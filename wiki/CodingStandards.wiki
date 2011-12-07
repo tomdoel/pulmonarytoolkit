@@ -7,7 +7,7 @@ This page describes standards and conventions which should be followed by code i
 = Plugins =
 
 == Button text ==
- * When choosing text for the button, note that it is also used in the progress dialog. It should make sense when you see `Computing <button name>` For example, `Airway Skeleton` is OK because `Computing Airway Skeleton` sounds OK, but `Show Airway Skeleton` is not good because Computing Show Airway Skeleton` is not good.
+ * When choosing text for the button, note that it is also used in the progress dialog. It should make sense when you see `Computing <button name>` For example, `Airway Skeleton` is OK because `Computing Airway Skeleton` sounds fine, but `Show Airway Skeleton` is not good because Computing Show Airway Skeleton` makes no sense.
 
 
 = Commenting =
@@ -38,4 +38,3 @@ This page describes standards and conventions which should be followed by code i
 == Global variables ==
 
 Global variables must not be used. The framework is designed to support multiple instances and this is fundamentally incompatible with global variables.
-
