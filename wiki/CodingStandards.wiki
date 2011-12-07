@@ -21,12 +21,12 @@ This page describes standards and conventions which should be followed by code i
  * All classes must inherit from handle
  
 
-= Variables
+= Variables =
 
 == Naming ==
 
  * Local variables should be named in lower case with connecting underscores, e.g. `radius_of_circle_in_mm`.
- * Properties should be named like this: PropertyName
+ * Properties should be named in Java style like this: `PropertyName`
  * Variables should not be named `x`, `y`, `i`, etc. except for co-ordinates
  * Co-ordinates should be named `i`, `j`, `k` instead of `x`, `y`, `z`. This is because Matlab stores matrices as `(y,x,z)` which causes confusion between the `x` and `y` coordinates. Always use `(i,j,k)` where `i` is the first coordinate. This avoids any ambiguity.
  * Index variables should not be named `i`, `x` etc. 
@@ -40,4 +40,4 @@ Global variables must not be used. The framework is designed to support multiple
 = Plugins =
 
 == Button text ==
- * When choosing text for the ButtonText property, note that this is used both for the GUI and also in the progress dialog. Choose text that makes sense when you see the phrase`Computing <button name>`. For example, `Airway Skeleton` is OK because `Computing Airway Skeleton` sounds fine, but `Show Airway Skeleton` is not good because Computing Show Airway Skeleton` makes no sense.
+ * When choosing text for the `ButtonText` property, note that this is used both for the GUI and also in the progress dialog. Choose text that makes sense when you see the phrase `Computing <button text>`. For example, `Airway Skeleton` is OK because `Computing Airway Skeleton` sounds fine, but `Show Airway Skeleton` is not good because Computing Show Airway Skeleton` makes no sense.
