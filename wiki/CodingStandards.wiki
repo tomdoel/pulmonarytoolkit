@@ -27,8 +27,8 @@ This page describes standards and conventions which should be followed by code i
 
  * Local variables should be named in lower case with connecting underscores, e.g. `radius_of_circle_in_mm`.
  * Properties should be named in Java style like this: `PropertyName`
- * Variables should not be named `x`, `y`, `i`, etc. except for co-ordinates
- * Co-ordinates should be named `i`, `j`, `k` instead of `x`, `y`, `z`. This is because Matlab stores matrices as `(y,x,z)` which causes confusion between the `x` and `y` coordinates. Always use `(i,j,k)` where `i` is the first coordinate. This avoids any ambiguity.
+ * Variables should not be named `x`, `y`, `i`, etc. except for co-ordinates.
+ * Co-ordinates should be named `i`, `j`, `k` instead of `x`, `y`, `z`. This is because Matlab stores matrices as `(y,x,z)` which causes confusion between the `x` and `y` co-ordinates. Always use `(i,j,k)` where `i` is the first coordinate. This avoids any ambiguity.
  * Index variables should not be named `i`, `x` etc. 
 
 == Global variables ==
