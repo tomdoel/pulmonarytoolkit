@@ -1,0 +1,41 @@
+#summary Summary of conventions to follow when contributing to the project
+
+= Introduction =
+
+This page describes standards and conventions which should be followed by code in the project. These standards help to make the framework stable and consistent.
+
+= Plugins =
+
+== Button text ==
+ * When choosing text for the button, note that it is also used in the progress dialog. It should make sense when you see `Computing <button name>` For example, `Airway Skeleton` is OK because `Computing Airway Skeleton` sounds OK, but `Show Airway Skeleton` is not good because Computing Show Airway Skeleton` is not good.
+
+
+= Commenting =
+
+ * Commented-out code should never be committed to the codebase.
+ * Code should be self-commenting where possible. In other words, choose variable, property and method names which are self-explanatory, rather than having to explain them using comments. If `r` is the radius of a circle in mm, rename it `radius_of_circle_in_mm`. If the function `Multiply` multiplies two vectors together, rename it `MultiplyTwoVectors`.
+ * Comment the code where (and only where) what it is doing is not obvious.
+
+
+= Functions and Classes =
+
+ * Code within the framework and user interface should be in classes.
+ * General utility functions can be single function files or part of a static class, and should be located in the Utilities folder.
+ * Image processing algorithms should be single function files and should be coated in the Library folder. ( Such algorithms may make use of classes, in which case those classes can be stored in the LIbrary folder too).
+ * All classes must inherit from handle
+ 
+
+= Variables
+
+== Naming ==
+
+ * Local variables should be named in lower case with connecting underscores, e.g. `radius_of_circle_in_mm`.
+ * Properties should be named like this: PropertyName
+ * Variables should not be named `x`, `y`, `i`, etc. except for co-ordinates
+ * Co-ordinates should be named `i`, `j`, `k` instead of `x`, `y`, `z`. This is because Matlab stores matrices as `(y,x,z)` which causes confusion between the `x` and `y` coordinates. Always use `(i,j,k)` where `i` is the first coordinate. This avoids any ambiguity.
+ * Index variables should not be named `i`, `x` etc. 
+
+== Global variables ==
+
+Global variables must not be used. The framework is designed to support multiple instances and this is fundamentally incompatible with global variables.
+
