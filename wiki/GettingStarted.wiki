@@ -44,13 +44,15 @@ To view data from DICOM files, load them into a TDImage and then display this:
 }}}
 A similar approach applies to mhd/raw files:
 {{{
-    my_image = TDLoad3DRawAndMetaFiles(path, filenames, kid);
+    my_image = TDLoad3DRawAndMetaFiles(path, filenames, uid);
     TDViewer(my_image);
 }}}
-Note you must specify an image kid, because this is not specified in the metaheader.
+Note you must specify an image uid, because this is not specified in the metaheader.
 
-= Running the Pulmonary Toolkit =
+= Running the Pulmonary Toolkit user interface=
 
 To run the PTK gui, run
-
+{{{
 ptk
+}}}
+The use the Load button to import data 
