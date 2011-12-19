@@ -5,7 +5,18 @@
 
 TDViewer is a standalone application for visualising 3D or 2D data slice-by-slice. 
 
+= Requirements = 
+ * A recent version of Matlab
+ * TD Pulmonary Toolkit
+
+
+
 = Running TDViewer =
+
+Before running the TDViewer, you may first need to add the PTK paths
+{{{
+    TDAddPtkPaths;
+}}}
 
 To visualise a 3D volume contained in the matrix my_image, run:
 {{{
@@ -13,10 +24,6 @@ To visualise a 3D volume contained in the matrix my_image, run:
 }}}
 `my_image` can also be a TDImage or TDDicomImage class. This is preferable, because then TDViewer will respect the voxel size and automatically display a title based on the patient name.
 
-You may first need to add the PTK paths
-{{{
-    TDAddPtkPaths;
-}}}
 
 You can specify an image type to control how the image is displayed:
 {{{
