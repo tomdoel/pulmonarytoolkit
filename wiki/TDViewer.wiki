@@ -65,18 +65,27 @@ Note you must specify an image uid, because this is not specified in the metahea
  * `Window` and `Level` controls can be adjusted using sliders or editable text boxes
 
  = Keyboard and mouse shortcuts =
+
+== Orientation ==
  * `C` - coronal mode
  * `S` - sagittal mode
  * `A` - axial mode
+
+== Mode ==
  * `Z` - zoom mode
  * `P` - pan mode
  * `E` - cine mode (drag to cine)
  * `M` - marker mode
+ * `W` - window/level mode (grad to change window and level)
+
+== Image viewing ==
  * `I` - toggle image on/off
  * `O` - toggle overlay on/off
  * `T` - toggle whether black in an overlay image is transparent
  * `SHIFT+mouse drag` - pan (in any mode)
  * `CTRL+mouse drag` - zoom (in any mode)
+
+== Cine through image slices ==
  * `Down Arrow` - next slice
  * `Up Arrow` - next slice
  * `mouse scrollwheel / trackpad` - cine through images
