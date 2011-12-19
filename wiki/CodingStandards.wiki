@@ -9,15 +9,19 @@ This page describes standards and conventions which should be followed by code i
 = Commenting =
 
  * Commented-out code should never be committed to the codebase.
- * Code should be self-commenting where possible. In other words, choose variable, property and method names which are self-explanatory, rather than having to explain them using comments. If `r` is the radius of a circle in mm, rename it `radius_of_circle_in_mm`. If the function `Multiply` multiplies two vectors together, rename it `MultiplyTwoVectors`.
- * Comment the code where (and only where) what it is doing is not obvious.
+ * A brief summary should be included at the top of each file, in Matlab help format.
+ * Academic references should be included where appropriate, e.g. if the function is implementing an algorithm described in a journal paper.
+ * Website links should not be included, except to the Pulmonary Toolkit project.
+ * Code should aim to be self-commenting. In other words, choose variable, property and method names which are self-explanatory, rather than having to explain them using comments. If `r` is the radius of a circle in mm, rename it `radius_of_circle_in_mm`. If the function `Multiply` multiplies two vectors together, rename it `MultiplyTwoVectors`.
+ * Add additional commenting where this aids understanding of the code, but not where the operation is obvious from reading the code.
 
 
 = Functions and Classes =
 
  * Code within the framework and user interface should be in classes.
- * General utility functions can be single function files or part of a static class, and should be located in the Utilities folder.
- * Image processing algorithms should be single function files and should be coated in the Library folder. ( Such algorithms may make use of classes, in which case those classes can be stored in the LIbrary folder too).
+ * Data types and interfaces should be declared as classes in the Types folder.
+ * General utility functions should be located in the Utilities folder. They can be single function files or grouped into static classes.
+ * Image processing algorithms should be single function files and should be located in the Library folder. 
  * All classes must inherit from handle
  
 
@@ -33,8 +37,11 @@ This page describes standards and conventions which should be followed by code i
 
 == Global variables ==
 
-Global variables must not be used. The framework is designed to support multiple instances and this is fundamentally incompatible with global variables.
+Global variables must not be used.
 
+= Display of Messages, errors, warnings and progress =
+
+All display of messages, warnings, errors and progress  bars should be made through TDReporting objects. Code within the framework and plugins should not write to the command window or dialogs directly. 
 
 
 = Plugins =
