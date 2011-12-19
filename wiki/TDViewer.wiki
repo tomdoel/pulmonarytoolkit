@@ -64,7 +64,13 @@ Note you must specify an image uid, because this is not specified in the metahea
  * The `Overlay` checkbox toggles display of the overlay image. Move the slider to change the transparency of the overlay
  * `Window` and `Level` controls can be adjusted using sliders or editable text boxes
 
+
+
+
  = Keyboard and mouse shortcuts =
+
+See KeyboardShortcuts
+
 
 == Orientation ==
  * `C` - coronal mode
