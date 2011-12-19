@@ -10,6 +10,17 @@ TDViewer is a standalone application for visualising 3D or 2D data slice-by-slic
  * TD Pulmonary Toolkit
 
 
+= Features =
+
+ * View images slice-by-slice in coronal, sagittal or axial directions
+ * Overlay image with adjustable transparency
+ * Quiver plot overlay
+ * Zoom and Pan tools 
+ * Change window and level through scrollbars or editable text boxes
+ * Cine using mouse wheel, scrollbar or draggable cine tool
+ * Marker mode to interactively add, remove and edit marker points in multiple colours
+ * Supports non-uniform image resolutions
+ * Displays current voxel coordinates, image value and Hounsfield value (for C images)
 
 = Running TDViewer =
 
@@ -46,3 +57,38 @@ A similar approach applies to mhd/raw files:
     TDViewer(my_image);
 }}}
 Note you must specify an image uid, because this is not specified in the metaheader.
+
+= Controls =
+ * The `Cor` (Coronal), `Sag` (sagittal) and `Ax` (Axial) buttons control which direction you are viewing the images in
+ * The `Image` checkbox toggles display of the background image
+ * The `Overlay` checkbox toggles display of the overlay image. Move the slider to change the transparency of the overlay
+ * `Window` and `Level` controls can be adjusted using sliders or editable text boxes
+
+ = Keyboard and mouse shortcuts =
+ * `C` - coronal mode
+ * `S` - sagittal mode
+ * `A` - axial mode
+ * `Z` - zoom mode
+ * `P` - pan mode
+ * `E` - cine mode (drag to cine)
+ * `M` - marker mode
+ * `i` - toggle image on/off
+ * `o` - toggle overlay on/off
+ * `t` - toggle whether black in an overlay image is transparent
+ * `SHIFT+mouse drag` - pan (in any mode)
+ * `CTRL+mouse drag` - zoom (in any mode)
+ * `downarrow` - next slice
+ * `uparrow` - next slice
+ * mouse scrollwheel / trackpad - cine through images
+
+== Marker mode shortcuts ==
+ * `L` - Toggle marker labels on/off (marker mode)
+ * `1`,` 2`, `3`, `4`,` 5`, `6`, `7` - change colour of next marker to place
+ * `Backspace` - delete the marker the mouse is currently over
+ * `Space` - Cine to the nearest image slice containing a marker 
+ * `Right Arrow` - Cine forward 10 slices, but stop at a slice if it contains a marker
+ * `Left Arrow` - Cine back 10 slices, but stop at a slice if it contains a marker
+ * `Right Arrow` - Cine forward 10 slices, but stop at a slice if it contains a marker
+ * `Page Up` - Cine to the first slice in the image containing a marker, or to the beginning of the image if the current slice contains the first marker
+ * `Page Down` - Cine to the last slice in the image containing a marker, or to the end of the image if the current slice contains the last marker
+
