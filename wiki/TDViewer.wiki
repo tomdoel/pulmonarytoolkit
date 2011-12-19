@@ -72,14 +72,14 @@ Note you must specify an image uid, because this is not specified in the metahea
  * `P` - pan mode
  * `E` - cine mode (drag to cine)
  * `M` - marker mode
- * `i` - toggle image on/off
- * `o` - toggle overlay on/off
- * `t` - toggle whether black in an overlay image is transparent
+ * `I` - toggle image on/off
+ * `O` - toggle overlay on/off
+ * `T` - toggle whether black in an overlay image is transparent
  * `SHIFT+mouse drag` - pan (in any mode)
  * `CTRL+mouse drag` - zoom (in any mode)
- * `downarrow` - next slice
- * `uparrow` - next slice
- * mouse scrollwheel / trackpad - cine through images
+ * `Down Arrow` - next slice
+ * `Up Arrow` - next slice
+ * `mouse scrollwheel / trackpad` - cine through images
 
 == Marker mode shortcuts ==
  * `L` - Toggle marker labels on/off (marker mode)
@@ -91,4 +91,3 @@ Note you must specify an image uid, because this is not specified in the metahea
  * `Right Arrow` - Cine forward 10 slices, but stop at a slice if it contains a marker
  * `Page Up` - Cine to the first slice in the image containing a marker, or to the beginning of the image if the current slice contains the first marker
  * `Page Down` - Cine to the last slice in the image containing a marker, or to the end of the image if the current slice contains the last marker
-
