@@ -16,7 +16,10 @@ Data can be imported in a variety of formats. You should import from original DI
 
 = Running TDViewer =
 
-TDViewer is a standalone application for visualising 3D or 2D data slice-by-slice. To visualise a 3D volume contained in the matrix my_image, run:
+TDViewer is a standalone application for visualising 3D or 2D data slice-by-slice. See the page TDViewer for more information
+
+
+To visualise a 3D volume contained in the matrix my_image, run:
 {{{
     TDViewer(my_image);
 }}}
