@@ -153,7 +153,7 @@ classdef TDProgressPanel < TDProgressInterface
         
         function cancelled = CancelClicked(obj)
             cancelled = obj.UserClickedCancel;
-            obj.UserClickedCancel = true;
+            obj.UserClickedCancel = false;
         end
     end
     
