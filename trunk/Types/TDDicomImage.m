@@ -123,7 +123,7 @@ classdef TDDicomImage < TDImage
         
         function [value, units] = GetRescaledValue(obj, coord)
             if obj.IsCT
-                value = obj.RawImage(coord(1), coord(2), coord(3))*obj.RescaleSlope + obj.RescaleIntercept;
+                value = obj.GreyscaleToHounsfield(obj.RawImage(coord(1), coord(2), coord(3)));
                 units = obj.RescaleUnits;
             else
                 [value, units] = GetRescaledValue@TDImage(coord);
@@ -134,6 +134,15 @@ classdef TDDicomImage < TDImage
             % Conversion from Hounsfield units to image raw intensity values:
             if obj.IsCT
                 units_greyscale = (units_hu - obj.RescaleIntercept)/obj.RescaleSlope;
+            else
+               error('Not a CT image'); 
+            end
+        end
+        
+        function units_hu = GreyscaleToHounsfield(obj, units_greyscale)
+            % Conversion from image raw intensity values to Hounsfield units:
+            if obj.IsCT
+                units_hu = units_greyscale*obj.RescaleSlope + obj.RescaleIntercept;
             else
                error('Not a CT image'); 
             end
