@@ -61,7 +61,7 @@ classdef TDSplashScreen < TDProgressInterface
             axis(obj.Image, 'off');
             obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 350, 480, 75], 'String', TDSoftwareInfo.Name, 'FontName', 'Helvetica Neue', 'FontUnits', 'points', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
             obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 240, 480, 110], 'FontName', 'Helvetica Neue', 'FontUnits', 'points', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
-            set(obj.BodyText, 'String', sprintf(['Version ' TDSoftwareInfo.Version ' \n\nTom Doel 2012         http://code.google.com/p/pulmonarytoolkit']));
+            set(obj.BodyText, 'String', sprintf(['Version ' TDSoftwareInfo.Version ' \n\n' TDSoftwareInfo.WebsiteUrl]));
             
             
 

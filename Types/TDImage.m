@@ -211,6 +211,14 @@ classdef TDImage < handle
             % dimensions so that we allow switching between quiver plots
             % (vectors) and scalars
             new_image_size = size(new_image);
+            
+            % If the length of the 3rd dimension of 'new_image' is 1, Matlab 
+            % will remove that dimension from the size argument, so we need to
+            % add it in so we can make a proper comparison
+            if length(new_image_size) == 2
+                new_image_size = [new_image_size 1];
+            end
+            
             if length(new_image_size) > 3
                 new_image_size = new_image_size(1:3);
             end
@@ -437,7 +445,7 @@ classdef TDImage < handle
                     obj.RawImage = repmat(flat, [number_of_repeats 1 1]);
                 case TDImageOrientation.Sagittal
                     obj.RawImage = repmat(flat, [1 number_of_repeats 1]);
-                case TDImageOrientation.Axis
+                case TDImageOrientation.Axial
                     obj.RawImage = repmat(flat, [1 1 number_of_repeats]);
             end
             obj.NotifyImageChanged;

@@ -38,6 +38,7 @@ classdef TDSoftwareInfo < handle
         ImageTemplatesCacheName = 'ImageTemplates'
         UserDirectoryName = 'User'
         ResultsDirectoryName = 'Results'
+        WebsiteUrl = 'http://code.google.com/p/pulmonarytoolkit'
     end
     
     methods (Static)
