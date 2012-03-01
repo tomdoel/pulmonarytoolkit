@@ -46,9 +46,9 @@ classdef TDVisualiseAirwaysIn3D < TDGuiPlugin
                 if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
                     segmentation = segmentation.Copy;
                     segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 1));
-                    smoothing_size = 0; % Don't smooth for small structures
+                    smoothing_size = 0;
                 else
-                    smoothing_size = 4; % 4 is good for lobes
+                    smoothing_size = 0;
                 end
                 
                 TDVisualiseIn3D(segmentation, smoothing_size, true, ptk_gui_app.Reporting);

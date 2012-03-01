@@ -99,7 +99,7 @@ classdef TDPTKGuiApp < handle
             % An empty image_info indicates that this dataset has already been
             % selected. This prevents data re-loading when the same dataset is
             % selected.
-            % Also, Due to a Matlab/Java bug, this callback may be called twice 
+            % Also, due to a Matlab/Java bug, this callback may be called twice 
             % when an option is selected from the drop-down load menu using 
             % keyboard shortcuts. This will prevent the loading function from
             % being called twice

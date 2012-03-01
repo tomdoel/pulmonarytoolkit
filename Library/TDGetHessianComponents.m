@@ -1,4 +1,4 @@
-function hessian_components = TDGetHessianComponents(image_data)
+function hessian_components = TDGetHessianComponents(image_data, mask)
     % TDGetHessianComponents. Computes the Hessian matrices for an image
     %
     %     TDGetHessianComponents computes the components of the Hessian matrix
@@ -13,6 +13,10 @@ function hessian_components = TDGetHessianComponents(image_data)
     %     The input image is of class TDImage.
     %     The output image is of clas TDWrapper.
     %
+    %     mask is an optional logical image mask specifying the points for which 
+    %     the Hessian should be computed. It should be of type TDImage or
+    %     TDWrapper.
+    %
     %
     %     Licence
     %     -------
@@ -22,27 +26,42 @@ function hessian_components = TDGetHessianComponents(image_data)
     %
     
 
+    if nargin < 2
+        mask = [];
+    end
+    
     hessian_components = TDWrapper;
-    hessian_components.RawImage = zeros([6, numel(image_data.RawImage)], 'single');
-    hessian_components.RawImage(1, :) = Der2CentralDifference(image_data, 1); %ii
-    hessian_components.RawImage(2, :) = Der1(image_data, 3); %ij
-    hessian_components.RawImage(3, :) = Der1(image_data, 2); %ik
-    hessian_components.RawImage(4, :) = Der2CentralDifference(image_data, 2); %jj
-    hessian_components.RawImage(5, :) = Der1(image_data, 1); %jk
-    hessian_components.RawImage(6, :) = Der2CentralDifference(image_data, 3); %kk
+    if isempty(mask)
+        num_points = numel(image_data.RawImage);
+    else
+        num_points = sum(mask.RawImage(:));
+    end
+    hessian_components.RawImage = zeros([6, num_points], 'single');
+    hessian_components.RawImage(1, :) = Der2CentralDifference(image_data, 1, mask); %ii
+    hessian_components.RawImage(2, :) = Der1(image_data, 3, mask); %ij
+    hessian_components.RawImage(3, :) = Der1(image_data, 2, mask); %ik
+    hessian_components.RawImage(4, :) = Der2CentralDifference(image_data, 2, mask); %jj
+    hessian_components.RawImage(5, :) = Der1(image_data, 1, mask); %jk
+    hessian_components.RawImage(6, :) = Der2CentralDifference(image_data, 3, mask); %kk
 end
 
-function cd = Der2CentralDifference(image_data, dimension)
+function cd = Der2CentralDifference(image_data, dimension, mask)
     ker = [];
     ker{1} = cast([1; -2; 1], 'single');
     ker{2} = cast([1, -2, 1], 'single');
     ker{3} = cast(permute([1, -2, 1], [3 1 2]), 'single');
     
     cd = single(convn(image_data.RawImage, ker{dimension}, 'same'));
-    cd = reshape(cd, [1 numel(cd)]);
+    if isempty(mask)
+        cd = reshape(cd, [1 numel(cd)]);
+    else
+        cd = cd(mask.RawImage(:));
+        cd = cd';
+    end
+    
 end
 
-function cd = Der1(image_data, orthog_dir)
+function cd = Der1(image_data, orthog_dir, mask)
     ker = [1, -1, 0; -1, 1, 0; 0, 0, 0];
     if orthog_dir == 1
         ker = permute(ker, [3 1 2]);
@@ -50,5 +69,10 @@ function cd = Der1(image_data, orthog_dir)
         ker = permute(ker, [1 3 2]);
     end
     cd = single(convn(image_data.RawImage, ker, 'same'));
-    cd = reshape(cd, [1 numel(cd)]);
+    if isempty(mask)
+        cd = reshape(cd, [1 numel(cd)]);
+    else
+        cd = cd(mask.RawImage(:));
+        cd = cd';
+    end
 end
