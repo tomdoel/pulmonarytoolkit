@@ -1,4 +1,4 @@
-function filtered_image = TDImageDividerHessian(image_data, filter_function, gaussian_sigma, hessian_filter_gaussian, dont_divide, dont_calculate_evals, is_left_lung, reporting)
+function filtered_image = TDImageDividerHessian(image_data, filter_function, mask, gaussian_sigma, hessian_filter_gaussian, dont_divide, dont_calculate_evals, is_left_lung, reporting)
     % TDImageDividerHessian. Computes a Hessian-based filter for an image, one octant at a time.
     %
     %     This function performs Hessian-based filtering on an image, but 
@@ -19,6 +19,8 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, gau
     %             image_data - The image to filter, in a TDImage class
     %             filter_function - handle to a user-defined filter function 
     %                 which is to be applied to each quadrant. See below for syntax.
+    %             mask - a logical matrix specifying which elements of
+    %                 image_data should be processed.
     %             gaussian_sigma - The size of the Gaussian filter to be applied to the whole image
     %                 before filtering using the supplied function. Specify [] for no filtering.
     %             hessian_filter_gaussian - Gaussian filter size to be applied
@@ -73,7 +75,7 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, gau
     %         function ComputeFilter
     %             reporting = TDReportingDefault;
     %             gaussian_size_mm = 1.5;
-    %             filtered_image = TDImageDividerHessian(image_data, @FilterFunction, gaussian_size_mm, [], [], [], [], reporting)
+    %             filtered_image = TDImageDividerHessian(image_data, @FilterFunction, [], gaussian_size_mm, [], [], [], [], reporting)
     %         end
     %
     %         function output_wrapper = FilterFunction(hessian_eigenvalues_wrapper)
@@ -89,11 +91,17 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, gau
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    
+    if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
+        reporing.Warning('TDImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
+    end
+
+    if dont_calculate_evals && ~isempty(mask)
+        reporing.Warning('TDImageDividerHessian:MaskAndFilteringNotSupported', 'Currently this function does not support a mask when not computing eigenvalues', []);
+    end
 
     % Check the input image is of the correct form
     if ~isa(image_data, 'TDImage')
-        error('Requires a TDImage as input');
+        reporing.Error('TDImageDividerHessian:InputImageBadFormat', 'Requires a TDImage as input');
     end
     
     if isempty(dont_divide)
@@ -110,20 +118,18 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, gau
     end
   
     % Gaussian filter
-    if ~isempty(gaussian_sigma)
+    if ~isempty(gaussian_sigma) && (gaussian_sigma > 0)
         image_data = TDGaussianFilter(image_data, gaussian_sigma);
     end
     
     % Progress ia split between left and right lungs
     if (is_left_lung)
         progress_text = 'left';
-%         progress_octant_offset = 9;
         progress_octant_offset = 0;
     else
         progress_text = 'right';
         progress_octant_offset = 0;
     end
-%     progress_max = 18;
     progress_max = 9;
     
     output_size = [image_data.ImageSize];
@@ -144,15 +150,15 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, gau
 
     if dont_divide
         
-        % Image will not be divided into quadrants
+        % Image will not be divided into octants
         reporting.ShowWarning('TDImageDividerHessian:NoDivide', 'Ignoring image division and operating on entire lung', []);
-        hessian_components = TDGetHessianComponents(image_data);
+        hessian_components = TDGetHessianComponents(image_data, mask);
         
         if dont_calculate_evals
             % Call filter with Hessian components
             filtered_image_raw = filter_function(hessian_components, image_size, reporting);
         else
-            part_hessian_evals = HessianVectorised(hessian_components, image_size);
+            part_hessian_evals = HessianVectorised(hessian_components, image_size, mask);
             
             % Call filter with the resulting eigenvalues
             filtered_image_raw = filter_function(part_hessian_evals);
@@ -162,7 +168,7 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, gau
         
         
     else
-        % Image will be divided into quadrants
+        % Image will be divided into octants
         
         [octant_limits_in, octant_limits_out, octant_limits_result] = ComputeOctantLimits(image_size, overlap_size);
          
@@ -177,8 +183,16 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, gau
             part_image = image_data.Copy;
             part_image.Crop([limits_in(1), limits_in(3), limits_in(5)], [limits_in(2), limits_in(4), limits_in(6)]);
             
+            if isempty(mask)
+                part_mask = [];
+            else
+                % Fetch mask for this octant
+                part_mask = mask.Copy;
+                part_mask.Crop([limits_in(1), limits_in(3), limits_in(5)], [limits_in(2), limits_in(4), limits_in(6)]);
+            end
+            
             % Compute eigenvalues for this octant
-            hessian_components = TDGetHessianComponents(part_image);
+            hessian_components = TDGetHessianComponents(part_image, part_mask);
             
             if ~isempty(hessian_filter_gaussian)
                 reporting.UpdateProgressText('Filtering Hessian components');
@@ -195,22 +209,40 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, gau
                 % Call filter with Hessian components
                 part_filtered_image = filter_function(hessian_components, part_image.ImageSize, reporting);
             else
-                part_hessian_evals = HessianVectorised(hessian_components, part_image.ImageSize);
+                part_hessian_evals = HessianVectorised(hessian_components, part_image.ImageSize, part_mask);
                 
                 % Call filter with the resulting eigenvalues
                 part_filtered_image = filter_function(part_hessian_evals);
             end
             
-            % Place results in output matrix, ignoring border regions
-            filtered_image_raw( ...
-                limits_result(1):limits_result(2), ...
-                limits_result(3):limits_result(4), ...
-                limits_result(5):limits_result(6) ...
-                ) = part_filtered_image.RawImage( ...
-                limits_out(1):limits_out(2), ...
-                limits_out(3):limits_out(4), ...
-                limits_out(5):limits_out(6) ...
-                );
+            if isempty(mask)
+
+                % Place results in output matrix, ignoring border regions
+                filtered_image_raw( ...
+                    limits_result(1):limits_result(2), ...
+                    limits_result(3):limits_result(4), ...
+                    limits_result(5):limits_result(6) ...
+                    ) = part_filtered_image.RawImage( ...
+                    limits_out(1):limits_out(2), ...
+                    limits_out(3):limits_out(4), ...
+                    limits_out(5):limits_out(6) ...
+                    );
+            else
+                part_image_raw = part_image.RawImage;
+                part_image_raw(:) = 0;
+                part_image_raw(part_mask.RawImage(:)) = part_filtered_image.RawImage;
+
+                % Place results in output matrix, ignoring border regions
+                filtered_image_raw( ...
+                    limits_result(1):limits_result(2), ...
+                    limits_result(3):limits_result(4), ...
+                    limits_result(5):limits_result(6) ...
+                    ) = part_image_raw( ...
+                    limits_out(1):limits_out(2), ...
+                    limits_out(3):limits_out(4), ...
+                    limits_out(5):limits_out(6) ...
+                    );
+            end
         end
         reporting.UpdateProgressAndMessage(100*((8+progress_octant_offset)/progress_max), ['Storing results for ' progress_text ' lung']);
         filtered_image.ChangeRawImage(filtered_image_raw);
@@ -261,13 +293,21 @@ function [octant_limits_in, octant_limits_out, octant_limits_result] = ComputeOc
 end
 
 % Compute eigenvalues of the Hessian matrix and store in a TDWrapper object
-function hessian_eigvals = HessianVectorised(hessian_components, reduced_image_size)    
+function hessian_eigvals = HessianVectorised(hessian_components, reduced_image_size, mask)
     [~, evals_v] = TDFastEigenvalues(hessian_components.RawImage, true);
     
     hessian_eigvals = TDWrapper;
-    hessian_eigvals.RawImage = zeros([reduced_image_size, 3], 'single');
-    hessian_eigvals.RawImage(:,:,:,1) = reshape(evals_v(1, :), reduced_image_size);
-    hessian_eigvals.RawImage(:,:,:,2) = reshape(evals_v(2, :), reduced_image_size);
-    hessian_eigvals.RawImage(:,:,:,3) = reshape(evals_v(3, :), reduced_image_size); 
+    if isempty(mask)
+        hessian_eigvals.RawImage = zeros([reduced_image_size, 3], 'single');
+        hessian_eigvals.RawImage(:,:,:,1) = reshape(evals_v(1, :), reduced_image_size);
+        hessian_eigvals.RawImage(:,:,:,2) = reshape(evals_v(2, :), reduced_image_size);
+        hessian_eigvals.RawImage(:,:,:,3) = reshape(evals_v(3, :), reduced_image_size);
+    else
+        linear_image_size = sum(mask.RawImage(:));
+        hessian_eigvals.RawImage = zeros([linear_image_size, 3], 'single');
+        hessian_eigvals.RawImage(:,1) = reshape(evals_v(1, :), [linear_image_size, 1]);
+        hessian_eigvals.RawImage(:,2) = reshape(evals_v(2, :), [linear_image_size, 1]);
+        hessian_eigvals.RawImage(:,3) = reshape(evals_v(3, :), [linear_image_size, 1]);
+    end
 end
 

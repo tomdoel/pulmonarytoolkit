@@ -42,7 +42,7 @@ classdef TDPluginForDataset < handle
             if ~isempty(cache_info)
                 dependencies = cache_info.DependencyList;
                 if ~obj.PluginResultsInfo.CheckDependenciesValid(dependencies, obj.Reporting)
-                    obj.Reporting.ShowWarning(['TDPluginForDataset:InvalidDependency', 'The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
+                    obj.Reporting.ShowWarning('TDPluginForDataset:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
                     value = [];
                 end
             end
