@@ -19,8 +19,8 @@ classdef TDDensityInterpolation < TDPlugin
 
     
     properties
-        ButtonText = 'Density'
-        ToolTip = 'Shows a schematic representation of a sponge model based on density analysis'
+        ButtonText = 'Density Interpolation'
+        ToolTip = 'Recomputes image density with different sized voxels'
         Category = 'Analysis'
 
         AllowResultsToBeCached = true

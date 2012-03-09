@@ -142,7 +142,7 @@ classdef TDDicomImage < TDImage
         function units_hu = GreyscaleToHounsfield(obj, units_greyscale)
             % Conversion from image raw intensity values to Hounsfield units:
             if obj.IsCT
-                units_hu = units_greyscale*obj.RescaleSlope + obj.RescaleIntercept;
+                units_hu = int16(units_greyscale)*obj.RescaleSlope + obj.RescaleIntercept;
             else
                error('Not a CT image'); 
             end
