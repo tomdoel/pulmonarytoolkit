@@ -206,13 +206,13 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
         CALCPRECISION phi = acos(acos_arg)/CALCPRECISION(3);
 
         if (phi < 0) {
-            phi = phi + M_PI/3;
+            phi = phi + CALCPRECISION(M_PI)/3;
         }
         
 		CALCPRECISION eigenvalues[3];
         eigenvalues[0] = m + 2*sqrt(p)*cos(phi);
-        eigenvalues[1] = m - sqrt(p)*(cos(phi) + sqrt(3)*sin(phi));
-        eigenvalues[2] = m - sqrt(p)*(cos(phi) - sqrt(3)*sin(phi));
+        eigenvalues[1] = m - sqrt(p)*(cos(phi) + sqrt(CALCPRECISION(3))*sin(phi));
+        eigenvalues[2] = m - sqrt(p)*(cos(phi) - sqrt(CALCPRECISION(3))*sin(phi));
 
         
 		

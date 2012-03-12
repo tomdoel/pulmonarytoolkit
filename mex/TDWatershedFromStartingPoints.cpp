@@ -187,7 +187,7 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     while (!points_to_do.empty()) {
         
         // Get next point (this will be the one with the smallest intensity)
-        PointSet::iterator first_point_iterator = points_to_do.begin();
+        set<Point, classcomp>::iterator first_point_iterator = points_to_do.begin();
         Point first_point = *first_point_iterator;
         int point_index = first_point.first;
         char label = output_data[point_index];
