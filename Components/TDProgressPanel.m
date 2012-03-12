@@ -58,21 +58,21 @@ classdef TDProgressPanel < TDProgressInterface
                 'BackgroundColor', panel_background_colour, 'Units', 'pixels', 'Position', progress_position, 'Visible', 'off' ...
             );
             
-            title_position = [20, 180, 460, 30];
-            text_position = [20, 120, 460, 40];
+            title_position = [20, 180, 460, 40];
+            text_position = [20, 120, 460, 50];
             cancel_position = [70, 20, 150, 40];
             quit_position = [280, 20, 150, 40];
             progress_bar_position = [50, 90, 400, 18];
             
             
             obj.Title = uicontrol('parent', obj.PanelHandle, 'style', 'text', 'units', 'pixel', 'Position', title_position, ...
-                'string', 'Please wait', 'FontSize', 28, 'FontWeight', 'bold', 'Fore', 'white', 'Back', [0, 0.129, 0.278], 'Visible', 'off');
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 26, 'FontWeight', 'bold', 'Fore', 'white', 'Back', [0, 0.129, 0.278], 'Visible', 'off');
             obj.Text = uicontrol('parent', obj.PanelHandle, 'style', 'text', 'units', 'pixel', 'Position', text_position, ...
-                'string', 'Please wait', 'FontSize', 18, 'Fore', 'white', 'Back', [0, 0.129, 0.278], 'Visible', 'off');
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 16, 'Fore', 'white', 'Back', [0, 0.129, 0.278], 'Visible', 'off');
             obj.Cancel = uicontrol('parent', obj.PanelHandle, 'string', 'Cancel', ...
-                'Position', cancel_position, 'Callback', @obj.CancelButton, 'Visible', 'off');
+                'Position', cancel_position, 'FontUnits', 'pixels', 'Callback', @obj.CancelButton, 'Visible', 'off');
             obj.Quit = uicontrol('parent', obj.PanelHandle, 'string', 'Force Quit', ...
-                'Position', quit_position, 'Callback', @obj.QuitButton, 'Visible', 'off');
+                'Position', quit_position, 'FontUnits', 'pixels', 'Callback', @obj.QuitButton, 'Visible', 'off');
             
             [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', ...
                 progress_bar_position, obj.PanelHandle);

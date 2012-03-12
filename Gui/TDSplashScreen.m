@@ -48,7 +48,7 @@ classdef TDSplashScreen < TDProgressInterface
         function obj = TDSplashScreen
             set(0, 'Units', 'pixels');
             screen_size = get(0, 'ScreenSize');
-            obj.FigureHandle = figure('Color', [1 1 1], 'Units', 'Pixels', 'ToolBar', 'none', 'Visible', 'off', 'Resize', 'off');
+            obj.FigureHandle = figure('Color', [1 1 1], 'Units', 'Pixels', 'ToolBar', 'none', 'Visible', 'off', 'Resize', 'off', 'MenuBar', 'none');
             position = get(obj.FigureHandle, 'Position');
             position(3) = 926; position(4) = 474;
             position(1) = max(1, round((screen_size(3) - position(3))/2));
@@ -59,8 +59,8 @@ classdef TDSplashScreen < TDProgressInterface
             logo = imread('TDPTKLogo.jpg');
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
-            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 350, 480, 75], 'String', TDSoftwareInfo.Name, 'FontName', 'Helvetica Neue', 'FontUnits', 'points', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
-            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 240, 480, 110], 'FontName', 'Helvetica Neue', 'FontUnits', 'points', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
+            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 350, 460, 75], 'String', TDSoftwareInfo.Name, 'FontName', 'Helvetica Neue', 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
+            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 240, 460, 110], 'FontName', 'Helvetica Neue', 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
             set(obj.BodyText, 'String', sprintf(['Version ' TDSoftwareInfo.Version ' \n\n' TDSoftwareInfo.WebsiteUrl]));
             
             
@@ -77,13 +77,13 @@ classdef TDSplashScreen < TDProgressInterface
             
             
             obj.ProgressTitle = uicontrol('parent', obj.FigureHandle, 'style', 'text', 'units', 'pixel', 'Position', title_position, ...
-                'string', 'Please wait', 'FontSize', 24, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour);
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 24, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour);
             obj.Text = uicontrol('parent', obj.FigureHandle, 'style', 'text', 'units', 'pixel', 'Position', text_position, ...
-                'string', 'Please wait', 'FontSize', 16, 'Fore', text_color, 'Back', panel_background_colour);
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 16, 'Fore', text_color, 'Back', panel_background_colour);
             obj.Cancel = uicontrol('parent', obj.FigureHandle, 'string', 'Cancel', ...
-                'Position', cancel_position, 'Callback', @obj.CancelButton);
+                'FontUnits', 'pixels', 'Position', cancel_position, 'Callback', @obj.CancelButton);
             obj.Quit = uicontrol('parent', obj.FigureHandle, 'string', 'Force Quit', ...
-                'Position', quit_position, 'Callback', @obj.QuitButton);
+                'FontUnits', 'pixels', 'Position', quit_position, 'Callback', @obj.QuitButton);
             
             [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', ...
                 progress_bar_position, obj.FigureHandle);

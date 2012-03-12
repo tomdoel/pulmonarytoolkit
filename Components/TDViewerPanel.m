@@ -126,32 +126,32 @@ classdef TDViewerPanel < handle
             obj.m_mouse_control_panel = uibuttongroup('Parent', obj.m_control_panel, 'BorderType', 'none', 'SelectionChangeFcn', @obj.ControlsCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             
             orientation_buttons = [0 0 0];
-            orientation_buttons(1) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_orientation_panel, 'String', 'Cor', 'FontSize', font_size, 'Tag', 'Coronal', 'TooltipString', 'View coronal slices (Y-Z)');
-            orientation_buttons(2) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_orientation_panel, 'String', 'Sag', 'FontSize', font_size, 'Tag', 'Sagittal', 'TooltipString', 'View sagittal slices (X-Z)');
-            orientation_buttons(3) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_orientation_panel, 'String', 'Ax', 'FontSize', font_size, 'Tag', 'Axial', 'TooltipString', 'View transverse slices (X-Y)');
+            orientation_buttons(1) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_orientation_panel, 'String', 'Cor', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Coronal', 'TooltipString', 'View coronal slices (Y-Z)');
+            orientation_buttons(2) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_orientation_panel, 'String', 'Sag', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Sagittal', 'TooltipString', 'View sagittal slices (X-Z)');
+            orientation_buttons(3) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_orientation_panel, 'String', 'Ax', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Axial', 'TooltipString', 'View transverse slices (X-Y)');
             obj.m_orientation_buttons = orientation_buttons;
             
             control_buttons = [0 0 0];
-            control_buttons(1) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'Zoom', 'FontSize', font_size, 'Tag', 'Zoom', 'TooltipString', 'Zoom tool');
-            control_buttons(2) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'Pan', 'FontSize', font_size, 'Tag', 'Pan', 'TooltipString', 'Pan tool');
-            control_buttons(3) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'Mark', 'FontSize', font_size, 'Tag', 'Mark', 'TooltipString', 'Select point');
-            control_buttons(4) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'W/L', 'FontSize', font_size, 'Tag', 'W/L', 'TooltipString', 'Window/level tool. Drag mouse to change window and level.');
-            control_buttons(5) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'Cine', 'FontSize', font_size, 'Tag', 'Cine', 'TooltipString', 'Cine tool. Drag mouse to cine through slices');
+            control_buttons(1) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'Zoom', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Zoom', 'TooltipString', 'Zoom tool');
+            control_buttons(2) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'Pan', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Pan', 'TooltipString', 'Pan tool');
+            control_buttons(3) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'Mark', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Mark', 'TooltipString', 'Select point');
+            control_buttons(4) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'W/L', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'W/L', 'TooltipString', 'Window/level tool. Drag mouse to change window and level.');
+            control_buttons(5) = uicontrol('Style', 'togglebutton', 'Parent', obj.m_mouse_control_panel, 'String', 'Cine', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Cine', 'TooltipString', 'Cine tool. Drag mouse to cine through slices');
             obj.m_mouse_control_buttons = control_buttons;
 
             obj.m_windowlevel_panel = uipanel('Parent', obj.m_control_panel, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             obj.m_imageoverlay_panel = uipanel('Parent', obj.m_control_panel, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             
-            obj.m_status_text = uicontrol('Style', 'text', 'Parent', obj.m_imageoverlay_panel, 'FontSize', font_size, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.m_status_text = uicontrol('Style', 'text', 'Parent', obj.m_imageoverlay_panel, 'Units', 'pixels', 'FontSize', font_size, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             
             obj.m_opacity_slider = uicontrol('Style', 'slider', 'Parent', obj.m_imageoverlay_panel, 'Callback', @obj.OpacitySliderCallback, 'TooltipString', 'Change opacity of overlay');
-            obj.m_image_checkbox = uicontrol('Style', 'checkbox', 'Parent', obj.m_imageoverlay_panel, 'FontSize', font_size, 'Callback', @obj.ImageCheckboxCallback, 'String', 'Image', 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Show image');
-            obj.m_overlay_checkbox = uicontrol('Style', 'checkbox', 'Parent', obj.m_imageoverlay_panel, 'FontSize', font_size, 'Callback', @obj.OverlayCheckboxCallback, 'String', 'Overlay', 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Show overlay over image');
+            obj.m_image_checkbox = uicontrol('Style', 'checkbox', 'Parent', obj.m_imageoverlay_panel, 'Units', 'pixels', 'FontSize', font_size, 'Callback', @obj.ImageCheckboxCallback, 'String', 'Image', 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Show image');
+            obj.m_overlay_checkbox = uicontrol('Style', 'checkbox', 'Parent', obj.m_imageoverlay_panel, 'Units', 'pixels', 'FontSize', font_size, 'Callback', @obj.OverlayCheckboxCallback, 'String', 'Overlay', 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Show overlay over image');
           
-            obj.m_window_text = uicontrol('Style', 'text', 'Parent', obj.m_windowlevel_panel, 'FontSize', font_size, 'String', 'Window:', 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'HorizontalAlignment', 'right');
-            obj.m_level_text = uicontrol('Style', 'text', 'Parent', obj.m_windowlevel_panel, 'FontSize', font_size, 'String', 'Level:', 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'HorizontalAlignment', 'right');
-            obj.m_window_editbox = uicontrol('Style', 'edit', 'Parent', obj.m_windowlevel_panel, 'FontSize', font_size, 'Callback', @obj.WindowTextCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Change window (contrast)');
-            obj.m_level_editbox = uicontrol('Style', 'edit', 'Parent', obj.m_windowlevel_panel, 'FontSize', font_size, 'Callback', @obj.LevelTextCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Change level (brightness)');
+            obj.m_window_text = uicontrol('Style', 'text', 'Parent', obj.m_windowlevel_panel, 'Units', 'pixels', 'FontSize', font_size, 'String', 'Window:', 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'HorizontalAlignment', 'right');
+            obj.m_level_text = uicontrol('Style', 'text', 'Parent', obj.m_windowlevel_panel, 'Units', 'pixels', 'FontSize', font_size, 'String', 'Level:', 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'HorizontalAlignment', 'right');
+            obj.m_window_editbox = uicontrol('Style', 'edit', 'Parent', obj.m_windowlevel_panel, 'Units', 'pixels', 'FontSize', font_size, 'Callback', @obj.WindowTextCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Change window (contrast)');
+            obj.m_level_editbox = uicontrol('Style', 'edit', 'Parent', obj.m_windowlevel_panel, 'Units', 'pixels', 'FontSize', font_size, 'Callback', @obj.LevelTextCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Change level (brightness)');
             obj.m_window_slider = uicontrol('Style', 'slider', 'Min', 0, 'Max', 1, 'Value', 1, 'Parent', obj.m_windowlevel_panel, 'Callback', @obj.WindowSliderCallback, 'TooltipString', 'Change window (contrast)');
             obj.m_level_slider = uicontrol('Style', 'slider', 'Min', 0, 'Max', 1, 'Value', 0, 'Parent', obj.m_windowlevel_panel, 'Callback', @obj.LevelSliderCallback, 'TooltipString', 'Change level (brightness)');
             

@@ -92,8 +92,6 @@ classdef TDPluginsPanel < handle
             
             set(obj.PanelHandle, 'Units', 'pixels');
             panel_size = get(obj.PanelHandle, 'Position');
-
-            max_x = panel_size(3);
             
             panel_position_y = panel_size(4);
             panel_spacing_h = 5;
@@ -186,7 +184,7 @@ classdef TDPluginsPanel < handle
                 button_text = ['<HTML><P ALIGN = RIGHT>', current_plugin.ButtonText];
                 button_handle = uicontrol('Style', 'pushbutton', 'Parent', panel_handle, 'String', button_text, 'Tag', current_plugin.PluginName, ...
                     'Callback', {callback_function_handle, current_plugin.PluginName}, 'ToolTipString', tooltip_string, ...
-                    'FontAngle', font_angle, 'ForegroundColor', 'white', 'FontSize', 12, 'Position', new_position);
+                    'FontAngle', font_angle, 'ForegroundColor', 'white', 'FontUnits', 'pixels', 'FontSize', 12, 'Position', new_position);
                 
                 preview_image = [];
                 rgb_image = obj.GetButtonImage(preview_image, button_height, button_width, [], []);
