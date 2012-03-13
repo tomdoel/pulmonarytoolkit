@@ -14,7 +14,7 @@ disp('Compiling mex files');
 file_list = dir(fullfile('mex', '*.cpp'));
 for index = 1 : numel(file_list)
     filename = file_list(index).name;
-    mex(fullfile('mex', filename));
+    mex(fullfile('mex', filename), '-outdir', 'mex');
 end
 
 disp('***********************************************************************');
