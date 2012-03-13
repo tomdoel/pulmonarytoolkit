@@ -4,9 +4,19 @@
 
  * A recent version of Matlab 
 
-= Downloading =
+= Downloading and Installing =
 
 Download the current version of the entire Pulmonary Toolkit and place in a folder on your Matlab path.
+
+If you have a C++ compiler, then run the `install.m` script by typing
+{{{
+install
+}}}
+in the Matlab command window, and follow the instructions to set up Matlab's mex compiler.
+
+The installer step is optional, but certain features of the Pulmonary Toolkit (alpha version) will not function without it.
+
+The installer script sets up Matlab's C++ mex compiler and uses this to compile certain functions used by the Toolkit. For more information about mex, type 'doc mex' at the Matlab command window. For Windows and Mac you may need to install a C++ compiler before running the install script. XCode (for Mac) or Visual Studio (for Windows) will install compilers on your system.
 
 = Data = 
 
