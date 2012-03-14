@@ -100,7 +100,7 @@ classdef TDViewerPanel < handle
     
     methods
         function obj = TDViewerPanel(parent)
-            font_size = 10;
+            font_size = 9;
             obj.m_axis_limits = [];
             obj.m_axis_limits{1} = {};
             obj.m_axis_limits{2} = {};

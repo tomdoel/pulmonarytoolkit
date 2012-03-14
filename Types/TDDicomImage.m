@@ -126,7 +126,7 @@ classdef TDDicomImage < TDImage
                 value = obj.GreyscaleToHounsfield(obj.RawImage(coord(1), coord(2), coord(3)));
                 units = obj.RescaleUnits;
             else
-                [value, units] = GetRescaledValue@TDImage(coord);
+                [value, units] = GetRescaledValue@TDImage(obj, coord);
             end
         end
         

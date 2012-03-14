@@ -399,7 +399,7 @@ classdef TDImage < handle
            value = obj.RawImage(coords(1), coords(2), coords(3)); 
         end
 
-        function [value units] = GetRescaledValue(obj, ~)
+        function [value, units] = GetRescaledValue(obj, ~)
             value = [];
             units = [];
         end
