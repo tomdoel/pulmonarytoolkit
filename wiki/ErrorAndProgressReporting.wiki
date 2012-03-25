@@ -6,7 +6,7 @@
 
 The Pulmonary Toolkit can be run in a number of different ways. It may be run from the graphical user interface, as part of a batch script computing results for multiple datasets, or integrated seamlessly within other software.
 
-Often, it is useful or necessary for algorithms to provide feedback, such as error or warning messages, progress information. The way in which this information is processed or displayed to the user depends very much on the way in which the Toolkit is being used. For example, when interacting with the GUI, the user will want to know immediately if an error occurred so they can attempt to fix it. Whereas when running batch operations, it may be better to store error messages so they can be reviewed later after all computations have completed.
+Often, it is useful or necessary for algorithms to provide feedback, such as error or warning messages, other information or details of algorithm progress. The way in which this information is processed or displayed to the user depends very much on the way in which the Toolkit is being used. For example, when interacting with the GUI, the user will want to know immediately if an error occurred so they can attempt to fix it. Whereas when running batch operations, it may be better to store error messages so they can be reviewed later after all computations have completed.
 
 For this reason, the Toolkit provides a single, unified framework for providing feedback to the user. This includes error and warning messages, progress information (typically shown as a progress bar) and other information messages such as the location of cache files.
 
@@ -15,7 +15,7 @@ For this reason, the Toolkit provides a single, unified framework for providing 
 
 The Toolkit uses a 'callback' mechanism. A 'reporting' object is provided to plugins and other functions, which they should use to provide all such error, warning and progress feedback. This reporting object implements the TDReportingInterface interface, which provides a standard set of methods for reporting errors, warnings, messages and progress.
 
-= Coding standards =
+== Coding standards ==
 
 The coding standard requires all feedback to the user (including errors, warnings and progress) should be provided via the TDReportingInterface, so that the Toolkit is capable of running silently.
 
