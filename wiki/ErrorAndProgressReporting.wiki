@@ -13,11 +13,11 @@ For this reason, the Toolkit provides a single, unified framework for providing 
 
 == TDReportingInterface ==
 
-The Toolkit uses a 'callback' mechanism. A 'reporting' object is provided to plugins and other functions, which they should use to provide all such error, warning and progress feedback. This reporting object implements the TDReportingInterface interface, which provides a standard set of methods for reporting errors, warnings, messages and progress.
+The Toolkit uses a 'callback' mechanism. A 'reporting' object is provided to plugins and other functions, which they should use to provide all such error, warning and progress feedback. This reporting object implements the `TDReportingInterface` interface, which provides a standard set of methods for reporting errors, warnings, messages and progress.
 
 == Coding standards ==
 
-The coding standard requires all feedback to the user (including errors, warnings and progress) should be provided via the TDReportingInterface, so that the Toolkit is capable of running silently.
+The coding standard requires all feedback to the user (including errors, warnings and progress) should be provided via the `TDReportingInterface`, so that the Toolkit is capable of running silently.
 
 Therefore, the following are not permitted by the coding standard
  * output to the command line e.g. `disp`, `sprint`, `pause` etc.
@@ -27,7 +27,7 @@ Therefore, the following are not permitted by the coding standard
 
 == Implementing errors, warning etc. ==
 
-See TDReportingInterface.m for more information on how to use this interface, and see other Toolkit classes for how they use this to handle error and warning messages.
+See `TDReportingInterface.m` for more information on how to use this interface, and see other Toolkit classes for how they use this to handle error and warning messages.
 
 Examples:
 {{{
@@ -38,21 +38,21 @@ Examples:
     reporting.Error('TDClassName:ErrorName', 'This error occurred. Here;s a suggestion on how to fix it.');
 }}}
 
-Note the TDClassName:ErrorName follows Matlab's standards for error and warning labels. See `doc error` or `doc warning` for more information. 
+Note the `TDClassName:ErrorName` follows Matlab's standards for error and warning labels. See `doc error` or `doc warning` for more information. 
 
 
 == How to provide a TDReportingInterface when using the Toolkit ==
 
-When you use the Toolkit in your own code, the Toolkit by default uses a standard reporting implementation TDReportingDefault. This displays a progress bar and writes error and warning messages to Matlab's command window. 
+When you use the Toolkit in your own code, the Toolkit by default uses a standard reporting implementation `TDReportingDefault`. This displays a progress bar and writes error and warning messages to Matlab's command window. 
 {{{
-    % With no 'reporting; object specified, the Toolkit will create a TDReportingDefault object 
+    % With no reporting; object specified, the Toolkit will create a TDReportingDefault object 
     ptk = TDPTK();
 }}}
 
 You can instead choose to provide your own implementation of TDReportingInterface. 
 This allows you as a programmer to decide how error and  warning messages etc. are dealt with- e.g. whether you want to terminate the program or reporting a warning message and continue.
 
-To do this, implement the TDReportingInterface in a class called MyReportingObject You provide a reporting object to the TDPTK constructor:
+To do this, implement the `TDReportingInterface` in a class called `MyReportingObject` You provide a reporting object to the `TDPTK` constructor:
 {{{
     reporting = MyReportingObject();
     ptk = TDPTK(reporting);
