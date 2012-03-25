@@ -1,6 +1,8 @@
 #summary The TDReporting interface and how to report errors, warnings, messages and progress
 
-= Philosophy =
+= Error and Progress Reporting =
+
+== Philosophy ==
 
 The Pulmonary Toolkit can be run in a number of different ways. It may be run from the graphical user interface, as part of a batch script computing results for multiple datasets, or integrated seamlessly within other software.
 
@@ -9,7 +11,7 @@ Often, it is useful or necessary for algorithms to provide feedback, such as err
 For this reason, the Toolkit provides a single, unified framework for providing feedback to the user. This includes error and warning messages, progress information (typically shown as a progress bar) and other information messages such as the location of cache files.
 
 
-= TDReportingInterface =
+== TDReportingInterface ==
 
 The Toolkit uses a 'callback' mechanism. A 'reporting' object is provided to plugins and other functions, which they should use to provide all such error, warning and progress feedback. This reporting object implements the TDReportingInterface interface, which provides a standard set of methods for reporting errors, warnings, messages and progress.
 
@@ -23,7 +25,7 @@ Therefore, the following are not permitted by the coding standard
  * errors and warnings e.g. `error`, `warning`
  
 
-= Implementing errors, warning etc. =
+== Implementing errors, warning etc. ==
 
 See TDReportingInterface.m for more information on how to use this interface, and see other Toolkit classes for how they use this to handle error and warning messages.
 
@@ -39,7 +41,7 @@ Examples:
 Note the TDClassName:ErrorName follows Matlab's standards for error and warning labels. See `doc error` or `doc warning` for more information. 
 
 
-= How to provide a TDReportingInterface when using the Toolkit = 
+== How to provide a TDReportingInterface when using the Toolkit ==
 
 When you use the Toolkit in your own code, the Toolkit by default uses a standard reporting implementation TDReportingDefault. This displays a progress bar and writes error and warning messages to Matlab's command window. 
 {{{
@@ -55,21 +57,3 @@ To do this, implement the TDReportingInterface in a class called MyReportingObje
     reporting = MyReportingObject();
     ptk = TDPTK(reporting);
 }}}
-
-
-
-
-
-
-= Implementing TDReportingInterface =
-
- 
-
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
