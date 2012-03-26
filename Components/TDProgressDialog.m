@@ -16,7 +16,7 @@ classdef TDProgressDialog < TDProgressInterface
     properties (Access = private)
         IncrementThreshold = 5
         HandleToWaitDialog
-        DialogText
+        DialogText = 'Please Wait'
         DialogTitle = ''
         ProgressValue = 0
         
