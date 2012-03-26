@@ -124,7 +124,11 @@ classdef TDDatasetResults < handle
             
             % We generate an output image if requested, or if we need to generate a preview image
             if generate_image || cache_preview
-                output_image = plugin_info.GenerateImageFromResults(result, obj.ImageTemplates, obj.Reporting);
+                if isa(result, 'TDImage')
+                    output_image = plugin_info.GenerateImageFromResults(result.Copy, obj.ImageTemplates, obj.Reporting);
+                else
+                    output_image = plugin_info.GenerateImageFromResults(result, obj.ImageTemplates, obj.Reporting);
+                end
             else
                 output_image = [];
             end
