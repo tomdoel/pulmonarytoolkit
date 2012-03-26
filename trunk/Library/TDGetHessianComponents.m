@@ -46,12 +46,13 @@ function hessian_components = TDGetHessianComponents(image_data, mask)
 end
 
 function cd = Der2CentralDifference(image_data, dimension, mask)
+    scaling = image_data.VoxelSize(dimension)*image_data.VoxelSize(dimension);
     ker = [];
     ker{1} = cast([1; -2; 1], 'single');
     ker{2} = cast([1, -2, 1], 'single');
     ker{3} = cast(permute([1, -2, 1], [3 1 2]), 'single');
     
-    cd = single(convn(image_data.RawImage, ker{dimension}, 'same'));
+    cd = single(convn(image_data.RawImage, ker{dimension}/(scaling), 'same'));
     if isempty(mask)
         cd = reshape(cd, [1 numel(cd)]);
     else
@@ -64,9 +65,11 @@ end
 function cd = Der1(image_data, orthog_dir, mask)
     ker = [1, -1, 0; -1, 1, 0; 0, 0, 0];
     if orthog_dir == 1
-        ker = permute(ker, [3 1 2]);
+        ker = permute(ker, [3 1 2])/(image_data.VoxelSize(2)*image_data.VoxelSize(3));
     elseif orthog_dir == 2
-        ker = permute(ker, [1 3 2]);
+        ker = permute(ker, [1 3 2])/(image_data.VoxelSize(1)*image_data.VoxelSize(3));
+    else
+        ker = ker/(image_data.VoxelSize(1)*image_data.VoxelSize(2));
     end
     cd = single(convn(image_data.RawImage, ker, 'same'));
     if isempty(mask)
