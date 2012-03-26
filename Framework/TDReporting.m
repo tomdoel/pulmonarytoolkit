@@ -189,6 +189,12 @@ classdef TDReporting < TDReportingInterface
                 marker_image = obj.ViewingPanel.MarkerPointManager.GetMarkerImage;
             end
         end
+
+        function UpdateOverlayImage(obj, new_image)
+            if ~isempty(obj.ViewingPanel)
+                obj.ViewingPanel.OverlayImage.ChangeRawImage(new_image);
+            end
+        end
     end
     
     methods (Access = private)
