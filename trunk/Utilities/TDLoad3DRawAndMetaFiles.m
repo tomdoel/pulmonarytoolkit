@@ -1,4 +1,4 @@
-function dicom_image = TDLoad3DRawAndMetaFiles(path, filename, study_uid, reporting)
+function dicom_image = TDLoad3DRawAndMetaFiles(path, filenames, study_uid, reporting)
     % TDLoad3DRawAndMetaFiles. Reads images from raw and meteheader files and returns as a TDImage.
     %
     %     Note: Currently assumes that images are CT
@@ -6,17 +6,18 @@ function dicom_image = TDLoad3DRawAndMetaFiles(path, filename, study_uid, report
     %     Syntax
     %     ------
     %
-    %         TDSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting)
+    %         dicom_image = TDLoad3DRawAndMetaFiles(image_data, path, filename, data_type, reporting)
     %
-    %             image_data      is a TDImage (or TDDicomImage) class containing the image
-    %                             to be saved
-    %             path, filename  specify the location to save the DICOM data. One 2D file
+    %             dicom_image     is a TDDicomImage class containing the image
+    %             path            The path where the files are located. For the
+    %                             current directory, use .
+    %             filenames       can be a single string containspecify the location to save the DICOM data. One 2D file
     %                             will be created for each image slice in the z direction. 
     %                             Each file is numbered, starting from 0.
     %                             So if filename is 'MyImage.DCM' then the files will be
     %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
+    %             reporting       Optional - an object implementing the TDReporting 
+    %                             interface for error and progress reporting. Create a TDReporting
     %                             with no arguments to hide all reporting
     %
     %
@@ -31,12 +32,27 @@ function dicom_image = TDLoad3DRawAndMetaFiles(path, filename, study_uid, report
         reporting = TDReportingDefault;
     end
     
-    header_filename = [path filename{1}];
+    if nargin < 2
+        reporting.Error('TDLoad3DRawAndMetaFiles:NotEnoughArguments', 'TDLoad3DRawAndMetaFiles requires a minimum of two arguments: the current path and  list of filenames');
+    end
+
+    % If a single file has been specified, put it into an array for consistency
+    % with multiple filename syntax
+    if ischar(filenames)
+        filenames = {filenames};
+    end
+
+    if nargin < 3
+        reporting.ShowWarning('TDLoad3DRawAndMetaFiles:NoStudyUid', 'No study UID was specified - I am going to use the filename.', []);
+        study_uid = filenames{1};
+    end
+
+    header_filename = fullfile(path, filenames{1});
     [pathstr, ~, ~] = fileparts(header_filename);
 
     file_id = fopen(header_filename);
     if (file_id <= 0)
-        error(['Unable to open file ' header_filename]);
+        reporting.Error('TDLoad3DRawAndMetaFiles:OpenFileFailed', ['Unable to open file ' header_filename]);
     end
 
     % Reads in the meta header data: meta_header_data{1} are the field names,
@@ -58,7 +74,7 @@ function dicom_image = TDLoad3DRawAndMetaFiles(path, filename, study_uid, report
         new_dimension_order = [2 1 3];
         flip_orientation = [0 0 1];
     else
-        error(['TDLoad3DRawAndMetaFiles: WARNING: no implementation yet for anatomical orientation ' header_data.AnatomicalOrientation '.']);
+        reporting.Error('TDLoad3DRawAndMetaFiles:UnsupportedOrientation', ['TDLoad3DRawAndMetaFiles: WARNING: no implementation yet for anatomical orientation ' header_data.AnatomicalOrientation '.']);
     end
         
     image_dims = sscanf(header_data.DimSize, '%d %d %d');
@@ -81,7 +97,7 @@ function dicom_image = TDLoad3DRawAndMetaFiles(path, filename, study_uid, report
     % Read in the raw image file
     file_id = fopen(raw_image_filename);
     if file_id <= 0
-        error(['Unable to open file ' raw_image_filename]);
+        reporting.Error('TDLoad3DRawAndMetaFiles:OpenFileFailed', ['Unable to open file ' raw_image_filename]);
     end
     original_image = zeros(image_dims', data_type);
     z_length = image_dims(3);
@@ -108,12 +124,13 @@ function dicom_image = TDLoad3DRawAndMetaFiles(path, filename, study_uid, report
     if flip_orientation(3)
         original_image = original_image(:, :, end:-1:1);
     end
-    rescale_slope = 1;
-    rescale_intercept = 0;
     
+    rescale_slope = int16(1);
+    rescale_intercept = int16(0);
+
     reporting.ShowWarning('TDLoad3DRawAndMetaFiles:AssumedCT', 'No modality information - I am assuming these images are CT with slope 1 and intercept 0.', []);
     modality = 'CT';
     dicom_image = TDDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid);
-    dicom_image.Title = filename{1};
+    dicom_image.Title = filenames{1};
 
 
