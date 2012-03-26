@@ -639,11 +639,11 @@ classdef TDImage < handle
         end
         
         function global_coords = LocalToGlobalCoordinates(obj, coords)
-            global_coords = obj.Origin + coords - [1, 1, 1];
+            global_coords = repmat(obj.Origin - [1, 1, 1], size(coords,1), 1) + coords;
         end
         
         function local_coords = GlobalToLocalCoordinates(obj, global_coords)
-            local_coords = global_coords - obj.Origin + [1, 1, 1];
+            local_coords = global_coords + repmat([1, 1, 1] - obj.Origin, size(global_coords, 1), 1);
         end
         
         function global_indices = LocalToGlobalIndices(obj, local_indices)
