@@ -58,6 +58,10 @@ classdef TDViewer < handle
                 obj.Title = 'TDViewer';
             end
             obj.ViewerPanelHandle.BackgroundImage = obj.ImageHandle;
+
+            % Set custom function for application closing
+            set(obj.FigureHandle, 'CloseRequestFcn', @obj.CustomCloseFunction);
+
         end
         
         function title = get.Title(obj)
@@ -68,5 +72,13 @@ classdef TDViewer < handle
             set(obj.FigureHandle, 'Name', title);
         end
 
+    end
+
+    methods (Access = private)
+
+        function CustomCloseFunction(obj, ~, ~)
+            delete(obj.FigureHandle);
+            delete(obj.ViewerPanelHandle);
+        end
     end
 end
