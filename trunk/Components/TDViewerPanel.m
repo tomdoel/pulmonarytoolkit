@@ -91,7 +91,7 @@ classdef TDViewerPanel < handle
         
         % Used for programmatic pan, zoom, etc.
         LastCoordinates = [0, 0, 0]
-        MouseDown = false
+        MouseIsDown = false
     end
 
     events
@@ -958,7 +958,7 @@ classdef TDViewerPanel < handle
         
         % Mouse has moved over the figure
         function MouseHasMoved(obj, hObject, eventData)
-            if obj.MouseDown
+            if obj.MouseIsDown
                 selection_type = get(hObject, 'SelectionType');
                 
                 if strcmp(selection_type, 'extend')
@@ -988,7 +988,7 @@ classdef TDViewerPanel < handle
             [i, j, k] = obj.GetImageCoordinates;            
             point_is_in_image = obj.BackgroundImage.IsPointInImage([i, j, k]);
             if (~point_is_in_image)
-                obj.MouseDown = false;
+                obj.MouseIsDown = false;
             end
             
             if (obj.SelectedControl == 3) && (point_is_in_image)
@@ -1010,7 +1010,7 @@ classdef TDViewerPanel < handle
         % Mouse has been clicked
         function MouseDown(obj, src, ~)
             obj.LastCoordinates = obj.GetScreenCoordinates;
-            obj.MouseDown = true;
+            obj.MouseIsDown = true;
             selection_type = get(src, 'SelectionType');
             if strcmp(selection_type, 'normal')
                 [i, j, k] = obj.GetImageCoordinates;
@@ -1027,7 +1027,7 @@ classdef TDViewerPanel < handle
 
         % Mouse has been clicked
         function MouseUp(obj, src, ~)
-            obj.MouseDown = false;
+            obj.MouseIsDown = false;
             
             obj.LastCoordinates = obj.GetScreenCoordinates;
             selection_type = get(src, 'SelectionType');
