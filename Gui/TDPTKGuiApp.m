@@ -46,6 +46,7 @@ classdef TDPTKGuiApp < handle
             set(text_version_handle, 'String', obj.GetSoftwareNameAndVersionForDisplay);
 
             set(figure_handle, 'Color', [0, 0.129, 0.278]);
+            obj.Reporting = TDReporting(splash_screen, obj.ImagePanel);
             obj.PluginsPanel = TDPluginsPanel(uipanel_handle, obj.Reporting);
             obj.ImagePanel = TDViewerPanel(viewer_panel_handle);
             addlistener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);
@@ -54,7 +55,6 @@ classdef TDPTKGuiApp < handle
             % For the moment, we use the splash screen to display progress,
             % because the gui isn't yet visible so the ProgressPanel won't
             % display
-            obj.Reporting = TDReporting(splash_screen, obj.ImagePanel);
             obj.Reporting.Log('New session of TDPTKGui');
             
             obj.Ptk = TDPTK(obj.Reporting);
