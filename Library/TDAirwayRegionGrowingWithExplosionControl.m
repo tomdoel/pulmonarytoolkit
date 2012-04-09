@@ -1,4 +1,4 @@
-function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point, reporting)
+function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point, maximum_number_of_generations, explosion_multiplier, reporting)
     % TDAirwayRegionGrowingWithExplosionControl. Segments the airways from a
     %     threshold image using a region growing method.
     %
@@ -19,6 +19,13 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     %
     %     start_point - coordinate (i,j,k) of a point inside and near the top
     %         of the trachea (as returned by plugin TDTopOfTrachea)
+    %
+    %     maximum_number_of_generations - tree-growing will terminate for each
+    %         branch when it exceeds this number of generations in that branch
+    %
+    %     explosion_multiplier - 7 is a typical value. An explosion is detected
+    %         when the number of new voxels in a wavefront exceeds the previous
+    %         minimum by a factor defined by this parameter
     %
     %     reporting (optional) - an object implementing the TDReporting
     %         interface for reporting progress and warnings
@@ -54,7 +61,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     reporting.UpdateProgressMessage('Starting region growing with explosion control');
     
     % Perform the airway segmentation
-    airway_tree = RegionGrowing(threshold_image, start_point, reporting);
+    airway_tree = RegionGrowing(threshold_image, start_point, reporting, maximum_number_of_generations, explosion_multiplier);
 
     
     if isempty(airway_tree)
@@ -90,7 +97,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
 end
 
 
-function first_segment = RegionGrowing(threshold_image, start_point, reporting)
+function first_segment = RegionGrowing(threshold_image, start_point, reporting, maximum_number_of_generations, explosion_multiplier)
     
     voxel_size_mm = threshold_image.VoxelSize;
     
@@ -104,7 +111,7 @@ function first_segment = RegionGrowing(threshold_image, start_point, reporting)
         
     [linear_offsets, ~] = TDImageCoordinateUtilities.GetLinearOffsets(size(threshold_image));
     
-    first_segment = TDTreeSegment([], min_distance_before_bifurcating_mm, voxel_size_mm);
+    first_segment = TDTreeSegment([], min_distance_before_bifurcating_mm, voxel_size_mm, maximum_number_of_generations, explosion_multiplier);
     start_point_index = sub2ind(image_size, start_point(1), start_point(2), start_point(3));
     
     threshold_image(start_point_index) = false;

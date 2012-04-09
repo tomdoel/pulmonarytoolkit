@@ -75,7 +75,7 @@ classdef TDTreeSegment < handle
         MaxCoords
         
         % Generations greater than this are automatically terminated
-        MaximumNumberOfGenerations = 15
+        MaximumNumberOfGenerations
         
         
         % We never use less than this value at each step when computing the minimum wavefront
@@ -93,7 +93,7 @@ classdef TDTreeSegment < handle
     end
     
     methods
-        function obj = TDTreeSegment(parent, min_distance_before_bifurcating_mm, voxel_size_mm)
+        function obj = TDTreeSegment(parent, min_distance_before_bifurcating_mm, voxel_size_mm, maximum_generations, explosion_multiplier)
             if nargin > 0
                 obj.Parent = parent;
                 obj.Children = {};
@@ -106,6 +106,8 @@ classdef TDTreeSegment < handle
                 obj.MinimumDistanceBeforeBifurcatingMm = min_distance_before_bifurcating_mm;
                 max_voxel_size_mm = max(voxel_size_mm);
                 obj.VoxelSizeMm = voxel_size_mm;
+                obj.MaximumNumberOfGenerations = maximum_generations;
+                obj.ExplosionMultiplier = explosion_multiplier;
                 voxel_volume = voxel_size_mm(1)*voxel_size_mm(2)*voxel_size_mm(3);
                 obj.MinimumNumberOfPointsThreshold = max(3, round(obj.MinimumNumberOfPointsThresholdMm3/voxel_volume));
                 
@@ -374,12 +376,14 @@ classdef TDTreeSegment < handle
             
             if length(growing_branches) > 1
                 
-                % If the maximum permitted number of generations is exceeded
-                % then terminate this segment
-                if obj.GenerationNumber >= obj.MaximumNumberOfGenerations
-                    obj.ExceededMaximumNumberOfGenerations = true;
-                    obj.CompleteThisSegment;
-                    return;
+                if ~isempty(obj.MaximumNumberOfGenerations)
+                    % If the maximum permitted number of generations is exceeded
+                    % then terminate this segment
+                    if obj.GenerationNumber >= obj.MaximumNumberOfGenerations
+                        obj.ExceededMaximumNumberOfGenerations = true;
+                        obj.CompleteThisSegment;
+                        return;
+                    end
                 end
                 
                 for index = 1 : length(growing_branches)
@@ -398,7 +402,7 @@ classdef TDTreeSegment < handle
                 wavefront_voxels{index} = intersect(int32(voxel_indices), obj.WavefrontIndices{index});
                 obj.WavefrontIndices{index} = setxor(wavefront_voxels{index}, obj.WavefrontIndices{index});
             end
-            new_segment = TDTreeSegment(obj, obj.MinimumChildDistanceBeforeBifurcatingMm, obj.VoxelSizeMm);
+            new_segment = TDTreeSegment(obj, obj.MinimumChildDistanceBeforeBifurcatingMm, obj.VoxelSizeMm, obj.MaximumNumberOfGenerations, obj.ExplosionMultiplier);
             obj.AddChild(new_segment);
             new_segment.WavefrontIndices = wavefront_voxels;
         end
