@@ -44,9 +44,9 @@ classdef TDTopOfTrachea < TDPlugin
     end
     
     methods (Static)
-        function results = RunPlugin(application, reporting)
+        function results = RunPlugin(dataset, reporting)
             reporting.ShowProgress('Finding the top of the trachea');
-            [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(application.GetResult('TDThresholdLung'), reporting);
+            [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(dataset.GetResult('TDThresholdLung'), reporting);
             results = [];
             results.top_of_trachea = top_of_trachea;
             results.trachea_voxels = trachea_voxels;
@@ -55,10 +55,10 @@ classdef TDTopOfTrachea < TDPlugin
         function results = GenerateImageFromResults(trachea_results, image_templates, reporting)
             template_image = image_templates.GetTemplateImage(TDContext.LungROI);
 
-            top_of_trachea = trachea_results.top_of_trachea;
+            top_of_trachea_global = trachea_results.top_of_trachea;
             
             % Convert to local coordinaes relative to the ROI
-            top_of_trachea = template_image.GlobalToLocalCoordinates(top_of_trachea);
+            top_of_trachea = template_image.GlobalToLocalCoordinates(top_of_trachea_global);
             image_size = template_image.ImageSize;
             
             trachea = zeros(image_size, 'uint8');
