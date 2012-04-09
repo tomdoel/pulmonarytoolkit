@@ -65,7 +65,10 @@ classdef TDAirways < TDPlugin
 
             threshold.ChangeRawImage(threshold_raw);
             
-            results = TDAirwayRegionGrowingWithExplosionControl(threshold, start_point, reporting);
+            maximum_number_of_generations = 15;
+            explosion_multiplier = 7;
+            
+            results = TDAirwayRegionGrowingWithExplosionControl(threshold, start_point, maximum_number_of_generations, explosion_multiplier, reporting);
         end
         
         function results = GenerateImageFromResults(airway_results, image_templates, ~)
