@@ -92,6 +92,7 @@ classdef TDImageTemplates < handle
             
             % return the template
             template = obj.TemplateImages(char(context));
+            template = template.Copy;
         end
 
 

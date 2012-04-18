@@ -17,21 +17,37 @@ classdef TDPluginsPanel < handle
     
     properties (Access = private)
         Reporting
+        ParentHandle
         PanelHandle
         PluginButtonHandlesMap
         GuiPluginPanels
         PluginPanels
         PluginsByCategory
         GuiPluginsByCategory
+        PluginSlider
         
     end
     
     methods
         function obj = TDPluginsPanel(uipanel_handle, reporting)
             obj.Reporting = reporting;
+            obj.ParentHandle = uipanel_handle;
+            
             obj.PanelHandle = uipanel_handle;
+            
+            % Create the panel
+            panel_background_colour = [0.0 0.129 0.278];
+            obj.PanelHandle = uipanel('Parent', obj.ParentHandle, 'BorderType', 'none', 'ForegroundColor', 'white', ...
+                'BackgroundColor', panel_background_colour, 'Units', 'pixels' ...
+            );
+        
+            obj.PluginSlider = uicontrol('Style', 'slider', 'Parent', obj.ParentHandle, 'TooltipString', 'Scroll through slices');
+        
+            
             obj.GuiPluginPanels = containers.Map;
-            obj.PluginPanels = containers.Map;            
+            obj.PluginPanels = containers.Map;
+            
+            setappdata(obj.ParentHandle ,'sliderListeners', handle.listener(obj.PluginSlider, 'ActionEvent', @obj.SliderCallback));            
         end
         
         function AddAllPreviewImagesToButtons(obj, current_dataset, window, level)
@@ -76,12 +92,44 @@ classdef TDPluginsPanel < handle
             gui_plugins_by_category = obj.GuiPluginsByCategory;
             plugins_by_category = obj.PluginsByCategory;
             obj.RepositionPanels(gui_plugins_by_category, plugins_by_category);
-        end        
+        end
+        
+        function input_has_been_processed = Scroll(obj, scroll_count, current_point)
+            plugins_panel_position = get(obj.ParentHandle, 'Position');
+            
+            if (current_point(1) >= plugins_panel_position(1) && current_point(2) >= plugins_panel_position(2) && ...
+                    current_point(1) <= plugins_panel_position(1) + plugins_panel_position(3) && ...
+                    current_point(2) <= plugins_panel_position(2) + plugins_panel_position(4))
+                
+                % positive scroll_count = scroll down
+                current_value = get(obj.PluginSlider, 'Value');
+                current_value = current_value - 2*scroll_count;
+                current_value = min(current_value, get(obj.PluginSlider, 'Max'));
+                current_value = max(current_value, 1);
+                set(obj.PluginSlider, 'Value', current_value);
+                obj.UpdateSlider;
+                input_has_been_processed = true;
+            else
+                input_has_been_processed = false;
+            end
+        end
+        
 
     end
     
     
     methods (Access = private)
+        
+        function UpdateSlider(obj)
+            y_offset = round(get(obj.PluginSlider, 'Value'));
+            y_max = round(get(obj.PluginSlider, 'Max'));
+            y_pos = y_max - y_offset;
+            panel_position = get(obj.PanelHandle, 'Position');
+            panel_position(2) =  y_pos;
+            set(obj.PanelHandle, 'Position', panel_position);
+            obj.ShowHideButtons;
+        end
+        
         function AddPluginsToPanel(obj, gui_plugins_by_category, plugins_by_category, callback_function_handle, gui_callback_function_handle, current_dataset)
             % Add plugin button to the panel
             
@@ -117,8 +165,15 @@ classdef TDPluginsPanel < handle
         
         function RepositionPanels(obj, gui_plugins_by_category, plugins_by_category)
             
-            set(obj.PanelHandle, 'Units', 'pixels');
-            panel_size = get(obj.PanelHandle, 'Position');
+            set(obj.ParentHandle, 'Units', 'pixels');
+            parent_panel_size = get(obj.ParentHandle, 'Position');
+
+            plugin_slider_width = 16;
+            plugin_slider_x_position = parent_panel_size(3) - plugin_slider_width;
+            set(obj.PluginSlider, 'Units', 'pixels', 'Position', [plugin_slider_x_position, 0, plugin_slider_width, parent_panel_size(4)]);
+            
+            panel_size = [0, 0, parent_panel_size(3) - plugin_slider_width, parent_panel_size(4)];
+            set(obj.PanelHandle, 'Units', 'pixels', 'Position', panel_size);
 
             max_x = panel_size(3);
             
@@ -148,8 +203,22 @@ classdef TDPluginsPanel < handle
                     panel_position_y = panel_position_y - new_panel_size(4) - panel_spacing_h;
                 end
             end
+            
+            overlap_y = max(0, - panel_position_y);
+            if (overlap_y > 0)
+                set(obj.PluginSlider, 'Min', 0);
+                set(obj.PluginSlider, 'Max', overlap_y);
+                set(obj.PluginSlider, 'SliderStep', [1/(overlap_y - 0), 10/(overlap_y - 0)]);
+                set(obj.PluginSlider, 'Value', overlap_y);
+                set(obj.PluginSlider, 'Visible', 'on');
+            else
+                set(obj.PluginSlider, 'Visible', 'off');
+            end
         end
-
+                       
+        function SliderCallback(obj, hObject, ~)
+            obj.UpdateSlider;
+        end
         
         function panel_handle = NewPanel(obj, panel_title, category_map, callback_function_handle)
             root_button_width = 20;
@@ -278,6 +347,34 @@ classdef TDPluginsPanel < handle
             
             obj.PluginsByCategory = [];
             obj.GuiPluginsByCategory = [];
+            
+        end
+        
+        function ShowHideButtons(obj)
+            leeway = 10;
+            parent_position = get(obj.PanelHandle, 'Position');
+            panel_top = parent_position(4) - parent_position(2);
+            for plugin_panel_handle = obj.GuiPluginPanels.values
+                category_position = get(plugin_panel_handle{1}, 'Position');
+                category_top = category_position(2) + category_position(4);
+                enable_category = category_top <= (panel_top + leeway);
+                if (enable_category)
+                    set(plugin_panel_handle{1}, 'Visible', 'on');
+                else
+                    set(plugin_panel_handle{1}, 'Visible', 'off');
+                end
+            end
+            
+            for plugin_panel_handle = obj.PluginPanels.values
+                category_position = get(plugin_panel_handle{1}, 'Position');
+                category_top = category_position(2) + category_position(4);
+                enable_category = category_top <= (panel_top + leeway);
+                if (enable_category)
+                    set(plugin_panel_handle{1}, 'Visible', 'on');
+                else
+                    set(plugin_panel_handle{1}, 'Visible', 'off');
+                end
+            end
             
         end
         

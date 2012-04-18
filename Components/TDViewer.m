@@ -46,6 +46,9 @@ classdef TDViewer < handle
             obj.FigureHandle = figure;
             set(obj.FigureHandle, 'NumberTitle', 'off');
             obj.ViewerPanelHandle = TDViewerPanel(obj.FigureHandle);
+            if nargin < 1
+                image = []
+            end
             if isa(image, 'TDImage')
                 obj.ImageHandle = image;
                 if ~isempty(image.Title)

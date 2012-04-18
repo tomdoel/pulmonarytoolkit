@@ -77,16 +77,12 @@ classdef TDProgressPanel < TDProgressInterface
             [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', ...
                 progress_bar_position, obj.PanelHandle);
             obj.ProgressBarHandle.setValue(0);
-%             set(obj.ProgressBarHandle, 'Visible', 0);
         end
         
         function Resize(obj)
             set(obj.PanelHandle, 'Position', obj.GetPanelPosition);
-            drawnow;            
         end
         
-        
-               
         function ShowAndHold(obj, text)
             if nargin < 2
                 text = 'Please wait';
