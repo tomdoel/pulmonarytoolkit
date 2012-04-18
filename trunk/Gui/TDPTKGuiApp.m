@@ -32,6 +32,7 @@ classdef TDPTKGuiApp < handle
         PluginsPanel
         DropDownLoadMenuManager
         ImageAxes
+        OldWindowScrollWheelFcn
     end
     
     methods
@@ -51,6 +52,9 @@ classdef TDPTKGuiApp < handle
             obj.PluginsPanel = TDPluginsPanel(uipanel_handle, obj.Reporting);
             addlistener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);
             obj.FigureHandle = figure_handle;
+            
+            obj.OldWindowScrollWheelFcn = get(figure_handle, 'WindowScrollWheelFcn');
+            set(figure_handle, 'WindowScrollWheelFcn', @obj.WindowScrollWheelFcn);
             
             % For the moment, we use the splash screen to display progress,
             % because the gui isn't yet visible so the ProgressPanel won't
@@ -214,6 +218,18 @@ classdef TDPTKGuiApp < handle
     
     
     methods (Access = private)
+        
+        % Scroll wheel
+        function WindowScrollWheelFcn(obj, src, eventdata)
+            current_point = get(obj.FigureHandle, 'CurrentPoint');
+            scroll_count = eventdata.VerticalScrollCount; % positive = scroll down
+            
+            % Give the plugins panel the option of processing the scrollwheel
+            % input; if it isn't processed then call the old handler
+            if ~obj.PluginsPanel.Scroll(scroll_count, current_point)
+                obj.OldWindowScrollWheelFcn(src, eventdata);
+            end
+        end
         
         function MarkerPanelSelected(obj, ~, ~)
             if ~obj.MarkersHaveBeenLoaded
