@@ -478,19 +478,17 @@ classdef TDViewerPanel < handle
                 status_text = 'No image';
             else
                 rescale_text = '';
-                [i, j, k] = obj.GetImageCoordinates;
-                
-                global_coords = obj.BackgroundImage.LocalToGlobalCoordinates([i, j, k]);
+                global_coords = obj.GetImageCoordinates;
                 
                 i_text = int2str(global_coords(1));
                 j_text = int2str(global_coords(2));
                 k_text = int2str(global_coords(3));
                     
-                if (main_image.IsPointInImage([i, j, k]))
-                    voxel_value = main_image.GetValue([i, j, k]);
+                if (main_image.IsPointInImage(global_coords))
+                    voxel_value = main_image.GetVoxel(global_coords);
                     value_text = int2str(voxel_value);
                     
-                    [rescale_value, rescale_units] = main_image.GetRescaledValue([i, j, k]);
+                    [rescale_value, rescale_units] = main_image.GetRescaledValue(global_coords);
                     if ~isempty(rescale_units) && ~isempty(rescale_value)
                         rescale_text = [rescale_units ':' int2str(rescale_value)];
                     end
@@ -515,7 +513,7 @@ classdef TDViewerPanel < handle
             set(obj.StatusText, 'String', status_text);
         end
 
-        function [i j k] = GetImageCoordinates(obj)
+        function global_coords = GetImageCoordinates(obj)
             coords = round(get(obj.Axes, 'CurrentPoint'));
             if (~isempty(coords))
                 i_screen = coords(2,1);
@@ -541,6 +539,7 @@ classdef TDViewerPanel < handle
                 j = 1;
                 k = 1;
             end
+            global_coords = obj.BackgroundImage.LocalToGlobalCoordinates([i, j, k]);
         end
 
         function screen_coords = GetScreenCoordinates(obj)
@@ -597,6 +596,10 @@ classdef TDViewerPanel < handle
                 set(obj.OpacitySlider, 'Min', 0);
                 set(obj.OpacitySlider, 'Max', 100);
                 limits = main_image.Limits;
+                limits_hu = main_image.GrayscaleToRescaled(limits);
+                if ~isempty(limits_hu)
+                    limits = limits_hu;
+                end
 
                 set(obj.WindowSlider, 'Min', 0);
                 set(obj.WindowSlider, 'Max', max(1, limits(2) - limits(1)));
@@ -752,13 +755,22 @@ classdef TDViewerPanel < handle
                 if image_object.ImageExists
                     image_slice = obj.GetImageSlice(image_object);
                     image_type = image_object.ImageType;
-                    
+
                     if (image_type == TDImageType.Scaled) || (image_type == TDImageType.Colormap)
                         limits = image_object.Limits;
                     else
                         limits = [];
                     end
-                    [rgb_slice, alpha_slice] = obj.GetImage(image_slice, limits, image_type, obj.Window, obj.Level, obj.BlackIsTransparent);
+
+                    level_grayscale = image_object.RescaledToGrayscale(obj.Level);
+                    window_grayscale = obj.Window;
+                    if isa(image_object, 'TDDicomImage')
+                        if image_object.IsCT
+                            window_grayscale = window_grayscale/image_object.RescaleSlope;
+                        end
+                    end
+
+                    [rgb_slice, alpha_slice] = obj.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, obj.BlackIsTransparent);
                     alpha_slice = double(alpha_slice)*opacity/100;
                     
                     if isempty(obj.ImageHandles{image_number})
@@ -986,8 +998,8 @@ classdef TDViewerPanel < handle
         end
         
         function UpdateCursor(obj, hObject)
-            [i, j, k] = obj.GetImageCoordinates;            
-            point_is_in_image = obj.BackgroundImage.IsPointInImage([i, j, k]);
+            global_coords = obj.GetImageCoordinates;
+            point_is_in_image = obj.BackgroundImage.IsPointInImage(global_coords);
             if (~point_is_in_image)
                 obj.MouseIsDown = false;
             end
@@ -1014,13 +1026,12 @@ classdef TDViewerPanel < handle
             obj.MouseIsDown = true;
             selection_type = get(src, 'SelectionType');
             if strcmp(selection_type, 'normal')
-                [i, j, k] = obj.GetImageCoordinates;
-                coord = [i, j, k];
-                if (obj.BackgroundImage.IsPointInImage(coord))
+                global_coords = obj.GetImageCoordinates;
+                if (obj.BackgroundImage.IsPointInImage(global_coords))
                     if (obj.SelectedControl == 3)
                         obj.MarkerPointManager.MouseDown(obj.GetScreenCoordinates);
                     else
-                        notify(obj, 'MouseClickInImage', TDEventData(coord));
+                        notify(obj, 'MouseClickInImage', TDEventData(global_coords));
                     end
                 end
             end
@@ -1033,8 +1044,8 @@ classdef TDViewerPanel < handle
             obj.LastCoordinates = obj.GetScreenCoordinates;
             selection_type = get(src, 'SelectionType');
             if (obj.SelectedControl == 3) && strcmp(selection_type, 'normal')
-                [i, j, k] = obj.GetImageCoordinates;
-                if (obj.BackgroundImage.IsPointInImage([i, j, k]))
+                global_coords = obj.GetImageCoordinates;
+                if (obj.BackgroundImage.IsPointInImage(global_coords))
                     obj.MarkerPointManager.MouseUp(obj.GetScreenCoordinates);
                 end
             end

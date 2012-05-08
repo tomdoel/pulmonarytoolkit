@@ -408,36 +408,58 @@ classdef TDImage < handle
             end
         end
 
-        function value = GetValue(obj, coords)
-           value = obj.RawImage(coords(1), coords(2), coords(3)); 
-        end
 
-        function [value, units] = GetRescaledValue(obj, ~)
+        function [value, units] = GetRescaledValue(~, ~)
             value = [];
             units = [];
         end
 
-        function point_is_in_image = IsPointInImage(obj, coord)
+        function units_rescaled = GrayscaleToRescaled(~, units_greyscale)
+            units_rescaled = units_greyscale;
+        end
+
+        function units_greyscale = RescaledToGrayscale(~, units_rescaled)
+            units_greyscale = units_rescaled;
+        end
+
+        function point_is_in_image = IsPointInImage(obj, global_coords)
+            local_coords = obj.GlobalToLocalCoordinates(global_coords);
             image_size = obj.ImageSize;
-            i_in_image = (coord(1) > 0) && (coord(1) <= image_size(1));
-            j_in_image = (coord(2) > 0) && (coord(2) <= image_size(2));
-            k_in_image = (coord(3) > 0) && (coord(3) <= image_size(3));
+            i_in_image = (local_coords(1) > 0) && (local_coords(1) <= image_size(1));
+            j_in_image = (local_coords(2) > 0) && (local_coords(2) <= image_size(2));
+            k_in_image = (local_coords(3) > 0) && (local_coords(3) <= image_size(3));
             point_is_in_image = i_in_image && j_in_image && k_in_image;
         end
+
+        % Gets the value of the voxel specified by global image coordinates
+        function value = GetVoxel(obj, global_coords)
+            local_coords = obj.GlobalToLocalCoordinates(global_coords);
+            value = obj.RawImage(local_coords(1), local_coords(2), local_coords(3));
+        end
         
-        % Changes the value of the voxel specified by image coordinates
-        function SetVoxelToThis(obj, coord, value)
-            
-            %TODO: change to global coordinates
-            obj.RawImage(coord(1), coord(2), coord(3)) = value;
+        % Changes the value of the voxel specified by global image coordinates
+        function SetVoxelToThis(obj, global_coords, value)
+            local_coords = obj.GlobalToLocalCoordinates(global_coords);
+            obj.RawImage(local_coords(1), local_coords(2), local_coords(3)) = value;
             obj.NotifyImageChanged;
         end
 
-        % Changes the value of the voxel specified by an index value
-        function SetIndexedVoxelsToThis(obj, voxel_indices, value)            
+        function global_coords = BoundCoordsInImage(obj, global_coords)
+            local_coords = obj.GlobalToLocalCoordinates(global_coords);
 
-            %TODO: change to global coordinates
-            obj.RawImage(voxel_indices) = value;
+            local_coords = max(1, local_coords);
+            image_size = obj.ImageSize;
+            local_coords(1) = min(local_coords(1), image_size(1));
+            local_coords(2) = min(local_coords(2), image_size(2));
+            local_coords(3) = min(local_coords(3), image_size(3));
+
+            global_coords = obj.LocalToGlobalCoordinates(local_coords);
+        end
+
+        % Changes the value of the voxel specified by an index value
+        function SetIndexedVoxelsToThis(obj, global_indices, value)
+            local_indices = obj.GlobalToLocalIndices(global_indices);
+            obj.RawImage(local_indices) = value;
             obj.NotifyImageChanged;
         end
 
@@ -470,8 +492,6 @@ classdef TDImage < handle
         
         % Modifies the specified 2D slice of the image
         function ReplaceImageSlice(obj, new_slice, slice_index, direction)
-            
-            %TODO: change to global coordinates
             switch direction
                 case TDImageOrientation.Coronal
                     obj.RawImage(slice_index, :, :) = new_slice;
