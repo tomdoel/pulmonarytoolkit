@@ -15,5 +15,8 @@ clc
 % Add all necessary paths
 TDAddPtkPaths;
 
+% Verify that an appropriate version of Matlab is being run
+TDCheckMatlabVersion;
+
 % Run the toolkit gui
 TDPTKGui;

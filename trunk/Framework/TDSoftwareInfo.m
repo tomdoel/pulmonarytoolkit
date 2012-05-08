@@ -39,6 +39,10 @@ classdef TDSoftwareInfo < handle
         UserDirectoryName = 'User'
         ResultsDirectoryName = 'Results'
         WebsiteUrl = 'http://code.google.com/p/pulmonarytoolkit'
+        MatlabMinimumMajorVersion = 7
+        MatlabMinimumMinorVersion = 11
+        MatlabAdvisedMajorVersion = 7
+        MatlabAdvisedMinorVersion = 14
     end
     
     methods (Static)
@@ -48,7 +52,14 @@ classdef TDSoftwareInfo < handle
             application_directory = fullfile(home_directory, application_directory);  
             if ~exist(application_directory, 'dir')
                 mkdir(application_directory);
-            end            
+            end
+        end
+        
+        function [major_version, minor_version] = GetMatlabVersion
+            [matlab_version, ~] = version;
+            version_matrix = sscanf(matlab_version, '%d.%d.%d.%d');
+            major_version = version_matrix(1);
+            minor_version = version_matrix(2);            
         end
     end
 end
