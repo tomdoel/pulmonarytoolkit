@@ -40,14 +40,17 @@ classdef TDMarkerPointImage < handle
             end
         end
         
-        function image_size = GetImageSize(obj)
-            image_size = obj.MarkerImage.ImageSize;
+        function global_coords = LocalToGlobalCoordinates(obj, local_coords)
+            global_coords = obj.MarkerImage.LocalToGlobalCoordinates(local_coords);
         end
         
-        function image_has_changed = ChangeMarkerPoint(obj, coords, colour)
-            current_value = obj.MarkerImage.RawImage(coords(1), coords(2), coords(3));
+        function image_has_changed = ChangeMarkerPoint(obj, local_coords, colour)
+            global_coords = obj.MarkerImage.LocalToGlobalCoordinates(local_coords);
+            global_coords = obj.MarkerImage.BoundCoordsInImage(global_coords);
+
+            current_value = obj.MarkerImage.GetVoxel(global_coords);
             if (current_value ~= colour)
-                obj.MarkerImage.SetVoxelToThis(coords, colour);
+                obj.MarkerImage.SetVoxelToThis(global_coords, colour);
                 image_has_changed = true;
             else
                 image_has_changed = false;

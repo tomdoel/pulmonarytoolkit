@@ -121,15 +121,31 @@ classdef TDDicomImage < TDImage
             end
         end
         
-        function [value, units] = GetRescaledValue(obj, coord)
+        function [value, units] = GetRescaledValue(obj, global_coords)
             if obj.IsCT
-                value = obj.GreyscaleToHounsfield(obj.RawImage(coord(1), coord(2), coord(3)));
+                value = obj.GreyscaleToHounsfield(obj.GetVoxel(global_coords));
                 units = obj.RescaleUnits;
             else
-                [value, units] = GetRescaledValue@TDImage(obj, coord);
+                [value, units] = GetRescaledValue@TDImage(obj, global_coords);
             end
         end
         
+        function units_rescaled = GrayscaleToRescaled(obj, units_greyscale)
+            if obj.IsCT
+                units_rescaled = obj.GreyscaleToHounsfield(units_greyscale);
+            else
+                units_rescaled = units_greyscale;
+            end
+        end
+
+        function units_greyscale = RescaledToGrayscale(obj, units_rescaled)
+            if obj.IsCT
+                units_greyscale = obj.HounsfieldToGreyscale(units_rescaled);
+            else
+                units_greyscale = units_rescaled;
+            end
+        end
+
         function units_greyscale = HounsfieldToGreyscale(obj, units_hu)
             % Conversion from Hounsfield units to image raw intensity values:
             if obj.IsCT

@@ -51,7 +51,7 @@ classdef TDMarkerPoint < handle
         
         function AddTextLabel(obj)
             obj.LabelOn = true;
-            image_coords = obj.Manager.GetImageCoordinates(obj.Handle.getPosition);
+            image_coords = obj.Manager.GetGlobalImageCoordinates(obj.Handle.getPosition);
             image_coords = round(image_coords);
             coords_text = ['(' int2str(image_coords(2)) ',' int2str(image_coords(1)) ',' int2str(image_coords(3)) ')'];
             if ~strcmp(coords_text, obj.String)

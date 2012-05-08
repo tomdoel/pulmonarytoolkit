@@ -174,7 +174,11 @@ classdef TDMarkerPointManager < handle
             end
         end
         
-        
+        function global_image_coords = GetGlobalImageCoordinates(obj, coords)
+            local_image_coords = obj.GetImageCoordinates(coords);
+            global_image_coords = obj.MarkerPointImage.LocalToGlobalCoordinates(local_image_coords);
+        end
+
         function RemoveThisMarker(obj, marker)
             for index = 1: length(obj.MarkerPoints)
                 indexed_marker = obj.MarkerPoints(index);
@@ -201,11 +205,6 @@ classdef TDMarkerPointManager < handle
         function AddPointToMarkerImage(obj, marker_position, colour)
             obj.LockCallback = true;
             coords = obj.GetImageCoordinates(marker_position);
-            coords = max(1, coords);
-            image_size = obj.MarkerPointImage.GetImageSize;
-            coords(1) = min(coords(1), image_size(1));
-            coords(2) = min(coords(2), image_size(2));
-            coords(3) = min(coords(3), image_size(3));
             
             if obj.MarkerPointImage.ChangeMarkerPoint(coords, colour)
                 obj.MarkerImageHasChanged = true;
