@@ -44,7 +44,7 @@ classdef TDSoftwareInfo < handle
         MatlabAdvisedMajorVersion = 7
         MatlabAdvisedMinorVersion = 14
     end
-    
+
     methods (Static)
         function application_directory = GetApplicationDirectoryAndCreateIfNecessary
             home_directory = TDDiskUtilities.GetUserDirectory;
@@ -54,12 +54,12 @@ classdef TDSoftwareInfo < handle
                 mkdir(application_directory);
             end
         end
-        
+
         function [major_version, minor_version] = GetMatlabVersion
             [matlab_version, ~] = version;
             version_matrix = sscanf(matlab_version, '%d.%d.%d.%d');
             major_version = version_matrix(1);
-            minor_version = version_matrix(2);            
+            minor_version = version_matrix(2);
         end
     end
 end

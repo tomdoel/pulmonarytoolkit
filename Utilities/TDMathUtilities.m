@@ -34,6 +34,12 @@ classdef TDMathUtilities
             end
         end
         
+        % Returns true if all the entries of the matrix are integers (even if
+        % the underlying data type is a float)
+        function is_integer = IsMatrixInteger(matrix_to_check)
+           is_integer = ~any(mod(matrix_to_check, 1));
+        end
+        
     end
 end
 
