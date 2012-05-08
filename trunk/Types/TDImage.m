@@ -117,6 +117,19 @@ classdef TDImage < handle
             obj.LastImageSize = obj.OriginalImageSize;
             obj.LastDataType = class(obj.RawImage);
         end
+        
+        function orientation = Find2DOrientation(obj)
+            image_size = obj.ImageSize;
+            if image_size(3) == 1
+                orientation = TDImageOrientation.Axial;
+            elseif image_size(2) == 1
+                orientation = TDImageOrientation.Sagittal;
+            elseif image_size(1) == 1
+                orientation = TDImageOrientation.Coronal;
+            else
+                orientation = [];
+            end
+        end
 
         % For a disk-cached image header, this loads the raw data
         function LoadRawImage(obj, file_path, reporting)
@@ -414,12 +427,16 @@ classdef TDImage < handle
         
         % Changes the value of the voxel specified by image coordinates
         function SetVoxelToThis(obj, coord, value)
+            
+            %TODO: change to global coordinates
             obj.RawImage(coord(1), coord(2), coord(3)) = value;
             obj.NotifyImageChanged;
         end
 
         % Changes the value of the voxel specified by an index value
         function SetIndexedVoxelsToThis(obj, voxel_indices, value)            
+
+            %TODO: change to global coordinates
             obj.RawImage(voxel_indices) = value;
             obj.NotifyImageChanged;
         end
@@ -453,6 +470,8 @@ classdef TDImage < handle
         
         % Modifies the specified 2D slice of the image
         function ReplaceImageSlice(obj, new_slice, slice_index, direction)
+            
+            %TODO: change to global coordinates
             switch direction
                 case TDImageOrientation.Coronal
                     obj.RawImage(slice_index, :, :) = new_slice;
@@ -502,7 +521,7 @@ classdef TDImage < handle
             if ~isempty(obj.RawImage)
                 added_size = [border_size border_size border_size];
                 class_name = class(obj.RawImage);
-                if strcmp(class_name, 'logical')
+                if islogical(class_name)
                     new_image = false(obj.ImageSize + 2*added_size);
                 else
                     new_image = zeros(obj.ImageSize + 2*added_size, class_name);
@@ -693,17 +712,24 @@ classdef TDImage < handle
             ball_element = ball_element <= (size_mm/2);
         end
         
-        
+        % Guesses which type of image renderng would be best. 
         function image_type = GuessImageType(obj)
-            class_name = class(obj.RawImage);
-            if strcmp(class_name, 'logical')
-                image_type = TDImageType.Colormap;
-            elseif strcmp(class_name, 'uint8')
-                image_type = TDImageType.Colormap;
-            elseif strcmp(class_name, 'int8')
+            if islogical(obj.RawImage)
+                % For binary images, opt for a simple colormap
                 image_type = TDImageType.Colormap;
             else
-                image_type = TDImageType.Grayscale;
+                % If the image data is noninteger then assume greyscale
+                if ~TDMathUtilities.IsMatrixInteger(obj.RawImage)
+                    image_type = TDImageType.Grayscale;
+                else
+                    % Otherwise choose colormap if the range of values is
+                    % restricted
+                    if (min(obj.RawImage(:))) >= 0 && (max(obj.RawImage(:)) <= 7)
+                        image_type = TDImageType.Colormap;
+                    else
+                        image_type = TDImageType.Grayscale;
+                    end
+                end
             end
         end
     end

@@ -566,6 +566,7 @@ classdef TDViewerPanel < handle
         % changed
         function ImageChanged(obj)
             obj.ClearAxesCache;
+            obj.AutoChangeOrientation;
             obj.UpdateAxes;
             obj.UpdateGuiForNewImageOrOrientation;
             obj.UpdateGui;
@@ -1178,7 +1179,15 @@ classdef TDViewerPanel < handle
                     obj.ImageChangedListeners{image_number} = [];
                 end
             end            
-        end        
+        end
+
+        function AutoChangeOrientation(obj)
+            orientation = obj.BackgroundImage.Find2DOrientation;
+            if ~isempty(orientation)
+                obj.Orientation = orientation;
+            end
+        end
+
         
     end
     methods (Access = private, Static)
@@ -1237,6 +1246,7 @@ classdef TDViewerPanel < handle
             scale_factor = 255/max(1, (max_value - min_value));
             rescaled_image = uint8(min(((image - min_value)*scale_factor), 255));
         end
+        
     end
 end
 

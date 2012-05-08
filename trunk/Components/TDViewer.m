@@ -40,14 +40,11 @@ classdef TDViewer < handle
 
     methods
         function obj = TDViewer(image, type)
-            if nargin < 2
-                type = TDImageType.Grayscale;
-            end
             obj.FigureHandle = figure;
             set(obj.FigureHandle, 'NumberTitle', 'off');
             obj.ViewerPanelHandle = TDViewerPanel(obj.FigureHandle);
             if nargin < 1
-                image = []
+                image = [];
             end
             if isa(image, 'TDImage')
                 obj.ImageHandle = image;
@@ -57,7 +54,11 @@ classdef TDViewer < handle
                     obj.Title = 'TDViewer';
                 end
             else
-                obj.ImageHandle = TDImage(image, type);
+                if nargin < 2
+                    obj.ImageHandle = TDImage(image);
+                else
+                    obj.ImageHandle = TDImage(image, type);
+                end
                 obj.Title = 'TDViewer';
             end
             obj.ViewerPanelHandle.BackgroundImage = obj.ImageHandle;
