@@ -1133,6 +1133,9 @@ classdef TDViewerPanel < handle
 
         function OpacitySliderCallback(obj, hObject, ~, ~)
             obj.OverlayOpacity = get(hObject,'Value');
+            if ~obj.ShowOverlay
+                obj.ShowOverlay = true;
+            end
         end
         
         function CustomResize(obj, eventdata, handles)
