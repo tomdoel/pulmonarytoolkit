@@ -82,7 +82,7 @@ classdef TDDatasetResults < handle
         
         % Returns an empty template image for the specified context
         % See TDImageTemplates.m for valid contexts
-        function template_image = GetTemplate(obj, context)
+        function template_image = GetTemplateImage(obj, context)
             template_image = obj.ImageTemplates.GetTemplateImage(context);
         end
         

@@ -53,7 +53,7 @@ classdef TDLobesByVesselnessDensityUsingWatershed < TDPlugin
             
             results_left = TDLobesByVesselnessDensityUsingWatershed.GetLeftLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe);
             results_right = TDLobesByVesselnessDensityUsingWatershed.GetRightLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe);
-            results = TDCombineLeftAndRightImages(dataset.GetTemplate(TDContext.LungROI), results_left, results_right, left_and_right_lungs);
+            results = TDCombineLeftAndRightImages(dataset.GetTemplateImage(TDContext.LungROI), results_left, results_right, left_and_right_lungs);
             results.ImageType = TDImageType.Colormap;
         end
         
