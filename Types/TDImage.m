@@ -541,7 +541,7 @@ classdef TDImage < handle
             if ~isempty(obj.RawImage)
                 added_size = [border_size border_size border_size];
                 class_name = class(obj.RawImage);
-                if islogical(class_name)
+                if islogical(obj.RawImage)
                     new_image = false(obj.ImageSize + 2*added_size);
                 else
                     new_image = zeros(obj.ImageSize + 2*added_size, class_name);
