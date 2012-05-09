@@ -45,28 +45,16 @@ classdef TDAirways < TDPlugin
         function results = RunPlugin(dataset, reporting)
             trachea_results = dataset.GetResult('TDTopOfTrachea');
             
-            % Fetch the start point in global coordinates
-            start_point = trachea_results.top_of_trachea;
-            
             % We use results from the trachea finding to remove holes in the
             % trachea, which can otherwise cause early branching of the airway
-            % algorithm            
-            threshold = dataset.GetResult('TDLungROI');
-            
-            % Convert the start point to local coordinates relative to the ROI
-            start_point = threshold.GlobalToLocalCoordinates(start_point);
-            
-            threshold = TDThresholdAirway(threshold);
-            threshold_raw = threshold.RawImage;
-            threshold_raw = threshold_raw > 0;
-            trachea_voxels_global = trachea_results.trachea_voxels;
-            trachea_voxels_local = threshold.GlobalToLocalIndices(trachea_voxels_global);
-            threshold_raw(trachea_voxels_local) = true;
+            % algorithm
+            threshold = dataset.GetResult('TDThresholdLung');
+            threshold.SetIndexedVoxelsToThis(trachea_results.trachea_voxels, true);
 
-            threshold.ChangeRawImage(threshold_raw);
-            
-            maximum_number_of_generations = 15;
-            explosion_multiplier = 7;
+            start_point = trachea_results.top_of_trachea;
+
+            maximum_number_of_generations = 10;
+            explosion_multiplier = 5;
             
             results = TDAirwayRegionGrowingWithExplosionControl(threshold, start_point, maximum_number_of_generations, explosion_multiplier, reporting);
         end
