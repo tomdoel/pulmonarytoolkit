@@ -47,7 +47,7 @@ classdef TDAirwaysLabelledByBronchus < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, ~)
-            results = dataset.GetResult('TDLungROI').BlankCopy;
+            results = dataset.GetTemplateImage(TDContext.LungROI);
             airway_results = dataset.GetResult('TDAirways');
             labeled_region = TDAirwaysLabelledByBronchus.GetLabeledSegmentedImageFromAirwayTree(airway_results.airway_tree, airway_results.image_size);
             results.ChangeRawImage(labeled_region);

@@ -49,7 +49,7 @@ classdef TDAirwaysLabelledByLobe < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            results = dataset.GetTemplate(TDContext.LungROI);
+            results = dataset.GetTemplateImage(TDContext.LungROI);
             [airway_results, airway_image] = dataset.GetResult('TDAirways');
             [skeleton_results, ~] = dataset.GetResult('TDAirwaySkeleton');
             airways_by_lobe = TDGetAirwaysLabelledByLobe(airway_results, skeleton_results, reporting);
