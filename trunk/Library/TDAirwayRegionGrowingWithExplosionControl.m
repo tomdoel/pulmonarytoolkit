@@ -1,4 +1,4 @@
-function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point, maximum_number_of_generations, explosion_multiplier, reporting)
+function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point_global, maximum_number_of_generations, explosion_multiplier, reporting)
     % TDAirwayRegionGrowingWithExplosionControl. Segments the airways from a
     %     threshold image using a region growing method.
     %
@@ -17,8 +17,9 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     %         Note: the lung volume can be a region-of-interest, or the entire
     %         volume.
     %
-    %     start_point - coordinate (i,j,k) of a point inside and near the top
-    %         of the trachea (as returned by plugin TDTopOfTrachea)
+    %     start_point_global - coordinate (i,j,k) of a point inside and near the top
+    %         of the trachea, in global coordinates (as returned by plugin 
+    %         TDTopOfTrachea)
     %
     %     maximum_number_of_generations - tree-growing will terminate for each
     %         branch when it exceeds this number of generations in that branch
@@ -58,10 +59,10 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
         reporting.Error('TDAirwayRegionGrowingWithExplosionControl:InvalidInput', 'Requires a TDImage as input');
     end
 
-    reporting.UpdateProgressMessage('Starting region growing with explosion control');
+    reporting.UpdateProgressAndMessage(0, 'Starting region growing with explosion control');
     
     % Perform the airway segmentation
-    airway_tree = RegionGrowing(threshold_image, start_point, reporting, maximum_number_of_generations, explosion_multiplier);
+    airway_tree = RegionGrowing(threshold_image, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier);
 
     
     if isempty(airway_tree)
@@ -90,15 +91,18 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
         results.explosion_points = explosion_points;
         results.endpoints = endpoints;
         results.airway_tree = airway_tree;
-        results.start_point = start_point;
+        results.start_point = start_point_global;
         results.image_size = threshold_image.ImageSize;
     end
     
 end
 
 
-function first_segment = RegionGrowing(threshold_image, start_point, reporting, maximum_number_of_generations, explosion_multiplier)
+function first_segment = RegionGrowing(threshold_image, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier)
     
+    % Convert the global start coordinate to local coordinates
+    start_point = threshold_image.GlobalToLocalCoordinates(start_point_global);
+
     voxel_size_mm = threshold_image.VoxelSize;
     
     min_distance_before_bifurcating_mm = max(3, ceil(threshold_image.ImageSize(3)*voxel_size_mm(3))/4);
@@ -117,7 +121,9 @@ function first_segment = RegionGrowing(threshold_image, start_point, reporting, 
     threshold_image(start_point_index) = false;
     
     segments_in_progress = first_segment.AddNewVoxelsAndGetNewSegments(start_point_index, image_size);
-        
+
+    last_progress_value = 0;
+
     while ~isempty(segments_in_progress)
         
         if reporting.HasBeenCancelled
@@ -144,13 +150,46 @@ function first_segment = RegionGrowing(threshold_image, start_point, reporting, 
         % segment if it is incomplete, or child segments if it has bifurcated
         if isempty(indices_of_new_points)
             current_segment.CompleteThisSegment;
+
+            % If the segment is ending, then report progress
+            last_progress_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_generations, last_progress_value, reporting);
+
         else
             next_segments = current_segment.AddNewVoxelsAndGetNewSegments(indices_of_new_points, image_size);
+
             segments_in_progress = [segments_in_progress, next_segments]; %#ok<AGROW>
             if length(segments_in_progress) > 500
                reporting.Error('TDAirwayRegionGrowingWithExplosionControl:MaximumSegmentsExceeded', 'More than 500 segments to do: is there a problem with the image?'); 
             end
+
+            % If the segment is ending, then report progress
+            if length(next_segments) ~= 1
+                last_progress_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_generations, last_progress_value, reporting);
+            end
+
         end
+    end
+end
+
+function last_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_generations, last_value, reporting)
+    % Estimate number of segments still to do
+    segments_left = 0;
+    segments_temp = segments_in_progress;
+    while ~isempty(segments_temp)
+        segment = segments_temp(end);
+        segments_temp(end) = [];
+        generation = segment{1}.GenerationNumber;
+        generations_left = (maximum_number_of_generations - generation);
+        num_segments_to_do = 2^(generations_left+1) - 1;
+        segments_left = segments_left + num_segments_to_do;
+        segments_temp = [segments_temp, segment{1}.Children];
+    end
+    total_segments = 2^maximum_number_of_generations - 1;
+
+    progress = 100*(total_segments - segments_left)/total_segments;
+    if progress > last_value
+        reporting.UpdateProgressValue(progress);
+        last_value = progress;
     end
 end
 
