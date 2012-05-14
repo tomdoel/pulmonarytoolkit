@@ -1,4 +1,4 @@
-function binary_image = TDSkeletonise(binary_image, fixed_points, reporting)
+function binary_image = TDSkeletonise(binary_image, fixed_points_global, reporting)
     if ~isa(binary_image, 'TDImage')
         error('Requires a TDImage as input');
     end
@@ -14,6 +14,8 @@ function binary_image = TDSkeletonise(binary_image, fixed_points, reporting)
         warning_message = 'Could not find compiled mex file TDFastIsSimplePoint. Using a slower version TDIsSimplePoint instead. Increase program speed by running mex TDFastIsSimplePoint.cpp in the mex folder.';
         reporting.ShowWarning('TDSkeletonise:TDFastIsSimplePointnotFound', warning_message, []);
     end
+    
+    fixed_points = binary_image.GlobalToLocalIndices(fixed_points_global);
     
     % Marks endpoints with 3
     binary_image = binary_image.Copy;

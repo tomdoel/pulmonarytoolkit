@@ -47,9 +47,12 @@ classdef TDAirwaySkeleton < TDPlugin
             reporting.ShowProgress('Finding airways');
             [airway_results, segmented_image] = dataset.GetResult('TDAirways');
 
-            start_point = airway_results.start_point;
-            start_point_index = sub2ind(airway_results.image_size, start_point(1), start_point(2), start_point(3));
-            end_points = airway_results.endpoints;
+            start_point = airway_results.StartPoint;
+            start_point_index = sub2ind(airway_results.ImageSize, start_point(1), start_point(2), start_point(3));
+            
+            
+            start_point_local = segmented_image.GlobalToLocalCoordinates(start_point);
+            end_points = airway_results.EndPoints;
             fixed_points = [start_point_index, end_points];
             
             segmented_image.ChangeRawImage(uint8(segmented_image.RawImage == 1));
@@ -68,7 +71,7 @@ classdef TDAirwaySkeleton < TDPlugin
             % The final processing removes closed loops and sorts the skeleton 
             % points into a tree strcuture
             reporting.ShowProgress('Processing skeleton tree');
-            results = TDProcessAirwaySkeleton(skeleton_image.RawImage, start_point, reporting);
+            results = TDProcessAirwaySkeleton(skeleton_image.RawImage, start_point_local, reporting);
         end
         
         function results = GenerateImageFromResults(skeleton_results, image_templates, ~)

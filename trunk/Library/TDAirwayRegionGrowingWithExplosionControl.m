@@ -80,7 +80,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
         % Remove holes within the airway segments
         reporting.ShowProgress('Closing airways segmentally');
         closing_size_mm = 5;
-        airway_tree = TDCloseBranchesInTree(airway_tree, closing_size_mm, threshold_image.ImageSize, reporting);
+        airway_tree = TDCloseBranchesInTree(airway_tree, closing_size_mm, threshold_image.OriginalImageSize, reporting);
 
         % Find and store endpoints
         reporting.ShowProgress('Finding endpoints');
@@ -88,41 +88,38 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
 
         % Store the results
         results = [];
-        results.explosion_points = explosion_points;
-        results.endpoints = endpoints;
-        results.airway_tree = airway_tree;
-        results.start_point = start_point_global;
-        results.image_size = threshold_image.ImageSize;
+        results.ExplosionPoints = explosion_points;
+        results.EndPoints = endpoints;
+        results.AirwayTree = airway_tree;
+        results.StartPoint = start_point_global;
+        results.ImageSize = threshold_image.OriginalImageSize;
     end
     
 end
 
 
-function first_segment = RegionGrowing(threshold_image, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier)
-    
-    % Convert the global start coordinate to local coordinates
-    start_point = threshold_image.GlobalToLocalCoordinates(start_point_global);
+function first_segment_global = RegionGrowing(threshold_image_handle, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier)
 
-    voxel_size_mm = threshold_image.VoxelSize;
-    
-    min_distance_before_bifurcating_mm = max(3, ceil(threshold_image.ImageSize(3)*voxel_size_mm(3))/4);
+    voxel_size_mm = threshold_image_handle.VoxelSize;
 
-    start_point = int32(start_point);
-    image_size = int32(threshold_image.ImageSize);
-    
-    threshold_image = logical(threshold_image.RawImage);
-    number_of_image_points = numel(threshold_image(:));
-        
-    [linear_offsets, ~] = TDImageCoordinateUtilities.GetLinearOffsets(size(threshold_image));
-    
-    first_segment = TDTreeSegment([], min_distance_before_bifurcating_mm, voxel_size_mm, maximum_number_of_generations, explosion_multiplier);
-    start_point_index = sub2ind(image_size, start_point(1), start_point(2), start_point(3));
-    
-    threshold_image(start_point_index) = false;
-    
+    min_distance_before_bifurcating_mm = max(3, ceil(threshold_image_handle.ImageSize(3)*voxel_size_mm(3))/4);
+
+    start_point_global = int32(start_point_global);
+    image_size_global = int32(threshold_image_handle.OriginalImageSize);
+
+    threshold_image = logical(threshold_image_handle.RawImage);
+    number_of_image_points_local = numel(threshold_image(:));
+
+    [linear_offsets_global, ~] = TDImageCoordinateUtilities.GetLinearOffsets(image_size_global);
+
+    first_segment_global = TDTreeSegment([], min_distance_before_bifurcating_mm, voxel_size_mm, maximum_number_of_generations, explosion_multiplier);
+    start_point_index_global = sub2ind(image_size_global, start_point_global(1), start_point_global(2), start_point_global(3));
+
+    threshold_image(start_point_index_global) = false;
+
     last_progress_value = 0;
 
-    segments_in_progress = first_segment.AddNewVoxelsAndGetNewSegments(start_point_index, image_size);
+    segments_in_progress = first_segment_global.AddNewVoxelsAndGetNewSegments(start_point_index_global, image_size_global);
 
 
     while ~isempty(segments_in_progress)
@@ -132,31 +129,39 @@ function first_segment = RegionGrowing(threshold_image, start_point_global, repo
         end
         
         % Get the next airway segment to add voxels to
-        current_segment = segments_in_progress(end);
+        current_segment_global = segments_in_progress(end);
         segments_in_progress(end) = [];
         
         % Fetch the front of the wavefront for this segment
-        frontmost_points = current_segment.GetFrontmostPoints;
+        frontmost_points_global = current_segment_global.GetFrontmostPoints;
         
         % Find the neighbours of these points, which will form the next 
         % generation of points to add to the wavefront
-        indices_of_new_points = GetNeighbouringPoints(frontmost_points', linear_offsets);
-        indices_of_new_points = indices_of_new_points(indices_of_new_points > 0 & indices_of_new_points <= number_of_image_points);
-        indices_of_new_points = indices_of_new_points(threshold_image(indices_of_new_points))';
-        threshold_image(indices_of_new_points) = false;
+        indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global', linear_offsets_global);
+        indices_of_new_points_local = threshold_image_handle.GlobalToLocalIndices(indices_of_new_points_global);
 
-                
+        in_range = indices_of_new_points_local > 0 & indices_of_new_points_local <= number_of_image_points_local;
+        indices_of_new_points_local = indices_of_new_points_local(in_range);
+        indices_of_new_points_global = indices_of_new_points_global(in_range);
+
+        in_threshold = threshold_image(indices_of_new_points_local);
+        indices_of_new_points_local = indices_of_new_points_local(in_threshold)';
+        indices_of_new_points_global = indices_of_new_points_global(in_threshold)';
+
+        threshold_image(indices_of_new_points_local) = false;
+
         % Add points to the current segment and retrieve a list of segments
         % which reqire further processing - this can comprise of the current
         % segment if it is incomplete, or child segments if it has bifurcated
-        if isempty(indices_of_new_points)
-            current_segment.CompleteThisSegment;
+        if isempty(indices_of_new_points_global)
+            
+            current_segment_global.CompleteThisSegment;
 
             % If the segment is ending, then report progress
             last_progress_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_generations, last_progress_value, reporting);
 
         else
-            next_segments = current_segment.AddNewVoxelsAndGetNewSegments(indices_of_new_points, image_size);
+            next_segments = current_segment_global.AddNewVoxelsAndGetNewSegments(indices_of_new_points_global, image_size_global);
 
             segments_in_progress = [segments_in_progress, next_segments]; %#ok<AGROW>
             if length(segments_in_progress) > 500

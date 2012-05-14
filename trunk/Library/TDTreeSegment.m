@@ -128,6 +128,7 @@ classdef TDTreeSegment < TDTree
         function accepted_voxels = GetAcceptedVoxels(obj)
             accepted_voxels = [];
             for index = 1 : length(obj.AcceptedIndicesOK)
+%                 ok_indices = obj.AcceptedIndicesOK{index};
                 if ~isempty(obj.AcceptedIndicesOK{index})
                     accepted_voxels = cat(2, accepted_voxels, obj.AcceptedIndicesOK{index});
                 end
