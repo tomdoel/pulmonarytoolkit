@@ -129,11 +129,11 @@ function first_segment_global = RegionGrowing(threshold_image_handle, start_poin
         end
         
         % Get the next airway segment to add voxels to
-        current_segment_global = segments_in_progress(end);
+        current_segment = segments_in_progress(end);
         segments_in_progress(end) = [];
         
         % Fetch the front of the wavefront for this segment
-        frontmost_points_global = current_segment_global.GetFrontmostPoints;
+        frontmost_points_global = current_segment.GetFrontmostWavefrontVoxels;
         
         % Find the neighbours of these points, which will form the next 
         % generation of points to add to the wavefront
@@ -148,20 +148,22 @@ function first_segment_global = RegionGrowing(threshold_image_handle, start_poin
         indices_of_new_points_local = indices_of_new_points_local(in_threshold)';
         indices_of_new_points_global = indices_of_new_points_global(in_threshold)';
 
-        threshold_image(indices_of_new_points_local) = false;
-
-        % Add points to the current segment and retrieve a list of segments
-        % which reqire further processing - this can comprise of the current
-        % segment if it is incomplete, or child segments if it has bifurcated
+        % If there are no new candidate neighbour indices then complete the
+        % segment
         if isempty(indices_of_new_points_global)
             
-            current_segment_global.CompleteThisSegment;
+            current_segment.CompleteThisSegment;
 
             % If the segment is ending, then report progress
             last_progress_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_generations, last_progress_value, reporting);
 
         else
-            next_segments = current_segment_global.AddNewVoxelsAndGetNewSegments(indices_of_new_points_global, image_size_global);
+            threshold_image(indices_of_new_points_local) = false;
+
+            % Add points to the current segment and retrieve a list of segments
+            % which reqire further processing - this can comprise of the current
+            % segment if it is incomplete, or child segments if it has bifurcated
+            next_segments = current_segment.AddNewVoxelsAndGetNewSegments(indices_of_new_points_global, image_size_global);
 
             segments_in_progress = [segments_in_progress, next_segments]; %#ok<AGROW>
             if length(segments_in_progress) > 500
@@ -205,7 +207,7 @@ function explosion_points = GetExplosionPoints(processed_segments)
     while ~isempty(segments_to_do)
         next_segment = segments_to_do(1);
         segments_to_do(1) = [];
-        explosion_points = cat(2, explosion_points, next_segment.GetExplodedVoxels);
+        explosion_points = cat(2, explosion_points, next_segment.GetRejectedVoxels);
         segments_to_do = [segments_to_do, next_segment.Children]; %#ok<AGROW>
     end
 end
@@ -221,7 +223,7 @@ function CheckSegments(airway_tree, reporting)
             number_of_branches_with_exceeded_generations = number_of_branches_with_exceeded_generations + 1;
         end
         segments_to_do(1) = [];
-        wavefront = next_segment.WavefrontIndices;
+        wavefront = next_segment.GetWavefrontVoxels;
         if ~isempty(wavefront)
             reporting.Error('TDAirwayRegionGrowingWithExplosionControl:NonEmptyWavefront', 'Program error: Wavefront is not empty when it should be.');
         end
@@ -280,7 +282,7 @@ function endpoints = FindEndpointsInAirwayTree(airway_tree, reporting)
         segments_to_do = [segments_to_do, segment.Children];
 
         if isempty(segment.Children)
-            final_voxels_in_segment = segment.AcceptedIndicesOK{end};
+            final_voxels_in_segment = segment.GetEndpoints;
             if isempty(final_voxels_in_segment)
                 reporting.Error('TDAirwayRegionGrowingWithExplosionControl:NoAcceptedIndices', 'No accepted indices in this airway segment');
             end

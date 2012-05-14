@@ -11,6 +11,17 @@ classdef TDTreeSegment < TDTree
     %     TDTreeSegments, so that it is possible to reconstruct the entire
     %     tree from a single segment.
     %
+    %     The way the airway voxels are stored in each segment is as follows:
+    %         The wavefront only exists during the region growing. It is a thick
+    %         layer of voxels which exists at the end of each segment
+    %         which is currently growing. If the wavefront forms more than one
+    %         connected component, the segment is ended and new child segments
+    %         formed from the wavefront components. When new voxels are added to
+    %         the front of the wavefront, old voxels from the back of the
+    %         wavefront are pushed out into the Pending voxels of the segment.
+    %         Pending voxels are 'accepted' or 'rejected' according to whether
+    %         the heuristics have determined an explosion has occurred.
+    %
     %     Licence
     %     -------
     %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
@@ -23,18 +34,9 @@ classdef TDTreeSegment < TDTree
     end
     
     properties (SetAccess = private)
-
-        % List of accepted (i.e. non-exploded) voxels
-        AcceptedIndicesOK
-    
         % Generation of this segment, starting at 1
         GenerationNumber
 
-        % The wavefront is a thick layer of voxels which is used to detect 
-        % and process bifurcations in the airway tree before these voxels are
-        % added to the segement's list of pending indices
-        WavefrontIndices
-        
         % Indicates if this branch was terminated due to the generation number
         % being too high, which may indicate leakage
         ExceededMaximumNumberOfGenerations = false
@@ -42,19 +44,27 @@ classdef TDTreeSegment < TDTree
 
         
     properties (Access = private)
+
+        % List of accepted (i.e. non-exploded) voxels
+        AcceptedVoxelIndices
         
-        % Additional voxels that were not originally part of the segment but 
-        % were added later after a morphological closing operation
-        ClosedPoints
+        % List of rejected (exploded) voxels        
+        RejectedVoxelIndices        
+    
+        % The wavefront is a thick layer of voxels which is used to detect 
+        % and process bifurcations in the airway tree before these voxels are
+        % added to the segement's list of pending indices
+        WavefrontVoxelIndices
         
         % Indices are allocated to the segment from the back of the wavefront
         % They are pending until the explosion control heuristic has determined
         % they are 'Accepted' or 'Exploded'.
-        PendingIndices
+        PendingVoxelIndices
 
-        % List of rejected (exploded) voxels        
-        AcceptedIndicesExplosion
-        
+        % Additional voxels that were not originally part of the segment but 
+        % were added later after a morphological closing operation
+        ClosedPoints
+
         PreviousMinimumVoxels
         NumberOfVoxelsSkipped = 0
         LastNumberOfVoxels = 0
@@ -94,10 +104,10 @@ classdef TDTreeSegment < TDTree
             if nargin > 0
                 obj.Parent = parent;
                 obj.MarkedExplosion = false;
-                obj.WavefrontIndices = int32([]);
-                obj.PendingIndices = int32([]);
-                obj.AcceptedIndicesOK = int32([]);
-                obj.AcceptedIndicesExplosion = int32([]);
+                obj.WavefrontVoxelIndices = int32([]);
+                obj.PendingVoxelIndices = int32([]);
+                obj.AcceptedVoxelIndices = int32([]);
+                obj.RejectedVoxelIndices = int32([]);
 
                 obj.MinimumDistanceBeforeBifurcatingMm = min_distance_before_bifurcating_mm;
                 max_voxel_size_mm = max(voxel_size_mm);
@@ -126,28 +136,40 @@ classdef TDTreeSegment < TDTree
         
         % Returns a list of voxels which have been accepted as not explosions.
         function accepted_voxels = GetAcceptedVoxels(obj)
-            accepted_voxels = [];
-            for index = 1 : length(obj.AcceptedIndicesOK)
-%                 ok_indices = obj.AcceptedIndicesOK{index};
-                if ~isempty(obj.AcceptedIndicesOK{index})
-                    accepted_voxels = cat(2, accepted_voxels, obj.AcceptedIndicesOK{index});
-                end
-            end
-            accepted_voxels = accepted_voxels';
+            accepted_voxels = obj.ConcatenateVoxels(obj.AcceptedVoxelIndices);
         end
         
         % Returns the wavefront for this segment, which includes voxels that may
         % be separated into child segments
-        function exploded_voxels = GetExplodedVoxels(obj)
-            exploded_voxels = [];
-            for index = 1 : numel(obj.AcceptedIndicesExplosion)
-                next_exploded_voxels = obj.AcceptedIndicesExplosion{index};
-                if ~isempty(next_exploded_voxels)
-                    exploded_voxels = cat(2, exploded_voxels, next_exploded_voxels);
-                end
-            end
+        function rejected_voxels = GetRejectedVoxels(obj)
+            rejected_voxels = obj.ConcatenateVoxels(obj.RejectedVoxelIndices);
         end
         
+        % Returns the very front layer of voxels at the wavefront
+        function frontmost_points = GetFrontmostWavefrontVoxels(obj)
+            frontmost_points = obj.WavefrontVoxelIndices{end}; 
+        end
+        
+        % Returns the wavefront for this segment, which includes voxels that may
+        % be separated into child segments
+        function wavefront_voxels = GetWavefrontVoxels(obj)
+            wavefront_voxels = obj.ConcatenateVoxels(obj.WavefrontVoxelIndices);
+        end
+        
+        function endpoints = GetEndpoints(obj)
+            endpoints = obj.AcceptedVoxelIndices{end};
+        end
+
+        % Returns all accepted region-growing points, plus those added from the airway closing operation
+        function all_points = GetAllAirwayPoints(obj)
+            all_points = [obj.GetAcceptedVoxels'; obj.ClosedPoints'];
+        end
+        
+        % Points which are added later to close gaps in the airway tree
+        function AddClosedPoints(obj, new_points)
+            obj.ClosedPoints = [obj.ClosedPoints, new_points];
+        end
+
         % Add new voxels to this segment, and returns a list of all segments
         % that require further processing (including this one, and any child
         % segments which have been created as a result of bifurcations)
@@ -161,12 +183,21 @@ classdef TDTreeSegment < TDTree
                 error('duplicates');
             end
                         
-            % Add the new voxels to the wavefront of this segment
-            obj.AddNewVoxelsToWavefront(indices_of_new_points);
+            % First we move voxels at the rear of the wavefront into the
+            % PendingVoxels
+            if ~isempty(obj.WavefrontVoxelIndices)
+                while length(obj.WavefrontVoxelIndices) > obj.WavefrontSize
+                    obj.MoveVoxelsFromRearOfWavefrontToPendingVoxels;
+                end
+            end
+            
+            % Next add the new points to the front of the wavefront
+            obj.WavefrontVoxelIndices{end + 1} = indices_of_new_points;            
+
             
             % If an explostion has been detected then do not continue
             if obj.MarkedExplosion
-                obj.AddAllWaverfrontVoxelsToPendingVoxels;
+                obj.MoveAllWaverfrontVoxelsToPendingVoxels;
                 segments_to_do = TDTreeSegment.empty; % This segment has been terminated
                 return                
             end
@@ -192,37 +223,10 @@ classdef TDTreeSegment < TDTree
             
         end
         
-        % Returns the very front layer of voxels at the wavefront
-        function frontmost_points = GetFrontmostPoints(obj)
-            frontmost_points = obj.WavefrontIndices{end}; 
-        end
         
         function CompleteThisSegment(obj)
-            obj.AddAllWaverfrontVoxelsToPendingVoxels;
-            obj.AcceptAllPendingIndices
-        end
-        
-        function number_of_segments = CountSegments(obj)
-            number_of_segments = 0;
-            
-            segments_to_do = obj;
-            while ~isempty(segments_to_do)
-                segment = segments_to_do(end);
-                segments_to_do(end) = [];
-                segments_to_do = [segments_to_do, segment.Children];
-                
-                number_of_segments = number_of_segments + 1;
-            end
-        end
-        
-        function AddClosedPoints(obj, new_points)
-            obj.ClosedPoints = [obj.ClosedPoints, new_points];
-        end
-        
-        % Returns all accepted region-growing points, plus those added from the airway closing operation
-        function all_points = GetAllAirwayPoints(obj)
-            all_points = [obj.GetAcceptedVoxels; obj.ClosedPoints];
-                
+            obj.MoveAllWaverfrontVoxelsToPendingVoxels;
+            obj.AcceptAllPendingVoxelIndices
         end
         
         function RecomputeGenerations(obj, new_generation_number)
@@ -248,6 +252,35 @@ classdef TDTreeSegment < TDTree
         
     methods (Access = private)
         
+        function MoveAllWaverfrontVoxelsToPendingVoxels(obj)
+            while ~isempty(obj.WavefrontVoxelIndices)                
+                obj.MoveVoxelsFromRearOfWavefrontToPendingVoxels;
+            end
+        end
+        
+        function MoveVoxelsFromRearOfWavefrontToPendingVoxels(obj)
+            % The wavefront may be empty after voxels have been divided
+            % amongst child branches
+            if ~isempty(obj.WavefrontVoxelIndices{1})
+                obj.AddPendingVoxels(obj.WavefrontVoxelIndices{1});
+            end
+            obj.WavefrontVoxelIndices(1) = [];
+        end
+
+        function AcceptAllPendingVoxelIndices(obj)
+            while ~isempty(obj.PendingVoxelIndices)
+                obj.AcceptedVoxelIndices{end + 1} = obj.PendingVoxelIndices{1};
+                obj.PendingVoxelIndices(1) = [];
+            end
+        end
+        
+        function RejectAllPendingVoxelIndices(obj)
+            while ~isempty(obj.PendingVoxelIndices)
+                obj.RejectedVoxelIndices{end + 1} = obj.PendingVoxelIndices{1};
+                obj.PendingVoxelIndices(1) = [];
+            end
+        end
+
         function AdjustMaxAndMinForVoxels(obj, voxel_indices, image_size)
             [x, y, z] = ind2sub(image_size, voxel_indices);
             mins = [min(x), min(y), min(z)];
@@ -260,53 +293,9 @@ classdef TDTreeSegment < TDTree
                 obj.MaxCoords = max(maxs, obj.MaxCoords);
             end
         end
-        
-        % Returns the wavefront for this segment, which includes voxels that may
-        % be separated into child segments
-        function wavefront_voxels = GetWavefrontVoxels(obj)
-            wavefront_voxels = [];
-            for index = 1 : length(obj.WavefrontIndices)
-                next_wavefront_voxels = obj.WavefrontIndices{index};
-                if ~isempty(next_wavefront_voxels)
-                    wavefront_voxels = cat(2, wavefront_voxels, next_wavefront_voxels);
-                end
-            end
-        end
-        
-        
-        function AddNewVoxelsToWavefront(obj, indices_of_new_points)
-            obj.AddRearOfWavefrontVoxelsToSegment;
-            obj.WavefrontIndices{end + 1} = indices_of_new_points;
-        end
 
-        function AddAllWaverfrontVoxelsToPendingVoxels(obj)
-            while ~isempty(obj.WavefrontIndices)
-                
-                % The wavefront may be empty after voxels have been divided
-                % amongst child branches
-                if ~isempty(obj.WavefrontIndices{1})
-                    obj.AddPendingVoxels(obj.WavefrontIndices{1});
-                end
-                obj.WavefrontIndices(1) = [];
-            end
-        end
-        
-        function AcceptAllPendingIndices(obj)
-            while ~isempty(obj.PendingIndices)
-                obj.AcceptedIndicesOK{end + 1} = obj.PendingIndices{1};
-                obj.PendingIndices(1) = [];
-            end
-        end
-        
-        function RejectAllPendingIndices(obj)
-            while ~isempty(obj.PendingIndices)
-                obj.AcceptedIndicesExplosion{end + 1} = obj.PendingIndices{1};
-                obj.PendingIndices(1) = [];
-            end
-        end
-        
         function is_minimum_size = WavefrontIsMinimumSize(obj)
-            is_minimum_size = (length(obj.WavefrontIndices) >= obj.WavefrontSize);
+            is_minimum_size = (length(obj.WavefrontVoxelIndices) >= obj.WavefrontSize);
         end
         
         function passed_minimum_lengths = MinimumLengthPassed(obj)
@@ -320,15 +309,15 @@ classdef TDTreeSegment < TDTree
         function segments_to_do = DivideWavefrontIntoSegments(obj, image_size)
             points_by_branches = [];
             
-            % Find connected components from the wavefront over several
-            % generations
-            [wavefront_connected_components, offset, size_im] = obj.GetConnectedComponentsOfThickWavefront(image_size);
-            
+            % Find connected components from the wavefront (which is several voxels thick)
+            [offset, reduced_image, reduced_image_size] = TDImageCoordinateUtilities.GetMinimalImageForIndices(int32(obj.GetWavefrontVoxels), image_size);
+            wavefront_connected_components = bwconncomp(reduced_image, 26);
+
             % Iterate over the components
             for component_number = 1 : wavefront_connected_components.NumObjects
                 % Get voxel list, and adjust the indices to match those for the full image
                 indices_of_component_points = wavefront_connected_components.PixelIdxList{component_number};
-                indices_of_component_points = TDImageCoordinateUtilities.OffsetIndices(int32(indices_of_component_points), offset, size_im, image_size);
+                indices_of_component_points = TDImageCoordinateUtilities.OffsetIndices(int32(indices_of_component_points), offset, reduced_image_size, image_size);
                 points_by_branches{component_number} = indices_of_component_points;
             end
             
@@ -337,14 +326,6 @@ classdef TDTreeSegment < TDTree
             segments_to_do = obj.DivideWavefrontPointsIntoBranches(points_by_branches);
         end
         
-        function [CC, offset, reduced_image_size] = GetConnectedComponentsOfThickWavefront(obj, original_image_size)
-            thick_wavefront = obj.GetWavefrontVoxels;
-            [offset, reduced_image, reduced_image_size] = TDImageCoordinateUtilities.GetMinimalImageForIndices(int32(thick_wavefront), original_image_size);
-            
-            CC = bwconncomp(reduced_image, 26);
-        end
-        
-
         function segments_to_do = DivideWavefrontPointsIntoBranches(obj, points_by_branches)
             segments_to_do = TDTreeSegment.empty;
             
@@ -396,26 +377,26 @@ classdef TDTreeSegment < TDTree
 
         function new_segment = SpawnChildFromWavefrontVoxels(obj, voxel_indices)
             wavefront_voxels = [];
-            for index = 1 : length(obj.WavefrontIndices)
-                wavefront_voxels{index} = intersect(int32(voxel_indices), obj.WavefrontIndices{index});
-                obj.WavefrontIndices{index} = setxor(wavefront_voxels{index}, obj.WavefrontIndices{index});
+            for index = 1 : length(obj.WavefrontVoxelIndices)
+                wavefront_voxels{index} = intersect(int32(voxel_indices), obj.WavefrontVoxelIndices{index});
+                obj.WavefrontVoxelIndices{index} = setxor(wavefront_voxels{index}, obj.WavefrontVoxelIndices{index});
             end
             new_segment = TDTreeSegment(obj, obj.MinimumChildDistanceBeforeBifurcatingMm, obj.VoxelSizeMm, obj.MaximumNumberOfGenerations, obj.ExplosionMultiplier);
-            new_segment.WavefrontIndices = wavefront_voxels;
+            new_segment.WavefrontVoxelIndices = wavefront_voxels;
         end
 
         function still_growing = IsThisComponentStillGrowing(obj, voxel_indices)
-            wavefront_voxels_end = intersect(int32(voxel_indices), obj.WavefrontIndices{end});
+            wavefront_voxels_end = intersect(int32(voxel_indices), obj.WavefrontVoxelIndices{end});
             still_growing = ~isempty(wavefront_voxels_end);            
         end
         
         
         function AddPendingVoxels(obj, indices_of_new_points)
 
-            obj.PendingIndices{end + 1} = indices_of_new_points;
+            obj.PendingVoxelIndices{end + 1} = indices_of_new_points;
 
             if obj.MarkedExplosion
-                obj.RejectAllPendingIndices;
+                obj.RejectAllPendingVoxelIndices;
             end
             
             number_of_points = numel(indices_of_new_points);
@@ -432,7 +413,7 @@ classdef TDTreeSegment < TDTree
             
             % Keep track of the point at which an explosion starts to occur
             if (number_of_points <= obj.LastNumberOfVoxels)
-                obj.AcceptAllPendingIndices;
+                obj.AcceptAllPendingVoxelIndices;
             end
 
             % Explosion control: we allow a certain number of consecutive
@@ -441,20 +422,23 @@ classdef TDTreeSegment < TDTree
             % deleted later.
             if (obj.NumberOfVoxelsSkipped > obj.PermittedVoxelSkips)
                 obj.MarkedExplosion = true;
-                obj.RejectAllPendingIndices;
-            end
-            
+                obj.RejectAllPendingVoxelIndices;
+            end            
         end
-
-        function AddRearOfWavefrontVoxelsToSegment(obj)
-            if ~isempty(obj.WavefrontIndices)
-                while length(obj.WavefrontIndices) > obj.WavefrontSize
-                    obj.AddPendingVoxels(obj.WavefrontIndices{1});
-                    obj.WavefrontIndices(1) = [];
+    end
+    
+    methods (Static, Access = private)
+        function concatenated_voxels = ConcatenateVoxels(voxels)
+            concatenated_voxels = [];
+            number_layers = length(voxels);
+            for index = 1 : number_layers
+                next_voxels = voxels{index};
+                if ~isempty(next_voxels)
+                    concatenated_voxels = cat(2, concatenated_voxels, next_voxels);
                 end
             end
         end
-
     end
+    
 end
 
