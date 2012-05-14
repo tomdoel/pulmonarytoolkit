@@ -1,4 +1,4 @@
-classdef TDTreeSegment < handle
+classdef TDTreeSegment < TDTree
     % TDTreeSegment. A data structure representing a segmented airway tree 
     %
     %     A root TDTreeSegment is returned by 
@@ -19,8 +19,6 @@ classdef TDTreeSegment < handle
     %       
     
     properties
-        Parent = []    % Parent TDTreeSegment
-        Children = []  % Child TDTreeSegments
         Colour         % A colourmap index allocated to this branch
     end
     
@@ -77,7 +75,6 @@ classdef TDTreeSegment < handle
         % Generations greater than this are automatically terminated
         MaximumNumberOfGenerations
         
-        
         % We never use less than this value at each step when computing the minimum wavefront
         % size over the image
         MinimumNumberOfPointsThreshold
@@ -96,7 +93,6 @@ classdef TDTreeSegment < handle
         function obj = TDTreeSegment(parent, min_distance_before_bifurcating_mm, voxel_size_mm, maximum_generations, explosion_multiplier)
             if nargin > 0
                 obj.Parent = parent;
-                obj.Children = {};
                 obj.MarkedExplosion = false;
                 obj.WavefrontIndices = int32([]);
                 obj.PendingIndices = int32([]);
@@ -112,6 +108,7 @@ classdef TDTreeSegment < handle
                 obj.MinimumNumberOfPointsThreshold = max(3, round(obj.MinimumNumberOfPointsThresholdMm3/voxel_volume));
                 
                 if ~isempty(parent)
+                    parent.AddChild(obj);                    
                     obj.PreviousMinimumVoxels = parent.PreviousMinimumVoxels;
                     obj.LastNumberOfVoxels = obj.PreviousMinimumVoxels;
                     obj.IsFirstSegment = false;
@@ -169,7 +166,7 @@ classdef TDTreeSegment < handle
             % If an explostion has been detected then do not continue
             if obj.MarkedExplosion
                 obj.AddAllWaverfrontVoxelsToPendingVoxels;
-                segments_to_do = {}; % This segment has been terminated
+                segments_to_do = TDTreeSegment.empty; % This segment has been terminated
                 return                
             end
             
@@ -178,13 +175,13 @@ classdef TDTreeSegment < handle
             % Do not allow the segment to bifurcate until it is above a minimum
             % length
             if ~obj.MinimumLengthPassed
-                segments_to_do = {obj}; % This segment is to continue growing
+                segments_to_do = obj; % This segment is to continue growing
                 return
             end
 
             % Do not allow the segment to bifurcate until it is above a minimum size
             if ~obj.WavefrontIsMinimumSize
-                segments_to_do = {obj}; % This segment is to continue growing
+                segments_to_do = obj; % This segment is to continue growing
                 return
             end
                         
@@ -348,7 +345,7 @@ classdef TDTreeSegment < handle
         
 
         function segments_to_do = DivideWavefrontPointsIntoBranches(obj, points_by_branches)
-            segments_to_do = [];
+            segments_to_do = TDTreeSegment.empty;
             
             if length(points_by_branches) == 1
                 % If there is only one component, it will be growing, so we 
@@ -370,7 +367,7 @@ classdef TDTreeSegment < handle
             end
             
             if length(growing_branches) == 1
-                segments_to_do = {obj};
+                segments_to_do = obj;
                 return
             end
             
@@ -387,7 +384,7 @@ classdef TDTreeSegment < handle
                 end
                 
                 for index = 1 : length(growing_branches)
-                    segments_to_do{end + 1} = obj.SpawnChildFromWavefrontVoxels(points_by_branches{growing_branches(index)});
+                    segments_to_do(end + 1) = obj.SpawnChildFromWavefrontVoxels(points_by_branches{growing_branches(index)});
                 end
                 
                 % If the branch has divided, there may be some unaccepted points
@@ -403,7 +400,6 @@ classdef TDTreeSegment < handle
                 obj.WavefrontIndices{index} = setxor(wavefront_voxels{index}, obj.WavefrontIndices{index});
             end
             new_segment = TDTreeSegment(obj, obj.MinimumChildDistanceBeforeBifurcatingMm, obj.VoxelSizeMm, obj.MaximumNumberOfGenerations, obj.ExplosionMultiplier);
-            obj.AddChild(new_segment);
             new_segment.WavefrontIndices = wavefront_voxels;
         end
 
@@ -458,10 +454,6 @@ classdef TDTreeSegment < handle
             end
         end
 
-        function AddChild(obj, child)
-            obj.Children = [obj.Children, child];
-        end
-        
     end
 end
 

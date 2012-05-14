@@ -1,4 +1,4 @@
-classdef TDSkeletonSegment < handle
+classdef TDSkeletonSegment < TDTree
     % TDSkeletonSegment. A data structure representing an airway tree skeleton
     %
     %     A root TDSkeletonSegment is returned by TDSkeletonise. From this you
@@ -18,20 +18,20 @@ classdef TDSkeletonSegment < handle
     %       
     
     properties (SetAccess = private)
-        Children  % Child segments which branch from this segment
         NextPoint % The next point to start processing from - will be empty once the skeleton is complete
-        Parent    % Parent segment
         Points    % The skeleton points in this segment
+        GenerationNumber % Generation of this segment, starting at 1
     end
     
     methods
         function obj = TDSkeletonSegment(start_point, parent)
-            obj.Children = TDSkeletonSegment.empty(0);
+            obj.GenerationNumber = 1;
             if nargin > 0
                 obj.NextPoint = start_point;
                 if nargin > 1
                     obj.Parent = parent;
                     obj.Parent.AddChild(obj);
+                    obj.GenerationNumber = obj.Parent.GenerationNumber + 1;
                 end
             end
         end
@@ -80,13 +80,18 @@ classdef TDSkeletonSegment < handle
                 tree_points = [tree_points, child_segment.GetTree]; %#ok<AGROW>
             end
         end
+        
+        function RecomputeGenerations(obj, new_generation_number)
+            obj.GenerationNumber = new_generation_number;
+            children = obj.Children;
+            for child = children
+                child.RecomputeGenerations(new_generation_number + 1);
+            end
+        end
+        
     end
     
     methods (Access = private)
-        
-        function AddChild(obj, child_segment)
-            obj.Children(end + 1) = child_segment;
-        end
         
         function RemoveChild(obj, child_segment)
             for child_index = 1 : length(obj.Children)

@@ -66,7 +66,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
 
     
     if isempty(airway_tree)
-        reporting.ShowWarning('TDRobustRegionGrowingWithExplosionControl:AirwaySegmentationFailed', 'Airway segmentation failed', []);
+        reporting.ShowWarning('TDAirwayRegionGrowingWithExplosionControl:AirwaySegmentationFailed', 'Airway segmentation failed', []);
     else
         % Sanity checking and warn user if any branches terminated early
         CheckSegments(airway_tree, reporting);
@@ -120,9 +120,10 @@ function first_segment = RegionGrowing(threshold_image, start_point_global, repo
     
     threshold_image(start_point_index) = false;
     
+    last_progress_value = 0;
+
     segments_in_progress = first_segment.AddNewVoxelsAndGetNewSegments(start_point_index, image_size);
 
-    last_progress_value = 0;
 
     while ~isempty(segments_in_progress)
         
@@ -131,7 +132,7 @@ function first_segment = RegionGrowing(threshold_image, start_point_global, repo
         end
         
         % Get the next airway segment to add voxels to
-        current_segment = segments_in_progress{end};
+        current_segment = segments_in_progress(end);
         segments_in_progress(end) = [];
         
         % Fetch the front of the wavefront for this segment
@@ -178,11 +179,11 @@ function last_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_
     while ~isempty(segments_temp)
         segment = segments_temp(end);
         segments_temp(end) = [];
-        generation = segment{1}.GenerationNumber;
+        generation = segment(1).GenerationNumber;
         generations_left = (maximum_number_of_generations - generation);
         num_segments_to_do = 2^(generations_left+1) - 1;
         segments_left = segments_left + num_segments_to_do;
-        segments_temp = [segments_temp, segment{1}.Children];
+        segments_temp = [segments_temp, segment(1).Children];
     end
     total_segments = 2^maximum_number_of_generations - 1;
 
@@ -254,11 +255,9 @@ function airway_tree = RemoveCompletelyExplodedSegments(airway_tree)
         segments_to_do(1) = [];
         
         if numel(next_segment.GetAcceptedVoxels) == 0
-            parent = next_segment.Parent;
-            if ~isempty(parent)
-                children = next_segment.Children;
-                parent.Children = setdiff(parent.Children, next_segment);
-                parent.Children = [parent.Children, children];
+            next_segment.CutFromTree;
+            if ~isempty(next_segment.Children)
+               disp('exploded segment has children'); 
             end
         end
         segments_to_do = [segments_to_do, next_segment.Children];
