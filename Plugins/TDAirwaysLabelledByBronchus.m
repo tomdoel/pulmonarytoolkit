@@ -49,7 +49,7 @@ classdef TDAirwaysLabelledByBronchus < TDPlugin
         function results = RunPlugin(dataset, ~)
             results = dataset.GetTemplateImage(TDContext.LungROI);
             airway_results = dataset.GetResult('TDAirways');
-            labeled_region = TDAirwaysLabelledByBronchus.GetLabeledSegmentedImageFromAirwayTree(airway_results.airway_tree, airway_results.image_size);
+            labeled_region = TDAirwaysLabelledByBronchus.GetLabeledSegmentedImageFromAirwayTree(airway_results.AirwayTree, results);
             results.ChangeRawImage(labeled_region);
             results.ImageType = TDImageType.Colormap;
         end
@@ -57,16 +57,16 @@ classdef TDAirwaysLabelledByBronchus < TDPlugin
     
     methods (Static, Access = private)
 
-        function segmented_image = GetLabeledSegmentedImageFromAirwayTree(airway_tree, image_size)
+        function segmented_image = GetLabeledSegmentedImageFromAirwayTree(airway_tree, template)
             airway_tree.AddColourValues(1);
-            segmented_image = zeros(image_size, 'uint8');
+            segmented_image = zeros(template.ImageSize, 'uint8');
             
             segments_to_do = airway_tree;
             
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
-                segmented_image(segment.GetAllAirwayPoints) = segment.Colour;
+                segmented_image(template.GlobalToLocalIndices(segment.GetAllAirwayPoints)) = segment.Colour;
                 segments_to_do = [segments_to_do segment.Children];
             end
         end

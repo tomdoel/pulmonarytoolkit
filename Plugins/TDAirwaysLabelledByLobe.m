@@ -52,7 +52,7 @@ classdef TDAirwaysLabelledByLobe < TDPlugin
             results = dataset.GetTemplateImage(TDContext.LungROI);
             [airway_results, airway_image] = dataset.GetResult('TDAirways');
             [skeleton_results, ~] = dataset.GetResult('TDAirwaySkeleton');
-            airways_by_lobe = TDGetAirwaysLabelledByLobe(airway_results, skeleton_results, reporting);
+            airways_by_lobe = TDGetAirwaysLabelledByLobe(results, airway_results, skeleton_results, reporting);
             airway_image = 7*uint8(airway_image.RawImage > 0);
             airway_image(airways_by_lobe > 0) = airways_by_lobe(airways_by_lobe > 0);
             results.ChangeRawImage(airway_image);

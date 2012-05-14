@@ -62,19 +62,21 @@ classdef TDAirways < TDPlugin
         function results = GenerateImageFromResults(airway_results, image_templates, ~)
             template_image = image_templates.GetTemplateImage(TDContext.LungROI);
             
-            image_size = airway_results.image_size;
+            image_size = template_image.ImageSize;
             
             airway_image = zeros(image_size, 'uint8');
             
-            airway_image(airway_results.explosion_points) = 3;
+            explosion_points = template_image.GlobalToLocalIndices(airway_results.ExplosionPoints);
+            airway_image(explosion_points) = 3;
             
 
-            airway_tree = airway_results.airway_tree;
+            airway_tree = airway_results.AirwayTree;
             segments_to_do = airway_tree;
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
                 voxels = segment.GetAllAirwayPoints;
+                voxels = template_image.GlobalToLocalIndices(voxels);
                 airway_image(voxels) = 1;
                 segments_to_do = [segments_to_do, segment.Children];
             end
