@@ -54,7 +54,7 @@ classdef TDPluginInformation
                     end
                     
                 catch ex
-                    reporting.Warning('TDPluginInformation:PluginParseError', ['Warning: There is a problem with plugin file ' plugin_name '. Check there are no code errors and it has the correct properties.'], ex);
+                    reporting.ShowWarning('TDPluginInformation:PluginParseError', ['Warning: There is a problem with plugin file ' plugin_name '. Check there are no code errors and it has the correct properties.'], ex);
                 end
             end
         end
