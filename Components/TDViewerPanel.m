@@ -327,7 +327,7 @@ classdef TDViewerPanel < handle
                 image_size = obj.BackgroundImage.ImageSize;
                 voxel_size = obj.BackgroundImage.VoxelSize;
                 
-                [dim_x_index, dim_y_index, dim_z_index] = GetXYDimensionIndex(obj);
+                [dim_x_index, dim_y_index, dim_z_index] = obj.GetXYDimensionIndex;
                 x_range = [1, image_size(dim_x_index)];
                 y_range = [1, image_size(dim_y_index)];
                 pixel_ratio = [voxel_size(dim_y_index) voxel_size(dim_x_index) voxel_size(dim_z_index)];
