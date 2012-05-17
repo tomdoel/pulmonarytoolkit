@@ -130,7 +130,7 @@ function dicom_image = TDLoad3DRawAndMetaFiles(path, filenames, study_uid, repor
 
     reporting.ShowWarning('TDLoad3DRawAndMetaFiles:AssumedCT', 'No modality information - I am assuming these images are CT with slope 1 and intercept 0.', []);
     modality = 'CT';
-    dicom_image = TDDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid);
+    dicom_image = TDDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid, header_data);
     dicom_image.Title = filenames{1};
 
 
