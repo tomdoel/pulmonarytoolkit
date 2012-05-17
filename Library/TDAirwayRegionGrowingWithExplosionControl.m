@@ -98,7 +98,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
 end
 
 
-function first_segment_global = RegionGrowing(threshold_image_handle, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier)
+function first_segment = RegionGrowing(threshold_image_handle, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier)
 
     voxel_size_mm = threshold_image_handle.VoxelSize;
 
@@ -112,14 +112,14 @@ function first_segment_global = RegionGrowing(threshold_image_handle, start_poin
 
     [linear_offsets_global, ~] = TDImageCoordinateUtilities.GetLinearOffsets(image_size_global);
 
-    first_segment_global = TDTreeSegment([], min_distance_before_bifurcating_mm, voxel_size_mm, maximum_number_of_generations, explosion_multiplier);
+    first_segment = TDWavefront([], min_distance_before_bifurcating_mm, voxel_size_mm, maximum_number_of_generations, explosion_multiplier);
     start_point_index_global = sub2ind(image_size_global, start_point_global(1), start_point_global(2), start_point_global(3));
 
     threshold_image(start_point_index_global) = false;
 
     last_progress_value = 0;
 
-    segments_in_progress = first_segment_global.AddNewVoxelsAndGetNewSegments(start_point_index_global, image_size_global);
+    segments_in_progress = first_segment.AddNewVoxelsAndGetNewSegments(start_point_index_global, image_size_global);
 
 
     while ~isempty(segments_in_progress)
@@ -177,6 +177,8 @@ function first_segment_global = RegionGrowing(threshold_image_handle, start_poin
 
         end
     end
+    
+    first_segment = first_segment.CurrentBranch;
 end
 
 function last_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_generations, last_value, reporting)
@@ -186,11 +188,11 @@ function last_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_
     while ~isempty(segments_temp)
         segment = segments_temp(end);
         segments_temp(end) = [];
-        generation = segment(1).GenerationNumber;
+        generation = segment(1).CurrentBranch.GenerationNumber;
         generations_left = (maximum_number_of_generations - generation);
         num_segments_to_do = 2^(generations_left+1) - 1;
         segments_left = segments_left + num_segments_to_do;
-        segments_temp = [segments_temp, segment(1).Children];
+%         segments_temp = [segments_temp, segment(1).Children];
     end
     total_segments = 2^maximum_number_of_generations - 1;
 
@@ -223,10 +225,6 @@ function CheckSegments(airway_tree, reporting)
             number_of_branches_with_exceeded_generations = number_of_branches_with_exceeded_generations + 1;
         end
         segments_to_do(1) = [];
-        wavefront = next_segment.GetWavefrontVoxels;
-        if ~isempty(wavefront)
-            reporting.Error('TDAirwayRegionGrowingWithExplosionControl:NonEmptyWavefront', 'Program error: Wavefront is not empty when it should be.');
-        end
         segments_to_do = [segments_to_do, next_segment.Children]; %#ok<AGROW>
     end
     
@@ -265,6 +263,9 @@ function airway_tree = RemoveCompletelyExplodedSegments(airway_tree)
             next_segment.CutFromTree;
             if ~isempty(next_segment.Children)
                disp('exploded segment has children'); 
+            end
+            if (length(next_segment.Parent.Children) == 1)
+                next_segment.Parent.MergeWithChild;
             end
         end
         segments_to_do = [segments_to_do, next_segment.Children];

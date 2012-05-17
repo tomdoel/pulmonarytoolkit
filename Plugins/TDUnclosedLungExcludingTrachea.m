@@ -54,7 +54,7 @@ classdef TDUnclosedLungExcludingTrachea < TDPlugin
             % Remove first two generations of airway tree
             reporting.ShowMessage('Finding main airways and removing');
             results = dataset.GetResult('TDAirways');
-            main_airways = TDUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.airway_tree, results.image_size, 3);
+            main_airways = TDUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, 3);
             
             % Dilate the airways in order to remove airway walls. But we don't use too large a value, otherwise regions of the lungs will be removed
             size_dilation = 5;
@@ -75,14 +75,14 @@ classdef TDUnclosedLungExcludingTrachea < TDPlugin
     
     methods (Static, Access = private)
         
-        function segmented_image = GetAirwaysBelowGeneration(airway_tree, image_size, max_generation_number)
-            segmented_image = zeros(image_size, 'uint8');
+        function segmented_image = GetAirwaysBelowGeneration(airway_tree, template, max_generation_number)
+            segmented_image = zeros(template.ImageSize, 'uint8');
             segments_to_do = airway_tree;
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
                 if segment.GenerationNumber <= max_generation_number
-                    voxels = segment.GetAllAirwayPoints;
+                    voxels = template.GlobalToLocalIndices(segment.GetAllAirwayPoints);
                     segmented_image(voxels) = 1;
                     segments_to_do = [segments_to_do, segment.Children];
                 end
