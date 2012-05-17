@@ -38,7 +38,9 @@ classdef TDGradients < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, ~)
             image = dataset.GetResult('TDLungROI');
-            [gi, gj, gk] = gradient(single(image.RawImage));
+            
+            % Matlab's gradient returns [x,y,z] which is our [i,j,k]
+            [gj, gi, gk] = gradient(single(image.RawImage));
             results = image.BlankCopy;
             results.ChangeRawImage(cat(4, gi, gj, gk));
         end
