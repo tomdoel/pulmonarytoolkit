@@ -30,8 +30,21 @@ classdef TDTree < handle
                 obj.Parent.Children = [setdiff(obj.Parent.Children, obj), obj.Children];
             end
         end
+
+        % Returns the number of branches in this tree, from this branch
+        % downwards
+        function number_of_branches = CountBranches(obj)
+            number_of_branches = 0;            
+            branches_to_do = obj;
+            while ~isempty(branches_to_do)
+                branch = branches_to_do(end);
+                branches_to_do(end) = [];
+                branches_to_do = [branches_to_do, branch.Children];
+                number_of_branches = number_of_branches + 1;
+            end
+        end
     end
-    
+
     methods (Access = protected)
         function AddChild(obj, child)
             obj.Children = [obj.Children, child];
