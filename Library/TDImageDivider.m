@@ -124,7 +124,7 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
         [octant_limits_in, octant_limits_out, octant_limits_result] = ComputeOctantLimits(image_size, overlap_size);
          
         for octant_index = 1 : 8
-            reporting.UpdateProgressAndMessage(100*(octant_index - 1 + progress_octant_offset)/progress_max, ['Computing Hessian for ' progress_text ' lung, octant ' num2str(octant_index)]);
+            reporting.UpdateProgressAndMessage(100*(octant_index - 1 + progress_octant_offset)/progress_max, ['Computing for ' progress_text ' lung, octant ' num2str(octant_index)]);
             
             limits_in = octant_limits_in(octant_index, :);
             limits_out = octant_limits_out(octant_index, :);
@@ -158,7 +158,7 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
                     );
             else
                 part_image_raw = zeros(part_image.ImageSize, 'single');
-                part_image_raw(part_mask.RawImage(:)) = part_filtered_image.RawImage;
+                part_image_raw(part_mask.RawImage) = part_filtered_image.RawImage(part_mask.RawImage);
                 
                 % Place results in output matrix, ignoring border regions
                 filtered_image_raw( ...
