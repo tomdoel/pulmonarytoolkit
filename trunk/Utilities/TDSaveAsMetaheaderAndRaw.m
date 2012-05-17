@@ -61,5 +61,14 @@ function TDSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporti
     full_filename = fullfile(path, filename);
 
     resolution = image_data.VoxelSize([2, 1, 3]);
-    TDWrite3DMetaFile(full_filename, image, resolution, data_type);  
+    
+    offset = '0 0 0';
+    if isa(original_image, 'TDDicomImage')
+        metadata = original_image.MetaHeader;
+        if isfield(metadata, 'Offset')
+            offset = metadata.Offset;
+        end
+    end
+    
+    TDWrite3DMetaFile(full_filename, image, resolution, data_type, offset);  
 end
