@@ -50,7 +50,7 @@ classdef TDVisualiseSegmentationIn3D < TDGuiPlugin
                     smoothing_size = 4; % 4 is good for lobes
                 end
                 
-                TDVisualiseIn3D(segmentation, smoothing_size, false, ptk_gui_app.Reporting);
+                TDVisualiseIn3D([], segmentation, smoothing_size, false, ptk_gui_app.Reporting);
             end
         end
     end

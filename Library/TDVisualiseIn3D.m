@@ -1,10 +1,13 @@
-function TDVisualiseIn3D(segmentation, smoothing_size, small_structures, reporting)
+function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_size, small_structures, reporting)
     % TDVisualiseIn3D. Opens a new Matlab figure and visualises the
     % segmentation image in 3D.
     %
     %
     %     Inputs
     %     ------
+    %
+    %     figure_handle - specify an empty array [] to open a new figure, or the
+    %         handle of the existing figure for the visualisation
     %
     %     segmentation - a binary 3D TDImage containing 1s for the voxels to
     %         visualise
@@ -41,6 +44,11 @@ function TDVisualiseIn3D(segmentation, smoothing_size, small_structures, reporti
         reporting = TDReportingDefault;    
     end
     
+    if isempty(figure_handle)
+        figure_handle = figure;
+    else
+        figure(figure_handle);
+    end
     
     if small_structures
         smoothing_size = 1;
@@ -70,7 +78,6 @@ function TDVisualiseIn3D(segmentation, smoothing_size, small_structures, reporti
     cm = colormap('Lines');
     view(-37.5, 30);
     camlight('headlight');
-    
         
     % Get a list of all labels in the segmentation image
     segmentation_labels = setdiff(unique(segmentation.RawImage(:)), 0);
@@ -97,7 +104,6 @@ function TDVisualiseIn3D(segmentation, smoothing_size, small_structures, reporti
         end
         
         sub_seg.BinaryMorph(@imclose, morph_size);
-        sub_seg.BinaryMorph(@imopen, 2);
         
         if smoothing_size > 0
             sub_seg = TDGaussianFilter(sub_seg, smoothing_size);
