@@ -20,7 +20,7 @@ classdef TDVolume < TDPlugin
     %
 
     properties
-        ButtonText = 'Volume'
+        ButtonText = 'Lung Volume'
         ToolTip = 'Measures lung volumes'
         Category = 'Analysis'
 
@@ -51,7 +51,7 @@ classdef TDVolume < TDPlugin
             combined_results.lung_volume_mm3 = left_results.lung_volume_mm3 + right_results.lung_volume_mm3;
             combined_results.surface_volume_mm3 = left_results.surface_volume_mm3 + right_results.surface_volume_mm3;
 
-            disp('*****');            
+            disp('*****');
             disp(['  Voxel size: ' num2str(voxel_size(1), '%3.2f') 'mm x ' num2str(voxel_size(2), '%3.2f') 'mm x ' num2str(voxel_size(3), '%3.2f') 'mm']);
             disp(['  LEFT LUNG: Volume: ' num2str(left_results.lung_volume_mm3/1000, '%7.0f') ' cm^3 error: ' num2str(left_results.surface_volume_mm3/1000, '%7.0f') ' cm^3']);
             disp(['  RIGHT LUNG: Volume: ' num2str(right_results.lung_volume_mm3/1000, '%7.0f') ' cm^3 error: ' num2str(right_results.surface_volume_mm3/1000, '%7.0f') ' cm^3']);
