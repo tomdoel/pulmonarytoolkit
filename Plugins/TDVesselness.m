@@ -54,19 +54,25 @@ classdef TDVesselness < TDPlugin
             
             left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
             
-            results = TDCombineLeftAndRightImages(dataset.GetTemplate(TDContext.LungROI), vesselness_left, vesselness_right, left_and_right_lungs);
+            results = TDCombineLeftAndRightImages(dataset.GetTemplateImage(TDContext.LungROI), vesselness_left, vesselness_right, left_and_right_lungs);
             
             lung = dataset.GetResult('TDLeftAndRightLungs');
             results.ChangeRawImage(results.RawImage.*single(lung.RawImage > 0));
             results.ImageType = TDImageType.Scaled;
         end
         
+        function results = GenerateImageFromResults(results, ~, ~)
+            vesselness_raw = 3*uint8(results.RawImage > 20);
+            results.ChangeRawImage(vesselness_raw);
+            results.ImageType = TDImageType.Colormap;
+        end        
+        
     end
     
     methods (Static, Access = private)
         
         function vesselness = ComputeVesselness(image_data, reporting, is_left_lung)
-            sigma_range = 0.5 : 0.5: 2;
+            sigma_range = 0.5 : 0.5: 4;
             vesselness = [];
             for sigma = sigma_range
                 mask = [];
