@@ -51,7 +51,7 @@ classdef TDVisualiseAirwaysIn3D < TDGuiPlugin
                     smoothing_size = 0;
                 end
                 
-                TDVisualiseIn3D(segmentation, smoothing_size, true, ptk_gui_app.Reporting);
+                TDVisualiseIn3D([], segmentation, smoothing_size, true, ptk_gui_app.Reporting);
             end
         end
     end
