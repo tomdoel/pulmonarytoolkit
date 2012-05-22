@@ -1,5 +1,5 @@
-classdef TDFissurenesssVesselsFactor < TDPlugin
-    % TDFissurenesssVesselsFactor. Plugin to detect fissures using distance
+classdef TDFissurenessVesselsFactor < TDPlugin
+    % TDFissurenessVesselsFactor. Plugin to detect fissures using distance
     %     transform from blood vessels.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
@@ -10,7 +10,7 @@ classdef TDFissurenesssVesselsFactor < TDPlugin
     %
     %     This is an intermediate stage towards lobar segmentation.
     %
-    %     TDFissurenesssVesselsFactor computes the component of the fissureness
+    %     TDFissurenessVesselsFactor computes the component of the fissureness
     %     generated using analysis of distance transform from blood vessels,
     %     which are segmented using a threshold applied to vesselness.
     %
