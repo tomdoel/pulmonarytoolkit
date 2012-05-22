@@ -11,7 +11,7 @@ classdef TDFissureness < TDPlugin
     %
     %     TDFissureness computes the fissureness by combining two components
     %     generated from the two plugins TDFissurenessHessianFactor and
-    %     TDFissurenesssVesselsFactor.
+    %     TDFissurenessVesselsFactor.
     %
     %     For more information, see 
     %     [Doel et al., Pulmonary lobe segmentation from CT images using
@@ -45,7 +45,7 @@ classdef TDFissureness < TDPlugin
         
         function results = RunPlugin(dataset, reporting)
             fissureness_from_hessian = single(dataset.GetResult('TDFissurenessHessianFactor').RawImage)/100;
-            fissureness_from_vessels = single(dataset.GetResult('TDFissurenesssVesselsFactor').RawImage)/100;
+            fissureness_from_vessels = single(dataset.GetResult('TDFissurenessVesselsFactor').RawImage)/100;
             results = dataset.GetTemplateImage(TDContext.LungROI);
             results.ChangeRawImage(100*fissureness_from_vessels.*fissureness_from_hessian);
             results.ImageType = TDImageType.Scaled;
