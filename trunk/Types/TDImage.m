@@ -508,21 +508,28 @@ classdef TDImage < handle
         function CropToFit(obj)
             if obj.ImageExists
                 
-                i_min = find(any(any(obj.RawImage, 2), 3), 1, 'first');
-                i_max = find(any(any(obj.RawImage, 2), 3), 1, 'last' );
-                
-                j_min = find(any(any(obj.RawImage, 1), 3), 1, 'first');
-                j_max = find(any(any(obj.RawImage, 1), 3), 1, 'last' );
-                
-                k_min = find(any(any(obj.RawImage, 1), 2), 1, 'first');
-                k_max = find(any(any(obj.RawImage, 1), 2), 1, 'last' );
+                bounds = obj.GetBounds;
                 
                 % Create new image
-                obj.RawImage = obj.RawImage(i_min:i_max, j_min:j_max, k_min:k_max);
+                obj.RawImage = obj.RawImage(bounds(1):bounds(2), bounds(3):bounds(4), bounds(5):bounds(6));
                 
-                obj.Origin = obj.Origin + [i_min - 1, j_min - 1, k_min - 1];
+                obj.Origin = obj.Origin + [bounds(1) - 1, bounds(3) - 1, bounds(5) - 1];
                 obj.NotifyImageChanged;
             end
+        end
+        
+        % Returns the bounding cordinates of a binary image
+        function bounds = GetBounds(obj)
+            i_min = find(any(any(obj.RawImage, 2), 3), 1, 'first');
+            i_max = find(any(any(obj.RawImage, 2), 3), 1, 'last' );
+            
+            j_min = find(any(any(obj.RawImage, 1), 3), 1, 'first');
+            j_max = find(any(any(obj.RawImage, 1), 3), 1, 'last' );
+            
+            k_min = find(any(any(obj.RawImage, 1), 2), 1, 'first');
+            k_max = find(any(any(obj.RawImage, 1), 2), 1, 'last' );
+            
+            bounds = [i_min, i_max, j_min, j_max, k_min, k_max];
         end
         
         % Strips away a border around the image, returning the region specified
@@ -734,6 +741,10 @@ classdef TDImage < handle
         
         % Guesses which type of image renderng would be best. 
         function image_type = GuessImageType(obj)
+            if isempty(obj.RawImage)
+                image_type = TDImageType.Colormap;
+                return
+            end
             if islogical(obj.RawImage)
                 % For binary images, opt for a simple colormap
                 image_type = TDImageType.Colormap;
