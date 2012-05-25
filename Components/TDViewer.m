@@ -41,7 +41,7 @@ classdef TDViewer < handle
     methods
         function obj = TDViewer(image, type)
             obj.FigureHandle = figure;
-            set(obj.FigureHandle, 'NumberTitle', 'off');
+            set(obj.FigureHandle, 'NumberTitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none');
             obj.ViewerPanelHandle = TDViewerPanel(obj.FigureHandle);
             if nargin < 1
                 image = [];
