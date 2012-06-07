@@ -212,8 +212,22 @@ classdef TDPTKGuiApp < handle
                 obj.WaitDialogHandle.Resize();
             end
         end
-        
-        
+        function Capture(obj)
+            obj.Reporting.ProgressDialog.Hide;
+            frame = obj.ImagePanel.Capture;
+            path_name = obj.Settings.SaveImagePath;
+            [filename, path_name, filter_index] = TDPTKGuiApp.SaveImageDialogBox(path_name);
+            if ~isempty(path_name) && filter_index > 0
+                obj.Settings.SaveImagePath = path_name;
+                obj.SaveSettings;
+            end
+            switch filter_index
+                case 1
+                    imwrite(frame.cdata, fullfile(path_name, filename), 'tif');
+                case 2
+                    imwrite(frame.cdata, fullfile(path_name, filename), 'jpg', 'Quality', 70);
+            end
+        end
     end
     
     
@@ -492,6 +506,17 @@ classdef TDPTKGuiApp < handle
                     end
                 end
             end
-        end        
+        end
+    end
+    
+    methods (Static, Access = private)
+        function [filename, path_name, filter_index] = SaveImageDialogBox(path_name)
+            filespec = {...
+                '*.tif', 'TIF (*.tif)';
+                '*.jpg', 'JPG (*.jpg)';
+                };
+            
+            [filename, path_name, filter_index] = uiputfile(filespec, 'Save image as', fullfile(path_name, ''));
+        end
     end
 end
