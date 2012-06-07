@@ -245,6 +245,81 @@ classdef TDViewerPanel < handle
         function delete(obj)
             obj.DeleteImageChangedListeners;
         end
+        
+        % Changes the current axis limits to the specified global coordinates
+        % i_limits = [minimum_i, maximum_i] and the same for j, k.
+        function ZoomTo(obj, i_limits, j_limits, k_limits)
+            
+            % Convert global coordinates to local coordinates
+            i_limits_local = i_limits - obj.BackgroundImage.Origin(1) + 1;
+            j_limits_local = j_limits - obj.BackgroundImage.Origin(2) + 1;
+            k_limits_local = k_limits - obj.BackgroundImage.Origin(3) + 1;
+            
+            % Update the cached axis limits
+            obj.AxisLimits{TDImageOrientation.Coronal}.XLim = j_limits_local;
+            obj.AxisLimits{TDImageOrientation.Coronal}.YLim = k_limits_local;
+            obj.AxisLimits{TDImageOrientation.Sagittal}.XLim = i_limits_local;
+            obj.AxisLimits{TDImageOrientation.Sagittal}.YLim = k_limits_local;
+            obj.AxisLimits{TDImageOrientation.Axial}.XLim = j_limits_local;
+            obj.AxisLimits{TDImageOrientation.Axial}.YLim = i_limits_local;
+
+            % Update the current axis limits
+            switch obj.Orientation
+                case TDImageOrientation.Coronal
+                    set(obj.Axes, 'XLim', j_limits_local)
+                    set(obj.Axes, 'YLim', k_limits_local)
+                case TDImageOrientation.Sagittal
+                    set(obj.Axes, 'XLim', i_limits_local)
+                    set(obj.Axes, 'YLim', k_limits_local)
+                case TDImageOrientation.Axial
+                    set(obj.Axes, 'XLim', j_limits_local)
+                    set(obj.Axes, 'YLim', i_limits_local)
+            end
+            
+            % Update the currently displayed slice to be the centre of the
+            % requested box
+            obj.SliceNumber = [round((i_limits_local(2)+i_limits_local(1))/2), round((j_limits_local(2)+j_limits_local(1))/2), round((k_limits_local(2)+k_limits_local(1))/2)];
+        end
+        
+        function frame = Capture(obj)
+            drawnow;
+            rect = get(obj.Axes, 'Position');
+            
+            % The image may not fill the entire axes, so we need to adjust the
+            % rectangle accordingly
+            data_aspect_ratio = get(obj.Axes, 'DataAspectRatio');
+            xlim = get(obj.Axes, 'XLim');
+            ylim = get(obj.Axes, 'YLim');
+            size_x = (xlim(2) - xlim(1))/data_aspect_ratio(1);
+            size_y = (ylim(2) - ylim(1))/data_aspect_ratio(2);
+            size_x_voxels = rect(3);
+            size_y_voxels = rect(4);
+            
+            scale_x = size_x_voxels/size_x;
+            scale_y = size_y_voxels/size_y;
+            if scale_x > scale_y
+                scale = scale_y;
+                x_offset = ceil((size_x_voxels - scale*size_x)/2);
+                y_offset = 0;
+            else
+                scale = scale_x;
+                x_offset = 0;
+                y_offset = ceil((size_y_voxels - scale*size_y)/2);
+            end
+            
+            rect(1) = rect(1) + x_offset;
+            rect(3) = rect(3) - 2*x_offset;
+            rect(2) = rect(2) + y_offset;
+            rect(4) = rect(4) - 2*y_offset;
+            
+            frame = getframe(obj.FigureHandle, rect);
+            figure;
+            image(frame.cdata);
+            set(gca, 'DataAspectRatio', data_aspect_ratio);
+            axis off
+            
+        end
+
     end
     
     
