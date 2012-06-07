@@ -26,7 +26,7 @@ classdef TDLobesByVesselDistanceTransform < TDPlugin
         Category = 'Lobes'
         
         AllowResultsToBeCached = true
-        AlwaysRunPlugin = true
+        AlwaysRunPlugin = false
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
         FlattenPreviewImage = false
@@ -49,6 +49,7 @@ classdef TDLobesByVesselDistanceTransform < TDPlugin
             vesselness_dt.ChangeRawImage(vessel_dt_raw);
             
             airways_by_lobe = dataset.GetResult('TDAirwaysLabelledByLobe');
+            airways_by_lobe = airways_by_lobe.AirwaysByLobeImage;
             
             results_left = TDLobesByVesselDistanceTransform.GetLeftLobes(dataset, left_and_right_lungs, vesselness_dt, airways_by_lobe);
             results_right = TDLobesByVesselDistanceTransform.GetRightLobes(dataset, left_and_right_lungs, vesselness_dt, airways_by_lobe);

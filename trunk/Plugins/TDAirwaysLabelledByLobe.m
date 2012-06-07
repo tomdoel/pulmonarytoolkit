@@ -49,14 +49,21 @@ classdef TDAirwaysLabelledByLobe < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            results = dataset.GetTemplateImage(TDContext.LungROI);
+            results_image = dataset.GetTemplateImage(TDContext.LungROI);
             [airway_results, airway_image] = dataset.GetResult('TDAirways');
             [skeleton_results, ~] = dataset.GetResult('TDAirwaySkeleton');
-            airways_by_lobe = TDGetAirwaysLabelledByLobe(results, airway_results, skeleton_results, reporting);
+            [airways_by_lobe, start_branches] = TDGetAirwaysLabelledByLobe(results_image, airway_results, skeleton_results, reporting);
             airway_image = 7*uint8(airway_image.RawImage > 0);
             airway_image(airways_by_lobe > 0) = airways_by_lobe(airways_by_lobe > 0);
-            results.ChangeRawImage(airway_image);
-            results.ImageType = TDImageType.Colormap;
+            results_image.ChangeRawImage(airway_image);
+            results_image.ImageType = TDImageType.Colormap;
+            results = [];
+            results.AirwaysByLobeImage = results_image;
+            results.StartBranches = start_branches;
         end
+        
+        function results = GenerateImageFromResults(airway_results, ~, ~)
+            results = airway_results.AirwaysByLobeImage;
+        end        
     end
 end

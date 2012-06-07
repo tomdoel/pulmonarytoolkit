@@ -1,10 +1,10 @@
-function results = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton_results, reporting)
+function [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton_results, reporting)
     % TDGetAirwaysLabelledByLobe. Label segmented bronchi according to the
     % lobes they serve.
     % 
     % Usage:
     %
-    %     results = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton_results, reporting)
+    %     [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton_results, reporting)
     %
     % Inputs:
     %
@@ -21,7 +21,7 @@ function results = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton
     %
     % Outputs:
     %
-    %     results : An image showing the segmented airways labelled by lobe.
+    %     results_image : An image showing the segmented airways labelled by lobe.
     %         The following colours are used:
     %             1 (blue)   : Right upper lobe
     %             2 (green)  : Right middle lobe
@@ -32,6 +32,8 @@ function results = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton
     %             3 (red)    : Uncertain - unable to allocate to a lobe
     %             7 (grey)   : Airways supplying more than one lobe (before the
     %                          lobar bifurcations)
+    %
+    %    start_branches : a structure containing the first branch for each lobe
     %
     % This function uses the skeletonised airway tree returned by TDSkeletonise
     % and the airway tree returned by TDAirwayRegionGrowingWithExplosionControl.
@@ -64,6 +66,17 @@ function results = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton
     % Separate right mid/lower lobe into mid and lower lobes
     [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobes(right_midlower_startindices, image_size, reporting);
 
+    start_branches = [];
+    start_branches.Left = left_lung_start;
+    start_branches.Right = right_lung_start;
+    start_branches.LeftUpper = left_upper_startindices;
+    start_branches.LeftLower = left_lower_startindices;
+    start_branches.RightUpper = right_upper_startindices;
+    start_branches.RightMidLower = right_midlower_startindices;
+    start_branches.RightMid = right_mid_startindices;
+    start_branches.RightLower = right_lower_startindices;
+    
+    
     % Get voxels for lobes
     left_lower_voxels = GetVoxelsForTheseBranches(left_lower_startindices);
     left_upper_voxels = GetVoxelsForTheseBranches(left_upper_startindices);
@@ -81,22 +94,22 @@ function results = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton
     
     uncertain_voxels_extended = GetVoxelsForTheseBranchesExtended(uncertain_segments, image_size);
     
-    results = zeros(image_size, 'uint8');
+    results_image = zeros(image_size, 'uint8');
     
     full_tree_voxels = start_segment.GetTree;
     
-    results(full_tree_voxels) = 7;
+    results_image(full_tree_voxels) = 7;
     
-    results(right_upper_voxels) = 1;
-    results(right_mid_voxels) = 2;
-    results(right_lower_voxels) = 4;
-    results(left_upper_voxels) = 5;
-    results(left_lower_voxels) = 6;
+    results_image(right_upper_voxels) = 1;
+    results_image(right_mid_voxels) = 2;
+    results_image(right_lower_voxels) = 4;
+    results_image(left_upper_voxels) = 5;
+    results_image(left_lower_voxels) = 6;
     
-    results(uncertain_voxels) = 3;
+    results_image(uncertain_voxels) = 3;
 
     % Label segments by skeleton
-    results(:) = 0;
+    results_image(:) = 0;
 
     segments_to_do = airway_results.AirwayTree;
     
@@ -128,7 +141,7 @@ function results = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton
         end
         
         if length(lobe_indices) == 1
-            results(voxel_indices_in_segment) = lobe_indices;
+            results_image(voxel_indices_in_segment) = lobe_indices;
         end
         
         segments_to_do = [segments_to_do segment.Children];
