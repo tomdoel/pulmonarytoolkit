@@ -43,6 +43,30 @@ classdef TDTree < handle
                 number_of_branches = number_of_branches + 1;
             end
         end
+
+        % Returns all the branches as a set, from this branch onwards
+        function branches_list = GetBranchesAsList(obj)
+            branches_list = obj;
+
+            branches_to_do = obj;
+            while ~isempty(branches_to_do)
+                branch = branches_to_do(end);
+                branches_to_do(end) = [];
+                branches_to_do = [branches_to_do, branch.Children];
+                branches_list = [branches_list, branch.Children];
+            end
+        end
+
+        % Returns all the branches as a set, from this branch onwards
+        % This is similar to GetBranchesAsList, but the branches are assembled
+        % in a different order. This is simply to match the output produced by
+        % other code
+        function branches_list = GetBranchesAsListUsingRecursion(obj)
+            branches_list = obj;
+            for child = obj.Children
+                branches_list = [branches_list child.  GetBranchesAsListUsingRecursion];
+            end
+        end
     end
 
     methods (Access = protected)
