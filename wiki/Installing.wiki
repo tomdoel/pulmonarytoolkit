@@ -1,4 +1,4 @@
-#How to install the Pulmonary Toolkit and enable all features
+#summary How to install the Pulmonary Toolkit and enable all features
 
 
 = Requirements =
@@ -56,7 +56,32 @@ bootstrap
 bjam link=shared
 }
 
+See [http://www.boost.org/doc/libs/1_49_0/more/getting_started/unix-variants.html here] for instructions on how to install Boost using other variants of Unix.
+
+
 
   * ITK
  
-See below on how to install these features
+ITK is not used by the Pulmonary Toolkit, but it is used by parts of the Gerardus project. Following the normal installation procedure for Gerardus requires the installation of ITK.
+
+
+= Installing - step by step instructions =
+
+  # Install [http://www.mathworks.com/products/matlab/ Matlab] and the [http://www.mathworks.com/products/image/ Matlab Image Processing Toolbox].
+
+Note: Matlab is a paid-for product, but if you are associated with an educational institution it may have licenses you can use. 
+
+  # Install a [http://subversion.apache.org/ Subversion] client.
+
+Subversion is a widely-used version control system. It allows you to download the Pulmonary Toolkit and to update it (to receive new features and box fixes) without losing any changes or additions you have made.
+
+Linux users can install subversion from http://subversion.apache.org/packages.html or using
+{{{
+$ sudo apt-get install subversion
+}}}
+
+A variety of Subversion clients are available for Windows (e.g. Tortoise SVN, Smart SVN) and for Mac OSX (e.g. Smart SVN, SVNX). Mac users with MacPorts installed can also obtain subversion this way
+
+  # Check out the Pulmonary Toolkit using Subversion
+
+
