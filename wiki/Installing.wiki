@@ -1,0 +1,40 @@
+#How to install the Pulmonary Toolkit and enable all features.
+
+= Requirements =
+
+You will need to install certain software before you can use the Pulmonary Toolkit. I recommend you install everything so that all the features are available to you. However, you can miss out certain programs if you don't mind not being able to use certain features.
+
+Apart from Matlab and the Matlab Image Processing Toolbox, all the required software is free and available for Windows, Linux and Mac OSX.
+
+
+== Minimum Requirements ==
+
+  * Matlab version R2010b or later
+  * The Matlab Image Processing Toolbox
+  * a Subversion client (in order to download and update the software)
+
+A variety of Subversion clients exist, e.g. Tortoise SVN, SmartSVN, SVNX.
+Linux users can install subversion from http://subversion.apache.org/packages.html or using 
+{{{
+$ sudo apt-get install subversion
+}}}
+
+
+== Additional Requirements ==
+
+Many features (e.g. lung segmentation, vessel segmentation) will also require these features:
+
+  * C++ compiler
+
+Linux users may already have gcc installed. Max OSX users can download Xcode free from the Apple AppStore. Windows users can install Visual Studio C++ Express free from Microsoft.
+
+
+== Requirements for lobe segmentation ==
+
+Lobe segmentation makes use of external code, which must be installed separately:
+
+  * the gerardaus project (http://code.google.com/p/gerardus)
+  * Boost C++ libraries (http://www.boost.org)
+  * ITK
+ 
+See below on how to install these features
