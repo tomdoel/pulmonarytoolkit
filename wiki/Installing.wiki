@@ -1,4 +1,4 @@
-#How to install the Pulmonary Toolkit and enable all features.
+#How to install the Pulmonary Toolkit and enable all features
 
 
 = Requirements =
@@ -36,6 +36,27 @@ Lobe segmentation makes use of external code, which must be installed separately
 
   * the gerardaus project (http://code.google.com/p/gerardus)
   * Boost C++ libraries (http://www.boost.org)
+
+
+Linux users may be able to install Boost as follows:
+{{{
+sudo apt-get install libboost1.46-all-dev
+}}}
+
+Mac OSX users with MacPorts installed can install Boost as follows:
+{{{
+sudo port install boost
+}}}
+
+Windows 32-bit users can install. [http://www.boostpro.com BoostPro]
+
+Windows 64-bit users will need to download Boost and install it on the command line using:
+{
+bootstrap
+bjam link=shared
+}
+
+
   * ITK
  
 See below on how to install these features
