@@ -283,22 +283,27 @@ classdef TDImage < handle
 
         % Adjusts the image borders to match the specified template image
         function ResizeToMatch(obj, template_image)
+            obj.ResizeToMatchOriginAndSize(template_image.Origin, template_image.ImageSize)
+        end
+        
+        % Adjusts the image borders to match the specified origin and size
+        function ResizeToMatchOriginAndSize(obj, new_origin, image_size)
             if obj.ImageExists
-                src_offset = template_image.Origin - obj.Origin + [1 1 1];
-                dst_offset = obj.Origin - template_image.Origin + [1 1 1];
+                src_offset = new_origin - obj.Origin + [1 1 1];
+                dst_offset = obj.Origin - new_origin + [1 1 1];
                 
                 src_start_crop = max(1, src_offset);
-                src_end_crop = min(obj.ImageSize(1:3), src_offset + template_image.ImageSize(1:3) - 1);
+                src_end_crop = min(obj.ImageSize(1:3), src_offset + image_size(1:3) - 1);
                 
                 dst_start_crop = max(1, dst_offset);
-                dst_end_crop = min(template_image.ImageSize(1:3), dst_offset + obj.ImageSize(1:3) - 1);
+                dst_end_crop = min(image_size(1:3), dst_offset + obj.ImageSize(1:3) - 1);
                 
                 class_name = class(obj.RawImage);
                 
-                num_dims = length(template_image.ImageSize);
+                num_dims = length(image_size);
                 new_image_size = obj.ImageSize;
-                new_image_size(1:num_dims) = template_image.ImageSize;
-                if strcmp(class_name, 'logical')
+                new_image_size(1:num_dims) = image_size;
+                if islogical(obj.RawImage)
                     new_rawimage = false(new_image_size);
                 else
                     new_rawimage = zeros(new_image_size, class_name);
@@ -314,7 +319,7 @@ classdef TDImage < handle
                     : );
                 obj.RawImage = new_rawimage;
             end
-            obj.Origin = template_image.Origin;
+            obj.Origin = new_origin;
             obj.NotifyImageChanged;
         end
         
