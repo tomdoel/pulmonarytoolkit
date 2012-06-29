@@ -47,14 +47,24 @@ classdef TDLeftAndRightLungs < TDPlugin
             right_lung = results.Copy;
             right_lung.ChangeRawImage(right_lung.RawImage == 1);
             right_lung.CropToFit;
+            
+            % Perform morphological closing with a spherical structure element of radius 8mm
             right_lung.MorphWithBorder(@imclose, 8);
+            % Fill any remaining holes inside the 3D image
+            right_lung = TDFillHolesInImage(right_lung);
+            
             right_lung.ChangeRawImage(uint8(right_lung.RawImage));
             
             reporting.UpdateProgressAndMessage(50, 'Closing left lung');
             left_lung = results.Copy;
             left_lung.ChangeRawImage(left_lung.RawImage == 2);
             left_lung.CropToFit;
+
+            % Perform morphological closing with a spherical structure element of radius 8mm
             left_lung.MorphWithBorder(@imclose, 8);
+            % Fill any remaining holes inside the 3D image
+            left_lung = TDFillHolesInImage(left_lung);
+
             left_lung.ChangeRawImage(2*uint8(left_lung.RawImage));
             
             reporting.UpdateProgressAndMessage(75, 'Combining');
