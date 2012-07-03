@@ -35,12 +35,12 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, reporting)
     try
         metadata = dicominfo(fullfile(path, filenames{1}));
     catch exception
-        reporting.Error('TDLoadImageFromDicomFiles:MetaDataReadError', ['TDLoadImageFromDicomFiles: error while reading metadata from ' filenames{1} ': is this a DICOM file? Error:' exception.msgString]);
+        reporting.Error('TDLoadImageFromDicomFiles:MetaDataReadError', ['TDLoadImageFromDicomFiles: error while reading metadata from ' filenames{1} ': is this a DICOM file? Error:' exception.message]);
     end
     try
         first_image_slice = dicomread(metadata);
     catch exception
-        reporting.Error('TDLoadImageFromDicomFiles:DicomReadError', ['TDLoadImageFromDicomFiles: error while reading file ' filenames{1} '. Error:' exception.msgString]);
+        reporting.Error('TDLoadImageFromDicomFiles:DicomReadError', ['TDLoadImageFromDicomFiles: error while reading file ' filenames{1} '. Error:' exception.message]);
     end
     
     if exist('reporting', 'var')
@@ -74,12 +74,12 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, reporting)
             slice_locations(file_number) = next_metadata.SliceLocation;
             series_uids{file_number} = next_metadata.SeriesInstanceUID;
         catch exception
-            reporting.Error('TDLoadImageFromDicomFiles:MetadataReadFailure', ['TDLoadImageFromDicomFiles: error while reading metadata from ' filenames{file_number} '. Error:' exception.msgString], []);
+            reporting.Error('TDLoadImageFromDicomFiles:MetadataReadFailure', ['TDLoadImageFromDicomFiles: error while reading metadata from ' filenames{file_number} '. Error:' exception.message], []);
         end
         try
             loaded_image(:, :, file_number) = dicomread(next_metadata);
         catch exception
-            calback.Error('TDLoadImageFromDicomFiles:DicomReadFailure', ['TDLoadImageFromDicomFiles: error while reading file ' filenames{file_number} '. Error:' exception.msgString]);
+            calback.Error('TDLoadImageFromDicomFiles:DicomReadFailure', ['TDLoadImageFromDicomFiles: error while reading file ' filenames{file_number} '. Error:' exception.message]);
         end     
     end
 
