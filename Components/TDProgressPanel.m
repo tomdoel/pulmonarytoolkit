@@ -58,8 +58,8 @@ classdef TDProgressPanel < TDProgressInterface
                 'BackgroundColor', panel_background_colour, 'Units', 'pixels', 'Position', progress_position, 'Visible', 'off' ...
             );
             
-            title_position = [20, 180, 460, 40];
-            text_position = [20, 120, 460, 50];
+            title_position = [20, 165, 460, 55];
+            text_position = [20, 115, 460, 45];
             cancel_position = [70, 20, 150, 40];
             quit_position = [280, 20, 150, 40];
             progress_bar_position = [50, 90, 400, 18];
