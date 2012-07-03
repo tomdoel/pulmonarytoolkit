@@ -96,14 +96,10 @@ classdef TDDensityVsHeight < TDPlugin
             % Find the coordinates of each voxel in the lung
             [i_coord, ~, ~] = ind2sub(lung_roi.ImageSize, voxels_in_lung_indices);
             
-            % Find the raw values
-            density_values_raw = lung_roi.RawImage(voxels_in_lung_indices);
+            density_mg_mL_image = TDConvertCTToDensity(lung_roi);
             
-            % Convert to HU
-            hu_values = double(lung_roi.GreyscaleToHounsfield(density_values_raw));
             
-            % Convert to density mg/mL
-            density_mg_mL = hu_values + 1000;
+            density_mg_mL = density_mg_mL_image.RawImage;
             
             % Compute the gravitatioal height
             height = (lung_roi.ImageSize(1) - i_coord).*lung_roi.VoxelSize(1);
