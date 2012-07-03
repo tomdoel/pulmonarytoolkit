@@ -212,6 +212,7 @@ classdef TDPTKGuiApp < handle
                 obj.WaitDialogHandle.Resize();
             end
         end
+
         function Capture(obj)
             obj.Reporting.ProgressDialog.Hide;
             frame = obj.ImagePanel.Capture;
