@@ -148,6 +148,8 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
         reporting.ShowWarning('TDProcessAirwaySkeleton:InternalLoopRemoved', [num2str(internal_loops_removed) ' internal ' loop_text ' detected and removed from the airway skeleton.'], []);
     end
     
+    skeleton_parent.RecomputeGenerations(1);
+    
     results = skeleton_parent;
 end
 
