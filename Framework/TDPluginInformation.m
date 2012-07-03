@@ -21,16 +21,36 @@ classdef TDPluginInformation
     methods (Static)
         
         % Obtains a list of plugins found in the Plugins folder
-        function plugin_list = GetListOfPlugins
+        function plugin_list = GetListOfPlugins(reporting)
             plugin_list = TDDiskUtilities.GetDirectoryFileList(TDPluginInformation.GetPluginsPath, '*.m');
             user_plugin_list = TDDiskUtilities.GetDirectoryFileList(TDPluginInformation.GetUserPluginsPath, '*.m');
-            plugin_list = horzcat(plugin_list, user_plugin_list);
+            combined_plugin_list = horzcat(plugin_list, user_plugin_list);
+            plugin_list = [];
+
+            for plugin_filename = combined_plugin_list
+                [~, plugin_name, ~] = fileparts(plugin_filename{1});
+                try
+                    if (exist(plugin_name, 'class') == 8)                    
+                        plugin_handle = str2func(plugin_name);
+                        plugin_info_structure = feval(plugin_handle);
+                        if isa(plugin_info_structure, 'TDPlugin')
+                            plugin_list{end + 1} = plugin_filename{1};
+                        else
+                            reporting.ShowWarning('TDPluginInformation:FileNotPlugin', ['Warning: The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
+                        end
+                    else
+                        reporting.ShowWarning('TDPluginInformation:FileNotPlugin', ['Warning: The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
+                    end
+                catch ex
+                    reporting.ShowWarning('TDPluginInformation:ParsePluginError', ['Warning: The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class, or contains errors. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], ex.message);
+                end
+            end            
         end
         
         % Obtains a list of plugins and sorts into categories according to their
         % properties
         function plugins_by_category = GetPluginInformation(reporting)
-            plugin_list = TDPluginInformation.GetListOfPlugins;
+            plugin_list = TDPluginInformation.GetListOfPlugins(reporting);
             
             plugins_by_category = containers.Map;
             
@@ -54,7 +74,7 @@ classdef TDPluginInformation
                     end
                     
                 catch ex
-                    reporting.ShowWarning('TDPluginInformation:PluginParseError', ['Warning: There is a problem with plugin file ' plugin_name '. Check there are no code errors and it has the correct properties.'], ex);
+                    reporting.ShowWarning('TDPluginInformation:PluginParseError', ['Warning: There is a problem with plugin file ' plugin_name '. Check there are no code errors and it has the correct properties.'], ex.message);
                 end
             end
         end

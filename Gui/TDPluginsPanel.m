@@ -74,7 +74,7 @@ classdef TDPluginsPanel < handle
         
         function AddPlugins(obj, callback_function_handle, gui_callback_function_handle, current_dataset)
             % This function adds buttons for all files in the Plugins directory
-            gui_plugins_by_category = TDGuiPluginInformation.GetPluginInformation;
+            gui_plugins_by_category = TDGuiPluginInformation.GetPluginInformation(obj.Reporting);
             plugins_by_category = TDPluginInformation.GetPluginInformation(obj.Reporting);
             obj.PluginsByCategory = plugins_by_category;
             obj.GuiPluginsByCategory = gui_plugins_by_category;
