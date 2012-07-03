@@ -1,4 +1,4 @@
-classdef TDPluginDependencyTracker < handle
+classdef TDPluginDependencyTracker< handle
     % TDPluginDependencyTracker. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -75,10 +75,13 @@ classdef TDPluginDependencyTracker < handle
                     ignore_dependency_checks = plugin_info.AlwaysRunPlugin || ~plugin_info.AllowResultsToBeCached;
 
                     obj.PluginCallStack.CreateAndPush(plugin_name, ignore_dependency_checks);
+                    
+                    % This is the actual call which runs the plugin
                     result = plugin_info.RunPlugin(dataset, reporting);
+                    
                     new_cache_info = obj.PluginCallStack.Pop;
                     if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
-                        error('Inconsistency in plugin call stack');
+                        reporting.Error('TDPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
                     end
                     
                     % Get the newly calculated list of dependencies for this
