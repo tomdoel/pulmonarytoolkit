@@ -26,7 +26,8 @@ Currently the code does not depend on ITK, but ITK is built as part of the gerar
 Required by the mba line fitting code. The open source allows us to include the files in our project. I believe the required files are all header files so we can add them to the project and include them as part of the build procedure.
 
 = C++ compiler =
-Required to compile anumber of mex functions used by the project
+
+Required to compile a number of mex functions used by the project
 
 = gerardus =
 
