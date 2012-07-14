@@ -363,6 +363,12 @@ classdef TDImage < handle
                 end
             end
             
+            obj.DownsampleImage(scale);
+        end
+        
+        % Downscales the image by an integer amount, without any filtering. Note
+        % this does not alter the OriginalImageSize property
+        function DownsampleImage(obj, scale)
             obj.VoxelSize = scale.*obj.VoxelSize;
             obj.Scale = scale;
             obj.RawImage = obj.RawImage(1:scale(1):end, 1:scale(2):end, 1:scale(3):end);
@@ -445,7 +451,9 @@ classdef TDImage < handle
         % Changes the value of the voxel specified by global image coordinates
         function SetVoxelToThis(obj, global_coords, value)
             local_coords = obj.GlobalToLocalCoordinates(global_coords);
-            obj.RawImage(local_coords(1), local_coords(2), local_coords(3)) = value;
+            for index = 1 : size(local_coords, 1)
+                obj.RawImage(local_coords(index, 1), local_coords(index, 2), local_coords(index, 3)) = value;
+            end
             obj.NotifyImageChanged;
         end
 
@@ -576,6 +584,61 @@ classdef TDImage < handle
             end
         end
         
+        % Resamples the image to a new voxel size, using the interpolation
+        % method specified. The resampling is based on the origin of the
+        % original image, so that the position of the new voxels is consistent
+        % between images. The resulting image is cropped to the region
+        % containing all of the previous image
+        function Resample(obj, new_voxel_size_mm, interpolation_function)
+            % Find the bounding coordinates in mm of the original image
+            min_old_coords_mm = (obj.Origin - [1, 1, 1]).*obj.VoxelSize;
+            max_old_coords_mm = (obj.Origin + obj.ImageSize - [1, 1, 1]).*obj.VoxelSize;
+            
+            % Get 1-indexed bounding voxel coordinates of the new image
+            min_new_coords = [1, 1, 1] + floor(min_old_coords_mm./new_voxel_size_mm);
+            max_new_coords = ceil(max_old_coords_mm./new_voxel_size_mm);
+
+            % Find the coordinates of the centre of each of the new voxels
+            new_i = min_new_coords(1) : max_new_coords(1);
+            new_j = min_new_coords(2) : max_new_coords(2);
+            new_k = min_new_coords(3) : max_new_coords(3);
+            new_i_mm = (new_i' - 0.5)*new_voxel_size_mm(1);
+            new_j_mm = (new_j' - 0.5)*new_voxel_size_mm(2);
+            new_k_mm = (new_k' - 0.5)*new_voxel_size_mm(3);
+            
+            % We must add a border around the image before we interpolate. This
+            % is because our coordinates refer to the voxel centres. However,
+            % interpolation uses these coordinates to determine minimum and
+            % maximum values for the coordinates of the interpolated voxels;
+            % outside of these minima and maxima the output will be set to the
+            % extrapolation value, even if that voxel lies partly or wholly
+            % within the original image. To fix this we need to extend the image
+            % domain by one voxel in each direction so that the interpolation
+            % can extend to all voxels which are mostly enclosed by the original
+            % image. The AddBorder method neatly does this, correctly adjusting
+            % the origin so the GetGlobalCoordinatesMm method will work.
+            % Note this MUST de done AFTER the new coordinates have been
+            % computed, so that they relate to the image before the border is
+            % added.
+            obj.AddBorder(1);
+            
+            % Fetch coordinates for each voxel within the existing image. Note
+            % this MUST be done AFTER the AddBorder call.
+            [old_i_mm, old_j_mm, old_k_mm] = obj.GetGlobalCoordinatesMm;            
+            
+            [old_i_grid, old_j_grid, old_k_grid] = ndgrid(old_i_mm, old_j_mm, old_k_mm);
+            [new_i_grid, new_j_grid, new_k_grid] = ndgrid(new_i_mm, new_j_mm, new_k_mm);
+            
+            % Find the nearest value for each point in the new grid
+            obj.RawImage = interpn(old_i_grid, old_j_grid, old_k_grid, obj.RawImage, new_i_grid, new_j_grid, new_k_grid, interpolation_function, 0);
+            
+            obj.Origin = min_new_coords;
+            obj.OriginalImageSize = ceil((obj.OriginalImageSize.*obj.VoxelSize)./new_voxel_size_mm);
+            obj.VoxelSize = new_voxel_size_mm;
+            obj.Scale = [1, 1, 1];
+            obj.NotifyImageChanged;            
+        end
+        
         % Performs a Matlab morphological operation using s apherical element of
         % the specified size in mm, adjusting for the voxel size
         function Morph(obj, morph_function_handle, size_mm)
@@ -703,6 +766,30 @@ classdef TDImage < handle
         
         function local_indices = GlobalToLocalIndices(obj, global_indices)
             local_indices = TDImageCoordinateUtilities.OffsetIndices(global_indices, [1, 1, 1] - obj.Origin, obj.OriginalImageSize, obj.ImageSize);
+        end
+        
+        % Given a set of global indices, compute the coordinates of each in mm
+        function [ic, jc, kc] = GlobalIndicesToCoordinatesMm(obj, indices)
+            [ic, jc, kc] = ind2sub(obj.OriginalImageSize, indices);
+            ic = (ic - 0.5)*obj.VoxelSize(1);
+            jc = (jc - 0.5)*obj.VoxelSize(2);
+            kc = (kc - 0.5)*obj.VoxelSize(3);
+        end
+        
+        % Given a set of coordinates in mm, compute the global coordinates of each
+        function global_coordinates = CoordinatesMmToGlobalCoordinates(obj, global_coordinates_mm)
+            global_coordinates = floor(global_coordinates_mm./repmat(obj.VoxelSize, size(global_coordinates_mm, 1), 1));
+        end
+        
+        % Compute the coordinates of all points in the image, in global
+        % coordinates in mm
+        function [ic, jc, kc] = GetGlobalCoordinatesMm(obj)
+            ic = 1 : obj.ImageSize(1);
+            ic = (ic' + obj.Origin(1) - 1.5)*obj.VoxelSize(1);
+            jc = 1 : obj.ImageSize(2);
+            jc = (jc' + obj.Origin(2) - 1.5)*obj.VoxelSize(2);
+            kc = 1 : obj.ImageSize(3);
+            kc = (kc' + obj.Origin(3) - 1.5)*obj.VoxelSize(3);
         end
         
     end
