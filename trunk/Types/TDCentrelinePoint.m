@@ -1,4 +1,4 @@
-classdef TDCentrelinePoint
+classdef TDCentrelinePoint < TDPoint
     % TDCentrelinePoint. A class for storing points on the centreline
     %
     %
@@ -10,18 +10,15 @@ classdef TDCentrelinePoint
     %    
     
     properties
-        CoordI
-        CoordJ
-        CoordK
+        GlobalIndex
         Radius
     end
     
     methods
-        function obj = TDCentrelinePoint(c_i, c_j, c_k, radius)
-            obj.CoordI = c_i;
-            obj.CoordJ = c_j;
-            obj.CoordK = c_k;
+        function obj = TDCentrelinePoint(c_i, c_j, c_k, radius, global_index)
+            obj = obj@TDPoint(c_i, c_j, c_k);
             obj.Radius = radius;
+            obj.GlobalIndex = global_index;
         end
     end
     
