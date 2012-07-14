@@ -24,6 +24,14 @@ classdef TDTree < handle
             end
         end
         
+        
+        function root = GetRoot(obj)
+            root = obj;
+            while ~isempty(root.Parent)
+                root = root.Parent;
+            end
+        end
+        
         % Remove this branch from the tree, connecting its children to its parent branch 
         function CutFromTree(obj)
             if ~isempty(obj.Parent)
@@ -34,7 +42,7 @@ classdef TDTree < handle
         % Returns the number of branches in this tree, from this branch
         % downwards
         function number_of_branches = CountBranches(obj)
-            number_of_branches = 0;            
+            number_of_branches = 0;
             branches_to_do = obj;
             while ~isempty(branches_to_do)
                 branch = branches_to_do(end);
@@ -44,16 +52,51 @@ classdef TDTree < handle
             end
         end
 
-        % Returns all the branches as a set, from this branch onwards
-        function branches_list = GetBranchesAsList(obj)
-            branches_list = obj;
-
+        % Returns the number of branches in this tree, from this branch
+        % downwards
+        function number_of_branches = CountTerminalBranches(obj)
+            number_of_branches = 0;
             branches_to_do = obj;
             while ~isempty(branches_to_do)
                 branch = branches_to_do(end);
                 branches_to_do(end) = [];
                 branches_to_do = [branches_to_do, branch.Children];
-                branches_list = [branches_list, branch.Children];
+                if isempty(branch.Children)
+                    number_of_branches = number_of_branches + 1;
+                end
+            end
+        end
+        
+        % Returns the number of branches in this tree, from this branch
+        % downwards
+        function minimum_generation = GetMinimumTerminalGeneration(obj)
+            minimum_generation = 99;
+            branches_to_do = obj;
+            while ~isempty(branches_to_do)
+                branch = branches_to_do(end);
+                branches_to_do(end) = [];
+                branches_to_do = [branches_to_do, branch.Children];
+                if isempty(branch.Children)
+                    minimum_generation = min(minimum_generation, branch.GenerationNumber);
+                end
+            end
+        end
+        
+        
+        
+
+        
+
+        % Returns all the branches as a set, from this branch onwards
+        function branches_list = GetBranchesAsList(obj)
+            branches_list = obj;
+            branches_to_do = obj.Children;
+
+            while ~isempty(branches_to_do)
+                branch = branches_to_do(end);
+                branches_to_do(end) = [];
+                branches_to_do = [branches_to_do, branch.Children];
+                branches_list(end+1) = branch;
             end
         end
 
