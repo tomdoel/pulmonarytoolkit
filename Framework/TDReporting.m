@@ -200,8 +200,8 @@ classdef TDReporting < TDReportingInterface
     methods (Access = private)
         function AppendToLogFile(obj, message)
             file_id = fopen(obj.LogFileName, 'at');
-            message = [datestr(now) ': ' message '\n'];
-            fprintf(file_id, '%s', message);
+            message = [datestr(now) ': ' message];
+            fprintf(file_id, '%s\n', message);
             fclose(file_id);
         end
     end
