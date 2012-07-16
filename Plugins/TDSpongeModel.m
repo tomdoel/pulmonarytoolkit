@@ -47,7 +47,7 @@ classdef TDSpongeModel < TDPlugin
             results.Clear;
             
             if ~roi.IsCT
-                reporting.ShowMessage('Cannot perform density analysis as this is not a CT image');
+                reporting.ShowMessage('TDSpongeModel:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
                 return;
             end
             
