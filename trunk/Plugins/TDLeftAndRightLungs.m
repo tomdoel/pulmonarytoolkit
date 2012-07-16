@@ -107,7 +107,7 @@ classdef TDLeftAndRightLungs < TDPlugin
                     reporting.Error('TDClosedLabeledLeftAndRightLungs:FailedToSeparateLungs', ['Failed to separate left and right lungs after ' num2str(iter_number) ' opening attempts']);
                 end
                 iter_number = iter_number + 1;
-                reporting.ShowMessage(['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
+                reporting.ShowMessage('TDLeftAndRightLungs:OpeningLungs', ['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
                 opening_size = iter_number;
                 image_to_close = both_lungs.Copy;
                 image_to_close.BinaryMorph(@imopen, opening_size);
@@ -123,7 +123,7 @@ classdef TDLeftAndRightLungs < TDPlugin
                 
             end
             
-            reporting.ShowMessage('Lung regions found.');
+            reporting.ShowMessage('TDLeftAndRightLungs:LungsFound', 'Lung regions found.');
             
             largest_area_index = largest_areas_indices(1);
             second_largest_area_index = largest_areas_indices(2);

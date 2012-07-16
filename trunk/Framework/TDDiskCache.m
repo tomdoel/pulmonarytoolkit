@@ -43,9 +43,9 @@ classdef TDDiskCache < handle
             cache_directory = fullfile(cache_parent_directory, uuid);
             if ~exist(cache_directory, 'dir')
                 mkdir(cache_directory);
-                reporting.ShowMessage(['Creating disk cache : ' cache_directory]);
+                reporting.ShowMessage('TDDiskCache:NewCacheDirectory', ['Creating disk cache : ' cache_directory]);
             else
-                reporting.ShowMessage(['Using disk cache : ' cache_directory]);
+                reporting.ShowMessage('TDDiskCache:ExistingCacheDirectory', ['Using disk cache : ' cache_directory]);
             end
             
             obj.Uuid = uuid;
@@ -156,7 +156,7 @@ classdef TDDiskCache < handle
                 file_name = file_list{index};
                 if (~strcmp(file_name, [TDSoftwareInfo.SchemaCacheName '.mat'])) && (~strcmp(file_name, [TDSoftwareInfo.ImageInfoCacheName '.mat'])) && (~strcmp(file_name, [TDSoftwareInfo.MakerPointsCacheName '.mat'])) && (~strcmp(file_name, [TDSoftwareInfo.MakerPointsCacheName 'raw'])) && (~strcmp(file_name, [TDSoftwareInfo.ImageTemplatesCacheName '.mat']))
                     full_filename = fullfile(obj.CachePath, file_name);
-                    reporting.ShowMessage(['Moving cache file to recycle bin: ' full_filename]);
+                    reporting.ShowMessage('TDDiskCache:RecyclingCacheDirectory', ['Moving cache file to recycle bin: ' full_filename]);
                     
                     delete(full_filename);
                     obj.Reporting.Log(['Deleting ' full_filename]);

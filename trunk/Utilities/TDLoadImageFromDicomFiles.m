@@ -55,7 +55,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, reporting)
     data_type = whos('first_image_slice');
     data_type_class = data_type.class;
     if (strcmp(data_type_class, 'char'))
-        reporting.ShowMessage('TDLoadImageFromDicomFiles: char datatype detected. Setting to int8');
+        reporting.ShowMessage('TDLoadImageFromDicomFiles:SettingDatatypeToInt8', 'TDLoadImageFromDicomFiles: char datatype detected. Setting to int8');
         data_type_class = 'int8';
     end
     loaded_image = zeros(size_i, size_j, size_k, data_type_class);

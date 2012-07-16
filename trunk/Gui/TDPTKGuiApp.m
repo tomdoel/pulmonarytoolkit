@@ -280,7 +280,7 @@ classdef TDPTKGuiApp < handle
                             lung_roi = obj.Dataset.GetResult('TDLungROI');
                             obj.SetImage(lung_roi);
                         catch exc
-                            obj.Reporting.ShowMessage(['Unable to extract region of interest from this dataset. Error: ' exc.message]);
+                            obj.Reporting.ShowMessage('TDPTKGuiApp:CannotGetROI', ['Unable to extract region of interest from this dataset. Error: ' exc.message]);
                             load_full_data = true;
                         end
                     else
@@ -315,7 +315,7 @@ classdef TDPTKGuiApp < handle
 
             catch exc
                 msgbox(exc.message, [TDSoftwareInfo.Name ': Cannot load dataset'], 'error');
-                obj.Reporting.ShowMessage(['Failed to load dataset due to error: ' exc.message]);
+                obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
             end
             
             obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;

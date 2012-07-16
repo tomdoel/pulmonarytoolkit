@@ -32,7 +32,7 @@ classdef TDReportingInterface < handle
         
         % Displays an information message to the user. This will generally be
         % written to the command window
-        ShowMessage(obj, message)
+        ShowMessage(obj, identifier, message)
         
         % Displays an warning to the user. This will generally be
         % written to the command window. 

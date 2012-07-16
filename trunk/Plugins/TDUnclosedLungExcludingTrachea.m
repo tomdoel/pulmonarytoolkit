@@ -44,15 +44,15 @@ classdef TDUnclosedLungExcludingTrachea < TDPlugin
             threshold_image = dataset.GetResult('TDThresholdLungFiltered');
             threshold_image.ChangeRawImage(threshold_image.RawImage > 0);
             
-            reporting.ShowMessage('Extracting lung without trachea');
+            reporting.ShowProgress('Extracting lung without trachea');
             
-            reporting.ShowMessage('Searching for largest connected region');
+            reporting.ShowProgress('Searching for largest connected region');
             
             % Find the main component, excluding any components touching the border
             threshold_image = TDGetMainRegionExcludingBorder(threshold_image, reporting);
             
             % Remove first two generations of airway tree
-            reporting.ShowMessage('Finding main airways and removing');
+            reporting.ShowProgress('Finding main airways and removing');
             results = dataset.GetResult('TDAirways');
             main_airways = TDUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, 3);
             

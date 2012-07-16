@@ -79,18 +79,17 @@ classdef TDReporting < TDReportingInterface
             obj.AppendToLogFile([calling_function ': ' message]);
         end
         
-        function ShowMessage(obj, message)
+        function ShowMessage(obj, identifier, message)
             [calling_function, ~] = TDErrorUtilities.GetCallingFunction(2);
             disp([calling_function ': ' message]);
-            obj.AppendToLogFile([calling_function ': ' message]);
+            obj.AppendToLogFile([calling_function ': ' identifier ':' message]);
         end
         
         function ShowWarning(obj, identifier, message, supplementary_info)
             [calling_function, ~] = TDErrorUtilities.GetCallingFunction(2);
             
-            message = ['WARNING: ' calling_function ': ' message];
             obj.AppendToLogFile([calling_function ': WARNING: ' identifier ':' message]);
-            warning(identifier, message);
+            disp(['WARNING: ' message]);
             if ~isempty(supplementary_info)
                 disp('Additional information on this warning:');
                 disp(supplementary_info);

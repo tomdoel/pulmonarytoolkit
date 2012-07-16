@@ -20,7 +20,7 @@ classdef TDFrequencyDistribution < TDPlugin
     %
     
     properties
-        ButtonText = 'Frequency'
+        ButtonText = 'Lung Histogram'
         ToolTip = 'Shows a histogram of the CT frequency distribution'
         Category = 'Analysis'
 
@@ -42,7 +42,7 @@ classdef TDFrequencyDistribution < TDPlugin
             roi = application.GetResult('TDLungROI');
             
             if ~roi.IsCT
-                reporting.ShowMessage('Cannot perform density analysis as this is not a CT image');
+                reporting.ShowMessage('TDFrequencyDistribution:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
                 return;
             end
             
@@ -57,7 +57,7 @@ classdef TDFrequencyDistribution < TDPlugin
             hold(axes_handle, 'on');
             
             % Shade the compartments
-            max_y = 55;
+            max_y = 60;
             rectangle('Parent', axes_handle, 'Position', [-1000, 0, 100, max_y], 'EdgeColor', 'none', 'FaceColor', [0.9 0.9 1])
             rectangle('Parent', axes_handle, 'Position', [ -900, 0, 400, max_y], 'EdgeColor', 'none', 'FaceColor', [0.8 0.8 1])
             rectangle('Parent', axes_handle, 'Position', [ -500, 0, 400, max_y], 'EdgeColor', 'none', 'FaceColor', [0.7 0.7 1])
