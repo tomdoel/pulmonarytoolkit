@@ -791,6 +791,15 @@ classdef TDImage < handle
             kc = 1 : obj.ImageSize(3);
             kc = (kc' + obj.Origin(3) - 1.5)*obj.VoxelSize(3);
         end
+
+        % Computes the isotropic grid spacing required to resample this mask so
+        % as to achieve approximately the number of specified points in the mask
+        function grid_spacing_mm = ComputeResamplingGridSpacing(obj, approx_number_points)
+            number_of_voxels = sum(obj.RawImage(:) > 0);
+            parallelepiped_volume = prod(obj.VoxelSize);
+            grid_spacing_mm = nthroot(parallelepiped_volume*(number_of_voxels/approx_number_points), 3);
+        end
+        
         
     end
     
