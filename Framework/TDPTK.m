@@ -45,9 +45,10 @@ classdef TDPTK < handle
     %
     
     properties        
-        Reporting % Object for error and progress reporting
+        Reporting          % Object for error and progress reporting
+        ReportingWithCache % For the dataset, uses the same object, but warnings and messages are cached so multiple warnings can be displayed together
     end
-    
+
     methods
         
         % Constructor. If no error/progress reporting object is specified then a
@@ -57,6 +58,8 @@ classdef TDPTK < handle
                 reporting = TDReportingDefault;
             end
             obj.Reporting = reporting;
+            obj.ReportingWithCache = TDReportingWithCache(obj.Reporting);
+
         end
         
         % Creates a TDDataset object for a dataset specified by the uid. The
@@ -68,7 +71,7 @@ classdef TDPTK < handle
                 obj.Reporting.Error('TDPTK:UidNotFound', 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
-            dataset = TDDataset(image_info, disk_cache, obj.Reporting);
+            dataset = TDDataset(image_info, disk_cache, obj.ReportingWithCache);
             
         end
 
@@ -97,7 +100,7 @@ classdef TDPTK < handle
                 disk_cache.Save(TDSoftwareInfo.ImageInfoCacheName, image_info);
             end
             
-            dataset = TDDataset(image_info, disk_cache, obj.Reporting);
+            dataset = TDDataset(image_info, disk_cache, obj.ReportingWithCache);
             
         end
     end

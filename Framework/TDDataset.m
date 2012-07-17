@@ -40,7 +40,7 @@ classdef TDDataset < handle
         DependencyTracker % Tracks plugin usage to construct dependency lists 
         DiskCache         % Reads and writes to the disk cache for this dataset
         PreviewImages     % Stores the thumbnail preview images
-        Reporting    % Object for error and progress reporting
+        Reporting         % Object for error and progress reporting
     end
     
     events
@@ -79,34 +79,40 @@ classdef TDDataset < handle
             else
                 result = obj.DatasetResults.GetResult(plugin_name, context);
             end
+            obj.Reporting.ShowAndClear;
         end
                 
         % Save data as a cache file associated with this dataset
         % Used for marker points
         function SaveData(obj, name, data)
             obj.DiskCache.Save(name, data);
+            obj.Reporting.ShowAndClear;
         end
         
         % Load data from a cache file associated with this dataset
         function data = LoadData(obj, name)
             data = obj.DiskCache.Load(name);
+            obj.Reporting.ShowAndClear;
         end
 
         % Gets the path of the folder where the results for this dataset are
         % stored
         function dataset_cache_path = GetDatasetCachePath(obj)
             dataset_cache_path = obj.DiskCache.CachePath;
+            obj.Reporting.ShowAndClear;
         end
 
         % Returns a TDImageInfo structure with image information, including the
         % UID, filenames and file path
         function image_info = GetImageInfo(obj)
             image_info = obj.DatasetResults.GetImageInfo;
+            obj.Reporting.ShowAndClear;
         end
 
         % Gets a thumbnail image of the last result for this plugin
         function preview = GetPluginPreview(obj, plugin_name)
             preview = obj.PreviewImages.GetPreview(plugin_name);
+            obj.Reporting.ShowAndClear;
         end
 
         % Removes all the cache files associated with this dataset. Cache files
@@ -116,6 +122,7 @@ classdef TDDataset < handle
         function ClearCacheForThisDataset(obj)
             obj.DiskCache.RemoveAllCachedFiles(obj.Reporting);
             obj.PreviewImages.Clear;
+            obj.Reporting.ShowAndClear;
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
@@ -123,6 +130,7 @@ classdef TDDataset < handle
         % that context.
         function context_is_enabled = IsContextEnabled(obj, context)
             context_is_enabled = obj.DatasetResults.IsContextEnabled(context);
+            obj.Reporting.ShowAndClear;
         end
     end
 end
