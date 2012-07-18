@@ -81,7 +81,7 @@ classdef TDReporting < TDReportingInterface
         
         function ShowMessage(obj, identifier, message)
             [calling_function, ~] = TDErrorUtilities.GetCallingFunction(2);
-            disp([calling_function ': ' message]);
+            disp(message);
             obj.AppendToLogFile([calling_function ': ' identifier ':' message]);
         end
         
