@@ -1,4 +1,4 @@
-TD Pulmonary Toolkit
+Pulmonary Toolkit
 Lung medical image analysis and visualisation software for Matlab.
 
 This code is open source and available free to download from the project website:
@@ -20,8 +20,24 @@ It comprises:
   * a rapid prototyping framework for developing new algorithms, which fully integrates with the GUI application.
 
 This software requires Matlab and the Matlab Image Processing Toolbox.
+Some functionality also requires a C++ compiler to be installed. Please see the website for details.
+    http://code.google.com/p/pulmonarytoolkit
 
 This software is intended for research purposes only. It is not intended for clinical use.
+
+
+
+Licence
+-------
+
+The code in the project (except for code in the External folder) is distributed under the GNU GPL v3 licence. 
+See licence.txt or the website for details.
+
+Code in the External folder:
+ The External folder contains code imported from other open-source projects, which may be covered by different licences.
+ Please see the licence files, which are contained in the corresponding folder for each project.
+ 
+ Note: the licenses for these projects permit the code to be distributed with this project.
 
 
 
@@ -32,10 +48,23 @@ To run the gui, run
 
     ptk
 
-at the Matlab command line
+at the Matlab command line.
+
+For more details please read the wiki at
+    http://code.google.com/p/pulmonarytoolkit
 
 
-Adding new functinality
+Scripting
+---------
+
+To use the toolkit in your own programs, create an instance of TDPTK and use 
+this to create TDDataset objects for each dataset you want to work with.
+
+For more information see the code wiki http://code.google.com/p/pulmonarytoolkit
+
+
+
+Adding new functionality
 -----------------------
 
 You add new functionality to the toolkit by creating new plugin files in the 
@@ -54,13 +83,6 @@ the Plugins/ and GuiPlugins/ folders.
 For more information see the code wiki http://code.google.com/p/pulmonarytoolkit
 
 
-Scripting
----------
-
-To use the toolkit in your own programs, create an instance of TDPTK and use 
-this to create TDDataset objects for each dataset you want to work with.
-
-For more information see the code wiki http://code.google.com/p/pulmonarytoolkit
 
 
 Folders
