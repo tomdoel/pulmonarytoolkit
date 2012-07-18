@@ -169,7 +169,11 @@ classdef TDImage < handle
                 
                 fid = fopen(full_raw_filename, 'rb');
                 data = fread(fid, ['*' file_data_type]);
-                obj.RawImage(:) = data(1:numel(obj.RawImage(:)));
+                if numel(data) == numel(obj.RawImage)
+                    obj.RawImage(:) = data(:);
+                else
+                    obj.RawImage(:) = data(1:numel(obj.RawImage(:)));
+                end
                 fclose(fid);
                     
                 obj.NotifyImageChangedCacheStillValid
