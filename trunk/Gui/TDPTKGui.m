@@ -64,7 +64,12 @@ function TDPTKGui_OpeningFcn(hObject, ~, handles, varargin)
     set(handles.TDPTK_Figure, 'CloseRequestFcn', @CustomCloseFunction);
 
     % Create the application object
-    ptk_app = TDPTKGuiApp(handles.uipanel_image, handles.TDPTK_Figure, handles.uipanel_plugins, handles.popupmenu_load, handles.text_version, handles);
+    if ~isempty(varargin) && isa(varargin{1}, 'TDProgressInterface')
+        splash_screen = varargin{1};
+    else
+        splash_screen = [];
+    end
+    ptk_app = TDPTKGuiApp(handles.uipanel_image, handles.TDPTK_Figure, handles.uipanel_plugins, handles.popupmenu_load, handles.text_version, handles, splash_screen);
     
     % Store a handle to the application object in the figure data, so that it
     % can be obtained by the gui callbacks.
