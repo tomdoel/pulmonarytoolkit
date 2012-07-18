@@ -36,10 +36,12 @@ classdef TDPTKGuiApp < handle
     end
     
     methods
-        function obj = TDPTKGuiApp(viewer_panel_handle, figure_handle, uipanel_handle, popupmenu_handle, text_version_handle, handles)
+        function obj = TDPTKGuiApp(viewer_panel_handle, figure_handle, uipanel_handle, popupmenu_handle, text_version_handle, handles, splash_screen)
             
             % Create the splash screen.
-            splash_screen = TDSplashScreen;
+            if isempty(splash_screen)
+                splash_screen = TDSplashScreen;
+            end
             
             obj.ImageAxes = handles.uipanel_image;
             

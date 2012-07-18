@@ -15,8 +15,13 @@ clc
 % Add all necessary paths
 TDAddPtkPaths;
 
+% Create the splash screen - do this early so the user knows something is
+% hapenning
+splash_screen = TDSplashScreen;
+splash_screen.ShowAndHold('Initialising');
+
 % Verify that an appropriate version of Matlab is being run
 TDCheckMatlabVersion;
 
 % Run the toolkit gui
-TDPTKGui;
+TDPTKGui(splash_screen);
