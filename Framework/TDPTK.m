@@ -44,7 +44,8 @@ classdef TDPTK < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties        
+    properties
+        FrameworkCache
         Reporting          % Object for error and progress reporting
         ReportingWithCache % For the dataset, uses the same object, but warnings and messages are cached so multiple warnings can be displayed together
     end
@@ -59,7 +60,13 @@ classdef TDPTK < handle
             end
             obj.Reporting = reporting;
             obj.ReportingWithCache = TDReportingWithCache(obj.Reporting);
-
+            obj.FrameworkCache = TDFrameworkCache.LoadCache(obj.Reporting);
+            %TDCompileMexFiles(obj.FrameworkCache, false, obj.Reporting);            
+        end
+        
+        % Forces recompilation of mex files
+        function Recompile(obj)
+            TDCompileMexFiles(obj.FrameworkCache, true, obj.Reporting);
         end
         
         % Creates a TDDataset object for a dataset specified by the uid. The
