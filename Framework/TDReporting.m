@@ -68,7 +68,7 @@ classdef TDReporting < TDReportingInterface
             if nargin > 1
                 obj.ViewingPanel = viewing_panel;
             end
-            settings_folder = TDPTKSettings.GetSettingsDirectory;
+            settings_folder = TDSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
             log_file_name = TDSoftwareInfo.LogFileName;
             obj.LogFileName = fullfile(settings_folder, log_file_name);
         end
