@@ -43,6 +43,7 @@ function TDCompileMexFiles(framework_cache, force_recompile, reporting)
     framework_cache.MexInfoMap = mex_files_to_compile;
     framework_cache.IsNewlyCreated = false;
     framework_cache.SaveCache;
+    reporting.CompleteProgress;
 end
 
 function compiler = MexSetup(reporting)
@@ -84,7 +85,11 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
             elseif strcmp(mex_file.StatusID, 'TDCompileMexFiles:NoCachedInfoForMex')
                 reporting.ShowMessage('TDCompileMexFiles:NoCachedInfoForMex', [mex_file.Name ' requires compilation.']);
             elseif strcmp(mex_file.StatusID, 'TDCompileMexFiles:CacheFileDeleted')
-                reporting.ShowMessage('TDCompileMexFiles:CacheFileDeleted', [mex_file.Name ' requires recompilation because it appears the cache file ' TDSoftwareInfo.FrameworkCacheFileName ' was deleted.']);
+                reporting.ShowMessage('TDCompileMexFiles:CacheFileDeleted', [mex_file.Name ' requires recompilation because it appears the cache file ' TDSoftwareInfo.FrameworkCacheFileName ' was deleted.']);                
+            elseif strcmp(mex_file.StatusID, 'TDCompileMexFiles:CompiledFileNotFound')
+                reporting.ShowMessage('TDCompileMexFiles:CompiledFileNotFound', [mex_file.Name ' requires compilation.']);
+                
+                
             elseif strcmp(mex_file.StatusID, 'TDCompileMexFiles:NoRecompileNeeded')
                 if force_recompile
                     reporting.ShowMessage('TDCompileMexFiles:ForcingRecompile', ['Forcing recompile of ' mex_file.Name '.']);
@@ -212,7 +217,11 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
                 
                 % Only display a warning message here if there is a record of a
                 % previous compilation
-                mex_file.StatusID = 'TDCompileMexFiles:CompiledFileRemoved';
+                if (~isempty(mex_file.LastSuccessfulCompiledVersion)) && (~mex_file.LastCompileFailed)
+                    mex_file.StatusID = 'TDCompileMexFiles:CompiledFileRemoved';
+                else
+                    mex_file.StatusID = 'TDCompileMexFiles:CompiledFileNotFound';
+                end
             end
             
         else
