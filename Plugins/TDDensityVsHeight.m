@@ -34,18 +34,18 @@ classdef TDDensityVsHeight < TDPlugin
     end
     
     methods (Static)
-        function results = RunPlugin(application, reporting)
+        function results = RunPlugin(dataset, reporting)
             results = [];
 
-            lung_roi = application.GetResult('TDLungROI');
+            lung_roi = dataset.GetResult('TDLungROI');
             
             if ~lung_roi.IsCT
-                reporting.ShowMessage('Cannot perform analysis as this is not a CT image');
+                reporting.ShowMessage('TDDensityVsHeight:NotCTImage', 'Cannot perform analysis as this is not a CT image');
                 return;
             end
             
-            left_and_right_lungs = application.GetResult('TDLeftAndRightLungs');
-            surface = application.GetResult('TDLungSurface');
+            left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
+            surface = dataset.GetResult('TDLungSurface');
             left_and_right_lungs.ChangeRawImage(left_and_right_lungs.RawImage.*uint8(~surface.RawImage));
             left_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 2));
             right_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 1));
@@ -86,8 +86,11 @@ classdef TDDensityVsHeight < TDPlugin
             set(gca, 'XTick', x_ticks)
             set(gca, 'XTickLabel', sprintf('%1.4f|', x_ticks))
             ylabel(axes_handle, 'Gravitational height (%)', 'FontSize', 20);
-            axis([min(x_ticks) max_x 0 100]);      
+            axis([min(x_ticks) max_x 0 100]);
+            
+            TDDensityVsHeight.SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle);
         end
+        
         
         function results = ComputeForLung(lung_roi,  voxels_in_lung_indices)
             
@@ -159,6 +162,32 @@ classdef TDDensityVsHeight < TDPlugin
     end
     
     methods (Static, Access = private)
+        function SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle)
+            results_directory = TDPTK.GetResultsDirectoryAndCreateIfNecessary;
+            image_info = dataset.GetImageInfo;
+            uid = image_info.ImageUid;
+            file_name = fullfile(results_directory, uid);
+            if ~exist(file_name, 'dir')
+                mkdir(file_name);
+            end
+            results_file_name = fullfile(file_name, ['DensityVsHeight.txt']);
+            file_handle = fopen(results_file_name, 'w');
+            
+            number_points = length(left_lung_results.mean_density_values);
+            for index = 1 : number_points
+                left_density = left_lung_results.mean_density_values(index);
+                right_density = right_lung_results.mean_density_values(index);
+                gravity_percentage = left_lung_results.gravity_percentage_values(index);
+                left_stdev = left_lung_results.std_values(index);
+                right_stdev = right_lung_results.std_values(index);
+                output_string = sprintf('%6.6g,%6.6g,%6.6g,%6.6g,%6.6g\r\n', gravity_percentage, left_density, right_density, left_stdev, right_stdev);
+                fprintf(file_handle, regexprep(output_string, ' ', ''));
+            end
+            
+            fclose(file_handle);
+            figure_filename = fullfile(file_name, ['DensityVsHeight.tif']);
+            saveas(figure_handle, figure_filename);
+        end
         
         %maximize Displays a figure full-screen
         function Maximize(fig)
