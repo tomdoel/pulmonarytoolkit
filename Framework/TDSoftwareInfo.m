@@ -32,6 +32,7 @@ classdef TDSoftwareInfo < handle
         TDPTKVersion = '1'
         CachedPluginInfoFileName = 'CachedPluginInfo'
         SettingsFileName = 'TDPTKSettings.mat'
+        FrameworkCacheFileName = 'TDFrameworkCache.mat'
         MakerPointsCacheName = 'MarkerPoints'
         ImageInfoCacheName = 'ImageInfo'
         SchemaCacheName = 'Schema'
@@ -60,6 +61,12 @@ classdef TDSoftwareInfo < handle
             version_matrix = sscanf(matlab_version, '%d.%d.%d.%d');
             major_version = version_matrix(1);
             minor_version = version_matrix(2);
+        end
+        
+        function source_directory = GetSourceDirectory
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            source_directory = fullfile(path_root, '..');
         end
     end
 end
