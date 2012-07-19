@@ -1,4 +1,4 @@
-function TDWrite3DMetaFile(header_filename, image, resolution, data_type)
+function TDWrite3DMetaFile(header_filename, image, resolution, data_type, offset)
     % TDWrite3DMetaFile. Writes out raw image data in metaheader & raw format
     %
     %     Syntax
@@ -26,16 +26,17 @@ function TDWrite3DMetaFile(header_filename, image, resolution, data_type)
     fid = fopen(header_filename, 'w');
     if (fid <= 0)
         sprintf('Unable to open file %s\n', header_filename);
+        error;
     end
     
     fprintf(fid, 'ObjectType = Image\n');
     fprintf(fid, 'NDims = 3\n');
     fprintf(fid, 'BinaryData = True\n');
     fprintf(fid, 'BinaryDataByteOrderMSB = False\n');
-    fprintf(fid, 'TransformMatrix = 0 1 0 1 0 0 0 0 -1\n');
-    fprintf(fid, 'Offset = 0 0 0\n');
+    fprintf(fid, 'TransformMatrix = 0 1 0 1 0 0 0 0 1\n');
+    fprintf(fid, 'Offset = %s\n', offset);
     fprintf(fid, 'CenterOfRotation = 0 0 0\n');
-    fprintf(fid, 'AnatomicalOrientation = ARS\n');
+    fprintf(fid, 'AnatomicalOrientation = RAI\n');
     fprintf(fid, 'ElementSpacing = %1.4f %1.4f %1.4f\n', resolution(1), resolution(2), resolution(3));
     fprintf(fid, 'DimSize = %d %d %d\n', size(image, 1), size(image, 2), size(image, 3));
     
@@ -55,4 +56,5 @@ function TDWrite3DMetaFile(header_filename, image, resolution, data_type)
     end
     fwrite(fid, image, data_type);
     fclose(fid);
+end
     
