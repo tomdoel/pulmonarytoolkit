@@ -93,7 +93,7 @@ classdef TDPTKSettings < handle
             settings_path = TDPTKSettings.GetSettingsDirectory;
             settings_filename = TDPTKSettings.GetSettingsFilePath;
             if ~exist(settings_path, 'dir')
-                reporting.ShowMessage('TDPTKGuiApp:NewSettingsDirectory', ['Creating settings directory: ' settings_path]);
+                reporting.ShowMessage('TDPTKSettings:NewSettingsDirectory', ['Creating settings directory: ' settings_path]);
                 mkdir(settings_path);
             end
             
