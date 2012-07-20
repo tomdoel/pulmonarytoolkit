@@ -49,6 +49,7 @@ Using a command-line Subversion client:
 svn checkout http://pulmonarytoolkit.googlecode.com/svn/trunk/ pulmonarytoolkit
 }}}
 
-Using Subversion GUI:
-  * Find the "Checkout" option
-  * Select SVN checkout
+Using a Subversion GUI, find the command to check out a repository. You want to chef out the following repository as an anonymous user:
+{{{
+http://pulmonarytoolkit.googlecode.com/svn/trunk/
+}}}
