@@ -44,12 +44,12 @@ A variety of Subversion clients are available for Windows (e.g. Tortoise SVN, Sm
 
   # Check out the Pulmonary Toolkit using Subversion
 
-Using a command-line Subversion client:
+*Using a command-line Subversion client*, execute the following:
 {{{
 svn checkout http://pulmonarytoolkit.googlecode.com/svn/trunk/ pulmonarytoolkit
 }}}
 
-Using a Subversion GUI, find the command to check out a repository. You want to chef out the following repository as an anonymous user:
+*Or, if you are using a Subversion GUI*, find the command to check out a repository. You want to check out the following repository as an anonymous user:
 {{{
 http://pulmonarytoolkit.googlecode.com/svn/trunk/
 }}}
