@@ -8,7 +8,7 @@ You will need to install certain software before you can use the Pulmonary Toolk
 Apart from Matlab and the Matlab Image Processing Toolbox, all the required software is free and available for Windows, Linux and Mac OSX.
 
 
-== Minimum Requirements ==
+== Required software ==
 
   * Matlab version R2010b or later
   * The Matlab Image Processing Toolbox
@@ -20,49 +20,9 @@ Linux users can install subversion from http://subversion.apache.org/packages.ht
 $ sudo apt-get install subversion
 }}}
 
-
-== Additional Requirements ==
-
-Many features (e.g. lung segmentation, vessel segmentation) will also require these features:
-
-  * C++ compiler
+  * C++ compiler (required to use advance features such as lobe segmentation).
 
 Linux users may already have gcc installed. Max OSX users can download Xcode free from the Apple AppStore. Windows users can install Visual Studio C++ Express free from Microsoft.
-
-
-== Requirements for lobe segmentation ==
-
-Lobe segmentation makes use of external code, which must be installed separately:
-
-  * the gerardaus project (http://code.google.com/p/gerardus)
-  * Boost C++ libraries (http://www.boost.org)
-
-
-Linux users may be able to install Boost as follows:
-{{{
-sudo apt-get install libboost1.46-all-dev
-}}}
-
-Mac OSX users with MacPorts installed can install Boost as follows:
-{{{
-sudo port install boost
-}}}
-
-Windows 32-bit users can install. [http://www.boostpro.com BoostPro]
-
-Windows 64-bit users will need to download Boost and install it on the command line using:
-{
-bootstrap
-bjam link=shared
-}
-
-See [http://www.boost.org/doc/libs/1_49_0/more/getting_started/unix-variants.html here] for instructions on how to install Boost using other variants of Unix.
-
-
-
-  * ITK
- 
-ITK is not used by the Pulmonary Toolkit, but it is used by parts of the Gerardus project. Following the normal installation procedure for Gerardus requires the installation of ITK.
 
 
 = Installing - step by step instructions =
@@ -84,4 +44,11 @@ A variety of Subversion clients are available for Windows (e.g. Tortoise SVN, Sm
 
   # Check out the Pulmonary Toolkit using Subversion
 
+Using a command-line Subversion client:
+{{{
+svn checkout http://pulmonarytoolkit.googlecode.com/svn/trunk/ pulmonarytoolkit
+}}}
 
+Using Subversion GUI:
+  * Find the "Checkout" option
+  * Select SVN checkout
