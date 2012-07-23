@@ -44,6 +44,8 @@ classdef TDSoftwareInfo < handle
         MatlabMinimumMinorVersion = 11
         MatlabAdvisedMajorVersion = 7
         MatlabAdvisedMinorVersion = 14
+        DebugMode = true
+        BackgroundColour = [0, 0.129, 0.278]
     end
 
     methods (Static)
