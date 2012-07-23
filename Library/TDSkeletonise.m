@@ -1,4 +1,15 @@
 function binary_image = TDSkeletonise(binary_image, fixed_points_global, reporting)
+    % TDSkeletonise. Performs a skeletonisation on a segmented airway tree.
+    %
+    %
+    %
+    %     Licence
+    %     -------
+    %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %    
+
     if ~isa(binary_image, 'TDImage')
         error('Requires a TDImage as input');
     end
