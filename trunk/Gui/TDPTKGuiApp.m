@@ -66,6 +66,15 @@ classdef TDPTKGuiApp < handle
             obj.Ptk = TDPTK(obj.Reporting);
             
             obj.Settings = TDPTKSettings.LoadSettings(obj.ImagePanel, obj.Reporting);
+            if isempty(obj.Settings.ScreenPosition)
+                % Initialise full-screen
+                units=get(obj.FigureHandle, 'units');
+                set(obj.FigureHandle, 'units', 'normalized', 'outerposition', [0 0 1 1]);
+                set(obj.FigureHandle, 'units', units);
+                
+            else
+                set(obj.FigureHandle, 'Position', obj.Settings.ScreenPosition);
+            end
             
             obj.DropDownLoadMenuManager = TDDropDownLoadMenuManager(obj.Settings, popupmenu_handle);
 
@@ -471,6 +480,8 @@ classdef TDPTKGuiApp < handle
         end
         
         function SaveSettings(obj)
+            set(obj.FigureHandle, 'units', 'pixels');
+            obj.Settings.ScreenPosition = get(obj.FigureHandle, 'Position');
             obj.Settings.SaveSettings(obj.ImagePanel, obj.Reporting);
         end
         

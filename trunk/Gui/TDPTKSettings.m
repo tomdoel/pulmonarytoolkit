@@ -18,7 +18,7 @@ classdef TDPTKSettings < handle
     properties
         OverlayOpacity = 50
         ImageInfo = []
-        PreviousImageInfos = containers.Map
+        PreviousImageInfos
         Window = 1000
         Level = 1000
         SliceNumber = [1 1 1]
@@ -30,6 +30,7 @@ classdef TDPTKSettings < handle
         ShowTextLabels = true
         SliceSkip = 10
         CurrentMarkerColour = 1
+        ScreenPosition
     end
     
     methods (Static)
@@ -76,6 +77,13 @@ classdef TDPTKSettings < handle
     end
     
     methods
+        function obj = TDPTKSettings
+            % Objects should be instantiated in the constructor, not in the
+            % property list. Otherwise all objects of this class will have the
+            % same instance of the property
+            obj.PreviousImageInfos = containers.Map;
+        end
+        
         function SaveSettings(obj, viewer_panel, reporting)
             % Also save settings from the image panel
             obj.OverlayOpacity = viewer_panel.OverlayOpacity;
