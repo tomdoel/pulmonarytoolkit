@@ -1,5 +1,5 @@
 classdef TDAirwaysLabelledByLobe < TDPlugin
-    % TDAirwaysLabelledByBronchus. Plugin to visualise the airway tree labelled
+    % TDAirwaysLabelledByLobe. Plugin to visualise the airway tree labelled
     % according to lobe
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
@@ -52,8 +52,11 @@ classdef TDAirwaysLabelledByLobe < TDPlugin
             results_image = dataset.GetTemplateImage(TDContext.LungROI);
             [airway_results, airway_image] = dataset.GetResult('TDAirways');
             [skeleton_results, ~] = dataset.GetResult('TDAirwaySkeleton');
-            [airways_by_lobe, start_branches] = TDGetAirwaysLabelledByLobe(results_image, airway_results, skeleton_results, reporting);
-            airway_image = 7*uint8(airway_image.RawImage > 0);
+            if ~isequal(skeleton_results.ImageSize, results_image.ImageSize)
+                reporting.Error('TDAirwaysLabelledByLobe:ImageSizeMismatch', 'The airway skeleton image size does not match the ROI size, so results are invalid. Try deleting the cache for this dataset.');
+            end
+            [airways_by_lobe, start_branches] = TDGetAirwaysLabelledByLobe(results_image, airway_results, skeleton_results.AirwayCentrelineTree, reporting);
+            airway_image = 7*uint8(airway_image.RawImage == 1);
             airway_image(airways_by_lobe > 0) = airways_by_lobe(airways_by_lobe > 0);
             results_image.ChangeRawImage(airway_image);
             results_image.ImageType = TDImageType.Colormap;
