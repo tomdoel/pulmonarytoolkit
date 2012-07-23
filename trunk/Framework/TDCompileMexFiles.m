@@ -85,11 +85,11 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
             elseif strcmp(mex_file.StatusID, 'TDCompileMexFiles:NoCachedInfoForMex')
                 reporting.ShowMessage('TDCompileMexFiles:NoCachedInfoForMex', [mex_file.Name ' requires compilation.']);
             elseif strcmp(mex_file.StatusID, 'TDCompileMexFiles:CacheFileDeleted')
-                reporting.ShowMessage('TDCompileMexFiles:CacheFileDeleted', [mex_file.Name ' requires recompilation because it appears the cache file ' TDSoftwareInfo.FrameworkCacheFileName ' was deleted.']);                
+                reporting.ShowMessage('TDCompileMexFiles:CacheFileDeleted', [mex_file.Name ' requires recompilation because it appears the cache file ' TDSoftwareInfo.FrameworkCacheFileName ' was deleted.']);
             elseif strcmp(mex_file.StatusID, 'TDCompileMexFiles:CompiledFileNotFound')
                 reporting.ShowMessage('TDCompileMexFiles:CompiledFileNotFound', [mex_file.Name ' requires compilation.']);
-                
-                
+
+
             elseif strcmp(mex_file.StatusID, 'TDCompileMexFiles:NoRecompileNeeded')
                 if force_recompile
                     reporting.ShowMessage('TDCompileMexFiles:ForcingRecompile', ['Forcing recompile of ' mex_file.Name '.']);

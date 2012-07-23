@@ -61,7 +61,7 @@ classdef TDPTK < handle
             obj.Reporting = reporting;
             obj.ReportingWithCache = TDReportingWithCache(obj.Reporting);
             obj.FrameworkCache = TDFrameworkCache.LoadCache(obj.Reporting);
-            TDCompileMexFiles(obj.FrameworkCache, false, obj.Reporting);            
+            TDCompileMexFiles(obj.FrameworkCache, false, obj.Reporting);
         end
         
         % Forces recompilation of mex files
