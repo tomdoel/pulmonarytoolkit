@@ -59,31 +59,13 @@ classdef TDAirways < TDPlugin
             results = TDAirwayRegionGrowingWithExplosionControl(threshold, start_point, maximum_number_of_generations, explosion_multiplier, reporting);
         end
         
-        function results = GenerateImageFromResults(airway_results, image_templates, ~)
+        function results = GenerateImageFromResults(airway_results, image_templates, reporting)
             template_image = image_templates.GetTemplateImage(TDContext.LungROI);
-            
-            image_size = template_image.ImageSize;
-            
-            airway_image = zeros(image_size, 'uint8');
-            
+            results = TDGetImageFromAirwayResults(airway_results, template_image, reporting);
+            results_raw = results.RawImage;
             explosion_points = template_image.GlobalToLocalIndices(airway_results.ExplosionPoints);
-            airway_image(explosion_points) = 3;
-            
-
-            airway_tree = airway_results.AirwayTree;
-            segments_to_do = airway_tree;
-            while ~isempty(segments_to_do)
-                segment = segments_to_do(end);
-                segments_to_do(end) = [];
-                voxels = segment.GetAllAirwayPoints;
-                voxels = template_image.GlobalToLocalIndices(voxels);
-                airway_image(voxels) = 1;
-                segments_to_do = [segments_to_do, segment.Children];
-            end
-                        
-            results = template_image;
-            results.ChangeRawImage(airway_image);
-            results.ImageType = TDImageType.Colormap;
+            results_raw(explosion_points) = 3;
+            results.ChangeRawImage(results_raw);
        end
     end
 end
