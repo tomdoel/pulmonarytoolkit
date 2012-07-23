@@ -23,6 +23,12 @@ classdef TDSkeletonSegment < TDTree
         GenerationNumber % Generation of this segment, starting at 1
     end
     
+    % ToDo: Radius property should be removed; instead create a TDTreeModel as
+    % part of the airway radius computation
+    properties
+        Radius    % This will be set by the TDAirwayRadius plugin
+    end
+    
     methods
         function obj = TDSkeletonSegment(start_point, parent)
             obj.GenerationNumber = 1;
@@ -36,8 +42,8 @@ classdef TDSkeletonSegment < TDTree
             end
         end
         
-        function AddPoint(obj, new_point)
-            obj.Points(end + 1) = new_point;
+        function AddPoint(obj, new_point_localindex)
+            obj.Points(end + 1) = new_point_localindex;
         end
         
         function CompleteSegment(obj)
