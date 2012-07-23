@@ -44,44 +44,19 @@ classdef TDAirwaySkeleton < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            reporting.ShowProgress('Finding airways');
-            [airway_results, segmented_image] = dataset.GetResult('TDAirways');
-
-            start_point = airway_results.StartPoint;
-            start_point_index = sub2ind(airway_results.ImageSize, start_point(1), start_point(2), start_point(3));
-            
-            
-            start_point_local = segmented_image.GlobalToLocalCoordinates(start_point);
-            end_points = airway_results.EndPoints;
-            fixed_points = [start_point_index, end_points];
-            
-            segmented_image.ChangeRawImage(uint8(segmented_image.RawImage == 1));
-            
-            % While each branch of the tree has been closed, there may still be
-            % holes where branches meet. Hence we perform a hole filling to
-            % ensure this does not cause topoligcal problems with the
-            % skeletonisation
-            reporting.ShowProgress('Filling holes in airway tree');
-            segmented_image = TDFillHolesInImage(segmented_image);
-
-            % Skeletonise
-            reporting.ShowProgress('Reducing airways to a skeleton');
-            skeleton_image = TDSkeletonise(segmented_image, fixed_points, reporting);
-
-            % The final processing removes closed loops and sorts the skeleton 
-            % points into a tree strcuture
-            reporting.ShowProgress('Processing skeleton tree');
-            results = TDProcessAirwaySkeleton(skeleton_image.RawImage, start_point_local, reporting);
+            lung_image = dataset.GetResult('TDLungROI');
+            airway_results = dataset.GetResult('TDAirways');
+            results = TDGetCentrelineFromAirways(lung_image, airway_results, reporting);
         end
-        
+
         function results = GenerateImageFromResults(skeleton_results, image_templates, ~)
             template_image = image_templates.GetTemplateImage(TDContext.LungROI);
 
-            new_image = zeros(skeleton_results.image_size, 'uint8');
-            new_image(skeleton_results.original_skeleton_points) = 2;
-            new_image(skeleton_results.skeleton_points) = 1;
-            new_image(skeleton_results.removed_points) = 6;
-            new_image(skeleton_results.bifurcation_points) = 3;
+            new_image = zeros(skeleton_results.ImageSize, 'uint8');
+            new_image(skeleton_results.OriginalSkeletonPoints) = 2;
+            new_image(skeleton_results.SkeletonPoints) = 1;
+            new_image(skeleton_results.RemovedPoints) = 6;
+            new_image(skeleton_results.BifurcationPoints) = 3;
             
             results = template_image.BlankCopy;
             results.ChangeRawImage(new_image);
