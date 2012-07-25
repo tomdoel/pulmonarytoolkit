@@ -19,13 +19,13 @@ classdef TDRefreshPlugins < TDGuiPlugin
     %    
     
     properties
-        ButtonText = 'Reset'
+        ButtonText = 'Check for new plugins'
         ToolTip = 'Check for new plugins'
         Category = 'File'
 
         HidePluginInDisplay = false
         TDPTKVersion = '1'
-        ButtonWidth = 4
+        ButtonWidth = 6
         ButtonHeight = 1
     end
     
