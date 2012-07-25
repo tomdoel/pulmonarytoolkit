@@ -53,14 +53,14 @@ classdef TDPTKGui < handle
             obj.UipanelPluginsHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [889 6 668 869], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'BorderType', 'none');
             obj.UipanelVersionHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [10 2 392 34], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'BorderType', 'none');
             obj.PopupmenuLoadHandle = uicontrol('Parent', obj.FigureHandle', 'Style', 'popupmenu', ...
-                'Units', 'pixels', 'Position', [8 912 1560 23], 'Callback', @obj.popupmenu_load_Callback, 'String', 'Recent datasets');
+                'Units', 'pixels', 'Position', [8 912 1560 23], 'Callback', @obj.PopupmenuLoadCallback, 'String', 'Recent datasets');
             obj.TextVersionHandle = uicontrol('Parent', obj.UipanelVersionHandle, 'Style', 'text', ...
                 'Units', 'pixels', 'Position', [10 2 392 34], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, ...
                 'FontName', 'Helvetica Neue', 'FontSize', 20.0, 'ForegroundColor', [1.0 0.694 0.392], 'HorizontalAlignment', 'left', ...
                 'FontWeight', 'bold');
             obj.ProfileCheckboxHandle = uicontrol('Parent', obj.UipanelVersionHandle, 'Style', 'checkbox', 'String', 'Enable profiler', ...
                 'Units', 'pixels', 'Position', [429 -8 143 49], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'ForegroundColor', [1 1 1], ...
-                'Callback', @obj.checkbox_profile_Callback);
+                'Callback', @obj.ProfileCheckboxCallback);
 
             % Set custom function for application closing
             set(obj.FigureHandle, 'CloseRequestFcn', @obj.CustomCloseFunction);
@@ -113,15 +113,65 @@ classdef TDPTKGui < handle
             
             % Now we switch to a progress panel displayed over the gui
             obj.Reporting.ProgressDialog = obj.WaitDialogHandle;
-            splash_screen.Delete;
             
             % Resizing will correctly lay out the GUI
             obj.Resize;
 
-            set(obj.FigureHandle, 'ResizeFcn', @obj.TDPTK_Figure_ResizeFcn);
+            set(obj.FigureHandle, 'ResizeFcn', @obj.ResizeCallback);
             set(obj.FigureHandle, 'Visible', 'on');
+
+            % Wait until the GUI is visible before removing the splash screen
+            splash_screen.Delete;
+        end
+
+        % Causes the GUI to load the images specified either by the UID or the
+        % filenames
+        function Load(obj, image_info)
+            obj.LoadImages(image_info, obj.WaitDialogHandle);
         end
         
+        % Causes the GUI to run the named plugin and display the result
+        function RunPlugin(obj, plugin_name)
+            if isempty(obj.Dataset)
+                return;
+            end
+            
+            wait_dialog = obj.WaitDialogHandle;
+            
+            
+            new_plugin = TDPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
+            wait_dialog.ShowAndHold(['Computing ' new_plugin.ButtonText]);
+            
+            plugin_text = new_plugin.ButtonText;
+            
+            if strcmp(new_plugin.PluginType, 'DoNothing')
+                obj.Dataset.GetResult(plugin_name);
+            else
+                [~, new_image] = obj.Dataset.GetResult(plugin_name);
+                if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
+
+                    if all(new_image.ImageSize == obj.ImagePanel.BackgroundImage.ImageSize) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
+                        obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
+                    else
+                        obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text);
+                    end
+                    obj.UpdateFigureTitle;
+                elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
+                    if all(new_image.ImageSize(1:3) == obj.ImagePanel.BackgroundImage.ImageSize(1:3)) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
+                        obj.ReplaceQuiverImage(new_image.RawImage, 4);
+                    else
+                        obj.ReplaceQuiverImageAdjustingSize(new_image);
+                    end
+                                        
+                elseif strcmp(new_plugin.PluginType, 'ReplaceImage')
+                    obj.SetImage(new_image);
+                end
+            end
+            
+            wait_dialog.Hide;            
+        end  
+        
+        % Prompts the user for file(s) to load
         function SelectFilesAndLoad(obj)
             image_info = TDChooseImagingFiles(obj.Settings.SaveImagePath);
             
@@ -134,23 +184,7 @@ classdef TDPTKGui < handle
                 obj.LoadImages(image_info, obj.WaitDialogHandle);
             end
         end
-       
-        function LoadFromPopupMenu(obj, index)            
-            image_info = obj.DropDownLoadMenuManager.GetImageInfoForIndex(index);
-            
-            % An empty image_info indicates that this dataset has already been
-            % selected. This prevents data re-loading when the same dataset is
-            % selected.
-            % Also, due to a Matlab/Java bug, this callback may be called twice 
-            % when an option is selected from the drop-down load menu using 
-            % keyboard shortcuts. This will prevent the loading function from
-            % being called twice
-            if ~isempty(image_info)
-                obj.LoadImages(image_info, obj.WaitDialogHandle);
-            end
-            
-        end
-        
+               
         function SaveBackgroundImage(obj)
             patient_name = obj.ImagePanel.BackgroundImage.Title;
             image_data = obj.ImagePanel.BackgroundImage;
@@ -205,11 +239,6 @@ classdef TDPTKGui < handle
             display_string = [TDSoftwareInfo.Name, ' version ' TDSoftwareInfo.Version];
         end        
         
-        function ApplicationClosing(obj)
-            obj.AutoSaveMarkers;
-            obj.SaveSettings;
-        end
-        
         function dataset_cache_path = GetDatasetCachePath(obj)
             if ~isempty(obj.Dataset)
                 dataset_cache_path = obj.Dataset.GetDatasetCachePath;
@@ -224,32 +253,6 @@ classdef TDPTKGui < handle
             end
         end
         
-        function Resize(obj)
-            set(obj.FigureHandle, 'Units', 'Pixels');
-
-            parent_position = get(obj.FigureHandle, 'Position');
-            parent_width_pixels = parent_position(3);
-            parent_height_pixels = parent_position(4);
-            
-            load_menu_height = 23;
-            viewer_panel_height = max(1, parent_height_pixels - load_menu_height);
-            viewer_panel_width = viewer_panel_height;
-            
-            version_panel_height = 35;
-            version_panel_width = max(1, parent_width_pixels - viewer_panel_width);
-            
-            plugins_panel_height = max(1, parent_height_pixels - load_menu_height - version_panel_height);
-            
-            set(obj.UipanelImageHandle, 'Units', 'Pixels', 'Position', [1, 1, viewer_panel_width, viewer_panel_height]);
-            set(obj.PopupmenuLoadHandle, 'Units', 'Pixels', 'Position', [0, parent_height_pixels - load_menu_height, parent_width_pixels, load_menu_height]);
-            set(obj.UipanelVersionHandle, 'Units', 'Pixels', 'Position', [viewer_panel_width, parent_height_pixels - load_menu_height - version_panel_height, version_panel_width, version_panel_height]);
-            set(obj.UipanelPluginsHandle, 'Units', 'Pixels', 'Position', [viewer_panel_width, 0, version_panel_width, plugins_panel_height]);
-            obj.PluginsPanel.Resize();
-            
-            if ~isempty(obj.WaitDialogHandle)
-                obj.WaitDialogHandle.Resize();
-            end
-        end
 
         function Capture(obj)
             obj.Reporting.ProgressDialog.Hide;
@@ -267,6 +270,8 @@ classdef TDPTKGui < handle
                     imwrite(frame.cdata, fullfile(path_name, filename), 'jpg', 'Quality', 70);
             end
         end
+        
+
     end
     
     
@@ -282,27 +287,45 @@ classdef TDPTKGui < handle
             
         end
         
+        function ApplicationClosing(obj)
+            obj.AutoSaveMarkers;
+            obj.SaveSettings;
+        end        
+        
         % Executes when figure is resized
-        function TDPTK_Figure_ResizeFcn(obj, ~, ~, ~)
+        function ResizeCallback(obj, ~, ~, ~)
             obj.Resize;
         end
         
         % Item selected from the pop-up "quick load" menu
-        function popupmenu_load_Callback(obj, hObject, ~, ~)
+        function PopupmenuLoadCallback(obj, hObject, ~, ~)
             obj.LoadFromPopupMenu(get(hObject, 'Value'));
         end
         
+        function LoadFromPopupMenu(obj, index)            
+            image_info = obj.DropDownLoadMenuManager.GetImageInfoForIndex(index);
+            
+            % An empty image_info indicates that this dataset has already been
+            % selected. This prevents data re-loading when the same dataset is
+            % selected.
+            % Also, due to a Matlab/Java bug, this callback may be called twice 
+            % when an option is selected from the drop-down load menu using 
+            % keyboard shortcuts. This will prevent the loading function from
+            % being called twice
+            if ~isempty(image_info)
+                obj.LoadImages(image_info, obj.WaitDialogHandle);
+            end            
+        end
         
         % Profile checkbox
         % Enables or disables (and shows) Matlab's profiler
-        function checkbox_profile_Callback(obj, hObject, ~, ~)
+        function ProfileCheckboxCallback(obj, hObject, ~, ~)
             if get(hObject,'Value')
                 profile on
             else
                 profile viewer
             end
         end
-        
         
         % Updates the "Show profile" check box according to the current running state
         % of the Matlab profiler
@@ -314,14 +337,6 @@ classdef TDPTKGui < handle
                 set(obj.ProfileCheckboxHandle, 'Value', false);
             end
         end
-
-        
-        
-        
-        
-        
-        
-        
         
         % Scroll wheel
         function WindowScrollWheelFcn(obj, src, eventdata)
@@ -482,45 +497,9 @@ classdef TDPTKGui < handle
         
         
         function RunPluginCallback(obj, ~, ~, plugin_name)
-            if isempty(obj.Dataset)
-                return;
-            end
-            
-            wait_dialog = obj.WaitDialogHandle;
-            
-            
-            new_plugin = TDPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
-            wait_dialog.ShowAndHold(['Computing ' new_plugin.ButtonText]);
-            
-            plugin_text = new_plugin.ButtonText;
-            
-            if strcmp(new_plugin.PluginType, 'DoNothing')
-                obj.Dataset.GetResult(plugin_name);
-            else
-                [~, new_image] = obj.Dataset.GetResult(plugin_name);
-                if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
-
-                    if all(new_image.ImageSize == obj.ImagePanel.BackgroundImage.ImageSize) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
-                        obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
-                    else
-                        obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text);
-                    end
-                    obj.UpdateFigureTitle;
-                elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
-                    if all(new_image.ImageSize(1:3) == obj.ImagePanel.BackgroundImage.ImageSize(1:3)) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
-                        obj.ReplaceQuiverImage(new_image.RawImage, 4);
-                    else
-                        obj.ReplaceQuiverImageAdjustingSize(new_image);
-                    end
-                                        
-                elseif strcmp(new_plugin.PluginType, 'ReplaceImage')
-                    obj.SetImage(new_image);
-                end
-            end
-            
-            wait_dialog.Hide;            
+            obj.RunPlugin(plugin_name);
         end
-        
+                
         function SetImage(obj, new_image)
             obj.ImagePanel.BackgroundImage = new_image;
             
@@ -599,6 +578,34 @@ classdef TDPTKGui < handle
                 end
             end
         end
+        
+        function Resize(obj)
+            set(obj.FigureHandle, 'Units', 'Pixels');
+
+            parent_position = get(obj.FigureHandle, 'Position');
+            parent_width_pixels = parent_position(3);
+            parent_height_pixels = parent_position(4);
+            
+            load_menu_height = 23;
+            viewer_panel_height = max(1, parent_height_pixels - load_menu_height);
+            viewer_panel_width = viewer_panel_height;
+            
+            version_panel_height = 35;
+            version_panel_width = max(1, parent_width_pixels - viewer_panel_width);
+            
+            plugins_panel_height = max(1, parent_height_pixels - load_menu_height - version_panel_height);
+            
+            set(obj.UipanelImageHandle, 'Units', 'Pixels', 'Position', [1, 1, viewer_panel_width, viewer_panel_height]);
+            set(obj.PopupmenuLoadHandle, 'Units', 'Pixels', 'Position', [0, parent_height_pixels - load_menu_height, parent_width_pixels, load_menu_height]);
+            set(obj.UipanelVersionHandle, 'Units', 'Pixels', 'Position', [viewer_panel_width, parent_height_pixels - load_menu_height - version_panel_height, version_panel_width, version_panel_height]);
+            set(obj.UipanelPluginsHandle, 'Units', 'Pixels', 'Position', [viewer_panel_width, 0, version_panel_width, plugins_panel_height]);
+            obj.PluginsPanel.Resize();
+            
+            if ~isempty(obj.WaitDialogHandle)
+                obj.WaitDialogHandle.Resize();
+            end
+        end
+        
     end
     
     methods (Static, Access = private)
