@@ -25,7 +25,7 @@ function TDCompileMexFiles(framework_cache, force_recompile, reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    reporting.ShowProgress('Compiling mex files');
+    reporting.ShowProgress('Checking mex files');
     root_directory = TDSoftwareInfo.GetSourceDirectory;
     output_directory = fullfile(root_directory, 'bin');
     cached_mex_file_info = framework_cache.MexInfoMap;
@@ -67,6 +67,7 @@ function compiler = MexSetup(reporting)
 end
 
 function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, compiler, force_recompile, reporting)
+    progress_message_showing_compile = false;
     for mex_file_s = mex_files_to_compile.values
         mex_file = mex_file_s{1};
         
@@ -123,6 +124,10 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
                 if ~exist(src_fullfile, 'file')
                     reporting.ShowWarning('TDCompileMexFiles:SourceFileNotFound', ['The mex source file ' src_fullfile ' was not found. If this file has been removed it should also be removed from the list in TDCompileMexFiles.m'], []);
                 else
+                    if ~progress_message_showing_compile
+                        progress_message_showing_compile = true;
+                        reporting.UpdateProgressMessage('Compiling mex files');
+                    end
                     mex_arguments = {'-outdir', output_directory};
                     mex_arguments = [mex_arguments, mex_file.CompilerOptions, src_fullfile, mex_file.OtherCompilerFiles];
                     mex_result = mex(mex_arguments{:});
