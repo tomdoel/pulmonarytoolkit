@@ -2,22 +2,9 @@ classdef TDTreeModel < TDTree
     % TDTreeModel. A branch of a tree model (used to store airways, vessels
     % etc.)
     %
-    % A TDTreeModel is s tree structure which is created by TDAirwayRadius to
-    % store an airway centreline with computed radius. 
-    %     Syntax
-    %     ------
-    %
-    %         root_branch = TDLoadCentrelineTreeFromNodes(file_path, filename_prefix, reporting)
-    %
-    %             root_branch     is the root branch in a TDTreeModel structure 
-    %             file_path       is the path where the node and element files
-    %                             are to be stored
-    %             filename_prefix is the filename prefix. The node and element
-    %                             files will have '_node.txt' and '_element.txt'
-    %                             appended to this prefix before saving.
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
-    %                             with no arguments to hide all reporting
+    % A TDTreeModel is s tree structure which represents an airway centreline
+    % with radius information. As such, it is a "model" of an airway, rather
+    % than a "segmentation"
     %
     %     Licence
     %     -------
@@ -27,10 +14,9 @@ classdef TDTreeModel < TDTree
     %           
     
     properties
-        StartPoint % mm
+        StartPoint % TDCentrelinePoint, mm
         EndPoint   % mm
         Radius     % mm
-        Length     % mm
         TemporaryIndex
         
         Centreline
@@ -126,9 +112,6 @@ classdef TDTreeModel < TDTree
         function GenerateBranchParameters(obj)
             obj.StartPoint = obj.Centreline(1);
             obj.EndPoint = obj.Centreline(end);
-            coord_start = [obj.StartPoint.CoordI, obj.StartPoint.CoordJ, obj.StartPoint.CoordK];
-            coord_end = [obj.EndPoint.CoordI, obj.EndPoint.CoordJ, obj.EndPoint.CoordK];
-            obj.Length = norm(coord_start - coord_end, 2);
             
             number_centreline_points = numel(obj.Centreline);
             quarter_radius = round(number_centreline_points/4);
@@ -152,6 +135,12 @@ classdef TDTreeModel < TDTree
             for child = obj.Children
                 child.GenerateBranchParameters;  
             end
+        end
+        
+        function length_mm = LengthMm
+            coord_start = [obj.StartPoint.CoordI, obj.StartPoint.CoordJ, obj.StartPoint.CoordK];
+            coord_end = [obj.EndPoint.CoordI, obj.EndPoint.CoordJ, obj.EndPoint.CoordK];
+            length_mm = norm(coord_start - coord_end, 2);            
         end
         
     end
