@@ -107,19 +107,17 @@ classdef TDPTKGui < handle
             if ~isempty(image_info)
                 obj.LoadImages(image_info, splash_screen);
             end
-            
-            obj.WaitDialogHandle = TDProgressPanel(obj.UipanelImageHandle);
-
-            
-            % Now we switch to a progress panel displayed over the gui
-            obj.Reporting.ProgressDialog = obj.WaitDialogHandle;
-            
+                        
             % Resizing will correctly lay out the GUI
             obj.Resize;
 
             set(obj.FigureHandle, 'ResizeFcn', @obj.ResizeCallback);
             set(obj.FigureHandle, 'Visible', 'on');
 
+            % Now we switch to a progress panel displayed over the gui
+            obj.WaitDialogHandle = TDProgressPanel(obj.UipanelImageHandle);
+            obj.Reporting.ProgressDialog = obj.WaitDialogHandle;
+            
             % Wait until the GUI is visible before removing the splash screen
             splash_screen.Delete;
         end

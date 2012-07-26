@@ -26,5 +26,5 @@ TDCheckMatlabVersion;
 % Run the toolkit gui
 TDPTKGui(splash_screen);
 
-% Remove our handle to the splash screen
-clear splash_screen
+% Remove our handle to the splash screen and the GUI
+clear splash_screen ans

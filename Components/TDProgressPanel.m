@@ -76,7 +76,7 @@ classdef TDProgressPanel < TDProgressInterface
             
             [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', ...
                 progress_bar_position, obj.PanelHandle);
-            obj.ProgressBarHandle.setValue(0);
+            set(obj.ProgressBarHandle, 'visible', 0);
         end
         
         function Resize(obj)
