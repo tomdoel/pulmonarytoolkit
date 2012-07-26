@@ -16,11 +16,14 @@ classdef TDAirwayGrowingTree < TDTree
         SkeletonTreeSegment
         GenerationNumber % 1 = trachea
         IsGenerated  % True if this branch was created by the volume-filling algorithm
-        StrahlerOrder
-        StrahlerProcessed = false
         Density
         
         TemporaryIndex
+    end
+    
+    properties (Access = private)
+        StrahlerOrder
+        StrahlerProcessed = false        
     end
     
     methods
