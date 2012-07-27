@@ -56,10 +56,10 @@ function TDVisualiseTreeModel(parent_branch)
         y_b = end_point.CoordI;
         z_b = - end_point.CoordK;
         
-        pi = [x_a; x_b];
-        pj = [y_a; y_b];
-        pk = [z_a; z_b];
+        px = [x_a; x_b];
+        py = [y_a; y_b];
+        pz = [z_a; z_b];
         
-        plot3(pi, pj, pk, 'b', 'LineWidth', thickness);
+        plot3(px, py, pz, 'b', 'LineWidth', thickness);
     end
 end
