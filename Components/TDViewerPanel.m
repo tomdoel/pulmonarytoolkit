@@ -1330,8 +1330,8 @@ classdef TDViewerPanel < handle
         end
         
         function rescaled_image = RescaleImage(image, window, level)
-            min_value = level - window/2;
-            max_value = level + window/2;
+            min_value = double(level - window/2);
+            max_value = double(level + window/2);
             scale_factor = 255/max(1, (max_value - min_value));
             rescaled_image = uint8(min(((image - min_value)*scale_factor), 255));
         end
