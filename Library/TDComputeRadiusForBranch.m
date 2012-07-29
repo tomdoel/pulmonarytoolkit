@@ -1,4 +1,4 @@
-function next_result = TDComputeRadiusForBranch(next_segment, lung_image, dt_image)
+function next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_double, dt_image)
     % TDComputeRadiusForBranch. Image-derived radius estimation of an airway.
     %
     %     TDComputeRadiusForBranch creates a projection of the lung image
@@ -13,8 +13,8 @@ function next_result = TDComputeRadiusForBranch(next_segment, lung_image, dt_ima
     %       
     
     
-    min_voxel_size_mm = min(lung_image.VoxelSize);
-    image_size = lung_image.ImageSize;
+    min_voxel_size_mm = min(lung_image_as_double.VoxelSize);
+    image_size = lung_image_as_double.ImageSize;
     next_result = [];
     generation_number = next_segment.GenerationNumber;
     points_indices = next_segment.Points;
@@ -38,7 +38,7 @@ function next_result = TDComputeRadiusForBranch(next_segment, lung_image, dt_ima
     backward_knot_index = max(1, central_knot_index - 3);
     direction_vector_voxels = knot(forward_knot_index, :) - knot(backward_knot_index, :);
     radius_results = GetRadiusAndCentrepoint(central_knot, direction_vector_voxels, ...
-        lung_image, expected_radius_mm, lung_image.VoxelSize);
+        lung_image_as_double, expected_radius_mm, lung_image_as_double.VoxelSize);
     
     radius_exp = sprintf('%7.2f', expected_radius_mm);
     radius_min = sprintf('%7.2f', radius_results.RadiusMin);
@@ -56,7 +56,7 @@ end
 
 
 function results = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector_voxels, ...
-        lung_image, expected_radius_mm, voxel_size_mm)
+        lung_image_as_double, expected_radius_mm, voxel_size_mm)
     
     % Determine number of different angles to use to capture the whole
     % airway cross-section
@@ -91,7 +91,8 @@ function results = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector
     
     % Interpolate the lung image
     % ToDo: consider cubic interpolation
-    values = interpn(double(lung_image.RawImage), i_coord_voxels(:), j_coord_voxels(:), k_coord_voxels(:));
+    values = interpn(lung_image_as_double.RawImage, i_coord_voxels(:), j_coord_voxels(:), k_coord_voxels(:));
+    
     interp_image = zeros(size(i_coord_voxels), 'double');
     interp_image(:) = values(:);
     
@@ -100,8 +101,8 @@ function results = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector
     % tissue
     min_hu = -1024;
     max_hu = 0;
-    min_intensity = lung_image.HounsfieldToGreyscale(min_hu);
-    max_intensity = lung_image.HounsfieldToGreyscale(max_hu);
+    min_intensity = lung_image_as_double.HounsfieldToGreyscale(min_hu);
+    max_intensity = lung_image_as_double.HounsfieldToGreyscale(max_hu);
     interp_image = max(double(min_intensity), interp_image);
     interp_image = min(double(max_intensity), interp_image);
     midpoint = ceil(size(interp_image, 1)/2);
