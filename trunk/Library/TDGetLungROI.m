@@ -38,7 +38,7 @@ function lung_image = TDGetLungROI(lung_image, reporting)
     reduced_image = lung_image.Copy;
     
     reporting.ShowProgress('Rescaling image');    
-    reduced_image.RescaleToMaxSize(256);
+    reduced_image.RescaleToMaxSize(128);
 
     reporting.ShowProgress('Filtering image');
     reduced_image = TDGaussianFilter(reduced_image, 1.0);
