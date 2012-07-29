@@ -107,10 +107,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
             distance_between_first_and_last = abs(metadata_first_file.SliceLocation - metadata_last_file.SliceLocation);
             computed_distance = (num_slices - 1)*slice_thickness;
             if abs(computed_distance - distance_between_first_and_last) > 0.1;
-                disp('*variable slice thickness');
                 reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Warning: Not all slices have the same thickness', []);
-            else
-                disp('*slice thickness OK');
             end
             
             
