@@ -27,7 +27,7 @@ classdef TDAirwaySkeleton < TDPlugin
     
     
     properties
-        ButtonText = 'Airway <BR>Skeleton'
+        ButtonText = 'Airway <BR>Centreline'
         ToolTip = 'Show airway skeletonisation results processed globally'
         Category = 'Airways'
 
