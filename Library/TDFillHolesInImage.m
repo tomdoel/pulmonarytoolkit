@@ -18,7 +18,10 @@ function filled_image = TDFillHolesInImage(original_image)
     if ~isa(original_image, 'TDImage')
         error('Requires a TDImage as input');
     end
-    filled_image = FillHolesInImage(original_image);
+    original_reduced = original_image.Copy;
+    original_reduced.CropToFit;
+    filled_image = FillHolesInImage(original_reduced);
+    filled_image.ResizeToMatch(original_image);
 end
 
 
