@@ -54,14 +54,15 @@ function binary_image = TDSkeletonise(binary_image, fixed_points_global, reporti
             end
         end
                 
-        if ~isempty(reporting)
-            number_remaining_points = sum(raw_image(:) > 0);
-            progress_value = round(100*(1-number_remaining_points/total_number_of_points));
-            reporting.UpdateProgressAndMessage(progress_value, ['Skeletonisation: Iteration ' int2str(iteration)]);
-        end
 
         % For each of the 6 principal directions
         for direction = [5, 23, 11, 17, 13, 15]
+            
+            if ~isempty(reporting)
+                number_remaining_points = sum(raw_image(:) > 0);
+                progress_value = round(100*(1-number_remaining_points/total_number_of_points));
+                reporting.UpdateProgressAndMessage(progress_value, ['Skeletonisation: Iteration ' int2str(iteration)]);
+            end
             
             if ~isempty(reporting)
                 if reporting.HasBeenCancelled
