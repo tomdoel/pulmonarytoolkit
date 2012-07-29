@@ -30,11 +30,11 @@ function output_image = TDSimpleRegionGrowing(threshold_image, start_points, rep
     %
     
     % Check the input image is of the correct form
-    if ~isa(image_data, 'TDImage')
+    if ~isa(threshold_image, 'TDImage')
         error('Requires a TDImage as input');
     end
     
-    if exist(reporting, 'var')
+    if exist('reporting', 'var')
         reporting.Log('Started region growing');
     end
     
@@ -63,7 +63,7 @@ function output_image = TDSimpleRegionGrowing(threshold_image, start_points, rep
     end
     output_image.ChangeRawImage(segmented_image);
     
-    if exist(reporting, 'var')
+    if exist('reporting', 'var')
         reporting.Log('Finished region growing');
     end    
  end
