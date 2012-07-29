@@ -390,7 +390,7 @@ classdef TDPluginsPanel < handle
             end
         end
         
-        function rgb_image = GetButtonImage(image_preview, button_height, button_width, window, level)
+        function rgb_image = GetButtonImage(image_preview, button_height, button_width, window_hu, level_hu)
             if ~isempty(image_preview)
                 if islogical(image_preview.RawImage)
                     button_image = zeros(button_height, button_width, 'uint8');
@@ -404,10 +404,23 @@ classdef TDPluginsPanel < handle
                 button_image(1:max_height, 1:max_width) = image_preview.RawImage(1:max_height, 1:max_width);
                 image_type = image_preview.ImageType;
                 image_preview_limits = image_preview.GlobalLimits;
+                
+                % Convert window and level from HU to greyscale values
+                level_grayscale = image_preview.RescaledToGrayscale(level_hu);
+                window_grayscale = window_hu;
+                if isa(image_preview, 'TDDicomImage')
+                    if image_preview.IsCT
+                        window_grayscale = window_grayscale/image_preview.RescaleSlope;
+                    end
+                end
+                
             else
                 button_image = zeros(button_height, button_width, 'uint8');
                 image_type = TDImageType.Colormap;
                 image_preview_limits = [];
+                
+                level_grayscale = level_hu;
+                window_grayscale = window_hu;
             end
             
             
@@ -419,7 +432,7 @@ classdef TDPluginsPanel < handle
                 image_preview_limits = [1 100];
             end
             
-            [rgb_image, ~] = TDImageUtilities.GetImage(button_image, image_preview_limits, image_type, window, level);
+            [rgb_image, ~] = TDImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale);
             
             final_fade_factor = 0.3;
             rgb_image_factor = final_fade_factor*ones(size(rgb_image));
