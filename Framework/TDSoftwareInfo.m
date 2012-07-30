@@ -44,8 +44,9 @@ classdef TDSoftwareInfo < handle
         MatlabMinimumMinorVersion = 11
         MatlabAdvisedMajorVersion = 7
         MatlabAdvisedMinorVersion = 14
-        DebugMode = true
+        DebugMode = false
         BackgroundColour = [0, 0.129, 0.278]
+        CancelErrorId = 'TDPTK:UserCancel'
     end
 
     methods (Static)
@@ -69,6 +70,10 @@ classdef TDSoftwareInfo < handle
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
             source_directory = fullfile(path_root, '..');
+        end
+        
+        function is_cancel_id = IsErrorCancel(error_id)
+            is_cancel_id = strcmp(error_id, TDSoftwareInfo.CancelErrorId);
         end
     end
 end
