@@ -24,8 +24,13 @@ classdef TDTextUtilities < handle
             % Determine the maximum number of consecutive digits across all of
             % the filenames
             [start_indices, end_indices] = regexp(filenames,'\d+','start','end');
-            string_lengths = 1 + cell2mat(end_indices') - cell2mat(start_indices');
-            max_digits = max(string_lengths(:));
+            max_digits = 0;
+            for filename_index = 1 : length(start_indices)
+                string_lengths = 1 + end_indices{filename_index} - start_indices{filename_index};
+                if ~isempty(string_lengths)
+                    max_digits = max(max_digits, max(string_lengths));
+                end
+            end
             
             % Format each sequence of numbers into a fixed width field, so that
             % sorting will correctly order numbered files which don't have

@@ -194,7 +194,13 @@ classdef TDPTKGui < handle
                 % will start from there
                 obj.Settings.SaveImagePath = image_info.ImagePath;
                 obj.SaveSettings;
-                obj.LoadImages(image_info, obj.WaitDialogHandle);
+                
+                if (image_info.ImageFileFormat == TDImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
+                    msgbox('No valid DICOM files were found in this folder', [TDSoftwareInfo.Name ': No image files found.']);
+                    obj.Reporting.ShowMessage('TDPTKGuiApp:NoilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);                    
+                else
+                    obj.LoadImages(image_info, obj.WaitDialogHandle);
+                end
             end
         end
                
