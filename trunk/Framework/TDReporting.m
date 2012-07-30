@@ -102,7 +102,11 @@ classdef TDReporting < TDReportingInterface
 
             msgStruct = [];
             msgStruct.message = ['Error in function ' calling_function ': ' message];
-            msgStruct.identifier = [ 'TDPTK:' identifier];
+            if TDSoftwareInfo.IsErrorCancel(identifier)
+                msgStruct.identifier = identifier;
+            else
+                msgStruct.identifier = [ 'TDPTK:' identifier];
+            end
             msgStruct.stack = stack;
             obj.AppendToLogFile([calling_function ': ERROR: ' identifier ':' message]);
             error(msgStruct);
@@ -145,6 +149,7 @@ classdef TDReporting < TDReportingInterface
             if ~isempty(obj.ProgressDialog)
                 obj.ProgressDialog.SetProgressValue(progress_value);
             end
+            obj.CheckForCancel;
         end
          
         function UpdateProgressAndMessage(obj, progress_value, text)
@@ -163,7 +168,7 @@ classdef TDReporting < TDReportingInterface
         
         function CheckForCancel(obj)
             if obj.HasBeenCancelled
-                error('User cancelled');
+                obj.Error(TDSoftwareInfo.CancelErrorId, 'User cancelled');
             end
         end
         
