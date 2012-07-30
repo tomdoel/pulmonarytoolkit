@@ -88,6 +88,7 @@ classdef TDPTKGui < handle
             obj.Ptk = TDPTK(obj.Reporting);
             
             obj.Settings = TDPTKSettings.LoadSettings(obj.ImagePanel, obj.Reporting);
+            
             if isempty(obj.Settings.ScreenPosition)
                 % Initialise full-screen
                 units=get(obj.FigureHandle, 'units');
@@ -107,7 +108,10 @@ classdef TDPTKGui < handle
             if ~isempty(image_info)
                 obj.LoadImages(image_info, splash_screen);
             end
-                        
+
+            obj.ImagePanel.ShowImage = true;
+            obj.ImagePanel.ShowOverlay = true;
+            
             % Resizing will correctly lay out the GUI
             obj.Resize;
 
@@ -134,35 +138,46 @@ classdef TDPTKGui < handle
                 return;
             end
             
-            wait_dialog = obj.WaitDialogHandle;
-            
-            
-            new_plugin = TDPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
-            wait_dialog.ShowAndHold(['Computing ' new_plugin.ButtonText]);
-            
-            plugin_text = new_plugin.ButtonText;
-            
-            if strcmp(new_plugin.PluginType, 'DoNothing')
-                obj.Dataset.GetResult(plugin_name);
-            else
-                [~, new_image] = obj.Dataset.GetResult(plugin_name);
-                if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
-
-                    if all(new_image.ImageSize == obj.ImagePanel.BackgroundImage.ImageSize) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
-                        obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
-                    else
-                        obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text);
+            try
+                
+                wait_dialog = obj.WaitDialogHandle;
+                
+                
+                new_plugin = TDPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
+                wait_dialog.ShowAndHold(['Computing ' new_plugin.ButtonText]);
+                
+                plugin_text = new_plugin.ButtonText;
+                
+                if strcmp(new_plugin.PluginType, 'DoNothing')
+                    obj.Dataset.GetResult(plugin_name);
+                else
+                    [~, new_image] = obj.Dataset.GetResult(plugin_name);
+                    if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
+                        
+                        if all(new_image.ImageSize == obj.ImagePanel.BackgroundImage.ImageSize) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
+                            obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
+                        else
+                            obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text);
+                        end
+                        obj.UpdateFigureTitle;
+                    elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
+                        if all(new_image.ImageSize(1:3) == obj.ImagePanel.BackgroundImage.ImageSize(1:3)) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
+                            obj.ReplaceQuiverImage(new_image.RawImage, 4);
+                        else
+                            obj.ReplaceQuiverImageAdjustingSize(new_image);
+                        end
+                        
+                    elseif strcmp(new_plugin.PluginType, 'ReplaceImage')
+                        obj.SetImage(new_image);
                     end
-                    obj.UpdateFigureTitle;
-                elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
-                    if all(new_image.ImageSize(1:3) == obj.ImagePanel.BackgroundImage.ImageSize(1:3)) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
-                        obj.ReplaceQuiverImage(new_image.RawImage, 4);
-                    else
-                        obj.ReplaceQuiverImageAdjustingSize(new_image);
-                    end
-                                        
-                elseif strcmp(new_plugin.PluginType, 'ReplaceImage')
-                    obj.SetImage(new_image);
+                end
+            
+            catch exc
+                if TDSoftwareInfo.IsErrorCancel(exc.identifier)
+                    obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
+                else
+                    msgbox(exc.message, [TDSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'error');
+                    obj.Reporting.ShowMessage('TDPTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                 end
             end
             
@@ -382,8 +397,14 @@ classdef TDPTKGui < handle
                             lung_roi = obj.Dataset.GetResult('TDLungROI');
                             obj.SetImage(lung_roi);
                         catch exc
-                            obj.Reporting.ShowMessage('TDPTKGuiApp:CannotGetROI', ['Unable to extract region of interest from this dataset. Error: ' exc.message]);
-                            load_full_data = true;
+                            if TDSoftwareInfo.IsErrorCancel(exc.identifier)
+                                obj.Reporting.Log('LoadImages cancelled by user');
+                                load_full_data = false;
+                                rethrow(exc)
+                            else
+                                obj.Reporting.ShowMessage('TDPTKGuiApp:CannotGetROI', ['Unable to extract region of interest from this dataset. Error: ' exc.message]);
+                                load_full_data = true;
+                            end
                         end
                     else
                         load_full_data = true;
@@ -416,8 +437,12 @@ classdef TDPTKGui < handle
                 end
 
             catch exc
-                msgbox(exc.message, [TDSoftwareInfo.Name ': Cannot load dataset'], 'error');
-                obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
+                if TDSoftwareInfo.IsErrorCancel(exc.identifier)
+                    obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingCancelled', 'User cancelled loading');
+                else
+                    msgbox(exc.message, [TDSoftwareInfo.Name ': Cannot load dataset'], 'error');
+                    obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
+                end
             end
             
             obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;

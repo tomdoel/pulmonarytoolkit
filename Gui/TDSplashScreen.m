@@ -71,8 +71,8 @@ classdef TDSplashScreen < TDProgressInterface
             
             title_position = [450, 140, 400, 30];
             text_position = [450, 90, 400, 40];
-            cancel_position = [480, 20, 140, 30];
-            quit_position = [680, 20, 140, 30];
+            cancel_position = [580, 20, 140, 30];
+            quit_position = [750, 20, 70, 30];
             progress_bar_position = [450, 80, 400, 18];
             
             
@@ -165,7 +165,7 @@ classdef TDSplashScreen < TDProgressInterface
         
         function cancelled = CancelClicked(obj)
             cancelled = obj.UserClickedCancel;
-            obj.UserClickedCancel = true;
+            obj.UserClickedCancel = false;
         end
         
         function Resize(~, ~)
@@ -187,7 +187,11 @@ classdef TDSplashScreen < TDProgressInterface
             end            
             set(obj.Text, 'Visible', 'on');
             set(obj.ProgressTitle, 'Visible', 'on');
-            set(obj.Quit, 'Visible', 'on');
+            
+            if TDSoftwareInfo.DebugMode
+                set(obj.Quit, 'Visible', 'on');
+            end
+
             set(obj.Cancel, 'Visible', 'on');
             set(obj.ProgressBarHandle, 'visible', 1);
             
