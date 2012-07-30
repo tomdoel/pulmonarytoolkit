@@ -110,7 +110,7 @@ classdef TDDatasetResults < handle
             % result if required
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name);
 
-            [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, obj, obj.Reporting);
+            [result, plugin_has_been_run] = obj.GetResultFromDependencyTracker(plugin_name, plugin_info);
 
             % Allow the context manager to construct a template image from this
             % result if required
@@ -125,9 +125,9 @@ classdef TDDatasetResults < handle
             % We generate an output image if requested, or if we need to generate a preview image
             if generate_image || cache_preview
                 if isa(result, 'TDImage')
-                    output_image = plugin_info.GenerateImageFromResults(result.Copy, obj.ImageTemplates, obj.Reporting);
+                    output_image = obj.GenerateImageFromResults(plugin_info, result.Copy);
                 else
-                    output_image = plugin_info.GenerateImageFromResults(result, obj.ImageTemplates, obj.Reporting);
+                    output_image = obj.GenerateImageFromResults(plugin_info, result);
                 end
             else
                 output_image = [];
@@ -154,6 +154,37 @@ classdef TDDatasetResults < handle
             
             obj.Reporting.CompleteProgress;
             
+        end
+        
+        function [result, plugin_has_been_run] = GetResultFromDependencyTracker(obj, plugin_name, plugin_info)
+            
+            % If non-debug mode 
+            % In debug mode we don't try to catch exceptions so that the
+            % debugger will stop at the right place
+            if TDSoftwareInfo.DebugMode
+                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, obj, obj.Reporting);
+            else
+                try
+                    [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, obj, obj.Reporting);
+                catch ex
+                    obj.DependencyTracker.ClearStack;
+                    rethrow(ex);
+                end
+            end
+        end
+        
+        function output_image = GenerateImageFromResults(obj, plugin_info, result)
+            
+            if TDSoftwareInfo.DebugMode
+                output_image = plugin_info.GenerateImageFromResults(result, obj.ImageTemplates, obj.Reporting);
+            else
+                try
+                    output_image = plugin_info.GenerateImageFromResults(result, obj.ImageTemplates, obj.Reporting);
+                catch ex
+                    obj.ClearStack;
+                    rethrow(ex);
+                end
+            end
         end
     end    
 end

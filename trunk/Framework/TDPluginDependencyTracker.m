@@ -44,35 +44,7 @@ classdef TDPluginDependencyTracker< handle
         % Gets a plugin result, from the disk cache if possible. If there is no
         % cached result, or if the dependenices are invalid, or if the
         % "AlwaysRunPlugin" property is set, then the plugin is executed.
-
         function [result, plugin_has_been_run] = GetResult(obj, plugin_name, plugin_info, dataset, reporting)
-            
-            % If non-debug mode 
-            % In debug mode we don't try to catch exceptions so that the
-            % debugger will stop at the right place
-            if TDSoftwareInfo.DebugMode
-                [result, plugin_has_been_run] = GetResultTryCatchBlock(obj, plugin_name, plugin_info, dataset, reporting);
-            else
-                try
-                    [result, plugin_has_been_run] = GetResultTryCatchBlock(obj, plugin_name, plugin_info, dataset, reporting);
-                catch ex
-                    obj.ClearStack;
-                    rethrow(ex);
-                end
-            end
-        end
-        
-        
-        % Clear the call stack in case an error has left it in a bad state
-        function ClearStack(obj)
-            obj.PluginCallStack.Clear;
-        end
-        
-    end
-    
-    methods (Access = private)
-        
-        function [result, plugin_has_been_run] = GetResultTryCatchBlock(obj, plugin_name, plugin_info, dataset, reporting)
             
             % Fetch plugin result from the disk cache
             result = [];
@@ -131,6 +103,16 @@ classdef TDPluginDependencyTracker< handle
                 plugin_has_been_run = false;
             end
         end
+        
+        
+        % Clear the call stack in case an error has left it in a bad state
+        function ClearStack(obj)
+            obj.PluginCallStack.Clear;
+        end
+        
+    end
+    
+    methods (Access = private)
         
         function AddDependenciesToAllPluginsInStack(obj, dependencies)
             obj.PluginCallStack.AddDependenciesToAllPluginsInStack(dependencies);
