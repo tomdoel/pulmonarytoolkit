@@ -717,12 +717,13 @@ classdef TDViewerPanel < handle
         end
                 
         function UpdateGui(obj)
+            set(obj.OverlayCheckbox, 'Value', obj.ShowOverlay);
+            set(obj.ImageCheckbox, 'Value', obj.ShowImage);
+            set(obj.OrientationButtons(obj.Orientation), 'Value', 1);
+            set(obj.MouseControlButtons(obj.SelectedControl), 'Value', 1);
+            
             main_image = obj.BackgroundImage;
             if ~isempty(main_image) && main_image.ImageExists
-                set(obj.OrientationButtons(obj.Orientation), 'Value', 1);
-                set(obj.MouseControlButtons(obj.SelectedControl), 'Value', 1);
-                set(obj.OverlayCheckbox, 'Value', obj.ShowOverlay);
-                set(obj.ImageCheckbox, 'Value', obj.ShowImage);
                 set(obj.WindowEditbox, 'String', num2str(obj.Window));
                 set(obj.WindowSlider, 'Value', obj.Window);
                 set(obj.LevelEditbox, 'String', num2str(obj.Level));
