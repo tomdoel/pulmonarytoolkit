@@ -233,11 +233,11 @@ classdef TDPluginsPanel < handle
             % Add the buttons to the panel
             for current_plugin_key = category_map.keys
                 current_plugin = category_map(char(current_plugin_key));
-                tooltip_string = current_plugin.ToolTip;
+                tooltip_string = ['<HTML>' current_plugin.ToolTip];
                 
                 if (current_plugin.AlwaysRunPlugin)
                     font_angle = 'italic';
-                    tooltip_string = [tooltip_string ' (this filter has disabled results caching)'];
+                    tooltip_string = [tooltip_string ' <BR><I>(this plugin has been set to Always Run)'];
                 else
                     font_angle = 'normal';
                 end
