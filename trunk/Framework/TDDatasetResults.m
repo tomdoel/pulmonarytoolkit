@@ -181,7 +181,7 @@ classdef TDDatasetResults < handle
                 try
                     output_image = plugin_info.GenerateImageFromResults(result, obj.ImageTemplates, obj.Reporting);
                 catch ex
-                    obj.ClearStack;
+                    obj.DependencyTracker.ClearStack;
                     rethrow(ex);
                 end
             end
