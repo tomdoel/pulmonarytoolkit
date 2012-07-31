@@ -773,16 +773,20 @@ classdef TDImage < handle
         end
         
         % Given a set of global indices, compute the coordinates of each in mm
-        function [ic, jc, kc] = GlobalIndicesToCoordinatesMm(obj, indices)
-            [ic, jc, kc] = ind2sub(obj.OriginalImageSize, indices);
+        function [ic, jc, kc] = GlobalIndicesToCoordinatesMm(obj, global_indices)
+            [ic, jc, kc] = obj.GlobalIndicesToGlobalCoordinates(global_indices);
             ic = (ic - 0.5)*obj.VoxelSize(1);
             jc = (jc - 0.5)*obj.VoxelSize(2);
             kc = (kc - 0.5)*obj.VoxelSize(3);
         end
         
+        function [ic, jc, kc] = GlobalIndicesToGlobalCoordinates(obj, global_indices)
+            [ic, jc, kc] = ind2sub(obj.OriginalImageSize, global_indices);
+        end
+        
         % Given a set of coordinates in mm, compute the global coordinates of each
         function global_coordinates = CoordinatesMmToGlobalCoordinates(obj, global_coordinates_mm)
-            global_coordinates = floor(global_coordinates_mm./repmat(obj.VoxelSize, size(global_coordinates_mm, 1), 1));
+            global_coordinates = repmat([1, 1, 1], size(global_coordinates_mm, 1), 1) + floor(global_coordinates_mm./repmat(obj.VoxelSize, size(global_coordinates_mm, 1), 1));
         end
         
         % Compute the coordinates of all points in the image, in global
