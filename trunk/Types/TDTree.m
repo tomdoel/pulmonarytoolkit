@@ -39,6 +39,11 @@ classdef TDTree < handle
             end
         end
 
+        % Remove all child branches from this branch
+        function RemoveChildren(obj)
+            obj.Children = [];
+        end
+        
         % Returns the number of branches in this tree, from this branch
         % downwards
         function number_of_branches = CountBranches(obj)
