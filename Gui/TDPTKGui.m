@@ -138,51 +138,25 @@ classdef TDPTKGui < handle
                 return;
             end
             
-            try
-                
-                wait_dialog = obj.WaitDialogHandle;
-                
-                
-                new_plugin = TDPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
-                wait_dialog.ShowAndHold(['Computing ' new_plugin.ButtonText]);
-                
-                plugin_text = new_plugin.ButtonText;
-                
-                if strcmp(new_plugin.PluginType, 'DoNothing')
-                    obj.Dataset.GetResult(plugin_name);
-                else
-                    [~, new_image] = obj.Dataset.GetResult(plugin_name);
-                    if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
-                        
-                        if all(new_image.ImageSize == obj.ImagePanel.BackgroundImage.ImageSize) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
-                            obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
-                        else
-                            obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text);
-                        end
-                        obj.UpdateFigureTitle;
-                    elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
-                        if all(new_image.ImageSize(1:3) == obj.ImagePanel.BackgroundImage.ImageSize(1:3)) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
-                            obj.ReplaceQuiverImage(new_image.RawImage, 4);
-                        else
-                            obj.ReplaceQuiverImageAdjustingSize(new_image);
-                        end
-                        
-                    elseif strcmp(new_plugin.PluginType, 'ReplaceImage')
-                        obj.SetImage(new_image);
+            wait_dialog = obj.WaitDialogHandle;
+            
+            if TDSoftwareInfo.DebugMode
+                obj.RunPluginTryCatchBlock(plugin_name)
+            else
+                try
+                    obj.RunPluginTryCatchBlock(plugin_name)
+                catch exc
+                    if TDSoftwareInfo.IsErrorCancel(exc.identifier)
+                        obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
+                    else
+                        msgbox(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [TDSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'error');
+                        obj.Reporting.ShowMessage('TDPTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     end
                 end
-            
-            catch exc
-                if TDSoftwareInfo.IsErrorCancel(exc.identifier)
-                    obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
-                else
-                    msgbox(exc.message, [TDSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'error');
-                    obj.Reporting.ShowMessage('TDPTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
-                end
             end
-            
             wait_dialog.Hide;            
-        end  
+        end
+        
         
         % Prompts the user for file(s) to load
         function SelectFilesAndLoad(obj)
@@ -289,12 +263,43 @@ classdef TDPTKGui < handle
                     imwrite(frame.cdata, fullfile(path_name, filename), 'jpg', 'Quality', 70);
             end
         end
-        
-
     end
     
     
     methods (Access = private)
+        function RunPluginTryCatchBlock(obj, plugin_name)
+            wait_dialog = obj.WaitDialogHandle;
+            
+            new_plugin = TDPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
+            wait_dialog.ShowAndHold(['Computing ' new_plugin.ButtonText]);
+            
+            plugin_text = new_plugin.ButtonText;
+            
+            if strcmp(new_plugin.PluginType, 'DoNothing')
+                obj.Dataset.GetResult(plugin_name);
+            else
+                [~, new_image] = obj.Dataset.GetResult(plugin_name);
+                if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
+                    
+                    if all(new_image.ImageSize == obj.ImagePanel.BackgroundImage.ImageSize) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
+                        obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
+                    else
+                        obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text);
+                    end
+                    obj.UpdateFigureTitle;
+                elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
+                    if all(new_image.ImageSize(1:3) == obj.ImagePanel.BackgroundImage.ImageSize(1:3)) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
+                        obj.ReplaceQuiverImage(new_image.RawImage, 4);
+                    else
+                        obj.ReplaceQuiverImageAdjustingSize(new_image);
+                    end
+                    
+                elseif strcmp(new_plugin.PluginType, 'ReplaceImage')
+                    obj.SetImage(new_image);
+                end
+            end
+        end
+        
         
         % Executes when application closes
         function CustomCloseFunction(obj, src, ~)
