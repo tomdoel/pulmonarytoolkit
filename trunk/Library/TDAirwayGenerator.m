@@ -35,17 +35,20 @@ classdef TDAirwayGenerator < handle
 
     
     properties
+        OriginalLungImage
+        
         AirwayTree
         LengthLimitMm = 1.2 % A branch is terminated if its length is less than this value. Tawhai et al 2004 use value 2.
-        PointLimitVoxels = 4 % A branch is terminated if the point cloud of the apex has fewer points than this limit
+        PointLimitVoxels = 1 % A branch is terminated if the point cloud of the apex has fewer points than this limit
         AngleLimitRadians % Maximum permitted branch angle in degrees
         BranchingFraction = 0.4 % The fraction a branch extends towards the centre of the point cloud. Value 0.4 from Tawhai et al., 2004
-        ReallocatePointsAtEachGeneration = true % If true, points will be reassigned to apices at each generation up to the generation number set in NumberOfGenerationsToReallocate
+        ReallocatePointsAtEachGeneration = false % If true, points will be reassigned to apices at each generation up to the generation number set in NumberOfGenerationsToReallocate
         NumberOfGenerationsToReallocate = 10  % If ReallocatePointsAtEachGeneration is set to true, this is the number of generations for which points in the volume will be reallocated at each generation
-        PointNumberMultiple = 8 % The desired numbe of grid points is obtained by multiplying approx_number_points by this value
+        PointNumberMultiple = 1 % The desired number of grid points is obtained by multiplying approx_number_points by this value
         Reporting
-        ApexImage
+        InitialApexImage
         GridSpacingMm
+        InitialTerminatingBranchLengthLimit = 6
         
         Apices
         MaximumGenerationNumber = 25     % All branches of the output tree will terminate if they extend beyond this generation number
@@ -53,7 +56,7 @@ classdef TDAirwayGenerator < handle
     
     methods
         function obj = TDAirwayGenerator(lung_mask, skeleton_tree, approx_number_points, reporting)
-            
+            obj.OriginalLungImage = lung_mask;
             % Compute the maximum brannching angle in radians
             angle_limit_degrees = 60; % Value 60 from Tawhai et al, 2004
             obj.AngleLimitRadians = pi*angle_limit_degrees/180.0;
@@ -66,7 +69,9 @@ classdef TDAirwayGenerator < handle
             % Initialise other variables
             obj.Apices = [];
             obj.Reporting = reporting;
-            obj.AirwayTree = obj.CreateInitialTreeFromSegmentation(skeleton_tree, reporting);
+            initial_airway_tree = obj.CreateInitialTreeFromSegmentation(skeleton_tree, reporting);
+            obj.RemoveSmallTerminatingAirways(initial_airway_tree, obj.InitialTerminatingBranchLengthLimit, reporting);
+            obj.AirwayTree = initial_airway_tree;
         end
         
         function delete(~)
@@ -85,9 +90,15 @@ classdef TDAirwayGenerator < handle
                 % Get the first and last voxel coordinates from the segment of
                 % the skeleton airway tree
                 centreline_segment = segment.SkeletonTreeSegment;
-                first_point = centreline_segment.Centreline(1);
+                if isempty(segment.Parent)
+                    first_point = centreline_segment.Centreline(1);
+                else
+                    first_point = centreline_segment.Parent.Centreline(end);
+                end
                 end_point = centreline_segment.Centreline(end);
                 
+                
+
                 segment.StartCoords = [first_point.CoordI, first_point.CoordJ, first_point.CoordK];
                 segment.EndCoords = [end_point.CoordI, end_point.CoordJ, end_point.CoordK];
                 
@@ -96,7 +107,7 @@ classdef TDAirwayGenerator < handle
                 end
                 
                 if centreline_segment.GenerationNumber >= obj.MaximumGenerationNumber
-                    obj.Reporting.ShowWarning('TDAirwayGenerator:SegmentedBranchesExcluded', 'Branches have been excluded due to the maximum generation parameter', []);
+                    obj.Reporting.ShowWarning('TDAirwayGenerator:SegmentedBranchesExcluded', 'Initial branches have been excluded due to the maximum generation parameter', []);
                 else
                     
                     if ~isempty(centreline_segment.Children)
@@ -117,6 +128,7 @@ classdef TDAirwayGenerator < handle
         % Starting from the initial airway tree generated from AddTree(),  
         function GrowTree(obj, growth_volume, starting_segment, reporting)
             [resampled_volume] = obj.CreatePointCloud(growth_volume);
+            disp(['Number of seed points:' int2str(sum(resampled_volume.RawImage(:)))]);
             obj.AddApicesBelowThisBranch(starting_segment, resampled_volume, reporting);
             obj.Grow(resampled_volume);
         end        
@@ -144,25 +156,23 @@ classdef TDAirwayGenerator < handle
             % Step through generations one by one
             while ~isempty(obj.Apices)
                 generation_number = obj.GetMinimumTerminalGeneration;
-                if (first_run)
-                    obj.AssignInitialPointCloudToApices(lung_volume);
-                    obj.ApexImage = obj.GetImageFromApex(lung_volume);
-                end
                 if generation_number >= obj.MaximumGenerationNumber
-                    obj.Reporting.ShowMessage('TDAirwayGenerator:IncompleteApices', 'Branches were incomplete when the terminal generation was reached', []);                    
+                    obj.Reporting.ShowMessage('TDAirwayGenerator:IncompleteApices', [num2str(length(obj.Apices)) ' branches were incomplete when the terminal generation was reached']);                    
                     return
                 end
-                
                 obj.Reporting.UpdateProgressValue(round(100*generation_number/obj.MaximumGenerationNumber));
-                if (~first_run) && (generation_number < obj.NumberOfGenerationsToReallocate) && (obj.ReallocatePointsAtEachGeneration)
+
+                % Allocate points to the apices
+                if (first_run) || ((generation_number < obj.NumberOfGenerationsToReallocate) && (obj.ReallocatePointsAtEachGeneration))
                     obj.AssignInitialPointCloudToApices(lung_volume);
-                end
-                if (first_run)
-                    first_run = false;
+                    if (first_run)
+                        obj.InitialApexImage = obj.GetImageFromApex(lung_volume);
+                        first_run = false;
+                    end
                 end
                 
                 obj.Reporting.ShowMessage('TDAirwayGenerator:GenerationNumber', ['Generation:' int2str(generation_number)]);
-                apices_to_do = TDAirwayGeneratorApex.empty(100000,0);
+                apices_to_do = TDAirwayGeneratorApex.empty(50000,0);
                 for apex = obj.Apices
                     generation = apex.AirwayGrowingTreeSegment.GenerationNumber;
                     % If this is the right generation then grow the apex;
@@ -205,12 +215,12 @@ classdef TDAirwayGenerator < handle
                 
                 if isempty(children)
                     % Add apices for airway growing
-                    if obj.IsInsideVolume(segment.EndCoords, lung_volume, image_size)
+%                     if obj.IsInsideVolume(segment.EndCoords, lung_volume, image_size)
                         new_apex = TDAirwayGeneratorApex(segment, TDPoints);
                         obj.Apices = [obj.Apices new_apex];
-                    else
-                         obj.Reporting.ShowWarning('TDAirwayGenerator:StartBranchesOutsideVolume', 'Airway growing Start branches were outside of the volume', []);
-                    end
+%                     else
+%                          obj.Reporting.ShowWarning('TDAirwayGenerator:StartBranchesOutsideVolume', 'Airway growing start branches were outside of the volume', []);
+%                     end
                 end
             end
                 
@@ -221,10 +231,7 @@ classdef TDAirwayGenerator < handle
                obj.Reporting.Error('TDAirwayGenerator:AssignInitialPointCloudToApices', 'No starting points');
                 
             end
-            if numel(obj.Apices) > 255
-               obj.Reporting.Error('TDAirwayGenerator:AssignInitialPointCloudToApices', 'TooManyStartingPoints');
-            end
-            sample_image = zeros(resampled_volume.ImageSize, 'uint8');
+            sample_image = zeros(resampled_volume.ImageSize, 'uint16');
             for apex_number = 1 : numel(obj.Apices)
                 apex = obj.Apices(apex_number);
                 end_point_mm = apex.AirwayGrowingTreeSegment.EndCoords;
@@ -232,7 +239,7 @@ classdef TDAirwayGenerator < handle
                 end_point = resampled_volume.GlobalToLocalCoordinates(end_point_global_coordinates);
                 current_value = sample_image(end_point(1), end_point(2), end_point(3));
                 if current_value ~= 0
-                    obj.Reporting.ShowWarning('TDAirwayGeerator:ApexAlreadyUsed', 'The start point for allocating voxels to apices could not be assigned as the poing has already been used by another apex', []);
+                    obj.Reporting.ShowWarning('TDAirwayGeerator:ApexAlreadyUsed', 'The start point for allocating voxels to apices could not be assigned as the point has already been used by another apex', []);
                 end
                 sample_image(end_point(1), end_point(2), end_point(3)) = apex_number;
             end
@@ -241,7 +248,7 @@ classdef TDAirwayGenerator < handle
             
             [~, IDX] = bwdist(bw_image);
             mapped_image = sample_image(IDX);
-            mapped_image_masked = zeros(size(bw_image), 'uint8');
+            mapped_image_masked = zeros(size(bw_image), 'uint16');
             point_indices = find(resampled_volume.RawImage);
             mapped_image_masked(point_indices) = mapped_image(point_indices);
             
@@ -258,27 +265,91 @@ classdef TDAirwayGenerator < handle
                 obj.Reporting.ShowWarning('TDAirwayGenerator:EmptyPointCloud', 'Branches terminated because they had an empty point cloud', []);
                 apex_1 = [];
                 apex_2 = [];
+            elseif size(current_apex.PointCloud.Coords, 1) < 2
+                obj.Reporting.ShowWarning('TDAirwayGenerator:TooFewPointsInCloud', 'Branches terminated because there was only one point in the point cloud', []);
+                apex_1 = [];
+                apex_2 = [];
             else
-
-                % Find the start end end coordinates for this branch
+                
+                % Find the end coordinates for this branch
                 branch = current_apex.AirwayGrowingTreeSegment;
-                end_coords = branch.EndCoords;
+                branch_end_coords = branch.EndCoords;
+
+                % Find the centre of mass for the point cloud assigned to this
+                % apex
+                centre_of_mass = obj.GetCentreOfMass(current_apex.PointCloud);
                 
-                % Compute a normalised direction vector
-                branch_direction = branch.Direction;
+                % Create a vector from the end branch point to the centre of
+                % mass
+                vector_to_com = centre_of_mass - branch_end_coords;
                 
-                % determine normal to allow the point cloud to be split
-                previous_direction = branch.Parent.Direction;
-                normal = cross(previous_direction, branch_direction);
-                normal = normal / norm(normal);
+                % Get a normalised vector perpendicular to the plane passing
+                % through the centre of pass and the start and end points of the
+                % branch
+                plane_normal = obj.GetValidPlaneNormal(vector_to_com, branch);
                 
-                % Split the point cloud into two, create a new apex if there are enough points
-                [cloud1, cloud2] = obj.SplitPointCloud(current_apex.PointCloud, normal, end_coords);
+                % Split the point cloud into two, creating a new apex for each if there are enough points
+                [cloud1, cloud2] = obj.SplitPointCloud(current_apex.PointCloud, plane_normal, branch_end_coords);
+                
+                if isempty(cloud1.Coords) || isempty(cloud2.Coords)
+                    obj.Reporting.ShowWarning('TDAirwayGenerator:EmptyPointCloud', 'Branches terminated because the point clouds could not be divided into two nonempty clouds', []);
+                    apex_1 = [];
+                    apex_2 = [];
+                    return;
+                end
                 
                 % Create new branches
                 apex_1 = obj.AddBranchAndApex(branch, cloud1, lung_volume, generation, image_size);
                 apex_2 = obj.AddBranchAndApex(branch, cloud2, lung_volume, generation, image_size);
             end
+        end
+        
+        % Compute a normalised direction vector for a plane parallel to the
+        % given vector and the direction of the given branch. If the two vectors
+        % are parallel then the direction of the parent branch is used. If this
+        % does not exist or is still parallel, then we choose a guaranteed
+        % non-parallel vector using the null space.
+        function plane_normal = GetValidPlaneNormal(obj, vector_to_com, branch)
+            
+            if ~isempty(branch.Parent)
+                parent_branch_direction = branch.Parent.Direction;
+                plane_normal = cross(vector_to_com, parent_branch_direction);
+            else
+                branch_direction = branch.Direction;
+                plane_normal = cross(vector_to_com, branch_direction);
+            end
+            
+            % This is an implementation of the algorithm described in Tawhai et
+            % al., 2004 for finding the plane. However, this does not work since
+            % the parent branch will often be collinear with the centre of mass
+            % point (since branches are created in the direction of the centre
+            % of mass).
+%             branch_direction = branch.Direction;
+%             
+%             % Find the normal to the plane which passes through the centre
+%             % of mass and the branch start and end points
+%             plane_normal = cross(vector_to_com, branch_direction);
+%             
+%             % If the branch direction is parallel to the vector then we try the
+%             % parent direction
+%             if isequal(plane_normal, [0 0 0])
+%                 disp('parallel - correcting');
+%                 if ~isempty(branch.Parent)
+%                     parent_branch_direction = branch.Parent.Direction;
+%                     plane_normal = cross(vector_to_com, parent_branch_direction);
+%                 end
+%             end
+            
+            % If the vectors are still parallel then we use the null space to
+            % find another vector which is perpendicular
+            if isequal(plane_normal, [0 0 0])
+                disp('still parallel - correcting');
+                plane_null_space = null(vector_to_com/norm(vector_to_com));
+                perpendicular_vector = plane_null_space(:, 1);
+                plane_normal = cross(vector_to_com, perpendicular_vector);
+            end
+            
+            plane_normal = plane_normal / norm(plane_normal);
         end
         
         % Divides the point cloud in two, based on a plane perpendicular to the
@@ -299,52 +370,57 @@ classdef TDAirwayGenerator < handle
         
         function new_apex = AddBranchAndApex(obj, parent_branch, cloud, lung_volume, generation, image_size)
             new_apex = [];
-            end_coords = parent_branch.EndCoords;
-            branch_direction = parent_branch.Direction;
+            
+            % Determine the centre of the point cloud
+            centre_of_mass = obj.GetCentreOfMass(cloud);
+            
+            % The new branch starts at the end of the parent branch
+            new_branch_start_point = parent_branch.EndCoords;
+            
+            % Fetch the director vector of the parent branch
+            parent_direction = parent_branch.Direction;
+            
+            % Calculate the end point of the new branch. This is subject both to
+            % a length limit and an angle limit.
+            new_branch_end_point = obj.CheckBranchAngleLengthAndAdjust(new_branch_start_point, centre_of_mass, parent_direction);
 
-            if (numel(cloud.Coords) >= obj.PointLimitVoxels)
-                
-                % Determine the centre of the point cloud
-                centre = obj.GetCentreOfMass(cloud);
-                centre = obj.CheckBranchAngleLengthAndAdjust(end_coords, branch_direction, centre);
-                
-                % If the modified centrepoint is the same as the end point then
-                % we cannot add a point here
-                if any(isnan((centre)))
-                    obj.Stats.EmptyPointCloud = obj.Stats.EmptyPointCloud + 1;
-                    return;
-                end
-                
-                % If the branch point isn't inside the volume then terminate
-                if ~obj.IsInsideVolume(centre, lung_volume, image_size)
-                    obj.Reporting.ShowWarning('TDAirwayGenerator:BranchesOutsideVolume', 'Branches were terminated because they grew outside the lung volume', []);
-                    return;
-                end
-                
-                new_branch_length = norm(centre - end_coords);
-                
-                if (new_branch_length > 10) && (generation > 14)
-                    disp('Large branch detected');
-                end
-                
-                if (new_branch_length > obj.LengthLimitMm)
-                    
-                    % Create the new branch in AirwayTree
-                    new_branch = TDAirwayGrowingTree(parent_branch);
-                    new_branch.StartCoords = end_coords;
-                    new_branch.EndCoords = centre;
-                    new_branch.IsGenerated = true;
-                    
+            % Create the new branch in AirwayTree
+            new_branch = TDAirwayGrowingTree(parent_branch);
+            new_branch.StartCoords = new_branch_start_point;
+            new_branch.EndCoords = new_branch_end_point;
+            new_branch.IsGenerated = true;
+
+            new_branch_length = norm(new_branch_end_point - new_branch_start_point);            
+
+            % Find closest point in cloud and delete
+            closest_point = FindClosestPointInCloud(obj, new_branch_end_point, cloud);
+            closest_point_global_coords = lung_volume.CoordinatesMmToGlobalCoordinates(closest_point);
+            lung_volume.SetVoxelToThis(closest_point_global_coords, 0);
+            
+            
+            [~, matches] = ismember(cloud.Coords, closest_point, 'rows');
+            index_closest_point = find(matches);
+            
+            % Check if the number of points in the cloud is less than the
+            % required minimum
+            if (size(cloud.Coords, 1) <= obj.PointLimitVoxels)
+                obj.Reporting.ShowWarning('TDAirwayGenerator:BelowLengthThreshold', 'Branches terminated because the number of points was below the threshold', []);
+            else
+                if (new_branch_length < obj.LengthLimitMm)
+                    obj.Reporting.ShowWarning('TDAirwayGenerator:BelowLengthThreshold', 'Branches terminated because their length was below the threshold', []);
+                else
                     % Create new growth branch
                     new_apex = TDAirwayGeneratorApex(new_branch, cloud);
-                else
-                    obj.Reporting.ShowWarning('TDAirwayGenerator:BelowLengthThreshold', 'Branches terminated because their length was below the threshold', []);
                 end
-            else
-                obj.Reporting.ShowWarning('TDAirwayGenerator:BelowLengthThreshold', 'Branches terminated because the number of points was below the threshold', []);
-            end
-            
-            % ToDo: reassign unused points
+            end            
+        end
+        
+        function closest_point = FindClosestPointInCloud(obj, point, cloud)
+            num_points_in_cloud = size(cloud.Coords, 1);
+            distance = cloud.Coords - repmat(point, [num_points_in_cloud, 1]);
+            distance = sqrt(distance(:,1).^2 + distance(:,2).^2 + distance(:,3).^2);
+            [~, min_index] = min(distance, [], 1);
+            closest_point = cloud.Coords(min_index, :);
         end
         
         function in_volume = IsInsideVolume(obj, point_mm, lung_volume, image_size)
@@ -361,22 +437,22 @@ classdef TDAirwayGenerator < handle
         end
 
         % Checks the branch angle of a proposed growth centre and adjusts it within tolerance, if necessary
-        function centre = CheckBranchAngleLengthAndAdjust(obj, start_coords, original_direction, centre)
+        function end_coords = CheckBranchAngleLengthAndAdjust(obj, start_coords, end_coords, parent_direction)
             % calculate vector from apex start to the centre
             start_point = start_coords;
-            new_direction = centre - start_point;
+            new_direction = end_coords - start_point;
             
             % Record the branching length
             branch_length = norm(new_direction);
             
             new_direction = new_direction / norm(new_direction);
             
-            old_direction = original_direction;
+            old_direction = parent_direction;
             old_direction = old_direction / norm(old_direction);
             
             % determine branch angle
-            dot_product = dot(new_direction, original_direction);
-            branch_angle = acos(dot_product/(norm(new_direction)*norm(original_direction)));
+            dot_product = dot(new_direction, parent_direction);
+            branch_angle = acos(dot_product/(norm(new_direction)*norm(parent_direction)));
 
             % If the branch angle is above the limit then set it to the limit
             if (branch_angle > obj.AngleLimitRadians)
@@ -394,11 +470,11 @@ classdef TDAirwayGenerator < handle
             new_direction = new_direction * branch_length;
             
             % Update the centre
-            centre = start_point + new_direction;
+            end_coords = start_point + new_direction;
         end
         
         function new_image = GetImageFromApex(obj, template)
-            new_image = zeros(template.ImageSize, 'uint8');
+            new_image = zeros(template.ImageSize, 'uint16');
             colour = 1;
             for apex = obj.Apices
                 cloud_points = apex.PointCloud.Coords;
@@ -416,7 +492,7 @@ classdef TDAirwayGenerator < handle
         
         function centre = GetCentreOfMass(obj, point_cloud)
             cloud_points = point_cloud.Coords;
-            centre = mean(cloud_points);
+            centre = mean(cloud_points, 1);
         end
     
         function centreline_indices_local = CentrelinePointsToLocalIndices(obj, centreline_points, template_image)
@@ -425,6 +501,33 @@ classdef TDAirwayGenerator < handle
             kc = [centreline_points.CoordK];
             centreline_indices_global = sub2ind(template_image.OriginalImageSize, ic, jc, kc);
             centreline_indices_local = template_image.GlobalToLocalIndices(centreline_indices_global);
+        end
+        
+        function RemoveSmallTerminatingAirways(obj, initial_airway_tree, length_limit, reporting)
+            branches_to_do = initial_airway_tree;
+            has_changed = true;
+            iteration_number = 0;
+            while (has_changed)
+                has_changed = false;
+                iteration_number = iteration_number + 1;
+                while ~isempty(branches_to_do)
+                    branch = branches_to_do(end);
+                    branches_to_do(end) = [];
+                    if isempty(branch.Children)
+                        branch_length = norm(branch.StartCoords - branch.EndCoords);
+                        if branch_length < length_limit
+                            if ~isempty(branch.Parent)
+                                obj.Reporting.ShowWarning('TDAirwayGenerator:SegmentedBranchesBelowLimit', 'Initial branches have been excluded due to their length being below the limit', []);
+                                branch.Parent.RemoveChildren;
+                                has_changed = true;
+                            end
+                        end
+                        
+                    else
+                        branches_to_do = [branches_to_do, branch.Children];
+                    end
+                end
+            end
         end
     end
 end
