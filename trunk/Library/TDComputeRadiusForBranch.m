@@ -222,3 +222,24 @@ function [wall_indices, wall_mask, refined_wall_indices] = FindWall(half_image)
     wall_mask = uint8(radii_indices_repeated == repmat(indices_halfpoint, [number_of_radii, 1]));
 end
 
+function value = GenerateSpline(knots, num_points)
+    knots_add=zeros(size(knots, 1) + 2, size(knots, 2));
+    knots_add(2 : size(knots, 1) + 1, :) = knots;
+    knots_add(1, :) = knots_add(2, :) - (knots_add(3, :) - knots_add(2, :));
+    knots_add(end, :) = knots_add(end - 1, :) - (knots_add(end - 2, : ) - knots_add(end - 1, :));
+    
+    total_knots = size(knots_add, 1);
+    inter_values = 0 : 1/num_points : 1;
+    inter_values2 = inter_values.^2;
+    inter_values3 = inter_values.^3;
+
+    for index = 2 : total_knots-2
+        coeffs = (1/6).*[knots_add(index - 1,:) + 4*knots_add(index, :)+knots_add(index + 1, :); ...
+                    - 3*knots_add(index - 1, :) + 3*knots_add(index + 1, :); ...
+                    3*knots_add(index - 1, :) - 6*knots_add(index, :) + 3*knots_add(index + 1, :); ...
+                    - knots_add(index - 1, :) + 3*knots_add(index, :) - 3*knots_add(index + 1, :) + knots_add(index+2, :)]';
+            
+        interv = [ones(size(inter_values)); inter_values; inter_values2; inter_values3];
+        value(:, (index - 2)*num_points + 1:(index - 1)*num_points + 1) = coeffs*interv;
+    end
+end
