@@ -56,7 +56,7 @@ classdef TDOriginalImage < TDPlugin
             
             switch(image_file_format)
                 case TDImageFileFormat.Dicom
-                    image = TDLoadImageFromDicomFiles(image_path, filenames, false, reporting);
+                    image = TDLoadImageFromDicomFiles(image_path, filenames, true, reporting);
                 case TDImageFileFormat.Metaheader
                     image = TDLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
                 otherwise
