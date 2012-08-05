@@ -16,7 +16,6 @@ classdef TDTreeModel < TDTree
     properties
         StartPoint % TDCentrelinePoint, mm
         EndPoint   % mm
-        Radius     % mm
         TemporaryIndex
         
         Centreline

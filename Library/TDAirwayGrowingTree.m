@@ -116,7 +116,7 @@ classdef TDAirwayGrowingTree < TDTree
         
         function radius = Radius(obj)
             if ~isempty(obj.SkeletonTreeSegment)
-                radius = obj.SkeletonTreeSegment.Radius;
+                radius = obj.SkeletonTreeSegment.Centreline(1).Radius;
             else
                 if ~isempty(obj.StrahlerOrder)
                     % Compute radius based on Strahler order
