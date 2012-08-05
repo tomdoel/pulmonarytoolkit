@@ -42,15 +42,19 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
         reporting = TDReportingDefault;
     end
     
+    progress_index = 0;
+
     reporting.ShowProgress('Loading images');
+    reporting.UpdateProgressValue(0);
     
     filenames = TDTextUtilities.SortFilenames(filenames);
-    
+    num_slices = length(filenames);
     
     % Load metadata and image data from first file in the list
     [metadata_first_file, first_image_slice] = ReadDicomFile(fullfile(path, filenames{1}), reporting);
-    
-    num_slices = length(filenames);
+    reporting.UpdateProgressValue(round(100*progress_index/num_slices));
+    progress_index = progress_index + 1;
+
     size_i = metadata_first_file.Height;
     size_j = metadata_first_file.Width;
     size_k = num_slices;
@@ -69,69 +73,86 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
             data_type_class = 'int8';
         end
         loaded_image = zeros(size_i, size_j, size_k, data_type_class);
-        loaded_image(:, :, 1) = first_image_slice;
 
-        % Load metadata and image data from second file in the list
-        [metadata_second_file, second_image_slice] = ReadDicomFile(fullfile(path, filenames{2}), reporting);
-        loaded_image(:, :, 2) = second_image_slice;
+        % Load metadata and image data from last file in the list
+        [metadata_last_file, last_image_slice] = ReadDicomFile(fullfile(path, filenames{num_slices}), reporting);
+        reporting.UpdateProgressValue(round(100*progress_index/num_slices));
+        progress_index = progress_index + 1;
+
+        distance_between_first_and_last = abs(metadata_first_file.SliceLocation - metadata_last_file.SliceLocation);
         
-        % Check that second image is from the same series
-        if ~strcmp(metadata_first_file.SeriesInstanceUID, metadata_second_file.SeriesInstanceUID)
+        % Determine which order to load the slices in
+        load_first_to_last = metadata_first_file.SliceLocation > metadata_last_file.SliceLocation;
+        
+        % These variables are only used for verifying the slice location when
+        % check_files is set to true
+        series_uids = repmat({''}, size_k, 1);
+        slice_locations = zeros(size_k, 1);
+        
+        if load_first_to_last
+            image_index_range = 1 : size_k;
+        else
+            image_index_range = size_k: -1 : 1;
+        end
+        
+        loaded_image(:, :, image_index_range(end)) = last_image_slice;
+        slice_locations(image_index_range(end)) = metadata_last_file.SliceLocation;
+        series_uids{image_index_range(end)} = metadata_last_file.SeriesInstanceUID;
+        
+        loaded_image(:, :, image_index_range(1)) = first_image_slice;
+        slice_locations(image_index_range(1)) = metadata_first_file.SliceLocation;
+        series_uids{image_index_range(1)} = metadata_first_file.SeriesInstanceUID;
+        
+        % Check whether the first and last slice are from the same series. This
+        % is a quick way of approximately checking if all the data is from the
+        % same series. To do it properly, we need to check this for every slice.
+        % We only do this if check_data is true, because processing the metadata
+        % for every slice using dicominfo is very slow.
+        if ~strcmp(metadata_first_file.SeriesInstanceUID, metadata_last_file.SeriesInstanceUID)
             reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'Warning: These images are from more than one series', []);
         end
-
-        % For the purposes of building an image volume, we take slice thickness
-        % to be the spacing between adjacent slices, not the scanning slice
-        % thickness (SliceThickness tag), which is different. Computing the
-        % spacing using the SliceLocation tag is a more reliable 
-        % measure than the SpacingBetweenSlices attribute, which may not be
-        % defined.
-        slice_thickness = abs(metadata_second_file.SliceLocation - metadata_first_file.SliceLocation);
         
         % If there are only 2 slices, we already have everything loaded
-        if num_slices > 2
+        if num_slices == 2
+            slice_thickness = abs(metadata_last_file.SliceLocation - metadata_first_file.SliceLocation);            
+        else
+        
+            % Load metadata and image data from second file in the list
+            [metadata_second_file, second_image_slice] = ReadDicomFile(fullfile(path, filenames{2}), reporting);            
+            reporting.UpdateProgressValue(round(100*progress_index/num_slices));
+            progress_index = progress_index + 1;
+            loaded_image(:, :, image_index_range(2)) = second_image_slice;
+            slice_locations(image_index_range(2)) = metadata_second_file.SliceLocation;
+            series_uids{image_index_range(2)} = metadata_second_file.SeriesInstanceUID;
             
-            % Load metadata and image data from last file in the list
-            [metadata_last_file, last_image_slice] = ReadDicomFile(fullfile(path, filenames{num_slices}), reporting);
-            loaded_image(:, :, size_k) = last_image_slice;
-            
-            % Check whether the first and last slice are from the same series. This
-            % is a quick way of approximately checking if all the data is from the
-            % same series. To do it properly, we need to check this for every slice.
-            % We only do this if check_data is true, because processing the metadata
-            % for every slice using dicominfo is very slow.
-            if ~strcmp(metadata_first_file.SeriesInstanceUID, metadata_last_file.SeriesInstanceUID)
+            % Check that second image is from the same series
+            if ~strcmp(metadata_first_file.SeriesInstanceUID, metadata_second_file.SeriesInstanceUID)
                 reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'Warning: These images are from more than one series', []);
             end
             
-            distance_between_first_and_last = abs(metadata_first_file.SliceLocation - metadata_last_file.SliceLocation);
+            % For the purposes of building an image volume, we take slice thickness
+            % to be the spacing between adjacent slices, not the scanning slice
+            % thickness (SliceThickness tag), which is different. Computing the
+            % spacing using the SliceLocation tag is a more reliable
+            % measure than the SpacingBetweenSlices attribute, which may not be
+            % defined.
+            slice_thickness = abs(metadata_second_file.SliceLocation - metadata_first_file.SliceLocation);
+
+            % Check to see if the distance between first and last slices is what
+            % we expect (if not, it may indicate that some slices are missing or
+            % have a different thickness from other slices.
             computed_distance = (num_slices - 1)*slice_thickness;
             if abs(computed_distance - distance_between_first_and_last) > 0.1;
-                reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Warning: Not all slices have the same thickness', []);
+                reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Warning: Some image slices may be of different thickness, or some slices are missing', []);
             end
             
             
-            if check_files
-                series_uids = repmat({''}, size_k, 1);
-                slice_locations = zeros(size_k, 1);
-                slice_locations(1) = metadata_first_file.SliceLocation;
-                series_uids{1} = metadata_first_file.SeriesInstanceUID;
-                slice_locations(size_k) = metadata_last_file.SliceLocation;
-                series_uids{size_k} = metadata_last_file.SeriesInstanceUID;
-            end
-            
-            % Decide the order in which to load the data
-            if (metadata_first_file.SliceLocation > metadata_last_file.SliceLocation)
-                file_index_range = 3 : (size_k - 1);
-            else
-                file_index_range = (size_k - 1) : -1 : 3;
-            end
             
             % Load remaining files
-            for file_number = file_index_range
-                if exist('reporting', 'var')
-                    reporting.UpdateProgressValue(round(100*(file_number-1)/size_k));
-                end
+            for file_number = 3 : size_k % file_index_to_load_range
+                image_index = image_index_range(file_number);
+                reporting.UpdateProgressValue(round(100*progress_index/num_slices));
+                progress_index = progress_index + 1;
                 next_filename_or_metadata = fullfile(path, filenames{file_number});
                 
                 % We only load the metadata if check_files is true, because the
@@ -139,8 +160,8 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                 if check_files
                     try
                         next_filename_or_metadata = dicominfo(next_filename_or_metadata);
-                        slice_locations(file_number) = next_filename_or_metadata.SliceLocation;
-                        series_uids{file_number} = next_filename_or_metadata.SeriesInstanceUID;
+                        slice_locations(image_index) = next_filename_or_metadata.SliceLocation;
+                        series_uids{image_index} = next_filename_or_metadata.SeriesInstanceUID;
                     catch exception
                         reporting.Error('TDLoadImageFromDicomFiles:MetadataReadFailure', ['TDLoadImageFromDicomFiles: error while reading metadata from ' filenames{file_number} '. Error:' exception.message], []);
                     end
@@ -148,7 +169,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                 try
                     % If check_files is true, next_file will be metadata
                     % If false, next_file will be the filename
-                    loaded_image(:, :, file_number) = dicomread(next_filename_or_metadata);
+                    loaded_image(:, :, image_index) = dicomread(next_filename_or_metadata);
                 catch exception
                     reporting.Error('TDLoadImageFromDicomFiles:DicomReadFailure', ['TDLoadImageFromDicomFiles: error while reading file ' filenames{file_number} '. Error:' exception.message]);
                 end
