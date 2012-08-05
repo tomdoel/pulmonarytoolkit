@@ -119,8 +119,8 @@ classdef TDDataset < handle
         % store the results of plugins so they need only be computed once for
         % each dataset. Clearing the cache files forces recomputation of all
         % results.
-        function ClearCacheForThisDataset(obj)
-            obj.DiskCache.RemoveAllCachedFiles(obj.Reporting);
+        function ClearCacheForThisDataset(obj, remove_framework_files)
+            obj.DiskCache.RemoveAllCachedFiles(remove_framework_files, obj.Reporting);
             obj.PreviewImages.Clear;
             obj.Reporting.ShowAndClear;
         end

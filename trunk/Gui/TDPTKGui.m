@@ -242,7 +242,7 @@ classdef TDPTKGui < handle
         
         function ClearCacheForThisDataset(obj)
             if ~isempty(obj.Dataset)
-                obj.Dataset.ClearCacheForThisDataset;
+                obj.Dataset.ClearCacheForThisDataset(false);
             end
         end
         
@@ -263,6 +263,25 @@ classdef TDPTKGui < handle
                     imwrite(frame.cdata, fullfile(path_name, filename), 'jpg', 'Quality', 70);
             end
         end
+        
+        function DeleteImageInfo(obj)
+            obj.Settings.ImageInfo = [];
+
+            if ~isempty(obj.Dataset)
+                obj.Dataset.ClearCacheForThisDataset(false);
+                image_info = obj.Dataset.GetImageInfo;
+                
+                old_infos = obj.Settings.PreviousImageInfos;
+                if old_infos.isKey(image_info.ImageUid)
+                    old_infos.remove(image_info.ImageUid);
+                    obj.Settings.PreviousImageInfos = old_infos;
+                end
+            end
+            
+            obj.SaveSettings;
+            obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
+        end
+        
     end
     
     
@@ -460,9 +479,7 @@ classdef TDPTKGui < handle
             wait_dialog.Hide;
 
         end
-        
-        
-    
+
         function LoadMarkers(obj)
             
             new_image = obj.Dataset.LoadData(TDSoftwareInfo.MakerPointsCacheName);

@@ -41,12 +41,14 @@ classdef TDDropDownLoadMenuManager < handle
             infos = prev_infos.values;
             prev_paths = [];
             for index = 1 : length(infos)
-                if isempty(infos{index}.ImageFilenames) || (length(infos{index}.ImageFilenames) > 1)
-                    display_path = infos{index}.ImagePath;
-                else
-                    display_path = fullfile(infos{index}.ImagePath, infos{index}.ImageFilenames{1});
+                if ~isempty(infos{index})
+                    if isempty(infos{index}.ImageFilenames) || (length(infos{index}.ImageFilenames) > 1)
+                        display_path = infos{index}.ImagePath;
+                    else
+                        display_path = fullfile(infos{index}.ImagePath, infos{index}.ImageFilenames{1});
+                    end
+                    prev_paths{index} = display_path;
                 end
-                prev_paths{index} = display_path;
             end
             
             popupmenu_argument = prev_paths{1};
@@ -55,12 +57,12 @@ classdef TDDropDownLoadMenuManager < handle
             end
             
             uids = prev_infos.keys;
-            current_uid = obj.Settings.ImageInfo.ImageUid;
-            current_number = find(ismember(uids, current_uid), 1);
-            
+            if ~isempty(obj.Settings.ImageInfo) && ~isempty(obj.Settings.ImageInfo.ImageUid)
+                current_uid = obj.Settings.ImageInfo.ImageUid;
+                current_number = find(ismember(uids, current_uid), 1);
+                set(obj.MenuHandle, 'Value', current_number);
+            end
             set(obj.MenuHandle, 'String', popupmenu_argument);
-            set(obj.MenuHandle, 'Value', current_number);
-                        
         end
         
         function image_info = GetImageInfoForIndex(obj, index)
@@ -74,8 +76,10 @@ classdef TDDropDownLoadMenuManager < handle
 
                 % If the selected entry is the currenyly loaded dataset then do
                 % nothing
-                if strcmp(image_uid, obj.Settings.ImageInfo.ImageUid)
-                    image_info = [];
+                if ~isempty(obj.Settings.ImageInfo) && ~isempty(obj.Settings.ImageInfo.ImageUid)                
+                    if strcmp(image_uid, obj.Settings.ImageInfo.ImageUid)
+                        image_info = [];
+                    end
                 end
             end
         end
