@@ -142,8 +142,9 @@ classdef TDDiskCache < handle
 
         
         % Remove all results files for this dataset. Does not remove certain
-        % files such as dataset info and manually-created marker files.
-        function RemoveAllCachedFiles(obj, reporting)
+        % files such as dataset info and manually-created marker files, unless
+        % the "remove_framework_files" flag is set to true.
+        function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
             
             % Switch on recycle bin before deleting
             state = recycle;
@@ -154,7 +155,8 @@ classdef TDDiskCache < handle
             file_list = cat(2, file_list, file_list_2);
             for index = 1 : length(file_list)
                 file_name = file_list{index};
-                if (~strcmp(file_name, [TDSoftwareInfo.SchemaCacheName '.mat'])) && (~strcmp(file_name, [TDSoftwareInfo.ImageInfoCacheName '.mat'])) && (~strcmp(file_name, [TDSoftwareInfo.MakerPointsCacheName '.mat'])) && (~strcmp(file_name, [TDSoftwareInfo.MakerPointsCacheName 'raw'])) && (~strcmp(file_name, [TDSoftwareInfo.ImageTemplatesCacheName '.mat']))
+                is_framework_file = strcmp(file_name, [TDSoftwareInfo.SchemaCacheName '.mat']) || strcmp(file_name, [TDSoftwareInfo.ImageInfoCacheName '.mat']) || strcmp(file_name, [TDSoftwareInfo.MakerPointsCacheName '.mat']) || strcmp(file_name, [TDSoftwareInfo.MakerPointsCacheName 'raw']) || strcmp(file_name, [TDSoftwareInfo.ImageTemplatesCacheName '.mat']);
+                if (remove_framework_files || (~is_framework_file))
                     full_filename = fullfile(obj.CachePath, file_name);
                     reporting.ShowMessage('TDDiskCache:RecyclingCacheDirectory', ['Moving cache file to recycle bin: ' full_filename]);
                     
