@@ -52,15 +52,17 @@ classdef TDAirwaySkeleton < TDPlugin
         function results = GenerateImageFromResults(skeleton_results, image_templates, ~)
             template_image = image_templates.GetTemplateImage(TDContext.LungROI);
 
-            new_image = zeros(skeleton_results.ImageSize, 'uint8');
-            new_image(skeleton_results.OriginalSkeletonPoints) = 2;
-            new_image(skeleton_results.SkeletonPoints) = 1;
-            new_image(skeleton_results.RemovedPoints) = 6;
-            new_image(skeleton_results.BifurcationPoints) = 3;
+            new_image = zeros(template_image.ImageSize, 'uint8');
+            new_image(template_image.GlobalToLocalIndices(skeleton_results.OriginalSkeletonPoints)) = 2;
+            new_image(template_image.GlobalToLocalIndices(skeleton_results.SkeletonPoints)) = 1;
+            new_image(template_image.GlobalToLocalIndices(skeleton_results.RemovedPoints)) = 6;
+            new_image(template_image.GlobalToLocalIndices(skeleton_results.BifurcationPoints)) = 3;
             
             results = template_image.BlankCopy;
             results.ChangeRawImage(new_image);
             results.ImageType = TDImageType.Colormap;
+            
+            results.SetVoxelToThis(skeleton_results.StartPoint, 4);
             
         end
     end
