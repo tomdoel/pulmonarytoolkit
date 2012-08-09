@@ -75,7 +75,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
         explosion_points = GetExplosionPoints(airway_tree);
         
         % Remove segments in which all points are marked as explosions
-        airway_tree = RemoveCompletelyExplodedSegments(airway_tree);
+        airway_tree = RemoveCompletelyExplodedSegments(airway_tree, reporting);
         
         % Remove holes within the airway segments
         reporting.ShowProgress('Closing airways segmentally');
@@ -253,19 +253,34 @@ end
     
 
 
-function airway_tree = RemoveCompletelyExplodedSegments(airway_tree)
+function airway_tree = RemoveCompletelyExplodedSegments(airway_tree, reporting)
     segments_to_do = airway_tree;
     while ~isempty(segments_to_do)
         next_segment = segments_to_do(1);
         segments_to_do(1) = [];
         
+        % Remove segments which are explosions
         if numel(next_segment.GetAcceptedVoxels) == 0
             next_segment.CutFromTree;
             if ~isempty(next_segment.Children)
-               disp('exploded segment has children'); 
+               reporting.Error('TDAirwayRegionGrowingWithExplosionControl:ExplodedSegmentWithChildren', 'Exploded segment has children - this should never happen, and indicates an program error.');
             end
+            
+            % Removing an explosion may leave its parent with only one child, in
+            % which case these should be merged, since they are really the same
+            % segment
             if (length(next_segment.Parent.Children) == 1)
+                remaining_child = next_segment.Parent.Children;
                 next_segment.Parent.MergeWithChild;
+                
+                % Need to be careful when merging a child branch with its
+                % parent - if the child branch is currently in the
+                % segments_to_do we need to remove it and put its child branches
+                % in so they get processed correctly
+                if ismember(remaining_child, segments_to_do)
+                    segments_to_do = setdiff(segments_to_do, remaining_child);
+                    segments_to_do = [segments_to_do, remaining_child.Children];
+                end
             end
         end
         segments_to_do = [segments_to_do, next_segment.Children];
