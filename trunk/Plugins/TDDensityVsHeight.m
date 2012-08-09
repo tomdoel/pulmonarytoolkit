@@ -63,6 +63,7 @@ classdef TDDensityVsHeight < TDPlugin
             figure_handle = figure;
             axes_handle = gca;
             set(figure_handle, 'Name', [lung_roi.Title ' : Density vs gravitational height']);
+            set(figure_handle, 'PaperPositionMode', 'auto');
             TDDensityVsHeight.Maximize;
             hold(axes_handle, 'on');
 
@@ -119,10 +120,10 @@ classdef TDDensityVsHeight < TDPlugin
             gravity_bin_size = global_gravity_bin_boundaries(2) - global_gravity_bin_boundaries(1);
             gravity_bins = global_gravity_bin_boundaries;
             
-            density_mg_mL_image = TDConvertCTToDensity(lung_roi);
+            density_g_mL_image = TDConvertCTToDensity(lung_roi);
             
             
-            density_mg_mL = density_mg_mL_image.RawImage;
+            density_g_mL = density_g_mL_image.RawImage;
                         
             gravity_plot = [];
             density_plot = [];
@@ -134,8 +135,8 @@ classdef TDDensityVsHeight < TDPlugin
                 
                 % Use a cut-off of 5ml
                 if (volume_mm3 >= 5000)
-                    densities_in_bin_mg_ml = density_mg_mL(voxels_in_lung_indices(in_bin));
-                    densities_in_bin_kg_l = densities_in_bin_mg_ml/1000;
+                    densities_in_bin_g_ml = density_g_mL(voxels_in_lung_indices(in_bin));
+                    densities_in_bin_kg_l = densities_in_bin_g_ml;
                     average_density_for_bin = mean(densities_in_bin_kg_l);
                     std_density_for_bin = std(densities_in_bin_kg_l);
                     
