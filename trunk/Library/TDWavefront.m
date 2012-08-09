@@ -1,13 +1,16 @@
 classdef TDWavefront < handle
     % TDWavefront. A data structure representing a segmented airway tree 
     %
+    %     TDWavefront is used as part of the airway region growing process in 
+    %     TDAirwayRegionGrowingWithExplosionControl.
+    % 
     %     A root TDTreeSegment is returned by 
     %     TDAirwayRegionGrowingWithExplosionControl. From this you
     %     can extract and analyse the resulting airway tree.
     %
     %     TDTreeSegment is used in the construction and storage of
     %     the airway trees. A TDTreeSegment stores an individual
-    %     segment of the skeleton tree, with references to the parent and child
+    %     segment of the centreline tree, with references to the parent and child
     %     TDTreeSegments, so that it is possible to reconstruct the entire
     %     tree from a single segment.
     %

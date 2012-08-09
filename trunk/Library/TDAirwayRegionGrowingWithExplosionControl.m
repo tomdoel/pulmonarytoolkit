@@ -234,7 +234,7 @@ function CheckSegments(airway_tree, reporting)
         else
             loop_text = 'branches have';
         end
-        reporting.ShowWarning('TDProcessAirwaySkeleton:InternalLoopRemoved', [num2str(number_of_branches_with_exceeded_generations) ...
+        reporting.ShowWarning('TDAirwayRegionGrowingWithExplosionControl:InternalLoopRemoved', [num2str(number_of_branches_with_exceeded_generations) ...
             ' airway ' loop_text ' been terminated because the maximum number of airway generations has been exceeded. This may indicate that the airway has leaked into the surrounding parenchyma.'], []);
     end
     

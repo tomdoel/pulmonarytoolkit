@@ -48,7 +48,7 @@ function results_image = TDColourBranchesByLobe(start_branches, airway_tree, tem
     
     results_image(uncertain_voxels) = 3;
 
-    % Label segments by skeleton
+    % Label segments by centreline
     results_image(:) = 0;
 
     segments_to_do = airway_tree;
@@ -114,7 +114,7 @@ function voxels = GetVoxelsForTheseBranchesExtended(start_indices, template)
     end
 
     % Add nearest neighbours to the list of voxels, otherwise it is possible for
-    % a diagnoally-connected skeleton segment to pass through a
+    % a diagnoally-connected centreline segment to pass through a
     % diagnoally-connected airway segment
     [~, linear_offsets27] = TDImageCoordinateUtilities.GetLinearOffsets(template.ImageSize);
     voxels = repmat(int32(voxels), 27, 1) + repmat(int32(linear_offsets27'), 1, length(voxels));    

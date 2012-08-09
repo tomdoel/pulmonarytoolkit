@@ -20,7 +20,7 @@ classdef TDAirwayGenerator < handle
     %     Syntax:
     %         airway_generator = TDAirwayGenerator(
     %             lung_mask,              % A binary mask of the whole lung volume
-    %             skeleton_tree,          % A TDModelTree produced from TDRadius
+    %             centreline_tree,          % A TDModelTree produced from TDAirwayCentreline
     %             point_limit_voxels,     % Branches will terminate if the size of the region they grow into in voxels is less than this limit
     %             approx_number_points,   %
     %             reporting               % A TDReporting object for error, warning and progress reporting
@@ -55,7 +55,7 @@ classdef TDAirwayGenerator < handle
     end
     
     methods
-        function obj = TDAirwayGenerator(lung_mask, skeleton_tree, approx_number_points, reporting)
+        function obj = TDAirwayGenerator(lung_mask, centreline_tree, approx_number_points, reporting)
             obj.OriginalLungImage = lung_mask;
             % Compute the maximum brannching angle in radians
             angle_limit_degrees = 60; % Value 60 from Tawhai et al, 2004
@@ -69,7 +69,7 @@ classdef TDAirwayGenerator < handle
             % Initialise other variables
             obj.Apices = [];
             obj.Reporting = reporting;
-            initial_airway_tree = obj.CreateInitialTreeFromSegmentation(skeleton_tree, reporting);
+            initial_airway_tree = obj.CreateInitialTreeFromSegmentation(centreline_tree, reporting);
             obj.RemoveSmallTerminatingAirways(initial_airway_tree, obj.InitialTerminatingBranchLengthLimit, reporting);
             obj.AirwayTree = initial_airway_tree;
         end
@@ -78,18 +78,18 @@ classdef TDAirwayGenerator < handle
         end
         
         % Use CreateInitialTreeFromSegmentation to create an initial airway tree
-        % from the airway skeleton results
+        % from the airway centreline results
         function airway_tree = CreateInitialTreeFromSegmentation(obj, segmented_centreline_tree, reporting)
             airway_tree = TDAirwayGrowingTree;
-            airway_tree.SkeletonTreeSegment = segmented_centreline_tree;
+            airway_tree.CentrelineTreeSegment = segmented_centreline_tree;
             segments_to_do = airway_tree;
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
                 
                 % Get the first and last voxel coordinates from the segment of
-                % the skeleton airway tree
-                centreline_segment = segment.SkeletonTreeSegment;
+                % the centreline airway tree
+                centreline_segment = segment.CentrelineTreeSegment;
                 if isempty(segment.Parent)
                     first_point = centreline_segment.Centreline(1);
                 else
@@ -115,7 +115,7 @@ classdef TDAirwayGenerator < handle
                         for child = centreline_segment.Children
                             % Create a new segment
                             new_segment = TDAirwayGrowingTree(segment);
-                            new_segment.SkeletonTreeSegment = child;
+                            new_segment.CentrelineTreeSegment = child;
                             new_segment.IsGenerated = false;
                             segments_to_do = [segments_to_do, new_segment];
                         end
@@ -199,12 +199,12 @@ classdef TDAirwayGenerator < handle
             resampled_volume.Resample(grid_spacing, '*nearest')
         end
         
-        function AddApicesBelowThisBranch(obj, skeleton_branches, lung_volume, reporting)
+        function AddApicesBelowThisBranch(obj, centreline_branches, lung_volume, reporting)
             obj.Apices = [];
-            image_size = lung_volume.ImageSize;
+%             image_size = lung_volume.ImageSize;
             segments_to_do = [];
-            for skeleton_branch = skeleton_branches
-                branch = obj.AirwayTree.FindSkeletonBranch(skeleton_branch, reporting);
+            for centreline_branch = centreline_branches
+                branch = obj.AirwayTree.FindCentrelineBranch(centreline_branch, reporting);
                 segments_to_do = [segments_to_do, branch];
             end
             while ~isempty(segments_to_do)

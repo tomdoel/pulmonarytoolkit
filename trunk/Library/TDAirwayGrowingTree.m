@@ -13,7 +13,7 @@ classdef TDAirwayGrowingTree < TDTree
     properties
         StartCoords  % [i,j,k] First point
         EndCoords    % [i,j,k] Last point
-        SkeletonTreeSegment
+        CentrelineTreeSegment
         GenerationNumber % 1 = trachea
         IsGenerated  % True if this branch was created by the volume-filling algorithm
         Density
@@ -115,8 +115,8 @@ classdef TDAirwayGrowingTree < TDTree
         end
         
         function radius = Radius(obj)
-            if ~isempty(obj.SkeletonTreeSegment)
-                radius = obj.SkeletonTreeSegment.Centreline(1).Radius;
+            if ~isempty(obj.CentrelineTreeSegment)
+                radius = obj.CentrelineTreeSegment.Centreline(1).Radius;
             else
                 if ~isempty(obj.StrahlerOrder)
                     % Compute radius based on Strahler order
@@ -143,12 +143,12 @@ classdef TDAirwayGrowingTree < TDTree
         
         % Once an initial tree has been generated using AddTree(), this method
         % finds the TDAirwayGrowingTree branch which matches the
-        % TDSkeletonSegment branch given as skeleton_branch.
-        function branch = FindSkeletonBranch(obj, skeleton_branch, reporting)
+        % branch given as centreline_branch.
+        function branch = FindCentrelineBranch(obj, centreline_branch, reporting)
             segments_to_do = obj;
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
-                if (segment.SkeletonTreeSegment == skeleton_branch)
+                if (segment.CentrelineTreeSegment == centreline_branch)
                     branch = segment;
                     return;
                 end
@@ -156,7 +156,7 @@ classdef TDAirwayGrowingTree < TDTree
                 children = segment.Children;
                 segments_to_do = [segments_to_do, children];
             end
-            reporting.Error('FindBranch', 'Skeleton branch not found');
+            reporting.Error('FindBranch', 'Centreline branch not found');
         end
         
     end

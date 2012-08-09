@@ -1,21 +1,21 @@
-function [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton_airway_tree, reporting)
+function [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, airway_results, airway_centreline_tree, reporting)
     % TDGetAirwaysLabelledByLobe. Label segmented bronchi according to the
     % lobes they serve.
     % 
     % Usage:
     %
-    %     [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, airway_results, skeleton_results, reporting)
+    %     [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, airway_results, airway_centreline_tree, reporting)
     %
     % Inputs:
     %
     %     template : A TDImage representing the region of interest used by the
-    %         skeletonisation algorithm
+    %         centreline algorithm
     %
     %     airway_results : the root TDTreeSegment of a segmented airway tree
     %         structure produced by TDAirwayRegionGrowingWithExplosionControl
     %
-    %     skeleton_airway_tree : the root TDTreeModel of a segmented airway
-    %         tree skeleton produced by TDAirwaySkeleton
+    %     airway_centreline_tree : the root TDTreeModel of a segmented airway
+    %         tree centreline produced by TDAirwayCentreline
     %
     %     reporting : A TDReporting object used for error and warning messages
     %
@@ -35,9 +35,9 @@ function [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, 
     %
     %    start_branches : a structure containing the first branch for each lobe
     %
-    % This function uses the skeletonised airway tree returned by TDSkeletonise
+    % This function uses the airway centreline returned by TDAirwayCentreline
     % and the airway tree returned by TDAirwayRegionGrowingWithExplosionControl.
-    % The skeleton is analysed to determine its branching structure. At each
+    % The centreline is analysed to determine its branching structure. At each
     % bufurcation, the entire subtree growing from each branch is analysed to
     % determine its centroid. The two centroids are compared to separate the
     % branches according to lobes.
@@ -50,7 +50,7 @@ function [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, 
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    start_segment = skeleton_airway_tree;
+    start_segment = airway_centreline_tree;
 
     % Separate into left and right lungs
     [left_lung_start, right_lung_start] = SeparateIntoLeftAndRightLungs(start_segment, template, reporting);
@@ -135,7 +135,7 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         lower_lobe_3centroid = GetCentroid(CentrelinePointsToLocalIndices(lower_lobe_reference.GetCentrelineTree, template), template);
 
         if abs(upper_lobe_dpcentroid - lower_lobe_dpcentroid) < 20
-            reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the skeletonised branches');
+            reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the branch centrelines.');
         end
 
         left_upper_startsegment = upper_lobe_reference;
@@ -204,7 +204,7 @@ function [right_upper_startindices, right_midlower_startindices] = SeparateRight
         centroid_2 = GetDPCentroid(child_index_2, template);
         
         if abs(centroid_1 - centroid_2) < 20
-            reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the skeletonised branches');
+            reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the branch centrelines');
         end
         
         if centroid_1 > centroid_2
