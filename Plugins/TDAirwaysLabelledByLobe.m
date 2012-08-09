@@ -9,8 +9,8 @@ classdef TDAirwaysLabelledByLobe < TDPlugin
     %     Plugins should not be run directly from your code.
     %
     %     TDAirwaysLabelledByLobe calls the TDAirways plugin to segment the
-    %     airway tree and the TDAirwaySkeleton plguin to obtain the airway
-    %     skeleon. It then calls the library function TDGetAirwaysLabelledByLobe
+    %     airway tree and the TDAirwayCentreline plguin to obtain the airway
+    %     centreline. It then calls the library function TDGetAirwaysLabelledByLobe
     %     to allocate each broncus to the unique lobe it serves. Bronchi serving
     %     more than one lobe are not displayed.
     %
@@ -51,11 +51,8 @@ classdef TDAirwaysLabelledByLobe < TDPlugin
         function results = RunPlugin(dataset, reporting)
             results_image = dataset.GetTemplateImage(TDContext.LungROI);
             [airway_results, airway_image] = dataset.GetResult('TDAirways');
-            [skeleton_results, ~] = dataset.GetResult('TDAirwaySkeleton');
-            if ~isequal(skeleton_results.ImageSize, results_image.ImageSize)
-                reporting.Error('TDAirwaysLabelledByLobe:ImageSizeMismatch', 'The airway skeleton image size does not match the ROI size, so results are invalid. Try deleting the cache for this dataset.');
-            end
-            [airways_by_lobe, start_branches] = TDGetAirwaysLabelledByLobe(results_image, airway_results, skeleton_results.AirwayCentrelineTree, reporting);
+            [centreline_results, ~] = dataset.GetResult('TDAirwayCentreline');
+            [airways_by_lobe, start_branches] = TDGetAirwaysLabelledByLobe(results_image, airway_results, centreline_results.AirwayCentrelineTree, reporting);
             airway_image = 7*uint8(airway_image.RawImage == 1);
             airway_image(airways_by_lobe > 0) = airways_by_lobe(airways_by_lobe > 0);
             results_image.ChangeRawImage(airway_image);
