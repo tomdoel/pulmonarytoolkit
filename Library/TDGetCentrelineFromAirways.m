@@ -51,14 +51,14 @@ function results = TDGetCentrelineFromAirways(lung_image, airway_results, report
     dt_image = dt_image == 0;
     dt_image = bwdist(dt_image);
     [radius_results, skeleton_tree] = GetRadius(lung_image, skeleton_results.airway_skeleton, dt_image, reporting);
-    skeleton_tree_model = TDTreeModel.CreateFromSkeletonTree(skeleton_tree, lung_image);
+    centreline_tree_model = TDTreeModel.CreateFromSkeletonTree(skeleton_tree, lung_image);
     
     
     results = [];
-    results.AirwayCentrelineTree = skeleton_tree_model;
-    results.OriginalSkeletonPoints = skeleton_image.LocalToGlobalIndices(skeleton_results.original_skeleton_points);
+    results.AirwayCentrelineTree = centreline_tree_model;
+    results.OriginalCentrelinePoints = skeleton_image.LocalToGlobalIndices(skeleton_results.original_skeleton_points);
     results.BifurcationPoints = skeleton_image.LocalToGlobalIndices(skeleton_results.bifurcation_points);
-    results.SkeletonPoints = skeleton_image.LocalToGlobalIndices(skeleton_results.skeleton_points);
+    results.CentrelinePoints = skeleton_image.LocalToGlobalIndices(skeleton_results.skeleton_points);
     results.ImageSize = lung_image.OriginalImageSize;
     results.StartPoint = start_point_global;
     results.RemovedPoints = skeleton_image.LocalToGlobalIndices(skeleton_results.removed_points);
