@@ -187,7 +187,7 @@ classdef TDSplashScreen < TDProgressInterface
             end            
             set(obj.Text, 'Visible', 'on');
             set(obj.ProgressTitle, 'Visible', 'on');
-            
+
             if TDSoftwareInfo.DebugMode
                 set(obj.Quit, 'Visible', 'on');
             end

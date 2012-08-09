@@ -76,7 +76,7 @@ classdef TDDropDownLoadMenuManager < handle
 
                 % If the selected entry is the currenyly loaded dataset then do
                 % nothing
-                if ~isempty(obj.Settings.ImageInfo) && ~isempty(obj.Settings.ImageInfo.ImageUid)                
+                if ~isempty(obj.Settings.ImageInfo) && ~isempty(obj.Settings.ImageInfo.ImageUid)
                     if strcmp(image_uid, obj.Settings.ImageInfo.ImageUid)
                         image_info = [];
                     end

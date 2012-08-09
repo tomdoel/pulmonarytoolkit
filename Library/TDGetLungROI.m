@@ -33,7 +33,7 @@ function lung_image = TDGetLungROI(lung_image, reporting)
         reporting = TDReportingDefault;
     end
     
-    reporting.ShowProgress('Rescaling image');    
+    reporting.ShowProgress('Rescaling image');
     
     reduced_image = lung_image.Copy;
     
