@@ -112,7 +112,7 @@ classdef TDTree < handle
         function branches_list = GetBranchesAsListUsingRecursion(obj)
             branches_list = obj;
             for child = obj.Children
-                branches_list = [branches_list child.  GetBranchesAsListUsingRecursion];
+                branches_list = [branches_list child.GetBranchesAsListUsingRecursion];
             end
         end
     end

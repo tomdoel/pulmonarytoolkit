@@ -16,11 +16,11 @@ function results = TDGetCentrelineFromAirways(lung_image, airway_results, report
     
     reporting.ShowProgress('Finding airways');
     
-    start_point = airway_results.StartPoint;
-    start_point_index = sub2ind(airway_results.ImageSize, start_point(1), start_point(2), start_point(3));
+    start_point_global = airway_results.StartPoint;
+    start_point_index = sub2ind(airway_results.ImageSize, start_point_global(1), start_point_global(2), start_point_global(3));
     
     
-    start_point_local = airway_segented_image.GlobalToLocalCoordinates(start_point);
+    start_point_local = airway_segented_image.GlobalToLocalCoordinates(start_point_global);
     end_points = airway_results.EndPoints;
     fixed_points = [start_point_index, end_points];
     
@@ -56,12 +56,12 @@ function results = TDGetCentrelineFromAirways(lung_image, airway_results, report
     
     results = [];
     results.AirwayCentrelineTree = skeleton_tree_model;
-    results.OriginalSkeletonPoints = skeleton_results.original_skeleton_points;
-    results.BifurcationPoints = skeleton_results.bifurcation_points;
-    results.SkeletonPoints = skeleton_results.skeleton_points;
-    results.ImageSize = skeleton_results.image_size;
-    results.StartPoint = skeleton_results.start_point;
-    results.RemovedPoints = skeleton_results.removed_points;
+    results.OriginalSkeletonPoints = skeleton_image.LocalToGlobalIndices(skeleton_results.original_skeleton_points);
+    results.BifurcationPoints = skeleton_image.LocalToGlobalIndices(skeleton_results.bifurcation_points);
+    results.SkeletonPoints = skeleton_image.LocalToGlobalIndices(skeleton_results.skeleton_points);
+    results.ImageSize = lung_image.OriginalImageSize;
+    results.StartPoint = start_point_global;
+    results.RemovedPoints = skeleton_image.LocalToGlobalIndices(skeleton_results.removed_points);
     
 end
 
