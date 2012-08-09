@@ -88,7 +88,7 @@ classdef TDPTKGui < handle
             obj.Ptk = TDPTK(obj.Reporting);
             
             obj.Settings = TDPTKSettings.LoadSettings(obj.ImagePanel, obj.Reporting);
-            
+
             if isempty(obj.Settings.ScreenPosition)
                 % Initialise full-screen
                 units=get(obj.FigureHandle, 'units');
@@ -111,7 +111,7 @@ classdef TDPTKGui < handle
 
             obj.ImagePanel.ShowImage = true;
             obj.ImagePanel.ShowOverlay = true;
-            
+
             % Resizing will correctly lay out the GUI
             obj.Resize;
 
@@ -171,7 +171,7 @@ classdef TDPTKGui < handle
                 
                 if (image_info.ImageFileFormat == TDImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
                     msgbox('No valid DICOM files were found in this folder', [TDSoftwareInfo.Name ': No image files found.']);
-                    obj.Reporting.ShowMessage('TDPTKGuiApp:NoilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);                    
+                    obj.Reporting.ShowMessage('TDPTKGuiApp:NoilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
                     obj.LoadImages(image_info, obj.WaitDialogHandle);
                 end
