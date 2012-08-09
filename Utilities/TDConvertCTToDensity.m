@@ -7,8 +7,10 @@ function density_image = TDConvertCTToDensity(ct_image)
     %
     %     Note: this is often a reasonable approximation, but it depends on the
     %     scanner and the material being scanned. 
+    %
     %     The input must be of type TDImage, with values in Hounsfield Units.
-    %     The output will also be a TDImage, containing density values in mg/mL.
+    %
+    %     The output will also be a TDImage, containing density values in g/mL.
     %
     %
     %     Licence
@@ -38,12 +40,14 @@ function density_image = TDConvertCTToDensity(ct_image)
     alpha = (density_air_stp_mgmL - density_water_mgmL)/HU_air;
     density_values_raw = alpha*density_values_raw + density_water_mgmL;
     
+    % Convert from mg/mL to g/ml
+    density_values_raw = density_values_raw/1000;
+    
     % Because this linear relationship is an approximation, we might get
     % negative density values - threshold at zero
     density_values_raw = max(0, density_values_raw);
 
     density_image.ChangeRawImage(density_values_raw);
     density_image.ImageType = TDImageType.Grayscale;
-    
 end
 
