@@ -52,9 +52,11 @@ classdef TDLobarHistogram < TDPlugin
             figure_handle = figure;
             axes_handle = gca;
             set(figure_handle, 'Name', [roi.Title ' : CT Histogram']);
-            TDLobarFrequencyDistribution.Maximize;
+            set(figure_handle, 'PaperPositionMode', 'auto');
+            TDLobarHistogram.Maximize;
             
             hold(axes_handle, 'on');
+
             
             % Shade the compartments
             max_y = 70;
@@ -66,19 +68,19 @@ classdef TDLobarHistogram < TDPlugin
             
             % Whole lung
             graph_data = [];
-            graph_data.Lung = TDLobarFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage > 0, 'k', axes_handle);
+            graph_data.Lung = TDLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage > 0, 'k', axes_handle);
             
             % Left and right lungs
-            graph_data.Left = TDLobarFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage == 2, 'r', axes_handle);
-            graph_data.Right = TDLobarFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage == 1, 'b', axes_handle);
+            graph_data.Left = TDLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage == 2, 'r', axes_handle);
+            graph_data.Right = TDLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage == 1, 'b', axes_handle);
 
             % Lobes
             lobes = dataset.GetResult('TDLobesFromFissurePlane');
-            graph_data.RightUpper = TDLobarFrequencyDistribution.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
-            graph_data.RightMid =  TDLobarFrequencyDistribution.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
-            graph_data.RightLower = TDLobarFrequencyDistribution.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);
-            graph_data.LeftUpper = TDLobarFrequencyDistribution.Histogram(roi, lobes.RawImage == 5, 'm', axes_handle);
-            graph_data.LeftLower = TDLobarFrequencyDistribution.Histogram(roi, lobes.RawImage == 6, 'y', axes_handle);
+            graph_data.RightUpper = TDLobarHistogram.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
+            graph_data.RightMid =  TDLobarHistogram.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
+            graph_data.RightLower = TDLobarHistogram.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);
+            graph_data.LeftUpper = TDLobarHistogram.Histogram(roi, lobes.RawImage == 5, 'm', axes_handle);
+            graph_data.LeftLower = TDLobarHistogram.Histogram(roi, lobes.RawImage == 6, 'y', axes_handle);
             legend_strings = {'Whole lung', 'Left lung', 'Right lung', 'Upper right lobe', 'Middle right lobe', 'Lower right lobe', 'Upper left lobe', 'Lower left lobe'};
   
             legend(legend_strings, 'FontName', 'Helvetica Neue', 'FontSize', 20, 'Location', 'East');
@@ -104,7 +106,7 @@ classdef TDLobarHistogram < TDPlugin
             ylabel(axes_handle, 'CT numbers frequency (%)', 'FontSize', 20);
             axis(axes_handle, [-1100 200 0 max_y]);
 
-            TDLobarFrequencyDistribution.SaveToFile(dataset, graph_data, figure_handle);
+            TDLobarHistogram.SaveToFile(dataset, graph_data, figure_handle);
 
         end
     end
@@ -166,14 +168,14 @@ classdef TDLobarHistogram < TDPlugin
             results_file_name = fullfile(file_name, ['LobeHistogram.txt']);
             file_handle = fopen(results_file_name, 'w');
             
-            TDLobarFrequencyDistribution.SaveLobeToFile(file_handle, graph_data.Lung,       'BOTHLUNG');
-            TDLobarFrequencyDistribution.SaveLobeToFile(file_handle, graph_data.Left,       'LEFTLUNG');
-            TDLobarFrequencyDistribution.SaveLobeToFile(file_handle, graph_data.Right,      'RGHTLUNG');
-            TDLobarFrequencyDistribution.SaveLobeToFile(file_handle, graph_data.RightUpper, 'RGHTUPPR');
-            TDLobarFrequencyDistribution.SaveLobeToFile(file_handle, graph_data.RightMid,   'RGHTMIDL');
-            TDLobarFrequencyDistribution.SaveLobeToFile(file_handle, graph_data.RightLower, 'RGTTLOWR');
-            TDLobarFrequencyDistribution.SaveLobeToFile(file_handle, graph_data.LeftUpper,  'LEFTUPPR');
-            TDLobarFrequencyDistribution.SaveLobeToFile(file_handle, graph_data.LeftLower,  'LEFTLOWR');
+            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.Lung,       'BOTHLUNG');
+            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.Left,       'LEFTLUNG');
+            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.Right,      'RGHTLUNG');
+            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.RightUpper, 'RGHTUPPR');
+            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.RightMid,   'RGHTMIDL');
+            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.RightLower, 'RGTTLOWR');
+            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.LeftUpper,  'LEFTUPPR');
+            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.LeftLower,  'LEFTLOWR');
             
             fclose(file_handle);
             figure_filename = fullfile(file_name, ['LobeHistogram.tif']);
