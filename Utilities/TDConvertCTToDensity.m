@@ -1,4 +1,24 @@
 function density_image = TDConvertCTToDensity(ct_image)
+    % TDConvertCTToDensity. Converts image from Hounsfield Units to density
+    %
+    %     TDConvertCTToDensity takes a CT image and converts the HU values to
+    %     the approximate values of mass density, assuming a linear
+    %     relationshoip between radiodensity values and mass density.
+    %
+    %     Note: this is often a reasonable approximation, but it depends on the
+    %     scanner and the material being scanned. 
+    %     The input must be of type TDImage, with values in Hounsfield Units.
+    %     The output will also be a TDImage, containing density values in mg/mL.
+    %
+    %
+    %     Licence
+    %     -------
+    %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
+    
+    
     density_image = ct_image.BlankCopy;
     
     % Find the raw values

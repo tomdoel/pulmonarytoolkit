@@ -45,10 +45,11 @@ classdef TDDensityVsHeight < TDPlugin
             end
             
             left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
+            [global_gravity_bin_boundaries, lung_height_mm] = TDDensityVsHeight.GetGravityBins(left_and_right_lungs);
             surface = dataset.GetResult('TDLungSurface');
             left_and_right_lungs.ChangeRawImage(left_and_right_lungs.RawImage.*uint8(~surface.RawImage));
-            left_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 2));
-            right_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 1));
+            left_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 2), global_gravity_bin_boundaries, lung_height_mm);
+            right_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 1), global_gravity_bin_boundaries, lung_height_mm);
             
             max_x = max([left_lung_results.mean_density_values right_lung_results.mean_density_values]);
             max_x = 0.3*ceil(max_x/.3);
@@ -91,47 +92,56 @@ classdef TDDensityVsHeight < TDPlugin
             TDDensityVsHeight.SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle);
         end
         
+        function [global_gravity_bin_boundaries, lung_height_mm] = GetGravityBins(whole_lung_mask)
+            bounds = whole_lung_mask.GetBounds;
+            min_i = bounds(1);
+            max_i = bounds(2);
+            
+            i_offset_mm = (min_i + whole_lung_mask.Origin(1) - 2)*whole_lung_mask.VoxelSize(1);
+            lung_height_mm = (1 + max_i - min_i)*whole_lung_mask.VoxelSize(1);
+            slice_height_mm = 10;
+            
+            global_gravity_bin_boundaries = 0 : slice_height_mm : lung_height_mm;
+            global_gravity_bin_boundaries = global_gravity_bin_boundaries + i_offset_mm;
+        end
         
-        function results = ComputeForLung(lung_roi,  voxels_in_lung_indices)
+        function results = ComputeForLung(lung_roi,  voxels_in_lung_indices, global_gravity_bin_boundaries, lung_height_mm)
             
             results = [];
             
-            % Find the coordinates of each voxel in the lung
-            [i_coord, ~, ~] = ind2sub(lung_roi.ImageSize, voxels_in_lung_indices);
+            % Convert the local indices passed in to global coordinates in mm
+            % For a supine patient, the i cordinate is the gravitational height
+            % from the bottom of the original image
+            global_indices = lung_roi.LocalToGlobalIndices(voxels_in_lung_indices);
+            [i_coord, ~, ~] = lung_roi.GlobalIndicesToCoordinatesMm(global_indices);
+            height = i_coord;
+            
+            gravity_bin_size = global_gravity_bin_boundaries(2) - global_gravity_bin_boundaries(1);
+            gravity_bins = global_gravity_bin_boundaries;
             
             density_mg_mL_image = TDConvertCTToDensity(lung_roi);
             
             
             density_mg_mL = density_mg_mL_image.RawImage;
-            
-            % Compute the gravitatioal height
-            height = (lung_roi.ImageSize(1) - i_coord).*lung_roi.VoxelSize(1);
-            
-            % Width of gravity compartment
-            gravity_bin_size = 11;
-            
-            % Compute the gravity slice positions
-            max_gravity = gravity_bin_size*ceil((1+max(height(:)))/gravity_bin_size);
-            gravity_bins = 0 : gravity_bin_size : max_gravity;
-            
+                        
             gravity_plot = [];
             density_plot = [];
             std_plot = [];
             
             for gravity_bin = gravity_bins
                 in_bin = (height >= gravity_bin) & (height < (gravity_bin + gravity_bin_size));
-                volume_mm3 = sum(in_bin(:)).*prod(lung_roi.VoxelSize);
+                volume_mm3 = sum(in_bin(:))*prod(lung_roi.VoxelSize);
                 
                 % Use a cut-off of 5ml
                 if (volume_mm3 >= 5000)
-                    densities_in_bin_mg_ml = density_mg_mL(in_bin);
+                    densities_in_bin_mg_ml = density_mg_mL(voxels_in_lung_indices(in_bin));
                     densities_in_bin_kg_l = densities_in_bin_mg_ml/1000;
                     average_density_for_bin = mean(densities_in_bin_kg_l);
                     std_density_for_bin = std(densities_in_bin_kg_l);
                     
                     % Centrepoint for plot
                     gravity_position = gravity_bin + gravity_bin_size/2;
-                    gravity_plot(end+1) = 100*gravity_position/max_gravity;
+                    gravity_plot(end+1) = 100 - 100*(gravity_position - global_gravity_bin_boundaries(1))/lung_height_mm;
                     density_plot(end+1) = average_density_for_bin;
                     std_plot(end+1) = std_density_for_bin;
                 end
