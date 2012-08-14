@@ -206,7 +206,7 @@ function WriteExelemHeader(file_handle, num_elements)
 end
 
 function PrintIpelemToFile(element_file_handle, parent_index, child_index)
-    fprintf(element_file_handle, ' Element number [%5u]: %5u\r\n', parent_index, parent_index);
+    fprintf(element_file_handle, ' Element number [%5u]: %5u\r\n', child_index - 1, child_index - 1);
     fprintf(element_file_handle, ' The number of geometric Xj-coordinates is [3]: 3\r\n');
     fprintf(element_file_handle, ' The basis function type for geometric variable 1 is [1]:  1\r\n');
     fprintf(element_file_handle, ' The basis function type for geometric variable 2 is [1]:  1\r\n');
@@ -216,7 +216,7 @@ function PrintIpelemToFile(element_file_handle, parent_index, child_index)
 end
 
 function PrintExelemToFile(file_handle, parent_index, child_index)
-    fprintf(file_handle, 'Element: %6u 0 0\r\n', parent_index);
+    fprintf(file_handle, 'Element: %6u 0 0\r\n', child_index - 1);
     fprintf(file_handle, '   Nodes:\r\n');
     fprintf(file_handle, '     %6u %6u\r\n', parent_index, child_index);
     fprintf(file_handle, '   Scale factors:\r\n');
