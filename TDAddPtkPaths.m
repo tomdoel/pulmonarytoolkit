@@ -25,6 +25,7 @@ function TDAddPtkPaths
         path_folders{end + 1} = 'Interfaces';
         path_folders{end + 1} = 'Types';
         path_folders{end + 1} = 'Framework';
+        path_folders{end + 1} = fullfile('External', 'gerardus', 'matlab', 'PointsToolbox');
         
         full_paths_to_add = {};
         
