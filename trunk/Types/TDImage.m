@@ -626,15 +626,19 @@ classdef TDImage < handle
             % added.
             obj.AddBorder(1);
             
-            % Fetch coordinates for each voxel within the existing image. Note
-            % this MUST be done AFTER the AddBorder call.
-            [old_i_mm, old_j_mm, old_k_mm] = obj.GetGlobalCoordinatesMm;            
-            
-            [old_i_grid, old_j_grid, old_k_grid] = ndgrid(old_i_mm, old_j_mm, old_k_mm);
-            [new_i_grid, new_j_grid, new_k_grid] = ndgrid(new_i_mm, new_j_mm, new_k_mm);
-            
-            % Find the nearest value for each point in the new grid
-            obj.RawImage = interpn(old_i_grid, old_j_grid, old_k_grid, obj.RawImage, new_i_grid, new_j_grid, new_k_grid, interpolation_function, 0);
+            if isempty(obj.RawImage)
+                obj.LastImageSize = [size(new_i, 2), size(new_j, 2), size(new_k, 2)];
+            else
+                % Fetch coordinates for each voxel within the existing image. Note
+                % this MUST be done AFTER the AddBorder call.
+                [old_i_mm, old_j_mm, old_k_mm] = obj.GetGlobalCoordinatesMm;
+                
+                [old_i_grid, old_j_grid, old_k_grid] = ndgrid(old_i_mm, old_j_mm, old_k_mm);
+                [new_i_grid, new_j_grid, new_k_grid] = ndgrid(new_i_mm, new_j_mm, new_k_mm);
+                
+                % Find the nearest value for each point in the new grid
+                obj.RawImage = interpn(old_i_grid, old_j_grid, old_k_grid, obj.RawImage, new_i_grid, new_j_grid, new_k_grid, interpolation_function, 0);
+            end
             
             obj.Origin = min_new_coords;
             obj.OriginalImageSize = ceil((obj.OriginalImageSize.*obj.VoxelSize)./new_voxel_size_mm);
@@ -834,18 +838,7 @@ classdef TDImage < handle
         end
         
         function ball_element = CreateBallStructuralElement(obj, size_mm)
-            voxel_size = obj.VoxelSize;
-            strel_size_voxels = ceil(size_mm./(2*voxel_size));
-            ispan = -strel_size_voxels(1) : strel_size_voxels(1);
-            jspan = -strel_size_voxels(2) : strel_size_voxels(2);
-            kspan = -strel_size_voxels(3) : strel_size_voxels(3);
-            [i, j, k] = ndgrid(ispan, jspan, kspan);
-            i = i.*voxel_size(1);
-            j = j.*voxel_size(2);
-            k = k.*voxel_size(3);
-            ball_element = zeros(size(i));
-            ball_element(:) = sqrt(i(:).^2 + j(:).^2 + k(:).^2);
-            ball_element = ball_element <= (size_mm/2);
+            ball_element = TDImageUtilities.CreateBallStructuralElement(obj.VoxelSize, size_mm);
         end
         
         % Guesses which type of image renderng would be best. 
