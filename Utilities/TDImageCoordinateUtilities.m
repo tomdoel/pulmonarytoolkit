@@ -27,11 +27,11 @@ classdef TDImageCoordinateUtilities
             for n = 1 : length(dirs)
                 direction = dirs(n);
                 direction_vector = direction_vectors(direction, :);
-                i_start_point = [2 2 2];
-                i_end_point = i_start_point + direction_vector;
-                i = [i_start_point(1); i_end_point(1)];
-                j = [i_start_point(2); i_end_point(2)];
-                k = [i_start_point(3); i_end_point(3)];
+                start_point = [2 2 2];
+                i_end_point = start_point + direction_vector;
+                i = [start_point(1); i_end_point(1)];
+                j = [start_point(2); i_end_point(2)];
+                k = [start_point(3); i_end_point(3)];
                 linear_indices = sub2ind(image_size, i, j, k);
                 linear_offsets(n) = linear_indices(2) - linear_indices(1);
             end
@@ -42,11 +42,11 @@ classdef TDImageCoordinateUtilities
             for n = 1 : length(dirs)
                 direction = dirs(n);
                 direction_vector = direction_vectors(direction, :);
-                i_start_point = [2 2 2];
-                i_end_point = i_start_point + direction_vector;
-                i = [i_start_point(1); i_end_point(1)];
-                j = [i_start_point(2); i_end_point(2)];
-                k = [i_start_point(3); i_end_point(3)];
+                start_point = [2 2 2];
+                i_end_point = start_point + direction_vector;
+                i = [start_point(1); i_end_point(1)];
+                j = [start_point(2); i_end_point(2)];
+                k = [start_point(3); i_end_point(3)];
                 linear_indices = sub2ind(image_size, i, j, k);
                 linear_offsets27(n) = linear_indices(2) - linear_indices(1);
             end
