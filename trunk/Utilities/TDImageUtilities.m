@@ -96,6 +96,20 @@ classdef TDImageUtilities
                 new_image = zeros(image_size, image_class);
             end
         end
+        
+        function ball_element = CreateBallStructuralElement(voxel_size, size_mm)
+            strel_size_voxels = ceil(size_mm./(2*voxel_size));
+            ispan = -strel_size_voxels(1) : strel_size_voxels(1);
+            jspan = -strel_size_voxels(2) : strel_size_voxels(2);
+            kspan = -strel_size_voxels(3) : strel_size_voxels(3);
+            [i, j, k] = ndgrid(ispan, jspan, kspan);
+            i = i.*voxel_size(1);
+            j = j.*voxel_size(2);
+            k = k.*voxel_size(3);
+            ball_element = zeros(size(i));
+            ball_element(:) = sqrt(i(:).^2 + j(:).^2 + k(:).^2);
+            ball_element = ball_element <= (size_mm/2);
+        end
     end
 end
 
