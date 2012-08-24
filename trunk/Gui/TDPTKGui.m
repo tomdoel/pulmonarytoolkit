@@ -588,9 +588,11 @@ classdef TDPTKGui < handle
         end
         
         function SaveSettings(obj)
-            set(obj.FigureHandle, 'units', 'pixels');
-            obj.Settings.ScreenPosition = get(obj.FigureHandle, 'Position');
-            obj.Settings.SaveSettings(obj.ImagePanel, obj.Reporting);
+            if ~isempty(obj.Settings)
+                set(obj.FigureHandle, 'units', 'pixels');
+                obj.Settings.ScreenPosition = get(obj.FigureHandle, 'Position');
+                obj.Settings.SaveSettings(obj.ImagePanel, obj.Reporting);
+            end
         end
         
         function delete(obj)
