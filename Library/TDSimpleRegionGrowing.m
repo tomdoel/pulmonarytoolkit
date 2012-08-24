@@ -1,10 +1,10 @@
-function output_image = TDSimpleRegionGrowing(threshold_image, start_points, reporting)
+function output_image = TDSimpleRegionGrowing(threshold_image, start_points_global, reporting)
     % TDSimpleRegionGrowing. Performs 3D region growing through the supplied
     %     binary threshold image, starting from the specified points
     %
     %
     %     Syntax:
-    %         output_image = TDSimpleRegionGrowing(threshold_image, start_points, reporting)
+    %         output_image = TDSimpleRegionGrowing(threshold_image, start_points_global, reporting)
     %
     %         Inputs:
     %         ------
@@ -36,22 +36,32 @@ function output_image = TDSimpleRegionGrowing(threshold_image, start_points, rep
     
     if exist('reporting', 'var')
         reporting.Log('Started region growing');
+        reporting.ShowProgress('Region growing');
     end
     
     output_image = threshold_image.BlankCopy;
-    threshold_image = logical(threshold_image.RawImage);
-    segmented_image = zeros(size(threshold_image), 'uint8');
+    segmented_image = zeros(threshold_image.ImageSize, 'uint8');
     
-    [linear_offsets, ~] = TDImageCoordinateUtilities.GetLinearOffsets(size(threshold_image));
-    next_points = zeros(length(start_points), 1);
+    [linear_offsets, ~] = TDImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
+    next_points = zeros(length(start_points_global), 1);
     for i = 1 : length(next_points)
-        start_point = start_points{i};
-        next_points(i) = sub2ind(size(threshold_image), start_point(1), start_point(2), start_point(3));        
+        start_point = start_points_global{i};
+        start_point = threshold_image.GloabalToLocalCoordinates(start_point);
+        next_points(i) = sub2ind(threshold_image.ImageSize, start_point(1), start_point(2), start_point(3));        
     end    
 
+    threshold_image = logical(threshold_image.RawImage);
     number_points = length(segmented_image(:));
     
+    number_of_points_to_grow = sum(threshold_image(:));
+    iteration = 0;
+    
     while ~isempty(next_points)
+        if mod(iteration, 100) == 0
+            points_to_do = sum(threshold_image(:));
+            reporting.UpdateProgressValue(round(100*(number_of_points_to_grow - points_to_do)/number_of_points_to_grow));
+        end
+        iteration = iteration + 1;
         all_points = GetNeighbouringPoints(next_points, linear_offsets);
         all_points = all_points(all_points > 0 & all_points <= number_points);
         
@@ -65,7 +75,8 @@ function output_image = TDSimpleRegionGrowing(threshold_image, start_points, rep
     
     if exist('reporting', 'var')
         reporting.Log('Finished region growing');
-    end    
+        reporting.CompleteProgress;
+    end
  end
  
 function list_of_point_indices = GetNeighbouringPoints(point_indices, linear_offsets)
