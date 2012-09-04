@@ -562,8 +562,10 @@ classdef TDImage < handle
         % Adds a blank border of border_size voxels to the image in all
         % dimensions
         function AddBorder(obj, border_size)
-            if ~isempty(obj.RawImage)
-                added_size = [border_size border_size border_size];
+            added_size = [border_size border_size border_size];
+            if ~obj.ImageExists
+                obj.LastImageSize = obj.LastImageSize + 2*added_size;
+            else
                 class_name = class(obj.RawImage);
                 if islogical(obj.RawImage)
                     new_image = false(obj.ImageSize + 2*added_size);
@@ -573,19 +575,21 @@ classdef TDImage < handle
                 
                 new_image(1+border_size:end-border_size, 1+border_size:end-border_size, 1+border_size:end-border_size) = obj.RawImage;
                 obj.RawImage = new_image;
-                obj.Origin = obj.Origin - added_size;
-                obj.NotifyImageChanged;
             end
+            obj.Origin = obj.Origin - added_size;
+            obj.NotifyImageChanged;
         end
         
         % Removes a border of border_size voxels to the image in all dimensions
         function RemoveBorder(obj, border_size)
-            if obj.ImageExists
-                added_size = [border_size border_size border_size];
+            added_size = [border_size border_size border_size];
+            if ~obj.ImageExists
+                obj.LastImageSize = obj.LastImageSize - 2*added_size;
+            else
                 obj.RawImage = obj.RawImage(1+border_size : end-border_size, 1+border_size : end-border_size, 1+border_size : end-border_size);
-                obj.Origin = obj.Origin + added_size;
-                obj.NotifyImageChanged;
             end
+            obj.Origin = obj.Origin + added_size;
+            obj.NotifyImageChanged;
         end
         
         % Resamples the image to a new voxel size, using the interpolation
