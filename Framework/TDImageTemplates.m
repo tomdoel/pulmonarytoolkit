@@ -79,7 +79,7 @@ classdef TDImageTemplates < handle
             % If the template does not already exist, generate it now by calling
             % the appropriate plugin and creating a template copy
             if ~obj.TemplateImages.isKey(char(context))
-                obj.Reporting.ShowWarning('TDImageTemplates:TemplateNotFound', ['No ' context ' template found. I am generating one now.'], []);
+                obj.Reporting.ShowWarning('TDImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
                 obj.DatasetResultsCallback.GetResult(obj.ValidContexts(char(context)));
                 
                 % The call to GetResult should have automatically created the
