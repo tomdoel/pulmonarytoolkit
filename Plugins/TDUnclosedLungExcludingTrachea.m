@@ -41,24 +41,22 @@ classdef TDUnclosedLungExcludingTrachea < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            threshold_image = dataset.GetResult('TDThresholdLungFiltered');
-            threshold_image.ChangeRawImage(threshold_image.RawImage > 0);
-            
-            reporting.ShowProgress('Extracting lung without trachea');
-            
-            reporting.ShowProgress('Searching for largest connected region');
-            
-            % Find the main component, excluding any components touching the border
-            threshold_image = TDGetMainRegionExcludingBorder(threshold_image, reporting);
+            threshold_image = dataset.GetResult('TDUnclosedLungIncludingTrachea');
             
             % Remove first two generations of airway tree
             reporting.ShowProgress('Finding main airways and removing');
             results = dataset.GetResult('TDAirways');
-            main_airways = TDUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, 3);
+            if strcmp(dataset.GetImageInfo.Modality, 'MR')
+                max_generation = 2;
+            else
+                max_generation = 3;
+            end
+            main_airways = TDUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, max_generation);
             
             % Dilate the airways in order to remove airway walls. But we don't use too large a value, otherwise regions of the lungs will be removed
-            size_dilation = 5;
-            main_airways = imdilate(main_airways, ones(size_dilation, size_dilation, size_dilation));
+            size_dilation_mm = 2.5;
+            ball_element = TDImageUtilities.CreateBallStructuralElement(threshold_image.VoxelSize, size_dilation_mm);
+            main_airways = imdilate(main_airways, ball_element);
             
             main_airways = ~main_airways;
             
