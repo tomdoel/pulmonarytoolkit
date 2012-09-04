@@ -36,13 +36,10 @@ classdef TDGetRightLungROI < TDPlugin
     end
     
     methods (Static)
-        function results = RunPlugin(dataset, ~)
-            right_lung = dataset.GetResult('TDLeftAndRightLungs');
-            right_lung.ChangeRawImage(uint8(right_lung.RawImage == 1));
-            right_lung.CropToFit;
-            right_lung.AddBorder(2);
-            results = dataset.GetResult('TDLungROI');
-            results.ResizeToMatch(right_lung);
+        function results = RunPlugin(dataset, reporting)
+            roi = dataset.GetResult('TDLungROI');
+            left_and_right_lung_mask = dataset.GetResult('TDLeftAndRightLungs');
+            results = TDGetRightLungROIFromLeftAndRightLungs(roi, left_and_right_lung_mask, reporting);
         end
     end  
 end
