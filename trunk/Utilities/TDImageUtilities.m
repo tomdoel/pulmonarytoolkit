@@ -70,21 +70,24 @@ classdef TDImageUtilities
             if length(box_size) == 1
                 box_size = [box_size, box_size, box_size];
             end
+
+            min_coords = max(centre_point - box_size, 1);
+            max_coords = min(centre_point + box_size, size(image));
+
+            image(min_coords(1):max_coords(1), min_coords(2), centre_point(3)) = colour;
+            image(min_coords(1):max_coords(1), max_coords(2), centre_point(3)) = colour;
+            image(min_coords(1), min_coords(2):max_coords(2), centre_point(3)) = colour;
+            image(max_coords(1), min_coords(2):max_coords(2), centre_point(3)) = colour;
             
-            image(centre_point(1)-box_size(1):centre_point(1)+box_size(1), centre_point(2)-box_size(2), centre_point(3)) = colour;
-            image(centre_point(1)-box_size(1):centre_point(1)+box_size(1), centre_point(2)+box_size(2), centre_point(3)) = colour;
-            image(centre_point(1)-box_size(1), centre_point(2)-box_size(2):centre_point(2)+box_size(2), centre_point(3)) = colour;
-            image(centre_point(1)+box_size(1), centre_point(2)-box_size(2):centre_point(2)+box_size(2), centre_point(3)) = colour;
+            image(centre_point(1), min_coords(2), min_coords(3):max_coords(3)) = colour;
+            image(centre_point(1), max_coords(2), min_coords(3):max_coords(3)) = colour;
+            image(centre_point(1), min_coords(2):max_coords(2), min_coords(3)) = colour;
+            image(centre_point(1), min_coords(2):max_coords(2), max_coords(3)) = colour;
             
-            image(centre_point(1), centre_point(2)-box_size(2), max(1, centre_point(3)-box_size(3)):centre_point(3)+box_size(3)) = colour;
-            image(centre_point(1), centre_point(2)+box_size(2), max(1, centre_point(3)-box_size(3)):centre_point(3)+box_size(3)) = colour;
-            image(centre_point(1), centre_point(2)-box_size(2):centre_point(2)+box_size(2), max(1, centre_point(3)-box_size(3))) = colour;
-            image(centre_point(1), centre_point(2)-box_size(2):centre_point(2)+box_size(2), centre_point(3)+box_size(3)) = colour;
-            
-            image(centre_point(1)-box_size(1), centre_point(2), max(1, centre_point(3)-box_size(3)):centre_point(3)+box_size(3)) = colour;
-            image(centre_point(1)+box_size(1), centre_point(2), max(1, centre_point(3)-box_size(3)):centre_point(3)+box_size(3)) = colour;
-            image(centre_point(1)-box_size(1):centre_point(1)+box_size(1), centre_point(2), max(1, centre_point(3)-box_size(3))) = colour;
-            image(centre_point(1)-box_size(1):centre_point(1)+box_size(1), centre_point(2), centre_point(3)+box_size(3)) = colour;
+            image(min_coords(1), centre_point(2), min_coords(3):max_coords(3)) = colour;
+            image(max_coords(1), centre_point(2), min_coords(3):max_coords(3)) = colour;
+            image(min_coords(1):max_coords(1), centre_point(2), min_coords(3)) = colour;
+            image(min_coords(1):max_coords(1), centre_point(2), max_coords(3)) = colour;
         end
         
         % Construct a new image of zeros or logical false, depending on the
