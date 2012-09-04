@@ -18,12 +18,17 @@ classdef TDImageCoordinateUtilities
         % added to the linear index of any point to return the linear indices of
         % its nearest neighbours.
         function [linear_offsets, linear_offsets27] = GetLinearOffsets(image_size)
-            direction_vectors = TDImageCoordinateUtilities.CalculateDirectionVectors;
-            
             % Compute linear index offsets for diretion vectors
-            linear_offsets = zeros(1, 6);
-            
             dirs = [5, 23, 11, 17, 13, 15];
+            linear_offsets = TDImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
+            
+            dirs = 1:27;
+            linear_offsets27 = TDImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
+        end
+        
+        function linear_offsets = GetLinearOffsetsForDirections(dirs, image_size)
+            direction_vectors = TDImageCoordinateUtilities.CalculateDirectionVectors;            
+            linear_offsets = zeros(1, numel(dirs));
             for n = 1 : length(dirs)
                 direction = dirs(n);
                 direction_vector = direction_vectors(direction, :);
@@ -34,21 +39,6 @@ classdef TDImageCoordinateUtilities
                 k = [start_point(3); i_end_point(3)];
                 linear_indices = sub2ind(image_size, i, j, k);
                 linear_offsets(n) = linear_indices(2) - linear_indices(1);
-            end
-            
-            
-            linear_offsets27 = zeros(1, 27);
-            dirs = 1:27;
-            for n = 1 : length(dirs)
-                direction = dirs(n);
-                direction_vector = direction_vectors(direction, :);
-                start_point = [2 2 2];
-                i_end_point = start_point + direction_vector;
-                i = [start_point(1); i_end_point(1)];
-                j = [start_point(2); i_end_point(2)];
-                k = [start_point(3); i_end_point(3)];
-                linear_indices = sub2ind(image_size, i, j, k);
-                linear_offsets27(n) = linear_indices(2) - linear_indices(1);
             end
         end
         
@@ -77,6 +67,9 @@ classdef TDImageCoordinateUtilities
             i = i + offset(1);
             j = j + offset(2);
             k = k + offset(3);
+            if any(i < 0) || any(j < 0) || any(k < 0)
+                error('OffsetIndices: The indices are out of range for this image');
+            end
             
             new_indices = 1 + (i) + (j)*size_big(1) + (k)*size_big(1)*size_big(2);
         end
