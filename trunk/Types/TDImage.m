@@ -808,6 +808,17 @@ classdef TDImage < handle
             kc = (kc' + obj.Origin(3) - 1.5)*obj.VoxelSize(3);
         end
 
+        % Returns the coordinates of all points in the image in global
+        % coordinates in mm, with the origin at the centre of the original image
+        function [ic, jc, kc] = GetCentredGlobalCoordinatesMm(obj)
+            original_voxel_size = obj.VoxelSize./obj.Scale;
+            offset = obj.OriginalImageSize.*original_voxel_size/2;
+            [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
+            ic = ic - offset(1);
+            jc = jc - offset(2);
+            kc = kc - offset(3);
+        end
+
         % Computes the isotropic grid spacing required to resample this mask so
         % as to achieve approximately the number of specified points in the mask
         function grid_spacing_mm = ComputeResamplingGridSpacing(obj, approx_number_points)
@@ -816,6 +827,21 @@ classdef TDImage < handle
             grid_spacing_mm = nthroot(parallelepiped_volume*(number_of_voxels/approx_number_points), 3);
         end
         
+        % Interpolates the image to the coordinates in the template image
+        function InterpolationToMatch(obj, template)
+            [i_o, j_o, k_o] = obj.GetGlobalCoordinatesMm;
+            [i_o, j_o, k_o] = ndgrid(i_o, j_o, k_o);
+            
+            [i_r, j_r, k_r] = template.GetGlobalCoordinatesMm;
+            [i_r, j_r, k_r] = ndgrid(i_r, j_r, k_r);
+            
+            obj.RawImage = interpn(i_o, j_o, k_o, single(obj.RawImage), ...
+                i_r, j_r, k_r, '*linear', 0);
+            obj.Origin = template.Origin;
+            obj.VoxelSize = template.VoxelSize;
+            obj.NotifyImageChanged;
+            
+        end
         
     end
     
