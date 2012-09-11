@@ -110,7 +110,61 @@ classdef TDImageCoordinateUtilities
         function indices = FastSub2ind(im_size, i, j, k)
             indices = i + (j-1)*im_size(1) + (k-1)*im_size(1)*im_size(2);
         end
+
+        function rot_matrix = GetEulerRotationMatrix(phi, theta, psi)
+            rot_matrix = zeros(3,3);
+            
+            rot_matrix(1, 1) = cos(psi)*cos(phi) - cos(theta)*sin(phi)*sin(psi);
+            rot_matrix(1, 2) = cos(psi)*sin(phi) + cos(theta)*cos(phi)*sin(psi);
+            rot_matrix(1, 3) = sin(psi)*sin(theta);
+            
+            rot_matrix(2, 1) = -sin(psi)*cos(phi) - cos(theta)*sin(phi)*cos(psi);
+            rot_matrix(2, 2) = -sin(psi)*sin(phi) + cos(theta)*cos(phi)*cos(psi);
+            rot_matrix(2, 3) = cos(psi)*sin(theta);
+            
+            rot_matrix(3, 1) =  sin(theta)*sin(phi);
+            rot_matrix(3, 2) = -sin(theta)*cos(psi);
+            rot_matrix(3, 3) = cos(theta);
+        end
         
+        function affine_matrix = CreateAffineMatrix(x)
+            affine_matrix = zeros(3, 4, 'single');
+            affine_matrix(:) = x(:);
+            affine_matrix = [affine_matrix; [0 0 0 1]];
+        end
+        
+        function affine_matrix = CreateRigidAffineMatrix(x)
+            affine_matrix = zeros(3, 4, 'single');
+            
+            euler_rot_matrix = TDImageCoordinateUtilities.GetEulerRotationMatrix(x(1), x(2), x(3));
+            affine_matrix(1:3, 1:3) = euler_rot_matrix;
+            
+            affine_matrix(1:3,4) = x(4:6);
+            
+            affine_matrix = [affine_matrix; [0 0 0 1]];
+        end
+        
+        function [i, j, k] = TransformCoordsAffine(i, j, k, augmented_matrix)
+            [j, i, k] = TDImageCoordinateUtilities.TranslateAndRotateMeshGrid(j, i, k, augmented_matrix(1:3,1:3), augmented_matrix(1:3,4));
+        end
+        
+        function [X, Y, Z] = TranslateAndRotateMeshGrid(X, Y, Z, rot_matrix, trans_matrix)
+            % Rotates and translates meshgrid generated coordinates in 3D
+            [X, Y, Z] = TDImageCoordinateUtilities.RotateMeshGrid(X + trans_matrix(1), Y + trans_matrix(2), Z + trans_matrix(3), rot_matrix);
+        end
+
+        function [X, Y, Z] = RotateMeshGrid(X, Y, Z, rot_matrix)
+            % Rotates coordinates that are given in 3D meshgrid matrices
+            coords = rot_matrix * [ ...
+                reshape(X, 1, numel(X)); ...
+                reshape(Y, 1, numel(Y)); ...
+                reshape(Z, 1, numel(Z)) ...
+                ];
+            
+            X = reshape(coords(1, :), size(X));
+            Y = reshape(coords(2, :), size(Y));
+            Z = reshape(coords(3, :), size(Z));
+        end
     end
 end
 
