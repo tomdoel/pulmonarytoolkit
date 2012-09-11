@@ -1314,8 +1314,8 @@ classdef TDViewerPanel < handle
         end
 
         function [rgb_image alpha] = GetColourMap(image, image_limits, black_is_transparent)
-            image_limits(1) = min(0, image_limits(1));
-            image_limits(2) = max(0, image_limits(2));
+            image_limits(1) = min(-1, image_limits(1));
+            image_limits(2) = max(1, image_limits(2));
             positive_mask = image >= 0;
             rgb_image = zeros([size(image), 3], 'uint8');
             positive_image = abs(double(image))/abs(double(image_limits(2)));
@@ -1324,7 +1324,9 @@ classdef TDViewerPanel < handle
             rgb_image(:, :, 3) = uint8(~positive_mask).*(uint8(255*negative_image));
             
             if black_is_transparent
-                alpha = int8(min(1, abs(max(positive_image, negative_image))));
+                alpha = double(positive_mask).*positive_image + single(~positive_mask).*negative_image;
+                rgb_image(:, :, 1) = 255*uint8(positive_mask);
+                rgb_image(:, :, 3) = 255*uint8(~positive_mask);
             else
                 alpha = ones(size(image));
             end
