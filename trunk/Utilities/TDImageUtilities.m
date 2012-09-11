@@ -113,6 +113,43 @@ classdef TDImageUtilities
             ball_element(:) = sqrt(i(:).^2 + j(:).^2 + k(:).^2);
             ball_element = ball_element <= (size_mm/2);
         end
+        
+        function image_to_invert = InvertImage(image_to_invert)
+            image_to_invert.ChangeRawImage(image_to_invert.Limits(2) - image_to_invert.RawImage);
+        end
+        
+        function MatchSizes(image_1, image_2)
+            new_size = max(image_1.ImageSize, image_2.ImageSize);
+            new_origin_1 = image_1.Origin - floor((new_size - image_1.ImageSize)/2);
+            image_1.ResizeToMatchOriginAndSize(new_origin_1, new_size);
+            new_origin_2 = image_2.Origin - floor((new_size - image_2.ImageSize)/2);
+            image_2.ResizeToMatchOriginAndSize(new_origin_2, new_size);
+        end
+        
+        function MatchSizesAndOrigin(image_1, image_2)
+            new_origin = min(image_1.Origin, image_2.Origin);
+            new_size = max(image_1.Origin + image_1.ImageSize, image_2.Origin + image_2.ImageSize) - new_origin;
+            image_1.ResizeToMatchOriginAndSize(new_origin, new_size);
+            image_2.ResizeToMatchOriginAndSize(new_origin, new_size);
+        end
+        
+        function combined_image = CombineImages(image_1, image_2)
+            combined_image = image_1.Copy;
+            new_origin = min(image_1.Origin, image_2.Origin);
+            br_coords = max(image_1.Origin + image_1.ImageSize - [1,1,1], image_2.Origin + image_2.ImageSize - [1,1,1]);
+            new_size = br_coords - new_origin + [1,1,1];
+            combined_image.ResizeToMatchOriginAndSize(new_origin, new_size);
+            combined_image.ChangeSubImage(image_2);
+        end
+        
+        function dt = GetNormalisedDT(seg)
+            seg_raw = single(bwdist(seg.RawImage == 0)); 
+            max_val = single(max(seg_raw(:)));
+            seg_raw = seg_raw/max_val;
+            dt = seg.BlankCopy;
+            dt.ChangeRawImage(seg_raw);
+            dt.ImageType = TDImageType.Scaled;
+        end
     end
 end
 
