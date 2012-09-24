@@ -283,41 +283,65 @@ classdef TDViewerPanel < handle
         
         function frame = Capture(obj)
             drawnow;
-            rect = get(obj.Axes, 'Position');
             
-            % The image may not fill the entire axes, so we need to adjust the
-            % rectangle accordingly
-            data_aspect_ratio = get(obj.Axes, 'DataAspectRatio');
+            % Matlab cannot capture images on a secondary monitor, so we must
+            % move the figure to the primary monitor
+            old_position = get(obj.Axes, 'Position');
+            movegui(obj.Axes);
+            
+            % Fetch the current screen coordinates of the axes
+            rect_screenpixels = get(obj.Axes, 'Position');
+            
+            % The image may not occupy the entire axes, so we need to crop the
+            % rectangle to only include the image
             xlim = get(obj.Axes, 'XLim');
             ylim = get(obj.Axes, 'YLim');
-            size_x = (xlim(2) - xlim(1))/data_aspect_ratio(1);
-            size_y = (ylim(2) - ylim(1))/data_aspect_ratio(2);
-            size_x_voxels = rect(3);
-            size_y_voxels = rect(4);
+
+            x_size_screenpixels = rect_screenpixels(3);
+            x_size_imagepixels = xlim(2) - xlim(1);
+            scale_x = x_size_screenpixels/x_size_imagepixels;
+            y_size_screenpixels = rect_screenpixels(4);
+            y_size_imagepixels = ylim(2) - ylim(1);
+            scale_y = y_size_screenpixels/y_size_imagepixels;
             
-            scale_x = size_x_voxels/size_x;
-            scale_y = size_y_voxels/size_y;
-            if scale_x > scale_y
-                scale = scale_y;
-                x_offset = ceil((size_x_voxels - scale*size_x)/2);
-                y_offset = 0;
-            else
-                scale = scale_x;
-                x_offset = 0;
-                y_offset = ceil((size_y_voxels - scale*size_y)/2);
+            origin = [0.5, 0.5, 0.5];
+            image_limit = origin + obj.BackgroundImage.ImageSize;
+            switch obj.Orientation
+                case TDImageOrientation.Coronal
+                    xlim_image = [origin(2), image_limit(2)];
+                    ylim_image = [origin(3), image_limit(3)];
+                case TDImageOrientation.Sagittal
+                    xlim_image = [origin(1), image_limit(1)];
+                    ylim_image = [origin(3), image_limit(3)];
+                case TDImageOrientation.Axial
+                    xlim_image = [origin(2), image_limit(2)];
+                    ylim_image = [origin(1), image_limit(1)];
             end
             
-            rect(1) = rect(1) + x_offset;
-            rect(3) = rect(3) - 2*x_offset;
-            rect(2) = rect(2) + y_offset;
-            rect(4) = rect(4) - 2*y_offset;
+            x_offset_imagevoxels = max(0, xlim_image(1) - xlim(1));
+            x_offset_screenvoxels = x_offset_imagevoxels*scale_x;
             
-            frame = getframe(obj.FigureHandle, rect);
-            figure;
-            image(frame.cdata);
-            set(gca, 'DataAspectRatio', data_aspect_ratio);
-            axis off
+            x_endoffset_imagevoxels = max(0, xlim(2) - xlim_image(2));
+            x_endoffset_screenvoxels = x_endoffset_imagevoxels*scale_x;
+
+            y_offset_imagevoxels = max(0, ylim_image(1) - ylim(1));
+            y_offset_screenvoxels = y_offset_imagevoxels*scale_y;
             
+            y_endoffset_imagevoxels = max(0, ylim(2) - ylim_image(2));
+            y_endoffset_screenvoxels = y_endoffset_imagevoxels*scale_y;
+
+            % Crop the image rectangle so it only contains the image
+            rect_screenpixels(1) = rect_screenpixels(1) + x_offset_screenvoxels;
+            rect_screenpixels(2) = rect_screenpixels(2) + y_offset_screenvoxels;
+            rect_screenpixels(3) = rect_screenpixels(3) - x_offset_screenvoxels - x_endoffset_screenvoxels;
+            rect_screenpixels(4) = rect_screenpixels(4) - y_offset_screenvoxels - y_endoffset_screenvoxels;
+            rect_screenpixels = round(rect_screenpixels);
+
+            % Capture the image as a bitmap
+            frame = getframe(obj.FigureHandle, rect_screenpixels);
+            
+            % Return the figure to its original position 
+            set(obj.Axes, 'Position', old_position);            
         end
 
     end
