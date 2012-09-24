@@ -285,6 +285,56 @@ classdef TDImage < handle
             obj.NotifyImageChanged;
         end
 
+        % Modifies a region of the image, but using a mask to determine which
+        % voxels wil be changed.
+        function ChangeSubImageWithMask(obj, new_subimage, mask)
+            mask = mask.Copy;
+            mask.ResizeToMatch(new_subimage);
+            dst_offset = new_subimage.Origin - obj.Origin + [1 1 1];
+            src_offset = obj.Origin - new_subimage.Origin + [1 1 1];
+            
+            dst_start_crop = max(1, dst_offset);
+            dst_end_crop = min(obj.ImageSize(1:3), dst_offset + new_subimage.ImageSize(1:3) - 1);
+            
+            src_start_crop = max(1, src_offset);
+            src_end_crop = min(new_subimage.ImageSize(1:3), src_offset + obj.ImageSize(1:3) - 1);
+            
+            existing_subimage_raw = obj.RawImage(...
+                    dst_start_crop(1) : dst_end_crop(1), ...
+                    dst_start_crop(2) : dst_end_crop(2), ...
+                    dst_start_crop(3) : dst_end_crop(3), ...
+                    : ...
+                );
+            
+            mask_subimage_raw = mask.RawImage(...
+                    src_start_crop(1) : src_end_crop(1), ...
+                    src_start_crop(2) : src_end_crop(2), ...
+                    src_start_crop(3) : src_end_crop(3), ...    
+                    : ...
+                );
+            
+            mask_subimage_raw = mask_subimage_raw > 0;
+            
+            
+            new_subimage_raw = new_subimage.RawImage(...
+                    src_start_crop(1) : src_end_crop(1), ...
+                    src_start_crop(2) : src_end_crop(2), ...
+                    src_start_crop(3) : src_end_crop(3), ...    
+                    : ...
+                );
+            
+            existing_subimage_raw(mask_subimage_raw) = new_subimage_raw(mask_subimage_raw);
+
+            obj.RawImage(...
+                    dst_start_crop(1) : dst_end_crop(1), ...
+                    dst_start_crop(2) : dst_end_crop(2), ...
+                    dst_start_crop(3) : dst_end_crop(3), ...
+                    : ...
+                )  = existing_subimage_raw;
+            
+            obj.NotifyImageChanged;
+        end
+        
         % Adjusts the image borders to match the specified template image
         function ResizeToMatch(obj, template_image)
             obj.ResizeToMatchOriginAndSize(template_image.Origin, template_image.ImageSize)
@@ -377,6 +427,7 @@ classdef TDImage < handle
             obj.Scale = scale;
             obj.RawImage = obj.RawImage(1:scale(1):end, 1:scale(2):end, 1:scale(3):end);
             obj.NotifyImageChanged;
+            obj.Origin = floor(obj.Origin./scale);
         end
         
         % Returns a 2D slice from the image in the specified direction
@@ -598,6 +649,10 @@ classdef TDImage < handle
         % between images. The resulting image is cropped to the region
         % containing all of the previous image
         function Resample(obj, new_voxel_size_mm, interpolation_function)
+            obj.ResampleWithAffineTransformation(new_voxel_size_mm, interpolation_function, []);
+        end
+        
+        function ResampleWithAffineTransformation(obj, new_voxel_size_mm, interpolation_function, affine_matrix)
             % Find the bounding coordinates in mm of the original image
             min_old_coords_mm = (obj.Origin - [1, 1, 1]).*obj.VoxelSize;
             max_old_coords_mm = (obj.Origin + obj.ImageSize - [1, 1, 1]).*obj.VoxelSize;
@@ -639,6 +694,10 @@ classdef TDImage < handle
                 
                 [old_i_grid, old_j_grid, old_k_grid] = ndgrid(old_i_mm, old_j_mm, old_k_mm);
                 [new_i_grid, new_j_grid, new_k_grid] = ndgrid(new_i_mm, new_j_mm, new_k_mm);
+                
+                if ~isempty(affine_matrix)
+                    [new_i_grid, new_j_grid, new_k_grid] = TDImageCoordinateUtilities.TransformCoordsAffine(new_i_grid, new_j_grid, new_k_grid, affine_matrix);
+                end
                 
                 % Find the nearest value for each point in the new grid
                 obj.RawImage = interpn(old_i_grid, old_j_grid, old_k_grid, obj.RawImage, new_i_grid, new_j_grid, new_k_grid, interpolation_function, 0);
