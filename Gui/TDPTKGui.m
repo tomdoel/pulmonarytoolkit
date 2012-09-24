@@ -48,7 +48,7 @@ classdef TDPTKGui < handle
             end
 
             % Create the figure and gui components
-            obj.FigureHandle = figure('Color', TDSoftwareInfo.BackgroundColour, 'Visible', 'off', 'numbertitle', 'off');
+            obj.FigureHandle = figure('Color', TDSoftwareInfo.BackgroundColour, 'Visible', 'off', 'numbertitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none');
             obj.UipanelImageHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [1 1 921 921], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'BorderType', 'none');
             obj.UipanelPluginsHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [889 6 668 869], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'BorderType', 'none');
             obj.UipanelVersionHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [10 2 392 34], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'BorderType', 'none');
