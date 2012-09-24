@@ -148,6 +148,12 @@ classdef TDImageCoordinateUtilities
             [j, i, k] = TDImageCoordinateUtilities.TranslateAndRotateMeshGrid(j, i, k, augmented_matrix(1:3,1:3), augmented_matrix(1:3,4));
         end
         
+        function [i, j, k] = TransformCoordsFluid(i, j, k, deformation_field)
+            i = i - deformation_field.RawImage(:,:,:,1);
+            j = j - deformation_field.RawImage(:,:,:,2);
+            k = k - deformation_field.RawImage(:,:,:,3);
+        end
+        
         function [X, Y, Z] = TranslateAndRotateMeshGrid(X, Y, Z, rot_matrix, trans_matrix)
             % Rotates and translates meshgrid generated coordinates in 3D
             [X, Y, Z] = TDImageCoordinateUtilities.RotateMeshGrid(X + trans_matrix(1), Y + trans_matrix(2), Z + trans_matrix(3), rot_matrix);
