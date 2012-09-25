@@ -159,6 +159,60 @@ classdef TDAirwayGrowingTree < TDTree
             reporting.Error('FindBranch', 'Centreline branch not found');
         end
         
+        % Returns the coordinates of each terminal branch in the tree below this
+        % branch
+        function terminal_coords = GetTerminalCoordinates(obj, reporting)
+            num_branches = obj.CountBranches;
+            num_terminal_branches = obj.CountTerminalBranches;
+            
+            reporting.UpdateProgressMessage('Finding terminal coordinates');
+            
+            branches_to_do = obj;
+            
+            all_starts = zeros(num_branches, 3);
+            all_ends = zeros(num_branches, 3);
+            terminal_coords = zeros(num_terminal_branches, 3);
+            terminal_index = 1;
+            index = 1;
+            
+            while ~isempty(branches_to_do)
+                branch = branches_to_do(end);
+                branches_to_do(end) = [];
+                children = branch.Children;
+                if ~isempty(children)
+                    branches_to_do = [branches_to_do, children];
+                else
+                    terminal_coords(terminal_index, :) = branch.EndCoords;
+                    terminal_index = terminal_index + 1;
+                end
+                
+                parent = branch.Parent;
+                
+                if isempty(parent)
+                    start_point_mm = branch.StartCoords;
+                else
+                    start_point_mm = parent.EndCoords;
+                end
+                end_point_mm = branch.EndCoords;
+                if isnan(end_point_mm)
+                    reporting.Error('TDGrowingTreeBySegment:Nan', 'NaN found in branch coordinate');
+                end
+                
+                all_starts(index, :) = start_point_mm;
+                all_ends(index, :) = end_point_mm;
+                
+                index = index + 1;
+            end
+            
+            if terminal_index ~= num_terminal_branches + 1
+                reporting.Error('TDGrowingTreeBySegment:TerminalBranchCountMismatch', 'A code error occurred: the termina branch count was not as expected');
+            end
+            
+            %     all_local_indices = GetAirwayModelAsLocalIndices(all_starts, all_ends);
+            
+        end
+        
+        
     end
     
 end
