@@ -67,9 +67,10 @@ classdef TDImageCoordinateUtilities
             i = i + offset(1);
             j = j + offset(2);
             k = k + offset(3);
-            if any(i < 0) || any(j < 0) || any(k < 0)
-                error('OffsetIndices: The indices are out of range for this image');
-            end
+
+            % Note that i,j,k can be negative, in the case where a border has
+            % been added to the image so its coordinates extend beyond the
+            % boundaries of the original image
             
             new_indices = 1 + (i) + (j)*size_big(1) + (k)*size_big(1)*size_big(2);
         end
