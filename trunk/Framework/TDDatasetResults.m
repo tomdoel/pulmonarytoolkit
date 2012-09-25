@@ -95,6 +95,8 @@ classdef TDDatasetResults < handle
             context_is_enabled = obj.ImageTemplates.IsContextEnabled(context);
         end
         
+        % ToDo: This check is based on series description and should be more
+        % general
         function is_gas_mri = IsGasMRI(obj)
             is_gas_mri = false;
             if ~strcmp(obj.GetImageInfo.Modality, 'MR')
