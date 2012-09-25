@@ -44,9 +44,6 @@ function threshold_image = TDThresholdAirway(lung_image, use_wide_threshold)
             end
         end
         
-    elseif lung_image.IsMR
-        limit_1 = 0;
-        limit_2 = 250;
     else
         error('Unsupported modality');
     end
