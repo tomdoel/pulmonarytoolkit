@@ -45,8 +45,8 @@ classdef TDLobesFromFissurePlane < TDPlugin
             lung_mask = application.GetResult('TDLeftAndRightLungs');
             left_lung_template = application.GetTemplateImage(TDContext.LeftLungROI);
             right_lung_template = application.GetTemplateImage(TDContext.RightLungROI);
-            results_left = TDLobesFromFissurePlane.GetLeftLungResults(left_lung_template, lung_mask.Copy, fissure_plane.Copy);
-            results_right = TDLobesFromFissurePlane.GetRightLungResults(right_lung_template, lung_mask, fissure_plane);
+            results_left = TDLobesFromFissurePlane.GetLeftLungResults(left_lung_template, lung_mask.Copy, fissure_plane.Copy, reporting);
+            results_right = TDLobesFromFissurePlane.GetRightLungResults(right_lung_template, lung_mask, fissure_plane, reporting);
             
             results = TDCombineLeftAndRightImages(application.GetTemplateImage(TDContext.LungROI), results_left, results_right, left_and_right_lungs);
             results.ImageType = TDImageType.Colormap;
@@ -57,7 +57,7 @@ classdef TDLobesFromFissurePlane < TDPlugin
     end    
     
     methods (Static, Access = private)
-        function left_results = GetLeftLungResults(lung_template, lung_mask, fissure_plane)
+        function left_results = GetLeftLungResults(lung_template, lung_mask, fissure_plane, reporting)
 
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage == 2));
             
@@ -76,7 +76,7 @@ classdef TDLobesFromFissurePlane < TDPlugin
             left_results.ChangeRawImage(results_left_raw);
         end
         
-        function right_results = GetRightLungResults(lung_template, lung_mask, fissure_plane)
+        function right_results = GetRightLungResults(lung_template, lung_mask, fissure_plane, reporting)
             
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage == 1));
             
@@ -88,14 +88,21 @@ classdef TDLobesFromFissurePlane < TDPlugin
             
             % Mid lobe
             fissure_plane_m = find(fissure_plane.RawImage(:) == 2);
-            lung_mask_excluding_lower = lung_mask.Copy;
-            lung_mask_excluding_lower.ChangeRawImage(results_right_raw == 2);
-            results_mid_right_raw = TDGetLobesFromFissurePoints(fissure_plane_m, lung_mask_excluding_lower, lung_template.ImageSize);
             
+            if ~isempty(fissure_plane_m)
+                lung_mask_excluding_lower = lung_mask.Copy;
+                lung_mask_excluding_lower.ChangeRawImage(results_right_raw == 2);
+                results_mid_right_raw = TDGetLobesFromFissurePoints(fissure_plane_m, lung_mask_excluding_lower, lung_template.ImageSize);
+
+                results_right_raw(results_right_raw == 3) = 4;
+                results_right_raw(results_mid_right_raw == 2) = 1;
+                results_right_raw(results_mid_right_raw == 3) = 2;
+            else
+                reporting.ShowWarning('TDLobesFromFissurePlane:NoRightObliqueFissure', 'Unable to find the right horizontal fissure. No middle right lobe segmentation will be shown.', []);
+                results_right_raw(results_right_raw == 2) = 1;
+                results_right_raw(results_right_raw == 3) = 4;
+            end
             
-            results_right_raw(results_right_raw == 3) = 4;
-            results_right_raw(results_mid_right_raw == 2) = 1;
-            results_right_raw(results_mid_right_raw == 3) = 2;
                         
             right_results = lung_template.BlankCopy;
             right_results.ChangeRawImage(results_right_raw);
