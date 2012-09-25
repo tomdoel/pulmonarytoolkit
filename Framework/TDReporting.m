@@ -151,6 +151,10 @@ classdef TDReporting < TDReportingInterface
             end
             obj.CheckForCancel;
         end
+        
+        function UpdateProgressStage(obj, progress_stage, num_stages)
+            obj.UpdateProgressValue(round(100*progress_stage/num_stages));
+        end
          
         function UpdateProgressAndMessage(obj, progress_value, text)
             if ~isempty(obj.ProgressDialog)
@@ -196,7 +200,15 @@ classdef TDReporting < TDReportingInterface
 
         function UpdateOverlayImage(obj, new_image)
             if ~isempty(obj.ViewingPanel)
-                obj.ViewingPanel.OverlayImage.ChangeRawImage(new_image);
+%                 obj.ViewingPanel.OverlayImage.ChangeRawImage(new_image.RawImage);
+                obj.ViewingPanel.OverlayImage.ChangeSubImage(new_image);
+                obj.ViewingPanel.OverlayImage.ImageType = new_image.ImageType;
+            end
+        end
+        
+        function UpdateOverlaySubImage(obj, new_image)
+            if ~isempty(obj.ViewingPanel)
+                obj.ViewingPanel.OverlayImage.ChangeSubImage(new_image);
             end
         end
     end
