@@ -41,13 +41,13 @@ classdef TDFissurePlane < TDPlugin
     end
     
     methods (Static)
-        function results = RunPlugin(application, ~)
+        function results = RunPlugin(application, reporting)
             
             left_and_right_lungs = application.GetResult('TDLeftAndRightLungs');
             
             
-            results_left = TDFissurePlane.GetLeftLungResults(application);
-            results_right = TDFissurePlane.GetRightLungResults(application);
+            results_left = TDFissurePlane.GetLeftLungResults(application, reporting);
+            results_right = TDFissurePlane.GetRightLungResults(application, reporting);
             
             results = TDCombineLeftAndRightImages(application.GetTemplateImage(TDContext.LungROI), results_left, results_right, left_and_right_lungs);
             results.ImageType = TDImageType.Colormap;
@@ -58,13 +58,17 @@ classdef TDFissurePlane < TDPlugin
     end    
     
     methods (Static, Access = private)
-        function left_results = GetLeftLungResults(application)
+        function left_results = GetLeftLungResults(application, reporting)
             max_fissure_points = application.GetResult('TDMaximumFissurePoints');
             
             
             left_lung_roi = application.GetResult('TDGetLeftLungROI');
             max_fissure_points.ResizeToMatch(left_lung_roi);
             max_fissure_points = find(max_fissure_points.RawImage(:) == 1);
+
+            if isempty(max_fissure_points)
+                reporting.Error('TDFissurePlane:NoLeftObliqueFissure', 'Unable to find the left oblique fissure');
+            end
             
             results_left_raw = TDGetFissurePlane(max_fissure_points, left_lung_roi.ImageSize, 3);
                         
@@ -72,7 +76,7 @@ classdef TDFissurePlane < TDPlugin
             left_results.ChangeRawImage(4*uint8(results_left_raw == 1));
         end
         
-        function right_results = GetRightLungResults(application)
+        function right_results = GetRightLungResults(application, reporting)
             max_fissure_points = application.GetResult('TDMaximumFissurePoints');
             
             right_lung_roi = application.GetResult('TDGetRightLungROI');
@@ -80,13 +84,15 @@ classdef TDFissurePlane < TDPlugin
             max_fissure_points_o = find(max_fissure_points.RawImage(:) == 1);
             max_fissure_points_m = find(max_fissure_points.RawImage(:) == 8);
             
+            if isempty(max_fissure_points_o)
+                reporting.Error('TDFissurePlane:NoRightObliqueFissure', 'Unable to find the right oblique fissure');
+            end
+            
+            if isempty(max_fissure_points_m)
+                reporting.ShowWarning('TDFissurePlane:NoRightHoritontalFissure', 'Unable to find the right horizontal fissure', []);
+            end
+            
             results_right_raw = 3*TDGetFissurePlane(max_fissure_points_o, right_lung_roi.ImageSize, 3);
-            
-            
-            % The final value controls the extrapolation. 4 is a reasonable 
-            % value, but higher values may be needed if few fissure points have 
-            % been found, especially for the right mid fissure.
-            results_right_m_raw = TDGetFissurePlane(max_fissure_points_m, right_lung_roi.ImageSize, 4);
             
             right_lung_mask = application.GetResult('TDLeftAndRightLungs');
             right_lung_mask.ResizeToMatch(right_lung_roi);
@@ -97,9 +103,18 @@ classdef TDFissurePlane < TDPlugin
             % Create a mask which excludes the lower lobe
             lobes_right_raw = TDGetLobesFromFissurePoints(fissure_plane_oblique, right_lung_mask, right_lung_roi.ImageSize);
             right_lung_mask.ChangeRawImage(lobes_right_raw == 2); 
-            results_right_m_raw(right_lung_mask.RawImage == 0) = 0;
-
-            results_right_raw(results_right_m_raw == 1) = 2;
+            
+            
+            % The final value controls the extrapolation. 4 is a reasonable 
+            % value, but higher values may be needed if few fissure points have 
+            % been found, especially for the right mid fissure.
+            if ~isempty(max_fissure_points_m)
+                results_right_m_raw = TDGetFissurePlane(max_fissure_points_m, right_lung_roi.ImageSize, 4);
+                results_right_m_raw(right_lung_mask.RawImage == 0) = 0;
+                results_right_raw(results_right_m_raw == 1) = 2;
+            end
+            
+            
             right_results = right_lung_roi.BlankCopy;
             right_results.ChangeRawImage(results_right_raw);
         end
