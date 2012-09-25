@@ -163,8 +163,10 @@ end
 
 function result = ReduceImageToCentralComponents(image_to_reduce, slices_per_step, voxel_size, reporting_stage, reporting)
     result = false(size(image_to_reduce));
-    
-    max_xy_voxel_size = max(voxel_size(1), voxel_size(2));
+
+    % for images with thick slices, we need to choose the minimum voxel size, not the maximum
+    max_xy_voxel_size = min(voxel_size(1), voxel_size(2));
+%     max_xy_voxel_size = max(voxel_size(1), voxel_size(2));
     
     % Compute a maximum for the trachea diameter - we will filter out structures
     % wider than this

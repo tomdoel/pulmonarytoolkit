@@ -34,7 +34,12 @@ classdef TDUnclosedLungIncludingTrachea < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            if strcmp(dataset.GetImageInfo.Modality, 'MR')
+            if dataset.IsGasMRI
+                results = dataset.GetResult('TDSegmentGasMRI');
+                results.AddBorder(1);
+                results = TDGetMainRegionExcludingBorder(results);
+                results.RemoveBorder(1);
+            elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
                 lung_threshold = dataset.GetResult('TDMRILungThreshold');
                 results = lung_threshold.LungMask;
                 

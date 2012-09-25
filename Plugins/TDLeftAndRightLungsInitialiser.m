@@ -35,9 +35,10 @@ classdef TDLeftAndRightLungsInitialiser < TDPlugin
         function results = RunPlugin(dataset, reporting)
             reporting.ShowProgress('Separating lungs');
             
-            unclosed_lungs = dataset.GetResult('TDUnclosedLungExcludingTrachea');
+            unclosed_lungs = dataset.GetResult('TDUnclosedLungExcludingTrachea', TDContext.LungROI);
             lung_roi = dataset.GetResult('TDLungROI');
-            filtered_threshold_lung = dataset.GetResult('TDThresholdLungFiltered');
+            
+            filtered_threshold_lung = dataset.GetResult('TDThresholdLungFiltered', TDContext.LungROI);
             
             results = TDGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting);
         end

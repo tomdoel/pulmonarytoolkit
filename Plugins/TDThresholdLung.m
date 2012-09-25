@@ -1,7 +1,7 @@
 classdef TDThresholdLung < TDPlugin
     % TDThresholdLung. Plugin to detect airlike voxels using thresholding.
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
     %     See TDPlugin.m for more information on how to run plugins.
     %
@@ -36,9 +36,22 @@ classdef TDThresholdLung < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, ~)
-            results = dataset.GetResult('TDLungROI');
-            results = TDThresholdAirway(results);
-            results.ImageType = TDImageType.Colormap;
+            if dataset.IsGasMRI
+                results = dataset.GetResult('TDSegmentGasMRI');
+            elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
+                lung_threshold = dataset.GetResult('TDMRILungThreshold');
+                limits = lung_threshold.Bounds;
+                lung_roi = dataset.GetResult('TDLungROI');
+                raw_image = lung_roi.RawImage;
+                raw_image = (raw_image >= limits(1) & raw_image <= limits(2));
+                results = lung_roi.BlankCopy;
+                results.ChangeRawImage(raw_image);
+                results.ImageType = TDImageType.Colormap;
+            else
+                results = dataset.GetResult('TDLungROI');
+                results = TDThresholdAirway(results);
+                results.ImageType = TDImageType.Colormap;
+            end
         end
     end
 end

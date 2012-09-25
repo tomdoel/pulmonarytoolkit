@@ -46,15 +46,19 @@ classdef TDUnclosedLungExcludingTrachea < TDPlugin
             % Remove first two generations of airway tree
             reporting.ShowProgress('Finding main airways and removing');
             results = dataset.GetResult('TDAirways');
-            if strcmp(dataset.GetImageInfo.Modality, 'MR')
+            if dataset.IsGasMRI
+                size_dilation_mm = 2.5;
+                max_generation = 2;
+            elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
+                size_dilation_mm = 2.5;
                 max_generation = 2;
             else
+                size_dilation_mm = 2.5;
                 max_generation = 3;
             end
             main_airways = TDUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, max_generation);
             
             % Dilate the airways in order to remove airway walls. But we don't use too large a value, otherwise regions of the lungs will be removed
-            size_dilation_mm = 2.5;
             ball_element = TDImageUtilities.CreateBallStructuralElement(threshold_image.VoxelSize, size_dilation_mm);
             main_airways = imdilate(main_airways, ball_element);
             
