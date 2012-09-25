@@ -129,8 +129,9 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
 
     first_segment = TDWavefront([], min_distance_before_bifurcating_mm, voxel_size_mm, maximum_number_of_generations, explosion_multiplier);
     start_point_index_global = sub2ind(image_size_global, start_point_global(1), start_point_global(2), start_point_global(3));
+    start_point_index_local = threshold_image_handle.GlobalToLocalIndices(start_point_index_global);
 
-    threshold_image(start_point_index_global) = false;
+    threshold_image(start_point_index_local) = false;
 
     last_progress_value = 0;
 
