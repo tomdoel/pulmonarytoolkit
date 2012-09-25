@@ -96,8 +96,27 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
             % against current neighbours
             loop_detected = false;
             for segment = segments_to_check_for_loop
-                if find(segment.NextPoint == neighbour_indices, 1)
-                    loop_detected = true;
+                points_with_possible_loop = neighbour_indices(segment.NextPoint == neighbour_indices);
+                if ~isempty(points_with_possible_loop)
+                    
+                    % We need to perform an additional check. If the parent
+                    % point of this point is a neighbour of the same point we
+                    % are checking, then this might not be a loop.
+                    if (next_point == first_point_for_segment)
+                        parent_of_current_point = current_skeleton_segment.Parent.Points(end);
+                    else
+                        parent_of_current_point = current_skeleton_segment.Points(end - 1);
+                    end
+                    parent_neighbour_indices = parent_of_current_point + neighbour_offsets;
+                    
+                    for candidate_points = points_with_possible_loop
+                        if ~find(segment.NextPoint == parent_neighbour_indices, 1)
+                            loop_detected = true;
+                        end
+                    end
+                end
+                
+                if loop_detected
                     removed_points = [removed_points, segment.GetTree]; %#ok<AGROW>
                     removed_points = [removed_points, segment.NextPoint]; %#ok<AGROW>
                     segment.DeleteThisSegment;
@@ -127,7 +146,7 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
         
         % Store the bifurcation points
         if (num_neighbours > 0)
-            current_skeleton_segment.AddPoint(next_point);
+            % Don't need to add point as it has already been added above
             bifurcation_points(end+1) = next_point; %#ok<AGROW>
         end
         
