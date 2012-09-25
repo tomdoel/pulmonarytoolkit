@@ -67,6 +67,7 @@ classdef TDDataset < handle
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.        
         function [result, output_image] = GetResult(obj, plugin_name, context)
+            obj.Reporting.ClearStack;
             if nargin < 3
                 context = [];
             end
@@ -80,6 +81,7 @@ classdef TDDataset < handle
                 result = obj.DatasetResults.GetResult(plugin_name, context);
             end
             obj.Reporting.ShowAndClear;
+            obj.Reporting.ClearStack;
         end
                 
         % Save data as a cache file associated with this dataset
