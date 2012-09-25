@@ -1,4 +1,4 @@
-function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point_global, maximum_number_of_generations, explosion_multiplier, reporting)
+function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point_global, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting)
     % TDAirwayRegionGrowingWithExplosionControl. Segments the airways from a
     %     threshold image using a region growing method.
     %
@@ -27,6 +27,9 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     %     explosion_multiplier - 7 is a typical value. An explosion is detected
     %         when the number of new voxels in a wavefront exceeds the previous
     %         minimum by a factor defined by this parameter
+    %
+    %     coronal_mode - if true, the algorithm performs in a special mode
+    %         designed for images with thick coronal slices
     %
     %     reporting (optional) - an object implementing the TDReporting
     %         interface for reporting progress and warnings
@@ -62,7 +65,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     reporting.UpdateProgressAndMessage(0, 'Starting region growing with explosion control');
     
     % Perform the airway segmentation
-    airway_tree = RegionGrowing(threshold_image, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier);
+    airway_tree = RegionGrowing(threshold_image, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier, coronal_mode);
 
     
     if isempty(airway_tree)
@@ -98,8 +101,10 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
 end
 
 
-function first_segment = RegionGrowing(threshold_image_handle, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier)
+function first_segment = RegionGrowing(threshold_image_handle, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier, coronal_mode)
 
+    threshold_image_handle.AddBorder(1);
+    
     voxel_size_mm = threshold_image_handle.VoxelSize;
 
     min_distance_before_bifurcating_mm = max(3, ceil(threshold_image_handle.ImageSize(3)*voxel_size_mm(3))/4);
@@ -111,6 +116,16 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
     number_of_image_points_local = numel(threshold_image(:));
 
     [linear_offsets_global, ~] = TDImageCoordinateUtilities.GetLinearOffsets(image_size_global);
+
+    
+    % For Coronal mode compute the linear offsets
+    if coronal_mode
+        dirs_coronal = [5, 23, 11, 17];
+        linear_offsets_global_jk = TDImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs_coronal, image_size_global);
+        linear_offsets_neighbours = linear_offsets_global_jk;
+    else
+        linear_offsets_neighbours = linear_offsets_global;        
+    end
 
     first_segment = TDWavefront([], min_distance_before_bifurcating_mm, voxel_size_mm, maximum_number_of_generations, explosion_multiplier);
     start_point_index_global = sub2ind(image_size_global, start_point_global(1), start_point_global(2), start_point_global(3));
@@ -137,7 +152,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
         
         % Find the neighbours of these points, which will form the next 
         % generation of points to add to the wavefront
-        indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global', linear_offsets_global);
+        indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global', linear_offsets_neighbours);
         indices_of_new_points_local = threshold_image_handle.GlobalToLocalIndices(indices_of_new_points_global);
 
         in_range = indices_of_new_points_local > 0 & indices_of_new_points_local <= number_of_image_points_local;
@@ -147,6 +162,37 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
         in_threshold = threshold_image(indices_of_new_points_local);
         indices_of_new_points_local = indices_of_new_points_local(in_threshold)';
         indices_of_new_points_global = indices_of_new_points_global(in_threshold)';
+        
+        if coronal_mode
+            if isempty(indices_of_new_points_global)
+                % Fetch the front of the wavefront for this segment
+                frontmost_points_global = current_segment.GetWavefrontVoxels;
+                indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global', linear_offsets_global);
+                indices_of_new_points_local = threshold_image_handle.GlobalToLocalIndices(indices_of_new_points_global);
+                
+                in_range = indices_of_new_points_local > 0 & indices_of_new_points_local <= number_of_image_points_local;
+                indices_of_new_points_local = indices_of_new_points_local(in_range);
+                indices_of_new_points_global = indices_of_new_points_global(in_range);
+                
+                in_threshold = threshold_image(indices_of_new_points_local);
+                indices_of_new_points_local = indices_of_new_points_local(in_threshold)';
+                indices_of_new_points_global = indices_of_new_points_global(in_threshold)';
+                
+                if isempty(indices_of_new_points_global)
+                    frontmost_points_global = current_segment.CurrentBranch.GetAcceptedVoxels;
+                    indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global', linear_offsets_global);
+                    indices_of_new_points_local = threshold_image_handle.GlobalToLocalIndices(indices_of_new_points_global);
+                    
+                    in_range = indices_of_new_points_local > 0 & indices_of_new_points_local <= number_of_image_points_local;
+                    indices_of_new_points_local = indices_of_new_points_local(in_range);
+                    indices_of_new_points_global = indices_of_new_points_global(in_range);
+                    
+                    in_threshold = threshold_image(indices_of_new_points_local);
+                    indices_of_new_points_local = indices_of_new_points_local(in_threshold)';
+                    indices_of_new_points_global = indices_of_new_points_global(in_threshold)';
+                end
+            end
+        end
 
         % If there are no new candidate neighbour indices then complete the
         % segment
@@ -246,7 +292,7 @@ function list_of_point_indices = GetNeighbouringPoints(point_indices, linear_off
         return
     end
     
-    list_of_point_indices = repmat(int32(point_indices), 1, 6) + repmat(int32(linear_offsets), length(point_indices), 1);    
+    list_of_point_indices = repmat(int32(point_indices), 1, size(linear_offsets,2)) + repmat(int32(linear_offsets), length(point_indices), 1);    
     list_of_point_indices = unique(list_of_point_indices(:));
     
 end
