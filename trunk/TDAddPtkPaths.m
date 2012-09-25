@@ -1,4 +1,6 @@
-function TDAddPtkPaths
+function TDAddPtkPaths(varargin)
+    
+    force = nargin > 0 && strcmp(varargin{1}, 'force');
     
     % This version number should be incremented whenever new paths are added to
     % the list
@@ -9,7 +11,7 @@ function TDAddPtkPaths
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     
-    if (isempty(TDPTK_PathsHaveBeenSet) || TDPTK_PathsHaveBeenSet ~= TDAddPtkPaths_Version_Number)
+    if force || (isempty(TDPTK_PathsHaveBeenSet) || TDPTK_PathsHaveBeenSet ~= TDAddPtkPaths_Version_Number)
         
         path_folders = {};
         
@@ -22,6 +24,8 @@ function TDAddPtkPaths
         path_folders{end + 1} = 'Plugins';
         path_folders{end + 1} = 'Utilities';
         path_folders{end + 1} = 'Library';
+        path_folders{end + 1} = fullfile('Library', 'Registration');
+        path_folders{end + 1} = fullfile('Library', 'Visualisation');
         path_folders{end + 1} = 'Interfaces';
         path_folders{end + 1} = 'Types';
         path_folders{end + 1} = 'Framework';
@@ -49,6 +53,10 @@ function TDAddPtkPaths
     user_function_name = 'TDAddUserPaths';
     user_add_paths_function = fullfile(path_root, 'User', [user_function_name '.m']);
     if exist(user_add_paths_function, 'file')
-        feval(user_function_name);
+        if force
+            feval(user_function_name, 'force');
+        else
+            feval(user_function_name);
+        end
     end
 end
