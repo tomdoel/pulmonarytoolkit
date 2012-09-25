@@ -21,6 +21,8 @@ classdef TDTreeModel < TDTree
         
         Centreline
         Density = -99
+        
+        BranchProperties
     end
     
     properties (SetAccess = protected)
@@ -143,6 +145,76 @@ classdef TDTreeModel < TDTree
             length_mm = norm(coord_start - coord_end, 2);            
         end
         
+        % This function exists for compatibility with TDAirwayGrowingTree
+        function branch = FindCentrelineBranch(obj, branch_to_find, reporting)
+            segments_to_do = obj;
+            while ~isempty(segments_to_do)
+                segment = segments_to_do(end);
+                if (segment == branch_to_find)
+                    branch = segment;
+                    return;
+                end
+                segments_to_do(end) = [];
+                children = segment.Children;
+                segments_to_do = [segments_to_do, children];
+            end
+            reporting.Error('FindCentrelineBranch', 'Branch not found');
+        end
+    
+        % ToDo: This method is duplicated in TDAirwayGrowingTree
+        % Returns the coordinates of each terminal branch in the tree below this
+        % branch
+        function terminal_coords = GetTerminalCoordinates(obj, reporting)
+            num_branches = obj.CountBranches;
+            num_terminal_branches = obj.CountTerminalBranches;
+            
+            reporting.UpdateProgressMessage('Finding terminal coordinates');
+            
+            branches_to_do = obj;
+            
+            all_starts = zeros(num_branches, 3);
+            all_ends = zeros(num_branches, 3);
+            terminal_coords = zeros(num_terminal_branches, 3);
+            terminal_index = 1;
+            index = 1;
+            
+            while ~isempty(branches_to_do)
+                branch = branches_to_do(end);
+                branches_to_do(end) = [];
+                children = branch.Children;
+                if ~isempty(children)
+                    branches_to_do = [branches_to_do, children];
+                else
+                    terminal_coords(terminal_index, :) =  [branch.EndPoint.CoordI, branch.EndPoint.CoordJ, branch.EndPoint.CoordK];
+                    terminal_index = terminal_index + 1;
+                end
+                
+                parent = branch.Parent;
+                
+                if isempty(parent)
+                    start_point_mm = [branch.StartPoint.CoordI, branch.StartPoint.CoordJ, branch.StartPoint.CoordK];
+                else
+                    start_point_mm = [parent.EndPoint.CoordI, parent.EndPoint.CoordJ, parent.EndPoint.CoordK];
+                end
+                end_point_mm = [branch.EndPoint.CoordI, branch.EndPoint.CoordJ, branch.EndPoint.CoordK];
+                if isnan(end_point_mm)
+                    reporting.Error('TDGrowingTreeBySegment:Nan', 'NaN found in branch coordinate');
+                end
+                
+                all_starts(index, :) = start_point_mm;
+                all_ends(index, :) = end_point_mm;
+                
+                index = index + 1;
+            end
+            
+            if terminal_index ~= num_terminal_branches + 1
+                reporting.Error('TDGrowingTreeBySegment:TerminalBranchCountMismatch', 'A code error occurred: the termina branch count was not as expected');
+            end
+            
+            %     all_local_indices = GetAirwayModelAsLocalIndices(all_starts, all_ends);
+            
+        end
+
     end
     
     methods (Static)
