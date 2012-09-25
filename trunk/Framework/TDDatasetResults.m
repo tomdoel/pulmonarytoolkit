@@ -64,6 +64,7 @@ classdef TDDatasetResults < handle
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.
         function [result, output_image] = GetResult(obj, plugin_name, context)
+            obj.Reporting.PushProgress;
             if nargin < 3
                 context = [];
             end
@@ -72,6 +73,7 @@ classdef TDDatasetResults < handle
             else
                 result = obj.RunPluginWithOptionalImageGeneration(plugin_name, false, context);
             end
+            obj.Reporting.PopProgress;
         end
 
         % Returns a TDImageInfo structure with image information, including the
@@ -93,6 +95,17 @@ classdef TDDatasetResults < handle
             context_is_enabled = obj.ImageTemplates.IsContextEnabled(context);
         end
         
+        function is_gas_mri = IsGasMRI(obj)
+            is_gas_mri = false;
+            if ~strcmp(obj.GetImageInfo.Modality, 'MR')
+                return;
+            else
+                template = obj.GetTemplateImage(TDContext.OriginalImage);
+                if strcmp(template.MetaHeader.SeriesDescription(1:2), 'Xe')
+                    is_gas_mri = true;
+                end
+            end
+        end
     end
 
     methods (Access = private)
