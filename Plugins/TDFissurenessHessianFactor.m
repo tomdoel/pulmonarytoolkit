@@ -42,15 +42,18 @@ classdef TDFissurenessHessianFactor < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
+            reporting.UpdateProgressValue(0);
             left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
             
             right_lung = dataset.GetResult('TDGetRightLungROI');
             
             fissureness_right = TDFissurenessHessianFactor.ComputeFissureness(right_lung, left_and_right_lungs, reporting, false);
             
+            reporting.UpdateProgressValue(50);
             left_lung = dataset.GetResult('TDGetLeftLungROI');
             fissureness_left = TDFissurenessHessianFactor.ComputeFissureness(left_lung, left_and_right_lungs, reporting, true);
             
+            reporting.UpdateProgressValue(100);
             results = TDCombineLeftAndRightImages(dataset.GetTemplateImage(TDContext.LungROI), fissureness_left, fissureness_right, left_and_right_lungs);
             
             results.ImageType = TDImageType.Scaled;
