@@ -45,10 +45,26 @@ classdef TDAirways < TDPlugin
         function results = RunPlugin(dataset, reporting)
             trachea_results = dataset.GetResult('TDTopOfTrachea');
             
+            if dataset.IsGasMRI
+                threshold = dataset.GetResult('TDThresholdGasMRIAirways');
+                coronal_mode = false;
+            elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
+                lung_threshold = dataset.GetResult('TDMRILungThreshold');
+                threshold = lung_threshold.LungMask;
+                threshold_raw = threshold.RawImage;
+                se = ones(1, 3, 10);
+                threshold_raw_c = imopen(threshold_raw, se);
+                threshold.ChangeRawImage(threshold_raw_c);
+                coronal_mode = true;
+                
+            else
+                threshold = dataset.GetResult('TDThresholdLung');
+                coronal_mode = false;
+            end            
+            
             % We use results from the trachea finding to remove holes in the
             % trachea, which can otherwise cause early branching of the airway
             % algorithm
-            threshold = dataset.GetResult('TDThresholdLung');
             threshold.SetIndexedVoxelsToThis(trachea_results.trachea_voxels, true);
 
             start_point = trachea_results.top_of_trachea;
@@ -56,7 +72,7 @@ classdef TDAirways < TDPlugin
             maximum_number_of_generations = 10;
             explosion_multiplier = 5;
             
-            results = TDAirwayRegionGrowingWithExplosionControl(threshold, start_point, maximum_number_of_generations, explosion_multiplier, reporting);
+            results = TDAirwayRegionGrowingWithExplosionControl(threshold, start_point, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting);
         end
         
         function results = GenerateImageFromResults(airway_results, image_templates, reporting)

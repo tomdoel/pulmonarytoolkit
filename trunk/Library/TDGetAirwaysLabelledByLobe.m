@@ -51,6 +51,8 @@ function [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, 
     %
 
     start_segment = airway_centreline_tree;
+    
+    start_segment.GenerateBranchParameters;
 
     % Separate into left and right lungs
     [left_lung_start, right_lung_start] = SeparateIntoLeftAndRightLungs(start_segment, template, reporting);
@@ -117,8 +119,18 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         left_upper_startsegment = [];
     else
         
-        uncertain = [];
+
         
+        % Test
+        top_branches = TDTreeUtilities.GetLargestBranches(left_lung_start, 3, 4);
+        ordered_top_branches = OrderSegmentsByCentroidDistanceFromDiagonalPlane(top_branches, template);
+        % end test
+        left_lower_startsegment = [ordered_top_branches(1), ordered_top_branches(2)];
+        left_upper_startsegment = [ordered_top_branches(3), ordered_top_branches(4)];
+        uncertain = [];
+        return
+        
+        uncertain = [];
         first_bifurcation = left_lung_start;
         first_children = first_bifurcation.Children;
         first_grandchildren = [first_children(1).Children, first_children(2).Children];
