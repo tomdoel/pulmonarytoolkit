@@ -120,78 +120,77 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
     else
         
 
-        
-        % Test
+        % Order branches by their computed radii and choose the largest 4
         top_branches = TDTreeUtilities.GetLargestBranches(left_lung_start, 3, 4);
         ordered_top_branches = OrderSegmentsByCentroidDistanceFromDiagonalPlane(top_branches, template);
-        % end test
+
         left_lower_startsegment = [ordered_top_branches(1), ordered_top_branches(2)];
         left_upper_startsegment = [ordered_top_branches(3), ordered_top_branches(4)];
         uncertain = [];
         return
         
-        uncertain = [];
-        first_bifurcation = left_lung_start;
-        first_children = first_bifurcation.Children;
-        first_grandchildren = [first_children(1).Children, first_children(2).Children];
-        
-        ordered_grandchildren = OrderSegmentsByCentroidDistanceFromDiagonalPlane(first_grandchildren, template);
-        
-        lower_lobe_reference = ordered_grandchildren(1);
-        upper_lobe_reference = ordered_grandchildren(end);
-        uncertain_segments = ordered_grandchildren(2 : end-1);
-        
-        upper_lobe_dpcentroid = GetDPCentroid(upper_lobe_reference, template);
-        lower_lobe_dpcentroid = GetDPCentroid(lower_lobe_reference, template);
-
-        lower_lobe_3centroid = GetCentroid(CentrelinePointsToLocalIndices(lower_lobe_reference.GetCentrelineTree, template), template);
-
-        if abs(upper_lobe_dpcentroid - lower_lobe_dpcentroid) < 20
-            reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the branch centrelines.');
-        end
-
-        left_upper_startsegment = upper_lobe_reference;
-        left_lower_startsegment = lower_lobe_reference;
-        
-        for i = 1 : length(uncertain_segments)
-            uncertain_dpcentroid = GetDPCentroid(uncertain_segments(i), template);
-            uncertain_3centroid = GetCentroid(CentrelinePointsToLocalIndices(uncertain_segments(i).GetCentrelineTree, template), template);
-            distance_to_upper_lobe = abs(uncertain_dpcentroid - upper_lobe_dpcentroid);
-            distance_to_lower_lobe = abs(uncertain_dpcentroid - lower_lobe_dpcentroid);
-            
-            if abs(distance_to_upper_lobe - distance_to_lower_lobe) < 60
-                
-                % To deal with cases where the bronchi near the fissures which
-                % stretch over to the back of the lung are more likely to be
-                % part of the lower lobe. This is somewhat heuristic and there
-                % should be a more robust way of determining which lobe an
-                % airway belongs to
-                if (uncertain_3centroid(1) > lower_lobe_3centroid(1))
-                    left_lower_startsegment(end + 1) = uncertain_segments(i);
-                else
-                    
-                    if abs(distance_to_upper_lobe - distance_to_lower_lobe) < 30
-                        reporting.ShowWarning('TDGetAirwaysLabelledByLobe:Uncertain', 'Some bronchi have been labeled as uncertain', []);
-                        uncertain = [uncertain; uncertain_segments(i)];
-                    else
-                        if (distance_to_upper_lobe < distance_to_lower_lobe)
-                            left_upper_startsegment(end + 1) = uncertain_segments(i);
-                        else
-                            left_lower_startsegment(end + 1) = uncertain_segments(i);
-                        end
-                    end
-                    
-                end
-                
-            else
-                if (distance_to_upper_lobe < distance_to_lower_lobe)
-                    left_upper_startsegment(end + 1) = uncertain_segments(i);
-                else
-                    left_lower_startsegment(end + 1) = uncertain_segments(i);
-                end
-            end
-            
-        end
+%         uncertain = [];
+%         first_bifurcation = left_lung_start;
+%         first_children = first_bifurcation.Children;
+%         first_grandchildren = [first_children(1).Children, first_children(2).Children];
+%         
+%         ordered_grandchildren = OrderSegmentsByCentroidDistanceFromDiagonalPlane(first_grandchildren, template);
+%         
+%         lower_lobe_reference = ordered_grandchildren(1);
+%         upper_lobe_reference = ordered_grandchildren(end);
+%         uncertain_segments = ordered_grandchildren(2 : end-1);
+%         
+%         upper_lobe_dpcentroid = GetDPCentroid(upper_lobe_reference, template);
+%         lower_lobe_dpcentroid = GetDPCentroid(lower_lobe_reference, template);
+% 
+%         lower_lobe_3centroid = GetCentroid(CentrelinePointsToLocalIndices(lower_lobe_reference.GetCentrelineTree, template), template);
+% 
+%         if abs(upper_lobe_dpcentroid - lower_lobe_dpcentroid) < 20
+%             reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the branch centrelines.');
+%         end
+% 
+%         left_upper_startsegment = upper_lobe_reference;
+%         left_lower_startsegment = lower_lobe_reference;
+%         
+%         for i = 1 : length(uncertain_segments)
+%             uncertain_dpcentroid = GetDPCentroid(uncertain_segments(i), template);
+%             uncertain_3centroid = GetCentroid(CentrelinePointsToLocalIndices(uncertain_segments(i).GetCentrelineTree, template), template);
+%             distance_to_upper_lobe = abs(uncertain_dpcentroid - upper_lobe_dpcentroid);
+%             distance_to_lower_lobe = abs(uncertain_dpcentroid - lower_lobe_dpcentroid);
+%             
+%             if abs(distance_to_upper_lobe - distance_to_lower_lobe) < 60
+%                 
+%                 % To deal with cases where the bronchi near the fissures which
+%                 % stretch over to the back of the lung are more likely to be
+%                 % part of the lower lobe. This is somewhat heuristic and there
+%                 % should be a more robust way of determining which lobe an
+%                 % airway belongs to
+%                 if (uncertain_3centroid(1) > lower_lobe_3centroid(1))
+%                     left_lower_startsegment(end + 1) = uncertain_segments(i);
+%                 else
+%                     
+%                     if abs(distance_to_upper_lobe - distance_to_lower_lobe) < 30
+%                         reporting.ShowWarning('TDGetAirwaysLabelledByLobe:Uncertain', 'Some bronchi have been labeled as uncertain', []);
+%                         uncertain = [uncertain; uncertain_segments(i)];
+%                     else
+%                         if (distance_to_upper_lobe < distance_to_lower_lobe)
+%                             left_upper_startsegment(end + 1) = uncertain_segments(i);
+%                         else
+%                             left_lower_startsegment(end + 1) = uncertain_segments(i);
+%                         end
+%                     end
+%                     
+%                 end
+%                 
+%             else
+%                 if (distance_to_upper_lobe < distance_to_lower_lobe)
+%                     left_upper_startsegment(end + 1) = uncertain_segments(i);
+%                 else
+%                     left_lower_startsegment(end + 1) = uncertain_segments(i);
+%                 end
+%             end
+%             
+%         end
     end
 end
 
