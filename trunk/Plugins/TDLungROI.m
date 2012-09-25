@@ -36,7 +36,18 @@ classdef TDLungROI < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            results = TDGetLungROI(dataset.GetResult('TDOriginalImage'), reporting);
+            if dataset.IsGasMRI
+                lung_threshold = dataset.GetResult('TDUnclosedLungIncludingTrachea');
+                lung_threshold.CropToFit;
+                results = dataset.GetResult('TDOriginalImage');
+                results.ResizeToMatch(lung_threshold);
+            elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
+                lung_threshold = dataset.GetResult('TDMRILungThreshold');
+                results = dataset.GetResult('TDOriginalImage');
+                results.ResizeToMatch(lung_threshold.LungMask);                
+            else            
+                results = TDGetLungROI(dataset.GetResult('TDOriginalImage'), reporting);
+            end
         end
     end
 end

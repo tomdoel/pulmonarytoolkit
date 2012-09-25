@@ -46,7 +46,15 @@ classdef TDTopOfTrachea < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             reporting.ShowProgress('Finding the top of the trachea');
-            [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(dataset.GetResult('TDThresholdLung'), reporting);
+            if dataset.IsGasMRI
+                threshold_image = dataset.GetResult('TDThresholdGasMRIAirways');
+            elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
+                lung_threshold = dataset.GetResult('TDMRILungThreshold');
+                threshold_image = lung_threshold.LungMask;
+            else
+                threshold_image = dataset.GetResult('TDThresholdLung');
+            end            
+            [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(threshold_image, reporting);
             results = [];
             results.top_of_trachea = top_of_trachea;
             results.trachea_voxels = trachea_voxels;
