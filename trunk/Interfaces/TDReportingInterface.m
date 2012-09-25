@@ -60,6 +60,10 @@ classdef TDReportingInterface < handle
         % necessary
         UpdateProgressValue(obj, progress_value)
          
+        % When progress reporting consists of a number of stages, use this
+        % method to ensure progress is handled correctly
+        UpdateProgressStage(obj, progress_stage, num_stages)
+        
         % Changes the percentage complete and subtext in the progress dialog,
         % displaying if necessary
         UpdateProgressAndMessage(obj, progress_value, text)

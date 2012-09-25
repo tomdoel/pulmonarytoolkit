@@ -21,6 +21,9 @@ classdef TDReportingWithCache < TDReportingInterface
     properties (Access = private)
         Reporting  % Handle to a TDReporting object
         WarningsCache
+        ProgressStack
+        CurrentProgressStackItem
+        ParentProgressStackItem
     end
     
     methods
@@ -31,11 +34,30 @@ classdef TDReportingWithCache < TDReportingInterface
                 obj.Reporting = TDReportingDefault;
             end
             obj.WarningsCache = TDReportingWarningsCache(obj);
+            obj.ClearStack;
         end
         
         function delete(obj)
             obj.ShowAndClear;
         end        
+        
+        function ClearStack(obj)
+            obj.ProgressStack = TDProgressStackItem.empty(0);
+            obj.CurrentProgressStackItem = TDProgressStackItem('', 0, 100);
+            obj.ParentProgressStackItem = TDProgressStackItem('', 0, 100);
+        end
+        
+        function PushProgress(obj)
+            obj.ProgressStack(end + 1) = obj.ParentProgressStackItem;
+            obj.ParentProgressStackItem = obj.CurrentProgressStackItem;
+            obj.CurrentProgressStackItem = TDProgressStackItem('', obj.ParentProgressStackItem.MinPosition, obj.ParentProgressStackItem.MaxPosition);
+        end
+        
+        function PopProgress(obj)
+            obj.CurrentProgressStackItem = obj.ParentProgressStackItem;
+            obj.ParentProgressStackItem = obj.ProgressStack(end);
+            obj.ProgressStack(end) = [];
+        end
         
         function Log(obj, message)
             obj.Reporting.Log(message);
@@ -59,7 +81,7 @@ classdef TDReportingWithCache < TDReportingInterface
         end
                 
         function ShowProgress(obj, text)
-            obj.Reporting.ShowProgress(text);
+            obj.Reporting.ShowProgress(obj.AdjustProgressText(text));
         end
         
         function CompleteProgress(obj)
@@ -67,15 +89,22 @@ classdef TDReportingWithCache < TDReportingInterface
         end
         
         function UpdateProgressMessage(obj, text)
-            obj.Reporting.UpdateProgressMessage(text);
+            obj.Reporting.UpdateProgressMessage(obj.AdjustProgressText(text));
         end
         
         function UpdateProgressValue(obj, progress_value)
-            obj.Reporting.UpdateProgressValue(progress_value);        
+            obj.Reporting.UpdateProgressValue(obj.AdjustProgressValue(progress_value, []));
         end
          
         function UpdateProgressAndMessage(obj, progress_value, text)
-            obj.Reporting.UpdateProgressAndMessage(progress_value, text);
+            obj.Reporting.UpdateProgressAndMessage(obj.AdjustProgressValue(progress_value, []), obj.AdjustProgressText(text));
+        end
+        
+        function UpdateProgressStage(obj, progress_stage, num_stages)
+            progress_value = 100*progress_stage/num_stages;
+            value_change = 100/num_stages;
+            obj.Reporting.UpdateProgressValue(obj.AdjustProgressValue(progress_value, value_change));
+%             obj.Reporting.UpdateProgressStage(progress_stage, num_stages);
         end
         
         function cancelled = HasBeenCancelled(obj)
@@ -102,6 +131,10 @@ classdef TDReportingWithCache < TDReportingInterface
             obj.Reporting.UpdateOverlayImage(new_image);
         end
         
+        function UpdateOverlaySubImage(obj, new_image)
+            obj.Reporting.UpdateOverlaySubImage(new_image);
+        end
+        
         function ShowAndClear(obj)
             obj.WarningsCache.ShowAndClear;
         end
@@ -113,5 +146,26 @@ classdef TDReportingWithCache < TDReportingInterface
         function ShowCachedWarning(obj, identifier, message, supplementary_info)
              obj.Reporting.ShowWarning(identifier, message, supplementary_info);
         end
+    end
+    
+    methods (Access = private)
+        function adjusted_text = AdjustProgressText(obj, text)
+            adjusted_text = text;
+            obj.CurrentProgressStackItem.ProgressText = text;
+        end
+        
+        function adjusted_value = AdjustProgressValue(obj, value, value_change)
+            if isempty(value_change)
+                value_change = value - obj.CurrentProgressStackItem.LastProgressValue;
+            end
+            obj.CurrentProgressStackItem.LastProgressValue = value;
+            
+            scale = (obj.ParentProgressStackItem.MaxPosition - obj.ParentProgressStackItem.MinPosition)/100;
+            adjusted_value = obj.ParentProgressStackItem.MinPosition + scale*value;
+            obj.CurrentProgressStackItem.MinPosition = adjusted_value;
+            if value_change > 0
+                obj.CurrentProgressStackItem.MaxPosition = adjusted_value + scale*value_change;
+            end
+        end        
     end
 end
