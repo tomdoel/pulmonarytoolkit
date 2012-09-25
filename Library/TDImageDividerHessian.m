@@ -91,6 +91,11 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
+    % ToDo: This is too specific
+    if isa(reporting, 'TDReportingWithCache')
+        reporting.PushProgress;
+    end
+    
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
         reporing.Warning('TDImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
     end
@@ -247,6 +252,14 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
         reporting.UpdateProgressAndMessage(100*((8+progress_octant_offset)/progress_max), ['Storing results for ' progress_text ' lung']);
         filtered_image.ChangeRawImage(filtered_image_raw);
     end
+    
+    
+    
+    % ToDo: This is too specific
+    if isa(reporting, 'TDReportingWithCache')
+        reporting.PopProgress;
+    end
+
     
 end
 
