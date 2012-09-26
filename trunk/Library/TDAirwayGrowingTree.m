@@ -156,7 +156,7 @@ classdef TDAirwayGrowingTree < TDTree
                 children = segment.Children;
                 segments_to_do = [segments_to_do, children];
             end
-            reporting.Error('FindBranch', 'Centreline branch not found');
+            reporting.Error('TDAirwayGrowingTree:FindCentrelineBranch', 'Centreline branch not found');
         end
         
         % Returns the coordinates of each terminal branch in the tree below this
