@@ -57,6 +57,22 @@ classdef TDTree < handle
             end
         end
 
+        % Returns true if this subtree contains the branch
+        function contains_branch = ContainsBranch(obj, branch)
+            segments_to_do = obj;
+            while ~isempty(segments_to_do)
+                segment = segments_to_do(end);
+                if (segment == branch)
+                    contains_branch = true;
+                    return;
+                end
+                segments_to_do(end) = [];
+                children = segment.Children;
+                segments_to_do = [segments_to_do, children];
+            end
+            contains_branch = false;
+        end
+        
         % Returns the number of branches in this tree, from this branch
         % downwards
         function number_of_branches = CountTerminalBranches(obj)
