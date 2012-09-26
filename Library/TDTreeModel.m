@@ -104,6 +104,18 @@ classdef TDTreeModel < TDTree
             end
         end
         
+        function SimpleCopyBranch(obj, tree)
+            obj.Radius = tree.Radius;
+            obj.BranchProperties.SourceBranch = tree;
+            
+            % Create copies of child branches and set the Children and Parent
+            % properties correctly
+            for child = tree.Children
+                child_branch = TDTreeModel(obj);
+                child_branch.SimpleCopyBranch(child);
+            end
+        end
+        
         function tree_points = GetCentrelineTree(obj)
             tree_points = obj.Centreline;
             for child_segment = obj.Children
@@ -222,6 +234,14 @@ classdef TDTreeModel < TDTree
             new_tree = TDTreeModel;
             new_tree.CreateFromSkeletonTreeBranch(skeleton_tree, image_template);
         end
+        
+        % Creates a copy of the tree, but only copies the radius property, but
+        % also maintains a reference to the branch that was copied
+        function new_tree = SimpleTreeCopy(tree)
+            new_tree = TDTreeModel;
+            new_tree.SimpleCopyBranch(tree);
+        end
+        
     end
     
 end
