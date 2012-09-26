@@ -35,10 +35,42 @@ classdef TDTreeUtilities < handle
             end
         end
         
+        % Returns a branch which is the ancestor of both specifed branches
+        function ancestor = FindCommonAncestor(branch_1, branch_2)
+            ancestor = branch_1;
+            while ~ancestor.ContainsBranch(branch_2);
+                ancestor = ancestor.Parent;
+                if isempty(ancestor)
+                    return
+                end
+            end
+        end
+        
+        % Adds additional branches to the tree to ensure a minimum number of generations
+        function ExpandTree(tree, number_of_generations)
+            if (number_of_generations > 0)
+                if isempty(tree.Children)
+                    new_child_1 = TDTreeModel(tree);
+                    new_child_2 = TDTreeModel(tree);
+                    new_child_1.Radius = 0.7*tree.Radius;
+                    new_child_2.Radius = 0.7*tree.Radius;
+                end
+                for child = tree.Children
+                    TDTreeUtilities.ExpandTree(child, number_of_generations - 1);
+                end
+            end
+        end
+        
         function largest_branches = GetLargestBranches(start_branches, number_of_generations_to_search, number_of_branches_to_find)
             
+            % Make a copy of the tree - so we can extend it with artificial
+            % branches where necessary
+            start_branches_copy = TDTreeModel.SimpleTreeCopy(start_branches);
+            
+            TDTreeUtilities.ExpandTree(start_branches_copy, number_of_generations_to_search);
+            
             % Find all combinations of branches
-            branch_permutations = TDTreeUtilities.GetAllBranchPermutations(start_branches, number_of_generations_to_search);
+            branch_permutations = TDTreeUtilities.GetAllBranchPermutations(start_branches_copy, number_of_generations_to_search);
             
             % Remove all combinations which don't have the right number of branches
             new_permutations = [];
@@ -57,16 +89,38 @@ classdef TDTreeUtilities < handle
             min_radius = [];
             for index = 1 : length(new_permutations)
                 this_permutation = new_permutations{index};
-                radius_values = [];
-                for segment_index = 1 : length(this_permutation)
-                    radius_values(segment_index) = this_permutation(segment_index).Radius;
-                end
-                min_radius(index) = min(radius_values);
+                [sorted_permutation, sorted_radii] = TDTreeUtilities.SortBranchesByRadiusValues(this_permutation);
+                
+                % Choosing max radius
+                min_radius(index) = sorted_radii(1);
+                
+                
+                new_permutations{index} = sorted_permutation;
             end
             
             % Choose the permutation with the largest value of the minimum radius
             [~, sort_indices] = sort(min_radius);
-            largest_branches = new_permutations{sort_indices(end)};
+            largest_branches_newtree = new_permutations{sort_indices(end)};
+            
+            % Now get the corresponding branches from the original tree
+            largest_branches = TDTreeModel.empty();
+            for index = 1 : length(largest_branches_newtree)
+                next_branch = largest_branches_newtree(index);
+                while isempty(next_branch.BranchProperties)
+                    next_branch = next_branch.Parent;
+                end
+                largest_branches(end+1) = next_branch.BranchProperties.SourceBranch;
+            end
+        end
+        
+        function [sorted_branches, sorted_radii] = SortBranchesByRadiusValues(branches)
+            radius_values = [];
+            for segment_index = 1 : length(branches)
+                radius_values(segment_index) = branches(segment_index).Radius;
+            end
+            [~, sort_indices] = sort(radius_values);
+            sorted_branches = branches(sort_indices);
+            sorted_radii = radius_values(sort_indices);
         end
         
     end
