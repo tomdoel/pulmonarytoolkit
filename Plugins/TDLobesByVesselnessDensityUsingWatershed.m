@@ -75,7 +75,7 @@ classdef TDLobesByVesselnessDensityUsingWatershed < TDPlugin
             airways_by_lobe = airways_by_lobe.Copy;
             airways_by_lobe.ResizeToMatch(left_lung_roi);
             
-            airways_by_lobe = TDLobesByVesselnessDensityUsingWatershed.DilateAirways(airways_by_lobe, [5 6]);
+            airways_by_lobe = TDLobesByVesselnessDensityUsingWatershed.DilateAirwaysAndIntialWatershed(airways_by_lobe, [5 6], left_lung_mask, vessel_density);
             airways_by_lobe = int8(5*(airways_by_lobe == 5) + 6*(airways_by_lobe == 6));
             airways_by_lobe(~(left_lung_mask.RawImage)) = -1;
             
@@ -101,7 +101,7 @@ classdef TDLobesByVesselnessDensityUsingWatershed < TDPlugin
             airways_by_lobe = airways_by_lobe.Copy;
             airways_by_lobe.ResizeToMatch(right_lung_roi);
             
-            airways_by_lobe = TDLobesByVesselnessDensityUsingWatershed.DilateAirways(airways_by_lobe, [1 2 4]);
+            airways_by_lobe = TDLobesByVesselnessDensityUsingWatershed.DilateAirwaysAndIntialWatershed(airways_by_lobe, [1 2 4], right_lung_mask, vessel_density);
             airways_by_lobe_1 = int8(1*(airways_by_lobe == 1) + 1*(airways_by_lobe == 2) + 4*(airways_by_lobe == 4));
             airways_by_lobe_1(~(right_lung_mask.RawImage)) = -1;
             
@@ -126,13 +126,26 @@ classdef TDLobesByVesselnessDensityUsingWatershed < TDPlugin
             results_right.ImageType = TDImageType.Colormap;
         end
         
-        function dilated_airways = DilateAirways(airways, colour_range)
+        % To ensure each set of airways gets a chance to grow without getting
+        % trapped in a local region of high-vesselness, dilate each airway and
+        % then allow it to grow according to the vessel density for a limited
+        % number of iterations (controlled by the initial_volume parameter)
+        function dilated_airways = DilateAirwaysAndIntialWatershed(airways, colour_range, lung_mask, vessel_density)
+            initial_volume_mm3 = 4000;
+            max_iterations = round(initial_volume_mm3/prod(lung_mask.VoxelSize));
             dilated_airways = zeros(airways.ImageSize, 'int8');
             for colour = colour_range
                 next_image = airways.Copy;
                 next_image.ChangeRawImage(next_image.RawImage == colour);
+                
+                % Dilate the airways
                 next_image.BinaryMorph(@imdilate, 5);
-                dilated_airways = dilated_airways + colour*int8(next_image.RawImage);
+
+                % Now perform a watershed for a limited number of iterations
+                airways_by_lobe = int8(next_image.RawImage);
+                airways_by_lobe(~(lung_mask.RawImage)) = -1;
+                results = TDWatershedMeyerFromStartingPoints(vessel_density, airways_by_lobe, max_iterations);
+                dilated_airways = dilated_airways + colour*int8(results == 1);
             end
         end
 
