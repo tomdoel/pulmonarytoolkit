@@ -13,13 +13,16 @@
 //
 //     Syntax
 //     ------
-//         labeled_output = TDWatershedMeyerFromStartingPoints(image, starting_labels)
+//         labeled_output = TDWatershedMeyerFromStartingPoints(image, starting_labels [, max_num_iterations])
 //
 //     Inputs
 //     ------
 //         image = 16-bit ingeter image (int16). The watershed regions grow according to the minima of these points
 //
 //         starting_labels - 8-bit integer (int8). Labels of starting points for the watershed
+//
+//         max_num_iterations (optional) - The algorithm will terminate if the number of iterations 
+//                                         (one per point allocated) goes above this value
 //
 //     Output
 //     ------
@@ -95,8 +98,8 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     mexPrintf("TDWatershedMeyerFromStartingPoints\n"); 
     
     // Check inputs
-    if (num_inputs != 2) {
-        mexErrMsgTxt("Two inputs are required: the image and a label matrix of the staring points.");
+    if ((num_inputs < 2) || (num_inputs > 3)) {
+        mexErrMsgTxt("Two inputs are required: the image and a label matrix of the staring points. The third optional input is the maximum number of iterations");
     }
     
     if (num_outputs > 1) {
@@ -106,6 +109,16 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     // Get the input images
     const mxArray* intensity_matrix = pointers_to_inputs[0];
     const mxArray* starting_indices = pointers_to_inputs[1];
+
+    bool max_iter_set_manually = false;
+    int max_iterations = 1000000000;
+    if (num_inputs == 3) {
+        if ((!mxIsNumeric(pointers_to_inputs[2])) || (mxGetNumberOfElements(pointers_to_inputs[2]) != 1) || mxIsComplex(pointers_to_inputs[2])) {
+            mexErrMsgTxt("The maximum number of iterations must be noncomplex integer.");
+        }
+        max_iterations = mxGetScalar(pointers_to_inputs[2]);
+        max_iter_set_manually = true;
+    }
     
     Size dimensions = GetDimensions(intensity_matrix);
     Size dimensions_starting_points = GetDimensions(starting_indices);
@@ -146,7 +159,6 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     multiples[2] = size_i*size_j;
     
     int iteration_number = 0;
-    const int max_iterations = 1000000000;
     
     // Linear index offsets to nearest neighbours
     const int number_of_nearest_neighbours = 6;
@@ -279,7 +291,12 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
         
         iteration_number++;
         if (iteration_number > max_iterations) {
-            mexErrMsgTxt("Error: Max Iteration number exceeded");
+            if (max_iter_set_manually) {
+                mexWarnMsgTxt("Terminating as the specified maximum iteration number has been reached");
+                return;
+            } else {
+                mexErrMsgTxt("Error: Maximum number of iterations has been exceeded");
+            }
         }
     }
     

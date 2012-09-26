@@ -156,7 +156,7 @@ function mex_files_to_compile_map = GetMexFilesToCompile(root_dir, reporting)
     mex_files_to_compile(end + 1) = TDMexInfo(1, 'TDFastEigenvalues', 'cpp', mex_dir, [], []);
     mex_files_to_compile(end + 1) = TDMexInfo(1, 'TDFastIsSimplePoint', 'cpp', mex_dir, [], []);
     mex_files_to_compile(end + 1) = TDMexInfo(1, 'TDWatershedFromStartingPoints', 'cpp', mex_dir, [], []);
-    mex_files_to_compile(end + 1) = TDMexInfo(1, 'TDWatershedMeyerFromStartingPoints', 'cpp', mex_dir, [], []);
+    mex_files_to_compile(end + 1) = TDMexInfo(2, 'TDWatershedMeyerFromStartingPoints', 'cpp', mex_dir, [], []);
     
     mex_files_to_compile(end + 1) = TDMexInfo(1, 'mba_surface_interpolation', 'cpp', fullfile(root_dir, 'External', 'gerardus', 'matlab', 'PointsToolbox'), ...
         {'-IExternal', ['-I' fullfile('External', 'mba', 'include')]}, ...
