@@ -59,7 +59,7 @@ function [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, 
     
     % Separate left lung into upper and lower lobes
     [left_upper_startindices, left_lower_startindices, uncertain_segments] = SeparateLeftLungIntoLobes(left_lung_start, template, reporting);
-        
+
     % Separate right lung into upper and mid/lower lobes
     [right_upper_startindices, right_midlower_startindices] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting);
     
@@ -108,7 +108,7 @@ function [left_lung_start, right_lung_start] = SeparateIntoLeftAndRightLungs(sta
     end
 end
 
-function [left_upper_startsegment, left_lower_startsegment, uncertain] = SeparateLeftLungIntoLobes(left_lung_start, template, reporting)
+function [left_upper_startsegment, left_lower_startsegment, uncertain] = SeparateLeftLungIntoLobesNew(left_lung_start, template, reporting)
     if length(left_lung_start.Children) > 2
         reporting.ShowWarning('TDGetAirwaysLabelledByLobe:TooManyBronchi', 'More than 2 bronchial branches were found separating the left upper and lower lobes.', []);
         left_lower_startsegment = [];
@@ -126,90 +126,146 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
 
         left_lower_startsegment = [ordered_top_branches(1), ordered_top_branches(2)];
         left_upper_startsegment = [ordered_top_branches(3), ordered_top_branches(4)];
+        
+        left_lower_startsegment = unique(left_lower_startsegment);
+        left_upper_startsegment = unique(left_upper_startsegment);
         uncertain = [];
         return
-        
-%         uncertain = [];
-%         first_bifurcation = left_lung_start;
-%         first_children = first_bifurcation.Children;
-%         first_grandchildren = [first_children(1).Children, first_children(2).Children];
-%         
-%         ordered_grandchildren = OrderSegmentsByCentroidDistanceFromDiagonalPlane(first_grandchildren, template);
-%         
-%         lower_lobe_reference = ordered_grandchildren(1);
-%         upper_lobe_reference = ordered_grandchildren(end);
-%         uncertain_segments = ordered_grandchildren(2 : end-1);
-%         
-%         upper_lobe_dpcentroid = GetDPCentroid(upper_lobe_reference, template);
-%         lower_lobe_dpcentroid = GetDPCentroid(lower_lobe_reference, template);
-% 
-%         lower_lobe_3centroid = GetCentroid(CentrelinePointsToLocalIndices(lower_lobe_reference.GetCentrelineTree, template), template);
-% 
-%         if abs(upper_lobe_dpcentroid - lower_lobe_dpcentroid) < 20
-%             reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the branch centrelines.');
-%         end
-% 
-%         left_upper_startsegment = upper_lobe_reference;
-%         left_lower_startsegment = lower_lobe_reference;
-%         
-%         for i = 1 : length(uncertain_segments)
-%             uncertain_dpcentroid = GetDPCentroid(uncertain_segments(i), template);
-%             uncertain_3centroid = GetCentroid(CentrelinePointsToLocalIndices(uncertain_segments(i).GetCentrelineTree, template), template);
-%             distance_to_upper_lobe = abs(uncertain_dpcentroid - upper_lobe_dpcentroid);
-%             distance_to_lower_lobe = abs(uncertain_dpcentroid - lower_lobe_dpcentroid);
-%             
-%             if abs(distance_to_upper_lobe - distance_to_lower_lobe) < 60
-%                 
-%                 % To deal with cases where the bronchi near the fissures which
-%                 % stretch over to the back of the lung are more likely to be
-%                 % part of the lower lobe. This is somewhat heuristic and there
-%                 % should be a more robust way of determining which lobe an
-%                 % airway belongs to
-%                 if (uncertain_3centroid(1) > lower_lobe_3centroid(1))
-%                     left_lower_startsegment(end + 1) = uncertain_segments(i);
-%                 else
-%                     
-%                     if abs(distance_to_upper_lobe - distance_to_lower_lobe) < 30
-%                         reporting.ShowWarning('TDGetAirwaysLabelledByLobe:Uncertain', 'Some bronchi have been labeled as uncertain', []);
-%                         uncertain = [uncertain; uncertain_segments(i)];
-%                     else
-%                         if (distance_to_upper_lobe < distance_to_lower_lobe)
-%                             left_upper_startsegment(end + 1) = uncertain_segments(i);
-%                         else
-%                             left_lower_startsegment(end + 1) = uncertain_segments(i);
-%                         end
-%                     end
-%                     
-%                 end
-%                 
-%             else
-%                 if (distance_to_upper_lobe < distance_to_lower_lobe)
-%                     left_upper_startsegment(end + 1) = uncertain_segments(i);
-%                 else
-%                     left_lower_startsegment(end + 1) = uncertain_segments(i);
-%                 end
-%             end
-%             
-%         end
     end
 end
 
-function [right_upper_startindices, right_midlower_startindices] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_startindex, template, reporting)
-    if numel(right_lung_startindex) > 1
+function [left_upper_startsegment, left_lower_startsegment, uncertain] = SeparateLeftLungIntoLobes(left_lung_start, template, reporting)
+    if length(left_lung_start.Children) > 2
+        reporting.ShowWarning('TDGetAirwaysLabelledByLobe:TooManyBronchi', 'More than 2 bronchial branches were found separating the left upper and lower lobes.', []);
+        left_lower_startsegment = [];
+        left_upper_startsegment = [];
+    elseif length(left_lung_start.Children) < 1
+        calback.ShowWarning('TDGetAirwaysLabelledByLobe:NoBronchi', 'ERROR: No bronchial branches were found separating the left upper and lower lobes.', []);
+        left_lower_startsegment = [];
+        left_upper_startsegment = [];
+    else
+        
+        uncertain = [];
+        first_bifurcation = left_lung_start;
+        first_children = first_bifurcation.Children;
+        first_grandchildren = [first_children(1).Children, first_children(2).Children];
+        
+        ordered_grandchildren = OrderSegmentsByCentroidDistanceFromDiagonalPlane(first_grandchildren, template);
+        
+        lower_lobe_reference = ordered_grandchildren(1);
+        upper_lobe_reference = ordered_grandchildren(end);
+        uncertain_segments = ordered_grandchildren(2 : end-1);
+        
+        upper_lobe_dpcentroid = GetDPCentroid(upper_lobe_reference, template);
+        lower_lobe_dpcentroid = GetDPCentroid(lower_lobe_reference, template);
+
+        lower_lobe_3centroid = GetCentroid(CentrelinePointsToLocalIndices(lower_lobe_reference.GetCentrelineTree, template), template);
+
+        if abs(upper_lobe_dpcentroid - lower_lobe_dpcentroid) < 20
+            reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the branch centrelines.');
+        end
+
+        left_upper_startsegment = upper_lobe_reference;
+        left_lower_startsegment = lower_lobe_reference;
+        
+        for i = 1 : length(uncertain_segments)
+            uncertain_dpcentroid = GetDPCentroid(uncertain_segments(i), template);
+            uncertain_3centroid = GetCentroid(CentrelinePointsToLocalIndices(uncertain_segments(i).GetCentrelineTree, template), template);
+            distance_to_upper_lobe = abs(uncertain_dpcentroid - upper_lobe_dpcentroid);
+            distance_to_lower_lobe = abs(uncertain_dpcentroid - lower_lobe_dpcentroid);
+            
+            if abs(distance_to_upper_lobe - distance_to_lower_lobe) < 60
+                
+                % To deal with cases where the bronchi near the fissures which
+                % stretch over to the back of the lung are more likely to be
+                % part of the lower lobe. This is somewhat heuristic and there
+                % should be a more robust way of determining which lobe an
+                % airway belongs to
+                if (uncertain_3centroid(1) > lower_lobe_3centroid(1))
+                    left_lower_startsegment(end + 1) = uncertain_segments(i);
+                else
+                    
+                    if abs(distance_to_upper_lobe - distance_to_lower_lobe) < 30
+                        reporting.ShowWarning('TDGetAirwaysLabelledByLobe:Uncertain', 'Some bronchi have been labeled as uncertain', []);
+                        uncertain = [uncertain; uncertain_segments(i)];
+                    else
+                        if (distance_to_upper_lobe < distance_to_lower_lobe)
+                            left_upper_startsegment(end + 1) = uncertain_segments(i);
+                        else
+                            left_lower_startsegment(end + 1) = uncertain_segments(i);
+                        end
+                    end
+                    
+                end
+                
+            else
+                if (distance_to_upper_lobe < distance_to_lower_lobe)
+                    left_upper_startsegment(end + 1) = uncertain_segments(i);
+                else
+                    left_lower_startsegment(end + 1) = uncertain_segments(i);
+                end
+            end
+            
+        end
+    end
+end
+
+function [right_upper_start_branches, right_midlower_start_branches] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting)
+    if numel(right_lung_start) > 1
         reporting.Error('TDGetAirwaysLabelledByLobe:TooManyStartingIndices', 'Too many start indices for the right upper lobe');
     end
     
-    if length(right_lung_startindex.Children) > 2
-        reporting.Error('TDGetAirwaysLabelledByLobe:TooManyChildBranches', 'More than 2 bronchial branches were found separating the right upper and right mid lobes.');
-        right_upper_startindices = [];
-        right_midlower_startindices = [];
-    elseif length(right_lung_startindex.Children) < 1
+    if length(right_lung_start.Children) < 1
         reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughChildBranches', 'No bronchial branches were found separating the right upper and right mid lobes.');
-        right_upper_startindices = [];
-        right_midlower_startindices = [];
+        right_upper_start_branches = [];
+        right_midlower_start_branches = [];
     else
-        child_index_1 = right_lung_startindex.Children(1);
-        child_index_2 = right_lung_startindex.Children(2);
+        % Order branches by their computed radii and choose the largest 3
+        top_branches = TDTreeUtilities.GetLargestBranches(right_lung_start, 2, 3);
+        
+        % Find the ancestor branch of the two widest branches - this is the
+        % bifurcation point between the upper and middle lobes
+        ancestor_branch = TDTreeUtilities.FindCommonAncestor(top_branches(2), top_branches(3));
+        
+        % There are two possibilites: the lobar bifurcation happens at either
+        % the first or second bifurcaton in the right bronchial tree
+        if ancestor_branch == right_lung_start
+            
+            % In this case the lower branch goes into the mid/lower lobes, and
+            % the upper branches go into the upper lobe
+            branches_to_order = ancestor_branch.Children;
+            ordered_branches = OrderSegmentsByCentroidDistanceFromDiagonalPlane(branches_to_order, template);
+            right_upper_start_branches = ordered_branches(end);
+            right_midlower_start_branches = ordered_branches(1:end-1);
+        else
+            
+            % In this case, there is an additional branch for the upper lobe
+            % before the upper/mid-lower bifurcation occurs
+            branches_to_order = ancestor_branch.Children;
+            earlier_branches = setdiff(ancestor_branch.Parent.Children, ancestor_branch);
+            ordered_branches = OrderSegmentsByCentroidDistanceFromDiagonalPlane(branches_to_order, template);
+            right_upper_start_branches = [ordered_branches(2:end), earlier_branches];
+            right_midlower_start_branches = ordered_branches(1);
+        end
+    end
+end
+
+function [right_upper_start_branches, right_midlower_start_branches] = SeparateRightLungIntoUpperAndMidlowerLobesOld(right_lung_start, template, reporting)
+    if numel(right_lung_start) > 1
+        reporting.Error('TDGetAirwaysLabelledByLobe:TooManyStartingIndices', 'Too many start indices for the right upper lobe');
+    end
+
+    if length(right_lung_start.Children) > 2
+        reporting.Error('TDGetAirwaysLabelledByLobe:TooManyChildBranches', 'More than 2 bronchial branches were found separating the right upper and right mid lobes.');
+        right_upper_start_branches = [];
+        right_midlower_start_branches = [];
+    elseif length(right_lung_start.Children) < 1
+        reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughChildBranches', 'No bronchial branches were found separating the right upper and right mid lobes.');
+        right_upper_start_branches = [];
+        right_midlower_start_branches = [];
+    else
+        child_index_1 = right_lung_start.Children(1);
+        child_index_2 = right_lung_start.Children(2);
         
         centroid_1 = GetDPCentroid(child_index_1, template);
         centroid_2 = GetDPCentroid(child_index_2, template);
@@ -219,13 +275,26 @@ function [right_upper_startindices, right_midlower_startindices] = SeparateRight
         end
         
         if centroid_1 > centroid_2
-            right_upper_startindices = child_index_1;
-            right_midlower_startindices = child_index_2;
+            right_upper_start_branches = child_index_1;
+            right_midlower_start_branches = child_index_2;
         else
-            right_midlower_startindices = child_index_1;
-            right_upper_startindices = child_index_2;
+            right_midlower_start_branches = child_index_1;
+            right_upper_start_branches = child_index_2;
         end
     end
+end
+
+function [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobesNew(right_midlower_startindex, template, reporting)
+    if isempty(right_midlower_startindex)
+        reporting.Error('TDGetAirwaysLabelledByLobe:NoStartBranch', 'No start branch was specified.');
+    end
+    
+    % Order branches by their computed radii and choose the largest 3
+    top_branches = TDTreeUtilities.GetLargestBranches(right_midlower_startindex, 2, 3);
+
+    ordered_branches = OrderSegmentsByCentroidI(top_branches, template);
+    right_mid_startindices = ordered_branches(1);
+    right_lower_startindices = ordered_branches(2:end);
 end
 
 function [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobes(right_midlower_startindex, template, reporting)
@@ -291,13 +360,21 @@ function [right_mid_startindices, right_lower_startindices] = SeparateRightLungI
     end
 end
 
+function sorted_segments = OrderSegmentsByCentroidI(segments_to_order, template)
+    centroids_i = [];
+    for i = 1 : length(segments_to_order)
+        centroids_i(end + 1) = GetICentroid(segments_to_order(i), template);
+    end
+    
+    [~, sorted_indices] = sort(centroids_i);
+    sorted_segments = segments_to_order(sorted_indices);
+end
 
-
-function sorted_child_indices = OrderByCentroidI(start, image_size)
+function sorted_child_indices = OrderByCentroidI(start, template)
     child_indices = start.Children;
     centroids_i = [];
     for i = 1 : length(child_indices)
-        centroids_i(end + 1) = GetICentroid(child_indices(i), image_size);
+        centroids_i(end + 1) = GetICentroid(child_indices(i), template);
     end
     
     [~, sorted_indices] = sort(centroids_i);
