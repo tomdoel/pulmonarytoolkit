@@ -29,7 +29,7 @@ function image_info = TDChooseImagingFiles(image_path)
     % If in DICOM format, then we will load the entire directory
     if (filter_index ==  1)
         filenames = TDTextUtilities.SortFilenames(TDDiskUtilities.GetDirectoryFileList(image_path, '*'));
-        filenames = RemoveNonDicomFiles(image_path, filenames);
+        filenames = TDDiskUtilities.RemoveNonDicomFiles(image_path, filenames);
         image_type = TDImageFileFormat.Dicom;
         
         % If there are no valid DICOM files then we return an ImageInfo with
@@ -63,11 +63,4 @@ function image_info = TDChooseImagingFiles(image_path)
     image_info = TDImageInfo(image_path, filenames, image_type, [], [], []);
 end
 
-function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
-    dicom_filenames = [];
-    for index = 1 : length(filenames)
-        if isdicom(fullfile(image_path, filenames{index}));
-            dicom_filenames{end + 1} = filenames{index};
-        end
-    end
-end
+
