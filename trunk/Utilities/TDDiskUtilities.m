@@ -82,7 +82,32 @@ classdef TDDiskUtilities
         
         % Creates a random unique identifier        
         function uid = GenerateUid
-            uid = char(java.util.UUID.randomUUID);
+            % On unix systems, if java is not running we can use the system
+            % command
+            if isunix && ~usejava('jvm')
+                [status, uid] = system('uuidgen');
+                if status ~= 0
+                    error('Failure running uuidgen');
+                end
+            else
+                uid = char(java.util.UUID.randomUUID);
+            end
+        end
+        
+        function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
+            dicom_filenames = [];
+            for index = 1 : length(filenames)
+                if isdicom(fullfile(image_path, filenames{index}));
+                    dicom_filenames{end + 1} = filenames{index};
+                end
+            end
+        end
+        
+        function image_info = GetListOfDicomFiles(image_path)
+            filenames = TDTextUtilities.SortFilenames(TDDiskUtilities.GetDirectoryFileList(image_path, '*'));
+            filenames = TDDiskUtilities.RemoveNonDicomFiles(image_path, filenames);
+            image_type = TDImageFileFormat.Dicom;            
+            image_info = TDImageInfo(image_path, filenames, image_type, [], [], []);
         end
     end
 end
