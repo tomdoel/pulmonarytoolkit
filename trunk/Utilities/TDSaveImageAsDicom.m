@@ -136,7 +136,7 @@ function TDSaveImageAsDicom(image_data, path, filename, patient_name, is_seconda
         slice_filename = [filename_name, int2str(slice_index - 1)];
         full_filename = fullfile(filename_pathstr, [slice_filename, filename_ext]);
         
-        status = dicomwrite(slice_data, lines, full_filename, metadata);
+        status = dicomwrite(slice_data, full_filename, metadata);
         
         if ~IsStatusEmpty(status)
             reporting.ShowWarning('TDSaveImageAsDicom:DicomWriteWarning', 'Dicomwrite returned a warning when saving the image', status);
