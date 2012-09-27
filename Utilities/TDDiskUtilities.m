@@ -109,6 +109,12 @@ classdef TDDiskUtilities
             image_type = TDImageFileFormat.Dicom;            
             image_info = TDImageInfo(image_path, filenames, image_type, [], [], []);
         end
+
+        function CreateDirectoryIfNecessary(dir_name)
+            if ~exist(dir_name, 'dir')
+                mkdir(dir_name);
+            end
+        end
     end
 end
 
