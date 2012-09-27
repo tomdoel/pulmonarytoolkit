@@ -37,7 +37,7 @@ classdef TDUnclosedLungIncludingTrachea < TDPlugin
             if dataset.IsGasMRI
                 results = dataset.GetResult('TDSegmentGasMRI');
                 results.AddBorder(1);
-                results = TDGetMainRegionExcludingBorder(results);
+                results = TDGetMainRegionExcludingBorder(results, reporting);
                 results.RemoveBorder(1);
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
                 lung_threshold = dataset.GetResult('TDMRILungThreshold');
@@ -50,7 +50,7 @@ classdef TDUnclosedLungIncludingTrachea < TDPlugin
                 reporting.ShowProgress('Searching for largest connected region');
                 
                 % Find the main component, excluding any components touching the border
-                threshold_image = TDGetMainRegionExcludingBorder(threshold_image);
+                threshold_image = TDGetMainRegionExcludingBorder(threshold_image, reporting);
                 
                 results = threshold_image;
                 results.ImageType = TDImageType.Colormap;

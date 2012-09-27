@@ -65,5 +65,5 @@ function lung_image = TDSegmentLungsWithoutClosing(original_image, filter_image,
     end
     
     % Find the main component, excluding any components touching the border
-    lung_image = TDGetMainRegionExcludingBorder(filtered_lung_image, reporting);    
+    lung_image = TDGetMainRegionExcludingBorder(filtered_lung_image, reporting);
 end
