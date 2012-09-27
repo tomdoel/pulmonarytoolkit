@@ -16,6 +16,7 @@ function TDAddPtkPaths(varargin)
         path_folders = {};
         
         % List of folders to add to the path
+        path_folders{end + 1} = '';
         path_folders{end + 1} = 'User';
         path_folders{end + 1} = 'Components';
         path_folders{end + 1} = 'bin';
