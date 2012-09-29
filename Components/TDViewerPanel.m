@@ -194,8 +194,8 @@ classdef TDViewerPanel < handle
             addlistener(obj, 'Window', 'PostSet', @obj.SettingsChangedCallback);
             addlistener(obj, 'OverlayOpacity', 'PostSet', @obj.SettingsChangedCallback);
             addlistener(obj, 'ShowImage', 'PostSet', @obj.SettingsChangedCallback);
-            addlistener(obj, 'ShowOverlay', 'PostSet', @obj.SettingsChangedCallback);            
-            addlistener(obj, 'BlackIsTransparent', 'PostSet', @obj.SettingsChangedCallback);            
+            addlistener(obj, 'ShowOverlay', 'PostSet', @obj.SettingsChangedCallback);
+            addlistener(obj, 'BlackIsTransparent', 'PostSet', @obj.SettingsChangedCallback);
                                     
             % Listen for image change events
             addlistener(obj, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
@@ -458,7 +458,7 @@ classdef TDViewerPanel < handle
                     x_lim = [x_range(1) - horizontal_space_pixels - 0.5, x_range(2) + horizontal_space_pixels + 0.5];
                     y_lim = [y_range(1) - 0.5, y_range(2) + 0.5];
                 end
-                 
+            
                 data_aspect_ratio = 1./[pixel_ratio(2) pixel_ratio(1) pixel_ratio(3)];
                 set(obj.Axes, 'XLim', x_lim, 'YLim', y_lim, 'DataAspectRatio', data_aspect_ratio);
 
@@ -475,12 +475,24 @@ classdef TDViewerPanel < handle
                     set(obj.ImageHandles{1}, 'XData', x_range, 'YData', y_range);
                 end
                 if ~isempty(obj.ImageHandles{2})
-                    set(obj.ImageHandles{2}, 'XData', x_range, 'YData', y_range);
+                    overlay_offset_voxels = obj.GetOffsetVoxels(obj.OverlayImage);
+                    overlay_offset_x_voxels = overlay_offset_voxels(dim_x_index);
+                    overlay_offset_y_voxels = overlay_offset_voxels(dim_y_index);
+                    set(obj.ImageHandles{2}, 'XData', x_range - overlay_offset_x_voxels, 'YData', y_range - overlay_offset_y_voxels);
                 end
                 if ~isempty(obj.ImageHandles{3})
-                    set(obj.ImageHandles{3}, 'XData', x_range, 'YData', y_range);
+                    quiver_offset_voxels = obj.GetOffsetVoxels(obj.QuiverImage);
+                    quiver_offset_x_voxels = quiver_offset_voxels(dim_x_index);
+                    quiver_offset_y_voxels = quiver_offset_voxels(dim_y_index);
+                    
+                    set(obj.ImageHandles{3}, 'XData', x_range - quiver_offset_x_voxels, 'YData', y_range - quiver_offset_y_voxels);
                 end
             end
+        end
+        
+        function offset_voxels = GetOffsetVoxels(obj, image_handle)
+            offset_mm = image_handle.GlobalOrigin - obj.BackgroundImage.GlobalOrigin;
+            offset_voxels = offset_mm./obj.BackgroundImage.VoxelSize;
         end
         
         function [dim_x_index dim_y_index dim_z_index] = GetXYDimensionIndex(obj)
@@ -686,6 +698,7 @@ classdef TDViewerPanel < handle
             
 
         function OverlayImageChanged(obj)
+            obj.UpdateAxes;
             obj.DrawImages(false, true, false);
         end
         
@@ -770,7 +783,13 @@ classdef TDViewerPanel < handle
         end
                 
         function image_slice = GetImageSlice(obj, image_object)
-            image_slice = image_object.GetSlice(obj.SliceNumber(obj.Orientation), obj.Orientation);
+            offset_voxels = obj.GetOffsetVoxels(image_object);
+            slice_number = obj.SliceNumber(obj.Orientation) - round(offset_voxels(obj.Orientation));
+            if (slice_number < 1) || (slice_number > image_object.ImageSize(obj.Orientation))
+                image_slice = image_object.GetBlankSlice(obj.Orientation);
+            else
+                image_slice = image_object.GetSlice(slice_number, obj.Orientation);
+            end
             if (obj.Orientation ~= TDImageOrientation.Axial)
                 image_slice = image_slice';
             end
@@ -848,8 +867,7 @@ classdef TDViewerPanel < handle
                 slice = permute(slice, [2 1 3]);
             end
         end
-        
-        
+            
         function DrawImage(obj, image_number, opacity, image_object)
             if ~isempty(image_object)
                 if image_object.ImageExists
