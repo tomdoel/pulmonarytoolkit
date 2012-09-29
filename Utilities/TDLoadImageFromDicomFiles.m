@@ -88,6 +88,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
         % check_files is set to true
         series_uids = repmat({''}, size_k, 1);
         slice_locations = zeros(size_k, 1);
+        patient_positions = zeros(size_k, 3);
         
         if load_first_to_last
             image_index_range = 1 : size_k;
@@ -97,11 +98,17 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
         
         loaded_image(:, :, image_index_range(end)) = last_image_slice;
         slice_locations(image_index_range(end)) = metadata_last_file.SliceLocation;
+        patient_positions(image_index_range(end), :) = metadata_last_file.ImagePositionPatient';
         series_uids{image_index_range(end)} = metadata_last_file.SeriesInstanceUID;
         
         loaded_image(:, :, image_index_range(1)) = first_image_slice;
         slice_locations(image_index_range(1)) = metadata_first_file.SliceLocation;
+        patient_positions(image_index_range(1), :) = metadata_first_file.ImagePositionPatient';
         series_uids{image_index_range(1)} = metadata_first_file.SeriesInstanceUID;
+        
+        % The global origin is the DICOM patient location for the first image
+        % slice
+        global_origin_mm = min(patient_positions(image_index_range(1), :), patient_positions(image_index_range(end), :));
         
         % Check whether the first and last slice are from the same series. This
         % is a quick way of approximately checking if all the data is from the
@@ -123,6 +130,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
             progress_index = progress_index + 1;
             loaded_image(:, :, image_index_range(2)) = second_image_slice;
             slice_locations(image_index_range(2)) = metadata_second_file.SliceLocation;
+            patient_positions(image_index_range(2), :) = metadata_second_file.ImagePositionPatient';
             series_uids{image_index_range(2)} = metadata_second_file.SeriesInstanceUID;
             
             % Check that second image is from the same series
@@ -161,6 +169,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                     try
                         next_filename_or_metadata = dicominfo(next_filename_or_metadata);
                         slice_locations(image_index) = next_filename_or_metadata.SliceLocation;
+                        patient_positions(image_index, :) = next_filename_or_metadata.ImagePositionPatient';
                         series_uids{image_index} = next_filename_or_metadata.SeriesInstanceUID;
                     catch exception
                         reporting.Error('TDLoadImageFromDicomFiles:MetadataReadFailure', ['TDLoadImageFromDicomFiles: error while reading metadata from ' filenames{file_number} '. Error:' exception.message], []);
@@ -183,6 +192,8 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                     sort_mode = 'descend';
                     
                     [sorted_slice_locations, index_matrix] = sort(slice_locations, sort_mode);
+                    patient_positions = patient_positions(index_matrix, :);
+                    global_origin_mm = min(patient_positions, [], 1);
                     slice_thicknesses = abs(sorted_slice_locations(2:end) - sorted_slice_locations(1:end-1));
                     slice_thickness = slice_thicknesses(1);
                     if ~all(slice_thicknesses == slice_thickness)
@@ -216,7 +227,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
         end
     end
     
-    loaded_image = TDDicomImage.CreateDicomImageFromMetadata(loaded_image, metadata_first_file, slice_thickness, reporting);
+    loaded_image = TDDicomImage.CreateDicomImageFromMetadata(loaded_image, metadata_first_file, slice_thickness, global_origin_mm, reporting);
 end
 
 function [metadata, image_data] = ReadDicomFile(file_name, reporting)

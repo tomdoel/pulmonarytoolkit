@@ -40,9 +40,10 @@ classdef TDImage < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
         
-    properties
+    properties (SetObservable)
         ImageType
         Title
+        GlobalOrigin = [0 0 0]
     end
     
     properties (SetAccess = protected)
@@ -116,6 +117,10 @@ classdef TDImage < handle
             
             obj.LastImageSize = obj.OriginalImageSize;
             obj.LastDataType = class(obj.RawImage);
+
+            addlistener(obj, 'ImageType', 'PostSet', @obj.ImagePropertyChangedCallback);
+            addlistener(obj, 'Title', 'PostSet', @obj.ImagePropertyChangedCallback);
+            addlistener(obj, 'GlobalOrigin', 'PostSet', @obj.ImagePropertyChangedCallback);            
         end
         
         function orientation = Find2DOrientation(obj)
@@ -442,6 +447,20 @@ classdef TDImage < handle
                otherwise
                    error('Unsupported dimension');
            end
+        end
+        
+        % Returns a blank slice from the image in the specified direction
+        function slice = GetBlankSlice(obj, dimension)
+            switch dimension
+                case TDImageOrientation.Coronal
+                    slice = TDImageUtilities.Zeros([obj.ImageSize(2), obj.ImageSize(3)], obj.LastDataType);
+                case TDImageOrientation.Sagittal
+                    slice = TDImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(3)], obj.LastDataType);
+                case TDImageOrientation.Axial
+                    slice = TDImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(2)], obj.LastDataType);
+                otherwise
+                    error('Unsupported dimension');
+            end
         end
         
         function image_size = get.ImageSize(obj)
@@ -953,6 +972,11 @@ classdef TDImage < handle
                     end
                 end
             end
+        end
+        
+        % Settings have changed
+        function ImagePropertyChangedCallback(obj, ~, ~, ~)
+            obj.NotifyImageChanged;
         end
     end
         
