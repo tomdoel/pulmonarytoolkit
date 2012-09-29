@@ -34,7 +34,7 @@ classdef TDDicomImage < TDImage
     end
     
     methods (Static)
-        function new_dicom_image = CreateDicomImageFromMetadata(original_image, metadata, slice_thickness, reporting)
+        function new_dicom_image = CreateDicomImageFromMetadata(original_image, metadata, slice_thickness, global_origin_mm, reporting)
 
             % Our voxel size should be equal to SpacingBetweenSlices. However, 
             % some scanners incorrectly set SpacingBetweenSlices as the
@@ -61,6 +61,7 @@ classdef TDDicomImage < TDImage
             end
             original_image = permute(original_image, new_dimension_order);
             voxel_size = voxel_size(new_dimension_order);
+            global_origin_mm = global_origin_mm([2 1 3]);
             
             if isfield(metadata, 'RescaleSlope')
                 rescale_slope = metadata.RescaleSlope;
@@ -93,6 +94,8 @@ classdef TDDicomImage < TDImage
             end
             
             new_dicom_image.Title = [patient_name, study_description, series_description];
+            new_dicom_image.GlobalOrigin = global_origin_mm;
+            
         end
     end
     
