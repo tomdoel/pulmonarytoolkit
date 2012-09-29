@@ -134,13 +134,21 @@ classdef TDImageCoordinateUtilities
             affine_matrix = [affine_matrix; [0 0 0 1]];
         end
         
+        function affine_matrix = CreateAffineTranslationMatrix(x)
+            affine_matrix = zeros(3, 4, 'single');
+            affine_matrix(1, 1) = 1;
+            affine_matrix(2, 2) = 1;
+            affine_matrix(3, 3) = 1;
+            affine_matrix(4, 4) = 1;
+            affine_matrix(1:3, 4) = x;
+        end
+        
         function affine_matrix = CreateRigidAffineMatrix(x)
             affine_matrix = zeros(3, 4, 'single');
             
             euler_rot_matrix = TDImageCoordinateUtilities.GetEulerRotationMatrix(x(1), x(2), x(3));
             affine_matrix(1:3, 1:3) = euler_rot_matrix;
-            
-            affine_matrix(1:3,4) = x(4:6);
+            affine_matrix(1:3, 4) = x(4:6);
             
             affine_matrix = [affine_matrix; [0 0 0 1]];
         end
@@ -171,6 +179,13 @@ classdef TDImageCoordinateUtilities
             X = reshape(coords(1, :), size(X));
             Y = reshape(coords(2, :), size(Y));
             Z = reshape(coords(3, :), size(Z));
+        end
+        
+        function affine_matrix = GetAffineTranslationFromPatientPosition(image_1, image_2)
+            translation = (image_1.GlobalOrigin - image_2.GlobalOrigin);
+            translation = translation([2 1 3]);
+            translation(3) = - translation(3);
+            affine_matrix = TDImageCoordinateUtilities.CreateAffineTranslationMatrix(translation);
         end
     end
 end
