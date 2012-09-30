@@ -36,9 +36,9 @@ classdef TDPluginDependencyTracker< handle
     
     methods
         
-        function obj = TDPluginDependencyTracker(disk_cache, reporting)
+        function obj = TDPluginDependencyTracker(dataset_disk_cache, reporting)
             obj.PluginCallStack = TDPluginCallStack(reporting);
-            obj.PluginForDataset = TDDatasetDiskCache(disk_cache);
+            obj.PluginForDataset = dataset_disk_cache;
         end
         
         % Gets a plugin result, from the disk cache if possible. If there is no

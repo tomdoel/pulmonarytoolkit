@@ -23,15 +23,15 @@ classdef TDDatasetDiskCache < handle
     end
     
     methods
-        function obj = TDDatasetDiskCache(disk_cache)
+        function obj = TDDatasetDiskCache(disk_cache, reporting)
             obj.DiskCache = disk_cache;
-            obj.LoadCachedPluginResultsFile;
+            obj.LoadCachedPluginResultsFile(reporting);
         end
 
         % Fetches a cached result for a plugin, but checks the dependencies to
         % ensure it is still valid, and if not returns an empty result.
         function [value, cache_info] = LoadPluginResult(obj, plugin_name, reporting)
-            [value, cache_info] = obj.DiskCache.Load(plugin_name);
+            [value, cache_info] = obj.DiskCache.Load(plugin_name, reporting);
             if ~isempty(cache_info)
                 dependencies = cache_info.DependencyList;
                 if ~obj.PluginResultsInfo.CheckDependenciesValid(dependencies, reporting)
@@ -45,7 +45,7 @@ classdef TDDatasetDiskCache < handle
         % information
         function SavePluginResult(obj, plugin_name, result, cache_info, reporting)
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name);
-            obj.DiskCache.Save(plugin_name, result, cache_info);
+            obj.DiskCache.SaveWithInfo(plugin_name, result, cache_info, reporting);
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, reporting);
             obj.SaveCachedPluginInfoFile;
         end
@@ -58,21 +58,32 @@ classdef TDDatasetDiskCache < handle
         end
         
         % Saves additional data associated with this dataset to the cache
-        function SaveData(obj, data_filename, value)
-            obj.DiskCache.Save(data_filename, value);
+        function SaveData(obj, data_filename, value, reporting)
+            obj.DiskCache.Save(data_filename, value, reporting);
         end
         
         % Loads additional data associated with this dataset from the cache
-        function value = LoadData(obj, data_filename)
-            value = obj.DiskCache.Load(data_filename);
+        function value = LoadData(obj, data_filename, reporting)
+            value = obj.DiskCache.Load(data_filename, reporting);
         end
         
+        function cache_path = GetCachePath(obj, ~)
+           cache_path = obj.DiskCache.CachePath;
+        end
+        
+        function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
+            obj.DiskCache.RemoveAllCachedFiles(remove_framework_files, reporting);
+        end
+        
+        function exists = Exists(obj, name, reporting)
+            exists = obj.DiskCache.Exists(name, reporting);
+        end
     end
     
     methods (Access = private)
         
-        function LoadCachedPluginResultsFile(obj)
-            cached_plugin_info = obj.DiskCache.Load(TDSoftwareInfo.CachedPluginInfoFileName);
+        function LoadCachedPluginResultsFile(obj, reporting)
+            cached_plugin_info = obj.DiskCache.Load(TDSoftwareInfo.CachedPluginInfoFileName, reporting);
             if isempty(cached_plugin_info)
                 obj.PluginResultsInfo = TDPluginResultsInfo;
             else
@@ -80,12 +91,10 @@ classdef TDDatasetDiskCache < handle
             end
         end
         
-        function SaveCachedPluginInfoFile(obj)
-            obj.DiskCache.Save(TDSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo);
+        function SaveCachedPluginInfoFile(obj, reporting)
+            obj.DiskCache.Save(TDSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, reporting);
         end
-        
     end
-    
 end
 
 

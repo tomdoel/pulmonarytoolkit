@@ -24,7 +24,6 @@ classdef TDDiskCache < handle
     end
     
     properties (Access = private)
-        Reporting    % Error and log reporting
         Uuid         % A unique identifier for this dataset
         SchemaNumber % Version number
     end
@@ -34,7 +33,6 @@ classdef TDDiskCache < handle
         % Create a disk cache object, and associated folder, for the dataset
         % associated with this unique identifier
         function obj = TDDiskCache(uuid, reporting)
-            obj.Reporting = reporting;
             cache_parent_directory = obj.GetCacheDirectory;
             if ~exist(cache_parent_directory, 'dir')
                 mkdir(cache_parent_directory);
@@ -52,32 +50,32 @@ classdef TDDiskCache < handle
             obj.CachePath = cache_directory;
             obj.SchemaNumber = 1;
 
-            if obj.Exists(TDSoftwareInfo.SchemaCacheName)
-                schema = obj.Load(TDSoftwareInfo.SchemaCacheName);
+            if obj.Exists(TDSoftwareInfo.SchemaCacheName, reporting)
+                schema = obj.Load(TDSoftwareInfo.SchemaCacheName, reporting);
                 if (schema ~= obj.SchemaNumber)
                     reporting.Error('TDDiskCache:BadSchema', 'Wrong schema found This is caused by having a disk cache from a redundant version of code. Delete your Temp directory to fix.');
                 end
             else
-               obj.Save(TDSoftwareInfo.SchemaCacheName, obj.SchemaNumber);
+               obj.Save(TDSoftwareInfo.SchemaCacheName, obj.SchemaNumber, reporting);
             end
         end
         
         % Determine if a results file exists in the cahce
-        function exists = Exists(obj, name)
+        function exists = Exists(obj, name, ~)
             filename = [fullfile(obj.CachePath, name) '.mat'];
             exists = exist(filename, 'file');
         end
         
         % Determine if the raw image file associated with a TDImage results file exists in the cahce
-        function exists = RawFileExists(obj, name)
+        function exists = RawFileExists(obj, name, ~)
             filename = [fullfile(obj.CachePath, name) '.raw'];
             exists = exist(filename, 'file');
         end
         
         
         % Load a result from the cache
-        function [result, info] = Load(obj, name)
-            if obj.Exists(name)
+        function [result, info] = Load(obj, name, reporting)
+            if obj.Exists(name, reporting)
                 filename = [fullfile(obj.CachePath, name) '.mat'];
                 results_struct = load(filename);
                 result = results_struct.value;
@@ -96,14 +94,14 @@ classdef TDDiskCache < handle
                 % separate file
                 if isa(result, 'TDImage')
                     try
-                        result.LoadRawImage(obj.CachePath, obj.Reporting);
+                        result.LoadRawImage(obj.CachePath, reporting);
                     
                     catch exception
                         
                         % Check for the particular case of the .raw file being
                         % deleted
                         if strcmp(exception.identifier, 'TDImage:RawFileNotFound')
-                            obj.Reporting.Log(['Disk cache found a header file with no corresponding raw file for plugin ' name]);
+                            reporting.Log(['Disk cache found a header file with no corresponding raw file for plugin ' name]);
                             result = [];
                             info = [];
                             return;
@@ -122,24 +120,14 @@ classdef TDDiskCache < handle
         
         
         % Save a result to the cache
-        function Save(obj, name, value, info)  
-            result = [];
-            if nargin > 3
-                result.info = info;
-            end
-            if isa(value, 'TDImage')
-                obj.Reporting.Log(['Saving raw image data for ' name]);
-                header = value.SaveRawImage(obj.CachePath, name);
-                result.value = header;
-            else
-                result.value = value;
-            end
-            obj.Reporting.Log(['Saving data for ' name]);
-            
-            filename = [fullfile(obj.CachePath, name) '.mat'];
-            save(filename, '-struct', 'result');
+        function Save(obj, name, value, reporting)
+            obj.PrivateSave(name, value, [], reporting);
         end
 
+        % Save a result to the cache
+        function SaveWithInfo(obj, name, value, info, reporting)
+            obj.PrivateSave(name, value, info, reporting);
+        end
         
         % Remove all results files for this dataset. Does not remove certain
         % files such as dataset info and manually-created marker files, unless
@@ -161,7 +149,7 @@ classdef TDDiskCache < handle
                     reporting.ShowMessage('TDDiskCache:RecyclingCacheDirectory', ['Moving cache file to recycle bin: ' full_filename]);
                     
                     delete(full_filename);
-                    obj.Reporting.Log(['Deleting ' full_filename]);
+                    reporting.Log(['Deleting ' full_filename]);
                 end
             end
             
@@ -180,5 +168,26 @@ classdef TDDiskCache < handle
             cache_directory = fullfile(application_directory, cache_directory);
         end
         
+    end
+    
+    methods (Access = private)
+
+        function PrivateSave(obj, name, value, info, reporting)  
+            result = [];
+            if ~isempty(info)
+                result.info = info;
+            end
+            if isa(value, 'TDImage')
+                reporting.Log(['Saving raw image data for ' name]);
+                header = value.SaveRawImage(obj.CachePath, name);
+                result.value = header;
+            else
+                result.value = value;
+            end
+            reporting.Log(['Saving data for ' name]);
+            
+            filename = [fullfile(obj.CachePath, name) '.mat'];
+            save(filename, '-struct', 'result');
+        end        
     end
 end
