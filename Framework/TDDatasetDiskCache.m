@@ -1,5 +1,5 @@
-classdef TDPluginForDataset < handle
-    % TDPluginForDataset. Part of the internal framework of the Pulmonary Toolkit.
+classdef TDDatasetDiskCache < handle
+    % TDDatasetDiskCache. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -23,7 +23,7 @@ classdef TDPluginForDataset < handle
     end
     
     methods
-        function obj = TDPluginForDataset(disk_cache)
+        function obj = TDDatasetDiskCache(disk_cache)
             obj.DiskCache = disk_cache;
             obj.LoadCachedPluginResultsFile;
         end
@@ -35,7 +35,7 @@ classdef TDPluginForDataset < handle
             if ~isempty(cache_info)
                 dependencies = cache_info.DependencyList;
                 if ~obj.PluginResultsInfo.CheckDependenciesValid(dependencies, reporting)
-                    reporting.ShowWarning('TDPluginForDataset:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
+                    reporting.ShowWarning('TDDatasetDiskCache:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
                     value = [];
                 end
             end
