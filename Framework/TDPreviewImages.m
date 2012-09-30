@@ -17,14 +17,14 @@ classdef TDPreviewImages < handle
     %    
     
     properties (Access = private)
-        DiskCache       % disk cache for this dataset
+        DatasetDiskCache       % disk cache for this dataset
         Reporting  % error/progress reporting
         Previews        % preview thumnail images
     end
     
     methods
-        function obj = TDPreviewImages(disk_cache, reporting)
-            obj.DiskCache = disk_cache;
+        function obj = TDPreviewImages(dataset_disk_cache, reporting)
+            obj.DatasetDiskCache = dataset_disk_cache;
             obj.LoadPreviewFile;
             obj.Reporting = reporting;
         end
@@ -64,7 +64,7 @@ classdef TDPreviewImages < handle
         
         % Cache previews on disk
         function LoadPreviewFile(obj)
-            cached_previews = obj.DiskCache.Load(TDSoftwareInfo.PreviewImageFileName);
+            cached_previews = obj.DatasetDiskCache.LoadData(TDSoftwareInfo.PreviewImageFileName, obj.Reporting);
             if isempty(cached_previews)
                 obj.Previews = containers.Map;
             else
@@ -74,7 +74,7 @@ classdef TDPreviewImages < handle
         
         % Load cached previews from disk
         function SavePreviewFile(obj)
-            obj.DiskCache.Save(TDSoftwareInfo.PreviewImageFileName, obj.Previews);
+            obj.DatasetDiskCache.SaveData(TDSoftwareInfo.PreviewImageFileName, obj.Previews, obj.Reporting);
         end
     end
     

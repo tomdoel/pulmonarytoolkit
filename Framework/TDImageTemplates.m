@@ -33,7 +33,7 @@ classdef TDImageTemplates < handle
         ValidContexts
         
         % Used for persisting the templates between sessions
-        DiskCache
+        DatasetDiskCache
         
         % Callback for running the plugins required to generate template images
         DatasetResultsCallback
@@ -43,9 +43,9 @@ classdef TDImageTemplates < handle
     end
     
     methods
-        function obj = TDImageTemplates(dataset_callback, disk_cache, reporting)
+        function obj = TDImageTemplates(dataset_callback, dataset_disk_cache, reporting)
             
-            obj.DiskCache = disk_cache;
+            obj.DatasetDiskCache = dataset_disk_cache;
             obj.DatasetResultsCallback = dataset_callback;
             obj.Reporting = reporting;
             
@@ -177,8 +177,8 @@ classdef TDImageTemplates < handle
         
         % Retrieves previous templates from the disk cache
         function Load(obj)
-            if obj.DiskCache.Exists(TDSoftwareInfo.ImageTemplatesCacheName)
-                info = obj.DiskCache.Load(TDSoftwareInfo.ImageTemplatesCacheName);
+            if obj.DatasetDiskCache.Exists(TDSoftwareInfo.ImageTemplatesCacheName, obj.Reporting)
+                info = obj.DatasetDiskCache.LoadData(TDSoftwareInfo.ImageTemplatesCacheName, obj.Reporting);
                 obj.TemplateImages = info.TemplateImages;
                 obj.TemplatePluginsRun = info.TemplatePluginsRun;
             end
@@ -189,7 +189,7 @@ classdef TDImageTemplates < handle
             info = [];
             info.TemplateImages = obj.TemplateImages;
             info.TemplatePluginsRun = obj.TemplatePluginsRun;
-            obj.DiskCache.Save(TDSoftwareInfo.ImageTemplatesCacheName, info);
+            obj.DatasetDiskCache.SaveData(TDSoftwareInfo.ImageTemplatesCacheName, info, obj.Reporting);
         end
     end
 end

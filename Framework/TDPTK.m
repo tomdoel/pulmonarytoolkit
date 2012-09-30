@@ -71,14 +71,15 @@ classdef TDPTK < handle
         
         % Creates a TDDataset object for a dataset specified by the uid. The
         % dataset must already be imported.
-        function dataset = CreateDatasetFromUid(obj, uid)
-            disk_cache = TDDiskCache(uid, obj.Reporting);
-            image_info = disk_cache.Load(TDSoftwareInfo.ImageInfoCacheName);
+        function dataset = CreateDatasetFromUid(obj, dataset_uid)
+            disk_cache = TDDiskCache(dataset_uid, obj.Reporting);
+            dataset_disk_cache = TDDatasetDiskCache(disk_cache, obj.Reporting);
+            image_info = dataset_disk_cache.LoadData(TDSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
                 obj.Reporting.Error('TDPTK:UidNotFound', 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
-            dataset = TDDataset(image_info, disk_cache, obj.ReportingWithCache);
+            dataset = TDDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
             
         end
 
@@ -93,22 +94,17 @@ classdef TDPTK < handle
                 new_image_info.StudyUid = study_uid;
                 new_image_info.Modality = modality;
             end
+            
             disk_cache = TDDiskCache(new_image_info.ImageUid, obj.Reporting);
-            image_info = disk_cache.Load(TDSoftwareInfo.ImageInfoCacheName);
+            dataset_disk_cache = TDDatasetDiskCache(disk_cache, obj.Reporting);
+            image_info = dataset_disk_cache.LoadData(TDSoftwareInfo.ImageInfoCacheName, obj.Reporting);
 
-            if isempty(image_info)
-                image_info = new_image_info;                
-                disk_cache.Save(TDSoftwareInfo.ImageInfoCacheName, image_info);
+            anything_changed = image_info.CopyNonEmptyFields(new_image_info);
+            if (anything_changed)
+                dataset_disk_cache.SaveData(TDSoftwareInfo.ImageInfoCacheName, image_info, obj.Reporting);
             end
-            
-            % If the cached info doesn't have the modality, add this
-            if isempty(image_info.Modality) && ~isempty(new_image_info.Modality)
-                image_info = new_image_info;                
-                disk_cache.Save(TDSoftwareInfo.ImageInfoCacheName, image_info);
-            end
-            
-            dataset = TDDataset(image_info, disk_cache, obj.ReportingWithCache);
-            
+
+            dataset = TDDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
         end
     end
     
@@ -154,8 +150,7 @@ classdef TDPTK < handle
                 otherwise
                     obj.Reporting.Error('TDPTK:UnknownImageFileFormat', 'Could not import the image because the file format was not recognised.');
             end
-            
-        end        
+        end
     end
 end
 

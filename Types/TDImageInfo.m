@@ -25,12 +25,32 @@ classdef TDImageInfo
     
     methods
         function obj = TDImageInfo(path, filenames, image_type, uid, study_uid, modality)
-            obj.ImagePath = path;
-            obj.ImageFilenames = filenames;
-            obj.ImageFileFormat = image_type;
-            obj.ImageUid = uid;
-            obj.StudyUid = study_uid;
-            obj.Modality = modality;
+            if nargin > 0
+                obj.ImagePath = path;
+                obj.ImageFilenames = filenames;
+                obj.ImageFileFormat = image_type;
+                obj.ImageUid = uid;
+                obj.StudyUid = study_uid;
+                obj.Modality = modality;
+            end
+        end
+
+        % Copies values from another TDImageInfo object, but only those
+        % properies which are not empty
+        function anything_changed = CopyNonEmptyFields(obj, other_image_info)
+            anything_changed = false;
+            metaclass = ?TDImageInfo;
+            property_list = metaclass.Properties;
+            for i = 1 : length(property_list);
+                property = property_list{i};
+                other_value = other_image_info.(property.Name);
+                if ~isempty(other_value)
+                    if ~isequal(obj.(property.Name), other_value)
+                        obj.(property.Name) = other_value;
+                        anything_changed = true;
+                    end
+                end
+            end
         end
     end
 end

@@ -38,7 +38,7 @@ classdef TDDataset < handle
     properties (Access = private)
         DatasetResults    % Called to fetch results and data for this dataset
         DependencyTracker % Tracks plugin usage to construct dependency lists 
-        DiskCache         % Reads and writes to the disk cache for this dataset
+        DatasetDiskCache  % Reads and writes to the disk cache for this dataset
         PreviewImages     % Stores the thumbnail preview images
         Reporting         % Object for error and progress reporting
     end
@@ -51,12 +51,12 @@ classdef TDDataset < handle
     methods
         
         % TDDataset is created by the TDPTK class
-        function obj = TDDataset(image_info, disk_cache, reporting)
-            obj.DiskCache = disk_cache;
+        function obj = TDDataset(image_info, dataset_disk_cache, reporting)
+            obj.DatasetDiskCache = dataset_disk_cache;
             obj.Reporting = reporting;
-            obj.DependencyTracker = TDPluginDependencyTracker(disk_cache, reporting);
-            obj.PreviewImages = TDPreviewImages(disk_cache, reporting);
-            obj.DatasetResults = TDDatasetResults(image_info, obj.PreviewImages, obj.DependencyTracker, @obj.notify, disk_cache, reporting);
+            obj.DependencyTracker = TDPluginDependencyTracker(dataset_disk_cache, reporting);
+            obj.PreviewImages = TDPreviewImages(dataset_disk_cache, reporting);
+            obj.DatasetResults = TDDatasetResults(image_info, obj.PreviewImages, obj.DependencyTracker, @obj.notify, dataset_disk_cache, reporting);
         end
         
         % GetResult: Returns the results of a plugin. If a valid result is cached on disk,
@@ -87,20 +87,20 @@ classdef TDDataset < handle
         % Save data as a cache file associated with this dataset
         % Used for marker points
         function SaveData(obj, name, data)
-            obj.DiskCache.Save(name, data);
+            obj.DatasetDiskCache.SaveData(name, data, obj.Reporting);
             obj.Reporting.ShowAndClear;
         end
         
         % Load data from a cache file associated with this dataset
         function data = LoadData(obj, name)
-            data = obj.DiskCache.Load(name);
+            data = obj.DatasetDiskCache.LoadData(name, obj.Reporting);
             obj.Reporting.ShowAndClear;
         end
 
         % Gets the path of the folder where the results for this dataset are
         % stored
         function dataset_cache_path = GetDatasetCachePath(obj)
-            dataset_cache_path = obj.DiskCache.CachePath;
+            dataset_cache_path = obj.DatasetDiskCache.GetCachePath(obj.Reporting);
             obj.Reporting.ShowAndClear;
         end
 
@@ -122,7 +122,7 @@ classdef TDDataset < handle
         % each dataset. Clearing the cache files forces recomputation of all
         % results.
         function ClearCacheForThisDataset(obj, remove_framework_files)
-            obj.DiskCache.RemoveAllCachedFiles(remove_framework_files, obj.Reporting);
+            obj.DatasetDiskCache.RemoveAllCachedFiles(remove_framework_files, obj.Reporting);
             obj.PreviewImages.Clear;
             obj.Reporting.ShowAndClear;
         end

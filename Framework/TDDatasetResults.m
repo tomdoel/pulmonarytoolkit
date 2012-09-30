@@ -47,11 +47,11 @@ classdef TDDatasetResults < handle
     end
     
     methods
-        function obj = TDDatasetResults(image_info, preview_images, dependency_tracker, external_notify_function, disk_cache, reporting)
+        function obj = TDDatasetResults(image_info, preview_images, dependency_tracker, external_notify_function, dataset_disk_cache, reporting)
             obj.ImageInfo = image_info;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
             obj.Reporting = reporting;
-            obj.ImageTemplates = TDImageTemplates(obj, disk_cache, reporting);
+            obj.ImageTemplates = TDImageTemplates(obj, dataset_disk_cache, reporting);
             obj.PreviewImages = preview_images;
             obj.DependencyTracker = dependency_tracker;            
         end
