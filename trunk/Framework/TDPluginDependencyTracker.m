@@ -36,9 +36,9 @@ classdef TDPluginDependencyTracker< handle
     
     methods
         
-        function obj = TDPluginDependencyTracker(disk_cache, reporting, image_info)
+        function obj = TDPluginDependencyTracker(disk_cache, reporting)
             obj.PluginCallStack = TDPluginCallStack(reporting);
-            obj.PluginForDataset = TDPluginForDataset(disk_cache, reporting, image_info);
+            obj.PluginForDataset = TDPluginForDataset(disk_cache);
         end
         
         % Gets a plugin result, from the disk cache if possible. If there is no
@@ -50,7 +50,7 @@ classdef TDPluginDependencyTracker< handle
             result = [];
             if ~plugin_info.AlwaysRunPlugin
                 
-                [result, cache_info] = obj.PluginForDataset.LoadPluginResult(plugin_name);
+                [result, cache_info] = obj.PluginForDataset.LoadPluginResult(plugin_name, reporting);
                 
                 % Add the dependencies of the cached result to any other
                 % plugins in the callstack
@@ -88,9 +88,9 @@ classdef TDPluginDependencyTracker< handle
                 
                 % Cache the plugin result
                 if plugin_info.AllowResultsToBeCached && ~isempty(result)
-                    obj.PluginForDataset.SavePluginResult(plugin_name, result, new_cache_info);
+                    obj.PluginForDataset.SavePluginResult(plugin_name, result, new_cache_info, reporting);
                 else
-                    obj.PluginForDataset.CachePluginInfo(plugin_name, new_cache_info);
+                    obj.PluginForDataset.CachePluginInfo(plugin_name, new_cache_info, reporting);
                 end
                 
                 obj.AddDependenciesToAllPluginsInStack(dependencies);
