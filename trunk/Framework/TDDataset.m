@@ -54,7 +54,7 @@ classdef TDDataset < handle
         function obj = TDDataset(image_info, disk_cache, reporting)
             obj.DiskCache = disk_cache;
             obj.Reporting = reporting;
-            obj.DependencyTracker = TDPluginDependencyTracker(disk_cache, reporting, image_info);
+            obj.DependencyTracker = TDPluginDependencyTracker(disk_cache, reporting);
             obj.PreviewImages = TDPreviewImages(disk_cache, reporting);
             obj.DatasetResults = TDDatasetResults(image_info, obj.PreviewImages, obj.DependencyTracker, @obj.notify, disk_cache, reporting);
         end
