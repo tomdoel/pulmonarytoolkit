@@ -1,5 +1,5 @@
 classdef TDDatasetResults < handle
-    % TDDatasetResults. Used by plugins to obtain results and associated data for a particualar dataset.
+    % TDDatasetResults. Used by plugins to obtain results and associated data for a particular dataset.
     %
     %     This class is used by plugins to run calculations and fetch cached
     %     results associated with a dataset. The difference between TDDataset 

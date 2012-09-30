@@ -24,7 +24,7 @@ classdef TDDiskCache < handle
     end
     
     properties (Access = private)
-        Reporting     % Error and log reporting
+        Reporting    % Error and log reporting
         Uuid         % A unique identifier for this dataset
         SchemaNumber % Version number
     end
