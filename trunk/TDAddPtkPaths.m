@@ -6,7 +6,7 @@ function TDAddPtkPaths(varargin)
     % the list
     TDAddPtkPaths_Version_Number = 1;
     
-    global TDPTK_PathsHaveBeenSet
+    persistent TDPTK_PathsHaveBeenSet
     
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
