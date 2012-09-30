@@ -20,29 +20,22 @@ classdef TDPluginForDataset < handle
     properties (Access = private)
         PluginResultsInfo
         DiskCache
-        Reporting
-        ImageInfo
-        Schema
     end
     
     methods
-        function obj = TDPluginForDataset(disk_cache, reporting, image_info)
+        function obj = TDPluginForDataset(disk_cache)
             obj.DiskCache = disk_cache;
-            obj.Reporting = reporting;
-            obj.ImageInfo = image_info;
-            obj.Schema = TDSoftwareInfo.DiskCacheSchema;
-
             obj.LoadCachedPluginResultsFile;
         end
 
         % Fetches a cached result for a plugin, but checks the dependencies to
         % ensure it is still valid, and if not returns an empty result.
-        function [value, cache_info] = LoadPluginResult(obj, plugin_name)
+        function [value, cache_info] = LoadPluginResult(obj, plugin_name, reporting)
             [value, cache_info] = obj.DiskCache.Load(plugin_name);
             if ~isempty(cache_info)
                 dependencies = cache_info.DependencyList;
-                if ~obj.PluginResultsInfo.CheckDependenciesValid(dependencies, obj.Reporting)
-                    obj.Reporting.ShowWarning('TDPluginForDataset:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
+                if ~obj.PluginResultsInfo.CheckDependenciesValid(dependencies, reporting)
+                    reporting.ShowWarning('TDPluginForDataset:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
                     value = [];
                 end
             end
@@ -50,17 +43,17 @@ classdef TDPluginForDataset < handle
         
         % Stores a plugin result in the disk cache and updates cached dependency
         % information
-        function SavePluginResult(obj, plugin_name, result, cache_info)
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, obj.Reporting);
+        function SavePluginResult(obj, plugin_name, result, cache_info, reporting)
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name);
             obj.DiskCache.Save(plugin_name, result, cache_info);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, obj.Reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, reporting);
             obj.SaveCachedPluginInfoFile;
         end
         
         % Caches Dependency information
-        function CachePluginInfo(obj, plugin_name, cache_info)
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, obj.Reporting);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, obj.Reporting);
+        function CachePluginInfo(obj, plugin_name, cache_info, reporting)
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, reporting);
             obj.SaveCachedPluginInfoFile;
         end
         
