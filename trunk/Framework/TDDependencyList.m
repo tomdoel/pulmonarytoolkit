@@ -29,17 +29,17 @@ classdef TDDependencyList < handle
         end
         
         % Adds a single dependency to the list
-        function AddDependency(obj, dependency)
-            if ~obj.DependencyAlreadyExists(dependency)
+        function AddDependency(obj, dependency, reporting)
+            if ~obj.DependencyAlreadyExists(dependency, reporting)
                 obj.DependencyList(end+1) = dependency;
             end
         end
         
         % Adds multiple dependencies to the list
-        function AddDependenciesList(obj, dependencies)
+        function AddDependenciesList(obj, dependencies, reporting)
             new_dependency_list = dependencies.DependencyList;
             for index = 1 : length(new_dependency_list);
-                obj.AddDependency(new_dependency_list(index));
+                obj.AddDependency(new_dependency_list(index), reporting);
             end
         end
         
@@ -48,14 +48,18 @@ classdef TDDependencyList < handle
     methods (Access = private)
         
         % Check if this dependency already exists
-        function dependency_exists = DependencyAlreadyExists(obj, new_dependency)
+        function dependency_exists = DependencyAlreadyExists(obj, new_dependency, reporting)
             for index = 1 : length(obj.DependencyList)
                 dependency = obj.DependencyList(index);
                 
                 if strcmp(dependency.PluginName, new_dependency.PluginName) && strcmp(dependency.DatasetUid, new_dependency.DatasetUid)
                     dependency_exists = true;
                     if ~strcmp(dependency.Uid, new_dependency.Uid)
-                        error('Dependency inconsistency');
+                        if (dependency.Attributes.IgnoreDependencyChecks && new_dependency.Attributes.IgnoreDependencyChecks)
+                            reporting.ShowWarning(['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
+                        else
+                            reporting.Error(['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
+                        end
                     end
                     return;
                 end

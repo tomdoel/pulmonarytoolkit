@@ -50,7 +50,9 @@ classdef TDDatasetStack < handle
             if obj.PluginAlreadyExistsInStack(plugin_name)
                 obj.Reporting.Error('TDDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
-            instance_identifier = TDDependency(plugin_name, TDDiskUtilities.GenerateUid, dataset_uid);
+            attributes = [];
+            attributes.IgnoreDependencyChecks = ignore_dependency_checks;
+            instance_identifier = TDDependency(plugin_name, TDDiskUtilities.GenerateUid, dataset_uid, attributes);
             cache_info = TDDatasetStackItem(instance_identifier, TDDependencyList, ignore_dependency_checks, obj.Reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end
@@ -66,8 +68,8 @@ classdef TDDatasetStack < handle
         % currently being executed in the call stack
         function AddDependenciesToAllPluginsInStack(obj, dependencies)
             for index = 1 : length(obj.DatasetStack)
-                plugin_info = obj.DatasetStack(index);
-                plugin_info.AddDependencies(dependencies);
+                dataset_stack_item = obj.DatasetStack(index);
+                dataset_stack_item.AddDependencies(dependencies, obj.Reporting);
             end
         end
         

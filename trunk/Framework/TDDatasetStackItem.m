@@ -42,8 +42,8 @@ classdef TDDatasetStackItem < handle
         
         % Adds more plugin result which this particular plugin result depends
         % on.
-        function AddDependencies(obj, dependencies)
-            obj.DependencyList.AddDependenciesList(dependencies);
+        function AddDependencies(obj, dependencies, reporting)
+            obj.DependencyList.AddDependenciesList(dependencies, reporting);
         end
     end
     
