@@ -39,7 +39,7 @@ classdef TDDataset < handle
         DatasetDiskCache  % Reads and writes to the disk cache for this dataset
         LinkedDatasetChooser % Chooses between all the datasets linked to this one
         PreviewImages     % Stores the thumbnail preview images
-        PluginCallStack   % Manages the heirarchy of plugins calling other plugins
+        DatasetStack      % Manages the heirarchy of plugins calling other plugins
         Reporting         % Object for error and progress reporting
     end
     
@@ -52,7 +52,7 @@ classdef TDDataset < handle
         
         % TDDataset is created by the TDPTK class
         function obj = TDDataset(image_info, dataset_disk_cache, reporting)
-            obj.PluginCallStack = TDPluginCallStack(reporting);
+            obj.DatasetStack = TDDatasetStack(reporting);
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.Reporting = reporting;
             obj.PreviewImages = TDPreviewImages(dataset_disk_cache, reporting);
@@ -83,12 +83,12 @@ classdef TDDataset < handle
             end
             
             % Reset the dependency stack, since this could be left in a bad state if a previous plugin call caused an exception
-            obj.PluginCallStack.ClearStack;
+            obj.DatasetStack.ClearStack;
             
             if nargout > 1
-                [result, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.PluginCallStack, context, dataset_uid);
+                [result, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
             else
-                result = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.PluginCallStack, context, dataset_uid);
+                result = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
             end
             obj.Reporting.ShowAndClear;
             obj.Reporting.ClearStack;

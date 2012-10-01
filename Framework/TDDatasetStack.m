@@ -1,5 +1,5 @@
-classdef TDPluginCallStack < handle
-    % TDPluginCallStack. Part of the internal framework of the Pulmonary Toolkit.
+classdef TDDatasetStack < handle
+    % TDDatasetStack. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -30,43 +30,43 @@ classdef TDPluginCallStack < handle
     
     properties (Access = private)
         
-        % The stack - an array of TDPluginCallStackItem objects; one for each plugin which is
+        % The stack - an array of TDDatasetStackItem objects; one for each plugin which is
         % currently being executed.
-        PluginCallStack
+        DatasetStack
 
         % Callback for errors, warnings and logs
         Reporting
     end
     
     methods
-        function obj =  TDPluginCallStack(reporting)
-            obj.PluginCallStack = TDPluginCallStackItem.empty;
+        function obj =  TDDatasetStack(reporting)
+            obj.DatasetStack = TDDatasetStackItem.empty;
             obj.Reporting = reporting;
         end
     
-        % Create a new TDPluginCallStackItem object with an empty dependency list and a
+        % Create a new TDDatasetStackItem object with an empty dependency list and a
         % new unique identifier. The push it to the end of the stack
         function CreateAndPush(obj, plugin_name, ignore_dependency_checks)
             if obj.PluginAlreadyExistsInStack(plugin_name)
-                obj.Reporting.Error('TDPluginCallStack:RecursivePluginCall', 'Recursive plugin call');
+                obj.Reporting.Error('TDDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
             instance_identifier = TDDependency(plugin_name, TDDiskUtilities.GenerateUid);
-            cache_info = TDPluginCallStackItem(instance_identifier, TDDependencyList, ignore_dependency_checks, obj.Reporting);
-            obj.PluginCallStack(end + 1) = cache_info;
+            cache_info = TDDatasetStackItem(instance_identifier, TDDependencyList, ignore_dependency_checks, obj.Reporting);
+            obj.DatasetStack(end + 1) = cache_info;
         end
         
         % Remove a plugin from the call stack and return the updated info object
         % for this plugin
         function cache_info = Pop(obj)
-            cache_info = obj.PluginCallStack(end);
-            obj.PluginCallStack(end) = [];
+            cache_info = obj.DatasetStack(end);
+            obj.DatasetStack(end) = [];
         end
         
         % Adds the specified plugin as a dependency of every plugin which is
         % currently being executed in the call stack
         function AddDependenciesToAllPluginsInStack(obj, dependencies)
-            for index = 1 : length(obj.PluginCallStack)
-                plugin_info = obj.PluginCallStack(index);
+            for index = 1 : length(obj.DatasetStack)
+                plugin_info = obj.DatasetStack(index);
                 plugin_info.AddDependencies(dependencies);
             end
         end
@@ -74,7 +74,7 @@ classdef TDPluginCallStack < handle
         % Clear the stack. This may be necessary if a plugin failed during
         % execution, leaving the call stack in a bad state.
         function ClearStack(obj)
-            obj.PluginCallStack = TDPluginCallStackItem.empty;
+            obj.DatasetStack = TDDatasetStackItem.empty;
         end
 
     end
@@ -83,8 +83,8 @@ classdef TDPluginCallStack < handle
         
         % Check if this plugin already exists in the stack
         function plugin_exists = PluginAlreadyExistsInStack(obj, plugin_name)
-            for index = 1 : length(obj.PluginCallStack)
-                plugin_info = obj.PluginCallStack(index);
+            for index = 1 : length(obj.DatasetStack)
+                plugin_info = obj.DatasetStack(index);
                 this_name = plugin_info.InstanceIdentifier.PluginName;
                 if strcmp(plugin_name, this_name)
                     plugin_exists = true;
