@@ -1,13 +1,13 @@
-classdef TDPluginCallStackItem < handle
-    % TDPluginCallStackItem. Part of the internal framework of the Pulmonary Toolkit.
+classdef TDDatasetStackItem < handle
+    % TDDatasetStackItem. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
     %     Used to store the dependency information of a plugin as it is being
-    %     build up during execution. TDPluginCallStackItems are created 
-    %     temporarily by the class TDPluginCallStack and used to build up the
-    %     dependency list. See TDPluginCallStack for more information.
+    %     build up during execution. TDDatasetStackItem are created 
+    %     temporarily by the class TDDatasetStack and used to build up the
+    %     dependency list. See TDDatasetStack for more information.
     %
     %
     %     Licence
@@ -25,13 +25,13 @@ classdef TDPluginCallStackItem < handle
     end
     
     methods
-        function obj = TDPluginCallStackItem(instance_id, dependency_list, ignore_dependency_checks, reporting)
+        function obj = TDDatasetStackItem(instance_id, dependency_list, ignore_dependency_checks, reporting)
             if ~isa(instance_id, 'TDDependency')
-                reporting.Error('TDPluginCallStackItem:BadInstanceID', 'instance_id must be a TDDependency object');
+                reporting.Error('TDDatasetStackItem:BadInstanceID', 'instance_id must be a TDDependency object');
             end
             
             if ~isa(dependency_list, 'TDDependencyList')
-                reporting.Error('TDPluginCallStackItem:BadDependencyList', 'dependency_list must be a TDDependencyList object');
+                reporting.Error('TDDatasetStackItem:BadDependencyList', 'dependency_list must be a TDDependencyList object');
             end
                         
             obj.InstanceIdentifier = instance_id;
