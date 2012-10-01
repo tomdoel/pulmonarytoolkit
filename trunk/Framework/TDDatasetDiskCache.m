@@ -47,14 +47,14 @@ classdef TDDatasetDiskCache < handle
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name);
             obj.DiskCache.SaveWithInfo(plugin_name, result, cache_info, reporting);
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, reporting);
-            obj.SaveCachedPluginInfoFile;
+            obj.SaveCachedPluginInfoFile(reporting);
         end
         
         % Caches Dependency information
         function CachePluginInfo(obj, plugin_name, cache_info, reporting)
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, reporting);
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, reporting);
-            obj.SaveCachedPluginInfoFile;
+            obj.SaveCachedPluginInfoFile(reporting);
         end
         
         % Saves additional data associated with this dataset to the cache

@@ -46,49 +46,58 @@ classdef TDLinkedDatasetChooser < handle
         % Specifying a second argument also produces a representative image from
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.
-        function [result, output_image] = GetResult(obj, plugin_name, dataset_call_stack, context, dataset_uid)
-            linked_dataset = obj.FindLinkedDatasetChooser(dataset_uid);
+        function [result, output_image] = GetResult(obj, plugin_name, dataset_call_stack, context, dataset_name)
+            linked_dataset = obj.FindLinkedDatasetChooser(dataset_name);
             dataset_callback = TDDatasetCallback(linked_dataset, dataset_call_stack);
+            template_callback = TDTemplateCallback(linked_dataset, dataset_call_stack);
             
             if nargout > 1
-                [result, output_image] = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, dataset_callback, dataset_call_stack, context);
+                [result, output_image] = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, dataset_callback, template_callback, dataset_call_stack, context);
             else
-                result = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, dataset_callback, dataset_call_stack, context);
+                result = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, dataset_callback, template_callback, dataset_call_stack, context);
             end
         end
 
         % Returns a TDImageInfo structure with image information, including the
         % UID, filenames and file path
-        function image_info = GetImageInfo(obj, dataset_uid)
-            image_info = obj.FindLinkedDatasetChooser(dataset_uid).PrimaryDatasetResults.GetImageInfo;
+        function image_info = GetImageInfo(obj, dataset_name)
+            image_info = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.GetImageInfo;
         end
         
         % Returns an empty template image for the specified context
         % See TDImageTemplates.m for valid contexts
-        function template_image = GetTemplateImage(obj, context, dataset_uid)
-            template_image = obj.FindLinkedDatasetChooser(dataset_uid).PrimaryDatasetResults.ImageTemplates.GetTemplateImage(context);
+        function template_image = GetTemplateImage(obj, context, dataset_stack, dataset_name)
+            linked_dataset = obj.FindLinkedDatasetChooser(dataset_name);
+            dataset_callback = TDDatasetCallback(linked_dataset, dataset_stack);
+            template_callback = TDTemplateCallback(linked_dataset, dataset_stack);
+
+            template_image = linked_dataset.PrimaryDatasetResults.GetTemplateImage(context, dataset_callback, template_callback, dataset_stack);
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
         % failure when running the plugin that generates the template image for 
         % that context.
-        function context_is_enabled = IsContextEnabled(obj, context, dataset_uid)
-            context_is_enabled = obj.FindLinkedDatasetChooser(dataset_uid).PrimaryDatasetResults.ImageTemplates.IsContextEnabled(context);
+        function context_is_enabled = IsContextEnabled(obj, context, dataset_name)
+            context_is_enabled = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.IsContextEnabled(context);
         end
         
         % ToDo: This check is based on series description and should be more
         % general
-        function is_gas_mri = IsGasMRI(obj, dataset_uid)
-            is_gas_mri = obj.FindLinkedDatasetChooser(dataset_uid).PrimaryDatasetResults.IsGasMRI;
+        function is_gas_mri = IsGasMRI(obj, dataset_stack, dataset_name)
+            linked_dataset = obj.FindLinkedDatasetChooser(dataset_name);
+            dataset_callback = TDDatasetCallback(linked_dataset, dataset_stack);
+            template_callback = TDTemplateCallback(linked_dataset, dataset_stack);
+
+            is_gas_mri = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.IsGasMRI(dataset_callback, template_callback, dataset_stack);
         end
     end
 
     methods (Access = private)
-        function linked_dataset_chooser = FindLinkedDatasetChooser(obj, dataset_uid)
-            if isempty(dataset_uid)
-                dataset_uid = obj.PrimaryDatasetUid;
+        function linked_dataset_chooser = FindLinkedDatasetChooser(obj, dataset_name)
+            if isempty(dataset_name)
+                dataset_name = obj.PrimaryDatasetUid;
             end
-            linked_dataset_chooser = obj.LinkedDatasetChooserList(dataset_uid);
+            linked_dataset_chooser = obj.LinkedDatasetChooserList(dataset_name);
         end
     end
 end

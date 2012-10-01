@@ -98,6 +98,9 @@ classdef TDPTK < handle
             disk_cache = TDDiskCache(new_image_info.ImageUid, obj.Reporting);
             dataset_disk_cache = TDDatasetDiskCache(disk_cache, obj.Reporting);
             image_info = dataset_disk_cache.LoadData(TDSoftwareInfo.ImageInfoCacheName, obj.Reporting);
+            if isempty(image_info)
+                image_info = new_image_info;
+            end
 
             anything_changed = image_info.CopyNonEmptyFields(new_image_info);
             if (anything_changed)
