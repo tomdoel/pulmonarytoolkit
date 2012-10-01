@@ -21,13 +21,15 @@ classdef TDDependency < handle
         PluginName
         Uid
         DatasetUid
+        Attributes
     end
     
     methods
-        function obj = TDDependency(name, uid, dataset_uid)
+        function obj = TDDependency(name, uid, dataset_uid, attributes)
             obj.PluginName = name;
             obj.Uid = uid;
             obj.DatasetUid = dataset_uid;
+            obj.Attributes = attributes;
         end
     end
 end
