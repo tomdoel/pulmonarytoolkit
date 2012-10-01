@@ -46,7 +46,7 @@ function output_image = TDSimpleRegionGrowing(threshold_image, start_points_glob
     next_points = zeros(length(start_points_global), 1);
     for i = 1 : length(next_points)
         start_point = start_points_global{i};
-        start_point = threshold_image.GloabalToLocalCoordinates(start_point);
+        start_point = threshold_image.GlobalToLocalCoordinates(start_point);
         next_points(i) = sub2ind(threshold_image.ImageSize, start_point(1), start_point(2), start_point(3));
     end    
 
