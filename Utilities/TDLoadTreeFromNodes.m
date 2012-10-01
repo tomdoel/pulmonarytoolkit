@@ -155,7 +155,7 @@ end
 % %         % element is (0,0)
 % %         if (element_index == number_of_elements) && (parent_index == 1) && (child_index == 1) ...
 % %                 && (number_of_child_points(num_nodes) == 0)  && (number_of_child_points(num_nodes - 1) == 0)
-% %             reporting.ShowWarning('TDLoadTreeFromNodes:AddingElement', 'Warning: Adding additional element to correct for bug in airway file', []);
+% %             reporting.ShowWarning('TDLoadTreeFromNodes:AddingElement', 'Adding additional element to correct for bug in airway file', []);
 % %             parent_index = num_nodes - 1;
 % %             child_index = num_nodes;
 % %         end

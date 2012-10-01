@@ -53,7 +53,7 @@ function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, repor
     % (on the x-y plane) of the original scan is. This is not always the
     % midpoint of the ROI, e.g. if one of the lungs is blocked.
     if isempty(lung_image.OriginalImageSize)
-        disp('WARNING: OriginalImageSize not found for this image');
+        reporting.ShowWarning('TDFindTopOfTrachea:NoOriginalImageSize', 'OriginalImageSize not found for this image. Using default values', []);
         midpoint_roi = round(image_size/2);
     else
         % Find the midpoint of the original image

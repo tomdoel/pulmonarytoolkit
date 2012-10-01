@@ -56,7 +56,7 @@ classdef TDDicomImage < TDImage
             elseif isequal(orientation, [0 1 0 0 0 1]')
                 new_dimension_order = [2 3 1];
             else
-                reporting.ShowWarning('TDDicomImage:UnknownPatientOrientation', 'Warning: Unknown patient orientation. Images may not be aligned correctly', []);
+                reporting.ShowWarning('TDDicomImage:UnknownPatientOrientation', 'Unknown patient orientation. Images may not be aligned correctly', []);
                 new_dimension_order = [1 2 3];
             end
             original_image = permute(original_image, new_dimension_order);

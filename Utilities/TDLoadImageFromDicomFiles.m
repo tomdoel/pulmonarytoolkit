@@ -116,7 +116,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
         % We only do this if check_data is true, because processing the metadata
         % for every slice using dicominfo is very slow.
         if ~strcmp(metadata_first_file.SeriesInstanceUID, metadata_last_file.SeriesInstanceUID)
-            reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'Warning: These images are from more than one series', []);
+            reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'These images are from more than one series', []);
         end
         
         % If there are only 2 slices, we already have everything loaded
@@ -135,7 +135,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
             
             % Check that second image is from the same series
             if ~strcmp(metadata_first_file.SeriesInstanceUID, metadata_second_file.SeriesInstanceUID)
-                reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'Warning: These images are from more than one series', []);
+                reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'These images are from more than one series', []);
             end
             
             % For the purposes of building an image volume, we take slice thickness
@@ -151,7 +151,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
             % have a different thickness from other slices.
             computed_distance = (num_slices - 1)*slice_thickness;
             if abs(computed_distance - distance_between_first_and_last) > 0.1;
-                reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Warning: Some image slices may be of different thickness, or some slices are missing', []);
+                reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Some image slices may be of different thickness, or some slices are missing', []);
             end
             
             
@@ -197,11 +197,11 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                     slice_thicknesses = abs(sorted_slice_locations(2:end) - sorted_slice_locations(1:end-1));
                     slice_thickness = slice_thicknesses(1);
                     if ~all(slice_thicknesses == slice_thickness)
-                        reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Warning: Not all slices have the same thickness', []);
+                        reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
                     end
                     loaded_image(:,:,:) = loaded_image(:,:,index_matrix);
                 else
-                    reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'Warning: These images are from more than one series', []);
+                    reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'These images are from more than one series', []);
                 end
             end
         end
