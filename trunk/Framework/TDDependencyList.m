@@ -52,7 +52,7 @@ classdef TDDependencyList < handle
             for index = 1 : length(obj.DependencyList)
                 dependency = obj.DependencyList(index);
                 
-                if strcmp(dependency.PluginName, new_dependency.PluginName)
+                if strcmp(dependency.PluginName, new_dependency.PluginName) && strcmp(dependency.DatasetUid, new_dependency.DatasetUid)
                     dependency_exists = true;
                     if ~strcmp(dependency.Uid, new_dependency.Uid)
                         error('Dependency inconsistency');

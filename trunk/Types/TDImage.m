@@ -1,4 +1,4 @@
-classdef TDImage < handle
+classdef (ConstructOnLoad = true) TDImage < handle
     % TDImage. A class for holding a 3D image volume.
     %
     %     TDImage is the fundamental image class used by the Pulmonary Toolkit.

@@ -172,15 +172,16 @@ classdef TDDatasetResults < handle
         end
         
         function [result, plugin_has_been_run] = GetResultFromDependencyTracker(obj, plugin_name, plugin_info, dataset_callback, dataset_stack)
+            dataset_uid = obj.ImageInfo.ImageUid;
             
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
             if TDSoftwareInfo.DebugMode
-                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, dataset_callback, dataset_stack, obj.Reporting);
+                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, dataset_uid, dataset_uiddataset_callback, dataset_stack, obj.Reporting);
             else
                 try
-                    [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, dataset_callback, dataset_stack, obj.Reporting);
+                    [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, dataset_uid, dataset_callback, dataset_stack, obj.Reporting);
                 catch ex
                     dataset_stack.ClearStack;
                     rethrow(ex);
