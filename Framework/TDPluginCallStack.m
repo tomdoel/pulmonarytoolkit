@@ -73,7 +73,7 @@ classdef TDPluginCallStack < handle
         
         % Clear the stack. This may be necessary if a plugin failed during
         % execution, leaving the call stack in a bad state.
-        function Clear(obj)
+        function ClearStack(obj)
             obj.PluginCallStack = TDPluginCallStackItem.empty;
         end
 
