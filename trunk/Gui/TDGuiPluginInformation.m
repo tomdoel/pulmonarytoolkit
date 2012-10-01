@@ -37,13 +37,13 @@ classdef TDGuiPluginInformation
                         if isa(plugin_info_structure, 'TDGuiPlugin')
                             plugin_list{end + 1} = plugin_filename{1};
                         else
-                            reporting.ShowWarning('TDGuiPluginInformation:FileNotPlugin', ['Warning: The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a TDGuiPlugin class. I am ignoring this file. If this is not a TDGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
+                            reporting.ShowWarning('TDGuiPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a TDGuiPlugin class. I am ignoring this file. If this is not a TDGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
                         end
                     else
-                        reporting.ShowWarning('TDGuiPluginInformation:FileNotPlugin', ['Warning: The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a TDGuiPlugin class. I am ignoring this file. If this is not a TDGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
+                        reporting.ShowWarning('TDGuiPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a TDGuiPlugin class. I am ignoring this file. If this is not a TDGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
                     end
                 catch ex
-                    reporting.ShowWarning('TDGuiPluginInformation:ParsePluginError', ['Warning: The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a TDGuiPlugin class, or contains errors. I am ignoring this file. If this is not a TDGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], ex.message);
+                    reporting.ShowWarning('TDGuiPluginInformation:ParsePluginError', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a TDGuiPlugin class, or contains errors. I am ignoring this file. If this is not a TDGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], ex.message);
                 end
             end
         end
@@ -61,7 +61,7 @@ classdef TDGuiPluginInformation
                 
                 try
                     % get information from the plugin
-                    new_plugin = TDGuiPluginInformation.LoadPluginInfoStructure(plugin_name);
+                    new_plugin = TDGuiPluginInformation.LoadPluginInfoStructure(plugin_name, reporting);
                     
                     if ~new_plugin.HidePluginInDisplay
                         
@@ -75,17 +75,17 @@ classdef TDGuiPluginInformation
                         plugins_by_category(new_plugin.Category) = current_category_map;
                     end
                     
-                catch
-                    disp(['Warning: file ' plugin_name ' found in GuiPlugins directory did not return the correct information structure when called with no arguments.']);
+                catch ex
+                    reporting.ShowWarning('TDGuiPluginInformation:InvalidGuiPlugin', ['The file ' plugin_name ' was found in GuiPlugins directory but does not appear to be a TDGuiPlugin class, or contains errors.'], []);
                 end
             end
         end
         
         % Obtains a handle to the gui plugin which can be used to parse its properties
-        function new_plugin = LoadPluginInfoStructure(plugin_name)
+        function new_plugin = LoadPluginInfoStructure(plugin_name, reporting)
             plugin_handle = str2func(plugin_name);
             plugin_info_structure = feval(plugin_handle);
-            new_plugin = TDGuiPluginInformation.ParsePluginClass(plugin_name, plugin_info_structure);            
+            new_plugin = TDGuiPluginInformation.ParsePluginClass(plugin_name, plugin_info_structure, reporting);
         end
     end
     
@@ -103,12 +103,12 @@ classdef TDGuiPluginInformation
             plugins_path = fullfile(path_root, '..', TDSoftwareInfo.UserDirectoryName, TDSoftwareInfo.GuiPluginDirectoryName);
         end
         
-        function new_plugin = ParsePluginClass(plugin_name, plugin_class)
+        function new_plugin = ParsePluginClass(plugin_name, plugin_class, reporting)
             new_plugin = [];
             new_plugin.PluginName = plugin_name;
             
             if plugin_class.TDPTKVersion ~= '1'
-                disp(['Warning: plugin ' plugin_name ' was created for a more recent version of this software']);
+                reporting.ShowWarning('TDGuiPluginInformation:OldPlugin', ['Plugin ' plugin_name ' was created for a more recent version of this software']), [];
             end
             
             new_plugin.ToolTip = plugin_class.ToolTip;
