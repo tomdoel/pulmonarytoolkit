@@ -113,7 +113,7 @@ classdef TDDatasetResults < handle
     methods (Access = private)
                 
         % Returns the plugin result, computing if necessary
-        function [result, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, plugin_call_stack, context)
+        function [result, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, dataset_callback, plugin_call_stack, context)
             
             % Get information about the plugin
             plugin_info = eval(plugin_name);
@@ -125,7 +125,7 @@ classdef TDDatasetResults < handle
             % result if required
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name);
 
-            [result, plugin_has_been_run] = obj.GetResultFromDependencyTracker(plugin_name, plugin_call_stack, plugin_info);
+            [result, plugin_has_been_run] = obj.GetResultFromDependencyTracker(plugin_name, dataset_callback, plugin_call_stack, plugin_info);
 
             % Allow the context manager to construct a template image from this
             % result if required
@@ -171,18 +171,18 @@ classdef TDDatasetResults < handle
             
         end
         
-        function [result, plugin_has_been_run] = GetResultFromDependencyTracker(obj, plugin_name, plugin_call_stack, plugin_info)
+        function [result, plugin_has_been_run] = GetResultFromDependencyTracker(obj, plugin_name, dataset_callback, dataset_call_stack, plugin_info)
             
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
             if TDSoftwareInfo.DebugMode
-                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, obj, plugin_call_stack, obj.Reporting);
+                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, dataset_callback, dataset_call_stack, obj.Reporting);
             else
                 try
-                    [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, obj, obj.Reporting);
+                    [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, dataset_callback, dataset_call_stack, obj.Reporting);
                 catch ex
-                    plugin_call_stack.ClearStack;
+                    dataset_call_stack.ClearStack;
                     rethrow(ex);
                 end
             end
