@@ -428,7 +428,7 @@ classdef TDPluginsPanel < handle
             button_text_colour = 150*[1, 1, 1];
                         
             if (image_type == 3) && isempty(image_preview_limits)
-                disp('Warning: forcing image limits');
+                obj.Reporting.ShowWarning('TDPluginsPanel:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
                 image_preview_limits = [1 100];
             end
             

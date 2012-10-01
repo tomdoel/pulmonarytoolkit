@@ -72,7 +72,7 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
     end
     
     if isempty(is_left_lung)
-        reporting.ShowWarning('TDImageDivider:ArgumentNotSpecified', 'Warning: the argument is_left_lung was not specified, so I''m assuming this is true', []);
+        reporting.ShowWarning('TDImageDivider:ArgumentNotSpecified', 'The argument is_left_lung was not specified, so I''m assuming this is true', []);
         is_left_lung = true;
     end
   

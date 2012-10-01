@@ -118,7 +118,7 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     end
     
     if isempty(is_left_lung)
-        reporting.ShowWarning('TDImageDividerHessian:ArgumentNotSpecified', 'Warning: the argument is_left_lung was not specified, so I''m assuming this is true', []);
+        reporting.ShowWarning('TDImageDividerHessian:ArgumentNotSpecified', 'The argument is_left_lung was not specified, so I''m assuming this is true', []);
         is_left_lung = true;
     end
   
