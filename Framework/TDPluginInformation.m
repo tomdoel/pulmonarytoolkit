@@ -36,13 +36,13 @@ classdef TDPluginInformation
                         if isa(plugin_info_structure, 'TDPlugin')
                             plugin_list{end + 1} = plugin_filename{1};
                         else
-                            reporting.ShowWarning('TDPluginInformation:FileNotPlugin', ['Warning: The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
+                            reporting.ShowWarning('TDPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
                         end
                     else
-                        reporting.ShowWarning('TDPluginInformation:FileNotPlugin', ['Warning: The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
+                        reporting.ShowWarning('TDPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
                     end
                 catch ex
-                    reporting.ShowWarning('TDPluginInformation:ParsePluginError', ['Warning: The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class, or contains errors. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], ex.message);
+                    reporting.ShowWarning('TDPluginInformation:ParsePluginError', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class, or contains errors. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], ex.message);
                 end
             end            
         end
@@ -74,7 +74,7 @@ classdef TDPluginInformation
                     end
                     
                 catch ex
-                    reporting.ShowWarning('TDPluginInformation:PluginParseError', ['Warning: There is a problem with plugin file ' plugin_name '. Check there are no code errors and it has the correct properties.'], ex.message);
+                    reporting.ShowWarning('TDPluginInformation:PluginParseError', ['There is a problem with plugin file ' plugin_name '. Check there are no code errors and it has the correct properties.'], ex.message);
                 end
             end
         end
@@ -108,7 +108,7 @@ classdef TDPluginInformation
             new_plugin.PluginName = plugin_name;
             
             if ~strcmp(plugin_class.TDPTKVersion, TDSoftwareInfo.TDPTKVersion)
-                reporting.ShowWarning('TDPluginInformation:MismatchingPluginVersion', ['Warning: plugin ' plugin_name ' was created for a more recent version of this software'], []);
+                reporting.ShowWarning('TDPluginInformation:MismatchingPluginVersion', ['Plugin ' plugin_name ' was created for a more recent version of this software'], []);
             end
             
             new_plugin.ToolTip = plugin_class.ToolTip;
