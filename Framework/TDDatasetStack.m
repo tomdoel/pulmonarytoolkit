@@ -46,11 +46,11 @@ classdef TDDatasetStack < handle
     
         % Create a new TDDatasetStackItem object with an empty dependency list and a
         % new unique identifier. The push it to the end of the stack
-        function CreateAndPush(obj, plugin_name, ignore_dependency_checks)
+        function CreateAndPush(obj, plugin_name, dataset_uid, ignore_dependency_checks)
             if obj.PluginAlreadyExistsInStack(plugin_name)
                 obj.Reporting.Error('TDDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
-            instance_identifier = TDDependency(plugin_name, TDDiskUtilities.GenerateUid);
+            instance_identifier = TDDependency(plugin_name, TDDiskUtilities.GenerateUid, dataset_uid);
             cache_info = TDDatasetStackItem(instance_identifier, TDDependencyList, ignore_dependency_checks, obj.Reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end

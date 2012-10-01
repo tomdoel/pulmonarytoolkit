@@ -40,7 +40,7 @@ classdef TDPluginDependencyTracker < handle
         % Gets a plugin result, from the disk cache if possible. If there is no
         % cached result, or if the dependencies are invalid, or if the
         % "AlwaysRunPlugin" property is set, then the plugin is executed.
-        function [result, plugin_has_been_run] = GetResult(obj, plugin_name, plugin_info, dataset_callback, dataset_call_stack, reporting)
+        function [result, plugin_has_been_run] = GetResult(obj, plugin_name, plugin_info, dataset_uid, dataset_callback, dataset_call_stack, reporting)
             
             % Fetch plugin result from the disk cache
             result = [];
@@ -68,7 +68,11 @@ classdef TDPluginDependencyTracker < handle
                 
                 ignore_dependency_checks = plugin_info.AlwaysRunPlugin || ~plugin_info.AllowResultsToBeCached;
                 
-                dataset_call_stack.CreateAndPush(plugin_name, ignore_dependency_checks);
+                % Create a new dependency. The dependency relates to the plugin
+                % being called (plugin_name) and the UID of the dataset the
+                % result is being requested from; however, the stack belongs to
+                % the primary dataset
+                dataset_call_stack.CreateAndPush(plugin_name, dataset_uid, ignore_dependency_checks);
                 
                 % This is the actual call which runs the plugin
                 result = plugin_info.RunPlugin(dataset_callback, reporting);

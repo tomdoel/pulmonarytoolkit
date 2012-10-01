@@ -34,10 +34,13 @@ classdef TDImageInfo
                 obj.Modality = modality;
             end
         end
-
+    end
+    
+    methods (Static)
         % Copies values from another TDImageInfo object, but only those
         % properies which are not empty
-        function anything_changed = CopyNonEmptyFields(obj, other_image_info)
+        function [new_info, anything_changed] = CopyNonEmptyFields(image_info, other_image_info)
+            new_info = image_info;
             anything_changed = false;
             metaclass = ?TDImageInfo;
             property_list = metaclass.Properties;
@@ -45,8 +48,8 @@ classdef TDImageInfo
                 property = property_list{i};
                 other_value = other_image_info.(property.Name);
                 if ~isempty(other_value)
-                    if ~isequal(obj.(property.Name), other_value)
-                        obj.(property.Name) = other_value;
+                    if ~isequal(new_info.(property.Name), other_value)
+                        new_info.(property.Name) = other_value;
                         anything_changed = true;
                     end
                 end
