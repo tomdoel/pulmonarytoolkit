@@ -27,41 +27,37 @@ classdef TDPluginDependencyTracker< handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
     properties
-        % Manages the heirarchy of plugins calling other plugins
-        PluginCallStack  
-        
         % Loads and saves data associated with this dataset and ensures dependencies are valid
-        PluginForDataset
+        DatasetDiskCache
     end
     
     methods
         
-        function obj = TDPluginDependencyTracker(dataset_disk_cache, reporting)
-            obj.PluginCallStack = TDPluginCallStack(reporting);
-            obj.PluginForDataset = dataset_disk_cache;
+        function obj = TDPluginDependencyTracker(dataset_disk_cache)
+            obj.DatasetDiskCache = dataset_disk_cache;
         end
         
         % Gets a plugin result, from the disk cache if possible. If there is no
         % cached result, or if the dependenices are invalid, or if the
         % "AlwaysRunPlugin" property is set, then the plugin is executed.
-        function [result, plugin_has_been_run] = GetResult(obj, plugin_name, plugin_info, dataset, reporting)
+        function [result, plugin_has_been_run] = GetResult(obj, plugin_name, plugin_info, dataset, plugin_call_stack, reporting)
             
             % Fetch plugin result from the disk cache
             result = [];
             if ~plugin_info.AlwaysRunPlugin
                 
-                [result, cache_info] = obj.PluginForDataset.LoadPluginResult(plugin_name, reporting);
+                [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, reporting);
                 
                 % Add the dependencies of the cached result to any other
                 % plugins in the callstack
                 if ~isempty(result) && ~isempty(cache_info)
                     dependencies = cache_info.DependencyList;
-                    obj.AddDependenciesToAllPluginsInStack(dependencies);
+                    plugin_call_stack.AddDependenciesToAllPluginsInStack(dependencies);
                     
                     dependency = cache_info.InstanceIdentifier;
                     dependency_list_for_this_plugin = TDDependencyList;
                     dependency_list_for_this_plugin.AddDependency(dependency);
-                    obj.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin);
+                    plugin_call_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin);
                 end
                 
             end
@@ -72,12 +68,12 @@ classdef TDPluginDependencyTracker< handle
                 
                 ignore_dependency_checks = plugin_info.AlwaysRunPlugin || ~plugin_info.AllowResultsToBeCached;
                 
-                obj.PluginCallStack.CreateAndPush(plugin_name, ignore_dependency_checks);
+                plugin_call_stack.CreateAndPush(plugin_name, ignore_dependency_checks);
                 
                 % This is the actual call which runs the plugin
                 result = plugin_info.RunPlugin(dataset, reporting);
                 
-                new_cache_info = obj.PluginCallStack.Pop;
+                new_cache_info = plugin_call_stack.Pop;
                 if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
                     reporting.Error('TDPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
                 end
@@ -88,36 +84,24 @@ classdef TDPluginDependencyTracker< handle
                 
                 % Cache the plugin result
                 if plugin_info.AllowResultsToBeCached && ~isempty(result)
-                    obj.PluginForDataset.SavePluginResult(plugin_name, result, new_cache_info, reporting);
+                    obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, reporting);
                 else
-                    obj.PluginForDataset.CachePluginInfo(plugin_name, new_cache_info, reporting);
+                    obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, reporting);
                 end
                 
-                obj.AddDependenciesToAllPluginsInStack(dependencies);
+                plugin_call_stack.AddDependenciesToAllPluginsInStack(dependencies);
                 
                 dependency = new_cache_info.InstanceIdentifier;
                 dependency_list_for_this_plugin = TDDependencyList;
                 dependency_list_for_this_plugin.AddDependency(dependency);
-                obj.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin);
+                plugin_call_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin);
             else
                 plugin_has_been_run = false;
             end
-        end
-        
-        
-        % Clear the call stack in case an error has left it in a bad state
-        function ClearStack(obj)
-            obj.PluginCallStack.Clear;
-        end
-        
+        end        
     end
     
     methods (Access = private)
-        
-        function AddDependenciesToAllPluginsInStack(obj, dependencies)
-            obj.PluginCallStack.AddDependenciesToAllPluginsInStack(dependencies);
-        end
-        
         
         function AddDependenciesToPlugin(obj, plugin_name, dependencies)
             if ~obj.DependencyList.isKey(plugin_name)

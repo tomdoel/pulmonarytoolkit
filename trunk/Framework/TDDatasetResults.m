@@ -35,10 +35,10 @@ classdef TDDatasetResults < handle
 
     properties (Access = private)
         
+        DependencyTracker  % Tracks plugin usage to construct dependency lists 
         ImageTemplates     % Template images for different contexts
         Reporting          % Object for error and progress reporting
         PreviewImages      % Stores the thumbnail preview images
-        DependencyTracker  % Tracks plugin usage to construct dependency lists 
         ImageInfo          % Information about this dataset
         
         % A pointer to the TDDataset object which contains the event to be triggered when a preview thumbnail image has changed
@@ -47,13 +47,13 @@ classdef TDDatasetResults < handle
     end
     
     methods
-        function obj = TDDatasetResults(image_info, preview_images, dependency_tracker, external_notify_function, dataset_disk_cache, reporting)
+        function obj = TDDatasetResults(image_info, preview_images, external_notify_function, dataset_disk_cache, reporting)
             obj.ImageInfo = image_info;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
             obj.Reporting = reporting;
             obj.ImageTemplates = TDImageTemplates(obj, dataset_disk_cache, reporting);
             obj.PreviewImages = preview_images;
-            obj.DependencyTracker = dependency_tracker;            
+            obj.DependencyTracker = TDPluginDependencyTracker(dataset_disk_cache);
         end
 
         % RunPlugin: Returns the results of a plugin. If a valid result is cached on disk,
@@ -63,15 +63,15 @@ classdef TDDatasetResults < handle
         % Specifying a second argument also produces a representative image from
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.
-        function [result, output_image] = GetResult(obj, plugin_name, context)
+        function [result, output_image] = GetResult(obj, plugin_name, plugin_call_stack, context)
             obj.Reporting.PushProgress;
             if nargin < 3
                 context = [];
             end
             if nargout > 1
-                [result, output_image] = obj.RunPluginWithOptionalImageGeneration(plugin_name, true, context);
+                [result, output_image] = obj.RunPluginWithOptionalImageGeneration(plugin_name, true, plugin_call_stack, context);
             else
-                result = obj.RunPluginWithOptionalImageGeneration(plugin_name, false, context);
+                result = obj.RunPluginWithOptionalImageGeneration(plugin_name, false, plugin_call_stack, context);
             end
             obj.Reporting.PopProgress;
         end
@@ -113,7 +113,7 @@ classdef TDDatasetResults < handle
     methods (Access = private)
                 
         % Returns the plugin result, computing if necessary
-        function [result, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, context)
+        function [result, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, plugin_call_stack, context)
             
             % Get information about the plugin
             plugin_info = eval(plugin_name);
@@ -125,7 +125,7 @@ classdef TDDatasetResults < handle
             % result if required
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name);
 
-            [result, plugin_has_been_run] = obj.GetResultFromDependencyTracker(plugin_name, plugin_info);
+            [result, plugin_has_been_run] = obj.GetResultFromDependencyTracker(plugin_name, plugin_call_stack, plugin_info);
 
             % Allow the context manager to construct a template image from this
             % result if required
@@ -140,9 +140,9 @@ classdef TDDatasetResults < handle
             % We generate an output image if requested, or if we need to generate a preview image
             if generate_image || cache_preview
                 if isa(result, 'TDImage')
-                    output_image = obj.GenerateImageFromResults(plugin_info, result.Copy);
+                    output_image = obj.GenerateImageFromResults(plugin_info, plugin_call_stack, result.Copy);
                 else
-                    output_image = obj.GenerateImageFromResults(plugin_info, result);
+                    output_image = obj.GenerateImageFromResults(plugin_info, plugin_call_stack, result);
                 end
             else
                 output_image = [];
@@ -171,24 +171,24 @@ classdef TDDatasetResults < handle
             
         end
         
-        function [result, plugin_has_been_run] = GetResultFromDependencyTracker(obj, plugin_name, plugin_info)
+        function [result, plugin_has_been_run] = GetResultFromDependencyTracker(obj, plugin_name, plugin_call_stack, plugin_info)
             
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
             if TDSoftwareInfo.DebugMode
-                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, obj, obj.Reporting);
+                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, obj, plugin_call_stack, obj.Reporting);
             else
                 try
                     [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, obj, obj.Reporting);
                 catch ex
-                    obj.DependencyTracker.ClearStack;
+                    plugin_call_stack.ClearStack;
                     rethrow(ex);
                 end
             end
         end
         
-        function output_image = GenerateImageFromResults(obj, plugin_info, result)
+        function output_image = GenerateImageFromResults(obj, plugin_info, plugin_call_stack, result)
             
             if TDSoftwareInfo.DebugMode
                 output_image = plugin_info.GenerateImageFromResults(result, obj.ImageTemplates, obj.Reporting);
@@ -196,7 +196,7 @@ classdef TDDatasetResults < handle
                 try
                     output_image = plugin_info.GenerateImageFromResults(result, obj.ImageTemplates, obj.Reporting);
                 catch ex
-                    obj.DependencyTracker.ClearStack;
+                    plugin_call_stack.ClearStack;
                     rethrow(ex);
                 end
             end

@@ -37,9 +37,9 @@ classdef TDDataset < handle
     
     properties (Access = private)
         DatasetResults    % Called to fetch results and data for this dataset
-        DependencyTracker % Tracks plugin usage to construct dependency lists 
         DatasetDiskCache  % Reads and writes to the disk cache for this dataset
         PreviewImages     % Stores the thumbnail preview images
+        PluginCallStack   % Manages the heirarchy of plugins calling other plugins
         Reporting         % Object for error and progress reporting
     end
     
@@ -52,11 +52,11 @@ classdef TDDataset < handle
         
         % TDDataset is created by the TDPTK class
         function obj = TDDataset(image_info, dataset_disk_cache, reporting)
+            obj.PluginCallStack = TDPluginCallStack(reporting);
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.Reporting = reporting;
-            obj.DependencyTracker = TDPluginDependencyTracker(dataset_disk_cache, reporting);
             obj.PreviewImages = TDPreviewImages(dataset_disk_cache, reporting);
-            obj.DatasetResults = TDDatasetResults(image_info, obj.PreviewImages, obj.DependencyTracker, @obj.notify, dataset_disk_cache, reporting);
+            obj.DatasetResults = TDDatasetResults(image_info, obj.PreviewImages, @obj.notify, dataset_disk_cache, reporting);
         end
         
         % GetResult: Returns the results of a plugin. If a valid result is cached on disk,
@@ -73,12 +73,12 @@ classdef TDDataset < handle
             end
             
             % Reset the dependency stack, since this could be left in a bad state if a previous plugin call caused an exception
-            obj.DependencyTracker.ClearStack;
+            obj.PluginCallStack.ClearStack;
             
             if nargout > 1
-                [result, output_image] = obj.DatasetResults.GetResult(plugin_name, context);
+                [result, output_image] = obj.DatasetResults.GetResult(plugin_name, obj.PluginCallStack, context);
             else
-                result = obj.DatasetResults.GetResult(plugin_name, context);
+                result = obj.DatasetResults.GetResult(plugin_name, obj.PluginCallStack, context);
             end
             obj.Reporting.ShowAndClear;
             obj.Reporting.ClearStack;
