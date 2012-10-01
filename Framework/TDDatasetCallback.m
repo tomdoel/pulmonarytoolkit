@@ -35,12 +35,12 @@ classdef TDDatasetCallback < handle
 
     properties (Access = private)
         LinkedDatasetChooser  % Sends the API calls to the correct dataset
-        DatasetCallStack       % Handle to the current call stack for the primary dataset
+        DatasetStack       % Handle to the current call stack for the primary dataset
     end
     
     methods
-        function obj = TDDatasetResults(linked_dataset_chooser, dataset_call_stack)
-            obj.DatasetCallStack = dataset_call_stack;
+        function obj = TDDatasetCallback(linked_dataset_chooser, dataset_call_stack)
+            obj.DatasetStack = dataset_call_stack;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
         end
 
@@ -62,9 +62,9 @@ classdef TDDatasetCallback < handle
                 dataset_name = [];
             end
             if nargout > 1
-                [result, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetCallStack, context, dataset_name);
+                [result, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_name);
             else
-                result = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetCallStack, context, dataset_name);
+                result = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_name);
             end
         end
 
@@ -74,7 +74,7 @@ classdef TDDatasetCallback < handle
             if nargin < 2
                 dataset_name = [];
             end
-            image_info = obj.LinkedDatasetChooser.ImageInfo(dataset_name);
+            image_info = obj.LinkedDatasetChooser.GetImageInfo(dataset_name);
         end
         
         % Returns an empty template image for the specified context
@@ -83,7 +83,7 @@ classdef TDDatasetCallback < handle
             if nargin < 3
                 dataset_name = [];
             end
-            template_image = obj.LinkedDatasetChooser.GetTemplateImage(context, dataset_name);
+            template_image = obj.LinkedDatasetChooser.GetTemplateImage(context, obj.DatasetStack, dataset_name);
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
@@ -101,7 +101,7 @@ classdef TDDatasetCallback < handle
             if nargin < 2
                 dataset_name = [];
             end
-            is_gas_mri = obj.LinkedDatasetChooser.IsGasMRI(dataset_name);
+            is_gas_mri = obj.LinkedDatasetChooser.IsGasMRI(obj.DatasetStack, dataset_name);
         end
     end
 end

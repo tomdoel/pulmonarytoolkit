@@ -69,7 +69,7 @@ classdef TDImageTemplates < handle
         
         
         % Returns an image template for the requested context
-        function template = GetTemplateImage(obj, context)
+        function template = GetTemplateImage(obj, context, dataset_callback, template_callback, plugin_call_stack)
             
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
@@ -80,8 +80,8 @@ classdef TDImageTemplates < handle
             % the appropriate plugin and creating a template copy
             if ~obj.TemplateImages.isKey(char(context))
                 obj.Reporting.ShowWarning('TDImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
-                obj.DatasetResultsCallback.GetResult(obj.ValidContexts(char(context)));
-                
+                obj.DatasetResultsCallback.GetResult(obj.ValidContexts(char(context)), dataset_callback, template_callback, plugin_call_stack, []);
+
                 % The call to GetResult should have automatically created the
                 % template image - check that this has happened
                 if ~obj.TemplateImages.isKey(char(context))
