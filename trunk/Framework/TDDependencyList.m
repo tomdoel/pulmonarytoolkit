@@ -56,9 +56,9 @@ classdef TDDependencyList < handle
                     dependency_exists = true;
                     if ~strcmp(dependency.Uid, new_dependency.Uid)
                         if (dependency.Attributes.IgnoreDependencyChecks && new_dependency.Attributes.IgnoreDependencyChecks)
-                            reporting.ShowWarning(['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
+                            reporting.ShowWarning('TDDependencyList:PermittedDependencyMismatch', ['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
                         else
-                            reporting.Error(['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
+                            reporting.Error('TDDependencyList:DependencyMismatch', ['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
                         end
                     end
                     return;
