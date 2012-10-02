@@ -85,7 +85,7 @@ classdef TDPluginDependencyTracker < handle
                 dataset_stack.CreateAndPush(plugin_name, dataset_uid, ignore_dependency_checks);
                 
                 % This is the actual call which runs the plugin
-                dataset_callback = TDDatasetCallback(linked_dataset, dataset_call_stack);
+                dataset_callback = TDDatasetCallback(linked_dataset_chooser, dataset_stack);
                 result = plugin_info.RunPlugin(dataset_callback, reporting);
                 
                 new_cache_info = dataset_stack.Pop;
