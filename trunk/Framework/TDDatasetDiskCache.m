@@ -32,13 +32,6 @@ classdef TDDatasetDiskCache < handle
         % ensure it is still valid, and if not returns an empty result.
         function [value, cache_info] = LoadPluginResult(obj, plugin_name, reporting)
             [value, cache_info] = obj.DiskCache.Load(plugin_name, reporting);
-            if ~isempty(cache_info)
-                dependencies = cache_info.DependencyList;
-                if ~obj.PluginResultsInfo.CheckDependenciesValid(dependencies, reporting)
-                    reporting.ShowWarning('TDDatasetDiskCache:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
-                    value = [];
-                end
-            end
         end
         
         % Stores a plugin result in the disk cache and updates cached dependency
@@ -77,6 +70,10 @@ classdef TDDatasetDiskCache < handle
         
         function exists = Exists(obj, name, reporting)
             exists = obj.DiskCache.Exists(name, reporting);
+        end
+
+        function valid = CheckDependencyValid(obj, next_dependency, reporting)
+            valid = obj.PluginResultsInfo.CheckDependencyValid(next_dependency, reporting);
         end
     end
     

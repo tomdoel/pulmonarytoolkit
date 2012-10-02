@@ -43,36 +43,32 @@ classdef TDPluginResultsInfo < handle
             end
         end
         
-        % Checks the dependencies in this result with the current dependency
-        % list, and determine if the dependencies are still valid
-        function valid = CheckDependenciesValid(obj, dependencies, reporting)
+        function valid = CheckDependencyValid(obj, next_dependency, reporting)
+            % The full list should always contain the most recent dependency
+            % uid, unless the dependencies file was deleted
+            if ~obj.ResultsInfo.isKey(next_dependency.PluginName)
+                reporting.Log('No dependency record for this plugin - forcing re-run.');
+                valid = false;
+                return;
+            end
             
-            dependency_list = dependencies.DependencyList;
+            current_info = obj.ResultsInfo(next_dependency.PluginName);
+            current_dependency = current_info.InstanceIdentifier;
             
-            for index = 1 : length(dependency_list)
-                next_dependency = dependency_list(index);
-                
-                % The full list should always contain the most recent dependency
-                % uid, unless the dependencies file was delted
-                if ~obj.ResultsInfo.isKey(next_dependency.PluginName)
-                    reporting.Log('No dependency record for this plugin - forcing re-run.');
+            if current_info.IgnoreDependencyChecks
+                reporting.Log(['Ignoring dependency checks for plugin ' next_dependency.PluginName]);
+            else
+                % Sanity check - this case should never occur
+                if ~strcmp(next_dependency.DatasetUid, current_dependency.DatasetUid)
+                    reporting.Error('TDPluginResultsInfo:DatsetUidError', 'Code error - not matching dataset UID during dependency check');
+                end
+
+                if ~strcmp(next_dependency.Uid, current_dependency.Uid)
+                    reporting.Log('Mismatch in dependency version uids - forcing re-run');
                     valid = false;
                     return;
-                end
-                
-                current_info = obj.ResultsInfo(next_dependency.PluginName);
-                current_dependency = current_info.InstanceIdentifier;
-                
-                if current_info.IgnoreDependencyChecks
-                    reporting.Log(['Ignoring dependency checks for plugin ' next_dependency.PluginName]);
                 else
-                    if ~strcmp(next_dependency.Uid, current_dependency.Uid)
-                        reporting.Log('Mismatch in dependency version uids - forcing re-run');
-                        valid = false;
-                        return;
-                    else
-                        reporting.Log(['Dependencies Ok for plugin ' next_dependency.PluginName]);
-                    end                        
+                    reporting.Log(['Dependencies Ok for plugin ' next_dependency.PluginName]);
                 end
             end
             
