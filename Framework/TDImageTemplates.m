@@ -36,17 +36,17 @@ classdef TDImageTemplates < handle
         DatasetDiskCache
         
         % Callback for running the plugins required to generate template images
-        DatasetResultsCallback
+        DatasetResults
 
         % Callback for error reporting
         Reporting
     end
     
     methods
-        function obj = TDImageTemplates(dataset_callback, dataset_disk_cache, reporting)
+        function obj = TDImageTemplates(dataset_results, dataset_disk_cache, reporting)
             
             obj.DatasetDiskCache = dataset_disk_cache;
-            obj.DatasetResultsCallback = dataset_callback;
+            obj.DatasetResults = dataset_results;
             obj.Reporting = reporting;
             
             % Create empty maps. Maps must be initialised in the constructor,
@@ -69,7 +69,7 @@ classdef TDImageTemplates < handle
         
         
         % Returns an image template for the requested context
-        function template = GetTemplateImage(obj, context, dataset_callback, template_callback, plugin_call_stack)
+        function template = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack)
             
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
@@ -80,7 +80,7 @@ classdef TDImageTemplates < handle
             % the appropriate plugin and creating a template copy
             if ~obj.TemplateImages.isKey(char(context))
                 obj.Reporting.ShowWarning('TDImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
-                obj.DatasetResultsCallback.GetResult(obj.ValidContexts(char(context)), dataset_callback, template_callback, plugin_call_stack, []);
+                obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), linked_dataset_chooser, dataset_stack, []);
 
                 % The call to GetResult should have automatically created the
                 % template image - check that this has happened

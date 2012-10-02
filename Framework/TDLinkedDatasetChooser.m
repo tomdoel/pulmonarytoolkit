@@ -48,13 +48,11 @@ classdef TDLinkedDatasetChooser < handle
         % same as the results.
         function [result, output_image] = GetResult(obj, plugin_name, dataset_call_stack, context, dataset_name)
             linked_dataset = obj.FindLinkedDatasetChooser(dataset_name);
-            dataset_callback = TDDatasetCallback(linked_dataset, dataset_call_stack);
-            template_callback = TDTemplateCallback(linked_dataset, dataset_call_stack);
             
             if nargout > 1
-                [result, output_image] = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, dataset_callback, template_callback, dataset_call_stack, context);
+                [result, output_image] = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, linked_dataset, dataset_call_stack, context);
             else
-                result = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, dataset_callback, template_callback, dataset_call_stack, context);
+                result = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, linked_dataset, dataset_call_stack, context);
             end
         end
 
@@ -68,10 +66,7 @@ classdef TDLinkedDatasetChooser < handle
         % See TDImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, dataset_stack, dataset_name)
             linked_dataset = obj.FindLinkedDatasetChooser(dataset_name);
-            dataset_callback = TDDatasetCallback(linked_dataset, dataset_stack);
-            template_callback = TDTemplateCallback(linked_dataset, dataset_stack);
-
-            template_image = linked_dataset.PrimaryDatasetResults.GetTemplateImage(context, dataset_callback, template_callback, dataset_stack);
+            template_image = linked_dataset.PrimaryDatasetResults.GetTemplateImage(context, linked_dataset, dataset_stack);
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
@@ -85,10 +80,27 @@ classdef TDLinkedDatasetChooser < handle
         % general
         function is_gas_mri = IsGasMRI(obj, dataset_stack, dataset_name)
             linked_dataset = obj.FindLinkedDatasetChooser(dataset_name);
-            dataset_callback = TDDatasetCallback(linked_dataset, dataset_stack);
-            template_callback = TDTemplateCallback(linked_dataset, dataset_stack);
-
-            is_gas_mri = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.IsGasMRI(dataset_callback, template_callback, dataset_stack);
+            is_gas_mri = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.IsGasMRI(linked_dataset, dataset_stack);
+        end
+        
+        % Checks the dependencies in this result with the current dependency
+        % list, and determine if the dependencies are still valid
+        function valid = CheckDependenciesValid(obj, dependencies)
+            
+            dependency_list = dependencies.DependencyList;
+            
+            for index = 1 : length(dependency_list)
+                next_dependency = dependency_list(index);
+                
+                dataset_uid = next_dependency.DatasetUid;
+                linked_dataset = obj.FindLinkedDatasetChooser(dataset_uid);
+                if ~linked_dataset.PrimaryDatasetResults.CheckDependencyValid(next_dependency);
+                    valid = false;
+                    return;
+                end
+            end
+            
+            valid = true;
         end
     end
 

@@ -56,22 +56,22 @@ classdef TDDatasetResults < handle
             obj.DependencyTracker = TDPluginDependencyTracker(dataset_disk_cache);
         end
 
-        % RunPlugin: Returns the results of a plugin. If a valid result is cached on disk,
+        % Returns the results of a plugin. If a valid result is cached on disk,
         % this wil be returned provided all the dependencies are valid.
         % Otherwise the plugin will be executed and the new result returned.
         % The optional context parameter specifies the region of interest to which the output result will be framed.
         % Specifying a second argument also produces a representative image from
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.
-        function [result, output_image] = GetResult(obj, plugin_name, dataset_callback, template_callback, dataset_stack, context)
+        function [result, output_image] = GetResult(obj, plugin_name, linked_dataset_chooser, dataset_stack, context)
             obj.Reporting.PushProgress;
             if nargin < 5
                 context = [];
             end
             if nargout > 1
-                [result, output_image] = obj.RunPluginWithOptionalImageGeneration(plugin_name, true, dataset_callback, template_callback, dataset_stack, context);
+                [result, output_image] = obj.RunPluginWithOptionalImageGeneration(plugin_name, true, linked_dataset_chooser, dataset_stack, context);
             else
-                result = obj.RunPluginWithOptionalImageGeneration(plugin_name, false, dataset_callback, template_callback, dataset_stack, context);
+                result = obj.RunPluginWithOptionalImageGeneration(plugin_name, false, linked_dataset_chooser, dataset_stack, context);
             end
             obj.Reporting.PopProgress;
         end
@@ -84,8 +84,8 @@ classdef TDDatasetResults < handle
         
         % Returns an empty template image for the specified context
         % See TDImageTemplates.m for valid contexts
-        function template_image = GetTemplateImage(obj, context, dataset_callback, template_callback, dataset_stack)
-            template_image = obj.ImageTemplates.GetTemplateImage(context, dataset_callback, template_callback, dataset_stack);
+        function template_image = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack)
+            template_image = obj.ImageTemplates.GetTemplateImage(context, linked_dataset_chooser, dataset_stack);
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
@@ -97,23 +97,27 @@ classdef TDDatasetResults < handle
         
         % ToDo: This check is based on series description and should be more
         % general
-        function is_gas_mri = IsGasMRI(obj, dataset_callback, template_callback, dataset_stack)
+        function is_gas_mri = IsGasMRI(obj, linked_dataset_chooser, dataset_stack)
             is_gas_mri = false;
             if ~strcmp(obj.GetImageInfo.Modality, 'MR')
                 return;
             else
-                template = obj.GetTemplateImage(TDContext.OriginalImage, dataset_callback, template_callback, dataset_stack);
+                template = obj.GetTemplateImage(TDContext.OriginalImage, linked_dataset_chooser, dataset_stack);
                 if strcmp(template.MetaHeader.SeriesDescription(1:2), 'Xe')
                     is_gas_mri = true;
                 end
             end
+        end
+
+        function valid = CheckDependencyValid(obj, next_dependency)
+            valid = obj.DependencyTracker.CheckDependencyValid(next_dependency, obj.Reporting);
         end
     end
 
     methods (Access = private)
                 
         % Returns the plugin result, computing if necessary
-        function [result, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, dataset_callback, template_callback, dataset_stack, context)
+        function [result, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, linked_dataset_chooser, dataset_stack, context)
             
             % Get information about the plugin
             plugin_info = eval(plugin_name);
@@ -125,7 +129,7 @@ classdef TDDatasetResults < handle
             % result if required
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name);
 
-            [result, plugin_has_been_run] = obj.GetResultFromDependencyTracker(plugin_name, plugin_info, dataset_callback, dataset_stack);
+            [result, plugin_has_been_run] = obj.GetResultFromDependencyTracker(plugin_name, linked_dataset_chooser, plugin_info, dataset_stack);
 
             % Allow the context manager to construct a template image from this
             % result if required
@@ -140,9 +144,9 @@ classdef TDDatasetResults < handle
             % We generate an output image if requested, or if we need to generate a preview image
             if generate_image || cache_preview
                 if isa(result, 'TDImage')
-                    output_image = obj.GenerateImageFromResults(plugin_info, template_callback, dataset_stack, result.Copy);
+                    output_image = obj.GenerateImageFromResults(plugin_info, linked_dataset_chooser, dataset_stack, result.Copy);
                 else
-                    output_image = obj.GenerateImageFromResults(plugin_info, template_callback, dataset_stack, result);
+                    output_image = obj.GenerateImageFromResults(plugin_info, linked_dataset_chooser, dataset_stack, result);
                 end
             else
                 output_image = [];
@@ -171,17 +175,17 @@ classdef TDDatasetResults < handle
             
         end
         
-        function [result, plugin_has_been_run] = GetResultFromDependencyTracker(obj, plugin_name, plugin_info, dataset_callback, dataset_stack)
+        function [result, plugin_has_been_run] = GetResultFromDependencyTracker(obj, plugin_name, linked_dataset_chooser, plugin_info, dataset_stack)
             dataset_uid = obj.ImageInfo.ImageUid;
             
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
             if TDSoftwareInfo.DebugMode
-                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, dataset_uid, dataset_uiddataset_callback, dataset_stack, obj.Reporting);
+                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, obj.Reporting);
             else
                 try
-                    [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, plugin_info, dataset_uid, dataset_callback, dataset_stack, obj.Reporting);
+                    [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, obj.Reporting);
                 catch ex
                     dataset_stack.ClearStack;
                     rethrow(ex);
@@ -189,7 +193,8 @@ classdef TDDatasetResults < handle
             end
         end
         
-        function output_image = GenerateImageFromResults(obj, plugin_info, template_callback, dataset_stack, result)
+        function output_image = GenerateImageFromResults(obj, plugin_info, linked_dataset_chooser, dataset_stack, result)
+            template_callback = TDTemplateCallback(linked_dataset_chooser, dataset_stack);
             
             if TDSoftwareInfo.DebugMode
                 output_image = plugin_info.GenerateImageFromResults(result, template_callback, obj.Reporting);

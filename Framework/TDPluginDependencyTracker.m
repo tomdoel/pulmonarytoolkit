@@ -40,13 +40,23 @@ classdef TDPluginDependencyTracker < handle
         % Gets a plugin result, from the disk cache if possible. If there is no
         % cached result, or if the dependencies are invalid, or if the
         % "AlwaysRunPlugin" property is set, then the plugin is executed.
-        function [result, plugin_has_been_run] = GetResult(obj, plugin_name, plugin_info, dataset_uid, dataset_callback, dataset_stack, reporting)
+        function [result, plugin_has_been_run] = GetResult(obj, plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, reporting)
             
             % Fetch plugin result from the disk cache
             result = [];
             if ~plugin_info.AlwaysRunPlugin
                 
                 [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, reporting);
+                
+                % Check dependencies of the result. If the are invalid, set the
+                % result to null to force a re-run of the plugin
+                if ~isempty(cache_info)
+                    dependencies = cache_info.DependencyList;
+                    if ~linked_dataset_chooser.CheckDependenciesValid(dependencies)
+                        reporting.ShowWarning('TDPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
+                        result = [];
+                    end
+                end
                 
                 % Add the dependencies of the cached result to any other
                 % plugins in the callstack
@@ -75,6 +85,7 @@ classdef TDPluginDependencyTracker < handle
                 dataset_stack.CreateAndPush(plugin_name, dataset_uid, ignore_dependency_checks);
                 
                 % This is the actual call which runs the plugin
+                dataset_callback = TDDatasetCallback(linked_dataset, dataset_call_stack);
                 result = plugin_info.RunPlugin(dataset_callback, reporting);
                 
                 new_cache_info = dataset_stack.Pop;
@@ -102,7 +113,11 @@ classdef TDPluginDependencyTracker < handle
             else
                 plugin_has_been_run = false;
             end
-        end        
+        end
+
+        function valid = CheckDependencyValid(obj, next_dependency, reporting)
+            valid = obj.DatasetDiskCache.CheckDependencyValid(next_dependency, reporting);
+        end
     end
     
     methods (Access = private)
