@@ -1,4 +1,4 @@
-function [affine_matrix, transformed_matrix] = TDSolveForAffineRegistration(image_to_transform, reference_image)
+function [affine_matrix, transformed_matrix] = TDSolveForAffineRegistration(image_to_transform, reference_image, reporting)
     % TDSolveForAffineRegistration. Computes the transformation matrix to register one
     %     image segmentation to another based on an solving for an affine
     %     transformation.
@@ -23,7 +23,7 @@ function [affine_matrix, transformed_matrix] = TDSolveForAffineRegistration(imag
     x_0 = [1 0 0 0; 0 1 0 0; 0 0 1 0];
     
     % Create an anonymous function for the solution method
-    AnonFn = @(x) FnToMinimise(x, image_to_transform, reference_image, i_o, j_o, k_o, i_r, j_r, k_r);
+    AnonFn = @(x) FnToMinimise(x, image_to_transform, reference_image, i_o, j_o, k_o, i_r, j_r, k_r, reporting);
     
     disp('Solving');
     [x_vector, ~, ~] = fminsearch(AnonFn, x_0, optimset('TolX',1e-3, 'TolFun', 10, 'PlotFcns', @optimplotfval));
@@ -35,9 +35,9 @@ function [affine_matrix, transformed_matrix] = TDSolveForAffineRegistration(imag
     transformed_matrix = TDImageCoordinateUtilities.TransformAffine(image_to_transform, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r);
 end
 
-function closeness = FnToMinimise(x_vector, image_to_transform, reference_image, i_o, j_o, k_o, i_r, j_r, k_r)
+function closeness = FnToMinimise(x_vector, image_to_transform, reference_image, i_o, j_o, k_o, i_r, j_r, k_r, reporting)
     affine_matrix = TDImageCoordinateUtilities.CreateAffineMatrix(x_vector);        
-    transformed_image = TDImageCoordinateUtilities.TransformAffine(image_to_transform, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r);
+    transformed_image = TDRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
     closeness = ComputeCloseness(transformed_image, reference_image);
 end
 
