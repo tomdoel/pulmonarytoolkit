@@ -662,6 +662,19 @@ classdef (ConstructOnLoad = true) TDImage < handle
             obj.NotifyImageChanged;
         end
         
+        % Similar to resample, but uses a linear interpolation followed by
+        % thresholding to ensure a smoother binary mask
+        function ResampleBinary(obj, new_voxel_size_mm)
+            is_logical = islogical(obj.RawImage);
+            obj.ChangeRawImage(single(obj.RawImage));
+            obj.ResampleWithAffineTransformation(new_voxel_size_mm, '*linear', []);
+            if is_logical
+                obj.ChangeRawImage(obj.RawImage > 0.5);
+            else
+                obj.ChangeRawImage(uint8(obj.RawImage > 0.5));
+            end
+        end
+        
         % Resamples the image to a new voxel size, using the interpolation
         % method specified. The resampling is based on the origin of the
         % original image, so that the position of the new voxels is consistent
