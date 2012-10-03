@@ -20,9 +20,9 @@ function [affine_matrix, transformed_matrix] = TDSolveForRigidRegistration(image
     register_voxel_size = reference_image.VoxelSize;
     register_voxel_size = register_voxel_size./round(register_voxel_size/min(register_voxel_size));
     reference_image2 = reference_image.Copy;
-    reference_image2.Resample(register_voxel_size, '*nearest');
+    reference_image2.ResampleBinary(register_voxel_size);
     image_to_transform2 = image_to_transform.Copy;
-    image_to_transform2.Resample(register_voxel_size, '*nearest');
+    image_to_transform2.ResampleBinary(register_voxel_size);
 
     
     reference_image2.AddBorder(20);
