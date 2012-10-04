@@ -13,13 +13,15 @@ classdef TDAirwayGeneratorApex < handle
 
     properties
         AirwayGrowingTreeSegment   % The terminal tree segment     
-        PointCloud;                % The points this tree will grow in to
+        PointCloud                 % The points this tree will grow in to
+        IsGrowingApex              % Determines whether this apex can grow
     end
     
     methods
-        function obj = TDAirwayGeneratorApex(tree_segment, point_cloud)
+        function obj = TDAirwayGeneratorApex(tree_segment, point_cloud, is_growing)
             obj.AirwayGrowingTreeSegment = tree_segment;
             obj.PointCloud = point_cloud;
+            obj.IsGrowingApex = is_growing;
         end
     end
 end
