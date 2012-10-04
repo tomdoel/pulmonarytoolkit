@@ -167,7 +167,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                 % loading and processing of metadata using dicominfo is very slow
                 if check_files
                     try
-                        next_filename_or_metadata = dicominfo(next_filename_or_metadata);
+                        next_filename_or_metadata = ReadMetadata(next_filename_or_metadata, reporting);
                         slice_locations(image_index) = next_filename_or_metadata.SliceLocation;
                         patient_positions(image_index, :) = next_filename_or_metadata.ImagePositionPatient';
                         series_uids{image_index} = next_filename_or_metadata.SeriesInstanceUID;
@@ -196,7 +196,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                     global_origin_mm = min(patient_positions, [], 1);
                     slice_thicknesses = abs(sorted_slice_locations(2:end) - sorted_slice_locations(1:end-1));
                     slice_thickness = slice_thicknesses(1);
-                    if ~all(slice_thicknesses == slice_thickness)
+                    if max(slice_thicknesses - slice_thickness) > 0.01
                         reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
                     end
                     loaded_image(:,:,:) = loaded_image(:,:,index_matrix);
@@ -228,9 +228,19 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
     end
     
     loaded_image = TDDicomImage.CreateDicomImageFromMetadata(loaded_image, metadata_first_file, slice_thickness, global_origin_mm, reporting);
+    
 end
 
 function [metadata, image_data] = ReadDicomFile(file_name, reporting)
+    metadata = ReadMetadata(file_name, reporting);
+    try
+        image_data = dicomread(metadata);
+    catch exception
+        reporting.Error('TDLoadImageFromDicomFiles:DicomReadError', ['TDLoadImageFromDicomFiles: error while reading file ' file_name '. Error:' exception.message]);
+    end
+end
+
+function metadata = ReadMetadata(file_name, reporting)
     try
         metadata = dicominfo(file_name);
     catch exception
