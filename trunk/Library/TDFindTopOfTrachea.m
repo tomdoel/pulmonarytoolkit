@@ -75,12 +75,13 @@ function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, repor
     startpoint = midpoint_roi - round(search_length_voxels/2);
     endpoint = midpoint_roi + round(search_length_voxels/2);
     startpoint = max(1, startpoint);
-    endpoint = min(image_size, endpoint);
     
     %Compute the start and end coordinates in the z direction
     startpoint(3) = 1;
     endpoint(3) = search_length_voxels(3);
     
+    endpoint = min(image_size, endpoint);
+
     % Crop the image
     partial_image = lung_image.RawImage(startpoint(1):endpoint(1), startpoint(2):endpoint(2), startpoint(3):endpoint(3));
     
