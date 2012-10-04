@@ -46,7 +46,13 @@ function TDSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
     end
     
     point_coordinates = zeros(num_points, 3);
-    point_coordinates(1, :) = [tree_root.StartPoint(2), tree_root.StartPoint(1), tree_root.StartPoint(3)];
+    
+    % ToDo
+    if isa(tree_root, 'TDAirwayGrowingTree')
+        point_coordinates(1, :) = [tree_root.StartCoords(2), tree_root.StartCoords(1), tree_root.StartCoords(3)];
+    else
+        point_coordinates(1, :) = [tree_root.StartPoint(2), tree_root.StartPoint(1), tree_root.StartPoint(3)];
+    end
     lines = zeros(num_branches, 2);
     vertices = [0 : num_points - 1]';
     pressure = zeros(num_points, 1);
@@ -56,11 +62,13 @@ function TDSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
     
     radius(1) = tree_root.Radius;
     
-    if isfield(tree_root.BranchProperties, 'Flowrate')
-        flow_rate(1) = branch.BranchProperties.Flowrate;
-    end
-    if isfield(tree_root.BranchProperties, 'Pressure')
-        pressure(1) = branch.BranchProperties.Pressure;
+    if isfield(tree_root, 'BranchProperties')
+        if isfield(tree_root.BranchProperties, 'Flowrate')
+            flow_rate(1) = branch.BranchProperties.Flowrate;
+        end
+        if isfield(tree_root.BranchProperties, 'Pressure')
+            pressure(1) = branch.BranchProperties.Pressure;
+        end
     end
     
     for branch_index = 1 : num_branches
@@ -79,17 +87,24 @@ function TDSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
         point_matlab_index = branch_index + 1;
 
         % Write the next point for this branch end point
-        point_coordinates(point_matlab_index, :) = [branch.EndPoint(2), branch.EndPoint(1), branch.EndPoint(3)];
+        if isa(branch, 'TDAirwayGrowingTree')
+            point_coordinates(point_matlab_index, :) = [branch.EndCoords(2), branch.EndCoords(1), branch.EndCoords(3)];
+        else
+            point_coordinates(point_matlab_index, :) = [branch.EndPoint(2), branch.EndPoint(1), branch.EndPoint(3)];
+        end
+        
         
         lines(branch_index, :) = [start_point_index, end_point_index];
         
         % Write out parameters - NB. these correspond to points, not lines
         radius(point_matlab_index) = branch.Radius;
-        if isfield(branch.BranchProperties, 'Flowrate')
-            flow_rate(point_matlab_index) = branch.BranchProperties.Flowrate;
-        end
-        if isfield(branch.BranchProperties, 'Pressure')
-            pressure(point_matlab_index) = branch.BranchProperties.Pressure;
+        if isfield(tree_root, 'BranchProperties')
+            if isfield(branch.BranchProperties, 'Flowrate')
+                flow_rate(point_matlab_index) = branch.BranchProperties.Flowrate;
+            end
+            if isfield(branch.BranchProperties, 'Pressure')
+                pressure(point_matlab_index) = branch.BranchProperties.Pressure;
+            end
         end
     end
     
