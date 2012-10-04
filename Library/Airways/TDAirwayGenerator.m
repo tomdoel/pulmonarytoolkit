@@ -36,13 +36,16 @@ classdef TDAirwayGenerator < handle
     properties (Constant)
         LengthLimitMm = 1.2 % A branch is terminated if its length is less than this value. Tawhai et al 2004 use value 2.
         PointLimitVoxels = 1 % A branch is terminated if the point cloud of the apex has fewer points than this limit
-        NumberOfGenerationsToReallocate = 25  % If ReallocatePointsAtEachGeneration is set to true, this is the number of generations for which points in the volume will be reallocated at each generation
+        NumberOfGenerationsToReallocate = 20  % If ReallocatePointsAtEachGeneration is set to true, this is the number of generations for which points in the volume will be reallocated at each generation
         PointNumberMultiple = 1 % The desired number of grid points is obtained by multiplying approx_number_points by this value
         MaximumGenerationNumber = 25     % All branches of the output tree will terminate if they extend beyond this generation number
         InitialTerminatingBranchLengthLimit = 6
         BranchingFraction = 0.4 % The fraction a branch extends towards the centre of the point cloud. Value 0.4 from Tawhai et al., 2004
         ReallocatePointsAtEachGeneration = true % If true, points will be reassigned to apices at each generation up to the generation number set in NumberOfGenerationsToReallocate
         AngleLimitRadians = 60*(pi/180.0); % Value 60 degrees from Tawhai et al, 2004
+        PointDistanceLimit = 5 % Points greather than a voxel distance of this number multiplied by the number of cloud points are removed from the apex cloud
+        BranchLengthToParentRatioLimit = 1 % Child branches cannot be longer than this factor multiplied by ther parent's length
+        BranchLengthToParentGenerationLimit = 20 % The BranchLengthToParentRatioLimit parameter starts taking effect from this generation number
     end
     
     
@@ -76,7 +79,8 @@ classdef TDAirwayGenerator < handle
     end
     
     methods (Static, Access = private)
-         function initial_apex_image = GrowTreeUsingThisGridSpacing(airway_tree, growth_volume, starting_segment, grid_spacing_mm, reporting)
+        function initial_apex_image = GrowTreeUsingThisGridSpacing(airway_tree, growth_volume, starting_segment, grid_spacing_mm, reporting)
+            
             % ToDo: Deal with a more general reporting object
             if isa(reporting, 'TDReportingWithCache')
                 reporting.PushProgress;
@@ -84,8 +88,8 @@ classdef TDAirwayGenerator < handle
             
             resampled_volume = TDAirwayGenerator.CreatePointCloud(growth_volume, grid_spacing_mm);
             disp(['Number of seed points:' int2str(sum(resampled_volume.RawImage(:)))]);
-            apices = TDAirwayGenerator.AddApicesBelowThisBranch(starting_segment, airway_tree, resampled_volume, reporting);
-            initial_apex_image = TDAirwayGenerator.Grow(apices, resampled_volume, reporting);
+            
+            initial_apex_image = TDAirwayGenerator.Grow(resampled_volume, airway_tree, starting_segment, reporting);
             
             % ToDo: Deal with a more general reporting object
             if isa(reporting, 'TDReportingWithCache')
@@ -168,40 +172,72 @@ classdef TDAirwayGenerator < handle
             end
         end
         
-        function in_volume = IsInsideVolume(point_mm, lung_volume, image_size)
-            global_coordinates = floor(point_mm./lung_volume.VoxelSize);
-            point = global_coordinates + [1, 1, 1] - lung_volume.Origin;
-            
-            x = point(1); y = point(2); z = point(3);
-            if (x < 1) || (x > image_size(1)) || (y < 1) || (y > image_size(2)) || (z < 1) || (z > image_size(3))
+        function in_volume = IsInsideVolume(point_mm, lung_volume)
+            global_coordinates = lung_volume.CoordinatesMmToGlobalCoordinates(point_mm);
+            if ~lung_volume.IsPointInImage(global_coordinates)
                 in_volume = false;
-                return
             else
-                in_volume = lung_volume.RawImage(x, y, z);
+                in_volume = lung_volume.GetVoxel(global_coordinates);
             end
         end
 
-        function apices = AddApicesBelowThisBranch(centreline_branches, airway_tree, lung_volume, reporting)
+        function apices = GetApicesBelowThisBranchForTerminalSegments(centreline_branches, airway_tree, generation_number, reporting)
             apices = [];
+            
+            % Find the starting segments
             segments_to_do = [];
             for centreline_branch = centreline_branches
                 branch = airway_tree.FindCentrelineBranch(centreline_branch, reporting);
                 segments_to_do = [segments_to_do, branch];
             end
+            
+            % Now search the tree below the starting segments and create an apex
+            % for each one at the correct generation number
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
                 children = segment.Children;
                 segments_to_do = [segments_to_do, children];
                 
-                if isempty(children)
+                % Now search the tree below the starting segments and create an apex
+                % for each one that is a terminal segment
+                if isempty(children) && isempty(segment.IsTerminal)
                     % Add apices for airway growing
-%                     if obj.IsInsideVolume(segment.EndCoords, lung_volume, lung_volume.ImageSize)
-                        new_apex = TDAirwayGeneratorApex(segment, TDPoints);
+                    new_apex = TDAirwayGeneratorApex(segment, TDPoints, true);
+                    apices = [apices new_apex];
+                end
+            end
+        end
+        
+        function apices = GetApicesBelowThisBranchForThisGeneration(start_centreline_branches, airway_tree, generation_number, reporting)
+            apices = [];
+            
+            % Find the starting segments
+            segments_to_do = [];
+            for centreline_branch = start_centreline_branches
+                branch = airway_tree.FindCentrelineBranch(centreline_branch, reporting);
+                segments_to_do = [segments_to_do, branch];
+            end
+
+            % Now search the tree below the starting segments and create an apex
+            % for each one at the correct generation number
+            while ~isempty(segments_to_do)
+                segment = segments_to_do(end);
+                segments_to_do(end) = [];
+                children = segment.Children;
+                segments_to_do = [segments_to_do, children];
+                
+                % Find all branches of this generation which have not been
+                % terminaetd by the algorithm. This includes branches which
+                % already have child branches - these will not be grown, but
+                % points will be allocated to their apices so that they may
+                % later be available for their child branches to grow
+                if segment.GenerationNumber == generation_number
+                    if isempty(segment.IsTerminal)
+                        is_growing_apex = isempty(children);
+                        new_apex = TDAirwayGeneratorApex(segment, TDPoints, is_growing_apex);
                         apices = [apices new_apex];
-%                     else
-%                          reporting.ShowWarning('TDAirwayGenerator:StartBranchesOutsideVolume', 'Airway growing start branches were outside of the volume', []);
-%                     end
+                    end
                 end
             end
         end
@@ -215,6 +251,37 @@ classdef TDAirwayGenerator < handle
                 else
                     generation_number = min(generation_number, apex_generation);
                 end
+            end
+        end
+        
+        % Find the smallest generation number of a branch in the airway tree
+        % which is still growing. This will return an empty variable if no more
+        % airways are growing
+        function generation_number = GetMinimumActiveTerminalGeneration(airway_tree, start_centreline_branches, reporting)
+            % Find the starting segments
+            segments_to_do = [];
+            for centreline_branch = start_centreline_branches
+                branch = airway_tree.FindCentrelineBranch(centreline_branch, reporting);
+                segments_to_do = [segments_to_do, branch];
+            end
+
+            generation_number = [];
+            while ~isempty(segments_to_do)
+                next_branch = segments_to_do(end);
+                child_branches = next_branch.Children;
+                
+                % A branch is still growing if it has no child branches and it
+                % has not been terminated by the growing algorithm
+                if isempty(child_branches) && isempty(next_branch.IsTerminal)
+                    
+                    % We want the smallest generation number for the tree
+                    if (isempty(generation_number) || (generation_number > next_branch.GenerationNumber))
+                        generation_number = next_branch.GenerationNumber;
+                    end 
+                end
+                
+                segments_to_do(end) = [];
+                segments_to_do = [segments_to_do child_branches];
             end
         end
         
@@ -323,7 +390,7 @@ classdef TDAirwayGenerator < handle
         end
        
         % Checks the branch angle of a proposed growth centre and adjusts it within tolerance, if necessary
-        function end_coords = CheckBranchAngleLengthAndAdjust(start_coords, end_coords, parent_direction)
+        function end_coords = CheckBranchAngleLengthAndAdjust(start_coords, end_coords, parent_direction, parent_length_mm, generation_number)
             % calculate vector from apex start to the centre
             start_point = start_coords;
             new_direction = end_coords - start_point;
@@ -353,13 +420,16 @@ classdef TDAirwayGenerator < handle
             
             % Reduce the branch length as required
             branch_length = branch_length*TDAirwayGenerator.BranchingFraction;
+            if generation_number >= TDAirwayGenerator.BranchLengthToParentGenerationLimit
+                branch_length = min(branch_length, parent_length_mm*TDAirwayGenerator.BranchLengthToParentRatioLimit);
+            end
             new_direction = new_direction * branch_length;
             
             % Update the centre
             end_coords = start_point + new_direction;
         end
         
-        function new_apex = AddBranchAndApex(parent_branch, cloud, lung_volume, generation, image_size, reporting)
+        function new_apex = AddBranchAndApex(parent_branch, cloud, lung_volume, lung_mask, generation_number, image_size, reporting)
             new_apex = [];
             
             % Determine the centre of the point cloud
@@ -373,8 +443,14 @@ classdef TDAirwayGenerator < handle
             
             % Calculate the end point of the new branch. This is subject both to
             % a length limit and an angle limit.
-            new_branch_end_point = TDAirwayGenerator.CheckBranchAngleLengthAndAdjust(new_branch_start_point, centre_of_mass, parent_direction);
+            new_branch_end_point = TDAirwayGenerator.CheckBranchAngleLengthAndAdjust(new_branch_start_point, centre_of_mass, parent_direction, parent_branch.Length, generation_number);
 
+            if ~TDAirwayGenerator.IsInsideVolume(new_branch_end_point, lung_mask)
+                reporting.ShowWarning('TDAirwayGenerator:OutsideVolume', 'Branches terminated because they grew outside the lung volume', []);
+                parent_branch.IsTerminal = true;
+                return;
+            end
+            
             % Create the new branch in AirwayTree
             new_branch = TDAirwayGrowingTree(parent_branch);
             new_branch.StartCoords = new_branch_start_point;
@@ -391,27 +467,31 @@ classdef TDAirwayGenerator < handle
             % Check if the number of points in the cloud is less than the
             % required minimum
             if (size(cloud.Coords, 1) <= TDAirwayGenerator.PointLimitVoxels)
+                new_branch.IsTerminal = true;
                 reporting.ShowWarning('TDAirwayGenerator:BelowLengthThreshold', 'Branches terminated because the number of points was below the threshold', []);
             else
                 if (new_branch_length < TDAirwayGenerator.LengthLimitMm)
+                    new_branch.IsTerminal = true;
                     reporting.ShowWarning('TDAirwayGenerator:BelowLengthThreshold', 'Branches terminated because their length was below the threshold', []);
                 else
                     % Create new growth branch
-                    new_apex = TDAirwayGeneratorApex(new_branch, cloud);
+                    new_apex = TDAirwayGeneratorApex(new_branch, cloud, true);
                 end
             end
         end
         
-        function apices = AssignInitialPointCloudToApices(apices, resampled_volume, reporting)
+        function apices = AssignPointCloudToApices(apices, resampled_volume, reporting)
             if numel(apices) == 0
-               reporting.Error('TDAirwayGenerator:AssignInitialPointCloudToApices', 'No starting points');
+               reporting.Error('TDAirwayGenerator:AssignPointCloudToApices', 'No starting points');
             end
             sample_image = zeros(resampled_volume.ImageSize, 'uint16');
+            apex_start_points = zeros(numel(apices), 3);
             for apex_number = 1 : numel(apices)
                 apex = apices(apex_number);
                 end_point_mm = apex.AirwayGrowingTreeSegment.EndCoords;
                 end_point_global_coordinates = resampled_volume.CoordinatesMmToGlobalCoordinates(end_point_mm);
                 end_point = resampled_volume.GlobalToLocalCoordinates(end_point_global_coordinates);
+                apex_start_points(apex_number, :) = [end_point(1), end_point(2), end_point(3)];
                 current_value = sample_image(end_point(1), end_point(2), end_point(3));
                 if current_value ~= 0
                     reporting.ShowWarning('TDAirwayGenerator:ApexAlreadyUsed', 'The start point for allocating voxels to apices could not be assigned as the point has already been used by another apex', []);
@@ -429,25 +509,58 @@ classdef TDAirwayGenerator < handle
             
             for apex_number = 1 : numel(apices)
                 local_indices = find(mapped_image_masked == apex_number);
-                global_indices =  resampled_volume.LocalToGlobalIndices(local_indices);
-                [ic, jc, kc] = resampled_volume.GlobalIndicesToCoordinatesMm(global_indices);
-                apices(apex_number).PointCloud.Coords = [ic, jc, kc];
+                if ~isempty(local_indices)
+                    [di, dj, dk] = ind2sub(size(mapped_image_masked), local_indices);
+                    
+                    % Calculate the distance from these new points to the start
+                    % point
+                    root_point = apex_start_points(apex_number, :);
+                    di = di - root_point(1);
+                    dj = dj - root_point(2);
+                    dk = dk - root_point(3);
+                    dist_voxels = sqrt(di.^2 + dj.^2 + dk.^2);
+                    points_too_far_away = dist_voxels > TDAirwayGenerator.PointDistanceLimit*numel(local_indices);
+                    
+                    % This is a check for distance from root point compared to
+                    % parent length
+%                     di = (di - root_point(1))*resampled_volume.VoxelSize(1);
+%                     dj = (dj - root_point(2))*resampled_volume.VoxelSize(2);
+%                     dk = (dk - root_point(3))*resampled_volume.VoxelSize(3);
+%                     dist_mm = sqrt(di.^2 + dj.^2 + dk.^2);
+%                     last_branch_length = apices(apex_number).AirwayGrowingTreeSegment.Length;
+%                     points_too_far_away = dist_mm > TDAirwayGenerator.PointDistanceLimit*last_branch_length;
+
+                    number_of_points_to_remove = sum(uint8(points_too_far_away));
+                    if number_of_points_to_remove > 0
+                        disp([int2str(number_of_points_to_remove) ' points removed as they were too far away (generation' int2str(apices(apex_number).AirwayGrowingTreeSegment.GenerationNumber) ')']);
+                    end
+                    local_indices = local_indices(~points_too_far_away, :);
+                    
+                    global_indices =  resampled_volume.LocalToGlobalIndices(local_indices);
+                    [ic, jc, kc] = resampled_volume.GlobalIndicesToCoordinatesMm(global_indices);
+                    apices(apex_number).PointCloud.Coords = [ic, jc, kc];
+                else
+                    apices(apex_number).PointCloud.Coords = [];
+                end
             end
         end
         
-        function [apex_1, apex_2] = GrowApex(current_apex, lung_volume, generation, image_size, reporting)
+        function [apex_1, apex_2] = GrowApex(current_apex, lung_volume, lung_mask, generation_number, image_size, reporting)
+            branch = current_apex.AirwayGrowingTreeSegment;
+
             if isempty(current_apex.PointCloud.Coords)
+                branch.IsTerminal = true;
                 reporting.ShowWarning('TDAirwayGenerator:EmptyPointCloud', 'Branches terminated because they had an empty point cloud', []);
                 apex_1 = [];
                 apex_2 = [];
             elseif size(current_apex.PointCloud.Coords, 1) < 2
+                branch.IsTerminal = true;
                 reporting.ShowWarning('TDAirwayGenerator:TooFewPointsInCloud', 'Branches terminated because there was only one point in the point cloud', []);
                 apex_1 = [];
                 apex_2 = [];
             else
                 
                 % Find the end coordinates for this branch
-                branch = current_apex.AirwayGrowingTreeSegment;
                 branch_end_coords = branch.EndCoords;
 
                 % Find the centre of mass for the point cloud assigned to this
@@ -468,59 +581,112 @@ classdef TDAirwayGenerator < handle
                 
                 if isempty(cloud1.Coords) || isempty(cloud2.Coords)
                     reporting.ShowWarning('TDAirwayGenerator:EmptyPointCloud', 'Branches terminated because the point clouds could not be divided into two nonempty clouds', []);
+                    branch.IsTerminal = true;
                     apex_1 = [];
                     apex_2 = [];
                     return;
                 end
                 
                 % Create new branches
-                apex_1 = TDAirwayGenerator.AddBranchAndApex(branch, cloud1, lung_volume, generation, image_size, reporting);
-                apex_2 = TDAirwayGenerator.AddBranchAndApex(branch, cloud2, lung_volume, generation, image_size, reporting);
+                apex_1 = TDAirwayGenerator.AddBranchAndApex(branch, cloud1, lung_volume, lung_mask, generation_number, image_size, reporting);
+                apex_2 = TDAirwayGenerator.AddBranchAndApex(branch, cloud2, lung_volume, lung_mask, generation_number, image_size, reporting);
             end
         end
         
-        function [apices, initial_apex_image] = Grow(apices, lung_volume, reporting)
+        function [apices, initial_apex_image] = Grow(lung_volume, airway_tree, starting_segment, reporting)
+            
+            % We need to keep a copy of the lung mask for checking that airways
+            % are inside. The original image will have points removed as airways are grown. 
+            lung_mask = lung_volume.Copy;
+            
             reporting.ShowProgress('Growing branches');
             reporting.UpdateProgressValue(0);
             first_run = true;
             image_size = lung_volume.ImageSize;
-            % Step through generations one by one
-            while ~isempty(apices)
-                generation_number = TDAirwayGenerator.GetMinimumTerminalGeneration(apices);
+            
+            % Set this to something non-empty for the first run
+            apices = 1;
+            generation_number = 1;
+            
+            % Step through generations one by one and terminate when there are
+            % no active growing branches left
+            while ~isempty(generation_number)
+                
+                % Find the lowest generation to grow
+                generation_number = TDAirwayGenerator.GetMinimumActiveTerminalGeneration(airway_tree, starting_segment, reporting);
+                if (first_run)
+                    min_generation_number = generation_number;
+                end
+                
+                % Terminate when there are no active growing branches left
+                if isempty(generation_number)
+                    return;
+                end
+                
+                % Terminate when we have exceeded a generation threshold, and
+                % report how many branches were incomplete
                 if generation_number >= TDAirwayGenerator.MaximumGenerationNumber
                     reporting.ShowMessage('TDAirwayGenerator:IncompleteApices', [num2str(length(apices)) ' branches were incomplete when the terminal generation was reached']);                    
                     return
                 end
-                reporting.UpdateProgressValue(round(100*generation_number/TDAirwayGenerator.MaximumGenerationNumber));
-
-                % Allocate points to the apices
+                
+                % Progress reporting
+                reporting.ShowMessage('TDAirwayGenerator:GenerationNumber', ['Generation:' int2str(generation_number)]);
+                reporting.UpdateProgressValue(round(100*(generation_number - min_generation_number)/(TDAirwayGenerator.MaximumGenerationNumber - min_generation_number)));
+                
+                % Allocate/reallocate points to the apices
                 if (first_run) || ((generation_number < TDAirwayGenerator.NumberOfGenerationsToReallocate) && (TDAirwayGenerator.ReallocatePointsAtEachGeneration))
-                    apices = TDAirwayGenerator.AssignInitialPointCloudToApices(apices, lung_volume, reporting);
+                    
+                    is_this_the_last_reallocation = (generation_number + 1 == TDAirwayGenerator.NumberOfGenerationsToReallocate) || (~TDAirwayGenerator.ReallocatePointsAtEachGeneration);
+                    
+                    if is_this_the_last_reallocation
+                        apices = TDAirwayGenerator.GetApicesBelowThisBranchForTerminalSegments(starting_segment, airway_tree, generation_number, reporting);
+                    else
+                        apices = TDAirwayGenerator.GetApicesBelowThisBranchForThisGeneration(starting_segment, airway_tree, generation_number, reporting);
+                    end
+                    
+                    num_apices = numel(apices);
+                    apices = TDAirwayGenerator.AssignPointCloudToApices(apices, lung_volume, reporting);
+                    disp(['Generation:' int2str(generation_number) ' Number of apices:' int2str(num_apices) ' Apices post-allocation:' int2str(numel(apices))]);
                     if (first_run)
                         initial_apex_image = TDAirwayGenerator.GetImageFromApex(lung_volume, apices);
                         first_run = false;
                     end
                 end
                 
-                reporting.ShowMessage('TDAirwayGenerator:GenerationNumber', ['Generation:' int2str(generation_number)]);
-                apices_to_do = TDAirwayGeneratorApex.empty(50000,0);
+                apices_next_generation = TDAirwayGeneratorApex.empty(50000,0);
                 for apex = apices
-                    generation = apex.AirwayGrowingTreeSegment.GenerationNumber;
-                    % If this is the right generation then grow the apex;
-                    % otherwise add to the list to do
-                    if (generation == generation_number)
-                        [new_apex_1, new_apex_2] = TDAirwayGenerator.GrowApex(apex, lung_volume, generation_number, image_size, reporting);
-                        if ~isempty(new_apex_1)
-                            apices_to_do(end+1) = new_apex_1;
+                    
+                    % Ignore non-growing apices - they are just there to help
+                    % with the point reallocation
+                    if (apex.IsGrowingApex)
+                        % After the final point reallocation, we may have apices
+                        % with higher generation numbers than the current one - this
+                        % will happen if the segmented tree has a higher number of
+                        % generations than the number of generations to reallocate.
+                        % We ignore any apices with a higher generation number than
+                        % the current one, but save these for processing later
+                        if (generation_number == apex.AirwayGrowingTreeSegment.GenerationNumber)
+                            [new_apex_1, new_apex_2] = TDAirwayGenerator.GrowApex(apex, lung_volume, lung_mask, generation_number, image_size, reporting);
+                            if ~isempty(new_apex_1)
+                                apices_next_generation(end+1) = new_apex_1;
+                            end
+                            if ~isempty(new_apex_2)
+                                apices_next_generation(end+1) = new_apex_2;
+                            end
+                        else
+                            apices_next_generation(end + 1) = apex;
                         end
-                        if ~isempty(new_apex_2)
-                            apices_to_do(end+1) = new_apex_2;
-                        end
-                    else
-                        apices_to_do(end+1) = apex;
                     end
                 end
-                apices = apices_to_do;
+                
+                % The next generation of apices is used when point reallocation
+                % no longer happens (either the point reallocation generation
+                % has been exceeded, or the reallocation flag is switched off).
+                % The list of apices includes newly generated apices, plus any
+                % terminal branhces from the segmented airways which are waiting
+                % to be grown
+                apices = apices_next_generation;
             end
         end
     end

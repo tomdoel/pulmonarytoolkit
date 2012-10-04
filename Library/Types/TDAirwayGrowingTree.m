@@ -16,6 +16,7 @@ classdef TDAirwayGrowingTree < TDTree
         CentrelineTreeSegment
         GenerationNumber % 1 = trachea
         IsGenerated  % True if this branch was created by the volume-filling algorithm
+        IsTerminal   % True if this is a terminal branch after the volume-filling algorithm has completed
         Density
         
         TemporaryIndex
