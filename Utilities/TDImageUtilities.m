@@ -58,8 +58,8 @@ classdef TDImageUtilities
         
         % Rescale image to a single-byte in the range 0-255.
         function rescaled_image = RescaleImage(image, window, level)
-            min_value = double(level - window/2);
-            max_value = double(level + window/2);
+            min_value = double(level) - double(window)/2;
+            max_value = double(level) + double(window)/2;
             scale_factor = 255/(max_value - min_value);
             rescaled_image = uint8(min(((image - min_value)*scale_factor), 255));
         end  
