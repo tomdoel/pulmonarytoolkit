@@ -647,7 +647,7 @@ classdef TDAirwayGenerator < handle
                     
                     num_apices = numel(apices);
                     apices = TDAirwayGenerator.AssignPointCloudToApices(apices, lung_volume, reporting);
-                    disp(['Generation:' int2str(generation_number) ' Number of apices:' int2str(num_apices) ' Apices post-allocation:' int2str(numel(apices))]);
+%                     disp(['Generation:' int2str(generation_number) ' Number of apices:' int2str(num_apices) ' Apices post-allocation:' int2str(numel(apices))]);
                     if (first_run)
                         initial_apex_image = TDAirwayGenerator.GetImageFromApex(lung_volume, apices);
                         first_run = false;
