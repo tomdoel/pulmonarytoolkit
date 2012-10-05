@@ -27,7 +27,7 @@ classdef TDSoftwareInfo < handle
         DiskCacheSchema = '0.1'
         LogFileName = 'log.txt'
         PluginDirectoryName = 'Plugins'
-        GuiPluginDirectoryName = 'GuiPlugins'
+        GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')
         PreviewImageFileName = 'PreviewImages'
         TDPTKVersion = '1'
         CachedPluginInfoFileName = 'CachedPluginInfo'
