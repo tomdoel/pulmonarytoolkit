@@ -149,7 +149,7 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
 end
 
 function mex_files_to_compile_map = GetMexFilesToCompile(root_dir, reporting)
-    mex_dir = fullfile(root_dir, 'mex');
+    mex_dir = TDSoftwareInfo.MexSourceDirectory;
 
     % Populate list with known mex files
     mex_files_to_compile = TDMexInfo.empty(0);

@@ -37,6 +37,7 @@ classdef TDSoftwareInfo < handle
         ImageInfoCacheName = 'ImageInfo'
         SchemaCacheName = 'Schema'
         ImageTemplatesCacheName = 'ImageTemplates'
+        MexSourceDirectory = fullfile('Library', 'mex')
         UserDirectoryName = 'User'
         ResultsDirectoryName = 'Results'
         WebsiteUrl = 'http://code.google.com/p/pulmonarytoolkit'
