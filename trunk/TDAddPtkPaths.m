@@ -22,15 +22,15 @@ function TDAddPtkPaths(varargin)
         path_folders{end + 1} = 'Gui';
         path_folders{end + 1} = 'GuiPlugins';
         path_folders{end + 1} = 'Plugins';
-        path_folders{end + 1} = 'Utilities';
         path_folders{end + 1} = 'Library';
         path_folders{end + 1} = fullfile('Library', 'Airways');
         path_folders{end + 1} = fullfile('Library', 'File');
         path_folders{end + 1} = fullfile('Library', 'GuiComponents');
+        path_folders{end + 1} = fullfile('Library', 'Interfaces');
         path_folders{end + 1} = fullfile('Library', 'Registration');
         path_folders{end + 1} = fullfile('Library', 'Types');
+        path_folders{end + 1} = fullfile('Library', 'Utilities');
         path_folders{end + 1} = fullfile('Library', 'Visualisation');
-        path_folders{end + 1} = 'Interfaces';
         path_folders{end + 1} = 'Framework';
         path_folders{end + 1} = fullfile('External', 'gerardus', 'matlab', 'PointsToolbox');
         
