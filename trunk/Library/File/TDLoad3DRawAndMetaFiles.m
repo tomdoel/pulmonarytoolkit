@@ -89,7 +89,7 @@ function dicom_image = TDLoad3DRawAndMetaFiles(path, filenames, study_uid, repor
     elseif strcmp(header_data.ElementType,'MET_SHORT')
         data_type = 'int16';
     else
-        data_type = 'ushort';
+        data_type = 'uint16';
     end
 
     raw_image_filename = fullfile(pathstr, header_data.ElementDataFile);
