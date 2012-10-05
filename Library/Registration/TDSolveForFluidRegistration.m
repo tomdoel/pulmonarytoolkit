@@ -140,7 +140,7 @@ function [deformation_field, deformed_image] = Solve(image_1, image_2, reporting
     deformed_image.ChangeRawImage(deformed_image_raw);
     
     if (exit_flag ~= 1)
-        reporting.Warning('TDGetFluidDeformationField:RegistrationDidNotConverge', 'npReg registration did not converge.', []);
+        reporting.ShowWarning('TDGetFluidDeformationField:RegistrationDidNotConverge', 'npReg registration did not converge.', []);
     end
     
     translation = (image_2.Origin - image_1.Origin).*image_2.VoxelSize;
