@@ -109,6 +109,9 @@ classdef TDLinkedDatasetChooser < handle
             if isempty(dataset_name)
                 dataset_name = obj.PrimaryDatasetUid;
             end
+            if ~obj.LinkedDatasetChooserList.isKey(dataset_name)
+                error; 
+            end
             linked_dataset_chooser = obj.LinkedDatasetChooserList(dataset_name);
         end
     end

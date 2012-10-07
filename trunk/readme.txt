@@ -88,29 +88,41 @@ For more information see the code wiki http://code.google.com/p/pulmonarytoolkit
 Folders
 -------
 
-Components - gui classes which can be used in your own programs.
+Library - suite of image processing, file access and utility functions. You can 
+    use these in your own programs. These functions can be used independently 
+    of the rest of the Toolkit as they do not depend on any files outside of the 
+    Library folder.
+Library\mex - image processing algorithms which use mex and so must be compiled 
+    first. The Toolkit normally compiles these automatically as required.
 
-Framework - core classes forming the toolkit.
+Plugins - contains a Plugin class for each high-level algorithm in the Toolkit.
+    Plugins are the algorithmic building blocks of the Toolkit. They appear as 
+    buttons in the GUI and are invoked by clicking the button.
+    If you are using the API, plugins are invoked using the GetResult() method.
+    A plugin represents a high-level concept such as airway segmentation, or an 
+    intermediate stage such as trachea detection. When the Plugin runs it 
+    generates any required inputs (normally by executing other Plugins), then 
+    executes the appropriate functions (usually part of the Library) to generate
+    the Plugin result. So for example, the airway segmentatinon Plugin will 
+    first fetch the result of the trachea detection Plugin, and then use this 
+    result in a call to the Library routines to segment the airways.
+    Plugin classes are therefore an interface layer between the Framework, 
+    the Library and the GUI.
+    Plugin classes also contain properties which describe how the plugin button
+    is displayed in the GUI and how the plugin relates to the Framework.
+    You can create your own plugins in the User/Plugins folder.
 
-Gui - gui classes specifically for the ptk gui. 
+Framework - core classes forming the toolkit. You use some of these classes to 
+    use the API.
 
-GuiPlugins - contains gui-related plugins, which provide buttons on the user 
+Gui - classes forming the optional graphical user interface
+Gui\GuiPlugins - contains pugins which are specific to the GUI, which provide buttons on the user 
     interface for non-algorithm operations such as importing, exporting and visualising data
 
-Interfaces - abstract class interfaces used in the toolkit
+bin - compiled mex files are stored here.
 
-Library - suite of image processing algorithms which can be used in your own programs.
-
-mex - image processing algorithms which use mex and so must be compiled first
-
-Plugins - contains algorithm-related plugins, which provide buttons on the user 
-    interface for operations which produce results such as segmentation operations.
-
-Types - contains data classes and enumerations used by the framework.
-
-Utilities - general purpose utility routines
-
-
+External - library functions imported from different open-source projects.
+           Note: these may have different licensing requirements
 
 User - where you store your own routines which are not committed to the codebase
 

@@ -92,6 +92,11 @@ classdef (ConstructOnLoad = true) TDImage < handle
         
         % Constructs a new image using raw data from new_image if specified
         function obj = TDImage(new_image, image_type, voxel_size)            
+            if nargin > 0
+                if isstruct(new_image)
+                    error('First argument must be an image');
+                end
+            end
             switch nargin
                 case 0
                     obj.RawImage = zeros(0, 0, 0, 'uint8');

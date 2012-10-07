@@ -11,6 +11,8 @@ function lung_image = TDFillCoronalHoles(lung_image, is_right, reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
+    reporting.ShowProgress('Filling holes');
+    
     max_non_coronal_voxel_size = max(lung_image.VoxelSize(2:3));
 
     opening_size = 16/max_non_coronal_voxel_size;
@@ -18,6 +20,7 @@ function lung_image = TDFillCoronalHoles(lung_image, is_right, reporting)
     
     lung_image.AddBorder(10);
     for coronal_index = 11 : lung_image.ImageSize(1) - 10
+        reporting.UpdateProgressValue(round(100*(coronal_index - 11)/(lung_image.ImageSize(1) - 20)));
         coronal_slice = lung_image.GetSlice(coronal_index, TDImageOrientation.Coronal);
         if ~isempty(is_right)
             coronal_slice = OpenOrClose(coronal_slice, is_right, opening_size, closing_size, reporting);
