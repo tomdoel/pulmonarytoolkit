@@ -187,6 +187,25 @@ classdef TDImageCoordinateUtilities
             translation(3) = - translation(3);
             affine_matrix = TDImageCoordinateUtilities.CreateAffineTranslationMatrix(translation);
         end
+    
+        % To combine a rigid transformation with a nonrigid deformation field, 
+        % compute the change in image coordinates after applying the
+        % deformation field and then the rigid affine transformation.
+        function deformation_field = AdjustDeformationFieldForInitialAffineTransformation(deformation_field, affine_initial_matrix)
+            
+            [df_i, df_j, df_k] = deformation_field.GetCentredGlobalCoordinatesMm;
+            [df_i, df_j, df_k] = ndgrid(df_i, df_j, df_k);
+            [df_i_t, df_j_t, df_k_t] = TDImageCoordinateUtilities.TransformCoordsFluid(df_i, df_j, df_k, deformation_field);
+            [df_i_t, df_j_t, df_k_t] = TDImageCoordinateUtilities.TransformCoordsAffine(df_i_t, df_j_t, df_k_t, affine_initial_matrix);
+            
+            deformation_field_raw = zeros(deformation_field.ImageSize);
+            deformation_field_raw(:,:,:,1) = df_i - df_i_t;
+            deformation_field_raw(:,:,:,2) = df_j - df_j_t;
+            deformation_field_raw(:,:,:,3) = df_k - df_k_t;
+            deformation_field2 = deformation_field.BlankCopy;
+            deformation_field2.ChangeRawImage(deformation_field_raw);
+            deformation_field = deformation_field2;
+        end
     end
 end
 
