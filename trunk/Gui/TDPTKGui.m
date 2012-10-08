@@ -300,6 +300,9 @@ classdef TDPTKGui < handle
                 [~, new_image] = obj.Dataset.GetResult(plugin_name);
                 if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
                     
+                    if isempty(new_image)
+                        obj.Reporting.Error('TDPTkGui:EmptyIMage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
+                    end
                     if all(new_image.ImageSize == obj.ImagePanel.BackgroundImage.ImageSize) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
                         obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
                     else
