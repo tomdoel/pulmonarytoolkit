@@ -77,7 +77,7 @@ classdef TDAirways < TDPlugin
         
         function results = GenerateImageFromResults(airway_results, image_templates, reporting)
             template_image = image_templates.GetTemplateImage(TDContext.LungROI);
-            results = TDGetImageFromAirwayResults(airway_results, template_image, reporting);
+            results = TDGetImageFromAirwayResults(airway_results.AirwayTree, template_image, reporting);
             results_raw = results.RawImage;
             explosion_points = template_image.GlobalToLocalIndices(airway_results.ExplosionPoints);
             results_raw(explosion_points) = 3;
