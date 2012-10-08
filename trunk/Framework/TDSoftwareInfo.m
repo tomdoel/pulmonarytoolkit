@@ -52,7 +52,11 @@ classdef TDSoftwareInfo < handle
 
     methods (Static)
         function application_directory = GetApplicationDirectoryAndCreateIfNecessary
-            home_directory = TDDiskUtilities.GetUserDirectory;
+            if ~isempty(PTKConfig.CacheFolder)
+                home_directory = PTKConfig.CacheFolder;
+            else
+                home_directory = TDDiskUtilities.GetUserDirectory;
+            end
             application_directory = TDSoftwareInfo.ApplicationSettingsFolderName;
             application_directory = fullfile(home_directory, application_directory);  
             if ~exist(application_directory, 'dir')
