@@ -1,4 +1,4 @@
-function airway_image = TDGetImageFromAirwayResults(airway_results, template_image, reporting)
+function airway_image = TDGetImageFromAirwayResults(airway_tree, template_image, reporting)
     % TDGetImageFromAirwayResults. Creates an image of the segmented airways
     %
     %     This function takes the airway results structure from the TDAirways
@@ -16,7 +16,6 @@ function airway_image = TDGetImageFromAirwayResults(airway_results, template_ima
     
     airway_image_raw = zeros(image_size, 'uint8');
     
-    airway_tree = airway_results.AirwayTree;
     segments_to_do = airway_tree;
     while ~isempty(segments_to_do)
         segment = segments_to_do(end);

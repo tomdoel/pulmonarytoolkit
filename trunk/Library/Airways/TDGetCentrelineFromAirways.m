@@ -11,7 +11,7 @@ function results = TDGetCentrelineFromAirways(lung_image, airway_results, report
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
-    airway_segented_image = TDGetImageFromAirwayResults(airway_results, lung_image, reporting);
+    airway_segented_image = TDGetImageFromAirwayResults(airway_results.AirwayTree, lung_image, reporting);
     
     
     reporting.ShowProgress('Finding airways');
