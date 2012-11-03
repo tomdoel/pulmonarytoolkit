@@ -610,6 +610,28 @@ classdef (ConstructOnLoad = true) TDImage < handle
             end
         end
         
+        % Removes surrounding zeros; i.e. strips away planes of
+        % zeros from the edges of the image
+        function CropToFitWithBorder(obj, border_size)
+            if obj.ImageExists
+                image_size = obj.ImageSize;
+                bounds = obj.GetBounds;
+                bounds(1) = max(1, bounds(1) - border_size);
+                bounds(3) = max(1, bounds(3) - border_size);
+                bounds(5) = max(1, bounds(5) - border_size);
+                
+                bounds(2) = min(image_size(1), bounds(2) + border_size);
+                bounds(4) = min(image_size(2), bounds(4) + border_size);
+                bounds(6) = min(image_size(3), bounds(6) + border_size);
+                
+                % Create new image
+                obj.RawImage = obj.RawImage(bounds(1):bounds(2), bounds(3):bounds(4), bounds(5):bounds(6));
+                
+                obj.Origin = obj.Origin + [bounds(1) - 1, bounds(3) - 1, bounds(5) - 1];
+                obj.NotifyImageChanged;
+            end
+        end
+        
         % Returns the bounding cordinates of a binary image
         function bounds = GetBounds(obj)
             i_min = find(any(any(obj.RawImage, 2), 3), 1, 'first');
