@@ -44,7 +44,7 @@ classdef TDMRILungThreshold < TDPlugin
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
                 full_image = dataset.GetResult('TDOriginalImage');
                 [lung_mask, bounds] = TDComputeSegmentLungsMRI(full_image, 1, reporting);
-                lung_mask.CropToFit;
+                lung_mask.CropToFitWithBorder(5);
                 lung_mask.ImageType = TDImageType.Colormap;
                 results.Bounds = bounds;
                 results.LungMask = lung_mask;
