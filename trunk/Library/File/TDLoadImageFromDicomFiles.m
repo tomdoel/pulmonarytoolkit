@@ -213,7 +213,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
         
         padding_indices = find(loaded_image == padding_value);
         if (~isempty(padding_indices))
-            reporting.ShowMessage('TDLoadImageFromDicomFiles:ReplacingPaddingValue', ['Replacing padding value ' num2str(padding_value) ' with zeros.'], []);
+            reporting.ShowMessage('TDLoadImageFromDicomFiles:ReplacingPaddingValue', ['Replacing padding value ' num2str(padding_value) ' with zeros.']);
             loaded_image(padding_indices) = 0;
         end
     end
