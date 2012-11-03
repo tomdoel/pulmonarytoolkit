@@ -20,14 +20,14 @@ function [high_fissure_indices, ref_image] = TDGetMaxFissurePoints(fissure_appro
     
     bin_size = 2;
 
-    [high_fissure_indices, ref_image] = GetFissurePoints(data_points_indices, image_size, lung_mask.RawImage, fissureness.RawImage, bin_size);
+    [high_fissure_indices, ref_image] = GetFissurePoints(data_points_indices, image_size, lung_mask, fissureness.RawImage, bin_size);
 end
 
 
 function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for_model, image_size, lung_segmentation, fissureness, bin_size)
 
     % Get the coordinates of every voxel in the lung segmentation
-    candidate_indices = find(lung_segmentation);
+    candidate_indices = find(lung_segmentation.RawImage);
 
     % An image for debugging
     ref_image = zeros(image_size, 'uint8');
@@ -97,7 +97,7 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     % Remove non-connected points (outliers)
     [x_all, y_all, z_all] = TDImageCoordinateUtilities.FastInd2sub(image_size, maximum_fissureness_indices);
     points_coords = ArraysToPoints(x_all(:), y_all(:), z_all(:));
-    points_coords = RemoveNonConnectedPoints(points_coords, image_size);
+    points_coords = RemoveNonConnectedPoints(points_coords, lung_segmentation, image_size);
     [x_all, y_all, z_all] = PointsToArrays(points_coords);
     maximum_fissureness_indices = TDImageCoordinateUtilities.FastSub2ind(image_size, x_all(:), y_all(:), z_all(:));
     ref_image(maximum_fissureness_indices) = 1;
@@ -175,29 +175,33 @@ function is_maxima = GetMaxima(candidate_indices, bin, fissureness_at_indices, f
 end
 
 
-function points_coords = RemoveNonConnectedPoints(points_coords, grid_size)
-    min_component_size = 500;
-    dilate_size = 3;
+function points_coords = RemoveNonConnectedPoints(points_coords, template_image, image_size)
+    voxel_volume = prod(template_image.VoxelSize);
+    min_component_size_mm3 = 200;
+    min_component_size_voxels = round(min_component_size_mm3/voxel_volume);
+
+    dilate_size_mm = 5;
     
-    image_mask = false(grid_size);
-    indices = sub2ind(grid_size, points_coords(:,1), points_coords(:,2), points_coords(:,3));
+    image_mask = false(image_size);
+    indices = sub2ind(image_size, points_coords(:,1), points_coords(:,2), points_coords(:,3));
     image_mask(indices) = true;
     
-    tci = TDImage(image_mask);
-    tci.BinaryMorph(@imdilate, dilate_size);
+    tci = template_image.BlankCopy;
+    tci.ChangeRawImage(image_mask);
+    tci.BinaryMorph(@imdilate, dilate_size_mm);
     connected_image = tci.RawImage;
     
     connected_components = bwconncomp(connected_image, 26);
     num_components = connected_components.NumObjects;
     for component = 1 : num_components
         pixels = connected_components.PixelIdxList{component};
-        if length(pixels) < min_component_size
+        if length(pixels) < min_component_size_voxels
             connected_image(pixels) = false;
         end
     end
     image_mask = image_mask & connected_image;
     indices = find(image_mask(:));
-    [i2_coords, j2_coords, k2_coords] = ind2sub(grid_size, indices);
+    [i2_coords, j2_coords, k2_coords] = ind2sub(image_size, indices);
     points_coords = ArraysToPoints(i2_coords, j2_coords, k2_coords);
 end
 
