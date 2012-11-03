@@ -150,6 +150,55 @@ classdef TDImageUtilities
             dt.ChangeRawImage(seg_raw);
             dt.ImageType = TDImageType.Scaled;
         end
+        
+        
+        function [dice, combined_image] = ComputeDice(image_1, image_2)
+            TDImageUtilities.MatchSizes(image_1, image_2);
+            
+            combined_image = image_1.BlankCopy;
+            
+            combined_image_raw = zeros(combined_image.ImageSize, 'uint8');
+            
+            volume_indices = find(image_1.RawImage);
+            combined_image_raw(volume_indices) = 1;
+            
+            volume_indices = find(image_2.RawImage);
+            combined_image_raw(volume_indices) = combined_image_raw(volume_indices) + 2;
+            
+            TP = sum(sum(sum(combined_image_raw == 3)));
+            FN = sum(sum(sum(combined_image_raw == 1)));
+            FP = sum(sum(sum(combined_image_raw == 2)));
+            dice = 2*TP/(2*TP+FP+FN);
+            combined_image.ChangeRawImage(combined_image_raw);
+        end
+        
+        function [dice, combined_image] = ComputeDiceWithCoronalAllowance(image_1, image_2)
+            TDImageUtilities.MatchSizes(image_1, image_2);
+            
+            combined_image = image_1.BlankCopy;
+            
+            combined_image_raw = zeros(combined_image.ImageSize, 'uint8');
+            
+            volume_indices = find(image_1.RawImage);
+            combined_image_raw(volume_indices) = 1;
+            
+            volume_indices = find(image_2.RawImage);
+            combined_image_raw(volume_indices) = combined_image_raw(volume_indices) + 2;
+            
+            for coronal_index = 1 : image_1.ImageSize(1)
+                slice = combined_image_raw(coronal_index, :, :);
+                slice2 = convn(slice == 3, ones(3,3), 'same');
+                slice2 = slice2 & (slice > 0);
+                slice(slice2) = 3;
+                combined_image_raw(coronal_index, :, :) = slice;
+            end
+            
+            TP = sum(sum(sum(combined_image_raw == 3)));
+            FN = sum(sum(sum(combined_image_raw == 1)));
+            FP = sum(sum(sum(combined_image_raw == 2)));
+            dice = 2*TP/(2*TP+FP+FN);
+            combined_image.ChangeRawImage(combined_image_raw);
+        end
     end
 end
 
