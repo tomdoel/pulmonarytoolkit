@@ -901,9 +901,14 @@ classdef (ConstructOnLoad = true) TDImage < handle
         % Given a set of global indices, compute the coordinates of each in mm
         function [ic, jc, kc] = GlobalIndicesToCoordinatesMm(obj, global_indices)
             [ic, jc, kc] = obj.GlobalIndicesToGlobalCoordinates(global_indices);
-            ic = (ic - 0.5)*obj.VoxelSize(1);
-            jc = (jc - 0.5)*obj.VoxelSize(2);
-            kc = (kc - 0.5)*obj.VoxelSize(3);
+            [ic, jc, kc] = obj.GlobalCoordinatesToCoordinatesMm(obj, [ic, jc, kc]);
+        end
+        
+        % Given a set of global indices, compute the coordinates of each in mm
+        function [ic, jc, kc] = GlobalCoordinatesToCoordinatesMm(obj, global_coordinates)
+            ic = (global_coordinates(1, :) - 0.5)*obj.VoxelSize(1);
+            jc = (global_coordinates(2, :) - 0.5)*obj.VoxelSize(2);
+            kc = (global_coordinates(3, :) - 0.5)*obj.VoxelSize(3);
         end
         
         function [ic, jc, kc] = GlobalIndicesToGlobalCoordinates(obj, global_indices)
