@@ -23,6 +23,7 @@ classdef TDProgressPanel < TDProgressInterface
         UiControlText
         UiControlCancel
         UiControlQuit
+        UiControlHide
         ProgressBarHandle
 
         IncrementThreshold = 5
@@ -76,6 +77,7 @@ classdef TDProgressPanel < TDProgressInterface
             text_position = [20, 115, 460, 45];
             cancel_position = [175, 20, 150, 40];
             quit_position = [350, 20, 80, 40];
+            hide_position = [50, 20, 80, 40];
             progress_bar_position = [50, 90, 400, 18];
             
             
@@ -87,6 +89,8 @@ classdef TDProgressPanel < TDProgressInterface
                 'Position', cancel_position, 'FontUnits', 'pixels', 'Callback', @obj.CancelButton, 'Visible', 'off');
             obj.UiControlQuit = uicontrol('parent', obj.PanelHandle, 'string', 'Force Quit', ...
                 'Position', quit_position, 'FontUnits', 'pixels', 'Callback', @obj.QuitButton, 'Visible', 'off');
+            obj.UiControlHide = uicontrol('parent', obj.PanelHandle, 'string', 'Hide Dialog', ...
+                'Position', hide_position, 'FontUnits', 'pixels', 'Callback', @obj.HideButton, 'Visible', 'off');
             
             [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', ...
                 progress_bar_position, obj.PanelHandle);
@@ -224,6 +228,7 @@ classdef TDProgressPanel < TDProgressInterface
                 set(obj.UiControlTitle, 'Visible', 'on');
                 if TDSoftwareInfo.DebugMode
                     set(obj.UiControlQuit, 'Visible', 'on');
+                    set(obj.UiControlHide, 'Visible', 'on');
                 end
                 set(obj.UiControlCancel, 'Visible', 'on');
                 obj.CurrentlyDisplayedVisibility = true;
@@ -232,6 +237,7 @@ classdef TDProgressPanel < TDProgressInterface
                 set(obj.UiControlText, 'Visible', 'off');
                 set(obj.UiControlTitle, 'Visible', 'off');
                 set(obj.UiControlQuit, 'Visible', 'off');
+                set(obj.UiControlHide, 'Visible', 'off');
                 set(obj.UiControlCancel, 'Visible', 'off');
                 set(obj.ProgressBarHandle, 'visible', 0);
                 set(obj.PanelHandle, 'Visible', 'off');
@@ -255,6 +261,12 @@ classdef TDProgressPanel < TDProgressInterface
             throw(MException('TDProgressPanel:UserForceQuit', 'User forced plugin to quit'));
         end
 
+        function HideButton(obj, ~, ~)
+            obj.PanelVisibility = false;
+            obj.Hold = false;
+            obj.UpdateVisibility;
+        end
+        
         function progress_position = GetPanelPosition(obj)
             panel_position = get(obj.Parent, 'Position');
 
