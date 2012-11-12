@@ -906,9 +906,9 @@ classdef (ConstructOnLoad = true) TDImage < handle
         
         % Given a set of global indices, compute the coordinates of each in mm
         function [ic, jc, kc] = GlobalCoordinatesToCoordinatesMm(obj, global_coordinates)
-            ic = (global_coordinates(1, :) - 0.5)*obj.VoxelSize(1);
-            jc = (global_coordinates(2, :) - 0.5)*obj.VoxelSize(2);
-            kc = (global_coordinates(3, :) - 0.5)*obj.VoxelSize(3);
+            ic = (global_coordinates(:, 1) - 0.5)*obj.VoxelSize(1);
+            jc = (global_coordinates(:, 2) - 0.5)*obj.VoxelSize(2);
+            kc = (global_coordinates(:, 3) - 0.5)*obj.VoxelSize(3);
         end
         
         function [ic, jc, kc] = GlobalIndicesToGlobalCoordinates(obj, global_indices)
@@ -934,14 +934,19 @@ classdef (ConstructOnLoad = true) TDImage < handle
         % Returns the coordinates of all points in the image in global
         % coordinates in mm, with the origin at the centre of the original image
         function [ic, jc, kc] = GetCentredGlobalCoordinatesMm(obj)
+            [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
+            [ic, jc, kc] = obj.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(ic, jc, kc);
+        end
+
+        % Translates global coordinates in mm so that the origin is in the centre of the image
+        function [ic, jc, kc] = GlobalCoordinatesMmToCentredGlobalCoordinatesMm(obj, ic, jc, kc)
             original_voxel_size = obj.VoxelSize./obj.Scale;
             offset = obj.OriginalImageSize.*original_voxel_size/2;
-            [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
             ic = ic - offset(1);
             jc = jc - offset(2);
             kc = kc - offset(3);
         end
-
+        
         % Computes the isotropic grid spacing required to resample this mask so
         % as to achieve approximately the number of specified points in the mask
         function grid_spacing_mm = ComputeResamplingGridSpacing(obj, approx_number_points)
