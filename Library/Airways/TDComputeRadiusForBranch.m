@@ -1,4 +1,4 @@
-function next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_double, dt_image)
+function next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d)
     % TDComputeRadiusForBranch. Image-derived radius estimation of an airway.
     %
     %     TDComputeRadiusForBranch creates a projection of the lung image
@@ -12,8 +12,6 @@ function next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_doub
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
-    
-    min_voxel_size_mm = min(lung_image_as_double.VoxelSize);
     image_size = lung_image_as_double.ImageSize;
     next_result = [];
     generation_number = next_segment.GenerationNumber;
@@ -22,8 +20,8 @@ function next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_doub
         first_point = next_segment.Parent.Points(end);
         points_indices = [first_point, points_indices];
     end
-    dt_at_points = dt_image(points_indices);
-    expected_radius_mm = mean(dt_at_points)*min_voxel_size_mm;
+    
+    expected_radius_mm = mode(radius_approximation.RawImage(points_indices));
     [px, py, pz] = ind2sub(image_size, points_indices');
     knot = [px, py, pz];
     
@@ -38,7 +36,7 @@ function next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_doub
     backward_knot_index = max(1, central_knot_index - 3);
     direction_vector_voxels = knot(forward_knot_index, :) - knot(backward_knot_index, :);
     radius_results = GetRadiusAndCentrepoint(central_knot, direction_vector_voxels, ...
-        lung_image_as_double, expected_radius_mm, lung_image_as_double.VoxelSize);
+        lung_image_as_double, expected_radius_mm, lung_image_as_double.VoxelSize, figure_airways_3d);
     
     radius_exp = sprintf('%7.2f', expected_radius_mm);
     radius_min = sprintf('%7.2f', radius_results.RadiusMin);
@@ -56,7 +54,7 @@ end
 
 
 function results = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector_voxels, ...
-        lung_image_as_double, expected_radius_mm, voxel_size_mm)
+        lung_image_as_double, expected_radius_mm, voxel_size_mm, figure_airways_3d)
     
     % Determine number of different angles to use to capture the whole
     % airway cross-section
@@ -70,7 +68,7 @@ function results = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector
     % We take a radius step size of half the minimum voxel size and
     % extend it to twice the estimated radius
     step_size_mm = min_voxel_size_mm/2;
-    airway_max_mm = step_size_mm*(ceil(2*expected_radius_mm/step_size_mm));
+    airway_max_mm = step_size_mm*(ceil(3*expected_radius_mm/step_size_mm));
     radius_range_upper = step_size_mm : step_size_mm : airway_max_mm;
     
     % Construct the radius range, ensuring there is a point at exactly
@@ -132,34 +130,47 @@ function results = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector
     results.RadiusStdev = std(radius_mm);
     results.CentrePoint = [mean(mp_i), mean(mp_j), mean(mp_k)];
     
-    %             TDAirwayRadius.ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint);
-    %             TDAirwayRadius.ShowInterpolatedCoordinatesOn3dFigure(figure_airways_3d, lung_image.ImageSize, centre_point_voxels, i_coord_voxels, j_coord_voxels, k_coord_voxels)
+    % Debugging
+    if ~isempty(figure_airways_3d)
+        ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint);
+        ShowInterpolatedCoordinatesOn3dFigure(figure_airways_3d, lung_image_as_double, centre_point_voxels, i_coord_voxels, j_coord_voxels, k_coord_voxels)
+    end
 end
 
-% % For showing the stretched out wall with midpoints and walls superimposed
-% function ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint)
-%     figure(2);
-%     viewer = TDViewer(interp_image, TDImageType.Grayscale);
-%     viewer.ViewerPanelHandle.Orientation = TDImageOrientation.Axial;
-%     midpoint_repeated = repmat(round(midpoints), [size(interp_image, 1), 1]);
-%     radii_indices = (1 : size(interp_image, 1))';
-%     radii_repeated = repmat(radii_indices, [1, size(interp_image, 2)]);
-%     mp = midpoint_repeated == radii_repeated;
-%     
-%     
-%     wall_overlay = zeros(size(interp_image), 'uint8');
-%     wall_overlay(midpoint:end, :) = wall_mask_upper;
-%     wall_overlay(midpoint:-1:1, :) = wall_mask_lower;
-%     wall_overlay(mp) = 3;
-%     viewer.ViewerPanelHandle.OverlayImage = TDImage(wall_overlay);
-% end
-% 
-% function ShowInterpolatedCoordinatesOn3dFigure(figure_airways_3d, image_size, centre_point_voxels, i_coord_voxels, j_coord_voxels, k_coord_voxels)
-%     figure(figure_airways_3d);
-%     plot3(centre_point_voxels(2), centre_point_voxels(1), 1 + image_size(3) - centre_point_voxels(3), 'rx', 'MarkerSize', 10);
-%     plot3(j_coord_voxels(:), i_coord_voxels(:), 1 + image_size(3) - k_coord_voxels(:), 'ro');
-%     
-% end
+% For showing the stretched out wall with midpoints and walls superimposed
+function ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint)
+    figure(2);
+    viewer = TDViewer(interp_image, TDImageType.Grayscale);
+    viewer.ViewerPanelHandle.Orientation = TDImageOrientation.Axial;
+    midpoint_repeated = repmat(round(midpoints), [size(interp_image, 1), 1]);
+    radii_indices = (1 : size(interp_image, 1))';
+    radii_repeated = repmat(radii_indices, [1, size(interp_image, 2)]);
+    mp = midpoint_repeated == radii_repeated;
+    
+    
+    wall_overlay = zeros(size(interp_image), 'uint8');
+    wall_overlay(midpoint:end, :) = wall_mask_upper;
+    wall_overlay(midpoint:-1:1, :) = wall_mask_lower;
+    wall_overlay(mp) = 3;
+    viewer.ViewerPanelHandle.OverlayImage = TDImage(wall_overlay);
+end
+
+function ShowInterpolatedCoordinatesOn3dFigure(figure_airways_3d, lung_image, centre_point_voxels, i_coord_voxels, j_coord_voxels, k_coord_voxels)
+%     image_size = lung_image.ImageSize;
+    figure(figure_airways_3d);
+    hold on;
+
+    global_centre_point_voxels = lung_image.LocalToGlobalCoordinates([centre_point_voxels(:, 1), centre_point_voxels(:, 2), centre_point_voxels(:, 3)]);
+    [ic_cp, jc_cp, kc_cp] = lung_image.GlobalCoordinatesToCoordinatesMm(global_centre_point_voxels);
+    [ic_cp, jc_cp, kc_cp] = lung_image.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(ic_cp, jc_cp, kc_cp);
+    plot3(jc_cp, ic_cp, - kc_cp, 'rx', 'MarkerSize', 10);
+    
+    global_coordinates = lung_image.LocalToGlobalCoordinates([i_coord_voxels(:), j_coord_voxels(:), k_coord_voxels(:)]);
+    [ic, jc, kc] = lung_image.GlobalCoordinatesToCoordinatesMm(global_coordinates);
+    [ic, jc, kc] = lung_image.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(ic, jc, kc);
+    
+    plot3(jc(:), ic(:), -kc(:), 'r.');    
+end
 
 function [i_coord_voxels, j_coord_voxels, k_coord_voxels] = PolarToGlobal(r, theta, centre_point_voxels, voxel_size_mm, x_prime_norm, y_prime_norm)
     xp_coord_mm = r.*cos(theta);
