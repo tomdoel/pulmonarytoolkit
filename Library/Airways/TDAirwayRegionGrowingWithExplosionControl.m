@@ -1,4 +1,4 @@
-function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point_global, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting)
+function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point_global, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting, debug_mode)
     % TDAirwayRegionGrowingWithExplosionControl. Segments the airways from a
     %     threshold image using a region growing method.
     %
@@ -9,7 +9,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     %     heuristics to prevent 'explosions' into the lung parenchyma.
     %
     % Syntax:
-    %     results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point, reporting)
+    %     results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point, maximum_number_of_generations, explosion_multiplier, reporting, debug_mode)
     %
     % Inputs:
     %     threshold_image - a lung volume stored as a TDImage which has been
@@ -31,8 +31,11 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     %     coronal_mode - if true, the algorithm performs in a special mode
     %         designed for images with thick coronal slices
     %
-    %     reporting (optional) - an object implementing the TDReporting
+    %     reporting - an object implementing the TDReporting
     %         interface for reporting progress and warnings
+    %
+    %     debug_mode (optional) - should normally be set to false. 
+    %         Provides visual debugging, but the algorithm will run much slower.
     %
     % Outputs:
     %     results - a structure containing the following fields:
@@ -58,6 +61,10 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
+    if nargin < 7
+        debug_mode = false;
+    end
+    
     if ~isa(threshold_image, 'TDImage')
         reporting.Error('TDAirwayRegionGrowingWithExplosionControl:InvalidInput', 'Requires a TDImage as input');
     end
@@ -65,7 +72,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     reporting.UpdateProgressAndMessage(0, 'Starting region growing with explosion control');
     
     % Perform the airway segmentation
-    airway_tree = RegionGrowing(threshold_image, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier, coronal_mode);
+    airway_tree = RegionGrowing(threshold_image, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier, coronal_mode, debug_mode);
 
     
     if isempty(airway_tree)
@@ -101,8 +108,8 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
 end
 
 
-function first_segment = RegionGrowing(threshold_image_handle, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier, coronal_mode)
-
+function first_segment = RegionGrowing(threshold_image_handle, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier, coronal_mode, debug_mode)
+    
     threshold_image_handle.AddBorder(1);
     
     voxel_size_mm = threshold_image_handle.VoxelSize;
@@ -112,7 +119,13 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
     start_point_global = int32(start_point_global);
     image_size_global = int32(threshold_image_handle.OriginalImageSize);
 
+    if debug_mode
+        pause_skip = 0;
+        debug_image = threshold_image_handle.BlankCopy;
+        debug_image.ChangeRawImage(zeros(debug_image.ImageSize, 'uint8'));
+    end
     threshold_image = logical(threshold_image_handle.RawImage);
+    
     number_of_image_points_local = numel(threshold_image(:));
 
     [linear_offsets_global, ~] = TDImageCoordinateUtilities.GetLinearOffsets(image_size_global);
@@ -131,7 +144,12 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
     start_point_index_global = sub2ind(image_size_global, start_point_global(1), start_point_global(2), start_point_global(3));
     start_point_index_local = threshold_image_handle.GlobalToLocalIndices(start_point_index_global);
 
+    
     threshold_image(start_point_index_local) = false;
+    
+    if debug_mode
+        debug_image.SetIndexedVoxelsToThis(start_point_index_global, 1);
+    end
 
     last_progress_value = 0;
 
@@ -207,19 +225,41 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
         else
             threshold_image(indices_of_new_points_local) = false;
 
+            if debug_mode
+                pause_skip = pause_skip + 1;
+                debug_image.SetIndexedVoxelsToThis(current_segment.GetWavefrontVoxels, 1);
+            end
+                        
             % Add points to the current segment and retrieve a list of segments
             % which reqire further processing - this can comprise of the current
             % segment if it is incomplete, or child segments if it has bifurcated
             next_segments = current_segment.AddNewVoxelsAndGetNewSegments(indices_of_new_points_global, image_size_global);
+            
+            if debug_mode
+                colour_index = 2;
+                for segment = next_segments
+                    wavefront_voxels = segment.GetWavefrontVoxels;
+                    debug_image.SetIndexedVoxelsToThis(wavefront_voxels, colour_index);
+                    colour_index = colour_index + 1;
+                end
+                if (length(next_segments) > 1) || (pause_skip > 10);
+                    pause_skip = 0;
+                    reporting.UpdateOverlayImage(debug_image);
+                    disp('PAUSED');
+                    pause
+                end
+            end
 
             segments_in_progress = [segments_in_progress, next_segments]; %#ok<AGROW>
             if length(segments_in_progress) > 500
                reporting.Error('TDAirwayRegionGrowingWithExplosionControl:MaximumSegmentsExceeded', 'More than 500 segments to do: is there a problem with the image?'); 
             end
 
-            % If the segment is ending, then report progress
-            if length(next_segments) ~= 1
-                last_progress_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_generations, last_progress_value, reporting);
+            if ~debug_mode
+                % If the segment is ending, then report progress
+                if length(next_segments) ~= 1
+                    last_progress_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_generations, last_progress_value, reporting);
+                end
             end
 
         end
