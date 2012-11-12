@@ -585,6 +585,8 @@ classdef TDViewerPanel < handle
         
         function UpdateStatus(obj)
             main_image = obj.BackgroundImage;
+            overlay_image = obj.OverlayImage;
+            
             if isempty(main_image) || ~main_image.ImageExists
                 status_text = 'No image';
             else
@@ -597,13 +599,30 @@ classdef TDViewerPanel < handle
                     
                 if (main_image.IsPointInImage(global_coords))
                     voxel_value = main_image.GetVoxel(global_coords);
-                    value_text = int2str(voxel_value);
+                    if isinteger(voxel_value)
+                        value_text = int2str(voxel_value);
+                    else
+                        value_text = num2str(voxel_value, 3);
+                    end
                     
                     [rescale_value, rescale_units] = main_image.GetRescaledValue(global_coords);
                     if ~isempty(rescale_units) && ~isempty(rescale_value)
                         rescale_text = [rescale_units ':' int2str(rescale_value)];
                     end
+                    
+                    if isempty(overlay_image) || ~overlay_image.ImageExists
+                        overlay_text = [];
+                    else
+                        overlay_voxel_value = overlay_image.GetVoxel(global_coords);
+                        if isinteger(overlay_voxel_value)
+                            overlay_value_text = int2str(overlay_voxel_value);
+                        else
+                            overlay_value_text = num2str(overlay_voxel_value, 3);
+                        end
+                        overlay_text = [' O:' overlay_value_text];
+                    end
                 else
+                    overlay_text = '';
                     value_text = '-';
                     switch obj.Orientation
                         case TDImageOrientation.Coronal
@@ -619,7 +638,7 @@ classdef TDViewerPanel < handle
                             
                 end
             
-                status_text = ['X:' j_text ' Y:' i_text ' Z:' k_text ' I:' value_text ' ' rescale_text];
+                status_text = ['X:' j_text ' Y:' i_text ' Z:' k_text ' I:' value_text ' ' rescale_text overlay_text];
             end
             set(obj.StatusText, 'String', status_text);
         end
