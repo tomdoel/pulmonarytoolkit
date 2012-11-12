@@ -71,8 +71,9 @@ classdef TDAirways < TDPlugin
 
             maximum_number_of_generations = 10;
             explosion_multiplier = 5;
-            
-            results = TDAirwayRegionGrowingWithExplosionControl(threshold, start_point, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting);
+
+            debug_mode = TDSoftwareInfo.GraphicalDebugMode;
+            results = TDAirwayRegionGrowingWithExplosionControl(threshold, start_point, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting, debug_mode);
         end
         
         function results = GenerateImageFromResults(airway_results, image_templates, reporting)
