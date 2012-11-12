@@ -46,6 +46,7 @@ classdef TDSoftwareInfo < handle
         MatlabAdvisedMajorVersion = 7
         MatlabAdvisedMinorVersion = 14
         DebugMode = false
+        GraphicalDebugMode = false
         BackgroundColour = [0, 0.129, 0.278]
         CancelErrorId = 'TDPTK:UserCancel'
     end
