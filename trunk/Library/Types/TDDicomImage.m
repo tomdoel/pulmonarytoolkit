@@ -154,7 +154,7 @@ classdef TDDicomImage < TDImage
             if obj.IsCT
                 units_greyscale = (units_hu - obj.RescaleIntercept)/obj.RescaleSlope;
             else
-               error('Not a CT image'); 
+               error('The HounsfieldToGreyscale() method was called, but this is not a CT image'); 
             end
         end
         
@@ -163,7 +163,7 @@ classdef TDDicomImage < TDImage
             if obj.IsCT
                 units_hu = int16(units_greyscale)*obj.RescaleSlope + obj.RescaleIntercept;
             else
-               error('Not a CT image'); 
+               error('The HounsfieldToGreyscale() method was called, but this is not a CT image'); 
             end
         end
         
@@ -171,7 +171,7 @@ classdef TDDicomImage < TDImage
             if obj.IsCT || obj.IsMR
                 units_rescaled = obj.HounsfieldToGreyscale(units_rescaled);
             else
-                error('Not a CT or MR image - cannot rescale');    
+                error('The RescaledToGreyscale() method was called, but this is not a CT or MR image');    
             end
             
         end
