@@ -120,7 +120,7 @@ classdef TDDatasetResults < handle
         function [result, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, linked_dataset_chooser, dataset_stack, context)
             
             % Get information about the plugin
-            plugin_info = eval(plugin_name);
+            plugin_info = feval(plugin_name);
             
             % Update the progress dialog with the current plugin being run
             obj.Reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
