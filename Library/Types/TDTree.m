@@ -121,6 +121,22 @@ classdef TDTree < handle
             end
         end
 
+        % Returns all the branches as a set, with this branch first, then its
+        % children, then its grandchildren, and so on.
+        function branches_list = GetBranchesAsListByGeneration(obj)
+            branches_list = obj;
+            current_generation = obj;
+            
+            while ~isempty(current_generation)
+                next_generation = current_generation.empty();
+                for branch = current_generation
+                    branches_list(end+1) = branch;
+                    next_generation(end+1:end+length(branch.Children)) = branch.Children;
+                end
+                current_generation = next_generation;
+            end
+        end
+        
         % Returns all the branches as a set, from this branch onwards
         % This is similar to GetBranchesAsList, but the branches are assembled
         % in a different order. This is simply to match the output produced by
