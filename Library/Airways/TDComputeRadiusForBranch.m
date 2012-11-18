@@ -25,18 +25,59 @@ function next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_doub
     [px, py, pz] = ind2sub(image_size, points_indices');
     knot = [px, py, pz];
     
-    % ToDo: Change number of spline points
+    % Generate a spline curve through the centreline points
+    % Currently this is not used in the radius computation
     spline = GenerateSpline(knot, 2);
     
-    % Find image perpendicular to airway
+    % Find points at 1/4, 1/2 and 3/4 way along the centreline
+    % We will compute the radius between these points
     number_knots = size(knot, 1);
-    central_knot_index = max(1, round(number_knots/2));
-    central_knot = knot(central_knot_index, :);
-    forward_knot_index = min(number_knots, central_knot_index + 3);
-    backward_knot_index = max(1, central_knot_index - 3);
-    direction_vector_voxels = knot(forward_knot_index, :) - knot(backward_knot_index, :);
-    radius_results = GetRadiusAndCentrepoint(central_knot, direction_vector_voxels, ...
-        lung_image_as_double, expected_radius_mm, lung_image_as_double.VoxelSize, figure_airways_3d);
+    quarter_point_index = max(1, round(number_knots/4));
+    three_quarter_point_index = min(number_knots, round(3*number_knots/4));
+    
+    % We compute the radius between the 1/4 and 3/4 points on the centreline
+    first_radius_index = quarter_point_index;
+    last_radius_index = three_quarter_point_index;
+    
+    % To compute the direction vector, we select two points on the centreline.
+    % If the airway is long enough, we use the 1/4 and 3/4 points. For shorter
+    % airways we chooser further away points to get a better centreline
+    if abs(three_quarter_point_index - quarter_point_index) < 4
+        quarter_point_index = max(1, quarter_point_index - 2);
+    end
+    if abs(three_quarter_point_index - quarter_point_index) < 4
+        three_quarter_point_index = min(number_knots, three_quarter_point_index + 2);
+    end
+
+    % Compute the direction based on the selected points
+    direction_vector_voxels = knot(three_quarter_point_index, :) - knot(quarter_point_index, :);
+    
+    radius_mm_allknots = [];
+    global_coords_list = [];
+    
+    middle_point = first_radius_index + round((last_radius_index - first_radius_index)/2);
+    
+    for central_knot_index = first_radius_index : last_radius_index
+        
+        % Only show the figure if this is the centre point
+        if central_knot_index == middle_point
+            debug_figure = figure_airways_3d;
+        else
+            debug_figure = [];
+        end
+        central_knot = knot(central_knot_index, :);
+        [radius_mm_list, global_coords] = GetRadiusAndCentrepoint(central_knot, direction_vector_voxels, ...
+            lung_image_as_double, expected_radius_mm, lung_image_as_double.VoxelSize, debug_figure);
+        radius_mm_allknots = [radius_mm_allknots; radius_mm_list'];
+        global_coords_list = [global_coords_list; global_coords];
+    end
+    
+    radius_results = [];
+    radius_results.RadiusMin = min(radius_mm_allknots);
+    radius_results.RadiusMax = max(radius_mm_allknots);
+    radius_results.RadiusMean = mean(radius_mm_allknots);
+    radius_results.RadiusStdev = std(radius_mm_allknots);
+    radius_results.CentrePoint = mean(global_coords_list, 1);
     
     radius_exp = sprintf('%7.2f', expected_radius_mm);
     radius_min = sprintf('%7.2f', radius_results.RadiusMin);
@@ -53,7 +94,7 @@ function next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_doub
 end
 
 
-function results = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector_voxels, ...
+function [radius_mm_list, global_coords] = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector_voxels, ...
         lung_image_as_double, expected_radius_mm, voxel_size_mm, figure_airways_3d)
     
     % Determine number of different angles to use to capture the whole
@@ -68,7 +109,7 @@ function results = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector
     % We take a radius step size of half the minimum voxel size and
     % extend it to twice the estimated radius
     step_size_mm = min_voxel_size_mm/2;
-    airway_max_mm = step_size_mm*(ceil(3*expected_radius_mm/step_size_mm));
+    airway_max_mm = step_size_mm*(ceil(2*expected_radius_mm/step_size_mm));
     radius_range_upper = step_size_mm : step_size_mm : airway_max_mm;
     
     % Construct the radius range, ensuring there is a point at exactly
@@ -116,30 +157,24 @@ function results = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector
     lower_wall_indices_refined = midpoint + 1 - lower_wall_indices_refined;
     
     diameters_mm = abs(upper_wall_indices_refined - lower_wall_indices_refined)*step_size_mm;
-    radius_mm = diameters_mm/2;
+    radius_mm_list = diameters_mm/2;
     
     midpoints = (upper_wall_indices_refined + lower_wall_indices_refined) / 2 - midpoint;
     
     midpoints_mm = midpoints*step_size_mm;
     [mp_i, mp_j, mp_k] = PolarToGlobal(midpoints_mm, angle_range, centre_point_voxels, voxel_size_mm, x_prime_norm, y_prime_norm);
     
-    results = [];
-    results.RadiusMin = min(radius_mm);
-    results.RadiusMax = max(radius_mm);
-    results.RadiusMean = mean(radius_mm);
-    results.RadiusStdev = std(radius_mm);
-    results.CentrePoint = [mean(mp_i), mean(mp_j), mean(mp_k)];
+    global_coords = [mean(mp_i), mean(mp_j), mean(mp_k)];
     
     % Debugging
     if ~isempty(figure_airways_3d)
-        ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint);
+        figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint, airway_max_mm);
         ShowInterpolatedCoordinatesOn3dFigure(figure_airways_3d, lung_image_as_double, centre_point_voxels, i_coord_voxels, j_coord_voxels, k_coord_voxels)
     end
 end
 
 % For showing the stretched out wall with midpoints and walls superimposed
-function ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint)
-    figure(2);
+function figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint, airway_max_mm)
     viewer = TDViewer(interp_image, TDImageType.Grayscale);
     viewer.ViewerPanelHandle.Orientation = TDImageOrientation.Axial;
     midpoint_repeated = repmat(round(midpoints), [size(interp_image, 1), 1]);
@@ -153,10 +188,27 @@ function ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mas
     wall_overlay(midpoint:-1:1, :) = wall_mask_lower;
     wall_overlay(mp) = 3;
     viewer.ViewerPanelHandle.OverlayImage = TDImage(wall_overlay);
+    
+    
+    interp_image_full = [interp_image(end:-1:midpoint,:), interp_image(1:midpoint,:)];
+    viewer2 = TDViewer(interp_image_full, TDImageType.Grayscale);
+    viewer2.ViewerPanelHandle.Orientation = TDImageOrientation.Axial;
+
+    wall_overlay_full = [wall_overlay(end:-1:midpoint, :), wall_overlay(1:midpoint, :)];
+    viewer2.ViewerPanelHandle.OverlayImage = TDImage(wall_overlay_full);
+    
+    viewer2.ViewerPanelHandle.Window = 928;
+    viewer2.ViewerPanelHandle.Level = 272;
+    frame = viewer2.ViewerPanelHandle.Capture;
+    figure(11);
+    figure_handle = gcf;
+    imagesc([0, 360], [airway_max_mm, 0], frame.cdata);
+    xlabel('\theta /degrees', 'FontName', 'Helvetica Neue', 'FontSize', 20);
+    ylabel('r /mm', 'FontName', 'Helvetica Neue', 'FontSize', 20);
+    set(gca,'YDir','normal')
 end
 
 function ShowInterpolatedCoordinatesOn3dFigure(figure_airways_3d, lung_image, centre_point_voxels, i_coord_voxels, j_coord_voxels, k_coord_voxels)
-%     image_size = lung_image.ImageSize;
     figure(figure_airways_3d);
     hold on;
 
