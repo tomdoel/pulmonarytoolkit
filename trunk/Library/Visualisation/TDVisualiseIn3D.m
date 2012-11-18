@@ -51,33 +51,36 @@ function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_
     end
     
     if small_structures
-        smoothing_size = 1;
+        smoothing_size = min(1, smoothing_size);
     end
     
     reporting.ShowProgress('Generating the 3D image');
     
     % Crop surrounding whitespace and reduce the image size if it is large.
     % A smaller image size is necessary for the use of isonormals
+    segmentation = segmentation.Copy;
     segmentation.CropToFit;
+    
+    % Speed up visualisation by rescaling large images.
     segmentation.RescaleToMaxSize(200);
+    
     segmentation.AddBorder(1);
     
-    % Determine the aspect ratio of the 3D image
-    voxel_size = segmentation.VoxelSize;
-    aspect_ratio = [1/voxel_size(2), 1/voxel_size(1), 1/voxel_size(3)];
-
     % Set up appropriate figure properties
-    figure;
     axis off;
     axis square;
     lighting gouraud;
     axis equal;
     set(gcf, 'Color', 'white');
-    daspect(aspect_ratio);
+
+    % Fix data aspect ratio. Note this is not set from the voxel size, because
+    % we are drawing the image using coordinates in mm, which already take the
+    % voxel size into account
+    daspect([1 1 1]);
+    
     rotate3d;
     cm = colormap('Lines');
     view(-37.5, 30);
-    camlight('headlight');
         
     % Get a list of all labels in the segmentation image
     segmentation_labels = setdiff(unique(segmentation.RawImage(:)), 0);
@@ -103,7 +106,9 @@ function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_
             morph_size = 3;
         end
         
-        sub_seg.BinaryMorph(@imclose, morph_size);
+        if morph_size > 0
+            sub_seg.BinaryMorph(@imclose, morph_size);
+        end
         
         if smoothing_size > 0
             sub_seg = TDGaussianFilter(sub_seg, smoothing_size);
@@ -117,18 +122,25 @@ function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_
         if small_structures
             threshold = 0.2;
         else
-             threshold = 0.5;
+            threshold = 0.5;
         end
-        p = patch(isosurface(sub_seg.GetRawImageForPlotting, threshold), 'EdgeColor', 'none', 'FaceColor', cm_color);
+        
+        [ic, jc, kc] = sub_seg.GetCentredGlobalCoordinatesMm;
+        kc = -kc;
+
+        p = patch(isosurface(jc, ic, kc, sub_seg.RawImage, threshold), 'EdgeColor', 'none', 'FaceColor', cm_color);
         
         % Using isonormals improves the image quality but is slow for large
         % images
-        isonormals(sub_seg.GetRawImageForPlotting, p);
+        isonormals(jc, ic, kc, sub_seg.RawImage, p);
 
     end
-    camorbit(0, -25);
-    camorbit(25, 0);
-
-    reporting.UpdateProgressValue(100);
+    % Change camera angle
+    campos([0, -1600, 0]);
     
+    % Add lighting
+    cl = camlight('left');
+    set(cl, 'Position', [50, 50, 100]);
+    
+    reporting.UpdateProgressValue(100);
 end
