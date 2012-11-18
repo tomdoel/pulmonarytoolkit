@@ -1,4 +1,4 @@
-function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, reporting)
+function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, reporting, debug_mode)
     % TDFindTopOfTrachea. Finds the trachea from a thresholded lung CT image.
     %
     % Given a binary image which representes an airway threshold applied to a
@@ -83,20 +83,42 @@ function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, repor
     endpoint = min(image_size, endpoint);
 
     % Crop the image
-    partial_image = lung_image.RawImage(startpoint(1):endpoint(1), startpoint(2):endpoint(2), startpoint(3):endpoint(3));
+    partial_image = lung_image.Copy;
+    partial_image.Crop(startpoint, endpoint);
     
-    % First pass: iterate through 2-slice thick segments and remove components
+    if debug_mode
+        debug_image = partial_image.Copy;
+    end
+    
+    if debug_mode
+        debug_image.ChangeRawImage(partial_image.RawImage);
+        reporting.UpdateOverlaySubImage(debug_image);
+        TDVisualiseIn3D([], debug_image, [], true, reporting);
+        pause;
+    end
+    
+    % Iterate through 2-slice thick segments and remove components
     % that are too wide or which touch the edges. The first pass helps to
     % disconnect the trachea from the rest of the lung, so that less of the
     % trachea is removed in the second pass.
-    partial_image2 = ReduceImageToCentralComponents(partial_image, 2, lung_image.VoxelSize, 1, reporting);
-    
-    % Second pass: repeat with a thicker slice. This is more effective at
-    % removing the lungs but could also delete the lower trachea - we mitigate this by disconnecting the trachea in the first pass.
-    partial_image2 = ReduceImageToCentralComponents(partial_image2, 10, lung_image.VoxelSize, 2, reporting);
+    partial_image2 = ReduceImageToCentralComponents(partial_image.RawImage, ceil(1.3/lung_image.VoxelSize(3)), lung_image.VoxelSize, 1, reporting);
+
+    if debug_mode
+        debug_image.ChangeRawImage(partial_image2);
+        reporting.UpdateOverlayImage(debug_image);
+        TDVisualiseIn3D([], debug_image, [], true, reporting);
+        pause;
+    end
     
     % Reduce the image to the main component
     result = FindLargestComponent(partial_image2);
+    
+    if debug_mode
+        debug_image.ChangeRawImage(result);
+        reporting.UpdateOverlayImage(debug_image);
+        TDVisualiseIn3D([], debug_image, [], true, reporting);
+        pause;
+    end
     
     % Find coordinates of highest point in the resulting image
     relative_top_of_trachea = FindHighestPoint(result, lung_image.VoxelSize);
@@ -148,9 +170,6 @@ function relative_top_of_trachea = FindHighestPoint(component, voxel_size)
     % Return point in [i,j,k] notation
     [i, j, k] = ind2sub(size(thick_slice), all_points(nearest_point_index_index));
     relative_top_of_trachea = [i, j, k + k_highest - 1];
-    
-    %     [i j] = find(component(:, :, k), 1);
-    
 end
 
 function centroid = GetCentroid(indices, image_size)
@@ -167,7 +186,6 @@ function result = ReduceImageToCentralComponents(image_to_reduce, slices_per_ste
 
     % for images with thick slices, we need to choose the minimum voxel size, not the maximum
     max_xy_voxel_size = min(voxel_size(1), voxel_size(2));
-%     max_xy_voxel_size = max(voxel_size(1), voxel_size(2));
     
     % Compute a maximum for the trachea diameter - we will filter out structures
     % wider than this
@@ -198,7 +216,7 @@ function result = ReduceImageToCentralComponents(image_to_reduce, slices_per_ste
     
     % Iterate through all slices
     for k_index = 1 : slices_per_step : num_slices
-        reporting.UpdateProgressValue((reporting_stage - 1)*50 + round(50*k_index/num_slices));
+        reporting.UpdateProgressValue((reporting_stage - 1)*100 + round(100*k_index/num_slices));
         k_max = k_index + slices_per_step - 1;
         slice = logical(image_to_reduce(:, :, k_index : k_max));
         slice = slice | border_slice;
