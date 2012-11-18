@@ -15,8 +15,8 @@ function lung_image = TDFillCoronalHoles(lung_image, is_right, reporting)
     
     max_non_coronal_voxel_size = max(lung_image.VoxelSize(2:3));
 
-    opening_size = 16/max_non_coronal_voxel_size;
-    closing_size = 16/max_non_coronal_voxel_size;
+    opening_size = 10/max_non_coronal_voxel_size;
+    closing_size = 10/max_non_coronal_voxel_size;
     
     lung_image.AddBorder(10);
     for coronal_index = 11 : lung_image.ImageSize(1) - 10
