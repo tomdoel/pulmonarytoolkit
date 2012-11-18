@@ -58,7 +58,7 @@ function [results_image, start_branches] = TDGetAirwaysLabelledByLobe(template, 
     [left_lung_start, right_lung_start] = SeparateIntoLeftAndRightLungs(start_segment, template, reporting);
     
     % Separate left lung into upper and lower lobes
-    [left_upper_startindices, left_lower_startindices, uncertain_segments] = SeparateLeftLungIntoLobes(left_lung_start, template, reporting);
+    [left_upper_startindices, left_lower_startindices, uncertain_segments] = SeparateLeftLungIntoLobesNew(left_lung_start, template, reporting);
 
     % Separate right lung into upper and mid/lower lobes
     [right_upper_startindices, right_midlower_startindices] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting);
