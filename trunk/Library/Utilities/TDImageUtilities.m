@@ -151,8 +151,33 @@ classdef TDImageUtilities
             dt.ImageType = TDImageType.Scaled;
         end
         
-        
-        function [dice, combined_image] = ComputeDice(image_1, image_2)
+        function [dt, border_image] = GetDistanceTransformBySlice(image_mask, direction)
+            border_image = image_mask.Copy;
+            dt = image_mask.BlankCopy;
+            
+            % Slice by slice replace the dt image with a 2D distance transform
+            for slice_index = 1 : image_mask.ImageSize(direction)
+                slice = image_mask.GetSlice(slice_index, direction);
+                surface_slice = TDImageUtilities.GetSurfaceFrom2DSegmentation(slice);
+                border_image.ReplaceImageSlice(surface_slice, slice_index, direction);
+                dt_slice = bwdist(surface_slice > 0);
+                dt.ReplaceImageSlice(dt_slice, slice_index, direction);
+            end
+            
+            border_image.ChangeRawImage(border_image.RawImage > 0);
+        end
+
+        function segmentation_2d = GetSurfaceFrom2DSegmentation(segmentation_2d)
+            segmentation_2d = int8(segmentation_2d == 1);
+            
+            % Find pixels that are nonzero and do not have 6 nonzero neighbours
+            filter = zeros(3, 3);
+            filter(:) = [0 1 0 1 0 1 0 1 0];
+            image_conv = convn(segmentation_2d, filter, 'same');
+            segmentation_2d = (segmentation_2d & (image_conv < 4));
+        end
+
+        function [results, combined_image] = ComputeDice(image_1, image_2)
             TDImageUtilities.MatchSizes(image_1, image_2);
             
             combined_image = image_1.BlankCopy;
@@ -168,7 +193,10 @@ classdef TDImageUtilities
             TP = sum(sum(sum(combined_image_raw == 3)));
             FN = sum(sum(sum(combined_image_raw == 1)));
             FP = sum(sum(sum(combined_image_raw == 2)));
-            dice = 2*TP/(2*TP+FP+FN);
+            results = [];
+            results.Dice = 2*TP/(2*TP+FP+FN);
+            results.Precision = TP/(TP+FP);
+            results.Recall = TP/(TP+FN);
             combined_image.ChangeRawImage(combined_image_raw);
         end
         
