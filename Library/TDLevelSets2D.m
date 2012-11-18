@@ -17,11 +17,11 @@ function result = TDLevelSets2D(original_image, initial_mask, bounds, figure_han
     
     options = [];
     options.num_iterations = 500;
-    options.std_dev = 3;
+    options.std_dev = 2;
     options.c = 0; % No speed set. Typical value of =0.5
     options.dt = 0.5;
     options.k = 2;
-    options.alpha = 0.001;
+    options.alpha = 0.01;
     options.upper_bound = single(bounds(2)); % Typical value 330;
     options.lower_bound = single(bounds(1)); % Typical value 0;
     options.curv_multiple = 1;
