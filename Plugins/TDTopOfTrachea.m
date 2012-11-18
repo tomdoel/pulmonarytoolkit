@@ -54,7 +54,7 @@ classdef TDTopOfTrachea < TDPlugin
             else
                 threshold_image = dataset.GetResult('TDThresholdLung');
             end            
-            [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(threshold_image, reporting);
+            [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(threshold_image, reporting, TDSoftwareInfo.GraphicalDebugMode);
             results = [];
             results.top_of_trachea = top_of_trachea;
             results.trachea_voxels = trachea_voxels;
