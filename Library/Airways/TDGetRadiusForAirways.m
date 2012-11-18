@@ -21,7 +21,6 @@ function results = TDGetRadiusForAirways(centreline_results, lung_image, radius_
 end
     
 function [results, airway_skeleton] = GetRadius(lung_image, airway_skeleton, radius_approximation, reporting, figure_airways_3d)
-    segments_to_do = airway_skeleton;
     results = {};
     
     number_of_segments = airway_skeleton.CountBranches;
@@ -30,12 +29,11 @@ function [results, airway_skeleton] = GetRadius(lung_image, airway_skeleton, rad
     lung_image_as_double = lung_image.BlankCopy;
     lung_image_as_double.ChangeRawImage(double(lung_image.RawImage));
     
-    while ~isempty(segments_to_do)
+    segments = airway_skeleton.GetBranchesAsListByGeneration;
+    
+    for next_segment = segments
         reporting.UpdateProgressValue(round(100*segments_done/number_of_segments));
         segments_done = segments_done + 1;
-        next_segment = segments_to_do(end);
-        segments_to_do(end) = [];
-        segments_to_do = [segments_to_do next_segment.Children];
         
         next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d);
         results{end+1} = next_result;
