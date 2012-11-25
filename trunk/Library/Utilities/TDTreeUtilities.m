@@ -47,25 +47,34 @@ classdef TDTreeUtilities < handle
         end
         
         % Adds additional branches to the tree to ensure a minimum number of generations
-        function ExpandTree(tree, number_of_generations)
+        function ExpandTree(trees, number_of_generations)
             if (number_of_generations > 0)
-                if isempty(tree.Children)
-                    new_child_1 = TDTreeModel(tree);
-                    new_child_2 = TDTreeModel(tree);
-                    new_child_1.Radius = 0.7*tree.Radius;
-                    new_child_2.Radius = 0.7*tree.Radius;
-                end
-                for child = tree.Children
-                    TDTreeUtilities.ExpandTree(child, number_of_generations - 1);
+                for tree = trees
+                    if isempty(tree.Children)
+                        new_child_1 = TDTreeModel(tree);
+                        new_child_2 = TDTreeModel(tree);
+                        new_child_1.Radius = 0.7*tree.Radius;
+                        new_child_2.Radius = 0.7*tree.Radius;
+                    end
+                    for child = tree.Children
+                        TDTreeUtilities.ExpandTree(child, number_of_generations - 1);
+                    end
                 end
             end
         end
         
-        function largest_branches = GetLargestBranches(start_branches, number_of_generations_to_search, number_of_branches_to_find)
+        % Computes all possible divisions of the tree defined by start_branches
+        % into the number of subtrees specified by number_of_branches, where
+        % each subtree is specified by a single root branch
+        function new_permutations = GetBranchPermutationsForBranchNumber(start_branches, number_of_generations_to_search, number_of_branches_to_find)
             
             % Make a copy of the tree - so we can extend it with artificial
             % branches where necessary
-            start_branches_copy = TDTreeModel.SimpleTreeCopy(start_branches);
+            start_branches_copy = [];
+            for start_branch = start_branches
+                next_start_branches_copy = TDTreeModel.SimpleTreeCopy(start_branch);
+                start_branches_copy = [start_branches_copy, next_start_branches_copy];
+            end
             
             TDTreeUtilities.ExpandTree(start_branches_copy, number_of_generations_to_search);
             
@@ -85,31 +94,38 @@ classdef TDTreeUtilities < handle
                 reporting.Error('TDTreeUtilities:PermutationsDoNotMatchSegmentNumber', 'Could not subdivide the tree into exactly the desired number of branches');
             end
             
+        end
+        
+        function largest_branches = GetLargestBranchesFromPermutations(permutations)
+            
             % Find the minimum branch radius for each branch permutation
             min_radius = [];
-            for index = 1 : length(new_permutations)
-                this_permutation = new_permutations{index};
+            for index = 1 : length(permutations)
+                this_permutation = permutations{index};
                 [sorted_permutation, sorted_radii] = TDTreeUtilities.SortBranchesByRadiusValues(this_permutation);
                 
-                % Choosing max radius
+                % Choosing min radius
                 min_radius(index) = sorted_radii(1);
                 
-                
-                new_permutations{index} = sorted_permutation;
+                permutations{index} = sorted_permutation;
             end
             
             % Choose the permutation with the largest value of the minimum radius
             [~, sort_indices] = sort(min_radius);
-            largest_branches_newtree = new_permutations{sort_indices(end)};
             
-            % Now get the corresponding branches from the original tree
-            largest_branches = TDTreeModel.empty();
-            for index = 1 : length(largest_branches_newtree)
-                next_branch = largest_branches_newtree(index);
+            largest_branch_index = sort_indices(end);
+            largest_branches = permutations{largest_branch_index};
+        end
+        
+        
+        function source_branches = BranchesToSourceBranches(branches)
+            source_branches = TDTreeModel.empty();
+            for index = 1 : length(branches)
+                next_branch = branches(index);
                 while isempty(next_branch.BranchProperties)
                     next_branch = next_branch.Parent;
                 end
-                largest_branches(end+1) = next_branch.BranchProperties.SourceBranch;
+                source_branches(end+1) = next_branch.BranchProperties.SourceBranch;
             end
         end
         
@@ -122,6 +138,82 @@ classdef TDTreeUtilities < handle
             sorted_branches = branches(sort_indices);
             sorted_radii = radius_values(sort_indices);
         end
+        
+        function sorted_segments = OrderSegmentsByCentroidI(segments_to_order, template)
+            centroids_i = [];
+            for i = 1 : length(segments_to_order)
+                centroids_i(end + 1) = TDTreeUtilities.GetICentroid(segments_to_order(i), template);
+            end
+            
+            [~, sorted_indices] = sort(centroids_i);
+            sorted_segments = segments_to_order(sorted_indices);
+        end
+        
+        function sorted_child_indices = OrderByCentroidI(start, template)
+            child_indices = start.Children;
+            centroids_i = [];
+            for i = 1 : length(child_indices)
+                centroids_i(end + 1) = TDTreeUtilities.GetICentroid(child_indices(i), template);
+            end
+            
+            [~, sorted_indices] = sort(centroids_i);
+            sorted_child_indices = child_indices(sorted_indices);
+        end
+        
+        function sorted_segments = OrderSegmentsByCentroidDistanceFromDiagonalPlane(segments_to_order, template)
+            centroids_dp = [];
+            for i = 1 : length(segments_to_order)
+                centroids_dp(end + 1) = TDTreeUtilities.GetDPCentroid(segments_to_order(i), template);
+            end
+            
+            [~, sorted_indices] = sort(centroids_dp);
+            sorted_segments = segments_to_order(sorted_indices);
+        end
+        
+        function centroid_i = GetICentroid(start, template)
+            tree = TDTreeUtilities.CentrelinePointsToLocalIndices(start.GetCentrelineTree, template);
+            centroid = TDTreeUtilities.GetCentroid(tree, template);
+            centroid_i = centroid(1);
+        end
+        
+        function centroid_dp = GetDPCentroid(start_segments, template)
+            tree_points = [];
+            for segment = start_segments
+                tree_points = [tree_points segment.GetCentrelineTree];
+            end
+            tree = TDTreeUtilities.CentrelinePointsToLocalIndices(tree_points, template);
+            centroid = TDTreeUtilities.GetCentroid(tree, template);
+            centroid_dp = - centroid(3) - centroid(1);
+        end
+        
+        function centroid = GetCentroid(indices, template)
+            [i, j, k] = ind2sub(template.ImageSize, indices);
+            centroid = zeros(1, 3);
+            centroid(1) = mean(i);
+            centroid(2) = mean(j);
+            centroid(3) = mean(k);
+        end
+        
+        function centreline_indices_local = CentrelinePointsToLocalIndices(centreline_points, template_image)
+            centreline_indices_global = [centreline_points.GlobalIndex];
+            centreline_indices_local = template_image.GlobalToLocalIndices(centreline_indices_global);
+        end
+        
+        function k_distance = GetKDistance(branch)
+            start_centreline_point = branch.GetCentrelineTree;
+            start_centreline_point = start_centreline_point(1);
+            start_k = start_centreline_point.CoordK;
+            tree_points = branch.GetCentrelineTree;
+            k_coords = [tree_points.CoordK];
+            max_k = max(k_coords);
+            min_k = min(k_coords);
+            if abs(max_k - start_k) > abs(min_k - start_k)
+                k_distance = max_k - start_k;
+            else
+                k_distance = min_k - start_k;
+            end
+        end
+        
         
     end
 end
