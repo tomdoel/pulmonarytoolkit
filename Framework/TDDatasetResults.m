@@ -167,7 +167,7 @@ classdef TDDatasetResults < handle
             % If a context has been specified then resize the output image
             % to this context
             if ~isempty(context) && isa(result, 'TDImage')
-                template_image = obj.ImageTemplates.GetTemplateImage(context);
+                template_image = obj.ImageTemplates.GetTemplateImage(context, linked_dataset_chooser, dataset_stack);
                 result.ResizeToMatch(template_image);
             end
             
