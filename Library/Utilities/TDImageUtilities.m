@@ -150,8 +150,8 @@ classdef TDImageUtilities
             dt.ChangeRawImage(seg_raw);
             dt.ImageType = TDImageType.Scaled;
         end
-        
-        function [dt, border_image] = GetDistanceTransformBySlice(image_mask, direction)
+
+        function [dt, border_image] = GetBorderDistanceTransformBySlice(image_mask, direction)
             border_image = image_mask.Copy;
             dt = image_mask.BlankCopy;
             
@@ -175,6 +175,36 @@ classdef TDImageUtilities
             filter(:) = [0 1 0 1 0 1 0 1 0];
             image_conv = convn(segmentation_2d, filter, 'same');
             segmentation_2d = (segmentation_2d & (image_conv < 4));
+        end
+        
+        % Resamples the image by inserting additional slices in one or more
+        % directions so that the image is approximately isotropic. The original
+        % image data is unchanged, and the new slices are determined by
+        % interpolation
+        function reference_image_resampled = MakeImageApproximatelyIsotropic(reference_image, interpolation_type)
+            
+            % Find a voxel size to use for the registration image. We divide up thick
+            % slices to give an approximately isotropic voxel size
+            register_voxel_size = reference_image.VoxelSize;
+            register_voxel_size = register_voxel_size./round(register_voxel_size/min(register_voxel_size));
+            
+            % Resample both images so they have the same image and voxel size
+            reference_image_resampled = reference_image.Copy;
+            
+            if strcmp(interpolation_type, 'PTK smoothed binary')
+                reference_image_resampled.ResampleBinary(register_voxel_size);
+            else
+                reference_image_resampled.Resample(register_voxel_size, interpolation_type);
+            end
+        end
+
+        % Calculates an approximate distance transform for a non-isotropic input
+        % image
+        function dt = GetNonisotropicDistanceTransform(binary_image)
+            dt = TDImageUtilities.MakeImageApproximatelyIsotropic(binary_image, '*nearest');
+            dt.ChangeRawImage(bwdist(logical(dt.RawImage)));
+            dt.Resample(binary_image.VoxelSize, '*nearest');
+            dt.ImageType = TDImageType.Scaled;
         end
 
         function [results, combined_image] = ComputeDice(image_1, image_2)
