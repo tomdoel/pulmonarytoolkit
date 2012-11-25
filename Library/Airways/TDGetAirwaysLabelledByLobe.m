@@ -93,11 +93,11 @@ function [left_lung_start, right_lung_start] = SeparateIntoLeftAndRightLungs(sta
     child_segment_1 = start_segment.Children(1);
     child_segment_2 = start_segment.Children(2);
 
-    tree_1 = CentrelinePointsToLocalIndices(child_segment_1.GetCentrelineTree, template);
-    tree_2 = CentrelinePointsToLocalIndices(child_segment_2.GetCentrelineTree, template);
+    tree_1 = TDTreeUtilities.CentrelinePointsToLocalIndices(child_segment_1.GetCentrelineTree, template);
+    tree_2 = TDTreeUtilities.CentrelinePointsToLocalIndices(child_segment_2.GetCentrelineTree, template);
     
-    centroid_1 = GetCentroid(tree_1, template);
-    centroid_2 = GetCentroid(tree_2, template);
+    centroid_1 = TDTreeUtilities.GetCentroid(tree_1, template);
+    centroid_2 = TDTreeUtilities.GetCentroid(tree_2, template);
     
     if centroid_1(2) < centroid_2(2)
         right_lung_start = child_segment_1;
@@ -119,10 +119,9 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         left_upper_startsegment = [];
     else
         
-
         % Order branches by their computed radii and choose the largest 4
-        top_branches = TDTreeUtilities.GetLargestBranches(left_lung_start, 3, 4);
-        ordered_top_branches = OrderSegmentsByCentroidDistanceFromDiagonalPlane(top_branches, template);
+        top_branches = ForceLingulaAndGetLargestBranches(left_lung_start, 3, 4, template, 2);
+        ordered_top_branches = TDTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(top_branches, template);
 
         left_lower_startsegment = [ordered_top_branches(1), ordered_top_branches(2)];
         left_upper_startsegment = [ordered_top_branches(3), ordered_top_branches(4)];
@@ -130,9 +129,48 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         left_lower_startsegment = unique(left_lower_startsegment);
         left_upper_startsegment = unique(left_upper_startsegment);
         uncertain = [];
+        
         return
     end
 end
+
+function largest_branches = GetLargestBranches(start_branches, number_of_generations_to_search, number_of_branches_to_find)
+    permutations = TDTreeUtilities.GetBranchPermutationsForBranchNumber(start_branches, number_of_generations_to_search, number_of_branches_to_find);
+    largest_branches = TDTreeUtilities.GetLargestBranchesFromPermutations(permutations);
+    
+    % Now get the corresponding branches from the original tree
+    largest_branches = TDTreeUtilities.BranchesToSourceBranches(largest_branches);
+end
+
+function largest_branches = ForceLingulaAndGetLargestBranches(start_branches, number_of_generations_to_search, number_of_branches_to_find, template, number_of_branches_1)
+    
+    permutations = TDTreeUtilities.GetBranchPermutationsForBranchNumber(start_branches, number_of_generations_to_search, number_of_branches_to_find);
+    
+    % Remove permutations where the third branch does not have a
+    % downward direction
+    new_permutations = [];
+    for index = 1 : length(permutations)
+        this_permutation = permutations{index};
+        permutation_source = TDTreeUtilities.BranchesToSourceBranches(this_permutation);
+        ordered_branches = TDTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(permutation_source, template);
+        k_distance_3 = TDTreeUtilities.GetKDistance(ordered_branches(3));
+        if k_distance_3 > 0
+            new_permutations{end + 1} = this_permutation;
+        end
+    end
+    
+    if isempty(new_permutations)
+        reporting.Error('TDTreeUtilities:NoValidPermutations', 'Branches did not match the expected criteria');
+    end
+    
+    permutations = new_permutations;
+    
+    largest_branches = TDTreeUtilities.GetLargestBranchesFromPermutations(permutations);
+    
+    % Now get the corresponding branches from the original tree
+    largest_branches = TDTreeUtilities.BranchesToSourceBranches(largest_branches);
+end
+
 
 function [left_upper_startsegment, left_lower_startsegment, uncertain] = SeparateLeftLungIntoLobes(left_lung_start, template, reporting)
     if length(left_lung_start.Children) > 2
@@ -150,16 +188,16 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         first_children = first_bifurcation.Children;
         first_grandchildren = [first_children(1).Children, first_children(2).Children];
         
-        ordered_grandchildren = OrderSegmentsByCentroidDistanceFromDiagonalPlane(first_grandchildren, template);
+        ordered_grandchildren = TDTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(first_grandchildren, template);
         
         lower_lobe_reference = ordered_grandchildren(1);
         upper_lobe_reference = ordered_grandchildren(end);
         uncertain_segments = ordered_grandchildren(2 : end-1);
         
-        upper_lobe_dpcentroid = GetDPCentroid(upper_lobe_reference, template);
-        lower_lobe_dpcentroid = GetDPCentroid(lower_lobe_reference, template);
+        upper_lobe_dpcentroid = TDTreeUtilities.GetDPCentroid(upper_lobe_reference, template);
+        lower_lobe_dpcentroid = TDTreeUtilities.GetDPCentroid(lower_lobe_reference, template);
 
-        lower_lobe_3centroid = GetCentroid(CentrelinePointsToLocalIndices(lower_lobe_reference.GetCentrelineTree, template), template);
+        lower_lobe_3centroid = TDTreeUtilities.GetCentroid(CentrelinePointsToLocalIndices(lower_lobe_reference.GetCentrelineTree, template), template);
 
         if abs(upper_lobe_dpcentroid - lower_lobe_dpcentroid) < 20
             reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the branch centrelines.');
@@ -169,8 +207,8 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         left_lower_startsegment = lower_lobe_reference;
         
         for i = 1 : length(uncertain_segments)
-            uncertain_dpcentroid = GetDPCentroid(uncertain_segments(i), template);
-            uncertain_3centroid = GetCentroid(CentrelinePointsToLocalIndices(uncertain_segments(i).GetCentrelineTree, template), template);
+            uncertain_dpcentroid = TDTreeUtilities.GetDPCentroid(uncertain_segments(i), template);
+            uncertain_3centroid = TDTreeUtilities.GetCentroid(CentrelinePointsToLocalIndices(uncertain_segments(i).GetCentrelineTree, template), template);
             distance_to_upper_lobe = abs(uncertain_dpcentroid - upper_lobe_dpcentroid);
             distance_to_lower_lobe = abs(uncertain_dpcentroid - lower_lobe_dpcentroid);
             
@@ -221,7 +259,7 @@ function [right_upper_start_branches, right_midlower_start_branches] = SeparateR
         right_midlower_start_branches = [];
     else
         % Order branches by their computed radii and choose the largest 3
-        top_branches = TDTreeUtilities.GetLargestBranches(right_lung_start, 2, 3);
+        top_branches = GetLargestBranches(right_lung_start, 2, 3);
         
         % Find the ancestor branch of the two widest branches - this is the
         % bifurcation point between the upper and middle lobes
@@ -234,7 +272,7 @@ function [right_upper_start_branches, right_midlower_start_branches] = SeparateR
             % In this case the lower branch goes into the mid/lower lobes, and
             % the upper branches go into the upper lobe
             branches_to_order = ancestor_branch.Children;
-            ordered_branches = OrderSegmentsByCentroidDistanceFromDiagonalPlane(branches_to_order, template);
+            ordered_branches = TDTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(branches_to_order, template);
             right_upper_start_branches = ordered_branches(end);
             right_midlower_start_branches = ordered_branches(1:end-1);
         else
@@ -243,7 +281,7 @@ function [right_upper_start_branches, right_midlower_start_branches] = SeparateR
             % before the upper/mid-lower bifurcation occurs
             branches_to_order = ancestor_branch.Children;
             earlier_branches = setdiff(ancestor_branch.Parent.Children, ancestor_branch);
-            ordered_branches = OrderSegmentsByCentroidDistanceFromDiagonalPlane(branches_to_order, template);
+            ordered_branches = TDTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(branches_to_order, template);
             right_upper_start_branches = [ordered_branches(2:end), earlier_branches];
             right_midlower_start_branches = ordered_branches(1);
         end
@@ -267,8 +305,8 @@ function [right_upper_start_branches, right_midlower_start_branches] = SeparateR
         child_index_1 = right_lung_start.Children(1);
         child_index_2 = right_lung_start.Children(2);
         
-        centroid_1 = GetDPCentroid(child_index_1, template);
-        centroid_2 = GetDPCentroid(child_index_2, template);
+        centroid_1 = TDTreeUtilities.GetDPCentroid(child_index_1, template);
+        centroid_2 = TDTreeUtilities.GetDPCentroid(child_index_2, template);
         
         if abs(centroid_1 - centroid_2) < 20
             reporting.Error('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the branch centrelines');
@@ -290,9 +328,9 @@ function [right_mid_startindices, right_lower_startindices] = SeparateRightLungI
     end
     
     % Order branches by their computed radii and choose the largest 3
-    top_branches = TDTreeUtilities.GetLargestBranches(right_midlower_startindex, 2, 3);
+    top_branches = GetLargestBranches(right_midlower_startindex, 2, 3);
 
-    ordered_branches = OrderSegmentsByCentroidI(top_branches, template);
+    ordered_branches = TDTreeUtilities.OrderSegmentsByCentroidI(top_branches, template);
     right_mid_startindices = ordered_branches(1);
     right_lower_startindices = ordered_branches(2:end);
 end
@@ -314,12 +352,12 @@ function [right_mid_startindices, right_lower_startindices] = SeparateRightLungI
         right_mid_startindices = [];
         right_lower_startindices = [];
     else
-        sorted_child_indices_A = OrderByCentroidI(right_midlower_startindex, template);
+        sorted_child_indices_A = TDTreeUtilities.OrderByCentroidI(right_midlower_startindex, template);
         child_index_A1 = sorted_child_indices_A(1);
         child_index_A2 = sorted_child_indices_A(2);
 
-        centroid_A1 = GetICentroid(child_index_A1, template);
-        centroid_A2 = GetICentroid(child_index_A2, template);
+        centroid_A1 = TDTreeUtilities.GetICentroid(child_index_A1, template);
+        centroid_A2 = TDTreeUtilities.GetICentroid(child_index_A2, template);
         if abs(centroid_A1 - centroid_A2) < 10
             reporting.ShowWarning('TDGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Not enough centroid separation.', []);
         end
@@ -335,12 +373,12 @@ function [right_mid_startindices, right_lower_startindices] = SeparateRightLungI
 
         child_indices_B = right_mid_startindices.Children;
         if ~isempty(child_indices_B)
-            sorted_child_indices_B = OrderByCentroidI(child_index_A1, template);
+            sorted_child_indices_B = TDTreeUtilities.OrderByCentroidI(child_index_A1, template);
             child_index_B1 = sorted_child_indices_B(1);
             child_index_B2 = sorted_child_indices_B(2);
             
-            centroid_B1 = GetICentroid(child_index_B1, template);
-            centroid_B2 = GetICentroid(child_index_B2, template);
+            centroid_B1 = TDTreeUtilities.GetICentroid(child_index_B1, template);
+            centroid_B2 = TDTreeUtilities.GetICentroid(child_index_B2, template);
            
             distance_1 = centroid_A2 - centroid_B2;
             distance_2 = centroid_B2 - centroid_B1;
@@ -359,60 +397,3 @@ function [right_mid_startindices, right_lower_startindices] = SeparateRightLungI
         end
     end
 end
-
-function sorted_segments = OrderSegmentsByCentroidI(segments_to_order, template)
-    centroids_i = [];
-    for i = 1 : length(segments_to_order)
-        centroids_i(end + 1) = GetICentroid(segments_to_order(i), template);
-    end
-    
-    [~, sorted_indices] = sort(centroids_i);
-    sorted_segments = segments_to_order(sorted_indices);
-end
-
-function sorted_child_indices = OrderByCentroidI(start, template)
-    child_indices = start.Children;
-    centroids_i = [];
-    for i = 1 : length(child_indices)
-        centroids_i(end + 1) = GetICentroid(child_indices(i), template);
-    end
-    
-    [~, sorted_indices] = sort(centroids_i);
-    sorted_child_indices = child_indices(sorted_indices);
-end
-
-function sorted_segments = OrderSegmentsByCentroidDistanceFromDiagonalPlane(segments_to_order, template)
-    centroids_dp = [];
-    for i = 1 : length(segments_to_order)
-        centroids_dp(end + 1) = GetDPCentroid(segments_to_order(i), template);
-    end
-    
-    [~, sorted_indices] = sort(centroids_dp);
-    sorted_segments = segments_to_order(sorted_indices);
-end
-
-function centroid_i = GetICentroid(start, template)
-    tree = CentrelinePointsToLocalIndices(start.GetCentrelineTree, template);
-    centroid = GetCentroid(tree, template);
-    centroid_i = centroid(1);
-end
-
-function centroid_dp = GetDPCentroid(start_segment, template)
-    tree = CentrelinePointsToLocalIndices(start_segment.GetCentrelineTree, template);
-    centroid = GetCentroid(tree, template);
-    centroid_dp = - centroid(3) - centroid(1);
-end
-
-function centroid = GetCentroid(indices, template)
-    [i, j, k] = ind2sub(template.ImageSize, indices);
-    centroid = zeros(1, 3);
-    centroid(1) = mean(i);
-    centroid(2) = mean(j);
-    centroid(3) = mean(k);    
-end
-
-function centreline_indices_local = CentrelinePointsToLocalIndices(centreline_points, template_image)
-    centreline_indices_global = [centreline_points.GlobalIndex];
-    centreline_indices_local = template_image.GlobalToLocalIndices(centreline_indices_global);
-end
-
