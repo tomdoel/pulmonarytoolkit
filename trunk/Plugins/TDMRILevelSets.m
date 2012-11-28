@@ -78,6 +78,28 @@ classdef TDMRILevelSets < TDPlugin
                 end
                 results.ReplaceImageSlice(results_slice.RawImage, coronal_index, TDImageOrientation.Coronal);
             end
+            
+            results.BinaryMorph(@imopen, 2);
+            
+            % Select largest component in each coronal slice
+            for coronal_index = 1 : results.ImageSize(1)
+                lung_mask_slice = results.GetSlice(coronal_index, TDImageOrientation.Coronal);
+                if any(lung_mask_slice(:))
+
+                    % Obtain connected component matrix
+                    cc = bwconncomp(lung_mask_slice, 8);
+                    
+                    % Find largest region
+                    num_pixels = cellfun(@numel, cc.PixelIdxList);
+                    [~, sorted_largest_areas_indices] = sort(num_pixels, 'descend');
+                    largest_region_index = sorted_largest_areas_indices(1);
+                    lung_mask_slice = results_slice.RawImage;
+                    lung_mask_slice(:) = false;
+                    lung_mask_slice(cc.PixelIdxList{largest_region_index}) = true;
+                    
+                    results.ReplaceImageSlice(lung_mask_slice, coronal_index, TDImageOrientation.Coronal);
+                end
+            end
         end
     end
 end
