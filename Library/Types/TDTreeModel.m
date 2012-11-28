@@ -151,7 +151,7 @@ classdef TDTreeModel < TDTree
             end
         end
         
-        function length_mm = LengthMm
+        function length_mm = LengthMm(obj)
             coord_start = [obj.StartPoint.CoordI, obj.StartPoint.CoordJ, obj.StartPoint.CoordK];
             coord_end = [obj.EndPoint.CoordI, obj.EndPoint.CoordJ, obj.EndPoint.CoordK];
             length_mm = norm(coord_start - coord_end, 2);            
