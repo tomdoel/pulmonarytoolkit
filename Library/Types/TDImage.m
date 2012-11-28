@@ -769,7 +769,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
             obj.NotifyImageChanged;            
         end
         
-        % Performs a Matlab morphological operation using s apherical element of
+        % Performs a Matlab morphological operation using a spherical element of
         % the specified size in mm, adjusting for the voxel size
         function Morph(obj, morph_function_handle, size_mm)
             % Create structural element as a ball shape
@@ -786,7 +786,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
             ball_element = obj.CreateBallStructuralElement(size_mm);
             
             obj.RawImage = obj.RawImage > 0;
-            obj.RawImage = uint8(morph_function_handle(obj.RawImage, ball_element));
+            obj.RawImage = boolean(morph_function_handle(obj.RawImage, ball_element));
             obj.NotifyImageChanged;
         end
         
