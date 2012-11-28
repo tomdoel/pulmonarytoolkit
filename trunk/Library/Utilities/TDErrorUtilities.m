@@ -21,12 +21,16 @@ classdef TDErrorUtilities < handle
                 % Get the call stack, excluding the call to this function and the
                 % caller of this function
                 [stack, ~] = dbstack(levels_to_ignore, '-completenames');
-                stack_top = stack(1);
-                calling_function = stack_top.name;
-                if length(calling_function) < 11 || ~strcmp(calling_function(1:11), 'TDReporting')
+                if isempty(stack)
                     caller_found = true;
+                else
+                    stack_top = stack(1);
+                    calling_function = stack_top.name;
+                    if length(calling_function) < 11 || ~strcmp(calling_function(1:11), 'TDReporting')
+                        caller_found = true;
+                    end
+                    levels_to_ignore = levels_to_ignore + 1;
                 end
-                levels_to_ignore = levels_to_ignore + 1;
             end
         end
     end
