@@ -20,7 +20,7 @@ function [deformation_field, deformed_image] = TDSolveForFluidRegistration(image
 
     % For the fluid registration, the images must be the same size and have the
     % same voxel size
-    isotropic_reference_image = MakeImageApproximatelyIsotropic(reference_image);
+    isotropic_reference_image = TDImageUtilities.MakeImageApproximatelyIsotropic(reference_image, 'PTK smoothed binary');
     
     % The fluid registration will be performed after the rigid registration has
     % been performed
@@ -33,18 +33,7 @@ function [deformation_field, deformed_image] = TDSolveForFluidRegistration(image
     deformed_image = TDRegisterImageFluid(image_to_transform, deformation_field, '*nearest', reporting);
 end
 
-function reference_image2 = MakeImageApproximatelyIsotropic(reference_image)
-    
-    % Find a voxel size to use for the registration image. We divide up thick
-    % slices to give an approximately isotropic voxel size
-    register_voxel_size = reference_image.VoxelSize;
-    register_voxel_size = register_voxel_size./round(register_voxel_size/min(register_voxel_size));
-    
-    % Resample both images so they have the same image and voxel size
-    reference_image2 = reference_image.Copy;
-    reference_image2.ResampleBinary(register_voxel_size);    
-end
-    
+
 function affine_initial_matrix = GetInitialTransformation(image_to_transform, reference_image, reporting)
     % Initially perform a centroid registration
     [affine_initial_matrix, ~] = TDRegisterCentroid(image_to_transform, reference_image, reporting);
