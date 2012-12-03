@@ -24,6 +24,7 @@ function TDAddPtkPaths(varargin)
         path_folders{end + 1} = 'Plugins';
         path_folders{end + 1} = 'Library';
         path_folders{end + 1} = fullfile('Library', 'Airways');
+        path_folders{end + 1} = fullfile('Library', 'Analysis');
         path_folders{end + 1} = fullfile('Library', 'File');
         path_folders{end + 1} = fullfile('Library', 'GuiComponents');
         path_folders{end + 1} = fullfile('Library', 'Interfaces');
