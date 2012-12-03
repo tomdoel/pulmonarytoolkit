@@ -49,17 +49,35 @@ classdef TDLobarHistogram < TDPlugin
             left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
             
             
+            label_font_size = 10;
+            legend_font_size = 4;
+            compartment_font_size = 6;
+            axis_line_width = 1;
+            axes_label_font_size = 6;
+            widthheightratio = 4/3;
+            page_width_cm = 8;
+            resolution_dpi = 300;
+            compartment_line_width_points = 0.5;
+            font_name = 'Arial';
+
+            
             figure_handle = figure;
+            set(figure_handle, 'Units','centimeters');
+            graph_size = [page_width_cm, (page_width_cm/widthheightratio)];
+            
             axes_handle = gca;
             set(figure_handle, 'Name', [roi.Title ' : CT Histogram']);
             set(figure_handle, 'PaperPositionMode', 'auto');
-            TDLobarHistogram.Maximize;
+            set(figure_handle, 'position', [0,0, graph_size]);
+
+%             TDLobarHistogram.Maximize;
             
             hold(axes_handle, 'on');
+            axis manual
 
             
             % Shade the compartments
-            max_y = 70;
+            max_y = 90;
             rectangle('Parent', axes_handle, 'Position', [-1000, 0, 100, max_y], 'EdgeColor', 'none', 'FaceColor', [0.9 0.9 1])
             rectangle('Parent', axes_handle, 'Position', [ -900, 0, 400, max_y], 'EdgeColor', 'none', 'FaceColor', [0.8 0.8 1])
             rectangle('Parent', axes_handle, 'Position', [ -500, 0, 400, max_y], 'EdgeColor', 'none', 'FaceColor', [0.7 0.7 1])
@@ -83,30 +101,34 @@ classdef TDLobarHistogram < TDPlugin
             graph_data.LeftLower = TDLobarHistogram.Histogram(roi, lobes.RawImage == 6, 'y', axes_handle);
             legend_strings = {'Whole lung', 'Left lung', 'Right lung', 'Upper right lobe', 'Middle right lobe', 'Lower right lobe', 'Upper left lobe', 'Lower left lobe'};
   
-            legend(legend_strings, 'FontName', 'Helvetica Neue', 'FontSize', 20, 'Location', 'East');
+            legend(legend_strings, 'FontName', font_name, 'FontSize', legend_font_size, 'Location', 'SouthEast');
 
             % Set tick marks
-            set(axes_handle, 'XTick', -1000:100:100);
-            set(axes_handle, 'YTick', 0:10:50);
+            set(axes_handle, 'XTick', -1000:200:100);
+            set(axes_handle, 'YTick', 0:10:max_y);
+            set(axes_handle, 'FontSize', axes_label_font_size);
+            set(axes_handle, 'LineWidth', axis_line_width);
             
             % Label the compartments
-            text('Parent', axes_handle, 'Position', [-900-5, max_y-2], 'String', 'Hyperinflated', 'FontName', 'Helvetica Neue', 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
-            text('Parent', axes_handle, 'Position', [-500-5, max_y-2], 'String', 'Normally aerated', 'FontName', 'Helvetica Neue', 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
-            text('Parent', axes_handle, 'Position', [-100-5, max_y-2], 'String', 'Normally aerated', 'FontName', 'Helvetica Neue', 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
-            text('Parent', axes_handle, 'Position', [ 200-5, max_y-2], 'String', 'Non aerated', 'FontName', 'Helvetica Neue', 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
+            text('Parent', axes_handle, 'Position', [-900-5, max_y-2], 'String', 'Hyperinflated', 'FontName', font_name, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', compartment_font_size);
+            text('Parent', axes_handle, 'Position', [-500-5, max_y-2], 'String', 'Normally aerated', 'FontName', font_name, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', compartment_font_size);
+            text('Parent', axes_handle, 'Position', [-100-5, max_y-2], 'String', 'Normally aerated', 'FontName', font_name, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', compartment_font_size);
+            text('Parent', axes_handle, 'Position', [ 200-5, max_y-2], 'String', 'Non aerated', 'FontName', font_name, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', compartment_font_size);
             
             % Draw lines between the compartments
-            line('Parent', axes_handle, 'XData', [-1000, -1000], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--')
-            line('Parent', axes_handle, 'XData', [ -900,  -900], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--')
-            line('Parent', axes_handle, 'XData', [ -500,  -500], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--')
-            line('Parent', axes_handle, 'XData', [ -100,  -100], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--')
-            line('Parent', axes_handle, 'XData', [  200,   200], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--')
+            line('Parent', axes_handle, 'XData', [-1000, -1000], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--', 'LineWidth', compartment_line_width_points)
+            line('Parent', axes_handle, 'XData', [ -900,  -900], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--', 'LineWidth', compartment_line_width_points)
+            line('Parent', axes_handle, 'XData', [ -500,  -500], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--', 'LineWidth', compartment_line_width_points)
+            line('Parent', axes_handle, 'XData', [ -100,  -100], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--', 'LineWidth', compartment_line_width_points)
+            line('Parent', axes_handle, 'XData', [  200,   200], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--', 'LineWidth', compartment_line_width_points)
             
-            xlabel(axes_handle, 'CT numbers (Hounsfield Units)', 'FontSize', 20);
-            ylabel(axes_handle, 'CT numbers frequency (%)', 'FontSize', 20);
+            xlabel(axes_handle, 'CT numbers (Hounsfield Units)', 'FontSize', label_font_size, 'FontName', font_name);
+            ylabel(axes_handle, 'CT numbers frequency (%)', 'FontSize', label_font_size, 'FontName', font_name);
             axis(axes_handle, [-1100 200 0 max_y]);
 
-            TDLobarHistogram.SaveToFile(dataset, graph_data, figure_handle);
+            
+            
+            TDLobarHistogram.SaveToFile(dataset, graph_data, figure_handle, resolution_dpi);
 
         end
     end
@@ -141,7 +163,7 @@ classdef TDLobarHistogram < TDPlugin
             percentages_spline = ppval(percentages_spline, hu_spline)';
             
             % Plot the spline curve
-            plot(axes_handle, hu_spline, percentages_spline, colour, 'LineWidth', 2);
+            plot(axes_handle, hu_spline, percentages_spline, colour, 'LineWidth', 1);
             results = [];
             results.Hu = hu_label;
             results.Percentages = hu_percentages;
@@ -157,7 +179,7 @@ classdef TDLobarHistogram < TDPlugin
             set(fig,'units',units);
         end
         
-        function SaveToFile(dataset, graph_data, figure_handle)
+        function SaveToFile(dataset, graph_data, figure_handle, resolution)
             results_directory = TDPTK.GetResultsDirectoryAndCreateIfNecessary;
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
@@ -178,8 +200,15 @@ classdef TDLobarHistogram < TDPlugin
             TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.LeftLower,  'LEFTLOWR');
             
             fclose(file_handle);
-            figure_filename = fullfile(file_name, ['LobeHistogram.tif']);
-            saveas(figure_handle, figure_filename);
+%             figure_filename = fullfile(file_name, ['LobeHistogram.tif']);
+%             saveas(figure_handle, figure_filename);
+            
+            figure_filename_2 = fullfile(file_name, ['LobeHistogram']);
+            resolution_str = ['-r' num2str(resolution)];
+            
+            print(figure_handle, '-depsc2', resolution_str, figure_filename_2);   % Export to .eps
+            print(figure_handle, '-dpng', resolution_str, figure_filename_2);     % Export .png
+            
         end
         
         function SaveLobeToFile(file_handle, lobe_data, lobe_id)
