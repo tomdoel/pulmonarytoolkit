@@ -24,7 +24,7 @@ classdef TDDensityGridPerLobe < TDPlugin
 
         AllowResultsToBeCached = false
         AlwaysRunPlugin = true
-        PluginType = 'ReplaceOverlay'
+        PluginType = 'DoNothing'
         HidePluginInDisplay = false
         FlattenPreviewImage = false
         TDPTKVersion = '1'
@@ -46,7 +46,9 @@ classdef TDDensityGridPerLobe < TDPlugin
             grid_spacing_3 = [grid_spacing_mm, grid_spacing_mm, grid_spacing_mm];
             
             % Get the average density
-            density_average = dataset.GetResult('TDDensityAverage');
+            density_average_result = dataset.GetResult('TDDensityAverage');
+            density_average = density_average_result.DensityAverage;
+            density_average_mask = density_average_result.DensityAverageMask;
 
             reporting.ShowProgress('Resample and saving density per lobe to files');
 
@@ -64,12 +66,15 @@ classdef TDDensityGridPerLobe < TDPlugin
                 % Crop the density to the same size
                 density_average_copy = density_average.Copy;
                 density_average_copy.ResizeToMatch(lobes_copy);
+                density_average_mask_copy = density_average_mask.Copy;
+                density_average_mask_copy.ResizeToMatch(lobes_copy);
 
                 % Resample lobes and density
                 lobes_copy.Resample(grid_spacing_3, '*nearest')
                 density_average_copy.Resample(grid_spacing_3, '*nearest')
+                density_average_mask_copy.Resample(grid_spacing_3, '*nearest')
                 
-                local_indices_for_this_lobe = find(lobes_copy.RawImage);
+                local_indices_for_this_lobe = find(lobes_copy.RawImage & density_average_mask_copy.RawImage);
                 global_indices_for_this_lobe = lobes_copy.LocalToGlobalIndices(local_indices_for_this_lobe);
                 [ic, jc, kc] = lobes_copy.GlobalIndicesToCoordinatesMm(global_indices_for_this_lobe);
                 density_values = density_average_copy.RawImage(local_indices_for_this_lobe);
