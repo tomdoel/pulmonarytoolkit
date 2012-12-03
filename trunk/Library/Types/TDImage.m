@@ -901,7 +901,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
         % Given a set of global indices, compute the coordinates of each in mm
         function [ic, jc, kc] = GlobalIndicesToCoordinatesMm(obj, global_indices)
             [ic, jc, kc] = obj.GlobalIndicesToGlobalCoordinates(global_indices);
-            [ic, jc, kc] = obj.GlobalCoordinatesToCoordinatesMm(obj, [ic, jc, kc]);
+            [ic, jc, kc] = obj.GlobalCoordinatesToCoordinatesMm([ic, jc, kc]);
         end
         
         % Given a set of global indices, compute the coordinates of each in mm
