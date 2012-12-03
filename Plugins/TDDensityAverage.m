@@ -8,7 +8,7 @@ classdef TDDensityAverage < TDPlugin
     %     Plugins should not be run directly from your code.
     %
     %     TDDensityAverage computes the density of each voxel, averaged over a
-    %     3x3x3 neighbourhood.
+    %     local neighbourhood.
     %
     %
     %     Licence
@@ -38,42 +38,17 @@ classdef TDDensityAverage < TDPlugin
         function results = RunPlugin(dataset, reporting)
             reporting.ShowProgress('Fetching ROI');
             lung_roi = dataset.GetResult('TDLungROI');
-            
-            density_average_el = ones(5,5,5);
-            size_el = numel(density_average_el);
-            
-            % Create a lung mask excluding the surface layer of voxels
-            reporting.ShowProgress('Computing lung mask');
             mask = dataset.GetResult('TDLeftAndRightLungs');
-            surface = dataset.GetResult('TDLungSurface');
-            surface = convn(logical(surface.RawImage), true(3,3,3), 'same');
-            mask.ChangeRawImage((mask.RawImage > 0) & (~surface));
+            [~, airways] = dataset.GetResult('TDAirways');
             
-            % Remove the mask from the lung image
-            lung_roi.ChangeRawImage(int16(lung_roi.RawImage).*int16(mask.RawImage));
-
-            % Average the mask, in order to produce a scaling for the density to
-            % take into account edge voxels
-            reporting.ShowProgress('Computing scaling factor');
-            mask_averaged = convn(single(mask.RawImage), density_average_el, 'same');
-            zero_mask = mask_averaged == 0;
-            mask_averaged(zero_mask) = size_el;
-            
-            reporting.ShowProgress('Computing average lung density');
-            density_g_mL_image = TDConvertCTToDensity(lung_roi);
-            density_averaged = convn(density_g_mL_image.RawImage, density_average_el, 'same')/size_el;
-            
-            % Rescale image. This adjusts for lower densities near the
-            % lung boundaries where the contributing density values have been
-            % masked out
-            reporting.ShowProgress('Rescaling lung density');
-            density_averaged = density_averaged.*(size_el/mask_averaged);
-            density_averaged(zero_mask) = 0;
-            
-            reporting.ShowProgress('Storing results');
-            results = lung_roi.BlankCopy;
-            results.ChangeRawImage(density_averaged);
-            results.ImageType = TDImageType.Scaled;
+            [density_average, density_average_mask] = TDComputeDensityAverage(lung_roi, mask, airways, reporting);
+            results = [];
+            results.DensityAverage = density_average;
+            results.DensityAverageMask = density_average_mask;
         end
+        
+         function results = GenerateImageFromResults(results, ~, ~)
+             results = results.DensityAverage;
+         end
     end
 end
