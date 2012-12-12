@@ -35,6 +35,17 @@ classdef TDDensityVsHeight < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
+            label_font_size = 10;
+            legend_font_size = 9;
+            widthheightratio = 4/3;
+            page_width_cm = 13;
+            resolution_dpi = 300;
+            font_name = 'Arial';
+            line_width = 1.5;
+            marker_line_width = 1;
+            
+            marker_size = 8;
+            
             results = [];
 
             lung_roi = dataset.GetResult('TDLungROI');
@@ -61,10 +72,13 @@ classdef TDDensityVsHeight < TDPlugin
             end
 
             figure_handle = figure;
+            set(figure_handle, 'Units', 'centimeters');
+            graph_size = [page_width_cm, (page_width_cm/widthheightratio)];
+            
             axes_handle = gca;
             set(figure_handle, 'Name', [lung_roi.Title ' : Density vs gravitational height']);
             set(figure_handle, 'PaperPositionMode', 'auto');
-            TDDensityVsHeight.Maximize;
+            set(figure_handle, 'position', [0,0, graph_size]);
             hold(axes_handle, 'on');
 
             x_ticks = 0 : x_tick_spacing : max_x;
@@ -76,21 +90,21 @@ classdef TDDensityVsHeight < TDPlugin
             end
             
             % Plot the markers and error bars
-            TDDensityVsHeight.PlotForLung(left_lung_results, axes_handle, [0, 0, 1], 'd', 0.2);
-            TDDensityVsHeight.PlotForLung(right_lung_results, axes_handle, [1, 0, 0], 's', -0.2);
+            TDDensityVsHeight.PlotForLung(left_lung_results, axes_handle, [0, 0, 1], 'd', 0.2, marker_size, line_width, marker_line_width);
+            TDDensityVsHeight.PlotForLung(right_lung_results, axes_handle, [1, 0, 0], 's', -0.2, marker_size, line_width, marker_line_width);
 
             % Create the legend
             legend_strings = {'Left', 'Right'};
-            legend(legend_strings, 'FontName', 'Helvetica Neue', 'FontSize', 20, 'Location', 'West');
+            legend(legend_strings, 'FontName', font_name, 'FontSize', legend_font_size, 'Location', 'East');
             
             % Set the axes
-            xlabel(axes_handle, 'Density (kg/l)', 'FontSize', 20);
+            xlabel(axes_handle, 'Density (kg/l)', 'FontName', font_name, 'FontSize', label_font_size);
             set(gca, 'XTick', x_ticks)
-            set(gca, 'XTickLabel', sprintf('%1.4f|', x_ticks))
-            ylabel(axes_handle, 'Gravitational height (%)', 'FontSize', 20);
+            set(gca, 'XTickLabel', sprintf('%1.2f|', x_ticks))
+            ylabel(axes_handle, 'Gravitational height (%)', 'FontName', font_name, 'FontSize', label_font_size);
             axis([min(x_ticks) max_x 0 100]);
             
-            TDDensityVsHeight.SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle);
+            TDDensityVsHeight.SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle, resolution_dpi);
         end
         
         function [global_gravity_bin_boundaries, lung_height_mm] = GetGravityBins(whole_lung_mask)
@@ -154,7 +168,7 @@ classdef TDDensityVsHeight < TDPlugin
             
         end
         
-        function PlotForLung(results, axes_handle, colour, symbol, errorbar_offset)
+        function PlotForLung(results, axes_handle, colour, symbol, errorbar_offset, marker_size, line_width, marker_line_width)
 
             % Plot error bars
             for index = 1 : length(results.mean_density_values)
@@ -162,18 +176,18 @@ classdef TDDensityVsHeight < TDPlugin
                 gravity = results.gravity_percentage_values(index);
                 y_position = gravity + errorbar_offset;
                 stdev = results.std_values(index);
-                h_line = line('Parent', axes_handle, 'XData', [density - stdev/2, density + stdev/2], 'YData', [y_position, y_position], 'Color', colour, 'LineStyle', '-', 'LineWidth', 2);
+                h_line = line('Parent', axes_handle, 'XData', [density - stdev/2, density + stdev/2], 'YData', [y_position, y_position], 'Color', colour, 'LineStyle', '-', 'LineWidth', line_width);
                 set(get(get(h_line,'Annotation'),'LegendInformation'), 'IconDisplayStyle','off'); % Exclude line from legend
             end
 
             % Plot markers
-            plot(axes_handle, results.mean_density_values, results.gravity_percentage_values, symbol, 'LineWidth', 2, 'MarkerEdgeColor', colour, 'Color', colour, 'MarkerSize', 20, 'MarkerFaceColor', min(1, colour + 0.5));
+            plot(axes_handle, results.mean_density_values, results.gravity_percentage_values, symbol, 'LineWidth', marker_line_width, 'MarkerEdgeColor', colour, 'Color', colour, 'MarkerSize', marker_size, 'MarkerFaceColor', min(1, colour + 0.5));
 
         end
     end
     
     methods (Static, Access = private)
-        function SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle)
+        function SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle, resolution)
             results_directory = TDPTK.GetResultsDirectoryAndCreateIfNecessary;
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
@@ -196,18 +210,12 @@ classdef TDDensityVsHeight < TDPlugin
             end
             
             fclose(file_handle);
-            figure_filename = fullfile(file_name, ['DensityVsHeight.tif']);
-            saveas(figure_handle, figure_filename);
-        end
-        
-        %maximize Displays a figure full-screen
-        function Maximize(fig)
             
-            if nargin==0, fig=gcf; end
+            figure_filename_2 = fullfile(file_name, ['DensityVsHeight']);
+            resolution_str = ['-r' num2str(resolution)];
             
-            units=get(fig,'units');
-            set(fig,'units','normalized','outerposition',[0 0 1 1]);
-            set(fig,'units',units);
+            print(figure_handle, '-depsc2', resolution_str, figure_filename_2);   % Export to .eps
+            print(figure_handle, '-dpng', resolution_str, figure_filename_2);     % Export .png            
         end
     end
 end
