@@ -70,8 +70,6 @@ classdef TDLobarHistogram < TDPlugin
             set(figure_handle, 'PaperPositionMode', 'auto');
             set(figure_handle, 'position', [0,0, graph_size]);
 
-%             TDLobarHistogram.Maximize;
-            
             hold(axes_handle, 'on');
             axis manual
 
@@ -126,8 +124,6 @@ classdef TDLobarHistogram < TDPlugin
             ylabel(axes_handle, 'CT numbers frequency (%)', 'FontSize', label_font_size, 'FontName', font_name);
             axis(axes_handle, [-1100 200 0 max_y]);
 
-            
-            
             TDLobarHistogram.SaveToFile(dataset, graph_data, figure_handle, resolution_dpi);
 
         end
@@ -169,16 +165,6 @@ classdef TDLobarHistogram < TDPlugin
             results.Percentages = hu_percentages;
         end
         
-        %maximize Displays a figure full-screen
-        function Maximize(fig)
-            
-            if nargin==0, fig=gcf; end
-            
-            units=get(fig,'units');
-            set(fig,'units','normalized','outerposition',[0 0 1 1]);
-            set(fig,'units',units);
-        end
-        
         function SaveToFile(dataset, graph_data, figure_handle, resolution)
             results_directory = TDPTK.GetResultsDirectoryAndCreateIfNecessary;
             image_info = dataset.GetImageInfo;
@@ -200,8 +186,6 @@ classdef TDLobarHistogram < TDPlugin
             TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.LeftLower,  'LEFTLOWR');
             
             fclose(file_handle);
-%             figure_filename = fullfile(file_name, ['LobeHistogram.tif']);
-%             saveas(figure_handle, figure_filename);
             
             figure_filename_2 = fullfile(file_name, ['LobeHistogram']);
             resolution_str = ['-r' num2str(resolution)];
