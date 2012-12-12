@@ -69,7 +69,7 @@ classdef TDAirways < TDPlugin
 
             start_point = trachea_results.top_of_trachea;
 
-            maximum_number_of_generations = 10;
+            maximum_number_of_generations = 15;
             explosion_multiplier = 5;
 
             debug_mode = TDSoftwareInfo.GraphicalDebugMode;
