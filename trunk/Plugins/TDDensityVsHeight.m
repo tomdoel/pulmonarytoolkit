@@ -62,7 +62,7 @@ classdef TDDensityVsHeight < TDPlugin
             left_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 2), global_gravity_bin_boundaries, lung_height_mm);
             right_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 1), global_gravity_bin_boundaries, lung_height_mm);
             
-            max_x = max([left_lung_results.mean_density_values right_lung_results.mean_density_values]);
+            max_x = max([(left_lung_results.mean_density_values + left_lung_results.std_values/2) (right_lung_results.mean_density_values + right_lung_results.std_values/2)]);
             max_x = 0.3*ceil(max_x/.3);
             
             if max_x > 0.3
@@ -142,42 +142,46 @@ classdef TDDensityVsHeight < TDPlugin
             gravity_plot = [];
             density_plot = [];
             std_plot = [];
+            volume_bin = [];
             
             for gravity_bin = gravity_bins
                 in_bin = (height >= gravity_bin) & (height < (gravity_bin + gravity_bin_size));
                 volume_mm3 = sum(in_bin(:))*prod(lung_roi.VoxelSize);
                 
-                % Use a cut-off of 5ml
-                if (volume_mm3 >= 5000)
-                    densities_in_bin_g_ml = density_g_mL(voxels_in_lung_indices(in_bin));
-                    densities_in_bin_kg_l = densities_in_bin_g_ml;
-                    average_density_for_bin = mean(densities_in_bin_kg_l);
-                    std_density_for_bin = std(densities_in_bin_kg_l);
-                    
-                    % Centrepoint for plot
-                    gravity_position = gravity_bin + gravity_bin_size/2;
-                    gravity_plot(end+1) = 100 - 100*(gravity_position - global_gravity_bin_boundaries(1))/lung_height_mm;
-                    density_plot(end+1) = average_density_for_bin;
-                    std_plot(end+1) = std_density_for_bin;
-                end
+                densities_in_bin_g_ml = density_g_mL(voxels_in_lung_indices(in_bin));
+                densities_in_bin_kg_l = densities_in_bin_g_ml;
+                average_density_for_bin = mean(densities_in_bin_kg_l);
+                std_density_for_bin = std(densities_in_bin_kg_l);
+                
+                % Centrepoint for plot
+                gravity_position = gravity_bin + gravity_bin_size/2;
+                gravity_plot(end+1) = 100 - 100*(gravity_position - global_gravity_bin_boundaries(1))/lung_height_mm;
+                density_plot(end+1) = average_density_for_bin;
+                std_plot(end+1) = std_density_for_bin;
+                volume_bin(end+1) = volume_mm3;
             end
             
             results.gravity_percentage_values = gravity_plot;
             results.mean_density_values = density_plot;
             results.std_values = std_plot;
-            
+            results.volume_bin = volume_bin;
         end
         
         function PlotForLung(results, axes_handle, colour, symbol, errorbar_offset, marker_size, line_width, marker_line_width)
 
             % Plot error bars
             for index = 1 : length(results.mean_density_values)
+                volume_mm3 = results.volume_bin(index);
                 density = results.mean_density_values(index);
                 gravity = results.gravity_percentage_values(index);
                 y_position = gravity + errorbar_offset;
                 stdev = results.std_values(index);
-                h_line = line('Parent', axes_handle, 'XData', [density - stdev/2, density + stdev/2], 'YData', [y_position, y_position], 'Color', colour, 'LineStyle', '-', 'LineWidth', line_width);
-                set(get(get(h_line,'Annotation'),'LegendInformation'), 'IconDisplayStyle','off'); % Exclude line from legend
+
+                % Use a cut-off of 5ml                
+                if (volume_mm3 >= 5000)
+                    h_line = line('Parent', axes_handle, 'XData', [density - stdev/2, density + stdev/2], 'YData', [y_position, y_position], 'Color', colour, 'LineStyle', '-', 'LineWidth', line_width);
+                    set(get(get(h_line,'Annotation'),'LegendInformation'), 'IconDisplayStyle','off'); % Exclude line from legend
+                end
             end
 
             % Plot markers
@@ -205,7 +209,9 @@ classdef TDDensityVsHeight < TDPlugin
                 gravity_percentage = left_lung_results.gravity_percentage_values(index);
                 left_stdev = left_lung_results.std_values(index);
                 right_stdev = right_lung_results.std_values(index);
-                output_string = sprintf('%6.6g,%6.6g,%6.6g,%6.6g,%6.6g\r\n', gravity_percentage, left_density, right_density, left_stdev, right_stdev);
+                left_volume_mm = left_lung_results.volume_bin(index);
+                right_volume_mm = right_lung_results.volume_bin(index);
+                output_string = sprintf('%6.6g,%6.6g,%6.6g,%6.6g,%6.6g,%6.6g,%6.6g\r\n', gravity_percentage, left_density, right_density, left_stdev, right_stdev, left_volume_mm, right_volume_mm);
                 fprintf(file_handle, regexprep(output_string, ' ', ''));
             end
             
