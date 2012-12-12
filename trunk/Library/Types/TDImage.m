@@ -295,11 +295,38 @@ classdef (ConstructOnLoad = true) TDImage < handle
             obj.NotifyImageChanged;
         end
 
+        % Returns an image mask, set to true for each voxel which equals the
+        % mask index
+        function masked_image = GetMask(obj, mask_index)
+            if nargin < 2
+                mask_index = 1;
+            end
+            masked_image = obj.BlankCopy;
+            masked_image.ChangeRawImage(obj.RawImage == mask_index);
+        end
+        
+        % Returns a copy of the image with every point outside of the mask set to zero
+        function masked_image = GetMaskedImage(obj, mask, mask_index)
+            if nargin < 3
+                mask_index = 1;
+            end
+            masked_image = obj.BlankCopy;
+            masked_image.ChangeRawImage(obj.RawImage.*cast(mask.RawImage == mask_index, class(obj.RawImage)));
+        end
+        
         % Modifies a region of the image, but using a mask to determine which
         % voxels wil be changed.
-        function ChangeSubImageWithMask(obj, new_subimage, mask)
+        function ChangeSubImageWithMask(obj, new_subimage, mask, mask_index)
+            if nargin < 4
+                mask_index = [];
+            end
             mask = mask.Copy;
             mask.ResizeToMatch(new_subimage);
+
+            if (length(mask.ImageSize) == 3) && (length(new_subimage.ImageSize) == 4)
+                mask.ChangeRawImage(repmat(mask.RawImage, [1, 1, 1, new_subimage.ImageSize(4)]));
+            end
+
             dst_offset = new_subimage.Origin - obj.Origin + [1 1 1];
             src_offset = obj.Origin - new_subimage.Origin + [1 1 1];
             
@@ -323,7 +350,11 @@ classdef (ConstructOnLoad = true) TDImage < handle
                     : ...
                 );
             
-            mask_subimage_raw = mask_subimage_raw > 0;
+            if ~isempty(mask_index)
+                mask_subimage_raw = mask_subimage_raw == mask_index;
+            else
+                mask_subimage_raw = mask_subimage_raw > 0;
+            end
             
             
             new_subimage_raw = new_subimage.RawImage(...
@@ -364,9 +395,9 @@ classdef (ConstructOnLoad = true) TDImage < handle
                 
                 class_name = class(obj.RawImage);
                 
-                num_dims = length(image_size);
+                num_dims = min(length(image_size), length(obj.ImageSize));
                 new_image_size = obj.ImageSize;
-                new_image_size(1:num_dims) = image_size;
+                new_image_size(1:num_dims) = image_size(1:num_dims);
                 if islogical(obj.RawImage)
                     new_rawimage = false(new_image_size);
                 else
