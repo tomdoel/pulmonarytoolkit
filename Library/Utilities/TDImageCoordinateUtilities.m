@@ -165,6 +165,7 @@ classdef TDImageCoordinateUtilities
         
         function [X, Y, Z] = TranslateAndRotateMeshGrid(X, Y, Z, rot_matrix, trans_matrix)
             % Rotates and translates meshgrid generated coordinates in 3D
+            % Note coordinates are [XYZ] NOT [IJK]
             [X, Y, Z] = TDImageCoordinateUtilities.RotateMeshGrid(X + trans_matrix(1), Y + trans_matrix(2), Z + trans_matrix(3), rot_matrix);
         end
 
