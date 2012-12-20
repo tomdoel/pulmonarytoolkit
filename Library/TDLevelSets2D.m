@@ -16,7 +16,7 @@ function result = TDLevelSets2D(original_image, initial_mask, bounds, figure_han
     initial_mask.ChangeRawImage(logical(initial_mask.RawImage));
     
     options = [];
-    options.num_iterations = 500;
+    options.num_iterations = 1000;
     options.std_dev = 2;
     options.c = 0; % No speed set. Typical value of =0.5
     options.dt = 0.5;
