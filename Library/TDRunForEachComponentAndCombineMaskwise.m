@@ -1,11 +1,18 @@
 function results = TDRunForEachComponentAndCombineMaskwise(function_handle, mask, reporting)
-    % Separates a mask into components and runs a
-    % given function for each component. The result masks are then recombined,
-    % and given their original colour value.
+    % TDRunForEachComponentAndCombineMaskwise. Separates a mask into components
+    % and runs a given function for each component. The result masks are then
+    % recombined, and given their original colour value.
     %
     % Note: TDRunForEachComponentAndCombine is similar, but is used for
     % running functions on images which consist of several components defined by
     % masks
+    %
+    %     Licence
+    %     -------
+    %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
     
     if ~isinteger(mask.RawImage)
         reporting.Error('TDRunForEachComponentAndCombineMaskwise:NonIntegerMask', 'Mask input must be of integer type');
