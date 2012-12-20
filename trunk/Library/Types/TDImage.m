@@ -633,11 +633,18 @@ classdef (ConstructOnLoad = true) TDImage < handle
                 
                 bounds = obj.GetBounds;
                 
-                % Create new image
-                obj.RawImage = obj.RawImage(bounds(1):bounds(2), bounds(3):bounds(4), bounds(5):bounds(6));
-                
-                obj.Origin = obj.Origin + [bounds(1) - 1, bounds(3) - 1, bounds(5) - 1];
-                obj.NotifyImageChanged;
+                if isempty(bounds)
+                    obj.RawImage = [];
+                    obj.NotifyImageChanged;
+                    
+                else
+                    
+                    % Create new image
+                    obj.RawImage = obj.RawImage(bounds(1):bounds(2), bounds(3):bounds(4), bounds(5):bounds(6));
+                    
+                    obj.Origin = obj.Origin + [bounds(1) - 1, bounds(3) - 1, bounds(5) - 1];
+                    obj.NotifyImageChanged;
+                end
             end
         end
         
