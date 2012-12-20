@@ -28,10 +28,11 @@ function [affine_matrix, transformed_matrix] = TDSolveForRigidTranslation(image_
     reference_image2.AddBorder(20);
     image_to_transform2.AddBorder(20);
     
-    dt_float = TDImageUtilities.GetNormalisedDT(image_to_transform2);
+    dt_float = TDRunForEachComponentAndCombine(@TDImageUtilities.GetNormalisedDT, image_to_transform2, image_to_transform2, reporting);
+    dt_ref = TDRunForEachComponentAndCombine(@TDImageUtilities.GetNormalisedDT, reference_image2, reference_image2, reporting);
+    
     dt_float.RescaleToMaxSize(128);
 
-    dt_ref = TDImageUtilities.GetNormalisedDT(reference_image2);
     dt_ref.RescaleToMaxSize(128);
     
     [affine_matrix, transformed_matrix] = Solve(dt_float, dt_ref, com_affine_vector(4:6), reporting);
