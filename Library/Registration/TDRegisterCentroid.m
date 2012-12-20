@@ -14,6 +14,7 @@ function [affine_matrix, affine_vector] = TDRegisterCentroid(image_to_transform,
     com_float = GetCentreOfMass(image_to_transform);
     com_ref = GetCentreOfMass(reference_image);
     com_float_to_ref = com_ref - com_float;
+    com_float_to_ref = com_float_to_ref([2,1,3]);
     
     affine_vector = [0, 0, 0, -com_float_to_ref];
     affine_matrix = TDImageCoordinateUtilities.CreateRigidAffineMatrix(affine_vector);
