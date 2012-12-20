@@ -12,7 +12,6 @@ function results = TDGetRadiusForAirways(centreline_results, lung_image, radius_
 
     reporting.ShowProgress('Computing radius for each branch');
     
-    
     [radius_results, skeleton_tree] = GetRadius(lung_image, centreline_results.IntermediateAirwaySkeleton, radius_approximation, reporting, figure_airways_3d);
     centreline_tree_model = TDTreeModel.CreateFromSkeletonTree(skeleton_tree, lung_image);
     
