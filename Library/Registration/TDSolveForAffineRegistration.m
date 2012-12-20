@@ -36,7 +36,7 @@ function [affine_matrix, transformed_matrix] = TDSolveForAffineRegistration(imag
 end
 
 function closeness = FnToMinimise(x_vector, image_to_transform, reference_image, i_o, j_o, k_o, i_r, j_r, k_r, reporting)
-    affine_matrix = TDImageCoordinateUtilities.CreateAffineMatrix(x_vector);        
+    affine_matrix = TDImageCoordinateUtilities.CreateAffineMatrix(x_vector);
     transformed_image = TDRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
     closeness = ComputeCloseness(transformed_image, reference_image);
 end
