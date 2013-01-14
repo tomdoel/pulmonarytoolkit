@@ -49,6 +49,8 @@ classdef TDSoftwareInfo < handle
         GraphicalDebugMode = false
         BackgroundColour = [0, 0.129, 0.278]
         CancelErrorId = 'TDPTK:UserCancel'
+        TimeFunctions = true;
+        FastMode = false;
     end
 
     methods (Static)
