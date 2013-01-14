@@ -40,7 +40,7 @@ classdef TDDensityVsHeight < TDPlugin
             widthheightratio = 4/3;
             page_width_cm = 13;
             resolution_dpi = 300;
-            font_name = 'Arial';
+            font_name = TDSoftwareInfo.GraphFont;
             line_width = 1.5;
             marker_line_width = 1;
             

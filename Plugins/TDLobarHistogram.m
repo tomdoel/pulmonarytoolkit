@@ -49,7 +49,7 @@ classdef TDLobarHistogram < TDPlugin
             left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
             
             
-            label_font_size = 10;
+            label_font_size = 8;
             legend_font_size = 4;
             compartment_font_size = 6;
             axis_line_width = 1;
@@ -58,7 +58,7 @@ classdef TDLobarHistogram < TDPlugin
             page_width_cm = 8;
             resolution_dpi = 300;
             compartment_line_width_points = 0.5;
-            font_name = 'Arial';
+            font_name = TDSoftwareInfo.GraphFont;
 
             
             figure_handle = figure;
