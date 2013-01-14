@@ -46,13 +46,13 @@ classdef TDLinkedDatasetChooser < handle
         % Specifying a second argument also produces a representative image from
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.
-        function [result, output_image] = GetResult(obj, plugin_name, dataset_call_stack, context, dataset_name)
+        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_call_stack, context, dataset_name)
             linked_dataset = obj.FindLinkedDatasetChooser(dataset_name);
             
-            if nargout > 1
-                [result, output_image] = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, linked_dataset, dataset_call_stack, context);
+            if nargout > 2
+                [result, cache_info, output_image] = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, linked_dataset, dataset_call_stack, context);
             else
-                result = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, linked_dataset, dataset_call_stack, context);
+                [result, cache_info] = linked_dataset.PrimaryDatasetResults.GetResult(plugin_name, linked_dataset, dataset_call_stack, context);
             end
         end
 

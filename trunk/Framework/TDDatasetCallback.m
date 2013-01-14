@@ -62,9 +62,9 @@ classdef TDDatasetCallback < handle
                 dataset_name = [];
             end
             if nargout > 1
-                [result, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_name);
+                [result, ~, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_name);
             else
-                result = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_name);
+                [result, ~] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_name);
             end
         end
 

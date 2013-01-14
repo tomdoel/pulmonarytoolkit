@@ -86,14 +86,35 @@ classdef TDDataset < handle
             obj.DatasetStack.ClearStack;
             
             if nargout > 1
-                [result, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
+                [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
             else
-                result = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
+                [result, cache_info] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
             end
             obj.Reporting.ShowAndClear;
             obj.Reporting.ClearStack;
         end
                 
+        function [result, cache_info, output_image] = GetResultWithCacheInfo(obj, plugin_name, context, dataset_uid)
+            obj.Reporting.ClearStack;
+            if nargin < 3
+                context = [];
+            end
+            if nargin < 4
+                dataset_uid = [];
+            end
+            
+            % Reset the dependency stack, since this could be left in a bad state if a previous plugin call caused an exception
+            obj.DatasetStack.ClearStack;
+            
+            if nargout > 2
+                [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
+            else
+                [result, cache_info] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
+            end
+            obj.Reporting.ShowAndClear;
+            obj.Reporting.ClearStack;
+        end
+        
         % Save data as a cache file associated with this dataset
         % Used for marker points
         function SaveData(obj, name, data)
