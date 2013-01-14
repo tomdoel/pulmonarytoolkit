@@ -200,12 +200,41 @@ function figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask
     viewer2.ViewerPanelHandle.Window = 928;
     viewer2.ViewerPanelHandle.Level = 272;
     frame = viewer2.ViewerPanelHandle.Capture;
+    
     figure(11);
     figure_handle = gcf;
     imagesc([0, 360], [airway_max_mm, 0], frame.cdata);
-    xlabel('\theta /degrees', 'FontName', 'Helvetica Neue', 'FontSize', 20);
-    ylabel('r /mm', 'FontName', 'Helvetica Neue', 'FontSize', 20);
+    
+    label_font_size = 8;
+    axis_line_width = 1;
+    axes_label_font_size = 6;
+    widthheightratio = 4/3;
+    page_width_cm = 8;
+    resolution_dpi = 300;
+    font_name = TDSoftwareInfo.GraphFont;
+
+    set(figure_handle, 'Units','centimeters');
+    graph_size = [page_width_cm, (page_width_cm/widthheightratio)];
+    
+    axes_handle = gca;
+    set(figure_handle, 'Name', 'FWHM');
+    set(figure_handle, 'PaperPositionMode', 'auto');
+    set(figure_handle, 'position', [0,0, graph_size]);
+    
+    hold(axes_handle, 'on');
+    axis manual
+    
+    axes_handle = gca;
+    set(axes_handle, 'FontSize', axes_label_font_size);
+    set(axes_handle, 'LineWidth', axis_line_width);
+    
+    xlabel('\theta /degrees', 'FontName', font_name, 'FontSize', label_font_size);
+    ylabel('r /mm', 'FontName', font_name, 'FontSize', label_font_size);
     set(gca,'YDir','normal')
+    
+    resolution_str = ['-r' num2str(resolution_dpi)];
+    print(figure_handle, '-dpng', resolution_str, '~\Desktop\Radius finding 2D.png');     % export .png
+    
 end
 
 function ShowInterpolatedCoordinatesOn3dFigure(figure_airways_3d, lung_image, centre_point_voxels, i_coord_voxels, j_coord_voxels, k_coord_voxels)
