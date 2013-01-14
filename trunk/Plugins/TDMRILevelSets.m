@@ -65,7 +65,12 @@ classdef TDMRILevelSets < TDPlugin
         end
         
         function results = SolveLevelSetsByCoronalSlice(lung_roi, lung_mask, bounds, reporting)
-            figure_handle = figure;
+            if TDSoftwareInfo.GraphicalDebugMode
+                figure_handle = figure;
+            else
+                figure_handle = [];
+            end
+            
             results = lung_mask.Copy;
             results.ImageType = TDImageType.Colormap;
             for coronal_index = 1 : lung_roi.ImageSize(1)

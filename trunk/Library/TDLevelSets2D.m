@@ -35,8 +35,10 @@ function result = SolveLevelSets(original_image, initial_mask, options, figure_h
     initial_mask = initial_mask.RawImage;
     im = double(original_image.RawImage);
 
-    figure(figure_handle);
-    imagesc(im); hold on; colormap gray; colorbar; axis square;
+    if ~isempty(figure_handle)
+        figure(figure_handle);
+        imagesc(im); hold on; colormap gray; colorbar; axis square;
+    end
     
     if (nargin < 2)
         initial_mask = GetInitialContourMask(im);
@@ -51,25 +53,63 @@ function result = SolveLevelSets(original_image, initial_mask, options, figure_h
 
     contour_handle = [];
     
-    hold off;
-    imagesc(im);
-    hold on;
+    if ~isempty(figure_handle)
+        hold off;
+        imagesc(im);
+        hold on;
+    end
     
-    for iter = 1 : options.num_iterations
-        
+    iter = 0;
+    converged = false;
+    converged_count = 0;
+    old_result = [];
+    
+    while (iter < options.num_iterations) && (~converged)
+        iter = iter + 1;
+    
         psi = NextContour(psi, im, gaussian_im, options, force_handle);
-        if (mod(iter, 10) == 0)
-            psi = re_initialise(psi);
+        
+        if any(isnan(psi))
+            disp('NaN found: terminating');
+            converged = true;
         end
         
-        if (mod(iter, 20) == 0)
-            if ~isempty(contour_handle)
-                delete(contour_handle);
+        
+        if (mod(iter, 10) == 0)
+            
+            % If there hasn't been any change in the segmentation for the last
+            % 50 iterations then we terminate early
+            result = (psi > 0);
+            
+            if ~isempty(old_result)
+                diff = abs(result - old_result);
+                if ~any(diff(:))
+                    converged_count = converged_count + 1;
+                else
+                    converged_count = 0;
+                end
+                
+                if converged_count > 5
+                    converged = true;
+                    disp('Converged: terminating');
+                end
             end
-            [~, contour_handle] = contour(psi,[0 0], 'r');
-            title(['Iteration ' num2str(iter)]);
-            drawnow;
+            
+            psi = re_initialise(psi);
+            old_result = result;
         end
+        
+        if ~isempty(figure_handle)
+            if (mod(iter, 20) == 0)
+                if ~isempty(contour_handle)
+                    delete(contour_handle);
+                end
+                [~, contour_handle] = contour(psi,[0 0], 'r');
+                title(['Iteration ' num2str(iter)]);
+                drawnow;
+            end
+        end
+        
     end
     
     result = (psi > 0);
