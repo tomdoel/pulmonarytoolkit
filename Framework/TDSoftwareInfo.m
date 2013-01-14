@@ -51,6 +51,8 @@ classdef TDSoftwareInfo < handle
         CancelErrorId = 'TDPTK:UserCancel'
         TimeFunctions = true;
         FastMode = false;
+        GraphFont = 'Helvetica'
+        GuiFont = 'Helvetica'
     end
 
     methods (Static)
