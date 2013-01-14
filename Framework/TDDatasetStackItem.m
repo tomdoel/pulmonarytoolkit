@@ -22,6 +22,9 @@ classdef TDDatasetStackItem < handle
         IgnoreDependencyChecks % Certain types of plugin do not cached their results and so are exempt from dependency checking
         DependencyList         % Current list of plugin results this plugin depends on
         Schema                 % The disk cache version
+    end
+    
+    properties (SetAccess = private, Transient = true)
         ExecutionTimer         % Times the execution time for this plugin
     end
     
