@@ -37,10 +37,18 @@ classdef TDPluginDependencyTracker < handle
             obj.DatasetDiskCache = dataset_disk_cache;
         end
         
+        
+        function cache_info = GetCacheInfo(obj, plugin_name)
+            [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, reporting);
+            if isempty(result) || isempty(cache_info)
+                reporting.ShowWarning('TDPluginDependencyTracker:NoCacheInfo', ['No cached value was found for plugin ' plugin_name '.'], []);
+            end
+        end
+        
         % Gets a plugin result, from the disk cache if possible. If there is no
         % cached result, or if the dependencies are invalid, or if the
         % "AlwaysRunPlugin" property is set, then the plugin is executed.
-        function [result, plugin_has_been_run] = GetResult(obj, plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, reporting)
+        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, reporting)
             
             % Fetch plugin result from the disk cache
             result = [];
@@ -78,17 +86,26 @@ classdef TDPluginDependencyTracker < handle
                 
                 ignore_dependency_checks = plugin_info.AlwaysRunPlugin || ~plugin_info.AllowResultsToBeCached;
                 
+                % Pause the self-timing of the current plugin
+                dataset_stack.PauseTiming;                
+
                 % Create a new dependency. The dependency relates to the plugin
                 % being called (plugin_name) and the UID of the dataset the
                 % result is being requested from; however, the stack belongs to
                 % the primary dataset
-                dataset_stack.CreateAndPush(plugin_name, dataset_uid, ignore_dependency_checks);
+                dataset_stack.CreateAndPush(plugin_name, dataset_uid, ignore_dependency_checks, TDSoftwareInfo.TimeFunctions);
                 
-                % This is the actual call which runs the plugin
                 dataset_callback = TDDatasetCallback(linked_dataset_chooser, dataset_stack);
+
+                % This is the actual call which runs the plugin
                 result = plugin_info.RunPlugin(dataset_callback, reporting);
                 
                 new_cache_info = dataset_stack.Pop;
+                
+                if TDSoftwareInfo.TimeFunctions
+                    dataset_stack.ResumeTiming;
+                end
+                
                 if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
                     reporting.Error('TDPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
                 end
@@ -110,6 +127,8 @@ classdef TDPluginDependencyTracker < handle
                 dependency_list_for_this_plugin = TDDependencyList;
                 dependency_list_for_this_plugin.AddDependency(dependency, reporting);
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin);
+                
+                cache_info = new_cache_info;
             else
                 plugin_has_been_run = false;
             end

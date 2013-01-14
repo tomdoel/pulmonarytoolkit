@@ -1,7 +1,7 @@
 classdef TDDatasetResults < handle
-    % TDDatasetResults. Used by plugins to obtain results and associated data for a particular dataset.
+    % TDDatasetResults. 
     %
-    %     This class is used by plugins to run calculations and fetch cached
+    %     This class is used to run calculations and fetch cached
     %     results associated with a dataset. The difference between TDDataset 
     %     and TDDatasetResults is that TDDataset is called from outside the 
     %     toolkit, whereas TDDatasetResults is called by plugins during their 
@@ -63,16 +63,13 @@ classdef TDDatasetResults < handle
         % Specifying a second argument also produces a representative image from
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.
-        function [result, output_image] = GetResult(obj, plugin_name, linked_dataset_chooser, dataset_stack, context)
+        function [result, cache_info, output_image] = GetResult(obj, plugin_name, linked_dataset_chooser, dataset_stack, context)
             obj.Reporting.PushProgress;
             if nargin < 5
                 context = [];
             end
-            if nargout > 1
-                [result, output_image] = obj.RunPluginWithOptionalImageGeneration(plugin_name, true, linked_dataset_chooser, dataset_stack, context);
-            else
-                result = obj.RunPluginWithOptionalImageGeneration(plugin_name, false, linked_dataset_chooser, dataset_stack, context);
-            end
+            generate_results = nargout > 2;
+            [result, cache_info, output_image] = obj.RunPluginWithOptionalImageGeneration(plugin_name, generate_results, linked_dataset_chooser, dataset_stack, context);
             obj.Reporting.PopProgress;
         end
 
@@ -117,7 +114,7 @@ classdef TDDatasetResults < handle
     methods (Access = private)
                 
         % Returns the plugin result, computing if necessary
-        function [result, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, linked_dataset_chooser, dataset_stack, context)
+        function [result, cache_info, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, linked_dataset_chooser, dataset_stack, context)
             
             % Get information about the plugin
             plugin_info = feval(plugin_name);
@@ -129,7 +126,7 @@ classdef TDDatasetResults < handle
             % result if required
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name);
 
-            [result, plugin_has_been_run] = obj.GetResultFromDependencyTracker(plugin_name, linked_dataset_chooser, plugin_info, dataset_stack);
+            [result, plugin_has_been_run, cache_info] = obj.GetResultFromDependencyTracker(plugin_name, linked_dataset_chooser, plugin_info, dataset_stack);
 
             % Allow the context manager to construct a template image from this
             % result if required
@@ -175,17 +172,17 @@ classdef TDDatasetResults < handle
             
         end
         
-        function [result, plugin_has_been_run] = GetResultFromDependencyTracker(obj, plugin_name, linked_dataset_chooser, plugin_info, dataset_stack)
+        function [result, plugin_has_been_run, cache_info] = GetResultFromDependencyTracker(obj, plugin_name, linked_dataset_chooser, plugin_info, dataset_stack)
             dataset_uid = obj.ImageInfo.ImageUid;
             
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
             if TDSoftwareInfo.DebugMode
-                [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, obj.Reporting);
+                [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, obj.Reporting);
             else
                 try
-                    [result, plugin_has_been_run] = obj.DependencyTracker.GetResult(plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, obj.Reporting);
+                    [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, obj.Reporting);
                 catch ex
                     dataset_stack.ClearStack;
                     rethrow(ex);
