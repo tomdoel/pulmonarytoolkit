@@ -22,10 +22,11 @@ classdef TDDatasetStackItem < handle
         IgnoreDependencyChecks % Certain types of plugin do not cached their results and so are exempt from dependency checking
         DependencyList         % Current list of plugin results this plugin depends on
         Schema                 % The disk cache version
+        ExecutionTimer         % Times the execution time for this plugin
     end
     
     methods
-        function obj = TDDatasetStackItem(instance_id, dependency_list, ignore_dependency_checks, reporting)
+        function obj = TDDatasetStackItem(instance_id, dependency_list, ignore_dependency_checks, start_timer, reporting)
             if ~isa(instance_id, 'TDDependency')
                 reporting.Error('TDDatasetStackItem:BadInstanceID', 'instance_id must be a TDDependency object');
             end
@@ -38,12 +39,26 @@ classdef TDDatasetStackItem < handle
             obj.DependencyList = dependency_list;
             obj.IgnoreDependencyChecks = ignore_dependency_checks;
             obj.Schema = TDSoftwareInfo.DiskCacheSchema;
+            
+            if start_timer
+                obj.ExecutionTimer = TDTimer(reporting);
+                obj.ExecutionTimer.Start;
+            end
         end
         
         % Adds more plugin result which this particular plugin result depends
         % on.
         function AddDependencies(obj, dependencies, reporting)
             obj.DependencyList.AddDependenciesList(dependencies, reporting);
+        end
+        
+        function StopAndDeleteTimer(obj)
+            if ~isempty(obj.ExecutionTimer)
+                obj.ExecutionTimer.Stop;
+                obj.InstanceIdentifier.Attributes.ExecutionTime = obj.ExecutionTimer.TotalElapsedTime;
+                obj.InstanceIdentifier.Attributes.SelfTime = obj.ExecutionTimer.SelfTime;
+                obj.ExecutionTimer = [];
+            end
         end
     end
     

@@ -46,14 +46,14 @@ classdef TDDatasetStack < handle
     
         % Create a new TDDatasetStackItem object with an empty dependency list and a
         % new unique identifier. The push it to the end of the stack
-        function CreateAndPush(obj, plugin_name, dataset_uid, ignore_dependency_checks)
+        function CreateAndPush(obj, plugin_name, dataset_uid, ignore_dependency_checks, start_timer)
             if obj.PluginAlreadyExistsInStack(plugin_name)
                 obj.Reporting.Error('TDDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
             attributes = [];
             attributes.IgnoreDependencyChecks = ignore_dependency_checks;
             instance_identifier = TDDependency(plugin_name, TDDiskUtilities.GenerateUid, dataset_uid, attributes);
-            cache_info = TDDatasetStackItem(instance_identifier, TDDependencyList, ignore_dependency_checks, obj.Reporting);
+            cache_info = TDDatasetStackItem(instance_identifier, TDDependencyList, ignore_dependency_checks, start_timer, obj.Reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end
         
@@ -61,6 +61,7 @@ classdef TDDatasetStack < handle
         % for this plugin
         function cache_info = Pop(obj)
             cache_info = obj.DatasetStack(end);
+            cache_info.StopAndDeleteTimer;
             obj.DatasetStack(end) = [];
         end
         
@@ -78,7 +79,22 @@ classdef TDDatasetStack < handle
         function ClearStack(obj)
             obj.DatasetStack = TDDatasetStackItem.empty;
         end
+        
+        % Pause the timer used to generate SelfTime for the most recent plugin
+        % on the stack
+        function PauseTiming(obj)
+            if ~isempty(obj.DatasetStack) && ~isempty(obj.DatasetStack(end).ExecutionTimer)
+                obj.DatasetStack(end).ExecutionTimer.Pause;
+            end
+        end
 
+        % Resume the timer used to generate SelfTime for the most recent plugin
+        % on the stack
+        function ResumeTiming(obj)
+            if ~isempty(obj.DatasetStack) && ~isempty(obj.DatasetStack(end).ExecutionTimer)
+                obj.DatasetStack(end).ExecutionTimer.Resume;
+            end
+        end
     end
     
     methods (Access = private)
