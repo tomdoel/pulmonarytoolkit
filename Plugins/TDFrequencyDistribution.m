@@ -72,26 +72,26 @@ classdef TDFrequencyDistribution < TDPlugin
             TDFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage == 1, 'b', axes_handle);
             legend_strings = {'Whole lung', 'Left lung', 'Right lung'};
 
-%             % Lobes
-%             lobes = application.GetResult('TDLobesFromFissurePlane');
-%             TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
-%             TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
-%             TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);
-%             TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 5, 'm', axes_handle);
-%             TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 6, 'y', axes_handle);
-%             legend_strings = {'Whole lung', 'Upper right lobe', 'Middle right lobe', 'Lower right lobe', 'Upper left lobe', 'Lower left lobe'};
+            % Lobes
+            lobes = application.GetResult('TDLobesFromFissurePlane');
+            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
+            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
+            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);
+            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 5, 'm', axes_handle);
+            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 6, 'y', axes_handle);
+            legend_strings = {'Whole lung', 'Upper right lobe', 'Middle right lobe', 'Lower right lobe', 'Upper left lobe', 'Lower left lobe'};
   
-            legend(legend_strings, 'FontName', 'Helvetica Neue', 'FontSize', 20, 'Location', 'East');
+            legend(legend_strings, 'FontName', TDSoftwareInfo.GraphFont, 'FontSize', 20, 'Location', 'East');
 
             % Set tick marks
             set(axes_handle, 'XTick', -1000:100:100);
             set(axes_handle, 'YTick', 0:10:50);
             
             % Label the compartments
-            text('Parent', axes_handle, 'Position', [-900-5, max_y-2], 'String', 'Hyperinflated', 'FontName', 'Helvetica Neue', 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
-            text('Parent', axes_handle, 'Position', [-500-5, max_y-2], 'String', 'Normally aerated', 'FontName', 'Helvetica Neue', 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
-            text('Parent', axes_handle, 'Position', [-100-5, max_y-2], 'String', 'Normally aerated', 'FontName', 'Helvetica Neue', 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
-            text('Parent', axes_handle, 'Position', [ 200-5, max_y-2], 'String', 'Non aerated', 'FontName', 'Helvetica Neue', 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
+            text('Parent', axes_handle, 'Position', [-900-5, max_y-2], 'String', 'Hyperinflated', 'FontName', TDSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
+            text('Parent', axes_handle, 'Position', [-500-5, max_y-2], 'String', 'Normally aerated', 'FontName', TDSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
+            text('Parent', axes_handle, 'Position', [-100-5, max_y-2], 'String', 'Normally aerated', 'FontName', TDSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
+            text('Parent', axes_handle, 'Position', [ 200-5, max_y-2], 'String', 'Non aerated', 'FontName', TDSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
             
             % Draw lines between the compartments
             line('Parent', axes_handle, 'XData', [-1000, -1000], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--')
