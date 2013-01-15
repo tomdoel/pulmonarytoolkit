@@ -62,7 +62,9 @@ function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_
     segmentation.CropToFit;
     
     % Speed up visualisation by rescaling large images.
-    segmentation.RescaleToMaxSize(200);
+    if ~small_structures
+        segmentation.RescaleToMaxSize(200);
+    end
     
     segmentation.AddBorder(1);
     
