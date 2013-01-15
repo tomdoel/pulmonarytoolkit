@@ -1,4 +1,4 @@
-function airway_image = TDGetImageFromAirwayResults(airway_tree, template_image, reporting)
+function airway_image = TDGetImageFromAirwayResults(airway_tree, template_image, suppress_small_structures, reporting)
     % TDGetImageFromAirwayResults. Creates an image of the segmented airways
     %
     %     This function takes the airway results structure from the TDAirways
@@ -21,8 +21,13 @@ function airway_image = TDGetImageFromAirwayResults(airway_tree, template_image,
         segment = segments_to_do(end);
         segments_to_do(end) = [];
         voxels = segment.GetAllAirwayPoints;
-        voxels = template_image.GlobalToLocalIndices(voxels);
-        airway_image_raw(voxels) = 1;
+        
+        show_this_segment = (~suppress_small_structures) || (numel(voxels) > 10) || (~isempty(segment.Children));
+        
+        if show_this_segment
+            voxels = template_image.GlobalToLocalIndices(voxels);
+            airway_image_raw(voxels) = 1;
+        end
         segments_to_do = [segments_to_do, segment.Children];
     end
     
