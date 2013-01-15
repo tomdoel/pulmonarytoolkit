@@ -22,7 +22,7 @@ classdef TDThresholdGasMRIAirways < TDPlugin
         Category = 'Airways'
 
         AllowResultsToBeCached = true
-        AlwaysRunPlugin = true
+        AlwaysRunPlugin = false
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
         FlattenPreviewImage = true
@@ -36,7 +36,7 @@ classdef TDThresholdGasMRIAirways < TDPlugin
         function results = RunPlugin(dataset, reporting)
             results = dataset.GetResult('TDOriginalImage');
             results_filtered = TDGaussianFilter(results, 2);
-            results_filtered.ChangeRawImage(results_filtered.RawImage > 20);
+            results_filtered.ChangeRawImage(results_filtered.RawImage > 50);
             results.ChangeRawImage(results.RawImage > 100);
             extended = results.Copy;
             extended_raw = extended.RawImage;
