@@ -84,11 +84,14 @@ classdef TDMaximumFissurePoints < TDPlugin
             fissure_approximation.ResizeToMatch(right_lung_roi);
             lung_mask.ResizeToMatch(right_lung_roi);
             
-            [high_fissure_indices, ref_image] = TDGetMaxFissurePoints(fissure_approximation.RawImage == 2, lung_mask, fissureness_roi.RightMainFissure, right_lung_roi.ImageSize);
+            [high_fissure_indices, ref_image_o] = TDGetMaxFissurePoints(fissure_approximation.RawImage == 2, lung_mask, fissureness_roi.RightMainFissure, right_lung_roi.ImageSize);
 
             [high_fissure_indices_m, ref_image_m] = TDGetMaxFissurePoints(fissure_approximation.RawImage == 3, lung_mask, fissureness_roi.RightMidFissure, right_lung_roi.ImageSize);
             
+            ref_image = ref_image_m;
+            ref_image(ref_image_o == 1) = 1;
             ref_image(ref_image_m == 1) = 8;
+            
             right_results = right_lung_roi.BlankCopy;
             right_results.ChangeRawImage(ref_image);
         end
