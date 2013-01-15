@@ -54,7 +54,7 @@ classdef TDAirwayCentreline < TDPlugin
             if TDSoftwareInfo.GraphicalDebugMode
                 % For visualisation purposes
                 airway_results = dataset.GetResult('TDAirways');
-                airway_segmented_image = TDGetImageFromAirwayResults(airway_results.AirwayTree, lung_image, reporting);
+                airway_segmented_image = TDGetImageFromAirwayResults(airway_results.AirwayTree, lung_image, false, reporting);
                 figure_airways_3d = figure;                
                 TDVisualiseIn3D(figure_airways_3d, airway_segmented_image, 1, true, reporting);
             else

@@ -48,7 +48,7 @@ classdef TDAirwayRadiusApproximation < TDPlugin
     methods (Static, Access = private)
 
         function results = GetRadiusApproximationFromAirwayTree(airway_tree, template, reporting)
-            airway_segmented_image = TDGetImageFromAirwayResults(airway_tree, template, reporting);
+            airway_segmented_image = TDGetImageFromAirwayResults(airway_tree, template, false, reporting);
             dt_image = airway_segmented_image.RawImage;
             dt_image = dt_image == 0;
             dt_image = bwdist(dt_image);
