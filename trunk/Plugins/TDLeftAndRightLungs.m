@@ -40,7 +40,9 @@ classdef TDLeftAndRightLungs < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            if strcmp(dataset.GetImageInfo.Modality, 'MR')
+            if dataset.IsGasMRI
+                results = dataset.GetResult('TDLungMapForGasMRI');
+            elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
                 results = dataset.GetResult('TDMRILevelSets');
             else
                 results = dataset.GetResult('TDLeftAndRightLungsInitialiser');
