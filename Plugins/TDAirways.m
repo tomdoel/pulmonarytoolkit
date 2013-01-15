@@ -69,7 +69,12 @@ classdef TDAirways < TDPlugin
 
             start_point = trachea_results.top_of_trachea;
 
-            maximum_number_of_generations = 15;
+            if TDSoftwareInfo.FastMode
+                maximum_number_of_generations = 10;
+            else
+                maximum_number_of_generations = 15;
+            end
+            
             explosion_multiplier = 5;
 
             debug_mode = TDSoftwareInfo.GraphicalDebugMode;
@@ -78,7 +83,7 @@ classdef TDAirways < TDPlugin
         
         function results = GenerateImageFromResults(airway_results, image_templates, reporting)
             template_image = image_templates.GetTemplateImage(TDContext.LungROI);
-            results = TDGetImageFromAirwayResults(airway_results.AirwayTree, template_image, reporting);
+            results = TDGetImageFromAirwayResults(airway_results.AirwayTree, template_image, false, reporting);
             results_raw = results.RawImage;
             explosion_points = template_image.GlobalToLocalIndices(airway_results.ExplosionPoints);
             results_raw(explosion_points) = 3;
