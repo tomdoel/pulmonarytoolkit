@@ -51,7 +51,7 @@ classdef TDAirwaysLabelledByLobe < TDPlugin
         function results = RunPlugin(dataset, reporting)
             results_image = dataset.GetTemplateImage(TDContext.LungROI);
             [airway_results, airway_image] = dataset.GetResult('TDAirways');
-            [centreline_results, ~] = dataset.GetResult('TDAirwayCentreline');
+            centreline_results = dataset.GetResult('TDAirwayCentreline');
             [airways_by_lobe, start_branches] = TDGetAirwaysLabelledByLobe(results_image, airway_results, centreline_results.AirwayCentrelineTree, reporting);
             airway_image = 7*uint8(airway_image.RawImage == 1);
             airway_image(airways_by_lobe > 0) = airways_by_lobe(airways_by_lobe > 0);
