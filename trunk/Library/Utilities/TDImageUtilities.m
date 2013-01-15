@@ -257,6 +257,50 @@ classdef TDImageUtilities
             dice = 2*TP/(2*TP+FP+FN);
             combined_image.ChangeRawImage(combined_image_raw);
         end
+        
+        function results = ComputeBorderError(image_1, image_2)
+            
+            image_1 = image_1.Copy;
+            image_1.ChangeRawImage(image_1.RawImage > 0);
+            
+            image_2 = image_2.Copy;
+            image_2.ChangeRawImage(image_2.RawImage > 0);
+            
+            % Compute the in-plane resolution of the image
+            voxel_length = image_1.VoxelSize(2);
+            if image_1.VoxelSize(2) ~= image_1.VoxelSize(3)
+                error;
+            end
+            
+            % Get the distance transforms
+            [~, border_1] = TDImageUtilities.GetBorderDistanceTransformBySlice(image_1, TDImageOrientation.Coronal);
+            [~, border_2] = TDImageUtilities.GetBorderDistanceTransformBySlice(image_2, TDImageOrientation.Coronal);
+            
+            dt_1 = TDImageUtilities.GetNonisotropicDistanceTransform(border_1);
+            dt_2 = TDImageUtilities.GetNonisotropicDistanceTransform(border_2);
+            
+            
+            % Adjust the distance transforms to mm
+            dt_1.ChangeRawImage(dt_1.RawImage*voxel_length);
+            dt_2.ChangeRawImage(dt_2.RawImage*voxel_length);
+            
+            results = [];
+            
+            surface_distance_1 = dt_2.RawImage(border_1.RawImage);
+            results.MeanDistanceFrom1To2 = mean(surface_distance_1);
+            results.MaxDistanceFrom1To2 = max(surface_distance_1);
+
+            surface_distance_2 = dt_1.RawImage(border_2.RawImage);
+            results.MeanDistanceFrom2To1 = mean(surface_distance_2);
+            results.MaxDistanceFrom2To1 = max(surface_distance_2);            
+
+            combined_surface_distance = [surface_distance_1; surface_distance_2];
+            mean_c = mean(combined_surface_distance);
+            max_c = max(combined_surface_distance);
+            
+            results.MeanDistanceCombined = mean_c;
+            results.MaxDistanceCombined = max_c;
+        end
     end
 end
 
