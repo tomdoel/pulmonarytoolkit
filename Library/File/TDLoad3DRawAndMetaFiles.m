@@ -73,6 +73,9 @@ function dicom_image = TDLoad3DRawAndMetaFiles(path, filenames, study_uid, repor
     elseif strcmp(header_data.AnatomicalOrientation, 'RAI')
         new_dimension_order = [2 1 3];
         flip_orientation = [0 0 1];
+    elseif strcmp(header_data.AnatomicalOrientation, 'IPR')
+        new_dimension_order = [3 1 2];
+        flip_orientation = [0 0 0];
     else
         reporting.Error('TDLoad3DRawAndMetaFiles:UnsupportedOrientation', ['TDLoad3DRawAndMetaFiles: WARNING: no implementation yet for anatomical orientation ' header_data.AnatomicalOrientation '.']);
     end
