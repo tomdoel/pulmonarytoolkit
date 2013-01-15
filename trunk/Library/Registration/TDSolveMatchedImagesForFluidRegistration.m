@@ -16,8 +16,8 @@ function deformation_field = TDSolveMatchedImagesForFluidRegistration(image_to_t
     end
     
     % Convert to distance transforms
-    dt_float = TDImageUtilities.GetNormalisedDT(image_to_transform);
-    dt_ref = TDImageUtilities.GetNormalisedDT(reference_image);
+    dt_float = TDRunForEachComponentAndCombine(@TDImageUtilities.GetNormalisedDT, image_to_transform, image_to_transform, reporting);
+    dt_ref = TDRunForEachComponentAndCombine(@TDImageUtilities.GetNormalisedDT, reference_image, reference_image, reporting);
     
     % Solve to find the deformation field between these images
     [deformation_field, ~] = Solve(dt_float, dt_ref, reporting);
@@ -37,7 +37,7 @@ function [deformation_field, deformed_image] = Solve(image_1, image_2, reporting
     iterations = 200;
     % X corresponds to image columns and Y image rows
     options = npRegSet(...
-        'Display', 'iter', ...
+'Display', 'off', ...
         'Regularizer', 'curvature', ... % elastic | {fluid} | diffusion | curvature
         'BoundaryCond', 'Neumann', ...
         'VoxSizeX', voxel_size(2),'VoxSizeY', voxel_size(1), 'VoxSizeZ', voxel_size(3), ...
@@ -46,7 +46,7 @@ function [deformation_field, deformed_image] = Solve(image_1, image_2, reporting
         'BodyForceTol', 0.001, ... % Termination tolerance on the body force [1e-2]
         'BodyForceDiffTol', 0.001, ... % Termination tolerance on the difference between successive body force estimates [1e-2]..
         'SimMeasPercentDiffTol', 0.001, ... % Termination tolerance on the percentage difference between successive similarity measure estimates [ positive scalar {1e-2} ]
-        'FixedPointMaxFlowDistance', 10 ...
+        'FixedPointMaxFlowDistance', 1 ...
 );
 
 %         'SimilarityMeasure', 'SSD', ... % [ {SSD} | NCC | CR | MI | NMI ]
