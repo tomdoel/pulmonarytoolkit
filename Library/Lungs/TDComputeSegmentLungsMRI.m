@@ -31,6 +31,11 @@ function [new_image, bounds] = TDComputeSegmentLungsMRI(original_image, filter_s
         reporting.Error('TDComputeSegmentLungsMRI:BadInput', 'TDComputeSegmentLungsMRI requires a TDImage as input');
     end
     
+    % ToDo: This is too specific
+    if isa(reporting, 'TDReportingWithCache')
+        reporting.PushProgress;
+    end    
+    
     reporting.UpdateProgressMessage('Finding approximate MRI lung segmentation by region growing');
 
     original_image = TDGaussianFilter(original_image, filter_size_mm);
@@ -68,7 +73,11 @@ function [new_image, bounds] = TDComputeSegmentLungsMRI(original_image, filter_s
     bounds = [0, 0];
     bounds(1) = min(bounds_left(1), bounds_right(1));
     bounds(2) = max(bounds_left(2), bounds_right(2));
-
+    
+    % ToDo: This is too specific
+    if isa(reporting, 'TDReportingWithCache')
+        reporting.PopProgress;
+    end
 end
 
 function lung_point = AutoFindLungPoint(original_image, find_left)
