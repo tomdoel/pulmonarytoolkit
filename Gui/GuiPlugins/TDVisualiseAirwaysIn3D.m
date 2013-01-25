@@ -41,18 +41,20 @@ classdef TDVisualiseAirwaysIn3D < TDGuiPlugin
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
             segmentation = ptk_gui_app.ImagePanel.OverlayImage.Copy;
-            segmentation.ChangeRawImage(uint8(segmentation.RawImage == 1));
-
             if segmentation.ImageExists
-                if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
-                    segmentation = segmentation.Copy;
-                    segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 1));
-                    smoothing_size = 0.5;
-                else
-                    smoothing_size = 0.5;
-                end
+                segmentation.ChangeRawImage(uint8(segmentation.RawImage == 1));
                 
-                TDVisualiseIn3D([], segmentation, smoothing_size, true, ptk_gui_app.Reporting);
+                if segmentation.ImageExists
+                    if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
+                        segmentation = segmentation.Copy;
+                        segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 1));
+                        smoothing_size = 0.5;
+                    else
+                        smoothing_size = 0.5;
+                    end
+                    
+                    TDVisualiseIn3D([], segmentation, smoothing_size, true, ptk_gui_app.Reporting);
+                end
             end
         end
     end
