@@ -52,7 +52,7 @@ classdef TDFissurenessVesselsFactor < TDPlugin
             vesselness = dataset.GetResult('TDVesselness');
             
             % Threshold vesselness and compute distance transform
-            vesselness_threshold = 20;
+            vesselness_threshold = 50;
             vesselness = bwdist((vesselness.RawImage > vesselness_threshold) | ~(lung_mask.RawImage > 0));
             
             % Compute image based on distance transform
