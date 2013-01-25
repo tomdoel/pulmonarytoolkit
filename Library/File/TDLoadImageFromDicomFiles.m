@@ -195,7 +195,18 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                     patient_positions = patient_positions(index_matrix, :);
                     global_origin_mm = min(patient_positions, [], 1);
                     slice_thicknesses = abs(sorted_slice_locations(2:end) - sorted_slice_locations(1:end-1));
-                    slice_thickness = slice_thicknesses(1);
+                    fist_nonzero_index = 1;
+                    if any(slice_thicknesses == 0)
+                        reporting.ShowWarning('TDLoadImageFromDicomFiles:ZeroSliceThickness', 'This image contains more than one image at the same slice position', []);
+                        fist_nonzero_index = find(slice_thicknesses > 0, 1);
+                        if isempty(fist_nonzero_index)
+                            fist_nonzero_index = 1;
+                        end
+                    end
+                    slice_thickness = slice_thicknesses(fist_nonzero_index);
+                    if any(slice_thicknesses - slice_thickness) > 0.01
+                        reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
+                    end
                     if max(slice_thicknesses - slice_thickness) > 0.01
                         reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
                     end
