@@ -177,10 +177,10 @@ end
 
 function points_coords = RemoveNonConnectedPoints(points_coords, template_image, image_size)
     voxel_volume = prod(template_image.VoxelSize);
-    min_component_size_mm3 = 200;
+    min_component_size_mm3 = 500;
     min_component_size_voxels = round(min_component_size_mm3/voxel_volume);
 
-    dilate_size_mm = 5;
+    dilate_size_mm = 3;
     
     image_mask = false(image_size);
     indices = sub2ind(image_size, points_coords(:,1), points_coords(:,2), points_coords(:,3));
