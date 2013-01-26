@@ -31,7 +31,7 @@ classdef TDSoftwareInfo < handle
         PreviewImageFileName = 'PreviewImages'
         PTKVersion = '1'
         CachedPluginInfoFileName = 'CachedPluginInfo'
-        SettingsFileName = 'TDPTKSettings.mat'
+        SettingsFileName = 'PTKSettings.mat'
         FrameworkCacheFileName = 'TDFrameworkCache.mat'
         MakerPointsCacheName = 'MarkerPoints'
         ImageInfoCacheName = 'ImageInfo'
@@ -53,6 +53,7 @@ classdef TDSoftwareInfo < handle
         FastMode = false;
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica'
+        SplashScreenImageFile = 'PTKLogo.jpg'
     end
 
     methods (Static)

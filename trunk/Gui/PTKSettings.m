@@ -1,10 +1,10 @@
-classdef TDPTKSettings < handle
-    % TDPTKSettings. Part of the internal gui for the Pulmonary Toolkit.
+classdef PTKSettings < handle
+    % PTKSettings. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     TDPTKSettings stores gui application settings between sessions. This
+    %     PTKSettings stores gui application settings between sessions. This
     %     class is stored on disk so that settings persist betweek sessions.
     %
     %
@@ -39,24 +39,24 @@ classdef TDPTKSettings < handle
         end
         
         function settings_file_path = GetSettingsFilePath
-            settings_dir = TDPTKSettings.GetSettingsDirectory;
+            settings_dir = PTKSettings.GetSettingsDirectory;
             settings_filename = TDSoftwareInfo.SettingsFileName;
             settings_file_path = fullfile(settings_dir, settings_filename);
         end
         
         function settings = LoadSettings(viewer_panel, reporting)
             try
-                settings_filename = TDPTKSettings.GetSettingsFilePath;
+                settings_filename = PTKSettings.GetSettingsFilePath;
                 if exist(settings_filename, 'file')
                     settings_struct = load(settings_filename);
                     settings = settings_struct.settings;
                 else
-                    reporting.ShowWarning('TDPTKSettings:SettingsFileNotFound', 'No settings file found. Will create new one on exit', []);
-                    settings = TDPTKSettings;
+                    reporting.ShowWarning('PTKSettings:SettingsFileNotFound', 'No settings file found. Will create new one on exit', []);
+                    settings = PTKSettings;
                 end
                 
             catch ex
-                reporting.ErrorFromException('TDPTKSettings:FailedtoLoadSettingsFile', ['Error when loading settings file ' settings_filename '. Try deleting this file.'], ex);
+                reporting.ErrorFromException('PTKSettings:FailedtoLoadSettingsFile', ['Error when loading settings file ' settings_filename '. Try deleting this file.'], ex);
             end
             
             viewer_panel.Window = settings.Window;
@@ -77,7 +77,7 @@ classdef TDPTKSettings < handle
     end
     
     methods
-        function obj = TDPTKSettings
+        function obj = PTKSettings
             % Objects should be instantiated in the constructor, not in the
             % property list. Otherwise all objects of this class will have the
             % same instance of the property
@@ -98,10 +98,10 @@ classdef TDPTKSettings < handle
             obj.SliceSkip = viewer_panel.SliceSkip;
             obj.CurrentMarkerColour = viewer_panel.MarkerPointManager.CurrentColour;
             
-            settings_path = TDPTKSettings.GetSettingsDirectory;
-            settings_filename = TDPTKSettings.GetSettingsFilePath;
+            settings_path = PTKSettings.GetSettingsDirectory;
+            settings_filename = PTKSettings.GetSettingsFilePath;
             if ~exist(settings_path, 'dir')
-                reporting.ShowMessage('TDPTKSettings:NewSettingsDirectory', ['Creating settings directory: ' settings_path]);
+                reporting.ShowMessage('PTKSettings:NewSettingsDirectory', ['Creating settings directory: ' settings_path]);
                 mkdir(settings_path);
             end
             
@@ -109,7 +109,7 @@ classdef TDPTKSettings < handle
                 settings = obj; %#ok<NASGU>
                 save(settings_filename, 'settings');
             catch ex
-                reporting.ErrorFromException('TDPTKSettings:FailedtoSaveSettingsFile', ['Unable to save settings file ' settings_filename], ex);
+                reporting.ErrorFromException('PTKSettings:FailedtoSaveSettingsFile', ['Unable to save settings file ' settings_filename], ex);
             end
         end        
     end
