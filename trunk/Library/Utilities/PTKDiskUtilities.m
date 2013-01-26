@@ -1,4 +1,4 @@
-classdef TDDiskUtilities
+classdef PTKDiskUtilities
     % TDDiskUtilities. Disk-related utility functions.
     %
     %
