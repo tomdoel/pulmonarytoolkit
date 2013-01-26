@@ -12,7 +12,7 @@ classdef TDDataset < handle
     %     Each dataset will have its own instance of TDDataset.
     %
     %     You should not create this class directly. Instead, create an instance of
-    %     the class TDPTK and use the methods CreateDatasetFromInfo and
+    %     the class PTKMain and use the methods CreateDatasetFromInfo and
     %     CreateDatasetFromUid to get a TDDataset object for each dataset you are
     %     working with.
     %
@@ -20,7 +20,7 @@ classdef TDDataset < handle
     %     to your image data.
     %
     %         image_info = TDImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         ptk = TDPTK;
+    %         ptk = PTKMain;
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %
     %     You can then obtain results from this dataset, e.g.
@@ -50,7 +50,7 @@ classdef TDDataset < handle
 
     methods
         
-        % TDDataset is created by the TDPTK class
+        % TDDataset is created by the PTKMain class
         function obj = TDDataset(image_info, dataset_disk_cache, reporting)
             obj.DatasetStack = TDDatasetStack(reporting);
             obj.DatasetDiskCache = dataset_disk_cache;

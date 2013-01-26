@@ -1,12 +1,12 @@
-classdef TDPTK < handle
-    % TDPTK. Imports and provides access to data from the Pulmonary Toolkit
+classdef PTKMain < handle
+    % PTKMain. Imports and provides access to data from the Pulmonary Toolkit
     %
-    %     TDPTK provides access to data from the Pulmonary Toolkit, and allows 
+    %     PTKMain provides access to data from the Pulmonary Toolkit, and allows 
     %     you to import new data. Data is accessed through one or more TDDataset
-    %     objects. Your code should create a single TDPTK object, and then ask
+    %     objects. Your code should create a single PTKMain object, and then ask
     %     it to create a TDDataset object for each dataset you wish to access. 
     %
-    %     TDPTK is essentially a class factory for TDDatasets, but shares the 
+    %     PTKMain is essentially a class factory for TDDatasets, but shares the 
     %     TDReporting (error/progress reporting) objects between all 
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the Pulmonary Toolkit.
@@ -14,7 +14,7 @@ classdef TDPTK < handle
     %     To import a new dataset, construct a TDImageInfo object with the file
     %     path and file name set to the image file. For DICOM files it is only
     %     necessary to specify the path since all image files in that directory
-    %     will be imported. Then call CreateDatasetFromInfo. TDPTK will import
+    %     will be imported. Then call CreateDatasetFromInfo. PTKMain will import
     %     the data (if it has not already been imported) and return a new
     %     TDDataset object for that dataset.
     %
@@ -29,7 +29,7 @@ classdef TDPTK < handle
     %     to your image data.
     %
     %         image_info = TDImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         ptk = TDPTK;
+    %         ptk = PTKMain;
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %
     %     You can then obtain results from this dataset, e.g.
@@ -54,7 +54,7 @@ classdef TDPTK < handle
         
         % Constructor. If no error/progress reporting object is specified then a
         % default object is created.
-        function obj = TDPTK(reporting)
+        function obj = PTKMain(reporting)
             if nargin == 0
                 reporting = TDReportingDefault;
             end
@@ -76,7 +76,7 @@ classdef TDPTK < handle
             dataset_disk_cache = TDDatasetDiskCache(disk_cache, obj.Reporting);
             image_info = dataset_disk_cache.LoadData(TDSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
-                obj.Reporting.Error('TDPTK:UidNotFound', 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
+                obj.Reporting.Error('PTKMain:UidNotFound', 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
             dataset = TDDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
@@ -89,7 +89,7 @@ classdef TDPTK < handle
         function dataset = CreateDatasetFromInfo(obj, new_image_info)
             
             if isempty(new_image_info.ImageUid)
-                [series_uid, study_uid, modality] = TDPTK.GetImageUID(new_image_info);
+                [series_uid, study_uid, modality] = PTKMain.GetImageUID(new_image_info);
                 new_image_info.ImageUid = series_uid;
                 new_image_info.StudyUid = study_uid;
                 new_image_info.Modality = modality;
@@ -135,13 +135,13 @@ classdef TDPTK < handle
                     filenames = TDDiskUtilities.GetDirectoryFileList(image_info.ImagePath, '*');
                     first_filename = fullfile(image_info.ImagePath, filenames{1});
                     if (exist(first_filename, 'file') ~= 2)
-                       throw(MException('TDPTK:FileNotFound', ['The file ' first_filename ' does not exist']));
+                       throw(MException('PTKMain:FileNotFound', ['The file ' first_filename ' does not exist']));
                     end
                     
                     try
                         metadata = dicominfo(first_filename);
                     catch exception
-                        throw(MException('TDPTK:MetaheaderLoadFail', ['The file ' first_filename ' is not a valid DICOM file']));
+                        throw(MException('PTKMain:MetaheaderLoadFail', ['The file ' first_filename ' is not a valid DICOM file']));
                     end
                     image_uid = metadata.SeriesInstanceUID;
                     study_uid = metadata.StudyInstanceUID;
@@ -151,7 +151,7 @@ classdef TDPTK < handle
                     study_uid = [];
                     modality = [];
                 otherwise
-                    obj.Reporting.Error('TDPTK:UnknownImageFileFormat', 'Could not import the image because the file format was not recognised.');
+                    obj.Reporting.Error('PTKMain:UnknownImageFileFormat', 'Could not import the image because the file format was not recognised.');
             end
         end
     end

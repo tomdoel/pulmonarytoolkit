@@ -62,7 +62,7 @@ classdef TDLobarVolume < TDPlugin
             combined_results.lung_volume_mm3 = left_results.lung_volume_mm3 + right_results.lung_volume_mm3;
             combined_results.surface_volume_mm3 = left_results.surface_volume_mm3 + right_results.surface_volume_mm3;
 
-            results_directory = TDPTK.GetResultsDirectoryAndCreateIfNecessary;
+            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
             file_name = fullfile(results_directory, uid);

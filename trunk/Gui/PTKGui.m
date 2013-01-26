@@ -85,7 +85,7 @@ classdef PTKGui < handle
             % display
             obj.Reporting.Log('New session of PTKGui');
             
-            obj.Ptk = TDPTK(obj.Reporting);
+            obj.Ptk = PTKMain(obj.Reporting);
             
             obj.Settings = PTKSettings.LoadSettings(obj.ImagePanel, obj.Reporting);
 

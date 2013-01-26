@@ -13,7 +13,7 @@ classdef TDPlugin < handle
     %     click on the plugin button which is automatically created in the
     %     plugins panel on the right.
     %
-    %     To run a plugin from your own code, first create a TDPTK object. Then
+    %     To run a plugin from your own code, first create a PTKMain object. Then
     %     call CreateDatasetFromInfo() to create a TDDataset for the image files
     %     you wish to run the plugin with. Then call GetResult() on this dataset
     %     interface to run the plugin or fetch a previously cached result.
@@ -25,7 +25,7 @@ classdef TDPlugin < handle
     %     run.
     %
     %         image_info = TDImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         ptk = TDPTK;
+    %         ptk = PTKMain;
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %         airways = dataset.GetResult('MyPluginName');
     %    

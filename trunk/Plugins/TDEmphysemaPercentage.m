@@ -110,7 +110,7 @@ classdef TDEmphysemaPercentage < TDPlugin
             results.UL = ul_results;
             results.LL = ll_results;
 
-            results_directory = TDPTK.GetResultsDirectoryAndCreateIfNecessary;
+            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
             file_name = fullfile(results_directory, uid);
             if ~exist(file_name, 'dir')
                 mkdir(file_name);

@@ -3,7 +3,7 @@ function TDCompileMexFiles(framework_cache, force_recompile, reporting)
     % necessary
     %
     %     TDCompileMexFiles is an internal part of the Pulmonary Toolkit
-    %     Framework and is called by TDPTK. In general should not be 
+    %     Framework and is called by PTKMain. In general should not be 
     %     called by your own code.
     %
     %     TDCompileMexFiles contains a list of mex files to be compiled by the
@@ -50,7 +50,7 @@ function compiler = MexSetup(reporting)
     cpp_compilers = mex.getCompilerConfigurations('C++', 'Installed');
     if isempty(cpp_compilers)
         compiler = [];
-        reporting.ShowWarning('TDCompileMexFiles:NoCompiler', 'I cannot compile mex files because no C++ compiler has been found on this system. Some parts of the Toolkit will not function. Install a C++ compiler and run TDPTK.Recompile().', []);
+        reporting.ShowWarning('TDCompileMexFiles:NoCompiler', 'I cannot compile mex files because no C++ compiler has been found on this system. Some parts of the Toolkit will not function. Install a C++ compiler and run PTKMain.Recompile().', []);
     else
         disp('***********************************************************************');
         disp(' Pulmonary Toolkit - running MEX steup ');
@@ -61,7 +61,7 @@ function compiler = MexSetup(reporting)
         mex -setup;
         compiler = GetNameOfCppCompiler;
         if isempty(compiler)
-            reporting.ShowWarning('TDCompileMexFiles:NoCompiler', 'I cannot compile mex files because no C++ compiler has been selected. Run mex -setup to choose your C++ compiler. Then run TDPTK.Recompile().', []);
+            reporting.ShowWarning('TDCompileMexFiles:NoCompiler', 'I cannot compile mex files because no C++ compiler has been selected. Run mex -setup to choose your C++ compiler. Then run PTKMain.Recompile().', []);
         end
     end
 end
@@ -119,7 +119,7 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
             src_filename = [mex_file.Name '.' mex_file.Extension];
             src_fullfile = fullfile(mex_file.Path, src_filename);
             if ~(try_compilation_again || force_recompile)
-                reporting.ShowWarning('TDCompileMexFiles:NotRecompiling', ['The mex source file ' src_fullfile ' needs recompilation, but the previous attempt to compile failed so I am not going to try again. You need to force a recompilation using TDPTK.Recompile().'], []);
+                reporting.ShowWarning('TDCompileMexFiles:NotRecompiling', ['The mex source file ' src_fullfile ' needs recompilation, but the previous attempt to compile failed so I am not going to try again. You need to force a recompilation using PTKMain.Recompile().'], []);
             else
                 if ~exist(src_fullfile, 'file')
                     reporting.ShowWarning('TDCompileMexFiles:SourceFileNotFound', ['The mex source file ' src_fullfile ' was not found. If this file has been removed it should also be removed from the list in TDCompileMexFiles.m'], []);

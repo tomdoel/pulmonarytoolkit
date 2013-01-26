@@ -48,7 +48,7 @@ classdef TDSoftwareInfo < handle
         DebugMode = false
         GraphicalDebugMode = false
         BackgroundColour = [0, 0.129, 0.278]
-        CancelErrorId = 'TDPTK:UserCancel'
+        CancelErrorId = 'PTKMain:UserCancel'
         TimeFunctions = true;
         FastMode = false;
         GraphFont = 'Helvetica'
