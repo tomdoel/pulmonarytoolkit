@@ -14,7 +14,7 @@ classdef TDGuiPlugin < handle
     %     been correctly set, the plugin will automatically appear in the
     %     Pulmonary Toolkit gui.
     %
-    %     Gui plugins are given a handle to the TDPTKGiApp object so they can
+    %     Gui plugins are given a handle to the PTKGuiApp object so they can
     %     access gui methods and obtain dataset results if necessary
     %
     %

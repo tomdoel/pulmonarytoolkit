@@ -85,7 +85,7 @@ classdef TDDensityGridPerLobe < TDPlugin
         end
         
         function SaveToFile(dataset, lobe_name, ic, jc, kc, density_values)
-            results_directory = TDPTK.GetResultsDirectoryAndCreateIfNecessary;
+            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
             file_name = fullfile(results_directory, uid);

@@ -105,7 +105,7 @@ classdef TDReporting < TDReportingInterface
             if TDSoftwareInfo.IsErrorCancel(identifier)
                 msgStruct.identifier = identifier;
             else
-                msgStruct.identifier = [ 'TDPTK:' identifier];
+                msgStruct.identifier = [ 'PTKMain:' identifier];
             end
             msgStruct.stack = stack;
             obj.AppendToLogFile([calling_function ': ERROR: ' identifier ':' message]);
@@ -117,7 +117,7 @@ classdef TDReporting < TDReportingInterface
 
             msgStruct = [];
             msgStruct.message = ['Error in function ' calling_function ': ' message ' Exception message:' ex.message];
-            msgStruct.identifier = [ 'TDPTK:' identifier];
+            msgStruct.identifier = [ 'PTKMain:' identifier];
             msgStruct.stack = stack;
             obj.AppendToLogFile([calling_function ': ERROR: ' identifier ':' message]);
             error(msgStruct);
