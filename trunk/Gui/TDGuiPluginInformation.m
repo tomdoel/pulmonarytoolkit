@@ -107,7 +107,7 @@ classdef TDGuiPluginInformation
             new_plugin = [];
             new_plugin.PluginName = plugin_name;
             
-            if plugin_class.TDPTKVersion ~= '1'
+            if plugin_class.PTKVersion ~= '1'
                 reporting.ShowWarning('TDGuiPluginInformation:OldPlugin', ['Plugin ' plugin_name ' was created for a more recent version of this software']), [];
             end
             

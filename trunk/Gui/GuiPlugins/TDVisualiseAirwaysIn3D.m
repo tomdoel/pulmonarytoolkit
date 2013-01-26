@@ -33,7 +33,7 @@ classdef TDVisualiseAirwaysIn3D < TDGuiPlugin
         Category = 'View'
 
         HidePluginInDisplay = false
-        TDPTKVersion = '1'
+        PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
     end

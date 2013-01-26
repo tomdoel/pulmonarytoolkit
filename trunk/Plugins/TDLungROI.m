@@ -28,7 +28,7 @@ classdef TDLungROI < TDPlugin
         PluginType = 'ReplaceImage'
         HidePluginInDisplay = false
         FlattenPreviewImage = false
-        TDPTKVersion = '1'
+        PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true

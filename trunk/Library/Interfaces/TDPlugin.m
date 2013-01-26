@@ -45,7 +45,7 @@ classdef TDPlugin < handle
         % Set this to the value in TDSoftwareInfo.
         % This specifies the version of the Pulmonary Toolkit the plugin was
         % developed with.
-        TDPTKVersion
+        PTKVersion
         
         % Should normally be set to true.
         % Specifies if the results of this plugin can be cached on disk. If you

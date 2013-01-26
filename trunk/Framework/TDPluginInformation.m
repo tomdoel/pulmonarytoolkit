@@ -107,7 +107,7 @@ classdef TDPluginInformation
             new_plugin = [];
             new_plugin.PluginName = plugin_name;
             
-            if ~strcmp(plugin_class.TDPTKVersion, TDSoftwareInfo.TDPTKVersion)
+            if ~strcmp(plugin_class.PTKVersion, TDSoftwareInfo.PTKVersion)
                 reporting.ShowWarning('TDPluginInformation:MismatchingPluginVersion', ['Plugin ' plugin_name ' was created for a more recent version of this software'], []);
             end
             
