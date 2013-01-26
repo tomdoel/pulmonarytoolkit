@@ -56,7 +56,7 @@ classdef TDSplashScreen < TDProgressInterface
             set(obj.FigureHandle, 'Position', position);
             set(obj.FigureHandle, 'NumberTitle', 'off');
             obj.Image = axes('Units', 'Pixels', 'Position', [30, 100, 333, 314]);
-            logo = imread('TDPTKLogo.jpg');
+            logo = imread(TDSoftwareInfo.SplashScreenImageFile);
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
             obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 350, 460, 75], 'String', TDSoftwareInfo.Name, 'FontName', TDSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);

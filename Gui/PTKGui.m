@@ -87,7 +87,7 @@ classdef PTKGui < handle
             
             obj.Ptk = TDPTK(obj.Reporting);
             
-            obj.Settings = TDPTKSettings.LoadSettings(obj.ImagePanel, obj.Reporting);
+            obj.Settings = PTKSettings.LoadSettings(obj.ImagePanel, obj.Reporting);
 
             if isempty(obj.Settings.ScreenPosition)
                 % Initialise full-screen
