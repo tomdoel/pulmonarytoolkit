@@ -24,7 +24,7 @@ splash_screen.ShowAndHold('Initialising');
 TDCheckMatlabVersion;
 
 % Run the toolkit gui
-TDPTKGui(splash_screen);
+PTKGui(splash_screen);
 
 % Remove our handle to the splash screen and the GUI
 clear splash_screen ans

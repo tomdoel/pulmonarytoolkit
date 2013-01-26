@@ -1,5 +1,5 @@
-classdef TDPTKGui < handle
-    % TDPTKGui. The user interface for the TD Pulmonary Toolkit.
+classdef PTKGui < handle
+    % PTKGui. The user interface for the TD Pulmonary Toolkit.
     %
     %     To start the user interface, run ptk.m.
     %
@@ -40,7 +40,7 @@ classdef TDPTKGui < handle
     end
     
     methods
-        function obj = TDPTKGui(splash_screen)
+        function obj = PTKGui(splash_screen)
 
             % Create the splash screen if it doesn't already exist
             if nargin < 1 || isempty(splash_screen) || ~isa(splash_screen, 'TDProgressInterface')
@@ -83,7 +83,7 @@ classdef TDPTKGui < handle
             % For the moment, we use the splash screen to display progress,
             % because the gui isn't yet visible so the ProgressPanel won't
             % display
-            obj.Reporting.Log('New session of TDPTKGui');
+            obj.Reporting.Log('New session of PTKGui');
             
             obj.Ptk = TDPTK(obj.Reporting);
             
@@ -147,10 +147,10 @@ classdef TDPTKGui < handle
                     obj.RunPluginTryCatchBlock(plugin_name)
                 catch exc
                     if TDSoftwareInfo.IsErrorCancel(exc.identifier)
-                        obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
+                        obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                     else
                         msgbox(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [TDSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'error');
-                        obj.Reporting.ShowMessage('TDPTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
+                        obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     end
                 end
             end
@@ -171,7 +171,7 @@ classdef TDPTKGui < handle
                 
                 if (image_info.ImageFileFormat == TDImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
                     msgbox('No valid DICOM files were found in this folder', [TDSoftwareInfo.Name ': No image files found.']);
-                    obj.Reporting.ShowMessage('TDPTKGuiApp:NoilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
+                    obj.Reporting.ShowMessage('PTKGuiApp:NoilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
                     obj.LoadImages(image_info, obj.WaitDialogHandle);
                 end
@@ -435,7 +435,7 @@ classdef TDPTKGui < handle
                                 load_full_data = false;
                                 rethrow(exc)
                             else
-                                obj.Reporting.ShowMessage('TDPTKGuiApp:CannotGetROI', ['Unable to extract region of interest from this dataset. Error: ' exc.message]);
+                                obj.Reporting.ShowMessage('PTKGuiApp:CannotGetROI', ['Unable to extract region of interest from this dataset. Error: ' exc.message]);
                                 load_full_data = true;
                             end
                         end
@@ -471,10 +471,10 @@ classdef TDPTKGui < handle
 
             catch exc
                 if TDSoftwareInfo.IsErrorCancel(exc.identifier)
-                    obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingCancelled', 'User cancelled loading');
+                    obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', 'User cancelled loading');
                 else
                     msgbox(exc.message, [TDSoftwareInfo.Name ': Cannot load dataset'], 'error');
-                    obj.Reporting.ShowMessage('TDPTKGuiApp:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
+                    obj.Reporting.ShowMessage('PTKGuiApp:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
                 end
             end
             
@@ -599,7 +599,7 @@ classdef TDPTKGui < handle
         end
         
         function delete(obj)
-            obj.Reporting.Log('Closing TDPTKGui');
+            obj.Reporting.Log('Closing PTKGui');
         end
         
         function PreviewImageChanged(obj, ~, event_data)
