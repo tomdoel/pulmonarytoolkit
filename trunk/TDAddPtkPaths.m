@@ -6,12 +6,12 @@ function TDAddPtkPaths(varargin)
     % the list
     TDAddPtkPaths_Version_Number = 1;
     
-    persistent TDPTK_PathsHaveBeenSet
+    persistent PTK_PathsHaveBeenSet
     
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     
-    if force || (isempty(TDPTK_PathsHaveBeenSet) || TDPTK_PathsHaveBeenSet ~= TDAddPtkPaths_Version_Number)
+    if force || (isempty(PTK_PathsHaveBeenSet) || PTK_PathsHaveBeenSet ~= PTKAddPtkPaths_Version_Number)
         
         path_folders = {};
         
@@ -51,7 +51,7 @@ function TDAddPtkPaths(varargin)
         % Add all the paths together (much faster than adding them individually)
         addpath(full_paths_to_add{:});
         
-        TDPTK_PathsHaveBeenSet = TDAddPtkPaths_Version_Number;
+        PTK_PathsHaveBeenSet = PTKAddPtkPaths_Version_Number;
     end
     
     % Add additional user-specific paths specified in the file
