@@ -24,7 +24,7 @@ classdef TDWindowLevelImage < TDGuiPlugin
         Category = 'Window/Level Presets'
 
         HidePluginInDisplay = false
-        TDPTKVersion = '1'
+        PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
     end

@@ -24,7 +24,7 @@ classdef TDRefreshPlugins < TDGuiPlugin
         Category = 'File'
 
         HidePluginInDisplay = false
-        TDPTKVersion = '1'
+        PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
     end

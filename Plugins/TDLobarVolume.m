@@ -29,7 +29,7 @@ classdef TDLobarVolume < TDPlugin
         PluginType = 'DoNothing'
         HidePluginInDisplay = false
         FlattenPreviewImage = true
-        TDPTKVersion = '1'
+        PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
         GeneratePreview = false

@@ -30,7 +30,7 @@ classdef TDGuiPlugin < handle
         % Set this to the value in TDSoftwareInfo.
         % This specifies the version of the Pulmonary Toolkit the plugin was
         % developed with.
-        TDPTKVersion
+        PTKVersion
 
         % Set to the panel name in the gui under which you wish the gui plugin 
         % to appear. Examples include "File" or you can create your own.

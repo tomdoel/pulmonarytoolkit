@@ -29,7 +29,7 @@ classdef TDSoftwareInfo < handle
         PluginDirectoryName = 'Plugins'
         GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')
         PreviewImageFileName = 'PreviewImages'
-        TDPTKVersion = '1'
+        PTKVersion = '1'
         CachedPluginInfoFileName = 'CachedPluginInfo'
         SettingsFileName = 'TDPTKSettings.mat'
         FrameworkCacheFileName = 'TDFrameworkCache.mat'
