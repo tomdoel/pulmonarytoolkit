@@ -16,7 +16,7 @@ classdef PTKSoftwareInfo < handle
     %
 
     properties (Constant)
-        Version = '0.1'
+        Version = '0.2'
         DicomVersion = '0.1'
         Name = 'Pulmonary Toolkit'
         DicomName = 'TD Pulmonary Toolkit'
