@@ -1,16 +1,16 @@
-classdef TDFissurenessHessianFactor < TDPlugin
-    % TDFissureApproximation. Plugin to detect fissures using analysis of the
+classdef PTKFissurenessHessianFactor < PTKPlugin
+    % PTKFissureApproximation. Plugin to detect fissures using analysis of the
     %     Hessian matrix
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
     %     This is an intermediate stage towards lobar segmentation.
     %
-    %     TDFissurenessHessianFactor computes the components of the fissureness
+    %     PTKFissurenessHessianFactor computes the components of the fissureness
     %     generated using analysis of eigenvalues of the Hessian matrix.
     %
     %     For more information, see 
@@ -43,20 +43,20 @@ classdef TDFissurenessHessianFactor < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             reporting.UpdateProgressValue(0);
-            left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
+            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
             
-            right_lung = dataset.GetResult('TDGetRightLungROI');
+            right_lung = dataset.GetResult('PTKGetRightLungROI');
             
-            fissureness_right = TDFissurenessHessianFactor.ComputeFissureness(right_lung, left_and_right_lungs, reporting, false);
+            fissureness_right = PTKFissurenessHessianFactor.ComputeFissureness(right_lung, left_and_right_lungs, reporting, false);
             
             reporting.UpdateProgressValue(50);
-            left_lung = dataset.GetResult('TDGetLeftLungROI');
-            fissureness_left = TDFissurenessHessianFactor.ComputeFissureness(left_lung, left_and_right_lungs, reporting, true);
+            left_lung = dataset.GetResult('PTKGetLeftLungROI');
+            fissureness_left = PTKFissurenessHessianFactor.ComputeFissureness(left_lung, left_and_right_lungs, reporting, true);
             
             reporting.UpdateProgressValue(100);
-            results = TDCombineLeftAndRightImages(dataset.GetTemplateImage(TDContext.LungROI), fissureness_left, fissureness_right, left_and_right_lungs);
+            results = PTKCombineLeftAndRightImages(dataset.GetTemplateImage(PTKContext.LungROI), fissureness_left, fissureness_right, left_and_right_lungs);
             
-            results.ImageType = TDImageType.Scaled;
+            results.ImageType = PTKImageType.Scaled;
         end        
     end
     
@@ -72,14 +72,14 @@ classdef TDFissurenessHessianFactor < TDPlugin
             
             left_and_right_lungs = left_and_right_lungs.Copy;
             left_and_right_lungs.ResizeToMatch(image_data);
-            image_data.ChangeRawImage(TDFissurenessHessianFactor.DuplicateImageInMask(image_data.RawImage, left_and_right_lungs.RawImage));
+            image_data.ChangeRawImage(PTKFissurenessHessianFactor.DuplicateImageInMask(image_data.RawImage, left_and_right_lungs.RawImage));
             
             mask = [];
-            fissureness = TDImageDividerHessian(image_data, @TDFissurenessHessianFactor.ComputeFissurenessPartImage, mask, 1.0, [], false, false, is_left_lung, reporting);
+            fissureness = PTKImageDividerHessian(image_data, @PTKFissurenessHessianFactor.ComputeFissurenessPartImage, mask, 1.0, [], false, false, is_left_lung, reporting);
         end
         
         function fissureness_wrapper = ComputeFissurenessPartImage(hessian_eigs_wrapper)
-            fissureness_wrapper = TDComputeFissurenessFromHessianeigenvalues(hessian_eigs_wrapper);
+            fissureness_wrapper = PTKComputeFissurenessFromHessianeigenvalues(hessian_eigs_wrapper);
         end
     end
 end

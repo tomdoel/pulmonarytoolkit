@@ -1,13 +1,13 @@
-classdef TDGetLeftLungROI < TDPlugin
-    % TDGetLeftLungROI. Plugin for finding the left lung region of interest.
+classdef PTKGetLeftLungROI < PTKPlugin
+    % PTKGetLeftLungROI. Plugin for finding the left lung region of interest.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDGetLeftLungROI runs the library function TDLeftAndRightLungs to 
+    %     PTKGetLeftLungROI runs the library function PTKLeftAndRightLungs to 
     %     segment the left and right lungs, and uses this to determine a region 
     %     of interest for the left lung only.
     %
@@ -37,9 +37,9 @@ classdef TDGetLeftLungROI < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            roi = dataset.GetResult('TDLungROI');
-            left_and_right_lung_mask = dataset.GetResult('TDLeftAndRightLungs');
-            results = TDGetLeftLungROIFromLeftAndRightLungs(roi, left_and_right_lung_mask, reporting);
+            roi = dataset.GetResult('PTKLungROI');
+            left_and_right_lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
+            results = PTKGetLeftLungROIFromLeftAndRightLungs(roi, left_and_right_lung_mask, reporting);
         end
     end
 end

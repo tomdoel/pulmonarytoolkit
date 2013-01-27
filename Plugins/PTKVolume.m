@@ -1,13 +1,13 @@
-classdef TDVolume < TDPlugin
-    % TDVolume. Plugin for computing left and right lung volumes
+classdef PTKVolume < PTKPlugin
+    % PTKVolume. Plugin for computing left and right lung volumes
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDVolume computes the volume of the left and right lungs using the 
+    %     PTKVolume computes the volume of the left and right lungs using the 
     %     lung segmentations and voxel sizes. The vessels and bronchi are 
     %     excluded up to the point where they enter the lung region.
     %
@@ -38,8 +38,8 @@ classdef TDVolume < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             
-            left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
-            TDComputeVolumeFromLungMasks(left_and_right_lungs, reporting);
+            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
+            PTKComputeVolumeFromLungMasks(left_and_right_lungs, reporting);
 
             results = [];
         end

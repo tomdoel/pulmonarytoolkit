@@ -1,9 +1,9 @@
-classdef TDAirwaysPruned < TDPlugin
-    % TDAirwaysPruned. Plugin for pruning end branches from an airway tree
+classdef PTKAirwaysPruned < PTKPlugin
+    % PTKAirwaysPruned. Plugin for pruning end branches from an airway tree
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -35,23 +35,23 @@ classdef TDAirwaysPruned < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            airways_by_lobe = dataset.GetResult('TDReallocateAirwaysLabelledByLobe');
+            airways_by_lobe = dataset.GetResult('PTKReallocateAirwaysLabelledByLobe');
             
             max_generation_inside_lobe = 1;
             
-            TDAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.RightUpper, max_generation_inside_lobe);
-            TDAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.RightMid, max_generation_inside_lobe);
-            TDAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.RightLower, max_generation_inside_lobe);
-            TDAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.LeftUpper, max_generation_inside_lobe);
-            TDAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.LeftLower, max_generation_inside_lobe);
+            PTKAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.RightUpper, max_generation_inside_lobe);
+            PTKAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.RightMid, max_generation_inside_lobe);
+            PTKAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.RightLower, max_generation_inside_lobe);
+            PTKAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.LeftUpper, max_generation_inside_lobe);
+            PTKAirwaysPruned.PruneAirwaysBelowGeneration(airways_by_lobe.StartBranches.LeftLower, max_generation_inside_lobe);
             
             results = airways_by_lobe;
         end
         
         function results = GenerateImageFromResults(airway_results, image_templates, reporting)
             
-            template_image = image_templates.GetTemplateImage(TDContext.LungROI);
-            TDVisualiseTreeModelCentreline(airway_results.StartBranches.Trachea, template_image.VoxelSize);
+            template_image = image_templates.GetTemplateImage(PTKContext.LungROI);
+            PTKVisualiseTreeModelCentreline(airway_results.StartBranches.Trachea, template_image.VoxelSize);
             results = template_image;
             results.ChangeRawImage(zeros(template_image.ImageSize, 'uint8'));
         end

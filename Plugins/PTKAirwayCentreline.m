@@ -1,14 +1,14 @@
-classdef TDAirwayCentreline < TDPlugin
-    % TDAirwayCentreline. Plugin for finding the centreline and radius of the pulmonary airway tree.
+classdef PTKAirwayCentreline < PTKPlugin
+    % PTKAirwayCentreline. Plugin for finding the centreline and radius of the pulmonary airway tree.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDAirwayCentreline calls the TDAirways plugin to segment the airway
-    %     tree. It then uses the TDSkeletonise library routine to reduce the
+    %     PTKAirwayCentreline calls the PTKAirways plugin to segment the airway
+    %     tree. It then uses the PTKSkeletonise library routine to reduce the
     %     airway tree to a centreline. The results are stored in a heirarchical
     %     tree structure.
     %
@@ -47,26 +47,26 @@ classdef TDAirwayCentreline < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            lung_image = dataset.GetResult('TDLungROI');
-            radius_approximation = dataset.GetResult('TDAirwayRadiusApproximation');
-            centreline_results = dataset.GetResult('TDAirwaySkeleton');
+            lung_image = dataset.GetResult('PTKLungROI');
+            radius_approximation = dataset.GetResult('PTKAirwayRadiusApproximation');
+            centreline_results = dataset.GetResult('PTKAirwaySkeleton');
             
-            if TDSoftwareInfo.GraphicalDebugMode
+            if PTKSoftwareInfo.GraphicalDebugMode
                 % For visualisation purposes
-                airway_results = dataset.GetResult('TDAirways');
-                airway_segmented_image = TDGetImageFromAirwayResults(airway_results.AirwayTree, lung_image, false, reporting);
+                airway_results = dataset.GetResult('PTKAirways');
+                airway_segmented_image = PTKGetImageFromAirwayResults(airway_results.AirwayTree, lung_image, false, reporting);
                 figure_airways_3d = figure;                
-                TDVisualiseIn3D(figure_airways_3d, airway_segmented_image, 1, true, reporting);
+                PTKVisualiseIn3D(figure_airways_3d, airway_segmented_image, 1, true, reporting);
             else
                 figure_airways_3d = [];
             end
 
             
-            results = TDGetRadiusForAirways(centreline_results, lung_image, radius_approximation, reporting, figure_airways_3d);
+            results = PTKGetRadiusForAirways(centreline_results, lung_image, radius_approximation, reporting, figure_airways_3d);
         end
 
         function results = GenerateImageFromResults(skeleton_results, image_templates, ~)
-            template_image = image_templates.GetTemplateImage(TDContext.LungROI);
+            template_image = image_templates.GetTemplateImage(PTKContext.LungROI);
 
             new_image = zeros(template_image.ImageSize, 'uint8');
             new_image(template_image.GlobalToLocalIndices(skeleton_results.OriginalCentrelinePoints)) = 2;
@@ -76,7 +76,7 @@ classdef TDAirwayCentreline < TDPlugin
             
             results = template_image.BlankCopy;
             results.ChangeRawImage(new_image);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
             
             results.SetVoxelToThis(skeleton_results.StartPoint, 4);
             

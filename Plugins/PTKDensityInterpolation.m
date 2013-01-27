@@ -1,10 +1,10 @@
-classdef TDDensityInterpolation < TDPlugin
-    % TDDensityInterpolation. Plugin for interpolating density values to a
+classdef PTKDensityInterpolation < PTKPlugin
+    % PTKDensityInterpolation. Plugin for interpolating density values to a
     % different voxel size
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -49,8 +49,8 @@ classdef TDDensityInterpolation < TDPlugin
             
             
             % Fetch the intensity of just the lung regions
-            roi = application.GetResult('TDLungROI');
-            left_and_right_lungs = application.GetResult('TDLeftAndRightLungs');
+            roi = application.GetResult('PTKLungROI');
+            left_and_right_lungs = application.GetResult('PTKLeftAndRightLungs');
             
             reporting.ShowProgress('Finding lung region for density');
             mask = left_and_right_lungs.RawImage > 0;
@@ -98,7 +98,7 @@ classdef TDDensityInterpolation < TDPlugin
             
             
             results.ChangeRawImage(single(results_raw));
-            results.ImageType = TDImageType.Scaled;
+            results.ImageType = PTKImageType.Scaled;
 
         end
     end

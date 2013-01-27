@@ -1,16 +1,16 @@
-classdef TDFissureApproximation < TDPlugin
-    % TDFissureApproximation. Plugin to obtain an approximation of the fissures
+classdef PTKFissureApproximation < PTKPlugin
+    % PTKFissureApproximation. Plugin to obtain an approximation of the fissures
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
     %     This is an intermediate stage towards lobar segmentation.
     %
-    %     TDFissureApproximation uses the approximate lobar segmentation
-    %     generated using TDLobesByVesselnessDensityUsingWatershed. The fissures
+    %     PTKFissureApproximation uses the approximate lobar segmentation
+    %     generated using PTKLobesByVesselnessDensityUsingWatershed. The fissures
     %     are the watershed boundaries within the lung.
     %
     %
@@ -41,15 +41,15 @@ classdef TDFissureApproximation < TDPlugin
     methods (Static)
         function results = RunPlugin(application, reporting)
             
-            lobes_guess = application.GetResult('TDLobesByVesselnessDensityUsingWatershed');
+            lobes_guess = application.GetResult('PTKLobesByVesselnessDensityUsingWatershed');
             
-            left_and_right_lungs = application.GetResult('TDLeftAndRightLungs');
+            left_and_right_lungs = application.GetResult('PTKLeftAndRightLungs');
             
-            results_left = TDFissureApproximation.GetLeftLungResults(application, lobes_guess, left_and_right_lungs);
-            results_right = TDFissureApproximation.GetRightLungResults(application, lobes_guess, left_and_right_lungs);
+            results_left = PTKFissureApproximation.GetLeftLungResults(application, lobes_guess, left_and_right_lungs);
+            results_right = PTKFissureApproximation.GetRightLungResults(application, lobes_guess, left_and_right_lungs);
             
-            results = TDCombineLeftAndRightImages(application.GetTemplateImage(TDContext.LungROI), results_left, results_right, left_and_right_lungs);
-            results.ImageType = TDImageType.Colormap;
+            results = PTKCombineLeftAndRightImages(application.GetTemplateImage(PTKContext.LungROI), results_left, results_right, left_and_right_lungs);
+            results.ImageType = PTKImageType.Colormap;
         end
         
         function results = GenerateImageFromResults(results, ~, ~)
@@ -58,7 +58,7 @@ classdef TDFissureApproximation < TDPlugin
     
     methods (Static, Access = private)
         function left_results = GetLeftLungResults(application, lobes_guess, left_and_right_lungs)
-            left_lung_roi = application.GetResult('TDGetLeftLungROI');
+            left_lung_roi = application.GetResult('PTKGetLeftLungROI');
             
             lobes_guess = lobes_guess.Copy;
             lobes_guess.ResizeToMatch(left_lung_roi);
@@ -71,7 +71,7 @@ classdef TDFissureApproximation < TDPlugin
         end
         
         function right_results = GetRightLungResults(application, lobes_guess, left_and_right_lungs)
-            right_lung_roi = application.GetResult('TDGetRightLungROI');
+            right_lung_roi = application.GetResult('PTKGetRightLungROI');
             lobes_guess = lobes_guess.Copy;
             lobes_guess.ResizeToMatch(right_lung_roi);
             left_and_right_lungs = left_and_right_lungs.Copy;

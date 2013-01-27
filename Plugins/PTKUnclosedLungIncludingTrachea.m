@@ -1,10 +1,10 @@
-classdef TDUnclosedLungIncludingTrachea < TDPlugin
-    % TDUnclosedLungIncludingTrachea. Plugin to segment the lung regions
+classdef PTKUnclosedLungIncludingTrachea < PTKPlugin
+    % PTKUnclosedLungIncludingTrachea. Plugin to segment the lung regions
     %     including the airways.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -35,25 +35,25 @@ classdef TDUnclosedLungIncludingTrachea < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             if dataset.IsGasMRI
-                results = dataset.GetResult('TDSegmentGasMRI');
+                results = dataset.GetResult('PTKSegmentGasMRI');
                 results.AddBorder(1);
-                results = TDGetMainRegionExcludingBorder(results, reporting);
+                results = PTKGetMainRegionExcludingBorder(results, reporting);
                 results.RemoveBorder(1);
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
-                lung_threshold = dataset.GetResult('TDMRILungThreshold');
+                lung_threshold = dataset.GetResult('PTKMRILungThreshold');
                 results = lung_threshold.LungMask;
                 
             else
-                threshold_image = dataset.GetResult('TDThresholdLungFiltered');
+                threshold_image = dataset.GetResult('PTKThresholdLungFiltered');
                 threshold_image.ChangeRawImage(threshold_image.RawImage > 0);
                 
                 reporting.ShowProgress('Searching for largest connected region');
                 
                 % Find the main component, excluding any components touching the border
-                threshold_image = TDGetMainRegionExcludingBorder(threshold_image, reporting);
+                threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, reporting);
                 
                 results = threshold_image;
-                results.ImageType = TDImageType.Colormap;
+                results.ImageType = PTKImageType.Colormap;
             end
         end
     end

@@ -1,14 +1,14 @@
-classdef TDAirwaySkeleton < TDPlugin
-    % TDAirwayCentreline. Plugin for finding the centreline of the pulmonary airway tree.
+classdef PTKAirwaySkeleton < PTKPlugin
+    % PTKAirwayCentreline. Plugin for finding the centreline of the pulmonary airway tree.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDAirwayCentreline calls the TDAirways plugin to segment the airway
-    %     tree. It then uses the TDSkeletonise library routine to reduce the
+    %     PTKAirwayCentreline calls the PTKAirways plugin to segment the airway
+    %     tree. It then uses the PTKSkeletonise library routine to reduce the
     %     airway tree to a centreline. The results are stored in a heirarchical
     %     tree structure.
     %
@@ -44,13 +44,13 @@ classdef TDAirwaySkeleton < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            lung_image = dataset.GetResult('TDLungROI');
-            airway_results = dataset.GetResult('TDAirways');
-            results = TDGetCentrelineFromAirways(airway_results, lung_image, reporting);
+            lung_image = dataset.GetResult('PTKLungROI');
+            airway_results = dataset.GetResult('PTKAirways');
+            results = PTKGetCentrelineFromAirways(airway_results, lung_image, reporting);
         end
 
         function results = GenerateImageFromResults(skeleton_results, image_templates, ~)
-            template_image = image_templates.GetTemplateImage(TDContext.LungROI);
+            template_image = image_templates.GetTemplateImage(PTKContext.LungROI);
 
             new_image = zeros(template_image.ImageSize, 'uint8');
             new_image(template_image.GlobalToLocalIndices(skeleton_results.OriginalCentrelinePoints)) = 2;
@@ -60,7 +60,7 @@ classdef TDAirwaySkeleton < TDPlugin
             
             results = template_image.BlankCopy;
             results.ChangeRawImage(new_image);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
             
             results.SetVoxelToThis(skeleton_results.StartPoint, 4);
             

@@ -1,13 +1,13 @@
-classdef TDDensityVsHeight < TDPlugin
-    % TDDensityVsHeight. Plugin for showing a graph relating density to gravitational height
+classdef PTKDensityVsHeight < PTKPlugin
+    % PTKDensityVsHeight. Plugin for showing a graph relating density to gravitational height
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDDensityVsHeight opens a new window showing the graph.
+    %     PTKDensityVsHeight opens a new window showing the graph.
     %
     %
     %     Licence
@@ -40,7 +40,7 @@ classdef TDDensityVsHeight < TDPlugin
             widthheightratio = 4/3;
             page_width_cm = 13;
             resolution_dpi = 300;
-            font_name = TDSoftwareInfo.GraphFont;
+            font_name = PTKSoftwareInfo.GraphFont;
             line_width = 1.5;
             marker_line_width = 1;
             
@@ -48,19 +48,19 @@ classdef TDDensityVsHeight < TDPlugin
             
             results = [];
 
-            lung_roi = dataset.GetResult('TDLungROI');
+            lung_roi = dataset.GetResult('PTKLungROI');
             
             if ~lung_roi.IsCT
-                reporting.ShowMessage('TDDensityVsHeight:NotCTImage', 'Cannot perform analysis as this is not a CT image');
+                reporting.ShowMessage('PTKDensityVsHeight:NotCTImage', 'Cannot perform analysis as this is not a CT image');
                 return;
             end
             
-            left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
-            [global_gravity_bin_boundaries, lung_height_mm] = TDDensityVsHeight.GetGravityBins(left_and_right_lungs);
-            surface = dataset.GetResult('TDLungSurface');
+            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
+            [global_gravity_bin_boundaries, lung_height_mm] = PTKDensityVsHeight.GetGravityBins(left_and_right_lungs);
+            surface = dataset.GetResult('PTKLungSurface');
             left_and_right_lungs.ChangeRawImage(left_and_right_lungs.RawImage.*uint8(~surface.RawImage));
-            left_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 2), global_gravity_bin_boundaries, lung_height_mm);
-            right_lung_results = TDDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 1), global_gravity_bin_boundaries, lung_height_mm);
+            left_lung_results = PTKDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 2), global_gravity_bin_boundaries, lung_height_mm);
+            right_lung_results = PTKDensityVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 1), global_gravity_bin_boundaries, lung_height_mm);
             
             max_x = max([(left_lung_results.mean_density_values + left_lung_results.std_values/2) (right_lung_results.mean_density_values + right_lung_results.std_values/2)]);
             max_x = 0.3*ceil(max_x/.3);
@@ -90,8 +90,8 @@ classdef TDDensityVsHeight < TDPlugin
             end
             
             % Plot the markers and error bars
-            TDDensityVsHeight.PlotForLung(left_lung_results, axes_handle, [0, 0, 1], 'd', 0.2, marker_size, line_width, marker_line_width);
-            TDDensityVsHeight.PlotForLung(right_lung_results, axes_handle, [1, 0, 0], 's', -0.2, marker_size, line_width, marker_line_width);
+            PTKDensityVsHeight.PlotForLung(left_lung_results, axes_handle, [0, 0, 1], 'd', 0.2, marker_size, line_width, marker_line_width);
+            PTKDensityVsHeight.PlotForLung(right_lung_results, axes_handle, [1, 0, 0], 's', -0.2, marker_size, line_width, marker_line_width);
 
             % Create the legend
             legend_strings = {'Left', 'Right'};
@@ -104,7 +104,7 @@ classdef TDDensityVsHeight < TDPlugin
             ylabel(axes_handle, 'Gravitational height (%)', 'FontName', font_name, 'FontSize', label_font_size);
             axis([min(x_ticks) max_x 0 100]);
             
-            TDDensityVsHeight.SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle, resolution_dpi);
+            PTKDensityVsHeight.SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle, resolution_dpi);
         end
         
         function [global_gravity_bin_boundaries, lung_height_mm] = GetGravityBins(whole_lung_mask)
@@ -134,7 +134,7 @@ classdef TDDensityVsHeight < TDPlugin
             gravity_bin_size = global_gravity_bin_boundaries(2) - global_gravity_bin_boundaries(1);
             gravity_bins = global_gravity_bin_boundaries;
             
-            density_g_mL_image = TDConvertCTToDensity(lung_roi);
+            density_g_mL_image = PTKConvertCTToDensity(lung_roi);
             
             
             density_g_mL = density_g_mL_image.RawImage;

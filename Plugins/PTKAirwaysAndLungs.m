@@ -1,9 +1,9 @@
-classdef TDAirwaysAndLungs < TDPlugin
-    % TDAirwaysAndLungs. Plugin for displaying segented airways and lungs together
+classdef PTKAirwaysAndLungs < PTKPlugin
+    % PTKAirwaysAndLungs. Plugin for displaying segented airways and lungs together
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -36,10 +36,10 @@ classdef TDAirwaysAndLungs < TDPlugin
         function results = RunPlugin(dataset, reporting)
             
             % Get the airway results
-            [airways_results, airways_image] = dataset.GetResult('TDAirways');
+            [airways_results, airways_image] = dataset.GetResult('PTKAirways');
             
             % Get the results for the left and right lung segmentations
-            [left_and_right_lungs_results, left_and_right_lungs_image] = dataset.GetResult('TDLeftAndRightLungs');
+            [left_and_right_lungs_results, left_and_right_lungs_image] = dataset.GetResult('PTKLeftAndRightLungs');
             
             % Make our output image the lugn segmentation
             results = left_and_right_lungs_image.BlankCopy;

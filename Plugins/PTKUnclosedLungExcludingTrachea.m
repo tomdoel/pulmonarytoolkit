@@ -1,18 +1,18 @@
-classdef TDUnclosedLungExcludingTrachea < TDPlugin
-    % TDUnclosedLungExcludingTrachea. Plugin to segment the lung regions without
+classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
+    % PTKUnclosedLungExcludingTrachea. Plugin to segment the lung regions without
     % including the main airways.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDUnclosedLungExcludingTrachea runs the library function
-    %     TDGetMainRegionExcludingBorder on the lung image thresholded using the
-    %     plugin TDThresholdLungFiltered, in order to generate a segmented lung
+    %     PTKUnclosedLungExcludingTrachea runs the library function
+    %     PTKGetMainRegionExcludingBorder on the lung image thresholded using the
+    %     plugin PTKThresholdLungFiltered, in order to generate a segmented lung
     %     image which includes the airways. The main airways are then obtained
-    %     using the plugin TDAirways and dilated before being removed. The
+    %     using the plugin PTKAirways and dilated before being removed. The
     %     resulting image contains just the lungs.
     %
     %
@@ -41,11 +41,11 @@ classdef TDUnclosedLungExcludingTrachea < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            threshold_image = dataset.GetResult('TDUnclosedLungIncludingTrachea');
+            threshold_image = dataset.GetResult('PTKUnclosedLungIncludingTrachea');
             
             % Remove first two generations of airway tree
             reporting.ShowProgress('Finding main airways and removing');
-            results = dataset.GetResult('TDAirways');
+            results = dataset.GetResult('PTKAirways');
             if dataset.IsGasMRI
                 size_dilation_mm = 2.5;
                 max_generation = 2;
@@ -56,10 +56,10 @@ classdef TDUnclosedLungExcludingTrachea < TDPlugin
                 size_dilation_mm = 2.5;
                 max_generation = 3;
             end
-            main_airways = TDUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, max_generation);
+            main_airways = PTKUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, max_generation);
             
             % Dilate the airways in order to remove airway walls. But we don't use too large a value, otherwise regions of the lungs will be removed
-            ball_element = TDImageUtilities.CreateBallStructuralElement(threshold_image.VoxelSize, size_dilation_mm);
+            ball_element = PTKImageUtilities.CreateBallStructuralElement(threshold_image.VoxelSize, size_dilation_mm);
             main_airways = imdilate(main_airways, ball_element);
             
             main_airways = ~main_airways;
@@ -71,7 +71,7 @@ classdef TDUnclosedLungExcludingTrachea < TDPlugin
             threshold_image.ChangeRawImage(threshold_image_raw);
             
             results = threshold_image;
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
         end
     end
     
@@ -92,7 +92,3 @@ classdef TDUnclosedLungExcludingTrachea < TDPlugin
         end
     end
 end
-
-
-
-        

@@ -1,13 +1,13 @@
-classdef TDGradients < TDPlugin
-    % TDGradients. Plugin for showing image gradients using a quiver plot
+classdef PTKGradients < PTKPlugin
+    % PTKGradients. Plugin for showing image gradients using a quiver plot
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDGradients uses Matlab's gradient() function to compute finite
+    %     PTKGradients uses Matlab's gradient() function to compute finite
     %     difference image gradients in the i-j-k directions. These are returned
     %     as a 4D vector which can be illustrated as a quiver plot.
     %
@@ -37,7 +37,7 @@ classdef TDGradients < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, ~)
-            image = dataset.GetResult('TDLungROI');
+            image = dataset.GetResult('PTKLungROI');
             
             % Matlab's gradient returns [x,y,z] which is our [i,j,k]
             [gj, gi, gk] = gradient(single(image.RawImage));

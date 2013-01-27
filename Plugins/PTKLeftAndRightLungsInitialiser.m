@@ -1,9 +1,9 @@
-classdef TDLeftAndRightLungsInitialiser < TDPlugin
-    % TDLeftAndRightLungsInitialiser. Plugin to segment and label the left and right lungs.
+classdef PTKLeftAndRightLungsInitialiser < PTKPlugin
+    % PTKLeftAndRightLungsInitialiser. Plugin to segment and label the left and right lungs.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -36,16 +36,16 @@ classdef TDLeftAndRightLungsInitialiser < TDPlugin
             reporting.ShowProgress('Separating lungs');
             
             if strcmp(dataset.GetImageInfo.Modality, 'MR')
-                unclosed_lungs = dataset.GetResult('TDUnclosedLungIncludingTrachea', TDContext.LungROI);
+                unclosed_lungs = dataset.GetResult('PTKUnclosedLungIncludingTrachea', PTKContext.LungROI);
             else
-                unclosed_lungs = dataset.GetResult('TDUnclosedLungExcludingTrachea', TDContext.LungROI);
+                unclosed_lungs = dataset.GetResult('PTKUnclosedLungExcludingTrachea', PTKContext.LungROI);
             end
             
-            lung_roi = dataset.GetResult('TDLungROI');
+            lung_roi = dataset.GetResult('PTKLungROI');
             
-            filtered_threshold_lung = dataset.GetResult('TDThresholdLungFiltered', TDContext.LungROI);
+            filtered_threshold_lung = dataset.GetResult('PTKThresholdLungFiltered', PTKContext.LungROI);
             
-            results = TDGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting);
+            results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting);
         end
     end
 end

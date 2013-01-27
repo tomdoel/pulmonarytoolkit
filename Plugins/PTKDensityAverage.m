@@ -1,13 +1,13 @@
-classdef TDDensityAverage < TDPlugin
-    % TDDensityAverage. Plugin for finding density averaged over a neighbourhood
+classdef PTKDensityAverage < PTKPlugin
+    % PTKDensityAverage. Plugin for finding density averaged over a neighbourhood
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDDensityAverage computes the density of each voxel, averaged over a
+    %     PTKDensityAverage computes the density of each voxel, averaged over a
     %     local neighbourhood.
     %
     %
@@ -37,11 +37,11 @@ classdef TDDensityAverage < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             reporting.ShowProgress('Fetching ROI');
-            lung_roi = dataset.GetResult('TDLungROI');
-            mask = dataset.GetResult('TDLeftAndRightLungs');
-            [~, airways] = dataset.GetResult('TDAirways');
+            lung_roi = dataset.GetResult('PTKLungROI');
+            mask = dataset.GetResult('PTKLeftAndRightLungs');
+            [~, airways] = dataset.GetResult('PTKAirways');
             
-            [density_average, density_average_mask] = TDComputeDensityAverage(lung_roi, mask, airways, reporting);
+            [density_average, density_average_mask] = PTKComputeDensityAverage(lung_roi, mask, airways, reporting);
             results = [];
             results.DensityAverage = density_average;
             results.DensityAverageMask = density_average_mask;

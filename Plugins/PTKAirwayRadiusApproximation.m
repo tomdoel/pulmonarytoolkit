@@ -1,14 +1,14 @@
-classdef TDAirwayRadiusApproximation < TDPlugin
-    % TDAirwayRadiusApproximation. Plugin to approximate radius of branches in
+classdef PTKAirwayRadiusApproximation < PTKPlugin
+    % PTKAirwayRadiusApproximation. Plugin to approximate radius of branches in
     %     the airway tree
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDAirwayRadiusApproximation uses a distance transform to estimate the
+    %     PTKAirwayRadiusApproximation uses a distance transform to estimate the
     %     radius of each branch in the airway tree. The results are shown as an
     %     output image.
     %
@@ -39,16 +39,16 @@ classdef TDAirwayRadiusApproximation < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            results = dataset.GetTemplateImage(TDContext.LungROI);
-            airway_results = dataset.GetResult('TDAirways');
-            results = TDAirwayRadiusApproximation.GetRadiusApproximationFromAirwayTree(airway_results.AirwayTree, results, reporting);
+            results = dataset.GetTemplateImage(PTKContext.LungROI);
+            airway_results = dataset.GetResult('PTKAirways');
+            results = PTKAirwayRadiusApproximation.GetRadiusApproximationFromAirwayTree(airway_results.AirwayTree, results, reporting);
         end
     end
     
     methods (Static, Access = private)
 
         function results = GetRadiusApproximationFromAirwayTree(airway_tree, template, reporting)
-            airway_segmented_image = TDGetImageFromAirwayResults(airway_tree, template, false, reporting);
+            airway_segmented_image = PTKGetImageFromAirwayResults(airway_tree, template, false, reporting);
             dt_image = airway_segmented_image.RawImage;
             dt_image = dt_image == 0;
             dt_image = bwdist(dt_image);
@@ -69,7 +69,7 @@ classdef TDAirwayRadiusApproximation < TDPlugin
             
             results = airway_segmented_image.BlankCopy;
             results.ChangeRawImage(segmented_image);
-            results.ImageType = TDImageType.Scaled;
+            results.ImageType = PTKImageType.Scaled;
         end
     end
 end

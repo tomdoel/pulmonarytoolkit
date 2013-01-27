@@ -1,14 +1,14 @@
-classdef TDLobarHistogram < TDPlugin
-    % TDLobarHistogram. Plugin for showing a CT histogram showing the
+classdef PTKLobarHistogram < PTKPlugin
+    % PTKLobarHistogram. Plugin for showing a CT histogram showing the
     %     number of voxels falling into different compartments
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDFrequencyDistribution opens a new window with an annotated CT
+    %     PTKFrequencyDistribution opens a new window with an annotated CT
     %     histogram as a smoothed curve.
     %
     %
@@ -39,14 +39,14 @@ classdef TDLobarHistogram < TDPlugin
         function results = RunPlugin(dataset, reporting)
             results = [];
 
-            roi = dataset.GetResult('TDLungROI');
+            roi = dataset.GetResult('PTKLungROI');
             
             if ~roi.IsCT
-                reporting.ShowMessage('TDLobarHistogram:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
+                reporting.ShowMessage('PTKLobarHistogram:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
                 return;
             end
             
-            left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
+            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
             
             
             label_font_size = 8;
@@ -58,7 +58,7 @@ classdef TDLobarHistogram < TDPlugin
             page_width_cm = 8;
             resolution_dpi = 300;
             compartment_line_width_points = 0.5;
-            font_name = TDSoftwareInfo.GraphFont;
+            font_name = PTKSoftwareInfo.GraphFont;
 
             
             figure_handle = figure;
@@ -84,19 +84,19 @@ classdef TDLobarHistogram < TDPlugin
             
             % Whole lung
             graph_data = [];
-            graph_data.Lung = TDLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage > 0, 'k', axes_handle);
+            graph_data.Lung = PTKLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage > 0, 'k', axes_handle);
             
             % Left and right lungs
-            graph_data.Left = TDLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage == 2, 'r', axes_handle);
-            graph_data.Right = TDLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage == 1, 'b', axes_handle);
+            graph_data.Left = PTKLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage == 2, 'r', axes_handle);
+            graph_data.Right = PTKLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage == 1, 'b', axes_handle);
 
             % Lobes
-            lobes = dataset.GetResult('TDLobesFromFissurePlane');
-            graph_data.RightUpper = TDLobarHistogram.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
-            graph_data.RightMid =  TDLobarHistogram.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
-            graph_data.RightLower = TDLobarHistogram.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);
-            graph_data.LeftUpper = TDLobarHistogram.Histogram(roi, lobes.RawImage == 5, 'm', axes_handle);
-            graph_data.LeftLower = TDLobarHistogram.Histogram(roi, lobes.RawImage == 6, 'y', axes_handle);
+            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            graph_data.RightUpper = PTKLobarHistogram.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
+            graph_data.RightMid =  PTKLobarHistogram.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
+            graph_data.RightLower = PTKLobarHistogram.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);
+            graph_data.LeftUpper = PTKLobarHistogram.Histogram(roi, lobes.RawImage == 5, 'm', axes_handle);
+            graph_data.LeftLower = PTKLobarHistogram.Histogram(roi, lobes.RawImage == 6, 'y', axes_handle);
             legend_strings = {'Whole lung', 'Left lung', 'Right lung', 'Upper right lobe', 'Middle right lobe', 'Lower right lobe', 'Upper left lobe', 'Lower left lobe'};
   
             legend(legend_strings, 'FontName', font_name, 'FontSize', legend_font_size, 'Location', 'SouthEast');
@@ -124,7 +124,7 @@ classdef TDLobarHistogram < TDPlugin
             ylabel(axes_handle, 'CT numbers frequency (%)', 'FontSize', label_font_size, 'FontName', font_name);
             axis(axes_handle, [-1100 200 0 max_y]);
 
-            TDLobarHistogram.SaveToFile(dataset, graph_data, figure_handle, resolution_dpi);
+            PTKLobarHistogram.SaveToFile(dataset, graph_data, figure_handle, resolution_dpi);
 
         end
     end
@@ -176,14 +176,14 @@ classdef TDLobarHistogram < TDPlugin
             results_file_name = fullfile(file_name, ['LobeHistogram.txt']);
             file_handle = fopen(results_file_name, 'w');
             
-            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.Lung,       'BOTHLUNG');
-            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.Left,       'LEFTLUNG');
-            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.Right,      'RGHTLUNG');
-            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.RightUpper, 'RGHTUPPR');
-            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.RightMid,   'RGHTMIDL');
-            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.RightLower, 'RGTTLOWR');
-            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.LeftUpper,  'LEFTUPPR');
-            TDLobarHistogram.SaveLobeToFile(file_handle, graph_data.LeftLower,  'LEFTLOWR');
+            PTKLobarHistogram.SaveLobeToFile(file_handle, graph_data.Lung,       'BOTHLUNG');
+            PTKLobarHistogram.SaveLobeToFile(file_handle, graph_data.Left,       'LEFTLUNG');
+            PTKLobarHistogram.SaveLobeToFile(file_handle, graph_data.Right,      'RGHTLUNG');
+            PTKLobarHistogram.SaveLobeToFile(file_handle, graph_data.RightUpper, 'RGHTUPPR');
+            PTKLobarHistogram.SaveLobeToFile(file_handle, graph_data.RightMid,   'RGHTMIDL');
+            PTKLobarHistogram.SaveLobeToFile(file_handle, graph_data.RightLower, 'RGTTLOWR');
+            PTKLobarHistogram.SaveLobeToFile(file_handle, graph_data.LeftUpper,  'LEFTUPPR');
+            PTKLobarHistogram.SaveLobeToFile(file_handle, graph_data.LeftLower,  'LEFTLOWR');
             
             fclose(file_handle);
             

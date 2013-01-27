@@ -1,9 +1,9 @@
-classdef TDAirwayGrowing < TDPlugin
-    % TDAirwayGrowing. Plugin for generating an artificial airway tree
+classdef PTKAirwayGrowing < PTKPlugin
+    % PTKAirwayGrowing. Plugin for generating an artificial airway tree
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -35,10 +35,10 @@ classdef TDAirwayGrowing < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
 
-            left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
-            lobes = dataset.GetResult('TDLobesFromFissurePlane');
+            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
+            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
                         
-            airways_by_lobe = dataset.GetResult('TDReallocateAirwaysLabelledByLobe');
+            airways_by_lobe = dataset.GetResult('PTKReallocateAirwaysLabelledByLobe');
             
 
             upper_right_start_segment = airways_by_lobe.StartBranches.RightUpper;
@@ -55,7 +55,7 @@ classdef TDAirwayGrowing < TDPlugin
             
             template = left_and_right_lungs.BlankCopy;
             approx_number_points = 31000;
-            airway_generator = TDAirwayGenerator(left_and_right_lungs, airways_by_lobe.StartBranches.Trachea, approx_number_points, reporting);
+            airway_generator = PTKAirwayGenerator(left_and_right_lungs, airways_by_lobe.StartBranches.Trachea, approx_number_points, reporting);
             
             
             reporting.ShowProgress('RIGHT - upper');
@@ -104,7 +104,7 @@ classdef TDAirwayGrowing < TDPlugin
 %             airway_generator.AirwayTree.GenerateBranchParameters;
             
             % Add values of tissue density
-            density = dataset.GetResult('TDDensityAverage');
+            density = dataset.GetResult('PTKDensityAverage');
             airway_generator.AirwayTree.AddDensityValues(density);            
 
             results = [];
@@ -124,15 +124,15 @@ classdef TDAirwayGrowing < TDPlugin
         end
         
         function results = GenerateImageFromResults(airway_results, image_templates, reporting)
-            template_image = image_templates.GetTemplateImage(TDContext.LungROI);
+            template_image = image_templates.GetTemplateImage(PTKContext.LungROI);
 
             % Visualising the entire airway tree is Matlab is slow if the number
             % of branches is greater than a few thousand
-            % TDVisualiseAirwayGrowingTree(airway_results.Airways, reporting);
+            % PTKVisualiseAirwayGrowingTree(airway_results.Airways, reporting);
 
             results = template_image;
             results.ChangeRawImage(zeros(results.ImageSize, 'uint8'));
-            results = TDDrawAirwayGrowingBranchesAsSegmentation(airway_results.Airways, template_image, reporting);
+            results = PTKDrawAirwayGrowingBranchesAsSegmentation(airway_results.Airways, template_image, reporting);
         end
         
         

@@ -1,13 +1,13 @@
-classdef TDAirwaysLabelledByBronchus < TDPlugin
-    % TDAirwaysLabelledByBronchus. Plugin to visualise the airway tree bronchus by bronchus
+classdef PTKAirwaysLabelledByBronchus < PTKPlugin
+    % PTKAirwaysLabelledByBronchus. Plugin to visualise the airway tree bronchus by bronchus
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDAirwaysLabelledByBronchus calls the TDAirways plugin to segment the
+    %     PTKAirwaysLabelledByBronchus calls the PTKAirways plugin to segment the
     %     airway tree. It then cretes an output labelled image where each 
     %     bronchus is labelled with contrasting colour values, starting with 1
     %     for the trachea. The child segments of each bronchus are labelled
@@ -47,11 +47,11 @@ classdef TDAirwaysLabelledByBronchus < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, ~)
-            results = dataset.GetTemplateImage(TDContext.LungROI);
-            airway_results = dataset.GetResult('TDAirways');
-            labeled_region = TDAirwaysLabelledByBronchus.GetLabeledSegmentedImageFromAirwayTree(airway_results.AirwayTree, results);
+            results = dataset.GetTemplateImage(PTKContext.LungROI);
+            airway_results = dataset.GetResult('PTKAirways');
+            labeled_region = PTKAirwaysLabelledByBronchus.GetLabeledSegmentedImageFromAirwayTree(airway_results.AirwayTree, results);
             results.ChangeRawImage(labeled_region);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
         end
     end
     

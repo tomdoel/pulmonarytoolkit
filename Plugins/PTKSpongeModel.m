@@ -1,14 +1,14 @@
-classdef TDSpongeModel < TDPlugin
-    % TDSpongeModel. Plugin for illustrating slice-by-slice relation between
+classdef PTKSpongeModel < PTKPlugin
+    % PTKSpongeModel. Plugin for illustrating slice-by-slice relation between
     % gravitational compartments and volumes of air and tissue.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDSpongeModel produces an illustration of the air and tissue volumes
+    %     PTKSpongeModel produces an illustration of the air and tissue volumes
     %     in different gravitational compartments, on a slice by slice basis.
     %     Results should be viewed in the axial orientation. The results show a
     %     schematic illustration of the slice divided into 10 gravitational
@@ -41,18 +41,18 @@ classdef TDSpongeModel < TDPlugin
     
     methods (Static)
         function results = RunPlugin(application, reporting)
-            roi = application.GetResult('TDLungROI');
+            roi = application.GetResult('PTKLungROI');
                         
             results = roi.Copy;
             results.Clear;
             
             if ~roi.IsCT
-                reporting.ShowMessage('TDSpongeModel:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
+                reporting.ShowMessage('PTKSpongeModel:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
                 return;
             end
             
             
-            left_and_right_lungs = application.GetResult('TDLeftAndRightLungs');
+            left_and_right_lungs = application.GetResult('PTKLeftAndRightLungs');
             number_axial_slices = roi.ImageSize(3);
 
             ct_air = -1000;
@@ -62,8 +62,8 @@ classdef TDSpongeModel < TDPlugin
             
             for axial_slice_number = 1 : number_axial_slices
                 reporting.UpdateProgressValue(100*(axial_slice_number - 1)/number_axial_slices);
-                axial_slice = roi.GetSlice(axial_slice_number, TDImageOrientation.Axial);
-                axial_slice_mask = left_and_right_lungs.GetSlice(axial_slice_number, TDImageOrientation.Axial);
+                axial_slice = roi.GetSlice(axial_slice_number, PTKImageOrientation.Axial);
+                axial_slice_mask = left_and_right_lungs.GetSlice(axial_slice_number, PTKImageOrientation.Axial);
                 [axial_i_coords, ~, ~] = find(axial_slice_mask > 0);
                 if ~isempty(axial_i_coords)
                     min_i = min(axial_i_coords(:));
@@ -102,17 +102,17 @@ classdef TDSpongeModel < TDPlugin
                         output_slice(gravity_slice_boundaries(gravity_slice_number) : gravity_slice_boundaries(gravity_slice_number + 1) - 1, :) = output_gravity_slice;
                         output_slice(gravity_slice_boundaries(gravity_slice_number), :) = 7*(axial_slice_mask(gravity_slice_boundaries(gravity_slice_number), :) > 0);
                     end
-                    results.ReplaceImageSlice(output_slice, axial_slice_number, TDImageOrientation.Axial);
+                    results.ReplaceImageSlice(output_slice, axial_slice_number, PTKImageOrientation.Axial);
                 end
                 
                 
             end
             
-            surface = application.GetResult('TDLungSurface');
+            surface = application.GetResult('PTKLungSurface');
             results_raw = uint8(results.RawImage);
             results_raw(surface.RawImage > 0) = 7;
             results.ChangeRawImage(results_raw);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
             
 
 

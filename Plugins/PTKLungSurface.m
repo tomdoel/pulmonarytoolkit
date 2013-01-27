@@ -1,13 +1,13 @@
-classdef TDLungSurface < TDPlugin
-    % TDLungSurface. Plugin for finding points around the surface of the lungs
+classdef PTKLungSurface < PTKPlugin
+    % PTKLungSurface. Plugin for finding points around the surface of the lungs
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDLungSurface runs the library function TDGetSurfaceFromSegmentation
+    %     PTKLungSurface runs the library function PTKGetSurfaceFromSegmentation
     %     to find the lung surface and returns this as an image.
     %
     %
@@ -36,11 +36,11 @@ classdef TDLungSurface < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, ~)
-            lung_mask = dataset.GetResult('TDLeftAndRightLungs');
+            lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
             results = lung_mask.BlankCopy;
-            lungs = TDGetSurfaceFromSegmentation(uint8(lung_mask.RawImage > 0));
+            lungs = PTKGetSurfaceFromSegmentation(uint8(lung_mask.RawImage > 0));
             results.ChangeRawImage(lungs);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
         end
     end
 end

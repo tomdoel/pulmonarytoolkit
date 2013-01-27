@@ -1,13 +1,13 @@
-classdef TDThresholdLungFiltered < TDPlugin
-    % TDThresholdLungFiltered. Plugin to detect airlike voxels using thresholding.
+classdef PTKThresholdLungFiltered < PTKPlugin
+    % PTKThresholdLungFiltered. Plugin to detect airlike voxels using thresholding.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDThresholdLungFiltered uses the library routine TDThresholdAirway to
+    %     PTKThresholdLungFiltered uses the library routine PTKThresholdAirway to
     %     detect air-like voxels in the lung. Before thresholding, a Gaussian
     %     filter is applied to the image.
     %
@@ -38,29 +38,29 @@ classdef TDThresholdLungFiltered < TDPlugin
     methods (Static)
         function threshold_image = RunPlugin(dataset, ~)
             if dataset.IsGasMRI
-                lung_roi = dataset.GetResult('TDInvertImage');
-                filtered_image = TDGaussianFilter(lung_roi, 2);
+                lung_roi = dataset.GetResult('PTKInvertImage');
+                filtered_image = PTKGaussianFilter(lung_roi, 2);
             else
-                lung_roi = dataset.GetResult('TDLungROI');
-                filtered_image = TDGaussianFilter(lung_roi, 0.5);
+                lung_roi = dataset.GetResult('PTKLungROI');
+                filtered_image = PTKGaussianFilter(lung_roi, 0.5);
             end
             
             if dataset.IsGasMRI
-                mri_lung_threshold = dataset.GetResult('TDMRILungThreshold');
+                mri_lung_threshold = dataset.GetResult('PTKMRILungThreshold');
                 limits = mri_lung_threshold.Bounds;
                 raw_image = filtered_image.RawImage;
                 raw_image = (raw_image >= limits(1) & raw_image <= limits(2));
                 threshold_image = lung_roi.BlankCopy;
                 threshold_image.ChangeRawImage(raw_image);
-                threshold_image.ImageType = TDImageType.Colormap;
+                threshold_image.ImageType = PTKImageType.Colormap;
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
-                mri_lung_threshold = dataset.GetResult('TDMRILungThreshold');
+                mri_lung_threshold = dataset.GetResult('PTKMRILungThreshold');
                 limits = mri_lung_threshold.Bounds;
                 raw_image = filtered_image.RawImage;
                 raw_image = (raw_image >= limits(1) & raw_image <= limits(2));
                 threshold_image = lung_roi.BlankCopy;
                 threshold_image.ChangeRawImage(raw_image);
-                threshold_image.ImageType = TDImageType.Colormap;
+                threshold_image.ImageType = PTKImageType.Colormap;
             else
                 limit_1 = lung_roi.RescaledToGreyscale(-1024);
                 limit_2 = lung_roi.RescaledToGreyscale(-775);
@@ -75,7 +75,7 @@ classdef TDThresholdLungFiltered < TDPlugin
                 threshold_image = lung_roi.BlankCopy;
                 threshold_image.ChangeRawImage(filtered_image);
                 
-                threshold_image.ImageType = TDImageType.Colormap;
+                threshold_image.ImageType = PTKImageType.Colormap;
             end
         end
     end
