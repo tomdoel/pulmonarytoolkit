@@ -1,13 +1,13 @@
-classdef TDReportingWithCache < TDReportingInterface
-    % TDReportingWithCache. Provides error, message and progress reporting, with
+classdef PTKReportingWithCache < PTKReportingInterface
+    % PTKReportingWithCache. Provides error, message and progress reporting, with
     %     warnings and messages cached to prevent display of duplicates
     %
-    %     TDReportingWithCache is a wrapper around a TDReporting object.
-    %     Messages and warnings are cached using a TDReportingWarningsCache and displayed
+    %     PTKReportingWithCache is a wrapper around a PTKReporting object.
+    %     Messages and warnings are cached using a PTKReportingWarningsCache and displayed
     %     at the end of the algorith. Duplicate messages and warnings are
     %     grouped together to prevent multiple messages appearing.
     %
-    %     See TDReportingIntertface.m for details of the methods this class
+    %     See PTKReportingIntertface.m for details of the methods this class
     %     implements.
     %
     %
@@ -19,7 +19,7 @@ classdef TDReportingWithCache < TDReportingInterface
     %    
 
     properties (Access = private)
-        Reporting  % Handle to a TDReporting object
+        Reporting  % Handle to a PTKReporting object
         WarningsCache
         ProgressStack
         CurrentProgressStackItem
@@ -27,13 +27,13 @@ classdef TDReportingWithCache < TDReportingInterface
     end
     
     methods
-        function obj = TDReportingWithCache(reporting)
+        function obj = PTKReportingWithCache(reporting)
             if nargin > 0
                 obj.Reporting = reporting;
             else
-                obj.Reporting = TDReportingDefault;
+                obj.Reporting = PTKReportingDefault;
             end
-            obj.WarningsCache = TDReportingWarningsCache(obj);
+            obj.WarningsCache = PTKReportingWarningsCache(obj);
             obj.ClearStack;
         end
         
@@ -42,15 +42,15 @@ classdef TDReportingWithCache < TDReportingInterface
         end        
         
         function ClearStack(obj)
-            obj.ProgressStack = TDProgressStackItem.empty(0);
-            obj.CurrentProgressStackItem = TDProgressStackItem('', 0, 100);
-            obj.ParentProgressStackItem = TDProgressStackItem('', 0, 100);
+            obj.ProgressStack = PTKProgressStackItem.empty(0);
+            obj.CurrentProgressStackItem = PTKProgressStackItem('', 0, 100);
+            obj.ParentProgressStackItem = PTKProgressStackItem('', 0, 100);
         end
         
         function PushProgress(obj)
             obj.ProgressStack(end + 1) = obj.ParentProgressStackItem;
             obj.ParentProgressStackItem = obj.CurrentProgressStackItem;
-            obj.CurrentProgressStackItem = TDProgressStackItem('', obj.ParentProgressStackItem.MinPosition, obj.ParentProgressStackItem.MaxPosition);
+            obj.CurrentProgressStackItem = PTKProgressStackItem('', obj.ParentProgressStackItem.MinPosition, obj.ParentProgressStackItem.MaxPosition);
         end
         
         function PopProgress(obj)

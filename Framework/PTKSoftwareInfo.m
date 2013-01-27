@@ -1,5 +1,5 @@
-classdef TDSoftwareInfo < handle
-    % TDSoftwareInfo. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKSoftwareInfo < handle
+    % PTKSoftwareInfo. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -32,7 +32,7 @@ classdef TDSoftwareInfo < handle
         PTKVersion = '1'
         CachedPluginInfoFileName = 'CachedPluginInfo'
         SettingsFileName = 'PTKSettings.mat'
-        FrameworkCacheFileName = 'TDFrameworkCache.mat'
+        FrameworkCacheFileName = 'PTKFrameworkCache.mat'
         MakerPointsCacheName = 'MarkerPoints'
         ImageInfoCacheName = 'ImageInfo'
         SchemaCacheName = 'Schema'
@@ -61,9 +61,9 @@ classdef TDSoftwareInfo < handle
             if ~isempty(PTKConfig.CacheFolder)
                 home_directory = PTKConfig.CacheFolder;
             else
-                home_directory = TDDiskUtilities.GetUserDirectory;
+                home_directory = PTKDiskUtilities.GetUserDirectory;
             end
-            application_directory = TDSoftwareInfo.ApplicationSettingsFolderName;
+            application_directory = PTKSoftwareInfo.ApplicationSettingsFolderName;
             application_directory = fullfile(home_directory, application_directory);  
             if ~exist(application_directory, 'dir')
                 mkdir(application_directory);
@@ -84,7 +84,7 @@ classdef TDSoftwareInfo < handle
         end
         
         function is_cancel_id = IsErrorCancel(error_id)
-            is_cancel_id = strcmp(error_id, TDSoftwareInfo.CancelErrorId);
+            is_cancel_id = strcmp(error_id, PTKSoftwareInfo.CancelErrorId);
         end
     end
 end

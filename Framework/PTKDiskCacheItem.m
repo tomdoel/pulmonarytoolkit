@@ -1,11 +1,11 @@
-classdef TDDiskCacheItem < handle
-    % TDDiskCacheItem. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKDiskCacheItem < handle
+    % PTKDiskCacheItem. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
     %     Used to store a result along with its dependency information.
-    %     This class is used by TDDiskCache to store the result of a plugin, 
+    %     This class is used by PTKDiskCache to store the result of a plugin, 
     %     along with its dependency information.
     %
     %     Licence
@@ -21,7 +21,7 @@ classdef TDDiskCacheItem < handle
     end
     
     methods
-        function obj = TDDiskCacheItem(cache_item_info, result)
+        function obj = PTKDiskCacheItem(cache_item_info, result)
             obj.CacheInfo = cache_item_info;
             obj.Result = result;
         end

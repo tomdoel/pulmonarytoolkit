@@ -1,7 +1,7 @@
-classdef TDReportingDefault < TDReporting
-    % TDReportingDefault. Provides error, message and progress reporting.
+classdef PTKReportingDefault < PTKReporting
+    % PTKReportingDefault. Provides error, message and progress reporting.
     %
-    %     TDReporting. Implementation of TDReportingInterface, which is used by
+    %     PTKReporting. Implementation of PTKReportingInterface, which is used by
     %     the Pulmonary Toolkit for progress and error/message reporting. This
     %     is a convenient implementation with no constructor arguments which
     %     creates a progress dialog and writes messages to the command window,
@@ -12,7 +12,7 @@ classdef TDReportingDefault < TDReporting
     %     to create a default progress reporting implementation for input into
     %     Pulmonary Toolkit routines.
     %
-    %     See TDReportingIntertface.m for details of the methods this class
+    %     See PTKReportingIntertface.m for details of the methods this class
     %     implements.
     %
     %
@@ -24,8 +24,8 @@ classdef TDReportingDefault < TDReporting
     %    
     
     methods
-        function obj = TDReportingDefault
-            obj = obj@TDReporting(TDProgressDialog, []);
+        function obj = PTKReportingDefault
+            obj = obj@PTKReporting(PTKProgressDialog, []);
         end        
     end
 end

@@ -1,46 +1,46 @@
-classdef TDReporting < TDReportingInterface
-    % TDReporting. Provides error, message and progress reporting.
+classdef PTKReporting < PTKReportingInterface
+    % PTKReporting. Provides error, message and progress reporting.
     %
-    %     TDReporting. Implementation of TDReportingInterface, which is used by
+    %     PTKReporting. Implementation of PTKReportingInterface, which is used by
     %     the Pulmonary Toolkit for progress and error/message reporting. This
     %     implementation displays warnings and messages on the command window,
     %     and uses Matlab's error() command to process errors. Logging 
-    %     information is writen to a log file. A TDProcessDialog
-    %     or TDProgressPanel can be passed in for progress reporting, and a
-    %     handle to a TDViewerPanel can be passed in for obtaining gui
+    %     information is writen to a log file. A PTKProcessDialog
+    %     or PTKProgressPanel can be passed in for progress reporting, and a
+    %     handle to a PTKViewerPanel can be passed in for obtaining gui
     %     orientation and marker information.
     %
     %     Usage
     %     -----
     %
-    %     You should create a single TDReporting object and pass it into all the
+    %     You should create a single PTKReporting object and pass it into all the
     %     Pulmonary Toolkit routines you use in order to provide error, warning,
     %     message and progress reporting during execution of routines.
     %
     %     If you are not writing a gui application but would like a standard
     %     pop-up progress dialog to appear while waiting for plugins to execute,
-    %     consider creating a TDReportingDefault object instead. Use TDReporting
+    %     consider creating a PTKReportingDefault object instead. Use PTKReporting
     %     if you want to specify your own progress dialog, or specify a gui
     %     viewing panel, or if you want no progress dialog at all.
     %
-    %         reporting = TDReporting(progress_dialog, viewing_panel);
+    %         reporting = PTKReporting(progress_dialog, viewing_panel);
     %
-    %             progress_dialog - a TDProgressDialog or TDProgressPanel object
+    %             progress_dialog - a PTKProgressDialog or PTKProgressPanel object
     %                 for displaying a progress bar. You can omit this argument
     %                 or replace it with [] if you are writing scripts to run 
     %                 in the background and do not want progress dialogs popping
-    %                 up. Otherwise, you should create a TDProgressDialog or
-    %                 TDProgressPanel, or else implement your own progress class
-    %                 with the same interface as TDProgressDialog and pass this
+    %                 up. Otherwise, you should create a PTKProgressDialog or
+    %                 PTKProgressPanel, or else implement your own progress class
+    %                 with the same interface as PTKProgressDialog and pass this
     %                 in.
     %
     %             viewing_panel - if you are implementing a gui using a
-    %                 TDViewingPanel, then you can provide the class handle here
+    %                 PTKViewingPanel, then you can provide the class handle here
     %                 so that plugins can query which orientation the gui is in
     %                 and obtain the current marker image. Otherwise leave this
     %                 argment blank.
     %
-    %     See TDReportingIntertface.m for details of the methods this class
+    %     See PTKReportingIntertface.m for details of the methods this class
     %     implements.
     %
     %
@@ -52,7 +52,7 @@ classdef TDReporting < TDReportingInterface
     %    
 
     properties
-        ProgressDialog  % Handle to a TDProgressDialog or TDProgressPanel
+        ProgressDialog  % Handle to a PTKProgressDialog or PTKProgressPanel
     end
     
     properties (Access = private)
@@ -61,32 +61,32 @@ classdef TDReporting < TDReportingInterface
     end
     
     methods
-        function obj = TDReporting(progress_dialog, viewing_panel)
+        function obj = PTKReporting(progress_dialog, viewing_panel)
             if nargin > 0
                 obj.ProgressDialog = progress_dialog;
             end
             if nargin > 1
                 obj.ViewingPanel = viewing_panel;
             end
-            settings_folder = TDSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
-            log_file_name = TDSoftwareInfo.LogFileName;
+            settings_folder = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
+            log_file_name = PTKSoftwareInfo.LogFileName;
             obj.LogFileName = fullfile(settings_folder, log_file_name);
         end
         
         function Log(obj, message)
-            [calling_function, ~] = TDErrorUtilities.GetCallingFunction(2);
+            [calling_function, ~] = PTKErrorUtilities.GetCallingFunction(2);
             
             obj.AppendToLogFile([calling_function ': ' message]);
         end
         
         function ShowMessage(obj, identifier, message)
-            [calling_function, ~] = TDErrorUtilities.GetCallingFunction(2);
+            [calling_function, ~] = PTKErrorUtilities.GetCallingFunction(2);
             disp(message);
             obj.AppendToLogFile([calling_function ': ' identifier ':' message]);
         end
         
         function ShowWarning(obj, identifier, message, supplementary_info)
-            [calling_function, ~] = TDErrorUtilities.GetCallingFunction(2);
+            [calling_function, ~] = PTKErrorUtilities.GetCallingFunction(2);
             
             obj.AppendToLogFile([calling_function ': WARNING: ' identifier ':' message]);
             disp(['WARNING: ' message]);
@@ -98,11 +98,11 @@ classdef TDReporting < TDReportingInterface
         end
         
         function Error(obj, identifier, message)
-            [calling_function, stack] = TDErrorUtilities.GetCallingFunction(2);
+            [calling_function, stack] = PTKErrorUtilities.GetCallingFunction(2);
 
             msgStruct = [];
             msgStruct.message = ['Error in function ' calling_function ': ' message];
-            if TDSoftwareInfo.IsErrorCancel(identifier)
+            if PTKSoftwareInfo.IsErrorCancel(identifier)
                 msgStruct.identifier = identifier;
             else
                 msgStruct.identifier = [ 'PTKMain:' identifier];
@@ -113,7 +113,7 @@ classdef TDReporting < TDReportingInterface
         end
         
         function ErrorFromException(obj, identifier, message, ex)
-            [calling_function, stack] = TDErrorUtilities.GetCallingFunction(2);
+            [calling_function, stack] = PTKErrorUtilities.GetCallingFunction(2);
 
             msgStruct = [];
             msgStruct.message = ['Error in function ' calling_function ': ' message ' Exception message:' ex.message];
@@ -172,7 +172,7 @@ classdef TDReporting < TDReportingInterface
         
         function CheckForCancel(obj)
             if obj.HasBeenCancelled
-                obj.Error(TDSoftwareInfo.CancelErrorId, 'User cancelled');
+                obj.Error(PTKSoftwareInfo.CancelErrorId, 'User cancelled');
             end
         end
         

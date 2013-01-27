@@ -1,5 +1,5 @@
-classdef TDTemplateCallback < handle
-    % TDTemplateCallback. Used by plugins to fetch empty template images
+classdef PTKTemplateCallback < handle
+    % PTKTemplateCallback. Used by plugins to fetch empty template images
     %
     %     Template images are empty images with metadata matching the current
     %     image. They are used to create images that will be compatible with
@@ -20,7 +20,7 @@ classdef TDTemplateCallback < handle
     end
     
     methods
-        function obj = TDTemplateCallback(linked_dataset_chooser, dataset_call_stack)
+        function obj = PTKTemplateCallback(linked_dataset_chooser, dataset_call_stack)
             obj.DatasetStack = dataset_call_stack;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
         end

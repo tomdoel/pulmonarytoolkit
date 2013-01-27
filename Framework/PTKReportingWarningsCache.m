@@ -1,5 +1,5 @@
-classdef TDReportingWarningsCache < handle
-    %TDReportingWarningsCache Summary of this class goes here
+classdef PTKReportingWarningsCache < handle
+    %PTKReportingWarningsCache Summary of this class goes here
     %   Detailed explanation goes here
     
     properties (Access = private)
@@ -9,7 +9,7 @@ classdef TDReportingWarningsCache < handle
     end
     
     methods
-        function obj = TDReportingWarningsCache(reporting_with_cache)
+        function obj = PTKReportingWarningsCache(reporting_with_cache)
             obj.ReportingWithCache = reporting_with_cache;
             obj.PendingMessages = containers.Map;
             obj.PendingWarnings = containers.Map;

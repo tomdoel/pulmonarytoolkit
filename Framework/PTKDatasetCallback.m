@@ -1,11 +1,11 @@
-classdef TDDatasetCallback < handle
-    % TDDatasetCallback. Used by plugins to obtain results and associated data for a particular dataset.
+classdef PTKDatasetCallback < handle
+    % PTKDatasetCallback. Used by plugins to obtain results and associated data for a particular dataset.
     %
     %     This class is used by plugins to run calculations and fetch cached
-    %     results associated with a dataset. The difference between TDDataset 
-    %     and TDDatasetCallback is that TDDataset is called from outside the 
-    %     toolkit, whereas TDDatasetCallback is called by plugins during their 
-    %     RunPlugin() call. TDDataset calls TDDatasetCallback, but provides 
+    %     results associated with a dataset. The difference between PTKDataset 
+    %     and PTKDatasetCallback is that PTKDataset is called from outside the 
+    %     toolkit, whereas PTKDatasetCallback is called by plugins during their 
+    %     RunPlugin() call. PTKDataset calls PTKDatasetCallback, but provides 
     %     additional progress and error reporting and dependency tracking.
     %
     %     You should not create this class directly. An instance of this class
@@ -13,12 +13,12 @@ classdef TDDatasetCallback < handle
     %
     %     Example: 
     %
-    %     classdef MyPlugin < TDPlugin
+    %     classdef MyPlugin < PTKPlugin
     %
     %     methods (Static)
     %         function results = RunPlugin(dataset_callback, reporting)
     %             ...
-    %             airway_results = dataset_callback.GetResult('TDAirways');
+    %             airway_results = dataset_callback.GetResult('PTKAirways');
     %             ...
     %         end
     %     end
@@ -39,7 +39,7 @@ classdef TDDatasetCallback < handle
     end
     
     methods
-        function obj = TDDatasetCallback(linked_dataset_chooser, dataset_call_stack)
+        function obj = PTKDatasetCallback(linked_dataset_chooser, dataset_call_stack)
             obj.DatasetStack = dataset_call_stack;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
         end
@@ -68,7 +68,7 @@ classdef TDDatasetCallback < handle
             end
         end
 
-        % Returns a TDImageInfo structure with image information, including the
+        % Returns a PTKImageInfo structure with image information, including the
         % UID, filenames and file path
         function image_info = GetImageInfo(obj, dataset_name)
             if nargin < 2
@@ -78,7 +78,7 @@ classdef TDDatasetCallback < handle
         end
         
         % Returns an empty template image for the specified context
-        % See TDImageTemplates.m for valid contexts
+        % See PTKImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, dataset_name)
             if nargin < 3
                 dataset_name = [];

@@ -1,10 +1,10 @@
-classdef TDDatasetDiskCache < handle
-    % TDDatasetDiskCache. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKDatasetDiskCache < handle
+    % PTKDatasetDiskCache. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     A class used by TDPluginDependencyTracker to save and load plugin
+    %     A class used by PTKPluginDependencyTracker to save and load plugin
     %     results and data associated with a particular dataset. This class
     %     ensures dependencies are correctly added, saved and validated when
     %     results are accessed or changed.
@@ -23,7 +23,7 @@ classdef TDDatasetDiskCache < handle
     end
     
     methods
-        function obj = TDDatasetDiskCache(disk_cache, reporting)
+        function obj = PTKDatasetDiskCache(disk_cache, reporting)
             obj.DiskCache = disk_cache;
             obj.LoadCachedPluginResultsFile(reporting);
         end
@@ -80,16 +80,16 @@ classdef TDDatasetDiskCache < handle
     methods (Access = private)
         
         function LoadCachedPluginResultsFile(obj, reporting)
-            cached_plugin_info = obj.DiskCache.Load(TDSoftwareInfo.CachedPluginInfoFileName, reporting);
+            cached_plugin_info = obj.DiskCache.Load(PTKSoftwareInfo.CachedPluginInfoFileName, reporting);
             if isempty(cached_plugin_info)
-                obj.PluginResultsInfo = TDPluginResultsInfo;
+                obj.PluginResultsInfo = PTKPluginResultsInfo;
             else
                 obj.PluginResultsInfo = cached_plugin_info;
             end
         end
         
         function SaveCachedPluginInfoFile(obj, reporting)
-            obj.DiskCache.Save(TDSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, reporting);
+            obj.DiskCache.Save(PTKSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, reporting);
         end
     end
 end

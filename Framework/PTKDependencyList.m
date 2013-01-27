@@ -1,10 +1,10 @@
-classdef TDDependencyList < handle
-    % TDDependency. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKDependencyList < handle
+    % PTKDependency. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     TDDependencyList stores a list of dependencies (TDDependency objects) 
+    %     PTKDependencyList stores a list of dependencies (PTKDependency objects) 
     %     for a particular plugin result, for a particular dataset. 
     %     Each dependency represents another 
     %     plugin result which was accessed during the generation of this result. 
@@ -24,8 +24,8 @@ classdef TDDependencyList < handle
     end
     
     methods
-        function obj = TDDependencyList
-            obj.DependencyList = TDDependency.empty;
+        function obj = PTKDependencyList
+            obj.DependencyList = PTKDependency.empty;
         end
         
         % Adds a single dependency to the list
@@ -56,9 +56,9 @@ classdef TDDependencyList < handle
                     dependency_exists = true;
                     if ~strcmp(dependency.Uid, new_dependency.Uid)
                         if (dependency.Attributes.IgnoreDependencyChecks && new_dependency.Attributes.IgnoreDependencyChecks)
-                            reporting.ShowWarning('TDDependencyList:PermittedDependencyMismatch', ['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
+                            reporting.ShowWarning('PTKDependencyList:PermittedDependencyMismatch', ['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
                         else
-                            reporting.Error('TDDependencyList:DependencyMismatch', ['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
+                            reporting.Error('PTKDependencyList:DependencyMismatch', ['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
                         end
                     end
                     return;

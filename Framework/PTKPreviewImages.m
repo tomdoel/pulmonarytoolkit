@@ -1,10 +1,10 @@
-classdef TDPreviewImages < handle
-    % TDPreviewImages. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKPreviewImages < handle
+    % PTKPreviewImages. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     TDPreviewImages caches a list of 'preview images' which are thumbnails 
+    %     PTKPreviewImages caches a list of 'preview images' which are thumbnails 
     %     of previous plugin results for this dataset. These images are used by
     %     the GUI as a 'preview' of the results obtained when running a
     %     plugin.
@@ -23,7 +23,7 @@ classdef TDPreviewImages < handle
     end
     
     methods
-        function obj = TDPreviewImages(dataset_disk_cache, reporting)
+        function obj = PTKPreviewImages(dataset_disk_cache, reporting)
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.LoadPreviewFile;
             obj.Reporting = reporting;
@@ -64,7 +64,7 @@ classdef TDPreviewImages < handle
         
         % Cache previews on disk
         function LoadPreviewFile(obj)
-            cached_previews = obj.DatasetDiskCache.LoadData(TDSoftwareInfo.PreviewImageFileName, obj.Reporting);
+            cached_previews = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.PreviewImageFileName, obj.Reporting);
             if isempty(cached_previews)
                 obj.Previews = containers.Map;
             else
@@ -74,7 +74,7 @@ classdef TDPreviewImages < handle
         
         % Load cached previews from disk
         function SavePreviewFile(obj)
-            obj.DatasetDiskCache.SaveData(TDSoftwareInfo.PreviewImageFileName, obj.Previews, obj.Reporting);
+            obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.PreviewImageFileName, obj.Previews, obj.Reporting);
         end
     end
     
