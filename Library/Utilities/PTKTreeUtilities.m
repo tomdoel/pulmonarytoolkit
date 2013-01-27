@@ -1,5 +1,5 @@
-classdef TDTreeUtilities < handle
-    % TDTreeUtilities. Utility functions related to tree structures
+classdef PTKTreeUtilities < handle
+    % PTKTreeUtilities. Utility functions related to tree structures
     %
     %
     %     Licence
@@ -15,7 +15,7 @@ classdef TDTreeUtilities < handle
             permutations = [];
             for branch = start_branches
                 if ~isempty(branch.Children) && max_generations > 0
-                    new_permutations = TDTreeUtilities.GetAllBranchPermutations(branch.Children, max_generations - 1);
+                    new_permutations = PTKTreeUtilities.GetAllBranchPermutations(branch.Children, max_generations - 1);
                 else
                     new_permutations = [];
                 end
@@ -51,13 +51,13 @@ classdef TDTreeUtilities < handle
             if (number_of_generations > 0)
                 for tree = trees
                     if isempty(tree.Children)
-                        new_child_1 = TDTreeModel(tree);
-                        new_child_2 = TDTreeModel(tree);
+                        new_child_1 = PTKTreeModel(tree);
+                        new_child_2 = PTKTreeModel(tree);
                         new_child_1.Radius = 0.7*tree.Radius;
                         new_child_2.Radius = 0.7*tree.Radius;
                     end
                     for child = tree.Children
-                        TDTreeUtilities.ExpandTree(child, number_of_generations - 1);
+                        PTKTreeUtilities.ExpandTree(child, number_of_generations - 1);
                     end
                 end
             end
@@ -72,14 +72,14 @@ classdef TDTreeUtilities < handle
             % branches where necessary
             start_branches_copy = [];
             for start_branch = start_branches
-                next_start_branches_copy = TDTreeModel.SimpleTreeCopy(start_branch);
+                next_start_branches_copy = PTKTreeModel.SimpleTreeCopy(start_branch);
                 start_branches_copy = [start_branches_copy, next_start_branches_copy];
             end
             
-            TDTreeUtilities.ExpandTree(start_branches_copy, number_of_generations_to_search);
+            PTKTreeUtilities.ExpandTree(start_branches_copy, number_of_generations_to_search);
             
             % Find all combinations of branches
-            branch_permutations = TDTreeUtilities.GetAllBranchPermutations(start_branches_copy, number_of_generations_to_search);
+            branch_permutations = PTKTreeUtilities.GetAllBranchPermutations(start_branches_copy, number_of_generations_to_search);
             
             % Remove all combinations which don't have the right number of branches
             new_permutations = [];
@@ -91,7 +91,7 @@ classdef TDTreeUtilities < handle
             end
             
             if isempty(new_permutations)
-                reporting.Error('TDTreeUtilities:PermutationsDoNotMatchSegmentNumber', 'Could not subdivide the tree into exactly the desired number of branches');
+                reporting.Error('PTKTreeUtilities:PermutationsDoNotMatchSegmentNumber', 'Could not subdivide the tree into exactly the desired number of branches');
             end
             
         end
@@ -102,7 +102,7 @@ classdef TDTreeUtilities < handle
             min_radius = [];
             for index = 1 : length(permutations)
                 this_permutation = permutations{index};
-                [sorted_permutation, sorted_radii] = TDTreeUtilities.SortBranchesByRadiusValues(this_permutation);
+                [sorted_permutation, sorted_radii] = PTKTreeUtilities.SortBranchesByRadiusValues(this_permutation);
                 
                 % Choosing min radius
                 min_radius(index) = sorted_radii(1);
@@ -119,7 +119,7 @@ classdef TDTreeUtilities < handle
         
         
         function source_branches = BranchesToSourceBranches(branches)
-            source_branches = TDTreeModel.empty();
+            source_branches = PTKTreeModel.empty();
             for index = 1 : length(branches)
                 next_branch = branches(index);
                 while isempty(next_branch.BranchProperties)
@@ -142,7 +142,7 @@ classdef TDTreeUtilities < handle
         function sorted_segments = OrderSegmentsByCentroidI(segments_to_order, template)
             centroids_i = [];
             for i = 1 : length(segments_to_order)
-                centroids_i(end + 1) = TDTreeUtilities.GetICentroid(segments_to_order(i), template);
+                centroids_i(end + 1) = PTKTreeUtilities.GetICentroid(segments_to_order(i), template);
             end
             
             [~, sorted_indices] = sort(centroids_i);
@@ -153,7 +153,7 @@ classdef TDTreeUtilities < handle
             child_indices = start.Children;
             centroids_i = [];
             for i = 1 : length(child_indices)
-                centroids_i(end + 1) = TDTreeUtilities.GetICentroid(child_indices(i), template);
+                centroids_i(end + 1) = PTKTreeUtilities.GetICentroid(child_indices(i), template);
             end
             
             [~, sorted_indices] = sort(centroids_i);
@@ -163,7 +163,7 @@ classdef TDTreeUtilities < handle
         function sorted_segments = OrderSegmentsByCentroidDistanceFromDiagonalPlane(segments_to_order, template)
             centroids_dp = [];
             for i = 1 : length(segments_to_order)
-                centroids_dp(end + 1) = TDTreeUtilities.GetDPCentroid(segments_to_order(i), template);
+                centroids_dp(end + 1) = PTKTreeUtilities.GetDPCentroid(segments_to_order(i), template);
             end
             
             [~, sorted_indices] = sort(centroids_dp);
@@ -171,8 +171,8 @@ classdef TDTreeUtilities < handle
         end
         
         function centroid_i = GetICentroid(start, template)
-            tree = TDTreeUtilities.CentrelinePointsToLocalIndices(start.GetCentrelineTree, template);
-            centroid = TDTreeUtilities.GetCentroid(tree, template);
+            tree = PTKTreeUtilities.CentrelinePointsToLocalIndices(start.GetCentrelineTree, template);
+            centroid = PTKTreeUtilities.GetCentroid(tree, template);
             centroid_i = centroid(1);
         end
         
@@ -181,8 +181,8 @@ classdef TDTreeUtilities < handle
             for segment = start_segments
                 tree_points = [tree_points segment.GetCentrelineTree];
             end
-            tree = TDTreeUtilities.CentrelinePointsToLocalIndices(tree_points, template);
-            centroid = TDTreeUtilities.GetCentroid(tree, template);
+            tree = PTKTreeUtilities.CentrelinePointsToLocalIndices(tree_points, template);
+            centroid = PTKTreeUtilities.GetCentroid(tree, template);
             centroid_dp = - centroid(3) - centroid(1);
         end
         

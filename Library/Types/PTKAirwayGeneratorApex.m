@@ -1,7 +1,7 @@
-classdef TDAirwayGeneratorApex < handle
-    % TDAirwayGeneratorApex. Structure used by TDAirwayGenerator
+classdef PTKAirwayGeneratorApex < handle
+    % PTKAirwayGeneratorApex. Structure used by PTKAirwayGenerator
     %
-    % TDAirwayGeneratorApex is used to temporarily store airway tree endpoints
+    % PTKAirwayGeneratorApex is used to temporarily store airway tree endpoints
     % as part of the volume-filling airway growing algorithm.
     %
     %     Licence
@@ -18,7 +18,7 @@ classdef TDAirwayGeneratorApex < handle
     end
     
     methods
-        function obj = TDAirwayGeneratorApex(tree_segment, point_cloud, is_growing)
+        function obj = PTKAirwayGeneratorApex(tree_segment, point_cloud, is_growing)
             obj.AirwayGrowingTreeSegment = tree_segment;
             obj.PointCloud = point_cloud;
             obj.IsGrowingApex = is_growing;

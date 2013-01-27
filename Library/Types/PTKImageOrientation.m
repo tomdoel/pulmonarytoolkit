@@ -1,5 +1,5 @@
-classdef TDImageOrientation < uint8
-    % TDImageOrientation. An enumeration used to specify the orientation of an
+classdef PTKImageOrientation < uint8
+    % PTKImageOrientation. An enumeration used to specify the orientation of an
     % image
     %
     %     The number values correspond to the dimension axis perpendicular to

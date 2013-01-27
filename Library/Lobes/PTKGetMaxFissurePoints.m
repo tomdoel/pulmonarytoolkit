@@ -1,8 +1,8 @@
-function [high_fissure_indices, ref_image] = TDGetMaxFissurePoints(fissure_approximation, lung_mask, fissureness, image_size)
-    % TDGetMaxFissurePoints. function for finding candidate points of high
+function [high_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_approximation, lung_mask, fissureness, image_size)
+    % PTKGetMaxFissurePoints. function for finding candidate points of high
     %     fissureness given an initial fissure approximation.
     %
-    %     TDGetMaxFissurePoints is an intermediate stage in segmenting the
+    %     PTKGetMaxFissurePoints is an intermediate stage in segmenting the
     %     lobes. It is not intended to be a general-purpose algorithm.    
     %
     %     For more information, see 
@@ -41,7 +41,7 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     % Find a rotation matrix
     [eigv, m] = GetRotationMatrix(indices_for_model, image_size);
     
-    [x_all, y_all, z_all] = TDImageCoordinateUtilities.FastInd2sub(image_size, candidate_indices);
+    [x_all, y_all, z_all] = PTKImageCoordinateUtilities.FastInd2sub(image_size, candidate_indices);
     X_all = [x_all(:), y_all(:), z_all(:)]';
     
     % Transform to new basis
@@ -54,7 +54,7 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     y1_all = em_all(2, :);
 
     % Get the coordinates of each of the model points
-    [x_model, y_model, z_model] = TDImageCoordinateUtilities.FastInd2sub(image_size, indices_for_model);    
+    [x_model, y_model, z_model] = PTKImageCoordinateUtilities.FastInd2sub(image_size, indices_for_model);    
     X_model = [x_model(:), y_model(:), z_model(:)]';
     
     % Transform to new basis
@@ -77,7 +77,7 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     candidate_indices_ok = candidate_indices(is_valid);
     
     % Turn into x,y,z vectors
-    [x_all, y_all, z_all] = TDImageCoordinateUtilities.FastInd2sub(image_size, candidate_indices_ok);
+    [x_all, y_all, z_all] = PTKImageCoordinateUtilities.FastInd2sub(image_size, candidate_indices_ok);
     X_all = [x_all(:), y_all(:), z_all(:)]';    
 
     % Transform to new basis
@@ -95,11 +95,11 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     ref_image(maximum_fissureness_indices) = 3;
 
     % Remove non-connected points (outliers)
-    [x_all, y_all, z_all] = TDImageCoordinateUtilities.FastInd2sub(image_size, maximum_fissureness_indices);
+    [x_all, y_all, z_all] = PTKImageCoordinateUtilities.FastInd2sub(image_size, maximum_fissureness_indices);
     points_coords = ArraysToPoints(x_all(:), y_all(:), z_all(:));
     points_coords = RemoveNonConnectedPoints(points_coords, lung_segmentation, image_size);
     [x_all, y_all, z_all] = PointsToArrays(points_coords);
-    maximum_fissureness_indices = TDImageCoordinateUtilities.FastSub2ind(image_size, x_all(:), y_all(:), z_all(:));
+    maximum_fissureness_indices = PTKImageCoordinateUtilities.FastSub2ind(image_size, x_all(:), y_all(:), z_all(:));
     ref_image(maximum_fissureness_indices) = 1;
     
 end
@@ -160,7 +160,7 @@ function is_maxima = GetMaxima(candidate_indices, bin, fissureness_at_indices, f
     bin_allocation = zeros(image_size, 'int32');
     bin_allocation(candidate_indices) = bin;
     
-    [linear_offsets, ~] = TDImageCoordinateUtilities.GetLinearOffsets(image_size);
+    [linear_offsets, ~] = PTKImageCoordinateUtilities.GetLinearOffsets(image_size);
     neighbours = repmat(int32(candidate_indices), 1, 6) + repmat(int32(linear_offsets), length(candidate_indices), 1);
     fissureness_neighbours = fissureness(neighbours);
     bins_neighbours = bin_allocation(neighbours);

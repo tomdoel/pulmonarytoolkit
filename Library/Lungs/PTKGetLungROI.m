@@ -1,20 +1,20 @@
-function lung_image = TDGetLungROI(lung_image, reporting)
-    % TDGetLungROI. Finds a region of interest from a chest CT image which
+function lung_image = PTKGetLungROI(lung_image, reporting)
+    % PTKGetLungROI. Finds a region of interest from a chest CT image which
     %     contains the lungs and airways
     %
     %     Inputs
     %     ------
     %
-    %     lung_image - the full original lung volume stored as a TDImage.
+    %     lung_image - the full original lung volume stored as a PTKImage.
     %
-    %     reporting (optional) - an object implementing the TDReporting
+    %     reporting (optional) - an object implementing the PTKReporting
     %         interface for reporting progress and warnings
     %
     %
     %     Outputs
     %     -------
     %
-    %     lung_image - a TDImage cropped to the lung region of interest.
+    %     lung_image - a PTKImage cropped to the lung region of interest.
     %
     %
     %     Licence
@@ -25,12 +25,12 @@ function lung_image = TDGetLungROI(lung_image, reporting)
     %
 
     
-    if ~isa(lung_image, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(lung_image, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
 
     if nargin < 2
-        reporting = TDReportingDefault;
+        reporting = PTKReportingDefault;
     end
     
     reporting.ShowProgress('Rescaling image');
@@ -40,11 +40,11 @@ function lung_image = TDGetLungROI(lung_image, reporting)
     reduced_image.RescaleToMaxSize(128);
 
     reporting.ShowProgress('Filtering image');
-    reduced_image = TDGaussianFilter(reduced_image, 1.0);
+    reduced_image = PTKGaussianFilter(reduced_image, 1.0);
     
     scale_factor = reduced_image.Scale;
     reporting.ShowProgress('Finding region of interest');
-    reduced_image = TDSegmentLungsWithoutClosing(reduced_image, false, true, reporting);
+    reduced_image = PTKSegmentLungsWithoutClosing(reduced_image, false, true, reporting);
     
     % Use the crop function to find the offset and image size
     original_origin = reduced_image.Origin;

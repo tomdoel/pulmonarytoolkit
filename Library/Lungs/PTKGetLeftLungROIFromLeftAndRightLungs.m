@@ -1,5 +1,5 @@
-function lung_roi = TDGetLeftLungROIFromLeftAndRightLungs(lung_image, left_and_right_lung_mask, reporting)
-    % TDGetLeftLungROIFromLeftAndRightLungs. Extracts a region of interest for the left lung given the original image and the left and right lung mask.
+function lung_roi = PTKGetLeftLungROIFromLeftAndRightLungs(lung_image, left_and_right_lung_mask, reporting)
+    % PTKGetLeftLungROIFromLeftAndRightLungs. Extracts a region of interest for the left lung given the original image and the left and right lung mask.
     %
     %
     %     Licence

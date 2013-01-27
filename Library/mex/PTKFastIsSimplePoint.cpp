@@ -1,19 +1,19 @@
-// TDFastIsSimplePoint. Function for determining if a point is topologically simple.
+// PTKFastIsSimplePoint. Function for determining if a point is topologically simple.
 //
 //     This is a Matlab MEX function and must be compled before use. To compile, type 
 //
-//         mex TDFastIsSimplePoint
+//         mex PTKFastIsSimplePoint
 //
 //     on the Matlab command line.
 //
 //     This is an optimised adaption of the algorithm by G Malandain, G Bertrand, 1992
 //
-//     Alternatively, you can use the Matlab-only implementation TDIsSimplePoint 
+//     Alternatively, you can use the Matlab-only implementation PTKIsSimplePoint 
 //     which is equivalent to this function but slower as it does not use mex files. 
 //
 //     Syntax
 //     ------
-//         is_simple = TDFastIsSimplePoint(image)
+//         is_simple = PTKFastIsSimplePoint(image)
 //
 //     Input
 //     -----
@@ -261,11 +261,11 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
 {    
     // Check inputs
     if (num_inputs != 1) {
-        mexErrMsgTxt("Usage: is_simple = TDIsSimplePoint(image) where image is a 3x3x3 int8 matrix of the neighbourhood around the point.");
+        mexErrMsgTxt("Usage: is_simple = PTKIsSimplePoint(image) where image is a 3x3x3 int8 matrix of the neighbourhood around the point.");
     }
     
     if (num_outputs > 1) {
-         mexErrMsgTxt("TDIsSimplePoint produces one output but you have requested more.");
+         mexErrMsgTxt("PTKIsSimplePoint produces one output but you have requested more.");
     }
     
     // Get the input image

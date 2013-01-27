@@ -1,5 +1,5 @@
-function transformed_matrix = TDRegisterImageAffineUsingCoordinates(image_to_transform, template_to_match, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, interpolation_type, reporting)
-    % TDRegisterImageAffineUsingCoordinates. Computes the transformation matrix to register one
+function transformed_matrix = PTKRegisterImageAffineUsingCoordinates(image_to_transform, template_to_match, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, interpolation_type, reporting)
+    % PTKRegisterImageAffineUsingCoordinates. Computes the transformation matrix to register one
     %     image segmentation to another based on an solving for an affine
     %     transformation.
     %
@@ -12,7 +12,7 @@ function transformed_matrix = TDRegisterImageAffineUsingCoordinates(image_to_tra
     %
 
     % We use augmented matrices for the affine transformation
-    [it, jt, kt] = TDImageCoordinateUtilities.TransformCoordsAffine(i_r, j_r, k_r, affine_matrix);
+    [it, jt, kt] = PTKImageCoordinateUtilities.TransformCoordsAffine(i_r, j_r, k_r, affine_matrix);
 
     % If we are using nearest point interpolation we should keep the same data
     % type as the source image; otherwise we shoud change to a floating point

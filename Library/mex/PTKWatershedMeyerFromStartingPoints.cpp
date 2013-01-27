@@ -1,19 +1,19 @@
-// TDWatershedMeyerFromStartingPoints. Implementation of Meyer flooding algorithm.
+// PTKWatershedMeyerFromStartingPoints. Implementation of Meyer flooding algorithm.
 //
 //     This is a Matlab MEX function and must be compled before use. To compile, type 
 //
-//         mex TDWatershedMeyerFromStartingPoints
+//         mex PTKWatershedMeyerFromStartingPoints
 //
 //     on the Matlab command line.
 //
 //     This is an optimised adaption of the algorithm by G Malandain, G Bertrand, 1992
 //
-//     Alternatively, you can use the Matlab-only implementation TDWatershedMeyerFromStartingPointsMatlab 
+//     Alternatively, you can use the Matlab-only implementation PTKWatershedMeyerFromStartingPointsMatlab 
 //     which is equivalent to this function but slower as it does not use mex files. 
 //
 //     Syntax
 //     ------
-//         labeled_output = TDWatershedMeyerFromStartingPoints(image, starting_labels [, max_num_iterations])
+//         labeled_output = PTKWatershedMeyerFromStartingPoints(image, starting_labels [, max_num_iterations])
 //
 //     Inputs
 //     ------
@@ -95,7 +95,7 @@ struct classcomp {
 // The main function call
 void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs, const mxArray* pointers_to_inputs[])
 {
-    mexPrintf("TDWatershedMeyerFromStartingPoints\n"); 
+    mexPrintf("PTKWatershedMeyerFromStartingPoints\n"); 
     
     // Check inputs
     if ((num_inputs < 2) || (num_inputs > 3)) {
@@ -103,7 +103,7 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     }
     
     if (num_outputs > 1) {
-         mexErrMsgTxt("TDWatershedMeyerFromStartingPoints produces one output but you have requested more.");
+         mexErrMsgTxt("PTKWatershedMeyerFromStartingPoints produces one output but you have requested more.");
     }
     
     // Get the input images
@@ -300,6 +300,6 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
         }
     }
     
-    mexPrintf(" - Completed TDWatershedMeyerFromStartingPoints\n");
+    mexPrintf(" - Completed PTKWatershedMeyerFromStartingPoints\n");
     return;
 }

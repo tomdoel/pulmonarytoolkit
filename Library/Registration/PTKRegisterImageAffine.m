@@ -1,5 +1,5 @@
-function transformed_image = TDRegisterImageAffine(image_to_transform, template_to_match, affine_matrix, interpolation_type, reporting)
-    % TDRegisterImageAffine. Computes the transformation matrix to register one
+function transformed_image = PTKRegisterImageAffine(image_to_transform, template_to_match, affine_matrix, interpolation_type, reporting)
+    % PTKRegisterImageAffine. Computes the transformation matrix to register one
     %     image segmentation to another based on an affine transformation.
     %
     %
@@ -14,5 +14,5 @@ function transformed_image = TDRegisterImageAffine(image_to_transform, template_
     [i_r, j_r, k_r] = ndgrid(i_r, j_r, k_r);
     [i_o, j_o, k_o] = image_to_transform.GetCentredGlobalCoordinatesMm;
     [i_o, j_o, k_o] = ndgrid(i_o, j_o, k_o);
-    transformed_image = TDRegisterImageAffineUsingCoordinates(image_to_transform, template_to_match, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, interpolation_type, reporting);
+    transformed_image = PTKRegisterImageAffineUsingCoordinates(image_to_transform, template_to_match, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, interpolation_type, reporting);
 end

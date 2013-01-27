@@ -1,5 +1,5 @@
-classdef TDImageUtilities
-    % TDImageCoordinateUtilities. Utility functions related to displaying images
+classdef PTKImageUtilities
+    % PTKImageCoordinateUtilities. Utility functions related to displaying images
     %
     %
     %     Licence
@@ -14,13 +14,13 @@ classdef TDImageUtilities
         % Returns a 2D image slice and alpha information
         function [rgb_slice alpha_slice] = GetImage(image_slice, limits, image_type, window, level)
             switch image_type
-                case TDImageType.Grayscale
-                    rescaled_image_slice = TDImageUtilities.RescaleImage(image_slice, window, level);
-                    [rgb_slice, alpha_slice] = TDImageUtilities.GetBWImage(rescaled_image_slice);
-                case TDImageType.Colormap
-                    [rgb_slice, alpha_slice] = TDImageUtilities.GetLabeledImage(image_slice);
-                case TDImageType.Scaled
-                    [rgb_slice, alpha_slice] = TDImageUtilities.GetColourMap(image_slice, limits);
+                case PTKImageType.Grayscale
+                    rescaled_image_slice = PTKImageUtilities.RescaleImage(image_slice, window, level);
+                    [rgb_slice, alpha_slice] = PTKImageUtilities.GetBWImage(rescaled_image_slice);
+                case PTKImageType.Colormap
+                    [rgb_slice, alpha_slice] = PTKImageUtilities.GetLabeledImage(image_slice);
+                case PTKImageType.Scaled
+                    [rgb_slice, alpha_slice] = PTKImageUtilities.GetColourMap(image_slice, limits);
             end
             
         end
@@ -148,7 +148,7 @@ classdef TDImageUtilities
             seg_raw = seg_raw/max_val;
             dt = seg.BlankCopy;
             dt.ChangeRawImage(seg_raw);
-            dt.ImageType = TDImageType.Scaled;
+            dt.ImageType = PTKImageType.Scaled;
         end
 
         function [dt, border_image] = GetBorderDistanceTransformBySlice(image_mask, direction)
@@ -158,7 +158,7 @@ classdef TDImageUtilities
             % Slice by slice replace the dt image with a 2D distance transform
             for slice_index = 1 : image_mask.ImageSize(direction)
                 slice = image_mask.GetSlice(slice_index, direction);
-                surface_slice = TDImageUtilities.GetSurfaceFrom2DSegmentation(slice);
+                surface_slice = PTKImageUtilities.GetSurfaceFrom2DSegmentation(slice);
                 border_image.ReplaceImageSlice(surface_slice, slice_index, direction);
                 dt_slice = bwdist(surface_slice > 0);
                 dt.ReplaceImageSlice(dt_slice, slice_index, direction);
@@ -201,14 +201,14 @@ classdef TDImageUtilities
         % Calculates an approximate distance transform for a non-isotropic input
         % image
         function dt = GetNonisotropicDistanceTransform(binary_image)
-            dt = TDImageUtilities.MakeImageApproximatelyIsotropic(binary_image, '*nearest');
+            dt = PTKImageUtilities.MakeImageApproximatelyIsotropic(binary_image, '*nearest');
             dt.ChangeRawImage(bwdist(logical(dt.RawImage)));
             dt.Resample(binary_image.VoxelSize, '*nearest');
-            dt.ImageType = TDImageType.Scaled;
+            dt.ImageType = PTKImageType.Scaled;
         end
 
         function [results, combined_image] = ComputeDice(image_1, image_2)
-            TDImageUtilities.MatchSizes(image_1, image_2);
+            PTKImageUtilities.MatchSizes(image_1, image_2);
             
             combined_image = image_1.BlankCopy;
             
@@ -231,7 +231,7 @@ classdef TDImageUtilities
         end
         
         function [dice, combined_image] = ComputeDiceWithCoronalAllowance(image_1, image_2)
-            TDImageUtilities.MatchSizes(image_1, image_2);
+            PTKImageUtilities.MatchSizes(image_1, image_2);
             
             combined_image = image_1.BlankCopy;
             
@@ -273,11 +273,11 @@ classdef TDImageUtilities
             end
             
             % Get the distance transforms
-            [~, border_1] = TDImageUtilities.GetBorderDistanceTransformBySlice(image_1, TDImageOrientation.Coronal);
-            [~, border_2] = TDImageUtilities.GetBorderDistanceTransformBySlice(image_2, TDImageOrientation.Coronal);
+            [~, border_1] = PTKImageUtilities.GetBorderDistanceTransformBySlice(image_1, PTKImageOrientation.Coronal);
+            [~, border_2] = PTKImageUtilities.GetBorderDistanceTransformBySlice(image_2, PTKImageOrientation.Coronal);
             
-            dt_1 = TDImageUtilities.GetNonisotropicDistanceTransform(border_1);
-            dt_2 = TDImageUtilities.GetNonisotropicDistanceTransform(border_2);
+            dt_1 = PTKImageUtilities.GetNonisotropicDistanceTransform(border_1);
+            dt_2 = PTKImageUtilities.GetNonisotropicDistanceTransform(border_2);
             
             
             % Adjust the distance transforms to mm

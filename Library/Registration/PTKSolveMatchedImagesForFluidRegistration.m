@@ -1,5 +1,5 @@
-function deformation_field = TDSolveMatchedImagesForFluidRegistration(image_to_transform, reference_image, reporting)
-    % TDSolveMatchedImagesForFluidRegistration. 
+function deformation_field = PTKSolveMatchedImagesForFluidRegistration(image_to_transform, reference_image, reporting)
+    % PTKSolveMatchedImagesForFluidRegistration. 
     %
     %
     %     Licence
@@ -9,15 +9,15 @@ function deformation_field = TDSolveMatchedImagesForFluidRegistration(image_to_t
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    TDImageUtilities.MatchSizes(reference_image, image_to_transform);
+    PTKImageUtilities.MatchSizes(reference_image, image_to_transform);
     
     if ~isequal(image_to_transform.VoxelSize, reference_image.VoxelSize)
         reporting.Error('SolveMatchedImagesForFluidRegistration:UnequalVoxelSize', 'SolveMatchedImagesForFluidRegistration requires images to have the same voxel size');
     end
     
     % Convert to distance transforms
-    dt_float = TDRunForEachComponentAndCombine(@TDImageUtilities.GetNormalisedDT, image_to_transform, image_to_transform, reporting);
-    dt_ref = TDRunForEachComponentAndCombine(@TDImageUtilities.GetNormalisedDT, reference_image, reference_image, reporting);
+    dt_float = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, image_to_transform, image_to_transform, reporting);
+    dt_ref = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, reference_image, reference_image, reporting);
     
     % Solve to find the deformation field between these images
     [deformation_field, ~] = Solve(dt_float, dt_ref, reporting);
@@ -28,10 +28,10 @@ function [deformation_field, deformed_image] = Solve(image_1, image_2, reporting
     deformed_image = image_2.BlankCopy;
     voxel_size = image_2.VoxelSize;
     if ~isequal(voxel_size, image_1.VoxelSize)
-        reporting.Error('TDGetFluidDeformationField:DifferentVoxelSizes', 'Images must have the same voxel size');
+        reporting.Error('PTKGetFluidDeformationField:DifferentVoxelSizes', 'Images must have the same voxel size');
     end
     if ~isequal(image_1.ImageSize, image_2.ImageSize)
-        reporting.Error('TDGetFluidDeformationField:DifferentVoxelSizes', 'Images must have the same image size');
+        reporting.Error('PTKGetFluidDeformationField:DifferentVoxelSizes', 'Images must have the same image size');
     end
     
     iterations = 200;
@@ -77,7 +77,7 @@ function [deformation_field, deformed_image] = Solve(image_1, image_2, reporting
     deformed_image.ChangeRawImage(deformed_image_raw);
     
     if (exit_flag ~= 1)
-        reporting.ShowWarning('TDGetFluidDeformationField:RegistrationDidNotConverge', 'npReg registration did not converge.', []);
+        reporting.ShowWarning('PTKGetFluidDeformationField:RegistrationDidNotConverge', 'npReg registration did not converge.', []);
     end
     
     translation = (image_2.Origin - image_1.Origin).*image_2.VoxelSize;

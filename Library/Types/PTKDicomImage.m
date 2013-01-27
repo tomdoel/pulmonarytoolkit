@@ -1,18 +1,18 @@
-classdef TDDicomImage < TDImage
-    % TDDicomImage. A class for holding a 3D medical image volume.
+classdef PTKDicomImage < PTKImage
+    % PTKDicomImage. A class for holding a 3D medical image volume.
     %
-    %     TDDicomImage is inherited from the fundamental TDImage image class 
+    %     PTKDicomImage is inherited from the fundamental PTKImage image class 
     %     used by the Pulmonary Toolkit. It provides additional routines and
     %     metadata associated with medical imaging data, most commonly imported
     %     from the DICOM standard.
     %
-    %     In general, you do not need to create TDDicomImages using the
+    %     In general, you do not need to create PTKDicomImages using the
     %     constructor. You should import data using function such as
-    %     TDLoadImageFromDicomFiles() which correctly set the metadata.
+    %     PTKLoadImageFromDicomFiles() which correctly set the metadata.
     %     Thereafter, use .Copy() to make copies of the image, and .BlankCopy()
-    %     followed by .ChangeRawImage() to create derived images. See TDImage.m
+    %     followed by .ChangeRawImage() to create derived images. See PTKImage.m
     %     for an example of creating functions which modify images contained in
-    %     TDImage classes.
+    %     PTKImage classes.
     %
     %
     %     Licence
@@ -56,7 +56,7 @@ classdef TDDicomImage < TDImage
             elseif isequal(orientation, [0 1 0 0 0 1]')
                 new_dimension_order = [2 3 1];
             else
-                reporting.ShowWarning('TDDicomImage:UnknownPatientOrientation', 'Unknown patient orientation. Images may not be aligned correctly', []);
+                reporting.ShowWarning('PTKDicomImage:UnknownPatientOrientation', 'Unknown patient orientation. Images may not be aligned correctly', []);
                 new_dimension_order = [1 2 3];
             end
             original_image = permute(original_image, new_dimension_order);
@@ -75,7 +75,7 @@ classdef TDDicomImage < TDImage
                 rescale_intercept = [];
             end
 
-            new_dicom_image = TDDicomImage( ...
+            new_dicom_image = PTKDicomImage( ...
                 original_image, rescale_slope, rescale_intercept, voxel_size, metadata.Modality, metadata.StudyInstanceUID, metadata ...
             );
             patient_name = '';
@@ -102,9 +102,9 @@ classdef TDDicomImage < TDImage
     methods
         % The meta_data argument is optional, and is only used for saving DICOM
         % files. Other arguments are compulsory
-        function obj = TDDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid, meta_data)
+        function obj = PTKDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid, meta_data)
             
-            obj = obj@TDImage(original_image, TDImageType.Grayscale, voxel_size);
+            obj = obj@PTKImage(original_image, PTKImageType.Grayscale, voxel_size);
             
             obj.StudyUid = study_uid;
             
@@ -129,7 +129,7 @@ classdef TDDicomImage < TDImage
                 value = obj.GreyscaleToHounsfield(obj.GetVoxel(global_coords));
                 units = obj.RescaleUnits;
             else
-                [value, units] = GetRescaledValue@TDImage(obj, global_coords);
+                [value, units] = GetRescaledValue@PTKImage(obj, global_coords);
             end
         end
         
@@ -177,8 +177,8 @@ classdef TDDicomImage < TDImage
         end
 
         function copy = Copy(obj)
-            copy = TDDicomImage(obj.RawImage, obj.RescaleSlope, obj.RescaleIntercept, obj.VoxelSize, obj.Modality, obj.StudyUid, obj.MetaHeader);
-            metaclass = ?TDDicomImage;
+            copy = PTKDicomImage(obj.RawImage, obj.RescaleSlope, obj.RescaleIntercept, obj.VoxelSize, obj.Modality, obj.StudyUid, obj.MetaHeader);
+            metaclass = ?PTKDicomImage;
             property_list = metaclass.Properties;
             for i = 1 : length(property_list);
                 property = property_list{i};
@@ -189,8 +189,8 @@ classdef TDDicomImage < TDImage
         end
         
         function copy = BlankCopy(obj)
-            copy = TDDicomImage([], obj.RescaleSlope, obj.RescaleIntercept, obj.VoxelSize, obj.Modality, obj.StudyUid, obj.MetaHeader);
-            metaclass = ?TDDicomImage;
+            copy = PTKDicomImage([], obj.RescaleSlope, obj.RescaleIntercept, obj.VoxelSize, obj.Modality, obj.StudyUid, obj.MetaHeader);
+            metaclass = ?PTKDicomImage;
             property_list = metaclass.Properties;
             for i = 1 : length(property_list);
                 property = property_list{i};
@@ -201,7 +201,7 @@ classdef TDDicomImage < TDImage
         end
         
         function is_equal = eq(obj, other)
-            metaclass = ?TDImage;
+            metaclass = ?PTKImage;
             property_list = metaclass.Properties;
             for i = 1 : length(property_list);
                 property = property_list{i};

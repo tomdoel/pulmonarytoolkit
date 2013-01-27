@@ -1,5 +1,5 @@
-classdef TDCentrelinePoint < TDPoint
-    % TDCentrelinePoint. A class for storing points on the centreline
+classdef PTKCentrelinePoint < PTKPoint
+    % PTKCentrelinePoint. A class for storing points on the centreline
     %
     %
     %     Licence
@@ -15,8 +15,8 @@ classdef TDCentrelinePoint < TDPoint
     end
     
     methods
-        function obj = TDCentrelinePoint(c_i, c_j, c_k, radius, global_index)
-            obj = obj@TDPoint(c_i, c_j, c_k);
+        function obj = PTKCentrelinePoint(c_i, c_j, c_k, radius, global_index)
+            obj = obj@PTKPoint(c_i, c_j, c_k);
             obj.Radius = radius;
             obj.GlobalIndex = global_index;
         end

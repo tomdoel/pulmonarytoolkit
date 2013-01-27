@@ -1,14 +1,14 @@
-classdef TDTreeSegment < TDTree
-    % TDTreeSegment. A data structure representing a segmented airway tree 
+classdef PTKTreeSegment < PTKTree
+    % PTKTreeSegment. A data structure representing a segmented airway tree 
     %
-    %     A root TDTreeSegment is returned by 
-    %     TDAirwayRegionGrowingWithExplosionControl. From this you
+    %     A root PTKTreeSegment is returned by 
+    %     PTKAirwayRegionGrowingWithExplosionControl. From this you
     %     can extract and analyse the resulting airway tree.
     %
-    %     TDTreeSegment is used in the construction and storage of
-    %     the airway trees. A TDTreeSegment stores an individual
+    %     PTKTreeSegment is used in the construction and storage of
+    %     the airway trees. A PTKTreeSegment stores an individual
     %     segment of the centreline tree, with references to the parent and child
-    %     TDTreeSegments, so that it is possible to reconstruct the entire
+    %     PTKTreeSegments, so that it is possible to reconstruct the entire
     %     tree from a single segment.
     %
     %     The way the airway voxels are stored in each segment is as follows:
@@ -82,7 +82,7 @@ classdef TDTreeSegment < TDTree
     end
     
     methods
-        function obj = TDTreeSegment(parent, min_number_of_points_threshold, explosion_multiplier)
+        function obj = PTKTreeSegment(parent, min_number_of_points_threshold, explosion_multiplier)
             if nargin > 0
                 obj.Parent = parent;
                 obj.MarkedExplosion = false;

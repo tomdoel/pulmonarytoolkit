@@ -1,5 +1,5 @@
-function both_lungs = TDSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting)
-    % TDSeparateAndLabelLungs. Separates left and right lungs from a lung
+function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting)
+    % PTKSeparateAndLabelLungs. Separates left and right lungs from a lung
     %     segmentation.
     %
     %     The left and right lungs are separated using morphological opening
@@ -33,10 +33,10 @@ function both_lungs = TDSeparateAndLabelLungs(unclosed_lungs, filtered_threshold
     % so we attempt to disconnect them using morphological operations
     while (length(largest_areas_indices) < 2) || (largest_area_numpixels(2) < minimum_required_voxels_per_lung)
         if (iter_number > 10)
-            reporting.Error('TDSeparateAndLabelLungs:FailedToSeparateLungs', ['Failed to separate left and right lungs after ' num2str(iter_number) ' opening attempts']);
+            reporting.Error('PTKSeparateAndLabelLungs:FailedToSeparateLungs', ['Failed to separate left and right lungs after ' num2str(iter_number) ' opening attempts']);
         end
         iter_number = iter_number + 1;
-        reporting.ShowMessage('TDSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
+        reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
         opening_size = iter_number;
         image_to_close = both_lungs.Copy;
         image_to_close.BinaryMorph(@imopen, opening_size);
@@ -52,7 +52,7 @@ function both_lungs = TDSeparateAndLabelLungs(unclosed_lungs, filtered_threshold
         
     end
     
-    reporting.ShowMessage('TDSeparateAndLabelLungs:LungsFound', 'Lung regions found.');
+    reporting.ShowMessage('PTKSeparateAndLabelLungs:LungsFound', 'Lung regions found.');
     
     largest_area_index = largest_areas_indices(1);
     second_largest_area_index = largest_areas_indices(2);
@@ -64,7 +64,7 @@ function both_lungs = TDSeparateAndLabelLungs(unclosed_lungs, filtered_threshold
     region_2_centroid = GetCentroid(both_lungs.ImageSize, region_2_voxels);
     
     both_lungs.Clear;
-    both_lungs.ImageType = TDImageType.Colormap;
+    both_lungs.ImageType = PTKImageType.Colormap;
     if region_1_centroid(2) < region_2_centroid(2)
         region_1_colour = 1;
         region_2_colour = 2;
@@ -80,14 +80,14 @@ function both_lungs = TDSeparateAndLabelLungs(unclosed_lungs, filtered_threshold
     starting_voxels(region_2_voxels) = region_2_colour;
     starting_voxels(lung_exterior) = -1;
     
-    labeled_output = TDWatershedFromStartingPoints(int16(lung_roi.RawImage), starting_voxels);
+    labeled_output = PTKWatershedFromStartingPoints(int16(lung_roi.RawImage), starting_voxels);
     labeled_output(labeled_output == -1) = 0;
     
     both_lungs.ChangeRawImage(uint8(labeled_output));
-    both_lungs.ImageType = TDImageType.Colormap;
+    both_lungs.ImageType = PTKImageType.Colormap;
 end
 
 function centroid = GetCentroid(image_size, new_coords_indices)
-    [p_x, p_y, p_z] = TDImageCoordinateUtilities.FastInd2sub(image_size, new_coords_indices);
+    [p_x, p_y, p_z] = PTKImageCoordinateUtilities.FastInd2sub(image_size, new_coords_indices);
     centroid = [mean(p_x), mean(p_y), mean(p_z)];
 end

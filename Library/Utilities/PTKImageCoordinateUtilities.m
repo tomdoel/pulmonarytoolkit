@@ -1,5 +1,5 @@
-classdef TDImageCoordinateUtilities
-    % TDImageCoordinateUtilities. Utility functions related to processing 3D
+classdef PTKImageCoordinateUtilities
+    % PTKImageCoordinateUtilities. Utility functions related to processing 3D
     % image coordinates
     %
     %
@@ -20,14 +20,14 @@ classdef TDImageCoordinateUtilities
         function [linear_offsets, linear_offsets27] = GetLinearOffsets(image_size)
             % Compute linear index offsets for diretion vectors
             dirs = [5, 23, 11, 17, 13, 15];
-            linear_offsets = TDImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
+            linear_offsets = PTKImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
             
             dirs = 1:27;
-            linear_offsets27 = TDImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
+            linear_offsets27 = PTKImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
         end
         
         function linear_offsets = GetLinearOffsetsForDirections(dirs, image_size)
-            direction_vectors = TDImageCoordinateUtilities.CalculateDirectionVectors;            
+            direction_vectors = PTKImageCoordinateUtilities.CalculateDirectionVectors;            
             linear_offsets = zeros(1, numel(dirs));
             for n = 1 : length(dirs)
                 direction = dirs(n);
@@ -82,7 +82,7 @@ classdef TDImageCoordinateUtilities
                 error('GetMinimalImageForIndices requires indices to be in a row vector');
             end
             indices = int32(indices);
-            [i, j, k] = TDImageCoordinateUtilities.FastInd2sub(image_size, indices);
+            [i, j, k] = PTKImageCoordinateUtilities.FastInd2sub(image_size, indices);
             
             voxel_coordinates = [i' j' k'];
             mins = min(voxel_coordinates, [], 1);
@@ -90,7 +90,7 @@ classdef TDImageCoordinateUtilities
             reduced_image_size = maxs - mins + int32([1 1 1]);
             reduced_image = false(reduced_image_size);
             offset = mins - 1;
-            i = TDImageCoordinateUtilities.FastSub2ind(reduced_image_size, voxel_coordinates(:,1)-offset(1), voxel_coordinates(:,2)-offset(2), voxel_coordinates(:,3)-offset(3));
+            i = PTKImageCoordinateUtilities.FastSub2ind(reduced_image_size, voxel_coordinates(:,1)-offset(1), voxel_coordinates(:,2)-offset(2), voxel_coordinates(:,3)-offset(3));
             
             reduced_image(i) = true;
         end
@@ -146,7 +146,7 @@ classdef TDImageCoordinateUtilities
         function affine_matrix = CreateRigidAffineMatrix(x)
             affine_matrix = zeros(3, 4, 'single');
             
-            euler_rot_matrix = TDImageCoordinateUtilities.GetEulerRotationMatrix(x(1), x(2), x(3));
+            euler_rot_matrix = PTKImageCoordinateUtilities.GetEulerRotationMatrix(x(1), x(2), x(3));
             affine_matrix(1:3, 1:3) = euler_rot_matrix;
             affine_matrix(1:3, 4) = x(4:6);
             
@@ -154,7 +154,7 @@ classdef TDImageCoordinateUtilities
         end
         
         function [i, j, k] = TransformCoordsAffine(i, j, k, augmented_matrix)
-            [j, i, k] = TDImageCoordinateUtilities.TranslateAndRotateMeshGrid(j, i, k, augmented_matrix(1:3,1:3), augmented_matrix(1:3,4));
+            [j, i, k] = PTKImageCoordinateUtilities.TranslateAndRotateMeshGrid(j, i, k, augmented_matrix(1:3,1:3), augmented_matrix(1:3,4));
         end
         
         function [i, j, k] = TransformCoordsFluid(i, j, k, deformation_field)
@@ -166,7 +166,7 @@ classdef TDImageCoordinateUtilities
         function [X, Y, Z] = TranslateAndRotateMeshGrid(X, Y, Z, rot_matrix, trans_matrix)
             % Rotates and translates meshgrid generated coordinates in 3D
             % Note coordinates are [XYZ] NOT [IJK]
-            [X, Y, Z] = TDImageCoordinateUtilities.RotateMeshGrid(X + trans_matrix(1), Y + trans_matrix(2), Z + trans_matrix(3), rot_matrix);
+            [X, Y, Z] = PTKImageCoordinateUtilities.RotateMeshGrid(X + trans_matrix(1), Y + trans_matrix(2), Z + trans_matrix(3), rot_matrix);
         end
 
         function [X, Y, Z] = RotateMeshGrid(X, Y, Z, rot_matrix)
@@ -186,7 +186,7 @@ classdef TDImageCoordinateUtilities
             translation = (image_1.GlobalOrigin - image_2.GlobalOrigin);
             translation = translation([2 1 3]);
             translation(3) = - translation(3);
-            affine_matrix = TDImageCoordinateUtilities.CreateAffineTranslationMatrix(translation);
+            affine_matrix = PTKImageCoordinateUtilities.CreateAffineTranslationMatrix(translation);
         end
     
         % To combine a rigid transformation with a nonrigid deformation field, 
@@ -196,8 +196,8 @@ classdef TDImageCoordinateUtilities
             
             [df_i, df_j, df_k] = deformation_field.GetCentredGlobalCoordinatesMm;
             [df_i, df_j, df_k] = ndgrid(df_i, df_j, df_k);
-            [df_i_t, df_j_t, df_k_t] = TDImageCoordinateUtilities.TransformCoordsFluid(df_i, df_j, df_k, deformation_field);
-            [df_i_t, df_j_t, df_k_t] = TDImageCoordinateUtilities.TransformCoordsAffine(df_i_t, df_j_t, df_k_t, affine_initial_matrix);
+            [df_i_t, df_j_t, df_k_t] = PTKImageCoordinateUtilities.TransformCoordsFluid(df_i, df_j, df_k, deformation_field);
+            [df_i_t, df_j_t, df_k_t] = PTKImageCoordinateUtilities.TransformCoordsAffine(df_i_t, df_j_t, df_k_t, affine_initial_matrix);
             
             deformation_field_raw = zeros(deformation_field.ImageSize);
             deformation_field_raw(:,:,:,1) = df_i - df_i_t;

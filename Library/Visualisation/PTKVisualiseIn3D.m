@@ -1,5 +1,5 @@
-function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_size, small_structures, reporting)
-    % TDVisualiseIn3D. Opens a new Matlab figure and visualises the
+function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing_size, small_structures, reporting)
+    % PTKVisualiseIn3D. Opens a new Matlab figure and visualises the
     % segmentation image in 3D.
     %
     %
@@ -9,7 +9,7 @@ function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_
     %     figure_handle - specify an empty array [] to open a new figure, or the
     %         handle of the existing figure for the visualisation
     %
-    %     segmentation - a binary 3D TDImage containing 1s for the voxels to
+    %     segmentation - a binary 3D PTKImage containing 1s for the voxels to
     %         visualise
     %
     %     smoothing_size - the amount of smoothing to perform. Higher
@@ -19,7 +19,7 @@ function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_
     %     small_structures - set to true for improved visualisation of
     %         narrow structures such as airways and vessels
     %
-    %     reporting - a TDReporting object for progress, warning and
+    %     reporting - a PTKReporting object for progress, warning and
     %         error reporting.
     %
     %
@@ -32,8 +32,8 @@ function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_
     %    
     
     
-    if ~isa(segmentation, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(segmentation, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
     
     if nargin < 2
@@ -41,7 +41,7 @@ function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_
     end
     
     if nargin < 3
-        reporting = TDReportingDefault;    
+        reporting = PTKReportingDefault;    
     end
     
     if isempty(figure_handle)
@@ -113,7 +113,7 @@ function figure_handle = TDVisualiseIn3D(figure_handle, segmentation, smoothing_
         end
         
         if smoothing_size > 0
-            sub_seg = TDGaussianFilter(sub_seg, smoothing_size);
+            sub_seg = PTKGaussianFilter(sub_seg, smoothing_size);
         end
         
         % Get the colour from the colourmap

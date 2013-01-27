@@ -1,5 +1,5 @@
-function [affine_matrix, affine_vector] = TDRegisterCentroid(image_to_transform, reference_image, reporting)
-    % TDRegisterCentroid. Computes the transformation matrix to register one
+function [affine_matrix, affine_vector] = PTKRegisterCentroid(image_to_transform, reference_image, reporting)
+    % PTKRegisterCentroid. Computes the transformation matrix to register one
     % image segmentation to another based on a rigid translation of the
     % centroids.
     %
@@ -17,7 +17,7 @@ function [affine_matrix, affine_vector] = TDRegisterCentroid(image_to_transform,
     com_float_to_ref = com_float_to_ref([2,1,3]);
     
     affine_vector = [0, 0, 0, -com_float_to_ref];
-    affine_matrix = TDImageCoordinateUtilities.CreateRigidAffineMatrix(affine_vector);
+    affine_matrix = PTKImageCoordinateUtilities.CreateRigidAffineMatrix(affine_vector);
 end
 
 function com = GetCentreOfMass(mask)

@@ -1,5 +1,5 @@
 classdef PTKDiskUtilities
-    % TDDiskUtilities. Disk-related utility functions.
+    % PTKDiskUtilities. Disk-related utility functions.
     %
     %
     %     Licence
@@ -47,7 +47,7 @@ classdef PTKDiskUtilities
            elseif ismac
                unix(['Open ' directory_path]);
            else
-               warning('TDDiskUtilities:NotImplementedForUnix', 'Not implemented for unix');
+               warning('PTKDiskUtilities:NotImplementedForUnix', 'Not implemented for unix');
            end
         end
         
@@ -55,7 +55,7 @@ classdef PTKDiskUtilities
         function [path, filenames, filter_index] = ChooseFiles(text_to_display, path, allow_multiple_files, file_spec)
             
             if isempty(path)
-                path = TDDiskUtilities.GetUserDirectory;
+                path = PTKDiskUtilities.GetUserDirectory;
             end
             
             if (allow_multiple_files)
@@ -104,10 +104,10 @@ classdef PTKDiskUtilities
         end
         
         function image_info = GetListOfDicomFiles(image_path)
-            filenames = TDTextUtilities.SortFilenames(TDDiskUtilities.GetDirectoryFileList(image_path, '*'));
-            filenames = TDDiskUtilities.RemoveNonDicomFiles(image_path, filenames);
-            image_type = TDImageFileFormat.Dicom;            
-            image_info = TDImageInfo(image_path, filenames, image_type, [], [], []);
+            filenames = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(image_path, '*'));
+            filenames = PTKDiskUtilities.RemoveNonDicomFiles(image_path, filenames);
+            image_type = PTKImageFileFormat.Dicom;            
+            image_info = PTKImageInfo(image_path, filenames, image_type, [], [], []);
         end
 
         function CreateDirectoryIfNecessary(dir_name)

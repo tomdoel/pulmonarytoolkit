@@ -1,5 +1,5 @@
-classdef TDImageFileFormat
-    % TDImageFileFormat. An enumeration used to specify how a medical image is
+classdef PTKImageFileFormat
+    % PTKImageFileFormat. An enumeration used to specify how a medical image is
     % stored
     %
     %

@@ -1,22 +1,22 @@
-function [new_image, bounds] = TDComputeSegmentLungsMRI(original_image, filter_size_mm, reporting, start_point_right)
-    % TDComputeSegmentLungsMRI. Generates an approximate segmentation the lungs
+function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_size_mm, reporting, start_point_right)
+    % PTKComputeSegmentLungsMRI. Generates an approximate segmentation the lungs
     % from MRI images using region growing with a variable threshold.
     %
     %
     %     Syntax:
-    %         [new_image, bounds] = TDComputeSegmentLungsMRI(original_image, filter_size_mm, reporting, start_point_right)
+    %         [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_size_mm, reporting, start_point_right)
     %
     %         Inputs:
     %         ------
     %             original_image - The MRI image from which to segment the lungs
     %             filter_size_mm - The standard deviation of the filter to apply
-    %             reporting - a TDReporting object for progress, warning and
+    %             reporting - a PTKReporting object for progress, warning and
     %                 error reporting.
     %             start_point_right - optionally specify a starting point
     %
     %         Outputs:
     %         -------
-    %             new_image - A binary TDImage containing the segmented lungs
+    %             new_image - A binary PTKImage containing the segmented lungs
     %             bounds - The image threshold determined for lung segmentation
     %
     %
@@ -27,18 +27,18 @@ function [new_image, bounds] = TDComputeSegmentLungsMRI(original_image, filter_s
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    if ~isa(original_image, 'TDImage')
-        reporting.Error('TDComputeSegmentLungsMRI:BadInput', 'TDComputeSegmentLungsMRI requires a TDImage as input');
+    if ~isa(original_image, 'PTKImage')
+        reporting.Error('PTKComputeSegmentLungsMRI:BadInput', 'PTKComputeSegmentLungsMRI requires a PTKImage as input');
     end
     
     % ToDo: This is too specific
-    if isa(reporting, 'TDReportingWithCache')
+    if isa(reporting, 'PTKReportingWithCache')
         reporting.PushProgress;
     end    
     
     reporting.UpdateProgressMessage('Finding approximate MRI lung segmentation by region growing');
 
-    original_image = TDGaussianFilter(original_image, filter_size_mm);
+    original_image = PTKGaussianFilter(original_image, filter_size_mm);
 
     if (nargin < 4)
         reporting.UpdateProgressMessage('Automatically selecting a point in the lung parenchyma');
@@ -63,11 +63,11 @@ function [new_image, bounds] = TDComputeSegmentLungsMRI(original_image, filter_s
     
     if voxel_size(1) > 5
         new_image.AddBorder(1);
-        new_image = TDGetMainRegionExcludingBorder(new_image, reporting);
+        new_image = PTKGetMainRegionExcludingBorder(new_image, reporting);
         new_image.RemoveBorder(1);
         
     else
-        new_image = TDGetMainRegionExcludingBorder(new_image, reporting);
+        new_image = PTKGetMainRegionExcludingBorder(new_image, reporting);
     end
 
     bounds = [0, 0];
@@ -75,7 +75,7 @@ function [new_image, bounds] = TDComputeSegmentLungsMRI(original_image, filter_s
     bounds(2) = max(bounds_left(2), bounds_right(2));
     
     % ToDo: This is too specific
-    if isa(reporting, 'TDReportingWithCache')
+    if isa(reporting, 'PTKReportingWithCache')
         reporting.PopProgress;
     end
 end
@@ -119,7 +119,7 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, sta
             new_image = next_image;
             next_image = int16((lung_image.RawImage >= min_value) & (lung_image.RawImage <= max_value));
             next_image_open.ChangeRawImage(next_image);
-            next_image = TDSimpleRegionGrowing(next_image_open, start_points_global, reporting);
+            next_image = PTKSimpleRegionGrowing(next_image_open, start_points_global, reporting);
             next_image = next_image.RawImage;
         end
         max_value = max_value - increment;

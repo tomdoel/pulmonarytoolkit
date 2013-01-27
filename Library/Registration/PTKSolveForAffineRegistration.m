@@ -1,5 +1,5 @@
-function [affine_matrix, transformed_matrix] = TDSolveForAffineRegistration(image_to_transform, reference_image, reporting)
-    % TDSolveForAffineRegistration. Computes the transformation matrix to register one
+function [affine_matrix, transformed_matrix] = PTKSolveForAffineRegistration(image_to_transform, reference_image, reporting)
+    % PTKSolveForAffineRegistration. Computes the transformation matrix to register one
     %     image segmentation to another based on an solving for an affine
     %     transformation.
     %
@@ -30,14 +30,14 @@ function [affine_matrix, transformed_matrix] = TDSolveForAffineRegistration(imag
     
     disp(['Computing solution for ' num2str(x_vector(:)')]);
     
-    affine_matrix = TDImageCoordinateUtilities.GetAffineMatrix(x_vector);
+    affine_matrix = PTKImageCoordinateUtilities.GetAffineMatrix(x_vector);
 
-    transformed_matrix = TDImageCoordinateUtilities.TransformAffine(image_to_transform, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r);
+    transformed_matrix = PTKImageCoordinateUtilities.TransformAffine(image_to_transform, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r);
 end
 
 function closeness = FnToMinimise(x_vector, image_to_transform, reference_image, i_o, j_o, k_o, i_r, j_r, k_r, reporting)
-    affine_matrix = TDImageCoordinateUtilities.CreateAffineMatrix(x_vector);
-    transformed_image = TDRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
+    affine_matrix = PTKImageCoordinateUtilities.CreateAffineMatrix(x_vector);
+    transformed_image = PTKRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
     closeness = ComputeCloseness(transformed_image, reference_image);
 end
 

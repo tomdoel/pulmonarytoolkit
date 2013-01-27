@@ -1,5 +1,5 @@
-classdef TDImageType
-    % TDImageType. An enumeration used to specify how an image should be displayed
+classdef PTKImageType
+    % PTKImageType. An enumeration used to specify how an image should be displayed
     %
     %
     %     Licence

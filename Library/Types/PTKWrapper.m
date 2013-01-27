@@ -1,5 +1,5 @@
-classdef TDWrapper < handle
-    % TDWrapper. A simple handle class allowing images to be passed by reference
+classdef PTKWrapper < handle
+    % PTKWrapper. A simple handle class allowing images to be passed by reference
     %
     %     For passing images and other large data structures by reference, in
     %     order to avoid unnecessary copying of data.
@@ -7,12 +7,12 @@ classdef TDWrapper < handle
     %     Example
     %     -------
     %
-    %     This example shows how to use a TDWrapper to pass an image to a sub
-    %     function. As TDWrapper is a handle class, only the reference is passed
+    %     This example shows how to use a PTKWrapper to pass an image to a sub
+    %     function. As PTKWrapper is a handle class, only the reference is passed
     %     to the subfunction, avoiding copying of the large image matrix.
     %
     %
-    %     image_wrapper = TDWrapper;
+    %     image_wrapper = PTKWrapper;
     %     image_wrapper.RawImage = <large image matrix>
     %     SubFunction(image_wrapper);
     %

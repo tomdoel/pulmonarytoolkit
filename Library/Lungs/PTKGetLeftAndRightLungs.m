@@ -1,5 +1,5 @@
-function results = TDGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting)
-    % TDGetLeftAndRightLungs. Extracts left and right lungs from a lung
+function results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting)
+    % PTKGetLeftAndRightLungs. Extracts left and right lungs from a lung
     %     segmentation, with morphological smoothing and hole-flling
     %
     %
@@ -10,14 +10,14 @@ function results = TDGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lun
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
     
-    results = TDSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting);
+    results = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting);
     
     reporting.UpdateProgressAndMessage(25, 'Closing right lung');
     right_lung = results.Copy;
     right_lung.ChangeRawImage(right_lung.RawImage == 1);
     right_lung.CropToFit;
     
-    if TDSoftwareInfo.FastMode
+    if PTKSoftwareInfo.FastMode
         close_size = 5;
     else
         close_size = 8;
@@ -27,7 +27,7 @@ function results = TDGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lun
     right_lung.MorphWithBorder(@imclose, close_size);
     
     % Fill any remaining holes inside the 3D image
-    right_lung = TDFillHolesInImage(right_lung);
+    right_lung = PTKFillHolesInImage(right_lung);
     
     right_lung.ChangeRawImage(uint8(right_lung.RawImage));
     
@@ -39,7 +39,7 @@ function results = TDGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lun
     % Perform morphological closing with a spherical structure element of radius 8mm
     left_lung.MorphWithBorder(@imclose, close_size);
     % Fill any remaining holes inside the 3D image
-    left_lung = TDFillHolesInImage(left_lung);
+    left_lung = PTKFillHolesInImage(left_lung);
     
     left_lung.ChangeRawImage(2*uint8(left_lung.RawImage));
     
@@ -51,6 +51,6 @@ function results = TDGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lun
     results2.Clear;
     results2.ChangeSubImage(right_lung);
     results.ChangeRawImage(min(2, results.RawImage + results2.RawImage));
-    results.ImageType = TDImageType.Colormap;
+    results.ImageType = PTKImageType.Colormap;
 end
 

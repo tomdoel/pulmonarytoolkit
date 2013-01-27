@@ -1,5 +1,5 @@
-classdef TDTextUtilities < handle
-    % TDTextUtilities. Utility functions related to strings
+classdef PTKTextUtilities < handle
+    % PTKTextUtilities. Utility functions related to strings
     %
     %
     %     Licence

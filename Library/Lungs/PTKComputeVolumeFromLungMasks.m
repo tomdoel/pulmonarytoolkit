@@ -1,5 +1,5 @@
-function results = TDComputeVolumeFromLungMasks(left_and_right_lungs, reporting)
-    % TDComputeVolumeFromLungMasks. Computes volume and surface area from lung masks 
+function results = PTKComputeVolumeFromLungMasks(left_and_right_lungs, reporting)
+    % PTKComputeVolumeFromLungMasks. Computes volume and surface area from lung masks 
     %
     %     Lung masks have values of 1 for the right lung and 2 for the left lung
     %
@@ -37,7 +37,7 @@ function results = Analyse(voxel_size, mask)
     lung_volume_mm3 = sum(mask(:))*voxel_volume_mm3;
     results.LungVolumeMm3 = lung_volume_mm3;
     
-    surface = TDGetSurfaceFromSegmentation(mask);
+    surface = PTKGetSurfaceFromSegmentation(mask);
     surface_volume_mm3 = sum(surface(:))*voxel_volume_mm3;
     results.SurfaceVolumeMm3 = surface_volume_mm3;
 end
