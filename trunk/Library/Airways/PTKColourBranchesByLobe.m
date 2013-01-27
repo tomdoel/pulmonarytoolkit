@@ -1,5 +1,5 @@
-function results_image = TDColourBranchesByLobe(start_branches, airway_tree, template)
-    % TDColourBranchesByLobe. Given a set of labelled branches, this creates an output image with all the subtrees coloured by lobe
+function results_image = PTKColourBranchesByLobe(start_branches, airway_tree, template)
+    % PTKColourBranchesByLobe. Given a set of labelled branches, this creates an output image with all the subtrees coloured by lobe
     %
     %
     %     Licence
@@ -116,7 +116,7 @@ function voxels = GetVoxelsForTheseBranchesExtended(start_indices, template)
     % Add nearest neighbours to the list of voxels, otherwise it is possible for
     % a diagnoally-connected centreline segment to pass through a
     % diagnoally-connected airway segment
-    [~, linear_offsets27] = TDImageCoordinateUtilities.GetLinearOffsets(template.ImageSize);
+    [~, linear_offsets27] = PTKImageCoordinateUtilities.GetLinearOffsets(template.ImageSize);
     voxels = repmat(int32(voxels), 27, 1) + repmat(int32(linear_offsets27'), 1, length(voxels));    
     voxels = unique(voxels(:));
 end

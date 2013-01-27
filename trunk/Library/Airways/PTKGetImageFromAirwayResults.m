@@ -1,7 +1,7 @@
-function airway_image = TDGetImageFromAirwayResults(airway_tree, template_image, suppress_small_structures, reporting)
-    % TDGetImageFromAirwayResults. Creates an image of the segmented airways
+function airway_image = PTKGetImageFromAirwayResults(airway_tree, template_image, suppress_small_structures, reporting)
+    % PTKGetImageFromAirwayResults. Creates an image of the segmented airways
     %
-    %     This function takes the airway results structure from the TDAirways
+    %     This function takes the airway results structure from the PTKAirways
     %     plugin and creates an image of the segmented airways.
     %
     %
@@ -33,6 +33,6 @@ function airway_image = TDGetImageFromAirwayResults(airway_tree, template_image,
     
     airway_image = template_image.BlankCopy;
     airway_image.ChangeRawImage(airway_image_raw);
-    airway_image.ImageType = TDImageType.Colormap;
+    airway_image.ImageType = PTKImageType.Colormap;
 end
 

@@ -1,25 +1,25 @@
-function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point_global, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting, debug_mode)
-    % TDAirwayRegionGrowingWithExplosionControl. Segments the airways from a
+function results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, start_point_global, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting, debug_mode)
+    % PTKAirwayRegionGrowingWithExplosionControl. Segments the airways from a
     %     threshold image using a region growing method.
     %
     %     Given a binary image which representes an airway threshold applied to
-    %     a lung CT image, TDAirwayRegionGrowingWithExplosionControl finds a
+    %     a lung CT image, PTKAirwayRegionGrowingWithExplosionControl finds a
     %     tree structure representing the bifurcating airway tree. Airway
     %     segmentation proceeds by wavefront growing and splitting, with
     %     heuristics to prevent 'explosions' into the lung parenchyma.
     %
     % Syntax:
-    %     results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, start_point, maximum_number_of_generations, explosion_multiplier, reporting, debug_mode)
+    %     results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, start_point, maximum_number_of_generations, explosion_multiplier, reporting, debug_mode)
     %
     % Inputs:
-    %     threshold_image - a lung volume stored as a TDImage which has been
+    %     threshold_image - a lung volume stored as a PTKImage which has been
     %         thresholded for air voxels (1=air, 0=background).
     %         Note: the lung volume can be a region-of-interest, or the entire
     %         volume.
     %
     %     start_point_global - coordinate (i,j,k) of a point inside and near the top
     %         of the trachea, in global coordinates (as returned by plugin 
-    %         TDTopOfTrachea)
+    %         PTKTopOfTrachea)
     %
     %     maximum_number_of_generations - tree-growing will terminate for each
     %         branch when it exceeds this number of generations in that branch
@@ -31,7 +31,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     %     coronal_mode - if true, the algorithm performs in a special mode
     %         designed for images with thick coronal slices
     %
-    %     reporting - an object implementing the TDReporting
+    %     reporting - an object implementing the PTKReporting
     %         interface for reporting progress and warnings
     %
     %     debug_mode (optional) - should normally be set to false. 
@@ -39,7 +39,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     %
     % Outputs:
     %     results - a structure containing the following fields:
-    %         airway_tree - a TDTreeSegment object which represents the trachea.
+    %         airway_tree - a PTKTreeSegment object which represents the trachea.
     %             This is linked to its child segments via its Children
     %             property, and so on, so the entre tree can be accessed from
     %             this property.
@@ -50,7 +50,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
     %         start_point - the trachea location as passed into the function
     %         image_size - the image size
     %
-    % See the TDAirways plugin for an example of how to reconstruct this results
+    % See the PTKAirways plugin for an example of how to reconstruct this results
     % structure into an image
     %
     %
@@ -65,8 +65,8 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
         debug_mode = false;
     end
     
-    if ~isa(threshold_image, 'TDImage')
-        reporting.Error('TDAirwayRegionGrowingWithExplosionControl:InvalidInput', 'Requires a TDImage as input');
+    if ~isa(threshold_image, 'PTKImage')
+        reporting.Error('PTKAirwayRegionGrowingWithExplosionControl:InvalidInput', 'Requires a PTKImage as input');
     end
 
     reporting.UpdateProgressAndMessage(0, 'Starting region growing with explosion control');
@@ -76,7 +76,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
 
     
     if isempty(airway_tree)
-        reporting.ShowWarning('TDAirwayRegionGrowingWithExplosionControl:AirwaySegmentationFailed', 'Airway segmentation failed', []);
+        reporting.ShowWarning('PTKAirwayRegionGrowingWithExplosionControl:AirwaySegmentationFailed', 'Airway segmentation failed', []);
     else
         % Sanity checking and warn user if any branches terminated early
         CheckSegments(airway_tree, reporting);
@@ -90,7 +90,7 @@ function results = TDAirwayRegionGrowingWithExplosionControl(threshold_image, st
         % Remove holes within the airway segments
         reporting.ShowProgress('Closing airways segmentally');
         closing_size_mm = 5;
-        airway_tree = TDCloseBranchesInTree(airway_tree, closing_size_mm, threshold_image.OriginalImageSize, reporting);
+        airway_tree = PTKCloseBranchesInTree(airway_tree, closing_size_mm, threshold_image.OriginalImageSize, reporting);
 
         % Find and store endpoints
         reporting.ShowProgress('Finding endpoints');
@@ -128,19 +128,19 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
     
     number_of_image_points_local = numel(threshold_image(:));
 
-    [linear_offsets_global, ~] = TDImageCoordinateUtilities.GetLinearOffsets(image_size_global);
+    [linear_offsets_global, ~] = PTKImageCoordinateUtilities.GetLinearOffsets(image_size_global);
 
     
     % For Coronal mode compute the linear offsets
     if coronal_mode
         dirs_coronal = [5, 23, 11, 17];
-        linear_offsets_global_jk = TDImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs_coronal, image_size_global);
+        linear_offsets_global_jk = PTKImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs_coronal, image_size_global);
         linear_offsets_neighbours = linear_offsets_global_jk;
     else
         linear_offsets_neighbours = linear_offsets_global;        
     end
 
-    first_segment = TDWavefront([], min_distance_before_bifurcating_mm, voxel_size_mm, maximum_number_of_generations, explosion_multiplier);
+    first_segment = PTKWavefront([], min_distance_before_bifurcating_mm, voxel_size_mm, maximum_number_of_generations, explosion_multiplier);
     start_point_index_global = sub2ind(image_size_global, start_point_global(1), start_point_global(2), start_point_global(3));
     start_point_index_local = threshold_image_handle.GlobalToLocalIndices(start_point_index_global);
 
@@ -159,7 +159,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
     while ~isempty(segments_in_progress)
         
         if reporting.HasBeenCancelled
-            reporting.Error('TDAirwayRegionGrowingWithExplosionControl:UserCancel', 'User cancelled');
+            reporting.Error('PTKAirwayRegionGrowingWithExplosionControl:UserCancel', 'User cancelled');
         end
         
         % Get the next airway segment to add voxels to
@@ -252,7 +252,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
 
             segments_in_progress = [segments_in_progress, next_segments]; %#ok<AGROW>
             if length(segments_in_progress) > 500
-               reporting.Error('TDAirwayRegionGrowingWithExplosionControl:MaximumSegmentsExceeded', 'More than 500 segments to do: is there a problem with the image?'); 
+               reporting.Error('PTKAirwayRegionGrowingWithExplosionControl:MaximumSegmentsExceeded', 'More than 500 segments to do: is there a problem with the image?'); 
             end
 
             if ~debug_mode
@@ -321,7 +321,7 @@ function CheckSegments(airway_tree, reporting)
         else
             loop_text = 'branches have';
         end
-        reporting.ShowWarning('TDAirwayRegionGrowingWithExplosionControl:InternalLoopRemoved', [num2str(number_of_branches_with_exceeded_generations) ...
+        reporting.ShowWarning('PTKAirwayRegionGrowingWithExplosionControl:InternalLoopRemoved', [num2str(number_of_branches_with_exceeded_generations) ...
             ' airway ' loop_text ' been terminated because the maximum number of airway generations has been exceeded. This may indicate that the airway has leaked into the surrounding parenchyma.'], []);
     end
     
@@ -350,7 +350,7 @@ function airway_tree = RemoveCompletelyExplodedSegments(airway_tree, reporting)
         if numel(next_segment.GetAcceptedVoxels) == 0
             next_segment.CutFromTree;
             if ~isempty(next_segment.Children)
-               reporting.Error('TDAirwayRegionGrowingWithExplosionControl:ExplodedSegmentWithChildren', 'Exploded segment has children - this should never happen, and indicates an program error.');
+               reporting.Error('PTKAirwayRegionGrowingWithExplosionControl:ExplodedSegmentWithChildren', 'Exploded segment has children - this should never happen, and indicates an program error.');
             end
             
             % Removing an explosion may leave its parent with only one child, in
@@ -387,7 +387,7 @@ function endpoints = FindEndpointsInAirwayTree(airway_tree, reporting)
         if isempty(segment.Children)
             final_voxels_in_segment = segment.GetEndpoints;
             if isempty(final_voxels_in_segment)
-                reporting.Error('TDAirwayRegionGrowingWithExplosionControl:NoAcceptedIndices', 'No accepted indices in this airway segment');
+                reporting.Error('PTKAirwayRegionGrowingWithExplosionControl:NoAcceptedIndices', 'No accepted indices in this airway segment');
             end
             endpoints(end + 1) = final_voxels_in_segment(end);
         end        

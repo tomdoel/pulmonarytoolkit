@@ -1,19 +1,19 @@
-function root_branch = TDLoadTreeFromNodes(file_path, filename_prefix, reporting)
-    % TDLoadTreeFromNodes. Load a tree strucure from branches stored in node/element files
+function root_branch = PTKLoadTreeFromNodes(file_path, filename_prefix, reporting)
+    % PTKLoadTreeFromNodes. Load a tree strucure from branches stored in node/element files
     %
     %     Syntax
     %     ------
     %
-    %         root_branch = TDLoadTreeFromNodes(file_path, filename_prefix, reporting)
+    %         root_branch = PTKLoadTreeFromNodes(file_path, filename_prefix, reporting)
     %
-    %             root_branch     is the root branch in a TDTreeModel structure 
+    %             root_branch     is the root branch in a PTKTreeModel structure 
     %             file_path       is the path where the node and element files
     %                             are to be stored
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
+    %             reporting       A PTKReporting or implementor of the same interface,
+    %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
     %
     %     Licence
@@ -62,7 +62,7 @@ function root_branch = TDLoadTreeFromNodes(file_path, filename_prefix, reporting
     start_y = node_data{3}(1);
     start_z = node_data{4}(1);
     radius = node_data{5}(1);
-    first_point = TDCentrelinePoint(start_y, start_x, start_z, radius, []);
+    first_point = PTKCentrelinePoint(start_y, start_x, start_z, radius, []);
 
     % Create a new branch for each node
     for node_index = 2 : num_nodes
@@ -83,10 +83,10 @@ function root_branch = TDLoadTreeFromNodes(file_path, filename_prefix, reporting
 %         branch_length = node_data{9}(node_index);
 %         is_end_node = node_data{10}(node_index);
         
-%         first_point = TDCentrelinePoint(start_y, start_x, start_z, radius);
-        last_point = TDCentrelinePoint(end_y, end_x, end_z, radius, []);
+%         first_point = PTKCentrelinePoint(start_y, start_x, start_z, radius);
+        last_point = PTKCentrelinePoint(end_y, end_x, end_z, radius, []);
 
-        new_branch = TDTreeModel;
+        new_branch = PTKTreeModel;
         new_branch.Radius = radius;
 %         new_branch.Length = branch_length;
 %         new_branch.StartPoint = first_point;
@@ -120,7 +120,7 @@ function root_branch = TDLoadTreeFromNodes(file_path, filename_prefix, reporting
         start_y = parent_endpoint.CoordI;
         start_z = parent_endpoint.CoordK;
         radius = node_data{5}(branch_index);
-        first_point = TDCentrelinePoint(start_y, start_x, start_z, radius, []);
+        first_point = PTKCentrelinePoint(start_y, start_x, start_z, radius, []);
         branch.StartPoint = first_point;
     end
     
@@ -142,7 +142,7 @@ end
 %     
 %     % Allocate branches to each point
 %     branch_for_point = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
-%     first_branch = TDTreeModel;
+%     first_branch = PTKTreeModel;
 %     first_branch.Centreline(end + 1) = node_points(1);
 %     branch_for_point(1) = first_branch;
 %     number_of_elements = length(element_data{1});
@@ -155,7 +155,7 @@ end
 % %         % element is (0,0)
 % %         if (element_index == number_of_elements) && (parent_index == 1) && (child_index == 1) ...
 % %                 && (number_of_child_points(num_nodes) == 0)  && (number_of_child_points(num_nodes - 1) == 0)
-% %             reporting.ShowWarning('TDLoadTreeFromNodes:AddingElement', 'Adding additional element to correct for bug in airway file', []);
+% %             reporting.ShowWarning('PTKLoadTreeFromNodes:AddingElement', 'Adding additional element to correct for bug in airway file', []);
 % %             parent_index = num_nodes - 1;
 % %             child_index = num_nodes;
 % %         end
@@ -169,7 +169,7 @@ end
 %             % If this is a branchpoint (the parent has more than one child) then
 %             % we create a new branch for the child
 %             if (parent_index ~= child_index) && (number_of_child_points(parent_index) > 1)
-%                 this_branch = TDTreeModel;
+%                 this_branch = PTKTreeModel;
 %                 this_branch.SetParent(parent_branch);
 %             else
 %                 % Otherwise the child gets the same branch as the parent
@@ -192,8 +192,8 @@ end
 % %         radius = node_data{5}(node_index);
 % %         is_end_node = node_data{6}(node_index);
 % % 
-% %         new_branch = TDTreeModel;
-% %         new_point = TDCentrelinePoint(yc, xc, zc, radius);
+% %         new_branch = PTKTreeModel;
+% %         new_point = PTKCentrelinePoint(yc, xc, zc, radius);
 % %         new_branch.StartCoords = [xc, yc, zc];
 % %         new_branch.StartRadius = radius;
 % %         tree_branches(node_number + 1) = new_branch;
@@ -215,8 +215,8 @@ end
 % %         radius = node_data{5}(node_index);
 % %         is_end_node = node_data{6}(node_index);
 % % 
-% %         new_branch = TDTreeModel;
-% %         new_point = TDCentrelinePoint(yc, xc, zc, radius);
+% %         new_branch = PTKTreeModel;
+% %         new_point = PTKCentrelinePoint(yc, xc, zc, radius);
 % %         new_branch.StartCoords = [xc, yc, zc];
 % %         new_branch.StartRadius = radius;
 % %         tree_branches(node_number + 1) = new_branch;

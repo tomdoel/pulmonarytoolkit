@@ -1,8 +1,8 @@
-function labeled_output = TDWatershedMeyerFromStartingPointsMatlab(image, starting_labels)
-    % TDWatershedMeyerFromStartingPointsMatlab. Implementation of Meyer flooding algorithm.
+function labeled_output = PTKWatershedMeyerFromStartingPointsMatlab(image, starting_labels)
+    % PTKWatershedMeyerFromStartingPointsMatlab. Implementation of Meyer flooding algorithm.
     %
     %     This is a Matlab-only implementation of the mex function
-    %     TDWatershedMeyerFromStartingPoints. Use the mex function is possible
+    %     PTKWatershedMeyerFromStartingPoints. Use the mex function is possible
     %     as this is faster.
     %
     %     Inputs
@@ -29,8 +29,8 @@ function labeled_output = TDWatershedMeyerFromStartingPointsMatlab(image, starti
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    disp('TDWatershedMeyerFromStartingPointsMatlab');
-    warning('TDWatershedMeyerFromStartingPointsMatlab:MatlabVersion', 'This is a slow Matlab implementation of the mex function TDWatershedMeyerFromStartingPoints. For improved performance, use TDWatershedMeyerFromStartingPoints instead.');
+    disp('PTKWatershedMeyerFromStartingPointsMatlab');
+    warning('PTKWatershedMeyerFromStartingPointsMatlab:MatlabVersion', 'This is a slow Matlab implementation of the mex function PTKWatershedMeyerFromStartingPoints. For improved performance, use PTKWatershedMeyerFromStartingPoints instead.');
     
     % Check inputs
     if (nargin ~= 2) 
@@ -38,7 +38,7 @@ function labeled_output = TDWatershedMeyerFromStartingPointsMatlab(image, starti
     end
     
     if (nargout > 1)
-         error('TDWatershedMeyerFromStartingPointsMatlab produces one output but you have requested more.');
+         error('PTKWatershedMeyerFromStartingPointsMatlab produces one output but you have requested more.');
     end
     
     % Get the input images
@@ -140,5 +140,5 @@ function labeled_output = TDWatershedMeyerFromStartingPointsMatlab(image, starti
         end
     end
     labeled_output = output_data;
-    disp(' - Completed TDWatershedMeyerFromStartingPointsMatlab');
+    disp(' - Completed PTKWatershedMeyerFromStartingPointsMatlab');
 end

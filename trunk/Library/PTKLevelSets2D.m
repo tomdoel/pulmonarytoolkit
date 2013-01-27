@@ -1,5 +1,5 @@
-function result = TDLevelSets2D(original_image, initial_mask, bounds, figure_handle, reporting)
-    % TDLevelSets2D. 2D level set algorithm based on image gradient
+function result = PTKLevelSets2D(original_image, initial_mask, bounds, figure_handle, reporting)
+    % PTKLevelSets2D. 2D level set algorithm based on image gradient
     %
     %
     %     Licence
@@ -11,7 +11,7 @@ function result = TDLevelSets2D(original_image, initial_mask, bounds, figure_han
     
 
     result = initial_mask.BlankCopy;
-    result.ImageType = TDImageType.Colormap;
+    result.ImageType = PTKImageType.Colormap;
     
     initial_mask.ChangeRawImage(logical(initial_mask.RawImage));
     

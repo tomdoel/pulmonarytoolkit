@@ -1,12 +1,12 @@
-function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, reporting)
-    % TDLoadImageFromDicomFiles. Loads a series of DICOM files into a 3D volume
+function loaded_image = PTKLoadImageFromDicomFiles(path, filenames, check_files, reporting)
+    % PTKLoadImageFromDicomFiles. Loads a series of DICOM files into a 3D volume
     %
     %     Syntax
     %     ------
     %
-    %         loaded_image = TDLoadImageFromDicomFiles(path, filenames, reporting)
+    %         loaded_image = PTKLoadImageFromDicomFiles(path, filenames, reporting)
     %
-    %             loaded_image    a TDImage containing the 3D volume
+    %             loaded_image    a PTKImage containing the 3D volume
     %
     %             path, filename  specify the location to save the DICOM data. One 2D file
     %                             will be created for each image slice in the z direction. 
@@ -23,8 +23,8 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
     %                             numerical-alphabetical order, the files are in
     %                             the correct order
     %
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
+    %             reporting       A PTKReporting or implementor of the same interface,
+    %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting. If no
     %                             reporting object is specified then a default
     %                             reporting object with progress dialog is
@@ -39,7 +39,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
     %        
 
     if nargin < 3
-        reporting = TDReportingDefault;
+        reporting = PTKReportingDefault;
     end
     
     progress_index = 0;
@@ -47,7 +47,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
     reporting.ShowProgress('Loading images');
     reporting.UpdateProgressValue(0);
     
-    filenames = TDTextUtilities.SortFilenames(filenames);
+    filenames = PTKTextUtilities.SortFilenames(filenames);
     num_slices = length(filenames);
     
     % Load metadata and image data from first file in the list
@@ -69,7 +69,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
         data_type = whos('first_image_slice');
         data_type_class = data_type.class;
         if (strcmp(data_type_class, 'char'))
-            reporting.ShowMessage('TDLoadImageFromDicomFiles:SettingDatatypeToInt8', 'TDLoadImageFromDicomFiles: char datatype detected. Setting to int8');
+            reporting.ShowMessage('PTKLoadImageFromDicomFiles:SettingDatatypeToInt8', 'PTKLoadImageFromDicomFiles: char datatype detected. Setting to int8');
             data_type_class = 'int8';
         end
         loaded_image = zeros(size_i, size_j, size_k, data_type_class);
@@ -116,7 +116,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
         % We only do this if check_data is true, because processing the metadata
         % for every slice using dicominfo is very slow.
         if ~strcmp(metadata_first_file.SeriesInstanceUID, metadata_last_file.SeriesInstanceUID)
-            reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'These images are from more than one series', []);
+            reporting.ShowWarning('PTKLoadImageFromDicomFiles:MultipleSeriesFound', 'These images are from more than one series', []);
         end
         
         % If there are only 2 slices, we already have everything loaded
@@ -135,7 +135,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
             
             % Check that second image is from the same series
             if ~strcmp(metadata_first_file.SeriesInstanceUID, metadata_second_file.SeriesInstanceUID)
-                reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'These images are from more than one series', []);
+                reporting.ShowWarning('PTKLoadImageFromDicomFiles:MultipleSeriesFound', 'These images are from more than one series', []);
             end
             
             % For the purposes of building an image volume, we take slice thickness
@@ -151,7 +151,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
             % have a different thickness from other slices.
             computed_distance = (num_slices - 1)*slice_thickness;
             if abs(computed_distance - distance_between_first_and_last) > 0.1;
-                reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Some image slices may be of different thickness, or some slices are missing', []);
+                reporting.ShowWarning('PTKLoadImageFromDicomFiles:InconsistentSliceThickness', 'Some image slices may be of different thickness, or some slices are missing', []);
             end
             
             
@@ -172,7 +172,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                         patient_positions(image_index, :) = next_filename_or_metadata.ImagePositionPatient';
                         series_uids{image_index} = next_filename_or_metadata.SeriesInstanceUID;
                     catch exception
-                        reporting.Error('TDLoadImageFromDicomFiles:MetadataReadFailure', ['TDLoadImageFromDicomFiles: error while reading metadata from ' filenames{file_number} '. Error:' exception.message], []);
+                        reporting.Error('PTKLoadImageFromDicomFiles:MetadataReadFailure', ['PTKLoadImageFromDicomFiles: error while reading metadata from ' filenames{file_number} '. Error:' exception.message], []);
                     end
                 end
                 try
@@ -180,7 +180,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                     % If false, next_file will be the filename
                     loaded_image(:, :, image_index) = dicomread(next_filename_or_metadata);
                 catch exception
-                    reporting.Error('TDLoadImageFromDicomFiles:DicomReadFailure', ['TDLoadImageFromDicomFiles: error while reading file ' filenames{file_number} '. Error:' exception.message]);
+                    reporting.Error('PTKLoadImageFromDicomFiles:DicomReadFailure', ['PTKLoadImageFromDicomFiles: error while reading file ' filenames{file_number} '. Error:' exception.message]);
                 end
             end
             
@@ -197,7 +197,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                     slice_thicknesses = abs(sorted_slice_locations(2:end) - sorted_slice_locations(1:end-1));
                     fist_nonzero_index = 1;
                     if any(slice_thicknesses == 0)
-                        reporting.ShowWarning('TDLoadImageFromDicomFiles:ZeroSliceThickness', 'This image contains more than one image at the same slice position', []);
+                        reporting.ShowWarning('PTKLoadImageFromDicomFiles:ZeroSliceThickness', 'This image contains more than one image at the same slice position', []);
                         fist_nonzero_index = find(slice_thicknesses > 0, 1);
                         if isempty(fist_nonzero_index)
                             fist_nonzero_index = 1;
@@ -205,14 +205,14 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
                     end
                     slice_thickness = slice_thicknesses(fist_nonzero_index);
                     if any(slice_thicknesses - slice_thickness) > 0.01
-                        reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
+                        reporting.ShowWarning('PTKLoadImageFromDicomFiles:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
                     end
                     if max(slice_thicknesses - slice_thickness) > 0.01
-                        reporting.ShowWarning('TDLoadImageFromDicomFiles:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
+                        reporting.ShowWarning('PTKLoadImageFromDicomFiles:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
                     end
                     loaded_image(:,:,:) = loaded_image(:,:,index_matrix);
                 else
-                    reporting.ShowWarning('TDLoadImageFromDicomFiles:MultipleSeriesFound', 'These images are from more than one series', []);
+                    reporting.ShowWarning('PTKLoadImageFromDicomFiles:MultipleSeriesFound', 'These images are from more than one series', []);
                 end
             end
         end
@@ -224,7 +224,7 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
         
         padding_indices = find(loaded_image == padding_value);
         if (~isempty(padding_indices))
-            reporting.ShowMessage('TDLoadImageFromDicomFiles:ReplacingPaddingValue', ['Replacing padding value ' num2str(padding_value) ' with zeros.']);
+            reporting.ShowMessage('PTKLoadImageFromDicomFiles:ReplacingPaddingValue', ['Replacing padding value ' num2str(padding_value) ' with zeros.']);
             loaded_image(padding_indices) = 0;
         end
     end
@@ -233,12 +233,12 @@ function loaded_image = TDLoadImageFromDicomFiles(path, filenames, check_files, 
     if strcmp(metadata_first_file.Manufacturer, 'GE MEDICAL SYSTEMS')
         extra_padding_pixels = find(loaded_image == -2000);
         if ~isempty(extra_padding_pixels) && (metadata_first_file.PixelPaddingValue ~= -2000)
-            reporting.ShowWarning('TDLoadImageFromDicomFiles:IncorrectPixelPadding', 'This image is from a GE scanner and appears to have an incorrect PixelPaddingValue. This is a known issue with the some GE scanners. I am assuming the padding value is -2000 and replacing with zero.', []);
+            reporting.ShowWarning('PTKLoadImageFromDicomFiles:IncorrectPixelPadding', 'This image is from a GE scanner and appears to have an incorrect PixelPaddingValue. This is a known issue with the some GE scanners. I am assuming the padding value is -2000 and replacing with zero.', []);
             loaded_image(extra_padding_pixels) = 0;
         end
     end
     
-    loaded_image = TDDicomImage.CreateDicomImageFromMetadata(loaded_image, metadata_first_file, slice_thickness, global_origin_mm, reporting);
+    loaded_image = PTKDicomImage.CreateDicomImageFromMetadata(loaded_image, metadata_first_file, slice_thickness, global_origin_mm, reporting);
     
 end
 
@@ -247,7 +247,7 @@ function [metadata, image_data] = ReadDicomFile(file_name, reporting)
     try
         image_data = dicomread(metadata);
     catch exception
-        reporting.Error('TDLoadImageFromDicomFiles:DicomReadError', ['TDLoadImageFromDicomFiles: error while reading file ' file_name '. Error:' exception.message]);
+        reporting.Error('PTKLoadImageFromDicomFiles:DicomReadError', ['PTKLoadImageFromDicomFiles: error while reading file ' file_name '. Error:' exception.message]);
     end
 end
 
@@ -255,11 +255,11 @@ function metadata = ReadMetadata(file_name, reporting)
     try
         metadata = dicominfo(file_name);
     catch exception
-        reporting.Error('TDLoadImageFromDicomFiles:MetaDataReadError', ['TDLoadImageFromDicomFiles: error while reading metadata from ' file_name ': is this a DICOM file? Error:' exception.message]);
+        reporting.Error('PTKLoadImageFromDicomFiles:MetaDataReadError', ['PTKLoadImageFromDicomFiles: error while reading metadata from ' file_name ': is this a DICOM file? Error:' exception.message]);
     end
     try
         image_data = dicomread(metadata);
     catch exception
-        reporting.Error('TDLoadImageFromDicomFiles:DicomReadError', ['TDLoadImageFromDicomFiles: error while reading file ' file_name '. Error:' exception.message]);
+        reporting.Error('PTKLoadImageFromDicomFiles:DicomReadError', ['PTKLoadImageFromDicomFiles: error while reading file ' file_name '. Error:' exception.message]);
     end
 end

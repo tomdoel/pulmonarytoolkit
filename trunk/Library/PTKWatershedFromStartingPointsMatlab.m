@@ -1,8 +1,8 @@
-function labeled_output = TDWatershedFromStartingPointsMatlab(image, starting_labels)
-    % TDWatershedFromStartingPointsMatlab. A 3D watershed-like function.
+function labeled_output = PTKWatershedFromStartingPointsMatlab(image, starting_labels)
+    % PTKWatershedFromStartingPointsMatlab. A 3D watershed-like function.
     %
     %     This is a Matlab-only implementation of the mex function
-    %     TDWatershedFromStartingPoints. Use the mex function is possible as this is faster. 
+    %     PTKWatershedFromStartingPoints. Use the mex function is possible as this is faster. 
     %
     %     The watershed starts from the positive-valued labels in
     %     starting_labels and grows out into the zero-valued points, with the
@@ -20,8 +20,8 @@ function labeled_output = TDWatershedFromStartingPointsMatlab(image, starting_la
     %
     
 
-    disp('TDWatershedFromStartingPointsMatlab.');
-    warning('TDWatershedFromStartingPointsMatlab:MatlabVersion', 'This is a slow Matlab implementation of the mex function TDWatershedFromStartingPoints. For improved performance, use TDWatershedFromStartingPoints instead.');
+    disp('PTKWatershedFromStartingPointsMatlab.');
+    warning('PTKWatershedFromStartingPointsMatlab:MatlabVersion', 'This is a slow Matlab implementation of the mex function PTKWatershedFromStartingPoints. For improved performance, use PTKWatershedFromStartingPoints instead.');
     
     % Check inputs
     if (nargin ~= 2) 
@@ -29,7 +29,7 @@ function labeled_output = TDWatershedFromStartingPointsMatlab(image, starting_la
     end
     
     if (nargout > 1)
-         error('TDwatershedFromStartingPoints produces one output but you have requested more.');
+         error('PTKwatershedFromStartingPoints produces one output but you have requested more.');
     end
     
     % Get the input images
@@ -110,5 +110,5 @@ function labeled_output = TDWatershedFromStartingPointsMatlab(image, starting_la
         end
     end
     labeled_output = output_data;
-    disp(' - Completed TDWatershedFromStartingPointsMatlab');
+    disp(' - Completed PTKWatershedFromStartingPointsMatlab');
 end

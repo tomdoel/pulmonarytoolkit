@@ -1,5 +1,5 @@
-classdef TDAirwayGenerator < handle
-    % TDAirwayGenerator. Creates an artifical airway tree using a volume-filling
+classdef PTKAirwayGenerator < handle
+    % PTKAirwayGenerator. Creates an artifical airway tree using a volume-filling
     % algorithm.
     %
     %     This class generates an artificial model of the airway tree. You
@@ -18,12 +18,12 @@ classdef TDAirwayGenerator < handle
     %     changes have been made to the algorithm.
     %
     %     Syntax:
-    %         airway_generator = TDAirwayGenerator(
+    %         airway_generator = PTKAirwayGenerator(
     %             lung_mask,              % A binary mask of the whole lung volume
-    %             centreline_tree,          % A TDModelTree produced from TDAirwayCentreline
+    %             centreline_tree,          % A PTKModelTree produced from PTKAirwayCentreline
     %             point_limit_voxels,     % Branches will terminate if the size of the region they grow into in voxels is less than this limit
     %             approx_number_points,   %
-    %             reporting               % A TDReporting object for error, warning and progress reporting
+    %             reporting               % A PTKReporting object for error, warning and progress reporting
     %         )
     %
     %     Licence
@@ -56,16 +56,16 @@ classdef TDAirwayGenerator < handle
     end
     
     methods
-        function obj = TDAirwayGenerator(lung_mask, centreline_tree, approx_number_points, reporting)
+        function obj = PTKAirwayGenerator(lung_mask, centreline_tree, approx_number_points, reporting)
 
             % Compute the grid spacing. We choose to have more grid points than
             % the minimum required as a finer grid will give better branching
-            approx_number_grid_points = TDAirwayGenerator.PointNumberMultiple*approx_number_points;
+            approx_number_grid_points = PTKAirwayGenerator.PointNumberMultiple*approx_number_points;
             obj.GridSpacingMm = lung_mask.ComputeResamplingGridSpacing(approx_number_grid_points);
             
             % Initialise airway tree
-            initial_airway_tree = obj.CreateInitialTreeFromSegmentation(centreline_tree, TDAirwayGenerator.MaximumGenerationNumber, reporting);
-            obj.RemoveSmallTerminatingAirways(initial_airway_tree, TDAirwayGenerator.InitialTerminatingBranchLengthLimit, reporting);
+            initial_airway_tree = obj.CreateInitialTreeFromSegmentation(centreline_tree, PTKAirwayGenerator.MaximumGenerationNumber, reporting);
+            obj.RemoveSmallTerminatingAirways(initial_airway_tree, PTKAirwayGenerator.InitialTerminatingBranchLengthLimit, reporting);
             obj.AirwayTree = initial_airway_tree;
         end
         
@@ -74,7 +74,7 @@ classdef TDAirwayGenerator < handle
         
         % Starting from the initial airway tree generated from AddTree(),  
         function GrowTree(obj, growth_volume, starting_segment, reporting)
-            obj.InitialApexImage = TDAirwayGenerator.GrowTreeUsingThisGridSpacing(obj.AirwayTree, growth_volume, starting_segment, obj.GridSpacingMm, reporting);
+            obj.InitialApexImage = PTKAirwayGenerator.GrowTreeUsingThisGridSpacing(obj.AirwayTree, growth_volume, starting_segment, obj.GridSpacingMm, reporting);
         end        
     end
     
@@ -82,17 +82,17 @@ classdef TDAirwayGenerator < handle
         function initial_apex_image = GrowTreeUsingThisGridSpacing(airway_tree, growth_volume, starting_segment, grid_spacing_mm, reporting)
             
             % ToDo: Deal with a more general reporting object
-            if isa(reporting, 'TDReportingWithCache')
+            if isa(reporting, 'PTKReportingWithCache')
                 reporting.PushProgress;
             end
             
-            resampled_volume = TDAirwayGenerator.CreatePointCloud(growth_volume, grid_spacing_mm);
+            resampled_volume = PTKAirwayGenerator.CreatePointCloud(growth_volume, grid_spacing_mm);
             disp(['Number of seed points:' int2str(sum(resampled_volume.RawImage(:)))]);
             
-            initial_apex_image = TDAirwayGenerator.Grow(resampled_volume, airway_tree, starting_segment, reporting);
+            initial_apex_image = PTKAirwayGenerator.Grow(resampled_volume, airway_tree, starting_segment, reporting);
             
             % ToDo: Deal with a more general reporting object
-            if isa(reporting, 'TDReportingWithCache')
+            if isa(reporting, 'PTKReportingWithCache')
                 reporting.PopProgress;
             end
         end
@@ -100,7 +100,7 @@ classdef TDAirwayGenerator < handle
         % Use CreateInitialTreeFromSegmentation to create an initial airway tree
         % from the airway centreline results
         function airway_tree = CreateInitialTreeFromSegmentation(segmented_centreline_tree, maximum_generation_number, reporting)
-            airway_tree = TDAirwayGrowingTree;
+            airway_tree = PTKAirwayGrowingTree;
             airway_tree.CentrelineTreeSegment = segmented_centreline_tree;
             segments_to_do = airway_tree;
             while ~isempty(segments_to_do)
@@ -127,14 +127,14 @@ classdef TDAirwayGenerator < handle
                 end
                 
                 if centreline_segment.GenerationNumber >= maximum_generation_number
-                    reporting.ShowWarning('TDAirwayGenerator:SegmentedBranchesExcluded', 'Initial branches have been excluded due to the maximum generation parameter', []);
+                    reporting.ShowWarning('PTKAirwayGenerator:SegmentedBranchesExcluded', 'Initial branches have been excluded due to the maximum generation parameter', []);
                 else
                     
                     if ~isempty(centreline_segment.Children)
                         % Add a new branch to the tree for each child
                         for child = centreline_segment.Children
                             % Create a new segment
-                            new_segment = TDAirwayGrowingTree(segment);
+                            new_segment = PTKAirwayGrowingTree(segment);
                             new_segment.CentrelineTreeSegment = child;
                             new_segment.IsGenerated = false;
                             segments_to_do = [segments_to_do, new_segment];
@@ -159,7 +159,7 @@ classdef TDAirwayGenerator < handle
                         branch_length = norm(branch.StartCoords - branch.EndCoords);
                         if branch_length < length_limit
                             if ~isempty(branch.Parent)
-                                reporting.ShowWarning('TDAirwayGenerator:SegmentedBranchesBelowLimit', 'Initial branches have been excluded due to their length being below the limit', []);
+                                reporting.ShowWarning('PTKAirwayGenerator:SegmentedBranchesBelowLimit', 'Initial branches have been excluded due to their length being below the limit', []);
                                 branch.Parent.RemoveChildren;
                                 has_changed = true;
                             end
@@ -203,7 +203,7 @@ classdef TDAirwayGenerator < handle
                 % for each one that is a terminal segment
                 if isempty(children) && isempty(segment.IsTerminal)
                     % Add apices for airway growing
-                    new_apex = TDAirwayGeneratorApex(segment, TDPoints, true);
+                    new_apex = PTKAirwayGeneratorApex(segment, PTKPoints, true);
                     apices = [apices new_apex];
                 end
             end
@@ -235,7 +235,7 @@ classdef TDAirwayGenerator < handle
                 if segment.GenerationNumber == generation_number
                     if isempty(segment.IsTerminal)
                         is_growing_apex = isempty(children);
-                        new_apex = TDAirwayGeneratorApex(segment, TDPoints, is_growing_apex);
+                        new_apex = PTKAirwayGeneratorApex(segment, PTKPoints, is_growing_apex);
                         apices = [apices new_apex];
                     end
                 end
@@ -379,8 +379,8 @@ classdef TDAirwayGenerator < handle
             other_directions = ordered_directions(2:3);
             plane_points = - (p + normal(other_directions(1))*points_coords(:, other_directions(1)) + normal(other_directions(2))*points_coords(:, other_directions(2)))/normal(main_direction);
             in_plane = points_coords(:, main_direction) < plane_points;
-            this_plane = TDPoints(points_coords(in_plane, :));
-            other_plane = TDPoints(points_coords(~in_plane, :));
+            this_plane = PTKPoints(points_coords(in_plane, :));
+            other_plane = PTKPoints(points_coords(~in_plane, :));
         end
         
         function resampled_volume = CreatePointCloud(growth_volume, grid_spacing_mm)
@@ -408,20 +408,20 @@ classdef TDAirwayGenerator < handle
             branch_angle = acos(dot_product/(norm(new_direction)*norm(parent_direction)));
 
             % If the branch angle is above the limit then set it to the limit
-            if (branch_angle > TDAirwayGenerator.AngleLimitRadians)
+            if (branch_angle > PTKAirwayGenerator.AngleLimitRadians)
                 perpendicular_one = cross(new_direction, old_direction);
                 perpendicular_one = perpendicular_one/norm(perpendicular_one);
                 perpendicular_two = cross(old_direction, perpendicular_one);
                 perpendicular_two = perpendicular_two/norm(perpendicular_two);
-                old_direction = old_direction*cos(TDAirwayGenerator.AngleLimitRadians);
-                perpendicular_two = perpendicular_two*sin(TDAirwayGenerator.AngleLimitRadians);
+                old_direction = old_direction*cos(PTKAirwayGenerator.AngleLimitRadians);
+                perpendicular_two = perpendicular_two*sin(PTKAirwayGenerator.AngleLimitRadians);
                 new_direction = old_direction + perpendicular_two;
             end
             
             % Reduce the branch length as required
-            branch_length = branch_length*TDAirwayGenerator.BranchingFraction;
-            if generation_number >= TDAirwayGenerator.BranchLengthToParentGenerationLimit
-                branch_length = min(branch_length, parent_length_mm*TDAirwayGenerator.BranchLengthToParentRatioLimit);
+            branch_length = branch_length*PTKAirwayGenerator.BranchingFraction;
+            if generation_number >= PTKAirwayGenerator.BranchLengthToParentGenerationLimit
+                branch_length = min(branch_length, parent_length_mm*PTKAirwayGenerator.BranchLengthToParentRatioLimit);
             end
             new_direction = new_direction * branch_length;
             
@@ -433,7 +433,7 @@ classdef TDAirwayGenerator < handle
             new_apex = [];
             
             % Determine the centre of the point cloud
-            centre_of_mass = TDAirwayGenerator.GetCentreOfMass(cloud);
+            centre_of_mass = PTKAirwayGenerator.GetCentreOfMass(cloud);
             
             % The new branch starts at the end of the parent branch
             new_branch_start_point = parent_branch.EndCoords;
@@ -443,16 +443,16 @@ classdef TDAirwayGenerator < handle
             
             % Calculate the end point of the new branch. This is subject both to
             % a length limit and an angle limit.
-            new_branch_end_point = TDAirwayGenerator.CheckBranchAngleLengthAndAdjust(new_branch_start_point, centre_of_mass, parent_direction, parent_branch.Length, generation_number);
+            new_branch_end_point = PTKAirwayGenerator.CheckBranchAngleLengthAndAdjust(new_branch_start_point, centre_of_mass, parent_direction, parent_branch.Length, generation_number);
 
-            if ~TDAirwayGenerator.IsInsideVolume(new_branch_end_point, lung_mask)
-                reporting.ShowWarning('TDAirwayGenerator:OutsideVolume', 'Branches terminated because they grew outside the lung volume', []);
+            if ~PTKAirwayGenerator.IsInsideVolume(new_branch_end_point, lung_mask)
+                reporting.ShowWarning('PTKAirwayGenerator:OutsideVolume', 'Branches terminated because they grew outside the lung volume', []);
                 parent_branch.IsTerminal = true;
                 return;
             end
             
             % Create the new branch in AirwayTree
-            new_branch = TDAirwayGrowingTree(parent_branch);
+            new_branch = PTKAirwayGrowingTree(parent_branch);
             new_branch.StartCoords = new_branch_start_point;
             new_branch.EndCoords = new_branch_end_point;
             new_branch.IsGenerated = true;
@@ -460,29 +460,29 @@ classdef TDAirwayGenerator < handle
             new_branch_length = norm(new_branch_end_point - new_branch_start_point);            
 
             % Find closest point in cloud and delete
-            closest_point = TDAirwayGenerator.FindClosestPointInCloud(new_branch_end_point, cloud);
+            closest_point = PTKAirwayGenerator.FindClosestPointInCloud(new_branch_end_point, cloud);
             closest_point_global_coords = lung_volume.CoordinatesMmToGlobalCoordinates(closest_point);
             lung_volume.SetVoxelToThis(closest_point_global_coords, 0);
             
             % Check if the number of points in the cloud is less than the
             % required minimum
-            if (size(cloud.Coords, 1) <= TDAirwayGenerator.PointLimitVoxels)
+            if (size(cloud.Coords, 1) <= PTKAirwayGenerator.PointLimitVoxels)
                 new_branch.IsTerminal = true;
-                reporting.ShowWarning('TDAirwayGenerator:BelowLengthThreshold', 'Branches terminated because the number of points was below the threshold', []);
+                reporting.ShowWarning('PTKAirwayGenerator:BelowLengthThreshold', 'Branches terminated because the number of points was below the threshold', []);
             else
-                if (new_branch_length < TDAirwayGenerator.LengthLimitMm)
+                if (new_branch_length < PTKAirwayGenerator.LengthLimitMm)
                     new_branch.IsTerminal = true;
-                    reporting.ShowWarning('TDAirwayGenerator:BelowLengthThreshold', 'Branches terminated because their length was below the threshold', []);
+                    reporting.ShowWarning('PTKAirwayGenerator:BelowLengthThreshold', 'Branches terminated because their length was below the threshold', []);
                 else
                     % Create new growth branch
-                    new_apex = TDAirwayGeneratorApex(new_branch, cloud, true);
+                    new_apex = PTKAirwayGeneratorApex(new_branch, cloud, true);
                 end
             end
         end
         
         function apices = AssignPointCloudToApices(apices, resampled_volume, reporting)
             if numel(apices) == 0
-               reporting.Error('TDAirwayGenerator:AssignPointCloudToApices', 'No starting points');
+               reporting.Error('PTKAirwayGenerator:AssignPointCloudToApices', 'No starting points');
             end
             sample_image = zeros(resampled_volume.ImageSize, 'uint16');
             apex_start_points = zeros(numel(apices), 3);
@@ -494,7 +494,7 @@ classdef TDAirwayGenerator < handle
                 apex_start_points(apex_number, :) = [end_point(1), end_point(2), end_point(3)];
                 current_value = sample_image(end_point(1), end_point(2), end_point(3));
                 if current_value ~= 0
-                    reporting.ShowWarning('TDAirwayGenerator:ApexAlreadyUsed', 'The start point for allocating voxels to apices could not be assigned as the point has already been used by another apex', []);
+                    reporting.ShowWarning('PTKAirwayGenerator:ApexAlreadyUsed', 'The start point for allocating voxels to apices could not be assigned as the point has already been used by another apex', []);
                 end
                 sample_image(end_point(1), end_point(2), end_point(3)) = apex_number;
             end
@@ -519,7 +519,7 @@ classdef TDAirwayGenerator < handle
                     dj = dj - root_point(2);
                     dk = dk - root_point(3);
                     dist_voxels = sqrt(di.^2 + dj.^2 + dk.^2);
-                    points_too_far_away = dist_voxels > TDAirwayGenerator.PointDistanceLimit*numel(local_indices);
+                    points_too_far_away = dist_voxels > PTKAirwayGenerator.PointDistanceLimit*numel(local_indices);
                     
                     % This is a check for distance from root point compared to
                     % parent length
@@ -528,7 +528,7 @@ classdef TDAirwayGenerator < handle
 %                     dk = (dk - root_point(3))*resampled_volume.VoxelSize(3);
 %                     dist_mm = sqrt(di.^2 + dj.^2 + dk.^2);
 %                     last_branch_length = apices(apex_number).AirwayGrowingTreeSegment.Length;
-%                     points_too_far_away = dist_mm > TDAirwayGenerator.PointDistanceLimit*last_branch_length;
+%                     points_too_far_away = dist_mm > PTKAirwayGenerator.PointDistanceLimit*last_branch_length;
 
                     number_of_points_to_remove = sum(uint8(points_too_far_away));
                     if number_of_points_to_remove > 0
@@ -550,12 +550,12 @@ classdef TDAirwayGenerator < handle
 
             if isempty(current_apex.PointCloud.Coords)
                 branch.IsTerminal = true;
-                reporting.ShowWarning('TDAirwayGenerator:EmptyPointCloud', 'Branches terminated because they had an empty point cloud', []);
+                reporting.ShowWarning('PTKAirwayGenerator:EmptyPointCloud', 'Branches terminated because they had an empty point cloud', []);
                 apex_1 = [];
                 apex_2 = [];
             elseif size(current_apex.PointCloud.Coords, 1) < 2
                 branch.IsTerminal = true;
-                reporting.ShowWarning('TDAirwayGenerator:TooFewPointsInCloud', 'Branches terminated because there was only one point in the point cloud', []);
+                reporting.ShowWarning('PTKAirwayGenerator:TooFewPointsInCloud', 'Branches terminated because there was only one point in the point cloud', []);
                 apex_1 = [];
                 apex_2 = [];
             else
@@ -565,7 +565,7 @@ classdef TDAirwayGenerator < handle
 
                 % Find the centre of mass for the point cloud assigned to this
                 % apex
-                centre_of_mass = TDAirwayGenerator.GetCentreOfMass(current_apex.PointCloud);
+                centre_of_mass = PTKAirwayGenerator.GetCentreOfMass(current_apex.PointCloud);
                 
                 % Create a vector from the end branch point to the centre of
                 % mass
@@ -574,13 +574,13 @@ classdef TDAirwayGenerator < handle
                 % Get a normalised vector perpendicular to the plane passing
                 % through the centre of pass and the start and end points of the
                 % branch
-                plane_normal = TDAirwayGenerator.GetValidPlaneNormal(vector_to_com, branch);
+                plane_normal = PTKAirwayGenerator.GetValidPlaneNormal(vector_to_com, branch);
                 
                 % Split the point cloud into two, creating a new apex for each if there are enough points
-                [cloud1, cloud2] = TDAirwayGenerator.SplitPointCloud(current_apex.PointCloud, plane_normal, branch_end_coords);
+                [cloud1, cloud2] = PTKAirwayGenerator.SplitPointCloud(current_apex.PointCloud, plane_normal, branch_end_coords);
                 
                 if isempty(cloud1.Coords) || isempty(cloud2.Coords)
-                    reporting.ShowWarning('TDAirwayGenerator:EmptyPointCloud', 'Branches terminated because the point clouds could not be divided into two nonempty clouds', []);
+                    reporting.ShowWarning('PTKAirwayGenerator:EmptyPointCloud', 'Branches terminated because the point clouds could not be divided into two nonempty clouds', []);
                     branch.IsTerminal = true;
                     apex_1 = [];
                     apex_2 = [];
@@ -588,8 +588,8 @@ classdef TDAirwayGenerator < handle
                 end
                 
                 % Create new branches
-                apex_1 = TDAirwayGenerator.AddBranchAndApex(branch, cloud1, lung_volume, lung_mask, generation_number, image_size, reporting);
-                apex_2 = TDAirwayGenerator.AddBranchAndApex(branch, cloud2, lung_volume, lung_mask, generation_number, image_size, reporting);
+                apex_1 = PTKAirwayGenerator.AddBranchAndApex(branch, cloud1, lung_volume, lung_mask, generation_number, image_size, reporting);
+                apex_2 = PTKAirwayGenerator.AddBranchAndApex(branch, cloud2, lung_volume, lung_mask, generation_number, image_size, reporting);
             end
         end
         
@@ -613,7 +613,7 @@ classdef TDAirwayGenerator < handle
             while ~isempty(generation_number)
                 
                 % Find the lowest generation to grow
-                generation_number = TDAirwayGenerator.GetMinimumActiveTerminalGeneration(airway_tree, starting_segment, reporting);
+                generation_number = PTKAirwayGenerator.GetMinimumActiveTerminalGeneration(airway_tree, starting_segment, reporting);
                 if (first_run)
                     min_generation_number = generation_number;
                 end
@@ -625,36 +625,36 @@ classdef TDAirwayGenerator < handle
                 
                 % Terminate when we have exceeded a generation threshold, and
                 % report how many branches were incomplete
-                if generation_number >= TDAirwayGenerator.MaximumGenerationNumber
-                    reporting.ShowMessage('TDAirwayGenerator:IncompleteApices', [num2str(length(apices)) ' branches were incomplete when the terminal generation was reached']);                    
+                if generation_number >= PTKAirwayGenerator.MaximumGenerationNumber
+                    reporting.ShowMessage('PTKAirwayGenerator:IncompleteApices', [num2str(length(apices)) ' branches were incomplete when the terminal generation was reached']);                    
                     return
                 end
                 
                 % Progress reporting
-                reporting.ShowMessage('TDAirwayGenerator:GenerationNumber', ['Generation:' int2str(generation_number)]);
-                reporting.UpdateProgressValue(round(100*(generation_number - min_generation_number)/(TDAirwayGenerator.MaximumGenerationNumber - min_generation_number)));
+                reporting.ShowMessage('PTKAirwayGenerator:GenerationNumber', ['Generation:' int2str(generation_number)]);
+                reporting.UpdateProgressValue(round(100*(generation_number - min_generation_number)/(PTKAirwayGenerator.MaximumGenerationNumber - min_generation_number)));
                 
                 % Allocate/reallocate points to the apices
-                if (first_run) || ((generation_number < TDAirwayGenerator.NumberOfGenerationsToReallocate) && (TDAirwayGenerator.ReallocatePointsAtEachGeneration))
+                if (first_run) || ((generation_number < PTKAirwayGenerator.NumberOfGenerationsToReallocate) && (PTKAirwayGenerator.ReallocatePointsAtEachGeneration))
                     
-                    is_this_the_last_reallocation = (generation_number + 1 == TDAirwayGenerator.NumberOfGenerationsToReallocate) || (~TDAirwayGenerator.ReallocatePointsAtEachGeneration);
+                    is_this_the_last_reallocation = (generation_number + 1 == PTKAirwayGenerator.NumberOfGenerationsToReallocate) || (~PTKAirwayGenerator.ReallocatePointsAtEachGeneration);
                     
                     if is_this_the_last_reallocation
-                        apices = TDAirwayGenerator.GetApicesBelowThisBranchForTerminalSegments(starting_segment, airway_tree, generation_number, reporting);
+                        apices = PTKAirwayGenerator.GetApicesBelowThisBranchForTerminalSegments(starting_segment, airway_tree, generation_number, reporting);
                     else
-                        apices = TDAirwayGenerator.GetApicesBelowThisBranchForThisGeneration(starting_segment, airway_tree, generation_number, reporting);
+                        apices = PTKAirwayGenerator.GetApicesBelowThisBranchForThisGeneration(starting_segment, airway_tree, generation_number, reporting);
                     end
                     
                     num_apices = numel(apices);
-                    apices = TDAirwayGenerator.AssignPointCloudToApices(apices, lung_volume, reporting);
+                    apices = PTKAirwayGenerator.AssignPointCloudToApices(apices, lung_volume, reporting);
 %                     disp(['Generation:' int2str(generation_number) ' Number of apices:' int2str(num_apices) ' Apices post-allocation:' int2str(numel(apices))]);
                     if (first_run)
-                        initial_apex_image = TDAirwayGenerator.GetImageFromApex(lung_volume, apices);
+                        initial_apex_image = PTKAirwayGenerator.GetImageFromApex(lung_volume, apices);
                         first_run = false;
                     end
                 end
                 
-                apices_next_generation = TDAirwayGeneratorApex.empty(50000,0);
+                apices_next_generation = PTKAirwayGeneratorApex.empty(50000,0);
                 for apex = apices
                     
                     % Ignore non-growing apices - they are just there to help
@@ -667,7 +667,7 @@ classdef TDAirwayGenerator < handle
                         % We ignore any apices with a higher generation number than
                         % the current one, but save these for processing later
                         if (generation_number == apex.AirwayGrowingTreeSegment.GenerationNumber)
-                            [new_apex_1, new_apex_2] = TDAirwayGenerator.GrowApex(apex, lung_volume, lung_mask, generation_number, image_size, reporting);
+                            [new_apex_1, new_apex_2] = PTKAirwayGenerator.GrowApex(apex, lung_volume, lung_mask, generation_number, image_size, reporting);
                             if ~isempty(new_apex_1)
                                 apices_next_generation(end+1) = new_apex_1;
                             end

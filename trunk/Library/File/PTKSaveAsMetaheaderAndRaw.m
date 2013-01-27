@@ -1,20 +1,20 @@
-function TDSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting)
-    % TDSaveAsMetaheaderAndRaw. Writes out a TDImage in metaheader & raw format
+function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting)
+    % PTKSaveAsMetaheaderAndRaw. Writes out a PTKImage in metaheader & raw format
     %
     %     Syntax
     %     ------
     %
-    %         TDSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting)
+    %         PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting)
     %
-    %             image_data      is a TDImage (or TDDicomImage) class containing the image
+    %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved
     %             path, filename  specify the location to save the DICOM data. One 2D file
     %                             will be created for each image slice in the z direction. 
     %                             Each file is numbered, starting from 0.
     %                             So if filename is 'MyImage.DCM' then the files will be
     %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
+    %             reporting       A PTKReporting or implementor of the same interface,
+    %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
     %
     %
@@ -25,8 +25,8 @@ function TDSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporti
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
-    if ~isa(image_data, 'TDImage')
-        reporting.Error('TDSaveAsMetaheaderAndRaw:InputMustBeTDImage', 'Requires a TDImage as input');
+    if ~isa(image_data, 'PTKImage')
+        reporting.Error('PTKSaveAsMetaheaderAndRaw:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
 
     original_image = image_data.RawImage;
@@ -49,7 +49,7 @@ function TDSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporti
         if (scale_range <= 255)
             scale = 1;
         else
-            reporting.ShowWarning('TDSaveAsMetaheaderAndRaw:ImageRescaled', 'Image data has been rescaled', []);
+            reporting.ShowWarning('PTKSaveAsMetaheaderAndRaw:ImageRescaled', 'Image data has been rescaled', []);
             scale = scale_factor/double(max_scale - min_scale);
         end
         image = uint8(scale*(original_image - min_scale));
@@ -63,12 +63,12 @@ function TDSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporti
     resolution = image_data.VoxelSize([2, 1, 3]);
     
     offset = '0 0 0';
-    if isa(original_image, 'TDDicomImage')
+    if isa(original_image, 'PTKDicomImage')
         metadata = original_image.MetaHeader;
         if isfield(metadata, 'Offset')
             offset = metadata.Offset;
         end
     end
     
-    TDWrite3DMetaFile(full_filename, image, resolution, data_type, offset);  
+    PTKWrite3DMetaFile(full_filename, image, resolution, data_type, offset);  
 end

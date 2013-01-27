@@ -1,19 +1,19 @@
-function threshold_image = TDGetMainRegionExcludingBorder(threshold_image, reporting)
-    % TDGetMainRegionExcludingBorder. Finds the largest connected region in a
+function threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, reporting)
+    % PTKGetMainRegionExcludingBorder. Finds the largest connected region in a
     % binary 3D volume, excluding any regions which touch the borders in the
     % first and second dimensions.
     %
     % Syntax:
-    %     threshold_image = TDGetMainRegionExcludingBorder(threshold_image, reporting)
+    %     threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, reporting)
     %
     % Inputs:
-    %     threshold_image - a binary 3D volume as a TDImage.
+    %     threshold_image - a binary 3D volume as a PTKImage.
     %
-    %     reporting (optional) - an object implementing the TDReporting
+    %     reporting (optional) - an object implementing the PTKReporting
     %         interface for reporting progress and warnings
     %
     % Outputs:
-    %     threshold_image - a TDImage binary volume of the found region
+    %     threshold_image - a PTKImage binary volume of the found region
     %
     %
     %     Licence
@@ -23,12 +23,12 @@ function threshold_image = TDGetMainRegionExcludingBorder(threshold_image, repor
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    if ~isa(threshold_image, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(threshold_image, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
     
     if nargin < 2
-        reporting = TDReportingDefault;
+        reporting = PTKReportingDefault;
     end
 
     reporting.ShowProgress('Finding lung region');
@@ -58,7 +58,7 @@ function threshold_image = TDGetMainRegionExcludingBorder(threshold_image, repor
         bordered_image(CC.PixelIdxList{current_region_being_checked}) = true;
         if (bordered_image(1) || bordered_image(end))
             % This region is connected to the edge
-            reporting.ShowMessage('TDGetMainRegionExcludingBorder:LargestROIConnectedToExterior', 'The largest region connected with the edge of the volume. I''m assuming this region is outside the body so choosing the next largest region');
+            reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LargestROIConnectedToExterior', 'The largest region connected with the edge of the volume. I''m assuming this region is outside the body so choosing the next largest region');
         else
             results(result_index) = current_region_being_checked;
             result_index = result_index + 1;
@@ -89,12 +89,12 @@ function threshold_image = TDGetMainRegionExcludingBorder(threshold_image, repor
         
         use_both_regions = false;
         if (bb_1(2) >= image_centre_j - centre_offset) && (bb_2(5) < image_centre_j + centre_offset)
-            reporting.ShowMessage('TDGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
+            reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
             use_both_regions = true;
         end
         
         if (bb_2(2) >= image_centre_j - centre_offset) && (bb_1(5) < image_centre_j + centre_offset)
-            reporting.ShowMessage('TDGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
+            reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
             use_both_regions = true;
         end
     else

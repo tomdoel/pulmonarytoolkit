@@ -1,5 +1,5 @@
-function lung_image = TDFillCoronalHoles(lung_image, is_right, reporting)
-    % TDFillCoronalHoles. Operates on each coronal slice, applying a closing
+function lung_image = PTKFillCoronalHoles(lung_image, is_right, reporting)
+    % PTKFillCoronalHoles. Operates on each coronal slice, applying a closing
     % filter then filling interior holes
     %
     %
@@ -21,13 +21,13 @@ function lung_image = TDFillCoronalHoles(lung_image, is_right, reporting)
     lung_image.AddBorder(10);
     for coronal_index = 11 : lung_image.ImageSize(1) - 10
         reporting.UpdateProgressValue(round(100*(coronal_index - 11)/(lung_image.ImageSize(1) - 20)));
-        coronal_slice = lung_image.GetSlice(coronal_index, TDImageOrientation.Coronal);
+        coronal_slice = lung_image.GetSlice(coronal_index, PTKImageOrientation.Coronal);
         if ~isempty(is_right)
             coronal_slice = OpenOrClose(coronal_slice, is_right, opening_size, closing_size, reporting);
         end
         coronal_slice = imclose(coronal_slice, strel('disk', round(closing_size)));
         coronal_slice = imfill(coronal_slice, 'holes');
-        lung_image.ReplaceImageSlice(coronal_slice, coronal_index, TDImageOrientation.Coronal);
+        lung_image.ReplaceImageSlice(coronal_slice, coronal_index, PTKImageOrientation.Coronal);
     end    
     lung_image.RemoveBorder(10);
 end
@@ -36,7 +36,7 @@ function mask = OpenOrClose(mask, is_right, opening_size, closing_size, reportin
     closed_image = imclose(mask, strel('disk', round(closing_size)));
     opened_image = imopen(mask, strel('disk', round(opening_size)));
 
-    threshold = TDImage(~(closed_image & opened_image));
+    threshold = PTKImage(~(closed_image & opened_image));
     threshold.AddBorder(1);
     image_size = threshold.ImageSize;
 
@@ -55,7 +55,7 @@ function mask = OpenOrClose(mask, is_right, opening_size, closing_size, reportin
     other_border_indices = threshold.LocalToGlobalIndices(find(raw_image == 2));
     
     start_points = {right_border_indices, other_border_indices};
-    regions = TDMultipleRegionGrowing(threshold, start_points, reporting);
+    regions = PTKMultipleRegionGrowing(threshold, start_points, reporting);
     regions.RemoveBorder(1);
     closed_region = (regions.RawImage == 1);
     mask(closed_region) = closed_image(closed_region);

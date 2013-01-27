@@ -1,24 +1,24 @@
-function output_image = TDSimpleRegionGrowing(threshold_image, start_points_global, reporting)
-    % TDSimpleRegionGrowing. Performs 3D region growing through the supplied
+function output_image = PTKSimpleRegionGrowing(threshold_image, start_points_global, reporting)
+    % PTKSimpleRegionGrowing. Performs 3D region growing through the supplied
     %     binary threshold image, starting from the specified points
     %
     %
     %     Syntax:
-    %         output_image = TDSimpleRegionGrowing(threshold_image, start_points_global, reporting)
+    %         output_image = PTKSimpleRegionGrowing(threshold_image, start_points_global, reporting)
     %
     %         Inputs:
     %         ------
-    %             threshold_image - The threshold image in a TDImage class. 1s
+    %             threshold_image - The threshold image in a PTKImage class. 1s
     %                 represents voxels which are connected
     %             start_points - an array of points, where each point is a
     %                 coordinate in the form [i, j, k]. The region growing will
     %                 begin from all these points simultaneously
-    %             reporting - a TDReporting object for progress, warning and
+    %             reporting - a PTKReporting object for progress, warning and
     %                 error reporting.
     %
     %         Outputs:
     %         -------
-    %             output_image - A binary TDImage containing the segmented region
+    %             output_image - A binary PTKImage containing the segmented region
     %                 of all voxels connected to the starting points
     %
     %
@@ -30,8 +30,8 @@ function output_image = TDSimpleRegionGrowing(threshold_image, start_points_glob
     %
     
     % Check the input image is of the correct form
-    if ~isa(threshold_image, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(threshold_image, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
     
     if exist('reporting', 'var')
@@ -42,7 +42,7 @@ function output_image = TDSimpleRegionGrowing(threshold_image, start_points_glob
     output_image = threshold_image.BlankCopy;
     segmented_image = zeros(threshold_image.ImageSize, 'uint8');
     
-    [linear_offsets, ~] = TDImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
+    [linear_offsets, ~] = PTKImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
     next_points = zeros(length(start_points_global), 1);
     for i = 1 : length(next_points)
         start_point = start_points_global{i};

@@ -1,21 +1,21 @@
-function image = TDLoadImageFromMatlabFiles(path, filenames)
-    % TDLoadImageFromMatlabFiles. Loads a 3D image volume from a Matlab file
+function image = PTKLoadImageFromMatlabFiles(path, filenames)
+    % PTKLoadImageFromMatlabFiles. Loads a 3D image volume from a Matlab file
     %
     %    This function is used to load raw image data saved in a Matlab matrix
     %
     %     Syntax
     %     ------
     %
-    %         loaded_image = TDLoadImageFromDicomFiles(path, filenames, reporting)
+    %         loaded_image = PTKLoadImageFromDicomFiles(path, filenames, reporting)
     %
-    %             loaded_image    a TDImage containing the 3D volume
+    %             loaded_image    a PTKImage containing the 3D volume
     %             path, filename  specify the location to save the DICOM data. One 2D file
     %                             will be created for each image slice in the z direction. 
     %                             Each file is numbered, starting from 0.
     %                             So if filename is 'MyImage.DCM' then the files will be
     %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
+    %             reporting       A PTKReporting or implementor of the same interface,
+    %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting. If no
     %                             reporting object is specified then a default
     %                             reporting object with progress dialog is

@@ -1,24 +1,24 @@
-classdef TDViewer < handle
-    % TDViewer. A standalone image viewer for showing 3D images slice-by-slice
+classdef PTKViewer < handle
+    % PTKViewer. A standalone image viewer for showing 3D images slice-by-slice
     %
-    %     TDViewer uses TDViewerPanel to create a visualisation window for the
-    %     supplied image, which can be a TDImage or raw data. If a raw data
+    %     PTKViewer uses PTKViewerPanel to create a visualisation window for the
+    %     supplied image, which can be a PTKImage or raw data. If a raw data
     %     matrix is supplied, the type argument can be supplied to ensure the
     %     image is displayed as expected.
     %
     %     Examples
     %     --------
     %
-    %         % Displays my_image, where my_image is a 3D image matrix or a TDImage
-    %         TDViewer(my_image);
+    %         % Displays my_image, where my_image is a 3D image matrix or a PTKImage
+    %         PTKViewer(my_image);
     %
     %         % Displays my_image as a greyscale image, where my_image is a 3D image.
-    %         % If my_Image is a TDImage, the type will be ignored
-    %         TDViewer(my_image, TDImageType.Grayscale);
+    %         % If my_Image is a PTKImage, the type will be ignored
+    %         PTKViewer(my_image, PTKImageType.Grayscale);
     %
     %         % Displays my_image as a greyscale image, and overlay_image as an indexed colour image
-    %         viewer = TDViewer(my_image, TDImageType.Grayscale);
-    %         viewer.ViewerPanelHandle.OverlayImage = overlay_image; % Must be a TDImage
+    %         viewer = PTKViewer(my_image, PTKImageType.Grayscale);
+    %         viewer.ViewerPanelHandle.OverlayImage = overlay_image; % Must be a PTKImage
     %
     %
     %     Licence
@@ -39,27 +39,27 @@ classdef TDViewer < handle
     end
 
     methods
-        function obj = TDViewer(image, type)
+        function obj = PTKViewer(image, type)
             obj.FigureHandle = figure;
             set(obj.FigureHandle, 'NumberTitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none');
-            obj.ViewerPanelHandle = TDViewerPanel(obj.FigureHandle);
+            obj.ViewerPanelHandle = PTKViewerPanel(obj.FigureHandle);
             if nargin < 1
                 image = [];
             end
-            if isa(image, 'TDImage')
+            if isa(image, 'PTKImage')
                 obj.ImageHandle = image;
                 if ~isempty(image.Title)
                     obj.Title = image.Title;
                 else
-                    obj.Title = 'TDViewer';
+                    obj.Title = 'PTKViewer';
                 end
             else
                 if nargin < 2
-                    obj.ImageHandle = TDImage(image);
+                    obj.ImageHandle = PTKImage(image);
                 else
-                    obj.ImageHandle = TDImage(image, type);
+                    obj.ImageHandle = PTKImage(image, type);
                 end
-                obj.Title = 'TDViewer';
+                obj.Title = 'PTKViewer';
             end
             obj.ViewerPanelHandle.BackgroundImage = obj.ImageHandle;
 

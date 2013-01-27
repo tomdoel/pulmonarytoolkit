@@ -1,26 +1,26 @@
-function output_image = TDMultipleRegionGrowing(threshold_image, start_points_global, reporting)
-    % TDMultipleRegionGrowing. Performs 3D region growing of several regions
+function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_global, reporting)
+    % PTKMultipleRegionGrowing. Performs 3D region growing of several regions
     %      simultaneously through the supplied binary threshold image, beginning
     %      at the specified starting points for each region.
     %
     %
     %     Syntax:
-    %         output_image = TDMultipleRegionGrowing(threshold_image, start_points_global, reporting)
+    %         output_image = PTKMultipleRegionGrowing(threshold_image, start_points_global, reporting)
     %
     %         Inputs:
     %         ------
-    %             threshold_image - The threshold image in a TDImage class. 1s
+    %             threshold_image - The threshold image in a PTKImage class. 1s
     %                 represents voxels which are connected
     %             start_points - an set of starting points, where each element
     %                 in the set is array of points representing one region.
     %                 Each point is a global index. The region growing will 
     %                 begin from all these points simultaneously
-    %             reporting - a TDReporting object for progress, warning and
+    %             reporting - a PTKReporting object for progress, warning and
     %                 error reporting.
     %
     %         Outputs:
     %         -------
-    %             output_image - A binary TDImage containing the segmented region
+    %             output_image - A binary PTKImage containing the segmented region
     %                 of all voxels connected to the starting points
     %
     %
@@ -32,8 +32,8 @@ function output_image = TDMultipleRegionGrowing(threshold_image, start_points_gl
     %
     
     % Check the input image is of the correct form
-    if ~isa(threshold_image, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(threshold_image, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
     
     if exist('reporting', 'var')
@@ -44,7 +44,7 @@ function output_image = TDMultipleRegionGrowing(threshold_image, start_points_gl
     output_image = threshold_image.BlankCopy;
     segmented_image = zeros(threshold_image.ImageSize, 'uint8');
     
-    [linear_offsets, ~] = TDImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
+    [linear_offsets, ~] = PTKImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
 
     threshold_image_raw = logical(threshold_image.RawImage);
     number_points = length(segmented_image(:));

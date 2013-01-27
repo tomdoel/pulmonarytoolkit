@@ -1,11 +1,11 @@
-function filled_image = TDFillHolesInImage(original_image)
-    % TDFillHolesInImage. Fills in holes in a binary image.
+function filled_image = PTKFillHolesInImage(original_image)
+    % PTKFillHolesInImage. Fills in holes in a binary image.
     %
-    %     TDFillHolesInImage takes in a binary image and fills in any completely
+    %     PTKFillHolesInImage takes in a binary image and fills in any completely
     %     enclosed holes, where holes are regions of value zero surrounded
     %     completely by non-zero values.
     %
-    %     The input and output images are of class TDImage.
+    %     The input and output images are of class PTKImage.
     %
     %
     %     Licence
@@ -15,8 +15,8 @@ function filled_image = TDFillHolesInImage(original_image)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    if ~isa(original_image, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(original_image, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
     original_reduced = original_image.Copy;
     original_reduced.CropToFit;

@@ -1,20 +1,20 @@
-function [eigvec, eigval] = TDVectorisedEigenvalues(M, eigenvalues_only)
-    % TDVectorisedEigenvalues. Computes eigenvalues and eigenvectors for many symmetric matrices
+function [eigvec, eigval] = PTKVectorisedEigenvalues(M, eigenvalues_only)
+    % PTKVectorisedEigenvalues. Computes eigenvalues and eigenvectors for many symmetric matrices
     %
-    %     TDVectorisedEigenvalues is similar to Matlab's eigs() function, but can be
+    %     PTKVectorisedEigenvalues is similar to Matlab's eigs() function, but can be
     %     used to compute the eigenvalues and eigenvectors for multiple matrices,
     %     which for a large number of points is significantly quicker than using a
     %     for loop. Each input matrix must be symmetric and is represented by a
     %     single row of the input matrix as described below.
     %
-    %     The mex function TDFastEigenvalues is equivalent to function but runs
-    %     faster. TDVectorisedEigenvalues is slower than TDFastEigenvalues but still
+    %     The mex function PTKFastEigenvalues is equivalent to function but runs
+    %     faster. PTKVectorisedEigenvalues is slower than PTKFastEigenvalues but still
     %     significantly faster than running eigs() in a for loop when a large
     %     number of matrices is involved.
     %
     %
     %         Syntax:
-    %             [eigvectors, eigvalues] = TDFastEigenvalues(M [, eigenvalues_only])
+    %             [eigvectors, eigvalues] = PTKFastEigenvalues(M [, eigenvalues_only])
     %
     %         Input:
     %             M is a 6xn matrix. Each column of M represents one 3x3 symmetric matrix as follows

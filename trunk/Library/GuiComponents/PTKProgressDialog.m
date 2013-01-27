@@ -1,7 +1,7 @@
-classdef TDProgressDialog < TDProgressInterface
-    % TDProgressDialog. A dialog used to report progress informaton
+classdef PTKProgressDialog < PTKProgressInterface
+    % PTKProgressDialog. A dialog used to report progress informaton
     %
-    %     TDProgressDialog implements the TDProgressInterface, which is an
+    %     PTKProgressDialog implements the PTKProgressInterface, which is an
     %     interface used by the Pulmonary Toolkit to report the progress of
     %     operations.
     %
@@ -30,7 +30,7 @@ classdef TDProgressDialog < TDProgressInterface
                text = 'Please wait'; 
             end
             obj.Hide;
-            obj.DialogTitle = TDTextUtilities.RemoveHtml(text);
+            obj.DialogTitle = PTKTextUtilities.RemoveHtml(text);
             obj.DialogText = '';
             obj.ProgressValue = 0;
             obj.Hold = true;
@@ -63,7 +63,7 @@ classdef TDProgressDialog < TDProgressInterface
             if nargin < 2
                text = 'Please wait'; 
             end            
-            obj.DialogText = TDTextUtilities.RemoveHtml(text);
+            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
             obj.Update;
         end
         
@@ -80,7 +80,7 @@ classdef TDProgressDialog < TDProgressInterface
         
         function SetProgressAndMessage(obj, progress_value, text)
             obj.ShowProgressBar = true;
-            obj.DialogText = TDTextUtilities.RemoveHtml(text);
+            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
             obj.Update;
         end

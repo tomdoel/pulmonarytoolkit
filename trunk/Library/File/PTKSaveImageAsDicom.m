@@ -1,12 +1,12 @@
-function TDSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, reporting)
-    % TDSaveImageAsDicom. Saves an image in DICOM format, using Matlab's image processing toolbox
+function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, reporting)
+    % PTKSaveImageAsDicom. Saves an image in DICOM format, using Matlab's image processing toolbox
     %
     %     Syntax
     %     ------
     %
-    %         TDSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, reporting)
+    %         PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, reporting)
     %
-    %             image_data      is a TDImage (or TDDicomImage) class containing the image
+    %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved
     %             path, filename  specify the location to save the DICOM data. One 2D file
     %                             will be created for each image slice in the z direction. 
@@ -19,8 +19,8 @@ function TDSaveImageAsDicom(image_data, path, filename, patient_name, is_seconda
     %                             (e.g. a segmentation), and should be set to false when the 
     %                             pixel data is unaltered from the original
     %                             image (except for cropping or reordering axes)
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
+    %             reporting       A PTKReporting or implementor of the same interface,
+    %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
     %
     %
@@ -33,8 +33,8 @@ function TDSaveImageAsDicom(image_data, path, filename, patient_name, is_seconda
    
     
     % Verify that the image is of the correct class
-    if ~isa(image_data, 'TDImage')
-        reporting.Error('TDSaveImageAsDicom:InputMustBeTDImage', 'Requires a TDImage as input');
+    if ~isa(image_data, 'PTKImage')
+        reporting.Error('PTKSaveImageAsDicom:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
     
     % Show a progress dialog
@@ -51,7 +51,7 @@ function TDSaveImageAsDicom(image_data, path, filename, patient_name, is_seconda
     % Retrieve oiginal DICOM metadata from the image - note this may be empty if
     % the image was created from a non-DICOM image
     original_metadata = [];
-    if isa(image_data, 'TDDicomImage')
+    if isa(image_data, 'PTKDicomImage')
         original_metadata = image_data.MetaHeader; % Note the metadata may be empty
         study_uid = image_data.StudyUid;
     else
@@ -64,7 +64,7 @@ function TDSaveImageAsDicom(image_data, path, filename, patient_name, is_seconda
     if is_secondary_capture
         metadata = [];
         metadata.Modality = 'OT';
-        metadata.SeriesDescription = [TDSoftwareInfo.DicomName ' : ' image_data.Title];
+        metadata.SeriesDescription = [PTKSoftwareInfo.DicomName ' : ' image_data.Title];
     else
         metadata = original_metadata;
         metadata = CopyField('Modality', metadata, original_metadata, image_data.Modality);
@@ -73,9 +73,9 @@ function TDSaveImageAsDicom(image_data, path, filename, patient_name, is_seconda
     
     % There are certain tags we must change to ensure our series 
     metadata.SeriesInstanceUID = dicomuid; % MUST be unique for our series
-    metadata.SecondaryCaptureDeviceManufacturer = TDSoftwareInfo.DicomManufacturer;
-    metadata.SecondaryCaptureDeviceManufacturerModelName = TDSoftwareInfo.DicomName;
-    metadata.SecondaryCaptureDeviceSoftwareVersion = TDSoftwareInfo.DicomVersion;
+    metadata.SecondaryCaptureDeviceManufacturer = PTKSoftwareInfo.DicomManufacturer;
+    metadata.SecondaryCaptureDeviceManufacturerModelName = PTKSoftwareInfo.DicomName;
+    metadata.SecondaryCaptureDeviceSoftwareVersion = PTKSoftwareInfo.DicomVersion;
     metadata.SeriesNumber = []; % SeriesNumber (unlike SeriesInstanceUID) is purely descriptive. Since there is no way of guaranteeing uniqueness, it is better not to set it then to set it to a value like 1 which may already be used
     
     metadata.PatientPosition = 'FFS';
@@ -90,7 +90,7 @@ function TDSaveImageAsDicom(image_data, path, filename, patient_name, is_seconda
     metadata = CopyField('StudyDate', metadata, original_metadata, []);
     metadata = CopyField('StudyTime', metadata, original_metadata, []);
     
-    default_study_description = TDSoftwareInfo.DicomStudyDescription;
+    default_study_description = PTKSoftwareInfo.DicomStudyDescription;
     metadata = CopyField('StudyDescription', metadata, original_metadata, default_study_description);
 
     metadata = CopyField('PatientName', metadata, original_metadata, patient_name);
@@ -139,7 +139,7 @@ function TDSaveImageAsDicom(image_data, path, filename, patient_name, is_seconda
         status = dicomwrite(slice_data, full_filename, metadata);
         
         if ~IsStatusEmpty(status)
-            reporting.ShowWarning('TDSaveImageAsDicom:DicomWriteWarning', 'Dicomwrite returned a warning when saving the image', status);
+            reporting.ShowWarning('PTKSaveImageAsDicom:DicomWriteWarning', 'Dicomwrite returned a warning when saving the image', status);
         end
     end
     

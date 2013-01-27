@@ -1,15 +1,15 @@
-classdef TDProgressInterface < handle
-    % TDProgressInterface. Interface for classes which implement a progress bar.
+classdef PTKProgressInterface < handle
+    % PTKProgressInterface. Interface for classes which implement a progress bar.
     %
-    %     The TDReporting class uses this interface to display and update a
-    %     progress bar and associated text. The TDProgressDialog class
+    %     The PTKReporting class uses this interface to display and update a
+    %     progress bar and associated text. The PTKProgressDialog class
     %     implements the progress bar as a standard Matlab progress dialog,
-    %     whereas the TDReportingPanel implements a custom progress panel for an
+    %     whereas the PTKReportingPanel implements a custom progress panel for an
     %     existing figure.
     %
     %     You can implement custom progress reporting by creating a class which
     %     implements this interface, and then passing an instance of your
-    %     progress class into TDReporting.
+    %     progress class into PTKReporting.
     %
     %
     %     Licence

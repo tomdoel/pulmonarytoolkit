@@ -1,5 +1,5 @@
-function filtered_image = TDImageDividerHessian(image_data, filter_function, mask, gaussian_sigma, hessian_filter_gaussian, dont_divide, dont_calculate_evals, is_left_lung, reporting)
-    % TDImageDividerHessian. Computes a Hessian-based filter for an image, one octant at a time.
+function filtered_image = PTKImageDividerHessian(image_data, filter_function, mask, gaussian_sigma, hessian_filter_gaussian, dont_divide, dont_calculate_evals, is_left_lung, reporting)
+    % PTKImageDividerHessian. Computes a Hessian-based filter for an image, one octant at a time.
     %
     %     This function performs Hessian-based filtering on an image, but 
     %     reduces memory usage by first dividing the image into octants, 
@@ -14,9 +14,9 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     %     the overlap regions
     %
     %     Syntax:
-    %         filtered_image = TDImageDividerHessian(image_data, filter_function, gaussian_sigma, hessian_filter_gaussian, dont_divide, dont_calculate_evals, is_left_lung, reporting)
+    %         filtered_image = PTKImageDividerHessian(image_data, filter_function, gaussian_sigma, hessian_filter_gaussian, dont_divide, dont_calculate_evals, is_left_lung, reporting)
     %
-    %             image_data - The image to filter, in a TDImage class
+    %             image_data - The image to filter, in a PTKImage class
     %             filter_function - handle to a user-defined filter function 
     %                 which is to be applied to each quadrant. See below for syntax.
     %             mask - a logical matrix specifying which elements of
@@ -38,7 +38,7 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     %                 progress bar. Processing the left lung corresponds to the
     %                 right half of the progress bar. If [] is specified, the
     %                 left lung is assumed and a warning is issued.
-    %             reporting - a TDReporting object for progress, warning and
+    %             reporting - a PTKReporting object for progress, warning and
     %                 error reporting.
     %     Notes
     %     -----
@@ -47,39 +47,39 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     %             
     %         This function will be called once for each octant of the image.
     %      
-    %         hessian_eigenvalues_wrapper is a TDWrapper object, whose RawImage
+    %         hessian_eigenvalues_wrapper is a PTKWrapper object, whose RawImage
     %         property contains an lxmxnx3 matrix containing the 3 eigenvalues
     %         of the Hessian matrix at each point of the image of dimensions
     %         lxmxn. The eigenvalues are ordered by absolute valye with smallest
     %         first.
     % 
     %         In the case that dont_calculate_evals was set to true, the
-    %         TDWrapper object instead contains the Hessian components in the
+    %         PTKWrapper object instead contains the Hessian components in the
     %         form of a matrix 6xn, where n is the number of eleents in the
     %         matrix. This is the same form as returned by
-    %         TDGetHessianComponents.
+    %         PTKGetHessianComponents.
     %
-    %         output_wrapper is a TDWrapper object whose RawImage is the lxmxn
+    %         output_wrapper is a PTKWrapper object whose RawImage is the lxmxn
     %         image resulting from the filter.
     %   
     %     Example
     %     -------
-    %         See the plugins TDVesselness and TDFissurenessHessianFactor for
+    %         See the plugins PTKVesselness and PTKFissurenessHessianFactor for
     %         examples.
     %
-    %         The following code filters the TDImage image_data using a function
+    %         The following code filters the PTKImage image_data using a function
     %         FilterFromHessanEigenvalues, which takes in a matrix of
     %         eigenvalues for an image quadrant and returns an image matrix for
     %         that quadrant.
     %
     %         function ComputeFilter
-    %             reporting = TDReportingDefault;
+    %             reporting = PTKReportingDefault;
     %             gaussian_size_mm = 1.5;
-    %             filtered_image = TDImageDividerHessian(image_data, @FilterFunction, [], gaussian_size_mm, [], [], [], [], reporting)
+    %             filtered_image = PTKImageDividerHessian(image_data, @FilterFunction, [], gaussian_size_mm, [], [], [], [], reporting)
     %         end
     %
     %         function output_wrapper = FilterFunction(hessian_eigenvalues_wrapper)
-    %             output_wrapper = TDWrapper;
+    %             output_wrapper = PTKWrapper;
     %             output_wrapper.RawImage = FilterFromHessanEigenvalues(hessian_eigenvalues_wrapper.RawImage);
     %         end
     %
@@ -92,21 +92,21 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     %
 
     % ToDo: This is too specific
-    if isa(reporting, 'TDReportingWithCache')
+    if isa(reporting, 'PTKReportingWithCache')
         reporting.PushProgress;
     end
     
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
-        reporing.Warning('TDImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
+        reporing.Warning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
     end
 
     if dont_calculate_evals && ~isempty(mask)
-        reporing.Warning('TDImageDividerHessian:MaskAndFilteringNotSupported', 'Currently this function does not support a mask when not computing eigenvalues', []);
+        reporing.Warning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently this function does not support a mask when not computing eigenvalues', []);
     end
 
     % Check the input image is of the correct form
-    if ~isa(image_data, 'TDImage')
-        reporing.Error('TDImageDividerHessian:InputImageBadFormat', 'Requires a TDImage as input');
+    if ~isa(image_data, 'PTKImage')
+        reporing.Error('PTKImageDividerHessian:InputImageBadFormat', 'Requires a PTKImage as input');
     end
     
     if isempty(dont_divide)
@@ -118,13 +118,13 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     end
     
     if isempty(is_left_lung)
-        reporting.ShowWarning('TDImageDividerHessian:ArgumentNotSpecified', 'The argument is_left_lung was not specified, so I''m assuming this is true', []);
+        reporting.ShowWarning('PTKImageDividerHessian:ArgumentNotSpecified', 'The argument is_left_lung was not specified, so I''m assuming this is true', []);
         is_left_lung = true;
     end
   
     % Gaussian filter
     if ~isempty(gaussian_sigma) && (gaussian_sigma > 0)
-        image_data = TDGaussianFilter(image_data, gaussian_sigma);
+        image_data = PTKGaussianFilter(image_data, gaussian_sigma);
     end
     
     % Progress ia split between left and right lungs
@@ -148,7 +148,7 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     % image instead of dividing
     if any(image_size < (2*overlap_size + 2))
         if ~dont_divide
-            reporting.ShowWarning('TDImageDividerHessian:ImageTooSmallForDivision', 'TDImageDivider:ImageTooSmall', 'Image is too small to divide into octants. I will operate on the whole image', []);
+            reporting.ShowWarning('PTKImageDividerHessian:ImageTooSmallForDivision', 'PTKImageDivider:ImageTooSmall', 'Image is too small to divide into octants. I will operate on the whole image', []);
             dont_divide = true;
         end
     end
@@ -156,8 +156,8 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     if dont_divide
         
         % Image will not be divided into octants
-        reporting.ShowWarning('TDImageDividerHessian:NoDivide', 'Ignoring image division and operating on entire lung', []);
-        hessian_components = TDGetHessianComponents(image_data, mask);
+        reporting.ShowWarning('PTKImageDividerHessian:NoDivide', 'Ignoring image division and operating on entire lung', []);
+        hessian_components = PTKGetHessianComponents(image_data, mask);
         
         if dont_calculate_evals
             % Call filter with Hessian components
@@ -197,14 +197,14 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
             end
             
             % Compute eigenvalues for this octant
-            hessian_components = TDGetHessianComponents(part_image, part_mask);
+            hessian_components = PTKGetHessianComponents(part_image, part_mask);
             
             if ~isempty(hessian_filter_gaussian)
                 reporting.UpdateProgressText('Filtering Hessian components');
                 for component_index = 1 : 6
                     img = image_data.BlankCopy;
                     img.ChangeRawImage(reshape(hessian_components.RawImage(component_index, :), part_image.ImageSize));
-                    img = TDGaussianFilter(img, hessian_filter_gaussian);
+                    img = PTKGaussianFilter(img, hessian_filter_gaussian);
                     hessian_components.RawImage(component_index, :) = img.RawImage(:);
                     img.Reset();
                 end
@@ -256,7 +256,7 @@ function filtered_image = TDImageDividerHessian(image_data, filter_function, mas
     
     
     % ToDo: This is too specific
-    if isa(reporting, 'TDReportingWithCache')
+    if isa(reporting, 'PTKReportingWithCache')
         reporting.PopProgress;
     end
 
@@ -305,11 +305,11 @@ function [octant_limits_in, octant_limits_out, octant_limits_result] = ComputeOc
 
 end
 
-% Compute eigenvalues of the Hessian matrix and store in a TDWrapper object
+% Compute eigenvalues of the Hessian matrix and store in a PTKWrapper object
 function hessian_eigvals = HessianVectorised(hessian_components, reduced_image_size, mask)
-    [~, evals_v] = TDFastEigenvalues(hessian_components.RawImage, true);
+    [~, evals_v] = PTKFastEigenvalues(hessian_components.RawImage, true);
     
-    hessian_eigvals = TDWrapper;
+    hessian_eigvals = PTKWrapper;
     if isempty(mask)
         hessian_eigvals.RawImage = zeros([reduced_image_size, 3], 'single');
         hessian_eigvals.RawImage(:,:,:,1) = reshape(evals_v(1, :), reduced_image_size);

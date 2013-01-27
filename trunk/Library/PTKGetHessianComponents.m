@@ -1,8 +1,8 @@
-function hessian_components = TDGetHessianComponents(image_data, mask)
-    % TDGetHessianComponents. Computes the Hessian matrices for an image
+function hessian_components = PTKGetHessianComponents(image_data, mask)
+    % PTKGetHessianComponents. Computes the Hessian matrices for an image
     %
-    %     TDGetHessianComponents computes the components of the Hessian matrix
-    %     for each voxel in the 3D image specified in the TDImage class
+    %     PTKGetHessianComponents computes the components of the Hessian matrix
+    %     for each voxel in the 3D image specified in the PTKImage class
     %     image_data. Since the Hessian is symmetric, there are 6 independent
     %     components of the matrix for each voxel; these are returned in the 6xn
     %     matrix hessian_components, where there are n voxels and each row
@@ -10,12 +10,12 @@ function hessian_components = TDGetHessianComponents(image_data, mask)
     %
     %         [ H(1,1), H(1,2), H(1,3), H(2,3), H(2,4), H(3,3) ]
     %
-    %     The input image is of class TDImage.
-    %     The output image is of clas TDWrapper.
+    %     The input image is of class PTKImage.
+    %     The output image is of clas PTKWrapper.
     %
     %     mask is an optional logical image mask specifying the points for which 
-    %     the Hessian should be computed. It should be of type TDImage or
-    %     TDWrapper.
+    %     the Hessian should be computed. It should be of type PTKImage or
+    %     PTKWrapper.
     %
     %
     %     Licence
@@ -30,7 +30,7 @@ function hessian_components = TDGetHessianComponents(image_data, mask)
         mask = [];
     end
     
-    hessian_components = TDWrapper;
+    hessian_components = PTKWrapper;
     if isempty(mask)
         num_points = numel(image_data.RawImage);
     else

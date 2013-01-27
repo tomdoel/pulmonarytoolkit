@@ -1,7 +1,7 @@
-function next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d)
-    % TDComputeRadiusForBranch. Image-derived radius estimation of an airway.
+function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d)
+    % PTKComputeRadiusForBranch. Image-derived radius estimation of an airway.
     %
-    %     TDComputeRadiusForBranch creates a projection of the lung image
+    %     PTKComputeRadiusForBranch creates a projection of the lung image
     %     perpendicular to the centrepoint of the airway branch and uses a FWHM
     %     method to estimate the airway radius.
     %
@@ -175,8 +175,8 @@ end
 
 % For showing the stretched out wall with midpoints and walls superimposed
 function figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint, airway_max_mm)
-    viewer = TDViewer(interp_image, TDImageType.Grayscale);
-    viewer.ViewerPanelHandle.Orientation = TDImageOrientation.Axial;
+    viewer = PTKViewer(interp_image, PTKImageType.Grayscale);
+    viewer.ViewerPanelHandle.Orientation = PTKImageOrientation.Axial;
     midpoint_repeated = repmat(round(midpoints), [size(interp_image, 1), 1]);
     radii_indices = (1 : size(interp_image, 1))';
     radii_repeated = repmat(radii_indices, [1, size(interp_image, 2)]);
@@ -187,15 +187,15 @@ function figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask
     wall_overlay(midpoint:end, :) = wall_mask_upper;
     wall_overlay(midpoint:-1:1, :) = wall_mask_lower;
     wall_overlay(mp) = 3;
-    viewer.ViewerPanelHandle.OverlayImage = TDImage(wall_overlay);
+    viewer.ViewerPanelHandle.OverlayImage = PTKImage(wall_overlay);
     
     
     interp_image_full = [interp_image(end:-1:midpoint,:), interp_image(1:midpoint,:)];
-    viewer2 = TDViewer(interp_image_full, TDImageType.Grayscale);
-    viewer2.ViewerPanelHandle.Orientation = TDImageOrientation.Axial;
+    viewer2 = PTKViewer(interp_image_full, PTKImageType.Grayscale);
+    viewer2.ViewerPanelHandle.Orientation = PTKImageOrientation.Axial;
 
     wall_overlay_full = [wall_overlay(end:-1:midpoint, :), wall_overlay(1:midpoint, :)];
-    viewer2.ViewerPanelHandle.OverlayImage = TDImage(wall_overlay_full);
+    viewer2.ViewerPanelHandle.OverlayImage = PTKImage(wall_overlay_full);
     
     viewer2.ViewerPanelHandle.Window = 928;
     viewer2.ViewerPanelHandle.Level = 272;
@@ -211,7 +211,7 @@ function figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask
     widthheightratio = 4/3;
     page_width_cm = 8;
     resolution_dpi = 300;
-    font_name = TDSoftwareInfo.GraphFont;
+    font_name = PTKSoftwareInfo.GraphFont;
 
     set(figure_handle, 'Units','centimeters');
     graph_size = [page_width_cm, (page_width_cm/widthheightratio)];

@@ -1,7 +1,7 @@
-classdef TDProgressPanel < TDProgressInterface
-    % TDProgressPanel. A panel used to report progress informaton
+classdef PTKProgressPanel < PTKProgressInterface
+    % PTKProgressPanel. A panel used to report progress informaton
     %
-    %     TDProgressPanel implements the TDProgressInterface, which is an
+    %     PTKProgressPanel implements the PTKProgressInterface, which is an
     %     interface used by the Pulmonary Toolkit to report the progress of
     %     operations. This panel is displayed over the centre of the panel
     %     object whose handle is supplied in the constructor.
@@ -57,7 +57,7 @@ classdef TDProgressPanel < TDProgressInterface
     methods
         
         
-        function obj = TDProgressPanel(parent)
+        function obj = PTKProgressPanel(parent)
             obj.CurrentlyDisplayedDialogTitle = '';
             obj.CurrentlyDisplayedDialogText = '';
             obj.CurrentlyDisplayedProgressValue = [];
@@ -67,7 +67,7 @@ classdef TDProgressPanel < TDProgressInterface
             set(parent, 'Units', 'Pixels');
             
             % Create the panel
-            panel_background_colour = TDSoftwareInfo.BackgroundColour;
+            panel_background_colour = PTKSoftwareInfo.BackgroundColour;
             progress_position = obj.GetPanelPosition;
             obj.PanelHandle = uipanel('Parent', parent, 'Title', '', 'BorderType', 'etchedin', 'ForegroundColor', 'white', ...
                 'BackgroundColor', panel_background_colour, 'Units', 'pixels', 'Position', progress_position, 'Visible', 'off' ...
@@ -106,7 +106,7 @@ classdef TDProgressPanel < TDProgressInterface
             if nargin < 2
                 text = 'Please wait';
             end
-            obj.DialogTitle = TDTextUtilities.RemoveHtml(text);
+            obj.DialogTitle = PTKTextUtilities.RemoveHtml(text);
             obj.DialogText = '';
             obj.ProgressValue = 0;
             obj.Hold = true;
@@ -140,7 +140,7 @@ classdef TDProgressPanel < TDProgressInterface
             if nargin < 2
                text = 'Please wait'; 
             end            
-            obj.DialogText = TDTextUtilities.RemoveHtml(text);
+            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
             obj.PanelVisibility = true;
             obj.Update;
         end
@@ -154,7 +154,7 @@ classdef TDProgressPanel < TDProgressInterface
         
         function SetProgressAndMessage(obj, progress_value, text)
             obj.ShowProgressBar = true;
-            obj.DialogText = TDTextUtilities.RemoveHtml(text);
+            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
             obj.PanelVisibility = true;
             obj.Update;
@@ -226,7 +226,7 @@ classdef TDProgressPanel < TDProgressInterface
                 set(obj.PanelHandle, 'Visible', 'on');
                 set(obj.UiControlText, 'Visible', 'on');
                 set(obj.UiControlTitle, 'Visible', 'on');
-                if TDSoftwareInfo.DebugMode
+                if PTKSoftwareInfo.DebugMode
                     set(obj.UiControlQuit, 'Visible', 'on');
                     set(obj.UiControlHide, 'Visible', 'on');
                 end
@@ -258,7 +258,7 @@ classdef TDProgressPanel < TDProgressInterface
             obj.PanelVisibility = false;
             obj.Hold = false;
             obj.UpdateVisibility;
-            throw(MException('TDProgressPanel:UserForceQuit', 'User forced plugin to quit'));
+            throw(MException('PTKProgressPanel:UserForceQuit', 'User forced plugin to quit'));
         end
 
         function HideButton(obj, ~, ~)

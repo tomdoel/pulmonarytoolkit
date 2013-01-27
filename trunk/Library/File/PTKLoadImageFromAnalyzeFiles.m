@@ -1,12 +1,12 @@
-function loaded_image = TDLoadImageFromAnalyzeFiles(path, filenames)
-    % TDLoadImageFromAnalyzeFiles. Loads a 3D image volume from analyze files
+function loaded_image = PTKLoadImageFromAnalyzeFiles(path, filenames)
+    % PTKLoadImageFromAnalyzeFiles. Loads a 3D image volume from analyze files
     %
     %     Syntax
     %     ------
     %
-    %         loaded_image = TDLoadImageFromDicomFiles(path, filenames, reporting)
+    %         loaded_image = PTKLoadImageFromDicomFiles(path, filenames, reporting)
     %
-    %             loaded_image    a TDImage containing the 3D volume
+    %             loaded_image    a PTKImage containing the 3D volume
     %             path, filename  specify the location to save the DICOM data. One 2D file
     %                             will be created for each image slice in the z direction. 
     %                             Each file is numbered, starting from 0.

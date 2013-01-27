@@ -1,5 +1,5 @@
-function filtered_image = TDImageDivider(image_data, filter_function, mask, gaussian_sigma, hessian_filter_gaussian, dont_divide, is_left_lung, reporting)
-    % TDImageDivider. Computes a filter for an image, one octant at a time.
+function filtered_image = PTKImageDivider(image_data, filter_function, mask, gaussian_sigma, hessian_filter_gaussian, dont_divide, is_left_lung, reporting)
+    % PTKImageDivider. Computes a filter for an image, one octant at a time.
     
     %
     %     This function performs filtering on an image, but 
@@ -14,9 +14,9 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
     %     the overlap regions
     %
     %     Syntax:
-    %         filtered_image = TDImageDivider(image_data, filter_function, gaussian_sigma, hessian_filter_gaussian, dont_divide, is_left_lung, reporting)
+    %         filtered_image = PTKImageDivider(image_data, filter_function, gaussian_sigma, hessian_filter_gaussian, dont_divide, is_left_lung, reporting)
     %
-    %             image_data - The image to filter, in a TDImage class
+    %             image_data - The image to filter, in a PTKImage class
     %             filter_function - handle to a user-defined filter function 
     %                 which is to be applied to each quadrant. See below for syntax.
     %             mask - a logical matrix specifying which elements of
@@ -35,7 +35,7 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
     %                 progress bar. Processing the left lung corresponds to the
     %                 right half of the progress bar. If [] is specified, the
     %                 left lung is assumed and a warning is issued.
-    %             reporting - a TDReporting object for progress, warning and
+    %             reporting - a PTKReporting object for progress, warning and
     %                 error reporting.
     %     Notes
     %     -----
@@ -44,9 +44,9 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
     %             
     %         This function will be called once for each octant of the image.
     %      
-    %         subimage is a TDImage object, containing the image octant.
+    %         subimage is a PTKImage object, containing the image octant.
     %
-    %         output_wrapper is a TDImage object containing the image resulting 
+    %         output_wrapper is a PTKImage object containing the image resulting 
     %             from the filter.
     %   
     %
@@ -59,12 +59,12 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
     %
 
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
-        reporing.Warning('TDImageDivider:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
+        reporing.Warning('PTKImageDivider:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
     end
 
     % Check the input image is of the correct form
-    if ~isa(image_data, 'TDImage')
-        reporing.Error('TDImageDivider:InputImageBadFormat', 'Requires a TDImage as input');
+    if ~isa(image_data, 'PTKImage')
+        reporing.Error('PTKImageDivider:InputImageBadFormat', 'Requires a PTKImage as input');
     end
     
     if isempty(dont_divide)
@@ -72,13 +72,13 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
     end
     
     if isempty(is_left_lung)
-        reporting.ShowWarning('TDImageDivider:ArgumentNotSpecified', 'The argument is_left_lung was not specified, so I''m assuming this is true', []);
+        reporting.ShowWarning('PTKImageDivider:ArgumentNotSpecified', 'The argument is_left_lung was not specified, so I''m assuming this is true', []);
         is_left_lung = true;
     end
   
     % Gaussian filter
     if ~isempty(gaussian_sigma) && (gaussian_sigma > 0)
-        image_data = TDGaussianFilter(image_data, gaussian_sigma);
+        image_data = PTKGaussianFilter(image_data, gaussian_sigma);
     end
     
     % Progress ia split between left and right lungs
@@ -102,7 +102,7 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
     % image instead of dividing
     if any(image_size < (2*overlap_size + 2))
         if ~dont_divide
-            reporting.ShowWarning('TDImageDivider:ImageTooSmallForDivision', 'TDImageDivider:ImageTooSmall', 'Image is too small to divide into octants. I will operate on the whole image', []);
+            reporting.ShowWarning('PTKImageDivider:ImageTooSmallForDivision', 'PTKImageDivider:ImageTooSmall', 'Image is too small to divide into octants. I will operate on the whole image', []);
             dont_divide = true;
         end
     end
@@ -110,7 +110,7 @@ function filtered_image = TDImageDivider(image_data, filter_function, mask, gaus
     if dont_divide
         
         % Image will not be divided into octants
-        reporting.ShowWarning('TDImageDivider:NoDivide', 'Ignoring image division and operating on entire lung', []);
+        reporting.ShowWarning('PTKImageDivider:NoDivide', 'Ignoring image division and operating on entire lung', []);
         
         % Call filter with full image
         filtered_image_raw = filter_function(image_data, mask);

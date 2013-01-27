@@ -1,5 +1,5 @@
-function segmentation = TDGetSurfaceFromSegmentation(segmentation)
-    % TDGetSurfaceFromSegmentation. Finds the surface of a segmented 3D binary volume.
+function segmentation = PTKGetSurfaceFromSegmentation(segmentation)
+    % PTKGetSurfaceFromSegmentation. Finds the surface of a segmented 3D binary volume.
     %
     % The input and output images are raw image matrices containing a mask of 0s
     % and 1s where 1 is a segmented voxel.
