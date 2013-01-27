@@ -1,4 +1,4 @@
-#summary Keyboard and mouse shortcuts for TDViewer and the Pulmonary Toolkit.
+#summary Keyboard and mouse shortcuts for PTKViewer and the Pulmonary Toolkit.
 
  = Keyboard and mouse shortcuts =
 
