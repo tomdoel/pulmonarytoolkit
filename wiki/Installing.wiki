@@ -47,7 +47,7 @@ Linux users can install subversion from http://subversion.apache.org/packages.ht
 $ sudo apt-get install subversion
 }}}
 
-A variety of Subversion clients are available for Windows (e.g. Tortoise SVN, Smart SVN) and for Mac OSX (e.g. Smart SVN, SVNX). Mac users with MacPorts installed can also obtain subversion this way
+A variety of Subversion clients are available for Windows (e.g. Tortoise SVN, Smart SVN) and for Mac OSX (e.g. Smart SVN, SVNX). Mac users can install Subversion on the command line by installing XCode and then choosing "Command Line Tools"  from Xcode>Preferences>Downloads>Command Line Tools. Mac users with MacPorts installed can also obtain subversion this way. 
 
   * Check out the Pulmonary Toolkit using Subversion
 
