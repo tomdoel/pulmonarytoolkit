@@ -1,5 +1,5 @@
-function binary_image = TDSkeletonise(binary_image, fixed_points_global, reporting)
-    % TDSkeletonise. Performs a skeletonisation on a segmented airway tree.
+function binary_image = PTKSkeletonise(binary_image, fixed_points_global, reporting)
+    % PTKSkeletonise. Performs a skeletonisation on a segmented airway tree.
     %
     %
     %
@@ -10,20 +10,20 @@ function binary_image = TDSkeletonise(binary_image, fixed_points_global, reporti
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
 
-    if ~isa(binary_image, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(binary_image, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
     
     if ~exist('reporting', 'var')
-        reporting = TDReportingDefault;
+        reporting = PTKReportingDefault;
     end
     
-    if exist('TDFastIsSimplePoint') == 3 %#ok<EXIST>
+    if exist('PTKFastIsSimplePoint') == 3 %#ok<EXIST>
         use_mex_simple_point = true;
     else
         use_mex_simple_point = false;
-        warning_message = 'Could not find compiled mex file TDFastIsSimplePoint. Using a slower version TDIsSimplePoint instead. Increase program speed by running mex TDFastIsSimplePoint.cpp in the mex folder.';
-        reporting.ShowWarning('TDSkeletonise:TDFastIsSimplePointnotFound', warning_message, []);
+        warning_message = 'Could not find compiled mex file PTKFastIsSimplePoint. Using a slower version PTKIsSimplePoint instead. Increase program speed by running mex PTKFastIsSimplePoint.cpp in the mex folder.';
+        reporting.ShowWarning('PTKSkeletonise:PTKFastIsSimplePointnotFound', warning_message, []);
     end
     
     fixed_points = binary_image.GlobalToLocalIndices(fixed_points_global);
@@ -50,7 +50,7 @@ function binary_image = TDSkeletonise(binary_image, fixed_points_global, reporti
             if isempty(reporting)
                 error('Maximum number of iterations exceeded. This can occur if not all the airway endpoints have been specified correctly.');
             else
-                reporting.Error('TDSkeletonise:MaximumIterationsExceeded', 'Maximum number of iterations exceeded. This can occur if not all the airway endpoints have been specified correctly.');
+                reporting.Error('PTKSkeletonise:MaximumIterationsExceeded', 'Maximum number of iterations exceeded. This can occur if not all the airway endpoints have been specified correctly.');
             end
         end
                 
@@ -94,10 +94,10 @@ end
 function is_simple = IsPointSimple(binary_image, i, j, k, use_mex_simple_point)
     if use_mex_simple_point
         % MEX function (fast)
-        is_simple = TDFastIsSimplePoint((binary_image(i-1:i+1, j-1:j+1, k-1:k+1)));
+        is_simple = PTKFastIsSimplePoint((binary_image(i-1:i+1, j-1:j+1, k-1:k+1)));
     else
         % Matlab function (slow)
-        is_simple = TDIsSimplePoint(binary_image(i-1:i+1, j-1:j+1, k-1:k+1));
+        is_simple = PTKIsSimplePoint(binary_image(i-1:i+1, j-1:j+1, k-1:k+1));
     end
 end
 

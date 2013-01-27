@@ -1,5 +1,5 @@
-classdef TDGuiPlugin < handle
-    % TDGuiPlugin. Base class for a Gui-level plugin used by the Pulmonary Toolkit.
+classdef PTKGuiPlugin < handle
+    % PTKGuiPlugin. Base class for a Gui-level plugin used by the Pulmonary Toolkit.
     %
     %     Gui Plugins are classes you create to run gui-related routines from
     %     the Pulmonary Toolkit user interface. Like plugins, gui plugins each
@@ -10,7 +10,7 @@ classdef TDGuiPlugin < handle
     %     images and movies.
     %
     %     Gui Plugins must reside in the GuiPlugins folder, and
-    %     inherit from this class, TDGuiPlugin. Provided that the properties have
+    %     inherit from this class, PTKGuiPlugin. Provided that the properties have
     %     been correctly set, the plugin will automatically appear in the
     %     Pulmonary Toolkit gui.
     %
@@ -27,7 +27,7 @@ classdef TDGuiPlugin < handle
         
     properties (Abstract = true)
 
-        % Set this to the value in TDSoftwareInfo.
+        % Set this to the value in PTKSoftwareInfo.
         % This specifies the version of the Pulmonary Toolkit the plugin was
         % developed with.
         PTKVersion

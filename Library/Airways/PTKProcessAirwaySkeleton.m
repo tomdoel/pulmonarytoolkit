@@ -1,10 +1,10 @@
-function results = TDProcessAirwaySkeleton(skeleton_image, start_point, reporting)
-    % TDProcessAirwaySkeleton. Processes a skeletonised image of the airway
+function results = PTKProcessAirwaySkeleton(skeleton_image, start_point, reporting)
+    % PTKProcessAirwaySkeleton. Processes a skeletonised image of the airway
     % tree, beginning from start_point and returning a data structure containing
     % the processed informtion
     %
     % Syntax:
-    %     results = TDProcessAirwaySkeleton(skeleton_image, start_point)
+    %     results = PTKProcessAirwaySkeleton(skeleton_image, start_point)
     %            
     %     skeleton_image - A 3D volume containing the airway skeleton:
     %         0=background, 1=skeleton point
@@ -12,7 +12,7 @@ function results = TDProcessAirwaySkeleton(skeleton_image, start_point, reportin
     %     start_point - coordinate of the first point in the skeleton (the
     %         trachea) as a coordinate vector [i,j,k]
     %
-    %     reporting (optional) - an object implementing the TDReporting
+    %     reporting (optional) - an object implementing the PTKReporting
     %         interface for reporting progress and warnings
     %
     %
@@ -53,7 +53,7 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
     removed_points = [];
     
     % The first segment in the tree - this is a recursive tree structure
-    skeleton_parent = TDSkeletonSegment(start_point);
+    skeleton_parent = PTKSkeletonSegment(start_point);
     
     segments_to_do = skeleton_parent.GetIncompleteSegments;
     
@@ -164,7 +164,7 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
         else
             loop_text = 'loops were';
         end
-        reporting.ShowWarning('TDProcessAirwaySkeleton:InternalLoopRemoved', [num2str(internal_loops_removed) ' internal ' loop_text ' detected and removed from the airway skeleton.'], []);
+        reporting.ShowWarning('PTKProcessAirwaySkeleton:InternalLoopRemoved', [num2str(internal_loops_removed) ' internal ' loop_text ' detected and removed from the airway skeleton.'], []);
     end
     
     skeleton_parent.RecomputeGenerations(1);

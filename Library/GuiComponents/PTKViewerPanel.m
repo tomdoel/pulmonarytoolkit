@@ -1,22 +1,22 @@
-classdef TDViewerPanel < handle
-    % TDViewerPanel. Creates a data viewer window for imaging 3D data slice-by-slice.
+classdef PTKViewerPanel < handle
+    % PTKViewerPanel. Creates a data viewer window for imaging 3D data slice-by-slice.
     %
-    %     TDViewerPanel creates a visualisation window on the supplied
+    %     PTKViewerPanel creates a visualisation window on the supplied
     %     graphics handle. It creates the viewer panel, scrollbar, orientation
     %     and tool controls, a status window and controls for toggling the image
     %     and overlay on and off and changing overlay transparency.
     %
-    %     TDViewerPanel is used as a component by the standalong data viewer
-    %     application TDViewer, and by the Pulmonary Toolkit gui application.
+    %     PTKViewerPanel is used as a component by the standalong data viewer
+    %     application PTKViewer, and by the Pulmonary Toolkit gui application.
     %     You can also use this in your own user interfaces.
     %
     %     New background, overlay and quiver plots can be viewed by assigning
-    %     images (within a TDViewer class) to the BackgroundImage, OverlayImage
+    %     images (within a PTKViewer class) to the BackgroundImage, OverlayImage
     %     and QuiverImage properties.
     %
     %     To set the marker image, use MarkerPointManager.ChangeMarkerImage
     %
-    %     See TDViewer.m for a simple example of how to use this class.
+    %     See PTKViewer.m for a simple example of how to use this class.
     %
     %
     %     Licence
@@ -28,7 +28,7 @@ classdef TDViewerPanel < handle
     
 
     properties (SetObservable)
-        Orientation = TDImageOrientation.Coronal
+        Orientation = PTKImageOrientation.Coronal
         OverlayOpacity = 50
         ShowImage = true
         ShowOverlay = true
@@ -99,7 +99,7 @@ classdef TDViewerPanel < handle
     end
     
     methods
-        function obj = TDViewerPanel(parent)
+        function obj = PTKViewerPanel(parent)
             font_size = 9;
             obj.AxisLimits = [];
             obj.AxisLimits{1} = {};
@@ -108,9 +108,9 @@ classdef TDViewerPanel < handle
             
             % These must be created here, not on the properties section, to
             % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
-            obj.BackgroundImage = TDImage;
-            obj.OverlayImage = TDImage;
-            obj.QuiverImage = TDImage;
+            obj.BackgroundImage = PTKImage;
+            obj.OverlayImage = PTKImage;
+            obj.QuiverImage = PTKImage;
 
             
             obj.Parent = parent;
@@ -118,7 +118,7 @@ classdef TDViewerPanel < handle
             obj.SliceSlider = uicontrol('Style', 'slider', 'Parent', obj.Parent, 'TooltipString', 'Scroll through slices');
             obj.Axes = axes('Parent', obj.Parent);
             
-            obj.MarkerPointManager = TDMarkerPointManager(obj, obj.Axes);
+            obj.MarkerPointManager = PTKMarkerPointManager(obj, obj.Axes);
 
             obj.ControlPanel = uipanel('Parent', obj.Parent, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
 
@@ -256,22 +256,22 @@ classdef TDViewerPanel < handle
             k_limits_local = k_limits - obj.BackgroundImage.Origin(3) + 1;
             
             % Update the cached axis limits
-            obj.AxisLimits{TDImageOrientation.Coronal}.XLim = j_limits_local;
-            obj.AxisLimits{TDImageOrientation.Coronal}.YLim = k_limits_local;
-            obj.AxisLimits{TDImageOrientation.Sagittal}.XLim = i_limits_local;
-            obj.AxisLimits{TDImageOrientation.Sagittal}.YLim = k_limits_local;
-            obj.AxisLimits{TDImageOrientation.Axial}.XLim = j_limits_local;
-            obj.AxisLimits{TDImageOrientation.Axial}.YLim = i_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Coronal}.XLim = j_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Coronal}.YLim = k_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Sagittal}.XLim = i_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Sagittal}.YLim = k_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Axial}.XLim = j_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Axial}.YLim = i_limits_local;
 
             % Update the current axis limits
             switch obj.Orientation
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     set(obj.Axes, 'XLim', j_limits_local)
                     set(obj.Axes, 'YLim', k_limits_local)
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     set(obj.Axes, 'XLim', i_limits_local)
                     set(obj.Axes, 'YLim', k_limits_local)
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     set(obj.Axes, 'XLim', j_limits_local)
                     set(obj.Axes, 'YLim', i_limits_local)
             end
@@ -307,13 +307,13 @@ classdef TDViewerPanel < handle
             origin = [0.5, 0.5, 0.5];
             image_limit = origin + obj.BackgroundImage.ImageSize;
             switch obj.Orientation
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     xlim_image = [origin(2), image_limit(2)];
                     ylim_image = [origin(3), image_limit(3)];
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     xlim_image = [origin(1), image_limit(1)];
                     ylim_image = [origin(3), image_limit(3)];
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     xlim_image = [origin(2), image_limit(2)];
                     ylim_image = [origin(1), image_limit(1)];
             end
@@ -374,8 +374,8 @@ classdef TDViewerPanel < handle
                 
         function AddImage(obj, image_number, new_image)
             % Check that this image is the correct class type
-            if ~isa(new_image, 'TDImage')
-                error('The image must be of class TDImage');                
+            if ~isa(new_image, 'PTKImage')
+                error('The image must be of class PTKImage');                
             end
             
             no_current_image = isempty(obj.ImageHandles{image_number});
@@ -497,15 +497,15 @@ classdef TDViewerPanel < handle
         
         function [dim_x_index dim_y_index dim_z_index] = GetXYDimensionIndex(obj)
             switch obj.Orientation
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     dim_x_index = 2;
                     dim_y_index = 3;
                     dim_z_index = 1;
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     dim_x_index = 1;
                     dim_y_index = 3;
                     dim_z_index = 2;
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     dim_x_index = 2;
                     dim_y_index = 1;
                     dim_z_index = 3;
@@ -625,13 +625,13 @@ classdef TDViewerPanel < handle
                     overlay_text = '';
                     value_text = '-';
                     switch obj.Orientation
-                        case TDImageOrientation.Coronal
+                        case PTKImageOrientation.Coronal
                             j_text = '--';
                             k_text = '--';
-                        case TDImageOrientation.Sagittal
+                        case PTKImageOrientation.Sagittal
                             i_text = '--';
                             k_text = '--';
-                        case TDImageOrientation.Axial
+                        case PTKImageOrientation.Axial
                             i_text = '--';
                             j_text = '--';
                     end
@@ -651,15 +651,15 @@ classdef TDViewerPanel < handle
                 k_screen = obj.SliceNumber(obj.Orientation);
                 
                 switch obj.Orientation
-                    case TDImageOrientation.Coronal
+                    case PTKImageOrientation.Coronal
                         i = k_screen;
                         j = i_screen;
                         k = j_screen;
-                    case TDImageOrientation.Sagittal
+                    case PTKImageOrientation.Sagittal
                         i = i_screen;
                         j = k_screen;
                         k = j_screen;
-                    case TDImageOrientation.Axial
+                    case PTKImageOrientation.Axial
                         i = j_screen;
                         j = i_screen;
                         k = k_screen;
@@ -809,7 +809,7 @@ classdef TDViewerPanel < handle
             else
                 image_slice = image_object.GetSlice(slice_number, obj.Orientation);
             end
-            if (obj.Orientation ~= TDImageOrientation.Axial)
+            if (obj.Orientation ~= PTKImageOrientation.Axial)
                 image_slice = image_slice';
             end
         end
@@ -836,11 +836,11 @@ classdef TDViewerPanel < handle
                     image_size = quiver_image_object.ImageSize;
                     
                     switch obj.Orientation
-                        case TDImageOrientation.Coronal
+                        case PTKImageOrientation.Coronal
                             xy = [2 3];
-                        case TDImageOrientation.Sagittal
+                        case PTKImageOrientation.Sagittal
                             xy = [1 3];
-                        case TDImageOrientation.Axial
+                        case PTKImageOrientation.Axial
                             xy = [2 1];
                     end
                     x_range = 1 : image_size(xy(1));
@@ -873,16 +873,16 @@ classdef TDViewerPanel < handle
 
         function slice = GetQuiverSlice(obj, image_object, slice_number)
             switch obj.Orientation
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     slice = squeeze(image_object.RawImage(slice_number, :, :, :));
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     slice = squeeze(image_object.RawImage(:, slice_number, :, :));
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     slice = squeeze(image_object.RawImage(:, :, slice_number, :));
                 otherwise
                     error('Unsupported dimension');
             end
-            if (obj.Orientation ~= TDImageOrientation.Axial)
+            if (obj.Orientation ~= PTKImageOrientation.Axial)
                 slice = permute(slice, [2 1 3]);
             end
         end
@@ -893,7 +893,7 @@ classdef TDViewerPanel < handle
                     image_slice = obj.GetImageSlice(image_object);
                     image_type = image_object.ImageType;
 
-                    if (image_type == TDImageType.Scaled) || (image_type == TDImageType.Colormap)
+                    if (image_type == PTKImageType.Scaled) || (image_type == PTKImageType.Colormap)
                         limits = image_object.Limits;
                     else
                         limits = [];
@@ -901,7 +901,7 @@ classdef TDViewerPanel < handle
 
                     level_grayscale = image_object.RescaledToGrayscale(obj.Level);
                     window_grayscale = obj.Window;
-                    if isa(image_object, 'TDDicomImage')
+                    if isa(image_object, 'PTKDicomImage')
                         if image_object.IsCT
                             window_grayscale = window_grayscale/image_object.RescaleSlope;
                         end
@@ -1168,7 +1168,7 @@ classdef TDViewerPanel < handle
                     if (obj.SelectedControl == 3)
                         obj.MarkerPointManager.MouseDown(obj.GetScreenCoordinates);
                     else
-                        notify(obj, 'MouseClickInImage', TDEventData(global_coords));
+                        notify(obj, 'MouseClickInImage', PTKEventData(global_coords));
                     end
                 end
             end
@@ -1195,11 +1195,11 @@ classdef TDViewerPanel < handle
         
         function ShortcutKeys(obj, key)
             if strcmpi(key, 'c')
-                obj.Orientation = TDImageOrientation.Coronal;
+                obj.Orientation = PTKImageOrientation.Coronal;
             elseif strcmpi(key, 's')
-                obj.Orientation = TDImageOrientation.Sagittal;
+                obj.Orientation = PTKImageOrientation.Sagittal;
             elseif strcmpi(key, 'a')
-                obj.Orientation = TDImageOrientation.Axial;
+                obj.Orientation = PTKImageOrientation.Axial;
             elseif strcmpi(key, 'z')
                 obj.SetControl('Zoom');
             elseif strcmpi(key, 'p')
@@ -1254,11 +1254,11 @@ classdef TDViewerPanel < handle
         function OrientationCallback(obj, ~, eventdata, ~)
             switch get(eventdata.NewValue, 'Tag')
                 case 'Coronal'
-                    obj.Orientation = TDImageOrientation.Coronal;
+                    obj.Orientation = PTKImageOrientation.Coronal;
                 case 'Sagittal'
-                    obj.Orientation = TDImageOrientation.Sagittal;
+                    obj.Orientation = PTKImageOrientation.Sagittal;
                 case 'Axial'
-                    obj.Orientation = TDImageOrientation.Axial;
+                    obj.Orientation = PTKImageOrientation.Axial;
             end
         end
         
@@ -1316,7 +1316,8 @@ classdef TDViewerPanel < handle
             obj.SetControl(get(eventdata.NewValue, 'Tag'));
         end
         
-        
+
+% TODO
 %         % Executes when figure closes, to ensure the listeners are removed
 %         function CustomCloseFunction(obj, ~, ~)
 %             obj.DeleteImageChangedListeners;
@@ -1345,16 +1346,16 @@ classdef TDViewerPanel < handle
         
         function [rgb_slice alpha_slice] = GetImage(image_slice, limits, image_type, window, level, black_is_transparent)
             switch image_type
-                case TDImageType.Grayscale
-                    rescaled_image_slice = TDViewerPanel.RescaleImage(image_slice, window, level);
-                    [rgb_slice, alpha_slice] = TDViewerPanel.GetBWImage(rescaled_image_slice);
-                case TDImageType.Colormap
+                case PTKImageType.Grayscale
+                    rescaled_image_slice = PTKViewerPanel.RescaleImage(image_slice, window, level);
+                    [rgb_slice, alpha_slice] = PTKViewerPanel.GetBWImage(rescaled_image_slice);
+                case PTKImageType.Colormap
                     if limits(1) < 0
                         image_slice = image_slice - limits(1);
                     end
-                    [rgb_slice, alpha_slice] = TDViewerPanel.GetLabeledImage(image_slice);
-                case TDImageType.Scaled
-                    [rgb_slice, alpha_slice] = TDViewerPanel.GetColourMap(image_slice, limits, black_is_transparent);
+                    [rgb_slice, alpha_slice] = PTKViewerPanel.GetLabeledImage(image_slice);
+                case PTKImageType.Scaled
+                    [rgb_slice, alpha_slice] = PTKViewerPanel.GetColourMap(image_slice, limits, black_is_transparent);
             end
             
         end

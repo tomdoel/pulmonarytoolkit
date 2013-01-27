@@ -1,22 +1,22 @@
-function TDSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
-    % TDSaveTreeAsVTK. Exports a tree structure into a VTK file
+function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
+    % PTKSaveTreeAsVTK. Exports a tree structure into a VTK file
     %
-    %     TDSaveTreeAsVTK saves the tree whose root branch is tree_root into a
+    %     PTKSaveTreeAsVTK saves the tree whose root branch is tree_root into a
     %     .vtk file which can be viewed with ParaView. 
     %
     %     Syntax
     %     ------
     %
-    %         TDSaveTreeAsVTK(tree_root, file_path, base_filename, reporting)
+    %         PTKSaveTreeAsVTK(tree_root, file_path, base_filename, reporting)
     %
-    %             tree_root       is the root branch in a TDTreeModel structure 
+    %             tree_root       is the root branch in a PTKTreeModel structure 
     %             file_path       is the path where the node and element files
     %                             are to be stored
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
+    %             reporting       A PTKReporting or implementor of the same interface,
+    %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
     %
     %
@@ -48,7 +48,7 @@ function TDSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
     point_coordinates = zeros(num_points, 3);
     
     % ToDo
-    if isa(tree_root, 'TDAirwayGrowingTree')
+    if isa(tree_root, 'PTKAirwayGrowingTree')
         point_coordinates(1, :) = [tree_root.StartCoords(2), tree_root.StartCoords(1), tree_root.StartCoords(3)];
     else
         point_coordinates(1, :) = [tree_root.StartPoint(2), tree_root.StartPoint(1), tree_root.StartPoint(3)];
@@ -78,7 +78,7 @@ function TDSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
             start_point_index = 0;
         else
             if (branch.TemporaryIndex == 0)
-                reporting.Error('TDSaveTreeAsVTK:CodeError', 'Parent index has not been set. Indicates a bug in the algorithm');
+                reporting.Error('PTKSaveTreeAsVTK:CodeError', 'Parent index has not been set. Indicates a bug in the algorithm');
             end
             start_point_index = branch.TemporaryIndex;
         end
@@ -87,7 +87,7 @@ function TDSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
         point_matlab_index = branch_index + 1;
 
         % Write the next point for this branch end point
-        if isa(branch, 'TDAirwayGrowingTree')
+        if isa(branch, 'PTKAirwayGrowingTree')
             point_coordinates(point_matlab_index, :) = [branch.EndCoords(2), branch.EndCoords(1), branch.EndCoords(3)];
         else
             point_coordinates(point_matlab_index, :) = [branch.EndPoint(2), branch.EndPoint(1), branch.EndPoint(3)];

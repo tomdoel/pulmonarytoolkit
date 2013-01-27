@@ -1,11 +1,11 @@
-function is_simple = TDIsSimplePoint(image)
-    % TDIsSimplePoint. Determines if a point in a 3D binary image is a simple point.
+function is_simple = PTKIsSimplePoint(image)
+    % PTKIsSimplePoint. Determines if a point in a 3D binary image is a simple point.
     %
     %     A point is simple if removing it does not change the local
     %     connectivity of the surrounding points.
     %
     %     A faster implementation of this function can be found in
-    %     TDFastIsSimplePoint, which uses mex.
+    %     PTKFastIsSimplePoint, which uses mex.
     %
     %     Based on algirithm by G Malandain, G Bertrand, 1992
     %

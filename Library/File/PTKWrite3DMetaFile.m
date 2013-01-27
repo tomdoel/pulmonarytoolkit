@@ -1,10 +1,10 @@
-function TDWrite3DMetaFile(header_filename, image, resolution, data_type, offset)
-    % TDWrite3DMetaFile. Writes out raw image data in metaheader & raw format
+function PTKWrite3DMetaFile(header_filename, image, resolution, data_type, offset)
+    % PTKWrite3DMetaFile. Writes out raw image data in metaheader & raw format
     %
     %     Syntax
     %     ------
     %
-    %         TDWrite3DMetaFile(header_filename, image, resolution, data_type)
+    %         PTKWrite3DMetaFile(header_filename, image, resolution, data_type)
     %
     %             header_filename - full path to the header file
     %             image - 3D raw image to be saved

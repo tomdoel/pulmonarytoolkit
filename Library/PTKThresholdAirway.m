@@ -1,23 +1,23 @@
-function threshold_image = TDThresholdAirway(lung_image, use_wide_threshold)
-    % TDThresholdAirway. Threshold a 3D volume with typical values for air
+function threshold_image = PTKThresholdAirway(lung_image, use_wide_threshold)
+    % PTKThresholdAirway. Threshold a 3D volume with typical values for air
     %
     %     This function performs a threshold operation which returns voxels
     %     which lie within typical expected ranges for CT data, and for certain
     %     MR data.
     %
     %     Syntax:
-    %         threshold_image = TDThresholdAirway(lung_image, use_wide_threshold)
+    %         threshold_image = PTKThresholdAirway(lung_image, use_wide_threshold)
     %
     %         Inputs:
     %         ------
-    %             lung_image - The original image in a TDImage class.
+    %             lung_image - The original image in a PTKImage class.
     %             use_wide_threshold - Provides a winder range of values for the
     %                 threshold, which will better segment noisy images but may
     %                 oversegment, e.g. airway walls.
     %
     %         Outputs:
     %         -------
-    %             threshold_image - A binary TDImage containing the voxels which
+    %             threshold_image - A binary PTKImage containing the voxels which
     %                 lie within the threshold range.
     %
     %
@@ -28,8 +28,8 @@ function threshold_image = TDThresholdAirway(lung_image, use_wide_threshold)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    if ~isa(lung_image, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(lung_image, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
 
     if lung_image.IsCT
@@ -52,6 +52,6 @@ function threshold_image = TDThresholdAirway(lung_image, use_wide_threshold)
     raw_image = (raw_image >= limit_1 & raw_image <= limit_2);
     
     threshold_image = lung_image.BlankCopy;
-    threshold_image.ImageType = TDImageType.Colormap;
+    threshold_image.ImageType = PTKImageType.Colormap;
     threshold_image.ChangeRawImage(raw_image);
 end

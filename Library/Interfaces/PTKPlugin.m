@@ -1,5 +1,5 @@
-classdef TDPlugin < handle
-    % TDPlugin. Base class for a Plugin used by the Pulmonary Toolkit.
+classdef PTKPlugin < handle
+    % PTKPlugin. Base class for a Plugin used by the Pulmonary Toolkit.
     %
     %     Plugins are classes you create to run your own routines from the
     %     Pulmonary Toolkit. When you create a plugin, it will automatically
@@ -14,7 +14,7 @@ classdef TDPlugin < handle
     %     plugins panel on the right.
     %
     %     To run a plugin from your own code, first create a PTKMain object. Then
-    %     call CreateDatasetFromInfo() to create a TDDataset for the image files
+    %     call CreateDatasetFromInfo() to create a PTKDataset for the image files
     %     you wish to run the plugin with. Then call GetResult() on this dataset
     %     interface to run the plugin or fetch a previously cached result.
     %
@@ -24,7 +24,7 @@ classdef TDPlugin < handle
     %     to your image data, and MyPluginName with the name of the plugin to
     %     run.
     %
-    %         image_info = TDImageInfo( <image path>, <filenames>, [], [], [], []);
+    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
     %         ptk = PTKMain;
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %         airways = dataset.GetResult('MyPluginName');
@@ -42,7 +42,7 @@ classdef TDPlugin < handle
     % You must set each of these properties in your plugin class
     properties (Abstract = true)
         
-        % Set this to the value in TDSoftwareInfo.
+        % Set this to the value in PTKSoftwareInfo.
         % This specifies the version of the Pulmonary Toolkit the plugin was
         % developed with.
         PTKVersion
@@ -117,9 +117,9 @@ classdef TDPlugin < handle
     
     methods (Abstract, Static)
         
-        % Generates the results for this plugin. The results can be a TDImage or
+        % Generates the results for this plugin. The results can be a PTKImage or
         % any kind of Matlab structure. Plugins should generally return an
-        % output image as their result, but some plugins (such as TDAirways)
+        % output image as their result, but some plugins (such as PTKAirways)
         % generate information which cannot be stored in a simple image. For
         % these types of plugin, you should return a custom data structure
         % containing your results, and then override the function 
@@ -135,7 +135,7 @@ classdef TDPlugin < handle
         % the result is itself an image, there is no need to override this
         % function as this image will be returned. If the result is a data
         % structure, this function should generate an illustrative output image
-        % based on the results. For example, the TDAirways plugin returns a
+        % based on the results. For example, the PTKAirways plugin returns a
         % heirarchical data structure describing the airway tree. This functin
         % is then used to turn the structure into an image.
         function results = GenerateImageFromResults(results, ~, ~)

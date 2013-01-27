@@ -1,19 +1,19 @@
-function TDSaveCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, reporting)
-    % TDSaveCentrelineTreeAsNodes. Exports a centreline tree structure into node and element files
+function PTKSaveCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, reporting)
+    % PTKSaveCentrelineTreeAsNodes. Exports a centreline tree structure into node and element files
     %
     %     Syntax
     %     ------
     %
-    %         TDSaveCentrelineTreeAsNodes(tree_root, file_path, base_filename, reporting)
+    %         PTKSaveCentrelineTreeAsNodes(tree_root, file_path, base_filename, reporting)
     %
-    %             tree_root       is the root branch in a TDTreeModel structure 
+    %             tree_root       is the root branch in a PTKTreeModel structure 
     %             file_path       is the path where the node and element files
     %                             are to be stored
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
+    %             reporting       A PTKReporting or implementor of the same interface,
+    %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
     %
     %

@@ -1,5 +1,5 @@
-function combined_image = TDCombineLeftAndRightImages(template, left, right, left_and_right_lungs)
-    % TDCombineLeftAndRightImages. Combines images representing the left and
+function combined_image = PTKCombineLeftAndRightImages(template, left, right, left_and_right_lungs)
+    % PTKCombineLeftAndRightImages. Combines images representing the left and
     %     right lungs. Typically this is used after image filtering has been
     %     separately performed on the two lungs to reduce memory usage.
     %

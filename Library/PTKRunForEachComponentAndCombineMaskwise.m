@@ -1,9 +1,9 @@
-function results = TDRunForEachComponentAndCombineMaskwise(function_handle, mask, reporting)
-    % TDRunForEachComponentAndCombineMaskwise. Separates a mask into components
+function results = PTKRunForEachComponentAndCombineMaskwise(function_handle, mask, reporting)
+    % PTKRunForEachComponentAndCombineMaskwise. Separates a mask into components
     % and runs a given function for each component. The result masks are then
     % recombined, and given their original colour value.
     %
-    % Note: TDRunForEachComponentAndCombine is similar, but is used for
+    % Note: PTKRunForEachComponentAndCombine is similar, but is used for
     % running functions on images which consist of several components defined by
     % masks
     %
@@ -15,7 +15,7 @@ function results = TDRunForEachComponentAndCombineMaskwise(function_handle, mask
     %
     
     if ~isinteger(mask.RawImage)
-        reporting.Error('TDRunForEachComponentAndCombineMaskwise:NonIntegerMask', 'Mask input must be of integer type');
+        reporting.Error('PTKRunForEachComponentAndCombineMaskwise:NonIntegerMask', 'Mask input must be of integer type');
     end
     
     component_range = [max(1, mask.Limits(1)), mask.Limits(2)];
@@ -24,7 +24,7 @@ function results = TDRunForEachComponentAndCombineMaskwise(function_handle, mask
         masked_image = mask.GetMask(component_index);
         component_result = function_handle(masked_image);
         if ~islogical(component_result.RawImage)
-            reporting.Error('TDRunForEachComponentAndCombineMaskwise:NonBooleanResult', 'Expecting the function result to be a boolean mask');
+            reporting.Error('PTKRunForEachComponentAndCombineMaskwise:NonBooleanResult', 'Expecting the function result to be a boolean mask');
         end
         component_result.ChangeRawImage(component_index.*uint8(component_result.RawImage));
         if first_run

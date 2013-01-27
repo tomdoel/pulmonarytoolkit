@@ -1,7 +1,7 @@
-classdef TDReportingInterface < handle
-    % TDReportingInterface. Provides an interface for error and progress reporting.
+classdef PTKReportingInterface < handle
+    % PTKReportingInterface. Provides an interface for error and progress reporting.
     %
-    %     TDReportingInterface is the interface the Pulmonary Toolkit uses to
+    %     PTKReportingInterface is the interface the Pulmonary Toolkit uses to
     %     process errors, warnings, messages, logging information and progress
     %     reports. It is also used as a callback to the GUI (if it exists) for
     %     plugins to get the current orientation and marker image.
@@ -12,8 +12,8 @@ classdef TDReportingInterface < handle
     %     displaying them on the command line.
     %
     %     This is an abstract class; you should not directly create an instance
-    %     of TDReportingInterface. Instead, you should either use one of the
-    %     existing implementation classes (TDReporting, TDReportingDefault) or
+    %     of PTKReportingInterface. Instead, you should either use one of the
+    %     existing implementation classes (PTKReporting, PTKReportingDefault) or
     %     you can create your own to achieve customised behaviour.
     %
     %

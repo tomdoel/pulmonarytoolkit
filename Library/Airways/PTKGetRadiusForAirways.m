@@ -1,5 +1,5 @@
-function results = TDGetRadiusForAirways(centreline_results, lung_image, radius_approximation, reporting, figure_airways_3d)
-    % TDGetRadiusForAirways. Computes the radius for a segmented airway tree.
+function results = PTKGetRadiusForAirways(centreline_results, lung_image, radius_approximation, reporting, figure_airways_3d)
+    % PTKGetRadiusForAirways. Computes the radius for a segmented airway tree.
     %
     %
     %
@@ -13,7 +13,7 @@ function results = TDGetRadiusForAirways(centreline_results, lung_image, radius_
     reporting.ShowProgress('Computing radius for each branch');
     
     [radius_results, skeleton_tree] = GetRadius(lung_image, centreline_results.IntermediateAirwaySkeleton, radius_approximation, reporting, figure_airways_3d);
-    centreline_tree_model = TDTreeModel.CreateFromSkeletonTree(skeleton_tree, lung_image);
+    centreline_tree_model = PTKTreeModel.CreateFromSkeletonTree(skeleton_tree, lung_image);
     
     results = rmfield(centreline_results, 'IntermediateAirwaySkeleton');
     results.AirwayCentrelineTree = centreline_tree_model;
@@ -34,7 +34,7 @@ function [results, airway_skeleton] = GetRadius(lung_image, airway_skeleton, rad
         reporting.UpdateProgressValue(round(100*segments_done/number_of_segments));
         segments_done = segments_done + 1;
         
-        next_result = TDComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d);
+        next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d);
         results{end+1} = next_result;
         
         next_segment.Radius = next_result.Radius;

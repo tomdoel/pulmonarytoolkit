@@ -1,16 +1,16 @@
-function density_image = TDConvertCTToDensity(ct_image)
-    % TDConvertCTToDensity. Converts image from Hounsfield Units to density
+function density_image = PTKConvertCTToDensity(ct_image)
+    % PTKConvertCTToDensity. Converts image from Hounsfield Units to density
     %
-    %     TDConvertCTToDensity takes a CT image and converts the HU values to
+    %     PTKConvertCTToDensity takes a CT image and converts the HU values to
     %     the approximate values of mass density, assuming a linear
     %     relationshoip between radiodensity values and mass density.
     %
     %     Note: this is often a reasonable approximation, but it depends on the
     %     scanner and the material being scanned. 
     %
-    %     The input must be of type TDImage, with values in Hounsfield Units.
+    %     The input must be of type PTKImage, with values in Hounsfield Units.
     %
-    %     The output will also be a TDImage, containing density values in g/mL.
+    %     The output will also be a PTKImage, containing density values in g/mL.
     %
     %
     %     Licence
@@ -48,6 +48,6 @@ function density_image = TDConvertCTToDensity(ct_image)
     density_values_raw = max(0, density_values_raw);
 
     density_image.ChangeRawImage(density_values_raw);
-    density_image.ImageType = TDImageType.Grayscale;
+    density_image.ImageType = PTKImageType.Grayscale;
 end
 

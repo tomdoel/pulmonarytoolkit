@@ -1,20 +1,20 @@
-function vesselness_wrapper = TDComputeVesselnessFromHessianeigenvalues(hessian_eigs_wrapper)
-    % TDComputeVesselnessFromHessianeigenvalues. Vesselness filter for detecting blood vessels
+function vesselness_wrapper = PTKComputeVesselnessFromHessianeigenvalues(hessian_eigs_wrapper)
+    % PTKComputeVesselnessFromHessianeigenvalues. Vesselness filter for detecting blood vessels
     %
-    %     TDComputeVesselnessFromHessianeigenvalues computes a mutiscale
+    %     PTKComputeVesselnessFromHessianeigenvalues computes a mutiscale
     %     vesselness filter based on Frangi et al., 1998. "Multiscale Vessel
     %     Enhancement Filtering". The filter returns a value at each point which
     %     in some sense representes the probability of that point belonging to a
     %     blood vessel.
     %
-    %     This function takes in a TDWraper object which can either contain a nx6
+    %     This function takes in a PTKWraper object which can either contain a nx6
     %     matrix containing the 3 Hessian matrix eigenvalues for each of n
     %     points, or it can be an ixjxkx3 matrix representing the 3 Hessian
     %     matrix eigenvalues for an image of dimension ixjxk.
     %
     %     The output is a single vesselness value for each input point.
     %
-    %     See the TDVesselness plugin for example usage.
+    %     See the PTKVesselness plugin for example usage.
     %
     %
     %     Licence
@@ -26,7 +26,7 @@ function vesselness_wrapper = TDComputeVesselnessFromHessianeigenvalues(hessian_
     
     % lam1 = smallest eigenvalue, lam3 = largest eigenvalue
     
-    vesselness_wrapper = TDWrapper;
+    vesselness_wrapper = PTKWrapper;
     
     % The input matrix could be a linear set of points, or an image matrix
     if ndims(hessian_eigs_wrapper.RawImage) == 2

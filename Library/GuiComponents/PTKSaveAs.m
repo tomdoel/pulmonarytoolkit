@@ -1,12 +1,12 @@
-function path_name = TDSaveAs(image_data, patient_name, path_name, reporting)
-    % TDSaveAs. Prompts the user for a filename and file type, and saves the image
+function path_name = PTKSaveAs(image_data, patient_name, path_name, reporting)
+    % PTKSaveAs. Prompts the user for a filename and file type, and saves the image
     %
     %     Syntax
     %     ------
     %
-    %         TDSaveAs(image_data, patient_name, path_name, reporting)
+    %         PTKSaveAs(image_data, patient_name, path_name, reporting)
     %
-    %             image_data      is a TDImage (or TDDicomImage) class containing the image
+    %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved
     %             patient_name    specifies the patient name to be stored in the image (only
     %                             used when there is no metadata available in the image)
@@ -15,8 +15,8 @@ function path_name = TDSaveAs(image_data, patient_name, path_name, reporting)
     %                             Each file is numbered, starting from 0.
     %                             So if filename is 'MyImage.DCM' then the files will be
     %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
-    %             reporting       A TDReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a TDReporting
+    %             reporting       A PTKReporting or implementor of the same interface,
+    %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
     %
     %
@@ -27,8 +27,8 @@ function path_name = TDSaveAs(image_data, patient_name, path_name, reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %  
     
-    if ~isa(image_data, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(image_data, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
     
     if islogical(image_data.RawImage)
@@ -60,13 +60,13 @@ function SaveImage(image_data, filename, pathname, filter_index, patient_name, r
         
         switch filter_index
             case 1
-                TDSaveImageAsDicom(image_data, pathname, filename, patient_name, true, reporting)
+                PTKSaveImageAsDicom(image_data, pathname, filename, patient_name, true, reporting)
             case 2
-                TDSaveAsMatlab(image_data, pathname, filename, reporting);
+                PTKSaveAsMatlab(image_data, pathname, filename, reporting);
             case 3
-                TDSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'char', reporting)
+                PTKSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'char', reporting)
             case 4
-                TDSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'short', reporting)
+                PTKSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'short', reporting)
         end
     end
 end

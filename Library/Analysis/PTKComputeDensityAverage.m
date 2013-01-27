@@ -1,26 +1,26 @@
-function [density_average, density_average_mask] = TDComputeDensityAverage(lung_roi, mask, airways, reporting)
-    % TDComputeDensityAverage. Computes the density of parenchymal tissue by averaging over neighbouring voxels
+function [density_average, density_average_mask] = PTKComputeDensityAverage(lung_roi, mask, airways, reporting)
+    % PTKComputeDensityAverage. Computes the density of parenchymal tissue by averaging over neighbouring voxels
     %
     % Given a DICOM lung image, returns the density of voxels in the lung
     % parenchyma, averaged over a 5x5x5 voxel neighbourgood. Voxels close to the
     % image boundaries and in the airways are excluded.
     %
     % Syntax:
-    %     top_of_trachea = TDFindTopOfTrachea(lung_image, reporting)
-    %     [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, reporting)
+    %     top_of_trachea = PTKFindTopOfTrachea(lung_image, reporting)
+    %     [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, reporting)
     %
     % Inputs:
-    %     lung_roi - a TDImage containing the raw image values
+    %     lung_roi - a PTKImage containing the raw image values
     %
-    %     mask - a TDImage mask containing the voxels inside the lung
+    %     mask - a PTKImage mask containing the voxels inside the lung
     %
-    %     reporting (optional) - an object implementing the TDReporting
+    %     reporting (optional) - an object implementing the PTKReporting
     %         interface for reporting progress and warnings
     %
     % Outputs:
-    %     density_average - a TDImage containing average density values in g/mL
+    %     density_average - a PTKImage containing average density values in g/mL
     %
-    %     density_average_mask - a TDImage containing a mask of voxels whose
+    %     density_average_mask - a PTKImage containing a mask of voxels whose
     %         densities were calculated
     %
     %
@@ -32,12 +32,12 @@ function [density_average, density_average_mask] = TDComputeDensityAverage(lung_
     %
     
     
-    if ~isa(lung_roi, 'TDImage') || ~isa(mask, 'TDImage') || ~isa(airways, 'TDImage')
-        reporting.Error('TDComputeDensityAverage:InvalidInput', 'Requires a TDImage for all inputs');
+    if ~isa(lung_roi, 'PTKImage') || ~isa(mask, 'PTKImage') || ~isa(airways, 'PTKImage')
+        reporting.Error('PTKComputeDensityAverage:InvalidInput', 'Requires a PTKImage for all inputs');
     end
     
     if nargin < 4
-        reporting = TDReportingDefault;
+        reporting = PTKReportingDefault;
     end
     
     % The neighbourhood used to compute the density is a structural element
@@ -66,7 +66,7 @@ function [density_average, density_average_mask] = TDComputeDensityAverage(lung_
     
     % Compute the density at each voxel
     reporting.ShowProgress('Computing average lung density');
-    density_g_mL_image = TDConvertCTToDensity(lung_roi);
+    density_g_mL_image = PTKConvertCTToDensity(lung_roi);
     
     % To prevent divide by zero errors
     zero_mask = number_of_contributing_voxels == 0;
@@ -83,5 +83,5 @@ function [density_average, density_average_mask] = TDComputeDensityAverage(lung_
     reporting.ShowProgress('Storing results');
     density_average = lung_roi.BlankCopy;
     density_average.ChangeRawImage(density_average_raw);
-    density_average.ImageType = TDImageType.Scaled;
+    density_average.ImageType = PTKImageType.Scaled;
 end

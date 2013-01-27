@@ -1,25 +1,25 @@
-function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, reporting, debug_mode)
-    % TDFindTopOfTrachea. Finds the trachea from a thresholded lung CT image.
+function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, reporting, debug_mode)
+    % PTKFindTopOfTrachea. Finds the trachea from a thresholded lung CT image.
     %
     % Given a binary image which representes an airway threshold applied to a
-    % lung CT image, TDFindTopOfTrachea finds the coordinate of a point
+    % lung CT image, PTKFindTopOfTrachea finds the coordinate of a point
     % within and near the top of the trachea
     %
     % Syntax:
-    %     top_of_trachea = TDFindTopOfTrachea(lung_image, reporting)
-    %     [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, reporting)
+    %     top_of_trachea = PTKFindTopOfTrachea(lung_image, reporting)
+    %     [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, reporting)
     %
     % Inputs:
-    %     lung_image - a lung volume stored as a TDImage which has been
+    %     lung_image - a lung volume stored as a PTKImage which has been
     %         thresholded for air voxels (1=air, 0=background).
     %         Note: the lung volume can be a region-of-interest, or the entire
-    %         volume. To ensure correct results, TDImage usage guidelines 
-    %         should be followed, i.e. a TDImage should be formed from the
-    %         original (uncropped) dataset, and the methods of TDImage used to
+    %         volume. To ensure correct results, PTKImage usage guidelines 
+    %         should be followed, i.e. a PTKImage should be formed from the
+    %         original (uncropped) dataset, and the methods of PTKImage used to
     %         crop the image, so that the correct VoxelSize,
     %         OriginalImageSize and Origin parameters are set.
     %
-    %     reporting (optional) - an object implementing the TDReporting
+    %     reporting (optional) - an object implementing the PTKReporting
     %         interface for reporting progress and warnings
     %
     % Outputs:
@@ -37,12 +37,12 @@ function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, repor
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    if ~isa(lung_image, 'TDImage')
-        error('Requires a TDImage as input');
+    if ~isa(lung_image, 'PTKImage')
+        error('Requires a PTKImage as input');
     end
     
     if nargin < 2
-        reporting = TDReportingDefault;
+        reporting = PTKReportingDefault;
     end
     
     reporting.UpdateProgressMessage('Finding top of trachea');
@@ -53,7 +53,7 @@ function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, repor
     % (on the x-y plane) of the original scan is. This is not always the
     % midpoint of the ROI, e.g. if one of the lungs is blocked.
     if isempty(lung_image.OriginalImageSize)
-        reporting.ShowWarning('TDFindTopOfTrachea:NoOriginalImageSize', 'OriginalImageSize not found for this image. Using default values', []);
+        reporting.ShowWarning('PTKFindTopOfTrachea:NoOriginalImageSize', 'OriginalImageSize not found for this image. Using default values', []);
         midpoint_roi = round(image_size/2);
     else
         % Find the midpoint of the original image
@@ -93,7 +93,7 @@ function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, repor
     if debug_mode
         debug_image.ChangeRawImage(partial_image.RawImage);
         reporting.UpdateOverlaySubImage(debug_image);
-        TDVisualiseIn3D([], debug_image, [], true, reporting);
+        PTKVisualiseIn3D([], debug_image, [], true, reporting);
         pause;
     end
     
@@ -106,7 +106,7 @@ function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, repor
     if debug_mode
         debug_image.ChangeRawImage(partial_image2);
         reporting.UpdateOverlayImage(debug_image);
-        TDVisualiseIn3D([], debug_image, [], true, reporting);
+        PTKVisualiseIn3D([], debug_image, [], true, reporting);
         pause;
     end
     
@@ -116,7 +116,7 @@ function [top_of_trachea, trachea_voxels] = TDFindTopOfTrachea(lung_image, repor
     if debug_mode
         debug_image.ChangeRawImage(result);
         reporting.UpdateOverlayImage(debug_image);
-        TDVisualiseIn3D([], debug_image, [], true, reporting);
+        PTKVisualiseIn3D([], debug_image, [], true, reporting);
         pause;
     end
     

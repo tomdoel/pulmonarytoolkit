@@ -1,11 +1,11 @@
-function filtered_image = TDGaussianFilter(original_image, filter_size_mm)
-    % TDGaussianFilter. Performs 3D Gaussian filtering on a 3D image.
+function filtered_image = PTKGaussianFilter(original_image, filter_size_mm)
+    % PTKGaussianFilter. Performs 3D Gaussian filtering on a 3D image.
     %
-    %     TDGaussianFilter takes in an image in a TDImage class and performs 3D
+    %     PTKGaussianFilter takes in an image in a PTKImage class and performs 3D
     %     Gaussian filtering. The sigma size is specified in mm; this function
     %     takes into account the voxel size.
     %
-    %     The input and output images are of class TDImage.
+    %     The input and output images are of class PTKImage.
     %
     %
     %     Licence
@@ -16,8 +16,8 @@ function filtered_image = TDGaussianFilter(original_image, filter_size_mm)
     %
     
 
-    if ~isa(original_image, 'TDImage')
-        error('TDGaussianFilter requires a TDImage as input');
+    if ~isa(original_image, 'PTKImage')
+        error('PTKGaussianFilter requires a PTKImage as input');
     end
     
     voxel_size_mm = original_image.VoxelSize;
