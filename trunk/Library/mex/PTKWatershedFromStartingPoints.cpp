@@ -1,17 +1,17 @@
-// TDWatershedFromStartingPoints. Watershed-like function.
+// PTKWatershedFromStartingPoints. Watershed-like function.
 //
 //     This is a Matlab MEX function and must be compled before use. To compile, type 
 //
-//         mex TDWatershedFromStartingPoints
+//         mex PTKWatershedFromStartingPoints
 //
 //     on the Matlab command line.
 //
-//     Alternatively, you can use the Matlab-only implementation TDWatershedFromStartingPointsMatlab 
+//     Alternatively, you can use the Matlab-only implementation PTKWatershedFromStartingPointsMatlab 
 //     which is equivalent to this function but slower as it does not use mex files. 
 //
 //     Syntax
 //     ------
-//         labeled_output = TDWatershedFromStartingPoints(image, starting_labels)
+//         labeled_output = PTKWatershedFromStartingPoints(image, starting_labels)
 //
 //     Inputs
 //     ------
@@ -88,7 +88,7 @@ struct classcomp {
 // The main function call
 void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs, const mxArray* pointers_to_inputs[])
 {
-    mexPrintf("TDWatershedFromStartingPoints\n"); 
+    mexPrintf("PTKWatershedFromStartingPoints\n"); 
     
     // Check inputs
     if (num_inputs != 2) {
@@ -96,7 +96,7 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     }
     
     if (num_outputs > 1) {
-         mexErrMsgTxt("TDwatershedFromStartingPoints produces one output but you have requested more.");
+         mexErrMsgTxt("PTKwatershedFromStartingPoints produces one output but you have requested more.");
     }
     
     // Get the input images
@@ -212,6 +212,6 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
         }
     }
     
-    mexPrintf(" - Completed TDWatershedFromStartingPoints\n");
+    mexPrintf(" - Completed PTKWatershedFromStartingPoints\n");
     return;
 }

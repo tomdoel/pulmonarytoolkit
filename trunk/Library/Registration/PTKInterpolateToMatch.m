@@ -1,5 +1,5 @@
-function deformed_image = TDInterpolateToMatch(original_image, deformation_field, interpolation_type, reporting)
-    % TDInterpolateToMatch. Interpolates an image to match the origin and voxel
+function deformed_image = PTKInterpolateToMatch(original_image, deformation_field, interpolation_type, reporting)
+    % PTKInterpolateToMatch. Interpolates an image to match the origin and voxel
     %     size specified in a deformation field
     %
     %
@@ -10,11 +10,11 @@ function deformed_image = TDInterpolateToMatch(original_image, deformation_field
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    % This is similar to TDDeformImage but there is no actual image deformation;
+    % This is similar to PTKDeformImage but there is no actual image deformation;
     % we are just reinterpolating to match the template provided by the
     % deformation field
     deformed_image = deformation_field.BlankCopy;
-    deformed_image.ImageType = TDImageType.Grayscale;
+    deformed_image.ImageType = PTKImageType.Grayscale;
     [i_o, j_o, k_o] = original_image.GetGlobalCoordinatesMm;
     [i_o, j_o, k_o] = ndgrid(i_o, j_o, k_o);
     

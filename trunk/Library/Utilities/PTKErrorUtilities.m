@@ -1,5 +1,5 @@
-classdef TDErrorUtilities < handle
-    % TDErrorUtilities. Error-related utility functions.
+classdef PTKErrorUtilities < handle
+    % PTKErrorUtilities. Error-related utility functions.
     %
     %
     %     Licence
@@ -26,7 +26,7 @@ classdef TDErrorUtilities < handle
                 else
                     stack_top = stack(1);
                     calling_function = stack_top.name;
-                    if length(calling_function) < 11 || ~strcmp(calling_function(1:11), 'TDReporting')
+                    if length(calling_function) < 11 || ~strcmp(calling_function(1:11), 'PTKReporting')
                         caller_found = true;
                     end
                     levels_to_ignore = levels_to_ignore + 1;

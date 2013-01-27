@@ -1,5 +1,5 @@
-classdef TDMathUtilities
-    % TDMathUtilities. Utility functions related to maths
+classdef PTKMathUtilities
+    % PTKMathUtilities. Utility functions related to maths
     %
     %
     %     Licence
@@ -28,7 +28,7 @@ classdef TDMathUtilities
             if n == 1
                 all_combinations = v';
             else
-                remaining_values = TDMathUtilities.GetAllCombinations(v, n - 1);
+                remaining_values = PTKMathUtilities.GetAllCombinations(v, n - 1);
                 numels = size(remaining_values, 1);
                 all_combinations = [v(ceil((1:numels*numel(v))/numels))', repmat(remaining_values, length(v), 1)];
             end

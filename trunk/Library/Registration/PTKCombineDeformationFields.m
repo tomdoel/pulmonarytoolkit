@@ -1,5 +1,5 @@
-function deformation_field_combined = TDCombineDeformationFields(deformation_left, deformation_right, left_right_mask)
-    % TDCombineDeformationFields. Combines deformation fields for the left and
+function deformation_field_combined = PTKCombineDeformationFields(deformation_left, deformation_right, left_right_mask)
+    % PTKCombineDeformationFields. Combines deformation fields for the left and
     % right lungs
     %
     %

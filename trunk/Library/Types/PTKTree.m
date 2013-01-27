@@ -1,7 +1,7 @@
-classdef TDTree < handle
-    % TDTree. A base class representing a tree structure
+classdef PTKTree < handle
+    % PTKTree. A base class representing a tree structure
     %
-    %     Each branch in a tree structure is represented by a TDTree.
+    %     Each branch in a tree structure is represented by a PTKTree.
     %     Each branch references its parent and child branches; therefore it is
     %     possible to reconstruct the entire tree from a single branch.
     %
@@ -13,12 +13,12 @@ classdef TDTree < handle
     %       
     
     properties (SetAccess = protected)
-        Parent = []    % Parent TDTree
-        Children = []  % Child TDTree
+        Parent = []    % Parent PTKTree
+        Children = []  % Child PTKTree
     end
     
     methods
-        function obj = TDTree(parent)
+        function obj = PTKTree(parent)
             if nargin > 0
                 obj.Parent = parent;
             end

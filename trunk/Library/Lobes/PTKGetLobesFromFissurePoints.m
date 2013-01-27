@@ -1,7 +1,7 @@
-function result = TDGetLobesFromFissurePoints(approximant_indices, lung_mask, image_size)
-    % TDGetLobesFromFissurePoints. Generates a lobar segmentation given fissure points.
+function result = PTKGetLobesFromFissurePoints(approximant_indices, lung_mask, image_size)
+    % PTKGetLobesFromFissurePoints. Generates a lobar segmentation given fissure points.
     %
-    %     TDGetLobesFromFissurePoints is an intermediate stage in segmenting the
+    %     PTKGetLobesFromFissurePoints is an intermediate stage in segmenting the
     %     lobes.
     %
     %     For more information, see
@@ -26,7 +26,7 @@ function lobes = SegmentLobesFromFissures(lung_segmentation, fissure_image_raw, 
     lobes = lung_segmentation.BlankCopy;    
     lobes_raw = SegmentLobesFromFissuresRaw(lung_segmentation.RawImage, fissure_image_raw, reporting);
     lobes.ChangeRawImage(lobes_raw);
-    lobes.ImageType = TDImageType.Colormap;
+    lobes.ImageType = PTKImageType.Colormap;
 end
 
 function lobes_raw = SegmentLobesFromFissuresRaw(lung_segmentation_raw, fissure_image_raw, reporting)

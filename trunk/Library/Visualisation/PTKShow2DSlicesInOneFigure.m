@@ -1,6 +1,6 @@
-function figure_handle = TDShow2DSlicesInOneFigure(viewer_panel_handle, orientation, skip_sices, reporting)
-    % TDShowAll2DSlicesInOneFigure. Creates a figure showing every slice from a
-    %     TDViewerPanel object displayed in a grid
+function figure_handle = PTKShow2DSlicesInOneFigure(viewer_panel_handle, orientation, skip_sices, reporting)
+    % PTKShowAll2DSlicesInOneFigure. Creates a figure showing every slice from a
+    %     PTKViewerPanel object displayed in a grid
     %
     %
     %     Licence

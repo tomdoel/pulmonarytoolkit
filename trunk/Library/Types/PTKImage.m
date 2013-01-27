@@ -1,7 +1,7 @@
-classdef (ConstructOnLoad = true) TDImage < handle
-    % TDImage. A class for holding a 3D image volume.
+classdef (ConstructOnLoad = true) PTKImage < handle
+    % PTKImage. A class for holding a 3D image volume.
     %
-    %     TDImage is the fundamental image class used by the Pulmonary Toolkit.
+    %     PTKImage is the fundamental image class used by the Pulmonary Toolkit.
     %     It stores the image data and associated metadata, such as the voxel
     %     size, and maintains the knowledge of the relationship between this
     %     image and the image it was derived from after cropping and scaling
@@ -10,11 +10,11 @@ classdef (ConstructOnLoad = true) TDImage < handle
     %     disk, morphological operations, and the ability to extract out
     %     subimages, modify them and reinsert them.
     %
-    %     Any function which takes a TDImage as input, should also return a
-    %     TDImage as output, with the metadata preserved. You can do this by
+    %     Any function which takes a PTKImage as input, should also return a
+    %     PTKImage as output, with the metadata preserved. You can do this by
     %     creating a 'template image' using the BlankCopy() method, e.g.
     %
-    %         % This function doubles the values in a TDImage
+    %         % This function doubles the values in a PTKImage
     %         function output_image = DoubleImage(input_image)
     %
     %             % Creates a template image with no data, but with metadata
@@ -71,7 +71,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
         ImageHasBeenSet
         
         % List of properties which should be ignored when testing equality
-        % between two TDImage objects.
+        % between two PTKImage objects.
         PropertiesToIgnoreOnComparison = {'CachedDataType', 'LastDataType', 'CachedImageSize', ...
             'CachedRawImageFilename', ...
             'OriginalImageSize', 'CachedDataIsValid', 'CachedLimits'} 
@@ -91,7 +91,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
     methods
         
         % Constructs a new image using raw data from new_image if specified
-        function obj = TDImage(new_image, image_type, voxel_size)            
+        function obj = PTKImage(new_image, image_type, voxel_size)            
             if nargin > 0
                 if isstruct(new_image)
                     error('First argument must be an image');
@@ -101,7 +101,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
                 case 0
                     obj.RawImage = zeros(0, 0, 0, 'uint8');
                     obj.VoxelSize = [1, 1, 1];
-                    obj.ImageType = TDImageType.Grayscale;
+                    obj.ImageType = PTKImageType.Grayscale;
                     obj.OriginalImageSize = [0 0 0];
                 case 1
                     obj.RawImage = new_image;
@@ -131,11 +131,11 @@ classdef (ConstructOnLoad = true) TDImage < handle
         function orientation = Find2DOrientation(obj)
             image_size = obj.ImageSize;
             if image_size(3) == 1
-                orientation = TDImageOrientation.Axial;
+                orientation = PTKImageOrientation.Axial;
             elseif image_size(2) == 1
-                orientation = TDImageOrientation.Sagittal;
+                orientation = PTKImageOrientation.Sagittal;
             elseif image_size(1) == 1
-                orientation = TDImageOrientation.Coronal;
+                orientation = PTKImageOrientation.Coronal;
             else
                 orientation = [];
             end
@@ -151,7 +151,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
                 raw_filename = obj.CachedRawImageFilename;
                 full_raw_filename = fullfile(file_path, raw_filename);
                 if ~exist(full_raw_filename, 'file');
-                    throw(MException('TDImage:RawFileNotFound', ['The raw file ' raw_filename ' does not exist']));
+                    throw(MException('PTKImage:RawFileNotFound', ['The raw file ' raw_filename ' does not exist']));
                 end
                 
                 data_type = obj.CachedDataType;
@@ -264,7 +264,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
         
         % Returns a raw image suitable for use with Matlab's plottin functions
         % such as isosurface. The k-direction is inverted since the orientation
-        % for TDImage is is opposite to that for Matlab's 3D axes
+        % for PTKImage is is opposite to that for Matlab's 3D axes
         function raw_image = GetRawImageForPlotting(obj)
             raw_image = flipdim(obj.RawImage, 3);
         end
@@ -420,8 +420,8 @@ classdef (ConstructOnLoad = true) TDImage < handle
         
         % Makes a copy of this image
         function copy = Copy(obj)
-            copy = TDImage(obj.RawImage, obj.ImageType, obj.VoxelSize);
-            metaclass = ?TDImage;
+            copy = PTKImage(obj.RawImage, obj.ImageType, obj.VoxelSize);
+            metaclass = ?PTKImage;
             property_list = metaclass.Properties;
             for i = 1 : length(property_list);
                 property = property_list{i};
@@ -434,8 +434,8 @@ classdef (ConstructOnLoad = true) TDImage < handle
         % This function creates an empty template image, i.e. a copy with
         % all the fields set up but with no actual image data
         function copy = BlankCopy(obj)
-            copy = TDImage([], obj.ImageType, obj.VoxelSize);
-            metaclass = ?TDImage;
+            copy = PTKImage([], obj.ImageType, obj.VoxelSize);
+            metaclass = ?PTKImage;
             property_list = metaclass.Properties;
             for i = 1 : length(property_list);
                 property = property_list{i};
@@ -474,11 +474,11 @@ classdef (ConstructOnLoad = true) TDImage < handle
         % Returns a 2D slice from the image in the specified direction
         function slice = GetSlice(obj, slice_number, dimension)
            switch dimension
-               case TDImageOrientation.Coronal
+               case PTKImageOrientation.Coronal
                    slice = squeeze(obj.RawImage(slice_number, :, :));
-               case TDImageOrientation.Sagittal
+               case PTKImageOrientation.Sagittal
                    slice = squeeze(obj.RawImage(:, slice_number, :));
-               case TDImageOrientation.Axial
+               case PTKImageOrientation.Axial
                    slice = squeeze(obj.RawImage(:, :, slice_number));
                otherwise
                    error('Unsupported dimension');
@@ -488,12 +488,12 @@ classdef (ConstructOnLoad = true) TDImage < handle
         % Returns a blank slice from the image in the specified direction
         function slice = GetBlankSlice(obj, dimension)
             switch dimension
-                case TDImageOrientation.Coronal
-                    slice = TDImageUtilities.Zeros([obj.ImageSize(2), obj.ImageSize(3)], obj.LastDataType);
-                case TDImageOrientation.Sagittal
-                    slice = TDImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(3)], obj.LastDataType);
-                case TDImageOrientation.Axial
-                    slice = TDImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(2)], obj.LastDataType);
+                case PTKImageOrientation.Coronal
+                    slice = PTKImageUtilities.Zeros([obj.ImageSize(2), obj.ImageSize(3)], obj.LastDataType);
+                case PTKImageOrientation.Sagittal
+                    slice = PTKImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(3)], obj.LastDataType);
+                case PTKImageOrientation.Axial
+                    slice = PTKImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(2)], obj.LastDataType);
                 otherwise
                     error('Unsupported dimension');
             end
@@ -603,11 +603,11 @@ classdef (ConstructOnLoad = true) TDImage < handle
             flat = max(obj.RawImage, [], direction);
             number_of_repeats = size(obj.RawImage, direction);
             switch direction
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     obj.RawImage = repmat(flat, [number_of_repeats 1 1]);
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     obj.RawImage = repmat(flat, [1 number_of_repeats 1]);
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     obj.RawImage = repmat(flat, [1 1 number_of_repeats]);
             end
             obj.NotifyImageChanged;
@@ -616,11 +616,11 @@ classdef (ConstructOnLoad = true) TDImage < handle
         % Modifies the specified 2D slice of the image
         function ReplaceImageSlice(obj, new_slice, slice_index, direction)
             switch direction
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     obj.RawImage(slice_index, :, :) = new_slice;
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     obj.RawImage(:, slice_index, :) = new_slice;
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     obj.RawImage(:, :, slice_index) = new_slice;
             end
             obj.NotifyImageChanged;
@@ -793,7 +793,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
                 [new_i_grid, new_j_grid, new_k_grid] = ndgrid(new_i_mm, new_j_mm, new_k_mm);
                 
                 if ~isempty(affine_matrix)
-                    [new_i_grid, new_j_grid, new_k_grid] = TDImageCoordinateUtilities.TransformCoordsAffine(new_i_grid, new_j_grid, new_k_grid, affine_matrix);
+                    [new_i_grid, new_j_grid, new_k_grid] = PTKImageCoordinateUtilities.TransformCoordsAffine(new_i_grid, new_j_grid, new_k_grid, affine_matrix);
                 end
                 
                 % Find the nearest value for each point in the new grid
@@ -850,10 +850,10 @@ classdef (ConstructOnLoad = true) TDImage < handle
 
             if flatten_before_preview
                 image_copy = obj.Copy;
-                image_copy.Flatten(TDImageOrientation.Coronal);
-                slice = image_copy.GetSlice(slice_position, TDImageOrientation.Coronal);
+                image_copy.Flatten(PTKImageOrientation.Coronal);
+                slice = image_copy.GetSlice(slice_position, PTKImageOrientation.Coronal);
             else
-                slice = obj.GetSlice(slice_position, TDImageOrientation.Coronal); 
+                slice = obj.GetSlice(slice_position, PTKImageOrientation.Coronal); 
             end
             slice = slice';
 
@@ -880,15 +880,15 @@ classdef (ConstructOnLoad = true) TDImage < handle
             endpos = startpos + scaled_preview_size - [1 1];
                         
             switch obj.ImageType
-                case TDImageType.Grayscale
+                case PTKImageType.Grayscale
                     method = 'cubic';
-                case TDImageType.Colormap
+                case PTKImageType.Colormap
                     method = 'nearest';
                     nn_grid_size = 1./preview_scale;
                     floor_scale = max(1, ceil(nn_grid_size/2));
                     domain = true(floor_scale);
                     slice = ordfilt2(double(slice), numel(domain), domain);
-                case TDImageType.Scaled
+                case PTKImageType.Scaled
                     method = 'nearest';
                     nn_grid_size = 1./preview_scale;
                     floor_scale = max(1, ceil(nn_grid_size/2));
@@ -906,7 +906,7 @@ classdef (ConstructOnLoad = true) TDImage < handle
         
         % Equality operator
         function is_equal = eq(obj, other)
-            metaclass = ?TDImage;
+            metaclass = ?PTKImage;
             property_list = metaclass.Properties;
             for i = 1 : length(property_list);
                 property = property_list{i};
@@ -929,11 +929,11 @@ classdef (ConstructOnLoad = true) TDImage < handle
         end
         
         function global_indices = LocalToGlobalIndices(obj, local_indices)
-            global_indices = TDImageCoordinateUtilities.OffsetIndices(local_indices, obj.Origin - [1, 1, 1], obj.ImageSize, obj.OriginalImageSize);
+            global_indices = PTKImageCoordinateUtilities.OffsetIndices(local_indices, obj.Origin - [1, 1, 1], obj.ImageSize, obj.OriginalImageSize);
         end
         
         function local_indices = GlobalToLocalIndices(obj, global_indices)
-            local_indices = TDImageCoordinateUtilities.OffsetIndices(global_indices, [1, 1, 1] - obj.Origin, obj.OriginalImageSize, obj.ImageSize);
+            local_indices = PTKImageCoordinateUtilities.OffsetIndices(global_indices, [1, 1, 1] - obj.Origin, obj.OriginalImageSize, obj.ImageSize);
         end
         
         % Given a set of global indices, compute the coordinates of each in mm
@@ -1034,29 +1034,29 @@ classdef (ConstructOnLoad = true) TDImage < handle
         end
         
         function ball_element = CreateBallStructuralElement(obj, size_mm)
-            ball_element = TDImageUtilities.CreateBallStructuralElement(obj.VoxelSize, size_mm);
+            ball_element = PTKImageUtilities.CreateBallStructuralElement(obj.VoxelSize, size_mm);
         end
         
         % Guesses which type of image renderng would be best. 
         function image_type = GuessImageType(obj)
             if isempty(obj.RawImage)
-                image_type = TDImageType.Colormap;
+                image_type = PTKImageType.Colormap;
                 return
             end
             if islogical(obj.RawImage)
                 % For binary images, opt for a simple colormap
-                image_type = TDImageType.Colormap;
+                image_type = PTKImageType.Colormap;
             else
                 % If the image data is noninteger then assume greyscale
-                if ~TDMathUtilities.IsMatrixInteger(obj.RawImage)
-                    image_type = TDImageType.Grayscale;
+                if ~PTKMathUtilities.IsMatrixInteger(obj.RawImage)
+                    image_type = PTKImageType.Grayscale;
                 else
                     % Otherwise choose colormap if the range of values is
                     % restricted
                     if (min(obj.RawImage(:))) >= 0 && (max(obj.RawImage(:)) <= 7)
-                        image_type = TDImageType.Colormap;
+                        image_type = PTKImageType.Colormap;
                     else
-                        image_type = TDImageType.Grayscale;
+                        image_type = PTKImageType.Grayscale;
                     end
                 end
             end

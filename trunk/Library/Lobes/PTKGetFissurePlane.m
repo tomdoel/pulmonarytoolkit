@@ -1,7 +1,7 @@
-function result = TDGetFissurePlane(max_fissure_points, image_size, extrapolation_multiple)
-    % TDGetFissurePlane. Generates fissure curves given candidate points
+function result = PTKGetFissurePlane(max_fissure_points, image_size, extrapolation_multiple)
+    % PTKGetFissurePlane. Generates fissure curves given candidate points
     %
-    %     TDGetFissurePlane is an intermediate stage in segmenting the
+    %     PTKGetFissurePlane is an intermediate stage in segmenting the
     %     lobes.
     %
     %     For more information, see

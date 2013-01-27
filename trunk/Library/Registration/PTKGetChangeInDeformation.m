@@ -1,5 +1,5 @@
-function deformation_field = TDGetChangeInDeformation(deformation_field, rigid_affine_matrix)
-    % TDGetChangeInDeformation. Computes the deformation field relative to an
+function deformation_field = PTKGetChangeInDeformation(deformation_field, rigid_affine_matrix)
+    % PTKGetChangeInDeformation. Computes the deformation field relative to an
     %     original affine translation
     %
     %

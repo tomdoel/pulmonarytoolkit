@@ -1,5 +1,5 @@
-classdef TDEventData < event.EventData
-    % TDEventData. Encapsulate data to be passed when an event occurs.
+classdef PTKEventData < event.EventData
+    % PTKEventData. Encapsulate data to be passed when an event occurs.
     %
     %     Use this class when you trigger an event which needs to provide data
     %     to its listeners.
@@ -10,7 +10,7 @@ classdef TDEventData < event.EventData
     %     This example triggers a MouseClick event and passes the image coordiates
     %
     %         coords = GetImageCoordinates;
-    %         notify(obj, 'MouseClick', TDEventData(coords));
+    %         notify(obj, 'MouseClick', PTKEventData(coords));
     %
     %
     %     Licence
@@ -25,7 +25,7 @@ classdef TDEventData < event.EventData
     end
     
     methods
-        function obj = TDEventData(data)
+        function obj = PTKEventData(data)
             obj.Data = data;
         end
     end

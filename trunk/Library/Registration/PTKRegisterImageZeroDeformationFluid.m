@@ -1,5 +1,5 @@
-function deformed_image = TDRegisterImageZeroDeformationFluid(original_image, deformation_field, interpolation_type, reporting)
-    % TDRegisterImageZeroDeformationFluid. Registers an image using a zero deformation field.
+function deformed_image = PTKRegisterImageZeroDeformationFluid(original_image, deformation_field, interpolation_type, reporting)
+    % PTKRegisterImageZeroDeformationFluid. Registers an image using a zero deformation field.
     %
     %
     %     Licence
@@ -10,7 +10,7 @@ function deformed_image = TDRegisterImageZeroDeformationFluid(original_image, de
     %
 
     deformed_image = deformation_field.BlankCopy;
-    deformed_image.ImageType = TDImageType.Grayscale;
+    deformed_image.ImageType = PTKImageType.Grayscale;
     [i_o, j_o, k_o] = original_image.GetCentredGlobalCoordinatesMm;
     [i_o, j_o, k_o] = ndgrid(i_o, j_o, k_o);
     

@@ -1,12 +1,12 @@
-function TDVisualiseTreeModelCentreline(parent_branch, voxel_size)
-    % TDVisualiseTreeModelCentreline. Draws a simplified visualisation of a tree centreline
+function PTKVisualiseTreeModelCentreline(parent_branch, voxel_size)
+    % PTKVisualiseTreeModelCentreline. Draws a simplified visualisation of a tree centreline
     %
     %     Syntax
     %     ------
     %
-    %         TDVisualiseTreeModelCentreline(parent_branch)
+    %         PTKVisualiseTreeModelCentreline(parent_branch)
     %
-    %             parent_branch     is the root branch in a TDTreeModel structure 
+    %             parent_branch     is the root branch in a PTKTreeModel structure 
     %
     %     Licence
     %     -------

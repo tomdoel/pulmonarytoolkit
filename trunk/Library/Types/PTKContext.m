@@ -1,7 +1,7 @@
-classdef TDContext
-    % TDContext. An enumeration used to specify a region of interest
+classdef PTKContext
+    % PTKContext. An enumeration used to specify a region of interest
     %
-    %     Contexts are used in relation to TDImageTemplate to request a template
+    %     Contexts are used in relation to PTKImageTemplate to request a template
     %     image for a particular region of interest.
     %
     %

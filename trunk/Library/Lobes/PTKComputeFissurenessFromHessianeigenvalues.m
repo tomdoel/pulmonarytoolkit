@@ -1,21 +1,21 @@
-function fissureness_wrapper = TDComputeFissurenessFromHessianeigenvalues(hessian_eigs_wrapper)
-    % TDComputeFissurenessFromHessianeigenvalues. Filter for detecting fissures.
+function fissureness_wrapper = PTKComputeFissurenessFromHessianeigenvalues(hessian_eigs_wrapper)
+    % PTKComputeFissurenessFromHessianeigenvalues. Filter for detecting fissures.
     %
-    %     TDComputeFissurenessFromHessianeigenvalues computes a 
+    %     PTKComputeFissurenessFromHessianeigenvalues computes a 
     %     fissureness filter based on Doel et al., 2012. "Pulmonary lobe
     %     segmentation from CT images using fissureness, airways, vessels and
     %     multilevel B-splines". The filter returns a value at each point which
     %     in some sense representes the probability of that point belonging to a
     %     fissure.
     %
-    %     This function takes in a TDWraper object which can either contain a nx6
+    %     This function takes in a PTKWraper object which can either contain a nx6
     %     matrix containing the 3 Hessian matrix eigenvalues for each of n
     %     points, or it can be an ixjxkx3 matrix representing the 3 Hessian
     %     matrix eigenvalues for an image of dimension ixjxk.
     %
     %     The output is a single vesselness value for each input point.
     %
-    %     See the TDFissurenessHessianFactor plugin for example usage.
+    %     See the PTKFissurenessHessianFactor plugin for example usage.
     %
     %     For more information, see
     %     [Doel et al., Pulmonary lobe segmentation from CT images using
@@ -29,7 +29,7 @@ function fissureness_wrapper = TDComputeFissurenessFromHessianeigenvalues(hessia
     %
 
     % lam1 = smallest eigenvalue, lam3 = largest eigenvalue
-    fissureness_wrapper = TDWrapper;
+    fissureness_wrapper = PTKWrapper;
 
     % This allows us to compute the Fissureness in a vectorised or matrix-based way
     if ndims(hessian_eigs_wrapper.RawImage) == 2

@@ -1,5 +1,5 @@
-function [affine_matrix, transformed_matrix] = TDSolveForRigidTranslation(image_to_transform, reference_image, reporting)
-    % TDSolveForRigidTranslation. Computes the transformation matrix to register one
+function [affine_matrix, transformed_matrix] = PTKSolveForRigidTranslation(image_to_transform, reference_image, reporting)
+    % PTKSolveForRigidTranslation. Computes the transformation matrix to register one
     %     image segmentation to another based on an solving for a rigid
     %     translation.
     %
@@ -12,7 +12,7 @@ function [affine_matrix, transformed_matrix] = TDSolveForRigidTranslation(image_
     %
 
     % Initial centroid registration
-    [com_affine_matrix, com_affine_vector] = TDRegisterCentroid(image_to_transform, reference_image, reporting);
+    [com_affine_matrix, com_affine_vector] = PTKRegisterCentroid(image_to_transform, reference_image, reporting);
 
     % Before computing a distance transform, we must resample the images so they are approximately isotropic 
     % Find a voxel size to use for the registration image. We divide up thick
@@ -28,8 +28,8 @@ function [affine_matrix, transformed_matrix] = TDSolveForRigidTranslation(image_
     reference_image2.AddBorder(20);
     image_to_transform2.AddBorder(20);
     
-    dt_float = TDRunForEachComponentAndCombine(@TDImageUtilities.GetNormalisedDT, image_to_transform2, image_to_transform2, reporting);
-    dt_ref = TDRunForEachComponentAndCombine(@TDImageUtilities.GetNormalisedDT, reference_image2, reference_image2, reporting);
+    dt_float = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, image_to_transform2, image_to_transform2, reporting);
+    dt_ref = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, reference_image2, reference_image2, reporting);
     
     dt_float.RescaleToMaxSize(128);
 
@@ -50,14 +50,14 @@ function [affine_matrix, transformed_matrix] = Solve(image_to_transform, referen
     
     [x_vector, fval, exitflag, output] = fminsearch(AnonFn, x_0, optimset('TolX',0.0001, 'TolFun', 0.01, 'PlotFcns', @optimplotfval));
     
-    affine_matrix = TDImageCoordinateUtilities.CreateAffineTranslationMatrix(x_vector);
+    affine_matrix = PTKImageCoordinateUtilities.CreateAffineTranslationMatrix(x_vector);
 
-    transformed_matrix = TDRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
+    transformed_matrix = PTKRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
 end
 
 function closeness = FnToMinimiseRigid(x_vector, image_to_transform, reference_image, i_o, j_o, k_o, i_r, j_r, k_r, reporting)
-    affine_matrix = TDImageCoordinateUtilities.CreateAffineTranslationMatrix(x_vector);
-    transformed_image = TDRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
+    affine_matrix = PTKImageCoordinateUtilities.CreateAffineTranslationMatrix(x_vector);
+    transformed_image = PTKRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
     closeness = ComputeCloseness(transformed_image, reference_image);
 end
 

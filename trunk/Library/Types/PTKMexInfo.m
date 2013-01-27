@@ -1,7 +1,7 @@
-classdef TDMexInfo < handle
-    % TDMexInfo. Structure for caching information about compiled mex files.
+classdef PTKMexInfo < handle
+    % PTKMexInfo. Structure for caching information about compiled mex files.
     %
-    %     TDCompileMexFiles is an internal part of the Pulmonary Toolkit
+    %     PTKCompileMexFiles is an internal part of the Pulmonary Toolkit
     %     Framework and should not be called by your own code.
     %
     %     Licence
@@ -31,7 +31,7 @@ classdef TDMexInfo < handle
     end
     
     methods
-        function obj = TDMexInfo(current_version, filename, extension, file_path, compiler_options, other_files)
+        function obj = PTKMexInfo(current_version, filename, extension, file_path, compiler_options, other_files)
             if nargin > 0
                 obj.Name = filename;
                 obj.Extension = extension;

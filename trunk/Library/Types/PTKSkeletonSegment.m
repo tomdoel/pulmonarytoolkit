@@ -1,13 +1,13 @@
-classdef TDSkeletonSegment < TDTree
-    % TDSkeletonSegment. A data structure representing an airway tree skeleton
+classdef PTKSkeletonSegment < PTKTree
+    % PTKSkeletonSegment. A data structure representing an airway tree skeleton
     %
-    %     A root TDSkeletonSegment is returned by TDSkeletonise. From this you
+    %     A root PTKSkeletonSegment is returned by PTKSkeletonise. From this you
     %     can extract and analyse the resulting airway skeleton tree.
     %
-    %     TDSkeletonSegment is used in the construction and storage of
-    %     skeletonised airway trees. A TDSkeletonSegment stores an individual
+    %     PTKSkeletonSegment is used in the construction and storage of
+    %     skeletonised airway trees. A PTKSkeletonSegment stores an individual
     %     segment of the skeleton tree, with references to the parent and child
-    %     TDSkeletonSegments, so that it is possible to reconstruct the entire
+    %     PTKSkeletonSegments, so that it is possible to reconstruct the entire
     %     tree from a single segment.
     %
     %     Licence
@@ -23,14 +23,14 @@ classdef TDSkeletonSegment < TDTree
         GenerationNumber % Generation of this segment, starting at 1
     end
     
-    % ToDo: Radius property should be removed; instead create a TDTreeModel as
+    % ToDo: Radius property should be removed; instead create a PTKTreeModel as
     % part of the airway radius computation
     properties
-        Radius    % This will be set by the TDAirwayRadius plugin
+        Radius    % This will be set by the PTKAirwayRadius plugin
     end
     
     methods
-        function obj = TDSkeletonSegment(start_point, parent)
+        function obj = PTKSkeletonSegment(start_point, parent)
             obj.GenerationNumber = 1;
             if nargin > 0
                 obj.NextPoint = start_point;
@@ -51,7 +51,7 @@ classdef TDSkeletonSegment < TDTree
         end
         
         function new_child = SpawnChild(obj, child_start_point)
-            new_child = TDSkeletonSegment(child_start_point, obj);
+            new_child = PTKSkeletonSegment(child_start_point, obj);
         end
         
         function DeleteThisSegment(obj)

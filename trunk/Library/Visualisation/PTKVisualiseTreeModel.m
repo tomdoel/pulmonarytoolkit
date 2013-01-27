@@ -1,12 +1,12 @@
-function TDVisualiseTreeModel(parent_branch)
-    % TDVisualiseTreeModel. Draws a simplified visualisation of a tree
+function PTKVisualiseTreeModel(parent_branch)
+    % PTKVisualiseTreeModel. Draws a simplified visualisation of a tree
     %
     %     Syntax
     %     ------
     %
-    %         TDVisualiseTreeModel(parent_branch)
+    %         PTKVisualiseTreeModel(parent_branch)
     %
-    %             parent_branch     is the root branch in a TDTreeModel structure 
+    %             parent_branch     is the root branch in a PTKTreeModel structure 
     %
     %     Licence
     %     -------

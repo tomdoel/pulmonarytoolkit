@@ -1,17 +1,17 @@
-classdef TDWavefront < handle
-    % TDWavefront. A data structure representing a segmented airway tree 
+classdef PTKWavefront < handle
+    % PTKWavefront. A data structure representing a segmented airway tree 
     %
-    %     TDWavefront is used as part of the airway region growing process in 
-    %     TDAirwayRegionGrowingWithExplosionControl.
+    %     PTKWavefront is used as part of the airway region growing process in 
+    %     PTKAirwayRegionGrowingWithExplosionControl.
     % 
-    %     A root TDTreeSegment is returned by 
-    %     TDAirwayRegionGrowingWithExplosionControl. From this you
+    %     A root PTKTreeSegment is returned by 
+    %     PTKAirwayRegionGrowingWithExplosionControl. From this you
     %     can extract and analyse the resulting airway tree.
     %
-    %     TDTreeSegment is used in the construction and storage of
-    %     the airway trees. A TDTreeSegment stores an individual
+    %     PTKTreeSegment is used in the construction and storage of
+    %     the airway trees. A PTKTreeSegment stores an individual
     %     segment of the centreline tree, with references to the parent and child
-    %     TDTreeSegments, so that it is possible to reconstruct the entire
+    %     PTKTreeSegments, so that it is possible to reconstruct the entire
     %     tree from a single segment.
     %
     %     The way the airway voxels are stored in each segment is as follows:
@@ -71,7 +71,7 @@ classdef TDWavefront < handle
     end
     
     methods
-        function obj = TDWavefront(segment_parent, min_distance_before_bifurcating_mm, voxel_size_mm, maximum_generations, explosion_multiplier)
+        function obj = PTKWavefront(segment_parent, min_distance_before_bifurcating_mm, voxel_size_mm, maximum_generations, explosion_multiplier)
             if nargin > 0
                 obj.WavefrontVoxelIndices = int32([]);
 
@@ -86,10 +86,10 @@ classdef TDWavefront < handle
 
                 if ~isempty(segment_parent)
                     obj.WavefrontSize = ceil(obj.ChildWavefrontSizeMm/max_voxel_size_mm);
-                    obj.CurrentBranch = TDTreeSegment(segment_parent, min_number_of_points_threshold, explosion_multiplier);
+                    obj.CurrentBranch = PTKTreeSegment(segment_parent, min_number_of_points_threshold, explosion_multiplier);
                 else
                     obj.WavefrontSize = ceil(obj.FirstSegmentWavefrontSizeMm/max_voxel_size_mm);
-                    obj.CurrentBranch = TDTreeSegment([], min_number_of_points_threshold, explosion_multiplier);
+                    obj.CurrentBranch = PTKTreeSegment([], min_number_of_points_threshold, explosion_multiplier);
                 end
             end
         end
@@ -135,7 +135,7 @@ classdef TDWavefront < handle
             if obj.CurrentBranch.MarkedExplosion
                 obj.MoveAllWavefrontVoxelsToPendingVoxels;
 %                 obj.DeleteSegmentIfNoAcceptedVoxels;
-                segments_to_do = TDWavefront.empty; % This segment has been terminated
+                segments_to_do = PTKWavefront.empty; % This segment has been terminated
                 return
             end
             
@@ -158,7 +158,7 @@ classdef TDWavefront < handle
             % split it into a new set of child segments
             
             % Find connected components from the wavefront (which is several voxels thick)
-            [offset, reduced_image, reduced_image_size] = TDImageCoordinateUtilities.GetMinimalImageForIndices(int32(obj.GetWavefrontVoxels), image_size);
+            [offset, reduced_image, reduced_image_size] = PTKImageCoordinateUtilities.GetMinimalImageForIndices(int32(obj.GetWavefrontVoxels), image_size);
             wavefront_connected_components = bwconncomp(reduced_image, 26);
             number_of_components = wavefront_connected_components.NumObjects;
             
@@ -169,7 +169,7 @@ classdef TDWavefront < handle
                 return;
             end
             
-            segments_to_do = TDWavefront.empty;
+            segments_to_do = PTKWavefront.empty;
             growing_branches = [];
             points_by_branches = [];
             
@@ -179,7 +179,7 @@ classdef TDWavefront < handle
                 
                 % Get voxel list, and adjust the indices to match those for the full image
                 indices_of_component_points = wavefront_connected_components.PixelIdxList{component_number};
-                indices_of_component_points = TDImageCoordinateUtilities.OffsetIndices(int32(indices_of_component_points), offset, reduced_image_size, image_size);
+                indices_of_component_points = PTKImageCoordinateUtilities.OffsetIndices(int32(indices_of_component_points), offset, reduced_image_size, image_size);
                 points_by_branches{component_number} = indices_of_component_points;
                 
                 still_growing = obj.IsThisComponentStillGrowing(indices_of_component_points);
@@ -282,7 +282,7 @@ classdef TDWavefront < handle
                 wavefront_voxels{index} = intersect(int32(voxel_indices), obj.WavefrontVoxelIndices{index});
                 obj.WavefrontVoxelIndices{index} = setxor(wavefront_voxels{index}, obj.WavefrontVoxelIndices{index});
             end
-            new_segment = TDWavefront(obj.CurrentBranch, obj.MinimumChildDistanceBeforeBifurcatingMm, obj.VoxelSizeMm, obj.MaximumNumberOfGenerations, obj.ExplosionMultiplier);
+            new_segment = PTKWavefront(obj.CurrentBranch, obj.MinimumChildDistanceBeforeBifurcatingMm, obj.VoxelSizeMm, obj.MaximumNumberOfGenerations, obj.ExplosionMultiplier);
             new_segment.WavefrontVoxelIndices = wavefront_voxels;
         end
 

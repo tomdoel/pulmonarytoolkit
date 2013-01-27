@@ -1,5 +1,5 @@
-function deformed_image = TDRegisterImageFluid(original_image, deformation_field, interpolation_type, reporting)
-    % TDRegisterImageFluid. Registers an image using a deformation field.
+function deformed_image = PTKRegisterImageFluid(original_image, deformation_field, interpolation_type, reporting)
+    % PTKRegisterImageFluid. Registers an image using a deformation field.
     %
     %
     %     Licence
@@ -10,7 +10,7 @@ function deformed_image = TDRegisterImageFluid(original_image, deformation_field
     %
 
     deformed_image = deformation_field.BlankCopy;
-    deformed_image.ImageType = TDImageType.Grayscale;
+    deformed_image.ImageType = PTKImageType.Grayscale;
     [i_o, j_o, k_o] = original_image.GetCentredGlobalCoordinatesMm;
     [i_o, j_o, k_o] = ndgrid(i_o, j_o, k_o);
     
@@ -18,7 +18,7 @@ function deformed_image = TDRegisterImageFluid(original_image, deformation_field
     [i_r, j_r, k_r] = ndgrid(i_r, j_r, k_r);
 
     % Transform the coordinates using the deformation field
-    [i_r, j_r, k_r] = TDImageCoordinateUtilities.TransformCoordsFluid(i_r, j_r, k_r, deformation_field);
+    [i_r, j_r, k_r] = PTKImageCoordinateUtilities.TransformCoordsFluid(i_r, j_r, k_r, deformation_field);
     
     % Interpolate the image to the deformed coordinates
     deformed_image_raw = interpn(i_o, j_o, k_o, single(original_image.RawImage), i_r, j_r, k_r, interpolation_type, 0);

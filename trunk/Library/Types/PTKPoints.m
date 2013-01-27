@@ -1,5 +1,5 @@
-classdef TDPoints < handle
-    % TDPoints. Class for storing point coordinates.
+classdef PTKPoints < handle
+    % PTKPoints. Class for storing point coordinates.
     %
     %     Licence
     %     -------
@@ -13,7 +13,7 @@ classdef TDPoints < handle
     end
     
     methods
-        function obj = TDPoints(coords)
+        function obj = PTKPoints(coords)
             if nargin > 0
                 obj.Coords = coords;
             end

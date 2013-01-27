@@ -1,5 +1,5 @@
-classdef TDPoint
-    % TDPoint. A class for storing points
+classdef PTKPoint
+    % PTKPoint. A class for storing points
     %
     %
     %     Licence
@@ -16,7 +16,7 @@ classdef TDPoint
     end
     
     methods
-        function obj = TDPoint(c_i, c_j, c_k)
+        function obj = PTKPoint(c_i, c_j, c_k)
             if nargin > 0
                 obj.CoordI = c_i;
                 obj.CoordJ = c_j;

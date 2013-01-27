@@ -1,8 +1,8 @@
-classdef TDTreeModel < TDTree
-    % TDTreeModel. A branch of a tree model (used to store airways, vessels
+classdef PTKTreeModel < PTKTree
+    % PTKTreeModel. A branch of a tree model (used to store airways, vessels
     % etc.)
     %
-    % A TDTreeModel is s tree structure which represents an airway centreline
+    % A PTKTreeModel is s tree structure which represents an airway centreline
     % with radius information. As such, it is a "model" of an airway, rather
     % than a "segmentation"
     %
@@ -14,7 +14,7 @@ classdef TDTreeModel < TDTree
     %           
     
     properties
-        StartPoint % TDCentrelinePoint, mm
+        StartPoint % PTKCentrelinePoint, mm
         EndPoint   % mm
         Radius     % mm
         TemporaryIndex
@@ -30,8 +30,8 @@ classdef TDTreeModel < TDTree
     end
     
     methods
-        function obj = TDTreeModel(parent)
-            obj.Centreline = TDCentrelinePoint.empty(0);
+        function obj = PTKTreeModel(parent)
+            obj.Centreline = PTKCentrelinePoint.empty(0);
             obj.GenerationNumber = 1;
             if nargin > 0
                 obj.Parent = parent;
@@ -62,10 +62,10 @@ classdef TDTreeModel < TDTree
         function copy = Copy(obj)
             
             % Create a copy of this branch
-            copy = TDTreeModel;
+            copy = PTKTreeModel;
             
             % Copy properties, except for Children and Parent
-            metaclass = ?TDTreeModel;
+            metaclass = ?PTKTreeModel;
             property_list = metaclass.Properties;
             for i = 1 : length(property_list);
                 property = property_list{i};
@@ -92,14 +92,14 @@ classdef TDTreeModel < TDTree
                 c_i = (c_i - 0.5)*image_template.VoxelSize(1);
                 c_j = (c_j - 0.5)*image_template.VoxelSize(2);
                 c_k = (c_k - 0.5)*image_template.VoxelSize(3);
-                new_point = TDCentrelinePoint(c_i, c_j, c_k, radius, point);
+                new_point = PTKCentrelinePoint(c_i, c_j, c_k, radius, point);
                 obj.Centreline(end+1) = new_point;
             end
             
             % Create copies of child branches and set the Children and Parent
             % properties correctly
             for child = skeleton_tree.Children
-                child_branch = TDTreeModel(obj);
+                child_branch = PTKTreeModel(obj);
                 child_branch.CreateFromSkeletonTreeBranch(child, image_template);
             end
         end
@@ -111,7 +111,7 @@ classdef TDTreeModel < TDTree
             % Create copies of child branches and set the Children and Parent
             % properties correctly
             for child = tree.Children
-                child_branch = TDTreeModel(obj);
+                child_branch = PTKTreeModel(obj);
                 child_branch.SimpleCopyBranch(child);
             end
         end
@@ -157,7 +157,7 @@ classdef TDTreeModel < TDTree
             length_mm = norm(coord_start - coord_end, 2);            
         end
         
-        % This function exists for compatibility with TDAirwayGrowingTree
+        % This function exists for compatibility with PTKAirwayGrowingTree
         function branch = FindCentrelineBranch(obj, branch_to_find, reporting)
             segments_to_do = obj;
             while ~isempty(segments_to_do)
@@ -173,7 +173,7 @@ classdef TDTreeModel < TDTree
             reporting.Error('FindCentrelineBranch', 'Branch not found');
         end
     
-        % ToDo: This method is duplicated in TDAirwayGrowingTree
+        % ToDo: This method is duplicated in PTKAirwayGrowingTree
         % Returns the coordinates of each terminal branch in the tree below this
         % branch
         function terminal_coords = GetTerminalCoordinates(obj, reporting)
@@ -210,7 +210,7 @@ classdef TDTreeModel < TDTree
                 end
                 end_point_mm = [branch.EndPoint.CoordI, branch.EndPoint.CoordJ, branch.EndPoint.CoordK];
                 if isnan(end_point_mm)
-                    reporting.Error('TDGrowingTreeBySegment:Nan', 'NaN found in branch coordinate');
+                    reporting.Error('PTKGrowingTreeBySegment:Nan', 'NaN found in branch coordinate');
                 end
                 
                 all_starts(index, :) = start_point_mm;
@@ -220,7 +220,7 @@ classdef TDTreeModel < TDTree
             end
             
             if terminal_index ~= num_terminal_branches + 1
-                reporting.Error('TDGrowingTreeBySegment:TerminalBranchCountMismatch', 'A code error occurred: the termina branch count was not as expected');
+                reporting.Error('PTKGrowingTreeBySegment:TerminalBranchCountMismatch', 'A code error occurred: the termina branch count was not as expected');
             end
             
             %     all_local_indices = GetAirwayModelAsLocalIndices(all_starts, all_ends);
@@ -231,14 +231,14 @@ classdef TDTreeModel < TDTree
     
     methods (Static)
         function new_tree = CreateFromSkeletonTree(skeleton_tree, image_template)
-            new_tree = TDTreeModel;
+            new_tree = PTKTreeModel;
             new_tree.CreateFromSkeletonTreeBranch(skeleton_tree, image_template);
         end
         
         % Creates a copy of the tree, but only copies the radius property, but
         % also maintains a reference to the branch that was copied
         function new_tree = SimpleTreeCopy(tree)
-            new_tree = TDTreeModel;
+            new_tree = PTKTreeModel;
             new_tree.SimpleCopyBranch(tree);
         end
         

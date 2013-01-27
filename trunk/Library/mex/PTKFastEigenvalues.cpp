@@ -1,6 +1,6 @@
-// TDFastEigenvalues. Computes eigenvalues and eigenvectors for many symmetric matrices
+// PTKFastEigenvalues. Computes eigenvalues and eigenvectors for many symmetric matrices
 //
-//     TDFastEigenvalues is similar to Matlab's eigs() function, but can be used 
+//     PTKFastEigenvalues is similar to Matlab's eigs() function, but can be used 
 //     to compute the eigenvalues and eigenvectors for multiple matrices, which
 //     for a large number of points is significantly quicker than using a for 
 //     loop. Each input matrix must be symmetric and is represented by a single
@@ -8,19 +8,19 @@
 //
 //     This is a Matlab MEX function and must be compled before use. To compile, type 
 //
-//         mex TDFastEigenvalues
+//         mex PTKFastEigenvalues
 //
 //     on the Matlab command line.
 //
-//     Alternatively, you can use the Matlab function TDVectorisedEigenvalues 
+//     Alternatively, you can use the Matlab function PTKVectorisedEigenvalues 
 //     which is equivalent to this function but does not use mex files. 
-//     TDVectorisedEigenvalues is slower than TDFastEigenvalues but still
+//     PTKVectorisedEigenvalues is slower than PTKFastEigenvalues but still
 //     significantly faster than running eigs() in a for loop when a large
 //     number of matrices is involved.
 //
 //
 //     Syntax: 
-//         [eigvectors, eigvalues] = TDFastEigenvalues(M [, eigenvalues_only])
+//         [eigvectors, eigvalues] = PTKFastEigenvalues(M [, eigenvalues_only])
 //
 //     Input:
 //         M is a 6xn matrix. Each column of M represents one 3x3 symmetric matrix as follows
@@ -71,14 +71,14 @@ using namespace std;
 
 extern void _main();
 
-struct TDVector {
+struct PTKVector {
     CALCPRECISION x, y, z;
-	TDVector() : x(0), y(0), z(0) {}	
-	TDVector(CALCPRECISION xx, CALCPRECISION yy, CALCPRECISION zz) : x(xx), y(yy), z(zz) {}
+	PTKVector() : x(0), y(0), z(0) {}	
+	PTKVector(CALCPRECISION xx, CALCPRECISION yy, CALCPRECISION zz) : x(xx), y(yy), z(zz) {}
 };
 
-TDVector CrossProduct(const TDVector& v1, const TDVector& v2) {
-    TDVector result;
+PTKVector CrossProduct(const PTKVector& v1, const PTKVector& v2) {
+    PTKVector result;
 	result.x = (v1.y * v2.z) - (v1.z * v2.y);
 	result.y = (v1.z * v2.x) - (v1.x * v2.z);
 	result.z = (v1.x * v2.y) - (v1.y * v2.x);
@@ -111,15 +111,15 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
 {
     // Check inputs
     if (num_inputs < 1) {
-        mexErrMsgTxt("Syntax: [eigvectors, eigvalues] = TDFastEigenvalues(M) where M is a 6xn matrix representing n symmetrix 3x3 matrices (see source file for more information).\n");
+        mexErrMsgTxt("Syntax: [eigvectors, eigvalues] = PTKFastEigenvalues(M) where M is a 6xn matrix representing n symmetrix 3x3 matrices (see source file for more information).\n");
     }
     
     if (num_inputs > 2) {
-        mexErrMsgTxt("Too many arguments specified. Syntax: TDFastEigenvalues(M) where M represents the matricies (see source file).\n");
+        mexErrMsgTxt("Too many arguments specified. Syntax: PTKFastEigenvalues(M) where M represents the matricies (see source file).\n");
     }
 
     if (num_outputs > 2) {
-         mexErrMsgTxt("TDFastEigenvalues produces two outputs but you have requested more.\n");
+         mexErrMsgTxt("PTKFastEigenvalues produces two outputs but you have requested more.\n");
     }
     
 	if (mxIsComplex(pointers_to_inputs[0])) {
@@ -249,7 +249,7 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
 			base_index_evector[1] = (1 + index*num_dimensions)*num_dimensions;
 			base_index_evector[2] = (2 + index*num_dimensions)*num_dimensions;
 			
-			TDVector eigenvectors[3];
+			PTKVector eigenvectors[3];
 
 			// Compute first two eigenvectors
             for (long int evector_index = 0; evector_index <= 1; evector_index++) {
@@ -267,7 +267,7 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
                     vec = 0.01;
                 }
 				
-				eigenvectors[evector_index] = TDVector(eix/vec, eiy/vec, eiz/vec);               
+				eigenvectors[evector_index] = PTKVector(eix/vec, eiy/vec, eiz/vec);               
             }
             
 			// Calculate third eigenvector through cross product of first two eigenvectors
