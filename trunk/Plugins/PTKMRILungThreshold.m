@@ -1,9 +1,9 @@
-classdef TDMRILungThreshold < TDPlugin
-    % TDMRILungThreshold. Plugin for segmenting the lungs from MRI data
+classdef PTKMRILungThreshold < PTKPlugin
+    % PTKMRILungThreshold. Plugin for segmenting the lungs from MRI data
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -35,17 +35,17 @@ classdef TDMRILungThreshold < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             if dataset.IsGasMRI
-                full_image = dataset.GetResult('TDInvertImage');
-                [lung_mask, bounds] = TDComputeSegmentLungsMRI(full_image, 2, reporting);
+                full_image = dataset.GetResult('PTKInvertImage');
+                [lung_mask, bounds] = PTKComputeSegmentLungsMRI(full_image, 2, reporting);
                 lung_mask.CropToFit;
-                lung_mask.ImageType = TDImageType.Colormap;
+                lung_mask.ImageType = PTKImageType.Colormap;
                 results.Bounds = bounds;
                 results.LungMask = lung_mask;
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
-                full_image = dataset.GetResult('TDOriginalImage');
-                [lung_mask, bounds] = TDComputeSegmentLungsMRI(full_image, 1, reporting);
+                full_image = dataset.GetResult('PTKOriginalImage');
+                [lung_mask, bounds] = PTKComputeSegmentLungsMRI(full_image, 1, reporting);
                 lung_mask.CropToFitWithBorder(5);
-                lung_mask.ImageType = TDImageType.Colormap;
+                lung_mask.ImageType = PTKImageType.Colormap;
                 results.Bounds = bounds;
                 results.LungMask = lung_mask;
             else

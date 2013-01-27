@@ -1,17 +1,17 @@
-classdef TDFissureness < TDPlugin
-    % TDFissureness. Plugin to detect fissures 
+classdef PTKFissureness < PTKPlugin
+    % PTKFissureness. Plugin to detect fissures 
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
     %     This is an intermediate stage towards lobar segmentation.
     %
-    %     TDFissureness computes the fissureness by combining two components
-    %     generated from the two plugins TDFissurenessHessianFactor and
-    %     TDFissurenessVesselsFactor.
+    %     PTKFissureness computes the fissureness by combining two components
+    %     generated from the two plugins PTKFissurenessHessianFactor and
+    %     PTKFissurenessVesselsFactor.
     %
     %     For more information, see 
     %     [Doel et al., Pulmonary lobe segmentation from CT images using
@@ -44,11 +44,11 @@ classdef TDFissureness < TDPlugin
     methods (Static)
         
         function results = RunPlugin(dataset, reporting)
-            fissureness_from_hessian = single(dataset.GetResult('TDFissurenessHessianFactor').RawImage)/100;
-            fissureness_from_vessels = single(dataset.GetResult('TDFissurenessVesselsFactor').RawImage)/100;
-            results = dataset.GetTemplateImage(TDContext.LungROI);
+            fissureness_from_hessian = single(dataset.GetResult('PTKFissurenessHessianFactor').RawImage)/100;
+            fissureness_from_vessels = single(dataset.GetResult('PTKFissurenessVesselsFactor').RawImage)/100;
+            results = dataset.GetTemplateImage(PTKContext.LungROI);
             results.ChangeRawImage(100*fissureness_from_vessels.*fissureness_from_hessian);
-            results.ImageType = TDImageType.Scaled;
+            results.ImageType = PTKImageType.Scaled;
         end        
         
     end

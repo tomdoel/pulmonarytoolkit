@@ -1,13 +1,13 @@
-classdef TDLobesFromFissurePlane < TDPlugin
-    % TDLobesFromFissurePlane. Plugin which is part of the lobar segmentation.
+classdef PTKLobesFromFissurePlane < PTKPlugin
+    % PTKLobesFromFissurePlane. Plugin which is part of the lobar segmentation.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDLobesFromFissurePlane is an intermediate stage in segmenting the
+    %     PTKLobesFromFissurePlane is an intermediate stage in segmenting the
     %     lobes.
     %
     %     For more information, see
@@ -40,16 +40,16 @@ classdef TDLobesFromFissurePlane < TDPlugin
     methods (Static)
         function results = RunPlugin(application, reporting)
             
-            left_and_right_lungs = application.GetResult('TDLeftAndRightLungs');
-            fissure_plane = application.GetResult('TDFissurePlane');
-            lung_mask = application.GetResult('TDLeftAndRightLungs');
-            left_lung_template = application.GetTemplateImage(TDContext.LeftLungROI);
-            right_lung_template = application.GetTemplateImage(TDContext.RightLungROI);
-            results_left = TDLobesFromFissurePlane.GetLeftLungResults(left_lung_template, lung_mask.Copy, fissure_plane.Copy, reporting);
-            results_right = TDLobesFromFissurePlane.GetRightLungResults(right_lung_template, lung_mask, fissure_plane, reporting);
+            left_and_right_lungs = application.GetResult('PTKLeftAndRightLungs');
+            fissure_plane = application.GetResult('PTKFissurePlane');
+            lung_mask = application.GetResult('PTKLeftAndRightLungs');
+            left_lung_template = application.GetTemplateImage(PTKContext.LeftLungROI);
+            right_lung_template = application.GetTemplateImage(PTKContext.RightLungROI);
+            results_left = PTKLobesFromFissurePlane.GetLeftLungResults(left_lung_template, lung_mask.Copy, fissure_plane.Copy, reporting);
+            results_right = PTKLobesFromFissurePlane.GetRightLungResults(right_lung_template, lung_mask, fissure_plane, reporting);
             
-            results = TDCombineLeftAndRightImages(application.GetTemplateImage(TDContext.LungROI), results_left, results_right, left_and_right_lungs);
-            results.ImageType = TDImageType.Colormap;
+            results = PTKCombineLeftAndRightImages(application.GetTemplateImage(PTKContext.LungROI), results_left, results_right, left_and_right_lungs);
+            results.ImageType = PTKImageType.Colormap;
         end
         
         function results = GenerateImageFromResults(results, ~, ~)
@@ -67,7 +67,7 @@ classdef TDLobesFromFissurePlane < TDPlugin
             fissure_plane.ResizeToMatch(lung_template);
             fissure_plane = find(fissure_plane.RawImage(:) == 4);
             
-            results_left_raw = TDGetLobesFromFissurePoints(fissure_plane, lung_mask, lung_template.ImageSize);
+            results_left_raw = PTKGetLobesFromFissurePoints(fissure_plane, lung_mask, lung_template.ImageSize);
 
             results_left_raw(results_left_raw == 2) = 5;
             results_left_raw(results_left_raw == 3) = 6;
@@ -84,7 +84,7 @@ classdef TDLobesFromFissurePlane < TDPlugin
             fissure_plane.ResizeToMatch(lung_template);
             fissure_plane_o = find(fissure_plane.RawImage(:) == 3);
             
-            results_right_raw = TDGetLobesFromFissurePoints(fissure_plane_o, lung_mask, lung_template.ImageSize);
+            results_right_raw = PTKGetLobesFromFissurePoints(fissure_plane_o, lung_mask, lung_template.ImageSize);
             
             % Mid lobe
             fissure_plane_m = find(fissure_plane.RawImage(:) == 2);
@@ -92,13 +92,13 @@ classdef TDLobesFromFissurePlane < TDPlugin
             if ~isempty(fissure_plane_m)
                 lung_mask_excluding_lower = lung_mask.Copy;
                 lung_mask_excluding_lower.ChangeRawImage(results_right_raw == 2);
-                results_mid_right_raw = TDGetLobesFromFissurePoints(fissure_plane_m, lung_mask_excluding_lower, lung_template.ImageSize);
+                results_mid_right_raw = PTKGetLobesFromFissurePoints(fissure_plane_m, lung_mask_excluding_lower, lung_template.ImageSize);
 
                 results_right_raw(results_right_raw == 3) = 4;
                 results_right_raw(results_mid_right_raw == 2) = 1;
                 results_right_raw(results_mid_right_raw == 3) = 2;
             else
-                reporting.ShowWarning('TDLobesFromFissurePlane:NoRightObliqueFissure', 'Unable to find the right horizontal fissure. No middle right lobe segmentation will be shown.', []);
+                reporting.ShowWarning('PTKLobesFromFissurePlane:NoRightObliqueFissure', 'Unable to find the right horizontal fissure. No middle right lobe segmentation will be shown.', []);
                 results_right_raw(results_right_raw == 2) = 1;
                 results_right_raw(results_right_raw == 3) = 4;
             end

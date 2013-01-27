@@ -1,10 +1,10 @@
-classdef TDDensityGridPerLobe < TDPlugin
-    % TDDensityGridPerLobe. Plugin for finding density points in a grid within
+classdef PTKDensityGridPerLobe < PTKPlugin
+    % PTKDensityGridPerLobe. Plugin for finding density points in a grid within
     %     each lobe and saving to a file
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -38,7 +38,7 @@ classdef TDDensityGridPerLobe < TDPlugin
             reporting.ShowProgress('Computing lobes and density');
             
             % Get the lobe mask
-            lobes = dataset.GetResult('TDLobesFromFissurePlane');            
+            lobes = dataset.GetResult('PTKLobesFromFissurePlane');            
 
             % Work out the interpolation grid spacing
             approx_number_grid_points = 30000;
@@ -46,7 +46,7 @@ classdef TDDensityGridPerLobe < TDPlugin
             grid_spacing_3 = [grid_spacing_mm, grid_spacing_mm, grid_spacing_mm];
             
             % Get the average density
-            density_average_result = dataset.GetResult('TDDensityAverage');
+            density_average_result = dataset.GetResult('PTKDensityAverage');
             density_average = density_average_result.DensityAverage;
             density_average_mask = density_average_result.DensityAverageMask;
 
@@ -78,10 +78,10 @@ classdef TDDensityGridPerLobe < TDPlugin
                 global_indices_for_this_lobe = lobes_copy.LocalToGlobalIndices(local_indices_for_this_lobe);
                 [ic, jc, kc] = lobes_copy.GlobalIndicesToCoordinatesMm(global_indices_for_this_lobe);
                 density_values = density_average_copy.RawImage(local_indices_for_this_lobe);
-                TDDensityGridPerLobe.SaveToFile(dataset, lobe_names{lobe_index}, ic, jc, kc, density_values)
+                PTKDensityGridPerLobe.SaveToFile(dataset, lobe_names{lobe_index}, ic, jc, kc, density_values)
             end
             
-            results = dataset.GetTemplateImage(TDContext.LungROI);
+            results = dataset.GetTemplateImage(PTKContext.LungROI);
         end
         
         function SaveToFile(dataset, lobe_name, ic, jc, kc, density_values)

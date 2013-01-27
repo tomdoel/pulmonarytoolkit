@@ -1,9 +1,9 @@
-classdef TDCarina < TDPlugin
-    % TDCarina. Plugin to find the carina point in the airways
+classdef PTKCarina < PTKPlugin
+    % PTKCarina. Plugin to find the carina point in the airways
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -33,17 +33,17 @@ classdef TDCarina < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            main_bronchi = dataset.GetTemplateImage(TDContext.LungROI);
-            airway_results = dataset.GetResult('TDAirways');
-            labeled_region = TDCarina.GetTracheaAndMainBronchi(airway_results.AirwayTree, main_bronchi);
+            main_bronchi = dataset.GetTemplateImage(PTKContext.LungROI);
+            airway_results = dataset.GetResult('PTKAirways');
+            labeled_region = PTKCarina.GetTracheaAndMainBronchi(airway_results.AirwayTree, main_bronchi);
             main_bronchi.ChangeRawImage(labeled_region);
-            main_bronchi.ImageType = TDImageType.Colormap;
+            main_bronchi.ImageType = PTKImageType.Colormap;
             bronchi_surface = main_bronchi.BlankCopy;
-            bronchi_surface.ChangeRawImage(TDGetSurfaceFromSegmentation(main_bronchi.RawImage));
+            bronchi_surface.ChangeRawImage(PTKGetSurfaceFromSegmentation(main_bronchi.RawImage));
             
-            k_found = TDCarina.GetCarinaSliceIndex(main_bronchi, reporting);
+            k_found = PTKCarina.GetCarinaSliceIndex(main_bronchi, reporting);
 
-            next_slice = main_bronchi.GetSlice(k_found + 1, TDImageOrientation.Axial);
+            next_slice = main_bronchi.GetSlice(k_found + 1, PTKImageOrientation.Axial);
             cc = bwconncomp(next_slice);
             
             next_slice_1 = false(size(next_slice));
@@ -55,8 +55,8 @@ classdef TDCarina < TDPlugin
             
             added_dt = next_slice_1.^2 + next_slice_2.^2;
             
-            slice = main_bronchi.GetSlice(k_found, TDImageOrientation.Axial);
-            surface_slice = bronchi_surface.GetSlice(k_found, TDImageOrientation.Axial);
+            slice = main_bronchi.GetSlice(k_found, PTKImageOrientation.Axial);
+            surface_slice = bronchi_surface.GetSlice(k_found, PTKImageOrientation.Axial);
             slice = slice & surface_slice;
             candidate_indices = find(slice);
             added_dt_at_candidate_indices = added_dt(candidate_indices);
@@ -71,7 +71,7 @@ classdef TDCarina < TDPlugin
         end
         
         function results = GenerateImageFromResults(carina_results, image_templates, reporting)
-            template_image = image_templates.GetTemplateImage(TDContext.LungROI);
+            template_image = image_templates.GetTemplateImage(PTKContext.LungROI);
 
             carina_global = carina_results.Carina;
             
@@ -87,12 +87,12 @@ classdef TDCarina < TDPlugin
             carina = zeros(image_size, 'uint8');
             
             carina(top_of_carina(1), top_of_carina(2), top_of_carina(3)) = 3;
-            carina = TDImageUtilities.DrawBoxAround(carina, top_of_carina, 5, 3);
+            carina = PTKImageUtilities.DrawBoxAround(carina, top_of_carina, 5, 3);
             
             
             results = template_image;
             results.ChangeRawImage(carina);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
             
             reporting.ChangeViewingPosition(top_of_carina);
         end
@@ -112,18 +112,18 @@ classdef TDCarina < TDPlugin
             k_found = [];
             
             while k_continue            
-                next_slice = main_bronchi.GetSlice(k_index, TDImageOrientation.Axial);
+                next_slice = main_bronchi.GetSlice(k_index, PTKImageOrientation.Axial);
                 cc = bwconncomp(next_slice);
                 if cc.NumObjects == 2
                     k_continue = false;
                     if isempty(k_found)
-                        reporting.Error('TDCarina:CarinaNotFound', 'The carina could not be located');
+                        reporting.Error('PTKCarina:CarinaNotFound', 'The carina could not be located');
                     end
                 else
                     k_found = k_index;
                     k_index = k_index + 1;
                     if k_index > k_max
-                        reporting.Error('TDCarina:CarinaNotFound', 'The carina could not be located');
+                        reporting.Error('PTKCarina:CarinaNotFound', 'The carina could not be located');
                     end
                 end
             end

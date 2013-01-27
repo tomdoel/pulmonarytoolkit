@@ -1,13 +1,13 @@
-classdef TDMRILevelSets < TDPlugin
-    % TDMRILevelSets. Plugin for segmenting the lungs from MRI data
+classdef PTKMRILevelSets < PTKPlugin
+    % PTKMRILevelSets. Plugin for segmenting the lungs from MRI data
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDMRILevelSets computes a segmentation of the lungs using a level set
+    %     PTKMRILevelSets computes a segmentation of the lungs using a level set
     %     method
     %
     %
@@ -36,20 +36,20 @@ classdef TDMRILevelSets < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            left_and_right_lungs_initial = dataset.GetResult('TDMRILevelSetsInitialiser');
-            roi = dataset.GetResult('TDLungROI');
-            left_roi = TDGetLeftLungROIFromLeftAndRightLungs(roi, left_and_right_lungs_initial, reporting);
-            right_roi = TDGetRightLungROIFromLeftAndRightLungs(roi, left_and_right_lungs_initial, reporting);
-            results = dataset.GetTemplateImage(TDContext.LungROI);
-            results_left = TDMRILevelSets.ProcessLevelSets(dataset, left_roi, left_and_right_lungs_initial, 2, reporting);
-            results_right = TDMRILevelSets.ProcessLevelSets(dataset, right_roi, left_and_right_lungs_initial, 1, reporting);
+            left_and_right_lungs_initial = dataset.GetResult('PTKMRILevelSetsInitialiser');
+            roi = dataset.GetResult('PTKLungROI');
+            left_roi = PTKGetLeftLungROIFromLeftAndRightLungs(roi, left_and_right_lungs_initial, reporting);
+            right_roi = PTKGetRightLungROIFromLeftAndRightLungs(roi, left_and_right_lungs_initial, reporting);
+            results = dataset.GetTemplateImage(PTKContext.LungROI);
+            results_left = PTKMRILevelSets.ProcessLevelSets(dataset, left_roi, left_and_right_lungs_initial, 2, reporting);
+            results_right = PTKMRILevelSets.ProcessLevelSets(dataset, right_roi, left_and_right_lungs_initial, 1, reporting);
 
             results_right.ResizeToMatch(results);
             results_left.ResizeToMatch(results);
             results_raw = uint8(results_right.RawImage);
             results_raw(results_left.RawImage) = 2;
             results.ChangeRawImage(results_raw);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
         end
         
         function results = ProcessLevelSets(dataset, lung_roi, left_and_right_lungs_initial, mask_colour, reporting)
@@ -57,38 +57,38 @@ classdef TDMRILevelSets < TDPlugin
             lung_mask.ResizeToMatch(lung_roi);
             lung_mask.ChangeRawImage(lung_mask.RawImage == mask_colour);
 
-            threshold = dataset.GetResult('TDMRILungThreshold');
+            threshold = dataset.GetResult('PTKMRILungThreshold');
 
-            results = TDMRILevelSets.SolveLevelSetsByCoronalSlice(lung_roi, lung_mask, threshold.Bounds, reporting);
+            results = PTKMRILevelSets.SolveLevelSetsByCoronalSlice(lung_roi, lung_mask, threshold.Bounds, reporting);
             
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
         end
         
         function results = SolveLevelSetsByCoronalSlice(lung_roi, lung_mask, bounds, reporting)
-            if TDSoftwareInfo.GraphicalDebugMode
+            if PTKSoftwareInfo.GraphicalDebugMode
                 figure_handle = figure;
             else
                 figure_handle = [];
             end
             
             results = lung_mask.Copy;
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
             for coronal_index = 1 : lung_roi.ImageSize(1)
-                lung_roi_slice = TDImage(lung_roi.GetSlice(coronal_index, TDImageOrientation.Coronal));
-                lung_mask_slice = TDImage(lung_mask.GetSlice(coronal_index, TDImageOrientation.Coronal));
+                lung_roi_slice = PTKImage(lung_roi.GetSlice(coronal_index, PTKImageOrientation.Coronal));
+                lung_mask_slice = PTKImage(lung_mask.GetSlice(coronal_index, PTKImageOrientation.Coronal));
                 if any(lung_mask_slice.RawImage(:))
-                    results_slice = TDLevelSets2D(lung_roi_slice, lung_mask_slice, bounds, figure_handle, reporting);
+                    results_slice = PTKLevelSets2D(lung_roi_slice, lung_mask_slice, bounds, figure_handle, reporting);
                 else
                     results_slice = lung_mask_slice;
                 end
-                results.ReplaceImageSlice(results_slice.RawImage, coronal_index, TDImageOrientation.Coronal);
+                results.ReplaceImageSlice(results_slice.RawImage, coronal_index, PTKImageOrientation.Coronal);
             end
             
             results.BinaryMorph(@imopen, 2);
             
             % Select largest component in each coronal slice
             for coronal_index = 1 : results.ImageSize(1)
-                lung_mask_slice = results.GetSlice(coronal_index, TDImageOrientation.Coronal);
+                lung_mask_slice = results.GetSlice(coronal_index, PTKImageOrientation.Coronal);
                 if any(lung_mask_slice(:))
 
                     % Obtain connected component matrix
@@ -102,7 +102,7 @@ classdef TDMRILevelSets < TDPlugin
                     lung_mask_slice(:) = false;
                     lung_mask_slice(cc.PixelIdxList{largest_region_index}) = true;
                     
-                    results.ReplaceImageSlice(lung_mask_slice, coronal_index, TDImageOrientation.Coronal);
+                    results.ReplaceImageSlice(lung_mask_slice, coronal_index, PTKImageOrientation.Coronal);
                 end
             end
         end

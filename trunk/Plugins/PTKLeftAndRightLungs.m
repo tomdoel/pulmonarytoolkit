@@ -1,17 +1,17 @@
-classdef TDLeftAndRightLungs < TDPlugin
-    % TDLeftAndRightLungs. Plugin to segment and label the left and right lungs.
+classdef PTKLeftAndRightLungs < PTKPlugin
+    % PTKLeftAndRightLungs. Plugin to segment and label the left and right lungs.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDLeftAndRightLungs runs the library function
-    %     TDGetMainRegionExcludingBorder on the lung image thresholded using the
-    %     plugin TDThresholdLungFiltered, in order to generate a segmented lung
+    %     PTKLeftAndRightLungs runs the library function
+    %     PTKGetMainRegionExcludingBorder on the lung image thresholded using the
+    %     plugin PTKThresholdLungFiltered, in order to generate a segmented lung
     %     image which includes the airways. The main airways are then obtained
-    %     using the plugin TDAirways and dilated before being removed. The
+    %     using the plugin PTKAirways and dilated before being removed. The
     %     resulting image contains just the lungs.
     %
     %
@@ -41,11 +41,11 @@ classdef TDLeftAndRightLungs < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             if dataset.IsGasMRI
-                results = dataset.GetResult('TDLungMapForGasMRI');
+                results = dataset.GetResult('PTKLungMapForGasMRI');
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
-                results = dataset.GetResult('TDMRILevelSets');
+                results = dataset.GetResult('PTKMRILevelSets');
             else
-                results = dataset.GetResult('TDLeftAndRightLungsInitialiser');
+                results = dataset.GetResult('PTKLeftAndRightLungsInitialiser');
             end
         end
     end

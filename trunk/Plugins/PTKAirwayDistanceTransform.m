@@ -1,9 +1,9 @@
-classdef TDAirwayDistanceTransform < TDPlugin
-    % TDAirwayDistanceTransform. Plugin for distance transform to blood vessels
+classdef PTKAirwayDistanceTransform < PTKPlugin
+    % PTKAirwayDistanceTransform. Plugin for distance transform to blood vessels
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -34,16 +34,16 @@ classdef TDAirwayDistanceTransform < TDPlugin
     methods (Static)
         
         function results = RunPlugin(dataset, ~)    
-            lung_mask = dataset.GetResult('TDLeftAndRightLungs');
+            lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage > 0));
-            [airways, airway_image] = dataset.GetResult('TDAirways');
+            [airways, airway_image] = dataset.GetResult('PTKAirways');
             results = airway_image.BlankCopy;
             
             airways_dt = bwdist(airway_image.RawImage == 1);
 
             airways_dt(~(lung_mask.RawImage > 0)) = 0;
             results.ChangeRawImage(airways_dt);
-            results.ImageType = TDImageType.Scaled;
+            results.ImageType = PTKImageType.Scaled;
         end
         
     end    

@@ -1,16 +1,16 @@
-classdef TDFissurenessVesselsFactor < TDPlugin
-    % TDFissurenessVesselsFactor. Plugin to detect fissures using distance
+classdef PTKFissurenessVesselsFactor < PTKPlugin
+    % PTKFissurenessVesselsFactor. Plugin to detect fissures using distance
     %     transform from blood vessels.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
     %     This is an intermediate stage towards lobar segmentation.
     %
-    %     TDFissurenessVesselsFactor computes the component of the fissureness
+    %     PTKFissurenessVesselsFactor computes the component of the fissureness
     %     generated using analysis of distance transform from blood vessels,
     %     which are segmented using a threshold applied to vesselness.
     %
@@ -46,10 +46,10 @@ classdef TDFissurenessVesselsFactor < TDPlugin
         function results = RunPlugin(dataset, ~)
             
             % Get the mask for the lung parenchyma
-            lung_mask = dataset.GetResult('TDLeftAndRightLungs');
+            lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
             
             % Get the vesselness
-            vesselness = dataset.GetResult('TDVesselness');
+            vesselness = dataset.GetResult('PTKVesselness');
             
             % Threshold vesselness and compute distance transform
             vesselness_threshold = 50;
@@ -64,7 +64,7 @@ classdef TDFissurenessVesselsFactor < TDPlugin
             % Store in results
             results = lung_mask.BlankCopy;            
             results.ChangeRawImage(100*vesselness.*single(lung_mask.RawImage > 0));
-            results.ImageType = TDImageType.Scaled;
+            results.ImageType = PTKImageType.Scaled;
         end
     end
 end

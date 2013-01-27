@@ -1,9 +1,9 @@
-classdef TDInvertImage < TDPlugin
-    % TDInvertImage. Plugin for returning inverted image data.
+classdef PTKInvertImage < PTKPlugin
+    % PTKInvertImage. Plugin for returning inverted image data.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -34,10 +34,10 @@ classdef TDInvertImage < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             if dataset.IsGasMRI
-                results = dataset.GetResult('TDOriginalImage');
-                results = TDImageUtilities.InvertImage(results);
+                results = dataset.GetResult('PTKOriginalImage');
+                results = PTKImageUtilities.InvertImage(results);
             else
-                reporting.Error('TDInvertImage:InvalidModality', 'This plugin is only for use with gas MRI images');
+                reporting.Error('PTKInvertImage:InvalidModality', 'This plugin is only for use with gas MRI images');
             end
         end
     end

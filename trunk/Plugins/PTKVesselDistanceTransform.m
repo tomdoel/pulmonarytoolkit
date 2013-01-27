@@ -1,9 +1,9 @@
-classdef TDVesselDistanceTransform < TDPlugin
-    % TDVesselDistanceTransform. Plugin for distance transform to blood vessels
+classdef PTKVesselDistanceTransform < PTKPlugin
+    % PTKVesselDistanceTransform. Plugin for distance transform to blood vessels
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -34,16 +34,16 @@ classdef TDVesselDistanceTransform < TDPlugin
     methods (Static)
         
         function results = RunPlugin(dataset, ~)    
-            lung_mask = dataset.GetResult('TDLeftAndRightLungs');
+            lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage > 0));
-            vesselness = dataset.GetResult('TDVesselness');
+            vesselness = dataset.GetResult('PTKVesselness');
             results = vesselness.BlankCopy;
             
             vesselness_dt = bwdist(vesselness.RawImage > 20);
 
             vesselness_dt(~(lung_mask.RawImage > 0)) = 0;
             results.ChangeRawImage(vesselness_dt);
-            results.ImageType = TDImageType.Scaled;
+            results.ImageType = PTKImageType.Scaled;
         end
         
     end
@@ -53,7 +53,7 @@ classdef TDVesselDistanceTransform < TDPlugin
             vesselness_raw = single(vesselness.RawImage);
             filter_size = 10;            
             vesselness.ChangeRawImage(vesselness_raw);
-            filtered_vesselness = TDGaussianFilter(vesselness, filter_size);
+            filtered_vesselness = PTKGaussianFilter(vesselness, filter_size);
         end
     end
 end

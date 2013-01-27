@@ -1,13 +1,13 @@
-classdef TDOriginalImage < TDPlugin
-    % TDOriginalImage. Plugin to obtain hte uncropped full-size image
+classdef PTKOriginalImage < PTKPlugin
+    % PTKOriginalImage. Plugin to obtain hte uncropped full-size image
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDOriginalImage loads the original image data from disk. Since
+    %     PTKOriginalImage loads the original image data from disk. Since
     %     full-size images can be very large, and plugins normally use the
     %     region of interest, this plugin result is not usually
     %     cached by default.
@@ -40,7 +40,7 @@ classdef TDOriginalImage < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             reporting.ShowProgress('Loading Images');
-            results = TDOriginalImage.LoadImages(dataset.GetImageInfo, reporting);
+            results = PTKOriginalImage.LoadImages(dataset.GetImageInfo, reporting);
             reporting.CompleteProgress;
         end
         
@@ -51,17 +51,17 @@ classdef TDOriginalImage < TDPlugin
             study_uid = image_info.StudyUid;
             
             if isempty(filenames)
-                filenames = TDDiskUtilities.GetDirectoryFileList(image_path, '*');
+                filenames = PTKDiskUtilities.GetDirectoryFileList(image_path, '*');
             end
             
             switch(image_file_format)
-                case TDImageFileFormat.Dicom
-                    additional_file_checks = ~TDSoftwareInfo.FastMode;
-                    image = TDLoadImageFromDicomFiles(image_path, filenames, additional_file_checks, reporting);
-                case TDImageFileFormat.Metaheader
-                    image = TDLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
+                case PTKImageFileFormat.Dicom
+                    additional_file_checks = ~PTKSoftwareInfo.FastMode;
+                    image = PTKLoadImageFromDicomFiles(image_path, filenames, additional_file_checks, reporting);
+                case PTKImageFileFormat.Metaheader
+                    image = PTKLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
                 otherwise
-                    reporting.Error('TDOriginalImage:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
+                    reporting.Error('PTKOriginalImage:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
             end            
         end
 

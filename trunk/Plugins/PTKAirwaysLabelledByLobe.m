@@ -1,16 +1,16 @@
-classdef TDAirwaysLabelledByLobe < TDPlugin
-    % TDAirwaysLabelledByLobe. Plugin to visualise the airway tree labelled
+classdef PTKAirwaysLabelledByLobe < PTKPlugin
+    % PTKAirwaysLabelledByLobe. Plugin to visualise the airway tree labelled
     % according to lobe
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDAirwaysLabelledByLobe calls the TDAirways plugin to segment the
-    %     airway tree and the TDAirwayCentreline plguin to obtain the airway
-    %     centreline. It then calls the library function TDGetAirwaysLabelledByLobe
+    %     PTKAirwaysLabelledByLobe calls the PTKAirways plugin to segment the
+    %     airway tree and the PTKAirwayCentreline plguin to obtain the airway
+    %     centreline. It then calls the library function PTKGetAirwaysLabelledByLobe
     %     to allocate each broncus to the unique lobe it serves. Bronchi serving
     %     more than one lobe are not displayed.
     %
@@ -49,14 +49,14 @@ classdef TDAirwaysLabelledByLobe < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            results_image = dataset.GetTemplateImage(TDContext.LungROI);
-            [airway_results, airway_image] = dataset.GetResult('TDAirways');
-            centreline_results = dataset.GetResult('TDAirwayCentreline');
-            [airways_by_lobe, start_branches] = TDGetAirwaysLabelledByLobe(results_image, airway_results, centreline_results.AirwayCentrelineTree, reporting);
+            results_image = dataset.GetTemplateImage(PTKContext.LungROI);
+            [airway_results, airway_image] = dataset.GetResult('PTKAirways');
+            centreline_results = dataset.GetResult('PTKAirwayCentreline');
+            [airways_by_lobe, start_branches] = PTKGetAirwaysLabelledByLobe(results_image, airway_results, centreline_results.AirwayCentrelineTree, reporting);
             airway_image = 7*uint8(airway_image.RawImage == 1);
             airway_image(airways_by_lobe > 0) = airways_by_lobe(airways_by_lobe > 0);
             results_image.ChangeRawImage(airway_image);
-            results_image.ImageType = TDImageType.Colormap;
+            results_image.ImageType = PTKImageType.Colormap;
             results = [];
             results.AirwaysByLobeImage = results_image;
             results.StartBranches = start_branches;

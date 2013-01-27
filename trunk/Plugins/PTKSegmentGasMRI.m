@@ -1,9 +1,9 @@
-classdef TDSegmentGasMRI < TDPlugin
-    % TDSegmentGasMRI. Plugin for segmenting the lungs from gas MRI data.
+classdef PTKSegmentGasMRI < PTKPlugin
+    % PTKSegmentGasMRI. Plugin for segmenting the lungs from gas MRI data.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -34,10 +34,10 @@ classdef TDSegmentGasMRI < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            results = dataset.GetResult('TDOriginalImage');
-            results = TDGaussianFilter(results, 2);
+            results = dataset.GetResult('PTKOriginalImage');
+            results = PTKGaussianFilter(results, 2);
             results.ChangeRawImage(results.RawImage > 15);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
        end
     end
 end

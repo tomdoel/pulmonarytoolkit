@@ -1,14 +1,14 @@
-classdef TDFrequencyDistribution < TDPlugin
-    % TDFrequencyDistribution. Plugin for showing a CT histogram showing the
+classdef PTKFrequencyDistribution < PTKPlugin
+    % PTKFrequencyDistribution. Plugin for showing a CT histogram showing the
     %     number of voxels falling into different compartments
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDFrequencyDistribution opens a new window with an annotated CT
+    %     PTKFrequencyDistribution opens a new window with an annotated CT
     %     histogram as a smoothed curve.
     %
     %
@@ -39,20 +39,20 @@ classdef TDFrequencyDistribution < TDPlugin
         function results = RunPlugin(application, reporting)
             results = [];
 
-            roi = application.GetResult('TDLungROI');
+            roi = application.GetResult('PTKLungROI');
             
             if ~roi.IsCT
-                reporting.ShowMessage('TDFrequencyDistribution:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
+                reporting.ShowMessage('PTKFrequencyDistribution:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
                 return;
             end
             
-            left_and_right_lungs = application.GetResult('TDLeftAndRightLungs');
+            left_and_right_lungs = application.GetResult('PTKLeftAndRightLungs');
             
             
             figure_handle = figure;
             axes_handle = gca;
             set(figure_handle, 'Name', [roi.Title ' : CT Histogram']);
-            TDFrequencyDistribution.Maximize;
+            PTKFrequencyDistribution.Maximize;
             
             hold(axes_handle, 'on');
             
@@ -65,33 +65,33 @@ classdef TDFrequencyDistribution < TDPlugin
                         
             
             % Whole lung
-            TDFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage > 0, 'k', axes_handle);
+            PTKFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage > 0, 'k', axes_handle);
             
             % Left and right lungs
-            TDFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage == 2, 'r', axes_handle);
-            TDFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage == 1, 'b', axes_handle);
+            PTKFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage == 2, 'r', axes_handle);
+            PTKFrequencyDistribution.Histogram(roi, left_and_right_lungs.RawImage == 1, 'b', axes_handle);
             legend_strings = {'Whole lung', 'Left lung', 'Right lung'};
 
             % Lobes
-            lobes = application.GetResult('TDLobesFromFissurePlane');
-            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
-            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
-            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);
-            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 5, 'm', axes_handle);
-            TDFrequencyDistribution.Histogram(roi, lobes.RawImage == 6, 'y', axes_handle);
+            lobes = application.GetResult('PTKLobesFromFissurePlane');
+            PTKFrequencyDistribution.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
+            PTKFrequencyDistribution.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
+            PTKFrequencyDistribution.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);
+            PTKFrequencyDistribution.Histogram(roi, lobes.RawImage == 5, 'm', axes_handle);
+            PTKFrequencyDistribution.Histogram(roi, lobes.RawImage == 6, 'y', axes_handle);
             legend_strings = {'Whole lung', 'Upper right lobe', 'Middle right lobe', 'Lower right lobe', 'Upper left lobe', 'Lower left lobe'};
   
-            legend(legend_strings, 'FontName', TDSoftwareInfo.GraphFont, 'FontSize', 20, 'Location', 'East');
+            legend(legend_strings, 'FontName', PTKSoftwareInfo.GraphFont, 'FontSize', 20, 'Location', 'East');
 
             % Set tick marks
             set(axes_handle, 'XTick', -1000:100:100);
             set(axes_handle, 'YTick', 0:10:50);
             
             % Label the compartments
-            text('Parent', axes_handle, 'Position', [-900-5, max_y-2], 'String', 'Hyperinflated', 'FontName', TDSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
-            text('Parent', axes_handle, 'Position', [-500-5, max_y-2], 'String', 'Normally aerated', 'FontName', TDSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
-            text('Parent', axes_handle, 'Position', [-100-5, max_y-2], 'String', 'Normally aerated', 'FontName', TDSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
-            text('Parent', axes_handle, 'Position', [ 200-5, max_y-2], 'String', 'Non aerated', 'FontName', TDSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
+            text('Parent', axes_handle, 'Position', [-900-5, max_y-2], 'String', 'Hyperinflated', 'FontName', PTKSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
+            text('Parent', axes_handle, 'Position', [-500-5, max_y-2], 'String', 'Normally aerated', 'FontName', PTKSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
+            text('Parent', axes_handle, 'Position', [-100-5, max_y-2], 'String', 'Normally aerated', 'FontName', PTKSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
+            text('Parent', axes_handle, 'Position', [ 200-5, max_y-2], 'String', 'Non aerated', 'FontName', PTKSoftwareInfo.GraphFont, 'HorizontalAlignment', 'Right', 'rotation', 90, 'VerticalAlignment', 'Bottom', 'Color', 'k', 'FontSize', 20);
             
             % Draw lines between the compartments
             line('Parent', axes_handle, 'XData', [-1000, -1000], 'YData', [0 max_y], 'Color', 'b', 'LineStyle', '--')

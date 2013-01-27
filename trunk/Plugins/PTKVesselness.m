@@ -1,22 +1,22 @@
-classdef TDVesselness < TDPlugin
-    % TDVesselness. Plugin for detecting blood vessels
+classdef PTKVesselness < PTKPlugin
+    % PTKVesselness. Plugin for detecting blood vessels
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDVesselness computes a mutiscale vesselness filter based on Frangi et
+    %     PTKVesselness computes a mutiscale vesselness filter based on Frangi et
     %     al., 1998. "Multiscale Vessel Enhancement Filtering". The filter
     %     returns a value at each point which in some sense representes the
     %     probability of that point belonging to a blood vessel.
     %
     %     To reduce memory usage, the left and right lungs are filtered
     %     separately and each is further divided into subimages using the
-    %     TDImageDividerHessian function. This will compute the eigenvalues of
+    %     PTKImageDividerHessian function. This will compute the eigenvalues of
     %     the Hessian matrix for each subimage and use these to compute the
-    %     vesselness using the TDComputeVesselnessFromHessianeigenvalues
+    %     vesselness using the PTKComputeVesselnessFromHessianeigenvalues
     %     function.
     %
     %
@@ -45,26 +45,26 @@ classdef TDVesselness < TDPlugin
     methods (Static)
         
         function results = RunPlugin(dataset, reporting)
-            right_lung = dataset.GetResult('TDGetRightLungROI');
+            right_lung = dataset.GetResult('PTKGetRightLungROI');
             
-            vesselness_right = TDVesselness.ComputeVesselness(right_lung, reporting, false);
+            vesselness_right = PTKVesselness.ComputeVesselness(right_lung, reporting, false);
             
-            left_lung = dataset.GetResult('TDGetLeftLungROI');
-            vesselness_left = TDVesselness.ComputeVesselness(left_lung, reporting, true);
+            left_lung = dataset.GetResult('PTKGetLeftLungROI');
+            vesselness_left = PTKVesselness.ComputeVesselness(left_lung, reporting, true);
             
-            left_and_right_lungs = dataset.GetResult('TDLeftAndRightLungs');
+            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
             
-            results = TDCombineLeftAndRightImages(dataset.GetTemplateImage(TDContext.LungROI), vesselness_left, vesselness_right, left_and_right_lungs);
+            results = PTKCombineLeftAndRightImages(dataset.GetTemplateImage(PTKContext.LungROI), vesselness_left, vesselness_right, left_and_right_lungs);
             
-            lung = dataset.GetResult('TDLeftAndRightLungs');
+            lung = dataset.GetResult('PTKLeftAndRightLungs');
             results.ChangeRawImage(results.RawImage.*single(lung.RawImage > 0));
-            results.ImageType = TDImageType.Scaled;
+            results.ImageType = PTKImageType.Scaled;
         end
         
         function results = GenerateImageFromResults(results, ~, ~)
             vesselness_raw = 3*uint8(results.RawImage > 20);
             results.ChangeRawImage(vesselness_raw);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
         end        
         
     end
@@ -76,7 +76,7 @@ classdef TDVesselness < TDPlugin
             vesselness = [];
             for sigma = sigma_range
                 mask = [];
-                vesselness_next = TDImageDividerHessian(image_data.Copy, @TDVesselness.ComputeVesselnessPartImageNew, mask, sigma, [], false, false, is_left_lung, reporting);
+                vesselness_next = PTKImageDividerHessian(image_data.Copy, @PTKVesselness.ComputeVesselnessPartImageNew, mask, sigma, [], false, false, is_left_lung, reporting);
                 vesselness_next.ChangeRawImage(100*vesselness_next.RawImage);
                 if isempty(vesselness)
                     vesselness =  vesselness_next.Copy;
@@ -87,7 +87,7 @@ classdef TDVesselness < TDPlugin
         end
                 
         function vesselness_wrapper = ComputeVesselnessPartImageNew(hessian_eigs_wrapper)
-            vesselness_wrapper = TDComputeVesselnessFromHessianeigenvalues(hessian_eigs_wrapper);
+            vesselness_wrapper = PTKComputeVesselnessFromHessianeigenvalues(hessian_eigs_wrapper);
         end
         
     end

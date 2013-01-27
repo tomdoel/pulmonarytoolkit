@@ -1,9 +1,9 @@
-classdef TDROIDividedIntoLeftAndRight < TDPlugin
-    % TDROIDividedIntoLeftAndRight. Plugin to divide the roi region into left and right
+classdef PTKROIDividedIntoLeftAndRight < PTKPlugin
+    % PTKROIDividedIntoLeftAndRight. Plugin to divide the roi region into left and right
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -34,7 +34,7 @@ classdef TDROIDividedIntoLeftAndRight < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            results = dataset.GetResult('TDLeftAndRightLungs');
+            results = dataset.GetResult('PTKLeftAndRightLungs');
             [~, nn_index] = bwdist(results.RawImage > 0);
             results_raw = results.RawImage(nn_index);
             results.ChangeRawImage(results_raw);

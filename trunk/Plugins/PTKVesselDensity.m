@@ -1,16 +1,16 @@
-classdef TDVesselDensity < TDPlugin
-    % TDVesselDensity. Plugin for approximating a measure of vesesl density
+classdef PTKVesselDensity < PTKPlugin
+    % PTKVesselDensity. Plugin for approximating a measure of vesesl density
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDVesselDensity computes a measure which gives an approximation for
+    %     PTKVesselDensity computes a measure which gives an approximation for
     %     the density of blood vesels in the region surrounding each voxel. This
     %     is computed by applying a strong Gaussian filter to the multiscale
-    %     vesselness filter calculated using the TDVesselness plugin.
+    %     vesselness filter calculated using the PTKVesselness plugin.
     %
     %
     %     Licence
@@ -38,17 +38,17 @@ classdef TDVesselDensity < TDPlugin
     methods (Static)
         
         function results = RunPlugin(dataset, ~)    
-            lung_mask = dataset.GetResult('TDLeftAndRightLungs');
+            lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage > 0));
-            vesselness = dataset.GetResult('TDVesselness');
+            vesselness = dataset.GetResult('PTKVesselness');
             results = vesselness.BlankCopy;
                         
-            filtered_vesselness = TDVesselDensity.CalculateVesselDensity(vesselness);
+            filtered_vesselness = PTKVesselDensity.CalculateVesselDensity(vesselness);
             
             filtered_vesselness_raw = filtered_vesselness.RawImage;
             filtered_vesselness_raw(~(lung_mask.RawImage > 0)) = 0;
             results.ChangeRawImage(filtered_vesselness_raw);
-            results.ImageType = TDImageType.Scaled;
+            results.ImageType = PTKImageType.Scaled;
         end
         
     end
@@ -58,7 +58,7 @@ classdef TDVesselDensity < TDPlugin
             vesselness_raw = single(vesselness.RawImage);
             filter_size = 10;            
             vesselness.ChangeRawImage(vesselness_raw);
-            filtered_vesselness = TDGaussianFilter(vesselness, filter_size);
+            filtered_vesselness = PTKGaussianFilter(vesselness, filter_size);
         end
     end
 end

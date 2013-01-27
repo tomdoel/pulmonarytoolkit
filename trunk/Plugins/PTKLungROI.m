@@ -1,13 +1,13 @@
-classdef TDLungROI < TDPlugin
-    % TDLungROI. Plugin for finding the lung region of interest.
+classdef PTKLungROI < PTKPlugin
+    % PTKLungROI. Plugin for finding the lung region of interest.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
-    %     TDLungROI runs the library function TDGetLungROI to find the region of
+    %     PTKLungROI runs the library function PTKGetLungROI to find the region of
     %     interest for the lung image.
     %
     %
@@ -37,16 +37,16 @@ classdef TDLungROI < TDPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             if dataset.IsGasMRI
-                lung_threshold = dataset.GetResult('TDUnclosedLungIncludingTrachea');
+                lung_threshold = dataset.GetResult('PTKUnclosedLungIncludingTrachea');
                 lung_threshold.CropToFit;
-                results = dataset.GetResult('TDOriginalImage');
+                results = dataset.GetResult('PTKOriginalImage');
                 results.ResizeToMatch(lung_threshold);
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
-                lung_threshold = dataset.GetResult('TDMRILungThreshold');
-                results = dataset.GetResult('TDOriginalImage');
+                lung_threshold = dataset.GetResult('PTKMRILungThreshold');
+                results = dataset.GetResult('PTKOriginalImage');
                 results.ResizeToMatch(lung_threshold.LungMask);                
             else            
-                results = TDGetLungROI(dataset.GetResult('TDOriginalImage'), reporting);
+                results = PTKGetLungROI(dataset.GetResult('PTKOriginalImage'), reporting);
             end
         end
     end

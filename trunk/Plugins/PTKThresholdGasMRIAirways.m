@@ -1,9 +1,9 @@
-classdef TDThresholdGasMRIAirways < TDPlugin
-    % TDThresholdGasMRIAirways. Plugin for segmenting the lungs from gas MRI data.
+classdef PTKThresholdGasMRIAirways < PTKPlugin
+    % PTKThresholdGasMRIAirways. Plugin for segmenting the lungs from gas MRI data.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See TDPlugin.m for more information on how to run plugins.
+    %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
     %
@@ -34,8 +34,8 @@ classdef TDThresholdGasMRIAirways < TDPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            results = dataset.GetResult('TDOriginalImage');
-            results_filtered = TDGaussianFilter(results, 2);
+            results = dataset.GetResult('PTKOriginalImage');
+            results_filtered = PTKGaussianFilter(results, 2);
             results_filtered.ChangeRawImage(results_filtered.RawImage > 50);
             results.ChangeRawImage(results.RawImage > 100);
             extended = results.Copy;
@@ -45,7 +45,7 @@ classdef TDThresholdGasMRIAirways < TDPlugin
             extended.ChangeRawImage(extended.RawImage | extended_raw);
             extended.ChangeRawImage(extended.RawImage & results_filtered.RawImage);
             results.ChangeRawImage(results.RawImage | extended.RawImage);
-            results.ImageType = TDImageType.Colormap;
+            results.ImageType = PTKImageType.Colormap;
        end
     end
 end
