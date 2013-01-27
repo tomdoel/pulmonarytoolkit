@@ -1,10 +1,10 @@
-function TDAddPtkPaths(varargin)
+function PTKAddPtkPaths(varargin)
     
     force = nargin > 0 && strcmp(varargin{1}, 'force');
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    TDAddPtkPaths_Version_Number = 1;
+    PTKAddPtkPaths_Version_Number = 1;
     
     persistent PTK_PathsHaveBeenSet
     
@@ -55,8 +55,8 @@ function TDAddPtkPaths(varargin)
     end
     
     % Add additional user-specific paths specified in the file
-    % User/TDAddUserPaths.m if it exists
-    user_function_name = 'TDAddUserPaths';
+    % User/PTKAddUserPaths.m if it exists
+    user_function_name = 'PTKAddUserPaths';
     user_add_paths_function = fullfile(path_root, 'User', [user_function_name '.m']);
     if exist(user_add_paths_function, 'file')
         if force

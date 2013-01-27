@@ -1,11 +1,11 @@
-classdef TDDatasetResults < handle
-    % TDDatasetResults. 
+classdef PTKDatasetResults < handle
+    % PTKDatasetResults. 
     %
     %     This class is used to run calculations and fetch cached
-    %     results associated with a dataset. The difference between TDDataset 
-    %     and TDDatasetResults is that TDDataset is called from outside the 
-    %     toolkit, whereas TDDatasetResults is called by plugins during their 
-    %     RunPlugin() call. TDDataset calls TDDatasetResults, but provides 
+    %     results associated with a dataset. The difference between PTKDataset 
+    %     and PTKDatasetResults is that PTKDataset is called from outside the 
+    %     toolkit, whereas PTKDatasetResults is called by plugins during their 
+    %     RunPlugin() call. PTKDataset calls PTKDatasetResults, but provides 
     %     additional progress and error reporting and dependency tracking.
     %
     %     You should not create this class directly. An instance of this class
@@ -13,12 +13,12 @@ classdef TDDatasetResults < handle
     %
     %     Example: 
     %
-    %     classdef MyPlugin < TDPlugin
+    %     classdef MyPlugin < PTKPlugin
     %
     %     methods (Static)
     %         function results = RunPlugin(dataset_results, reporting)
     %             ...
-    %             airway_results = dataset_results.GetResult('TDAirways');
+    %             airway_results = dataset_results.GetResult('PTKAirways');
     %             ...
     %         end
     %     end
@@ -41,19 +41,19 @@ classdef TDDatasetResults < handle
         PreviewImages      % Stores the thumbnail preview images
         ImageInfo          % Information about this dataset
         
-        % A pointer to the TDDataset object which contains the event to be triggered when a preview thumbnail image has changed
+        % A pointer to the PTKDataset object which contains the event to be triggered when a preview thumbnail image has changed
         ExternalWrapperNotifyFunction
         
     end
     
     methods
-        function obj = TDDatasetResults(image_info, preview_images, external_notify_function, dataset_disk_cache, reporting)
+        function obj = PTKDatasetResults(image_info, preview_images, external_notify_function, dataset_disk_cache, reporting)
             obj.ImageInfo = image_info;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
             obj.Reporting = reporting;
-            obj.ImageTemplates = TDImageTemplates(obj, dataset_disk_cache, reporting);
+            obj.ImageTemplates = PTKImageTemplates(obj, dataset_disk_cache, reporting);
             obj.PreviewImages = preview_images;
-            obj.DependencyTracker = TDPluginDependencyTracker(dataset_disk_cache);
+            obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache);
         end
 
         % Returns the results of a plugin. If a valid result is cached on disk,
@@ -73,14 +73,14 @@ classdef TDDatasetResults < handle
             obj.Reporting.PopProgress;
         end
 
-        % Returns a TDImageInfo structure with image information, including the
+        % Returns a PTKImageInfo structure with image information, including the
         % UID, filenames and file path
         function image_info = GetImageInfo(obj)
             image_info = obj.ImageInfo;
         end
         
         % Returns an empty template image for the specified context
-        % See TDImageTemplates.m for valid contexts
+        % See PTKImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack)
             template_image = obj.ImageTemplates.GetTemplateImage(context, linked_dataset_chooser, dataset_stack);
         end
@@ -99,7 +99,7 @@ classdef TDDatasetResults < handle
             if ~strcmp(obj.GetImageInfo.Modality, 'MR')
                 return;
             else
-                template = obj.GetTemplateImage(TDContext.OriginalImage, linked_dataset_chooser, dataset_stack);
+                template = obj.GetTemplateImage(PTKContext.OriginalImage, linked_dataset_chooser, dataset_stack);
                 if strcmp(template.MetaHeader.SeriesDescription(1:2), 'Xe')
                     is_gas_mri = true;
                 end
@@ -140,7 +140,7 @@ classdef TDDatasetResults < handle
             
             % We generate an output image if requested, or if we need to generate a preview image
             if generate_image || cache_preview
-                if isa(result, 'TDImage')
+                if isa(result, 'PTKImage')
                     output_image = obj.GenerateImageFromResults(plugin_info, linked_dataset_chooser, dataset_stack, result.Copy);
                 else
                     output_image = obj.GenerateImageFromResults(plugin_info, linked_dataset_chooser, dataset_stack, result);
@@ -158,12 +158,12 @@ classdef TDDatasetResults < handle
                 % Fire an event indictaing the preview image has changed. This
                 % will allow any listening gui to update its preview images if
                 % necessary
-                obj.ExternalWrapperNotifyFunction('PreviewImageChanged', TDEventData(plugin_name));
+                obj.ExternalWrapperNotifyFunction('PreviewImageChanged', PTKEventData(plugin_name));
             end
             
             % If a context has been specified then resize the output image
             % to this context
-            if ~isempty(context) && isa(result, 'TDImage')
+            if ~isempty(context) && isa(result, 'PTKImage')
                 template_image = obj.ImageTemplates.GetTemplateImage(context, linked_dataset_chooser, dataset_stack);
                 result.ResizeToMatch(template_image);
             end
@@ -178,7 +178,7 @@ classdef TDDatasetResults < handle
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
-            if TDSoftwareInfo.DebugMode
+            if PTKSoftwareInfo.DebugMode
                 [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, obj.Reporting);
             else
                 try
@@ -191,9 +191,9 @@ classdef TDDatasetResults < handle
         end
         
         function output_image = GenerateImageFromResults(obj, plugin_info, linked_dataset_chooser, dataset_stack, result)
-            template_callback = TDTemplateCallback(linked_dataset_chooser, dataset_stack);
+            template_callback = PTKTemplateCallback(linked_dataset_chooser, dataset_stack);
             
-            if TDSoftwareInfo.DebugMode
+            if PTKSoftwareInfo.DebugMode
                 output_image = plugin_info.GenerateImageFromResults(result, template_callback, obj.Reporting);
             else
                 try

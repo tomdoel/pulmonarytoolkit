@@ -1,5 +1,5 @@
-classdef TDDatasetStack < handle
-    % TDDatasetStack. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKDatasetStack < handle
+    % PTKDatasetStack. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -30,7 +30,7 @@ classdef TDDatasetStack < handle
     
     properties (Access = private)
         
-        % The stack - an array of TDDatasetStackItem objects; one for each plugin which is
+        % The stack - an array of PTKDatasetStackItem objects; one for each plugin which is
         % currently being executed.
         DatasetStack
 
@@ -39,21 +39,21 @@ classdef TDDatasetStack < handle
     end
     
     methods
-        function obj =  TDDatasetStack(reporting)
-            obj.DatasetStack = TDDatasetStackItem.empty;
+        function obj =  PTKDatasetStack(reporting)
+            obj.DatasetStack = PTKDatasetStackItem.empty;
             obj.Reporting = reporting;
         end
     
-        % Create a new TDDatasetStackItem object with an empty dependency list and a
+        % Create a new PTKDatasetStackItem object with an empty dependency list and a
         % new unique identifier. The push it to the end of the stack
         function CreateAndPush(obj, plugin_name, dataset_uid, ignore_dependency_checks, start_timer)
             if obj.PluginAlreadyExistsInStack(plugin_name)
-                obj.Reporting.Error('TDDatasetStack:RecursivePluginCall', 'Recursive plugin call');
+                obj.Reporting.Error('PTKDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
             attributes = [];
             attributes.IgnoreDependencyChecks = ignore_dependency_checks;
-            instance_identifier = TDDependency(plugin_name, TDDiskUtilities.GenerateUid, dataset_uid, attributes);
-            cache_info = TDDatasetStackItem(instance_identifier, TDDependencyList, ignore_dependency_checks, start_timer, obj.Reporting);
+            instance_identifier = PTKDependency(plugin_name, PTKDiskUtilities.GenerateUid, dataset_uid, attributes);
+            cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, ignore_dependency_checks, start_timer, obj.Reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end
         
@@ -77,7 +77,7 @@ classdef TDDatasetStack < handle
         % Clear the stack. This may be necessary if a plugin failed during
         % execution, leaving the call stack in a bad state.
         function ClearStack(obj)
-            obj.DatasetStack = TDDatasetStackItem.empty;
+            obj.DatasetStack = PTKDatasetStackItem.empty;
         end
         
         % Pause the timer used to generate SelfTime for the most recent plugin

@@ -1,10 +1,10 @@
-classdef TDPluginDependencyTracker < handle
-    % TDPluginDependencyTracker. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKPluginDependencyTracker < handle
+    % PTKPluginDependencyTracker. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     TDPluginDependencyTracker is used by TDDataset to fetch plugin results
+    %     PTKPluginDependencyTracker is used by PTKDataset to fetch plugin results
     %     and run plugins, and build a dependency list for the plugin.
     %     A plugin may require the result of another plugin during its
     %     execution. This is a dependency, and the complete list of dependencies
@@ -33,7 +33,7 @@ classdef TDPluginDependencyTracker < handle
     
     methods
         
-        function obj = TDPluginDependencyTracker(dataset_disk_cache)
+        function obj = PTKPluginDependencyTracker(dataset_disk_cache)
             obj.DatasetDiskCache = dataset_disk_cache;
         end
         
@@ -41,7 +41,7 @@ classdef TDPluginDependencyTracker < handle
         function cache_info = GetCacheInfo(obj, plugin_name)
             [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, reporting);
             if isempty(result) || isempty(cache_info)
-                reporting.ShowWarning('TDPluginDependencyTracker:NoCacheInfo', ['No cached value was found for plugin ' plugin_name '.'], []);
+                reporting.ShowWarning('PTKPluginDependencyTracker:NoCacheInfo', ['No cached value was found for plugin ' plugin_name '.'], []);
             end
         end
         
@@ -61,7 +61,7 @@ classdef TDPluginDependencyTracker < handle
                 if ~isempty(cache_info)
                     dependencies = cache_info.DependencyList;
                     if ~linked_dataset_chooser.CheckDependenciesValid(dependencies)
-                        reporting.ShowWarning('TDPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
+                        reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
                         result = [];
                     end
                 end
@@ -73,7 +73,7 @@ classdef TDPluginDependencyTracker < handle
                     dataset_stack.AddDependenciesToAllPluginsInStack(dependencies);
                     
                     dependency = cache_info.InstanceIdentifier;
-                    dependency_list_for_this_plugin = TDDependencyList;
+                    dependency_list_for_this_plugin = PTKDependencyList;
                     dependency_list_for_this_plugin.AddDependency(dependency, reporting);
                     dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin);
                 end
@@ -93,21 +93,21 @@ classdef TDPluginDependencyTracker < handle
                 % being called (plugin_name) and the UID of the dataset the
                 % result is being requested from; however, the stack belongs to
                 % the primary dataset
-                dataset_stack.CreateAndPush(plugin_name, dataset_uid, ignore_dependency_checks, TDSoftwareInfo.TimeFunctions);
+                dataset_stack.CreateAndPush(plugin_name, dataset_uid, ignore_dependency_checks, PTKSoftwareInfo.TimeFunctions);
                 
-                dataset_callback = TDDatasetCallback(linked_dataset_chooser, dataset_stack);
+                dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack);
 
                 % This is the actual call which runs the plugin
                 result = plugin_info.RunPlugin(dataset_callback, reporting);
                 
                 new_cache_info = dataset_stack.Pop;
                 
-                if TDSoftwareInfo.TimeFunctions
+                if PTKSoftwareInfo.TimeFunctions
                     dataset_stack.ResumeTiming;
                 end
                 
                 if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
-                    reporting.Error('TDPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
+                    reporting.Error('PTKPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
                 end
                 
                 % Get the newly calculated list of dependencies for this
@@ -124,7 +124,7 @@ classdef TDPluginDependencyTracker < handle
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependencies);
                 
                 dependency = new_cache_info.InstanceIdentifier;
-                dependency_list_for_this_plugin = TDDependencyList;
+                dependency_list_for_this_plugin = PTKDependencyList;
                 dependency_list_for_this_plugin.AddDependency(dependency, reporting);
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin);
                 

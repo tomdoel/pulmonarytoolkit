@@ -1,31 +1,31 @@
-classdef TDDataset < handle
-    % TDDataset. Use this class to obtain results and associated data for a particualar dataset.
+classdef PTKDataset < handle
+    % PTKDataset. Use this class to obtain results and associated data for a particualar dataset.
     %
     %     This class is used by scripts and GUI applications to run
     %     calculations, fetch cached results and access data associated with a
-    %     dataset. The difference between TDDataset and TDDatasetResults is that
-    %     TDDataset is called from outside the toolkit, whereas TDDatasetResults
-    %     is called by plugins during their RunPlugin() call. TDDataset 
-    %     calls TDDatasetResults, but provides additional progress and error 
+    %     dataset. The difference between PTKDataset and PTKDatasetResults is that
+    %     PTKDataset is called from outside the toolkit, whereas PTKDatasetResults
+    %     is called by plugins during their RunPlugin() call. PTKDataset 
+    %     calls PTKDatasetResults, but provides additional progress and error 
     %     reporting and dependency tracking.
     %
-    %     Each dataset will have its own instance of TDDataset.
+    %     Each dataset will have its own instance of PTKDataset.
     %
     %     You should not create this class directly. Instead, create an instance of
     %     the class PTKMain and use the methods CreateDatasetFromInfo and
-    %     CreateDatasetFromUid to get a TDDataset object for each dataset you are
+    %     CreateDatasetFromUid to get a PTKDataset object for each dataset you are
     %     working with.
     %
     %     Example: Replace <image path> and <filenames> with the path and filenames
     %     to your image data.
     %
-    %         image_info = TDImageInfo( <image path>, <filenames>, [], [], [], []);
+    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
     %         ptk = PTKMain;
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %
     %     You can then obtain results from this dataset, e.g.
     %
-    %         airways = dataset.GetResult('TDAirways');
+    %         airways = dataset.GetResult('PTKAirways');
     %
     %
     %     Licence
@@ -50,14 +50,14 @@ classdef TDDataset < handle
 
     methods
         
-        % TDDataset is created by the PTKMain class
-        function obj = TDDataset(image_info, dataset_disk_cache, reporting)
-            obj.DatasetStack = TDDatasetStack(reporting);
+        % PTKDataset is created by the PTKMain class
+        function obj = PTKDataset(image_info, dataset_disk_cache, reporting)
+            obj.DatasetStack = PTKDatasetStack(reporting);
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.Reporting = reporting;
-            obj.PreviewImages = TDPreviewImages(dataset_disk_cache, reporting);
-            dataset_results = TDDatasetResults(image_info, obj.PreviewImages, @obj.notify, dataset_disk_cache, reporting);
-            obj.LinkedDatasetChooser = TDLinkedDatasetChooser(dataset_results);
+            obj.PreviewImages = PTKPreviewImages(dataset_disk_cache, reporting);
+            dataset_results = PTKDatasetResults(image_info, obj.PreviewImages, @obj.notify, dataset_disk_cache, reporting);
+            obj.LinkedDatasetChooser = PTKLinkedDatasetChooser(dataset_results);
         end
         
         % Link another dataset to this
@@ -135,7 +135,7 @@ classdef TDDataset < handle
             obj.Reporting.ShowAndClear;
         end
 
-        % Returns a TDImageInfo structure with image information, including the
+        % Returns a PTKImageInfo structure with image information, including the
         % UID, filenames and file path
         function image_info = GetImageInfo(obj, dataset_uid)
             if nargin < 2

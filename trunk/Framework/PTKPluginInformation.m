@@ -1,5 +1,5 @@
-classdef TDPluginInformation
-    % TDPluginInformation. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKPluginInformation
+    % PTKPluginInformation. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -22,8 +22,8 @@ classdef TDPluginInformation
         
         % Obtains a list of plugins found in the Plugins folder
         function plugin_list = GetListOfPlugins(reporting)
-            plugin_list = TDDiskUtilities.GetDirectoryFileList(TDPluginInformation.GetPluginsPath, '*.m');
-            user_plugin_list = TDDiskUtilities.GetDirectoryFileList(TDPluginInformation.GetUserPluginsPath, '*.m');
+            plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKPluginInformation.GetPluginsPath, '*.m');
+            user_plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKPluginInformation.GetUserPluginsPath, '*.m');
             combined_plugin_list = horzcat(plugin_list, user_plugin_list);
             plugin_list = [];
 
@@ -33,16 +33,16 @@ classdef TDPluginInformation
                     if (exist(plugin_name, 'class') == 8)                    
                         plugin_handle = str2func(plugin_name);
                         plugin_info_structure = feval(plugin_handle);
-                        if isa(plugin_info_structure, 'TDPlugin')
+                        if isa(plugin_info_structure, 'PTKPlugin')
                             plugin_list{end + 1} = plugin_filename{1};
                         else
-                            reporting.ShowWarning('TDPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
+                            reporting.ShowWarning('PTKPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a PTKPlugin class. I am ignoring this file. If this is not a PTKPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
                         end
                     else
-                        reporting.ShowWarning('TDPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
+                        reporting.ShowWarning('PTKPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a PTKPlugin class. I am ignoring this file. If this is not a PTKPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
                     end
                 catch ex
-                    reporting.ShowWarning('TDPluginInformation:ParsePluginError', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a TDPlugin class, or contains errors. I am ignoring this file. If this is not a TDPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], ex.message);
+                    reporting.ShowWarning('PTKPluginInformation:ParsePluginError', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a PTKPlugin class, or contains errors. I am ignoring this file. If this is not a PTKPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], ex.message);
                 end
             end            
         end
@@ -50,7 +50,7 @@ classdef TDPluginInformation
         % Obtains a list of plugins and sorts into categories according to their
         % properties
         function plugins_by_category = GetPluginInformation(reporting)
-            plugin_list = TDPluginInformation.GetListOfPlugins(reporting);
+            plugin_list = PTKPluginInformation.GetListOfPlugins(reporting);
             
             plugins_by_category = containers.Map;
             
@@ -60,7 +60,7 @@ classdef TDPluginInformation
                 
                 try
                     % get information from the plugin
-                    new_plugin = TDPluginInformation.LoadPluginInfoStructure(plugin_name, reporting);
+                    new_plugin = PTKPluginInformation.LoadPluginInfoStructure(plugin_name, reporting);
                     
                     if ~new_plugin.HidePluginInDisplay
                         
@@ -74,7 +74,7 @@ classdef TDPluginInformation
                     end
                     
                 catch ex
-                    reporting.ShowWarning('TDPluginInformation:PluginParseError', ['There is a problem with plugin file ' plugin_name '. Check there are no code errors and it has the correct properties.'], ex.message);
+                    reporting.ShowWarning('PTKPluginInformation:PluginParseError', ['There is a problem with plugin file ' plugin_name '. Check there are no code errors and it has the correct properties.'], ex.message);
                 end
             end
         end
@@ -85,7 +85,7 @@ classdef TDPluginInformation
             plugin_info_structure = feval(plugin_handle);
             
             % Parse the class properties into a data structure
-            new_plugin = TDPluginInformation.ParsePluginClass(plugin_name, plugin_info_structure, reporting); 
+            new_plugin = PTKPluginInformation.ParsePluginClass(plugin_name, plugin_info_structure, reporting); 
         end
     end
     
@@ -94,21 +94,21 @@ classdef TDPluginInformation
         function plugins_path = GetPluginsPath
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', TDSoftwareInfo.PluginDirectoryName);
+            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.PluginDirectoryName);
         end
         
         function plugins_path = GetUserPluginsPath
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', TDSoftwareInfo.UserDirectoryName, TDSoftwareInfo.PluginDirectoryName);
+            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.PluginDirectoryName);
         end
         
         function new_plugin = ParsePluginClass(plugin_name, plugin_class, reporting)
             new_plugin = [];
             new_plugin.PluginName = plugin_name;
             
-            if ~strcmp(plugin_class.PTKVersion, TDSoftwareInfo.PTKVersion)
-                reporting.ShowWarning('TDPluginInformation:MismatchingPluginVersion', ['Plugin ' plugin_name ' was created for a more recent version of this software'], []);
+            if ~strcmp(plugin_class.PTKVersion, PTKSoftwareInfo.PTKVersion)
+                reporting.ShowWarning('PTKPluginInformation:MismatchingPluginVersion', ['Plugin ' plugin_name ' was created for a more recent version of this software'], []);
             end
             
             new_plugin.ToolTip = plugin_class.ToolTip;

@@ -1,5 +1,5 @@
-classdef TDPluginResultsInfo < handle
-    % TDPluginResultsInfo. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKPluginResultsInfo < handle
+    % PTKPluginResultsInfo. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -24,14 +24,14 @@ classdef TDPluginResultsInfo < handle
     end
     
     methods
-        function obj = TDPluginResultsInfo
+        function obj = PTKPluginResultsInfo
             obj.ResultsInfo = containers.Map;
         end
         
         % Adds dependency record for a particular plugin result
         function AddCachedPluginInfo(obj, plugin_name, cache_info, reporting)
             if obj.ResultsInfo.isKey(plugin_name)
-                reporting.Error('TDPluginResultsInfo:CachedInfoAlreadyPresent', 'Cached plugin info already present');
+                reporting.Error('PTKPluginResultsInfo:CachedInfoAlreadyPresent', 'Cached plugin info already present');
             end
             obj.ResultsInfo(plugin_name) = cache_info;
         end
@@ -60,7 +60,7 @@ classdef TDPluginResultsInfo < handle
             else
                 % Sanity check - this case should never occur
                 if ~strcmp(next_dependency.DatasetUid, current_dependency.DatasetUid)
-                    reporting.Error('TDPluginResultsInfo:DatsetUidError', 'Code error - not matching dataset UID during dependency check');
+                    reporting.Error('PTKPluginResultsInfo:DatsetUidError', 'Code error - not matching dataset UID during dependency check');
                 end
 
                 if ~strcmp(next_dependency.Uid, current_dependency.Uid)

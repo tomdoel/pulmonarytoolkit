@@ -1,10 +1,10 @@
-classdef TDFrameworkCache < handle
-    % TDFrameworkCache. Part of the internal framework for the Pulmonary Toolkit.
+classdef PTKFrameworkCache < handle
+    % PTKFrameworkCache. Part of the internal framework for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
     %
-    %     TDFrameworkCache stores framework-related information that needs to
+    %     PTKFrameworkCache stores framework-related information that needs to
     %     persist between sessions, such as the version numbers of the currently
     %     compiled mex files.
     %
@@ -23,30 +23,30 @@ classdef TDFrameworkCache < handle
     
     methods (Static)
         function settings_dir = GetCacheDirectory
-            settings_dir = TDSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
+            settings_dir = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
         end
         
         function settings_file_path = GetCacheFilePath
-            settings_dir = TDFrameworkCache.GetCacheDirectory;
-            cache_filename = TDSoftwareInfo.FrameworkCacheFileName;
+            settings_dir = PTKFrameworkCache.GetCacheDirectory;
+            cache_filename = PTKSoftwareInfo.FrameworkCacheFileName;
             settings_file_path = fullfile(settings_dir, cache_filename);
         end
         
         function cache = LoadCache(reporting)
             try
-                cache_filename = TDFrameworkCache.GetCacheFilePath;
+                cache_filename = PTKFrameworkCache.GetCacheFilePath;
                 if exist(cache_filename, 'file')
                     cache_struct = load(cache_filename);
                     cache = cache_struct.cache;
                     cache.IsNewlyCreated = false;
                 else
-                    reporting.ShowWarning('TDFrameworkCache:CacheFileNotFound', 'No cache file found. Will create new one on exit', []);
-                    cache = TDFrameworkCache;
+                    reporting.ShowWarning('PTKFrameworkCache:CacheFileNotFound', 'No cache file found. Will create new one on exit', []);
+                    cache = PTKFrameworkCache;
                     cache.IsNewlyCreated = true;
                 end
                 
             catch ex
-                reporting.ErrorFromException('TDFrameworkCache:FailedtoLoadCacheFile', ['Error when loading cache file ' cache_filename '. Try deleting this file.'], ex);
+                reporting.ErrorFromException('PTKFrameworkCache:FailedtoLoadCacheFile', ['Error when loading cache file ' cache_filename '. Try deleting this file.'], ex);
             end
         end
         
@@ -54,15 +54,15 @@ classdef TDFrameworkCache < handle
     
     methods
         
-        function obj = TDFrameworkCache
+        function obj = PTKFrameworkCache
             obj.MexInfoMap = containers.Map;
         end
         
         function SaveCache(obj, reporting)
-            cache_path = TDFrameworkCache.GetCacheDirectory;
-            cache_filename = TDFrameworkCache.GetCacheFilePath;
+            cache_path = PTKFrameworkCache.GetCacheDirectory;
+            cache_filename = PTKFrameworkCache.GetCacheFilePath;
             if ~exist(cache_path, 'dir')
-                reporting.ShowMessage('TDFrameworkCache:NewSettingsDirectory', ['Creating settings directory: ' cache_path]);
+                reporting.ShowMessage('PTKFrameworkCache:NewSettingsDirectory', ['Creating settings directory: ' cache_path]);
                 mkdir(cache_path);
             end
             
@@ -70,7 +70,7 @@ classdef TDFrameworkCache < handle
                 cache = obj; %#ok<NASGU>
                 save(cache_filename, 'cache');
             catch ex
-                reporting.ErrorFromException('TDFrameworkCache:FailedtoSaveCacheFile', ['Unable to save settings file ' cache_filename], ex);
+                reporting.ErrorFromException('PTKFrameworkCache:FailedtoSaveCacheFile', ['Unable to save settings file ' cache_filename], ex);
             end
         end        
     end

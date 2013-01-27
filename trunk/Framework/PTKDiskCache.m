@@ -1,5 +1,5 @@
-classdef TDDiskCache < handle
-    % TDDiskCache. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKDiskCache < handle
+    % PTKDiskCache. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -32,7 +32,7 @@ classdef TDDiskCache < handle
         
         % Create a disk cache object, and associated folder, for the dataset
         % associated with this unique identifier
-        function obj = TDDiskCache(uuid, reporting)
+        function obj = PTKDiskCache(uuid, reporting)
             cache_parent_directory = obj.GetCacheDirectory;
             if ~exist(cache_parent_directory, 'dir')
                 mkdir(cache_parent_directory);
@@ -41,22 +41,22 @@ classdef TDDiskCache < handle
             cache_directory = fullfile(cache_parent_directory, uuid);
             if ~exist(cache_directory, 'dir')
                 mkdir(cache_directory);
-                reporting.ShowMessage('TDDiskCache:NewCacheDirectory', ['Creating disk cache : ' cache_directory]);
+                reporting.ShowMessage('PTKDiskCache:NewCacheDirectory', ['Creating disk cache : ' cache_directory]);
             else
-                reporting.ShowMessage('TDDiskCache:ExistingCacheDirectory', ['Using disk cache : ' cache_directory]);
+                reporting.ShowMessage('PTKDiskCache:ExistingCacheDirectory', ['Using disk cache : ' cache_directory]);
             end
             
             obj.Uuid = uuid;
             obj.CachePath = cache_directory;
             obj.SchemaNumber = 1;
 
-            if obj.Exists(TDSoftwareInfo.SchemaCacheName, reporting)
-                schema = obj.Load(TDSoftwareInfo.SchemaCacheName, reporting);
+            if obj.Exists(PTKSoftwareInfo.SchemaCacheName, reporting)
+                schema = obj.Load(PTKSoftwareInfo.SchemaCacheName, reporting);
                 if (schema ~= obj.SchemaNumber)
-                    reporting.Error('TDDiskCache:BadSchema', 'Wrong schema found This is caused by having a disk cache from a redundant version of code. Delete your Temp directory to fix.');
+                    reporting.Error('PTKDiskCache:BadSchema', 'Wrong schema found This is caused by having a disk cache from a redundant version of code. Delete your Temp directory to fix.');
                 end
             else
-               obj.Save(TDSoftwareInfo.SchemaCacheName, obj.SchemaNumber, reporting);
+               obj.Save(PTKSoftwareInfo.SchemaCacheName, obj.SchemaNumber, reporting);
             end
         end
         
@@ -66,7 +66,7 @@ classdef TDDiskCache < handle
             exists = exist(filename, 'file');
         end
         
-        % Determine if the raw image file associated with a TDImage results file exists in the cahce
+        % Determine if the raw image file associated with a PTKImage results file exists in the cahce
         function exists = RawFileExists(obj, name, ~)
             filename = [fullfile(obj.CachePath, name) '.raw'];
             exists = exist(filename, 'file');
@@ -90,9 +90,9 @@ classdef TDDiskCache < handle
                 end
                 
                 
-                % TDImage files typically have the raw image data stored in a 
+                % PTKImage files typically have the raw image data stored in a 
                 % separate file
-                if isa(result, 'TDImage')
+                if isa(result, 'PTKImage')
                     try
                         result.LoadRawImage(obj.CachePath, reporting);
                     
@@ -100,7 +100,7 @@ classdef TDDiskCache < handle
                         
                         % Check for the particular case of the .raw file being
                         % deleted
-                        if strcmp(exception.identifier, 'TDImage:RawFileNotFound')
+                        if strcmp(exception.identifier, 'PTKImage:RawFileNotFound')
                             reporting.Log(['Disk cache found a header file with no corresponding raw file for plugin ' name]);
                             result = [];
                             info = [];
@@ -138,15 +138,15 @@ classdef TDDiskCache < handle
             state = recycle;
             recycle('on');
             
-            file_list = TDDiskUtilities.GetDirectoryFileList(obj.CachePath, '*.raw');
-            file_list_2 = TDDiskUtilities.GetDirectoryFileList(obj.CachePath, '*.mat');
+            file_list = PTKDiskUtilities.GetDirectoryFileList(obj.CachePath, '*.raw');
+            file_list_2 = PTKDiskUtilities.GetDirectoryFileList(obj.CachePath, '*.mat');
             file_list = cat(2, file_list, file_list_2);
             for index = 1 : length(file_list)
                 file_name = file_list{index};
-                is_framework_file = strcmp(file_name, [TDSoftwareInfo.SchemaCacheName '.mat']) || strcmp(file_name, [TDSoftwareInfo.ImageInfoCacheName '.mat']) || strcmp(file_name, [TDSoftwareInfo.MakerPointsCacheName '.mat']) || strcmp(file_name, [TDSoftwareInfo.MakerPointsCacheName 'raw']) || strcmp(file_name, [TDSoftwareInfo.ImageTemplatesCacheName '.mat']);
+                is_framework_file = strcmp(file_name, [PTKSoftwareInfo.SchemaCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.ImageInfoCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName 'raw']) || strcmp(file_name, [PTKSoftwareInfo.ImageTemplatesCacheName '.mat']);
                 if (remove_framework_files || (~is_framework_file))
                     full_filename = fullfile(obj.CachePath, file_name);
-                    reporting.ShowMessage('TDDiskCache:RecyclingCacheDirectory', ['Moving cache file to recycle bin: ' full_filename]);
+                    reporting.ShowMessage('PTKDiskCache:RecyclingCacheDirectory', ['Moving cache file to recycle bin: ' full_filename]);
                     
                     delete(full_filename);
                     reporting.Log(['Deleting ' full_filename]);
@@ -163,8 +163,8 @@ classdef TDDiskCache < handle
         
         % Get the parent folder in which dataset cache folders are stored
         function cache_directory = GetCacheDirectory
-            application_directory = TDSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
-            cache_directory = TDSoftwareInfo.DiskCacheFolderName;
+            application_directory = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
+            cache_directory = PTKSoftwareInfo.DiskCacheFolderName;
             cache_directory = fullfile(application_directory, cache_directory);
         end
         
@@ -177,7 +177,7 @@ classdef TDDiskCache < handle
             if ~isempty(info)
                 result.info = info;
             end
-            if isa(value, 'TDImage')
+            if isa(value, 'PTKImage')
                 reporting.Log(['Saving raw image data for ' name]);
                 header = value.SaveRawImage(obj.CachePath, name);
                 result.value = header;

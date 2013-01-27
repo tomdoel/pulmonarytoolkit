@@ -1,10 +1,10 @@
-classdef TDTimer < handle
-    % TDTimer. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKTimer < handle
+    % PTKTimer. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     TDTimer is used to time plugin execution
+    %     PTKTimer is used to time plugin execution
     %
     %     Licence
     %     -------
@@ -25,13 +25,13 @@ classdef TDTimer < handle
     end
     
     methods
-        function obj = TDTimer(reporting)
+        function obj = PTKTimer(reporting)
             obj.Reporting = reporting;
         end
         
         function Start(obj)
             if ~isempty(obj.StartTicId)
-                reporting.Error('TDTimer:TimerAlreadyStarted', 'The Start() method was called but the clock has already been started.');
+                reporting.Error('PTKTimer:TimerAlreadyStarted', 'The Start() method was called but the clock has already been started.');
             end
             obj.StartTicId = tic;
             obj.PauseTicId = obj.StartTicId;
@@ -39,10 +39,10 @@ classdef TDTimer < handle
 
         function Stop(obj)
             if isempty(obj.StartTicId)
-                reporting.Error('TDTimer:TimerNotStarted', 'The Stop() method was called but the clock has not been started.');
+                reporting.Error('PTKTimer:TimerNotStarted', 'The Stop() method was called but the clock has not been started.');
             end
             if ~isempty(obj.TotalElapsedTime)
-                reporting.Error('TDTimer:ClockAlreadyStopped', 'The Stop() method was called but the clock has already been stopped.');
+                reporting.Error('PTKTimer:ClockAlreadyStopped', 'The Stop() method was called but the clock has already been stopped.');
             end
             obj.TotalElapsedTime = toc(obj.StartTicId);
             elapsed_time_since_resume = toc(obj.PauseTicId);
@@ -55,13 +55,13 @@ classdef TDTimer < handle
         
         function Pause(obj)
             if isempty(obj.StartTicId)
-                reporting.Error('TDTimer:TimerNotStarted', 'The Pause() method was called but the clock has not been started.');
+                reporting.Error('PTKTimer:TimerNotStarted', 'The Pause() method was called but the clock has not been started.');
             end
             if isempty(obj.PauseTicId)
-                reporting.Error('TDTimer:TimerNotStarted', 'The Pause() method was called but the clock is already paused.');
+                reporting.Error('PTKTimer:TimerNotStarted', 'The Pause() method was called but the clock is already paused.');
             end
             if ~isempty(obj.TotalElapsedTime)
-                reporting.Error('TDTimer:ClockAlreadyStopped', 'The Pause() method was called but the clock has already been stopped.');
+                reporting.Error('PTKTimer:ClockAlreadyStopped', 'The Pause() method was called but the clock has already been stopped.');
             end
             elapsed_time_since_resume = toc(obj.PauseTicId);
             if isempty(obj.SelfTime)
@@ -74,13 +74,13 @@ classdef TDTimer < handle
         
         function Resume(obj)
             if isempty(obj.StartTicId)
-                reporting.Error('TDTimer:TimerNotStarted', 'The Resume() method was called but the clock has not been started.');
+                reporting.Error('PTKTimer:TimerNotStarted', 'The Resume() method was called but the clock has not been started.');
             end
             if ~isempty(obj.TotalElapsedTime)
-                reporting.Error('TDTimer:ClockAlreadyStopped', 'The Resume() method was called but the clock has already been stopped.');
+                reporting.Error('PTKTimer:ClockAlreadyStopped', 'The Resume() method was called but the clock has already been stopped.');
             end
             if ~isempty(obj.PauseTicId)
-                reporting.Error('TDTimer:NotPaused', 'The Resume() method was called but the clock has not been paused.');
+                reporting.Error('PTKTimer:NotPaused', 'The Resume() method was called but the clock has not been paused.');
             end
             obj.PauseTicId = tic;
         end

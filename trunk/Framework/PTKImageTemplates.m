@@ -1,10 +1,10 @@
-classdef TDImageTemplates < handle
-    % TDImageTemplates. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKImageTemplates < handle
+    % PTKImageTemplates. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     TDImageTemplates maintains a list of template images for contexts.
+    %     PTKImageTemplates maintains a list of template images for contexts.
     %     A context is a region of interest of the lung (e.g. lung roi, left
     %     lung, right lung, original image). For each context there can exist a
     %     template image, which is an empty image containing the correct metadata
@@ -43,7 +43,7 @@ classdef TDImageTemplates < handle
     end
     
     methods
-        function obj = TDImageTemplates(dataset_results, dataset_disk_cache, reporting)
+        function obj = PTKImageTemplates(dataset_results, dataset_disk_cache, reporting)
             
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.DatasetResults = dataset_results;
@@ -58,10 +58,10 @@ classdef TDImageTemplates < handle
             obj.TemplatePluginsRun = containers.Map;
 
             % Add valid contexts
-            obj.ValidContexts(char(TDContext.OriginalImage)) = 'TDOriginalImage';
-            obj.ValidContexts(char(TDContext.LungROI)) = 'TDLungROI';
-            obj.ValidContexts(char(TDContext.LeftLungROI)) = 'TDGetLeftLungROI';
-            obj.ValidContexts(char(TDContext.RightLungROI)) = 'TDGetRightLungROI';
+            obj.ValidContexts(char(PTKContext.OriginalImage)) = 'PTKOriginalImage';
+            obj.ValidContexts(char(PTKContext.LungROI)) = 'PTKLungROI';
+            obj.ValidContexts(char(PTKContext.LeftLungROI)) = 'PTKGetLeftLungROI';
+            obj.ValidContexts(char(PTKContext.RightLungROI)) = 'PTKGetRightLungROI';
 
             % Loads cached template data
             obj.Load;
@@ -73,19 +73,19 @@ classdef TDImageTemplates < handle
             
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
-                obj.Reporting.Error('TDImageTemplates:UnknownContext', 'Context not recogised');
+                obj.Reporting.Error('PTKImageTemplates:UnknownContext', 'Context not recogised');
             end
             
             % If the template does not already exist, generate it now by calling
             % the appropriate plugin and creating a template copy
             if ~obj.TemplateImages.isKey(char(context))
-                obj.Reporting.ShowWarning('TDImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
+                obj.Reporting.ShowWarning('PTKImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
                 obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), linked_dataset_chooser, dataset_stack, []);
 
                 % The call to GetResult should have automatically created the
                 % template image - check that this has happened
                 if ~obj.TemplateImages.isKey(char(context))
-                    obj.Reporting.Error('TDImageTemplates:NoContext', 'Code error: a template should have been created by call to plugin, but was not');
+                    obj.Reporting.Error('PTKImageTemplates:NoContext', 'Code error: a template should have been created by call to plugin, but was not');
                 end
                 
             end
@@ -103,7 +103,7 @@ classdef TDImageTemplates < handle
             
             % Check if the result image is of a type that can be used to
             % generate a template image
-            if ~isempty(result_image) && isa(result_image, 'TDImage')
+            if ~isempty(result_image) && isa(result_image, 'PTKImage')
                 all_contexts = obj.ValidContexts.keys;
                 
                 % Search for contexts which relate to this plugin
@@ -131,7 +131,7 @@ classdef TDImageTemplates < handle
         function context_is_enabled = IsContextEnabled(obj, context)
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
-                obj.Reporting.Error('TDImageTemplates:UnknownContext', 'Context not recogised');
+                obj.Reporting.Error('PTKImageTemplates:UnknownContext', 'Context not recogised');
             end
             
             % The context is enabled unless a previous attempt to run the plugin
@@ -177,8 +177,8 @@ classdef TDImageTemplates < handle
         
         % Retrieves previous templates from the disk cache
         function Load(obj)
-            if obj.DatasetDiskCache.Exists(TDSoftwareInfo.ImageTemplatesCacheName, obj.Reporting)
-                info = obj.DatasetDiskCache.LoadData(TDSoftwareInfo.ImageTemplatesCacheName, obj.Reporting);
+            if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.ImageTemplatesCacheName, obj.Reporting)
+                info = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.ImageTemplatesCacheName, obj.Reporting);
                 obj.TemplateImages = info.TemplateImages;
                 obj.TemplatePluginsRun = info.TemplatePluginsRun;
             end
@@ -189,7 +189,7 @@ classdef TDImageTemplates < handle
             info = [];
             info.TemplateImages = obj.TemplateImages;
             info.TemplatePluginsRun = obj.TemplatePluginsRun;
-            obj.DatasetDiskCache.SaveData(TDSoftwareInfo.ImageTemplatesCacheName, info, obj.Reporting);
+            obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.ImageTemplatesCacheName, info, obj.Reporting);
         end
     end
 end

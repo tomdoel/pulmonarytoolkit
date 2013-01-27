@@ -2,21 +2,21 @@ classdef PTKMain < handle
     % PTKMain. Imports and provides access to data from the Pulmonary Toolkit
     %
     %     PTKMain provides access to data from the Pulmonary Toolkit, and allows 
-    %     you to import new data. Data is accessed through one or more TDDataset
+    %     you to import new data. Data is accessed through one or more PTKDataset
     %     objects. Your code should create a single PTKMain object, and then ask
-    %     it to create a TDDataset object for each dataset you wish to access. 
+    %     it to create a PTKDataset object for each dataset you wish to access. 
     %
-    %     PTKMain is essentially a class factory for TDDatasets, but shares the 
-    %     TDReporting (error/progress reporting) objects between all 
+    %     PTKMain is essentially a class factory for PTKDatasets, but shares the 
+    %     PTKReporting (error/progress reporting) objects between all 
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the Pulmonary Toolkit.
     %
-    %     To import a new dataset, construct a TDImageInfo object with the file
+    %     To import a new dataset, construct a PTKImageInfo object with the file
     %     path and file name set to the image file. For DICOM files it is only
     %     necessary to specify the path since all image files in that directory
     %     will be imported. Then call CreateDatasetFromInfo. PTKMain will import
     %     the data (if it has not already been imported) and return a new
-    %     TDDataset object for that dataset.
+    %     PTKDataset object for that dataset.
     %
     %     To access an existing dataset you can use CreateDatasetFromInfo as
     %     above, or you can use CreateDatasetFromUid to retrieve a dataset which
@@ -28,13 +28,13 @@ classdef PTKMain < handle
     %     Replace <image path> and <filenames> with the path and filenames
     %     to your image data.
     %
-    %         image_info = TDImageInfo( <image path>, <filenames>, [], [], [], []);
+    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
     %         ptk = PTKMain;
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %
     %     You can then obtain results from this dataset, e.g.
     %
-    %         airways = dataset.GetResult('TDAirways');
+    %         airways = dataset.GetResult('PTKAirways');
     %
     %
     %     Licence
@@ -56,35 +56,35 @@ classdef PTKMain < handle
         % default object is created.
         function obj = PTKMain(reporting)
             if nargin == 0
-                reporting = TDReportingDefault;
+                reporting = PTKReportingDefault;
             end
             obj.Reporting = reporting;
-            obj.ReportingWithCache = TDReportingWithCache(obj.Reporting);
-            obj.FrameworkCache = TDFrameworkCache.LoadCache(obj.Reporting);
-            TDCompileMexFiles(obj.FrameworkCache, false, obj.Reporting);
+            obj.ReportingWithCache = PTKReportingWithCache(obj.Reporting);
+            obj.FrameworkCache = PTKFrameworkCache.LoadCache(obj.Reporting);
+            PTKCompileMexFiles(obj.FrameworkCache, false, obj.Reporting);
         end
         
         % Forces recompilation of mex files
         function Recompile(obj)
-            TDCompileMexFiles(obj.FrameworkCache, true, obj.Reporting);
+            PTKCompileMexFiles(obj.FrameworkCache, true, obj.Reporting);
         end
         
-        % Creates a TDDataset object for a dataset specified by the uid. The
+        % Creates a PTKDataset object for a dataset specified by the uid. The
         % dataset must already be imported.
         function dataset = CreateDatasetFromUid(obj, dataset_uid)
-            disk_cache = TDDiskCache(dataset_uid, obj.Reporting);
-            dataset_disk_cache = TDDatasetDiskCache(disk_cache, obj.Reporting);
-            image_info = dataset_disk_cache.LoadData(TDSoftwareInfo.ImageInfoCacheName, obj.Reporting);
+            disk_cache = PTKDiskCache(dataset_uid, obj.Reporting);
+            dataset_disk_cache = PTKDatasetDiskCache(disk_cache, obj.Reporting);
+            image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
                 obj.Reporting.Error('PTKMain:UidNotFound', 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
-            dataset = TDDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
+            dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
             
         end
 
-        % Creates a TDDataset object for a dataset specified by the path, 
-        % filenames and/or uid specified in a TDImageInfo object. The dataset is
+        % Creates a PTKDataset object for a dataset specified by the path, 
+        % filenames and/or uid specified in a PTKImageInfo object. The dataset is
         % imported from the specified path if it does not already exist.
         function dataset = CreateDatasetFromInfo(obj, new_image_info)
             
@@ -95,27 +95,27 @@ classdef PTKMain < handle
                 new_image_info.Modality = modality;
             end
             
-            disk_cache = TDDiskCache(new_image_info.ImageUid, obj.Reporting);
-            dataset_disk_cache = TDDatasetDiskCache(disk_cache, obj.Reporting);
-            image_info = dataset_disk_cache.LoadData(TDSoftwareInfo.ImageInfoCacheName, obj.Reporting);
+            disk_cache = PTKDiskCache(new_image_info.ImageUid, obj.Reporting);
+            dataset_disk_cache = PTKDatasetDiskCache(disk_cache, obj.Reporting);
+            image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
-                image_info = TDImageInfo;
+                image_info = PTKImageInfo;
             end
 
             [image_info, anything_changed] = image_info.CopyNonEmptyFields(image_info, new_image_info);
             if (anything_changed)
-                dataset_disk_cache.SaveData(TDSoftwareInfo.ImageInfoCacheName, image_info, obj.Reporting);
+                dataset_disk_cache.SaveData(PTKSoftwareInfo.ImageInfoCacheName, image_info, obj.Reporting);
             end
 
-            dataset = TDDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
+            dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
         end
     end
     
     methods (Static)
         
         function results_directory = GetResultsDirectoryAndCreateIfNecessary
-            application_directory = TDSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
-            results_directory = fullfile(application_directory, TDSoftwareInfo.ResultsDirectoryName);
+            application_directory = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
+            results_directory = fullfile(application_directory, PTKSoftwareInfo.ResultsDirectoryName);
             if ~exist(results_directory, 'dir')
                 mkdir(results_directory);
             end
@@ -131,8 +131,8 @@ classdef PTKMain < handle
         function [image_uid, study_uid, modality] = GetImageUID(image_info)
             study_uid = [];
             switch(image_info.ImageFileFormat)
-                case TDImageFileFormat.Dicom
-                    filenames = TDDiskUtilities.GetDirectoryFileList(image_info.ImagePath, '*');
+                case PTKImageFileFormat.Dicom
+                    filenames = PTKDiskUtilities.GetDirectoryFileList(image_info.ImagePath, '*');
                     first_filename = fullfile(image_info.ImagePath, filenames{1});
                     if (exist(first_filename, 'file') ~= 2)
                        throw(MException('PTKMain:FileNotFound', ['The file ' first_filename ' does not exist']));
@@ -146,7 +146,7 @@ classdef PTKMain < handle
                     image_uid = metadata.SeriesInstanceUID;
                     study_uid = metadata.StudyInstanceUID;
                     modality = metadata.Modality;
-                case TDImageFileFormat.Metaheader
+                case PTKImageFileFormat.Metaheader
                     image_uid = image_info.ImageFilenames{1};
                     study_uid = [];
                     modality = [];

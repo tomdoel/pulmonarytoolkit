@@ -1,10 +1,10 @@
-classdef TDLinkedDatasetChooser < handle
-    % TDLinkedDatasetChooser. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKLinkedDatasetChooser < handle
+    % PTKLinkedDatasetChooser. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     TDLinkedDatasetChooser is used to select between linked datasets.
+    %     PTKLinkedDatasetChooser is used to select between linked datasets.
     %     By default, each dataset acts independently, but you can link datasets
     %     together (for example, if you wanted to register images between two
     %     datasets). When datasets are linked, one is the primary dataset, and
@@ -20,13 +20,13 @@ classdef TDLinkedDatasetChooser < handle
     %
 
     properties (Access = private)
-        PrimaryDatasetResults % Handle to the TDDatasetResults object for this dataset
-        LinkedDatasetChooserList % Handles to TDLinkedDatasetChooser objects for all linked datasets, including this one
+        PrimaryDatasetResults % Handle to the PTKDatasetResults object for this dataset
+        LinkedDatasetChooserList % Handles to PTKLinkedDatasetChooser objects for all linked datasets, including this one
         PrimaryDatasetUid     % The uid of this dataset
     end
     
     methods
-        function obj = TDLinkedDatasetChooser(primary_dataset_results)
+        function obj = PTKLinkedDatasetChooser(primary_dataset_results)
             obj.PrimaryDatasetUid = primary_dataset_results.GetImageInfo.ImageUid;
             obj.PrimaryDatasetResults = primary_dataset_results;
             obj.LinkedDatasetChooserList = containers.Map;
@@ -56,14 +56,14 @@ classdef TDLinkedDatasetChooser < handle
             end
         end
 
-        % Returns a TDImageInfo structure with image information, including the
+        % Returns a PTKImageInfo structure with image information, including the
         % UID, filenames and file path
         function image_info = GetImageInfo(obj, dataset_name)
             image_info = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.GetImageInfo;
         end
         
         % Returns an empty template image for the specified context
-        % See TDImageTemplates.m for valid contexts
+        % See PTKImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, dataset_stack, dataset_name)
             linked_dataset = obj.FindLinkedDatasetChooser(dataset_name);
             template_image = linked_dataset.PrimaryDatasetResults.GetTemplateImage(context, linked_dataset, dataset_stack);
