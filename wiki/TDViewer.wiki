@@ -1,13 +1,13 @@
 #summary A Matlab application for viewing 2D and 3D medical imaging data
 
 
-= TDViewer =
+= PTKViewer =
 
-TDViewer is a standalone application for visualising 3D or 2D data slice-by-slice. 
+PTKViewer is a standalone application for visualising 3D or 2D data slice-by-slice. 
 
 = Requirements = 
  * A recent version of Matlab
- * TD Pulmonary Toolkit
+ * Pulmonary Toolkit
 
 
 = Features =
@@ -22,39 +22,39 @@ TDViewer is a standalone application for visualising 3D or 2D data slice-by-slic
  * Supports non-uniform image resolutions
  * Displays current voxel coordinates, image value and Hounsfield value (for C images)
 
-= Running TDViewer =
+= Running PTKViewer =
 
-Before running the TDViewer, you may first need to add the PTK paths
+Before running the PTKViewer, you may first need to add the PTK paths
 {{{
-    TDAddPtkPaths;
+    PTKAddPtkPaths;
 }}}
 
 To visualise a 3D volume contained in the matrix my_image, run:
 {{{
-    TDViewer(my_image);
+    PTKViewer(my_image);
 }}}
-`my_image` can also be a TDImage or TDDicomImage class. This is preferable, because then TDViewer will respect the voxel size and automatically display a title based on the patient name.
+`my_image` can also be a PTKImage or PTKDicomImage class. This is preferable, because then PTKViewer will respect the voxel size and automatically display a title based on the patient name.
 
 
 You can specify an image type to control how the image is displayed:
 {{{
-    TDViewer(my_image, image_type);
+    PTKViewer(my_image, image_type);
 }}}
 Possible values of image_type are:
 
- * `TDImageType.Grayscale` - visualise a greyscale image (use for CT and MRI data)
- * `TDImageType.Colormap`  - visualise using the Lines colourmap. Each voxel represents a colour, e.g. 1 = blue, 2 = green, 3 = red etc.
- * `TDImageType.Scaled`       - visualise in shades of red (positive values) or blue (negative values), scaling the image so that the smallest value is black and the highest value is red.
+ * `PTKImageType.Grayscale` - visualise a greyscale image (use for CT and MRI data)
+ * `PTKImageType.Colormap`  - visualise using the Lines colourmap. Each voxel represents a colour, e.g. 1 = blue, 2 = green, 3 = red etc.
+ * `PTKImageType.Scaled`       - visualise in shades of red (positive values) or blue (negative values), scaling the image so that the smallest value is black and the highest value is red.
 
-To view data from DICOM files, load them into a TDImage and then display this:
+To view data from DICOM files, load them into a PTKImage and then display this:
 {{{
-    dicom_image = TDLoadImageFromDicomFiles(path, filenames);
-    TDViewer(dicom_image);
+    dicom_image = PTKLoadImageFromDicomFiles(path, filenames);
+    PTKViewer(dicom_image);
 }}}
 A similar approach applies to mhd/raw files:
 {{{
-    my_image = TDLoad3DRawAndMetaFiles(path, filenames, uid);
-    TDViewer(my_image);
+    my_image = PTKLoad3DRawAndMetaFiles(path, filenames, uid);
+    PTKViewer(my_image);
 }}}
 Note you must specify an image uid, because this is not specified in the metaheader.
 
