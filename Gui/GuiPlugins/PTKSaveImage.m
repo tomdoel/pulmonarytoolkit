@@ -1,11 +1,11 @@
-classdef TDSaveImage < TDGuiPlugin
-    % TDSaveImage. Gui Plugin for exporting the image currently in the
+classdef PTKSaveImage < PTKGuiPlugin
+    % PTKSaveImage. Gui Plugin for exporting the image currently in the
     % visualisation window to a file
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDSaveImage is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKSaveImage is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will raise a Save dialog allowing the user to
     %     choose a filename and format, and then save the image currently in the

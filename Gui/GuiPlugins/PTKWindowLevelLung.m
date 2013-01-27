@@ -1,10 +1,10 @@
-classdef TDWindowLevelLung < TDGuiPlugin
-    % TDWindowLevelLung. Gui Plugin for using a preset lung window/level
+classdef PTKWindowLevelLung < PTKGuiPlugin
+    % PTKWindowLevelLung. Gui Plugin for using a preset lung window/level
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDWindowLevelLung is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKWindowLevelLung is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will change the window and level of the viewing 
     %     panel to standard lung values.

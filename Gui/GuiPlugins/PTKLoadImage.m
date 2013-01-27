@@ -1,10 +1,10 @@
-classdef TDLoadImage < TDGuiPlugin
-    % TDLoadImage. Gui Plugin for importing and loading image files.
+classdef PTKLoadImage < PTKGuiPlugin
+    % PTKLoadImage. Gui Plugin for importing and loading image files.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDLoadImage is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKLoadImage is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will bring up a dialog box for selecting files to
     %     load. These files will be imported into the Pulmonary Toolkit if 

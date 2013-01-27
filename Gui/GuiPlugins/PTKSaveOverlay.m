@@ -1,11 +1,11 @@
-classdef TDSaveOverlay < TDGuiPlugin
-    % TDSaveOverlay. Gui Plugin for exporting the overlay image currently in the
+classdef PTKSaveOverlay < PTKGuiPlugin
+    % PTKSaveOverlay. Gui Plugin for exporting the overlay image currently in the
     % visualisation window to a file
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDSaveOverlay is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKSaveOverlay is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will raise a Save dialog allowing the user to
     %     choose a filename and format, and then save the overlay image

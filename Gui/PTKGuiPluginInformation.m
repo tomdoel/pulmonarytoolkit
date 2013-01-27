@@ -1,5 +1,5 @@
-classdef TDGuiPluginInformation
-    % TDGuiPluginInformation. Part of the gui for the Pulmonary Toolkit.
+classdef PTKGuiPluginInformation
+    % PTKGuiPluginInformation. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
@@ -23,8 +23,8 @@ classdef TDGuiPluginInformation
         
         % Obtains a list of plugins found in the GuiPlugins folder        
         function plugin_list = GetListOfPlugins(reporting)
-            plugin_list = TDDiskUtilities.GetDirectoryFileList(TDGuiPluginInformation.GetPluginsPath, '*.m');
-            user_plugin_list = TDDiskUtilities.GetDirectoryFileList(TDGuiPluginInformation.GetUserPluginsPath, '*.m');
+            plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKGuiPluginInformation.GetPluginsPath, '*.m');
+            user_plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKGuiPluginInformation.GetUserPluginsPath, '*.m');
             combined_plugin_list = horzcat(plugin_list, user_plugin_list);
             plugin_list = [];
 
@@ -34,16 +34,16 @@ classdef TDGuiPluginInformation
                     if (exist(plugin_name, 'class') == 8)
                         plugin_handle = str2func(plugin_name);
                         plugin_info_structure = feval(plugin_handle);
-                        if isa(plugin_info_structure, 'TDGuiPlugin')
+                        if isa(plugin_info_structure, 'PTKGuiPlugin')
                             plugin_list{end + 1} = plugin_filename{1};
                         else
-                            reporting.ShowWarning('TDGuiPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a TDGuiPlugin class. I am ignoring this file. If this is not a TDGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
+                            reporting.ShowWarning('PTKGuiPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a PTKGuiPlugin class. I am ignoring this file. If this is not a PTKGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
                         end
                     else
-                        reporting.ShowWarning('TDGuiPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a TDGuiPlugin class. I am ignoring this file. If this is not a TDGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
+                        reporting.ShowWarning('PTKGuiPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a PTKGuiPlugin class. I am ignoring this file. If this is not a PTKGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
                     end
                 catch ex
-                    reporting.ShowWarning('TDGuiPluginInformation:ParsePluginError', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a TDGuiPlugin class, or contains errors. I am ignoring this file. If this is not a TDGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], ex.message);
+                    reporting.ShowWarning('PTKGuiPluginInformation:ParsePluginError', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a PTKGuiPlugin class, or contains errors. I am ignoring this file. If this is not a PTKGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], ex.message);
                 end
             end
         end
@@ -51,7 +51,7 @@ classdef TDGuiPluginInformation
         % Obtains a list of gui plugins and sorts into categories according to
         % their properties
         function plugins_by_category = GetPluginInformation(reporting)
-            plugin_list = TDGuiPluginInformation.GetListOfPlugins(reporting);
+            plugin_list = PTKGuiPluginInformation.GetListOfPlugins(reporting);
             
             plugins_by_category = containers.Map;
             
@@ -61,7 +61,7 @@ classdef TDGuiPluginInformation
                 
                 try
                     % get information from the plugin
-                    new_plugin = TDGuiPluginInformation.LoadPluginInfoStructure(plugin_name, reporting);
+                    new_plugin = PTKGuiPluginInformation.LoadPluginInfoStructure(plugin_name, reporting);
                     
                     if ~new_plugin.HidePluginInDisplay
                         
@@ -76,7 +76,7 @@ classdef TDGuiPluginInformation
                     end
                     
                 catch ex
-                    reporting.ShowWarning('TDGuiPluginInformation:InvalidGuiPlugin', ['The file ' plugin_name ' was found in GuiPlugins directory but does not appear to be a TDGuiPlugin class, or contains errors.'], []);
+                    reporting.ShowWarning('PTKGuiPluginInformation:InvalidGuiPlugin', ['The file ' plugin_name ' was found in GuiPlugins directory but does not appear to be a PTKGuiPlugin class, or contains errors.'], []);
                 end
             end
         end
@@ -85,7 +85,7 @@ classdef TDGuiPluginInformation
         function new_plugin = LoadPluginInfoStructure(plugin_name, reporting)
             plugin_handle = str2func(plugin_name);
             plugin_info_structure = feval(plugin_handle);
-            new_plugin = TDGuiPluginInformation.ParsePluginClass(plugin_name, plugin_info_structure, reporting);
+            new_plugin = PTKGuiPluginInformation.ParsePluginClass(plugin_name, plugin_info_structure, reporting);
         end
     end
     
@@ -94,13 +94,13 @@ classdef TDGuiPluginInformation
         function plugins_path = GetPluginsPath
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', TDSoftwareInfo.GuiPluginDirectoryName);
+            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.GuiPluginDirectoryName);
         end
         
         function plugins_path = GetUserPluginsPath
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', TDSoftwareInfo.UserDirectoryName, TDSoftwareInfo.GuiPluginDirectoryName);
+            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.GuiPluginDirectoryName);
         end
         
         function new_plugin = ParsePluginClass(plugin_name, plugin_class, reporting)
@@ -108,7 +108,7 @@ classdef TDGuiPluginInformation
             new_plugin.PluginName = plugin_name;
             
             if plugin_class.PTKVersion ~= '1'
-                reporting.ShowWarning('TDGuiPluginInformation:OldPlugin', ['Plugin ' plugin_name ' was created for a more recent version of this software']), [];
+                reporting.ShowWarning('PTKGuiPluginInformation:OldPlugin', ['Plugin ' plugin_name ' was created for a more recent version of this software']), [];
             end
             
             new_plugin.ToolTip = plugin_class.ToolTip;

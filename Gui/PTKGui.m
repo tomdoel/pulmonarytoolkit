@@ -43,23 +43,23 @@ classdef PTKGui < handle
         function obj = PTKGui(splash_screen)
 
             % Create the splash screen if it doesn't already exist
-            if nargin < 1 || isempty(splash_screen) || ~isa(splash_screen, 'TDProgressInterface')
-                splash_screen = TDSplashScreen;
+            if nargin < 1 || isempty(splash_screen) || ~isa(splash_screen, 'PTKProgressInterface')
+                splash_screen = PTKSplashScreen;
             end
 
             % Create the figure and gui components
-            obj.FigureHandle = figure('Color', TDSoftwareInfo.BackgroundColour, 'Visible', 'off', 'numbertitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none');
-            obj.UipanelImageHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [1 1 921 921], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'BorderType', 'none');
-            obj.UipanelPluginsHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [889 6 668 869], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'BorderType', 'none');
-            obj.UipanelVersionHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [10 2 392 34], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'BorderType', 'none');
+            obj.FigureHandle = figure('Color', PTKSoftwareInfo.BackgroundColour, 'Visible', 'off', 'numbertitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none');
+            obj.UipanelImageHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [1 1 921 921], 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'BorderType', 'none');
+            obj.UipanelPluginsHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [889 6 668 869], 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'BorderType', 'none');
+            obj.UipanelVersionHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [10 2 392 34], 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'BorderType', 'none');
             obj.PopupmenuLoadHandle = uicontrol('Parent', obj.FigureHandle', 'Style', 'popupmenu', ...
                 'Units', 'pixels', 'Position', [8 912 1560 23], 'Callback', @obj.PopupmenuLoadCallback, 'String', 'Recent datasets');
             obj.TextVersionHandle = uicontrol('Parent', obj.UipanelVersionHandle, 'Style', 'text', ...
-                'Units', 'pixels', 'Position', [10 2 392 34], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, ...
-                'FontName', TDSoftwareInfo.GuiFont, 'FontSize', 20.0, 'ForegroundColor', [1.0 0.694 0.392], 'HorizontalAlignment', 'left', ...
+                'Units', 'pixels', 'Position', [10 2 392 34], 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, ...
+                'FontName', PTKSoftwareInfo.GuiFont, 'FontSize', 20.0, 'ForegroundColor', [1.0 0.694 0.392], 'HorizontalAlignment', 'left', ...
                 'FontWeight', 'bold');
             obj.ProfileCheckboxHandle = uicontrol('Parent', obj.UipanelVersionHandle, 'Style', 'checkbox', 'String', 'Enable profiler', ...
-                'Units', 'pixels', 'Position', [429 -8 143 49], 'BackgroundColor', TDSoftwareInfo.BackgroundColour, 'ForegroundColor', [1 1 1], ...
+                'Units', 'pixels', 'Position', [429 -8 143 49], 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'ForegroundColor', [1 1 1], ...
                 'Callback', @obj.ProfileCheckboxCallback);
 
             % Set custom function for application closing
@@ -72,9 +72,9 @@ classdef PTKGui < handle
             % Set the application name and version number
             set(obj.TextVersionHandle, 'String', obj.GetSoftwareNameAndVersionForDisplay);
 
-            obj.ImagePanel = TDViewerPanel(obj.UipanelImageHandle);
-            obj.Reporting = TDReporting(splash_screen, obj.ImagePanel);
-            obj.PluginsPanel = TDPluginsPanel(obj.UipanelPluginsHandle, obj.Reporting);
+            obj.ImagePanel = PTKViewerPanel(obj.UipanelImageHandle);
+            obj.Reporting = PTKReporting(splash_screen, obj.ImagePanel);
+            obj.PluginsPanel = PTKPluginsPanel(obj.UipanelPluginsHandle, obj.Reporting);
             addlistener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);
             
             obj.OldWindowScrollWheelFcn = get(obj.FigureHandle, 'WindowScrollWheelFcn');
@@ -99,7 +99,7 @@ classdef PTKGui < handle
                 set(obj.FigureHandle, 'Position', obj.Settings.ScreenPosition);
             end
             
-            obj.DropDownLoadMenuManager = TDDropDownLoadMenuManager(obj.Settings, obj.PopupmenuLoadHandle);
+            obj.DropDownLoadMenuManager = PTKDropDownLoadMenuManager(obj.Settings, obj.PopupmenuLoadHandle);
 
             obj.PluginsPanel.AddPlugins(@obj.RunPluginCallback, @obj.RunGuiPluginCallback, []);
             
@@ -119,7 +119,7 @@ classdef PTKGui < handle
             set(obj.FigureHandle, 'Visible', 'on');
 
             % Now we switch to a progress panel displayed over the gui
-            obj.WaitDialogHandle = TDProgressPanel(obj.UipanelImageHandle);
+            obj.WaitDialogHandle = PTKProgressPanel(obj.UipanelImageHandle);
             obj.Reporting.ProgressDialog = obj.WaitDialogHandle;
             
             % Wait until the GUI is visible before removing the splash screen
@@ -140,16 +140,16 @@ classdef PTKGui < handle
             
             wait_dialog = obj.WaitDialogHandle;
             
-            if TDSoftwareInfo.DebugMode
+            if PTKSoftwareInfo.DebugMode
                 obj.RunPluginTryCatchBlock(plugin_name)
             else
                 try
                     obj.RunPluginTryCatchBlock(plugin_name)
                 catch exc
-                    if TDSoftwareInfo.IsErrorCancel(exc.identifier)
+                    if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                         obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                     else
-                        msgbox(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [TDSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'error');
+                        msgbox(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [PTKSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'error');
                         obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     end
                 end
@@ -160,7 +160,7 @@ classdef PTKGui < handle
         
         % Prompts the user for file(s) to load
         function SelectFilesAndLoad(obj)
-            image_info = TDChooseImagingFiles(obj.Settings.SaveImagePath);
+            image_info = PTKChooseImagingFiles(obj.Settings.SaveImagePath);
             
             % An empty image_info means the user has cancelled
             if ~isempty(image_info)
@@ -169,8 +169,8 @@ classdef PTKGui < handle
                 obj.Settings.SaveImagePath = image_info.ImagePath;
                 obj.SaveSettings;
                 
-                if (image_info.ImageFileFormat == TDImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
-                    msgbox('No valid DICOM files were found in this folder', [TDSoftwareInfo.Name ': No image files found.']);
+                if (image_info.ImageFileFormat == PTKImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
+                    msgbox('No valid DICOM files were found in this folder', [PTKSoftwareInfo.Name ': No image files found.']);
                     obj.Reporting.ShowMessage('PTKGuiApp:NoilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
                     obj.LoadImages(image_info, obj.WaitDialogHandle);
@@ -183,7 +183,7 @@ classdef PTKGui < handle
             image_data = obj.ImagePanel.BackgroundImage;
             path_name = obj.Settings.SaveImagePath;
             
-            path_name = TDSaveAs(image_data, patient_name, path_name, obj.Reporting);
+            path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
                 obj.Settings.SaveImagePath = path_name;
                 obj.SaveSettings;
@@ -195,7 +195,7 @@ classdef PTKGui < handle
             image_data = obj.ImagePanel.OverlayImage;
             path_name = obj.Settings.SaveImagePath;
             
-            path_name = TDSaveAs(image_data, patient_name, path_name, obj.Reporting);
+            path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
                 obj.Settings.SaveImagePath = path_name;
                 obj.SaveSettings;
@@ -205,7 +205,7 @@ classdef PTKGui < handle
         function SaveMarkers(obj)
             if ~isempty(obj.Dataset)
                 markers = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
-                obj.Dataset.SaveData(TDSoftwareInfo.MakerPointsCacheName, markers);
+                obj.Dataset.SaveData(PTKSoftwareInfo.MakerPointsCacheName, markers);
                 obj.ImagePanel.MarkerPointManager.MarkerPointsHaveBeenSaved;
             end
         end
@@ -229,14 +229,14 @@ classdef PTKGui < handle
         end
         
         function display_string = GetSoftwareNameAndVersionForDisplay(~)
-            display_string = [TDSoftwareInfo.Name, ' version ' TDSoftwareInfo.Version];
+            display_string = [PTKSoftwareInfo.Name, ' version ' PTKSoftwareInfo.Version];
         end        
         
         function dataset_cache_path = GetDatasetCachePath(obj)
             if ~isempty(obj.Dataset)
                 dataset_cache_path = obj.Dataset.GetDatasetCachePath;
             else
-                dataset_cache_path = TDDiskCache.GetCacheDirectory;
+                dataset_cache_path = PTKDiskCache.GetCacheDirectory;
             end
         end
         
@@ -289,7 +289,7 @@ classdef PTKGui < handle
         function RunPluginTryCatchBlock(obj, plugin_name)
             wait_dialog = obj.WaitDialogHandle;
             
-            new_plugin = TDPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
+            new_plugin = PTKPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
             wait_dialog.ShowAndHold(['Computing ' new_plugin.ButtonText]);
             
             plugin_text = new_plugin.ButtonText;
@@ -301,7 +301,7 @@ classdef PTKGui < handle
                 if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
                     
                     if isempty(new_image)
-                        obj.Reporting.Error('TDPTkGui:EmptyIMage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
+                        obj.Reporting.Error('PTKGui:EmptyIMage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
                     end
                     if all(new_image.ImageSize == obj.ImagePanel.BackgroundImage.ImageSize) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
                         obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
@@ -425,12 +425,12 @@ classdef PTKGui < handle
                     
                 % Attempt to obtain the region of interest
                 if ~load_full_data
-                    if obj.Dataset.IsContextEnabled(TDContext.LungROI)
+                    if obj.Dataset.IsContextEnabled(PTKContext.LungROI)
                         try
-                            lung_roi = obj.Dataset.GetResult('TDLungROI');
+                            lung_roi = obj.Dataset.GetResult('PTKLungROI');
                             obj.SetImage(lung_roi);
                         catch exc
-                            if TDSoftwareInfo.IsErrorCancel(exc.identifier)
+                            if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                                 obj.Reporting.Log('LoadImages cancelled by user');
                                 load_full_data = false;
                                 rethrow(exc)
@@ -446,9 +446,9 @@ classdef PTKGui < handle
 
                 % If we couldn't obtain the ROI, we load the full dataset
                 if load_full_data
-                    lung_roi = obj.Dataset.GetResult('TDOriginalImage');
+                    lung_roi = obj.Dataset.GetResult('PTKOriginalImage');
                     obj.SetImage(lung_roi);
-                    obj.Dataset.SaveData('TDOriginalImage', lung_roi);
+                    obj.Dataset.SaveData('PTKOriginalImage', lung_roi);
                 end
                 
                 obj.Settings.ImageInfo = image_info;
@@ -470,10 +470,10 @@ classdef PTKGui < handle
                 end
 
             catch exc
-                if TDSoftwareInfo.IsErrorCancel(exc.identifier)
+                if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', 'User cancelled loading');
                 else
-                    msgbox(exc.message, [TDSoftwareInfo.Name ': Cannot load dataset'], 'error');
+                    msgbox(exc.message, [PTKSoftwareInfo.Name ': Cannot load dataset'], 'error');
                     obj.Reporting.ShowMessage('PTKGuiApp:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
                 end
             end
@@ -485,7 +485,7 @@ classdef PTKGui < handle
 
         function LoadMarkers(obj)
             
-            new_image = obj.Dataset.LoadData(TDSoftwareInfo.MakerPointsCacheName);
+            new_image = obj.Dataset.LoadData(PTKSoftwareInfo.MakerPointsCacheName);
             if isempty(new_image)
                 disp('No previous markers found for this image');
             else
@@ -515,8 +515,8 @@ classdef PTKGui < handle
         
         function UpdateFigureTitle(obj)
             
-            figure_title = TDSoftwareInfo.Name;
-            if isa(obj.ImagePanel.BackgroundImage, 'TDImage')
+            figure_title = PTKSoftwareInfo.Name;
+            if isa(obj.ImagePanel.BackgroundImage, 'PTKImage')
                 patient_name = obj.ImagePanel.BackgroundImage.Title;
                 if obj.ImagePanel.OverlayImage.ImageExists
                     overlay_name = obj.ImagePanel.OverlayImage.Title;
@@ -609,7 +609,7 @@ classdef PTKGui < handle
         
         function AutoSaveMarkers(obj)            
             if obj.ImagePanel.MarkerPointManager.MarkerImageHasChanged && obj.MarkersHaveBeenLoaded
-                saved_marker_points = obj.Dataset.LoadData(TDSoftwareInfo.MakerPointsCacheName);
+                saved_marker_points = obj.Dataset.LoadData(PTKSoftwareInfo.MakerPointsCacheName);
                 current_marker_points = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
                 markers_changed = false;
                 if isempty(saved_marker_points)

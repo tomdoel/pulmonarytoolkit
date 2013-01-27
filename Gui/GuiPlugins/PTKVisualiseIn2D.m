@@ -1,11 +1,11 @@
-classdef TDVisualiseIn2D < TDGuiPlugin
-    % TDVisualiseIn2D. Gui Plugin for showing the current 2D image slice in a
+classdef PTKVisualiseIn2D < PTKGuiPlugin
+    % PTKVisualiseIn2D. Gui Plugin for showing the current 2D image slice in a
     % separate figure.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDVisualiseIn2D is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKVisualiseIn2D is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will create a new figure and display the current
     %     image slice.
@@ -37,7 +37,7 @@ classdef TDVisualiseIn2D < TDGuiPlugin
                 slice_number = ptk_gui_app.ImagePanel.SliceNumber(ptk_gui_app.ImagePanel.Orientation);
                 image_slice = ptk_gui_app.ImagePanel.BackgroundImage.GetSlice(slice_number, direction);
                 figure;
-                TDVisualiseIn2D.Maximize;
+                PTKVisualiseIn2D.Maximize;
                 if (direction == 1) || (direction == 2)
                     image_slice = image_slice';
                 end
@@ -52,7 +52,7 @@ classdef TDVisualiseIn2D < TDGuiPlugin
                 image_size = ptk_gui_app.ImagePanel.BackgroundImage.ImageSize;
                 voxel_size = ptk_gui_app.ImagePanel.BackgroundImage.VoxelSize;
                 
-                [dim_x_index, dim_y_index, dim_z_index] = TDVisualiseIn2D.GetXYDimensionIndex(direction);
+                [dim_x_index, dim_y_index, dim_z_index] = PTKVisualiseIn2D.GetXYDimensionIndex(direction);
                 x_range = [1, image_size(dim_x_index)];
                 y_range = [1, image_size(dim_y_index)];
                 pixel_ratio = [voxel_size(dim_y_index) voxel_size(dim_x_index) voxel_size(dim_z_index)];
@@ -96,15 +96,15 @@ classdef TDVisualiseIn2D < TDGuiPlugin
     methods (Static, Access = private)
         function [dim_x_index dim_y_index dim_z_index] = GetXYDimensionIndex(orientation)
             switch orientation
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     dim_x_index = 2;
                     dim_y_index = 3;
                     dim_z_index = 1;
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     dim_x_index = 1;
                     dim_y_index = 3;
                     dim_z_index = 2;
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     dim_x_index = 2;
                     dim_y_index = 1;
                     dim_z_index = 3;

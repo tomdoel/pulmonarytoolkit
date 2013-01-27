@@ -1,12 +1,12 @@
-classdef TDMarkerPointManager < handle
-    % TDMarkerPointManager. Part of the internal gui for the Pulmonary Toolkit.
+classdef PTKMarkerPointManager < handle
+    % PTKMarkerPointManager. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     TDMarkerPointManager provides functionality for creating, editing and
+    %     PTKMarkerPointManager provides functionality for creating, editing and
     %     deleting marker points associated with an image using the
-    %     TDViewerPanel.
+    %     PTKViewerPanel.
     %
     %
     %     Licence
@@ -55,10 +55,10 @@ classdef TDMarkerPointManager < handle
     end
     
     methods
-        function obj = TDMarkerPointManager(viewer_panel, axes_handle)
+        function obj = PTKMarkerPointManager(viewer_panel, axes_handle)
             obj.ViewerPanel = viewer_panel;
             obj.AxesHandle = axes_handle;
-            obj.MarkerPointImage = TDMarkerPointImage;
+            obj.MarkerPointImage = PTKMarkerPointImage;
         end
         
         function ChangeMarkerImage(obj, new_image)
@@ -159,15 +159,15 @@ classdef TDMarkerPointManager < handle
             k_screen = obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation);
             
             switch obj.ViewerPanel.Orientation
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     image_coords(1) = k_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = i_screen;
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     image_coords(1) = j_screen;
                     image_coords(2) = k_screen;
                     image_coords(3) = i_screen;
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     image_coords(1) = i_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = k_screen;
@@ -277,7 +277,7 @@ classdef TDMarkerPointManager < handle
         end
                 
         function new_marker = NewMarker(obj, coords, colour)
-            new_marker = TDMarkerPoint(coords, obj.AxesHandle, colour, obj, obj.CoordinateLimits);
+            new_marker = PTKMarkerPoint(coords, obj.AxesHandle, colour, obj, obj.CoordinateLimits);
             
             if isempty(obj.MarkerPoints)
                 obj.MarkerPoints = new_marker;

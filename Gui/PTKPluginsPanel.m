@@ -1,10 +1,10 @@
-classdef TDPluginsPanel < handle
-    % TDPluginsPanel. Part of the gui for the Pulmonary Toolkit.
+classdef PTKPluginsPanel < handle
+    % PTKPluginsPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     TDPluginsPanel builds and manages the panel of plugins and gui plugins
+    %     PTKPluginsPanel builds and manages the panel of plugins and gui plugins
     %     as part of the Pulmonary Toolkit gui.
     %
     %
@@ -29,7 +29,7 @@ classdef TDPluginsPanel < handle
     end
     
     methods
-        function obj = TDPluginsPanel(uipanel_handle, reporting)
+        function obj = PTKPluginsPanel(uipanel_handle, reporting)
             obj.Reporting = reporting;
             obj.ParentHandle = uipanel_handle;
             
@@ -74,8 +74,8 @@ classdef TDPluginsPanel < handle
         
         function AddPlugins(obj, callback_function_handle, gui_callback_function_handle, current_dataset)
             % This function adds buttons for all files in the Plugins directory
-            gui_plugins_by_category = TDGuiPluginInformation.GetPluginInformation(obj.Reporting);
-            plugins_by_category = TDPluginInformation.GetPluginInformation(obj.Reporting);
+            gui_plugins_by_category = PTKGuiPluginInformation.GetPluginInformation(obj.Reporting);
+            plugins_by_category = PTKPluginInformation.GetPluginInformation(obj.Reporting);
             obj.PluginsByCategory = plugins_by_category;
             obj.GuiPluginsByCategory = gui_plugins_by_category;
             obj.AddPluginsToPanel(gui_plugins_by_category, plugins_by_category, callback_function_handle, gui_callback_function_handle, current_dataset);
@@ -408,7 +408,7 @@ classdef TDPluginsPanel < handle
                 % Convert window and level from HU to greyscale values
                 level_grayscale = image_preview.RescaledToGrayscale(level_hu);
                 window_grayscale = window_hu;
-                if isa(image_preview, 'TDDicomImage')
+                if isa(image_preview, 'PTKDicomImage')
                     if image_preview.IsCT
                         window_grayscale = window_grayscale/image_preview.RescaleSlope;
                     end
@@ -416,7 +416,7 @@ classdef TDPluginsPanel < handle
                 
             else
                 button_image = zeros(button_height, button_width, 'uint8');
-                image_type = TDImageType.Colormap;
+                image_type = PTKImageType.Colormap;
                 image_preview_limits = [];
                 
                 level_grayscale = level_hu;
@@ -428,11 +428,11 @@ classdef TDPluginsPanel < handle
             button_text_colour = 150*[1, 1, 1];
                         
             if (image_type == 3) && isempty(image_preview_limits)
-                obj.Reporting.ShowWarning('TDPluginsPanel:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
+                obj.Reporting.ShowWarning('PTKPluginsPanel:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
                 image_preview_limits = [1 100];
             end
             
-            [rgb_image, ~] = TDImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale);
+            [rgb_image, ~] = PTKImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale);
             
             final_fade_factor = 0.3;
             rgb_image_factor = final_fade_factor*ones(size(rgb_image));

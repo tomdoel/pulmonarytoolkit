@@ -1,10 +1,10 @@
-classdef TDFlattenSegmentation < TDGuiPlugin
-    % TDFlattenSegmentation. Gui Plugin for replacing the overlay with its projection on the current viewing plane
+classdef PTKFlattenSegmentation < PTKGuiPlugin
+    % PTKFlattenSegmentation. Gui Plugin for replacing the overlay with its projection on the current viewing plane
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDFlattenSegmentation is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKFlattenSegmentation is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will replace each slice of the current overlay (in
     %     the current axis orientation) with a projection image formed by

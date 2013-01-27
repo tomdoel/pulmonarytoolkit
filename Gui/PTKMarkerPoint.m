@@ -1,10 +1,10 @@
-classdef TDMarkerPoint < handle
-    % TDMarkerPoint. Part of the internal gui for the Pulmonary Toolkit.
+classdef PTKMarkerPoint < handle
+    % PTKMarkerPoint. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     A TDMarkerPoint object is created for each marker currently displayed
+    %     A PTKMarkerPoint object is created for each marker currently displayed
     %     on the image. The purpose behind this class is to store the previous
     %     marker position in order to remove points from the underlying marker
     %     image when markers are moved.
@@ -33,7 +33,7 @@ classdef TDMarkerPoint < handle
     end
     
     methods
-        function obj = TDMarkerPoint(coords, axes_handle, colour, manager, coord_limits)
+        function obj = PTKMarkerPoint(coords, axes_handle, colour, manager, coord_limits)
             obj.Colour = colour;
             obj.Manager = manager;
             limits_x = [1, coord_limits(2)];

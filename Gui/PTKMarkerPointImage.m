@@ -1,12 +1,12 @@
-classdef TDMarkerPointImage < handle
-    % TDMarkerPointImage. Part of the gui for the Pulmonary Toolkit.
+classdef PTKMarkerPointImage < handle
+    % PTKMarkerPointImage. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     TDMarkerPointImage stores the underlying image which represents marker
+    %     PTKMarkerPointImage stores the underlying image which represents marker
     %     points. It abstracts the storage of the marker image away from the
-    %     interactive creation and use of marker points in the TDViewerPanel.
+    %     interactive creation and use of marker points in the PTKViewerPanel.
     %
     %
     %     Licence
@@ -21,8 +21,8 @@ classdef TDMarkerPointImage < handle
     end
     
     methods
-        function obj = TDMarkerPointImage
-            obj.MarkerImage = TDImage;
+        function obj = PTKMarkerPointImage
+            obj.MarkerImage = PTKImage;
         end
         
         function [slice_markers, slice_size] = GetMarkersFromImage(obj, slice_number, dimension)
@@ -64,7 +64,7 @@ classdef TDMarkerPointImage < handle
         function BackgroundImageChanged(obj, template)
             obj.MarkerImage = template;
             obj.MarkerImage.ChangeRawImage(zeros(template.ImageSize, 'uint8'));            
-            obj.MarkerImage.ImageType = TDImageType.Colormap;
+            obj.MarkerImage.ImageType = PTKImageType.Colormap;
         end
         
         function index_of_nearest_marker = GetIndexOfPreviousMarker(obj, current_coordinate, maximum_skip, orientation)
@@ -74,11 +74,11 @@ classdef TDMarkerPointImage < handle
             coordinate_range = coordinate_range(1) : coordinate_range(2);
             
             switch orientation
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     consider_image = obj.MarkerImage.RawImage(coordinate_range, :, :);
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     consider_image = obj.MarkerImage.RawImage(:, coordinate_range, :);
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     consider_image = obj.MarkerImage.RawImage(:, :, coordinate_range);
             end
             other_dimension = setxor([1 2 3], orientation);
@@ -99,11 +99,11 @@ classdef TDMarkerPointImage < handle
             coordinate_range = min(max_coordinate, coordinate_range);
             coordinate_range = coordinate_range(1) : coordinate_range(2);
             switch orientation
-                case TDImageOrientation.Coronal
+                case PTKImageOrientation.Coronal
                     consider_image = obj.MarkerImage.RawImage(coordinate_range, :, :);
-                case TDImageOrientation.Sagittal
+                case PTKImageOrientation.Sagittal
                     consider_image = obj.MarkerImage.RawImage(:, coordinate_range, :);
-                case TDImageOrientation.Axial
+                case PTKImageOrientation.Axial
                     consider_image = obj.MarkerImage.RawImage(:, :, coordinate_range);
             end
             other_dimension = setxor([1 2 3], orientation);
