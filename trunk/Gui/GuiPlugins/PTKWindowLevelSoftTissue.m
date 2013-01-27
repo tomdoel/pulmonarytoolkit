@@ -1,10 +1,10 @@
-classdef TDWindowLevelSoftTissue < TDGuiPlugin
-    % TDWindowLevelSoftTissue. Gui Plugin for using a preset soft tissue window/level
+classdef PTKWindowLevelSoftTissue < PTKGuiPlugin
+    % PTKWindowLevelSoftTissue. Gui Plugin for using a preset soft tissue window/level
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDWindowLevelSoftTissue is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKWindowLevelSoftTissue is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will change the window and level of the viewing 
     %     panel to standard soft tissue values.

@@ -22,7 +22,7 @@ classdef PTKSettings < handle
         Window = 1000
         Level = 1000
         SliceNumber = [1 1 1]
-        Orientation = TDImageOrientation.Coronal
+        Orientation = PTKImageOrientation.Coronal
         ShowImage = true
         ShowOverlay = true
         SaveImagePath = ''
@@ -35,12 +35,12 @@ classdef PTKSettings < handle
     
     methods (Static)
         function settings_dir = GetSettingsDirectory
-            settings_dir = TDSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
+            settings_dir = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
         end
         
         function settings_file_path = GetSettingsFilePath
             settings_dir = PTKSettings.GetSettingsDirectory;
-            settings_filename = TDSoftwareInfo.SettingsFileName;
+            settings_filename = PTKSoftwareInfo.SettingsFileName;
             settings_file_path = fullfile(settings_dir, settings_filename);
         end
         

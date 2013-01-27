@@ -1,10 +1,10 @@
-classdef TDVisualiseAirwaysIn3D < TDGuiPlugin
-    % TDVisualiseAirwaysIn3D. Gui Plugin for rendering the current overlay image in 3D 
+classdef PTKVisualiseAirwaysIn3D < PTKGuiPlugin
+    % PTKVisualiseAirwaysIn3D. Gui Plugin for rendering the current overlay image in 3D 
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDVisualiseAirwaysIn3D is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKVisualiseAirwaysIn3D is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will create a new figure and display the current
     %     image overlay as a 3D image. If the image is integer-bsed, it is
@@ -15,7 +15,7 @@ classdef TDVisualiseAirwaysIn3D < TDGuiPlugin
     %
     %     This plugin is intended to visualise thin structures such as small
     %     airways. For larger structrues such as lobes, a better visual
-    %     appearance can be obtained usint the TDVisualiseSegmentationIn3D gui
+    %     appearance can be obtained usint the PTKVisualiseSegmentationIn3D gui
     %     plugin.
     %
     %
@@ -53,7 +53,7 @@ classdef TDVisualiseAirwaysIn3D < TDGuiPlugin
                         smoothing_size = 0.5;
                     end
                     
-                    TDVisualiseIn3D([], segmentation, smoothing_size, true, ptk_gui_app.Reporting);
+                    PTKVisualiseIn3D([], segmentation, smoothing_size, true, ptk_gui_app.Reporting);
                 end
             end
         end

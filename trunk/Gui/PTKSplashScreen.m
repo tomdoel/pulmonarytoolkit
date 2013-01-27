@@ -1,7 +1,7 @@
-classdef TDSplashScreen < TDProgressInterface
-    % TDSplashScreen. A splash screen dialog which also reports progress informaton
+classdef PTKSplashScreen < PTKProgressInterface
+    % PTKSplashScreen. A splash screen dialog which also reports progress informaton
     %
-    %     TDSplashScreen creates a dialog with the application logo and version
+    %     PTKSplashScreen creates a dialog with the application logo and version
     %     information. It also displays progress information, for use during the
     %     application startup for reporting progress before the user interface
     %     is visible.
@@ -45,7 +45,7 @@ classdef TDSplashScreen < TDProgressInterface
     end
         
     methods
-        function obj = TDSplashScreen
+        function obj = PTKSplashScreen
             set(0, 'Units', 'pixels');
             screen_size = get(0, 'ScreenSize');
             obj.FigureHandle = figure('Color', [1 1 1], 'Units', 'Pixels', 'ToolBar', 'none', 'Visible', 'off', 'Resize', 'off', 'MenuBar', 'none');
@@ -56,12 +56,12 @@ classdef TDSplashScreen < TDProgressInterface
             set(obj.FigureHandle, 'Position', position);
             set(obj.FigureHandle, 'NumberTitle', 'off');
             obj.Image = axes('Units', 'Pixels', 'Position', [30, 100, 333, 314]);
-            logo = imread(TDSoftwareInfo.SplashScreenImageFile);
+            logo = imread(PTKSoftwareInfo.SplashScreenImageFile);
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
-            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 350, 460, 75], 'String', TDSoftwareInfo.Name, 'FontName', TDSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
-            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 240, 460, 110], 'FontName', TDSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
-            set(obj.BodyText, 'String', sprintf(['Version ' TDSoftwareInfo.Version ' \n\n' TDSoftwareInfo.WebsiteUrl]));
+            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 350, 460, 75], 'String', PTKSoftwareInfo.Name, 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
+            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 240, 460, 110], 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
+            set(obj.BodyText, 'String', sprintf(['Version ' PTKSoftwareInfo.Version ' \n\n' PTKSoftwareInfo.WebsiteUrl]));
             
             
 
@@ -110,7 +110,7 @@ classdef TDSplashScreen < TDProgressInterface
                 text = 'Please wait';
             end
             obj.Hide;
-            obj.DialogTitle = TDTextUtilities.RemoveHtml(text);
+            obj.DialogTitle = PTKTextUtilities.RemoveHtml(text);
             obj.DialogText = '';
             obj.ProgressValue = 0;
             obj.Hold = true;
@@ -143,7 +143,7 @@ classdef TDSplashScreen < TDProgressInterface
             if nargin < 2
                text = 'Please wait'; 
             end            
-            obj.DialogText = TDTextUtilities.RemoveHtml(text);
+            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
             obj.Update;
             obj.ShowPanel;            
         end
@@ -157,7 +157,7 @@ classdef TDSplashScreen < TDProgressInterface
         
         function SetProgressAndMessage(obj, progress_value, text)
             obj.ShowProgressBar = true;
-            obj.DialogText = TDTextUtilities.RemoveHtml(text);
+            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
             obj.Update;
             obj.ShowPanel;            
@@ -188,7 +188,7 @@ classdef TDSplashScreen < TDProgressInterface
             set(obj.Text, 'Visible', 'on');
             set(obj.ProgressTitle, 'Visible', 'on');
 
-            if TDSoftwareInfo.DebugMode
+            if PTKSoftwareInfo.DebugMode
                 set(obj.Quit, 'Visible', 'on');
             end
 
@@ -216,7 +216,7 @@ classdef TDSplashScreen < TDProgressInterface
         
         function QuitButton(obj, ~, ~)
             obj.Hide;
-            throw(MException('TDCustomProgressDialog:UserForceQuit', 'User forced plugin to terminate'));
+            throw(MException('PTKCustomProgressDialog:UserForceQuit', 'User forced plugin to terminate'));
         end
     end
     

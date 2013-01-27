@@ -1,10 +1,10 @@
-classdef TDWindowLevelBone < TDGuiPlugin
-    % TDWindowLevelBone. Gui Plugin for using a preset bone window/level
+classdef PTKWindowLevelBone < PTKGuiPlugin
+    % PTKWindowLevelBone. Gui Plugin for using a preset bone window/level
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDWindowLevelBone is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKWindowLevelBone is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will change the window and level of the viewing 
     %     panel to standard soft tissue values.

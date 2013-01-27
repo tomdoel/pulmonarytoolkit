@@ -1,10 +1,10 @@
-classdef TDVisualiseSegmentationIn3D < TDGuiPlugin
-    % TDVisualiseSegmentationIn3D. Gui Plugin for rendering the current overlay image in 3D 
+classdef PTKVisualiseSegmentationIn3D < PTKGuiPlugin
+    % PTKVisualiseSegmentationIn3D. Gui Plugin for rendering the current overlay image in 3D 
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDVisualiseSegmentationIn3D is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKVisualiseSegmentationIn3D is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will create a new figure and display the current
     %     image overlay as a 3D image. If the image is integer-bsed, it is
@@ -16,7 +16,7 @@ classdef TDVisualiseSegmentationIn3D < TDGuiPlugin
     %     This plugin performs smoothing and morphological operations to
     %     improve the appearance of the 3D rendering. This may remove small
     %     structures such as small airways from the rendered image. To visualise
-    %     these structures use the gui plugin TDVisualiseAirwaysIn3D.
+    %     these structures use the gui plugin PTKVisualiseAirwaysIn3D.
     %
     %
     %     Licence
@@ -50,7 +50,7 @@ classdef TDVisualiseSegmentationIn3D < TDGuiPlugin
                     smoothing_size = 4; % 4 is good for lobes
                 end
                 
-                TDVisualiseIn3D([], segmentation, smoothing_size, false, ptk_gui_app.Reporting);
+                PTKVisualiseIn3D([], segmentation, smoothing_size, false, ptk_gui_app.Reporting);
             end
         end
     end

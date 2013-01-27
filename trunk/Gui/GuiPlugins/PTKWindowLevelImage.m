@@ -1,11 +1,11 @@
-classdef TDWindowLevelImage < TDGuiPlugin
-    % TDWindowLevelImage. Gui Plugin for setting the window/level to
+classdef PTKWindowLevelImage < PTKGuiPlugin
+    % PTKWindowLevelImage. Gui Plugin for setting the window/level to
     % image-defined values
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDWindowLevelImage is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKWindowLevelImage is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will change the window and level of the viewing 
     %     panel to values specified by DICOM tages WindowCenter and WindowWidth.

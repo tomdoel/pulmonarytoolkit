@@ -1,10 +1,10 @@
-classdef TDRefreshPlugins < TDGuiPlugin
-    % TDRefreshPlugins. Gui Plugin for reloading plugins in the gui
+classdef PTKRefreshPlugins < PTKGuiPlugin
+    % PTKRefreshPlugins. Gui Plugin for reloading plugins in the gui
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDRefreshPlugins is a Gui Plugin for the TD Pulmonary Toolkit.
+    %     PTKRefreshPlugins is a Gui Plugin for the TD Pulmonary Toolkit.
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will re-load all plugins and gui plugins from
     %     disk, adding any new plugins and deleting any which are no longer

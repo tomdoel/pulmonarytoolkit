@@ -1,10 +1,10 @@
-classdef TDAboutPtk < TDGuiPlugin
-    % TDAboutPtk. Gui Plugin for displaying an "about box" dialog
+classdef PTKAboutPtk < PTKGuiPlugin
+    % PTKAboutPtk. Gui Plugin for displaying an "about box" dialog
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDAboutPtk is a Gui Plugin for the TD Pulmonary Toolkit. The gui will
+    %     PTKAboutPtk is a Gui Plugin for the TD Pulmonary Toolkit. The gui will
     %     create a button to run this plugin. Running this plugin will cause a
     %     splash screen dialog to be displayed.
     %
@@ -29,7 +29,7 @@ classdef TDAboutPtk < TDGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(~)
-            TDSplashScreen;
+            PTKSplashScreen;
         end
     end
 end

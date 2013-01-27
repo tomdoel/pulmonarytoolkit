@@ -1,10 +1,10 @@
-classdef TDClearDiskCache < TDGuiPlugin
-    % TDClearDiskCache. Gui Plugin for deleting all cached results files for the current dataset
+classdef PTKClearDiskCache < PTKGuiPlugin
+    % PTKClearDiskCache. Gui Plugin for deleting all cached results files for the current dataset
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     TDClearDiskCache is a Gui Plugin for the TD Pulmonary Toolkit. 
+    %     PTKClearDiskCache is a Gui Plugin for the TD Pulmonary Toolkit. 
     %     The gui will create a button for the user to run this plugin.
     %     Running this plugin will delete all results files from the current 
     %     dataset results cache folder. Certain internal cache files will not be

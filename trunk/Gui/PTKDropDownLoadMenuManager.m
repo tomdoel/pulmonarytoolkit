@@ -1,12 +1,12 @@
-classdef TDDropDownLoadMenuManager < handle
-    % TDDropDownLoadMenuManager. Part of the gui for the Pulmonary Toolkit.
+classdef PTKDropDownLoadMenuManager < handle
+    % PTKDropDownLoadMenuManager. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     TDDropDownLoadMenuManager stores the menu entries in the drop-down
+    %     PTKDropDownLoadMenuManager stores the menu entries in the drop-down
     %     quick load menu at the top of the gui. Each entry contains a
-    %     TDImageInfo object which contains the filenames, path and uid for a
+    %     PTKImageInfo object which contains the filenames, path and uid for a
     %     dataset, so that this dataset can be loaded when selected from the
     %     menu. New entries are added when datasets are imported, and this
     %     information is stored in the settings file so that is is remembered
@@ -26,7 +26,7 @@ classdef TDDropDownLoadMenuManager < handle
     end
     
     methods
-        function obj = TDDropDownLoadMenuManager(settings, popupmenu_handle)
+        function obj = PTKDropDownLoadMenuManager(settings, popupmenu_handle)
             obj.MenuHandle = popupmenu_handle;
             obj.Settings = settings;
             obj.UpdateQuickLoadMenu;
