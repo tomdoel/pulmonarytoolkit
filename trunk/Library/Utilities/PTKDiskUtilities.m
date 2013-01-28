@@ -115,6 +115,122 @@ classdef PTKDiskUtilities
                 mkdir(dir_name);
             end
         end
+        
+        function [is_meta_header, raw_filename] = IsFileMetaHeader(header_filename, reporting)
+            meta_header = PTKDiskUtilities.ReadMetaHeader(header_filename, reporting);
+            if (~isempty(meta_header)) && isfield(meta_header, 'ElementDataFile')
+                is_meta_header = true;
+                raw_filename = meta_header.ElementDataFile;
+            else
+                is_meta_header = false;
+                raw_filename = [];
+            end
+        end
+        
+        function meta_header = ReadMetaHeader(header_filename, reporting)
+            file_id = fopen(header_filename);
+            if (file_id <= 0)
+                reporting.Error('PTKDiskUtilities:OpenFileFailed', ['Unable to open file ' header_filename]);
+            end
+            
+            try
+                % Reads in the meta header data: meta_header_data{1} are the field names,
+                % meta_header_data{2} are the values
+                meta_header_data = strtrim(textscan(file_id, '%s %s', 'delimiter', '='));
+            catch exc
+                fclose(file_id);
+                meta_header = [];
+                return;
+            end
+            fclose(file_id);
+            
+            meta_header = [];
+            
+            for index = 1 : length(meta_header_data{1});
+                meta_header.(meta_header_data{1}{index}) = meta_header_data{2}{index};
+            end
+        end
+        
+        function [image_type, principal_filename, secondary_filenames] = GuessFileType(image_path, image_filename, default_guess, reporting)
+            [~, name, ext] = fileparts(image_filename);
+            if strcmp(ext, '.mat')
+                image_type = PTKImageFileFormat.Matlab;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+
+            % For metaheader files (mhd/mha) we also fetch the filename of the
+            % raw image data
+            elseif strcmp(ext, '.mhd') || strcmp(ext, '.mha')
+                image_type = PTKImageFileFormat.Metaheader;
+                [is_meta_header, raw_filename] = PTKDiskUtilities.IsFileMetaHeader(fullfile(image_path, image_filename), reporting);
+                if ~is_meta_header
+                    reporting.Error('PTKDiskUtilities:OpenMHDFileFailed', ['Unable to read metaheader file ' header_filename]);
+                end
+                principal_filename = {image_filename};
+                secondary_filenames = {raw_filename};
+                return;
+                
+            % If a .raw file is selected, look for the corresponding .mha or
+            % .mhd file. We thrown an exception if no file is found, it cannot
+            % be loaded or the raw filename does not match the raw file we are
+            % loading
+            elseif strcmp(ext, '.raw')
+                [principal_filename, secondary_filenames] = PTKDiskUtilities.GetHeaderFileFromRawFile(image_path, name, reporting);
+                if isempty(principal_filename)
+                    reporting.Error('PTKDiskUtilities:HeaderFileLoadError', ['Unable to find valid header file for ' fullfile(image_path, image_filename)]);
+                end
+                if ~strcmp(secondary_filenames{1}, image_filename)
+                    reporting.Error('PTKDiskUtilities:MetaHeaderRawFileMismatch', ['Mismatch between specified image filename and entry in ' principal_filename{1}]);
+                end
+                image_type = PTKImageFileFormat.Metaheader;
+                return;
+            end
+
+            % Unknown file type. Try looking for a header file
+            [principal_filename_mh, secondary_filenames_mh] = PTKDiskUtilities.GetHeaderFileFromRawFile(image_path, name, reporting);
+            if (~isempty(principal_filename_mh)) && (strcmp(secondary_filenames_mh{1}, image_filename))
+                image_type = PTKImageFileFormat.Metaheader;
+                principal_filename = principal_filename_mh;
+                secondary_filenames = secondary_filenames_mh;
+                return;
+            end
+            
+            % Test for a DICOM image
+            if isdicom(fullfile(image_path, image_filename))
+                image_type = PTKImageFileFormat.Dicom;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+            end
+
+            % If all else fails, use the guess
+            image_type = default_guess;
+            principal_filename = image_filename;
+            secondary_filenames = {};
+        end
+        
+        function [principal_filename, secondary_filenames] = GetHeaderFileFromRawFile(image_path, image_filename, reporting)
+            [~, name, ~] = fileparts(image_filename);
+            if exist(fullfile(image_path, [name '.mha']), 'file')
+                header_filename = [name '.mha'];
+            elseif exist(fullfile(image_path, [name '.mhd']), 'file')
+                header_filename = [name '.mhd'];
+            else
+                principal_filename = {};
+                secondary_filenames = {};
+                return;
+            end
+            
+            [is_meta_header, raw_filename] = PTKDiskUtilities.IsFileMetaHeader(fullfile(image_path, header_filename), reporting);
+            if ~is_meta_header
+                principal_filename = {};
+                secondary_filenames = {};
+                return;
+            end
+            principal_filename = {header_filename};
+            secondary_filenames = {raw_filename};
+        end
     end
 end
 

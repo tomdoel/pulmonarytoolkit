@@ -50,18 +50,9 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     header_filename = fullfile(path, filenames{1});
     [pathstr, ~, ~] = fileparts(header_filename);
 
-    file_id = fopen(header_filename);
-    if (file_id <= 0)
-        reporting.Error('PTKLoad3DRawAndMetaFiles:OpenFileFailed', ['Unable to open file ' header_filename]);
-    end
-
-    % Reads in the meta header data: meta_header_data{1} are the field names,
-    % meta_header_data{2} are the values
-    meta_header_data = strtrim(textscan(file_id, '%s %s', 'delimiter', '='));
-    fclose(file_id);
-
-    for index = 1 : length(meta_header_data{1});
-        header_data.(meta_header_data{1}{index}) = meta_header_data{2}{index};
+    header_data = PTKDiskUtilities.ReadMetaHeader(header_filename);
+    if isempty(header_data)
+        reporting.Error('PTKLoad3DRawAndMetaFiles:MetaHeaderReadFailed', ['Unable to read metaheader data from ' header_filename]);
     end
     
     if strcmp(header_data.AnatomicalOrientation, 'RPI')

@@ -160,7 +160,7 @@ classdef PTKGui < handle
         
         % Prompts the user for file(s) to load
         function SelectFilesAndLoad(obj)
-            image_info = PTKChooseImagingFiles(obj.Settings.SaveImagePath);
+            image_info = PTKChooseImagingFiles(obj.Settings.SaveImagePath, obj.Reporting);
             
             % An empty image_info means the user has cancelled
             if ~isempty(image_info)
