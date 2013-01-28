@@ -30,6 +30,7 @@ classdef PTKVisualiseSegmentationIn3D < PTKGuiPlugin
         ButtonText = '3D'
         ToolTip = 'Visualise the current overlay in 3D'
         Category = 'View'
+        Visibility = 'Overlay'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

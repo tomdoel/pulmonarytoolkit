@@ -88,6 +88,60 @@ classdef PTKPluginsPanel < handle
             obj.AddAllPreviewImagesToButtons(current_dataset, window, level)
         end        
         
+        function ChangePluginVisibility(obj, dataset_present, overlay_present)
+            gui_plugin_categories = obj.GuiPluginsByCategory.keys;
+            for gui_category = gui_plugin_categories
+                category_name = gui_category{1};
+                category_buttons = obj.GuiPluginsByCategory(category_name);
+                any_visible = false;
+                for plugin_info = category_buttons.values
+                    info = plugin_info{1};
+                    name = info.PluginName;
+                    make_visible = false;
+                    if strcmp(info.Visibility, 'Always')
+                        make_visible = true;
+                    elseif strcmp(info.Visibility, 'Dataset')
+                        if dataset_present
+                            make_visible = true;
+                        else
+                            make_visible = false;
+                        end
+                    elseif strcmp(info.Visibility, 'Overlay')
+                        if dataset_present && overlay_present
+                            make_visible = true;
+                        else
+                            make_visible = false;
+                        end
+                    else
+                        any_visible = true;
+                    end
+                    
+                    if make_visible
+                        any_visible = true;
+                        set(obj.PluginButtonHandlesMap(name), 'Visible', 'on');
+                    else
+                        set(obj.PluginButtonHandlesMap(name), 'Visible', 'off');
+                    end
+                end
+                
+                if any_visible
+                    set(obj.GuiPluginPanels(category_name), 'Visible', 'on');
+                else
+                    set(obj.GuiPluginPanels(category_name), 'Visible', 'off');
+                end
+            end
+            
+            
+            plugin_handles = obj.PluginPanels.values;
+            for handle_index = 1 : numel(plugin_handles)
+                if dataset_present
+                    set(plugin_handles{handle_index}, 'Visible', 'on');
+                else
+                    set(plugin_handles{handle_index}, 'Visible', 'off');
+                end
+            end
+        end
+        
         function Resize(obj)
             gui_plugins_by_category = obj.GuiPluginsByCategory;
             plugins_by_category = obj.PluginsByCategory;

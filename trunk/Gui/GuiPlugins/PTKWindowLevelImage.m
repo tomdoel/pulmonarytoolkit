@@ -22,6 +22,7 @@ classdef PTKWindowLevelImage < PTKGuiPlugin
         ButtonText = 'Image'
         ToolTip = 'Changes the window and level settings to values specified in the image'
         Category = 'Window/Level Presets'
+        Visibility = 'Dataset'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

@@ -23,6 +23,7 @@ classdef PTKSaveImage < PTKGuiPlugin
         ButtonText = 'Save Image'
         ToolTip = 'Save the current image view to files'
         Category = 'File'
+        Visibility = 'Dataset'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
