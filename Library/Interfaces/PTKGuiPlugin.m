@@ -40,6 +40,10 @@ classdef PTKGuiPlugin < handle
         % If true, this plugin will not have a button in the gui window        
         HidePluginInDisplay
         
+        % Controls when the button will be visible. Can be set to 'Always',
+        % 'Dataset' (only when a dataset is loaded) or 'Overlay' (only when an
+        % overlay image is present)
+        Visibility
         
         % Should normally be set to 6.
         % The width (in units defined by the gui) of the button for this plugin        

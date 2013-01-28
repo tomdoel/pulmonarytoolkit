@@ -118,6 +118,10 @@ classdef PTKGuiPluginInformation
             new_plugin.ButtonWidth = plugin_class.ButtonWidth;
             new_plugin.ButtonHeight = plugin_class.ButtonHeight;
             new_plugin.AlwaysRunPlugin = false; % Ensures plugin name is not in italics
+            
+            if isprop(plugin_class, 'Visibility')
+                new_plugin.Visibility = plugin_class.Visibility;
+            end
         end
         
     end    

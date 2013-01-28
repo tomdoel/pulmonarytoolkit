@@ -19,9 +19,10 @@ classdef PTKLoadImage < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Load'
+        ButtonText = 'Import'
         ToolTip = 'Select image files to load'
         Category = 'File'
+        Visibility = 'Always'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

@@ -31,6 +31,7 @@ classdef PTKVisualiseAirwaysIn3D < PTKGuiPlugin
         ButtonText = '3D Airways'
         ToolTip = 'Visualise the current overlay in 3D'
         Category = 'View'
+        Visibility = 'Overlay'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

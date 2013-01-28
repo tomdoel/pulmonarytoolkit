@@ -25,6 +25,7 @@ classdef PTKFlattenSegmentation < PTKGuiPlugin
         ButtonText = 'Flatten'
         ToolTip = 'Superimpose all slices of the image'
         Category = 'View'
+        Visibility = 'Overlay'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

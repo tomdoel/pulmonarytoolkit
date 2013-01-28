@@ -69,7 +69,7 @@ function results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, s
         reporting.Error('PTKAirwayRegionGrowingWithExplosionControl:InvalidInput', 'Requires a PTKImage as input');
     end
 
-    reporting.UpdateProgressAndMessage(0, 'Starting region growing with explosion control');
+    reporting.UpdateProgressAndMessage(0, 'Airway region growing with explosion control');
     
     % Perform the airway segmentation
     airway_tree = RegionGrowing(threshold_image, start_point_global, reporting, maximum_number_of_generations, explosion_multiplier, coronal_mode, debug_mode);

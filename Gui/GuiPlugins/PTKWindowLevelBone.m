@@ -21,6 +21,7 @@ classdef PTKWindowLevelBone < PTKGuiPlugin
         ButtonText = 'Bone'
         ToolTip = 'Changes the window and level settings to standard bone values (Window 2000HU Level 300HU)'
         Category = 'Window/Level Presets'
+        Visibility = 'Dataset'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
