@@ -83,10 +83,112 @@ classdef PTKMain < handle
             
         end
 
+
         % Creates a PTKDataset object for a dataset specified by the path, 
         % filenames and/or uid specified in a PTKImageInfo object. The dataset is
         % imported from the specified path if it does not already exist.
         function dataset = CreateDatasetFromInfo(obj, new_image_info)
+            [image_info, dataset_disk_cache] = PTKMain.ImportDataFromInfo(obj, new_image_info);
+            dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
+        end
+        
+
+        % Imports data into the Pulmonary Toolkit so that it can be accessed
+        % from the CreateDatasetFromUid() method. The input argument is a string
+        % containing the path to the data file to import. If the path points to
+        % a single (non-DICOM) file, then only the file will be imported. If the
+        % path points to a directory, or to a DICOM file, then all image files in
+        % the directory will be imported.
+        function uids = ImportData(filenames)
+            uids = {};
+            
+            % Only support a string input
+            if ~ischar(filenames)
+                obj.Reporting.Error('PTKMain:FileNotAsExpected', 'The file or directory passed to PTKMain.ImportData() is not of the expected type.');
+            end
+            
+            [file_path, file_prefix, file_suffix] = fileparts(filename);
+            import_whole_directory = false;
+            dicom_filenames = {};
+            non_dicom_filenames = {};
+            
+            % Find out file type. 0=does not exist; 2=file; 7-directory
+            exist_result = exist(filename, 'file');
+            if exist_result == 0
+                obj.Reporting.Error('PTKMain:FileDoesNotExist', 'The file or directory passed to PTKMain.ImportData() does not exist.');
+            elseif exist_result == 7
+                import_whole_directory = true;
+                import_folder = fullfile(file_path, file_prefix);
+            elseif exist_result == 2
+                if isdicom(filename)
+                    import_whole_directory = true;
+                    import_folder = file_path;
+                else
+                    import_whole_directory = false;
+                    import_folder = file_path;
+                    non_dicom_filenames = {[file_prefix, file_suffix]};
+                end
+            else
+                obj.Reporting.Error('PTKMain:FileDoesNotExist', 'The file or directory passed to PTKMain.ImportData() does not exist.');
+            end
+            
+            if import_whole_directory
+                all_filenames = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(import_folder, '*'));
+                dicom_filenames = PTKDiskUtilities.RemoveNonDicomFiles(import_folder, all_filenames);
+                non_dicom_filenames = setdiff(all_filenames, dicom_filenames);
+            end
+            
+            if ~isempty(dicom_filenames)
+                image_info_dicom = PTKImageInfo(import_folder, dicom_filenames, PTKImageFileFormat.Dicom, [], [], []);
+                [image_info_dicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_dicom);
+                uids{end + 1} = image_info_dicom.ImageUid;
+            end
+            
+            while ~isempty(non_dicom_filenames)
+                next_filename = non_dicom_filenames{1};
+                non_dicom_filenames(1) = [];
+                [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(import_folder, next_filename, [], reporting);
+                
+                % Remove duplicate filenames (which can happen when loading
+                % metadata files which have raw and metaheader files)
+                non_dicom_filenames = setdiff(non_dicom_filenames, principal_filename);
+                non_dicom_filenames = setdiff(non_dicom_filenames, secondary_filenames);
+                
+                if isempty(image_type)
+                    obj.Reporting.Warning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(import_folder, next_filename)], []);
+                else
+                    image_info_nondicom = PTKImageInfo(import_folder, {principal_filename}, image_type, [], [], []);
+                    [image_info_nondicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_nondicom);
+                    uids{end + 1} = image_info_nondicom.ImageUid;
+                end
+            end
+            if numel(uids) == 1
+                uids = uids{1};
+            end
+        end
+        
+    end
+    
+    methods (Static)
+        
+        function results_directory = GetResultsDirectoryAndCreateIfNecessary
+            application_directory = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
+            results_directory = fullfile(application_directory, PTKSoftwareInfo.ResultsDirectoryName);
+            if ~exist(results_directory, 'dir')
+                mkdir(results_directory);
+            end
+            
+        end
+    end
+    
+    methods (Static, Access = private)
+        
+        % Imports data into the Pulmonary Toolkit so that it can be accessed
+        % from the CreateDatasetFromUid() method. The input argument is a
+        % PTKImageInfo object containing the path, filenames and file type of
+        % the data to import. If you do not know the file type, use the
+        % ImportData() method instead.
+        function [image_info, dataset_disk_cache] = ImportDataFromInfo(obj, new_image_info)
             
             if isempty(new_image_info.ImageUid)
                 [series_uid, study_uid, modality] = PTKMain.GetImageUID(new_image_info);
@@ -106,24 +208,8 @@ classdef PTKMain < handle
             if (anything_changed)
                 dataset_disk_cache.SaveData(PTKSoftwareInfo.ImageInfoCacheName, image_info, obj.Reporting);
             end
-
-            dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
         end
-    end
-    
-    methods (Static)
         
-        function results_directory = GetResultsDirectoryAndCreateIfNecessary
-            application_directory = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
-            results_directory = fullfile(application_directory, PTKSoftwareInfo.ResultsDirectoryName);
-            if ~exist(results_directory, 'dir')
-                mkdir(results_directory);
-            end
-            
-        end
-    end
-    
-    methods (Static, Access = private)
                 
         % We need a unique identifier for each dataset. For DICOM files we use
         % the series instance UID. For other files we use the filename, which

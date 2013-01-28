@@ -1,4 +1,4 @@
-function image_info = PTKChooseImagingFiles(image_path)
+function image_info = PTKChooseImagingFiles(image_path, reporting)
     % PTKChooseImagingFiles. Displays a dialog for choosing image files to load.
     %
     %     This function displays a dialog which allows users to select medical
@@ -15,6 +15,7 @@ function image_info = PTKChooseImagingFiles(image_path)
     %    
 
     filespec = {
+        '*.*', 'All files (*.*)';
         '*.*', 'DICOM files (*.*)';
         '*.mhd;*.mha', 'Metaheader and raw data (*.mhd,*.mha)'
         };
@@ -27,10 +28,34 @@ function image_info = PTKChooseImagingFiles(image_path)
     end
     
     % If in DICOM format, then we will load the entire directory
-    if (filter_index ==  1)
+    if (filter_index ==  2)
+        filenames_dicom = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(image_path, '*'));
+        filenames_dicom = PTKDiskUtilities.RemoveNonDicomFiles(image_path, filenames_dicom);
+        image_type = PTKImageFileFormat.Dicom;
+        
+        % If there are no valid DICOM files then we return an ImageInfo with
+        % just the path and image type set
+        if isempty(filenames_dicom)
+            image_info = PTKImageInfo(image_path, [], image_type, [], [], []);
+            return;
+        end
+        image_info = PTKImageInfo(image_path, filenames_dicom, image_type, [], [], []);
+        return;
+        
+    elseif (filter_index ==  3)
+        image_type = PTKImageFileFormat.Metaheader;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+    end
+    
+    % No format specified, so we try to infer from the file itself
+    [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(image_path, filenames{1}, [], reporting);
+    filenames = principal_filename;
+    
+    % If in DICOM format, then we will load the entire directory
+    if (image_type == PTKImageFileFormat.Dicom)
         filenames = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(image_path, '*'));
         filenames = PTKDiskUtilities.RemoveNonDicomFiles(image_path, filenames);
-        image_type = PTKImageFileFormat.Dicom;
         
         % If there are no valid DICOM files then we return an ImageInfo with
         % just the path and image type set
@@ -38,28 +63,8 @@ function image_info = PTKChooseImagingFiles(image_path)
             image_info = PTKImageInfo(image_path, [], image_type, [], [], []);
             return;
         end
-    elseif (filter_index ==  2)
-        image_type = PTKImageFileFormat.Metaheader;
     end
-    
-    [~, name, ext] = fileparts(filenames{1});
-    if strcmp(ext, '.mat')
-        image_type = PTKImageFileFormat.Matlab;
-    elseif strcmp(ext, '.mhd') || strcmp(ext, '.mha')
-        image_type = PTKImageFileFormat.Metaheader;
-        
-    % If a .raw file is selected, look for the corresponding .mha or .mhd file
-    elseif strcmp(ext, '.raw')
-        if exist(fullfile(image_path, [name '.mha']), 'file')
-            filename = [name '.mha'];
-            filenames = {filename};
-            image_type = PTKImageFileFormat.Metaheader;
-        elseif exist(fullfile(image_path, [name '.mhd']), 'file')
-            filename = [name '.mhd'];
-            filenames = {filename};
-            image_type = PTKImageFileFormat.Metaheader;
-        end
-    end
+
     image_info = PTKImageInfo(image_path, filenames, image_type, [], [], []);
 end
 
