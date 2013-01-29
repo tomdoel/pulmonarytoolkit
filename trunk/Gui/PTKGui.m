@@ -99,6 +99,10 @@ classdef PTKGui < handle
                 set(obj.FigureHandle, 'Position', obj.Settings.ScreenPosition);
             end
             
+            % Check if any datasets in cache exist which are not part of the
+            % drop-down menu
+            obj.AddAllDatasetsInCacheToDropDownMenu;
+            
             obj.DropDownLoadMenuManager = PTKDropDownLoadMenuManager(obj.Settings, obj.PopupmenuLoadHandle);
 
             obj.PluginsPanel.AddPlugins(@obj.RunPluginCallback, @obj.RunGuiPluginCallback, []);
@@ -171,7 +175,7 @@ classdef PTKGui < handle
                 
                 if (image_info.ImageFileFormat == PTKImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
                     msgbox('No valid DICOM files were found in this folder', [PTKSoftwareInfo.Name ': No image files found.']);
-                    obj.Reporting.ShowMessage('PTKGuiApp:NoilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
+                    obj.Reporting.ShowMessage('PTKGuiApp:NoFilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
                     obj.LoadImages(image_info, obj.WaitDialogHandle);
                 end
@@ -286,6 +290,33 @@ classdef PTKGui < handle
     
     
     methods (Access = private)
+        
+        function AddAllDatasetsInCacheToDropDownMenu(obj)
+            uids = PTKDiskCache.GetUidsOfAllDatasetsInCache;
+            old_infos = obj.Settings.PreviousImageInfos;
+            settings_changed = false;
+            
+            for uid = uids
+                temporary_uid = uid{1};
+                if ~old_infos.isKey(temporary_uid)
+                    obj.Reporting.ShowMessage('PTKGui:UnimportedDaatsetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the settings file. I am adding this dataset to the quick load menu. This may occur if the settings file was recently removed.']);
+                    try
+                        temporary_disk_cache = PTKDiskCache(temporary_uid, obj.Reporting);
+                        temporary_image_info = temporary_disk_cache.Load(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
+                        old_infos(temporary_uid) = temporary_image_info;
+                        obj.Settings.PreviousImageInfos = old_infos;
+                        settings_changed = true;
+                    catch exc
+                        obj.Reporting.ShowWarning('PTKGui:AddDatasetToMenuFailed', ['An error occured when adding dataset ' temporary_uid ' to the quick load menu. Error: ' exc.message], exc);
+                    end
+                end                
+            end
+            
+            if settings_changed
+                obj.SaveSettings;
+            end
+        end
+        
         function RunPluginTryCatchBlock(obj, plugin_name)
             wait_dialog = obj.WaitDialogHandle;
             
