@@ -106,6 +106,9 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
                 version_unchanged_since_last_compilation_attempt = isequal(cached_mex_file.LastAttemptedCompiledVersion, mex_file.CurrentVersion);
                 compiler_unchanged_since_last_compilation_attempt = isequal(cached_mex_file.LastAttemptedCompiler, compiler);
                 compiled_failed_last_time = cached_mex_file.LastCompileFailed;
+                if isempty(compiled_failed_last_time)
+                    compiled_failed_last_time = false;
+                end
                 
                 if compiled_failed_last_time && version_unchanged_since_last_compilation_attempt && compiler_unchanged_since_last_compilation_attempt;
                     try_compilation_again = false;
