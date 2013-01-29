@@ -92,7 +92,52 @@ classdef PTKMain < handle
             dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
         end
         
+        function uids = ImportDataRecursive(obj, filename)
+            obj.Reporting.ShowProgress('Imorting data');
+            exist_result = exist(filename, 'file');
+            
+            if exist_result == 0
+                % Directory does not exist
+                obj.Reporting.Error('PTKMain:DirectoryDoesNotExist', 'The directory passed to PTKMain.ImportDataRecursive() does not exist.');
+            
+            elseif exist_result == 7
+                % Directory specified
+                directories_to_do = {filename};
+                
+            elseif exist_result == 2
+                % File specified - try to extract a directory
+                [dir_path, ~, ~] = fileparts(filename);
+                exist_result_2 = exist(dir_path, 'file');
+                if exist_result_2 ~= 0
+                    obj.Reporting.Error('PTKMain:DirectoryDoesNotExist', 'The argument passed to PTKMain.ImportDataRecursive() does not exist or is not a directory.');
+                else
+                    directories_to_do = {dir_path};
+                end
+            end
+            
+            uids = {};
+            while ~isempty(directories_to_do)
+                current_dir = directories_to_do{end};
+                directories_to_do(end) = [];
+                
+                obj.Reporting.UpdateProgressMessage(['Importing data from: ' current_dir]);
+                
+                if obj.Reporting.HasBeenCancelled
+                    obj.Reporting.Error(PTKSoftwareInfo.CancelErrorId, 'User cancelled');
+                end
+                
+                new_uids = obj.ImportData(current_dir);
+                uids = cat(2, uids, new_uids);
+                next_dirs = PTKDiskUtilities.GetListOfDirectories(current_dir);
+                for dir_to_add = next_dirs
+                    new_dir = fullfile(current_dir, dir_to_add{1});
+                    directories_to_do{end + 1} = new_dir;
+                end
+            end
+            obj.Reporting.CompleteProgress;
+        end
 
+        
         % Imports data into the Pulmonary Toolkit so that it can be accessed
         % from the CreateDatasetFromUid() method. The input argument is a string
         % containing the path to the data file to import. If the path points to
@@ -147,7 +192,7 @@ classdef PTKMain < handle
             while ~isempty(non_dicom_filenames)
                 next_filename = non_dicom_filenames{1};
                 non_dicom_filenames(1) = [];
-                [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(import_folder, next_filename, [], reporting);
+                [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(import_folder, next_filename, [], obj.Reporting);
                 
                 % Remove duplicate filenames (which can happen when loading
                 % metadata files which have raw and metaheader files)
@@ -155,7 +200,7 @@ classdef PTKMain < handle
                 non_dicom_filenames = setdiff(non_dicom_filenames, secondary_filenames);
                 
                 if isempty(image_type)
-                    obj.Reporting.Warning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(import_folder, next_filename)], []);
+                    obj.Reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(import_folder, next_filename)], []);
                 else
                     image_info_nondicom = PTKImageInfo(import_folder, {principal_filename}, image_type, [], [], []);
                     [image_info_nondicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_nondicom);

@@ -168,6 +168,17 @@ classdef PTKDiskCache < handle
             cache_directory = fullfile(application_directory, cache_directory);
         end
         
+        function uids = GetUidsOfAllDatasetsInCache
+            cache_directory = PTKDiskCache.GetCacheDirectory;
+            subdirectories = PTKDiskUtilities.GetListOfDirectories(cache_directory);
+            uids = {};
+            for subdir = subdirectories
+                candidate_uid = subdir{1};
+                if 2 == exist(fullfile(cache_directory, candidate_uid, [PTKSoftwareInfo.ImageInfoCacheName '.mat']), 'file')
+                    uids{end+1} = candidate_uid;
+                end
+            end
+        end
     end
     
     methods (Access = private)

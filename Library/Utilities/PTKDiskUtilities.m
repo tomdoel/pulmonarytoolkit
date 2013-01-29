@@ -34,6 +34,20 @@ classdef PTKDiskUtilities
             end
         end
         
+        % Returns a list of files in the specified directory
+        function dir_list = GetListOfDirectories(path)
+            files = dir(fullfile(path, '*'));
+            number_files = length(files);
+            dir_list = {};
+            for i = 1 : number_files
+                filename = files(i).name;
+                isdir = files(i).isdir;
+                if (filename(1) ~= '.' && isdir)
+                    dir_list{end + 1} = filename; %#ok<AGROW>
+                end
+            end
+        end
+        
         % Opens an explorer/finder window at the specified path
         function OpenDirectoryWindow(directory_path)
            if ispc
@@ -97,7 +111,7 @@ classdef PTKDiskUtilities
         function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
             dicom_filenames = [];
             for index = 1 : length(filenames)
-                if isdicom(fullfile(image_path, filenames{index}));
+                if (isdicom(fullfile(image_path, filenames{index}))) && (~strcmp(filenames{index}, 'DICOMDIR'))
                     dicom_filenames{end + 1} = filenames{index};
                 end
             end
@@ -197,7 +211,7 @@ classdef PTKDiskUtilities
             end
             
             % Test for a DICOM image
-            if isdicom(fullfile(image_path, image_filename))
+            if ~strcmp(image_filename, 'DICOMDIR') && isdicom(fullfile(image_path, image_filename))
                 image_type = PTKImageFileFormat.Dicom;
                 principal_filename = {image_filename};
                 secondary_filenames = {};
