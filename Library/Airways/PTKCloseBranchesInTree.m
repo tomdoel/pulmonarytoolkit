@@ -30,7 +30,7 @@ function airway_tree = PTKCloseBranchesInTree(airway_tree, closing_size_mm, imag
         
         if ~isempty(reporting)
             if reporting.HasBeenCancelled
-                error('User cancelled');
+                reporting.Error(PTKSoftwareInfo.CancelErrorId, 'User cancelled');
             end
             
             progress_value = round(100*(segment_index/number_of_segments));
