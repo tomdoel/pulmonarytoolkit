@@ -99,11 +99,11 @@ classdef PTKMain < handle
         % a single (non-DICOM) file, then only the file will be imported. If the
         % path points to a directory, or to a DICOM file, then all image files in
         % the directory will be imported.
-        function uids = ImportData(filenames)
+        function uids = ImportData(obj, filename)
             uids = {};
             
             % Only support a string input
-            if ~ischar(filenames)
+            if ~ischar(filename)
                 obj.Reporting.Error('PTKMain:FileNotAsExpected', 'The file or directory passed to PTKMain.ImportData() is not of the expected type.');
             end
             
