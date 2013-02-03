@@ -610,7 +610,7 @@ classdef PTKViewerPanel < handle
                         rescale_text = [rescale_units ':' int2str(rescale_value)];
                     end
                     
-                    if isempty(overlay_image) || ~overlay_image.ImageExists
+                    if isempty(overlay_image) || ~overlay_image.ImageExists || ~overlay_image.IsPointInImage(global_coords)
                         overlay_text = [];
                     else
                         overlay_voxel_value = overlay_image.GetVoxel(global_coords);
