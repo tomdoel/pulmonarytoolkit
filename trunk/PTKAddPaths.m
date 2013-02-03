@@ -1,17 +1,17 @@
-function PTKAddPtkPaths(varargin)
+function PTKAddPaths(varargin)
     
     force = nargin > 0 && strcmp(varargin{1}, 'force');
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    PTKAddPtkPaths_Version_Number = 1;
+    PTKAddPaths_Version_Number = 1;
     
     persistent PTK_PathsHaveBeenSet
     
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     
-    if force || (isempty(PTK_PathsHaveBeenSet) || PTK_PathsHaveBeenSet ~= PTKAddPtkPaths_Version_Number)
+    if force || (isempty(PTK_PathsHaveBeenSet) || PTK_PathsHaveBeenSet ~= PTKAddPaths_Version_Number)
         
         path_folders = {};
         
@@ -51,7 +51,7 @@ function PTKAddPtkPaths(varargin)
         % Add all the paths together (much faster than adding them individually)
         addpath(full_paths_to_add{:});
         
-        PTK_PathsHaveBeenSet = PTKAddPtkPaths_Version_Number;
+        PTK_PathsHaveBeenSet = PTKAddPaths_Version_Number;
     end
     
     % Add additional user-specific paths specified in the file

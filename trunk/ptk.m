@@ -13,7 +13,7 @@
 clc
 
 % Add all necessary paths
-PTKAddPtkPaths;
+PTKAddPaths;
 
 % Create the splash screen - do this early so the user knows something is
 % hapenning
