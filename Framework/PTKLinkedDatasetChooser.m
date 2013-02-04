@@ -83,6 +83,12 @@ classdef PTKLinkedDatasetChooser < handle
             is_gas_mri = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.IsGasMRI(linked_dataset, dataset_stack);
         end
         
+        % Gets the path of the folder where the output files for this dataset are
+        % stored
+        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
+            dataset_cache_path = obj.PrimaryDatasetResults.GetOutputPathAndCreateIfNecessary;
+        end        
+        
         % Checks the dependencies in this result with the current dependency
         % list, and determine if the dependencies are still valid
         function valid = CheckDependenciesValid(obj, dependencies)
