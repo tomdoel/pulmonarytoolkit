@@ -39,7 +39,7 @@ classdef PTKSoftwareInfo < handle
         ImageTemplatesCacheName = 'ImageTemplates'
         MexSourceDirectory = fullfile('Library', 'mex')
         UserDirectoryName = 'User'
-        ResultsDirectoryName = 'Results'
+        ResultsDirectoryName = 'Output'
         WebsiteUrl = 'http://code.google.com/p/pulmonarytoolkit'
         MatlabMinimumMajorVersion = 7
         MatlabMinimumMinorVersion = 11
