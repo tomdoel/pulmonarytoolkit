@@ -192,14 +192,8 @@ classdef PTKDensityVsHeight < PTKPlugin
     
     methods (Static, Access = private)
         function SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle, resolution)
-            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
-            image_info = dataset.GetImageInfo;
-            uid = image_info.ImageUid;
-            file_name = fullfile(results_directory, uid);
-            if ~exist(file_name, 'dir')
-                mkdir(file_name);
-            end
-            results_file_name = fullfile(file_name, ['DensityVsHeight.txt']);
+            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
+            results_file_name = fullfile(results_directory, ['DensityVsHeight.txt']);
             file_handle = fopen(results_file_name, 'w');
             
             number_points = length(left_lung_results.mean_density_values);

@@ -110,12 +110,8 @@ classdef PTKEmphysemaPercentage < PTKPlugin
             results.UL = ul_results;
             results.LL = ll_results;
 
-            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
-            file_name = fullfile(results_directory, uid);
-            if ~exist(file_name, 'dir')
-                mkdir(file_name);
-            end      
-            file_name = fullfile(file_name, 'PTKEmphysemaPercentage.txt');
+            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
+            file_name = fullfile(results_directory, 'PTKEmphysemaPercentage.txt');
             file_handle = fopen(file_name, 'w');
             disp('*****');
             PTKEmphysemaPercentage.WriteResults(file_handle, 'LUNG', results.Lung);

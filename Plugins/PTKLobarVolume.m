@@ -62,14 +62,8 @@ classdef PTKLobarVolume < PTKPlugin
             combined_results.lung_volume_mm3 = left_results.lung_volume_mm3 + right_results.lung_volume_mm3;
             combined_results.surface_volume_mm3 = left_results.surface_volume_mm3 + right_results.surface_volume_mm3;
 
-            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
-            image_info = dataset.GetImageInfo;
-            uid = image_info.ImageUid;
-            file_name = fullfile(results_directory, uid);
-            if ~exist(file_name, 'dir')
-                mkdir(file_name);
-            end      
-            file_name = fullfile(file_name, 'VolumeMeasurements.txt');
+            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
+            file_name = fullfile(results_directory, 'VolumeMeasurements.txt');
             file_handle = fopen(file_name, 'w');
             disp('*****');
             PTKLobarVolume.WriteToFileAndScreen(file_handle, ['Voxel size: ' num2str(voxel_size(1), '%3.2f') 'mm x ' num2str(voxel_size(2), '%3.2f') 'mm x ' num2str(voxel_size(3), '%3.2f') 'mm']);

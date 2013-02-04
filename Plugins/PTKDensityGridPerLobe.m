@@ -85,14 +85,9 @@ classdef PTKDensityGridPerLobe < PTKPlugin
         end
         
         function SaveToFile(dataset, lobe_name, ic, jc, kc, density_values)
-            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
-            image_info = dataset.GetImageInfo;
-            uid = image_info.ImageUid;
-            file_name = fullfile(results_directory, uid);
-            if ~exist(file_name, 'dir')
-                mkdir(file_name);
-            end
-            results_file_name = fullfile(file_name, ['DensityValues_' lobe_name '.txt']);
+            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
+            
+            results_file_name = fullfile(results_directory, ['DensityValues_' lobe_name '.txt']);
             file_handle = fopen(results_file_name, 'w');
             
             number_points = length(ic);
