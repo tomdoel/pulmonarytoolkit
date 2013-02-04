@@ -106,6 +106,18 @@ classdef PTKDatasetResults < handle
             end
         end
 
+        % Gets the path of the folder where the output files for this dataset are
+        % stored
+        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
+            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
+            image_info = obj.GetImageInfo;
+            uid = image_info.ImageUid;
+            dataset_cache_path = fullfile(results_directory, uid);
+            if ~exist(dataset_cache_path, 'dir')
+                mkdir(dataset_cache_path);
+            end      
+        end        
+        
         function valid = CheckDependencyValid(obj, next_dependency)
             valid = obj.DependencyTracker.CheckDependencyValid(next_dependency, obj.Reporting);
         end

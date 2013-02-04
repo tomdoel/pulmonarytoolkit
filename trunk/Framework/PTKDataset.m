@@ -135,6 +135,12 @@ classdef PTKDataset < handle
             obj.Reporting.ShowAndClear;
         end
 
+        % Gets the path of the folder where the output files for this dataset are
+        % stored
+        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
+            dataset_cache_path = obj.LinkedDatasetChooser.GetOutputPathAndCreateIfNecessary;
+        end
+        
         % Returns a PTKImageInfo structure with image information, including the
         % UID, filenames and file path
         function image_info = GetImageInfo(obj, dataset_uid)

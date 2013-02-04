@@ -219,10 +219,7 @@ classdef PTKMain < handle
         function results_directory = GetResultsDirectoryAndCreateIfNecessary
             application_directory = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
             results_directory = fullfile(application_directory, PTKSoftwareInfo.ResultsDirectoryName);
-            if ~exist(results_directory, 'dir')
-                mkdir(results_directory);
-            end
-            
+            PTKDiskUtilities.CreateDirectoryIfNecessary(results_directory);
         end
     end
     
