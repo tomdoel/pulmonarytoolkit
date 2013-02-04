@@ -166,14 +166,8 @@ classdef PTKLobarHistogram < PTKPlugin
         end
         
         function SaveToFile(dataset, graph_data, figure_handle, resolution)
-            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
-            image_info = dataset.GetImageInfo;
-            uid = image_info.ImageUid;
-            file_name = fullfile(results_directory, uid);
-            if ~exist(file_name, 'dir')
-                mkdir(file_name);
-            end
-            results_file_name = fullfile(file_name, ['LobeHistogram.txt']);
+            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
+            results_file_name = fullfile(results_directory, ['LobeHistogram.txt']);
             file_handle = fopen(results_file_name, 'w');
             
             PTKLobarHistogram.SaveLobeToFile(file_handle, graph_data.Lung,       'BOTHLUNG');
