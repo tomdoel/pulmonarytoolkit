@@ -192,13 +192,14 @@ classdef PTKDiskUtilities
             elseif strcmp(ext, '.raw')
                 [principal_filename, secondary_filenames] = PTKDiskUtilities.GetHeaderFileFromRawFile(image_path, name, reporting);
                 if isempty(principal_filename)
-                    reporting.Error('PTKDiskUtilities:HeaderFileLoadError', ['Unable to find valid header file for ' fullfile(image_path, image_filename)]);
+                    reporting.ShowWarning('PTKDiskUtilities:HeaderFileLoadError', ['Unable to find valid header file for ' fullfile(image_path, image_filename)], []);
+                else
+                    if ~strcmp(secondary_filenames{1}, image_filename)
+                        reporting.Error('PTKDiskUtilities:MetaHeaderRawFileMismatch', ['Mismatch between specified image filename and entry in ' principal_filename{1}]);
+                    end
+                    image_type = PTKImageFileFormat.Metaheader;
+                    return;
                 end
-                if ~strcmp(secondary_filenames{1}, image_filename)
-                    reporting.Error('PTKDiskUtilities:MetaHeaderRawFileMismatch', ['Mismatch between specified image filename and entry in ' principal_filename{1}]);
-                end
-                image_type = PTKImageFileFormat.Metaheader;
-                return;
             end
 
             % Unknown file type. Try looking for a header file
