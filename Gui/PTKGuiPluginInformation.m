@@ -23,8 +23,8 @@ classdef PTKGuiPluginInformation
         
         % Obtains a list of plugins found in the GuiPlugins folder        
         function plugin_list = GetListOfPlugins(reporting)
-            plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKGuiPluginInformation.GetPluginsPath, '*.m');
-            user_plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKGuiPluginInformation.GetUserPluginsPath, '*.m');
+            plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKDirectories.GetGuiPluginsPath, '*.m');
+            user_plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKDirectories.GetGuiUserPluginsPath, '*.m');
             combined_plugin_list = horzcat(plugin_list, user_plugin_list);
             plugin_list = [];
 
@@ -91,17 +91,6 @@ classdef PTKGuiPluginInformation
     
     methods (Access = private, Static)
         
-        function plugins_path = GetPluginsPath
-            full_path = mfilename('fullpath');
-            [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.GuiPluginDirectoryName);
-        end
-        
-        function plugins_path = GetUserPluginsPath
-            full_path = mfilename('fullpath');
-            [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.GuiPluginDirectoryName);
-        end
         
         function new_plugin = ParsePluginClass(plugin_name, plugin_class, reporting)
             new_plugin = [];
