@@ -26,7 +26,7 @@ function PTKCompileMexFiles(framework_cache, force_recompile, reporting)
     %
     
     reporting.ShowProgress('Checking mex files');
-    root_directory = PTKSoftwareInfo.GetSourceDirectory;
+    root_directory = PTKDirectories.GetSourceDirectory;
     output_directory = fullfile(root_directory, 'bin');
     cached_mex_file_info = framework_cache.MexInfoMap;
     mex_files_to_compile = GetMexFilesToCompile(root_directory, reporting);
@@ -152,7 +152,7 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
 end
 
 function mex_files_to_compile_map = GetMexFilesToCompile(root_dir, reporting)
-    mex_dir = PTKSoftwareInfo.MexSourceDirectory;
+    mex_dir = PTKDirectories.GetMexSourceDirectory;
 
     % Populate list with known mex files
     mex_files_to_compile = PTKMexInfo.empty(0);

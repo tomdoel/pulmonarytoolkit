@@ -22,19 +22,9 @@ classdef PTKFrameworkCache < handle
     end
     
     methods (Static)
-        function settings_dir = GetCacheDirectory
-            settings_dir = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
-        end
-        
-        function settings_file_path = GetCacheFilePath
-            settings_dir = PTKFrameworkCache.GetCacheDirectory;
-            cache_filename = PTKSoftwareInfo.FrameworkCacheFileName;
-            settings_file_path = fullfile(settings_dir, cache_filename);
-        end
-        
         function cache = LoadCache(reporting)
             try
-                cache_filename = PTKFrameworkCache.GetCacheFilePath;
+                cache_filename = PTKDirectories.GetFrameworkCacheFilePath;
                 if exist(cache_filename, 'file')
                     cache_struct = load(cache_filename);
                     cache = cache_struct.cache;
@@ -59,12 +49,7 @@ classdef PTKFrameworkCache < handle
         end
         
         function SaveCache(obj, reporting)
-            cache_path = PTKFrameworkCache.GetCacheDirectory;
-            cache_filename = PTKFrameworkCache.GetCacheFilePath;
-            if ~exist(cache_path, 'dir')
-                reporting.ShowMessage('PTKFrameworkCache:NewSettingsDirectory', ['Creating settings directory: ' cache_path]);
-                mkdir(cache_path);
-            end
+            cache_filename = PTKDirectories.GetFrameworkCacheFilePath;
             
             try
                 cache = obj; %#ok<NASGU>
