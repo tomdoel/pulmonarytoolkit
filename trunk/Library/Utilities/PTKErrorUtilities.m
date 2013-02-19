@@ -33,6 +33,16 @@ classdef PTKErrorUtilities < handle
                 end
             end
         end
+        
+        function ThrowException(id, message)
+            [stack, ~] = dbstack(2, '-completenames');
+            
+            msgStruct = [];
+            msgStruct.message = message;
+            msgStruct.identifier = id;
+            msgStruct.stack = stack;
+            error(msgStruct);
+        end
     end
 end
 
