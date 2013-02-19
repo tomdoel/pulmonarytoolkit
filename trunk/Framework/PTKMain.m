@@ -214,15 +214,6 @@ classdef PTKMain < handle
         
     end
     
-    methods (Static)
-        
-        function results_directory = GetResultsDirectoryAndCreateIfNecessary
-            application_directory = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
-            results_directory = fullfile(application_directory, PTKSoftwareInfo.ResultsDirectoryName);
-            PTKDiskUtilities.CreateDirectoryIfNecessary(results_directory);
-        end
-    end
-    
     methods (Static, Access = private)
         
         % Imports data into the Pulmonary Toolkit so that it can be accessed

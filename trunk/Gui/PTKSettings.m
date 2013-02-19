@@ -34,19 +34,9 @@ classdef PTKSettings < handle
     end
     
     methods (Static)
-        function settings_dir = GetSettingsDirectory
-            settings_dir = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
-        end
-        
-        function settings_file_path = GetSettingsFilePath
-            settings_dir = PTKSettings.GetSettingsDirectory;
-            settings_filename = PTKSoftwareInfo.SettingsFileName;
-            settings_file_path = fullfile(settings_dir, settings_filename);
-        end
-        
         function settings = LoadSettings(viewer_panel, reporting)
             try
-                settings_filename = PTKSettings.GetSettingsFilePath;
+                settings_filename = PTKDirectories.GetSettingsFilePath;
                 if exist(settings_filename, 'file')
                     settings_struct = load(settings_filename);
                     settings = settings_struct.settings;
@@ -98,12 +88,7 @@ classdef PTKSettings < handle
             obj.SliceSkip = viewer_panel.SliceSkip;
             obj.CurrentMarkerColour = viewer_panel.MarkerPointManager.CurrentColour;
             
-            settings_path = PTKSettings.GetSettingsDirectory;
-            settings_filename = PTKSettings.GetSettingsFilePath;
-            if ~exist(settings_path, 'dir')
-                reporting.ShowMessage('PTKSettings:NewSettingsDirectory', ['Creating settings directory: ' settings_path]);
-                mkdir(settings_path);
-            end
+            settings_filename = PTKDirectories.GetSettingsFilePath;
             
             try
                 settings = obj; %#ok<NASGU>

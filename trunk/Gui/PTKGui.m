@@ -240,7 +240,7 @@ classdef PTKGui < handle
             if ~isempty(obj.Dataset)
                 dataset_cache_path = obj.Dataset.GetDatasetCachePath;
             else
-                dataset_cache_path = PTKDiskCache.GetCacheDirectory;
+                dataset_cache_path = PTKDirectories.GetCacheDirectory;
             end
         end
         

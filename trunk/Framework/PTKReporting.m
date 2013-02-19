@@ -68,9 +68,8 @@ classdef PTKReporting < PTKReportingInterface
             if nargin > 1
                 obj.ViewingPanel = viewing_panel;
             end
-            settings_folder = PTKSoftwareInfo.GetApplicationDirectoryAndCreateIfNecessary;
-            log_file_name = PTKSoftwareInfo.LogFileName;
-            obj.LogFileName = fullfile(settings_folder, log_file_name);
+            obj.LogFileName = PTKDirectories.GetLogFilePath;
+            
         end
         
         function Log(obj, message)
