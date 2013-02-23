@@ -246,6 +246,27 @@ classdef PTKDiskUtilities
             principal_filename = {header_filename};
             secondary_filenames = {raw_filename};
         end
+        
+        % Returns a list of Matlab classes found in the specified directory which
+        % inherit from the given superclass
+        function list_of_test_classes = GetListOfClassFiles(directory, superclass_name)
+            list_of_test_classes = {};
+            list_of_files = PTKDiskUtilities.GetDirectoryFileList(directory, '*.m');
+            for file_name = list_of_files
+                [~, this_class_name, ~] = fileparts(file_name{1});
+                if ~strcmp(this_class_name, superclass_name) && exist(this_class_name, 'class')
+                    meta_class = meta.class.fromName(this_class_name);
+                    superclasses = meta_class.SuperclassList;
+                    if ~isempty(superclasses);
+                        superclass_names = superclasses.Name;
+                        if ismember(superclass_names, superclass_name, 'rows')
+                            list_of_test_classes{end + 1} = this_class_name;
+                        end
+                    end
+                end
+            end
+
+        end
     end
 end
 
