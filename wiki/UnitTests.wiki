@@ -1,0 +1,18 @@
+#summary The PTK unit test framework
+
+= Unit tests =
+
+The PTK provides a simple framework for developing and running unit tests.
+Unit tests are helpful for the development of new code, but are particularly useful for regression testing (detecting when code changes cause unanticipated consequences). 
+
+= Running tests =
+
+Run PTKRunTests from the Matlab command window. This will attempt to run all tests and report whether each one passes or fails. The tests to be run are found by examining the \Test directory and finding all classes there which inherit from PTKTest.
+
+= Adding tests =
+
+A test is added by creating a new class in the \Test directory. This class must inherit from PTKTest. All code in the test must be invoked by the constructor, as the test will be executed by instantiating and then deleting an object of the test class. Tests can be put into methods, providing the methods are called by the constructor. 
+
+= Test coding standards =
+
+In general, one test class should be created for each corresponding class (or function file) being tested. Test classes should be called "TestFoo" corresponding to "PTKFoo" and are placed in \Test. Classes required as parameters  to the class being tested should in general be mocked (fake objects are OK where the interaction is not important). Mock and fake objects objects should be placed in \Library\Test, since these are not tests in themselves but helper classes.
