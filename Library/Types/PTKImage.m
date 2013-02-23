@@ -383,25 +383,24 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         % Adjusts the image borders to match the specified origin and size
         function ResizeToMatchOriginAndSize(obj, new_origin, image_size)
+            src_offset = new_origin - obj.Origin + [1 1 1];
+            dst_offset = obj.Origin - new_origin + [1 1 1];
+            
+            src_start_crop = max(1, src_offset);
+            src_end_crop = min(obj.ImageSize(1:3), src_offset + image_size(1:3) - 1);
+            
+            dst_start_crop = max(1, dst_offset);
+            dst_end_crop = min(image_size(1:3), dst_offset + obj.ImageSize(1:3) - 1);
+            
+            num_dims = min(length(image_size), length(obj.ImageSize));
+            new_image_size = obj.ImageSize;
+            new_image_size(1:num_dims) = image_size(1:num_dims);
+            
             if obj.ImageExists
-                src_offset = new_origin - obj.Origin + [1 1 1];
-                dst_offset = obj.Origin - new_origin + [1 1 1];
-                
-                src_start_crop = max(1, src_offset);
-                src_end_crop = min(obj.ImageSize(1:3), src_offset + image_size(1:3) - 1);
-                
-                dst_start_crop = max(1, dst_offset);
-                dst_end_crop = min(image_size(1:3), dst_offset + obj.ImageSize(1:3) - 1);
-                
-                class_name = class(obj.RawImage);
-                
-                num_dims = min(length(image_size), length(obj.ImageSize));
-                new_image_size = obj.ImageSize;
-                new_image_size(1:num_dims) = image_size(1:num_dims);
                 if islogical(obj.RawImage)
                     new_rawimage = false(new_image_size);
                 else
-                    new_rawimage = zeros(new_image_size, class_name);
+                    new_rawimage = zeros(new_image_size, class(obj.RawImage));
                 end
                 new_rawimage(...
                     dst_start_crop(1) : dst_end_crop(1), ...
@@ -413,6 +412,8 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                     src_start_crop(3) : src_end_crop(3),  ...
                     : );
                 obj.RawImage = new_rawimage;
+            else
+                obj.LastImageSize = new_image_size;
             end
             obj.Origin = new_origin;
             obj.NotifyImageChanged;
@@ -689,9 +690,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function Crop(obj, start_crop, end_crop)
             if obj.ImageExists
                 obj.RawImage = obj.RawImage(start_crop(1):end_crop(1), start_crop(2):end_crop(2), start_crop(3):end_crop(3));
-                obj.Origin = obj.Origin + [start_crop(1) - 1, start_crop(2) - 1, start_crop(3) - 1];
-                obj.NotifyImageChanged;
+            else
+                obj.LastImageSize = [1 + end_crop(1) - start_crop(1), 1 + end_crop(2) - start_crop(2), 1 + end_crop(3) - start_crop(3)];
             end
+            obj.Origin = obj.Origin + [start_crop(1) - 1, start_crop(2) - 1, start_crop(3) - 1];
+            obj.NotifyImageChanged;
         end
         
         % Adds a blank border of border_size voxels to the image in all
