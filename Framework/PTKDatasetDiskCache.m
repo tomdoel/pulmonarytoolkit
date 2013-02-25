@@ -30,34 +30,34 @@ classdef PTKDatasetDiskCache < handle
 
         % Fetches a cached result for a plugin, but checks the dependencies to
         % ensure it is still valid, and if not returns an empty result.
-        function [value, cache_info] = LoadPluginResult(obj, plugin_name, reporting)
-            [value, cache_info] = obj.DiskCache.Load(plugin_name, reporting);
+        function [value, cache_info] = LoadPluginResult(obj, plugin_name, context, reporting)
+            [value, cache_info] = obj.DiskCache.Load(plugin_name, context, reporting);
         end
         
         % Stores a plugin result in the disk cache and updates cached dependency
         % information
-        function SavePluginResult(obj, plugin_name, result, cache_info, reporting)
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name);
-            obj.DiskCache.SaveWithInfo(plugin_name, result, cache_info, reporting);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, reporting);
+        function SavePluginResult(obj, plugin_name, result, cache_info, context, reporting)
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context);
+            obj.DiskCache.SaveWithInfo(plugin_name, result, cache_info, context, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
         % Caches Dependency information
-        function CachePluginInfo(obj, plugin_name, cache_info, reporting)
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, reporting);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, reporting);
+        function CachePluginInfo(obj, plugin_name, cache_info, context, reporting)
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
         % Saves additional data associated with this dataset to the cache
         function SaveData(obj, data_filename, value, reporting)
-            obj.DiskCache.Save(data_filename, value, reporting);
+            obj.DiskCache.Save(data_filename, value, [], reporting);
         end
         
         % Loads additional data associated with this dataset from the cache
         function value = LoadData(obj, data_filename, reporting)
-            value = obj.DiskCache.Load(data_filename, reporting);
+            value = obj.DiskCache.Load(data_filename, [], reporting);
         end
         
         function cache_path = GetCachePath(obj, ~)
@@ -68,8 +68,8 @@ classdef PTKDatasetDiskCache < handle
             obj.DiskCache.RemoveAllCachedFiles(remove_framework_files, reporting);
         end
         
-        function exists = Exists(obj, name, reporting)
-            exists = obj.DiskCache.Exists(name, reporting);
+        function exists = Exists(obj, name, context, reporting)
+            exists = obj.DiskCache.Exists(name, context, reporting);
         end
 
         function valid = CheckDependencyValid(obj, next_dependency, reporting)
@@ -80,7 +80,7 @@ classdef PTKDatasetDiskCache < handle
     methods (Access = private)
         
         function LoadCachedPluginResultsFile(obj, reporting)
-            cached_plugin_info = obj.DiskCache.Load(PTKSoftwareInfo.CachedPluginInfoFileName, reporting);
+            cached_plugin_info = obj.DiskCache.Load(PTKSoftwareInfo.CachedPluginInfoFileName, [], reporting);
             if isempty(cached_plugin_info)
                 obj.PluginResultsInfo = PTKPluginResultsInfo;
             else
@@ -89,7 +89,7 @@ classdef PTKDatasetDiskCache < handle
         end
         
         function SaveCachedPluginInfoFile(obj, reporting)
-            obj.DiskCache.Save(PTKSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, reporting);
+            obj.DiskCache.Save(PTKSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, [], reporting);
         end
     end
 end

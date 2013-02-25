@@ -19,14 +19,16 @@ classdef PTKDependency < handle
     
     properties
         PluginName
+        Context
         Uid
         DatasetUid
         Attributes
     end
     
     methods
-        function obj = PTKDependency(name, uid, dataset_uid, attributes)
+        function obj = PTKDependency(name, context, uid, dataset_uid, attributes)
             obj.PluginName = name;
+            obj.Context = context;
             obj.Uid = uid;
             obj.DatasetUid = dataset_uid;
             obj.Attributes = attributes;

@@ -35,13 +35,15 @@ classdef PTKDatasetCallback < handle
 
     properties (Access = private)
         LinkedDatasetChooser  % Sends the API calls to the correct dataset
-        DatasetStack       % Handle to the current call stack for the primary dataset
+        DatasetStack          % Handle to the current call stack for the primary dataset
+        DefaultContext        % The context for any results requested
     end
     
     methods
-        function obj = PTKDatasetCallback(linked_dataset_chooser, dataset_call_stack)
+        function obj = PTKDatasetCallback(linked_dataset_chooser, dataset_call_stack, default_context)
             obj.DatasetStack = dataset_call_stack;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
+            obj.DefaultContext = default_context;
         end
 
         % RunPlugin: Returns the results of a plugin. If a valid result is cached on disk,
@@ -56,7 +58,7 @@ classdef PTKDatasetCallback < handle
         % same as the results.
         function [result, output_image] = GetResult(obj, plugin_name, context, dataset_name)
             if nargin < 3
-                context = [];
+                context = obj.DefaultContext;
             end
             if nargin < 4
                 dataset_name = [];

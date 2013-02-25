@@ -26,7 +26,7 @@ classdef PTKImageTemplates < handle
         
         % Template-related plugins which have been run. The idea is that we will 
         % know that a template is not available because the plugin was run but 
-        % no tempalte was generated
+        % no template was generated
         TemplatePluginsRun
         
         % A map of all valid contexts to their corresponding plugin
@@ -58,11 +58,16 @@ classdef PTKImageTemplates < handle
             obj.TemplatePluginsRun = containers.Map;
 
             % Add valid contexts
-            obj.ValidContexts(char(PTKContext.OriginalImage)) = 'PTKOriginalImage';
-            obj.ValidContexts(char(PTKContext.LungROI)) = 'PTKLungROI';
+            
+            obj.ValidContexts(char(PTKContext.OriginalImage)) = 'PTKGetContextForOriginalImage';
+            obj.ValidContexts(char(PTKContext.LungROI)) = 'PTKGetContextForLungROI';
+            obj.ValidContexts(char(PTKContext.LeftLung)) = 'PTKGetContextForSingleLung';
+            obj.ValidContexts(char(PTKContext.RightLung)) = 'PTKGetContextForSingleLung';
+            
+            % Deprecated
             obj.ValidContexts(char(PTKContext.LeftLungROI)) = 'PTKGetLeftLungROI';
             obj.ValidContexts(char(PTKContext.RightLungROI)) = 'PTKGetRightLungROI';
-
+            
             % Loads cached template data
             obj.Load;
         end
@@ -80,7 +85,7 @@ classdef PTKImageTemplates < handle
             % the appropriate plugin and creating a template copy
             if ~obj.TemplateImages.isKey(char(context))
                 obj.Reporting.ShowWarning('PTKImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
-                obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), linked_dataset_chooser, dataset_stack, []);
+                obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), linked_dataset_chooser, dataset_stack, context);
 
                 % The call to GetResult should have automatically created the
                 % template image - check that this has happened
@@ -99,27 +104,30 @@ classdef PTKImageTemplates < handle
         % Check to see if a plugin which has been run is associated with any of
         % the contexts. If it is, create a new template image for that context
         % if one does not already exist
-        function UpdateTemplates(obj, plugin_name, result_image)
+        function UpdateTemplates(obj, plugin_name, context, result_image, result_may_have_changed)
             
-            % Check if the result image is of a type that can be used to
-            % generate a template image
-            if ~isempty(result_image) && isa(result_image, 'PTKImage')
-                all_contexts = obj.ValidContexts.keys;
-                
-                % Search for contexts which relate to this plugin
-                for next_context = all_contexts
-                    context = char(next_context);
-                    context_plugin = obj.ValidContexts(context);
+            % Check whether the plugin that has been run is the template for
+            % this context
+            context_char = char(context);
+            if obj.ValidContexts.isKey(context_char)
+                context_plugin_name = obj.ValidContexts(context_char);
+                if strcmp(plugin_name, context_plugin_name)
                     
-                    % This context relates to this plugin
-                    if strcmp(plugin_name, context_plugin)
+                    % Check if the result image is of a type that can be used to
+                    % generate a template image
+                    if ~isempty(result_image) && isa(result_image, 'PTKImage')
                         
                         % Create a new template image if required for this
-                        % context
-                        if ~obj.TemplateImages.isKey(context)
-                            obj.SetTemplateImage(context, result_image.BlankCopy);
+                        % context, or if the template has changed
+                        if (~obj.TemplateImages.isKey(context)) || result_may_have_changed
+
+                            % Set the template image. Note: this may be an empty
+                            % image (indicating the entire cropped region) or a
+                            % boolean mask
+                            obj.SetTemplateImage(context, result_image);
                         end
                     end
+                    
                 end
             end
         end
@@ -141,16 +149,10 @@ classdef PTKImageTemplates < handle
         
 
         % Stores the fact that a plugin has been run
-        function NoteAttemptToRunPlugin(obj, plugin_name)
-            all_contexts = obj.ValidContexts.keys;
-            
-            % Search for contexts which relate to this plugin
-            for next_context = all_contexts
-                context = char(next_context);
-                context_plugin = obj.ValidContexts(context);
-                
-                % This context relates to this plugin
-                if strcmp(plugin_name, context_plugin)                    
+        function NoteAttemptToRunPlugin(obj, plugin_name, context)
+            if obj.ValidContexts.isKey(char(context))
+                context_plugin_name = obj.ValidContexts(char(context));
+                if strcmp(plugin_name, context_plugin_name)                    
                     obj.MarkTemplateImage(context);
                 end
             end
@@ -163,7 +165,7 @@ classdef PTKImageTemplates < handle
 
         % Cache a template image for this context
         function SetTemplateImage(obj, context, template_image)
-            obj.TemplateImages(context) = template_image;
+            obj.TemplateImages(char(context)) = template_image;
             obj.Save;
         end
         
@@ -177,7 +179,7 @@ classdef PTKImageTemplates < handle
         
         % Retrieves previous templates from the disk cache
         function Load(obj)
-            if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.ImageTemplatesCacheName, obj.Reporting)
+            if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.ImageTemplatesCacheName, [], obj.Reporting)
                 info = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.ImageTemplatesCacheName, obj.Reporting);
                 obj.TemplateImages = info.TemplateImages;
                 obj.TemplatePluginsRun = info.TemplatePluginsRun;
