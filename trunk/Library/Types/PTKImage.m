@@ -322,6 +322,9 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
             mask = mask.Copy;
             mask.ResizeToMatch(new_subimage);
+            if ~mask.ImageExists
+                mask.ChangeRawImage(true(mask.ImageSize));
+            end
 
             if (length(mask.ImageSize) == 3) && (length(new_subimage.ImageSize) == 4)
                 mask.ChangeRawImage(repmat(mask.RawImage, [1, 1, 1, new_subimage.ImageSize(4)]));
