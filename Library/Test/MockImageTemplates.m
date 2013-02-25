@@ -22,17 +22,17 @@ classdef MockImageTemplates < handle
             obj.MockTemplateImages = containers.Map;
         end
         
-        function AddMockImage(obj, name, context, template_image)
+        function AddMockImage(obj, context, template_image)
             result = [];
             result.Template = template_image;
-            obj.MockResults([name '.' char(context)]) = result;
+            obj.MockTemplateImages(char(context)) = result;
         end
         
         % Returns an image template for the requested context
         function template = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack)
-            key_name = [plugin_name '.' char(context)];
+            key_name = [char(context)];
             
-            result_from_cache = obj.MockResults(key_name);
+            result_from_cache = obj.MockTemplateImages(key_name);
             template = result_from_cache.Template;
         end
 
