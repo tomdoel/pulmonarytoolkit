@@ -50,6 +50,13 @@ classdef PTKDirectories < handle
             source_directory = fullfile(path_root, '..');
         end
         
+        % Returns the full path to root of the PTK test source code        
+        function source_directory = GetTestSourceDirectory
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            source_directory = fullfile(path_root, '..', PTKSoftwareInfo.TestSourceDirectory);
+        end
+        
         % Returns the full path to the mex file directory
         function mex_source_directory = GetMexSourceDirectory
             mex_source_directory = fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.MexSourceDirectory);
