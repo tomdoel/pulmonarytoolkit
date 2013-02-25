@@ -54,6 +54,9 @@ function PTKWrite3DMetaFile(header_filename, image, resolution, data_type, offse
     if (fid <= 0)
         sprintf('Unable to open file %s\n', raw_image_filename);
     end
+    
+    % Invert z axis for RAI orientation
+    image = image(:, :, end:-1:1);
     fwrite(fid, image, data_type);
     fclose(fid);
 end
