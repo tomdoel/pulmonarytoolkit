@@ -111,6 +111,10 @@ classdef PTKDataset < handle
             else
                 [result, cache_info] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
             end
+            
+            % ToDo: clear dataset stack?
+            
+            
             obj.Reporting.ShowAndClear;
             obj.Reporting.ClearStack;
         end

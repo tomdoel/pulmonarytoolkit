@@ -29,34 +29,38 @@ classdef PTKPluginResultsInfo < handle
         end
         
         % Adds dependency record for a particular plugin result
-        function AddCachedPluginInfo(obj, plugin_name, cache_info, reporting)
-            if obj.ResultsInfo.isKey(plugin_name)
+        function AddCachedPluginInfo(obj, plugin_name, cache_info, context, reporting)
+            plugin_key = obj.GetKey(plugin_name, context);
+            if obj.ResultsInfo.isKey(plugin_key)
                 reporting.Error('PTKPluginResultsInfo:CachedInfoAlreadyPresent', 'Cached plugin info already present');
             end
-            obj.ResultsInfo(plugin_name) = cache_info;
+            obj.ResultsInfo(plugin_key) = cache_info;
         end
         
         % Removes the dependency record for a particular plugin result
-        function DeleteCachedPluginInfo(obj, plugin_name, ~)
-            if obj.ResultsInfo.isKey(plugin_name)
-                obj.ResultsInfo.remove(plugin_name);
+        function DeleteCachedPluginInfo(obj, plugin_name, context, ~)
+            plugin_key = obj.GetKey(plugin_name, context);
+            if obj.ResultsInfo.isKey(plugin_key)
+                obj.ResultsInfo.remove(plugin_key);
             end
         end
         
         function valid = CheckDependencyValid(obj, next_dependency, reporting)
+            plugin_key = obj.GetKey(next_dependency.PluginName, next_dependency.Context);
+            
             % The full list should always contain the most recent dependency
             % uid, unless the dependencies file was deleted
-            if ~obj.ResultsInfo.isKey(next_dependency.PluginName)
+            if ~obj.ResultsInfo.isKey(plugin_key)
                 reporting.Log('No dependency record for this plugin - forcing re-run.');
                 valid = false;
                 return;
             end
             
-            current_info = obj.ResultsInfo(next_dependency.PluginName);
+            current_info = obj.ResultsInfo(plugin_key);
             current_dependency = current_info.InstanceIdentifier;
             
             if current_info.IgnoreDependencyChecks
-                reporting.Log(['Ignoring dependency checks for plugin ' next_dependency.PluginName]);
+                reporting.Log(['Ignoring dependency checks for plugin ' next_dependency.PluginName '(' char(next_dependency.Context) ')']);
             else
                 % Sanity check - this case should never occur
                 if ~strcmp(next_dependency.DatasetUid, current_dependency.DatasetUid)
@@ -73,6 +77,16 @@ classdef PTKPluginResultsInfo < handle
             end
             
             valid = true;
+        end
+    end
+    
+    methods (Static, Access = private)
+        function plugin_key = GetKey(plugin_name, context)
+            if isempty(context)
+                plugin_key = plugin_name;
+            else
+                plugin_key = [plugin_name '.' char(context)];
+            end
         end
     end
 end

@@ -35,6 +35,7 @@ classdef PTKDatasetResults < handle
 
     properties (Access = private)
         
+        ContextHierarchy   % Processes the calls to plugins, performing conversions between contexts where necessary
         DependencyTracker  % Tracks plugin usage to construct dependency lists 
         ImageTemplates     % Template images for different contexts
         Reporting          % Object for error and progress reporting
@@ -54,6 +55,7 @@ classdef PTKDatasetResults < handle
             obj.ImageTemplates = PTKImageTemplates(obj, dataset_disk_cache, reporting);
             obj.PreviewImages = preview_images;
             obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache);
+            obj.ContextHierarchy = PTKContextHierarchy(obj.DependencyTracker, obj.ImageTemplates, reporting);
         end
 
         % Returns the results of a plugin. If a valid result is cached on disk,
@@ -69,7 +71,18 @@ classdef PTKDatasetResults < handle
                 context = [];
             end
             generate_results = nargout > 2;
-            [result, cache_info, output_image] = obj.RunPluginWithOptionalImageGeneration(plugin_name, generate_results, linked_dataset_chooser, dataset_stack, context);
+            
+            % Get information about the plugin
+            plugin_class = feval(plugin_name);
+            plugin_info = PTKParsePluginClass(plugin_name, plugin_class, obj.Reporting);
+            
+            % Update the progress dialog with the current plugin being run
+            obj.Reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
+            
+            [result, cache_info, output_image, plugin_has_been_run] = obj.RunPluginWithOptionalImageGeneration(plugin_name, plugin_info, plugin_class, generate_results, linked_dataset_chooser, dataset_stack, context);
+            
+            obj.Reporting.CompleteProgress;
+            
             obj.Reporting.PopProgress;
         end
 
@@ -109,7 +122,7 @@ classdef PTKDatasetResults < handle
         % Gets the path of the folder where the output files for this dataset are
         % stored
         function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
-            results_directory = PTKMain.GetResultsDirectoryAndCreateIfNecessary;
+            results_directory = PTKDirectories.GetResultsDirectoryAndCreateIfNecessary;
             image_info = obj.GetImageInfo;
             uid = image_info.ImageUid;
             dataset_cache_path = fullfile(results_directory, uid);
@@ -126,40 +139,21 @@ classdef PTKDatasetResults < handle
     methods (Access = private)
                 
         % Returns the plugin result, computing if necessary
-        function [result, cache_info, output_image] = RunPluginWithOptionalImageGeneration(obj, plugin_name, generate_image, linked_dataset_chooser, dataset_stack, context)
-            
-            % Get information about the plugin
-            plugin_info = feval(plugin_name);
-            
-            % Update the progress dialog with the current plugin being run
-            obj.Reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
-                        
-            % Allow the context manager to construct a template image from this
-            % result if required
-            obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name);
-
-            [result, plugin_has_been_run, cache_info] = obj.GetResultFromDependencyTracker(plugin_name, linked_dataset_chooser, plugin_info, dataset_stack);
-
-            % Allow the context manager to construct a template image from this
-            % result if required
-            obj.ImageTemplates.UpdateTemplates(plugin_name, result);
+        function [result, cache_info, output_image, plugin_has_been_run] = RunPluginWithOptionalImageGeneration(obj, plugin_name, plugin_info, plugin_class, generate_image, linked_dataset_chooser, dataset_stack, context)
             
             preview_exists = obj.PreviewImages.DoesPreviewExist(plugin_name);
             
             % We don't save the preview image if the plugin result was loaded
             % from the cache, unless there is no existing preview image
-            cache_preview = plugin_info.GeneratePreview && (plugin_has_been_run || ~preview_exists);
             
-            % We generate an output image if requested, or if we need to generate a preview image
-            if generate_image || cache_preview
-                if isa(result, 'PTKImage')
-                    output_image = obj.GenerateImageFromResults(plugin_info, linked_dataset_chooser, dataset_stack, result.Copy);
-                else
-                    output_image = obj.GenerateImageFromResults(plugin_info, linked_dataset_chooser, dataset_stack, result);
-                end
-            else
-                output_image = [];
-            end
+            force_generate_preview = (plugin_info.GeneratePreview && ~preview_exists);
+            
+            force_generate_image = generate_image || force_generate_preview;
+
+            % Run the plugin for each required context and assemble result
+            [result, output_image, plugin_has_been_run, cache_info] = obj.ComputeResultForAllContexts(plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_stack, force_generate_image);
+
+            cache_preview = plugin_info.GeneratePreview && (plugin_has_been_run || ~preview_exists);
             
             % Generate and cache a preview image
             if cache_preview && ~isempty(output_image) && output_image.ImageExists
@@ -172,44 +166,19 @@ classdef PTKDatasetResults < handle
                 % necessary
                 obj.ExternalWrapperNotifyFunction('PreviewImageChanged', PTKEventData(plugin_name));
             end
-            
-            % If a context has been specified then resize the output image
-            % to this context
-            if ~isempty(context) && isa(result, 'PTKImage')
-                template_image = obj.ImageTemplates.GetTemplateImage(context, linked_dataset_chooser, dataset_stack);
-                result.ResizeToMatch(template_image);
-            end
-            
-            obj.Reporting.CompleteProgress;
-            
         end
         
-        function [result, plugin_has_been_run, cache_info] = GetResultFromDependencyTracker(obj, plugin_name, linked_dataset_chooser, plugin_info, dataset_stack)
+        function [result, output_image, plugin_has_been_run, cache_info] = ComputeResultForAllContexts(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_stack, force_generate_image)
             dataset_uid = obj.ImageInfo.ImageUid;
             
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
             if PTKSoftwareInfo.DebugMode
-                [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, obj.Reporting);
+                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, obj.Reporting);
             else
                 try
-                    [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, obj.Reporting);
-                catch ex
-                    dataset_stack.ClearStack;
-                    rethrow(ex);
-                end
-            end
-        end
-        
-        function output_image = GenerateImageFromResults(obj, plugin_info, linked_dataset_chooser, dataset_stack, result)
-            template_callback = PTKTemplateCallback(linked_dataset_chooser, dataset_stack);
-            
-            if PTKSoftwareInfo.DebugMode
-                output_image = plugin_info.GenerateImageFromResults(result, template_callback, obj.Reporting);
-            else
-                try
-                    output_image = plugin_info.GenerateImageFromResults(result, template_callback, obj.Reporting);
+                    [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, obj.Reporting);
                 catch ex
                     dataset_stack.ClearStack;
                     rethrow(ex);

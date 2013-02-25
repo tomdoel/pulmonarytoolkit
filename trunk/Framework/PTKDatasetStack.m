@@ -46,13 +46,13 @@ classdef PTKDatasetStack < handle
     
         % Create a new PTKDatasetStackItem object with an empty dependency list and a
         % new unique identifier. The push it to the end of the stack
-        function CreateAndPush(obj, plugin_name, dataset_uid, ignore_dependency_checks, start_timer)
-            if obj.PluginAlreadyExistsInStack(plugin_name)
+        function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, start_timer)
+            if obj.PluginAlreadyExistsInStack(plugin_name, context)
                 obj.Reporting.Error('PTKDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
             attributes = [];
             attributes.IgnoreDependencyChecks = ignore_dependency_checks;
-            instance_identifier = PTKDependency(plugin_name, PTKDiskUtilities.GenerateUid, dataset_uid, attributes);
+            instance_identifier = PTKDependency(plugin_name, context, PTKDiskUtilities.GenerateUid, dataset_uid, attributes);
             cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, ignore_dependency_checks, start_timer, obj.Reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end
@@ -100,19 +100,22 @@ classdef PTKDatasetStack < handle
     methods (Access = private)
         
         % Check if this plugin already exists in the stack
-        function plugin_exists = PluginAlreadyExistsInStack(obj, plugin_name)
+        function plugin_exists = PluginAlreadyExistsInStack(obj, plugin_name, context)
             for index = 1 : length(obj.DatasetStack)
                 plugin_info = obj.DatasetStack(index);
                 this_name = plugin_info.InstanceIdentifier.PluginName;
+                this_context = plugin_info.InstanceIdentifier.Context;
                 if strcmp(plugin_name, this_name)
-                    plugin_exists = true;
-                    return;
+                    % If both contexts are null we consider this equality - but
+                    % Matlab does not consider 2 null values to be equal so we
+                    % check for this case explicitly
+                    if (strcmp(context, this_context)) || (isempty(context) && isempty(this_context))
+                        plugin_exists = true;
+                        return;
+                    end
                 end
             end
             plugin_exists = false;
         end
-        
     end
-    
 end
-

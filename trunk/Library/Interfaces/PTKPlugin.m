@@ -125,7 +125,7 @@ classdef PTKPlugin < handle
         % containing your results, and then override the function 
         % GenerateImageFromResults below to produce an illustrative output
         % image.        
-        results = RunPlugin(application, reporting)
+        results = RunPlugin(application, context, reporting)
         
     end
     

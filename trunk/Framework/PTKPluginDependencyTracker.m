@@ -48,13 +48,13 @@ classdef PTKPluginDependencyTracker < handle
         % Gets a plugin result, from the disk cache if possible. If there is no
         % cached result, or if the dependencies are invalid, or if the
         % "AlwaysRunPlugin" property is set, then the plugin is executed.
-        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, reporting)
+        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, reporting)
             
             % Fetch plugin result from the disk cache
             result = [];
             if ~plugin_info.AlwaysRunPlugin
                 
-                [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, reporting);
+                [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, context, reporting);
                 
                 % Check dependencies of the result. If the are invalid, set the
                 % result to null to force a re-run of the plugin
@@ -93,12 +93,16 @@ classdef PTKPluginDependencyTracker < handle
                 % being called (plugin_name) and the UID of the dataset the
                 % result is being requested from; however, the stack belongs to
                 % the primary dataset
-                dataset_stack.CreateAndPush(plugin_name, dataset_uid, ignore_dependency_checks, PTKSoftwareInfo.TimeFunctions);
+                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, PTKSoftwareInfo.TimeFunctions);
                 
-                dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack);
+                dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context);
 
                 % This is the actual call which runs the plugin
-                result = plugin_info.RunPlugin(dataset_callback, reporting);
+                if strcmp(plugin_info.PTKVersion, '1')
+                    result = plugin_class.RunPlugin(dataset_callback, reporting);
+                else
+                    result = plugin_class.RunPlugin(dataset_callback, context, reporting);
+                end
                 
                 new_cache_info = dataset_stack.Pop;
                 
@@ -116,9 +120,9 @@ classdef PTKPluginDependencyTracker < handle
                 
                 % Cache the plugin result
                 if plugin_info.AllowResultsToBeCached && ~isempty(result)
-                    obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, reporting);
+                    obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, reporting);
                 else
-                    obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, reporting);
+                    obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, reporting);
                 end
                 
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependencies);
