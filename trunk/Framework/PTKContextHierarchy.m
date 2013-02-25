@@ -154,8 +154,8 @@ classdef PTKContextHierarchy < handle
                 plugin_has_been_run = false;
                 first_run = true;
                 for child_mapping = child_context_mappings
-                    child_context = child_mapping.Context;
-                    [this_result, this_output_image, this_plugin_has_been_run, this_cache_info] = obj.GetResult(plugin_name, child_context, linked_dataset_chooser, plugin_info, dataset_uid, dataset_stack, reporting);
+                    child_context = child_mapping{1}.Context;
+                    [this_result, this_output_image, this_plugin_has_been_run, this_cache_info] = obj.GetResult(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, reporting);
                     if first_run
                         output_image = this_output_image.Copy;
                         output_image.ResizeToMatch(output_image_template);
@@ -184,9 +184,9 @@ classdef PTKContextHierarchy < handle
             template_image = obj.ImageTemplates.GetTemplateImage(context_mapping.Context, linked_dataset_chooser, dataset_stack);
             full_result.ResizeToMatch(template_image);
             result = full_result.Copy;
-            result.Clear;
             
             if template_image.ImageExists
+                result.Clear;
                 result.ChangeSubImageWithMask(full_result, template_image, true);
             end
         end
