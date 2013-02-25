@@ -23,6 +23,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Gui', 'GuiPlugins');
         path_folders{end + 1} = 'Plugins';
         path_folders{end + 1} = 'Library';
+        path_folders{end + 1} = 'Test';
         path_folders{end + 1} = fullfile('Library', 'Airways');
         path_folders{end + 1} = fullfile('Library', 'Analysis');
         path_folders{end + 1} = fullfile('Library', 'File');
@@ -31,6 +32,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Lobes');
         path_folders{end + 1} = fullfile('Library', 'Lungs');
         path_folders{end + 1} = fullfile('Library', 'Registration');
+        path_folders{end + 1} = fullfile('Library', 'Test');
         path_folders{end + 1} = fullfile('Library', 'Types');
         path_folders{end + 1} = fullfile('Library', 'Utilities');
         path_folders{end + 1} = fullfile('Library', 'Visualisation');
