@@ -13,10 +13,13 @@ classdef PTKContext
     %    
     
     enumeration
-        OriginalImage, % The full image
-        LungROI,       % A region containing the lung and airways
-        LeftLungROI,   % A region containing the left lung
-        RightLungROI   % A region containing the right lung
+        OriginalImage,  % The full image
+        LungROI,        % A region containing the lung and airways
+        LeftLungROI,    % A region containing the left lung
+        RightLungROI,   % A region containing the right lung
+        
+        LeftLung,       % Results for the left lung
+        RightLung       % Results for the right lung
     end
     
 end
