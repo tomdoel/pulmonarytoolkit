@@ -9,7 +9,7 @@ classdef PTKColormapLabels
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
-    properties
+    properties (Constant)
         RightLung = 1
         LeftLung = 2
     end
