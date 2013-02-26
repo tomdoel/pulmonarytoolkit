@@ -36,7 +36,7 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
     new_plugin.GeneratePreview = plugin_class.GeneratePreview;
     new_plugin.FlattenPreviewImage = plugin_class.FlattenPreviewImage;
     
-    if isfield(plugin_class, 'Context')
+    if isprop(plugin_class, 'Context')
         new_plugin.Context = plugin_class.Context;
     else
         new_plugin.Context = [];
