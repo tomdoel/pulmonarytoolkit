@@ -20,6 +20,20 @@ classdef PTKDiskUtilities
             end
         end
         
+        function [absolute_file_path, filename] = GetFullFileParts(path_or_filename)
+            if exist(path_or_filename, 'dir')
+                relative_pathname = path_or_filename;
+                filename = '';
+            else
+                [relative_pathname, name, ext] = fileparts(path_or_filename);
+                filename = [name ext];                
+            end
+            current_path = pwd;
+            cd(relative_pathname);
+            absolute_file_path = pwd;
+            cd(current_path)
+        end
+        
         % Returns a list of files in the specified directory
         function file_list = GetDirectoryFileList(path, filename)
             files = dir(fullfile(path, filename));
