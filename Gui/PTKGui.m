@@ -302,7 +302,7 @@ classdef PTKGui < handle
                     obj.Reporting.ShowMessage('PTKGui:UnimportedDaatsetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the settings file. I am adding this dataset to the quick load menu. This may occur if the settings file was recently removed.']);
                     try
                         temporary_disk_cache = PTKDiskCache(temporary_uid, obj.Reporting);
-                        temporary_image_info = temporary_disk_cache.Load(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
+                        temporary_image_info = temporary_disk_cache.Load(PTKSoftwareInfo.ImageInfoCacheName, [], obj.Reporting);
                         old_infos(temporary_uid) = temporary_image_info;
                         obj.Settings.PreviousImageInfos = old_infos;
                         settings_changed = true;
