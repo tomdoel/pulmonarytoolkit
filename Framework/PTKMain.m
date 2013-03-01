@@ -152,7 +152,6 @@ classdef PTKMain < handle
                 obj.Reporting.Error('PTKMain:FileNotAsExpected', 'The file or directory passed to PTKMain.ImportData() is not of the expected type.');
             end
             
-            [file_path, file_prefix, file_suffix] = fileparts(filename);
             import_whole_directory = false;
             dicom_filenames = {};
             non_dicom_filenames = {};
@@ -161,17 +160,18 @@ classdef PTKMain < handle
             exist_result = exist(filename, 'file');
             if exist_result == 0
                 obj.Reporting.Error('PTKMain:FileDoesNotExist', 'The file or directory passed to PTKMain.ImportData() does not exist.');
+                
             elseif exist_result == 7
                 import_whole_directory = true;
-                import_folder = fullfile(file_path, file_prefix);
+                [import_folder, ~] = PTKDiskUtilities.GetFullFileParts(filename);
+                
             elseif exist_result == 2
+                [import_folder, filename_only] = PTKDiskUtilities.GetFullFileParts(filename);
                 if isdicom(filename)
                     import_whole_directory = true;
-                    import_folder = file_path;
                 else
                     import_whole_directory = false;
-                    import_folder = file_path;
-                    non_dicom_filenames = {[file_prefix, file_suffix]};
+                    non_dicom_filenames = {filename_only};
                 end
             else
                 obj.Reporting.Error('PTKMain:FileDoesNotExist', 'The file or directory passed to PTKMain.ImportData() does not exist.');
