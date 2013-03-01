@@ -42,8 +42,8 @@ classdef PTKLungROI < PTKPlugin
                 results = dataset.GetResult('PTKOriginalImage');
                 results.ResizeToMatch(lung_threshold);
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
-                lung_threshold = dataset.GetResult('PTKMRILungThreshold');
-                results = dataset.GetResult('PTKOriginalImage');
+                lung_threshold = dataset.GetResult('PTKMRILungThreshold', PTKContext.OriginalImage);
+                results = dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage);
                 results.ResizeToMatch(lung_threshold.LungMask);                
             else            
                 results = PTKGetLungROI(dataset.GetResult('PTKOriginalImage'), reporting);
