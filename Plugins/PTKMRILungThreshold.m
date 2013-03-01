@@ -26,23 +26,25 @@ classdef PTKMRILungThreshold < PTKPlugin
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
         FlattenPreviewImage = true
-        PTKVersion = '1'
+        PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
+        
+        Context = PTKContextSet.OriginalImage
     end
     
     methods (Static)
-        function results = RunPlugin(dataset, reporting)
+        function results = RunPlugin(dataset, context, reporting)
             if dataset.IsGasMRI
-                full_image = dataset.GetResult('PTKInvertImage');
+                full_image = dataset.GetResult('PTKInvertImage', PTKContext.OriginalImage);
                 [lung_mask, bounds] = PTKComputeSegmentLungsMRI(full_image, 2, reporting);
                 lung_mask.CropToFit;
                 lung_mask.ImageType = PTKImageType.Colormap;
                 results.Bounds = bounds;
                 results.LungMask = lung_mask;
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
-                full_image = dataset.GetResult('PTKOriginalImage');
+                full_image = dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage);
                 [lung_mask, bounds] = PTKComputeSegmentLungsMRI(full_image, 1, reporting);
                 lung_mask.CropToFitWithBorder(5);
                 lung_mask.ImageType = PTKImageType.Colormap;

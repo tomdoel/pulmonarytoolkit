@@ -31,14 +31,15 @@ classdef PTKOriginalImage < PTKPlugin
         PluginType = 'ReplaceImage'
         HidePluginInDisplay = false
         FlattenPreviewImage = false
-        PTKVersion = '1'
+        PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
+        Context = PTKContextSet.OriginalImage
     end
     
     methods (Static)
-        function results = RunPlugin(dataset, reporting)
+        function results = RunPlugin(dataset, context, reporting)
             reporting.ShowProgress('Loading Images');
             results = PTKOriginalImage.LoadImages(dataset.GetImageInfo, reporting);
             reporting.CompleteProgress;
