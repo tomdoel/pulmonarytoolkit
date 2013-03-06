@@ -113,7 +113,7 @@ classdef PTKDatasetResults < handle
                 return;
             else
                 template = obj.GetTemplateImage(PTKContext.OriginalImage, linked_dataset_chooser, dataset_stack);
-                if strcmp(template.MetaHeader.SeriesDescription(1:2), 'Xe')
+                if strcmpi(template.MetaHeader.SeriesDescription(1:2), 'Xe')
                     is_gas_mri = true;
                 end
             end
@@ -185,5 +185,5 @@ classdef PTKDatasetResults < handle
                 end
             end
         end
-    end    
+    end
 end
