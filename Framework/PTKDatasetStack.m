@@ -109,7 +109,7 @@ classdef PTKDatasetStack < handle
                     % If both contexts are null we consider this equality - but
                     % Matlab does not consider 2 null values to be equal so we
                     % check for this case explicitly
-                    if (strcmp(context, this_context)) || (isempty(context) && isempty(this_context))
+                    if (context == this_context) || (isempty(context) && isempty(this_context))
                         plugin_exists = true;
                         return;
                     end
