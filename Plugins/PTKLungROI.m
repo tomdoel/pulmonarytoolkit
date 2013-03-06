@@ -37,16 +37,13 @@ classdef PTKLungROI < PTKPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             if dataset.IsGasMRI
-                lung_threshold = dataset.GetResult('PTKUnclosedLungIncludingTrachea');
-                lung_threshold.CropToFit;
-                results = dataset.GetResult('PTKOriginalImage');
-                results.ResizeToMatch(lung_threshold);
+                results = PTKGetLungROIForGasMRI(dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage), reporting);
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
                 lung_threshold = dataset.GetResult('PTKMRILungThreshold', PTKContext.OriginalImage);
                 results = dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage);
                 results.ResizeToMatch(lung_threshold.LungMask);                
             else            
-                results = PTKGetLungROI(dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage), reporting);
+                results = PTKGetLungROIForCT(dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage), reporting);
             end
         end
     end

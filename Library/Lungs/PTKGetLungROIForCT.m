@@ -1,5 +1,5 @@
-function lung_image = PTKGetLungROI(lung_image, reporting)
-    % PTKGetLungROI. Finds a region of interest from a chest CT image which
+function lung_image = PTKGetLungROIForCT(lung_image, reporting)
+    % PTKGetLungROIForCT. Finds a region of interest from a chest CT image which
     %     contains the lungs and airways
     %
     %     Inputs
@@ -26,7 +26,7 @@ function lung_image = PTKGetLungROI(lung_image, reporting)
 
     
     if ~isa(lung_image, 'PTKImage')
-        error('Requires a PTKImage as input');
+        reporting.Error('PTKGetLungROIForCT:InputImageNotPTKImage', 'Requires a PTKImage as input');
     end
 
     if nargin < 2
