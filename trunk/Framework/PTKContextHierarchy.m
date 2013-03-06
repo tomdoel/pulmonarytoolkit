@@ -157,9 +157,13 @@ classdef PTKContextHierarchy < handle
                     child_context = child_mapping{1}.Context;
                     [this_result, this_output_image, this_plugin_has_been_run, this_cache_info] = obj.GetResult(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, reporting);
                     if first_run
-                        output_image = this_output_image.Copy;
-                        output_image.ResizeToMatch(output_image_template);
-                        output_image.Clear;
+                        if isempty(this_output_image)
+                            output_image = [];
+                        else
+                            output_image = this_output_image.Copy;
+                            output_image.ResizeToMatch(output_image_template);
+                            output_image.Clear;
+                        end
                         first_run = false;
                     end
                     
