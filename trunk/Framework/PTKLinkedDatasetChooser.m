@@ -32,7 +32,7 @@ classdef PTKLinkedDatasetChooser < handle
             obj.LinkedDatasetChooserList = containers.Map;
             obj.LinkedDatasetChooserList(obj.PrimaryDatasetUid) = obj;
         end
-        
+
         function AddLinkedDataset(obj, linked_name, linked_dataset_chooser)
             linked_uid = linked_dataset_chooser.PrimaryDatasetUid;
             obj.LinkedDatasetChooserList(linked_uid) = linked_dataset_chooser;
@@ -56,17 +56,51 @@ classdef PTKLinkedDatasetChooser < handle
             end
         end
 
+        % Save data as a cache file associated with the dataset
+        function SaveData(obj, name, data, dataset_name)
+            obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.SaveData(name, data);
+        end
+
+        % Load data from a cache file associated with the dataset
+        function data = LoadData(obj, name, dataset_name)
+            data = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.LoadData(name, obj.Reporting);
+        end
+
+        % Gets the path of the folder where the results for this dataset are
+        % stored
+        function dataset_cache_path = GetDatasetCachePath(obj, dataset_name)
+            dataset_cache_path = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.GetCachePath;
+        end
+
+        % Gets the path of the folder where the output files for this dataset are
+        % stored
+        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, dataset_name)
+            dataset_cache_path = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.GetOutputPathAndCreateIfNecessary;
+        end
+
         % Returns a PTKImageInfo structure with image information, including the
         % UID, filenames and file path
         function image_info = GetImageInfo(obj, dataset_name)
             image_info = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.GetImageInfo;
         end
-        
+
         % Returns an empty template image for the specified context
         % See PTKImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, dataset_stack, dataset_name)
-            linked_dataset = obj.FindLinkedDatasetChooser(dataset_name);
-            template_image = linked_dataset.PrimaryDatasetResults.GetTemplateImage(context, linked_dataset, dataset_stack);
+            template_image = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.GetTemplateImage(context, linked_dataset, dataset_stack);
+        end
+
+        % Gets a thumbnail image of the last result for this plugin
+        function preview = GetPluginPreview(obj, plugin_name, dataset_name)
+            preview = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.GetPluginPreview(plugin_name);
+        end
+
+        % Removes all the cache files associated with this dataset. Cache files
+        % store the results of plugins so they need only be computed once for
+        % each dataset. Clearing the cache files forces recomputation of all
+        % results.
+        function ClearCacheForThisDataset(obj, remove_framework_files, dataset_name)
+            obj.FindLinkedDatasetChooser(dataset_name).ClearCacheForThisDataset(remove_framework_files);
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
@@ -83,11 +117,6 @@ classdef PTKLinkedDatasetChooser < handle
             is_gas_mri = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults.IsGasMRI(linked_dataset, dataset_stack);
         end
         
-        % Gets the path of the folder where the output files for this dataset are
-        % stored
-        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
-            dataset_cache_path = obj.PrimaryDatasetResults.GetOutputPathAndCreateIfNecessary;
-        end        
         
         % Checks the dependencies in this result with the current dependency
         % list, and determine if the dependencies are still valid
