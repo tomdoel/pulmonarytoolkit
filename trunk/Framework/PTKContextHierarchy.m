@@ -105,7 +105,9 @@ classdef PTKContextHierarchy < handle
             
             % If the input and output contexts are of the same type, then
             % proceed to call the plugin
-            if plugin_context_set == output_context_set
+            % OR (special case): for a context plugin ('ReplaceImage'), we do
+            % not resize the image at all but just return it as it is
+            if (plugin_context_set == output_context_set) || (strcmp(plugin_info.PluginType, 'ReplaceImage'))
                 [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, reporting);
 
                 % If the plugin has been re-run, then we will generate an output

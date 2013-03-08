@@ -38,7 +38,7 @@ classdef PTKGetContextForOriginalImage < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, ~, ~)
-            results = dataset.GetResult('PTKOriginalImage').BlankCopy;
+            results = dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage).BlankCopy;
         end
     end
 end
