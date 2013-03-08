@@ -36,15 +36,32 @@ classdef PTKDataset < handle
     %
     
     properties (Access = private)
-        DatasetDiskCache  % Reads and writes to the disk cache for this dataset
-        LinkedDatasetChooser % Chooses between all the datasets linked to this one
-        PreviewImages     % Stores the thumbnail preview images
-        DatasetStack      % Manages the heirarchy of plugins calling other plugins
-        Reporting         % Object for error and progress reporting
+        
+        % Multiple datasets can be linked together. The LinkedDatasetChooser is
+        % used to send API calls to the correct dataset.
+        LinkedDatasetChooser
+        
+        % Manages the heirarchy (call stack) of plugins calling other plugins.
+        % This is used for dependency checking and to prevent recursion. 
+        % Each PTKDataset API has its own call stack which relates to the calls
+        % being made at that interface. Note that when datasets are linked, one
+        % dataset may end up calling another to fetch results; however, the same
+        % call stack must be used for the dependency checking to work correctly.
+        % This means that when a GetResult() call is
+        % made on a dataset, the call stack depends not on which dataset is
+        % being called, but where the call originated from. For this reason, the
+        % call stacks are owned by the PTKDataset class (where calls originate)
+        % and passed through.
+        DatasetStack
+        
+        % Object for error and progress reporting. PTKDataset uses this to clean
+        % up reporting in the case of error conditions.
+        Reporting         
     end
     
     events
-        % This event is fired when a plugin has been run for this dataset, and has generated a new preview thumbnail.
+        % This event is fired when a plugin has been run for this dataset, and
+        % has generated a new preview thumbnail.
         PreviewImageChanged
     end
 
@@ -53,11 +70,8 @@ classdef PTKDataset < handle
         % PTKDataset is created by the PTKMain class
         function obj = PTKDataset(image_info, dataset_disk_cache, reporting)
             obj.DatasetStack = PTKDatasetStack(reporting);
-            obj.DatasetDiskCache = dataset_disk_cache;
             obj.Reporting = reporting;
-            obj.PreviewImages = PTKPreviewImages(dataset_disk_cache, reporting);
-            dataset_results = PTKDatasetResults(image_info, obj.PreviewImages, @obj.notify, dataset_disk_cache, reporting);
-            obj.LinkedDatasetChooser = PTKLinkedDatasetChooser(dataset_results);
+            obj.LinkedDatasetChooser = PTKLinkedDatasetChooser(image_info, @obj.notify, dataset_disk_cache, reporting);
         end
         
         % Link another dataset to this
@@ -73,67 +87,25 @@ classdef PTKDataset < handle
         % Specifying a second argument also produces a representative image from
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.        
-        function [result, output_image] = GetResult(obj, plugin_name, context, dataset_uid)
-            obj.PreCallTidy;
-
-            % If no context has been specified, set to null to indicate the
-            % default context
-            if nargin < 3
-                context = [];
+        function [result, output_image] = GetResult(obj, plugin_name, varargin)
+            if nargout > 1
+                [result, ~, output_image] = obj.GetResultWithCacheInfo(plugin_name, varargin{:});
+            else
+                [result, ~] = obj.GetResultWithCacheInfo(plugin_name, varargin{:});
             end
-            
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 4
-                dataset_uid = [];
-            end
-            
-            % Reset the dependency stack, since this could be left in a bad state if a previous plugin call caused an exception
-            obj.DatasetStack.ClearStack;
-            
-            try
-                if nargout > 1
-                    [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
-                else
-                    [result, cache_info] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
-                end
-                
-            catch ex
-                % Tidy up
-                obj.DatasetStack.ClearStack;
-                obj.PostCallTidy;
-                
-                rethrow(ex)
-            end
-            
-            % Tidy up
-            obj.DatasetStack.ClearStack;
-            obj.PostCallTidy;
         end
                 
-        function [result, cache_info, output_image] = GetResultWithCacheInfo(obj, plugin_name, context, dataset_uid)
+        function [result, cache_info, output_image] = GetResultWithCacheInfo(obj, plugin_name, varargin)
             obj.PreCallTidy;
-            
-            % If no context has been specified, set to null to indicate the
-            % default context
-            if nargin < 3
-                context = [];
-            end
-            
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 4
-                dataset_uid = [];
-            end
             
             % Reset the dependency stack, since this could be left in a bad state if a previous plugin call caused an exception
             obj.DatasetStack.ClearStack;
             
             try
                 if nargout > 2
-                    [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
+                    [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, varargin{:});
                 else
-                    [result, cache_info] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_uid);
+                    [result, cache_info] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, varargin{:});
                 end
             catch ex
                 
@@ -151,157 +123,83 @@ classdef PTKDataset < handle
         
         % Save data as a cache file associated with this dataset
         % Used for marker points
-        function SaveData(obj, name, data, dataset_uid)
+        function SaveData(obj, name, data, varargin)
             obj.PreCallTidy;
-            
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 4
-                dataset_uid = [];
-            end
-            
-            obj.LinkedDatasetChooser.SaveData(name, data, dataset_uid);
-            
+            obj.LinkedDatasetChooser.SaveData(name, data, varargin{:});
             obj.PostCallTidy;
         end
         
         % Load data from a cache file associated with this dataset
-        function data = LoadData(obj, name, dataset_uid)
+        function data = LoadData(obj, name, varargin)
             obj.PreCallTidy;
-            
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 3
-                dataset_uid = [];
-            end
-            
-            data = obj.LinkedDatasetChooser.LoadData(name, dataset_uid);
-            
+            data = obj.LinkedDatasetChooser.LoadData(name, varargin{:});
             obj.PostCallTidy;
         end
 
         % Gets the path of the folder where the results for this dataset are
         % stored
-        function dataset_cache_path = GetDatasetCachePath(obj, dataset_uid)
+        function dataset_cache_path = GetDatasetCachePath(obj, varargin)
             obj.PreCallTidy;
-            
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 2
-                dataset_uid = [];
-            end
-            
-            dataset_cache_path = obj.LinkedDatasetChooser.GetCachePath(dataset_uid);
-            
+            dataset_cache_path = obj.LinkedDatasetChooser.GetCachePath(varargin{:});
             obj.PostCallTidy;
         end
 
         % Gets the path of the folder where the output files for this dataset are
         % stored
-        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, dataset_uid)
+        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, varargin)
             obj.PreCallTidy;
-            
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 2
-                dataset_uid = [];
-            end
-            
-            dataset_cache_path = obj.LinkedDatasetChooser.GetOutputPathAndCreateIfNecessary(dataset_uid);
-            
+            dataset_cache_path = obj.LinkedDatasetChooser.GetOutputPathAndCreateIfNecessary(varargin{:});
             obj.PostCallTidy;
         end
         
         % Returns a PTKImageInfo structure with image information, including the
         % UID, filenames and file path
-        function image_info = GetImageInfo(obj, dataset_uid)
+        function image_info = GetImageInfo(obj, varargin)
             obj.PreCallTidy;
-            
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 2
-                dataset_uid = [];
-            end
-            
-            image_info = obj.LinkedDatasetChooser.GetImageInfo(dataset_uid);
-            
+            image_info = obj.LinkedDatasetChooser.GetImageInfo(varargin{:});
             obj.PostCallTidy;
         end
 
         % Returns an empty template image for the specified context
         % See PTKImageTemplates.m for valid contexts
-        function template_image = GetTemplateImage(obj, context, dataset_uid)
+        function template_image = GetTemplateImage(obj, context, varargin)
             obj.PreCallTidy;
-            
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 3
-                dataset_uid = [];
-            end
-            
-            template_image = obj.LinkedDatasetChooser.GetTemplateImage(context, obj.DatasetStack, dataset_uid);
-            
+            template_image = obj.LinkedDatasetChooser.GetTemplateImage(context, obj.DatasetStack, varargin{:});
             obj.PostCallTidy;
         end
         
         % Gets a thumbnail image of the last result for this plugin
-        function preview = GetPluginPreview(obj, plugin_name, dataset_uid)
+        function preview = GetPluginPreview(obj, plugin_name, varargin)
             % Note: we don't do any pre/post call tidying on this method, as we
             % permit it to be called while another call is in progress (which
             % may happen during a PreviewImageChanged notification).
             
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 3
-                dataset_uid = [];
-            end
-            
-            preview = obj.LinkedDatasetChooser.GetPluginPreview(plugin_name, dataset_uid);
+            preview = obj.LinkedDatasetChooser.GetPluginPreview(plugin_name, varargin{:});
         end
 
         % Removes all the cache files associated with this dataset. Cache files
         % store the results of plugins so they need only be computed once for
         % each dataset. Clearing the cache files forces recomputation of all
         % results.
-        function ClearCacheForThisDataset(obj, remove_framework_files, dataset_uid)
+        function ClearCacheForThisDataset(obj, remove_framework_files, varargin)
             obj.PreCallTidy;
-
-            % If no dataset identifier has been specified, set to null to
-            % indicate the primary dataset should be called
-            if nargin < 2
-                dataset_uid = [];
-            end
-
-            obj.LinkedDatasetChooser.ClearCacheForThisDataset(remove_framework_files, dataset_uid);
-
+            obj.LinkedDatasetChooser.ClearCacheForThisDataset(remove_framework_files, varargin{:});
             obj.PostCallTidy;
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
         % failure when running the plugin that generates the template image for 
         % that context.
-        function context_is_enabled = IsContextEnabled(obj, context, dataset_uid)
+        function context_is_enabled = IsContextEnabled(obj, context, varargin)
             obj.PreCallTidy;
-
-            if nargin < 3
-                dataset_uid = [];
-            end
-
-            context_is_enabled = obj.LinkedDatasetChooser.IsContextEnabled(context, dataset_uid);
-
+            context_is_enabled = obj.LinkedDatasetChooser.IsContextEnabled(context, varargin{:});
             obj.PostCallTidy;
         end
         
         % Check if this is a hyperpolarised gas MRI image
-        function is_gas_mri = IsGasMRI(obj, dataset_uid)
+        function is_gas_mri = IsGasMRI(obj, varargin)
             obj.PreCallTidy;
-
-            if nargin < 3
-                dataset_uid = [];
-            end
-
-            is_gas_mri = obj.LinkedDatasetChooser.IsGasMRI(obj.DatasetStack, dataset_uid);
-
+            is_gas_mri = obj.LinkedDatasetChooser.IsGasMRI(obj.DatasetStack, varargin{:});
             obj.PostCallTidy;
         end 
     end

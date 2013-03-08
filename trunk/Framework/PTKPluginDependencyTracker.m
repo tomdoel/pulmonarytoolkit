@@ -60,7 +60,7 @@ classdef PTKPluginDependencyTracker < handle
                 % result to null to force a re-run of the plugin
                 if ~isempty(cache_info)
                     dependencies = cache_info.DependencyList;
-                    if ~linked_dataset_chooser.CheckDependenciesValid(dependencies)
+                    if ~PTKPluginDependencyTracker.CheckDependenciesValid(linked_dataset_chooser, dependencies)
                         reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
                         result = [];
                     end
@@ -165,6 +165,29 @@ classdef PTKPluginDependencyTracker < handle
             end
             obj.DependencyList(plugin_name) = current_dependency_list;
         end
+    end
+    
+    methods (Static, Access = private)
+        
+        % Checks the dependencies in this result with the current dependency
+        % list, and determine if the dependencies are still valid
+        function valid = CheckDependenciesValid(linked_dataset_chooser, dependencies)
+            
+            dependency_list = dependencies.DependencyList;
+            
+            for index = 1 : length(dependency_list)
+                next_dependency = dependency_list(index);
+                
+                dataset_uid = next_dependency.DatasetUid;
+                if ~linked_dataset_chooser.CheckDependencyValid(next_dependency, dataset_uid);
+                    valid = false;
+                    return;
+                end
+            end
+            
+            valid = true;
+        end
+        
     end    
 end
 
