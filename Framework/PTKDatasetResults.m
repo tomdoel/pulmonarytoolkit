@@ -36,6 +36,7 @@ classdef PTKDatasetResults < handle
     properties (Access = private)
         
         ContextHierarchy   % Processes the calls to plugins, performing conversions between contexts where necessary
+        DatasetDiskCache   % Reads and writes to the disk cache for this dataset
         DependencyTracker  % Tracks plugin usage to construct dependency lists 
         ImageTemplates     % Template images for different contexts
         Reporting          % Object for error and progress reporting
@@ -50,6 +51,7 @@ classdef PTKDatasetResults < handle
     methods
         function obj = PTKDatasetResults(image_info, preview_images, external_notify_function, dataset_disk_cache, reporting)
             obj.ImageInfo = image_info;
+            obj.DatasetDiskCache = dataset_disk_cache;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
             obj.Reporting = reporting;
             obj.ImageTemplates = PTKImageTemplates(obj, dataset_disk_cache, reporting);
@@ -92,10 +94,53 @@ classdef PTKDatasetResults < handle
             image_info = obj.ImageInfo;
         end
         
+        % Save data as a cache file associated with this dataset
+        % Used for marker points
+        function SaveData(obj, name, data)
+            obj.DatasetDiskCache.SaveData(name, data, obj.Reporting);
+        end
+        
+        % Load data from a cache file associated with this dataset
+        function data = LoadData(obj, name)
+            data = obj.DatasetDiskCache.LoadData(name, obj.Reporting);
+        end
+        
+        % Gets the path of the folder where the results for this dataset are
+        % stored
+        function dataset_cache_path = GetDatasetCachePath(obj)
+            dataset_cache_path = obj.DatasetDiskCache.GetCachePath(obj.Reporting);
+        end
+        
+        % Gets the path of the folder where the output files for this dataset are
+        % stored
+        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
+            results_directory = PTKDirectories.GetResultsDirectoryAndCreateIfNecessary;
+            image_info = obj.GetImageInfo;
+            uid = image_info.ImageUid;
+            dataset_cache_path = fullfile(results_directory, uid);
+            if ~exist(dataset_cache_path, 'dir')
+                mkdir(dataset_cache_path);
+            end      
+        end        
+        
         % Returns an empty template image for the specified context
         % See PTKImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack)
             template_image = obj.ImageTemplates.GetTemplateImage(context, linked_dataset_chooser, dataset_stack);
+        end
+        
+        % Gets a thumbnail image of the last result for this plugin
+        function preview = GetPluginPreview(obj, plugin_name)
+            preview = obj.PreviewImages.GetPreview(plugin_name);
+        end
+
+        % Removes all the cache files associated with this dataset. Cache files
+        % store the results of plugins so they need only be computed once for
+        % each dataset. Clearing the cache files forces recomputation of all
+        % results.
+        function ClearCacheForThisDataset(obj, remove_framework_files)
+            obj.DatasetDiskCache.RemoveAllCachedFiles(remove_framework_files, obj.Reporting);
+            obj.PreviewImages.Clear;
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
@@ -119,17 +164,6 @@ classdef PTKDatasetResults < handle
             end
         end
 
-        % Gets the path of the folder where the output files for this dataset are
-        % stored
-        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
-            results_directory = PTKDirectories.GetResultsDirectoryAndCreateIfNecessary;
-            image_info = obj.GetImageInfo;
-            uid = image_info.ImageUid;
-            dataset_cache_path = fullfile(results_directory, uid);
-            if ~exist(dataset_cache_path, 'dir')
-                mkdir(dataset_cache_path);
-            end      
-        end        
         
         function valid = CheckDependencyValid(obj, next_dependency)
             valid = obj.DependencyTracker.CheckDependencyValid(next_dependency, obj.Reporting);
