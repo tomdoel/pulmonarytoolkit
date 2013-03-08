@@ -116,15 +116,12 @@ classdef PTKContextHierarchy < handle
                 
                 % We generate an output image if requested, or if the plugin has been re-run (indictaing that we will need to generate a new preview image)
                 if force_generate_image
-%                 if generate_image || cache_preview
                     template_callback = PTKTemplateCallback(linked_dataset_chooser, dataset_stack);
                     
                     if isa(result, 'PTKImage')
                         output_image = plugin_class.GenerateImageFromResults(result.Copy, template_callback, reporting);
-%                         output_image = obj.GenerateImageFromResults(plugin_info, plugin_class, linked_dataset_chooser, dataset_stack, result.Copy);
                     else
                         output_image = plugin_class.GenerateImageFromResults(result, template_callback, reporting);
-%                         output_image = obj.DependencyTracker.GenerateImageFromResults(plugin_info, plugin_class, linked_dataset_chooser, dataset_stack, result);
                     end
                 else
                     output_image = [];
@@ -141,9 +138,9 @@ classdef PTKContextHierarchy < handle
                 end
                 [result, output_image, plugin_has_been_run, cache_info] = obj.GetResult(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, reporting);
                 
-                result = obj.ReduceResultToContext(result, output_context_mapping, linked_dataset_chooser, dataset_stack);
+                result = obj.ReduceResultToContext(result, output_context_mapping, dataset_stack);
                 if ~isempty(output_image)
-                    output_image = obj.ReduceResultToContext(output_image, output_context_mapping, linked_dataset_chooser, dataset_stack);
+                    output_image = obj.ReduceResultToContext(output_image, output_context_mapping, dataset_stack);
                 end
                 
             % If the plugin's context set is lower in the hierarchy, then get
@@ -151,7 +148,7 @@ classdef PTKContextHierarchy < handle
             elseif plugin_context_set_mapping.IsOtherContextSetHigher(output_context_set_mapping)
                 child_context_mappings = output_context_mapping.Children;
                 result = [];
-                output_image_template = obj.ImageTemplates.GetTemplateImage(output_context, linked_dataset_chooser, dataset_stack);
+                output_image_template = obj.ImageTemplates.GetTemplateImage(output_context, dataset_stack);
                 cache_info = [];
                 plugin_has_been_run = false;
                 first_run = true;
@@ -169,7 +166,7 @@ classdef PTKContextHierarchy < handle
                         first_run = false;
                     end
                     
-                    template_image_for_this_result = obj.ImageTemplates.GetTemplateImage(child_context, linked_dataset_chooser, dataset_stack);
+                    template_image_for_this_result = obj.ImageTemplates.GetTemplateImage(child_context, dataset_stack);
                     
                     result.(char(child_context)) = this_result;
                     if ~isempty(output_image) && ~isempty(this_output_image)
@@ -184,12 +181,12 @@ classdef PTKContextHierarchy < handle
             end
         end
         
-        function result = ReduceResultToContext(obj, full_result, context_mapping, linked_dataset_chooser, dataset_stack)
+        function result = ReduceResultToContext(obj, full_result, context_mapping, dataset_stack)
             if ~isa(full_result, 'PTKImage')
                 result = full_result;
                 return
             end
-            template_image = obj.ImageTemplates.GetTemplateImage(context_mapping.Context, linked_dataset_chooser, dataset_stack);
+            template_image = obj.ImageTemplates.GetTemplateImage(context_mapping.Context, dataset_stack);
             full_result.ResizeToMatch(template_image);
             result = full_result.Copy;
             

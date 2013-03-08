@@ -56,54 +56,36 @@ classdef PTKDatasetCallback < handle
         % Specifying a second output argument produces a representative image from
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.
-        function [result, output_image] = GetResult(obj, plugin_name, context, dataset_name)
-            if nargin < 3
-                context = obj.DefaultContext;
-            end
-            if nargin < 4
-                dataset_name = [];
-            end
+        function [result, output_image] = GetResult(obj, plugin_name, varargin)
             if nargout > 1
-                [result, ~, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_name);
+                [result, ~, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, varargin{:});
             else
-                [result, ~] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, context, dataset_name);
+                [result, ~] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, varargin{:});
             end
         end
 
         % Returns a PTKImageInfo structure with image information, including the
         % UID, filenames and file path
-        function image_info = GetImageInfo(obj, dataset_name)
-            if nargin < 2
-                dataset_name = [];
-            end
-            image_info = obj.LinkedDatasetChooser.GetImageInfo(dataset_name);
+        function image_info = GetImageInfo(obj, varargin)
+            image_info = obj.LinkedDatasetChooser.GetImageInfo(varargin{:});
         end
         
         % Returns an empty template image for the specified context
         % See PTKImageTemplates.m for valid contexts
-        function template_image = GetTemplateImage(obj, context, dataset_name)
-            if nargin < 3
-                dataset_name = [];
-            end
-            template_image = obj.LinkedDatasetChooser.GetTemplateImage(context, obj.DatasetStack, dataset_name);
+        function template_image = GetTemplateImage(obj, context, varargin)
+            template_image = obj.LinkedDatasetChooser.GetTemplateImage(context, obj.DatasetStack, varargin{:});
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
         % failure when running the plugin that generates the template image for 
         % that context.
-        function context_is_enabled = IsContextEnabled(obj, context, dataset_name)
-            if nargin < 3
-                dataset_name = [];
-            end
-            context_is_enabled = obj.LinkedDatasetChooser.IsContextEnabled(context, dataset_name);
+        function context_is_enabled = IsContextEnabled(obj, context, varargin)
+            context_is_enabled = obj.LinkedDatasetChooser.IsContextEnabled(context, varargin{:});
         end
         
         % Returns if this dataset is a gas MRI type
-        function is_gas_mri = IsGasMRI(obj, dataset_name)
-            if nargin < 2
-                dataset_name = [];
-            end
-            is_gas_mri = obj.LinkedDatasetChooser.IsGasMRI(obj.DatasetStack, dataset_name);
+        function is_gas_mri = IsGasMRI(obj, varargin)
+            is_gas_mri = obj.LinkedDatasetChooser.IsGasMRI(obj.DatasetStack, varargin{:});
         end
     end
 end

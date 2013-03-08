@@ -74,7 +74,7 @@ classdef PTKImageTemplates < handle
         
         
         % Returns an image template for the requested context
-        function template = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack)
+        function template = GetTemplateImage(obj, context, dataset_stack)
             
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
@@ -85,7 +85,7 @@ classdef PTKImageTemplates < handle
             % the appropriate plugin and creating a template copy
             if ~obj.TemplateImages.isKey(char(context))
                 obj.Reporting.ShowWarning('PTKImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
-                obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), linked_dataset_chooser, dataset_stack, context);
+                obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), dataset_stack, context);
 
                 % The call to GetResult should have automatically created the
                 % template image - check that this has happened
