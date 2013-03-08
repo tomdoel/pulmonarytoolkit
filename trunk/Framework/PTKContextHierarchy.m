@@ -142,7 +142,9 @@ classdef PTKContextHierarchy < handle
                 [result, output_image, plugin_has_been_run, cache_info] = obj.GetResult(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, reporting);
                 
                 result = obj.ReduceResultToContext(result, output_context_mapping, linked_dataset_chooser, dataset_stack);
-                output_image = obj.ReduceResultToContext(output_image, output_context_mapping, linked_dataset_chooser, dataset_stack);
+                if ~isempty(output_image)
+                    output_image = obj.ReduceResultToContext(output_image, output_context_mapping, linked_dataset_chooser, dataset_stack);
+                end
                 
             % If the plugin's context set is lower in the hierarchy, then get
             % run the plugin for all lower contexts and concatenate the results
@@ -170,7 +172,9 @@ classdef PTKContextHierarchy < handle
                     template_image_for_this_result = obj.ImageTemplates.GetTemplateImage(child_context, linked_dataset_chooser, dataset_stack);
                     
                     result.(char(child_context)) = this_result;
-                    output_image.ChangeSubImageWithMask(this_output_image, template_image_for_this_result);
+                    if ~isempty(output_image) && ~isempty(this_output_image)
+                        output_image.ChangeSubImageWithMask(this_output_image, template_image_for_this_result);
+                    end
                     cache_info.(char(child_context)) = this_cache_info;
                     plugin_has_been_run = plugin_has_been_run || this_plugin_has_been_run;
                     
