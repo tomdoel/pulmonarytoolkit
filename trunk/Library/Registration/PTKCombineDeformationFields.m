@@ -21,9 +21,10 @@ function deformation_field_combined = PTKCombineDeformationFields(deformation_le
     deformation_field_combined = left_right_mask.BlankCopy;
     deformation_field_combined.ChangeRawImage(zeros([deformation_field_combined.ImageSize, 3], 'double'));
     region_mask = left_right_mask.BlankCopy;
-    region_mask.ResizeToMatch(deformation_right);
     region_mask.ChangeRawImage(left_right_mask.RawImage == 1);
+    region_mask.ResizeToMatch(deformation_right);
     deformation_field_combined.ChangeSubImageWithMask(deformation_right, region_mask);
+    region_mask = left_right_mask.BlankCopy;
     region_mask.ChangeRawImage(left_right_mask.RawImage == 2);
     region_mask.ResizeToMatch(deformation_left);
     deformation_field_combined.ChangeSubImageWithMask(deformation_left, region_mask);
