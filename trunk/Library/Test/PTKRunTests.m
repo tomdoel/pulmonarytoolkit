@@ -26,7 +26,7 @@ function RunTests(test_classes)
         test_class_name = test_class{1};
         try
             class_handle = feval(test_class_name);
-            class_handle.delete();
+            class_handle.delete();5
             disp([' + Passed: ' char(test_class_name)]);
             passed = passed + 1;
         catch ex

@@ -32,7 +32,7 @@ classdef MockDatasetResults < handle
             obj.MockResults([name '.' char(context)]) = result;
         end
 
-        function [result, cache_info, output_image] = GetResult(obj, plugin_name, linked_dataset_chooser, dataset_stack, context)
+        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context)
             
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name, context);
 

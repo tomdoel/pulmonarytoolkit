@@ -42,91 +42,12 @@ classdef PTKLinkedDatasetChooser < handle
             obj.LinkedDatasetChooserList(linked_name) = linked_dataset_chooser;
         end
         
-        function dataset_results = GetDataset(obj, dataset_name)
-            dataset_results = obj.FindLinkedDatasetChooser(dataset_name).PrimaryDatasetResults;
-            
+        % Returns a handle to the DatasetResults object for a particular linked
+        % dataset. The dataset is identified by its uid in varargin, or an empty
+        % input will return the primary dataset.
+        function dataset_results = GetDataset(obj, varargin)
+            dataset_results = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults;
         end
-
-        % RunPlugin: Returns the results of a plugin. If a valid result is cached on disk,
-        % this wil be returned provided all the dependencies are valid.
-        % Otherwise the plugin will be executed and the new result returned.
-        % The optional context parameter specifies the region of interest to which the output result will be framed.
-        % Specifying a second argument also produces a representative image from
-        % the results. For plugins whose result is an image, this will generally be the
-        % same as the results.
-        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_call_stack, context, varargin)
-            if nargin < 4
-                context = [];
-            end
-            
-            if nargout > 2
-                [result, cache_info, output_image] = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.GetResult(plugin_name, dataset_call_stack, context);
-            else
-                [result, cache_info] = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.GetResult(plugin_name, dataset_call_stack, context);
-            end
-        end
-
-        % Save data as a cache file associated with the dataset
-        function SaveData(obj, name, data, varargin)
-            obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.SaveData(name, data);
-        end
-
-        % Load data from a cache file associated with the dataset
-        function data = LoadData(obj, name, varargin)
-            data = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.LoadData(name, obj.Reporting);
-        end
-
-        % Gets the path of the folder where the results for this dataset are
-        % stored
-        function dataset_cache_path = GetDatasetCachePath(obj, varargin)
-            dataset_cache_path = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.GetCachePath;
-        end
-
-        % Gets the path of the folder where the output files for this dataset are
-        % stored
-        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, varargin)
-            dataset_cache_path = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.GetOutputPathAndCreateIfNecessary;
-        end
-
-        % Returns a PTKImageInfo structure with image information, including the
-        % UID, filenames and file path
-        function image_info = GetImageInfo(obj, varargin)
-            image_info = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.GetImageInfo;
-        end
-
-        % Returns an empty template image for the specified context
-        % See PTKImageTemplates.m for valid contexts
-        function template_image = GetTemplateImage(obj, context, dataset_stack, varargin)
-            template_image = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.GetTemplateImage(context, dataset_stack);
-        end
-
-        % Gets a thumbnail image of the last result for this plugin
-        function preview = GetPluginPreview(obj, plugin_name, varargin)
-            preview = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.GetPluginPreview(plugin_name);
-        end
-
-        % Removes all the cache files associated with this dataset. Cache files
-        % store the results of plugins so they need only be computed once for
-        % each dataset. Clearing the cache files forces recomputation of all
-        % results.
-        function ClearCacheForThisDataset(obj, remove_framework_files, varargin)
-            obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.ClearCacheForThisDataset(remove_framework_files);
-        end
-        
-        % Check to see if a context has been disabled for this dataset, due to a 
-        % failure when running the plugin that generates the template image for 
-        % that context.
-        function context_is_enabled = IsContextEnabled(obj, context, varargin)
-            context_is_enabled = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.IsContextEnabled(context);
-        end
-        
-        function is_gas_mri = IsGasMRI(obj, dataset_stack, varargin)
-            is_gas_mri = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.IsGasMRI(dataset_stack);
-        end
-        
-        function valid = CheckDependencyValid(obj, dependency, varargin)
-            valid = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults.CheckDependencyValid(dependency);
-        end        
     end
 
     methods (Access = private)
