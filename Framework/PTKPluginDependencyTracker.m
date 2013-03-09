@@ -179,7 +179,7 @@ classdef PTKPluginDependencyTracker < handle
                 next_dependency = dependency_list(index);
                 
                 dataset_uid = next_dependency.DatasetUid;
-                if ~linked_dataset_chooser.CheckDependencyValid(next_dependency, dataset_uid);
+                if ~linked_dataset_chooser.GetDataset(dataset_uid).CheckDependencyValid(next_dependency);
                     valid = false;
                     return;
                 end

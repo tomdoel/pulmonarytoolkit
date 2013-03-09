@@ -33,7 +33,7 @@ classdef PTKTemplateCallback < handle
             if nargin < 3
                 dataset_name = [];
             end
-            template = obj.LinkedDatasetChooser.GetTemplateImage(context, obj.DatasetStack, dataset_name);
+            template = obj.LinkedDatasetChooser.GetDataset(dataset_name).GetTemplateImage(context, obj.DatasetStack);
         end
     end
 end

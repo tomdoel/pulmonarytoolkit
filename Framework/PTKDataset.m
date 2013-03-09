@@ -95,7 +95,11 @@ classdef PTKDataset < handle
             end
         end
                 
-        function [result, cache_info, output_image] = GetResultWithCacheInfo(obj, plugin_name, varargin)
+        function [result, cache_info, output_image] = GetResultWithCacheInfo(obj, plugin_name, context, varargin)
+            if nargin < 3
+                context = [];
+            end
+            
             obj.PreCallTidy;
             
             % Reset the dependency stack, since this could be left in a bad state if a previous plugin call caused an exception
@@ -103,9 +107,9 @@ classdef PTKDataset < handle
             
             try
                 if nargout > 2
-                    [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, varargin{:});
+                    [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context);
                 else
-                    [result, cache_info] = obj.LinkedDatasetChooser.GetResult(plugin_name, obj.DatasetStack, varargin{:});
+                    [result, cache_info] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context);
                 end
             catch ex
                 
@@ -125,14 +129,14 @@ classdef PTKDataset < handle
         % Used for marker points
         function SaveData(obj, name, data, varargin)
             obj.PreCallTidy;
-            obj.LinkedDatasetChooser.SaveData(name, data, varargin{:});
+            obj.LinkedDatasetChooser.GetDataset(varargin{:}).SaveData(name, data);
             obj.PostCallTidy;
         end
         
         % Load data from a cache file associated with this dataset
         function data = LoadData(obj, name, varargin)
             obj.PreCallTidy;
-            data = obj.LinkedDatasetChooser.LoadData(name, varargin{:});
+            data = obj.LinkedDatasetChooser.GetDataset(varargin{:}).LoadData(name);
             obj.PostCallTidy;
         end
 
@@ -140,7 +144,7 @@ classdef PTKDataset < handle
         % stored
         function dataset_cache_path = GetDatasetCachePath(obj, varargin)
             obj.PreCallTidy;
-            dataset_cache_path = obj.LinkedDatasetChooser.GetCachePath(varargin{:});
+            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetCachePath;
             obj.PostCallTidy;
         end
 
@@ -148,7 +152,7 @@ classdef PTKDataset < handle
         % stored
         function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, varargin)
             obj.PreCallTidy;
-            dataset_cache_path = obj.LinkedDatasetChooser.GetOutputPathAndCreateIfNecessary(varargin{:});
+            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetOutputPathAndCreateIfNecessary;
             obj.PostCallTidy;
         end
         
@@ -156,7 +160,7 @@ classdef PTKDataset < handle
         % UID, filenames and file path
         function image_info = GetImageInfo(obj, varargin)
             obj.PreCallTidy;
-            image_info = obj.LinkedDatasetChooser.GetImageInfo(varargin{:});
+            image_info = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetImageInfo;
             obj.PostCallTidy;
         end
 
@@ -164,7 +168,7 @@ classdef PTKDataset < handle
         % See PTKImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, varargin)
             obj.PreCallTidy;
-            template_image = obj.LinkedDatasetChooser.GetTemplateImage(context, obj.DatasetStack, varargin{:});
+            template_image = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetTemplateImage(context, obj.DatasetStack);
             obj.PostCallTidy;
         end
         
@@ -174,7 +178,7 @@ classdef PTKDataset < handle
             % permit it to be called while another call is in progress (which
             % may happen during a PreviewImageChanged notification).
             
-            preview = obj.LinkedDatasetChooser.GetPluginPreview(plugin_name, varargin{:});
+            preview = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetPluginPreview(plugin_name);
         end
 
         % Removes all the cache files associated with this dataset. Cache files
@@ -183,7 +187,7 @@ classdef PTKDataset < handle
         % results.
         function ClearCacheForThisDataset(obj, remove_framework_files, varargin)
             obj.PreCallTidy;
-            obj.LinkedDatasetChooser.ClearCacheForThisDataset(remove_framework_files, varargin{:});
+            obj.LinkedDatasetChooser.GetDataset(varargin{:}).ClearCacheForThisDataset(remove_framework_files);
             obj.PostCallTidy;
         end
         
@@ -192,14 +196,14 @@ classdef PTKDataset < handle
         % that context.
         function context_is_enabled = IsContextEnabled(obj, context, varargin)
             obj.PreCallTidy;
-            context_is_enabled = obj.LinkedDatasetChooser.IsContextEnabled(context, varargin{:});
+            context_is_enabled = obj.LinkedDatasetChooser.GetDataset(varargin{:}).IsContextEnabled(context);
             obj.PostCallTidy;
         end
         
         % Check if this is a hyperpolarised gas MRI image
         function is_gas_mri = IsGasMRI(obj, varargin)
             obj.PreCallTidy;
-            is_gas_mri = obj.LinkedDatasetChooser.IsGasMRI(obj.DatasetStack, varargin{:});
+            is_gas_mri = obj.LinkedDatasetChooser.GetDataset(varargin{:}).IsGasMRI(obj.DatasetStack);
             obj.PostCallTidy;
         end 
     end
