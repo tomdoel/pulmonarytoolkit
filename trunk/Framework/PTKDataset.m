@@ -144,7 +144,7 @@ classdef PTKDataset < handle
         % stored
         function dataset_cache_path = GetDatasetCachePath(obj, varargin)
             obj.PreCallTidy;
-            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetCachePath;
+            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetDatasetCachePath;
             obj.PostCallTidy;
         end
 
