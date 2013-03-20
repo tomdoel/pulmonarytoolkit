@@ -68,6 +68,9 @@ classdef PTKReportingWithCache < PTKReportingInterface
         end
         
         function ShowWarning(obj, identifier, message, supplementary_info)
+            if nargin < 4
+                supplementary_info = [];
+            end
             obj.WarningsCache.AddPendingWarning(identifier, message, supplementary_info);
         end
         
