@@ -244,6 +244,14 @@ classdef PTKGui < handle
             end
         end
         
+        function image_info = GetImageInfo(obj)
+            if ~isempty(obj.Dataset)
+                image_info = obj.Dataset.GetImageInfo;
+            else
+                image_info = [];
+            end
+        end        
+        
         function ClearCacheForThisDataset(obj)
             if ~isempty(obj.Dataset)
                 obj.Dataset.ClearCacheForThisDataset(false);
