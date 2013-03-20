@@ -42,7 +42,7 @@ function PTKCompileMexFiles(framework_cache, force_recompile, reporting)
     end
     framework_cache.MexInfoMap = mex_files_to_compile;
     framework_cache.IsNewlyCreated = false;
-    framework_cache.SaveCache;
+    framework_cache.SaveCache(reporting);
     reporting.CompleteProgress;
 end
 
