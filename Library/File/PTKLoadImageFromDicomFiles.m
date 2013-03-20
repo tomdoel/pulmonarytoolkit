@@ -72,10 +72,20 @@ function loaded_image = PTKLoadImageFromDicomFiles(path, filenames, check_files,
             reporting.ShowMessage('PTKLoadImageFromDicomFiles:SettingDatatypeToInt8', 'PTKLoadImageFromDicomFiles: char datatype detected. Setting to int8');
             data_type_class = 'int8';
         end
-        loaded_image = zeros(size_i, size_j, size_k, data_type_class);
 
         % Load metadata and image data from last file in the list
         [metadata_last_file, last_image_slice] = ReadDicomFile(fullfile(path, filenames{num_slices}), reporting);
+
+        if ~strcmp(metadata_first_file.ImageType, metadata_last_file.ImageType)
+            reporting.ShowWarning('PTKLoadImageFromDicomFiles:ImageTypeMismatch', 'The first image in this series appears to be a localiser image. I am removing this from the series.');
+            num_slices = num_slices - 1;
+            filenames(1) = [];
+            [metadata_first_file, first_image_slice] = ReadDicomFile(fullfile(path, filenames{1}), reporting);
+            size_i = metadata_first_file.Height;
+            size_j = metadata_first_file.Width;
+            size_k = num_slices;
+            [metadata_last_file, last_image_slice] = ReadDicomFile(fullfile(path, filenames{num_slices}), reporting);
+        end
         reporting.UpdateProgressValue(round(100*progress_index/num_slices));
         progress_index = progress_index + 1;
 
@@ -96,6 +106,9 @@ function loaded_image = PTKLoadImageFromDicomFiles(path, filenames, check_files,
             image_index_range = size_k: -1 : 1;
         end
         
+        % Pre-allocate image matrix
+        loaded_image = zeros(size_i, size_j, size_k, data_type_class);
+
         loaded_image(:, :, image_index_range(end)) = last_image_slice;
         slice_locations(image_index_range(end)) = metadata_last_file.SliceLocation;
         patient_positions(image_index_range(end), :) = metadata_last_file.ImagePositionPatient';
