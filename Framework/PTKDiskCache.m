@@ -76,7 +76,7 @@ classdef PTKDiskCache < handle
         function [result, info] = Load(obj, name, context, reporting)
             if obj.Exists(name, context, reporting)
                 filename = [fullfile(obj.CachePath, char(context), name) '.mat'];
-                results_struct = load(filename);
+                results_struct = PTKDiskUtilities.Load(filename);
                 result = results_struct.value;
 
                 % Return a cacheinfo object, if one was requested
@@ -207,7 +207,7 @@ classdef PTKDiskCache < handle
             reporting.Log(['Saving data for ' name]);
             
             filename = [fullfile(file_path_with_context, name) '.mat'];
-            save(filename, '-struct', 'result');
+            PTKDiskUtilities.Save(filename, result);
         end        
     end
 end
