@@ -38,7 +38,7 @@ classdef PTKSettings < handle
             try
                 settings_filename = PTKDirectories.GetSettingsFilePath;
                 if exist(settings_filename, 'file')
-                    settings_struct = load(settings_filename);
+                    settings_struct = PTKDiskUtilities.Load(settings_filename);
                     settings = settings_struct.settings;
                 else
                     reporting.ShowWarning('PTKSettings:SettingsFileNotFound', 'No settings file found. Will create new one on exit', []);
@@ -91,8 +91,9 @@ classdef PTKSettings < handle
             settings_filename = PTKDirectories.GetSettingsFilePath;
             
             try
-                settings = obj; %#ok<NASGU>
-                save(settings_filename, 'settings');
+                value = [];
+                value.settings = obj;
+                PTKDiskUtilities.Save(settings_filename, value);
             catch ex
                 reporting.ErrorFromException('PTKSettings:FailedtoSaveSettingsFile', ['Unable to save settings file ' settings_filename], ex);
             end

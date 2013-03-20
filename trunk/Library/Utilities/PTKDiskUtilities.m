@@ -279,8 +279,16 @@ classdef PTKDiskUtilities
                     end
                 end
             end
-
         end
+
+        function Save(filename, value) %#ok<INUSD>
+            save(filename, '-struct', 'value', '-v7');
+        end
+        
+        function value = Load(filename) %#ok<INUSD>
+            value = load(filename);
+        end
+        
     end
 end
 

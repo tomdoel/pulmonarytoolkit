@@ -26,7 +26,7 @@ classdef PTKFrameworkCache < handle
             try
                 cache_filename = PTKDirectories.GetFrameworkCacheFilePath;
                 if exist(cache_filename, 'file')
-                    cache_struct = load(cache_filename);
+                    cache_struct = PTKDiskUtilities.Load(cache_filename);
                     cache = cache_struct.cache;
                     cache.IsNewlyCreated = false;
                 else
@@ -52,8 +52,9 @@ classdef PTKFrameworkCache < handle
             cache_filename = PTKDirectories.GetFrameworkCacheFilePath;
             
             try
-                cache = obj; %#ok<NASGU>
-                save(cache_filename, 'cache');
+                value = [];
+                value.cache = obj;
+                PTKDiskUtilities.Save(cache_filename, value);
             catch ex
                 reporting.ErrorFromException('PTKFrameworkCache:FailedtoSaveCacheFile', ['Unable to save settings file ' cache_filename], ex);
             end
