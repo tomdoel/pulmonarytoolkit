@@ -47,18 +47,7 @@ classdef PTKDicomImage < PTKImage
              
             voxel_size = [metadata.PixelSpacing' voxelsize_z];
             
-            % Permute dimensions to match orientation of patient
-            orientation = abs(metadata.ImageOrientationPatient);
-            if isequal(orientation, [1 0 0 0 1 0]')
-                new_dimension_order = [1 2 3];
-            elseif isequal(orientation, [1 0 0 0 0 1]')
-                new_dimension_order = [3 2 1];
-            elseif isequal(orientation, [0 1 0 0 0 1]')
-                new_dimension_order = [2 3 1];
-            else
-                reporting.ShowWarning('PTKDicomImage:UnknownPatientOrientation', 'Unknown patient orientation. Images may not be aligned correctly', []);
-                new_dimension_order = [1 2 3];
-            end
+            new_dimension_order = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation(metadata.ImageOrientationPatient, reporting);
             original_image = permute(original_image, new_dimension_order);
             voxel_size = voxel_size(new_dimension_order);
             global_origin_mm = global_origin_mm([2 1 3]);

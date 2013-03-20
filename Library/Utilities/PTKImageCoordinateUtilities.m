@@ -207,6 +207,46 @@ classdef PTKImageCoordinateUtilities
             deformation_field2.ChangeRawImage(deformation_field_raw);
             deformation_field = deformation_field2;
         end
+        
+        % Returns a vector which defines the order in which the dimensions of an
+        % DICOM image volume should be permuted in order to align it with the
+        % PTK coordinate system
+        function permutation_vector = GetDimensionPermutationVectorFromDicomOrientation(orientation, reporting)
+            % The orientation vector is formed of cosines. Typically these will
+            % be 1s and 0s but we allow for small variations in the angles.
+            orientation = round(abs(orientation));
+            
+            % DICOM coordinates are XYZ but Matlab's coordinates are YXZ. We
+            % convert the orientation to Matlab coordinates, which we refer to as IJK.
+            orientation_i = orientation([5, 4, 6])'; % Direction of first image axis in ijk (=yxz) coordinates
+            orientation_j = orientation([2, 1, 3])'; % Direction of second image axis in ijk (=yxz) coordinates
+            
+            % Determine which PTK dimension each of these vectors corresponds to
+            dimension_i = PTKImageCoordinateUtilities.GetDimensionIndexFromOrientation(orientation_i, reporting);
+            dimension_j = PTKImageCoordinateUtilities.GetDimensionIndexFromOrientation(orientation_j, reporting);
+            
+            permutation_vector = [3, 3, 3];
+            permutation_vector(dimension_i) = 1;
+            permutation_vector(dimension_j) = 2;
+            
+            % Check the resulting vector is valid
+            if (sum(permutation_vector == 1) ~= 1) || (sum(permutation_vector == 2) ~= 1) || (sum(permutation_vector == 3) ~= 1) || ...
+                    ~isempty(setdiff(permutation_vector, [1,2,3]))
+                reporting.Error('PTKImageCoordinateUtilities:InvalidPermutationVector', 'GetDimensionPermutationVectorFromDicomOrientation() resulted in an invalid permutation vector');
+            end
+        end
+        
+        function dimension_number = GetDimensionIndexFromOrientation(orientation_vector, reporting)
+            if isequal(orientation_vector, [1, 0, 0]) || isequal(orientation_vector, [1; 0; 0])
+                dimension_number = 1;
+            elseif isequal(orientation_vector, [0, 1, 0]) || isequal(orientation_vector, [0; 1; 0])
+                dimension_number = 2;
+            elseif isequal(orientation_vector, [0, 0, 1]) || isequal(orientation_vector, [0; 0; 1])
+                dimension_number = 3;
+            else
+                reporting.Error('PTKImageCoordinateUtilities:UnknownOrientationVector', 'GetDimensionIndexFromOrientation() was called with an unknown orientation vector.');
+            end
+        end
     end
 end
 
