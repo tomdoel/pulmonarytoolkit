@@ -182,6 +182,29 @@ classdef PTKGui < handle
             end
         end
                
+        % Prompts the user for file(s) to load
+        function ImportMultipleFiles(obj)
+            folder_path = PTKDiskUtilities.ChooseDirectory('Select a directory from which files will be imported', obj.Settings.SaveImagePath);
+            
+            % An empty folder_path means the user has cancelled
+            if ~isempty(folder_path)
+                
+                % Save the path in the settings so that future load dialogs 
+                % will start from there
+                obj.Settings.SaveImagePath = folder_path;
+                obj.SaveSettings;
+                
+                % Import all datasets from this path
+                obj.Ptk.ImportDataRecursive(folder_path);
+                
+                % Add any new datasets to the menu
+                obj.AddAllDatasetsInCacheToDropDownMenu;
+                
+                % Update the menu
+                obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;                
+            end
+        end
+               
         function SaveBackgroundImage(obj)
             patient_name = obj.ImagePanel.BackgroundImage.Title;
             image_data = obj.ImagePanel.BackgroundImage;
