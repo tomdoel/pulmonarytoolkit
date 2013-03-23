@@ -93,8 +93,8 @@ classdef PTKDiskUtilities
             end
             
             input_path = path;
-            if (input_path(end) ~= '/')
-                input_path = [path '/'];
+            if (input_path(end) ~= filesep)
+                input_path = [path filesep];
             end
             
             [filenames, path, filter_index] = uigetfile(file_spec, text_to_display, input_path, 'MultiSelect', ms);
@@ -108,7 +108,26 @@ classdef PTKDiskUtilities
             end
         end
         
-        % Creates a random unique identifier        
+        % Displays a dialog for selecting a folder
+        function folder_path = ChooseDirectory(text_to_display, folder_path)
+            
+            if isempty(folder_path)
+                folder_path = PTKDiskUtilities.GetUserDirectory;
+            end
+            
+            input_path = folder_path;
+            if (input_path(end) ~= filesep)
+                input_path = [folder_path filesep];
+            end
+            
+            folder_path = uigetdir(input_path, text_to_display);
+            
+            if folder_path == 0
+                folder_path = [];
+            end
+        end
+
+        % Creates a random unique identifier
         function uid = GenerateUid
             % On unix systems, if java is not running we can use the system
             % command
