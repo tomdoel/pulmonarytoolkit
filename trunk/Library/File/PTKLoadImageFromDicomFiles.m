@@ -89,10 +89,14 @@ function loaded_image = PTKLoadImageFromDicomFiles(path, filenames, check_files,
         reporting.UpdateProgressValue(round(100*progress_index/num_slices));
         progress_index = progress_index + 1;
 
-        distance_between_first_and_last = abs(metadata_first_file.SliceLocation - metadata_last_file.SliceLocation);
-        
         % Determine which order to load the slices in
-        load_first_to_last = metadata_first_file.SliceLocation > metadata_last_file.SliceLocation;
+        if isfield(metadata_first_file, 'SliceLocation') && isfield(metadata_last_file, 'SliceLocation')
+            load_first_to_last = metadata_first_file.SliceLocation > metadata_last_file.SliceLocation;
+            distance_between_first_and_last = abs(metadata_first_file.SliceLocation - metadata_last_file.SliceLocation);
+        else
+            load_first_to_last = true;
+            distance_between_first_and_last = 0;
+        end
         
         % These variables are only used for verifying the slice location when
         % check_files is set to true
@@ -109,14 +113,44 @@ function loaded_image = PTKLoadImageFromDicomFiles(path, filenames, check_files,
         % Pre-allocate image matrix
         loaded_image = zeros(size_i, size_j, size_k, data_type_class);
 
-        loaded_image(:, :, image_index_range(end)) = last_image_slice;
-        slice_locations(image_index_range(end)) = metadata_last_file.SliceLocation;
-        patient_positions(image_index_range(end), :) = metadata_last_file.ImagePositionPatient';
+        if ndims(last_image_slice) > 2
+            reporting.ShowWarning('PTKLoadImageFromDicomFiles:ImageDimensionMismatch', 'The last file contains more than one image. I will only use the first image.');
+            loaded_image(:, :, image_index_range(end)) = last_image_slice(:,:,1);
+        else
+            loaded_image(:, :, image_index_range(end)) = last_image_slice;
+        end
+        
+        if isfield(metadata_last_file, 'SliceLocation')
+            slice_locations(image_index_range(end)) = metadata_last_file.SliceLocation;
+        else
+            slice_locations(image_index_range(end)) = 0;
+        end
+        
+        if isfield(metadata_last_file, 'ImagePositionPatient')
+            patient_positions(image_index_range(end), :) = metadata_last_file.ImagePositionPatient';
+        else
+            patient_positions(image_index_range(end), :) = 0;
+        end
         series_uids{image_index_range(end)} = metadata_last_file.SeriesInstanceUID;
         
-        loaded_image(:, :, image_index_range(1)) = first_image_slice;
-        slice_locations(image_index_range(1)) = metadata_first_file.SliceLocation;
-        patient_positions(image_index_range(1), :) = metadata_first_file.ImagePositionPatient';
+        if ndims(first_image_slice) > 2
+            reporting.ShowWarning('PTKLoadImageFromDicomFiles:ImageDimensionMismatch', 'The first file contains more than one image. I will only use the first image.');
+            loaded_image(:, :, image_index_range(1)) = first_image_slice(:,:,1);
+        else
+            loaded_image(:, :, image_index_range(1)) = first_image_slice;
+        end
+        
+        if isfield(metadata_first_file, 'SliceLocation')
+            slice_locations(image_index_range(1)) = metadata_first_file.SliceLocation;
+        else
+            slice_locations(image_index_range(1)) = 0;
+        end
+        
+        if isfield(metadata_first_file, 'ImagePositionPatient')
+            patient_positions(image_index_range(1), :) = metadata_first_file.ImagePositionPatient';
+        else
+            patient_positions(image_index_range(1), :) = 0;
+        end
         series_uids{image_index_range(1)} = metadata_first_file.SeriesInstanceUID;
         
         % The global origin is the DICOM patient location for the first image
@@ -134,16 +168,30 @@ function loaded_image = PTKLoadImageFromDicomFiles(path, filenames, check_files,
         
         % If there are only 2 slices, we already have everything loaded
         if num_slices == 2
-            slice_thickness = abs(metadata_last_file.SliceLocation - metadata_first_file.SliceLocation);            
+            if isfield(metadata_first_file, 'SliceLocation') && isfield(metadata_last_file, 'SliceLocation')
+                slice_thickness = abs(metadata_last_file.SliceLocation - metadata_first_file.SliceLocation);
+            else
+                slice_thickness = 0;
+            end
         else
         
             % Load metadata and image data from second file in the list
             [metadata_second_file, second_image_slice] = ReadDicomFile(fullfile(path, filenames{2}), reporting);            
             reporting.UpdateProgressValue(round(100*progress_index/num_slices));
             progress_index = progress_index + 1;
-            loaded_image(:, :, image_index_range(2)) = second_image_slice;
-            slice_locations(image_index_range(2)) = metadata_second_file.SliceLocation;
-            patient_positions(image_index_range(2), :) = metadata_second_file.ImagePositionPatient';
+            loaded_image(:, :, image_index_range(2)) = second_image_slice(:,:,1);;
+            
+            if isfield(metadata_second_file, 'SliceLocation')
+                slice_locations(image_index_range(2)) = metadata_second_file.SliceLocation;
+            else
+                slice_locations(image_index_range(2)) = 0;
+            end
+            
+            if isfield(metadata_second_file, 'ImagePositionPatient')
+                patient_positions(image_index_range(2), :) = metadata_second_file.ImagePositionPatient';
+            else
+                patient_positions(image_index_range(2), :) = 0;
+            end
             series_uids{image_index_range(2)} = metadata_second_file.SeriesInstanceUID;
             
             % Check that second image is from the same series
@@ -157,7 +205,11 @@ function loaded_image = PTKLoadImageFromDicomFiles(path, filenames, check_files,
             % spacing using the SliceLocation tag is a more reliable
             % measure than the SpacingBetweenSlices attribute, which may not be
             % defined.
-            slice_thickness = abs(metadata_second_file.SliceLocation - metadata_first_file.SliceLocation);
+            if isfield(metadata_second_file, 'SliceLocation') && isfield(metadata_first_file, 'SliceLocation')
+                slice_thickness = abs(metadata_second_file.SliceLocation - metadata_first_file.SliceLocation);
+            else
+                slice_thickness = 0;
+            end
 
             % Check to see if the distance between first and last slices is what
             % we expect (if not, it may indicate that some slices are missing or
@@ -181,8 +233,16 @@ function loaded_image = PTKLoadImageFromDicomFiles(path, filenames, check_files,
                 if check_files
                     try
                         next_filename_or_metadata = ReadMetadata(next_filename_or_metadata, reporting);
-                        slice_locations(image_index) = next_filename_or_metadata.SliceLocation;
-                        patient_positions(image_index, :) = next_filename_or_metadata.ImagePositionPatient';
+                        if isfield(next_filename_or_metadata, 'SliceLocation')
+                            slice_locations(image_index) = next_filename_or_metadata.SliceLocation;
+                        else
+                            slice_locations(image_index) = 0;
+                        end
+                        if isfield(next_filename_or_metadata, 'ImagePositionPatient')
+                            patient_positions(image_index, :) = next_filename_or_metadata.ImagePositionPatient';
+                        else
+                            patient_positions(image_index, :) = 0;
+                        end
                         series_uids{image_index} = next_filename_or_metadata.SeriesInstanceUID;
                     catch exception
                         reporting.Error('PTKLoadImageFromDicomFiles:MetadataReadFailure', ['PTKLoadImageFromDicomFiles: error while reading metadata from ' filenames{file_number} '. Error:' exception.message], []);
@@ -191,7 +251,8 @@ function loaded_image = PTKLoadImageFromDicomFiles(path, filenames, check_files,
                 try
                     % If check_files is true, next_file will be metadata
                     % If false, next_file will be the filename
-                    loaded_image(:, :, image_index) = dicomread(next_filename_or_metadata);
+                    next_slice = dicomread(next_filename_or_metadata);
+                    loaded_image(:, :, image_index) = next_slice(:, :, 1);
                 catch exception
                     reporting.Error('PTKLoadImageFromDicomFiles:DicomReadFailure', ['PTKLoadImageFromDicomFiles: error while reading file ' filenames{file_number} '. Error:' exception.message]);
                 end
