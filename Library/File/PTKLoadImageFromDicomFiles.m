@@ -331,9 +331,4 @@ function metadata = ReadMetadata(file_name, reporting)
     catch exception
         reporting.Error('PTKLoadImageFromDicomFiles:MetaDataReadError', ['PTKLoadImageFromDicomFiles: error while reading metadata from ' file_name ': is this a DICOM file? Error:' exception.message]);
     end
-    try
-        image_data = dicomread(metadata);
-    catch exception
-        reporting.Error('PTKLoadImageFromDicomFiles:DicomReadError', ['PTKLoadImageFromDicomFiles: error while reading file ' file_name '. Error:' exception.message]);
-    end
 end
