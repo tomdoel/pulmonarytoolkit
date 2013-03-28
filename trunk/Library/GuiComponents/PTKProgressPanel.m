@@ -74,7 +74,7 @@ classdef PTKProgressPanel < PTKProgressInterface
             );
             
             title_position = [20, 165, 460, 55];
-            text_position = [20, 115, 460, 45];
+            text_position = [20, 115, 460, 50];
             cancel_position = [175, 20, 150, 40];
             quit_position = [350, 20, 80, 40];
             hide_position = [50, 20, 80, 40];
