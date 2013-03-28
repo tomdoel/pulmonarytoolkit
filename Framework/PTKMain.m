@@ -257,11 +257,7 @@ classdef PTKMain < handle
                        throw(MException('PTKMain:FileNotFound', ['The file ' first_filename ' does not exist']));
                     end
                     
-                    try
-                        metadata = dicominfo(first_filename);
-                    catch exception
-                        throw(MException('PTKMain:MetaheaderLoadFail', ['The file ' first_filename ' is not a valid DICOM file']));
-                    end
+                    metadata = PTKDicomUtilities.ReadMetadata(image_info.ImagePath, filenames{1});
                     image_uid = metadata.SeriesInstanceUID;
                     study_uid = metadata.StudyInstanceUID;
                     modality = metadata.Modality;
