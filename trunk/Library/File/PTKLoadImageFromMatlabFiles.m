@@ -1,4 +1,4 @@
-function image = PTKLoadImageFromMatlabFiles(path, filenames)
+function image = PTKLoadImageFromMatlabFiles(path, filenames, reporting)
     % PTKLoadImageFromMatlabFiles. Loads a 3D image volume from a Matlab file
     %
     %    This function is used to load raw image data saved in a Matlab matrix
@@ -6,7 +6,7 @@ function image = PTKLoadImageFromMatlabFiles(path, filenames)
     %     Syntax
     %     ------
     %
-    %         loaded_image = PTKLoadImageFromDicomFiles(path, filenames, reporting)
+    %         loaded_image = PTKLoadImageFromMatlabFiles(path, filenames, reporting)
     %
     %             loaded_image    a PTKImage containing the 3D volume
     %             path, filename  specify the location to save the DICOM data. One 2D file
