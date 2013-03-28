@@ -1,5 +1,5 @@
-classdef PTKFileReader < handle
-    % PTKFileReader. A helper class to assist with parsing a text file
+classdef PTKTextFileReader < handle
+    % PTKTextFileReader. A helper class to assist with parsing a text file
     %
     %
     %     Licence
@@ -15,11 +15,11 @@ classdef PTKFileReader < handle
     end
     
     methods
-        function obj = PTKFileReader(file_path, file_name, reporting)
+        function obj = PTKTextFileReader(file_path, file_name, reporting)
             full_file_name = fullfile(file_path, file_name);
             file_id = fopen(full_file_name, 'rt');
             if (file_id == -1)
-                reporting.Error('PTKFileReader:CannotOpenFile', ['Unable to open file ' full_file_name]);
+                reporting.Error('PTKTextFileReader:CannotOpenFile', ['Unable to open file ' full_file_name]);
             else
                 obj.FileId = file_id;
             end
