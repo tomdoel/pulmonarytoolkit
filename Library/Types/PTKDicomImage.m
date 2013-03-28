@@ -45,11 +45,22 @@ classdef PTKDicomImage < PTKImage
             % 711.html
             voxelsize_z = slice_thickness;
              
-            voxel_size = [metadata.PixelSpacing' voxelsize_z];
+            if isfield(metadata, 'PixelSpacing')
+                voxel_size = [metadata.PixelSpacing' voxelsize_z];
+            else
+                reporting.ShowWarning('PTKDicomImage:NoPixelSpacing', 'Could not determine the pixel size from the image. I am assuming 1x1mm');
+                voxel_size = [1 1 voxelsize_z];
+            end
             
-            new_dimension_order = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation(metadata.ImageOrientationPatient, reporting);
-            original_image = permute(original_image, new_dimension_order);
-            voxel_size = voxel_size(new_dimension_order);
+            if isfield(metadata, 'ImageOrientationPatient')
+                new_dimension_order = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation(metadata.ImageOrientationPatient, reporting);
+                if isa(original_image, 'PTKWrapper')
+                    original_image.RawImage = permute(original_image.RawImage, new_dimension_order);
+                else
+                    original_image = permute(original_image, new_dimension_order);
+                end
+                voxel_size = voxel_size(new_dimension_order);
+            end
             global_origin_mm = global_origin_mm([2 1 3]);
             
             if isfield(metadata, 'RescaleSlope')
@@ -64,9 +75,15 @@ classdef PTKDicomImage < PTKImage
                 rescale_intercept = [];
             end
 
-            new_dicom_image = PTKDicomImage( ...
-                original_image, rescale_slope, rescale_intercept, voxel_size, metadata.Modality, metadata.StudyInstanceUID, metadata ...
-            );
+            if isa(original_image, 'PTKWrapper')
+                new_dicom_image = PTKDicomImage( ...
+                    original_image.RawImage, rescale_slope, rescale_intercept, voxel_size, metadata.Modality, metadata.StudyInstanceUID, metadata ...
+                    );
+            else
+                new_dicom_image = PTKDicomImage( ...
+                    original_image, rescale_slope, rescale_intercept, voxel_size, metadata.Modality, metadata.StudyInstanceUID, metadata ...
+                    );
+            end
             patient_name = '';
             study_description = '';
             series_description = '';
