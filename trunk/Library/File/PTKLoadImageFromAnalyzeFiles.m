@@ -4,7 +4,7 @@ function loaded_image = PTKLoadImageFromAnalyzeFiles(path, filenames)
     %     Syntax
     %     ------
     %
-    %         loaded_image = PTKLoadImageFromDicomFiles(path, filenames, reporting)
+    %         loaded_image = PTKLoadImageFromAnalyzeFiles(path, filenames, reporting)
     %
     %             loaded_image    a PTKImage containing the 3D volume
     %             path, filename  specify the location to save the DICOM data. One 2D file
