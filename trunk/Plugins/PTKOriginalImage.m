@@ -58,7 +58,7 @@ classdef PTKOriginalImage < PTKPlugin
             switch(image_file_format)
                 case PTKImageFileFormat.Dicom
                     additional_file_checks = ~PTKSoftwareInfo.FastMode;
-                    image = PTKLoadImageFromDicomFiles(image_path, filenames, additional_file_checks, reporting);
+                    image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting);
                 case PTKImageFileFormat.Metaheader
                     image = PTKLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
                 otherwise
