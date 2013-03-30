@@ -1,5 +1,9 @@
-function PTKRunTests
+function PTKRunTests(tests_to_run)
     % PTKRunTests. Part of the PTK test framework
+    %
+    %     tests_to_run - All tests will be run if this argument is omitted
+    %     
+    %     
     %
     % Executes all the tests that can be found and reports on the sucess and
     % failures.
@@ -12,8 +16,16 @@ function PTKRunTests
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
-    test_directory = PTKDirectories.GetTestSourceDirectory;
-    test_classes = PTKDiskUtilities.GetListOfClassFiles(test_directory, 'PTKTest');
+    if (nargin > 0) && ~isempty(tests_to_run)
+        if ischar(tests_to_run)
+            test_classes = {tests_to_run};
+        else
+            test_classes = tests_to_run;
+        end
+    else
+        test_directory = PTKDirectories.GetTestSourceDirectory;
+        test_classes = PTKDiskUtilities.GetListOfClassFiles(test_directory, 'PTKTest');
+    end
     RunTests(test_classes);
 end
 
@@ -26,7 +38,7 @@ function RunTests(test_classes)
         test_class_name = test_class{1};
         try
             class_handle = feval(test_class_name);
-            class_handle.delete();5
+            class_handle.delete();
             disp([' + Passed: ' char(test_class_name)]);
             passed = passed + 1;
         catch ex
