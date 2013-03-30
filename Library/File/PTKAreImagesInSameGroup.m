@@ -262,7 +262,7 @@ function matches = CompareFields(field_name, this_metadata, other_metadata, exac
     
     % Special comparison: 2 of the 3 array values should match approximately
     if match_2_out_of_3
-        matches = logical(sum((field_this(:) - field_other(:)) < 0.5) >= 2);
+        matches = logical(sum(abs(field_this(:) - field_other(:)) < 0.5) >= 2);
         return;
     end
     
