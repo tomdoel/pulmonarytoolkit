@@ -202,7 +202,7 @@ classdef PTKMain < handle
                 if isempty(image_type)
                     obj.Reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(import_folder, next_filename)], []);
                 else
-                    image_info_nondicom = PTKImageInfo(import_folder, {principal_filename}, image_type, [], [], []);
+                    image_info_nondicom = PTKImageInfo(import_folder, principal_filename, image_type, [], [], []);
                     [image_info_nondicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_nondicom);
                     uids{end + 1} = image_info_nondicom.ImageUid;
                 end
