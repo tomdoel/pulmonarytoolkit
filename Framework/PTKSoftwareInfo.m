@@ -66,6 +66,7 @@ classdef PTKSoftwareInfo < handle
         GraphicalDebugMode = false
         TimeFunctions = true;
         FastMode = false;
+        DemoMode = false; % If true, user plugins will be ignored
         
         % Do not change this
         CancelErrorId = 'PTKMain:UserCancel'        
