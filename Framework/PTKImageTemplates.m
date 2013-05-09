@@ -32,6 +32,10 @@ classdef PTKImageTemplates < handle
         % A map of all valid contexts to their corresponding plugin
         ValidContexts
         
+        % A map of all valid contexts to the function required to generate the
+        % context from the result of the plugin
+        TemplateGenerationFunctions
+        
         % Used for persisting the templates between sessions
         DatasetDiskCache
         
@@ -55,18 +59,25 @@ classdef PTKImageTemplates < handle
             % map instance
             obj.TemplateImages = containers.Map;
             obj.ValidContexts  = containers.Map;
+            obj.TemplateGenerationFunctions = containers.Map;
             obj.TemplatePluginsRun = containers.Map;
 
             % Add valid contexts
-            
-            obj.ValidContexts(char(PTKContext.OriginalImage)) = 'PTKGetContextForOriginalImage';
-            obj.ValidContexts(char(PTKContext.LungROI)) = 'PTKGetContextForLungROI';
-            obj.ValidContexts(char(PTKContext.LeftLung)) = 'PTKGetContextForSingleLung';
-            obj.ValidContexts(char(PTKContext.RightLung)) = 'PTKGetContextForSingleLung';
-            
+            obj.ValidContexts(char(PTKContext.OriginalImage)) = 'PTKOriginalImage';
+            obj.ValidContexts(char(PTKContext.LungROI)) = 'PTKLungROI';
+            obj.ValidContexts(char(PTKContext.LeftLung)) = 'PTKLeftAndRightLungs';
+            obj.ValidContexts(char(PTKContext.RightLung)) = 'PTKLeftAndRightLungs';
+
             % Deprecated
             obj.ValidContexts(char(PTKContext.LeftLungROI)) = 'PTKGetLeftLungROI';
             obj.ValidContexts(char(PTKContext.RightLungROI)) = 'PTKGetRightLungROI';
+            
+            % Add handles to the functions used to generate the templates
+            obj.TemplateGenerationFunctions(char(PTKContext.OriginalImage)) = @PTKCreateTemplateForOriginalImage;
+            obj.TemplateGenerationFunctions(char(PTKContext.LungROI)) = @PTKCreateTemplateForLungROI;
+            obj.TemplateGenerationFunctions(char(PTKContext.LeftLung)) = @PTKCreateTemplateForSingleLung;
+            obj.TemplateGenerationFunctions(char(PTKContext.RightLung)) = @PTKCreateTemplateForSingleLung;
+
             
             % Loads cached template data
             obj.Load;
@@ -86,6 +97,7 @@ classdef PTKImageTemplates < handle
             if ~obj.TemplateImages.isKey(char(context))
                 obj.Reporting.ShowWarning('PTKImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
                 obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), dataset_stack, context);
+                
 
                 % The call to GetResult should have automatically created the
                 % template image - check that this has happened
@@ -121,10 +133,18 @@ classdef PTKImageTemplates < handle
                         % context, or if the template has changed
                         if (~obj.TemplateImages.isKey(context)) || result_may_have_changed
 
+                            
+                            if ~obj.TemplateGenerationFunctions.isKey(context_char)
+                                obj.Reporting.Error('PTKImageTemplates:TemplateGenerationFunctionNotFound', 'Code error: the function handle required to generate this template was not found in the map.');
+                            end
+                            
+                            template_function = obj.TemplateGenerationFunctions(context_char);
+                            template_image = template_function(result_image, context, obj.Reporting);
+                            
                             % Set the template image. Note: this may be an empty
                             % image (indicating the entire cropped region) or a
                             % boolean mask
-                            obj.SetTemplateImage(context, result_image);
+                            obj.SetTemplateImage(context, template_image);
                         end
                     end
                     
