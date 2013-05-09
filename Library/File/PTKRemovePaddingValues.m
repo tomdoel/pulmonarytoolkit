@@ -3,7 +3,7 @@ function PTKRemovePaddingValues(image_wrapper, metadata, reporting)
     if (isfield(metadata, 'PixelPaddingValue'))
         padding_value = metadata.PixelPaddingValue;
         
-        padding_indices = find(loaded_image == padding_value);
+        padding_indices = find(image_wrapper.RawImage == padding_value);
         if (~isempty(padding_indices))
             reporting.ShowMessage('PTKLoadImageFromDicomFiles:ReplacingPaddingValue', ['Replacing padding value ' num2str(padding_value) ' with zeros.']);
             image_wrapper.RawImage(padding_indices) = 0;
