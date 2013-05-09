@@ -63,10 +63,10 @@ classdef PTKContextHierarchy < handle
             
             % Create the hierarchy of contexts
             obj.Contexts = containers.Map;
-            full_context =  PTKContextMapping(PTKContext.OriginalImage, full_set, 'PTKOriginalImage', []);
-            roi_context = PTKContextMapping(PTKContext.LungROI, roi_set, 'PTKLungROI', full_context);
-            left_lung_context = PTKContextMapping(PTKContext.LeftLung, single_lung_set, 'PTKGetContextForSingleLung', roi_context);
-            right_lung_context = PTKContextMapping(PTKContext.RightLung, single_lung_set, 'PTKGetContextForSingleLung', roi_context);
+            full_context =  PTKContextMapping(PTKContext.OriginalImage, full_set, @PTKCreateTemplateForOriginalImage, []);
+            roi_context = PTKContextMapping(PTKContext.LungROI, roi_set, @PTKCreateTemplateForLungROI, full_context);
+            left_lung_context = PTKContextMapping(PTKContext.LeftLung, single_lung_set, @PTKCreateTemplateForSingleLung, roi_context);
+            right_lung_context = PTKContextMapping(PTKContext.RightLung, single_lung_set, @PTKCreateTemplateForSingleLung, roi_context);
             obj.Contexts(char(PTKContext.OriginalImage)) = full_context;
             obj.Contexts(char(PTKContext.LungROI)) = roi_context;
             obj.Contexts(char(PTKContext.LeftLung)) = left_lung_context;
