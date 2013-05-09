@@ -126,9 +126,9 @@ classdef PTKWavefront < handle
                     obj.MoveVoxelsFromRearOfWavefrontToPendingVoxels;
                 end
             end
-            
+                        
             % Next add the new points to the front of the wavefront
-            obj.WavefrontVoxelIndices{end + 1} = indices_of_new_points;            
+            obj.WavefrontVoxelIndices{end + 1} = indices_of_new_points;
 
             
             % If an explosion has been detected then do not continue
@@ -158,7 +158,7 @@ classdef PTKWavefront < handle
             % split it into a new set of child segments
             
             % Find connected components from the wavefront (which is several voxels thick)
-            [offset, reduced_image, reduced_image_size] = PTKImageCoordinateUtilities.GetMinimalImageForIndices(int32(obj.GetWavefrontVoxels), image_size);
+            [offset, reduced_image, reduced_image_size] = PTKImageCoordinateUtilities.GetMinimalImageForIndices(int32(obj.GetWavefrontVoxels)', image_size);
             wavefront_connected_components = bwconncomp(reduced_image, 26);
             number_of_components = wavefront_connected_components.NumObjects;
             
@@ -300,11 +300,10 @@ classdef PTKWavefront < handle
             for index = 1 : number_layers
                 next_voxels = voxels{index};
                 if ~isempty(next_voxels)
-                    concatenated_voxels = cat(2, concatenated_voxels, next_voxels);
+                    concatenated_voxels = cat(1, concatenated_voxels, next_voxels);
                 end
             end
         end
     end
-    
 end
 

@@ -125,7 +125,7 @@ classdef PTKTreeSegment < PTKTree
 
         % Returns all accepted region-growing points, plus those added from the airway closing operation
         function all_points = GetAllAirwayPoints(obj)
-            all_points = [obj.GetAcceptedVoxels'; obj.ClosedPoints'];
+            all_points = [obj.GetAcceptedVoxels; obj.ClosedPoints];
         end
         
         % Points which are added later to close gaps in the airway tree
@@ -254,7 +254,7 @@ classdef PTKTreeSegment < PTKTree
             for index = 1 : number_layers
                 next_voxels = voxels{index};
                 if ~isempty(next_voxels)
-                    concatenated_voxels = cat(2, concatenated_voxels, next_voxels);
+                    concatenated_voxels = cat(1, concatenated_voxels, next_voxels);
                 end
             end
         end

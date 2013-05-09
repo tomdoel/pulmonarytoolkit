@@ -171,7 +171,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
         
         % Find the neighbours of these points, which will form the next 
         % generation of points to add to the wavefront
-        indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global', linear_offsets_neighbours);
+        indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global, linear_offsets_neighbours);
         indices_of_new_points_local = threshold_image_handle.GlobalToLocalIndices(indices_of_new_points_global);
 
         in_range = indices_of_new_points_local > 0 & indices_of_new_points_local <= number_of_image_points_local;
@@ -179,14 +179,14 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
         indices_of_new_points_global = indices_of_new_points_global(in_range);
 
         in_threshold = threshold_image(indices_of_new_points_local);
-        indices_of_new_points_local = indices_of_new_points_local(in_threshold)';
-        indices_of_new_points_global = indices_of_new_points_global(in_threshold)';
+        indices_of_new_points_local = indices_of_new_points_local(in_threshold);
+        indices_of_new_points_global = indices_of_new_points_global(in_threshold);
         
         if coronal_mode
             if isempty(indices_of_new_points_global)
                 % Fetch the front of the wavefront for this segment
                 frontmost_points_global = current_segment.GetWavefrontVoxels;
-                indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global', linear_offsets_global);
+                indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global, linear_offsets_global);
                 indices_of_new_points_local = threshold_image_handle.GlobalToLocalIndices(indices_of_new_points_global);
                 
                 in_range = indices_of_new_points_local > 0 & indices_of_new_points_local <= number_of_image_points_local;
@@ -199,7 +199,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
                 
                 if isempty(indices_of_new_points_global)
                     frontmost_points_global = current_segment.CurrentBranch.GetAcceptedVoxels;
-                    indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global', linear_offsets_global);
+                    indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global, linear_offsets_global);
                     indices_of_new_points_local = threshold_image_handle.GlobalToLocalIndices(indices_of_new_points_global);
                     
                     in_range = indices_of_new_points_local > 0 & indices_of_new_points_local <= number_of_image_points_local;
@@ -296,7 +296,7 @@ function explosion_points = GetExplosionPoints(processed_segments)
     while ~isempty(segments_to_do)
         next_segment = segments_to_do(1);
         segments_to_do(1) = [];
-        explosion_points = cat(2, explosion_points, next_segment.GetRejectedVoxels);
+        explosion_points = cat(1, explosion_points, next_segment.GetRejectedVoxels);
         segments_to_do = [segments_to_do, next_segment.Children]; %#ok<AGROW>
     end
 end
