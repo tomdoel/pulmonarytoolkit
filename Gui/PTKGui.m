@@ -508,9 +508,10 @@ classdef PTKGui < handle
 
                 % If we couldn't obtain the ROI, we load the full dataset
                 if load_full_data
-                    lung_roi = obj.Dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage);
+                    % Force the image to be saved so that it doesn't have to be
+                    % reloaded each time
+                    lung_roi = obj.Dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage, [], true);
                     obj.SetImage(lung_roi);
-                    obj.Dataset.SaveData('PTKOriginalImage', lung_roi);
                 end
                 
                 obj.Settings.ImageInfo = image_info;

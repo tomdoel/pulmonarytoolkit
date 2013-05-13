@@ -51,9 +51,11 @@ classdef PTKLinkedDatasetChooser < handle
     end
 
     methods (Access = private)
-        function linked_dataset_chooser = FindLinkedDatasetChooser(obj, dataset_name)
+        function linked_dataset_chooser = FindLinkedDatasetChooser(obj, varargin)
             if nargin < 2
                 dataset_name = [];
+            else
+                dataset_name = varargin{1};
             end
             if isempty(dataset_name)
                 dataset_name = obj.PrimaryDatasetUid;

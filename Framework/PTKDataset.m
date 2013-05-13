@@ -109,7 +109,7 @@ classdef PTKDataset < handle
                 if nargout > 2
                     [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context);
                 else
-                    [result, cache_info] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context);
+                    [result, cache_info] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, varargin{2:end});
                 end
             catch ex
                 

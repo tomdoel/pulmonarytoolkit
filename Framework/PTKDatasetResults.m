@@ -69,7 +69,7 @@ classdef PTKDatasetResults < handle
         % Specifying a second argument also produces a representative image from
         % the results. For plugins whose result is an image, this will generally be the
         % same as the results.
-        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context)
+        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context, allow_results_to_be_cached_override)
             obj.Reporting.PushProgress;
             if nargin < 4
                 context = [];
@@ -80,10 +80,18 @@ classdef PTKDatasetResults < handle
             plugin_class = feval(plugin_name);
             plugin_info = PTKParsePluginClass(plugin_name, plugin_class, obj.Reporting);
             
+            % Whether results can be cached is determined by the plugin
+            % parameters, but the input can force this to be enabled
+            if nargin < 5 || isempty(allow_results_to_be_cached_override)
+                allow_results_to_be_cached = plugin_info.AllowResultsToBeCached;
+            else
+                allow_results_to_be_cached = allow_results_to_be_cached_override || plugin_info.AllowResultsToBeCached;
+            end
+            
             % Update the progress dialog with the current plugin being run
             obj.Reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
             
-            [result, cache_info, output_image, plugin_has_been_run] = obj.RunPluginWithOptionalImageGeneration(plugin_name, plugin_info, plugin_class, generate_results, dataset_stack, context);
+            [result, cache_info, output_image, plugin_has_been_run] = obj.RunPluginWithOptionalImageGeneration(plugin_name, plugin_info, plugin_class, generate_results, dataset_stack, context, allow_results_to_be_cached);
             
             obj.Reporting.CompleteProgress;
             
@@ -174,7 +182,7 @@ classdef PTKDatasetResults < handle
     methods (Access = private)
                 
         % Returns the plugin result, computing if necessary
-        function [result, cache_info, output_image, plugin_has_been_run] = RunPluginWithOptionalImageGeneration(obj, plugin_name, plugin_info, plugin_class, generate_image, dataset_stack, context)
+        function [result, cache_info, output_image, plugin_has_been_run] = RunPluginWithOptionalImageGeneration(obj, plugin_name, plugin_info, plugin_class, generate_image, dataset_stack, context, allow_results_to_be_cached)
             
             preview_exists = obj.PreviewImages.DoesPreviewExist(plugin_name);
             
@@ -186,7 +194,7 @@ classdef PTKDatasetResults < handle
             force_generate_image = generate_image || force_generate_preview;
 
             % Run the plugin for each required context and assemble result
-            [result, output_image, plugin_has_been_run, cache_info] = obj.ComputeResultForAllContexts(plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image);
+            [result, output_image, plugin_has_been_run, cache_info] = obj.ComputeResultForAllContexts(plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image, allow_results_to_be_cached);
 
             cache_preview = plugin_info.GeneratePreview && (plugin_has_been_run || ~preview_exists);
             
@@ -203,17 +211,17 @@ classdef PTKDatasetResults < handle
             end
         end
         
-        function [result, output_image, plugin_has_been_run, cache_info] = ComputeResultForAllContexts(obj, plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image)
+        function [result, output_image, plugin_has_been_run, cache_info] = ComputeResultForAllContexts(obj, plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image, allow_results_to_be_cached)
             dataset_uid = obj.ImageInfo.ImageUid;
             
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
             if PTKSoftwareInfo.DebugMode
-                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, obj.Reporting);
+                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, obj.Reporting);
             else
                 try
-                    [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, obj.Reporting);
+                    [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, obj.Reporting);
                 catch ex
                     dataset_stack.ClearStack;
                     rethrow(ex);
