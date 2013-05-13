@@ -66,7 +66,7 @@ classdef TestImageTemplates < PTKTest
                     
                 end
             end
-            mock_dataset_results.AddMockResult('PTKLeftAndRightLungs', PTKContext.LeftLung, [], [], [], true);
+            mock_dataset_results.AddMockResult('PTKGetContextForSingleLung', PTKContext.LeftLung, [], [], [], true);
             mock_reporting.AddExpectation('MockReporting.Error', 'PTKImageTemplates:NoContext');
             try
                 template_image = image_templates.GetTemplateImage(PTKContext.LeftLung, null_dataset_stack);
@@ -101,8 +101,8 @@ classdef TestImageTemplates < PTKTest
             % Check fetching the template images
             mock_dataset_results.AddMockResult('PTKLungROI', PTKContext.LungROI, mock_roi_image, [], [], true);
             mock_dataset_results.AddMockResult('PTKOriginalImage', PTKContext.OriginalImage, mock_full_image, [], [], true);
-            mock_dataset_results.AddMockResult('PTKLeftAndRightLungs', PTKContext.LeftLung, mock_left_image, [], [], true);
-            mock_dataset_results.AddMockResult('PTKLeftAndRightLungs', PTKContext.RightLung, mock_right_image, [], [], true);
+            mock_dataset_results.AddMockResult('PTKGetContextForSingleLung', PTKContext.LeftLung, mock_left_image, [], [], true);
+            mock_dataset_results.AddMockResult('PTKGetContextForSingleLung', PTKContext.RightLung, mock_right_image, [], [], true);
 
             roi_template_image = image_templates.GetTemplateImage(PTKContext.LungROI, null_dataset_stack);
             obj.Assert(strcmp(roi_template_image.Title, 'roi'), 'Correct template image returned');
