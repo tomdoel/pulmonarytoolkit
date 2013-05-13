@@ -194,7 +194,7 @@ classdef PTKDiskUtilities
             meta_header = [];
             
             for index = 1 : length(meta_header_data{1});
-                meta_header.(meta_header_data{1}{index}) = meta_header_data{2}{index};
+                meta_header.(genvarname(meta_header_data{1}{index})) = meta_header_data{2}{index};
             end
         end
         
