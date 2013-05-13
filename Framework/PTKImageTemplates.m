@@ -65,8 +65,8 @@ classdef PTKImageTemplates < handle
             % Add valid contexts
             obj.ValidContexts(char(PTKContext.OriginalImage)) = 'PTKOriginalImage';
             obj.ValidContexts(char(PTKContext.LungROI)) = 'PTKLungROI';
-            obj.ValidContexts(char(PTKContext.LeftLung)) = 'PTKLeftAndRightLungs';
-            obj.ValidContexts(char(PTKContext.RightLung)) = 'PTKLeftAndRightLungs';
+            obj.ValidContexts(char(PTKContext.LeftLung)) = 'PTKGetContextForSingleLung';
+            obj.ValidContexts(char(PTKContext.RightLung)) = 'PTKGetContextForSingleLung';
 
             % Deprecated
             obj.ValidContexts(char(PTKContext.LeftLungROI)) = 'PTKGetLeftLungROI';
