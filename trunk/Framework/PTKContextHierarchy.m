@@ -79,7 +79,6 @@ classdef PTKContextHierarchy < handle
             
             [result, output_image, plugin_has_been_run, cache_info] = obj.GetResultForAllContexts(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, reporting);
             
-                        
             % Allow the context manager to construct a template image from this
             % result if required
             obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, result, plugin_has_been_run);
