@@ -68,10 +68,6 @@ classdef PTKImageTemplates < handle
             obj.ValidContexts(char(PTKContext.LeftLung)) = 'PTKGetContextForSingleLung';
             obj.ValidContexts(char(PTKContext.RightLung)) = 'PTKGetContextForSingleLung';
 
-            % Deprecated
-            obj.ValidContexts(char(PTKContext.LeftLungROI)) = 'PTKGetLeftLungROI';
-            obj.ValidContexts(char(PTKContext.RightLungROI)) = 'PTKGetRightLungROI';
-            
             % Add handles to the functions used to generate the templates
             obj.TemplateGenerationFunctions(char(PTKContext.OriginalImage)) = @PTKCreateTemplateForOriginalImage;
             obj.TemplateGenerationFunctions(char(PTKContext.LungROI)) = @PTKCreateTemplateForLungROI;
