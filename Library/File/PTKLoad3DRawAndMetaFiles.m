@@ -55,22 +55,24 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
         reporting.Error('PTKLoad3DRawAndMetaFiles:MetaHeaderReadFailed', ['Unable to read metaheader data from ' header_filename]);
     end
     
-    if strcmp(header_data.AnatomicalOrientation, 'RPI')
-        new_dimension_order = [2 1 3];
-        flip_orientation = [0 0 0];
-    elseif strcmp(header_data.AnatomicalOrientation, 'RPS')
-        new_dimension_order = [2 1 3];
-        flip_orientation = [0 0 1];
-    elseif strcmp(header_data.AnatomicalOrientation, 'RAI')
-        new_dimension_order = [2 1 3];
-        flip_orientation = [0 0 1];
-    elseif strcmp(header_data.AnatomicalOrientation, 'IPR')
-        new_dimension_order = [3 1 2];
-        flip_orientation = [0 0 0];
+    
+    if isfield(header_data, 'TransformMatrix')
+        transform_matrix = str2num(header_data.TransformMatrix); %#ok<ST2NM>
+        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation(transform_matrix(1:6), reporting);
     else
-        reporting.Error('PTKLoad3DRawAndMetaFiles:UnsupportedOrientation', ['PTKLoad3DRawAndMetaFiles: WARNING: no implementation yet for anatomical orientation ' header_data.AnatomicalOrientation '.']);
-    end
         
+        % Use the Anatomical Orientation tag
+        if strcmp(header_data.AnatomicalOrientation, 'RSA')
+            new_dimension_order = [3 1 2];
+            flip_orientation = [0 0 0];
+        elseif strcmp(header_data.AnatomicalOrientation, 'RAI')
+            new_dimension_order = [2 1 3];
+            flip_orientation = [0 0 1];
+        else
+            reporting.Error('PTKLoad3DRawAndMetaFiles:NoTransformMatrix', ['PTKLoad3DRawAndMetaFiles: WARNING: no implementation yet for anatomical orientation ' header_data.AnatomicalOrientation '.']);
+        end
+    end
+
     image_dims = sscanf(header_data.DimSize, '%d %d %d');
     
     % Note: for voxel size, we have a choice of ElementSpacing or ElementSize
@@ -106,17 +108,18 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     
     reporting.UpdateProgressAndMessage(0, 'Reslicing');
 
+    % We need to swap the X and Y dimensions in the loaded image
+    image_dimensions = [2 1 3];
+    new_dimension_order = image_dimensions(new_dimension_order);
+    
+    
     if ~isequal(new_dimension_order, [1, 2, 3])
         original_image = permute(original_image, new_dimension_order);
     end
-    if flip_orientation(1)
-        original_image = original_image(end:-1:1, :, :);
-    end
-    if flip_orientation(2)
-        original_image = original_image(:, end:-1:1, :);
-    end
-    if flip_orientation(3)
-        original_image = original_image(:, :, end:-1:1);
+    for dimension_index = 1 : 3
+        if flip_orientation(dimension_index)
+            original_image = flipdim(original_image, dimension_index);
+        end
     end
     
     rescale_slope = int16(1);
