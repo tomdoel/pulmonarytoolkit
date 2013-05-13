@@ -62,9 +62,9 @@ classdef PTKDatasetCallback < handle
             end
             
             if nargout > 1
-                [result, ~, output_image] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context);
+                [result, ~, output_image] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, []);
             else
-                [result, ~] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context);
+                [result, ~] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, []);
             end
         end
 

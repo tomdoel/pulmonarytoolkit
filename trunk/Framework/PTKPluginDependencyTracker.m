@@ -48,7 +48,7 @@ classdef PTKPluginDependencyTracker < handle
         % Gets a plugin result, from the disk cache if possible. If there is no
         % cached result, or if the dependencies are invalid, or if the
         % "AlwaysRunPlugin" property is set, then the plugin is executed.
-        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, reporting)
+        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
             
             % Fetch plugin result from the disk cache
             result = [];
@@ -84,7 +84,7 @@ classdef PTKPluginDependencyTracker < handle
             if isempty(result)
                 plugin_has_been_run = true;
                 
-                ignore_dependency_checks = plugin_info.AlwaysRunPlugin || ~plugin_info.AllowResultsToBeCached;
+                ignore_dependency_checks = plugin_info.AlwaysRunPlugin || ~allow_results_to_be_cached;
                 
                 % Pause the self-timing of the current plugin
                 dataset_stack.PauseTiming;                
@@ -119,7 +119,7 @@ classdef PTKPluginDependencyTracker < handle
                 dependencies = new_cache_info.DependencyList;
                 
                 % Cache the plugin result
-                if plugin_info.AllowResultsToBeCached && ~isempty(result)
+                if allow_results_to_be_cached && ~isempty(result)
                     obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, reporting);
                 else
                     obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, reporting);
