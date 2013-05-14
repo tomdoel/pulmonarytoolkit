@@ -11,6 +11,12 @@ classdef PTKDiskUtilities
     
     methods (Static)
         
+        % Determine if the raw image file associated with a PTKImage results file exists in the cahce
+        function exists = FileExists(path_name, filename)
+            exists = exist(fullfile(path_name, filename), 'file');
+        end
+        
+        
         % Returns a path to the user's home folder
         function home_directory = GetUserDirectory
             if (ispc)
