@@ -35,7 +35,7 @@ classdef MockPluginDependencyTracker < handle
         function cache_info = GetCacheInfo(obj, plugin_name)
         end
         
-        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, reporting)
+        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
                     
             key_name = [plugin_name '.' char(context) '.' dataset_uid];
             
