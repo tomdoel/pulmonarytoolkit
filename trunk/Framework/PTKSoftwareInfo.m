@@ -69,7 +69,8 @@ classdef PTKSoftwareInfo < handle
         DemoMode = false; % If true, user plugins will be ignored
         
         % Do not change this
-        CancelErrorId = 'PTKMain:UserCancel'        
+        CancelErrorId = 'PTKMain:UserCancel'
+        FileMissingErrorId = 'PTKMain:FileMissing'
     end
 
     methods (Static)
@@ -82,6 +83,10 @@ classdef PTKSoftwareInfo < handle
         
         function is_cancel_id = IsErrorCancel(error_id)
             is_cancel_id = strcmp(error_id, PTKSoftwareInfo.CancelErrorId);
+        end
+        
+        function is_error_missing_id = IsErrorFileMissing(error_id)
+            is_error_missing_id = strcmp(error_id, PTKSoftwareInfo.FileMissingErrorId);
         end
     end
 end
