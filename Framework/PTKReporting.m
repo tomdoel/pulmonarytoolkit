@@ -101,7 +101,7 @@ classdef PTKReporting < PTKReportingInterface
 
             msgStruct = [];
             msgStruct.message = ['Error in function ' calling_function ': ' message];
-            if PTKSoftwareInfo.IsErrorCancel(identifier)
+            if PTKSoftwareInfo.IsErrorCancel(identifier) || PTKSoftwareInfo.IsErrorFileMissing(identifier)
                 msgStruct.identifier = identifier;
             else
                 msgStruct.identifier = [ 'PTKMain:' identifier];
