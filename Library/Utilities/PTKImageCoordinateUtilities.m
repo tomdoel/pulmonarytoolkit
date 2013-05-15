@@ -183,7 +183,20 @@ classdef PTKImageCoordinateUtilities
         end
         
         function affine_matrix = GetAffineTranslationFromPatientPosition(image_1, image_2)
-            translation = (image_1.GlobalOrigin - image_2.GlobalOrigin);
+            
+            % Get the coordinates of the centre of the first voxel
+            [i1, j1, k1] = image_1.GlobalCoordinatesToCoordinatesMm([1, 1, image_1.OriginalImageSize(3)]);
+            [i1, j1, k1] = image_1.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(i1, j1, k1);
+            image_1_origin_coordinates = [i1, j1, k1];
+            image_1_centre_coordinates = image_1.GlobalOrigin - image_1_origin_coordinates;
+            
+            [i2, j2, k2] = image_2.GlobalCoordinatesToCoordinatesMm([1, 1, image_2.OriginalImageSize(3)]);
+            [i2, j2, k2] = image_2.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(i2, j2, k2);
+            image_2_origin_coordinates = [i2, j2, k2];
+            image_2_centre_coordinates = image_2.GlobalOrigin - image_2_origin_coordinates;
+            
+            translation = image_1_centre_coordinates - image_2_centre_coordinates;
+
             translation = translation([2 1 3]);
             translation(3) = - translation(3);
             affine_matrix = PTKImageCoordinateUtilities.CreateAffineTranslationMatrix(translation);
@@ -261,6 +274,8 @@ classdef PTKImageCoordinateUtilities
             orientation_vector = round(abs(orientation));
             
             if isequal(orientation_vector, [1, 0, 0, 0, 1, 0]) || isequal(orientation_vector, [1; 0; 0; 0; 1; 0])
+                flip = [false, false, true];
+            elseif isequal(orientation_vector, [0, 1, 0, 1, 0, 0]) || isequal(orientation_vector, [1; 0; 0; 0; 1; 0])
                 flip = [false, false, true];
             elseif isequal(orientation_vector, [1, 0, 0, 0, 0, 1]) || isequal(orientation_vector, [1; 0; 0; 0; 0; 1])
                 flip = [false, false, false];
