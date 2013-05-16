@@ -50,7 +50,7 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     header_filename = fullfile(path, filenames{1});
     [pathstr, ~, ~] = fileparts(header_filename);
 
-    header_data = PTKDiskUtilities.ReadMetaHeader(header_filename);
+    header_data = PTKDiskUtilities.ReadMetaHeader(header_filename, reporting);
     if isempty(header_data)
         reporting.Error('PTKLoad3DRawAndMetaFiles:MetaHeaderReadFailed', ['Unable to read metaheader data from ' header_filename]);
     end
@@ -77,8 +77,8 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     
     % Note: for voxel size, we have a choice of ElementSpacing or ElementSize
     % We choose ElementSpacing as we assume all the voxels are contiguous
-    voxel_size = sscanf(header_data.ElementSpacing, '%f %f %f');    
-    voxel_size = voxel_size(new_dimension_order)';
+    voxel_size = sscanf(header_data.ElementSpacing, '%f %f %f');
+    voxel_size = voxel_size';
     
     if strcmp(header_data.ElementType,'MET_UCHAR')
         data_type = 'uint8';
@@ -115,6 +115,7 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     
     if ~isequal(new_dimension_order, [1, 2, 3])
         original_image = permute(original_image, new_dimension_order);
+        voxel_size = voxel_size(new_dimension_order);        
     end
     for dimension_index = 1 : 3
         if flip_orientation(dimension_index)
