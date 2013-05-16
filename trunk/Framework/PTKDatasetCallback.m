@@ -91,5 +91,11 @@ classdef PTKDatasetCallback < handle
         function is_gas_mri = IsGasMRI(obj, varargin)
             is_gas_mri = obj.LinkedDatasetChooser.GetDataset(varargin{:}).IsGasMRI(obj.DatasetStack);
         end
+        
+        % Gets the path of the folder where the output files for this dataset are
+        % stored
+        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, varargin)
+            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetOutputPathAndCreateIfNecessary;
+        end        
     end
 end
