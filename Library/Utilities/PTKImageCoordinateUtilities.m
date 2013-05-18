@@ -184,12 +184,15 @@ classdef PTKImageCoordinateUtilities
         
         function affine_matrix = GetAffineTranslationFromPatientPosition(image_1, image_2)
             
-            % Get the coordinates of the centre of the first voxel
+            % Get the coordinates of the centre of the first voxel in image1,
+            % relative to the centre of image1
             [i1, j1, k1] = image_1.GlobalCoordinatesToCoordinatesMm([1, 1, image_1.OriginalImageSize(3)]);
             [i1, j1, k1] = image_1.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(i1, j1, k1);
             image_1_origin_coordinates = [i1, j1, k1];
             image_1_centre_coordinates = image_1.GlobalOrigin - image_1_origin_coordinates;
             
+            % Get the coordinates of the centre of the first voxel in image2,
+            % relative to centre of image2
             [i2, j2, k2] = image_2.GlobalCoordinatesToCoordinatesMm([1, 1, image_2.OriginalImageSize(3)]);
             [i2, j2, k2] = image_2.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(i2, j2, k2);
             image_2_origin_coordinates = [i2, j2, k2];
