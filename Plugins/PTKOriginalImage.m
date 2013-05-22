@@ -53,11 +53,17 @@ classdef PTKOriginalImage < PTKPlugin
             
             if isempty(filenames)
                 filenames = PTKDiskUtilities.GetDirectoryFileList(image_path, '*');
+                if isempty(filenames)
+                    reporting.Error(PTKSoftwareInfo.FileMissingErrorId, ['Cannot find any files in the folder ' image_path]);
+                end
+            else
+                if ~PTKDiskUtilities.FileExists(image_path, filenames{1})
+                    reporting.Error(PTKSoftwareInfo.FileMissingErrorId, ['Cannot find the file ' fullfile(image_path, filenames{1})]);
+                end
             end
             
             switch(image_file_format)
                 case PTKImageFileFormat.Dicom
-                    additional_file_checks = ~PTKSoftwareInfo.FastMode;
                     image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting);
                 case PTKImageFileFormat.Metaheader
                     image = PTKLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
