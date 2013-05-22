@@ -45,6 +45,10 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
     
     % Sort the images into the correct order
     [slice_thickness, global_origin_mm] = main_group.SortAndGetParameters(reporting);
+    if isempty(slice_thickness)
+        reporting.ShowWarning('PTKLoadImageFromDicomFiles:NoSliceThickness', 'No information found about the slice thickness. Setting to 1.');
+        slice_thickness = 1;
+    end
 
     % Obtain a representative set of metadata tags from the first image in the
     % sequence
