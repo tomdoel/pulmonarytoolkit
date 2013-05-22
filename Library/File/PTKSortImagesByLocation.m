@@ -63,11 +63,14 @@ function [sorted_indices, slice_thickness, global_origin_mm] = PTKSortImagesByLo
         i_axis = representative_metadata.ImageOrientationPatient(1:3);
         j_axis = representative_metadata.ImageOrientationPatient(4:6);
         
-        [~, i_direction] = max(i_axis);
-        [~, j_direction] = max(j_axis);
+        [~, i_direction] = max(abs(i_axis));
+        [~, j_direction] = max(abs(j_axis));
         
         k_direction = setdiff([1, 2, 3], [i_direction, j_direction]);
-        
+        if numel(k_direction) ~= 1
+            reporting.Error('PTKSortImagesByLocation:UnableToComputeDirection', 'Unable to group the files due to a program error. The computation of the image orientation failed');
+        end
+            
         [sorted_slice_locations, sorted_indices] = sort(image_positions_patient(:, k_direction), 'ascend');
         global_origin_mm = min(image_positions_patient, [], 1);
         slice_thicknesses = abs(sorted_slice_locations(2:end) - sorted_slice_locations(1:end-1));
