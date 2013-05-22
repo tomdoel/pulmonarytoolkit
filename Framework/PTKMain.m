@@ -185,8 +185,12 @@ classdef PTKMain < handle
             
             if ~isempty(dicom_filenames)
                 image_info_dicom = PTKImageInfo(import_folder, dicom_filenames, PTKImageFileFormat.Dicom, [], [], []);
-                [image_info_dicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_dicom);
-                uids{end + 1} = image_info_dicom.ImageUid;
+                try
+                    [image_info_dicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_dicom);
+                    uids{end + 1} = image_info_dicom.ImageUid;
+                catch ex
+                    obj.Reporting.ShowWarning('PTKMain:DicomReadFail', ['The file ' fullfile(import_folder, dicom_filenames{1}) ' looks like a Dicom file, but I am unable to read it. I will ignore this file.'], ex.message);
+                end
             end
             
             while ~isempty(non_dicom_filenames)
@@ -224,7 +228,7 @@ classdef PTKMain < handle
         function [image_info, dataset_disk_cache] = ImportDataFromInfo(obj, new_image_info)
             
             if isempty(new_image_info.ImageUid)
-                [series_uid, study_uid, modality] = PTKMain.GetImageUID(new_image_info);
+                [series_uid, study_uid, modality] = PTKMain.GetImageUID(new_image_info, obj.Reporting);
                 new_image_info.ImageUid = series_uid;
                 new_image_info.StudyUid = study_uid;
                 new_image_info.Modality = modality;
@@ -247,7 +251,7 @@ classdef PTKMain < handle
         % We need a unique identifier for each dataset. For DICOM files we use
         % the series instance UID. For other files we use the filename, which
         % will fail if two imported images have the same filename
-        function [image_uid, study_uid, modality] = GetImageUID(image_info)
+        function [image_uid, study_uid, modality] = GetImageUID(image_info, reporting)
             study_uid = [];
             switch(image_info.ImageFileFormat)
                 case PTKImageFileFormat.Dicom
@@ -257,7 +261,7 @@ classdef PTKMain < handle
                        throw(MException('PTKMain:FileNotFound', ['The file ' first_filename ' does not exist']));
                     end
                     
-                    metadata = PTKDicomUtilities.ReadMetadata(image_info.ImagePath, filenames{1});
+                    metadata = PTKDicomUtilities.ReadMetadata(image_info.ImagePath, filenames{1}, reporting);
                     image_uid = metadata.SeriesInstanceUID;
                     study_uid = metadata.StudyInstanceUID;
                     modality = metadata.Modality;
