@@ -491,8 +491,12 @@ classdef PTKViewerPanel < handle
         end
         
         function offset_voxels = GetOffsetVoxels(obj, image_handle)
-            offset_mm = image_handle.GlobalOrigin - obj.BackgroundImage.GlobalOrigin;
-            offset_voxels = offset_mm./obj.BackgroundImage.VoxelSize;
+            if ~isempty(image_handle.GlobalOrigin) && ~isempty(obj.BackgroundImage.GlobalOrigin)
+                offset_mm = image_handle.GlobalOrigin - obj.BackgroundImage.GlobalOrigin;
+                offset_voxels = offset_mm./obj.BackgroundImage.VoxelSize;
+            else
+                offset_voxels = [0, 0, 0];
+            end
         end
         
         function [dim_x_index dim_y_index dim_z_index] = GetXYDimensionIndex(obj)
@@ -902,7 +906,7 @@ classdef PTKViewerPanel < handle
                     level_grayscale = image_object.RescaledToGrayscale(obj.Level);
                     window_grayscale = obj.Window;
                     if isa(image_object, 'PTKDicomImage')
-                        if image_object.IsCT
+                        if image_object.IsCT && ~isempty(image_object.RescaleSlope)
                             window_grayscale = window_grayscale/image_object.RescaleSlope;
                         end
                     end
