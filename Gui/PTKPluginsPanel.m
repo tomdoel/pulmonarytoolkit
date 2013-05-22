@@ -463,7 +463,7 @@ classdef PTKPluginsPanel < handle
                 level_grayscale = image_preview.RescaledToGrayscale(level_hu);
                 window_grayscale = window_hu;
                 if isa(image_preview, 'PTKDicomImage')
-                    if image_preview.IsCT
+                    if image_preview.IsCT && ~isempty(image_preview.RescaleSlope)
                         window_grayscale = window_grayscale/image_preview.RescaleSlope;
                     end
                 end
