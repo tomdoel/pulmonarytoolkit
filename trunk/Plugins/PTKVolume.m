@@ -39,9 +39,9 @@ classdef PTKVolume < PTKPlugin
         function results = RunPlugin(dataset, reporting)
             
             left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
-            PTKComputeVolumeFromLungMasks(left_and_right_lungs, reporting);
-
             results = [];
+            results.Metrics = PTKComputeVolumeFromLungMasks(left_and_right_lungs, reporting);
+
         end
     end
 end
