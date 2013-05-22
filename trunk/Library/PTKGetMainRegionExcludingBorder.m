@@ -66,6 +66,9 @@ function threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, repo
         index_in_sorted_array = index_in_sorted_array + 1;
     end
     
+    if numel(results) == 0
+        return;
+    end
     
     if numel(results) > 1
         % If more than one region was found (after excluding boundary-touching
