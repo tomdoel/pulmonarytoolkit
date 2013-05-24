@@ -105,7 +105,7 @@ classdef PTKAirwayGrowing < PTKPlugin
             
             % Add values of tissue density
             density = dataset.GetResult('PTKDensityAverage');
-            airway_generator.AirwayTree.AddDensityValues(density);            
+            airway_generator.AirwayTree.AddDensityValues(density.DensityAverage);            
 
             results = [];
             results.Airways = airway_generator.AirwayTree;
