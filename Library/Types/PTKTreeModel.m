@@ -17,6 +17,7 @@ classdef PTKTreeModel < PTKTree
         StartPoint % PTKCentrelinePoint, mm
         EndPoint   % mm
         Radius     % mm
+        WallThickness % mm
         TemporaryIndex
         
         Centreline
@@ -85,6 +86,7 @@ classdef PTKTreeModel < PTKTree
         
         function CreateFromSkeletonTreeBranch(obj, skeleton_tree, image_template)
             radius = skeleton_tree.Radius;
+            obj.WallThickness = skeleton_tree.WallThickness;
             local_indices = skeleton_tree.Points;
             global_indices = image_template.LocalToGlobalIndices(local_indices);
             for point = global_indices
@@ -107,6 +109,7 @@ classdef PTKTreeModel < PTKTree
         function SimpleCopyBranch(obj, tree)
             obj.Radius = tree.Radius;
             obj.BranchProperties.SourceBranch = tree;
+            obj.WallThickness = tree.WallThickness;
             
             % Create copies of child branches and set the Children and Parent
             % properties correctly
