@@ -158,7 +158,7 @@ function filtered_image = PTKImageDivider(image_data, filter_function, mask, gau
                     );
             else
                 part_image_raw = zeros(part_image.ImageSize, 'single');
-                part_image_raw(part_mask.RawImage) = part_filtered_image.RawImage(part_mask.RawImage);
+                part_image_raw(part_mask.RawImage) = part_filtered_image.RawImage(:);
                 
                 % Place results in output matrix, ignoring border regions
                 filtered_image_raw( ...
