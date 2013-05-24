@@ -27,6 +27,7 @@ classdef PTKSkeletonSegment < PTKTree
     % part of the airway radius computation
     properties
         Radius    % This will be set by the PTKAirwayRadius plugin
+        WallThickness    % This will be set by the PTKAirwayRadius plugin
     end
     
     methods
