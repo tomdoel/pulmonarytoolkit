@@ -124,8 +124,8 @@ classdef PTKTree < handle
         % Returns all the branches as a set, with this branch first, then its
         % children, then its grandchildren, and so on.
         function branches_list = GetBranchesAsListByGeneration(obj)
-            branches_list = obj;
             current_generation = obj;
+            branches_list = current_generation.empty();
             
             while ~isempty(current_generation)
                 next_generation = current_generation.empty();
