@@ -211,7 +211,7 @@ classdef PTKDensityVsHeight < PTKPlugin
             
             fclose(file_handle);
             
-            figure_filename_2 = fullfile(file_name, ['DensityVsHeight']);
+            figure_filename_2 = fullfile(results_directory, ['DensityVsHeight']);
             resolution_str = ['-r' num2str(resolution)];
             
             print(figure_handle, '-depsc2', resolution_str, figure_filename_2);   % Export to .eps
