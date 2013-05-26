@@ -1015,6 +1015,20 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             
         end
         
+        function volume_mm3 = Volume(obj)
+            voxel_volume_mm3 = prod(obj.VoxelSize);
+            volume_mm3 = voxel_volume_mm3*sum(obj.RawImage(:) > 0);
+        end
+        
+        function ChangeColourIndex(obj, old_index, new_index, reporting)
+            if ~isinteger(obj.RawImage)
+                reporting.Error('PTKImage:ChangeColourIndexRequiresInteger', 'ChangeColourIndex() can only be called on images with integer data types');
+            end
+            obj.RawImage(obj.RawImage == old_index) = new_index;
+        end
+        
+        
+        
     end
     
     methods (Access = private)
