@@ -35,7 +35,7 @@ function results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lu
     right_lung.ChangeRawImage(uint8(right_lung.RawImage));
 
     % Get the right lung volume
-    right_lung_volume_mm3 = GetLungVolume(right_lung);
+    right_lung_volume_mm3 = right_lung.Volume;
     if right_lung_volume_mm3 < min_volume_warning_limit
         reporting.ShowWarning('PTKGetLeftAndRightLungs:RightLungVolumeSmall', ['The calculated right lung volume ' num2str(right_lung_volume_mm3) 'mm^3 is small. This may indicate pathology or a segmentation error. Please manually verify the lung segmentation.'], [])
     end
@@ -53,7 +53,7 @@ function results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lu
     left_lung.ChangeRawImage(2*uint8(left_lung.RawImage));
     
     % Get the left lung volume
-    left_lung_volume_mm3 = GetLungVolume(left_lung);
+    left_lung_volume_mm3 = left_lung.Volume;
     if left_lung_volume_mm3 < min_volume_warning_limit
         reporting.ShowWarning('PTKGetLeftAndRightLungs:LeftLungVolumeSmall', ['The calculated left lung volume ' num2str(right_lung_volume_mm3) 'mm^3 is small. This may indicate pathology or a segmentation error. Please manually verify the lung segmentation.'], [])
     end
@@ -72,10 +72,3 @@ function results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lu
     results.ChangeRawImage(min(2, results.RawImage + results2.RawImage));
     results.ImageType = PTKImageType.Colormap;
 end
-
-function lung_volume_mm3 = GetLungVolume(lung_mask)
-    voxel_size = lung_mask.VoxelSize;
-    voxel_volume_mm3 = voxel_size(1) * voxel_size(2) * voxel_size(3);
-    lung_volume_mm3 = sum(lung_mask.RawImage(:))*voxel_volume_mm3;
-end
-
