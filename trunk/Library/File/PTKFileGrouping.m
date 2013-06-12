@@ -39,7 +39,13 @@ classdef PTKFileGrouping < handle
         % slice thickness and global origin
         function [slice_thickness, global_origin_mm] = SortAndGetParameters(obj, reporting)
             [sorted_indices, slice_thickness, global_origin_mm] = PTKSortImagesByLocation(obj, reporting);
-            obj.Metadata = obj.Metadata(sorted_indices);
+            if numel(obj.Metadata) > 1
+                if isempty(sorted_indices)
+                    reporting.ShowWarning('PTKFileGrouping:UnableToSortFiles', 'The images in this series may appear in the wrong order because I was unable to determine the correct ordering');
+                else
+                    obj.Metadata = obj.Metadata(sorted_indices);
+                end
+            end
         end
     end
 end
