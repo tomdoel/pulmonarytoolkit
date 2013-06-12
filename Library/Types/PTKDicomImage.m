@@ -71,7 +71,9 @@ classdef PTKDicomImage < PTKImage
                 end
                 voxel_size = voxel_size(new_dimension_order);
             end
-            global_origin_mm = global_origin_mm([2 1 3]);
+            if ~isempty(global_origin_mm)
+                global_origin_mm = global_origin_mm([2 1 3]);
+            end
             
             if isfield(metadata, 'RescaleSlope')
                 rescale_slope = metadata.RescaleSlope;
@@ -168,13 +170,21 @@ classdef PTKDicomImage < PTKImage
         function units_greyscale = HounsfieldToGreyscale(obj, units_hu)
             % Conversion from Hounsfield units to image raw intensity values:
             if obj.IsCT
-                units_greyscale = (units_hu - obj.RescaleIntercept)/obj.RescaleSlope;
+                if isempty(obj.RescaleIntercept) || isempty(obj.RescaleSlope)
+                    units_greyscale = units_hu;
+                else
+                    units_greyscale = (units_hu - obj.RescaleIntercept)/obj.RescaleSlope;
+                end
             else
                error('The HounsfieldToGreyscale() method was called, but this is not a CT image'); 
             end
         end
         
         function units_hu = GreyscaleToHounsfield(obj, units_greyscale)
+            if isempty(obj.RescaleSlope) || isempty(obj.RescaleIntercept)
+                units_hu = units_greyscale;
+                return;
+            end
             % Conversion from image raw intensity values to Hounsfield units:
             if obj.IsCT
                 units_hu = int16(units_greyscale)*obj.RescaleSlope + obj.RescaleIntercept;
