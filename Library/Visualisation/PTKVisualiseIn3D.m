@@ -145,4 +145,5 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     set(cl, 'Position', [50, 50, 100]);
     
     reporting.UpdateProgressValue(100);
+    reporting.CompleteProgress;
 end
