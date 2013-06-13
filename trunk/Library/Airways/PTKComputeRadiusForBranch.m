@@ -53,6 +53,7 @@ function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_dou
     direction_vector_voxels = knot(three_quarter_point_index, :) - knot(quarter_point_index, :);
     
     radius_mm_allknots = [];
+    wall_thickness_mm_allknots = [];
     global_coords_list = [];
     
     middle_point = first_radius_index + round((last_radius_index - first_radius_index)/2);
@@ -66,17 +67,25 @@ function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_dou
             debug_figure = [];
         end
         central_knot = knot(central_knot_index, :);
-        [radius_mm_list, global_coords] = GetRadiusAndCentrepoint(central_knot, direction_vector_voxels, ...
+        [radius_mm_list, wall_thickness_mm_list, global_coords] = GetRadiusAndCentrepoint(central_knot, direction_vector_voxels, ...
             lung_image_as_double, expected_radius_mm, lung_image_as_double.VoxelSize, debug_figure);
         radius_mm_allknots = [radius_mm_allknots; radius_mm_list'];
+        wall_thickness_mm_allknots = [wall_thickness_mm_allknots; wall_thickness_mm_list'];
         global_coords_list = [global_coords_list; global_coords];
     end
     
     radius_results = [];
+    
     radius_results.RadiusMin = min(radius_mm_allknots);
     radius_results.RadiusMax = max(radius_mm_allknots);
     radius_results.RadiusMean = mean(radius_mm_allknots);
     radius_results.RadiusStdev = std(radius_mm_allknots);
+
+    radius_results.WallThicknessMin = min(wall_thickness_mm_allknots);
+    radius_results.WallThicknessMax = max(wall_thickness_mm_allknots);
+    radius_results.WallThicknessMean = mean(wall_thickness_mm_allknots);
+    radius_results.WallThicknessStdev = std(wall_thickness_mm_allknots);
+
     radius_results.CentrePoint = mean(global_coords_list, 1);
     
     radius_exp = sprintf('%7.2f', expected_radius_mm);
@@ -84,17 +93,24 @@ function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_dou
     radius_max = sprintf('%7.2f', radius_results.RadiusMax);
     radius_mean = sprintf('%7.2f', radius_results.RadiusMean);
     radius_std = sprintf('%7.2f', radius_results.RadiusStdev);
+    wt_min = sprintf('%7.2f', radius_results.WallThicknessMin);
+    wt_max = sprintf('%7.2f', radius_results.WallThicknessMax);
+    wt_mean = sprintf('%7.2f', radius_results.WallThicknessMean);
+    wt_std = sprintf('%7.2f', radius_results.WallThicknessStdev);
     
     next_result.CentrelinePoints = knot;
     next_result.CentrelineSpline = spline';
     next_result.Radius = radius_results.RadiusMean;
+    next_result.WallThickness = radius_results.WallThicknessMean;
     
     disp(['Generation:' int2str(generation_number) ', Radius: Expected:' radius_exp 'mm, Mean:' radius_mean ...
         ' SD:' radius_std ' Min:' radius_min ' Max:' radius_max]);
+    disp(['Generation:' int2str(generation_number) ', Wall Thickness: Mean:' wt_mean ...
+        ' SD:' wt_std ' Min:' wt_min ' Max:' wt_max]);
 end
 
 
-function [radius_mm_list, global_coords] = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector_voxels, ...
+function [radius_mm_list, wall_thickness_mm_list, global_coords] = GetRadiusAndCentrepoint(centre_point_voxels, direction_vector_voxels, ...
         lung_image_as_double, expected_radius_mm, voxel_size_mm, figure_airways_3d)
     
     % Determine number of different angles to use to capture the whole
@@ -107,9 +123,10 @@ function [radius_mm_list, global_coords] = GetRadiusAndCentrepoint(centre_point_
     
     % Determine number of radii steps
     % We take a radius step size of half the minimum voxel size and
-    % extend it to twice the estimated radius
+    % extend it to a multiple of the estimated radius
+    radius_multiple = 5;
     step_size_mm = min_voxel_size_mm/2;
-    airway_max_mm = step_size_mm*(ceil(2*expected_radius_mm/step_size_mm));
+    airway_max_mm = step_size_mm*(ceil(radius_multiple*expected_radius_mm/step_size_mm));
     radius_range_upper = step_size_mm : step_size_mm : airway_max_mm;
     
     % Construct the radius range, ensuring there is a point at exactly
@@ -129,8 +146,7 @@ function [radius_mm_list, global_coords] = GetRadiusAndCentrepoint(centre_point_
     [i_coord_voxels, j_coord_voxels, k_coord_voxels] = PolarToGlobal(r, theta, centre_point_voxels, voxel_size_mm, x_prime_norm, y_prime_norm);
     
     % Interpolate the lung image
-    % ToDo: consider cubic interpolation
-    values = interpn(lung_image_as_double.RawImage, i_coord_voxels(:), j_coord_voxels(:), k_coord_voxels(:));
+    values = interpn(lung_image_as_double.RawImage, i_coord_voxels(:), j_coord_voxels(:), k_coord_voxels(:), 'cubic');
     
     interp_image = zeros(size(i_coord_voxels), 'double');
     interp_image(:) = values(:);
@@ -148,35 +164,66 @@ function [radius_mm_list, global_coords] = GetRadiusAndCentrepoint(centre_point_
     upper_half = interp_image(midpoint:end, :);
     lower_half = interp_image(midpoint:-1:1, :);
     
-    [upper_wall_indices, wall_mask_upper, upper_wall_indices_refined] = FindWall(upper_half);
-    [lower_wall_indices, wall_mask_lower, lower_wall_indices_refined] = FindWall(lower_half);
+    [upper_wall_indices, wall_mask_upper, upper_wall_indices_refined, outer_upper_wall_indices, outer_wall_mask_upper] = FindWall(upper_half);
+    [lower_wall_indices, wall_mask_lower, lower_wall_indices_refined, outer_lower_wall_indices, outer_wall_mask_lower] = FindWall(lower_half);
     
+    % Indices that could not be found have index -1
+    mask = (upper_wall_indices >= 0) & (lower_wall_indices >= 0);
     upper_wall_indices = upper_wall_indices + midpoint - 1;
     lower_wall_indices = midpoint + 1 - lower_wall_indices;
     upper_wall_indices_refined = upper_wall_indices_refined + midpoint - 1;
     lower_wall_indices_refined = midpoint + 1 - lower_wall_indices_refined;
     
+    outer_mask_upper = (outer_upper_wall_indices >= 0) & (upper_wall_indices >= 0);
+    outer_mask_lower = (outer_lower_wall_indices >= 0) & (lower_wall_indices >= 0);
+    outer_upper_wall_indices = outer_upper_wall_indices + midpoint - 1;
+    outer_lower_wall_indices = midpoint + 1 - outer_lower_wall_indices;
+    
+    % Compute the wall thickness
+    wall_thickness_upper_mm = (outer_upper_wall_indices(outer_mask_upper) - upper_wall_indices(outer_mask_upper))*step_size_mm;
+    wall_thickness_lower_mm = (lower_wall_indices(outer_mask_lower) - outer_lower_wall_indices(outer_mask_lower))*step_size_mm;
+    wall_thickness_mm_list = [wall_thickness_upper_mm, wall_thickness_lower_mm];
+    wall_thickness_mm_list = max(step_size_mm, wall_thickness_mm_list);
+    
+    % Extract out only the valid values
+    upper_wall_indices_refined = upper_wall_indices_refined(mask);
+    lower_wall_indices_refined = lower_wall_indices_refined(mask);
+    upper_wall_indices = upper_wall_indices(mask);
+    lower_wall_indices = lower_wall_indices(mask);
+    
     diameters_mm = abs(upper_wall_indices_refined - lower_wall_indices_refined)*step_size_mm;
     radius_mm_list = diameters_mm/2;
-    
+
     midpoints = (upper_wall_indices_refined + lower_wall_indices_refined) / 2 - midpoint;
     
     midpoints_mm = midpoints*step_size_mm;
-    [mp_i, mp_j, mp_k] = PolarToGlobal(midpoints_mm, angle_range, centre_point_voxels, voxel_size_mm, x_prime_norm, y_prime_norm);
+    [mp_i, mp_j, mp_k] = PolarToGlobal(midpoints_mm, angle_range(mask), centre_point_voxels, voxel_size_mm, x_prime_norm, y_prime_norm);
     
     global_coords = [mean(mp_i), mean(mp_j), mean(mp_k)];
     
     % Debugging
     if ~isempty(figure_airways_3d)
-        figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint, airway_max_mm);
+        figure_handle = ShowInterpolatedWall(interp_image, midpoints, mask, wall_mask_upper, wall_mask_lower, outer_wall_mask_upper, outer_wall_mask_lower, midpoint, airway_max_mm);
         ShowInterpolatedCoordinatesOn3dFigure(figure_airways_3d, lung_image_as_double, centre_point_voxels, i_coord_voxels, j_coord_voxels, k_coord_voxels)
+        
+        file_name = '/Users/tom/Desktop/AirwaysWithRadiusFinding3D-TEST';
+        resolution_dpi = 600;
+        resolution_str = ['-r' num2str(resolution_dpi)];
+        print(figure_airways_3d, '-dpng', resolution_str, file_name);     % Export to .png
+        print(figure_airways_3d, '-depsc2', '-painters', resolution_str, file_name);
+
     end
 end
 
 % For showing the stretched out wall with midpoints and walls superimposed
-function figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask_upper, wall_mask_lower, midpoint, airway_max_mm)
+function figure_handle = ShowInterpolatedWall(interp_image, midpoints_part, midpoints_mask, wall_mask_upper, wall_mask_lower, outer_wall_mask_upper, outer_wall_mask_lower, midpoint, airway_max_mm)
+    
+    midpoint_colour = 3;
+    
     viewer = PTKViewer(interp_image, PTKImageType.Grayscale);
     viewer.ViewerPanelHandle.Orientation = PTKImageOrientation.Axial;
+    midpoints = zeros(size(midpoints_mask));
+    midpoints(midpoints_mask) = midpoints_part + midpoint - 1;
     midpoint_repeated = repmat(round(midpoints), [size(interp_image, 1), 1]);
     radii_indices = (1 : size(interp_image, 1))';
     radii_repeated = repmat(radii_indices, [1, size(interp_image, 2)]);
@@ -184,9 +231,10 @@ function figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask
     
     
     wall_overlay = zeros(size(interp_image), 'uint8');
-    wall_overlay(midpoint:end, :) = wall_mask_upper;
-    wall_overlay(midpoint:-1:1, :) = wall_mask_lower;
-    wall_overlay(mp) = 3;
+    wall_overlay(midpoint:end, :) = wall_mask_upper + 2*outer_wall_mask_upper;
+    wall_overlay(midpoint:-1:1, :) = wall_mask_lower + 2*outer_wall_mask_lower;
+    wall_overlay(mp) = midpoint_colour;
+    
     viewer.ViewerPanelHandle.OverlayImage = PTKImage(wall_overlay);
     
     
@@ -198,19 +246,19 @@ function figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask
     viewer2.ViewerPanelHandle.OverlayImage = PTKImage(wall_overlay_full);
     
     viewer2.ViewerPanelHandle.Window = 928;
-    viewer2.ViewerPanelHandle.Level = 272;
+    viewer2.ViewerPanelHandle.Level = -200; % 272;
     frame = viewer2.ViewerPanelHandle.Capture;
     
     figure(11);
     figure_handle = gcf;
     imagesc([0, 360], [airway_max_mm, 0], frame.cdata);
     
-    label_font_size = 8;
+    label_font_size = 9;
     axis_line_width = 1;
-    axes_label_font_size = 6;
+    axes_label_font_size = 7;
     widthheightratio = 4/3;
-    page_width_cm = 8;
-    resolution_dpi = 300;
+    page_width_cm = 12;
+    resolution_dpi = 600;
     font_name = PTKSoftwareInfo.GraphFont;
 
     set(figure_handle, 'Units','centimeters');
@@ -228,8 +276,8 @@ function figure_handle = ShowInterpolatedWall(interp_image, midpoints, wall_mask
     set(axes_handle, 'FontSize', axes_label_font_size);
     set(axes_handle, 'LineWidth', axis_line_width);
     
-    xlabel('\theta /degrees', 'FontName', font_name, 'FontSize', label_font_size);
-    ylabel('r /mm', 'FontName', font_name, 'FontSize', label_font_size);
+    xlabel('\theta (degrees)', 'FontName', font_name, 'FontSize', label_font_size);
+    ylabel('r (mm)', 'FontName', font_name, 'FontSize', label_font_size);
     set(gca,'YDir','normal')
     
     resolution_str = ['-r' num2str(resolution_dpi)];
@@ -267,8 +315,14 @@ function [i_coord_voxels, j_coord_voxels, k_coord_voxels] = PolarToGlobal(r, the
     
 end
 
-function [wall_indices, wall_mask, refined_wall_indices] = FindWall(half_image)
+function [wall_indices, wall_mask, refined_wall_indices, outer_wall_indices, outer_wall_mask] = FindWall(half_image)
+    
+    % We need to store a copy of the image for the refinement later
     original_half_image = half_image;
+    
+    % Create another image for computing the outer radius
+    outer_half_image = half_image;
+    
     number_of_radii = size(half_image, 1);
     number_of_angles = size(half_image, 2);
     
@@ -277,12 +331,26 @@ function [wall_indices, wall_mask, refined_wall_indices] = FindWall(half_image)
     
     % Find the maxima in each column - each column represents one radial line
     [max_val, max_indices] = max(half_image, [], 1);
+    
+    % If the maxima is very low in some of the columns, replace it with the mean
+    % of the other maxima. This can happen if the airway wall is located off the
+    % end of the image or due to partial volume effects. Replacing the value
+    % with the mean allows us to still find the half maximum value
+    [max_val, values_replaced] = ReplaceOutliersWithMean(max_val);
+    
+    % Maxima which have been replaced should be located off the image, so that
+    % no pixels are removed from that column in the search for the minima
+    max_indices(values_replaced) = number_of_radii + 1;
+    
     max_val_repeated = repmat(max_val, [number_of_radii, 1]);
     max_indices_repeated = repmat(max_indices, [number_of_radii, 1]);
     
     % Points beyond the maxima are set to the maxima values
     indices_outside_range = radii_indices_repeated > max_indices_repeated;
     half_image(indices_outside_range) = max_val_repeated(indices_outside_range);
+    
+    % Do the same for the outer radius approximation
+    outer_half_image(~indices_outside_range) = max_val_repeated(~indices_outside_range);
     
     % Find the minima in each column
     [min_val, ~] = min(half_image, [], 1);
@@ -292,15 +360,30 @@ function [wall_indices, wall_mask, refined_wall_indices] = FindWall(half_image)
     halfmax_repeated = repmat(halfmax, [number_of_radii, 1]);
     
     % Find points above the half maximum value
-    values_above_halfmax = half_image >= halfmax_repeated;
+    % Some columns may have no value above this
+    values_above_halfmax = half_image >= halfmax_repeated;    
+    halfmax_points_found = any(values_above_halfmax, 1);
+    
+    % For outer radius, find points below the half maximum value
+    values_below_halfmax_outer = outer_half_image <= halfmax_repeated;
+    outer_halfmax_points_found = any(values_below_halfmax_outer, 1);
     
     % Find the first values which go above the half maximum value - max
     % will return the indices of the first point in each column
     [~, indices_halfpoint] = max(values_above_halfmax, [], 1);
+    indices_halfpoint(~halfmax_points_found) = -1;
     wall_indices = indices_halfpoint;
     halfpoint_indices_repeated = repmat(indices_halfpoint, [number_of_radii, 1]);
     mask_maxima = halfpoint_indices_repeated == radii_indices_repeated;
     
+    % For outer wall, find the first values which go below the half maximum value - max
+    % will return the indices of the first point in each column
+    [~, indices_halfpoint_outer] = max(values_below_halfmax_outer, [], 1);
+    indices_halfpoint_outer(~outer_halfmax_points_found) = -1;
+    outer_wall_indices = indices_halfpoint_outer;
+    halfpoint_indices_repeated_outer = repmat(indices_halfpoint_outer, [number_of_radii, 1]);
+    mask_maxima_outer = halfpoint_indices_repeated_outer == radii_indices_repeated;
+
     % Compute a more refined calculation for airway edge using linear
     % interpolation
     gradients = zeros(size(original_half_image));
@@ -312,6 +395,25 @@ function [wall_indices, wall_mask, refined_wall_indices] = FindWall(half_image)
     
     % Create a mask of points on the interior airway walls
     wall_mask = uint8(radii_indices_repeated == repmat(indices_halfpoint, [number_of_radii, 1]));
+    outer_wall_mask = uint8(radii_indices_repeated == repmat(indices_halfpoint_outer, [number_of_radii, 1]));
+end
+
+function [values, values_replaced] = ReplaceOutliersWithMean(values)
+
+    remaining_values = values;    
+    below_threshold = true;
+    
+    % Iteratively remove outliers and recompute the mean after each removal
+    while any(below_threshold)
+        below_threshold = remaining_values < mean(remaining_values)/5;
+        remaining_values = remaining_values(~below_threshold);
+    end
+    
+    % Now using the new mean, replace outliers with this mean
+    adjusted_mean = mean(remaining_values);
+    values_replaced = values < adjusted_mean/5;
+    
+    values(values_replaced) = adjusted_mean;
 end
 
 function value = GenerateSpline(knots, num_points)
