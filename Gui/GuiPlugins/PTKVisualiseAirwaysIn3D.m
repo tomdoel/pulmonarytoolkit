@@ -43,19 +43,18 @@ classdef PTKVisualiseAirwaysIn3D < PTKGuiPlugin
         function RunGuiPlugin(ptk_gui_app)
             segmentation = ptk_gui_app.ImagePanel.OverlayImage.Copy;
             if segmentation.ImageExists
-                segmentation.ChangeRawImage(uint8(segmentation.RawImage == 1));
+                segmentation = segmentation.Copy;
                 
-                if segmentation.ImageExists
-                    if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
-                        segmentation = segmentation.Copy;
-                        segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 1));
-                        smoothing_size = 0.5;
-                    else
-                        smoothing_size = 0.5;
-                    end
-                    
-                    PTKVisualiseIn3D([], segmentation, smoothing_size, true, ptk_gui_app.Reporting);
+                if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
+                    segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 1));
+                    smoothing_size = 0.5;
+                else
+                    segmentation.ChangeRawImage(uint8(segmentation.RawImage == 1));
+
+                    smoothing_size = 0.5;
                 end
+                
+                PTKVisualiseIn3D([], segmentation, smoothing_size, true, ptk_gui_app.Reporting);
             end
         end
     end
