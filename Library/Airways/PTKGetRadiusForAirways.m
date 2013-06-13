@@ -38,6 +38,7 @@ function [results, airway_skeleton] = GetRadius(lung_image, airway_skeleton, rad
         results{end+1} = next_result;
         
         next_segment.Radius = next_result.Radius;
+        next_segment.WallThickness = next_result.WallThickness;
         
     end
 end
