@@ -52,11 +52,21 @@ classdef PTKAirwayCentreline < PTKPlugin
             centreline_results = dataset.GetResult('PTKAirwaySkeleton');
             
             if PTKSoftwareInfo.GraphicalDebugMode
+                
                 % For visualisation purposes
                 airway_results = dataset.GetResult('PTKAirways');
                 airway_segmented_image = PTKGetImageFromAirwayResults(airway_results.AirwayTree, lung_image, false, reporting);
-                figure_airways_3d = figure;                
-                PTKVisualiseIn3D(figure_airways_3d, airway_segmented_image, 1, true, reporting);
+                figure_airways_3d = figure;
+                
+                % Remove small structures
+                removed_voxels = PTKAirwayCentreline.RemoveTrailingEndpoints(airway_results.AirwayTree);
+                removed_voxels = airway_segmented_image.GlobalToLocalIndices(removed_voxels);
+                airway_results_raw = airway_segmented_image.RawImage;
+                airway_results_raw(airway_results_raw == 3) = 0;
+                airway_results_raw(removed_voxels) = 0;                
+                airway_segmented_image.ChangeRawImage(airway_results_raw);
+                
+                PTKVisualiseIn3D(figure_airways_3d, airway_segmented_image, 0.5, true, reporting);
             else
                 figure_airways_3d = [];
             end
@@ -64,6 +74,26 @@ classdef PTKAirwayCentreline < PTKPlugin
             
             results = PTKGetRadiusForAirways(centreline_results, lung_image, radius_approximation, reporting, figure_airways_3d);
         end
+        
+        function removed_voxels = RemoveTrailingEndpoints(airway_tree)
+            removed_voxels = [];
+            voxel_limit = 150;
+            next_segments = airway_tree;
+            while ~isempty(next_segments)
+                segment = next_segments(end);
+                next_segments(end) = [];
+                children = segment.Children;
+                next_segments = [next_segments children];
+                if isempty(children)
+                    voxels = segment.GetAllAirwayPoints;
+                    if numel(voxels) < voxel_limit
+                        removed_voxels = [removed_voxels; voxels];
+                    end
+                    
+                end
+            end
+        end
+        
 
         function results = GenerateImageFromResults(skeleton_results, image_templates, ~)
             template_image = image_templates.GetTemplateImage(PTKContext.LungROI);
