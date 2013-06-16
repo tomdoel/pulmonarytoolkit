@@ -1,5 +1,5 @@
-classdef PTKEmphysemaPercentage < PTKPlugin
-    % PTKEmphysemaPercentage. Plugin for computing the percentage of emphysema
+classdef PTKEmphysemaPercentageByLobe < PTKPlugin
+    % PTKEmphysemaPercentageByLobe. Plugin for computing the percentage of emphysema
     %     voxels
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
@@ -18,7 +18,7 @@ classdef PTKEmphysemaPercentage < PTKPlugin
     %
 
     properties
-        ButtonText = 'Emphysema'
+        ButtonText = 'Emphysema Lobes'
         ToolTip = 'Measures percentages of emphysema-like voxels'
         Category = 'Analysis'
 
@@ -37,12 +37,14 @@ classdef PTKEmphysemaPercentage < PTKPlugin
         function emphysema_results = RunPlugin(dataset, reporting)
             results_directory = dataset.GetOutputPathAndCreateIfNecessary;
             left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
+%             lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobesByVesselnessDensityUsingWatershed');
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
 
             roi = dataset.GetResult('PTKLungROI');
             
-            emphysema_results = PTKEmphysemaPercentage.GetEmphysemaPercentage(left_and_right_lungs, uid, roi, results_directory);
+            emphysema_results = PTKEmphysemaPercentageByLobe.GetEmphysemaPercentage(left_and_right_lungs, lobes, uid, roi, results_directory);
         end
         
         
@@ -72,7 +74,7 @@ classdef PTKEmphysemaPercentage < PTKPlugin
         end
 
         function WriteResults(file_id, text, results)
-            PTKEmphysemaPercentage.WriteToFileAndScreen(file_id, [text ' : Emphysema: ' num2str(results.EmphysemaPercentage, '%5.1f') '%, PD at 15%: ' num2str(results.EmphysemaPercentileDensityHU, '%5.1f') 'HU']);
+            PTKEmphysemaPercentageByLobe.WriteToFileAndScreen(file_id, [text ' : Emphysema: ' num2str(results.EmphysemaPercentage, '%5.1f') '%, PD at 15%: ' num2str(results.EmphysemaPercentileDensityHU, '%5.1f') 'HU']);
         end
 
         function WriteToFileAndScreen(file_id, text)
@@ -80,32 +82,49 @@ classdef PTKEmphysemaPercentage < PTKPlugin
             fprintf(file_id, sprintf('%s\r\n', text));
         end
     
-        function emphysema_results = GetEmphysemaPercentage(left_and_right_lungs, uid, roi, results_directory)
+        function emphysema_results = GetEmphysemaPercentage(left_and_right_lungs, lobes, uid, roi, results_directory)
             
             emphysema_image = roi.BlankCopy;
             emphysema_threshold_value_hu = -950;
             emphysema_threshold_value = roi.HounsfieldToGreyscale(emphysema_threshold_value_hu);
             emphysema_image.ChangeRawImage(roi.RawImage <= emphysema_threshold_value);
             
-            whole_lung_results = PTKEmphysemaPercentage.Analyse(roi, left_and_right_lungs.RawImage > 0);
+            whole_lung_results = PTKEmphysemaPercentageByLobe.Analyse(roi, left_and_right_lungs.RawImage > 0);
             
             results = [];
                         
-            left_results = PTKEmphysemaPercentage.Analyse(roi, left_and_right_lungs.RawImage == 2);
-            right_results = PTKEmphysemaPercentage.Analyse(roi, left_and_right_lungs.RawImage == 1);
+            left_results = PTKEmphysemaPercentageByLobe.Analyse(roi, left_and_right_lungs.RawImage == 2);
+            right_results = PTKEmphysemaPercentageByLobe.Analyse(roi, left_and_right_lungs.RawImage == 1);
+            
+            ur_results = PTKEmphysemaPercentageByLobe.Analyse(roi, lobes.RawImage == 1);
+            mr_results = PTKEmphysemaPercentageByLobe.Analyse(roi, lobes.RawImage == 2);
+            lr_results = PTKEmphysemaPercentageByLobe.Analyse(roi, lobes.RawImage == 4);
+            ul_results = PTKEmphysemaPercentageByLobe.Analyse(roi, lobes.RawImage == 5);
+            ll_results = PTKEmphysemaPercentageByLobe.Analyse(roi, lobes.RawImage == 6);
             
             results.Lung = whole_lung_results;
             results.Left = left_results;
             results.Right = right_results;
+            results.UR = ur_results;
+            results.MR = mr_results;
+            results.LR = lr_results;
+            results.UL = ul_results;
+            results.LL = ll_results;
 
             
-            file_name = fullfile(results_directory, 'PTKEmphysemaPercentage.txt');
+            file_name = fullfile(results_directory, 'PTKEmphysemaPercentageByLobe.txt');
             file_handle = fopen(file_name, 'w');
             disp('*****');
-            PTKEmphysemaPercentage.WriteResults(file_handle, 'LUNG', results.Lung);
+            PTKEmphysemaPercentageByLobe.WriteResults(file_handle, 'LUNG', results.Lung);
             disp('-');
-            PTKEmphysemaPercentage.WriteResults(file_handle, 'LEFT LUNG', results.Left);
-            PTKEmphysemaPercentage.WriteResults(file_handle, 'RIGHT LUNG', results.Right);
+            PTKEmphysemaPercentageByLobe.WriteResults(file_handle, 'LEFT LUNG', results.Left);
+            PTKEmphysemaPercentageByLobe.WriteResults(file_handle, 'RIGHT LUNG', results.Right);
+            disp('-');
+            PTKEmphysemaPercentageByLobe.WriteResults(file_handle, 'UR', results.UR);
+            PTKEmphysemaPercentageByLobe.WriteResults(file_handle, 'MR', results.MR);
+            PTKEmphysemaPercentageByLobe.WriteResults(file_handle, 'LR', results.LR);
+            PTKEmphysemaPercentageByLobe.WriteResults(file_handle, 'UL', results.UL);
+            PTKEmphysemaPercentageByLobe.WriteResults(file_handle, 'LL', results.LL);
             
             fclose(file_handle);
             emphysema_image.ImageType = PTKImageType.Colormap;
