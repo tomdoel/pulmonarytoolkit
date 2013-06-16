@@ -39,7 +39,7 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     reporting.UpdateProgressMessage('Finding approximate MRI lung segmentation by region growing');
 
     original_image = PTKGaussianFilter(original_image, filter_size_mm);
-
+    
     if (nargin < 4)
         reporting.UpdateProgressMessage('Automatically selecting a point in the lung parenchyma');
         start_point_right = AutoFindLungPoint(original_image, false);
@@ -49,19 +49,22 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     reporting.UpdateProgressMessage('Finding optimal threshold values');
     new_image_left = original_image.Copy;
     new_image_right = original_image.Copy;
-    [image_raw_left, bounds_left] = FindMaximumRegionNotTouchingSides(new_image_left, start_point_left, original_image.ImageSize, reporting);
-    [image_raw_right, bounds_right] = FindMaximumRegionNotTouchingSides(new_image_right, start_point_right, original_image.ImageSize, reporting);
+    
+    coronal_mode = original_image.VoxelSize(1) > 5;
+    
+    [image_raw_left, bounds_left] = FindMaximumRegionNotTouchingSides(new_image_left, start_point_left, coronal_mode, reporting);
+    [image_raw_right, bounds_right] = FindMaximumRegionNotTouchingSides(new_image_right, start_point_right, coronal_mode, reporting);
     
     new_image_left.ChangeRawImage(image_raw_left);
     new_image_right.ChangeRawImage(image_raw_right);
     
-    voxel_size = original_image.VoxelSize;
+    
     
     new_image = new_image_left.Copy;
     new_image.ChangeRawImage(uint8((new_image_left.RawImage + new_image_right.RawImage) > 0));
 
     
-    if voxel_size(1) > 5
+    if coronal_mode
         new_image.AddBorder(1);
         new_image = PTKGetMainRegionExcludingBorder(new_image, reporting);
         new_image.RemoveBorder(1);
@@ -100,7 +103,19 @@ function lung_point = AutoFindLungPoint(original_image, find_left)
     lung_point = lung_point + start_point - [1 1 1];
 end
 
-function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, start_point, voxel_size, reporting)
+function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, start_point, coronal_mode, reporting)
+    
+    % This code deals with the case where there are missing thick coronal slices
+    if coronal_mode
+        lung_image.AddBorder(1);
+        lung_image_raw = lung_image.RawImage;
+        max_lung_image = lung_image.Limits(2);
+        lung_image_raw(1, :, :) = max_lung_image;
+        lung_image_raw(end, :, :) = max_lung_image;
+        lung_image.ChangeRawImage(lung_image_raw);
+    end
+    
+    
     new_image = zeros(lung_image.ImageSize, 'int16');
     next_image = new_image;
     min_value = 0;
@@ -114,10 +129,11 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, sta
     next_image_open = lung_image.BlankCopy;
     
     for increment = increments
-        while (~IsTouchingSides(next_image, voxel_size))
+        while (~IsTouchingSides(next_image, coronal_mode))
             max_value = max_value + increment;
             new_image = next_image;
             next_image = int16((lung_image.RawImage >= min_value) & (lung_image.RawImage <= max_value));
+            
             next_image_open.ChangeRawImage(next_image);
             next_image = PTKSimpleRegionGrowing(next_image_open, start_points_global, reporting);
             next_image = next_image.RawImage;
@@ -128,10 +144,15 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, sta
     
     bounds = [min_value max_value];
     new_image = logical(new_image);
+    
+    if coronal_mode
+        lung_image.RemoveBorder(1);
+        new_image = new_image(2:end-1, 2:end-1, 2:end-1);
+    end
 end
 
-function is_touching_sides = IsTouchingSides(image_to_check, voxel_size)
-    if voxel_size(1) < 5
+function is_touching_sides = IsTouchingSides(image_to_check, coronal_mode)
+    if ~coronal_mode
         is_touching_sides = CheckSide(image_to_check(1, :, :)) || ...
             CheckSide(image_to_check(:, 1, :)) || ...
             CheckSide(image_to_check(end, :, :)) || ...
