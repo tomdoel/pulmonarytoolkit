@@ -4,7 +4,7 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
     %     Syntax
     %     ------
     %
-    %         PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting)
+    %         PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, orientation, reporting)
     %
     %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved
@@ -13,6 +13,7 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
     %                             Each file is numbered, starting from 0.
     %                             So if filename is 'MyImage.DCM' then the files will be
     %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
+    %             data_type
     %             reporting       A PTKReporting or implementor of the same interface,
     %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
@@ -29,12 +30,15 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
         reporting.Error('PTKSaveAsMetaheaderAndRaw:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
 
+    orientation = ChooseOrientation(image_data.VoxelSize);
+    
     original_image = image_data.RawImage;
     
     if (strcmp(data_type, 'char') || strcmp(data_type, 'uint8'))
         scale_factor = 255.0;
-        min_image = min(min(min(original_image)));
-        max_image = max(max(max(original_image)));
+        limits = image_data.Limits;
+        min_image = limits(1);
+        max_image = limits(2);
         min_scale = 0;
         max_scale = 2048;
         if (min_image < min_scale)
@@ -60,7 +64,7 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
     
     full_filename = fullfile(path, filename);
 
-    resolution = image_data.VoxelSize([2, 1, 3]);
+    resolution = image_data.VoxelSize([1, 2, 3]);
     
     offset = '0 0 0';
     if isa(original_image, 'PTKDicomImage')
@@ -70,5 +74,16 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
         end
     end
     
-    PTKWrite3DMetaFile(full_filename, image, resolution, data_type, offset);  
+    PTKWrite3DMetaFile(full_filename, image, resolution, data_type, offset, orientation, reporting);  
+end
+
+% Select an image orientation in which the image will be saved
+function orientation = ChooseOrientation(voxel_size)
+    orientation = PTKImageOrientation.Axial;
+    [sorted_voxel_size, sorted_voxel_size_index] = sort(voxel_size, 'descend');
+    if abs(sorted_voxel_size(1) - sorted_voxel_size(2)) > abs(sorted_voxel_size(2) - sorted_voxel_size(3))
+        if sorted_voxel_size_index(1) == 1
+            orientation = PTKImageOrientation.Coronal;
+        end
+    end
 end
