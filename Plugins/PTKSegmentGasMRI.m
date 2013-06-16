@@ -18,7 +18,7 @@ classdef PTKSegmentGasMRI < PTKPlugin
     
     properties
         ButtonText = 'Gas Lungs'
-        ToolTip = 'Shows a segmentation of the airways illustrating deleted points'
+        ToolTip = ''
         Category = 'Lungs'
 
         AllowResultsToBeCached = true
@@ -26,15 +26,16 @@ classdef PTKSegmentGasMRI < PTKPlugin
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
         FlattenPreviewImage = true
-        PTKVersion = '1'
+        PTKVersion = '2'
+        Context = PTKContextSet.OriginalImage
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
     end
     
     methods (Static)
-        function results = RunPlugin(dataset, reporting)
-            results = dataset.GetResult('PTKOriginalImage');
+        function results = RunPlugin(dataset, context, reporting)
+            results = dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage);
             results = PTKGaussianFilter(results, 2);
             results.ChangeRawImage(results.RawImage > 15);
             results.ImageType = PTKImageType.Colormap;
