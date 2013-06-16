@@ -1,4 +1,4 @@
-function PTKVisualiseTreeModelCentreline(parent_branch, voxel_size)
+function figure_handle = PTKVisualiseTreeModelCentreline(parent_branch, voxel_size, centreline_only)
     % PTKVisualiseTreeModelCentreline. Draws a simplified visualisation of a tree centreline
     %
     %     Syntax
@@ -14,13 +14,17 @@ function PTKVisualiseTreeModelCentreline(parent_branch, voxel_size)
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %           
-    %     
+    %
+    
+    if nargin < 3
+        centreline_only = false;
+    end
     
     aspect_ratio = [1/voxel_size(2), 1/voxel_size(1), 1/voxel_size(3)];
     
     % Set up appropriate figure properties
-    fig = figure; 
-    set(fig, 'Name', 'Centreline');
+    figure_handle = figure; 
+    set(figure_handle, 'Name', 'Centreline');
     
     hold on;
     axis off;
@@ -39,6 +43,9 @@ function PTKVisualiseTreeModelCentreline(parent_branch, voxel_size)
     for branch = branches
         centreline = branch.Centreline;
         radius = branch.Radius;
+        if centreline_only
+            radius = [];
+        end
         skip = 3;
         x_coords = [centreline.CoordJ];
         y_coords = [centreline.CoordI];
@@ -73,10 +80,14 @@ function PTKVisualiseTreeModelCentreline(parent_branch, voxel_size)
                 plot3(xb_coords', yb_coords', -zb_coords', 'b', 'LineWidth', 1.5);
             end
         else
-            plot3(x_coords', y_coords', z_coords', 'b', 'LineWidth', 4*radius);
+            plot3(figure_handle, x_coords', y_coords', z_coords', 'b', 'LineWidth', 4*radius);
         end
 
     end
+    
+    % Change camera angle
+    campos([200, -1600, 0]);
+
 end
 
 function value = GenerateSpline(knots, num_points)
