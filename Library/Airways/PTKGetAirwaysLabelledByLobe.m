@@ -64,7 +64,7 @@ function [results_image, start_branches] = PTKGetAirwaysLabelledByLobe(template,
     [right_upper_startindices, right_midlower_startindices] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting);
     
     % Separate right mid/lower lobe into mid and lower lobes
-    [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobes(right_midlower_startindices, template, reporting);
+    [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobesNew(right_midlower_startindices, template, reporting);
 
     start_branches = [];
     start_branches.Trachea = start_segment;
@@ -114,7 +114,7 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         left_lower_startsegment = [];
         left_upper_startsegment = [];
     elseif length(left_lung_start.Children) < 1
-        calback.ShowWarning('PTKGetAirwaysLabelledByLobe:NoBronchi', 'ERROR: No bronchial branches were found separating the left upper and lower lobes.', []);
+        reporting.ShowWarning('PTKGetAirwaysLabelledByLobe:NoBronchi', 'ERROR: No bronchial branches were found separating the left upper and lower lobes.', []);
         left_lower_startsegment = [];
         left_upper_startsegment = [];
     else
@@ -178,7 +178,7 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         left_lower_startsegment = [];
         left_upper_startsegment = [];
     elseif length(left_lung_start.Children) < 1
-        calback.ShowWarning('PTKGetAirwaysLabelledByLobe:NoBronchi', 'ERROR: No bronchial branches were found separating the left upper and lower lobes.', []);
+        reporting.ShowWarning('PTKGetAirwaysLabelledByLobe:NoBronchi', 'ERROR: No bronchial branches were found separating the left upper and lower lobes.', []);
         left_lower_startsegment = [];
         left_upper_startsegment = [];
     else
