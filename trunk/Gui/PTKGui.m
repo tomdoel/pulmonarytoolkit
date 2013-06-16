@@ -286,6 +286,7 @@ classdef PTKGui < handle
             obj.Reporting.ProgressDialog.Hide;
             frame = obj.ImagePanel.Capture;
             path_name = obj.Settings.SaveImagePath;
+            
             [filename, path_name, filter_index] = obj.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && filter_index > 0
                 obj.Settings.SaveImagePath = path_name;
@@ -534,10 +535,14 @@ classdef PTKGui < handle
 
             catch exc
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
-                    obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', 'User cancelled loading');
+                    obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled loading');
+                elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
+                    msgbox('This dataset is missing. It will be removed from the load menu.', [PTKSoftwareInfo.Name ': Cannot find dataset'], 'error');
+                    obj.Reporting.ShowMessage('PTKGui:FileNotFound', 'The original data is missing. I am removing this dataset.');
+                    obj.DeleteImageInfo
                 else
                     msgbox(exc.message, [PTKSoftwareInfo.Name ': Cannot load dataset'], 'error');
-                    obj.Reporting.ShowMessage('PTKGuiApp:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
+                    obj.Reporting.ShowMessage('PTKGui:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
                 end
             end
             
