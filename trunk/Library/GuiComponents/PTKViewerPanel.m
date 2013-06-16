@@ -914,10 +914,6 @@ classdef PTKViewerPanel < handle
                     [rgb_slice, alpha_slice] = obj.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, obj.BlackIsTransparent);
                     alpha_slice = double(alpha_slice)*opacity/100;
                     
-                    
-                    % Special code to highlight one colour
-                    alpha_slice(image_slice == 3) = 1;
-                    
                     if isempty(obj.ImageHandles{image_number})
                         obj.ImageHandles{image_number} = imshow([], 'Parent', obj.Axes);
                     end
