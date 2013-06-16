@@ -15,8 +15,37 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
     both_lungs = unclosed_lungs.Copy;
+    max_iter = 10;
     
     both_lungs.ChangeRawImage(uint8(both_lungs.RawImage & (filtered_threshold_lung.RawImage == 1)));
+    
+    success = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, max_iter, false, reporting);
+    if ~success
+        reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs after ' int2str(max_iter) ' opening attempts. Trying 2D approach.']);
+
+        % 3D approach failed. Try slice-by-slice coronal approach
+        results = both_lungs.Copy;
+        results.ImageType = PTKImageType.Colormap;
+        for coronal_index = 1 : lung_roi.ImageSize(1)
+            lung_roi_slice = PTKImage(lung_roi.GetSlice(coronal_index, PTKImageOrientation.Coronal));
+            both_lungs_slice = PTKImage(both_lungs.GetSlice(coronal_index, PTKImageOrientation.Coronal));
+            unclosed_lungs_slice = PTKImage(unclosed_lungs.GetSlice(coronal_index, PTKImageOrientation.Coronal));
+            if any(both_lungs_slice.RawImage(:))
+                success = SeparateLungs(both_lungs_slice, lung_roi_slice, unclosed_lungs_slice, max_iter, true, reporting);
+                if ~success
+                    reporting.ShowMessage('PTKSeparateAndLabelLungs:FailureInCoronalSlice', ['Failed to separate left and right lungs in a coronal slice after ' int2str(max_iter) ' opening attempts.']);
+                    both_lungs_slice.Clear;
+                end
+                
+            end
+            results_slice = both_lungs_slice;
+            results.ReplaceImageSlice(results_slice.RawImage, coronal_index, PTKImageOrientation.Coronal);
+        end
+        both_lungs = results;
+    end
+end
+    
+function success = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, max_iter, is_coronal, reporting)
     
     % Find the connected components in this mask
     CC = bwconncomp(both_lungs.RawImage > 0, 26);
@@ -32,8 +61,9 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     % If there is only one large connected component, the lungs are connected,
     % so we attempt to disconnect them using morphological operations
     while (length(largest_areas_indices) < 2) || (largest_area_numpixels(2) < minimum_required_voxels_per_lung)
-        if (iter_number > 10)
-            reporting.Error('PTKSeparateAndLabelLungs:FailedToSeparateLungs', ['Failed to separate left and right lungs after ' num2str(iter_number) ' opening attempts']);
+        if (iter_number > max_iter)
+            success = false;
+            return;
         end
         iter_number = iter_number + 1;
         reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
@@ -65,13 +95,38 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     
     both_lungs.Clear;
     both_lungs.ImageType = PTKImageType.Colormap;
-    if region_1_centroid(2) < region_2_centroid(2)
+    
+    if is_coronal
+        dimension_index = 1;
+    else
+        dimension_index = 2;
+    end
+    
+    if region_1_centroid(dimension_index) < region_2_centroid(dimension_index)
         region_1_colour = 1;
         region_2_colour = 2;
     else
         region_1_colour = 2;
         region_2_colour = 1;
     end
+    
+    % If both centroids are in the left lung region we assume they both belong
+    % to that lung
+    if (region_1_centroid(dimension_index) > (both_lungs.ImageSize(dimension_index) / 2)) && ...
+       (region_2_centroid(dimension_index) > (both_lungs.ImageSize(dimension_index) / 2))
+        region_1_colour = 2;
+        region_2_colour = 2;
+    end
+    
+    % If both centroids are in the right lung region we assume they both belong
+    % to that lung
+    if (region_1_centroid(dimension_index) < (both_lungs.ImageSize(dimension_index) / 2)) && ...
+       (region_2_centroid(dimension_index) < (both_lungs.ImageSize(dimension_index) / 2))
+        region_1_colour = 1;
+        region_2_colour = 1;
+    end
+    
+
     
     % Watershed to fill remaining voxels
     lung_exterior = unclosed_lungs.RawImage == 0;
@@ -85,6 +140,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     
     both_lungs.ChangeRawImage(uint8(labeled_output));
     both_lungs.ImageType = PTKImageType.Colormap;
+    success = true;
 end
 
 function centroid = GetCentroid(image_size, new_coords_indices)
