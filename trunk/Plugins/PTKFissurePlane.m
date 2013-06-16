@@ -92,7 +92,9 @@ classdef PTKFissurePlane < PTKPlugin
                 reporting.ShowWarning('PTKFissurePlane:NoRightHoritontalFissure', 'Unable to find the right horizontal fissure', []);
             end
             
-            results_right_raw = 3*PTKGetFissurePlane(max_fissure_points_o, right_lung_roi.ImageSize, 3);
+            extrapolation = 3;
+            
+            results_right_raw = 3*PTKGetFissurePlane(max_fissure_points_o, right_lung_roi.ImageSize, extrapolation);
             
             right_lung_mask = application.GetResult('PTKLeftAndRightLungs');
             right_lung_mask.ResizeToMatch(right_lung_roi);
@@ -101,15 +103,15 @@ classdef PTKFissurePlane < PTKPlugin
             fissure_plane_oblique = find(results_right_raw == 3);
             
             % Create a mask which excludes the lower lobe
-            lobes_right_raw = PTKGetLobesFromFissurePoints(fissure_plane_oblique, right_lung_mask, right_lung_roi.ImageSize);
-            right_lung_mask.ChangeRawImage(lobes_right_raw == 2); 
-            
+            lobes_right_raw = PTKGetLobesFromFissurePoints(fissure_plane_oblique, right_lung_mask, reporting);
+            right_lung_mask.ChangeRawImage(lobes_right_raw.RawImage == 1);
             
             % The final value controls the extrapolation. 4 is a reasonable 
             % value, but higher values may be needed if few fissure points have 
             % been found, especially for the right mid fissure.
             if ~isempty(max_fissure_points_m)
-                results_right_m_raw = PTKGetFissurePlane(max_fissure_points_m, right_lung_roi.ImageSize, 4);
+                extrapolation = 10; % A value of 4 typically works well, but may need to be increased in some cases
+                results_right_m_raw = PTKGetFissurePlane(max_fissure_points_m, right_lung_roi.ImageSize, extrapolation);
                 results_right_m_raw(right_lung_mask.RawImage == 0) = 0;
                 results_right_raw(results_right_m_raw == 1) = 2;
             end
