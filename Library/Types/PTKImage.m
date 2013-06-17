@@ -658,6 +658,12 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             if obj.ImageExists
                 image_size = obj.ImageSize;
                 bounds = obj.GetBounds;
+                if isempty(bounds)
+                    obj.RawImage = [];
+                    obj.NotifyImageChanged;
+                    return;
+                end
+                
                 bounds(1) = max(1, bounds(1) - border_size);
                 bounds(3) = max(1, bounds(3) - border_size);
                 bounds(5) = max(1, bounds(5) - border_size);
@@ -676,13 +682,23 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         % Returns the bounding cordinates of a binary image
         function bounds = GetBounds(obj)
+            bounds = [];
             i_min = find(any(any(obj.RawImage, 2), 3), 1, 'first');
+            if isempty(i_min)
+                return; 
+            end
             i_max = find(any(any(obj.RawImage, 2), 3), 1, 'last' );
             
             j_min = find(any(any(obj.RawImage, 1), 3), 1, 'first');
+            if isempty(j_min)
+                return; 
+            end
             j_max = find(any(any(obj.RawImage, 1), 3), 1, 'last' );
             
             k_min = find(any(any(obj.RawImage, 1), 2), 1, 'first');
+            if isempty(k_min)
+                return; 
+            end
             k_max = find(any(any(obj.RawImage, 1), 2), 1, 'last' );
             
             bounds = [i_min, i_max, j_min, j_max, k_min, k_max];
