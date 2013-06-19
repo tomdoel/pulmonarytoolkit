@@ -168,7 +168,10 @@ classdef PTKDatasetResults < handle
                 return;
             else
                 template = obj.GetTemplateImage(PTKContext.OriginalImage, dataset_stack);
-                if strcmpi(template.MetaHeader.SeriesDescription(1:2), 'Xe')
+                if ~isfield(template.MetaHeader, 'ReceiveCoilName')
+                    return;
+                end
+                if strcmpi(template.MetaHeader.ReceiveCoilName, 'MNS 129Xe TR')
                     is_gas_mri = true;
                 end
             end
