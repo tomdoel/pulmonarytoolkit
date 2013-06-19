@@ -84,10 +84,10 @@ classdef TestAreImagesInSameGroup < PTKTest
     methods (Access = private)
         function [this_metadata, other_metadata] = CheckMatchingOfTags(obj, this_metadata, other_metadata, tag_name, value_1, value_2)
             if nargin < 6
-                value_2 = PTKDiskUtilities.GenerateUid;
+                value_2 = PTKSystemUtilities.GenerateUid;
             end
             if nargin < 5
-                value_1 = PTKDiskUtilities.GenerateUid;
+                value_1 = PTKSystemUtilities.GenerateUid;
             end
             
             % Images should match if the tag is not present in either

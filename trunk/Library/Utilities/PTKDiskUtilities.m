@@ -133,20 +133,6 @@ classdef PTKDiskUtilities
             end
         end
 
-        % Creates a random unique identifier
-        function uid = GenerateUid
-            % On unix systems, if java is not running we can use the system
-            % command
-            if isunix && ~usejava('jvm')
-                [status, uid] = system('uuidgen');
-                if status ~= 0
-                    error('Failure running uuidgen');
-                end
-            else
-                uid = char(java.util.UUID.randomUUID);
-            end
-        end
-        
         function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
             dicom_filenames = [];
             for index = 1 : length(filenames)
