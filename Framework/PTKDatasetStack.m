@@ -52,7 +52,7 @@ classdef PTKDatasetStack < handle
             end
             attributes = [];
             attributes.IgnoreDependencyChecks = ignore_dependency_checks;
-            instance_identifier = PTKDependency(plugin_name, context, PTKDiskUtilities.GenerateUid, dataset_uid, attributes);
+            instance_identifier = PTKDependency(plugin_name, context, PTKSystemUtilities.GenerateUid, dataset_uid, attributes);
             cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, ignore_dependency_checks, start_timer, obj.Reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end
