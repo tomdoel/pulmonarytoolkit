@@ -44,6 +44,7 @@ classdef PTKViewerPanel < handle
     
     properties
         MarkerPointManager
+        OpaqueColour
     end
     
     events
@@ -701,7 +702,8 @@ classdef PTKViewerPanel < handle
             obj.ClearAxesCache;
             obj.AutoChangeOrientation;
             obj.UpdateAxes;
-            obj.UpdateGuiForNewImageOrOrientation;
+            obj.UpdateGuiForNewImage;
+            obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
             obj.DrawImages(true, false, false);
             obj.UpdateStatus;
@@ -712,7 +714,7 @@ classdef PTKViewerPanel < handle
         % changed
         function OrientationChanged(obj)
             obj.UpdateAxes;
-            obj.UpdateGuiForNewImageOrOrientation;
+            obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
             obj.DrawImages(true, true, true);
             obj.UpdateStatus;
@@ -725,7 +727,7 @@ classdef PTKViewerPanel < handle
             obj.DrawImages(false, true, false);
         end
         
-        function UpdateGuiForNewImageOrOrientation(obj)
+        function UpdateGuiForNewImage(obj)
             main_image = obj.BackgroundImage;
             if ~isempty(main_image) && main_image.ImageExists
                 set(obj.OpacitySlider, 'Min', 0);
@@ -753,6 +755,12 @@ classdef PTKViewerPanel < handle
                 if obj.Level > limits(2)
                     obj.Level = limits(2);
                 end
+            end
+        end
+        
+        function UpdateGuiForNewOrientation(obj)
+            main_image = obj.BackgroundImage;
+            if ~isempty(main_image) && main_image.ImageExists
                 
                 image_size = main_image.ImageSize;
                 slider_max =  max(2, image_size(obj.Orientation));
@@ -914,6 +922,11 @@ classdef PTKViewerPanel < handle
                     [rgb_slice, alpha_slice] = obj.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, obj.BlackIsTransparent);
                     alpha_slice = double(alpha_slice)*opacity/100;
                     
+                    % Special code to highlight one colour
+                    if ~isempty(obj.OpaqueColour)
+                        alpha_slice(image_slice == obj.OpaqueColour) = 1;
+                    end
+
                     if isempty(obj.ImageHandles{image_number})
                         obj.ImageHandles{image_number} = imshow([], 'Parent', obj.Axes);
                     end
