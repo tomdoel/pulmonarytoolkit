@@ -102,7 +102,11 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
             reporting.UpdateProgressValue(round(100*(z_index-1)/z_length));
         end
         
-        original_image(:,:,z_index) = cast(fread(file_id, image_dims(1:2)', data_type), data_type);
+        try
+            original_image(:,:,z_index) = cast(fread(file_id, image_dims(1:2)', data_type), data_type);
+        catch exc
+            reporting.Error('PTKLoad3DRawAndMetaFiles:ReadFailed', ['Failed to read data from ' raw_image_filename ' due to the following error: ' exc.message]);
+        end
     end
     fclose(file_id);
     
