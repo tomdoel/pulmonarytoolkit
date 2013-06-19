@@ -91,7 +91,7 @@ function lung_point = AutoFindLungPoint(original_image, find_left)
     else
         adjust_centrepoint = 1;
     end
-    centre_point(2) = centre_point(2) + adjust_centrepoint*round(image_size(2)/4);
+    centre_point(2) = centre_point(2) + adjust_centrepoint*round(image_size(2)/8);
     search_size = round(image_size/10);
     start_point = centre_point - search_size;
     end_point = centre_point + search_size;
@@ -108,6 +108,7 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, sta
     % This code deals with the case where there are missing thick coronal slices
     if coronal_mode
         lung_image.AddBorder(1);
+        start_point = start_point + 1;
         lung_image_raw = lung_image.RawImage;
         max_lung_image = lung_image.Limits(2);
         lung_image_raw(1, :, :) = max_lung_image;
