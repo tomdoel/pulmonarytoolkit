@@ -846,7 +846,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             ball_element = obj.CreateBallStructuralElement(size_mm);
             
             obj.RawImage = obj.RawImage > 0;
-            obj.RawImage = boolean(morph_function_handle(obj.RawImage, ball_element));
+            obj.RawImage = logical(morph_function_handle(obj.RawImage, ball_element));
             obj.NotifyImageChanged;
         end
         
