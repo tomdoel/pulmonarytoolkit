@@ -213,6 +213,31 @@ classdef PTKAirwayGrowingTree < PTKTree
             
         end
         
+        % Returns the number of branches in this tree, from this branch
+        % and excluding generations above the max_generation_number
+        function number_of_branches = CountBranchesUpToGeneration(obj, max_generation_number)
+            number_of_branches = 0;
+            if obj.GenerationNumber > max_generation_number
+                return;
+            else
+                branches_to_do = obj;
+                while ~isempty(branches_to_do)
+                    branch = branches_to_do(end);
+                    branches_to_do(end) = [];
+                    if branch.GenerationNumber <= max_generation_number
+                        branches_to_do = [branches_to_do, branch.Children];
+                        number_of_branches = number_of_branches + 1;
+                    end
+                end
+            end
+        end
+
+        function length_mm = LengthMm(obj)
+            coord_start = obj.StartCoords;
+            coord_end = obj.EndCoords;
+            length_mm = norm(coord_start - coord_end, 2);            
+        end
+        
         
     end
     
