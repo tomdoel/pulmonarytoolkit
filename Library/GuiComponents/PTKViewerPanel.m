@@ -40,11 +40,11 @@ classdef PTKViewerPanel < handle
         BackgroundImage
         OverlayImage
         QuiverImage
+        OpaqueColour % If set, then this colour will always be shown at full opacity in the overlay
     end
     
     properties
         MarkerPointManager
-        OpaqueColour
     end
     
     events
@@ -197,6 +197,8 @@ classdef PTKViewerPanel < handle
             addlistener(obj, 'ShowImage', 'PostSet', @obj.SettingsChangedCallback);
             addlistener(obj, 'ShowOverlay', 'PostSet', @obj.SettingsChangedCallback);
             addlistener(obj, 'BlackIsTransparent', 'PostSet', @obj.SettingsChangedCallback);
+            addlistener(obj, 'OpaqueColour', 'PostSet', @obj.SettingsChangedCallback);
+            
                                     
             % Listen for image change events
             addlistener(obj, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
@@ -739,7 +741,7 @@ classdef PTKViewerPanel < handle
                 end
 
                 set(obj.WindowSlider, 'Min', 0);
-                set(obj.WindowSlider, 'Max', max(1, limits(2) - limits(1)));
+                set(obj.WindowSlider, 'Max', max(1, 3*(limits(2) - limits(1))));
                 if obj.Window < 0
                     obj.Window = 0;
                 end
@@ -783,7 +785,25 @@ classdef PTKViewerPanel < handle
                 set(obj.SliceSlider, 'SliderStep', [1/(slider_max - slider_min), 10/(slider_max-slider_min)]);
             end
         end
-                
+        
+        % This function is used to change the max window and min/max level
+        % values after the window or level has been changed to a value outside
+        % of the limits
+        function ModifyWindowLevelLimits(obj)
+            if obj.Level > get(obj.LevelSlider, 'Max')
+                set(obj.LevelSlider, 'Max', obj.Level);
+            end
+            if obj.Level < get(obj.LevelSlider, 'Min')
+                set(obj.LevelSlider, 'Min', obj.Level);
+            end
+            if obj.Window > get(obj.WindowSlider, 'Max')
+                set(obj.WindowSlider, 'Max', obj.Window);
+            end
+            if obj.Window < 0
+                obj.Window = 0;
+            end
+        end
+     
         function UpdateGui(obj)
             set(obj.OverlayCheckbox, 'Value', obj.ShowOverlay);
             set(obj.ImageCheckbox, 'Value', obj.ShowImage);
@@ -988,6 +1008,11 @@ classdef PTKViewerPanel < handle
 
         % Settings have changed
         function SettingsChangedCallback(obj, ~, ~, ~)
+            
+            % If the window or level values have been externally set outside the
+            % slider range, then we modify the slider range to accommodate this
+            obj.ModifyWindowLevelLimits;
+            
             obj.UpdateGui;
             obj.DrawImages(true, true, true);
             obj.UpdateStatus;
