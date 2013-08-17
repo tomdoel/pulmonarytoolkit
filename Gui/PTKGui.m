@@ -292,11 +292,13 @@ classdef PTKGui < handle
                 obj.Settings.SaveImagePath = path_name;
                 obj.SaveSettings;
             end
-            switch filter_index
-                case 1
-                    imwrite(frame.cdata, fullfile(path_name, filename), 'tif');
-                case 2
-                    imwrite(frame.cdata, fullfile(path_name, filename), 'jpg', 'Quality', 70);
+            if (filename ~= 0)
+                switch filter_index
+                    case 1
+                        imwrite(frame.cdata, fullfile(path_name, filename), 'tif');
+                    case 2
+                        imwrite(frame.cdata, fullfile(path_name, filename), 'jpg', 'Quality', 70);
+                end
             end
         end
         
@@ -738,6 +740,10 @@ classdef PTKGui < handle
                 '*.tif', 'TIF (*.tif)';
                 '*.jpg', 'JPG (*.jpg)';
                 };
+            
+            if exist(path_name, 'dir') ~= 7
+                path_name = '';
+            end
             
             [filename, path_name, filter_index] = uiputfile(filespec, 'Save image as', fullfile(path_name, ''));
         end
