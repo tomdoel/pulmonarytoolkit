@@ -49,8 +49,6 @@ classdef PTKVisualiseAirwaysIn3D < PTKGuiPlugin
                     segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 1));
                     smoothing_size = 0.5;
                 else
-                    segmentation.ChangeRawImage(uint8(segmentation.RawImage == 1));
-
                     smoothing_size = 0.5;
                 end
                 
