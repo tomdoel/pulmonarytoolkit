@@ -75,7 +75,7 @@ function figure_handle = PTKShow2DSlicesInOneFigure(viewer_panel_handle, orienta
     display_height = display_dimensions(2) - 300;
     proportional_width = display_height*(size(im,2)/size(im,1))*(num_plots_x/num_plots_y)*(1 - 2*gap*num_plots_y)/(1 - 2*gap*num_plots_x);
     
-    set(figure_handle, 'Position', [0 0 proportional_width, display_height]);
+    set(figure_handle, 'Units', 'pixels', 'Position', [0 0 proportional_width, display_height]);
     set(figure_handle, 'PaperPositionMode', 'auto');
 end
 
