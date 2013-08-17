@@ -69,9 +69,11 @@ function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_dou
         central_knot = knot(central_knot_index, :);
         [radius_mm_list, wall_thickness_mm_list, global_coords] = GetRadiusAndCentrepoint(central_knot, direction_vector_voxels, ...
             lung_image_as_double, expected_radius_mm, lung_image_as_double.VoxelSize, debug_figure);
-        radius_mm_allknots = [radius_mm_allknots; radius_mm_list'];
-        wall_thickness_mm_allknots = [wall_thickness_mm_allknots; wall_thickness_mm_list'];
-        global_coords_list = [global_coords_list; global_coords];
+        if ~isempty(radius_mm_list)
+            radius_mm_allknots = [radius_mm_allknots; radius_mm_list'];
+            wall_thickness_mm_allknots = [wall_thickness_mm_allknots; wall_thickness_mm_list'];
+            global_coords_list = [global_coords_list; global_coords];
+        end
     end
     
     radius_results = [];
