@@ -301,6 +301,39 @@ classdef PTKImageUtilities
             results.MeanDistanceCombined = mean_c;
             results.MaxDistanceCombined = max_c;
         end
+        
+        % Use Matlab's undocumented hardcopy() function to capture an image from a figure, avoiding the limitations of getframe()
+        function frame = CaptureFigure(figure_handle, rect_screenpixels)
+            % Store current figure settings
+            old_renderer     = get(figure_handle, 'Renderer');
+            old_resize_fcn = get(figure_handle, 'ResizeFcn');
+            old_paper_position_mode = get(figure_handle, 'PaperPositionMode');
+            old_paper_orientation  = get(figure_handle, 'PaperOrientation');
+            old_invert_hardcopy = get(figure_handle, 'InvertHardcopy');
+            
+            % Choose renderer
+            if strcmpi(old_renderer, 'painters')
+                image_renderer = '-dzbuffer';
+            else
+                image_renderer = ['-d', old_renderer];
+            end
+            
+            % Change figure settings
+            set(figure_handle, 'PaperPositionMode', 'auto', 'PaperOrientation', 'portrait', ...
+                'InvertHardcopy', 'off', 'ResizeFcn', '');
+            
+            % Get image
+            cdata = hardcopy(figure_handle, image_renderer);
+            frame = im2frame(cdata);
+            
+            % Restore figure settings
+            set(figure_handle, 'PaperPositionMode', old_paper_position_mode, 'PaperOrientation', old_paper_orientation, ...
+                'InvertHardcopy', old_invert_hardcopy, 'ResizeFcn', old_resize_fcn);
+            
+            frame_height = size(frame.cdata, 1);
+            cdata = frame.cdata(1 + frame_height - (rect_screenpixels(2)+rect_screenpixels(4)) : frame_height - rect_screenpixels(2), rect_screenpixels(1):rect_screenpixels(1)+rect_screenpixels(3)-1, :);
+            frame.cdata = cdata;
+        end
     end
 end
 

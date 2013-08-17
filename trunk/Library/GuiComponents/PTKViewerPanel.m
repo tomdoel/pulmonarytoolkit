@@ -341,30 +341,7 @@ classdef PTKViewerPanel < handle
             rect_screenpixels = round(rect_screenpixels);
 
             % Capture the image as a bitmap
-            
-%             frame = getframe(obj.FigureHandle, rect_screenpixels);
-
-            % Change renderer and paper position mode
-            temp_paper_position_mode = get(obj.FigureHandle, 'PaperPositionMode');
-            temp_renderer = get(obj.FigureHandle, 'Renderer');
-            set(obj.FigureHandle, 'PaperPositionMode', 'auto');
-            if strcmp(temp_renderer, 'painters')
-                set(obj.FigureHandle, 'Renderer','zbuffer');
-            end
-            
-            % Use undocumented hardcopy() function to capture image
-            cdata = hardcopy(obj.FigureHandle, '-Dzbuffer', '-r0');
-            
-            % Restore renderer and paper position mode
-            if strcmp(temp_renderer, 'painters')
-                set(obj.FigureHandle, 'Renderer', 'painters');
-            end
-            set(obj.FigureHandle, 'PaperPositionMode', temp_paper_position_mode);
-            
-            frame = im2frame(cdata);
-            frame_height = size(frame.cdata, 1);
-            cd2 = frame.cdata(1 + frame_height - (rect_screenpixels(2)+rect_screenpixels(4)) : frame_height - rect_screenpixels(2), rect_screenpixels(1):rect_screenpixels(1)+rect_screenpixels(3)-1, :);
-            frame.cdata = cd2;
+            frame = PTKImageUtilities.CaptureFigure(obj.FigureHandle, rect_screenpixels);
             
             % Return the figure to its original position 
             set(obj.Axes, 'Position', old_position);            
