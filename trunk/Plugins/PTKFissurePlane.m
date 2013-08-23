@@ -92,7 +92,7 @@ classdef PTKFissurePlane < PTKPlugin
                 reporting.ShowWarning('PTKFissurePlane:NoRightHoritontalFissure', 'Unable to find the right horizontal fissure', []);
             end
             
-            extrapolation = 3;
+            extrapolation = 4;
             
             results_right_raw = 3*PTKGetFissurePlane(max_fissure_points_o, right_lung_roi.ImageSize, extrapolation);
             
@@ -110,7 +110,7 @@ classdef PTKFissurePlane < PTKPlugin
             % value, but higher values may be needed if few fissure points have 
             % been found, especially for the right mid fissure.
             if ~isempty(max_fissure_points_m)
-                extrapolation = 10; % A value of 4 typically works well, but may need to be increased in some cases
+                extrapolation = 4; % A value of 4 typically works well, but may need to be increased in some cases
                 results_right_m_raw = PTKGetFissurePlane(max_fissure_points_m, right_lung_roi.ImageSize, extrapolation);
                 results_right_m_raw(right_lung_mask.RawImage == 0) = 0;
                 results_right_raw(results_right_m_raw == 1) = 2;
