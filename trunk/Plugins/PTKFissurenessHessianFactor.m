@@ -78,8 +78,8 @@ classdef PTKFissurenessHessianFactor < PTKPlugin
             fissureness = PTKImageDividerHessian(image_data, @PTKFissurenessHessianFactor.ComputeFissurenessPartImage, mask, 1.0, [], false, false, is_left_lung, reporting);
         end
         
-        function fissureness_wrapper = ComputeFissurenessPartImage(hessian_eigs_wrapper)
-            fissureness_wrapper = PTKComputeFissurenessFromHessianeigenvalues(hessian_eigs_wrapper);
+        function fissureness_wrapper = ComputeFissurenessPartImage(hessian_eigs_wrapper, voxel_size)
+            fissureness_wrapper = PTKComputeFissurenessFromHessianeigenvalues(hessian_eigs_wrapper, voxel_size);
         end
     end
 end
