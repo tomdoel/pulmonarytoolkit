@@ -1,4 +1,4 @@
-function fissureness_wrapper = PTKComputeFissurenessFromHessianeigenvalues(hessian_eigs_wrapper)
+function fissureness_wrapper = PTKComputeFissurenessFromHessianeigenvalues(hessian_eigs_wrapper, voxel_size)
     % PTKComputeFissurenessFromHessianeigenvalues. Filter for detecting fissures.
     %
     %     PTKComputeFissurenessFromHessianeigenvalues computes a 

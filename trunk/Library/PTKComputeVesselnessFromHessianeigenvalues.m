@@ -1,4 +1,4 @@
-function vesselness_wrapper = PTKComputeVesselnessFromHessianeigenvalues(hessian_eigs_wrapper)
+function vesselness_wrapper = PTKComputeVesselnessFromHessianeigenvalues(hessian_eigs_wrapper, voxel_size)
     % PTKComputeVesselnessFromHessianeigenvalues. Vesselness filter for detecting blood vessels
     %
     %     PTKComputeVesselnessFromHessianeigenvalues computes a mutiscale
@@ -49,10 +49,12 @@ function vesselness_wrapper = PTKComputeVesselnessFromHessianeigenvalues(hessian
 
     term_3 = sqrt(lam1.^2 + lam2.^2 + lam3.^2); % S
     
-    % Frangi et al. choose a noise threshold of half the maximum hessian
-    % eigenvalue, i.e. c = max(term_3(:)) / 2
-    % However, we find a fixed experimentally-chosen threshold works better
-    c = 200;
+    % Frangi et al. choose a noise threshold based on the Hessian mean.
+    % However, we find a fixed experimentally-chosen threshold works better, but
+    % this must be scaled by the voxel size
+    multiple_matrix = voxel_size'*voxel_size;
+    c_scaling = 1/mean(multiple_matrix(:));
+    c = 400*c_scaling;
     
     term_3 = 1 - exp((-term_3.^2)./(2*c^2));
     

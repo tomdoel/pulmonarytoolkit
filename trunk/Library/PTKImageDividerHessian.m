@@ -97,16 +97,16 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     end
     
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
-        reporing.Warning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
+        reporting.Warning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
     end
 
     if dont_calculate_evals && ~isempty(mask)
-        reporing.Warning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently this function does not support a mask when not computing eigenvalues', []);
+        reporting.Warning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently this function does not support a mask when not computing eigenvalues', []);
     end
 
     % Check the input image is of the correct form
     if ~isa(image_data, 'PTKImage')
-        reporing.Error('PTKImageDividerHessian:InputImageBadFormat', 'Requires a PTKImage as input');
+        reporting.Error('PTKImageDividerHessian:InputImageBadFormat', 'Requires a PTKImage as input');
     end
     
     if isempty(dont_divide)
@@ -166,7 +166,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
             part_hessian_evals = HessianVectorised(hessian_components, image_size, mask);
             
             % Call filter with the resulting eigenvalues
-            filtered_image_raw = filter_function(part_hessian_evals);
+            filtered_image_raw = filter_function(part_hessian_evals, image_data.VoxelSize);
         end
         
         filtered_image.ChangeRawImage(filtered_image_raw.RawImage);
@@ -217,7 +217,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
                 part_hessian_evals = HessianVectorised(hessian_components, part_image.ImageSize, part_mask);
                 
                 % Call filter with the resulting eigenvalues
-                part_filtered_image = filter_function(part_hessian_evals);
+                part_filtered_image = filter_function(part_hessian_evals, part_image.VoxelSize);
             end
             
             if isempty(mask)
