@@ -52,14 +52,16 @@ classdef PTKFissurenessVesselsFactor < PTKPlugin
             vesselness = dataset.GetResult('PTKVesselness');
             
             % Threshold vesselness and compute distance transform
-            vesselness_threshold = 50;
+            vesselness_threshold = 10;
             vesselness = bwdist((vesselness.RawImage > vesselness_threshold) | ~(lung_mask.RawImage > 0));
             
             % Compute image based on distance transform
-            % ToDo: alpha should take into account the voxel size
-            alpha = 4;
+            nu_mm = 5;
             
-            vesselness = 1 - exp((-(vesselness).^2)./(2*alpha^2));
+            mean_voxel_length = mean(lung_mask.VoxelSize);
+            nu_voxels = nu_mm/mean_voxel_length;
+            
+            vesselness = 1 - exp((-(vesselness).^2)./(2*nu_voxels^2));
             
             % Store in results
             results = lung_mask.BlankCopy;            
