@@ -176,7 +176,7 @@ classdef PTKDiskCache < handle
             file_list = cat(2, file_list, file_list_2);
             for index = 1 : length(file_list)
                 file_name = file_list{index};
-                is_framework_file = strcmp(file_name, [PTKSoftwareInfo.SchemaCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.ImageInfoCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName 'raw']) || strcmp(file_name, [PTKSoftwareInfo.ImageTemplatesCacheName '.mat']);
+                is_framework_file = strcmp(file_name, [PTKSoftwareInfo.SchemaCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.ImageInfoCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.raw']) || strcmp(file_name, [PTKSoftwareInfo.ImageTemplatesCacheName '.mat']);
                 if (remove_framework_files || (~is_framework_file))
                     full_filename = fullfile(file_path, file_name);
                     reporting.ShowMessage('PTKDiskCache:RecyclingCacheDirectory', ['Moving cache file to recycle bin: ' full_filename]);
