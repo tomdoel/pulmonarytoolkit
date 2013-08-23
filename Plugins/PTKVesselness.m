@@ -72,11 +72,11 @@ classdef PTKVesselness < PTKPlugin
     methods (Static, Access = private)
         
         function vesselness = ComputeVesselness(image_data, reporting, is_left_lung)
-            sigma_range = 0.5 : 0.5: 4;
+            sigma_range = 0.5 : 0.5: 2;
             vesselness = [];
             for sigma = sigma_range
                 mask = [];
-                vesselness_next = PTKImageDividerHessian(image_data.Copy, @PTKVesselness.ComputeVesselnessPartImageNew, mask, sigma, [], false, false, is_left_lung, reporting);
+                vesselness_next = PTKImageDividerHessian(image_data.Copy, @PTKVesselness.ComputeVesselnessPartImage, mask, sigma, [], false, false, is_left_lung, reporting);
                 vesselness_next.ChangeRawImage(100*vesselness_next.RawImage);
                 if isempty(vesselness)
                     vesselness =  vesselness_next.Copy;
@@ -86,8 +86,8 @@ classdef PTKVesselness < PTKPlugin
             end
         end
                 
-        function vesselness_wrapper = ComputeVesselnessPartImageNew(hessian_eigs_wrapper)
-            vesselness_wrapper = PTKComputeVesselnessFromHessianeigenvalues(hessian_eigs_wrapper);
+        function vesselness_wrapper = ComputeVesselnessPartImage(hessian_eigs_wrapper, voxel_size)
+            vesselness_wrapper = PTKComputeVesselnessFromHessianeigenvalues(hessian_eigs_wrapper, voxel_size);
         end
         
     end
