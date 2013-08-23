@@ -34,7 +34,7 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     ref_image(candidate_indices) = 2;
     
     % Remove points with low fissureness    
-    fissureness_threshold = 30;
+    fissureness_threshold = 50;
     candidate_indices = candidate_indices(fissureness(candidate_indices) > fissureness_threshold);
     ref_image(candidate_indices) = 4;
 
@@ -177,10 +177,10 @@ end
 
 function points_coords = RemoveNonConnectedPoints(points_coords, template_image, image_size)
     voxel_volume = prod(template_image.VoxelSize);
-    min_component_size_mm3 = 500;
+    min_component_size_mm3 = 200;
     min_component_size_voxels = round(min_component_size_mm3/voxel_volume);
 
-    dilate_size_mm = 3;
+    dilate_size_mm = 2.5;
     
     image_mask = false(image_size);
     indices = sub2ind(image_size, points_coords(:,1), points_coords(:,2), points_coords(:,3));
