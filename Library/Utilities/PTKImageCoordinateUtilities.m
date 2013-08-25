@@ -288,6 +288,32 @@ classdef PTKImageCoordinateUtilities
                 reporting.Error('PTKImageCoordinateUtilities:UnknownOrientationVector', 'GetDimensionIndexFromOrientation() was called with an unknown orientation vector.');
             end
         end
+        
+        function spline_points = CreateSplineCurve(points, num_points)
+            number_of_points = size(points, 1);
+            number_of_coordinates = size(points, 2);
+            extended_points = zeros(number_of_points + 2, number_of_coordinates);
+            extended_points(2 : number_of_points + 1, :) = points;
+            extended_points(1, :) = extended_points(2, :) - (extended_points(3, :) - extended_points(2, :));
+            extended_points(end, :) = extended_points(end - 1, :) - (extended_points(end - 2, : ) - extended_points(end - 1, :));
+            
+            extended_number_of_points = size(extended_points, 1);
+            interval_values = linspace(0, 1, num_points + 1);
+            interval_values2 = interval_values.^2;
+            interval_values3 = interval_values.^3;
+            
+            for index = 2 : extended_number_of_points - 2
+                coeffs = (1/6).*[...
+                        extended_points(index - 1,:)  + 4*extended_points(index, :) + extended_points(index + 1, :); ...
+                    - 3*extended_points(index - 1, :) + 3*extended_points(index + 1, :); ...
+                      3*extended_points(index - 1, :) - 6*extended_points(index, :) + 3*extended_points(index + 1, :); ...
+                    -   extended_points(index - 1, :) + 3*extended_points(index, :) - 3*extended_points(index + 1, :) + extended_points(index+2, :) ...
+                ]';
+                
+                interval = [ones(size(interval_values)); interval_values; interval_values2; interval_values3];
+                spline_points(:, (index - 2)*num_points + 1 : (index - 1)*num_points + 1) = coeffs*interval;
+            end
+        end
     end
 end
 
