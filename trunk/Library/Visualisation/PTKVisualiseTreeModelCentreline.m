@@ -42,45 +42,26 @@ function figure_handle = PTKVisualiseTreeModelCentreline(parent_branch, voxel_si
     
     for branch = branches
         centreline = branch.Centreline;
+
         radius = branch.Radius;
         if centreline_only
             radius = [];
         end
-        skip = 3;
+        
         x_coords = [centreline.CoordJ];
         y_coords = [centreline.CoordI];
         z_coords = [centreline.CoordK];
         
-        num_points = numel(x_coords);
-        if branch.GenerationNumber > 3
-            range = round(linspace(1, num_points, 3));
-        else
-            range = round(linspace(1, num_points, 10));
-        end
-        
-        x_coords_reduced = x_coords(range);
-        y_coords_reduced = y_coords(range);
-        z_coords_reduced = z_coords(range);
-        
         if isempty(radius)
-            knot = [x_coords_reduced', y_coords_reduced', z_coords_reduced'];
+            branch.GenerateSmoothedCentreline;
+            smoothed_centreline = branch.SmoothedCentreline;
+            x_smoothed = [smoothed_centreline.CoordJ];
+            y_smoothed = [smoothed_centreline.CoordI];
+            z_smoothed = [smoothed_centreline.CoordK];
             
-            % Generate a spline curve through the centreline points
-            % Currently this is not used in the radius computation
-            spline = GenerateSpline(knot, 2);
-            
-            plot3(spline(1,:)', spline(2,:)', -spline(3,:)', 'b', 'LineWidth', 1.5);
-            if ~isempty(branch.Parent)
-                p_x_coords = [branch.Parent.Centreline.CoordJ];
-                p_y_coords = [branch.Parent.Centreline.CoordI];
-                p_z_coords = [branch.Parent.Centreline.CoordK];
-                xb_coords = [p_x_coords(end), x_coords(1)];
-                yb_coords = [p_y_coords(end), y_coords(1)];
-                zb_coords = [p_z_coords(end), z_coords(1)];
-                plot3(xb_coords', yb_coords', -zb_coords', 'b', 'LineWidth', 1.5);
-            end
+            plot3(x_smoothed', y_smoothed', -z_smoothed', 'b', 'LineWidth', 1.5);
         else
-            plot3(figure_handle, x_coords', y_coords', z_coords', 'b', 'LineWidth', 4*radius);
+            plot3(x_coords', y_coords', z_coords', 'b', 'LineWidth', 4*radius);
         end
 
     end
