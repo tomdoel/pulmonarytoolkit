@@ -114,7 +114,7 @@ function [sorted_indices, slice_thickness, global_origin_mm] = PTKSortImagesByLo
         end
     else
         slice_thickness = mode(slice_thicknesses);
-        if any(slice_thicknesses - slice_thickness) > 0.01
+        if any((slice_thicknesses - slice_thickness) > 0.01)
             reporting.ShowWarning('PTKSortImagesByLocation:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
         end
     end
