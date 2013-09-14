@@ -59,9 +59,17 @@ function figure_handle = PTKVisualiseTreeModelCentreline(parent_branch, voxel_si
             y_smoothed = [smoothed_centreline.CoordI];
             z_smoothed = [smoothed_centreline.CoordK];
             
+            if ~isempty(branch.Parent)
+                x_smoothed = [branch.Parent.Centreline(end).CoordJ(end), x_smoothed];
+                y_smoothed = [branch.Parent.Centreline(end).CoordI(end), y_smoothed];
+                z_smoothed = [branch.Parent.Centreline(end).CoordK(end), z_smoothed];
+            end
+            
             plot3(x_smoothed', y_smoothed', -z_smoothed', 'b', 'LineWidth', 1.5);
+            plot3(x_smoothed', y_smoothed', -z_smoothed', 'ro');
         else
             plot3(x_coords', y_coords', z_coords', 'b', 'LineWidth', 4*radius);
+            plot3(x_coords', y_coords', z_coords', 'rx');
         end
 
     end
