@@ -91,12 +91,15 @@ classdef PTKDensityGridPerLobe < PTKPlugin
             file_handle = fopen(results_file_name, 'w');
             
             number_points = length(ic);
+            
+            template_image = dataset.GetTemplateImage(PTKContext.LungROI);
+
             for index = 1 : number_points
                 
-                % Matlab stores coordinates as [yxz]
-                coord_x = jc(index);
-                coord_y = ic(index);
-                coord_z = kc(index);
+                dicom_coords = PTKImageCoordinateUtilities.PtkToCornerCoordinates([ic(index), jc(index), kc(index)], template_image);
+                coord_x = dicom_coords(1);
+                coord_y = dicom_coords(2);
+                coord_z = dicom_coords(3);
                 
                 density = density_values(index);
                 output_string = sprintf('%6.6g,%6.6g,%6.6g,%6.6g\r\n', coord_x, coord_y, coord_z, density);
