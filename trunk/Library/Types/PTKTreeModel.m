@@ -21,7 +21,11 @@ classdef PTKTreeModel < PTKTree
         TemporaryIndex
         
         Centreline
+        SmoothedCentreline
         Density = -99
+        
+        LobeIndex
+        SegmentIndex
         
         BranchProperties
     end
@@ -33,6 +37,7 @@ classdef PTKTreeModel < PTKTree
     methods
         function obj = PTKTreeModel(parent)
             obj.Centreline = PTKCentrelinePoint.empty(0);
+            obj.SmoothedCentreline = PTKCentrelinePoint.empty(0);
             obj.GenerationNumber = 1;
             if nargin > 0
                 obj.Parent = parent;
@@ -45,6 +50,57 @@ classdef PTKTreeModel < PTKTree
             obj.Parent = parent;
             parent.AddChild(obj);
         end
+        
+        function RemoveMultipleBifurcations(obj)
+            branches_to_do = obj;
+            while ~isempty(branches_to_do)
+                branch = branches_to_do(end);
+                branches_to_do(end) = [];
+                branch.SplitChildBranchesIntoBifurcations;
+                branches_to_do = [branches_to_do, branch.Children];
+            end
+        end
+        
+        function SplitChildBranchesIntoBifurcations(obj)
+            while numel(obj.Children) > 2
+                children = obj.Children;
+                child_radius = [children.Radius];
+                [~, sorted_indices] = sort(child_radius, 'descend');
+                largest_child = children(sorted_indices(1));
+                second_largest_chid = children(sorted_indices(2));
+                
+                other_children = children(sorted_indices(2:end));
+                
+                % Remove all other branches except the largest
+                obj.Children = largest_child;
+                
+                % Create a new branch and add as a child of the current branch
+                new_branch = PTKTreeModel(obj);
+                
+                % Add the other child branches to the new branch
+                for child = other_children
+                    new_branch.AddChild(child);
+                end
+                
+                % Set parameters for new branch
+                new_branch.StartPoint = obj.EndPoint;
+                new_branch.EndPoint = obj.EndPoint;
+                new_branch.Radius = second_largest_chid.Radius;
+                new_branch.WallThickness = second_largest_chid.Radius;
+                
+                new_branch.Centreline = obj.Centreline(end);
+                new_branch.SmoothedCentreline = obj.Centreline(end);
+                new_branch.Density = second_largest_chid.Density;
+                
+                new_branch.LobeIndex = second_largest_chid.LobeIndex;
+                new_branch.SegmentIndex = second_largest_chid.LobeIndex;
+                
+                new_branch.BranchProperties = second_largest_chid.BranchProperties;
+                
+                
+            end
+            
+        end
 
         % Returns the number of branches in this tree, from this branch
         % downwards
@@ -56,6 +112,19 @@ classdef PTKTreeModel < PTKTree
                 branches_to_do(end) = [];
                 branches_to_do = [branches_to_do, branch.Children];
                 number_of_points = number_of_points + numel(branch.Centreline);
+            end
+        end
+        
+        % Returns the number of branches in this tree, from this branch
+        % downwards
+        function number_of_points = CountSmoothedCentrelinePointsInTree(obj)
+            number_of_points = 0;            
+            branches_to_do = obj;
+            while ~isempty(branches_to_do)
+                branch = branches_to_do(end);
+                branches_to_do(end) = [];
+                branches_to_do = [branches_to_do, branch.Children];
+                number_of_points = number_of_points + numel(branch.SmoothedCentreline);
             end
         end
         
@@ -90,10 +159,7 @@ classdef PTKTreeModel < PTKTree
             local_indices = skeleton_tree.Points;
             global_indices = image_template.LocalToGlobalIndices(local_indices);
             for point = global_indices
-                [c_i, c_j, c_k] = ind2sub(image_template.OriginalImageSize, point);
-                c_i = (c_i - 0.5)*image_template.VoxelSize(1);
-                c_j = (c_j - 0.5)*image_template.VoxelSize(2);
-                c_k = (c_k - 0.5)*image_template.VoxelSize(3);
+                [c_i, c_j, c_k] = image_template.GlobalIndicesToCoordinatesMm(point);
                 new_point = PTKCentrelinePoint(c_i, c_j, c_k, radius, point);
                 obj.Centreline(end+1) = new_point;
             end
@@ -126,6 +192,55 @@ classdef PTKTreeModel < PTKTree
             end
         end
         
+        function GenerateSmoothedCentreline(obj)
+            centreline = obj.Centreline;
+            x_coords = [centreline.CoordJ];
+            y_coords = [centreline.CoordI];
+            z_coords = [centreline.CoordK];
+            radius_values = [centreline.Radius];
+            global_index = [centreline.GlobalIndex];
+            if ~isempty(obj.Parent)
+                x_coords = [obj.Parent.Centreline(end).CoordJ(end), x_coords];
+                y_coords = [obj.Parent.Centreline(end).CoordI(end), y_coords];
+                z_coords = [obj.Parent.Centreline(end).CoordK(end), z_coords];
+                radius_values = [obj.Parent.Centreline(end).Radius(end), radius_values];
+                global_index = [obj.Parent.Centreline(end).GlobalIndex(end), global_index];
+            end
+            
+            point_spacing_mm = 5;
+            desired_number_of_points = ceil(obj.LengthMm/(3*point_spacing_mm));
+            desired_number_of_points = max(2, desired_number_of_points);
+            num_points = numel(x_coords);
+            range = round(linspace(1, num_points, desired_number_of_points));
+            
+            x_coords_reduced = x_coords(range);
+            y_coords_reduced = y_coords(range);
+            z_coords_reduced = z_coords(range);
+            
+            knot = [x_coords_reduced', y_coords_reduced', z_coords_reduced'];
+            
+            % Generate a spline curve through the centreline points
+            spline = PTKImageCoordinateUtilities.CreateSplineCurve(knot, 2);
+
+            number_of_original_points = size(radius_values, 2);
+            number_of_spline_points = size(spline, 2);
+            interpolated_indices = round(linspace(1, number_of_original_points, number_of_spline_points));
+            
+            radius_values = radius_values(interpolated_indices);
+            global_index = global_index(interpolated_indices);
+            
+            % Store smoothed centreline
+            obj.SmoothedCentreline = PTKCentrelinePoint.empty;
+            for smoothed_point_index = 1 : number_of_spline_points
+                obj.SmoothedCentreline(smoothed_point_index) = PTKCentrelinePoint(spline(2, smoothed_point_index), spline(1, smoothed_point_index), spline(3, smoothed_point_index), radius_values(smoothed_point_index), global_index(smoothed_point_index));
+            end
+            
+            % Remove bifurcation point
+            if ~isempty(obj.Parent)
+                obj.SmoothedCentreline(1) = [];
+            end
+        end
+        
         function GenerateBranchParameters(obj)
             obj.StartPoint = obj.Centreline(1);
             obj.EndPoint = obj.Centreline(end);
@@ -154,10 +269,15 @@ classdef PTKTreeModel < PTKTree
             end
         end
         
+        % LengthMm computes the segment length based on the start and end
+        % voxels. This method works for arrays.
         function length_mm = LengthMm(obj)
-            coord_start = [obj.StartPoint.CoordI, obj.StartPoint.CoordJ, obj.StartPoint.CoordK];
-            coord_end = [obj.EndPoint.CoordI, obj.EndPoint.CoordJ, obj.EndPoint.CoordK];
-            length_mm = norm(coord_start - coord_end, 2);            
+            start_points = [obj.StartPoint];
+            end_points = [obj.EndPoint];
+            coord_start = [[start_points.CoordI]; [end_points.CoordJ]; [start_points.CoordK]];
+            coord_end = [[end_points.CoordI]; [end_points.CoordJ]; [end_points.CoordK]];
+            
+            length_mm = sqrt(sum((coord_start - coord_end).^2, 1));
         end
         
         % This function exists for compatibility with PTKAirwayGrowingTree
@@ -248,8 +368,6 @@ classdef PTKTreeModel < PTKTree
                 end
             end
         end
-        
-
     end
     
     methods (Static)
