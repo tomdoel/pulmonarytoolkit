@@ -1,4 +1,4 @@
-function PTKSaveCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, reporting)
+function PTKSaveCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, template_image, reporting)
     % PTKSaveCentrelineTreeAsNodes. Exports a centreline tree structure into node and element files
     %
     %     Syntax
@@ -50,7 +50,7 @@ function PTKSaveCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, rep
             is_endpoint = (point_index == length(points)) && isempty(branch.Children);
             
             % Write point to node file
-            PrintNodeToFile(node_file_handle, current_node_index, point, is_endpoint);
+            PrintNodeToFile(node_file_handle, current_node_index, point, is_endpoint, template_image);
             
             % Write (parent, current_node_index) to element file
             PrintElementToFile(element_file_handle, parent_node_index, current_node_index)
@@ -89,10 +89,13 @@ function PrintElementToFile(fid, parent_index, child_index)
     fprintf(fid, '%u,%u\r\n', parent_index, child_index);
 end
 
-function PrintNodeToFile(fid, node_index, point, is_endpoint)
-    xc = point.CoordJ;
-    yc = point.CoordI;
-    zc = point.CoordK;
+function PrintNodeToFile(fid, node_index, point, is_endpoint, template_image)
+    
+    dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([point.CoordI, point.CoordJ, point.CoordK], template_image);
+    
+    xc = dicom_coordinates(1);
+    yc = dicom_coordinates(2);
+    zc = dicom_coordinates(3);
     radius = point.Radius;
     if is_endpoint
         is_final_node = 'y';
@@ -102,6 +105,5 @@ function PrintNodeToFile(fid, node_index, point, is_endpoint)
     
     output_string = sprintf('%u,%6.6g,%6.6g,%6.6g,%2.2g,%c\r\n', node_index, xc, yc, zc, radius, is_final_node);
     fprintf(fid, regexprep(output_string, ' ', ''));
-%     fprintf(fid, '%u,%3.3f,%3.3f,%3.3f,%3.1f,%c\r\n', node_index, xc, yc, zc, radius, is_final_node);
     
 end
