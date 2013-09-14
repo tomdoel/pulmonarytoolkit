@@ -1,4 +1,4 @@
-function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, reporting)
+function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, template_image, reporting)
     % PTKSaveTreeAsNodes. Exports a tree structure into node and element files
     %
     %     Syntax
@@ -42,9 +42,13 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, reporting)
     % Create the first node from the trachea start point. The first element
     % connects this point to itself
     first_point = tree_root.StartPoint;
-    start_x_mm = first_point.CoordJ;
-    start_y_mm = first_point.CoordI;
-    start_z_mm = first_point.CoordK;
+    
+    dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([first_point.CoordI, first_point.CoordJ, first_point.CoordK], template_image);
+    start_x_mm = dicom_coordinates(1);
+    start_y_mm = dicom_coordinates(2);
+    start_z_mm = dicom_coordinates(3);
+    
+    
     start_radius_mm = tree_root.Radius;
     start_density_mgml = tree_root.Density;
     
@@ -61,7 +65,7 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, reporting)
         parent_node_index = branch.TemporaryIndex;
         
         % Write branch to node file (the end point will be the node coordinate).
-        PrintBranchToFileAsNode(node_file_handle, current_node_index, branch);
+        PrintBranchToFileAsNode(node_file_handle, current_node_index, branch, template_image);
         
         % Write (parent, current_node_index) to element file
         PrintElementToFile(element_file_handle, parent_node_index, current_node_index)
@@ -89,14 +93,17 @@ function PrintElementToFile(fid, parent_index, child_index)
     fprintf(fid, '%u,%u\r\n', parent_index, child_index);
 end
 
-function PrintBranchToFileAsNode(fid, node_index, branch)
+function PrintBranchToFileAsNode(fid, node_index, branch, template_image)
 
     % We define nodes using the end coordinate of each branch, since this is the
     % bifurcation point
     last_point = branch.EndPoint;
-    x_mm = last_point.CoordJ;
-    y_mm = last_point.CoordI;
-    z_mm = last_point.CoordK;
+    
+    dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([last_point.CoordI, last_point.CoordJ, last_point.CoordK], template_image);
+    x_mm = dicom_coordinates(1);
+    y_mm = dicom_coordinates(2);
+    z_mm = dicom_coordinates(3);
+
     radius_mm = branch.Radius;
     density_mgml = branch.Density;
     
