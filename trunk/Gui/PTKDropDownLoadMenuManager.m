@@ -61,6 +61,10 @@ classdef PTKDropDownLoadMenuManager < handle
                 current_uid = obj.Settings.ImageInfo.ImageUid;
                 current_number = find(ismember(uids, current_uid), 1);
                 set(obj.MenuHandle, 'Value', current_number);
+            else
+                % Ideally we should set the popupmenu to have no selection at
+                % this point, but Matlab does not allow this
+                
             end
             set(obj.MenuHandle, 'String', popupmenu_argument);
         end
