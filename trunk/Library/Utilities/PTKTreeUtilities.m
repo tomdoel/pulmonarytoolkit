@@ -65,8 +65,10 @@ classdef PTKTreeUtilities < handle
         
         % Computes all possible divisions of the tree defined by start_branches
         % into the number of subtrees specified by number_of_branches, where
-        % each subtree is specified by a single root branch
-        function new_permutations = GetBranchPermutationsForBranchNumber(start_branches, number_of_generations_to_search, number_of_branches_to_find)
+        % each subtree is specified by a single root branch.
+        % Will return an empty matrix if the tree could not be exactly divided 
+        % into the requested number of branches
+        function new_permutations = GetBranchPermutationsForBranchNumber(start_branches, number_of_generations_to_search, number_of_branches_to_find, reporting)
             
             % Make a copy of the tree - so we can extend it with artificial
             % branches where necessary
@@ -89,11 +91,6 @@ classdef PTKTreeUtilities < handle
                     new_permutations{end + 1} = this_permutation;
                 end
             end
-            
-            if isempty(new_permutations)
-                reporting.Error('PTKTreeUtilities:PermutationsDoNotMatchSegmentNumber', 'Could not subdivide the tree into exactly the desired number of branches');
-            end
-            
         end
         
         function largest_branches = GetLargestBranchesFromPermutations(permutations)
