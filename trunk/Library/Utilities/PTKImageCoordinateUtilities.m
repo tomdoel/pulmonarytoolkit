@@ -314,6 +314,48 @@ classdef PTKImageCoordinateUtilities
                 spline_points(:, (index - 2)*num_points + 1 : (index - 1)*num_points + 1) = coeffs*interval;
             end
         end
+        
+        function dicom_coordinates = PtkToDicomCoordinates(ptk_coordinates, template_image)
+            global_origin = template_image.GlobalOrigin;
+            voxel_size = template_image.VoxelSize;
+            original_image_size = template_image.OriginalImageSize;
+            
+            
+            % Adjust to coordinates at centre of first voxel
+            offset = -voxel_size/2;
+            offset = [offset(2), offset(1), -offset(3)];
+            
+            % Shift the global origin to the first slice of the image
+            global_origin = global_origin([2, 1, 3]); % Note global_origin(3) is currently in Dicom z-orientation and has not been inverted
+            global_origin(3) = global_origin(3) + (original_image_size(3) - 1)*voxel_size(3);
+            
+            % Adjust to Dicom origin
+            offset = offset + global_origin;
+
+            
+            
+            dicom_coordinates = [ptk_coordinates(:, 2), ptk_coordinates(:, 1), - ptk_coordinates(:, 3)];
+            dicom_coordinates = dicom_coordinates + repmat(offset, size(ptk_coordinates, 1), 1);
+        end
+        
+        function dicom_coordinates = PtkToCornerCoordinates(ptk_coordinates, template_image)
+            voxel_size = template_image.VoxelSize;
+            
+            % Adjust to coordinates at centre of first voxel
+            offset = -voxel_size/2;
+            offset = [offset(2), offset(1), -offset(3)];
+            
+            % Shift the global origin to the first slice of the image
+            global_origin = [0, 0, 0];
+            
+            % Adjust to Dicom origin
+            offset = offset + global_origin;
+
+            
+            
+            dicom_coordinates = [ptk_coordinates(:, 2), ptk_coordinates(:, 1), - ptk_coordinates(:, 3)];
+            dicom_coordinates = dicom_coordinates + repmat(offset, size(ptk_coordinates, 1), 1);
+        end
     end
 end
 
