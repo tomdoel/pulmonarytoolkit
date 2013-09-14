@@ -61,9 +61,9 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
             results.AirwaysByLobeImage = results_image;
             results.StartBranches = start_branches;
         end
-        
+
         function results = GenerateImageFromResults(airway_results, ~, ~)
             results = airway_results.AirwaysByLobeImage;
-        end        
+        end
     end
 end
