@@ -17,6 +17,11 @@ function separated_mask = PTKDivideVolumeUsingScatteredPoints(volume_mask, scatt
     % Find the main parts of the two main regions
     separated_mask = SeparateIntoTwo(volume_mask_copy, scattered_points, reporting);
     
+    % If the separation failed, return empty matrix
+    if isempty(separated_mask)
+        return;
+    end
+    
     % Fill in any remaining parts of the regions, excluding the scattered points
     volume_mask_raw = volume_mask_copy.RawImage;
     volume_mask_raw(scattered_points) = false;
@@ -61,7 +66,8 @@ function separated_mask = SeparateIntoTwo(volume_mask, scattered_points, reporti
         if isempty(region_1_indices)
             closing_size_mm = closing_size_mm + closing_step_mm;
             if closing_size_mm > max_closing_size_mm
-                reporting.Error('PTKDivideVolumeUsingScatteredPoints:UnableToDivide', 'Could not separate this volume into two sub-volumes');                
+                separated_mask = [];
+                return;
             end
             
             % Reset dividing points image to original set of points
