@@ -306,7 +306,7 @@ classdef PTKGui < handle
             obj.Settings.ImageInfo = [];
 
             if ~isempty(obj.Dataset)
-                obj.Dataset.ClearCacheForThisDataset(false);
+                obj.Dataset.ClearCacheForThisDataset(true);
                 image_info = obj.Dataset.GetImageInfo;
                 
                 old_infos = obj.Settings.PreviousImageInfos;
