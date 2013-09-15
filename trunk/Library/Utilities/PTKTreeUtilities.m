@@ -210,8 +210,38 @@ classdef PTKTreeUtilities < handle
                 k_distance = min_k - start_k;
             end
         end
+
+        function voxels = GetCentrelineVoxelsForTheseBranches(start_branches, template)
+            voxels = [];
+            for index = 1 : numel(start_branches)
+                voxels = cat(2, voxels, PTKTreeUtilities.CentrelinePointsToLocalIndices(start_branches(index).GetCentrelineTree, template));
+            end
+        end
         
-        
+        function voxels = GetCentrelineVoxelsForTheseBranchesExtended(start_branches, template)
+            voxels = [];
+            if isempty(start_branches)
+                return;
+            end
+            
+            for index = 1 : numel(start_branches)
+                voxels = cat(2, voxels, PTKTreeUtilities.CentrelinePointsToLocalIndices(start_branches(index).GetCentrelineTree, template));
+                parent = start_branches(index).Parent;
+                while ~isempty(parent)
+                    centreline_indices = PTKTreeUtilities.CentrelinePointsToLocalIndices(parent.Centreline, template);
+                    voxels = cat(2, voxels, centreline_indices);
+                    parent = parent.Parent;
+                end
+            end
+            
+            % Add nearest neighbours to the list of voxels, otherwise it is possible for
+            % a diagnoally-connected centreline segment to pass through a
+            % diagnoally-connected airway segment
+            [~, linear_offsets27] = PTKImageCoordinateUtilities.GetLinearOffsets(template.ImageSize);
+            voxels = repmat(int32(voxels), 27, 1) + repmat(int32(linear_offsets27'), 1, length(voxels));
+            voxels = unique(voxels(:));
+        end
+
     end
 end
 
