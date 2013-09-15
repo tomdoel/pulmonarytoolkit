@@ -140,13 +140,12 @@ classdef PTKFissurePlane < PTKPlugin
                     if extrapolation > max_extrapolation
                         reporting.Error('PTKFissurePlane:UnableToDivide', 'Could not separate the lobes');
                     end
-                    compute_again = true;                    
+                    compute_again = true;
                 else
                     compute_again = false;
                     disp(['Final extrapolation:' int2str(extrapolation)]);
-                end                    
+                end
             end
         end
-        
     end
 end
