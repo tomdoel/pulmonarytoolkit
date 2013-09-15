@@ -108,7 +108,7 @@ classdef PTKDicomImage < PTKImage
                 study_description = ['/ ', metadata.StudyDescription, ' '];
             end
             if isfield(metadata, 'SeriesDescription')
-                study_description = ['/ ', metadata.SeriesDescription, ' '];
+                series_description = ['/ ', metadata.SeriesDescription, ' '];
             end
             
             new_dicom_image.Title = [patient_name, study_description, series_description];
