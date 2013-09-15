@@ -120,7 +120,7 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
     else
         
         % Order branches by their computed radii and choose the largest 4
-        top_branches = ForceLingulaAndGetLargestBranches(left_lung_start, 3, 4, template, 2);
+        top_branches = ForceLingulaAndGetLargestBranches(left_lung_start, 3, 4, template, 2, reporting);
         ordered_top_branches = PTKTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(top_branches, template);
 
         left_lower_startsegment = [ordered_top_branches(1), ordered_top_branches(2)];
@@ -134,17 +134,24 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
     end
 end
 
-function largest_branches = GetLargestBranches(start_branches, number_of_generations_to_search, number_of_branches_to_find)
+function largest_branches = GetLargestBranches(start_branches, number_of_generations_to_search, number_of_branches_to_find, reporting)
     permutations = PTKTreeUtilities.GetBranchPermutationsForBranchNumber(start_branches, number_of_generations_to_search, number_of_branches_to_find);
+    if isempty(permutations)
+        reporting.Error('PTKGetAirwaysLabelledByLobe:PermutationsDoNotMatchSegmentNumber', 'Could not subdivide the tree into exactly the desired number of branches');
+    end
+
     largest_branches = PTKTreeUtilities.GetLargestBranchesFromPermutations(permutations);
     
     % Now get the corresponding branches from the original tree
     largest_branches = PTKTreeUtilities.BranchesToSourceBranches(largest_branches);
 end
 
-function largest_branches = ForceLingulaAndGetLargestBranches(start_branches, number_of_generations_to_search, number_of_branches_to_find, template, number_of_branches_1)
+function largest_branches = ForceLingulaAndGetLargestBranches(start_branches, number_of_generations_to_search, number_of_branches_to_find, template, number_of_branches_1, reporting)
     
     permutations = PTKTreeUtilities.GetBranchPermutationsForBranchNumber(start_branches, number_of_generations_to_search, number_of_branches_to_find);
+    if isempty(permutations)
+        reporting.Error('PTKGetAirwaysLabelledByLobe:PermutationsDoNotMatchSegmentNumber', 'Could not subdivide the tree into exactly the desired number of branches');
+    end
     
     % Remove permutations where the third branch does not have a
     % downward direction
@@ -197,7 +204,7 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         upper_lobe_dpcentroid = PTKTreeUtilities.GetDPCentroid(upper_lobe_reference, template);
         lower_lobe_dpcentroid = PTKTreeUtilities.GetDPCentroid(lower_lobe_reference, template);
 
-        lower_lobe_3centroid = PTKTreeUtilities.GetCentroid(CentrelinePointsToLocalIndices(lower_lobe_reference.GetCentrelineTree, template), template);
+        lower_lobe_3centroid = PTKTreeUtilities.GetCentroid(PTKTreeUtilities.CentrelinePointsToLocalIndices(lower_lobe_reference.GetCentrelineTree, template), template);
 
         if abs(upper_lobe_dpcentroid - lower_lobe_dpcentroid) < 20
             reporting.Error('PTKGetAirwaysLabelledByLobe:NotEnoughCentroidSeparation', 'Unable to determine airway branching structure because there is not enough separation between the centroids of the branch centrelines.');
@@ -208,7 +215,7 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         
         for i = 1 : length(uncertain_segments)
             uncertain_dpcentroid = PTKTreeUtilities.GetDPCentroid(uncertain_segments(i), template);
-            uncertain_3centroid = PTKTreeUtilities.GetCentroid(CentrelinePointsToLocalIndices(uncertain_segments(i).GetCentrelineTree, template), template);
+            uncertain_3centroid = PTKTreeUtilities.GetCentroid(PTKTreeUtilities.CentrelinePointsToLocalIndices(uncertain_segments(i).GetCentrelineTree, template), template);
             distance_to_upper_lobe = abs(uncertain_dpcentroid - upper_lobe_dpcentroid);
             distance_to_lower_lobe = abs(uncertain_dpcentroid - lower_lobe_dpcentroid);
             
@@ -259,7 +266,7 @@ function [right_upper_start_branches, right_midlower_start_branches] = SeparateR
         right_midlower_start_branches = [];
     else
         % Order branches by their computed radii and choose the largest 3
-        top_branches = GetLargestBranches(right_lung_start, 2, 3);
+        top_branches = GetLargestBranches(right_lung_start, 2, 3, reporting);
         
         % Find the ancestor branch of the two widest branches - this is the
         % bifurcation point between the upper and middle lobes
@@ -328,7 +335,7 @@ function [right_mid_startindices, right_lower_startindices] = SeparateRightLungI
     end
     
     % Order branches by their computed radii and choose the largest 3
-    top_branches = GetLargestBranches(right_midlower_startindex, 2, 3);
+    top_branches = GetLargestBranches(right_midlower_startindex, 2, 3, reporting);
 
     ordered_branches = PTKTreeUtilities.OrderSegmentsByCentroidI(top_branches, template);
     right_mid_startindices = ordered_branches(1);
