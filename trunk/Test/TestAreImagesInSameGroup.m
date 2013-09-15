@@ -45,7 +45,6 @@ classdef TestAreImagesInSameGroup < PTKTest
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'BitDepth', 1, 2);
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'ColorType');
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'MediaStorageSOPClassUID');
-            [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'TransferSyntaxUID');
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'ImageType', 'ORIGINAL\PRIMARY\AXIAL', 'ORIGINAL\PRIMARY');            
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'SOPClassUID');
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'ImplementationClassUID');
@@ -64,20 +63,31 @@ classdef TestAreImagesInSameGroup < PTKTest
             other_metadata.SliceLocation = 2;
             obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
             
-            % ImagePositionPatient tag: existence must match and 2 of the 3 values must match
-            this_metadata.ImagePositionPatient = [1;2;3];
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should fail');
-            other_metadata.ImagePositionPatient = [4;5;6];
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should fail');
-            other_metadata.ImagePositionPatient = [1;5;6];
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should fail');
-            other_metadata.ImagePositionPatient = [1;2;6];
-            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
-            other_metadata.ImagePositionPatient = [7;2;3];
-            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
-            other_metadata.ImagePositionPatient = [1;8;3];
-            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
-            
+            % ImagePositionPatient tag: check consistency of image locations
+            % Image positions should lie approximately on a line; there is a
+            % tolerance of 10mm
+            extra_metadata = other_metadata;
+            this_metadata.ImagePositionPatient = [10;20;30];
+            extra_metadata.ImagePositionPatient = [20;40;60];
+            other_metadata.ImagePositionPatient = [30;60;110];
+            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
+            other_metadata.ImagePositionPatient = [30;60;90];
+            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should pass');
+            extra_metadata.ImagePositionPatient = [20;-40;60];
+            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
+
+            this_metadata.ImagePositionPatient = [0;30;40];
+            extra_metadata.ImagePositionPatient = [0;90;120];
+            other_metadata.ImagePositionPatient = [0;60;80];
+            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should pass');
+            other_metadata.ImagePositionPatient = [0;55;80];
+            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should pass');
+            this_metadata.ImagePositionPatient = [0;30;-40];
+            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
+            this_metadata.ImagePositionPatient = [0;15;40];
+            extra_metadata.ImagePositionPatient = [0;90;120];
+            other_metadata.ImagePositionPatient = [0;60;80];
+            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
         end
     end
     

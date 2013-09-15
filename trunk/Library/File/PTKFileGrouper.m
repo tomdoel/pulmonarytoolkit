@@ -60,7 +60,7 @@ classdef PTKFileGrouper < handle
     methods (Access = private)
         
         function grouping = FindGrouping(obj, metadata)
-            for grouping = obj.FileGroupings;
+            for grouping = obj.FileGroupings
                 if grouping.Matches(metadata)
                     return;
                 end

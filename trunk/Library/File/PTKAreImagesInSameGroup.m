@@ -1,4 +1,4 @@
-function match = PTKAreImagesInSameGroup(this_metadata, other_metadata)
+function match = PTKAreImagesInSameGroup(this_metadata, other_metadata, this_metadata_2)
     % PTKAreImagesInSameGroup. Determines whether two Dicom images form a coherent sequence
     %
     % PTKAreImagesInSameGroup compares the metadata from two Dicom images. If
@@ -13,6 +13,8 @@ function match = PTKAreImagesInSameGroup(this_metadata, other_metadata)
     %     Inputs:
     %         this_metadata, other_metadata - metadata structures representing
     %             two Dicom images
+    %         this_metadata_2 - additional image used only for checking that the
+    %             image locations form a coherant set
     %
     %     Outputs:
     %         match - True if the two images form a coherent sequence
@@ -24,7 +26,22 @@ function match = PTKAreImagesInSameGroup(this_metadata, other_metadata)
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
+   
+    if nargin < 3
+        this_metadata_2 = [];
+    end
     
+    % Check that the main Dicom tags match
+    match = CompareMainTags(this_metadata, other_metadata);
+    
+    % Check that image coordinates lie in a straight line
+    if ~isempty(this_metadata_2)
+        match = match && CompareMainTags(this_metadata_2, other_metadata);
+        match = match && PTKDicomUtilities.AreImageLocationsConsistent(this_metadata, other_metadata, this_metadata_2);
+    end
+end
+    
+function match = CompareMainTags(this_metadata, other_metadata)
         
     % Verify that this is the same patient
     if ~CompareFields('PatientName', this_metadata, other_metadata, true)
@@ -119,11 +136,6 @@ function match = PTKAreImagesInSameGroup(this_metadata, other_metadata)
         match = false;
         return;
     end
-        
-    if ~CompareFields('ImagePositionPatient', this_metadata, other_metadata, false, true)
-        match = false;
-        return;
-    end
     
     if ~CompareFields('ImageOrientationPatient', this_metadata, other_metadata, false)
         match = false;
@@ -156,11 +168,6 @@ function match = PTKAreImagesInSameGroup(this_metadata, other_metadata)
     end
     
     if ~CompareFields('MediaStorageSOPClassUID', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('TransferSyntaxUID', this_metadata, other_metadata, true)
         match = false;
         return;
     end
@@ -231,10 +238,7 @@ function match = PTKAreImagesInSameGroup(this_metadata, other_metadata)
     match = true;
 end
 
-function matches = CompareFields(field_name, this_metadata, other_metadata, exact_match, match_2_out_of_3)
-    if nargin < 5
-        match_2_out_of_3 = false;
-    end
+function matches = CompareFields(field_name, this_metadata, other_metadata, exact_match)
     
     % If this field does not exist in either metadata, then return a
     % true match
@@ -260,12 +264,6 @@ function matches = CompareFields(field_name, this_metadata, other_metadata, exac
         return;
     end
     
-    % Special comparison: 2 of the 3 array values should match approximately
-    if match_2_out_of_3
-        matches = logical(sum(abs(field_this(:) - field_other(:)) < 0.5) >= 2);
-        return;
-    end
-    
     if exact_match || ~isnumeric(field_this)
         matches = isequal(field_this, field_other);
     else
@@ -273,3 +271,4 @@ function matches = CompareFields(field_name, this_metadata, other_metadata, exac
         matches = max(field_this(:) - field_other(:)) < 0.5;
     end
 end
+
