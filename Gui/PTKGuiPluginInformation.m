@@ -100,10 +100,6 @@ classdef PTKGuiPluginInformation
             new_plugin = [];
             new_plugin.PluginName = plugin_name;
             
-            if plugin_class.PTKVersion ~= '1'
-                reporting.ShowWarning('PTKGuiPluginInformation:OldPlugin', ['Plugin ' plugin_name ' was created for a more recent version of this software']), [];
-            end
-            
             new_plugin.ToolTip = plugin_class.ToolTip;
             new_plugin.ButtonText = plugin_class.ButtonText;
             new_plugin.Category = plugin_class.Category;
