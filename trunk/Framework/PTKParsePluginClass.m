@@ -17,12 +17,6 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
     new_plugin = [];
     new_plugin.PluginName = plugin_name;
     
-    if strcmp(plugin_class.PTKVersion, '1')
-        reporting.ShowWarning('PTKPluginInformation:OldPluginVersion', ['Plugin ' plugin_name ' uses an old version of the plugin interface. This may be deprecated in a future version of this software.'], []);
-    elseif ~strcmp(plugin_class.PTKVersion, PTKSoftwareInfo.PTKVersion)
-        reporting.ShowWarning('PTKPluginInformation:MismatchingPluginVersion', ['Plugin ' plugin_name ' was created for a more recent version of this software'], []);
-    end
-    
     new_plugin.ToolTip = plugin_class.ToolTip;
     new_plugin.AlwaysRunPlugin = plugin_class.AlwaysRunPlugin;
     new_plugin.AllowResultsToBeCached = plugin_class.AllowResultsToBeCached;
