@@ -32,8 +32,16 @@ classdef PTKFileGrouping < handle
         % Determine if a file with specified metadata should be grouped with
         % these files
         function match = Matches(obj, other_metadata)
-            match = PTKAreImagesInSameGroup(obj.Metadata{1}, other_metadata);
+            
+            if numel(obj.Metadata) > 1
+                additional_image = obj.Metadata{2};
+            else
+                additional_image = [];
+            end
+            
+            match = PTKAreImagesInSameGroup(obj.Metadata{1}, other_metadata, additional_image);
         end
+        
 
         % Sorts the images according to slice location, and computes values for
         % slice thickness and global origin
