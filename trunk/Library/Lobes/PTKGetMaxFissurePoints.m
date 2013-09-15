@@ -97,8 +97,29 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     % Remove non-connected points (outliers)
     [x_all, y_all, z_all] = PTKImageCoordinateUtilities.FastInd2sub(image_size, maximum_fissureness_indices);
     points_coords = ArraysToPoints(x_all(:), y_all(:), z_all(:));
-    points_coords = RemoveNonConnectedPoints(points_coords, lung_segmentation, image_size);
-    [x_all, y_all, z_all] = PointsToArrays(points_coords);
+        
+    min_dilate_size_mm = 2.5;
+    max_dilate_size_mm = 4;
+    
+    dilate_size_mm = min_dilate_size_mm;
+    
+    calculate_again = true;
+    target_number_of_points = round(numel(x_all)/2);
+    
+    % Perform the removal of connected points with a variable dilation size
+    while calculate_again
+        points_coords_new = RemoveNonConnectedPoints(points_coords, lung_segmentation, image_size, dilate_size_mm);
+        number_of_found_points = numel(points_coords_new);
+        if (number_of_found_points >= target_number_of_points) || (dilate_size_mm > max_dilate_size_mm)
+            calculate_again = false;
+        else
+            dilate_size_mm = dilate_size_mm + 0.5;
+        end
+        
+    end
+    
+    disp(['Final dilate size: ' num2str(dilate_size_mm) 'mm']);
+    [x_all, y_all, z_all] = PointsToArrays(points_coords_new);
     maximum_fissureness_indices = PTKImageCoordinateUtilities.FastSub2ind(image_size, x_all(:), y_all(:), z_all(:));
     ref_image(maximum_fissureness_indices) = 1;
     
@@ -175,12 +196,11 @@ function is_maxima = GetMaxima(candidate_indices, bin, fissureness_at_indices, f
 end
 
 
-function points_coords = RemoveNonConnectedPoints(points_coords, template_image, image_size)
+function points_coords = RemoveNonConnectedPoints(points_coords, template_image, image_size, dilate_size_mm)
     voxel_volume = prod(template_image.VoxelSize);
     min_component_size_mm3 = 200;
     min_component_size_voxels = round(min_component_size_mm3/voxel_volume);
 
-    dilate_size_mm = 2.5;
     
     image_mask = false(image_size);
     indices = sub2ind(image_size, points_coords(:,1), points_coords(:,2), points_coords(:,3));
