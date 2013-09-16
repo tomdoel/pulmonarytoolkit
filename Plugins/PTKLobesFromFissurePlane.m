@@ -67,7 +67,7 @@ classdef PTKLobesFromFissurePlane < PTKPlugin
             fissure_plane.ResizeToMatch(lung_template);
             fissure_plane = find(fissure_plane.RawImage(:) == 4);
             
-            left_results = PTKDivideVolumeUsingScatteredPoints(lung_mask, fissure_plane, reporting);
+            left_results = PTKDivideVolumeUsingScatteredPoints(lung_mask, fissure_plane, 5, reporting);
             left_results.ChangeColourIndex(1, 5);
             left_results.ChangeColourIndex(2, 6);  
         end
@@ -80,7 +80,7 @@ classdef PTKLobesFromFissurePlane < PTKPlugin
             fissure_plane.ResizeToMatch(lung_template);
             fissure_plane_o = find(fissure_plane.RawImage(:) == 3);
             
-            results_right = PTKDivideVolumeUsingScatteredPoints(lung_mask, fissure_plane_o, reporting);
+            results_right = PTKDivideVolumeUsingScatteredPoints(lung_mask, fissure_plane_o, 5, reporting);
             results_right.ChangeColourIndex(2, 4);
             
             % Mid lobe
@@ -90,7 +90,7 @@ classdef PTKLobesFromFissurePlane < PTKPlugin
                 lung_mask_excluding_lower = lung_mask.Copy;
                 lung_mask_excluding_lower.ChangeRawImage(results_right.RawImage == 1);
                 
-                results_mid_right = PTKDivideVolumeUsingScatteredPoints(lung_mask_excluding_lower, fissure_plane_m, reporting);                
+                results_mid_right = PTKDivideVolumeUsingScatteredPoints(lung_mask_excluding_lower, fissure_plane_m, 20, reporting);
                 results_right.ChangeSubImageWithMask(results_mid_right, results_mid_right);                
             else
                 reporting.ShowWarning('PTKLobesFromFissurePlane:NoRightObliqueFissure', 'Unable to find the right horizontal fissure. No middle right lobe segmentation will be shown.', []);
