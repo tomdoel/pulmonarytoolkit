@@ -32,8 +32,7 @@ classdef PTKDiskCache < handle
         
         % Create a disk cache object, and associated folder, for the dataset
         % associated with this unique identifier
-        function obj = PTKDiskCache(uuid, reporting)
-            cache_parent_directory = PTKDirectories.GetCacheDirectory;
+        function obj = PTKDiskCache(cache_parent_directory, uuid, reporting)
             if ~exist(cache_parent_directory, 'dir')
                 mkdir(cache_parent_directory);
             end
@@ -152,21 +151,6 @@ classdef PTKDiskCache < handle
         
     end
         
-    methods (Static)
-        
-        function uids = GetUidsOfAllDatasetsInCache
-            cache_directory = PTKDirectories.GetCacheDirectory;
-            subdirectories = PTKDiskUtilities.GetListOfDirectories(cache_directory);
-            uids = {};
-            for subdir = subdirectories
-                candidate_uid = subdir{1};
-                if 2 == exist(fullfile(cache_directory, candidate_uid, [PTKSoftwareInfo.ImageInfoCacheName '.mat']), 'file')
-                    uids{end+1} = candidate_uid;
-                end
-            end
-        end
-    end
-    
     methods (Static, Access = private)
     
         function RemoveFilesInDirectory(file_path, remove_framework_files, reporting)
@@ -176,7 +160,7 @@ classdef PTKDiskCache < handle
             file_list = cat(2, file_list, file_list_2);
             for index = 1 : length(file_list)
                 file_name = file_list{index};
-                is_framework_file = strcmp(file_name, [PTKSoftwareInfo.SchemaCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.ImageInfoCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.mat']) || strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.raw']) || strcmp(file_name, [PTKSoftwareInfo.ImageTemplatesCacheName '.mat']);
+                is_framework_file = PTKDirectories.IsFrameworkFile(file_name);
                 if (remove_framework_files || (~is_framework_file))
                     full_filename = fullfile(file_path, file_name);
                     reporting.ShowMessage('PTKDiskCache:RecyclingCacheDirectory', ['Moving cache file to recycle bin: ' full_filename]);

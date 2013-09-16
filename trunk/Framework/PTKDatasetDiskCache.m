@@ -19,26 +19,32 @@ classdef PTKDatasetDiskCache < handle
     
     properties (Access = private)
         PluginResultsInfo
-        DiskCache
+        
+        ResultsDiskCache % stores automatically generated plugin results for internal use
+        EditedResultsDiskCache % Stores manual corrections to results
+        OutputDiskCache % stores exported results which can be loaded by other applications
     end
     
     methods
-        function obj = PTKDatasetDiskCache(disk_cache, reporting)
-            obj.DiskCache = disk_cache;
+        function obj = PTKDatasetDiskCache(dataset_uid, reporting)
+            obj.ResultsDiskCache = PTKDiskCache(PTKDirectories.GetCacheDirectory, dataset_uid, reporting);
+            obj.EditedResultsDiskCache = PTKDiskCache(PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, reporting);
+            obj.OutputDiskCache = PTKDiskCache(PTKDirectories.GetOutputDirectoryAndCreateIfNecessary, dataset_uid, reporting);
+            
             obj.LoadCachedPluginResultsFile(reporting);
         end
 
         % Fetches a cached result for a plugin, but checks the dependencies to
         % ensure it is still valid, and if not returns an empty result.
         function [value, cache_info] = LoadPluginResult(obj, plugin_name, context, reporting)
-            [value, cache_info] = obj.DiskCache.Load(plugin_name, context, reporting);
+            [value, cache_info] = obj.ResultsDiskCache.Load(plugin_name, context, reporting);
         end
         
         % Stores a plugin result in the disk cache and updates cached dependency
         % information
         function SavePluginResult(obj, plugin_name, result, cache_info, context, reporting)
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context);
-            obj.DiskCache.SaveWithInfo(plugin_name, result, cache_info, context, reporting);
+            obj.ResultsDiskCache.SaveWithInfo(plugin_name, result, cache_info, context, reporting);
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
@@ -52,24 +58,24 @@ classdef PTKDatasetDiskCache < handle
         
         % Saves additional data associated with this dataset to the cache
         function SaveData(obj, data_filename, value, reporting)
-            obj.DiskCache.Save(data_filename, value, [], reporting);
+            obj.ResultsDiskCache.Save(data_filename, value, [], reporting);
         end
         
         % Loads additional data associated with this dataset from the cache
         function value = LoadData(obj, data_filename, reporting)
-            value = obj.DiskCache.Load(data_filename, [], reporting);
+            value = obj.ResultsDiskCache.Load(data_filename, [], reporting);
         end
         
         function cache_path = GetCachePath(obj, ~)
-           cache_path = obj.DiskCache.CachePath;
+           cache_path = obj.ResultsDiskCache.CachePath;
         end
         
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
-            obj.DiskCache.RemoveAllCachedFiles(remove_framework_files, reporting);
+            obj.ResultsDiskCache.RemoveAllCachedFiles(remove_framework_files, reporting);
         end
         
         function exists = Exists(obj, name, context, reporting)
-            exists = obj.DiskCache.Exists(name, context, reporting);
+            exists = obj.ResultsDiskCache.Exists(name, context, reporting);
         end
 
         function valid = CheckDependencyValid(obj, next_dependency, reporting)
@@ -80,7 +86,7 @@ classdef PTKDatasetDiskCache < handle
     methods (Access = private)
         
         function LoadCachedPluginResultsFile(obj, reporting)
-            cached_plugin_info = obj.DiskCache.Load(PTKSoftwareInfo.CachedPluginInfoFileName, [], reporting);
+            cached_plugin_info = obj.ResultsDiskCache.Load(PTKSoftwareInfo.CachedPluginInfoFileName, [], reporting);
             if isempty(cached_plugin_info)
                 obj.PluginResultsInfo = PTKPluginResultsInfo;
             else
@@ -89,7 +95,7 @@ classdef PTKDatasetDiskCache < handle
         end
         
         function SaveCachedPluginInfoFile(obj, reporting)
-            obj.DiskCache.Save(PTKSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, [], reporting);
+            obj.ResultsDiskCache.Save(PTKSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, [], reporting);
         end
     end
 end

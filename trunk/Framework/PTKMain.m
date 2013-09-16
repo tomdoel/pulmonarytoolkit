@@ -72,8 +72,7 @@ classdef PTKMain < handle
         % Creates a PTKDataset object for a dataset specified by the uid. The
         % dataset must already be imported.
         function dataset = CreateDatasetFromUid(obj, dataset_uid)
-            disk_cache = PTKDiskCache(dataset_uid, obj.Reporting);
-            dataset_disk_cache = PTKDatasetDiskCache(disk_cache, obj.Reporting);
+            dataset_disk_cache = PTKDatasetDiskCache(dataset_uid, obj.Reporting);
             image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
                 obj.Reporting.Error('PTKMain:UidNotFound', 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
@@ -234,8 +233,7 @@ classdef PTKMain < handle
                 new_image_info.Modality = modality;
             end
             
-            disk_cache = PTKDiskCache(new_image_info.ImageUid, obj.Reporting);
-            dataset_disk_cache = PTKDatasetDiskCache(disk_cache, obj.Reporting);
+            dataset_disk_cache = PTKDatasetDiskCache(new_image_info.ImageUid, obj.Reporting);
             image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
                 image_info = PTKImageInfo;
