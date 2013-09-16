@@ -63,10 +63,17 @@ classdef PTKDirectories < handle
         end
 
         % Returns the full path to the directory used for storing results        
-        function results_directory = GetResultsDirectoryAndCreateIfNecessary
+        function results_directory = GetOutputDirectoryAndCreateIfNecessary
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            results_directory = fullfile(application_directory, PTKSoftwareInfo.ResultsDirectoryName);
+            results_directory = fullfile(application_directory, PTKSoftwareInfo.OutputDirectoryName);
             PTKDiskUtilities.CreateDirectoryIfNecessary(results_directory);
+        end
+        
+        % Returns the full path to the directory used for storing results
+        function edited_results_directory = GetEditedResultsDirectoryAndCreateIfNecessary
+            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            edited_results_directory = fullfile(application_directory, PTKSoftwareInfo.EditedResultsDirectoryName);
+            PTKDiskUtilities.CreateDirectoryIfNecessary(edited_results_directory);
         end
         
         % Returns the full path to the framework cache file
@@ -105,6 +112,27 @@ classdef PTKDirectories < handle
             log_file_name = PTKSoftwareInfo.LogFileName;
             log_file_path = fullfile(settings_folder, log_file_name);
         end
+        
+        function is_framework_file = IsFrameworkFile(file_name)
+            is_framework_file = strcmp(file_name, [PTKSoftwareInfo.SchemaCacheName '.mat']) || ...
+                strcmp(file_name, [PTKSoftwareInfo.ImageInfoCacheName '.mat']) || ...
+                strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.mat']) || ...
+                strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.raw']) || ...
+                strcmp(file_name, [PTKSoftwareInfo.ImageTemplatesCacheName '.mat']);
+        end
+        
+        function uids = GetUidsOfAllDatasetsInCache
+            cache_directory = PTKDirectories.GetCacheDirectory;
+            subdirectories = PTKDiskUtilities.GetListOfDirectories(cache_directory);
+            uids = {};
+            for subdir = subdirectories
+                candidate_uid = subdir{1};
+                if 2 == exist(fullfile(cache_directory, candidate_uid, [PTKSoftwareInfo.ImageInfoCacheName '.mat']), 'file')
+                    uids{end+1} = candidate_uid;
+                end
+            end
+        end
+        
     end
 end
 

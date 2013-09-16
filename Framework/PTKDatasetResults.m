@@ -124,7 +124,7 @@ classdef PTKDatasetResults < handle
         % Gets the path of the folder where the output files for this dataset are
         % stored
         function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
-            results_directory = PTKDirectories.GetResultsDirectoryAndCreateIfNecessary;
+            results_directory = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
             image_info = obj.GetImageInfo;
             uid = image_info.ImageUid;
             dataset_cache_path = fullfile(results_directory, uid);

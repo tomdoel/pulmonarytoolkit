@@ -41,12 +41,14 @@ classdef PTKSoftwareInfo < handle
         
         % Directories
         DiskCacheFolderName = 'ResultsCache'
+        OutputDirectoryName = 'Output'
+        EditedResultsDirectoryName = 'EditedResults'
+        
         ApplicationSettingsFolderName = 'TDPulmonaryToolkit'
         PluginDirectoryName = 'Plugins'
         GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')
         MexSourceDirectory = fullfile('Library', 'mex')
         UserDirectoryName = 'User'
-        ResultsDirectoryName = 'Output'
         TestSourceDirectory = 'Test'
         
         % Filenames
