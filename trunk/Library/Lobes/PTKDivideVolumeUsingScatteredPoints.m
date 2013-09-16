@@ -1,4 +1,4 @@
-function separated_mask = PTKDivideVolumeUsingScatteredPoints(volume_mask, scattered_points, reporting)
+function separated_mask = PTKDivideVolumeUsingScatteredPoints(volume_mask, scattered_points, volume_fraction_threshold, reporting)
     % PTKDivideVolumeUsingScatteredPoints. Divides a volume into two regions,
     % given a set of points which partly divide the volume
     %
@@ -15,7 +15,7 @@ function separated_mask = PTKDivideVolumeUsingScatteredPoints(volume_mask, scatt
     volume_mask_copy.ChangeRawImage(logical(volume_mask.RawImage));
     
     % Find the main parts of the two main regions
-    separated_mask = SeparateIntoTwo(volume_mask_copy, scattered_points, reporting);
+    separated_mask = SeparateIntoTwo(volume_mask_copy, scattered_points, volume_fraction_threshold, reporting);
     
     % If the separation failed, return empty matrix
     if isempty(separated_mask)
@@ -45,7 +45,7 @@ function output_mask = FillRemaining(mask, separated_mask)
     output_mask.ChangeRawImage(output_mask_raw);
 end
     
-function separated_mask = SeparateIntoTwo(volume_mask, scattered_points, reporting)
+function separated_mask = SeparateIntoTwo(volume_mask, scattered_points, volume_fraction_threshold, reporting)
         
     % Place the points in their own image
     dividing_points_image = volume_mask.BlankCopy;
@@ -61,7 +61,7 @@ function separated_mask = SeparateIntoTwo(volume_mask, scattered_points, reporti
     while isempty(region_1_indices)
         mask_to_separate_raw = logical(volume_mask.RawImage);
         mask_to_separate_raw(dividing_points_image.RawImage) = false;
-        [region_1_indices, region_2_indices] = Separate(mask_to_separate_raw);
+        [region_1_indices, region_2_indices] = Separate(mask_to_separate_raw, volume_fraction_threshold);
         
         if isempty(region_1_indices)
             closing_size_mm = closing_size_mm + closing_step_mm;
@@ -85,7 +85,7 @@ function separated_mask = SeparateIntoTwo(volume_mask, scattered_points, reporti
     separated_mask.ChangeRawImage(separated_mask_raw);    
 end
 
-function [region_1_indices, region_2_indices] = Separate(mask_to_separate_raw)
+function [region_1_indices, region_2_indices] = Separate(mask_to_separate_raw, volume_fraction_threshold)
     
     region_1_indices = [];
     region_2_indices = [];
@@ -105,7 +105,7 @@ function [region_1_indices, region_2_indices] = Separate(mask_to_separate_raw)
     
     % Compute a threshold for the minimum region size
     total_num_voxels = sum(num_voxels_per_component);
-    minimum_required_voxels_per_component = total_num_voxels/5;
+    minimum_required_voxels_per_component = total_num_voxels/volume_fraction_threshold;
     
     % If either of the two largest components are below the volume threshold
     % then this separation failed
