@@ -14,12 +14,20 @@ classdef PTKContainerUtilities
         % Returns a set of values, corresponding to the contents of the field
         % 'field_name' in each structure in the set 'set'.
         function field_values = GetFieldValuesFromSet(set, field_name)
+            if isempty(set)
+                field_values = [];
+                return;
+            end
             field_values = cellfun(@(x)getfield(x, field_name), set, 'UniformOutput', false); %#ok<GFLD>
         end
         
         % Returns a matrix of values, corresponding to the contents of the field
         % 'field_name' in each structure in the set 'set'.
         function field_values = GetMatrixOfFieldValuesFromSet(set, field_name)
+            if isempty(set)
+                field_values = [];
+                return;
+            end
             field_values = cell2mat(PTKContainerUtilities.GetFieldValuesFromSet(set, field_name));
         end
         
