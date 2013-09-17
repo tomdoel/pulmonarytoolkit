@@ -19,7 +19,13 @@ classdef PTKTextUtilities < handle
         end
         
         % Sorts a list of filenames, taking into account numbers
-        function sorted_filenames = SortFilenames(filenames)
+        function [sorted_filenames, sorted_indices] = SortFilenames(filenames)
+            
+            if isempty(filenames)
+                sorted_filenames = [];
+                sorted_indices = [];
+                return;
+            end
             
             % Determine the maximum number of consecutive digits across all of
             % the filenames
