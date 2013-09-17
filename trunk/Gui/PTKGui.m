@@ -111,6 +111,8 @@ classdef PTKGui < handle
             
             if ~isempty(image_info)
                 obj.LoadImages(image_info, splash_screen);
+            else
+                obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
             end
 
             obj.ImagePanel.ShowImage = true;
@@ -367,9 +369,9 @@ classdef PTKGui < handle
                 if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
                     
                     if isempty(new_image)
-                        obj.Reporting.Error('PTKGui:EmptyIMage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
+                        obj.Reporting.Error('PTKGui:EmptyImage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
                     end
-                    if all(new_image.ImageSize == obj.ImagePanel.BackgroundImage.ImageSize) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
+                    if isequal(new_image.ImageSize, obj.ImagePanel.BackgroundImage.ImageSize) && isequal(new_image.Origin, obj.ImagePanel.BackgroundImage.Origin)
                         obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
                     else
                         obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text);
@@ -416,17 +418,39 @@ classdef PTKGui < handle
         
         function LoadFromPopupMenu(obj, index)            
             image_info = obj.DropDownLoadMenuManager.GetImageInfoForIndex(index);
+
+            % Get the UID of the newly selected dataset
+            if isempty(image_info)
+                selected_image_uid = [];
+            else
+                selected_image_uid = image_info.ImageUid;
+            end
             
-            % An empty image_info indicates that this dataset has already been
-            % selected. This prevents data re-loading when the same dataset is
-            % selected.
+            % Get the UID of the currently loaded dataset
+            if ~isempty(obj.Settings.ImageInfo) && ~isempty(obj.Settings.ImageInfo.ImageUid)
+                currently_loaded_image_UID = obj.Settings.ImageInfo.ImageUid;
+            else
+                currently_loaded_image_UID = [];
+            end
+
+            image_already_loaded = strcmp(selected_image_uid, currently_loaded_image_UID);
+            if isempty(selected_image_uid) && isempty(currently_loaded_image_UID)
+                image_already_loaded = true;
+            end
+            
+            % We prevent data re-loading when the same dataset is selected.
             % Also, due to a Matlab/Java bug, this callback may be called twice 
             % when an option is selected from the drop-down load menu using 
             % keyboard shortcuts. This will prevent the loading function from
             % being called twice
-            if ~isempty(image_info)
-                obj.LoadImages(image_info, obj.WaitDialogHandle);
-            end            
+            if ~image_already_loaded
+                if ~isempty(image_info)
+                    obj.LoadImages(image_info, obj.WaitDialogHandle);
+                else
+                    obj.ClearDataset(obj.WaitDialogHandle);
+                    % Clear dataset
+                end
+            end
         end
         
         % Profile checkbox
@@ -472,7 +496,7 @@ classdef PTKGui < handle
         end
         
         function LoadImages(obj, image_info, wait_dialog)
-                wait_dialog.ShowAndHold('Please wait');
+            wait_dialog.ShowAndHold('Please wait');
             
             try
                 new_dataset = obj.Ptk.CreateDatasetFromInfo(image_info);
@@ -553,6 +577,44 @@ classdef PTKGui < handle
             wait_dialog.Hide;
 
         end
+        
+        function ClearDataset(obj, wait_dialog)
+            wait_dialog.ShowAndHold('Please wait');
+            
+            try
+                obj.ClearImages;
+                delete(obj.Dataset);
+
+                obj.Dataset = [];
+                
+                image_info = [];                
+
+                obj.Settings.ImageInfo = image_info;
+                
+                obj.SaveSettings;
+                
+                obj.UpdateFigureTitle;
+                
+                obj.PluginsPanel.AddAllPreviewImagesToButtons(obj.Dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
+
+            catch exc
+                if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                    obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled loading');
+                elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
+                    msgbox('This dataset is missing. It will be removed from the load menu.', [PTKSoftwareInfo.Name ': Cannot find dataset'], 'error');
+                    obj.Reporting.ShowMessage('PTKGui:FileNotFound', 'The original data is missing. I am removing this dataset.');
+                    obj.DeleteImageInfo
+                else
+                    msgbox(exc.message, [PTKSoftwareInfo.Name ': Cannot load dataset'], 'error');
+                    obj.Reporting.ShowMessage('PTKGui:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
+                end
+            end
+            
+            obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
+            wait_dialog.Hide;
+
+        end
+        
 
         function LoadMarkers(obj)
             
