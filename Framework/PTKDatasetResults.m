@@ -117,6 +117,10 @@ classdef PTKDatasetResults < handle
         
         % Load data from a cache file associated with this dataset
         function SaveEditedPluginResult(obj, plugin_name, context, edited_result, cached_cache_info)
+            if isempty(context)
+                context = PTKContext.LungROI;
+            end
+            
             obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, edited_result, cached_cache_info, obj.Reporting);
         end
         
