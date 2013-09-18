@@ -31,7 +31,7 @@ classdef PTKClearOverlays < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ImagePanel.ClearOverlays;
+            ptk_gui_app.DeleteOverlays;
         end
     end
 end

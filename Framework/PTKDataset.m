@@ -125,6 +125,25 @@ classdef PTKDataset < handle
             obj.PostCallTidy;
         end
         
+        function SaveEditedResult(obj, plugin_name, edited_result, context, varargin)
+            if nargin < 4
+                context = [];
+            end
+            
+            obj.PreCallTidy;
+            
+            [cached_result, cached_cache_info] = obj.GetResultWithCacheInfo(plugin_name, context, varargin);
+            
+            if ~strcmp(class(cached_result), class(edited_result))
+                obj.Reporting.Error('PTKDataset:EditedResultClassMismatch', 'The edited result passed to SaveEditedResult() must be of the same class as the result being edited.');
+            end
+            
+            cached_cache_info.InstanceIdentifier.Attributes.IsEditedResult = true;
+            cached_cache_info.MarkEdited;
+            obj.LinkedDatasetChooser.GetDataset(varargin{:}).SaveEditedPluginResult(plugin_name, context, edited_result, cached_cache_info);
+            obj.PostCallTidy;
+        end
+        
         % Save data as a cache file associated with this dataset
         % Used for marker points
         function SaveData(obj, name, data, varargin)
@@ -145,6 +164,22 @@ classdef PTKDataset < handle
         function dataset_cache_path = GetDatasetCachePath(obj, varargin)
             obj.PreCallTidy;
             dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetDatasetCachePath;
+            obj.PostCallTidy;
+        end
+        
+        % Gets the path of the folder where the edited results for this dataset are
+        % stored
+        function dataset_cache_path = GetEditedResultsPath(obj, varargin)
+            obj.PreCallTidy;
+            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetEditedResultsPath;
+            obj.PostCallTidy;
+        end
+        
+        % Gets the path of the folder where the output for this dataset are
+        % stored
+        function dataset_cache_path = GetOutputPath(obj, varargin)
+            obj.PreCallTidy;
+            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetOutputPath;
             obj.PostCallTidy;
         end
 

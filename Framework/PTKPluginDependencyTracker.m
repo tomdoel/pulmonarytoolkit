@@ -93,7 +93,7 @@ classdef PTKPluginDependencyTracker < handle
                 % being called (plugin_name) and the UID of the dataset the
                 % result is being requested from; however, the stack belongs to
                 % the primary dataset
-                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, PTKSoftwareInfo.TimeFunctions);
+                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions);
                 
                 dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context);
 
@@ -138,6 +138,11 @@ classdef PTKPluginDependencyTracker < handle
             end
         end
 
+        % Saves the result of a plugin after semi-automatic editing
+        function SaveEditedResult(obj, plugin_name, context, result, new_cache_info, reporting)
+            obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, result, new_cache_info, context, reporting);
+        end
+        
         function valid = CheckDependencyValid(obj, next_dependency, reporting)
             valid = obj.DatasetDiskCache.CheckDependencyValid(next_dependency, reporting);
         end

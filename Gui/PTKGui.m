@@ -37,6 +37,7 @@ classdef PTKGui < handle
         TextVersionHandle
         UipanelVersionHandle
         
+        CurrentPluginName
     end
     
     methods
@@ -163,6 +164,32 @@ classdef PTKGui < handle
             wait_dialog.Hide;            
         end
         
+        % Causes the GUI to run the named plugin and display the result
+        function SaveEditedResult(obj, edited_result)
+            if isempty(obj.Dataset)
+                return;
+            end
+            
+            plugin_name = obj.CurrentPluginName;
+            
+            if isempty(plugin_name)
+                msgbox(['Cannot save the edited result as no plugin result is currently loaded'], [PTKSoftwareInfo.Name ': Cannot save edited result'], 'error');
+                obj.Reporting.ShowMessage('PTKGui:NoPlugin', 'Cannot save the edited result as no plugin result is currently loaded');
+                return
+            end
+            
+            wait_dialog = obj.WaitDialogHandle;
+            
+            new_plugin = PTKPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
+            plugin_text = new_plugin.ButtonText;
+            wait_dialog.ShowAndHold(['Saving edited result for ' plugin_text]);
+            
+            
+            obj.Dataset.SaveEditedResult(plugin_name, edited_result);
+            
+            wait_dialog.Hide;
+        end
+
         
         % Prompts the user for file(s) to load
         function SelectFilesAndLoad(obj)
@@ -269,6 +296,22 @@ classdef PTKGui < handle
             end
         end
         
+        function dataset_cache_path = GetEditedResultsPath(obj)
+            if ~isempty(obj.Dataset)
+                dataset_cache_path = obj.Dataset.GetEditedResultsPath;
+            else
+                dataset_cache_path = PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary;
+            end
+        end
+
+        function dataset_cache_path = GetOutputPath(obj)
+            if ~isempty(obj.Dataset)
+                dataset_cache_path = obj.Dataset.GetOutputPath;
+            else
+                dataset_cache_path = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
+            end
+        end
+        
         function image_info = GetImageInfo(obj)
             if ~isempty(obj.Dataset)
                 image_info = obj.Dataset.GetImageInfo;
@@ -320,6 +363,15 @@ classdef PTKGui < handle
             
             obj.SaveSettings;
             obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
+        end
+        
+        function DeleteOverlays(obj)
+            obj.ImagePanel.ClearOverlays;
+            obj.SetCurrentPluginAndUpdateFigureTitle([]);
+        end
+        
+        function ResetCurrentPlugin(obj)
+            obj.SetCurrentPluginAndUpdateFigureTitle([]);
         end
         
     end
@@ -376,7 +428,7 @@ classdef PTKGui < handle
                     else
                         obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text);
                     end
-                    obj.UpdateFigureTitle;
+                    obj.SetCurrentPluginAndUpdateFigureTitle(plugin_name);
                 elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
                     if all(new_image.ImageSize(1:3) == obj.ImagePanel.BackgroundImage.ImageSize(1:3)) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
                         obj.ReplaceQuiverImage(new_image.RawImage, 4);
@@ -552,7 +604,7 @@ classdef PTKGui < handle
                 
                 obj.SaveSettings;
                 
-                obj.UpdateFigureTitle;
+                obj.SetCurrentPluginAndUpdateFigureTitle([]);
                 
                 obj.PluginsPanel.AddAllPreviewImagesToButtons(obj.Dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
 
@@ -593,7 +645,7 @@ classdef PTKGui < handle
                 
                 obj.SaveSettings;
                 
-                obj.UpdateFigureTitle;
+                obj.SetCurrentPluginAndUpdateFigureTitle([]);
                 
                 obj.PluginsPanel.AddAllPreviewImagesToButtons(obj.Dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
 
@@ -640,18 +692,18 @@ classdef PTKGui < handle
         end
         
         
-        function DeleteOverlays(obj)
-            obj.ImagePanel.ClearOverlays;
+        
+        function SetCurrentPluginAndUpdateFigureTitle(obj, plugin_name)
+            obj.CurrentPluginName = plugin_name;
             obj.UpdateFigureTitle;
         end
-        
         
         function UpdateFigureTitle(obj)
             
             figure_title = PTKSoftwareInfo.Name;
             if isa(obj.ImagePanel.BackgroundImage, 'PTKImage')
                 patient_name = obj.ImagePanel.BackgroundImage.Title;
-                if obj.ImagePanel.OverlayImage.ImageExists
+                if ~isempty(obj.CurrentPluginName) && obj.ImagePanel.OverlayImage.ImageExists
                     overlay_name = obj.ImagePanel.OverlayImage.Title;
                     if ~isempty(overlay_name)
                         patient_name = [patient_name ' (' overlay_name ')'];

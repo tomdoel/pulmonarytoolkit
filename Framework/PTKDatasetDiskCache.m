@@ -49,6 +49,15 @@ classdef PTKDatasetDiskCache < handle
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
+        % Stores a plugin result after semi-automatic editing in the edited
+        % results disk cache and updates cached dependency information
+        function SaveEditedPluginResult(obj, plugin_name, context, edited_result, cache_info, reporting)
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context);
+            obj.EditedResultsDiskCache.SaveWithInfo(plugin_name, edited_result, cache_info, context, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, reporting);
+            obj.SaveCachedPluginInfoFile(reporting);
+        end
+        
         % Caches Dependency information
         function CachePluginInfo(obj, plugin_name, cache_info, context, reporting)
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, reporting);
@@ -68,6 +77,14 @@ classdef PTKDatasetDiskCache < handle
         
         function cache_path = GetCachePath(obj, ~)
            cache_path = obj.ResultsDiskCache.CachePath;
+        end
+        
+        function cache_path = GetEditedResultsPath(obj, ~)
+           cache_path = obj.EditedResultsDiskCache.CachePath;
+        end
+        
+        function cache_path = GetOutputPath(obj, ~)
+            cache_path = obj.OutputDiskCache.CachePath;
         end
         
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
