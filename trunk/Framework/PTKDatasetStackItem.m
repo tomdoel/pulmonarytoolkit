@@ -21,6 +21,7 @@ classdef PTKDatasetStackItem < handle
         InstanceIdentifier     % A unique identifier for this plugin result
         IgnoreDependencyChecks % Certain types of plugin do not cached their results and so are exempt from dependency checking
         DependencyList         % Current list of plugin results this plugin depends on
+        IsEdited
         Schema                 % The disk cache version
     end
     
@@ -42,6 +43,7 @@ classdef PTKDatasetStackItem < handle
             obj.DependencyList = dependency_list;
             obj.IgnoreDependencyChecks = ignore_dependency_checks;
             obj.Schema = PTKSoftwareInfo.DiskCacheSchema;
+            obj.IsEdited = false;
             
             if start_timer
                 obj.ExecutionTimer = PTKTimer(reporting);
@@ -62,6 +64,10 @@ classdef PTKDatasetStackItem < handle
                 obj.InstanceIdentifier.Attributes.SelfTime = obj.ExecutionTimer.SelfTime;
                 obj.ExecutionTimer = [];
             end
+        end
+        
+        function MarkEdited(obj)
+            obj.IsEdited = true;
         end
     end
     

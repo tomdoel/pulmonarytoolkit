@@ -36,6 +36,7 @@ classdef PTKFlattenSegmentation < PTKGuiPlugin
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.ImagePanel.OverlayImage.Flatten(ptk_gui_app.ImagePanel.Orientation);
+            ptk_gui_app.ResetCurrentPlugin;
         end
     end
 end

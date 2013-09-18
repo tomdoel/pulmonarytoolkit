@@ -115,10 +115,27 @@ classdef PTKDatasetResults < handle
             data = obj.DatasetDiskCache.LoadData(name, obj.Reporting);
         end
         
+        % Load data from a cache file associated with this dataset
+        function SaveEditedPluginResult(obj, plugin_name, context, edited_result, cached_cache_info)
+            obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, edited_result, cached_cache_info, obj.Reporting);
+        end
+        
         % Gets the path of the folder where the results for this dataset are
         % stored
         function dataset_cache_path = GetDatasetCachePath(obj)
             dataset_cache_path = obj.DatasetDiskCache.GetCachePath(obj.Reporting);
+        end
+        
+        % Gets the path of the folder where the edited results for this dataset are
+        % stored
+        function cache_path = GetEditedResultsPath(obj)
+           cache_path = obj.DatasetDiskCache.GetEditedResultsPath(obj.Reporting);
+        end
+        
+        % Gets the path of the folder where the output for this dataset are
+        % stored
+        function cache_path = GetOutputPath(obj)
+           cache_path = obj.DatasetDiskCache.GetOutputPath(obj.Reporting);
         end
         
         % Gets the path of the folder where the output files for this dataset are
