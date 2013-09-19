@@ -72,7 +72,7 @@ classdef PTKFissurePlane < PTKPlugin
                 reporting.Error('PTKFissurePlane:NoLeftObliqueFissure', 'Unable to find the left oblique fissure');
             end
             
-            [lobes_raw, fissure_plane] = PTKFissurePlane.SeparateIntoLobesWithVariableExtrapolation(max_fissure_points, left_lung_mask, left_lung_roi.ImageSize, 5, reporting);
+            [lobes_raw, fissure_plane] = PTKSeparateIntoLobesWithVariableExtrapolation(max_fissure_points, left_lung_mask, left_lung_roi.ImageSize, 5, reporting);
             
             results_left_raw = fissure_plane;
             
@@ -100,7 +100,7 @@ classdef PTKFissurePlane < PTKPlugin
             right_lung_mask.ResizeToMatch(right_lung_roi);
             right_lung_mask.ChangeRawImage(right_lung_mask.RawImage == 1);
             
-            [lobes_right, fissures_right] = PTKFissurePlane.SeparateIntoLobesWithVariableExtrapolation(max_fissure_points_o, right_lung_mask, right_lung_roi.ImageSize, 5, reporting);
+            [lobes_right, fissures_right] = PTKSeparateIntoLobesWithVariableExtrapolation(max_fissure_points_o, right_lung_mask, right_lung_roi.ImageSize, 5, reporting);
             right_lung_mask.ChangeRawImage(lobes_right.RawImage == 1);
             
             
@@ -108,7 +108,7 @@ classdef PTKFissurePlane < PTKPlugin
             % value, but higher values may be needed if few fissure points have 
             % been found, especially for the right mid fissure.
             if ~isempty(max_fissure_points_m)
-                [~, fissure_plane] = PTKFissurePlane.SeparateIntoLobesWithVariableExtrapolation(max_fissure_points_m, right_lung_mask, right_lung_roi.ImageSize, 20, reporting);
+                [~, fissure_plane] = PTKSeparateIntoLobesWithVariableExtrapolation(max_fissure_points_m, right_lung_mask, right_lung_roi.ImageSize, 20, reporting);
                 results_right_m_raw = fissure_plane;
                 results_right_m_raw(right_lung_mask.RawImage == 0) = 0;
                 fissures_right(results_right_m_raw == 3) = 2;
@@ -119,33 +119,5 @@ classdef PTKFissurePlane < PTKPlugin
             right_results.ChangeRawImage(fissures_right);
         end
         
-        function [lobes_raw, fissure_plane] = SeparateIntoLobesWithVariableExtrapolation(max_fissure_points, lung_mask, image_size, volume_fraction_threshold, reporting)
-            start_extrapolation = 4;
-            max_extrapolation = 20;
-            
-            extrapolation = start_extrapolation;
-            
-            compute_again = true;
-            
-            while compute_again
-                fissure_plane = 3*PTKGetFissurePlane(max_fissure_points, image_size, extrapolation);
-                fissure_plane_indices = find(fissure_plane == 3);
-                
-                % Create a mask which excludes the lower lobe
-                lobes_raw = PTKGetLobesFromFissurePoints(fissure_plane_indices, lung_mask, volume_fraction_threshold, reporting);
-                
-                % If the lobe separation fails, then try a larger extrapolation
-                if isempty(lobes_raw)
-                    extrapolation = extrapolation + 2;
-                    if extrapolation > max_extrapolation
-                        reporting.Error('PTKFissurePlane:UnableToDivide', 'Could not separate the lobes');
-                    end
-                    compute_again = true;
-                else
-                    compute_again = false;
-                    disp(['Final extrapolation:' int2str(extrapolation)]);
-                end
-            end
-        end
     end
 end
