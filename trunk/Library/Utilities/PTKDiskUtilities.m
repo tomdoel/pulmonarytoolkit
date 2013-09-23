@@ -16,6 +16,45 @@ classdef PTKDiskUtilities
             exists = exist(fullfile(path_name, filename), 'file');
         end
         
+        function RecycleFile(path_name, filename, reporting)
+            
+            if PTKDiskUtilities.FileExists(path_name, filename)
+                
+                % Switch on recycle bin before deleting
+                state = recycle;
+                recycle('on');
+                
+                full_filename = fullfile(path_name, filename);
+                delete(full_filename);
+                
+                % Restore previous recycle bin state
+                recycle(state);
+            end
+            
+        end
+        
+        function BackupFile(path_name, filename, reporting)
+            if PTKDiskUtilities.FileExists(path_name, filename)
+                new_filename = [filename '_Backup'];
+                backup_number = 0;
+                while PTKDiskUtilities.FileExists(path_name, new_filename)
+                    backup_number = backup_number + 1;
+                    new_filename = [filename '_Backup' int2str(backup_number)];                    
+                end
+                PTKDiskUtilities.RenameFile(path_name, filename, new_filename);                
+            end
+        end
+        
+        function renamed = RenameFile(path_name, old_filename, new_filename, reporting)
+            if PTKDiskUtilities.FileExists(path_name, old_filename)
+                source = fullfile(path_name, old_filename);
+                dest = fullfile(path_name, new_filename);
+                movefile(source, dest);
+                renamed = true;
+            else
+                renamed = false;
+            end
+        end
         
         % Returns a path to the user's home folder
         function home_directory = GetUserDirectory
