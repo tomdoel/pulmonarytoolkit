@@ -73,8 +73,8 @@ function separated_mask = SeparateIntoTwo(volume_mask, scattered_points, volume_
             % Reset dividing points image to original set of points
             dividing_points_image.ChangeRawImage(dividing_points_image_raw);
             
-            % Morphologically close to fill the gaps
-            dividing_points_image.BinaryMorph(@imclose, closing_size_mm);
+            % Morphologically dilate to fill the gaps
+            dividing_points_image.BinaryMorph(@imdilate, closing_size_mm);
         end
     end
     
