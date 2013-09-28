@@ -83,7 +83,10 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     rotate3d;
     cm = colormap('Lines');
     view(-37.5, 30);
-        
+    
+    % Change camera angle
+    campos([0, -1600, 0]);
+    
     % Get a list of all labels in the segmentation image
     segmentation_labels = setdiff(unique(segmentation.RawImage(:)), 0);
     
@@ -97,52 +100,23 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
         reporting.CheckForCancel;
         reporting.UpdateProgressValue(100*(label_index-1)/number_of_segmentations);
         
-        % Isolate this colour component
-        sub_seg = segmentation.BlankCopy;
-        sub_seg.ChangeRawImage(segmentation.RawImage == label);
-        
-        % Perform a closing operation and filter the image to create a smoother appearance
-        if small_structures
-            morph_size = 1;
-        else
-            morph_size = 3;
-        end
-        
-        if morph_size > 0
-            sub_seg.BinaryMorph(@imclose, morph_size);
-        end
-        
-        if smoothing_size > 0
-            sub_seg = PTKGaussianFilter(sub_seg, smoothing_size);
-        end
-        
         % Get the colour from the colourmap
         this_colour = (mod(label-1, 60)) + 1;
         cm_color = cm(this_colour, :);
-        
-        % Draw the 3D surface
-        if small_structures
-            threshold = 0.2;
-        else
-            threshold = 0.5;
-        end
-        
-        [ic, jc, kc] = sub_seg.GetCentredGlobalCoordinatesMm;
-        kc = -kc;
 
-        p = patch(isosurface(jc, ic, kc, sub_seg.RawImage, threshold), 'EdgeColor', 'none', 'FaceColor', cm_color);
+        [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label);
+        
+        p = patch(fv, 'EdgeColor', 'none', 'FaceColor', cm_color);
         
         % Using isonormals improves the image quality but is slow for large
         % images
-        isonormals(jc, ic, kc, sub_seg.RawImage, p);
+        set(p, 'VertexNormals', normals);
 
     end
-    % Change camera angle
-    campos([0, -1600, 0]);
     
     % Add lighting
     cl = camlight('left');
-    set(cl, 'Position', [50, 50, 100]);
+    set(cl, 'Position', [300, 300, -300]);
     
     reporting.UpdateProgressValue(100);
     reporting.CompleteProgress;
