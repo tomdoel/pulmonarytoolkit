@@ -468,8 +468,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         % Downscales the image by an integer amount, without any filtering. Note
         % this does not alter the OriginalImageSize property
         function DownsampleImage(obj, scale)
+            if length(scale) == 1
+                scale = repmat(scale, 1, length(obj.Origin));
+            end
             obj.VoxelSize = scale.*obj.VoxelSize;
-            obj.Scale = scale;
+            obj.Scale = scale.*obj.Scale;
             obj.RawImage = obj.RawImage(1:scale(1):end, 1:scale(2):end, 1:scale(3):end);
             obj.NotifyImageChanged;
             obj.Origin = floor(obj.Origin./scale);
@@ -997,6 +1000,32 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
             [ic, jc, kc] = obj.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(ic, jc, kc);
         end
+        
+        % Returns the coordinates of all points in the image in global
+        % coordinates in mm, with the origin at the centre of the original image
+        function [ic, jc, kc] = GetCornerGlobalCoordinatesMm(obj)
+            [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
+            [ic, jc, kc] = obj.GlobalCoordinatesMmToCornerCoordinates(ic, jc, kc);
+        end
+        
+        function [xc, yc, zc] = GlobalCoordinatesMmToCornerCoordinates(obj, ic, jc, kc)
+            voxel_size = obj.VoxelSize;
+            
+            % Adjust to coordinates at centre of first voxel
+            offset = -voxel_size/2;
+            offset = [offset(2), offset(1), -offset(3)];
+            
+            % Shift the global origin to the first slice of the image
+            global_origin = [0, 0, 0];
+            
+            % Adjust to Dicom origin
+            offset = offset + global_origin;
+            
+            xc = jc + offset(1);
+            yc = ic + offset(2);
+            zc = -kc + offset(3);
+        end
+
 
         % Translates global coordinates in mm so that the origin is in the centre of the image
         function [ic, jc, kc] = GlobalCoordinatesMmToCentredGlobalCoordinatesMm(obj, ic, jc, kc)
