@@ -45,7 +45,7 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
             
             % Remove first two generations of airway tree
             reporting.ShowProgress('Finding main airways and removing');
-            results = dataset.GetResult('PTKAirways');
+            [airway_tree, airway_image] = dataset.GetResult('PTKAirways');
             if dataset.IsGasMRI
                 size_dilation_mm = 2.5;
                 max_generation = 2;
@@ -56,7 +56,15 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
                 size_dilation_mm = 2.5;
                 max_generation = 3;
             end
-            main_airways = PTKUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, max_generation);
+
+            if dataset.IsGasMRI || strcmp(dataset.GetImageInfo.Modality, 'MR')
+                main_airways = PTKUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, max_generation);
+            else                
+                airways_by_lobe = dataset.GetResult('PTKAirwaysLabelledByLobe');
+                start_branches = airways_by_lobe.StartBranches;
+                main_airways = PTKColourBranchesBelowLobe(start_branches, airway_tree.AirwayTree, threshold_image.BlankCopy);
+                main_airways = (airway_image.RawImage == 1) & (main_airways == 0);
+            end
             
             % Dilate the airways in order to remove airway walls. But we don't use too large a value, otherwise regions of the lungs will be removed
             ball_element = PTKImageUtilities.CreateBallStructuralElement(threshold_image.VoxelSize, size_dilation_mm);
@@ -90,5 +98,18 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
                 end
             end
         end
+        
+        function segmented_image = GetAirwaysUpToBronchi(bronchi, template)
+            segmented_image = zeros(template.ImageSize, 'uint8');
+            segments_to_do = bronchi;
+            while ~isempty(segments_to_do)
+                segment = segments_to_do(end);
+                segments_to_do(end) = [];
+                voxels = template.GlobalToLocalIndices(segment.GetAllAirwayPoints);
+                segmented_image(voxels) = 1;
+                segments_to_do = [segments_to_do, segment.Parent];
+            end
+        end
+        
     end
 end
