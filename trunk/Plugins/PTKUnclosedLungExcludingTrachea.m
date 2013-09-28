@@ -59,7 +59,7 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
 
             if dataset.IsGasMRI || strcmp(dataset.GetImageInfo.Modality, 'MR')
                 main_airways = PTKUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, max_generation);
-            else                
+            else
                 airways_by_lobe = dataset.GetResult('PTKAirwaysLabelledByLobe');
                 start_branches = airways_by_lobe.StartBranches;
                 main_airways = PTKColourBranchesBelowLobe(start_branches, airway_tree.AirwayTree, threshold_image.BlankCopy);
