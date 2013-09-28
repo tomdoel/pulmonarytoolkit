@@ -237,9 +237,7 @@ classdef PTKTreeUtilities < handle
             % Add nearest neighbours to the list of voxels, otherwise it is possible for
             % a diagnoally-connected centreline segment to pass through a
             % diagnoally-connected airway segment
-            [~, linear_offsets27] = PTKImageCoordinateUtilities.GetLinearOffsets(template.ImageSize);
-            voxels = repmat(int32(voxels), 27, 1) + repmat(int32(linear_offsets27'), 1, length(voxels));
-            voxels = unique(voxels(:));
+            voxels = PTKImageCoordinateUtilities.AddNearestNeighbours(voxels, template);
         end
 
     end

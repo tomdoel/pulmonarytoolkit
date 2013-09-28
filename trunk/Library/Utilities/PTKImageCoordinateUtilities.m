@@ -356,6 +356,15 @@ classdef PTKImageCoordinateUtilities
             dicom_coordinates = [ptk_coordinates(:, 2), ptk_coordinates(:, 1), - ptk_coordinates(:, 3)];
             dicom_coordinates = dicom_coordinates + repmat(offset, size(ptk_coordinates, 1), 1);
         end
+        
+        function voxel_indices = AddNearestNeighbours(voxel_indices, template_image)
+            if isempty(voxel_indices)
+                return;
+            end
+            [~, linear_offsets27] = PTKImageCoordinateUtilities.GetLinearOffsets(template_image.ImageSize);
+            voxel_indices = repmat(int32(voxel_indices), 27, 1) + repmat(int32(linear_offsets27'), 1, length(voxel_indices));
+            voxel_indices = unique(voxel_indices(:));
+        end
     end
 end
 
