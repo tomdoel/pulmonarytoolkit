@@ -1,6 +1,6 @@
 classdef PTKAirwaysPrunedBySegment < PTKPlugin
     % PTKAirwaysPrunedBySegment. Plugin for pruning end branches from an airway
-    %     tree according tp the pulmonary segments
+    %     tree according to the pulmonary segments
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
