@@ -350,11 +350,20 @@ classdef PTKImageCoordinateUtilities
             
             % Adjust to Dicom origin
             offset = offset + global_origin;
-
-            
             
             dicom_coordinates = [ptk_coordinates(:, 2), ptk_coordinates(:, 1), - ptk_coordinates(:, 3)];
             dicom_coordinates = dicom_coordinates + repmat(offset, size(ptk_coordinates, 1), 1);
+        end
+        
+        function ptk_coordinates = CornerToPtkCoordinates(dicom_coordinates, template_image)
+            voxel_size = template_image.VoxelSize;
+            
+            offset = -voxel_size/2;
+            offset = [offset(2), offset(1), -offset(3)];
+            
+            dicom_coordinates = dicom_coordinates - repmat(offset, size(dicom_coordinates, 1), 1);
+            
+            ptk_coordinates = [dicom_coordinates(:, 2), dicom_coordinates(:, 1), - dicom_coordinates(:, 3)];
         end
         
         function voxel_indices = AddNearestNeighbours(voxel_indices, template_image)
