@@ -293,14 +293,14 @@ function ShowInterpolatedCoordinatesOn3dFigure(figure_airways_3d, lung_image, ce
 
     global_centre_point_voxels = lung_image.LocalToGlobalCoordinates([centre_point_voxels(:, 1), centre_point_voxels(:, 2), centre_point_voxels(:, 3)]);
     [ic_cp, jc_cp, kc_cp] = lung_image.GlobalCoordinatesToCoordinatesMm(global_centre_point_voxels);
-    [ic_cp, jc_cp, kc_cp] = lung_image.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(ic_cp, jc_cp, kc_cp);
-    plot3(jc_cp, ic_cp, - kc_cp, 'rx', 'MarkerSize', 10);
+    [xc_cp, yc_cp, zc_cp] = lung_image.GlobalCoordinatesMmToCornerCoordinates(ic_cp, jc_cp, kc_cp);
+    plot3(xc_cp, yc_cp, zc_cp, 'rx', 'MarkerSize', 10);
     
     global_coordinates = lung_image.LocalToGlobalCoordinates([i_coord_voxels(:), j_coord_voxels(:), k_coord_voxels(:)]);
     [ic, jc, kc] = lung_image.GlobalCoordinatesToCoordinatesMm(global_coordinates);
-    [ic, jc, kc] = lung_image.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(ic, jc, kc);
+    [xc, yc, zc] = lung_image.GlobalCoordinatesMmToCornerCoordinates(ic, jc, kc);
     
-    plot3(jc(:), ic(:), -kc(:), 'r.');    
+    plot3(xc(:), yc(:), zc(:), 'r.');
 end
 
 function [i_coord_voxels, j_coord_voxels, k_coord_voxels] = PolarToGlobal(r, theta, centre_point_voxels, voxel_size_mm, x_prime_norm, y_prime_norm)
