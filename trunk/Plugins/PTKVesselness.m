@@ -62,7 +62,7 @@ classdef PTKVesselness < PTKPlugin
         end
         
         function results = GenerateImageFromResults(results, ~, ~)
-            vesselness_raw = 3*uint8(results.RawImage > 20);
+            vesselness_raw = 3*uint8(results.RawImage > 5);
             results.ChangeRawImage(vesselness_raw);
             results.ImageType = PTKImageType.Colormap;
         end        
