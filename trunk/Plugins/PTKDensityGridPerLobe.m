@@ -38,17 +38,23 @@ classdef PTKDensityGridPerLobe < PTKPlugin
             reporting.ShowProgress('Computing lobes and density');
             
             % Get the lobe mask
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');            
+            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            
+            lung_excluding_surface = dataset.GetResult('PTKLungsExcludingSurface');
+
 
             % Work out the interpolation grid spacing
             approx_number_grid_points = 30000;
-            grid_spacing_mm = lobes.ComputeResamplingGridSpacing(approx_number_grid_points);
+            grid_spacing_mm = lung_excluding_surface.ComputeResamplingGridSpacing(approx_number_grid_points);
             grid_spacing_3 = [grid_spacing_mm, grid_spacing_mm, grid_spacing_mm];
             
             % Get the average density
             density_average_result = dataset.GetResult('PTKDensityAverage');
             density_average = density_average_result.DensityAverage;
-            density_average_mask = density_average_result.DensityAverageMask;
+            density_average_valid_mask = density_average_result.DensityAverageValidPointsMask;
+            
+            mean_density = mean(density_average.RawImage(density_average_valid_mask.RawImage(:)));
+            disp(['Mean density:' num2str(mean_density)]);
 
             reporting.ShowProgress('Resample and saving density per lobe to files');
 
@@ -66,15 +72,19 @@ classdef PTKDensityGridPerLobe < PTKPlugin
                 % Crop the density to the same size
                 density_average_copy = density_average.Copy;
                 density_average_copy.ResizeToMatch(lobes_copy);
-                density_average_mask_copy = density_average_mask.Copy;
-                density_average_mask_copy.ResizeToMatch(lobes_copy);
+                lung_excluding_surface_copy = lung_excluding_surface.Copy;
+                lung_excluding_surface_copy.ResizeToMatch(lobes_copy);
+                density_average_valid_mask_copy = density_average_valid_mask.Copy;
+                density_average_valid_mask_copy.ResizeToMatch(lobes_copy);
 
                 % Resample lobes and density
                 lobes_copy.Resample(grid_spacing_3, '*nearest')
                 density_average_copy.Resample(grid_spacing_3, '*nearest')
-                density_average_mask_copy.Resample(grid_spacing_3, '*nearest')
+                density_average_valid_mask_copy.Resample(grid_spacing_3, '*nearest')
+                lung_excluding_surface_copy.Resample(grid_spacing_3, '*nearest')
                 
-                local_indices_for_this_lobe = find(lobes_copy.RawImage & density_average_mask_copy.RawImage);
+                local_indices_for_this_lobe = find(lobes_copy.RawImage & lung_excluding_surface_copy.RawImage);
+                
                 global_indices_for_this_lobe = lobes_copy.LocalToGlobalIndices(local_indices_for_this_lobe);
                 [ic, jc, kc] = lobes_copy.GlobalIndicesToCoordinatesMm(global_indices_for_this_lobe);
                 density_values = density_average_copy.RawImage(local_indices_for_this_lobe);
@@ -86,27 +96,10 @@ classdef PTKDensityGridPerLobe < PTKPlugin
         
         function SaveToFile(dataset, lobe_name, ic, jc, kc, density_values)
             results_directory = dataset.GetOutputPathAndCreateIfNecessary;
-            
-            results_file_name = fullfile(results_directory, ['DensityValues_' lobe_name '.txt']);
-            file_handle = fopen(results_file_name, 'w');
-            
-            number_points = length(ic);
-            
+            file_name = ['DensityValues_' lobe_name '.txt'];
             template_image = dataset.GetTemplateImage(PTKContext.LungROI);
-
-            for index = 1 : number_points
-                
-                dicom_coords = PTKImageCoordinateUtilities.PtkToCornerCoordinates([ic(index), jc(index), kc(index)], template_image);
-                coord_x = dicom_coords(1);
-                coord_y = dicom_coords(2);
-                coord_z = dicom_coords(3);
-                
-                density = density_values(index);
-                output_string = sprintf('%6.6g,%6.6g,%6.6g,%6.6g\r\n', coord_x, coord_y, coord_z, density);
-                fprintf(file_handle, regexprep(output_string, ' ', ''));
-            end
             
-            fclose(file_handle);
+            PTKSaveListOfPointsAndValues(results_directory, file_name, ic, jc, kc, density_values, template_image)
         end        
     end
 end

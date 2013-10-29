@@ -38,17 +38,26 @@ classdef PTKDensityAverage < PTKPlugin
         function results = RunPlugin(dataset, reporting)
             reporting.ShowProgress('Fetching ROI');
             lung_roi = dataset.GetResult('PTKLungROI');
-            mask = dataset.GetResult('PTKLeftAndRightLungs');
-            [~, airways] = dataset.GetResult('PTKAirways');
+            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes_mask = lobes.BlankCopy;
+            lobes_mask.ChangeRawImage(lobes.RawImage > 0);
             
-            [density_average, density_average_mask] = PTKComputeDensityAverage(lung_roi, mask, airways, reporting);
+            mask = dataset.GetResult('PTKLungsExcludingSurface');
+            non_parenchyma_points = dataset.GetResult('PTKLungInteriorNonParenchymaPoints');
+            non_parenchyma_points_raw = non_parenchyma_points.RawImage;
+            non_parenchyma_points_raw(lobes_mask.RawImage & ~mask.RawImage) = true;
+            non_parenchyma_points.ChangeRawImage(non_parenchyma_points_raw);
+            [density_average, density_values_computed_mask, density_valid_values_mask] = ...
+                PTKComputeDensityAverage(lung_roi, lobes_mask, non_parenchyma_points, reporting);
             results = [];
             results.DensityAverage = density_average;
-            results.DensityAverageMask = density_average_mask;
+            results.DensityAverageMask = density_values_computed_mask;
+            results.DensityAverageValidPointsMask = density_valid_values_mask;
         end
         
          function results = GenerateImageFromResults(results, ~, ~)
-             results = results.DensityAverage;
+             results = results.DensityAverageMask;
+             results.ImageType = PTKImageType.Colormap;
          end
     end
 end
