@@ -85,7 +85,7 @@ classdef PTKEmphysemaPercentage < PTKPlugin
             emphysema_image = roi.BlankCopy;
             emphysema_threshold_value_hu = -950;
             emphysema_threshold_value = roi.HounsfieldToGreyscale(emphysema_threshold_value_hu);
-            emphysema_image.ChangeRawImage(roi.RawImage <= emphysema_threshold_value);
+            emphysema_image.ChangeRawImage(roi.RawImage <= emphysema_threshold_value & left_and_right_lungs.RawImage > 0);
             
             whole_lung_results = PTKEmphysemaPercentage.Analyse(roi, left_and_right_lungs.RawImage > 0);
             

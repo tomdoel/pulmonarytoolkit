@@ -37,8 +37,7 @@ classdef PTKEmphysemaPercentageByLobe < PTKPlugin
         function emphysema_results = RunPlugin(dataset, reporting)
             results_directory = dataset.GetOutputPathAndCreateIfNecessary;
             left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
-%             lobes = dataset.GetResult('PTKLobesFromFissurePlane');
-            lobes = dataset.GetResult('PTKLobesByVesselnessDensityUsingWatershed');
+            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
 
