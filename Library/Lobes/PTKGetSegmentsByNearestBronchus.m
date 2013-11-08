@@ -1,4 +1,4 @@
-function [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchus(airway_results, left_and_right_lungs, segment_airways, lobes, reporting)
+function [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchus(airway_root, left_and_right_lungs, segment_airways, lobes, reporting)
     % PTKGetSegmentsByNearestBronchus. Allocates airways to pulmonary segments
     %
     %
@@ -10,50 +10,50 @@ function [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchu
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
         
-    results_left = GetLeft(airway_results, left_and_right_lungs.Copy, lobes.Copy, segment_airways, reporting);
-    results_right = GetRight(airway_results, left_and_right_lungs, lobes, segment_airways, reporting);
+    results_left = GetLeft(airway_root, left_and_right_lungs.Copy, lobes.Copy, segment_airways, reporting);
+    results_right = GetRight(airway_root, left_and_right_lungs, lobes, segment_airways, reporting);
     segment_image_map = PTKCombineLeftAndRightImages(left_and_right_lungs, results_left, results_right, left_and_right_lungs);
     segment_image_map.ImageType = PTKImageType.Colormap;
     labelled_segments = segment_airways;
 end
 
-function results_right = GetRight(airway_results, left_and_right_lungs, lobes, segments, reporting)
+function results_right = GetRight(airway_root, left_and_right_lungs, lobes, segments, reporting)
     results_right = left_and_right_lungs.BlankCopy;
     results_right.ChangeRawImage(zeros(results_right.ImageSize, 'uint8'));
     all_segments = segments.StartBranches.Segments;
     
-    results_upper_right = GetSegmentsFromUpperRightLobe(lobes, all_segments, airway_results, reporting);
+    results_upper_right = GetSegmentsFromUpperRightLobe(airway_root, lobes, all_segments, reporting);
     results_right.ChangeSubImageWithMask(results_upper_right, lobes, 1);
     
-    results_mid_right = GetSegmentsFromMidRightLobe(lobes, all_segments, airway_results, reporting);
+    results_mid_right = GetSegmentsFromMidRightLobe(airway_root, lobes, all_segments, reporting);
     results_right.ChangeSubImageWithMask(results_mid_right, lobes, 2);
     
-    results_lower_right = GetSegmentsFromLowerRightLobe(lobes, all_segments, airway_results, reporting);
+    results_lower_right = GetSegmentsFromLowerRightLobe(airway_root, lobes, all_segments, reporting);
     results_right.ChangeSubImageWithMask(results_lower_right, lobes, 4);
     
     results_right.ImageType = PTKImageType.Colormap;
 end
 
-function results_left = GetLeft(airway_results, left_and_right_lungs, lobes, segments, reporting)
+function results_left = GetLeft(airway_root, left_and_right_lungs, lobes, segments, reporting)
     results_left = left_and_right_lungs.BlankCopy;
     results_left.ChangeRawImage(zeros(results_left.ImageSize, 'uint8'));
     all_segments = segments.StartBranches.Segments;
     
-    results_upper_left = GetSegmentsFromUpperLeftLobe(lobes, all_segments, airway_results, reporting);
+    results_upper_left = GetSegmentsFromUpperLeftLobe(airway_root, lobes, all_segments, reporting);
     results_left.ChangeSubImageWithMask(results_upper_left, lobes, 5);
     
-    results_lower_left = GetSegmentsFromLowerLeftLobe(lobes, all_segments, airway_results, reporting);
+    results_lower_left = GetSegmentsFromLowerLeftLobe(airway_root, lobes, all_segments, reporting);
     results_left.ChangeSubImageWithMask(results_lower_left, lobes, 6);
     
     results_left.ImageType = PTKImageType.Colormap;
 end
 
-function results = GetSegmentsFromUpperRightLobe(lobes, all_segments, airway_results, reporting)
+function results = GetSegmentsFromUpperRightLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
     roi.ChangeRawImage(lobes.RawImage == 1);
     segments = all_segments.UpperRightSegments;
     segments_remaining = segments;    
-    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_results, roi, true);
+    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
     [results, d1, d2, is, js, ks] = DivideImageCropped(airways_image, roi);
     
     % apical
@@ -75,12 +75,12 @@ function results = GetSegmentsFromUpperRightLobe(lobes, all_segments, airway_res
     results.ChangeRawImage(segment_colour_mapping(results.RawImage + 1));    
 end
 
-function results = GetSegmentsFromMidRightLobe(lobes, all_segments, airway_results, reporting)
+function results = GetSegmentsFromMidRightLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
     roi.ChangeRawImage(lobes.RawImage == 2);
     segments = all_segments.MiddleRightSegments;
     segments_remaining = segments;    
-    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_results, roi, true);
+    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
     [results, d1, d2, is, js, ks] = DivideImageCropped(airways_image, roi);
     
     % medial
@@ -99,12 +99,12 @@ function results = GetSegmentsFromMidRightLobe(lobes, all_segments, airway_resul
     results.ChangeRawImage(segment_colour_mapping(results.RawImage + 1));        
 end
 
-function results = GetSegmentsFromLowerRightLobe(lobes, all_segments, airway_results, reporting)
+function results = GetSegmentsFromLowerRightLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
     roi.ChangeRawImage(lobes.RawImage == 4);
     segments = all_segments.LowerRightSegments;
     segments_remaining = segments;    
-    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_results, roi, true);
+    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
     [results, d1, d2, is, js, ks] = DivideImageCropped(airways_image, roi);
     
     % superior
@@ -132,12 +132,12 @@ function results = GetSegmentsFromLowerRightLobe(lobes, all_segments, airway_res
     results.ChangeRawImage(segment_colour_mapping(results.RawImage + 1));        
 end
 
-function results = GetSegmentsFromUpperLeftLobe(lobes, all_segments, airway_results, reporting)
+function results = GetSegmentsFromUpperLeftLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
     roi.ChangeRawImage(lobes.RawImage == 5);
     segments = all_segments.UpperLeftSegments;
     segments_remaining = segments;
-    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_results, roi, true);
+    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
     [results, d1, d2, is, js, ks] = DivideImageCropped(airways_image, roi);
     
     % apico-posterior
@@ -166,12 +166,12 @@ function results = GetSegmentsFromUpperLeftLobe(lobes, all_segments, airway_resu
     results.ChangeRawImage(segment_colour_mapping(results.RawImage + 1));
 end
 
-function results = GetSegmentsFromLowerLeftLobe(lobes, all_segments, airway_results, reporting)
+function results = GetSegmentsFromLowerLeftLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
     roi.ChangeRawImage(lobes.RawImage == 6);
     segments = all_segments.LowerLeftSegments;
     segments_remaining = segments;    
-    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_results, roi, true);
+    airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
     [results, d1, d2, is, js, ks] = DivideImageCropped(airways_image, roi);
     
     % superior

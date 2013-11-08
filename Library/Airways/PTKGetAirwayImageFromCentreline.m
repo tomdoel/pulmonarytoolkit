@@ -1,4 +1,4 @@
-function results_image = PTKGetAirwayImageFromCentreline(label_bronchi, airway_results, template, colour_by_segment_index)
+function results_image = PTKGetAirwayImageFromCentreline(label_bronchi, airway_root, template, colour_by_segment_index)
     % PTKGetAirwayImageFromCentreline. Generates an image of the airways
     %     coloured according to a number of subtrees. The start branch of the
     %     subtrees are specified in label_bronchi. Any bronchi serving more han
@@ -25,7 +25,7 @@ function results_image = PTKGetAirwayImageFromCentreline(label_bronchi, airway_r
     
     results_image_raw = zeros(template.ImageSize, 'uint8');
     
-    bronchi_to_do = airway_results.AirwayTree;
+    bronchi_to_do = airway_root;
     
     while ~isempty(bronchi_to_do)
         airway_bronchus = bronchi_to_do(end);
