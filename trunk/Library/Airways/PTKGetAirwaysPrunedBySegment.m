@@ -26,7 +26,7 @@ function results_image = PTKGetAirwaysPrunedBySegment(start_branches, airway_res
     all_segments = [segments.UpperLeftSegments, segments.LowerLeftSegments, ...
         segments.UpperRightSegments, segments.MiddleRightSegments, segments.LowerRightSegments];
     template = airway_image;
-    results_image = PTKGetAirwayImageFromCentreline(all_segments, airway_results, template, false);
+    results_image = PTKGetAirwayImageFromCentreline(all_segments, airway_results.AirwayTree, template, false);
     results_image.ImageType = PTKImageType.Colormap;
 end
 
