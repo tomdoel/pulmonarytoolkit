@@ -38,6 +38,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Visualisation');
         path_folders{end + 1} = 'Framework';
         path_folders{end + 1} = fullfile('External', 'gerardus', 'matlab', 'PointsToolbox');
+        path_folders{end + 1} = fullfile('External', 'stlwrite');
         
         full_paths_to_add = {};
         
