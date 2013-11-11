@@ -127,7 +127,7 @@ else % BINARY
     
     
     %WGL Modification: Allows color in binary stl files
-    if isfield(options, 'facecolor')
+    if isfield(options, 'facecolor') && ~isempty(options.facecolor)
         facecolor = uint16(options.facecolor);
         %Set the Valid Color bit (bit 15)
         c0 = bitshift(ones(size(faces,1),1,'uint16'),15);
