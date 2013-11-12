@@ -41,7 +41,7 @@ classdef PTKPluginsPanel < handle
                 'BackgroundColor', panel_background_colour, 'Units', 'pixels' ...
             );
         
-            obj.PluginSlider = uicontrol('Style', 'slider', 'Parent', obj.ParentHandle, 'TooltipString', 'Scroll through slices');
+            obj.PluginSlider = uicontrol('Style', 'slider', 'Parent', obj.ParentHandle, 'TooltipString', 'Scroll through plugins');
         
             
             obj.GuiPluginPanels = containers.Map;
