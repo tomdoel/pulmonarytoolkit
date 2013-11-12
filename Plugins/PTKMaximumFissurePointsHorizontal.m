@@ -62,7 +62,7 @@ classdef PTKMaximumFissurePointsHorizontal < PTKPlugin
             lung_mask.ResizeToMatch(lung_roi);
             lung_mask.ResizeToMatch(lung_roi);
             
-            [~, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == fissure_colour, lung_mask, fissureness_roi, lung_roi.ImageSize);
+            [~, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == fissure_colour, lung_mask, fissureness_roi, lung_roi, lung_roi.ImageSize);
             
             ref_image(ref_image == 1) = 8;
             

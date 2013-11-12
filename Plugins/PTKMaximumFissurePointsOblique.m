@@ -63,7 +63,7 @@ classdef PTKMaximumFissurePointsOblique < PTKPlugin
             fissure_approximation.ResizeToMatch(lung_roi);
             lung_mask.ResizeToMatch(lung_roi);
             
-            [~, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == fissure_colour, lung_mask, fissureness_roi, lung_roi.ImageSize);
+            [~, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == fissure_colour, lung_mask, fissureness_roi, lung_roi, lung_roi.ImageSize);
             
             results = lung_roi.BlankCopy;
             results.ChangeRawImage(ref_image);

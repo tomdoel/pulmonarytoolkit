@@ -67,7 +67,7 @@ classdef PTKMaximumFissurePoints < PTKPlugin
             fissure_approximation.ResizeToMatch(left_lung_roi);
             lung_mask.ResizeToMatch(left_lung_roi);
             
-            [high_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == 6, lung_mask, fissureness_roi.LeftMainFissure, left_lung_roi.ImageSize);
+            [high_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == 6, lung_mask, fissureness_roi.LeftMainFissure, left_lung_roi, left_lung_roi.ImageSize);
             
             left_results = left_lung_roi.BlankCopy;
             left_results.ChangeRawImage(ref_image);
@@ -84,9 +84,9 @@ classdef PTKMaximumFissurePoints < PTKPlugin
             fissure_approximation.ResizeToMatch(right_lung_roi);
             lung_mask.ResizeToMatch(right_lung_roi);
             
-            [high_fissure_indices, ref_image_o] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == 2, lung_mask, fissureness_roi.RightMainFissure, right_lung_roi.ImageSize);
+            [high_fissure_indices, ref_image_o] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == 2, lung_mask, fissureness_roi.RightMainFissure, right_lung_roi, right_lung_roi.ImageSize);
 
-            [high_fissure_indices_m, ref_image_m] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == 3, lung_mask, fissureness_roi.RightMidFissure, right_lung_roi.ImageSize);
+            [high_fissure_indices_m, ref_image_m] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == 3, lung_mask, fissureness_roi.RightMidFissure, right_lung_roi, right_lung_roi.ImageSize);
             
             ref_image = ref_image_m;
             ref_image(ref_image_o == 1) = 1;
