@@ -1,4 +1,4 @@
-function [high_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_approximation, lung_mask, fissureness, image_size)
+function [high_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_approximation, lung_mask, fissureness, image_roi, image_size)
     % PTKGetMaxFissurePoints. function for finding candidate points of high
     %     fissureness given an initial fissure approximation.
     %
@@ -20,11 +20,11 @@ function [high_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_appr
     
     bin_size = 2;
 
-    [high_fissure_indices, ref_image] = GetFissurePoints(data_points_indices, image_size, lung_mask, fissureness.RawImage, bin_size);
+    [high_fissure_indices, ref_image] = GetFissurePoints(data_points_indices, image_size, lung_mask, fissureness, image_roi, bin_size);
 end
 
 
-function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for_model, image_size, lung_segmentation, fissureness, bin_size)
+function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for_model, image_size, lung_segmentation, fissureness, image_roi, bin_size)
 
     % Get the coordinates of every voxel in the lung segmentation
     candidate_indices = find(lung_segmentation.RawImage);
@@ -34,9 +34,11 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     ref_image(candidate_indices) = 2;
     
     % Remove points with low fissureness
-    max_fissureness = max(fissureness(candidate_indices));
+    max_fissureness = max(fissureness.RawImage(candidate_indices));
     fissureness_threshold = max_fissureness/3;
-    candidate_indices = candidate_indices(fissureness(candidate_indices) > fissureness_threshold);
+    intensity_threshold_hu = -800;
+    intensity_threshold = image_roi.HounsfieldToGreyscale(intensity_threshold_hu);
+    candidate_indices = candidate_indices((fissureness.RawImage(candidate_indices) > fissureness_threshold) & (image_roi.RawImage(candidate_indices) > intensity_threshold));
     ref_image(candidate_indices) = 4;
 
     % Find a rotation matrix
@@ -150,14 +152,14 @@ function [maximum_fissureness_indices, all_maxima] = SortIntoBins(x1, y1, candid
     bin = binx + (max(binx)+1)*biny;
     
     % Now sort the indices and bins by fissureness
-    fissureness_at_indices = fissureness(candidate_indices);
+    fissureness_at_indices = fissureness.RawImage(candidate_indices);
     
     is_maxima = GetMaxima(candidate_indices, bin, fissureness_at_indices, fissureness, image_size);
     all_maxima = candidate_indices(is_maxima);
     bin = bin(is_maxima);
     candidate_indices = candidate_indices(is_maxima);
 
-    fissureness_at_indices = fissureness(candidate_indices);
+    fissureness_at_indices = fissureness.RawImage(candidate_indices);
     
     [~, sorted_indices] = sort(fissureness_at_indices, 'descend');
     indices_sorted_by_fissureness = candidate_indices(sorted_indices);
@@ -174,7 +176,7 @@ function [maximum_fissureness_indices, all_maxima] = SortIntoBins(x1, y1, candid
         indices_sorted_by_fissureness(bin_indices) = [];
     end
     
-    maximum_fissureness_indices = maximum_fissureness_indices(fissureness(maximum_fissureness_indices) > 0);
+    maximum_fissureness_indices = maximum_fissureness_indices(fissureness.RawImage(maximum_fissureness_indices) > 0);
 
 end
 
@@ -184,7 +186,7 @@ function is_maxima = GetMaxima(candidate_indices, bin, fissureness_at_indices, f
     
     [linear_offsets, ~] = PTKImageCoordinateUtilities.GetLinearOffsets(image_size);
     neighbours = repmat(int32(candidate_indices), 1, 6) + repmat(int32(linear_offsets), length(candidate_indices), 1);
-    fissureness_neighbours = fissureness(neighbours);
+    fissureness_neighbours = fissureness.RawImage(neighbours);
     bins_neighbours = bin_allocation(neighbours);
     bins_match = bins_neighbours == repmat(bin', 1, 6);
     fissureness_centre = repmat(fissureness_at_indices, 1, 6);
