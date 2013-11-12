@@ -68,6 +68,13 @@ classdef PTKViewer < handle
 
         end
         
+        function delete(obj)
+            delete(obj.ViewerPanelHandle);
+            if ishandle(obj.FigureHandle)
+                delete(obj.FigureHandle);
+            end
+        end        
+        
         function title = get.Title(obj)
             title = get(obj.FigureHandle, 'Name');
         end
@@ -81,8 +88,8 @@ classdef PTKViewer < handle
     methods (Access = private)
 
         function CustomCloseFunction(obj, ~, ~)
-            delete(obj.FigureHandle);
-            delete(obj.ViewerPanelHandle);
+            delete(obj);
         end
+        
     end
 end
