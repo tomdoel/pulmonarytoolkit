@@ -73,8 +73,8 @@ classdef PTKViewer < handle
             if ishandle(obj.FigureHandle)
                 delete(obj.FigureHandle);
             end
-        end        
-        
+        end
+
         function title = get.Title(obj)
             title = get(obj.FigureHandle, 'Name');
         end
@@ -90,6 +90,6 @@ classdef PTKViewer < handle
         function CustomCloseFunction(obj, ~, ~)
             delete(obj);
         end
-        
+
     end
 end
