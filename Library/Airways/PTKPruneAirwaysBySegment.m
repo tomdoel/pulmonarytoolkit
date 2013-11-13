@@ -1,8 +1,6 @@
-function results_image = PTKGetAirwaysPrunedBySegment(start_branches, airway_results, airway_image)
-    % PTKGetAirwaysPrunedBySegment. Prunes branches from an airway
-    %     tree according tp the pulmonary segments
-    %
-    %
+function start_branches = PTKPruneAirwaysBySegment(start_branches)
+    % PTKPruneAirwaysBySegment. Prunes branches from an airway
+    %     tree at the end of each segmental bronchus
     %
     %
     %     Licence
@@ -20,14 +18,6 @@ function results_image = PTKGetAirwaysPrunedBySegment(start_branches, airway_res
     
     % Split trifurcations into multiple bifurcations
     start_branches.Trachea.RemoveMultipleBifurcations;
-    
-    % Generate results image
-    segments = start_branches.Segments;
-    all_segments = [segments.UpperLeftSegments, segments.LowerLeftSegments, ...
-        segments.UpperRightSegments, segments.MiddleRightSegments, segments.LowerRightSegments];
-    template = airway_image;
-    results_image = PTKGetAirwayImageFromCentreline(all_segments, airway_results.AirwayTree, template, false);
-    results_image.ImageType = PTKImageType.Colormap;
 end
 
 function PruneAirways(segments)

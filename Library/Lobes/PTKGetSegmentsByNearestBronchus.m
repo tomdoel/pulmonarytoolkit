@@ -1,4 +1,4 @@
-function [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchus(airway_root, left_and_right_lungs, segment_airways, lobes, reporting)
+function [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchus(airway_root, left_and_right_lungs, segmental_bronchi_by_lobe, lobes, reporting)
     % PTKGetSegmentsByNearestBronchus. Allocates airways to pulmonary segments
     %
     %
@@ -10,17 +10,17 @@ function [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchu
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
         
-    results_left = GetLeft(airway_root, left_and_right_lungs.Copy, lobes.Copy, segment_airways, reporting);
-    results_right = GetRight(airway_root, left_and_right_lungs, lobes, segment_airways, reporting);
+    results_left = GetLeft(airway_root, left_and_right_lungs.Copy, lobes.Copy, segmental_bronchi_by_lobe, reporting);
+    results_right = GetRight(airway_root, left_and_right_lungs, lobes, segmental_bronchi_by_lobe, reporting);
     segment_image_map = PTKCombineLeftAndRightImages(left_and_right_lungs, results_left, results_right, left_and_right_lungs);
     segment_image_map.ImageType = PTKImageType.Colormap;
-    labelled_segments = segment_airways;
+    labelled_segments = segmental_bronchi_by_lobe;
 end
 
-function results_right = GetRight(airway_root, left_and_right_lungs, lobes, segments, reporting)
+function results_right = GetRight(airway_root, left_and_right_lungs, lobes, segmental_bronchi_by_lobe, reporting)
     results_right = left_and_right_lungs.BlankCopy;
     results_right.ChangeRawImage(zeros(results_right.ImageSize, 'uint8'));
-    all_segments = segments.StartBranches.Segments;
+    all_segments = segmental_bronchi_by_lobe.Segments;
     
     results_upper_right = GetSegmentsFromUpperRightLobe(airway_root, lobes, all_segments, reporting);
     results_right.ChangeSubImageWithMask(results_upper_right, lobes, 1);
@@ -34,10 +34,10 @@ function results_right = GetRight(airway_root, left_and_right_lungs, lobes, segm
     results_right.ImageType = PTKImageType.Colormap;
 end
 
-function results_left = GetLeft(airway_root, left_and_right_lungs, lobes, segments, reporting)
+function results_left = GetLeft(airway_root, left_and_right_lungs, lobes, segmental_bronchi_by_lobe, reporting)
     results_left = left_and_right_lungs.BlankCopy;
     results_left.ChangeRawImage(zeros(results_left.ImageSize, 'uint8'));
-    all_segments = segments.StartBranches.Segments;
+    all_segments = segmental_bronchi_by_lobe.Segments;
     
     results_upper_left = GetSegmentsFromUpperLeftLobe(airway_root, lobes, all_segments, reporting);
     results_left.ChangeSubImageWithMask(results_upper_left, lobes, 5);
