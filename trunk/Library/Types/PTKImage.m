@@ -473,7 +473,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
             obj.VoxelSize = scale.*obj.VoxelSize;
             obj.Scale = scale.*obj.Scale;
-            obj.RawImage = obj.RawImage(1:scale(1):end, 1:scale(2):end, 1:scale(3):end);
+            obj.RawImage = obj.RawImage(round(1:scale(1):end), round(1:scale(2):end), round(1:scale(3):end));
             obj.NotifyImageChanged;
             obj.Origin = floor(obj.Origin./scale);
         end
