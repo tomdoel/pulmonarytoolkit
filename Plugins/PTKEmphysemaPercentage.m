@@ -98,20 +98,24 @@ classdef PTKEmphysemaPercentage < PTKPlugin
             results.Left = left_results;
             results.Right = right_results;
 
+            PTKEmphysemaPercentage.SaveAndPrintResults(results_directory, results);
             
-            file_name = fullfile(results_directory, 'PTKEmphysemaPercentage.txt');
-            file_handle = fopen(file_name, 'w');
-            disp('*****');
-            PTKEmphysemaPercentage.WriteResults(file_handle, 'LUNG', results.Lung);
-            disp('-');
-            PTKEmphysemaPercentage.WriteResults(file_handle, 'LEFT LUNG', results.Left);
-            PTKEmphysemaPercentage.WriteResults(file_handle, 'RIGHT LUNG', results.Right);
-            
-            fclose(file_handle);
             emphysema_image.ImageType = PTKImageType.Colormap;
             emphysema_results = [];
             emphysema_results.Image = emphysema_image;
             emphysema_results.Metrics = results;
+        end
+        
+        function SaveAndPrintResults(metrics)
+            file_name = fullfile(results_directory, 'PTKEmphysemaPercentage.txt');
+            file_handle = fopen(file_name, 'w');
+            disp('*****');
+            PTKEmphysemaPercentage.WriteResults(file_handle, 'LUNG', metrics.Lung);
+            disp('-');
+            PTKEmphysemaPercentage.WriteResults(file_handle, 'LEFT LUNG', metrics.Left);
+            PTKEmphysemaPercentage.WriteResults(file_handle, 'RIGHT LUNG', metrics.Right);
+            
+            fclose(file_handle);
         end
     end
 end
