@@ -13,7 +13,7 @@ classdef PTKAirwaysPrunedBySegment < PTKPlugin
     %     Licence
     %     -------
     %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
@@ -24,7 +24,7 @@ classdef PTKAirwaysPrunedBySegment < PTKPlugin
         Category = 'Airways'
 
         AllowResultsToBeCached = true
-        AlwaysRunPlugin = false
+        AlwaysRunPlugin = true
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
         FlattenPreviewImage = true
@@ -36,12 +36,19 @@ classdef PTKAirwaysPrunedBySegment < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
+            segmental_bronchi_for_each_lobe = dataset.GetResult('PTKSegmentalBronchiForEachLobe');
+            unpruned_segmental_centreline_tree = segmental_bronchi_for_each_lobe.StartBranches;
+            
             airways_by_segment = dataset.GetResult('PTKSegmentsByNearestBronchus');
-            start_branches = airways_by_segment.AirwaysBySegment.StartBranches;
+            start_branches = airways_by_segment.AirwaysBySegment;
             [airway_results, airway_image] = dataset.GetResult('PTKAirways');
             
-            results_image = PTKGetAirwaysPrunedBySegment(start_branches, airway_results, airway_image);
-                        
+            start_branches = PTKPruneAirwaysBySegment(start_branches);
+            template = airway_image;
+            
+            results_image = PTKGetPrunedSegmentalAirwayImageFromCentreline(start_branches, unpruned_segmental_centreline_tree, airway_results.AirwayTree, template, false);
+            results_image.ImageType = PTKImageType.Colormap;
+            
             % Store results and results image
             results = [];
             results.StartBranches = start_branches;
@@ -49,11 +56,6 @@ classdef PTKAirwaysPrunedBySegment < PTKPlugin
         end
         
         function results = GenerateImageFromResults(airway_results, image_templates, reporting)
-            template_image = image_templates.GetTemplateImage(PTKContext.LungROI);
-            
-            start_tree = airway_results.StartBranches.Trachea;
-            
-            PTKVisualiseTreeModelCentreline(start_tree, template_image.VoxelSize, true);
             results = airway_results.PrunedSegmentsByLobeImage;            
         end        
     end
