@@ -65,5 +65,5 @@ classdef PTKPatientBrowserPanel < PTKPanel
             input_has_been_processed = obj.AllPatientsSlidingPanel.Scroll(scroll_count, current_point);
         end
 
-    end    
+    end
 end
