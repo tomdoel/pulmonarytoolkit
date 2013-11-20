@@ -30,7 +30,13 @@ function PTKRunTests(tests_to_run)
 end
 
 function RunTests(test_classes)
-    disp('Running tests...');
+    num_tests = numel(test_classes);
+    if num_tests == 1
+        test_string = 'test';
+    else
+        test_string = 'tests';
+    end
+    disp(['Running ' test_string '...']);
     passed = 0;
     failed = 0;
     
@@ -46,5 +52,5 @@ function RunTests(test_classes)
             failed = failed + 1;
         end
     end
-    disp(['Complete. ' int2str(failed+passed) ' tests run. ' int2str(passed) ' passed. ' int2str(failed) ' failed. ' ]);
+    disp(['Complete. ' int2str(failed+passed) ' ' test_string ' run. ' int2str(passed) ' passed. ' int2str(failed) ' failed. ' ]);
 end
