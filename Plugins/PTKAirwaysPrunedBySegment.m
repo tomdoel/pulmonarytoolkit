@@ -24,7 +24,7 @@ classdef PTKAirwaysPrunedBySegment < PTKPlugin
         Category = 'Airways'
 
         AllowResultsToBeCached = true
-        AlwaysRunPlugin = true
+        AlwaysRunPlugin = false
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
         FlattenPreviewImage = true
