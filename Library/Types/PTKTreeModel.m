@@ -227,12 +227,19 @@ classdef PTKTreeModel < PTKTree
             interpolated_indices = round(linspace(1, number_of_original_points, number_of_spline_points));
             
             radius_values = radius_values(interpolated_indices);
-            global_index = global_index(interpolated_indices);
+            if ~isempty(global_index)
+                global_index = global_index(interpolated_indices);
+            end
             
             % Store smoothed centreline
             obj.SmoothedCentreline = PTKCentrelinePoint.empty;
             for smoothed_point_index = 1 : number_of_spline_points
-                obj.SmoothedCentreline(smoothed_point_index) = PTKCentrelinePoint(spline(2, smoothed_point_index), spline(1, smoothed_point_index), spline(3, smoothed_point_index), radius_values(smoothed_point_index), global_index(smoothed_point_index));
+                if isempty(global_index)
+                    global_index_value = [];
+                else
+                    global_index_value = global_index(smoothed_point_index);
+                end
+                obj.SmoothedCentreline(smoothed_point_index) = PTKCentrelinePoint(spline(2, smoothed_point_index), spline(1, smoothed_point_index), spline(3, smoothed_point_index), radius_values(smoothed_point_index), global_index_value);
             end
             
             % Remove bifurcation point
@@ -242,30 +249,31 @@ classdef PTKTreeModel < PTKTree
         end
         
         function GenerateBranchParameters(obj)
-            obj.StartPoint = obj.Centreline(1);
-            obj.EndPoint = obj.Centreline(end);
-            
-            number_centreline_points = numel(obj.Centreline);
-            quarter_radius = round(number_centreline_points/4);
-            radius_start = 1 + quarter_radius;
-            radius_end = number_centreline_points - quarter_radius;
-            radius_start = max(1, radius_start);
-            radius_start = min(number_centreline_points, radius_start);
-            radius_end = max(1, radius_end);
-            radius_end = min(number_centreline_points, radius_end);
-            radius_start = min(radius_start, radius_end);
-            radius_end = max(radius_end, radius_start);
-            
-            radius_points = obj.Centreline(radius_start : radius_end);
-            number_radius_points = numel(radius_points);
-            radius_sum = 0;
-            for radius_point = radius_points
-                radius_sum = radius_sum + radius_point.Radius;    
+            if ~isempty(obj.Centreline)
+                obj.StartPoint = obj.Centreline(1);
+                obj.EndPoint = obj.Centreline(end);
+                
+                number_centreline_points = numel(obj.Centreline);
+                quarter_radius = round(number_centreline_points/4);
+                radius_start = 1 + quarter_radius;
+                radius_end = number_centreline_points - quarter_radius;
+                radius_start = max(1, radius_start);
+                radius_start = min(number_centreline_points, radius_start);
+                radius_end = max(1, radius_end);
+                radius_end = min(number_centreline_points, radius_end);
+                radius_start = min(radius_start, radius_end);
+                radius_end = max(radius_end, radius_start);
+                
+                radius_points = obj.Centreline(radius_start : radius_end);
+                number_radius_points = numel(radius_points);
+                radius_sum = 0;
+                for radius_point = radius_points
+                    radius_sum = radius_sum + radius_point.Radius;
+                end
+                obj.Radius = radius_sum/number_radius_points;
             end
-            obj.Radius = radius_sum/number_radius_points;
-            
             for child = obj.Children
-                child.GenerateBranchParameters;  
+                child.GenerateBranchParameters;
             end
         end
         
