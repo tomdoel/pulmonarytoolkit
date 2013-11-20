@@ -65,8 +65,8 @@ function [results_image, start_branches] = PTKGetAirwaysLabelledByLobe(template,
     [right_upper_startindices, right_midlower_startindices] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting);
     
     % Separate right mid/lower lobe into mid and lower lobes
-    [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobes(right_midlower_startindices, template, reporting);
-%     [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobesNew(right_midlower_startindices, template, reporting);
+%     [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobes(right_midlower_startindices, template, reporting);
+    [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobesNew(right_midlower_startindices, template, reporting);
 
     start_branches = [];
     start_branches.Trachea = start_segment;
