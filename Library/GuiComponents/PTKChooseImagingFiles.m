@@ -15,8 +15,8 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
     %    
 
     filespec = {
-        '*.*', 'All files (*.*)';
-        '*.*', 'DICOM files (*.*)';
+        '*;*.*', 'All files (*.*)';
+        '*;*.*', 'DICOM files (*.*)';
         '*.mhd;*.mha', 'Metaheader and raw data (*.mhd,*.mha)'
         };
     
