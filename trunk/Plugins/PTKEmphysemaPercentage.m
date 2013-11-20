@@ -106,7 +106,7 @@ classdef PTKEmphysemaPercentage < PTKPlugin
             emphysema_results.Metrics = results;
         end
         
-        function SaveAndPrintResults(metrics)
+        function SaveAndPrintResults(results_directory, metrics)
             file_name = fullfile(results_directory, 'PTKEmphysemaPercentage.txt');
             file_handle = fopen(file_name, 'w');
             disp('*****');
