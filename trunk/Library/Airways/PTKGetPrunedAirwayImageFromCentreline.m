@@ -9,7 +9,7 @@ function results_image = PTKGetPrunedAirwayImageFromCentreline(parent_bronchi, c
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    airways_image = PTKGetAirwayImageFromCentreline(parent_bronchi, airway_root, template, colour_by_segment_index);    
+    airways_image = PTKGetAirwayImageFromCentreline(parent_bronchi, airway_root, template, colour_by_segment_index);
     airways_image_child = PTKGetAirwayImageFromCentreline(child_bronchi, airway_root, template, colour_by_segment_index);
     
     results_image = airways_image.BlankCopy;
