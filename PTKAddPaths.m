@@ -32,6 +32,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Lobes');
         path_folders{end + 1} = fullfile('Library', 'Lungs');
         path_folders{end + 1} = fullfile('Library', 'Registration');
+        path_folders{end + 1} = fullfile('Library', 'Segmentation');
         path_folders{end + 1} = fullfile('Library', 'Test');
         path_folders{end + 1} = fullfile('Library', 'Types');
         path_folders{end + 1} = fullfile('Library', 'Utilities');
