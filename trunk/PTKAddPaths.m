@@ -26,6 +26,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = 'Test';
         path_folders{end + 1} = fullfile('Library', 'Airways');
         path_folders{end + 1} = fullfile('Library', 'Analysis');
+        path_folders{end + 1} = fullfile('Library', 'Conversion');
         path_folders{end + 1} = fullfile('Library', 'File');
         path_folders{end + 1} = fullfile('Library', 'GuiComponents');
         path_folders{end + 1} = fullfile('Library', 'Interfaces');
