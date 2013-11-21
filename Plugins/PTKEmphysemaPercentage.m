@@ -36,13 +36,18 @@ classdef PTKEmphysemaPercentage < PTKPlugin
     methods (Static)
         function emphysema_results = RunPlugin(dataset, reporting)
             results_directory = dataset.GetOutputPathAndCreateIfNecessary;
-            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
+            lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
+            [~, airway_image] = dataset.GetResult('PTKAirways');
+            lung_mask_raw = lung_mask.RawImage;
+            lung_mask_raw(airway_image.RawImage == 1) = 0;
+            lung_mask.ChangeRawImage(lung_mask_raw);
+            
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
 
             roi = dataset.GetResult('PTKLungROI');
             
-            emphysema_results = PTKEmphysemaPercentage.GetEmphysemaPercentage(left_and_right_lungs, uid, roi, results_directory);
+            emphysema_results = PTKEmphysemaPercentage.GetEmphysemaPercentage(lung_mask, uid, roi, results_directory);
         end
         
         
@@ -80,19 +85,19 @@ classdef PTKEmphysemaPercentage < PTKPlugin
             fprintf(file_id, sprintf('%s\r\n', text));
         end
     
-        function emphysema_results = GetEmphysemaPercentage(left_and_right_lungs, uid, roi, results_directory)
+        function emphysema_results = GetEmphysemaPercentage(lung_region_mask, uid, roi, results_directory)
             
             emphysema_image = roi.BlankCopy;
             emphysema_threshold_value_hu = -950;
             emphysema_threshold_value = roi.HounsfieldToGreyscale(emphysema_threshold_value_hu);
-            emphysema_image.ChangeRawImage(roi.RawImage <= emphysema_threshold_value & left_and_right_lungs.RawImage > 0);
+            emphysema_image.ChangeRawImage(roi.RawImage <= emphysema_threshold_value & lung_region_mask.RawImage > 0);
             
-            whole_lung_results = PTKEmphysemaPercentage.Analyse(roi, left_and_right_lungs.RawImage > 0);
+            whole_lung_results = PTKEmphysemaPercentage.Analyse(roi, lung_region_mask.RawImage > 0);
             
             results = [];
                         
-            left_results = PTKEmphysemaPercentage.Analyse(roi, left_and_right_lungs.RawImage == 2);
-            right_results = PTKEmphysemaPercentage.Analyse(roi, left_and_right_lungs.RawImage == 1);
+            left_results = PTKEmphysemaPercentage.Analyse(roi, lung_region_mask.RawImage == 2);
+            right_results = PTKEmphysemaPercentage.Analyse(roi, lung_region_mask.RawImage == 1);
             
             results.Lung = whole_lung_results;
             results.Left = left_results;
