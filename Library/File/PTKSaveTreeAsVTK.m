@@ -1,4 +1,4 @@
-function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
+function PTKSaveTreeAsVTK(tree_root, template_image, file_path, filename_prefix, reporting)
     % PTKSaveTreeAsVTK. Exports a tree structure into a VTK file
     %
     %     PTKSaveTreeAsVTK saves the tree whose root branch is tree_root into a
@@ -50,6 +50,13 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
     % ToDo
     if isa(tree_root, 'PTKAirwayGrowingTree')
         point_coordinates(1, :) = [tree_root.StartCoords(2), tree_root.StartCoords(1), tree_root.StartCoords(3)];
+    elseif isa(tree_root, 'PTKTreeModel')
+        point = tree_root.StartPoint;
+        dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([point.CoordI, point.CoordJ, point.CoordK], template_image);
+        xc = dicom_coordinates(1);
+        yc = dicom_coordinates(2);
+        zc = dicom_coordinates(3);
+        point_coordinates(1, :) = [xc, yc, zc];
     else
         point_coordinates(1, :) = [tree_root.StartPoint(2), tree_root.StartPoint(1), tree_root.StartPoint(3)];
     end
@@ -58,9 +65,12 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
     pressure = zeros(num_points, 1);
     flow_rate = zeros(num_points, 1);
     radius = zeros(num_points, 1);
+    segment_index = zeros(num_points, 1);
     branches_to_write = zeros(num_points, 1);
     
-    radius(1) = tree_root.Radius;
+    if ~isempty(tree_root.Radius)
+        radius(1) = tree_root.Radius;
+    end
     
     if isfield(tree_root, 'BranchProperties')
         if isfield(tree_root.BranchProperties, 'Flowrate')
@@ -69,6 +79,12 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
         if isfield(tree_root.BranchProperties, 'Pressure')
             pressure(1) = branch.BranchProperties.Pressure;
         end
+    end
+    
+    if isempty(tree_root.SegmentIndex);
+        segment_index(1) = 0;
+    else
+        segment_index(1) = tree_root.SegmentIndex;
     end
     
     for branch_index = 1 : num_branches
@@ -89,6 +105,13 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
         % Write the next point for this branch end point
         if isa(branch, 'PTKAirwayGrowingTree')
             point_coordinates(point_matlab_index, :) = [branch.EndCoords(2), branch.EndCoords(1), branch.EndCoords(3)];
+        elseif isa(branch, 'PTKTreeModel')
+            point = branch.EndPoint;
+            dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([point.CoordI, point.CoordJ, point.CoordK], template_image);
+            xc = dicom_coordinates(1);
+            yc = dicom_coordinates(2);
+            zc = dicom_coordinates(3);
+            point_coordinates(point_matlab_index, :) = [xc, yc, zc];
         else
             point_coordinates(point_matlab_index, :) = [branch.EndPoint(2), branch.EndPoint(1), branch.EndPoint(3)];
         end
@@ -97,8 +120,10 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
         lines(branch_index, :) = [start_point_index, end_point_index];
         
         % Write out parameters - NB. these correspond to points, not lines
-        radius(point_matlab_index) = branch.Radius;
-        if isfield(tree_root, 'BranchProperties')
+        if ~isempty(branch.Radius)
+            radius(point_matlab_index) = branch.Radius;
+        end
+        if isfield(branch, 'BranchProperties')
             if isfield(branch.BranchProperties, 'Flowrate')
                 flow_rate(point_matlab_index) = branch.BranchProperties.Flowrate;
             end
@@ -106,6 +131,12 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
                 pressure(point_matlab_index) = branch.BranchProperties.Pressure;
             end
         end
+        if isempty(branch.SegmentIndex);
+            segment_index(point_matlab_index) = 0;
+        else
+            segment_index(point_matlab_index) = branch.SegmentIndex;
+        end
+        
     end
     
     vtk_file_name = fullfile(file_path, [filename_prefix '.vtk']);
@@ -117,7 +148,7 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, reporting)
     WritePointCoordinates(vtk_file_handle, point_coordinates, reporting);
     WriteLines(vtk_file_handle, lines, reporting);
     WriteVertices(vtk_file_handle, vertices, reporting);    
-    WritePointData(vtk_file_handle, pressure, flow_rate, radius, branches_to_write, reporting);
+    WritePointData(vtk_file_handle, pressure, flow_rate, radius, segment_index, branches_to_write, reporting);
     
     fclose(vtk_file_handle);
 end
@@ -172,7 +203,7 @@ function WriteVertices(file_handle, vertices, reporting)
 end
 
 
-function WritePointData(file_handle, pressure, flow_rate, radius, branches, reporting)
+function WritePointData(file_handle, pressure, flow_rate, radius, segment_index, branches, reporting)
     num_points = numel(pressure);
     first_line = sprintf('POINT_DATA %u', num_points);
     WriteToFile(file_handle, first_line, reporting);
@@ -181,6 +212,7 @@ function WritePointData(file_handle, pressure, flow_rate, radius, branches, repo
     WriteDataValues(file_handle, flow_rate, 'Flowrate', '%8.5f', reporting)
     WriteDataValues(file_handle, radius, 'Radius', '%10.8f', reporting)
     WriteDataValues(file_handle, branches, 'Branches', '%u', reporting)
+    WriteDataValues(file_handle, segment_index, 'Segment', '%u', reporting)
 end
 
 function WriteDataValues(file_handle, data, name, format_string, reporting)
