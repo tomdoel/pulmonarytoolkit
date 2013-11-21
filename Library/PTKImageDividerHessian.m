@@ -148,7 +148,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     % image instead of dividing
     if any(image_size < (2*overlap_size + 2))
         if ~dont_divide
-            reporting.ShowWarning('PTKImageDividerHessian:ImageTooSmallForDivision', 'PTKImageDivider:ImageTooSmall', 'Image is too small to divide into octants. I will operate on the whole image', []);
+            reporting.ShowWarning('PTKImageDividerHessian:ImageTooSmallForDivision', 'Image is too small to divide into octants. I will operate on the whole image', []);
             dont_divide = true;
         end
     end
