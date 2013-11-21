@@ -37,7 +37,13 @@ classdef PTKEmphysemaPercentageByLobe < PTKPlugin
         function emphysema_results = RunPlugin(dataset, reporting)
             results_directory = dataset.GetOutputPathAndCreateIfNecessary;
             left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
+            [~, airway_image] = dataset.GetResult('PTKAirways');
+            
+            left_and_right_lungs.ChangeRawImage(left_and_right_lungs.RawImage.*uint8(airway_image.RawImage ~= 1));
+            
             lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes.ChangeRawImage(lobes.RawImage.*uint8(airway_image.RawImage ~= 1));
+            
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
 
@@ -86,7 +92,7 @@ classdef PTKEmphysemaPercentageByLobe < PTKPlugin
             emphysema_image = roi.BlankCopy;
             emphysema_threshold_value_hu = -950;
             emphysema_threshold_value = roi.HounsfieldToGreyscale(emphysema_threshold_value_hu);
-            emphysema_image.ChangeRawImage(roi.RawImage <= emphysema_threshold_value);
+            emphysema_image.ChangeRawImage(roi.RawImage <= emphysema_threshold_value & left_and_right_lungs.RawImage > 0);
             
             whole_lung_results = PTKEmphysemaPercentageByLobe.Analyse(roi, left_and_right_lungs.RawImage > 0);
             
