@@ -9,25 +9,21 @@ classdef PTKStack < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
-    properties
+    properties (Access = private)
         Stack
     end
     
     methods 
         function obj = PTKStack(stack_items)
             if nargin > 0
-                if iscell(stack_items)
-                    obj.Stack = stack_items;
-                else
-                    obj.Stack = {stack_items};
-                end
+                obj.Stack = PTKContainerUtilities.ConvertToSet(stack_items);
             else
                 obj.Stack = cell.empty;
             end
         end
         
-        function Push(obj, items)
-            obj.Stack = [obj.Stack items];
+        function Push(obj, stack_items)
+            obj.Stack = [obj.Stack PTKContainerUtilities.ConvertToSet(stack_items)];
         end
         
         function item = Pop(obj)
@@ -39,9 +35,14 @@ classdef PTKStack < handle
             is_empty = isempty(obj.Stack);
         end
         
+        % Clears the stack and returns any remaining values in a set
         function all_values = GetAndClear(obj)
             all_values = obj.Stack;
             obj.Stack = [];
+        end
+        
+        function field_values = GetField(obj, field_name)
+             field_values = PTKContainerUtilities.GetFieldValuesFromSet(obj.Stack, field_name);
         end
     end
 end
