@@ -1,4 +1,4 @@
-classdef PTKPair
+classdef PTKPair < handle
     % PTKPair. A class for storing two values
     %
     %
