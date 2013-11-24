@@ -31,6 +31,20 @@ classdef PTKContainerUtilities
             field_values = cell2mat(PTKContainerUtilities.GetFieldValuesFromSet(set, field_name));
         end
         
+        % Converts the input values to a set of values, while preserving
+        % strings.
+        % If values is already a set, this does nothing. Otherwise, values is
+        % converted into a cell array. However, character arrays (ie strings)
+        % are converted into a cell array containing one string
+        function values_set = ConvertToSet(values)
+            if iscell(values)
+                values_set = values;
+            elseif ischar(values)
+                values_set = {values};
+            else
+                values_set = num2cell(values);
+            end
+        end
     end
 end
 
