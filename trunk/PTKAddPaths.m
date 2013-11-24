@@ -20,12 +20,6 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = 'User';
         path_folders{end + 1} = 'bin';
         path_folders{end + 1} = 'Gui';
-        path_folders{end + 1} = fullfile('Gui', 'GuiPlugins');
-        
-        plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories('Plugins');
-        for folder = plugin_folders
-            path_folders{end + 1} = folder{1};
-        end
 
         path_folders{end + 1} = 'Library';
         path_folders{end + 1} = 'Test';
@@ -44,22 +38,29 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Utilities');
         path_folders{end + 1} = fullfile('Library', 'Visualisation');
         path_folders{end + 1} = 'Framework';
+        
         path_folders{end + 1} = fullfile('External', 'gerardus', 'matlab', 'PointsToolbox');
         path_folders{end + 1} = fullfile('External', 'stlwrite');
         
-        full_paths_to_add = {};
+        AddToPath(path_root, path_folders)
         
-        % Get the full path for each folder but check it exists before adding to
-        % the list of paths to add
-        for i = 1 : length(path_folders)
-            full_path_name = fullfile(path_root, path_folders{i});
-            if exist(full_path_name, 'dir')
-                full_paths_to_add{end + 1} = full_path_name;
-            end
+        
+        
+        % Now add the plugins (have to do this afterwards, because we rely on
+        % library functions, so the library paths have to be set first)
+        path_folders = {};
+        
+        plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(fullfile('Gui', 'Plugins'));
+        for folder = plugin_folders
+            path_folders{end + 1} = folder{1};
         end
         
-        % Add all the paths together (much faster than adding them individually)
-        addpath(full_paths_to_add{:});
+        plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories('Plugins');
+        for folder = plugin_folders
+            path_folders{end + 1} = folder{1};
+        end
+        
+        AddToPath(path_root, path_folders);
         
         PTK_PathsHaveBeenSet = PTKAddPaths_Version_Number;
     end
@@ -77,4 +78,22 @@ function PTKAddPaths(varargin)
             end
         end
     end
+end
+
+function AddToPath(path_root, path_folders)
+    full_paths_to_add = {};
+    
+    % Get the full path for each folder but check it exists before adding to
+    % the list of paths to add
+    for i = 1 : length(path_folders)
+        full_path_name = fullfile(path_root, path_folders{i});
+        if exist(full_path_name, 'dir')
+            full_paths_to_add{end + 1} = full_path_name;
+        end
+    end
+    
+    
+    % Add all the paths together (much faster than adding them individually)
+    addpath(full_paths_to_add{:});
+    
 end

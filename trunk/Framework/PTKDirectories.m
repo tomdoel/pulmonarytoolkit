@@ -99,6 +99,22 @@ classdef PTKDirectories < handle
             plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetUserPluginsPath);
         end
         
+        function plugin_name_list = GetListOfGuiPlugins
+            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfGuiPluginFolders);
+        end
+        
+        function plugin_folders = GetListOfGuiPluginFolders
+            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiPluginsPath);
+        end
+        
+        function plugin_name_list = GetListOfUserGuiPlugins
+            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfUserGuiPluginFolders);
+        end
+        
+        function plugin_folders = GetListOfUserGuiPluginFolders
+            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiUserPluginsPath);
+        end
+        
         function matlab_name_list = GetAllMatlabFilesInFolders(folders_to_scan)
             folders_to_scan = PTKStack(folders_to_scan);
             plugins_found = PTKStack;
