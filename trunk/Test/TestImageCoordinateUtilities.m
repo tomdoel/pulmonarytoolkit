@@ -1,5 +1,5 @@
 classdef TestImageCoordinateUtilities < PTKTest
-    % TestImageCoordinateUtilities. Tests for the TestImageCoordinateUtilities class.
+    % TestImageCoordinateUtilities. Tests for the PTKImageCoordinateUtilities class.
     %
     %
     %     Licence
