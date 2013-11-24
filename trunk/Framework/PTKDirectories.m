@@ -83,6 +83,33 @@ classdef PTKDirectories < handle
             settings_file_path = fullfile(settings_dir, cache_filename);
         end
         
+        function plugin_name_list = GetListOfPlugins
+            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfPluginFolders);
+        end
+        
+        function plugin_folders = GetListOfPluginFolders
+            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetPluginsPath);
+        end
+        
+        function plugin_name_list = GetListOfUserPlugins
+            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfUserPluginFolders);
+        end
+        
+        function plugin_folders = GetListOfUserPluginFolders
+            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetUserPluginsPath);
+        end
+        
+        function matlab_name_list = GetAllMatlabFilesInFolders(folders_to_scan)
+            folders_to_scan = PTKStack(folders_to_scan);
+            plugins_found = PTKStack;
+            while ~folders_to_scan.IsEmpty
+                next_folder = folders_to_scan.Pop;
+                next_plugin_list = PTKDiskUtilities.GetDirectoryFileList(next_folder, '*.m');
+                plugins_found.Push(PTKTextUtilities.StripFileparts(next_plugin_list));
+            end
+            matlab_name_list = plugins_found.GetAndClear;
+        end
+        
         function plugins_path = GetPluginsPath
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
