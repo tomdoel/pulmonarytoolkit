@@ -38,19 +38,19 @@ classdef PTKSoftwareInfo < handle
         BackgroundColour = [0, 0.129, 0.278]
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica'
+        DefaultCategoryName = 'Uncategorised'
         
         % Directories
         DiskCacheFolderName = 'ResultsCache'
         OutputDirectoryName = 'Output'
         EditedResultsDirectoryName = 'EditedResults'
-        
         ApplicationSettingsFolderName = 'TDPulmonaryToolkit'
         PluginDirectoryName = 'Plugins'
         GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')
         MexSourceDirectory = fullfile('Library', 'mex')
         UserDirectoryName = 'User'
         TestSourceDirectory = 'Test'
-        
+
         % Filenames
         LogFileName = 'log.txt'
         CachedPluginInfoFileName = 'CachedPluginInfo'
@@ -63,6 +63,7 @@ classdef PTKSoftwareInfo < handle
         ImageTemplatesCacheName = 'ImageTemplates'
         SplashScreenImageFile = 'PTKLogo.jpg'
 
+        
         % Debugging and optional arguments
         DebugMode = false
         GraphicalDebugMode = false

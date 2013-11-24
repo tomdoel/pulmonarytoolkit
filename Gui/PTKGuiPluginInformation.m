@@ -34,7 +34,7 @@ classdef PTKGuiPluginInformation
             plugin_list = [];
 
             for plugin_filename = combined_plugin_list
-                plugin_name = plugin_filename{1};
+                plugin_name = plugin_filename{1}.First;
                 try
                     if (exist(plugin_name, 'class') == 8)
                         plugin_handle = str2func(plugin_name);
@@ -66,7 +66,16 @@ classdef PTKGuiPluginInformation
                 
                 try
                     % get information from the plugin
-                    new_plugin = PTKGuiPluginInformation.LoadPluginInfoStructure(plugin_name, reporting);
+                    new_plugin = PTKGuiPluginInformation.LoadPluginInfoStructure(plugin_name.First, reporting);
+                    if isempty(new_plugin.Category)
+                        if ~isempty(plugin_filename{1}.Second)
+                            new_plugin.Category = plugin_filename{1}.Second;
+                        else
+                            new_plugin.Category = PTKSoftwareInfo.DefaultCategoryName;
+                        end
+                        
+                        new_plugin.Category = plugin_filename{1}.Second;
+                    end
                     
                     if ~new_plugin.HidePluginInDisplay
                         
@@ -81,7 +90,7 @@ classdef PTKGuiPluginInformation
                     end
                     
                 catch ex
-                    reporting.ShowWarning('PTKGuiPluginInformation:InvalidGuiPlugin', ['The file ' plugin_name ' was found in GuiPlugins directory but does not appear to be a PTKGuiPlugin class, or contains errors.'], []);
+                    reporting.ShowWarning('PTKGuiPluginInformation:InvalidGuiPlugin', ['The file ' plugin_name.First ' was found in GuiPlugins directory but does not appear to be a PTKGuiPlugin class, or contains errors.'], []);
                 end
             end
         end
@@ -103,7 +112,11 @@ classdef PTKGuiPluginInformation
             
             new_plugin.ToolTip = plugin_class.ToolTip;
             new_plugin.ButtonText = plugin_class.ButtonText;
-            new_plugin.Category = plugin_class.Category;
+            if isprop(plugin_class, 'Category') && ~isempty(plugin_class.Category)
+                new_plugin.Category = plugin_class.Category;
+            else
+                new_plugin.Category = [];
+            end
             new_plugin.HidePluginInDisplay = plugin_class.HidePluginInDisplay;
             new_plugin.ButtonWidth = plugin_class.ButtonWidth;
             new_plugin.ButtonHeight = plugin_class.ButtonHeight;

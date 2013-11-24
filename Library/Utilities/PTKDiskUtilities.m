@@ -109,15 +109,19 @@ classdef PTKDiskUtilities
         
         % Returns a list of all subdirectories in the specified directory, its
         % subdictories and so on
+        % The list is returned as an array of PTKPairs. In each PTKPair, the
+        % First property is the directory path (relative to the root_path
+        % specified in the input parameter), and the Second property is the
+        % just the name of the deepest subdirectory
         function dir_list = GetRecursiveListOfDirectories(root_path)
-            dirs_to_do = PTKStack(root_path);
+            dirs_to_do = PTKStack(PTKPair(root_path, ''));
             dirs_found = PTKStack;
             while ~dirs_to_do.IsEmpty
                 next_dir = dirs_to_do.Pop;
                 dirs_found.Push(next_dir);
-                this_dir_list = PTKDiskUtilities.GetListOfDirectories(next_dir);
+                this_dir_list = PTKDiskUtilities.GetListOfDirectories(next_dir.First);
                 for index = 1 : numel(this_dir_list)
-                    this_dir_list{index} = fullfile(next_dir, this_dir_list{index});
+                    this_dir_list{index} = PTKPair(fullfile(next_dir.First, this_dir_list{index}), this_dir_list{index});
                 end
                 dirs_to_do.Push(this_dir_list);
             end

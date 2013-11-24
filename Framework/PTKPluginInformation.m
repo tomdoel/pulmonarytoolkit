@@ -32,7 +32,7 @@ classdef PTKPluginInformation
             plugin_list = [];
 
             for plugin_filename = combined_plugin_list
-                plugin_name = plugin_filename{1};
+                plugin_name = plugin_filename{1}.First;
                 try
                     if (exist(plugin_name, 'class') == 8)                    
                         plugin_handle = str2func(plugin_name);
@@ -60,11 +60,18 @@ classdef PTKPluginInformation
             
             for plugin_filename = plugin_list
                 
-                plugin_name = plugin_filename{1};
+                plugin_name = plugin_filename{1}.First;
                 
                 try
                     % get information from the plugin
                     new_plugin = PTKPluginInformation.LoadPluginInfoStructure(plugin_name, reporting);
+                    if isempty(new_plugin.Category)
+                        if ~isempty(plugin_filename{1}.Second)
+                            new_plugin.Category = plugin_filename{1}.Second;
+                        else
+                            new_plugin.Category = PTKSoftwareInfo.DefaultCategoryName;
+                        end
+                    end
                     
                     if ~new_plugin.HidePluginInDisplay
                         

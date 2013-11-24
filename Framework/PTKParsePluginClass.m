@@ -22,7 +22,13 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
     new_plugin.AllowResultsToBeCached = plugin_class.AllowResultsToBeCached;
     new_plugin.PluginType = plugin_class.PluginType;
     new_plugin.ButtonText = plugin_class.ButtonText;
-    new_plugin.Category = plugin_class.Category;
+    
+    if isprop(plugin_class, 'Category') && ~isempty(plugin_class.Category)
+        new_plugin.Category = plugin_class.Category;
+    else
+        new_plugin.Category = [];
+    end
+    
     new_plugin.HidePluginInDisplay = plugin_class.HidePluginInDisplay;
     new_plugin.ButtonWidth = plugin_class.ButtonWidth;
     new_plugin.ButtonHeight = plugin_class.ButtonHeight;

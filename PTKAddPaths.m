@@ -52,12 +52,12 @@ function PTKAddPaths(varargin)
         
         plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(fullfile('Gui', 'GuiPlugins'));
         for folder = plugin_folders
-            path_folders{end + 1} = folder{1};
+            path_folders{end + 1} = folder{1}.First;
         end
         
         plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories('Plugins');
         for folder = plugin_folders
-            path_folders{end + 1} = folder{1};
+            path_folders{end + 1} = folder{1}.First;
         end
         
         AddToPath(path_root, path_folders);
