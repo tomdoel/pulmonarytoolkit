@@ -93,7 +93,7 @@ classdef PTKDiskUtilities
             end
         end
         
-        % Returns a list of files in the specified directory
+        % Returns a list of subdirectories in the specified directory
         function dir_list = GetListOfDirectories(path)
             files = dir(fullfile(path, '*'));
             number_files = length(files);
@@ -105,6 +105,23 @@ classdef PTKDiskUtilities
                     dir_list{end + 1} = filename; %#ok<AGROW>
                 end
             end
+        end
+        
+        % Returns a list of all subdirectories in the specified directory, its
+        % subdictories and so on
+        function dir_list = GetRecursiveListOfDirectories(root_path)
+            dirs_to_do = PTKStack(root_path);
+            dirs_found = PTKStack;
+            while ~dirs_to_do.IsEmpty
+                next_dir = dirs_to_do.Pop;
+                dirs_found.Push(next_dir);
+                this_dir_list = PTKDiskUtilities.GetListOfDirectories(next_dir);
+                for index = 1 : numel(this_dir_list)
+                    this_dir_list{index} = fullfile(next_dir, this_dir_list{index});
+                end
+                dirs_to_do.Push(this_dir_list);
+            end
+            dir_list = dirs_found.GetAndClear;
         end
         
         % Opens an explorer/finder window at the specified path

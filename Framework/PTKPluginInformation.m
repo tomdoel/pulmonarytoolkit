@@ -22,17 +22,17 @@ classdef PTKPluginInformation
         
         % Obtains a list of plugins found in the Plugins folder
         function plugin_list = GetListOfPlugins(reporting)
-            plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKDirectories.GetPluginsPath, '*.m');
+            plugin_list = PTKDirectories.GetListOfPlugins;
             if PTKSoftwareInfo.DemoMode
                 combined_plugin_list = plugin_list;
             else
-                user_plugin_list = PTKDiskUtilities.GetDirectoryFileList(PTKDirectories.GetUserPluginsPath, '*.m');
+                user_plugin_list = PTKDirectories.GetListOfUserPlugins;
                 combined_plugin_list = horzcat(plugin_list, user_plugin_list);
             end
             plugin_list = [];
 
             for plugin_filename = combined_plugin_list
-                [~, plugin_name, ~] = fileparts(plugin_filename{1});
+                plugin_name = plugin_filename{1};
                 try
                     if (exist(plugin_name, 'class') == 8)                    
                         plugin_handle = str2func(plugin_name);
@@ -60,7 +60,7 @@ classdef PTKPluginInformation
             
             for plugin_filename = plugin_list
                 
-                [~, plugin_name, ~] = fileparts(plugin_filename{1});
+                plugin_name = plugin_filename{1};
                 
                 try
                     % get information from the plugin

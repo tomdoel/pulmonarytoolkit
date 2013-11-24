@@ -21,7 +21,12 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = 'bin';
         path_folders{end + 1} = 'Gui';
         path_folders{end + 1} = fullfile('Gui', 'GuiPlugins');
-        path_folders{end + 1} = 'Plugins';
+        
+        plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories('Plugins');
+        for folder = plugin_folders
+            path_folders{end + 1} = folder{1};
+        end
+
         path_folders{end + 1} = 'Library';
         path_folders{end + 1} = 'Test';
         path_folders{end + 1} = fullfile('Library', 'Airways');
@@ -61,13 +66,15 @@ function PTKAddPaths(varargin)
     
     % Add additional user-specific paths specified in the file
     % User/PTKAddUserPaths.m if it exists
-    user_function_name = 'PTKAddUserPaths';
-    user_add_paths_function = fullfile(path_root, 'User', [user_function_name '.m']);
-    if exist(user_add_paths_function, 'file')
-        if force
-            feval(user_function_name, 'force');
-        else
-            feval(user_function_name);
+    if ~PTKSoftwareInfo.DemoMode
+        user_function_name = 'PTKAddUserPaths';
+        user_add_paths_function = fullfile(path_root, 'User', [user_function_name '.m']);
+        if exist(user_add_paths_function, 'file')
+            if force
+                feval(user_function_name, 'force');
+            else
+                feval(user_function_name);
+            end
         end
     end
 end
