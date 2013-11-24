@@ -48,6 +48,23 @@ classdef PTKTextUtilities < handle
             [~, sorted_indices] = sort(reformatted_filenames);
             sorted_filenames = filenames(sorted_indices');
         end
+        
+        % Returns just the main filenames, removing the path and filetype
+        function filenames_stripped = StripFileparts(filenames)
+            cell_input = iscell(filenames);
+            if ~cell_input
+                filenames = {filenames};
+            end
+            filenames_stripped = [];
+            for index = 1 : numel(filenames)
+                [~, file_name, ~] = fileparts(filenames{index});
+                filenames_stripped{index} = file_name;
+            end
+            if ~cell_input
+                filenames_stripped = filenames_stripped{1};
+            end
+        end
+        
     end
     
 end
