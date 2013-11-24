@@ -19,6 +19,24 @@ classdef PTKPair < handle
             obj.First = first;
             obj.Second = second;
         end
+        
+        function first = FirstList(obj)
+            first = {obj.First};
+        end
+
+        function first = SecondList(obj)
+            first = {obj.First};
+        end
+        
+        % Equality operator
+        function is_equal = eq(obj, other)
+            if ~isa(other, 'PTKPair')
+                is_equal = false;
+            else
+                is_equal = isequal(obj.First, other.First) && isequal(obj.Second, other.Second);
+            end
+        end
+        
     end
 end
 
