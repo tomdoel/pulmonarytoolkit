@@ -73,11 +73,6 @@ classdef PTKPlugin < handle
         %                    its own window
         PluginType
         
-        % Set to the panel name in the gui you wish the plugin to appear under
-        % Examples include "Airways', 'Lungs', 'Analysis' or you can create your
-        % own
-        Category
-        
         % Should normally be set to false.
         % If true, this plugin will not have a button in the gui window
         HidePluginInDisplay

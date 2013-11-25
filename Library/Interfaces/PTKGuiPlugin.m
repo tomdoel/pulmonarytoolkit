@@ -32,10 +32,6 @@ classdef PTKGuiPlugin < handle
         % developed with.
         PTKVersion
 
-        % Set to the panel name in the gui under which you wish the gui plugin 
-        % to appear. Examples include "File" or you can create your own.
-        Category
-        
         % Should normally be set to false.
         % If true, this plugin will not have a button in the gui window        
         HidePluginInDisplay
