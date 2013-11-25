@@ -614,6 +614,7 @@ classdef PTKGui < handle
 
             catch exc
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                    obj.ClearDataset(obj.WaitDialogHandle);
                     obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled loading');
                 elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
                     msgbox('This dataset is missing. It will be removed from the load menu.', [PTKSoftwareInfo.Name ': Cannot find dataset'], 'error');
