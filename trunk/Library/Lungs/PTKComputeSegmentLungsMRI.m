@@ -31,10 +31,7 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
         reporting.Error('PTKComputeSegmentLungsMRI:BadInput', 'PTKComputeSegmentLungsMRI requires a PTKImage as input');
     end
     
-    % ToDo: This is too specific
-    if isa(reporting, 'PTKReportingWithCache')
-        reporting.PushProgress;
-    end    
+    reporting.PushProgress;
     
     reporting.UpdateProgressMessage('Finding approximate MRI lung segmentation by region growing');
 
@@ -77,10 +74,7 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     bounds(1) = min(bounds_left(1), bounds_right(1));
     bounds(2) = max(bounds_left(2), bounds_right(2));
     
-    % ToDo: This is too specific
-    if isa(reporting, 'PTKReportingWithCache')
-        reporting.PopProgress;
-    end
+    reporting.PopProgress;
 end
 
 function lung_point = AutoFindLungPoint(original_image, find_left)

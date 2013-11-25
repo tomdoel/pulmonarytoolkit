@@ -81,20 +81,14 @@ classdef PTKAirwayGenerator < handle
     methods (Static, Access = private)
         function initial_apex_image = GrowTreeUsingThisGridSpacing(airway_tree, growth_volume, starting_segment, grid_spacing_mm, reporting)
             
-            % ToDo: Deal with a more general reporting object
-            if isa(reporting, 'PTKReportingWithCache')
-                reporting.PushProgress;
-            end
+            reporting.PushProgress;
             
             resampled_volume = PTKAirwayGenerator.CreatePointCloud(growth_volume, grid_spacing_mm);
             disp(['Number of seed points:' int2str(sum(resampled_volume.RawImage(:)))]);
             
             initial_apex_image = PTKAirwayGenerator.Grow(resampled_volume, airway_tree, starting_segment, reporting);
             
-            % ToDo: Deal with a more general reporting object
-            if isa(reporting, 'PTKReportingWithCache')
-                reporting.PopProgress;
-            end
+            reporting.PopProgress;
         end
         
         % Use CreateInitialTreeFromSegmentation to create an initial airway tree
