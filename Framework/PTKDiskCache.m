@@ -74,8 +74,24 @@ classdef PTKDiskCache < handle
         % Load a result from the cache
         function [result, info] = Load(obj, name, context, reporting)
             if obj.Exists(name, context, reporting)
-                filename = [fullfile(obj.CachePath, char(context), name) '.mat'];
-                results_struct = PTKDiskUtilities.Load(filename);
+                file_path = fullfile(obj.CachePath, char(context));
+                
+                try
+                    results_struct = PTKDiskUtilities.LoadStructure(file_path, name, reporting);
+                catch exception
+                    % Check for the particular case of the .raw file being
+                    % deleted
+                    if strcmp(exception.identifier, 'PTKImage:RawFileNotFound')
+                        reporting.Log(['Disk cache found a header file with no corresponding raw file for plugin ' name]);
+                        result = [];
+                        info = [];
+                        return;
+                    else
+                        % For other errors we force an exception
+                        rethrow(exception);
+                    end
+                end
+                
                 result = results_struct.value;
 
                 % Return a cacheinfo object, if one was requested
@@ -84,29 +100,6 @@ classdef PTKDiskCache < handle
                         info = results_struct.info;
                     else
                         info = [];
-                    end
-                end
-                
-                
-                % PTKImage files typically have the raw image data stored in a 
-                % separate file
-                if isa(result, 'PTKImage')
-                    try
-                        result.LoadRawImage(fullfile(obj.CachePath, char(context)), reporting);
-                    
-                    catch exception
-                        
-                        % Check for the particular case of the .raw file being
-                        % deleted
-                        if strcmp(exception.identifier, 'PTKImage:RawFileNotFound')
-                            reporting.Log(['Disk cache found a header file with no corresponding raw file for plugin ' name]);
-                            result = [];
-                            info = [];
-                            return;
-                        else
-                            % For other errors we force an exception
-                            rethrow(exception);
-                        end
                     end
                 end
                 
@@ -181,17 +174,8 @@ classdef PTKDiskCache < handle
             if ~isempty(info)
                 result.info = info;
             end
-            if isa(value, 'PTKImage')
-                reporting.Log(['Saving raw image data for ' name]);
-                header = value.SaveRawImage(file_path_with_context, name);
-                result.value = header;
-            else
-                result.value = value;
-            end
-            reporting.Log(['Saving data for ' name]);
-            
-            filename = [fullfile(file_path_with_context, name) '.mat'];
-            PTKDiskUtilities.Save(filename, result);
-        end        
+            result.value = value;
+            PTKDiskUtilities.SaveStructure(file_path_with_context, name, result, reporting);
+        end
     end
 end
