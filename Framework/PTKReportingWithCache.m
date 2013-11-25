@@ -21,9 +21,6 @@ classdef PTKReportingWithCache < PTKReportingInterface
     properties (Access = private)
         Reporting  % Handle to a PTKReporting object
         WarningsCache
-        ProgressStack
-        CurrentProgressStackItem
-        ParentProgressStackItem
     end
     
     methods
@@ -34,29 +31,22 @@ classdef PTKReportingWithCache < PTKReportingInterface
                 obj.Reporting = PTKReportingDefault;
             end
             obj.WarningsCache = PTKReportingWarningsCache(obj);
-            obj.ClearStack;
         end
         
         function delete(obj)
-            obj.ShowAndClear;
+            obj.ShowAndClearPendingMessages;
         end        
         
-        function ClearStack(obj)
-            obj.ProgressStack = PTKProgressStackItem.empty(0);
-            obj.CurrentProgressStackItem = PTKProgressStackItem('', 0, 100);
-            obj.ParentProgressStackItem = PTKProgressStackItem('', 0, 100);
+        function ClearProgressStack(obj)
+            obj.Reporting.ClearProgressStack;
         end
         
         function PushProgress(obj)
-            obj.ProgressStack(end + 1) = obj.ParentProgressStackItem;
-            obj.ParentProgressStackItem = obj.CurrentProgressStackItem;
-            obj.CurrentProgressStackItem = PTKProgressStackItem('', obj.ParentProgressStackItem.MinPosition, obj.ParentProgressStackItem.MaxPosition);
+            obj.Reporting.PushProgress;
         end
         
         function PopProgress(obj)
-            obj.CurrentProgressStackItem = obj.ParentProgressStackItem;
-            obj.ParentProgressStackItem = obj.ProgressStack(end);
-            obj.ProgressStack(end) = [];
+            obj.Reporting.PopProgress;
         end
         
         function Log(obj, message)
@@ -74,7 +64,6 @@ classdef PTKReportingWithCache < PTKReportingInterface
             obj.WarningsCache.AddPendingWarning(identifier, message, supplementary_info);
         end
         
-        
         function Error(obj, identifier, message)
             obj.Reporting.Error(identifier, message);
         end
@@ -84,7 +73,7 @@ classdef PTKReportingWithCache < PTKReportingInterface
         end
                 
         function ShowProgress(obj, text)
-            obj.Reporting.ShowProgress(obj.AdjustProgressText(text));
+            obj.Reporting.ShowProgress(text);
         end
         
         function CompleteProgress(obj)
@@ -92,22 +81,19 @@ classdef PTKReportingWithCache < PTKReportingInterface
         end
         
         function UpdateProgressMessage(obj, text)
-            obj.Reporting.UpdateProgressMessage(obj.AdjustProgressText(text));
+            obj.Reporting.UpdateProgressMessage(text);
         end
         
         function UpdateProgressValue(obj, progress_value)
-            obj.Reporting.UpdateProgressValue(obj.AdjustProgressValue(progress_value, []));
+            obj.Reporting.UpdateProgressValue(progress_value);
         end
          
         function UpdateProgressAndMessage(obj, progress_value, text)
-            obj.Reporting.UpdateProgressAndMessage(obj.AdjustProgressValue(progress_value, []), obj.AdjustProgressText(text));
+            obj.Reporting.UpdateProgressAndMessage(progress_value, text);
         end
         
         function UpdateProgressStage(obj, progress_stage, num_stages)
-            progress_value = 100*progress_stage/num_stages;
-            value_change = 100/num_stages;
-            obj.Reporting.UpdateProgressValue(obj.AdjustProgressValue(progress_value, value_change));
-%             obj.Reporting.UpdateProgressStage(progress_stage, num_stages);
+            obj.Reporting.UpdateProgressStage(progress_stage, num_stages);
         end
         
         function cancelled = HasBeenCancelled(obj)
@@ -138,8 +124,9 @@ classdef PTKReportingWithCache < PTKReportingInterface
             obj.Reporting.UpdateOverlaySubImage(new_image);
         end
         
-        function ShowAndClear(obj)
+        function ShowAndClearPendingMessages(obj)
             obj.WarningsCache.ShowAndClear;
+            obj.Reporting.ShowAndClearPendingMessages;
         end
         
         function ShowCachedMessage(obj, identifier, message)
@@ -151,24 +138,4 @@ classdef PTKReportingWithCache < PTKReportingInterface
         end
     end
     
-    methods (Access = private)
-        function adjusted_text = AdjustProgressText(obj, text)
-            adjusted_text = text;
-            obj.CurrentProgressStackItem.ProgressText = text;
-        end
-        
-        function adjusted_value = AdjustProgressValue(obj, value, value_change)
-            if isempty(value_change)
-                value_change = value - obj.CurrentProgressStackItem.LastProgressValue;
-            end
-            obj.CurrentProgressStackItem.LastProgressValue = value;
-            
-            scale = (obj.ParentProgressStackItem.MaxPosition - obj.ParentProgressStackItem.MinPosition)/100;
-            adjusted_value = obj.ParentProgressStackItem.MinPosition + scale*value;
-            obj.CurrentProgressStackItem.MinPosition = adjusted_value;
-            if value_change > 0
-                obj.CurrentProgressStackItem.MaxPosition = adjusted_value + scale*value_change;
-            end
-        end        
-    end
 end

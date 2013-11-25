@@ -91,10 +91,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    % ToDo: This is too specific
-    if isa(reporting, 'PTKReportingWithCache')
-        reporting.PushProgress;
-    end
+    reporting.PushProgress;
     
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
         reporting.Warning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
@@ -253,13 +250,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
         filtered_image.ChangeRawImage(filtered_image_raw);
     end
     
-    
-    
-    % ToDo: This is too specific
-    if isa(reporting, 'PTKReportingWithCache')
-        reporting.PopProgress;
-    end
-
+    reporting.PopProgress;
     
 end
 

@@ -88,6 +88,28 @@ classdef PTKReportingInterface < handle
         % used by plugins which need to interact with the marker image used wit
         % the GUI.
         marker_image = GetMarkerImage(obj)
+
+        % Nests progress reporting. After calling this function, subsequent
+        % progress updates will modify the progress bar between the current
+        % value ane the current value plus the last value_change.
+        PushProgress(obj)
+
+        % Removes one layer of progress nesting, returning to the previous
+        % progress reporting.
+        PopProgress(obj)
+        
+        % Clears all progress nesting
+        ClearProgressStack(obj)
+        
+        % Show any error or warning messages and clear the message stack
+        ShowAndClearPendingMessages(obj)
+        
+        % Used to update any viewing panels attached to this reporting object
+        UpdateOverlayImage(obj, new_image)
+        
+        % Used to update any viewing panels attached to this reporting object
+        UpdateOverlaySubImage(obj, new_image)
+
     end
 end
 

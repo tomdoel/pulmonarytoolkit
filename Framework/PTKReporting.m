@@ -58,6 +58,11 @@ classdef PTKReporting < PTKReportingInterface
     properties (Access = private)
         ViewingPanel    % Handle to gui viewing panel
         LogFileName     % Full path to log file
+        
+        % Stack for nested progress reporting
+        ProgressStack
+        CurrentProgressStackItem
+        ParentProgressStackItem
     end
     
     methods
@@ -70,6 +75,7 @@ classdef PTKReporting < PTKReportingInterface
             end
             obj.LogFileName = PTKDirectories.GetLogFilePath;
             
+            obj.ClearProgressStack;
         end
         
         function Log(obj, message)
@@ -80,6 +86,9 @@ classdef PTKReporting < PTKReportingInterface
         
         function ShowMessage(obj, identifier, message)
             [calling_function, ~] = PTKErrorUtilities.GetCallingFunction(2);
+            if isempty(calling_function)
+                calling_function = 'Command Window';
+            end
             disp(message);
             obj.AppendToLogFile([calling_function ': ' identifier ':' message]);
         end
@@ -123,9 +132,11 @@ classdef PTKReporting < PTKReportingInterface
         end
                 
         function ShowProgress(obj, text)
+            adjusted_text = obj.AdjustProgressText(text);
+            
             if ~isempty(obj.ProgressDialog)
                 if nargin > 1
-                    obj.ProgressDialog.SetProgressText(text);
+                    obj.ProgressDialog.SetProgressText(adjusted_text);
                 else
                     obj.ProgressDialog.ProgressText();                    
                 end
@@ -139,26 +150,41 @@ classdef PTKReporting < PTKReportingInterface
         end
         
         function UpdateProgressMessage(obj, text)
+            adjusted_text = obj.AdjustProgressText(text);
+            
             if ~isempty(obj.ProgressDialog)
-                obj.ProgressDialog.SetProgressText(text);
+                obj.ProgressDialog.SetProgressText(adjusted_text);
             end
         end
         
         function UpdateProgressValue(obj, progress_value)
+            adjusted_value = obj.AdjustProgressValue(progress_value, []);
+            
             if ~isempty(obj.ProgressDialog)
-                obj.ProgressDialog.SetProgressValue(progress_value);
+                obj.ProgressDialog.SetProgressValue(adjusted_value);
             end
             obj.CheckForCancel;
         end
         
         function UpdateProgressStage(obj, progress_stage, num_stages)
-            obj.UpdateProgressValue(round(100*progress_stage/num_stages));
-        end
-         
-        function UpdateProgressAndMessage(obj, progress_value, text)
+            progress_value = 100*progress_stage/num_stages;
+            value_change = 100/num_stages;
+            adjusted_value = obj.AdjustProgressValue(progress_value, value_change);
             if ~isempty(obj.ProgressDialog)
-                obj.ProgressDialog.SetProgressAndMessage(progress_value, text);
+                obj.ProgressDialog.SetProgressValue(adjusted_value);
             end
+            obj.CheckForCancel;
+        end
+        
+        function UpdateProgressAndMessage(obj, progress_value, text)
+            adjusted_value = obj.AdjustProgressValue(progress_value, []);
+            adjusted_text = obj.AdjustProgressText(text);
+            
+            if ~isempty(obj.ProgressDialog)
+                obj.ProgressDialog.SetProgressAndMessage(adjusted_value, adjusted_text);
+            end
+            obj.CheckForCancel;
+
         end
         
         function cancelled = HasBeenCancelled(obj)
@@ -199,7 +225,6 @@ classdef PTKReporting < PTKReportingInterface
 
         function UpdateOverlayImage(obj, new_image)
             if ~isempty(obj.ViewingPanel)
-%                 obj.ViewingPanel.OverlayImage.ChangeRawImage(new_image.RawImage);
                 obj.ViewingPanel.OverlayImage.ChangeSubImage(new_image);
                 obj.ViewingPanel.OverlayImage.ImageType = new_image.ImageType;
             end
@@ -210,6 +235,28 @@ classdef PTKReporting < PTKReportingInterface
                 obj.ViewingPanel.OverlayImage.ChangeSubImage(new_image);
             end
         end
+        
+        function PushProgress(obj)
+            obj.ProgressStack(end + 1) = obj.ParentProgressStackItem;
+            obj.ParentProgressStackItem = obj.CurrentProgressStackItem;
+            obj.CurrentProgressStackItem = PTKProgressStackItem('', obj.ParentProgressStackItem.MinPosition, obj.ParentProgressStackItem.MaxPosition);
+        end
+            
+        function PopProgress(obj)
+            obj.CurrentProgressStackItem = obj.ParentProgressStackItem;
+            obj.ParentProgressStackItem = obj.ProgressStack(end);
+            obj.ProgressStack(end) = [];
+        end
+        
+        function ClearProgressStack(obj)
+            obj.ProgressStack = PTKProgressStackItem.empty(0);
+            obj.CurrentProgressStackItem = PTKProgressStackItem('', 0, 100);
+            obj.ParentProgressStackItem = PTKProgressStackItem('', 0, 100);
+        end
+        
+        function ShowAndClearPendingMessages(obj)
+        end
+        
     end
     
     methods (Access = private)
@@ -218,6 +265,35 @@ classdef PTKReporting < PTKReportingInterface
             message = [datestr(now) ': ' message];
             fprintf(file_id, '%s\n', message);
             fclose(file_id);
+        end
+        
+        function adjusted_text = AdjustProgressText(obj, text)
+            adjusted_text = text;
+            obj.CurrentProgressStackItem.ProgressText = text;
+        end
+        
+        function adjusted_value = AdjustProgressValue(obj, value, value_change)
+            if isempty(value_change)
+                value_change = value - obj.CurrentProgressStackItem.LastProgressValue;
+            end
+            obj.CurrentProgressStackItem.LastProgressValue = value;
+            
+            scale = (obj.ParentProgressStackItem.MaxPosition - obj.ParentProgressStackItem.MinPosition)/100;
+            adjusted_value = obj.ParentProgressStackItem.MinPosition + scale*value;
+            obj.CurrentProgressStackItem.MinPosition = adjusted_value;
+            if value_change > 0
+                obj.CurrentProgressStackItem.MaxPosition = adjusted_value + scale*value_change;
+            end
+        end
+        
+        function SetValueChange(obj, value_change)
+            value = obj.CurrentProgressStackItem.LastProgressValue;
+            scale = (obj.ParentProgressStackItem.MaxPosition - obj.ParentProgressStackItem.MinPosition)/100;
+            adjusted_value = obj.ParentProgressStackItem.MinPosition + scale*value;
+            obj.CurrentProgressStackItem.MinPosition = adjusted_value;
+            if value_change > 0
+                obj.CurrentProgressStackItem.MaxPosition = adjusted_value + scale*value_change;
+            end
         end
     end
 end

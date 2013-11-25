@@ -45,12 +45,19 @@ classdef PTKVesselness < PTKPlugin
     methods (Static)
         
         function results = RunPlugin(dataset, reporting)
+            
             right_lung = dataset.GetResult('PTKGetRightLungROI');
             
+            reporting.PushProgress;
+            
+            reporting.UpdateProgressStage(0, 2);
             vesselness_right = PTKVesselness.ComputeVesselness(right_lung, reporting, false);
             
+            reporting.UpdateProgressStage(1, 2);
             left_lung = dataset.GetResult('PTKGetLeftLungROI');
             vesselness_left = PTKVesselness.ComputeVesselness(left_lung, reporting, true);
+
+            reporting.PopProgress;
             
             left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
             
@@ -72,9 +79,17 @@ classdef PTKVesselness < PTKPlugin
     methods (Static, Access = private)
         
         function vesselness = ComputeVesselness(image_data, reporting, is_left_lung)
+            
+            reporting.PushProgress;
+            
             sigma_range = 0.5 : 0.5: 2;
+            num_calculations = numel(sigma_range);
             vesselness = [];
+            progress_index = 0;
             for sigma = sigma_range
+                reporting.UpdateProgressStage(progress_index, num_calculations);
+                progress_index = progress_index + 1;
+                
                 mask = [];
                 vesselness_next = PTKImageDividerHessian(image_data.Copy, @PTKVesselness.ComputeVesselnessPartImage, mask, sigma, [], false, false, is_left_lung, reporting);
                 vesselness_next.ChangeRawImage(100*vesselness_next.RawImage);
@@ -84,6 +99,9 @@ classdef PTKVesselness < PTKPlugin
                     vesselness.ChangeRawImage(max(vesselness.RawImage, vesselness_next.RawImage));
                 end
             end
+            
+            reporting.PopProgress;
+            
         end
                 
         function vesselness_wrapper = ComputeVesselnessPartImage(hessian_eigs_wrapper, voxel_size)

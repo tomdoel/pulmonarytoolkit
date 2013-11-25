@@ -248,14 +248,14 @@ classdef PTKDataset < handle
         % Called before methods are executed in order to ensure the Framework is
         % in a tidy state after any previous error conditions
         function PreCallTidy(obj)
-            obj.Reporting.ClearStack;
+            obj.Reporting.ClearProgressStack;
         end
         
         % Called after methods are executed in order to ensure the Framework is
         % in a tidy state after any previous error conditions
         function PostCallTidy(obj)
-            obj.Reporting.ShowAndClear;
-            obj.Reporting.ClearStack;
+            obj.Reporting.ShowAndClearPendingMessages;
+            obj.Reporting.ClearProgressStack;
         end
     end
 end
