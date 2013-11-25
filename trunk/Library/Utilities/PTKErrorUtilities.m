@@ -16,6 +16,7 @@ classdef PTKErrorUtilities < handle
         function [calling_function, stack] = GetCallingFunction(levels_to_ignore)
             caller_found = false;
             max_levels = 10;
+            calling_function = [];
             
             while ~caller_found
                 % Get the call stack, excluding the call to this function and the
