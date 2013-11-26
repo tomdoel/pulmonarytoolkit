@@ -76,6 +76,26 @@ classdef MockReporting < PTKReportingInterface
         
         function marker_image = GetMarkerImage(obj)
         end
+        
+        function PushProgress(obj)
+        end
+
+        function PopProgress(obj)
+        end
+        
+        function ClearProgressStack(obj)
+        end
+        
+        function ShowAndClearPendingMessages(obj)
+        end
+        
+        function UpdateOverlayImage(obj, new_image)
+        end
+        
+        function UpdateOverlaySubImage(obj, new_image)
+        end
+        
+        
     end
 end
 
