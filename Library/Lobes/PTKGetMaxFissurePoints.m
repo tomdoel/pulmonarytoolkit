@@ -36,7 +36,7 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     % Remove points with low fissureness
     max_fissureness = max(fissureness.RawImage(candidate_indices));
     fissureness_threshold = max_fissureness/3;
-    intensity_threshold_hu = -800;
+    intensity_threshold_hu = -900;
     intensity_threshold = image_roi.HounsfieldToGreyscale(intensity_threshold_hu);
     candidate_indices = candidate_indices((fissureness.RawImage(candidate_indices) > fissureness_threshold) & (image_roi.RawImage(candidate_indices) > intensity_threshold));
     ref_image(candidate_indices) = 4;
