@@ -197,7 +197,7 @@ classdef PTKAirwayGenerator < handle
                 % for each one that is a terminal segment
                 if isempty(children) && isempty(segment.IsTerminal)
                     % Add apices for airway growing
-                    new_apex = PTKAirwayGeneratorApex(segment, PTKPoints, true);
+                    new_apex = PTKAirwayGeneratorApex(segment, PTKCoords, true);
                     apices = [apices new_apex];
                 end
             end
@@ -229,7 +229,7 @@ classdef PTKAirwayGenerator < handle
                 if segment.GenerationNumber == generation_number
                     if isempty(segment.IsTerminal)
                         is_growing_apex = isempty(children);
-                        new_apex = PTKAirwayGeneratorApex(segment, PTKPoints, is_growing_apex);
+                        new_apex = PTKAirwayGeneratorApex(segment, PTKCoords, is_growing_apex);
                         apices = [apices new_apex];
                     end
                 end
@@ -373,8 +373,8 @@ classdef PTKAirwayGenerator < handle
             other_directions = ordered_directions(2:3);
             plane_points = - (p + normal(other_directions(1))*points_coords(:, other_directions(1)) + normal(other_directions(2))*points_coords(:, other_directions(2)))/normal(main_direction);
             in_plane = points_coords(:, main_direction) < plane_points;
-            this_plane = PTKPoints(points_coords(in_plane, :));
-            other_plane = PTKPoints(points_coords(~in_plane, :));
+            this_plane = PTKCoords(points_coords(in_plane, :));
+            other_plane = PTKCoords(points_coords(~in_plane, :));
         end
         
         function resampled_volume = CreatePointCloud(growth_volume, grid_spacing_mm)

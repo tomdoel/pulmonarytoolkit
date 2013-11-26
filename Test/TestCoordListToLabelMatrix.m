@@ -1,5 +1,5 @@
-classdef TestPointListToLabelMatrix < PTKTest
-    % TestPointListToLabelMatrix. Tests for the PTKPointListToLabelMatrix class.
+classdef TestCoordListToLabelMatrix < PTKTest
+    % PTKCoordListToLabelMatrix. Tests for the PTKCoordListToLabelMatrix class.
     %
     %
     %     Licence
@@ -10,7 +10,7 @@ classdef TestPointListToLabelMatrix < PTKTest
     %    
 
     methods
-        function obj = TestPointListToLabelMatrix
+        function obj = TestCoordListToLabelMatrix
             mock_reporting = MockReporting;
             obj.CheckLabels({[1, 3, 5], [2, 44, 80], [13, 125]}, mock_reporting);
             obj.CheckLabels({[1, 5], [2, 44, 80, 33, 12, 3]}, mock_reporting);
@@ -18,7 +18,7 @@ classdef TestPointListToLabelMatrix < PTKTest
         
         function CheckLabels(obj, labels, reporting)
             template = PTKImage(zeros([5,5,5], 'uint8'));
-            label_matrix = PTKPointListToLabelMatrix(labels, template, reporting);
+            label_matrix = PTKCoordListToLabelMatrix(labels, template, reporting);
             
             all_points = [];
             for label_set_index = 1 : numel(labels)

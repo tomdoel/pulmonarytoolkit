@@ -34,7 +34,7 @@ function labeled_subregion_mask = PTKVoronoiDivision(region_mask, start_points, 
     
     if ~isa(start_points, 'PTKImage')
         if iscell(start_points)
-            start_points = PTKPointListToLabelMatrix(start_points, region_mask, reporting);
+            start_points = PTKCoordListToLabelMatrix(start_points, region_mask, reporting);
         else
            reporting.Error('PTKVoronoiDivision:BadInput', 'start_points must be either a cell array or a PTKImage.');
         end

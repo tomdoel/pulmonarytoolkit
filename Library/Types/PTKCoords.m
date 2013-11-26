@@ -1,10 +1,10 @@
-classdef PTKPoints < handle
-    % PTKPoints. Class for storing point coordinates.
+classdef PTKCoords < handle
+    % PTKCoords. Class for storing a set of PTKCoord coordinates.
     %
     %     Licence
     %     -------
     %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
    
@@ -13,7 +13,7 @@ classdef PTKPoints < handle
     end
     
     methods
-        function obj = PTKPoints(coords)
+        function obj = PTKCoords(coords)
             if nargin > 0
                 obj.Coords = coords;
             end
