@@ -29,7 +29,7 @@ classdef TestVoronoiDivision < PTKTest
             obj.Assert(isequal(label_matrix.RawImage, expected_output), 'Label matrix set correctly');
             
             % Test image input
-            initial_label_image = PTKPointListToLabelMatrix(labels, region_mask, reporting);
+            initial_label_image = PTKCoordListToLabelMatrix(labels, region_mask, reporting);
             label_matrix = PTKVoronoiDivision(region_mask, initial_label_image, reporting);
             obj.Assert(isequal(label_matrix.RawImage, expected_output), 'Label matrix set correctly');            
         end

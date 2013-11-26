@@ -1,8 +1,8 @@
-function label_image = PTKPointListToLabelMatrix(points_list, image_template, reporting)
-    % PTKPointListToLabelMatrix. Converts sets of image points into a label
+function label_image = PTKCoordListToLabelMatrix(points_list, image_template, reporting)
+    % PTKCoordListToLabelMatrix. Converts sets of image points into a label
     %     matrix
     %
-    %     PTKPointListToLabelMatrix takes in a set of regions, each member of
+    %     PTKCoordListToLabelMatrix takes in a set of regions, each member of
     %     which is a vector of points for that region. Each point is defined by
     %     its global index. Each vector of points is assigned a label in the
     %     output image.
@@ -21,15 +21,15 @@ function label_image = PTKPointListToLabelMatrix(points_list, image_template, re
     %
      
     if ~isa(image_template, 'PTKImage')
-        reporting.Error('PTKPointListToLabelMatrix:BadInput', 'Requires a PTKImage as input');
+        reporting.Error('PTKCoordListToLabelMatrix:BadInput', 'Requires a PTKImage as input');
     end
     
     if ~iscell(points_list)
-        reporting.Error('PTKPointListToLabelMatrix:BadInput', 'points_list must be a cell array');
+        reporting.Error('PTKCoordListToLabelMatrix:BadInput', 'points_list must be a cell array');
     end
     
     if numel(points_list) > 255
-        reporting.Error('PTKPointListToLabelMatrix:TooManyRegions', 'Maximum number of 255 different labels');
+        reporting.Error('PTKCoordListToLabelMatrix:TooManyRegions', 'Maximum number of 255 different labels');
     end
     
     label_image = image_template.BlankCopy;
