@@ -1,5 +1,5 @@
 classdef PTKCoords < handle
-    % PTKCoords. Class for storing a set of PTKCoord coordinates.
+    % PTKCoords. Class for storing a set of coordinates.
     %
     %     Licence
     %     -------
