@@ -12,7 +12,7 @@ classdef PTKImageUtilities
     methods (Static)
         
         % Returns a 2D image slice and alpha information
-        function [rgb_slice alpha_slice] = GetImage(image_slice, limits, image_type, window, level)
+        function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level)
             switch image_type
                 case PTKImageType.Grayscale
                     rescaled_image_slice = PTKImageUtilities.RescaleImage(image_slice, window, level);
@@ -26,7 +26,7 @@ classdef PTKImageUtilities
         end
         
         % Returns an RGB image from a greyscale matrix
-        function [rgb_image alpha] = GetBWImage(image)
+        function [rgb_image, alpha] = GetBWImage(image)
             rgb_image = (cat(3, image, image, image));
             alpha = ones(size(image));
         end
