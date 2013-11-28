@@ -84,7 +84,8 @@ classdef PTKEmphysemaPercentageByLobe < PTKPlugin
 
         function WriteToFileAndScreen(file_id, text)
             disp(text);
-            fprintf(file_id, sprintf('%s\r\n', text));
+            fprintf(file_id, strrep(text, '%', '%%'));
+            fprintf(file_id, '\r\n');
         end
     
         function emphysema_results = GetEmphysemaPercentage(left_and_right_lungs, lobes, uid, roi, results_directory)
