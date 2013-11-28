@@ -1,4 +1,4 @@
-function PTKSaveTreeAsVTK(tree_root, template_image, file_path, filename_prefix, reporting)
+function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
     % PTKSaveTreeAsVTK. Exports a tree structure into a VTK file
     %
     %     PTKSaveTreeAsVTK saves the tree whose root branch is tree_root into a
@@ -15,6 +15,10 @@ function PTKSaveTreeAsVTK(tree_root, template_image, file_path, filename_prefix,
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
+    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %                             specifying the coordinate system to use
+    %             template_image  A PTKImage providing voxel size and image size
+    %                             parameters
     %             reporting       A PTKReporting or implementor of the same interface,
     %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
@@ -28,6 +32,15 @@ function PTKSaveTreeAsVTK(tree_root, template_image, file_path, filename_prefix,
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
+    if nargin < 4
+        reporting.Error('PTKSaveTreeAsVTK:BadArguments', 'No coordinate_system parameter specified');
+    end
+    
+    if ~isa(coordinate_system, 'PTKCoordinateSystem')
+        reporting.Error('PTKSaveTreeAsVTK:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    end
+    
+    
     % Get all branches in the tree
     linear_branch_list = tree_root.GetBranchesAsListUsingRecursion;
     num_branches = numel(linear_branch_list);
@@ -47,19 +60,9 @@ function PTKSaveTreeAsVTK(tree_root, template_image, file_path, filename_prefix,
     
     point_coordinates = zeros(num_points, 3);
     
-    % ToDo
-    if isa(tree_root, 'PTKAirwayGrowingTree')
-        point_coordinates(1, :) = [tree_root.StartCoords(2), tree_root.StartCoords(1), tree_root.StartCoords(3)];
-    elseif isa(tree_root, 'PTKTreeModel')
-        point = tree_root.StartPoint;
-        dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([point.CoordI, point.CoordJ, point.CoordK], template_image);
-        xc = dicom_coordinates(1);
-        yc = dicom_coordinates(2);
-        zc = dicom_coordinates(3);
-        point_coordinates(1, :) = [xc, yc, zc];
-    else
-        point_coordinates(1, :) = [tree_root.StartPoint(2), tree_root.StartPoint(1), tree_root.StartPoint(3)];
-    end
+    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([tree_root.StartPoint.CoordX, tree_root.StartPoint.CoordY, tree_root.StartPoint.CoordZ], coordinate_system, template_image);
+    point_coordinates(1, :) = [dicom_coordinates(1), dicom_coordinates(2), dicom_coordinates(3)];
+    
     lines = zeros(num_branches, 2);
     vertices = [0 : num_points - 1]';
     pressure = zeros(num_points, 1);
@@ -81,10 +84,14 @@ function PTKSaveTreeAsVTK(tree_root, template_image, file_path, filename_prefix,
         end
     end
     
-    if isempty(tree_root.SegmentIndex);
-        segment_index(1) = 0;
+    if isprop(tree_root, 'SegmentIndex')
+        if isempty(tree_root.SegmentIndex);
+            segment_index(1) = 0;
+        else
+            segment_index(1) = tree_root.SegmentIndex;
+        end
     else
-        segment_index(1) = tree_root.SegmentIndex;
+        segment_index(1) = 0;
     end
     
     for branch_index = 1 : num_branches
@@ -103,19 +110,8 @@ function PTKSaveTreeAsVTK(tree_root, template_image, file_path, filename_prefix,
         point_matlab_index = branch_index + 1;
 
         % Write the next point for this branch end point
-        if isa(branch, 'PTKAirwayGrowingTree')
-            point_coordinates(point_matlab_index, :) = [branch.EndCoords(2), branch.EndCoords(1), branch.EndCoords(3)];
-        elseif isa(branch, 'PTKTreeModel')
-            point = branch.EndPoint;
-            dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([point.CoordI, point.CoordJ, point.CoordK], template_image);
-            xc = dicom_coordinates(1);
-            yc = dicom_coordinates(2);
-            zc = dicom_coordinates(3);
-            point_coordinates(point_matlab_index, :) = [xc, yc, zc];
-        else
-            point_coordinates(point_matlab_index, :) = [branch.EndPoint(2), branch.EndPoint(1), branch.EndPoint(3)];
-        end
-        
+        dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([branch.EndPoint.CoordX, branch.EndPoint.CoordY, branch.EndPoint.CoordZ], coordinate_system, template_image);
+        point_coordinates(point_matlab_index, :) = [dicom_coordinates(1), dicom_coordinates(2), dicom_coordinates(3)];
         
         lines(branch_index, :) = [start_point_index, end_point_index];
         
@@ -131,10 +127,14 @@ function PTKSaveTreeAsVTK(tree_root, template_image, file_path, filename_prefix,
                 pressure(point_matlab_index) = branch.BranchProperties.Pressure;
             end
         end
-        if isempty(branch.SegmentIndex);
+        if ~isprop(branch, 'SegmentIndex')
             segment_index(point_matlab_index) = 0;
         else
-            segment_index(point_matlab_index) = branch.SegmentIndex;
+            if isempty(branch.SegmentIndex);
+                segment_index(point_matlab_index) = 0;
+            else
+                segment_index(point_matlab_index) = branch.SegmentIndex;
+            end
         end
         
     end

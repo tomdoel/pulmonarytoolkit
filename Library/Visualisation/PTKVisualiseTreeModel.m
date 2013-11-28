@@ -44,17 +44,17 @@ function PTKVisualiseTreeModel(parent_branch)
         thickness = 4*radius;
         parent = branch.Parent;
         if isempty(parent)
-            x_a = start_point.CoordJ;
-            y_a = start_point.CoordI;
-            z_a = - start_point.CoordK;
+            x_a = start_point.CoordX;
+            y_a = start_point.CoordY;
+            z_a = - start_point.CoordZ;
         else
-            x_a = parent.EndPoint.CoordJ;
-            y_a = parent.EndPoint.CoordI;
-            z_a = - parent.EndPoint.CoordK;            
+            x_a = parent.EndPoint.CoordX;
+            y_a = parent.EndPoint.CoordY;
+            z_a = - parent.EndPoint.CoordZ;
         end
-        x_b = end_point.CoordJ;
-        y_b = end_point.CoordI;
-        z_b = - end_point.CoordK;
+        x_b = end_point.CoordX;
+        y_b = end_point.CoordY;
+        z_b = - end_point.CoordZ;
         
         px = [x_a; x_b];
         py = [y_a; y_b];

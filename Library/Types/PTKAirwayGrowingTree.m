@@ -11,8 +11,8 @@ classdef PTKAirwayGrowingTree < PTKTree
     %    
 
     properties
-        StartCoords  % [i,j,k] First point
-        EndCoords    % [i,j,k] Last point
+        StartPoint
+        EndPoint
         CentrelineTreeSegment
         GenerationNumber % 1 = trachea
         IsGenerated  % True if this branch was created by the volume-filling algorithm
@@ -57,7 +57,7 @@ classdef PTKAirwayGrowingTree < PTKTree
         end
         
         function AddDensityValues(obj, density_image)
-            global_coordinates = density_image.CoordinatesMmToGlobalCoordinates(obj.EndCoords);
+            global_coordinates = PTKImageCoordinateUtilities.GetGlobalCoordinatesForPoints(obj.EndPoint, density_image);
             obj.Density = density_image.GetVoxel(global_coordinates);
             for child = obj.Children
                 child.AddDensityValues(density_image);
@@ -107,17 +107,9 @@ classdef PTKAirwayGrowingTree < PTKTree
             end            
         end
         
-        function start_point = StartPoint(obj)
-            start_point = PTKCentrelinePoint(obj.StartCoords(1), obj.StartCoords(2), obj.StartCoords(3), obj.Radius, []); 
-        end
-        
-        function start_point = EndPoint(obj)
-            start_point = PTKCentrelinePoint(obj.EndCoords(1), obj.EndCoords(2), obj.EndCoords(3), obj.Radius, []);            
-        end
-        
         function radius = Radius(obj)
             if ~isempty(obj.CentrelineTreeSegment)
-                radius = obj.CentrelineTreeSegment.Centreline(1).Radius;
+                radius = obj.CentrelineTreeSegment.Centreline(1).Parameters.Radius;
             else
                 if ~isempty(obj.StrahlerOrder)
                     % Compute radius based on Strahler order
@@ -134,12 +126,12 @@ classdef PTKAirwayGrowingTree < PTKTree
         end
         
         function segment_direction = Direction(obj)
-            segment_direction = obj.EndCoords - obj.StartCoords;
+            segment_direction = [obj.EndPoint.CoordX - obj.StartPoint.CoordX, obj.EndPoint.CoordY - obj.StartPoint.CoordY, obj.EndPoint.CoordZ - obj.StartPoint.CoordZ];
             segment_direction = segment_direction/norm(segment_direction);
         end
             
         function segment_length = Length(obj)
-            segment_length = norm(obj.EndCoords - obj.StartCoords);
+            segment_length = PTKImageCoordinateUtilities.DistanceBetweenPoints(obj.EndPoint, obj.StartPoint);
         end
         
         % Once an initial tree has been generated using AddTree(), this method
@@ -183,24 +175,24 @@ classdef PTKAirwayGrowingTree < PTKTree
                 if ~isempty(children)
                     branches_to_do = [branches_to_do, children];
                 else
-                    terminal_coords(terminal_index, :) = branch.EndCoords;
+                    terminal_coords(terminal_index, :) =  [branch.EndPoint.CoordX, branch.EndPoint.CoordY, branch.EndPoint.CoordZ];
                     terminal_index = terminal_index + 1;
                 end
                 
                 parent = branch.Parent;
                 
                 if isempty(parent)
-                    start_point_mm = branch.StartCoords;
+                    start_point_mm = branch.StartPoint;
                 else
-                    start_point_mm = parent.EndCoords;
+                    start_point_mm = parent.EndPoint;
                 end
-                end_point_mm = branch.EndCoords;
+                end_point_mm = branch.EndPoint;
                 if isnan(end_point_mm)
                     reporting.Error('PTKGrowingTreeBySegment:Nan', 'NaN found in branch coordinate');
                 end
                 
-                all_starts(index, :) = start_point_mm;
-                all_ends(index, :) = end_point_mm;
+                all_starts(index, :) = [start_point_mm.CoordX, start_point_mm.CoordY, start_point_mm.CoordZ];
+                all_ends(index, :) = [end_point_mm.CoordX, end_point_mm.CoordY, end_point_mm.CoordZ];
                 
                 index = index + 1;
             end
@@ -232,10 +224,16 @@ classdef PTKAirwayGrowingTree < PTKTree
             end
         end
 
+        % LengthMm computes the segment length based on the start and end
+        % voxels. This method works for arrays.
+        % This method is identical to that in PTKTreeModel
         function length_mm = LengthMm(obj)
-            coord_start = obj.StartCoords;
-            coord_end = obj.EndCoords;
-            length_mm = norm(coord_start - coord_end, 2);            
+            start_points = [obj.StartPoint];
+            end_points = [obj.EndPoint];
+            coord_start = [[start_points.CoordX]; [end_points.CoordY]; [start_points.CoordZ]];
+            coord_end = [[end_points.CoordX]; [end_points.CoordY]; [end_points.CoordZ]];
+            
+            length_mm = sqrt(sum((coord_start - coord_end).^2, 1));
         end
         
         

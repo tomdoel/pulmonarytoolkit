@@ -1,4 +1,4 @@
-function PTKSaveSmoothedCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, template_image, reporting)
+function PTKSaveSmoothedCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
     % PTKSaveSmoothedCentrelineTreeAsNodes. Exports a centreline tree structure into node and element files
     %
     %     Syntax
@@ -12,11 +12,13 @@ function PTKSaveSmoothedCentrelineTreeAsNodes(tree_root, file_path, filename_pre
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
+    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %                             specifying the coordinate system to use
+    %             template_image  A PTKImage providing voxel size and image size
+    %                             parameters
     %             reporting       A PTKReporting or implementor of the same interface,
     %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
-    %             template_image  A PTKImage providing voxel size and image size
-    %                             parameters
     %
     %
     %     Licence
@@ -26,6 +28,14 @@ function PTKSaveSmoothedCentrelineTreeAsNodes(tree_root, file_path, filename_pre
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
+    if nargin < 4
+        reporting.Error('PTKSaveSmoothedCentrelineTreeAsNodes:BadArguments', 'No coordinate_system parameter specified');
+    end
+    
+    if ~isa(coordinate_system, 'PTKCoordinateSystem')
+        reporting.Error('PTKSaveSmoothedCentrelineTreeAsNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    end
+    
     node_file_name = fullfile(file_path, [filename_prefix '_node.txt']);
     element_file_name = fullfile(file_path, [filename_prefix '_element.txt']);
     
@@ -70,7 +80,7 @@ function PTKSaveSmoothedCentrelineTreeAsNodes(tree_root, file_path, filename_pre
             is_endpoint = (point_index == length(points)) && isempty(branch.Children);
             
             % Write point to node file
-            PrintNodeToFile(node_file_handle, current_node_index, point, is_endpoint, lobe_index, segment_index, template_image);
+            PrintNodeToFile(node_file_handle, current_node_index, point, is_endpoint, lobe_index, segment_index, coordinate_system, template_image);
             
             % Write (parent, current_node_index) to element file
             PrintElementToFile(element_file_handle, parent_node_index, current_node_index)
@@ -97,13 +107,13 @@ function PrintElementToFile(fid, parent_index, child_index)
     fprintf(fid, '%u,%u\r\n', parent_index, child_index);
 end
 
-function PrintNodeToFile(fid, node_index, point, is_endpoint, lobe_index, segment_index, template_image)
+function PrintNodeToFile(fid, node_index, point, is_endpoint, lobe_index, segment_index, coordinate_system, template_image)
     
-    dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([point.CoordI, point.CoordJ, point.CoordK], template_image);
+    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([point.CoordX, point.CoordY, point.CoordZ], coordinate_system, template_image);
     xc = dicom_coordinates(1);
     yc = dicom_coordinates(2);
     zc = dicom_coordinates(3);
-    radius = point.Radius;
+    radius = point.Parameters.Radius;
     if is_endpoint
         is_final_node = 'y';
     else

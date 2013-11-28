@@ -1,4 +1,4 @@
-function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix, reporting)
+function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix, coordinate_system, template_image, reporting)
     % PTKLoadCentrelineTreeFromNodes. Load a tree strucure from centreline points stored in node/element files
     %
     %     Syntax
@@ -12,6 +12,12 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
+    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %                             specifying the coordinate system to use
+    %             template_image  may be required, depending on the value of
+    %                             coordinate_system. Provides the required
+    %                             parameters for reconstructing the centreline
+    %                             tree.
     %             reporting       A PTKReporting or implementor of the same interface,
     %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
@@ -23,6 +29,13 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
+    if nargin < 3
+        reporting.Error('PTKLoadCentrelineTreeFromNodes:BadArguments', 'No coordinate_system parameter specified');
+    end
+    
+    if ~isa(coordinate_system, 'PTKCoordinateSystem')
+        reporting.Error('PTKLoadCentrelineTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    end
 
     node_file = [filename_prefix '_node.txt'];
     node_file = fullfile(file_path, node_file);
@@ -52,7 +65,6 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
     element_data = textscan(fid, '%u%u', num_nodes, 'Delimiter', ',');
     fclose(fid);
     
-%     tree_branches = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
     node_points = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
     
     % Create a new point for each node
@@ -64,7 +76,11 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
         radius = node_data{5}(node_index);
         is_end_node = node_data{6}(node_index);
 
-        new_point = PTKCentrelinePoint(yc, xc, zc, radius, []);
+        point_parameters = [];
+        point_parameters.Radius = radius;
+        
+        new_coords = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([xc, yc, zc], coordinate_system, template_image);
+        new_point = PTKCentrelinePoint(new_coords(1), new_coords(2), new_coords(3), point_parameters);
         node_points(node_number + 1) = new_point;
     end
     
@@ -89,15 +105,6 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
     for element_index = 1 : number_of_elements
         parent_index = element_data{1}(element_index) + 1;
         child_index = element_data{2}(element_index) + 1;
-
-%         % Special case to correct for a bug in airway files where the final
-%         % element is (0,0)
-%         if (element_index == number_of_elements) && (parent_index == 1) && (child_index == 1) ...
-%                 && (number_of_child_points(num_nodes) == 0)  && (number_of_child_points(num_nodes - 1) == 0)
-%             reporting.ShowWarning('PTKLoadTreeFromNodes:AddingElement', 'Adding additional element to correct for bug in airway file', []);
-%             parent_index = num_nodes - 1;
-%             child_index = num_nodes;
-%         end
         
         if parent_index ~= child_index
             parent_branch =  branch_for_point(parent_index);
@@ -122,71 +129,6 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
         end
     end
     
-    %     % Create new branches for each point with
-%     for node_index = 1 : num_nodes
-%         node_number = node_data{1}(node_index);
-%         xc = node_data{2}(node_index);
-%         yc = node_data{3}(node_index);
-%         zc = node_data{4}(node_index);
-%         radius = node_data{5}(node_index);
-%         is_end_node = node_data{6}(node_index);
-% 
-%         new_branch = PTKTreeModel;
-%         new_point = PTKCentrelinePoint(yc, xc, zc, radius);
-%         new_branch.StartCoords = [xc, yc, zc];
-%         new_branch.StartRadius = radius;
-%         tree_branches(node_number + 1) = new_branch;
-%         node_points(node_number + 1) = new_point;
-%     end
-%     
-%     
-%     
-%     
-%     % Set up the parent-child relationships
-%     for element_index = 1 : length(element_data{1})
-%         node_a_index = element_data{1}(element_index) + 1;
-%         node_b_index = element_data{2}(element_index) + 1;
-%         if node_a_index ~= node_b_index
-%             parent_branch = tree_branches(node_a_index);
-%             child_branch = tree_branches(node_b_index);
-%             child_branch.SetParent(parent_branch);
-%             parent_branch.EndCoords = child_branch.StartCoords;
-%             parent_branch.EndRadius = child_branch.StartRadius;
-%         end
-%     end
-%     
-%     
-%     
-%     % Create new branches for each node
-%     for node_index = 1 : num_nodes
-%         node_number = node_data{1}(node_index);
-%         xc = node_data{2}(node_index);
-%         yc = node_data{3}(node_index);
-%         zc = node_data{4}(node_index);
-%         radius = node_data{5}(node_index);
-%         is_end_node = node_data{6}(node_index);
-% 
-%         new_branch = PTKTreeModel;
-%         new_point = PTKCentrelinePoint(yc, xc, zc, radius);
-%         new_branch.StartCoords = [xc, yc, zc];
-%         new_branch.StartRadius = radius;
-%         tree_branches(node_number + 1) = new_branch;
-%         node_points(node_number + 1) = new_point;
-%     end
-%     
-%     
-%     % Set up the parent-child relationships
-%     for element_index = 1 : length(element_data{1})
-%         node_a_index = element_data{1}(element_index) + 1;
-%         node_b_index = element_data{2}(element_index) + 1;
-%         if node_a_index ~= node_b_index
-%             parent_branch = tree_branches(node_a_index);
-%             child_branch = tree_branches(node_b_index);
-%             child_branch.SetParent(parent_branch);
-%             parent_branch.EndCoords = child_branch.StartCoords;
-%             parent_branch.EndRadius = child_branch.StartRadius;
-%         end
-%     end
     
     root_branch = branch_for_point(1);
     

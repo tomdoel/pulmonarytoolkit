@@ -42,9 +42,12 @@ classdef PTKSaveLobeMesh < PTKPlugin
             
             lobe_names = {'RU', 'RM', 'RL', 'LU', 'LL'};
             lobe_index_colours = [1, 2, 4, 5, 6];
+
+            coordinate_system = PTKCoordinateSystem.DicomUntranslated;
+            template_image = lobes;
+
             for lobe_index = 1 : 5
-                reporting.CheckForCancel;
-                reporting.UpdateProgressValue(100*(lobe_index-1)/5);
+                reporting.UpdateProgressStage((lobe_index-1), 5);
                 
                 current_lobe = lobes.Copy;
                 current_lobe.ChangeRawImage(lobes.RawImage == lobe_index_colours(lobe_index));
@@ -54,7 +57,9 @@ classdef PTKSaveLobeMesh < PTKPlugin
                 filepath = dataset.GetOutputPathAndCreateIfNecessary;
                 filename = ['LobeSurfaceMesh_' lobe_names{lobe_index} '.stl'];
                 current_lobe.AddBorder(6);
-                PTKCreateSurfaceMesh(filepath, filename, current_lobe, smoothing_size, false, reporting);
+                reporting.PushProgress;
+                PTKCreateSurfaceMesh(filepath, filename, current_lobe, smoothing_size, false, coordinate_system, template_image, reporting);
+                reporting.PopProgress;
             end
             results = lobes;
             reporting.UpdateProgressValue(100);

@@ -159,8 +159,10 @@ classdef PTKTreeModel < PTKTree
             local_indices = skeleton_tree.Points;
             global_indices = image_template.LocalToGlobalIndices(local_indices);
             for point = global_indices
-                [c_i, c_j, c_k] = image_template.GlobalIndicesToCoordinatesMm(point);
-                new_point = PTKCentrelinePoint(c_i, c_j, c_k, radius, point);
+                ptk_coordinates = image_template.GlobalIndicesToPTKCoordinates(point);
+                properties = [];
+                properties.Radius = radius;
+                new_point = PTKCentrelinePoint(ptk_coordinates(1), ptk_coordinates(2), ptk_coordinates(3), properties);
                 obj.Centreline(end+1) = new_point;
             end
             
@@ -194,17 +196,16 @@ classdef PTKTreeModel < PTKTree
         
         function GenerateSmoothedCentreline(obj)
             centreline = obj.Centreline;
-            x_coords = [centreline.CoordJ];
-            y_coords = [centreline.CoordI];
-            z_coords = [centreline.CoordK];
-            radius_values = [centreline.Radius];
-            global_index = [centreline.GlobalIndex];
+            x_coords = [centreline.CoordX];
+            y_coords = [centreline.CoordY];
+            z_coords = [centreline.CoordZ];
+            cp = [centreline.Parameters];
+            radius_values = [cp.Radius];
             if ~isempty(obj.Parent)
-                x_coords = [obj.Parent.Centreline(end).CoordJ(end), x_coords];
-                y_coords = [obj.Parent.Centreline(end).CoordI(end), y_coords];
-                z_coords = [obj.Parent.Centreline(end).CoordK(end), z_coords];
-                radius_values = [obj.Parent.Centreline(end).Radius(end), radius_values];
-                global_index = [obj.Parent.Centreline(end).GlobalIndex(end), global_index];
+                x_coords = [obj.Parent.Centreline(end).CoordX(end), x_coords];
+                y_coords = [obj.Parent.Centreline(end).CoordY(end), y_coords];
+                z_coords = [obj.Parent.Centreline(end).CoordZ(end), z_coords];
+                radius_values = [obj.Parent.Centreline(end).Parameters.Radius(end), radius_values];
             end
             
             point_spacing_mm = 5;
@@ -227,19 +228,13 @@ classdef PTKTreeModel < PTKTree
             interpolated_indices = round(linspace(1, number_of_original_points, number_of_spline_points));
             
             radius_values = radius_values(interpolated_indices);
-            if ~isempty(global_index)
-                global_index = global_index(interpolated_indices);
-            end
             
             % Store smoothed centreline
             obj.SmoothedCentreline = PTKCentrelinePoint.empty;
             for smoothed_point_index = 1 : number_of_spline_points
-                if isempty(global_index)
-                    global_index_value = [];
-                else
-                    global_index_value = global_index(smoothed_point_index);
-                end
-                obj.SmoothedCentreline(smoothed_point_index) = PTKCentrelinePoint(spline(2, smoothed_point_index), spline(1, smoothed_point_index), spline(3, smoothed_point_index), radius_values(smoothed_point_index), global_index_value);
+                properties = [];
+                properties.Radius = radius_values(smoothed_point_index);
+                obj.SmoothedCentreline(smoothed_point_index) = PTKCentrelinePoint(spline(1, smoothed_point_index), spline(2, smoothed_point_index), spline(3, smoothed_point_index), properties);
             end
             
             % Remove bifurcation point
@@ -268,7 +263,7 @@ classdef PTKTreeModel < PTKTree
                 number_radius_points = numel(radius_points);
                 radius_sum = 0;
                 for radius_point = radius_points
-                    radius_sum = radius_sum + radius_point.Radius;
+                    radius_sum = radius_sum + radius_point.Parameters.Radius;
                 end
                 obj.Radius = radius_sum/number_radius_points;
             end
@@ -282,8 +277,8 @@ classdef PTKTreeModel < PTKTree
         function length_mm = LengthMm(obj)
             start_points = [obj.StartPoint];
             end_points = [obj.EndPoint];
-            coord_start = [[start_points.CoordI]; [end_points.CoordJ]; [start_points.CoordK]];
-            coord_end = [[end_points.CoordI]; [end_points.CoordJ]; [end_points.CoordK]];
+            coord_start = [[start_points.CoordX]; [end_points.CoordY]; [start_points.CoordZ]];
+            coord_end = [[end_points.CoordX]; [end_points.CoordY]; [end_points.CoordZ]];
             
             length_mm = sqrt(sum((coord_start - coord_end).^2, 1));
         end
@@ -328,18 +323,18 @@ classdef PTKTreeModel < PTKTree
                 if ~isempty(children)
                     branches_to_do = [branches_to_do, children];
                 else
-                    terminal_coords(terminal_index, :) =  [branch.EndPoint.CoordI, branch.EndPoint.CoordJ, branch.EndPoint.CoordK];
+                    terminal_coords(terminal_index, :) =  [branch.EndPoint.CoordX, branch.EndPoint.CoordY, branch.EndPoint.CoordZ];
                     terminal_index = terminal_index + 1;
                 end
                 
                 parent = branch.Parent;
                 
                 if isempty(parent)
-                    start_point_mm = [branch.StartPoint.CoordI, branch.StartPoint.CoordJ, branch.StartPoint.CoordK];
+                    start_point_mm = [branch.StartPoint.CoordX, branch.StartPoint.CoordY, branch.StartPoint.CoordZ];
                 else
-                    start_point_mm = [parent.EndPoint.CoordI, parent.EndPoint.CoordJ, parent.EndPoint.CoordK];
+                    start_point_mm = [parent.EndPoint.CoordX, parent.EndPoint.CoordY, parent.EndPoint.CoordZ];
                 end
-                end_point_mm = [branch.EndPoint.CoordI, branch.EndPoint.CoordJ, branch.EndPoint.CoordK];
+                end_point_mm = [branch.EndPoint.CoordX, branch.EndPoint.CoordY, branch.EndPoint.CoordZ];
                 if isnan(end_point_mm)
                     reporting.Error('PTKGrowingTreeBySegment:Nan', 'NaN found in branch coordinate');
                 end

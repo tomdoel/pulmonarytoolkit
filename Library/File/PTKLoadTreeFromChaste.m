@@ -1,4 +1,4 @@
-function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_filename, template_image, reporting)
+function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_filename, coordinate_system, template_image, reporting)
     % PTKLoadTreeFromChaste. Load a tree strucure from branches stored in Chaste format node/element files
     %
     %     Syntax
@@ -9,8 +9,8 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
     %             root_branch     is the root branch in a PTKTreeModel structure 
     %             file_path       is the path where the node and edge files
     %                             are to be stored
-    %             node_filename   is the node filename
-    %             edge_filename   is the filename prefix
+    %             node_filename   is the name of the node file
+    %             edge_filename   is the name of the edge file
     %             template_image  is used to provide a reference coordinate
     %                             system
     %             reporting       A PTKReporting or implementor of the same interface,
@@ -23,6 +23,14 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
+    
+    if nargin < 4
+        reporting.Error('PTKLoadTreeFromChaste:BadArguments', 'No coordinate_system parameter specified');
+    end
+    
+    if ~isa(coordinate_system, 'PTKCoordinateSystem')
+        reporting.Error('PTKLoadTreeFromChaste:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    end
     
     node_file = fullfile(file_path, node_filename);
     element_file = fullfile(file_path, edge_filename);
@@ -69,10 +77,15 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
     x = node_data{2};
     y = node_data{3};
     z = node_data{4};
-    ptk_coordinates = PTKImageCoordinateUtilities.CornerToPtkCoordinates([x, y, z], template_image);
+    
+    ptk_coordinates = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([x, y, z], coordinate_system, template_image);
+    x = ptk_coordinates(:, 1);
+    y = ptk_coordinates(:, 2);
+    z = ptk_coordinates(:, 3);
+    
     radius = node_data{5};
     node_index_1 = element_data{2};
     node_index_2 = element_data{3};
     
-    root_branch = PTKCreateTreeFromNodesAndElements(node_index, ptk_coordinates(:, 1), ptk_coordinates(:, 2), ptk_coordinates(:, 3), radius, node_index_1, node_index_2, reporting);
+    root_branch = PTKCreateTreeFromNodesAndElements(node_index, x, y, z, radius, node_index_1, node_index_2, reporting);
 end

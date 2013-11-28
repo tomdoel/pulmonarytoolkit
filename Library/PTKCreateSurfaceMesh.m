@@ -1,4 +1,4 @@
-function PTKCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, small_structures, reporting)
+function PTKCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, small_structures, coordinate_system, template_image, reporting)
     % PTKCreateSurfaceMesh. Creates a surface mesh from a segmentation and
     %     writes into an STL file
     %
@@ -17,6 +17,13 @@ function PTKCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, 
     %
     %     small_structures - set to true for improved visualisation of
     %         narrow structures such as airways and vessels
+    %
+    %    coordinate_system  a PTKCoordinateSystem enumeration
+    %        specifying the coordinate system to use
+    %
+    %    template_image  A PTKImage providing voxel size and image size
+    %        parameters, which may be required depending on the coordinate
+    %        system
     %
     %     reporting - a PTKReporting object for progress, warning and
     %         error reporting.
@@ -76,7 +83,7 @@ function PTKCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, 
         reporting.CheckForCancel;
         reporting.UpdateProgressValue(100*(label_index-1)/number_of_segmentations);
         
-        [fv, ~] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label);
+        [fv, ~] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, reporting);
         
         current_filename = filename;
         stlwrite(fullfile(filepath, current_filename), fv)

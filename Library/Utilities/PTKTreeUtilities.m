@@ -192,16 +192,16 @@ classdef PTKTreeUtilities < handle
         end
         
         function centreline_indices_local = CentrelinePointsToLocalIndices(centreline_points, template_image)
-            centreline_indices_global = [centreline_points.GlobalIndex];
+            centreline_indices_global = PTKImageCoordinateUtilities.GetGlobalIndicesForPoints(centreline_points, template_image);
             centreline_indices_local = template_image.GlobalToLocalIndices(centreline_indices_global);
         end
         
         function k_distance = GetKDistance(branch)
             start_centreline_point = branch.GetCentrelineTree;
             start_centreline_point = start_centreline_point(1);
-            start_k = start_centreline_point.CoordK;
+            start_k = start_centreline_point.CoordZ;
             tree_points = branch.GetCentrelineTree;
-            k_coords = [tree_points.CoordK];
+            k_coords = [tree_points.CoordZ];
             max_k = max(k_coords);
             min_k = min(k_coords);
             if abs(max_k - start_k) > abs(min_k - start_k)
@@ -214,7 +214,7 @@ classdef PTKTreeUtilities < handle
         function voxels = GetCentrelineVoxelsForTheseBranches(start_branches, template)
             voxels = [];
             for index = 1 : numel(start_branches)
-                voxels = cat(2, voxels, PTKTreeUtilities.CentrelinePointsToLocalIndices(start_branches(index).GetCentrelineTree, template));
+                voxels = cat(2, voxels, PTKTreeUtilities.CentrelinePointsToLocalIndices(start_branches(index).GetCentrelineTree, template)');
             end
         end
         
@@ -225,10 +225,10 @@ classdef PTKTreeUtilities < handle
             end
             
             for index = 1 : numel(start_branches)
-                voxels = cat(2, voxels, PTKTreeUtilities.CentrelinePointsToLocalIndices(start_branches(index).GetCentrelineTree, template));
+                voxels = cat(2, voxels, PTKTreeUtilities.CentrelinePointsToLocalIndices(start_branches(index).GetCentrelineTree, template)');
                 parent = start_branches(index).Parent;
                 while ~isempty(parent)
-                    centreline_indices = PTKTreeUtilities.CentrelinePointsToLocalIndices(parent.Centreline, template);
+                    centreline_indices = PTKTreeUtilities.CentrelinePointsToLocalIndices(parent.Centreline, template)';
                     voxels = cat(2, voxels, centreline_indices);
                     parent = parent.Parent;
                 end

@@ -46,7 +46,10 @@ classdef PTKSaveAirwayMesh < PTKPlugin
             results_upsampled = results.Copy;
             results_upsampled.AddBorder(6);
             results_upsampled.DownsampleImage(0.25)
-            PTKCreateSurfaceMesh(filepath, filename, results, smoothing_size, true, reporting);
+
+            coordinate_system = PTKCoordinateSystem.DicomUntranslated;
+            template_image = results;
+            PTKCreateSurfaceMesh(filepath, filename, results, smoothing_size, true, coordinate_system, template_image, reporting);
             
         end
         

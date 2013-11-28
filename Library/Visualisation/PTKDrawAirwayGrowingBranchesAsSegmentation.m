@@ -40,24 +40,27 @@ function results = PTKDrawAirwayGrowingBranchesAsSegmentation(airway_tree, templ
         parent = branch.Parent;
         
         if isempty(parent)
-            start_point_mm = branch.StartCoords;
+            start_point_mm = branch.StartPoint;
         else
-            start_point_mm = parent.EndCoords;
+            start_point_mm = parent.EndPoint;
         end
-        end_point_mm = branch.EndCoords;
-        if isnan(end_point_mm)
+        end_point_mm = branch.EndPoint;
+        if isnan(end_point_mm.CoordX)
             disp('*');
         end
         
-        all_starts(index, :) = start_point_mm;
-        all_ends(index, :) = end_point_mm;
+        all_starts(index, :) = [start_point_mm.CoordX, start_point_mm.CoordY, start_point_mm.CoordZ];
+        all_ends(index, :) = [end_point_mm.CoordX, end_point_mm.CoordY, end_point_mm.CoordZ];
         
         index = index + 1;
     end
 
-    all_starts_coords = template_image.CoordinatesMmToGlobalCoordinates(all_starts);
+    all_starts_coords = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(all_starts);
+    all_starts_coords = round(template_image.CoordinatesMmToGlobalCoordinates(all_starts_coords));    
     all_starts_coords = template_image.GlobalToLocalCoordinates(all_starts_coords);
-    all_ends_coords = template_image.CoordinatesMmToGlobalCoordinates(all_ends);
+    
+    all_ends_coords = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(all_starts);
+    all_ends_coords = template_image.CoordinatesMmToGlobalCoordinates(all_ends_coords);
     all_ends_coords = template_image.GlobalToLocalCoordinates(all_ends_coords);
 
     

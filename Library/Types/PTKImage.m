@@ -968,6 +968,13 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         % Given a set of global indices, compute the coordinates of each in mm
+        function ptk_coordinates = GlobalIndicesToPTKCoordinates(obj, global_indices)
+            [ic, jc, kc] = obj.GlobalIndicesToCoordinatesMm(global_indices);
+            [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
+            ptk_coordinates = [ic, jc, kc];
+        end
+        
+        % Given a set of global indices, compute the coordinates of each in mm
         function [ic, jc, kc] = GlobalCoordinatesToCoordinatesMm(obj, global_coordinates)
             ic = (global_coordinates(:, 1) - 0.5)*obj.VoxelSize(1);
             jc = (global_coordinates(:, 2) - 0.5)*obj.VoxelSize(2);
@@ -980,7 +987,16 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         % Given a set of coordinates in mm, compute the global coordinates of each
         function global_coordinates = CoordinatesMmToGlobalCoordinates(obj, global_coordinates_mm)
-            global_coordinates = repmat([1, 1, 1], size(global_coordinates_mm, 1), 1) + floor(global_coordinates_mm./repmat(obj.VoxelSize, size(global_coordinates_mm, 1), 1));
+            if isempty(global_coordinates_mm)
+                global_coordinates = [];
+            else
+                global_coordinates = repmat([1, 1, 1], size(global_coordinates_mm, 1), 1) + floor(global_coordinates_mm./repmat(obj.VoxelSize, size(global_coordinates_mm, 1), 1));
+            end
+            
+        end
+        
+        function global_indices = GlobalCoordinatesToGlobalIndices(obj, coords)
+            global_indices = PTKImageCoordinateUtilities.FastSub2ind(obj.OriginalImageSize, coords(:, 1), coords(:, 2), coords(:, 3));
         end
         
         % Compute the coordinates of all points in the image, in global
@@ -1006,6 +1022,13 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function [ic, jc, kc] = GetCornerGlobalCoordinatesMm(obj)
             [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
             [ic, jc, kc] = obj.GlobalCoordinatesMmToCornerCoordinates(ic, jc, kc);
+        end
+        
+        % Returns the coordinates of all points in the image in global
+        % coordinates in mm, with the origin at the centre of the original image
+        function [ic, jc, kc] = GetPTKCoordinates(obj)
+            [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
+            [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
         end
         
         function [xc, yc, zc] = GlobalCoordinatesMmToCornerCoordinates(obj, ic, jc, kc)
@@ -1072,7 +1095,31 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             obj.RawImage(obj.RawImage == old_index) = new_index;
         end
         
-        
+        % Computes the offset from PTK to unshifted Dicom coordinates
+        function offset_in_mm = GetCornerOffset(obj)
+            voxel_size = obj.VoxelSize;
+            
+            % Adjust to coordinates at centre of first voxel
+            offset = -voxel_size/2;
+            offset_in_mm = [offset(1), offset(2), -offset(3)];
+        end
+
+        % Computes the offset from PTK to unshifted Dicom coordinates
+        function offset_in_mm = GetDicomOffset(obj)
+            global_origin = obj.GlobalOrigin;
+            voxel_size = obj.VoxelSize;
+            original_image_size = obj.OriginalImageSize;
+            
+            % Adjust to coordinates at centre of first voxel
+            offset = -voxel_size/2;
+            offset = [offset(1), offset(2), -offset(3)];
+            
+            % Shift the global origin to the first slice of the image
+            global_origin(3) = global_origin(3) + (original_image_size(3) - 1)*voxel_size(3);
+            
+            % Adjust to Dicom origin
+            offset_in_mm = offset + global_origin;
+        end
         
     end
     

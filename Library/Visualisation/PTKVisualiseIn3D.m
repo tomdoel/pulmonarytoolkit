@@ -92,6 +92,10 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     
     number_of_segmentations = length(segmentation_labels);
     
+    % We choose the PTK coordinate system, which requires no image template
+    coordinate_system = PTKCoordinateSystem.PTK;
+    template_image = [];
+
     % Separate the segmentation into components; one for each colour.
     % Iterate through these components and draw each separately
     for label_index = 1 : number_of_segmentations
@@ -104,7 +108,7 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
         this_colour = (mod(label-1, 60)) + 1;
         cm_color = cm(this_colour, :);
 
-        [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label);
+        [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, reporting);
         
         p = patch(fv, 'EdgeColor', 'none', 'FaceColor', cm_color);
         

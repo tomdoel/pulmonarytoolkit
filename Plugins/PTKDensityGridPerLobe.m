@@ -87,19 +87,20 @@ classdef PTKDensityGridPerLobe < PTKPlugin
                 
                 global_indices_for_this_lobe = lobes_copy.LocalToGlobalIndices(local_indices_for_this_lobe);
                 [ic, jc, kc] = lobes_copy.GlobalIndicesToCoordinatesMm(global_indices_for_this_lobe);
+                [ptk_x, ptk_y, ptk_z] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
                 density_values = density_average_copy.RawImage(local_indices_for_this_lobe);
-                PTKDensityGridPerLobe.SaveToFile(dataset, lobe_names{lobe_index}, ic, jc, kc, density_values)
+                PTKDensityGridPerLobe.SaveToFile(dataset, lobe_names{lobe_index}, ptk_x, ptk_y, ptk_z, density_values)
             end
             
             results = dataset.GetTemplateImage(PTKContext.LungROI);
         end
         
-        function SaveToFile(dataset, lobe_name, ic, jc, kc, density_values)
+        function SaveToFile(dataset, lobe_name, xc, yc, zc, density_values)
             results_directory = dataset.GetOutputPathAndCreateIfNecessary;
             file_name = ['DensityValues_' lobe_name '.txt'];
             template_image = dataset.GetTemplateImage(PTKContext.LungROI);
-            
-            PTKSaveListOfPointsAndValues(results_directory, file_name, ic, jc, kc, density_values, template_image)
+            coordinate_system = PTKCoordinateSystem.DicomUntranslated;
+            PTKSaveListOfPointsAndValues(results_directory, file_name, xc, yc, zc, density_values, coordinate_system, template_image)
         end        
     end
 end

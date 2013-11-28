@@ -315,30 +315,58 @@ classdef PTKImageCoordinateUtilities
             end
         end
         
-        function dicom_coordinates = PtkToDicomCoordinates(ptk_coordinates, template_image)
-            global_origin = template_image.GlobalOrigin;
-            voxel_size = template_image.VoxelSize;
-            original_image_size = template_image.OriginalImageSize;
-            
-            
-            % Adjust to coordinates at centre of first voxel
-            offset = -voxel_size/2;
-            offset = [offset(2), offset(1), -offset(3)];
-            
-            % Shift the global origin to the first slice of the image
-            global_origin = global_origin([2, 1, 3]); % Note global_origin(3) is currently in Dicom z-orientation and has not been inverted
-            global_origin(3) = global_origin(3) + (original_image_size(3) - 1)*voxel_size(3);
-            
-            % Adjust to Dicom origin
-            offset = offset + global_origin;
-
-            
-            
-            dicom_coordinates = [ptk_coordinates(:, 2), ptk_coordinates(:, 1), - ptk_coordinates(:, 3)];
-            dicom_coordinates = dicom_coordinates + repmat(offset, size(ptk_coordinates, 1), 1);
+        
+        
+        function dicom_coordinates = PTKToDicomCoordinates(ptk_coordinates, template_image)
+            offset = template_image.GetDicomOffset;
+            dicom_coordinates = ptk_coordinates + repmat(offset, size(ptk_coordinates, 1), 1);
         end
         
-        function dicom_coordinates = PtkToCornerCoordinates(ptk_coordinates, template_image)
+        function [d_x, d_y, d_z] = PTKToDicomCoordinatesCoordwise(p_x, p_y, p_z, template_image)
+            offset = template_image.GetDicomOffset;
+            d_x = p_x + offset(1);
+            d_y = p_y + offset(2);
+            d_z = p_z + offset(3);
+        end
+        
+        function ptk_coordinates = DicomToPTKCoordinates(dicom_coordinates, template_image)
+            offset = template_image.GetDicomOffset;
+            ptk_coordinates = dicom_coordinates - repmat(offset, size(dicom_coordinates, 1), 1);
+        end
+        
+        function dicom_coordinates = PTKToCornerCoordinates(ptk_coordinates, template_image)
+            offset = template_image.GetCornerOffset;
+            dicom_coordinates = ptk_coordinates + repmat(offset, size(ptk_coordinates, 1), 1);
+        end
+        
+        function [d_x, d_y, d_z] = PTKToCornerCoordinatesCoordwise(p_x, p_y, p_z, template_image)
+            offset = template_image.GetCornerOffset;
+            d_x = p_x + offset(1);
+            d_y = p_y + offset(2);
+            d_z = p_z + offset(3);
+        end
+        
+        function ptk_coordinates = CornerToPTKCoordinates(corner_coordinates, template_image)
+            offset = template_image.GetCornerOffset;
+            ptk_coordinates = corner_coordinates - repmat(offset, size(corner_coordinates, 1), 1);
+        end
+        
+        function [ptk_x, ptk_y, ptk_z] = CoordinatesMmToPTKCoordinates(ic, jc, kc)
+            ptk_x = jc;
+            ptk_y = ic;
+            ptk_z = -kc;
+        end
+        
+        function coordinates_mm = PTKCoordinatesToCoordinatesMm(ptk_coordinates)
+            coordinates_mm = [ptk_coordinates(:, 2), ptk_coordinates(:, 1), - ptk_coordinates(:, 3)];
+        end
+
+        function dicom_coordinates = PTKCoordinatesToCornerCoordinates(ptk_coordinates, template_image)
+            offset = template_image.GetCornerOffset;
+            dicom_coordinates = ptk_coordinates + repmat(offset, size(ptk_coordinates, 1), 1);
+        end
+        
+        function dicom_coordinates = CoordinatesMmToCornerCoordinates(ptk_coordinates, template_image)
             voxel_size = template_image.VoxelSize;
             
             % Adjust to coordinates at centre of first voxel
@@ -355,7 +383,7 @@ classdef PTKImageCoordinateUtilities
             dicom_coordinates = dicom_coordinates + repmat(offset, size(ptk_coordinates, 1), 1);
         end
         
-        function ptk_coordinates = CornerToPtkCoordinates(dicom_coordinates, template_image)
+        function ptk_coordinates = CornerToCoordinatesMm(dicom_coordinates, template_image)
             voxel_size = template_image.VoxelSize;
             
             offset = -voxel_size/2;
@@ -366,6 +394,48 @@ classdef PTKImageCoordinateUtilities
             ptk_coordinates = [dicom_coordinates(:, 2), dicom_coordinates(:, 1), - dicom_coordinates(:, 3)];
         end
         
+        function ptk_coordinates = ConvertToPTKCoordinates(coordinates, coordinate_system, template_image)
+            switch coordinate_system
+                case PTKCoordinateSystem.PTK
+                    ptk_coordinates = coordinates;
+                case PTKCoordinateSystem.Dicom
+                    ptk_coordinates = PTKImageCoordinateUtilities.DicomToPTKCoordinates(coordinates, template_image);
+                case PTKCoordinateSystem.DicomUntranslated
+                    ptk_coordinates = PTKImageCoordinateUtilities.CornerToPTKCoordinates(coordinates, template_image);
+                otherwise
+                    reporting.Error('PTKImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
+            end
+        end
+
+        function coordinates = ConvertFromPTKCoordinates(ptk_coordinates, coordinate_system, template_image)
+            switch coordinate_system
+                case PTKCoordinateSystem.PTK
+                    coordinates = ptk_coordinates;
+                case PTKCoordinateSystem.Dicom
+                    coordinates = PTKImageCoordinateUtilities.PTKToDicomCoordinates(ptk_coordinates, template_image);
+                case PTKCoordinateSystem.DicomUntranslated
+                    coordinates = PTKImageCoordinateUtilities.PTKToCornerCoordinates(ptk_coordinates, template_image);
+                otherwise
+                    reporting.Error('PTKImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
+            end
+        end
+        
+        function [c_x, c_y, c_z] = ConvertFromPTKCoordinatesCoordwise(p_x, p_y, p_z, coordinate_system, template_image)
+            switch coordinate_system
+                case PTKCoordinateSystem.PTK
+                    c_x = p_x;
+                    c_y = p_y;
+                    c_z = p_z;
+                case PTKCoordinateSystem.Dicom
+                    [c_x, c_y, c_z] = PTKImageCoordinateUtilities.PTKToDicomCoordinatesCoordwise(p_x, p_y, p_z, template_image);
+                case PTKCoordinateSystem.DicomUntranslated
+                    [c_x, c_y, c_z] = PTKImageCoordinateUtilities.PTKToCornerCoordinatesCoordwise(p_x, p_y, p_z, template_image);
+                otherwise
+                    reporting.Error('PTKImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
+            end
+        end
+        
+        
         function voxel_indices = AddNearestNeighbours(voxel_indices, template_image)
             if isempty(voxel_indices)
                 return;
@@ -373,6 +443,24 @@ classdef PTKImageCoordinateUtilities
             [~, linear_offsets27] = PTKImageCoordinateUtilities.GetLinearOffsets(template_image.ImageSize);
             voxel_indices = repmat(int32(voxel_indices), 27, 1) + repmat(int32(linear_offsets27'), 1, length(voxel_indices));
             voxel_indices = unique(voxel_indices(:));
+        end
+        
+        function global_coordinates = GetGlobalCoordinatesForPoints(point_list, template_image)
+            xc = [point_list.CoordX];
+            yc = [point_list.CoordY];
+            zc = [point_list.CoordZ];
+            ptk_coords = [xc', yc', zc'];
+            coordinates_mm = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(ptk_coords);
+            global_coordinates = round(template_image.CoordinatesMmToGlobalCoordinates(coordinates_mm));
+        end
+        
+        function global_indices = GetGlobalIndicesForPoints(point_list, template_image)
+            global_coordinates = PTKImageCoordinateUtilities.GetGlobalCoordinatesForPoints(point_list, template_image);
+            global_indices = template_image.GlobalCoordinatesToGlobalIndices(global_coordinates);
+        end
+        
+        function dist = DistanceBetweenPoints(point_1, point_2)
+            dist = norm([point_1.CoordX - point_2.CoordX, point_1.CoordY - point_2.CoordY, point_1.CoordZ - point_2.CoordZ]);
         end
     end
 end
