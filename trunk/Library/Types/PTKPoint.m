@@ -10,17 +10,17 @@ classdef PTKPoint
     %    
     
     properties
-        CoordI
-        CoordJ
-        CoordK
+        CoordX
+        CoordY
+        CoordZ
     end
     
     methods
-        function obj = PTKPoint(c_i, c_j, c_k)
+        function obj = PTKPoint(c_x, c_y, c_z)
             if nargin > 0
-                obj.CoordI = c_i;
-                obj.CoordJ = c_j;
-                obj.CoordK = c_k;
+                obj.CoordX = c_x;
+                obj.CoordY = c_y;
+                obj.CoordZ = c_z;
             end
         end
     end 

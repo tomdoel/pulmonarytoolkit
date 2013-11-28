@@ -1,5 +1,5 @@
-function root_branch = PTKCreateTreeFromNodesAndElements(node_index_list, ic, jc, kc, radius_list, node_index_1, node_index_2, reporting)
-    % PTKConvertListsToNodes. Converts a list of nodes into a PTKModelTree
+function root_branch = PTKCreateTreeFromNodesAndElements(node_index_list, xc, yc, zc, radius_list, node_index_1, node_index_2, reporting)
+    % PTKCreateTreeFromNodesAndElements. Converts a list of nodes into a PTKModelTree
     %
     %
     %     Licence
@@ -9,7 +9,7 @@ function root_branch = PTKCreateTreeFromNodesAndElements(node_index_list, ic, jc
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
-    start_nodes = PTKConvertListsToNodes(node_index_list, ic, jc, kc, radius_list, node_index_1, node_index_2, reporting);
+    start_nodes = PTKConvertListsToNodes(node_index_list, xc, yc, zc, radius_list, node_index_1, node_index_2, reporting);
 
     if numel(start_nodes) ~= 1
         reporting.Error('PTKCreateTreeFromNodesAndElements:MoreThanOneStartNode', 'More than one parent node was found in this file');

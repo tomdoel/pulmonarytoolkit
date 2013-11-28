@@ -54,8 +54,8 @@ function PTKVisualiseAirwayGrowingTree(airway_tree, reporting)
             segment_count = segment_count + 1;
             next_generation = [next_generation segment.Children];
         
-            start_point = segment.StartCoords;
-            end_point = segment.EndCoords;
+            start_point = segment.StartPoint;
+            end_point = segment.EndPoint;
             generation = segment.GenerationNumber;
             
             colour_value = mod(generation - 1, 5) + 1;
@@ -68,13 +68,12 @@ function PTKVisualiseAirwayGrowingTree(airway_tree, reporting)
                 thickness = 2;
             end
 
-            pi = [start_point(1); end_point(1)];
-            pj = [start_point(2); end_point(2)];
-            pk = [start_point(3); end_point(3)];
-            pk = - pk;
+            px = [start_point.CoordX; end_point.CoordX];
+            py = [start_point.CoordY; end_point.CoordY];
+            pz = [start_point.CoordZ; end_point.CoordZ];
             
             
-            line('XData', pj, 'YData', pk, 'ZData', pi, 'Color', colour, 'LineWidth', thickness);
+            line('XData', px, 'YData', py, 'ZData', pz, 'Color', colour, 'LineWidth', thickness);
         end
     end
 end

@@ -1,4 +1,4 @@
-function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, reporting)
+function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
     % PTKSaveTreeAsCMISS. Exports a tree structure into ipnode and ipelem files
     %
     %     Syntax
@@ -12,6 +12,10 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, reporting)
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
+    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %                             specifying the coordinate system to use
+    %             template_image  A PTKImage providing voxel size and image size
+    %                             parameters
     %             reporting       A PTKReporting or implementor of the same interface,
     %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
@@ -24,6 +28,15 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
+    if nargin < 4
+        reporting.Error('PTKSaveTreeAsCMISS:BadArguments', 'No coordinate_system parameter specified');
+    end
+    
+    if ~isa(coordinate_system, 'PTKCoordinateSystem')
+        reporting.Error('PTKSaveTreeAsCMISS:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    end
+    
+    
     ipnode_file_name = fullfile(file_path, [filename_prefix '.ipnode']);
     ipelem_file_name = fullfile(file_path, [filename_prefix '.ipelem']);
     exnode_file_name = fullfile(file_path, [filename_prefix '.exnode']);
@@ -62,9 +75,12 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, reporting)
 
     % First create the node at the start of the tree
     first_point = tree_root.StartPoint;
-    start_x_mm = first_point.CoordJ;
-    start_y_mm = first_point.CoordI;
-    start_z_mm = first_point.CoordK;
+    
+    first_point_converted = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([first_point.CoordX, first_point.CoordY, first_point.CoordZ], coordinate_system, template_image);
+
+    start_x_mm = first_point_converted(1);
+    start_y_mm = first_point_converted(2);
+    start_z_mm = first_point_converted(3);
     start_radius_mm = tree_root.Radius;
     start_density_mgml = tree_root.Density;
     current_node_index = 1;
@@ -93,7 +109,7 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, reporting)
         parent_node_index = branch.TemporaryIndex;
         
         % Write branch to node file (the end point will be the node coordinate).
-        previous_values = PrintBranchToFileAsNode(ipnode_file_handle, exnode_file_handle, current_node_index, branch, previous_values);
+        previous_values = PrintBranchToFileAsNode(ipnode_file_handle, exnode_file_handle, current_node_index, branch, previous_values, coordinate_system, template_image);
         
         % Write to the element file for each branch 
         PrintIpelemToFile(ipelem_file_handle, parent_node_index, current_node_index)
@@ -223,14 +239,17 @@ function PrintExelemToFile(file_handle, parent_index, child_index)
     fprintf(file_handle, '       0.1000000000000000E+01   0.1000000000000000E+01\r\n');
 end
 
-function previous_values = PrintBranchToFileAsNode(ipnode_file_handle, exnode_file_handle, node_index, branch, previous_values)
+function previous_values = PrintBranchToFileAsNode(ipnode_file_handle, exnode_file_handle, node_index, branch, previous_values, coordinate_system, template_image)
 
     % We define nodes using the end coordinate of each branch, since this is the
     % bifurcation point
     last_point = branch.EndPoint;
-    x_mm = last_point.CoordJ;
-    y_mm = last_point.CoordI;
-    z_mm = last_point.CoordK;
+    
+    converted_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([last_point.CoordX, last_point.CoordY, last_point.CoordZ], coordinate_system, template_image);
+    
+    x_mm = converted_coordinates(1);
+    y_mm = converted_coordinates(2);
+    z_mm = converted_coordinates(3);
     radius_mm = branch.Radius;
     density_mgml = branch.Density;
     

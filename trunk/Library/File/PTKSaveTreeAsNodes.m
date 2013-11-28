@@ -1,4 +1,4 @@
-function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, template_image, reporting)
+function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
     % PTKSaveTreeAsNodes. Exports a tree structure into node and element files
     %
     %     Syntax
@@ -12,6 +12,10 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, template_imag
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
+    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %                             specifying the coordinate system to use
+    %             template_image  A PTKImage providing voxel size and image size
+    %                             parameters
     %             reporting       A PTKReporting or implementor of the same interface,
     %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
@@ -24,6 +28,14 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, template_imag
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
+    if nargin < 4
+        reporting.Error('PTKSaveTreeAsNodes:BadArguments', 'No coordinate_system parameter specified');
+    end
+    
+    if ~isa(coordinate_system, 'PTKCoordinateSystem')
+        reporting.Error('PTKSaveTreeAsNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    end
+    
     node_file_name = fullfile(file_path, [filename_prefix '_node.txt']);
     element_file_name = fullfile(file_path, [filename_prefix '_element.txt']);
     
@@ -43,7 +55,7 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, template_imag
     % connects this point to itself
     first_point = tree_root.StartPoint;
     
-    dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([first_point.CoordI, first_point.CoordJ, first_point.CoordK], template_image);
+    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([first_point.CoordX, first_point.CoordY, first_point.CoordZ], coordinate_system, template_image);
     start_x_mm = dicom_coordinates(1);
     start_y_mm = dicom_coordinates(2);
     start_z_mm = dicom_coordinates(3);
@@ -65,7 +77,7 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, template_imag
         parent_node_index = branch.TemporaryIndex;
         
         % Write branch to node file (the end point will be the node coordinate).
-        PrintBranchToFileAsNode(node_file_handle, current_node_index, branch, template_image);
+        PrintBranchToFileAsNode(node_file_handle, current_node_index, branch, coordinate_system, template_image);
         
         % Write (parent, current_node_index) to element file
         PrintElementToFile(element_file_handle, parent_node_index, current_node_index)
@@ -93,13 +105,13 @@ function PrintElementToFile(fid, parent_index, child_index)
     fprintf(fid, '%u,%u\r\n', parent_index, child_index);
 end
 
-function PrintBranchToFileAsNode(fid, node_index, branch, template_image)
+function PrintBranchToFileAsNode(fid, node_index, branch, coordinate_system, template_image)
 
     % We define nodes using the end coordinate of each branch, since this is the
     % bifurcation point
     last_point = branch.EndPoint;
     
-    dicom_coordinates = PTKImageCoordinateUtilities.PtkToCornerCoordinates([last_point.CoordI, last_point.CoordJ, last_point.CoordK], template_image);
+    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([last_point.CoordX, last_point.CoordY, last_point.CoordZ], coordinate_system, template_image);
     x_mm = dicom_coordinates(1);
     y_mm = dicom_coordinates(2);
     z_mm = dicom_coordinates(3);
@@ -108,22 +120,8 @@ function PrintBranchToFileAsNode(fid, node_index, branch, template_image)
     density_mgml = branch.Density;
     
     
-%     first_point = branch.StartPoint;
-%     last_point = branch.EndPoint;
-%     start_x = first_point.CoordJ;
-%     start_y = first_point.CoordI;
-%     start_z = first_point.CoordK;
-%     end_x = last_point.CoordJ;
-%     end_y = last_point.CoordI;
-%     end_z = last_point.CoordK;
-%     radius = branch.Radius;
-%     length = branch.Length;
     is_final_node = isempty(branch.Children);
     PrintNodeToFile(fid, node_index, x_mm, y_mm, z_mm, radius_mm, density_mgml, is_final_node);
-    
-%     output_string = sprintf('%u,%6.6g,%6.6g,%6.6g,%2.2g,%c\r\n', node_index, x_mm, y_mm, z_mm, radius_mm, is_final_node);
-%     output_string = sprintf('%u,%6.6g,%6.6g,%6.6g,%6.6g,%6.6g,%6.6g,%2.2g,%3.3g,%c\r\n', node_index, start_x, start_y, start_z, end_x, end_y, end_z, radius, length, is_final_node);
-%     fprintf(fid, regexprep(output_string, ' ', ''));
 end
 
 function PrintNodeToFile(fid, node_index, x_mm, y_mm, z_mm, radius_mm, density, is_final_node)

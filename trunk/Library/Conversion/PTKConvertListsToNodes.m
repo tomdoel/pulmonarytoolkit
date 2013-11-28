@@ -1,4 +1,4 @@
-function start_nodes = PTKConvertListsToNodes(node_index_list, ic, jc, kc, radius_list, node_index_1, node_index_2, reporting)
+function start_nodes = PTKConvertListsToNodes(node_index_list, xc, yc, zc, radius_list, node_index_1, node_index_2, reporting)
     % PTKConvertListsToNodes. Converts a list of point indices, coordinates and parameters into a node structure
     %
     %
@@ -13,9 +13,11 @@ function start_nodes = PTKConvertListsToNodes(node_index_list, ic, jc, kc, radiu
     
     % Load in all the node points into an array
     nodes = PTKNode.empty;
+    node_parameters = [];
     for index = 1 : length(ic)
         next_node = PTKNode;
-        next_node.CentrelinePoint = PTKCentrelinePoint(ic(index), jc(index), kc(index), radius_list(index), []);
+        node_parameters.Radius = radius_list(index);
+        next_node.CentrelinePoint = PTKCentrelinePoint(xc(index), yc(index), zc(index), node_parameters);
         node_number = node_index_list(index);
         nodes(node_number + 1) = next_node;
         valid_node_indices(end + 1) = node_number;
