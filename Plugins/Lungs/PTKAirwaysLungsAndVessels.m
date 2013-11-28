@@ -19,7 +19,7 @@ classdef PTKAirwaysLungsAndVessels < PTKPlugin
     properties
         ButtonText = 'Airways, Lungs<BR> and vesssels'
         ToolTip = 'Shows a segmentation of the airways and lungs'
-        Category = 'Airways'
+        Category = 'Lungs'
 
         AllowResultsToBeCached = true
         AlwaysRunPlugin = true

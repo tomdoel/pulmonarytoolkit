@@ -17,7 +17,7 @@ classdef PTKInvertImage < PTKPlugin
     
     properties
         ButtonText = 'Invert Image'
-        ToolTip = 'Change the context to display the lungs and airways'
+        ToolTip = ''
         Category = 'Context'
 
         AllowResultsToBeCached = true
