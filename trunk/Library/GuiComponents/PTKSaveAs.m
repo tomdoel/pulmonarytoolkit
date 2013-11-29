@@ -49,7 +49,11 @@ function [filename, path_name, filter_index] = SaveImageDialogBox(path_name)
                 '*.mhd', '16-bit metaheader and raw data (*.mhd)';
                 };
 
-    [filename, path_name, filter_index] = uiputfile(filespec, 'Save image as', fullfile(path_name, ''));
+    if path_name == 0
+        [filename, path_name, filter_index] = uiputfile(filespec, 'Save image as');
+    else
+        [filename, path_name, filter_index] = uiputfile(filespec, 'Save image as', fullfile(path_name, ''));
+    end
 end
     
 function SaveImage(image_data, filename, pathname, filter_index, patient_name, reporting)
