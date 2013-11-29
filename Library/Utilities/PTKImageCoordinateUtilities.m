@@ -462,6 +462,18 @@ classdef PTKImageCoordinateUtilities
         function dist = DistanceBetweenPoints(point_1, point_2)
             dist = norm([point_1.CoordX - point_2.CoordX, point_1.CoordY - point_2.CoordY, point_1.CoordZ - point_2.CoordZ]);
         end
+        
+        % Select an appropriate image orientation for exporting an image
+        function orientation = ChooseOrientation(voxel_size)
+            orientation = PTKImageOrientation.Axial;
+            [sorted_voxel_size, sorted_voxel_size_index] = sort(voxel_size, 'descend');
+            if abs(sorted_voxel_size(1) - sorted_voxel_size(2)) > abs(sorted_voxel_size(2) - sorted_voxel_size(3))
+                if sorted_voxel_size_index(1) == 1
+                    orientation = PTKImageOrientation.Coronal;
+                end
+            end
+        end
+        
     end
 end
 
