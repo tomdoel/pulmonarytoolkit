@@ -43,7 +43,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
     properties (SetObservable)
         ImageType
         Title
-        GlobalOrigin = [0 0 0]
+        GlobalOrigin = [0 0 0] % Stored as IJK (ie YXZ)
     end
     
     properties (SetAccess = protected)
@@ -1107,6 +1107,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         % Computes the offset from PTK to unshifted Dicom coordinates
         function offset_in_mm = GetDicomOffset(obj)
             global_origin = obj.GlobalOrigin;
+            global_origin = global_origin([2, 1, 3]);
             voxel_size = obj.VoxelSize;
             original_image_size = obj.OriginalImageSize;
             
