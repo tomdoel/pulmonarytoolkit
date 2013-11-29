@@ -248,7 +248,10 @@ classdef PTKGui < handle
         
         function SaveOverlayImage(obj)
             patient_name = obj.ImagePanel.BackgroundImage.Title;
-            image_data = obj.ImagePanel.OverlayImage;
+            background_image = obj.ImagePanel.OverlayImage.Copy;
+            template = obj.Dataset.GetTemplateImage(PTKContext.OriginalImage);
+            background_image.ResizeToMatch(template);
+            image_data = background_image;
             path_name = obj.Settings.SaveImagePath;
             
             path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
@@ -412,7 +415,7 @@ classdef PTKGui < handle
             new_plugin = PTKPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
             wait_dialog.ShowAndHold(['Computing ' new_plugin.ButtonText]);
             
-            plugin_text = new_plugin.ButtonText;
+            plugin_text = PTKTextUtilities.RemoveHtml(new_plugin.ButtonText);
             
             if strcmp(new_plugin.PluginType, 'DoNothing')
                 obj.Dataset.GetResult(plugin_name);
