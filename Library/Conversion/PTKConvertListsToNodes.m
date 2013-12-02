@@ -14,7 +14,7 @@ function start_nodes = PTKConvertListsToNodes(node_index_list, xc, yc, zc, radiu
     % Load in all the node points into an array
     nodes = PTKNode.empty;
     node_parameters = [];
-    for index = 1 : length(ic)
+    for index = 1 : length(xc)
         next_node = PTKNode;
         node_parameters.Radius = radius_list(index);
         next_node.CentrelinePoint = PTKCentrelinePoint(xc(index), yc(index), zc(index), node_parameters);
