@@ -54,12 +54,12 @@ function [results_image, start_branches] = PTKGetAirwaysLabelledByLobe(template,
     
     start_segment.GenerateBranchParameters;
 
-    % Separate into left and right lungs
+    % Separate into lteft and right lungs
     [left_lung_start, right_lung_start] = SeparateIntoLeftAndRightLungs(start_segment, template, reporting);
     
     % Separate left lung into upper and lower lobes
-    [left_upper_startindices, left_lower_startindices, uncertain_segments] = SeparateLeftLungIntoLobes(left_lung_start, template, reporting);
-%     [left_upper_startindices, left_lower_startindices, uncertain_segments] = SeparateLeftLungIntoLobesNew(left_lung_start, template, reporting);
+%     [left_upper_startindices, left_lower_startindices, uncertain_segments] = SeparateLeftLungIntoLobes(left_lung_start, template, reporting);
+    [left_upper_startindices, left_lower_startindices, uncertain_segments] = SeparateLeftLungIntoLobesNew(left_lung_start, template, reporting);
 
     % Separate right lung into upper and mid/lower lobes
     [right_upper_startindices, right_midlower_startindices] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting);
@@ -163,7 +163,7 @@ function largest_branches = ForceLingulaAndGetLargestBranches(start_branches, nu
         permutation_source = PTKTreeUtilities.BranchesToSourceBranches(this_permutation);
         ordered_branches = PTKTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(permutation_source, template);
         k_distance_3 = PTKTreeUtilities.GetKDistance(ordered_branches(3));
-        if k_distance_3 > 0
+        if k_distance_3 < 0
             new_permutations{end + 1} = this_permutation;
         end
     end
