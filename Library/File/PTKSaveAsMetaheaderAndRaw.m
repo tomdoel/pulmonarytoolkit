@@ -30,7 +30,7 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
         reporting.Error('PTKSaveAsMetaheaderAndRaw:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
 
-    orientation = ChooseOrientation(image_data.VoxelSize);
+    orientation = PTKImageCoordinateUtilities.ChooseOrientation(image_data.VoxelSize);
     
     original_image = image_data.RawImage;
     
@@ -77,13 +77,3 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
     PTKWrite3DMetaFile(full_filename, image, resolution, data_type, offset, orientation, reporting);  
 end
 
-% Select an image orientation in which the image will be saved
-function orientation = ChooseOrientation(voxel_size)
-    orientation = PTKImageOrientation.Axial;
-    [sorted_voxel_size, sorted_voxel_size_index] = sort(voxel_size, 'descend');
-    if abs(sorted_voxel_size(1) - sorted_voxel_size(2)) > abs(sorted_voxel_size(2) - sorted_voxel_size(3))
-        if sorted_voxel_size_index(1) == 1
-            orientation = PTKImageOrientation.Coronal;
-        end
-    end
-end
