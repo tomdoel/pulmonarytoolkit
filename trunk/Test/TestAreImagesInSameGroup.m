@@ -42,8 +42,6 @@ classdef TestAreImagesInSameGroup < PTKTest
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'FrameOfReferenceUID');
             
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'Modality', 'CT', 'MR');
-            [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'BitDepth', 1, 2);
-            [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'ColorType');
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'MediaStorageSOPClassUID');
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'ImageType', 'ORIGINAL\PRIMARY\AXIAL', 'ORIGINAL\PRIMARY');            
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'SOPClassUID');
