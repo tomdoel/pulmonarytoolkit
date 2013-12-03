@@ -34,8 +34,6 @@ classdef TestAreImagesInSameGroup < PTKTest
             
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'Rows', 256, 512);
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'Columns', 256, 512);
-            [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'Width', 256, 512);
-            [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'Height', 256, 512);
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'PixelSpacing', [1 2], [3 4]);
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'PatientPosition');
             [this_metadata, other_metadata] = obj.CheckMatchingOfTags(this_metadata, other_metadata, 'ImageOrientationPatient', [1;0;0;0;1;0], [0;1;0;0;0;1]);
