@@ -47,7 +47,9 @@ classdef PTKSaveAirwayMesh < PTKPlugin
             results_upsampled.AddBorder(6);
             results_upsampled.DownsampleImage(0.25)
 
+            % Specifies the coordinate system to use when saving out files
             coordinate_system = PTKCoordinateSystem.DicomUntranslated;
+            
             template_image = results;
             PTKCreateSurfaceMesh(filepath, filename, results, smoothing_size, true, coordinate_system, template_image, reporting);
             
