@@ -40,12 +40,21 @@ classdef PTKTextFileReader < handle
             next_line = [];
             while isempty(next_line)
                 next_line = fgetl(obj.FileId);
+                if next_line == -1
+                    next_line = [];
+                    obj.Close;
+                    return;
+                end
                 next_line = strtrim(next_line);
             end
         end
         
         function data = ReadData(obj, format_string, num_points)
             data = textscan(obj.FileId, format_string, num_points);
+        end
+        
+        function is_eof = Eof(obj)
+            is_eof = isempty(obj.FileId);
         end
     end
 end
