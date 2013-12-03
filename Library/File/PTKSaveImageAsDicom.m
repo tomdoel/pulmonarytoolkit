@@ -42,6 +42,9 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         reporting.ShowProgress('Saving DICOM images');
     end
     
+    orientation = PTKImageCoordinateUtilities.ChooseOrientation(image_data.VoxelSize);
+    
+    
     full_filename = fullfile(path, filename);
     [filename_pathstr, filename_name, filename_ext] = fileparts(full_filename);
 
@@ -71,7 +74,8 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         metadata = CopyField('SeriesDescription', metadata, original_metadata, 'Original Image');
     end
     
-    % There are certain tags we must change to ensure our series 
+    % There are certain tags we must change to ensure our series is grouped with
+    % the original data
     metadata.SeriesInstanceUID = dicomuid; % MUST be unique for our series
     metadata.SecondaryCaptureDeviceManufacturer = PTKSoftwareInfo.DicomManufacturer;
     metadata.SecondaryCaptureDeviceManufacturerModelName = PTKSoftwareInfo.DicomName;
@@ -116,18 +120,55 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         metadata = CopyField('RescaleSlope', metadata, original_metadata, 1);
     end
     
-    num_slices = image_data.ImageSize(3);
+    num_slices = image_data.ImageSize(orientation);
     for slice_index = 1 : num_slices
         if exist('reporting', 'var')
             reporting.UpdateProgressValue(round(100*(slice_index-1)/num_slices));
         end
 
-        slice_data = squeeze(image_data.RawImage(:, :, slice_index));
-        slice_location = (slice_index - 1)*slice_spacing;
+        global_coords_slice = [1, 1, 1];
+        global_coords_slice(orientation) = slice_index;
+        [ic, jc, kc] = image_data.GlobalCoordinatesToCoordinatesMm(global_coords_slice);
+        [ptk_x, ptk_y, ptk_z] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
+        dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([ptk_x, ptk_y, ptk_z], PTKCoordinateSystem.Dicom, image_data);
+        
+        switch orientation
+            case PTKImageOrientation.Axial
+                slice_data = squeeze(image_data.RawImage(:, :, slice_index));
+            case PTKImageOrientation.Coronal
+                slice_data = squeeze(image_data.RawImage(slice_index, :, :))';
+            case PTKImageOrientation.Sagittal
+                slice_data = squeeze(image_data.RawImage(:, slice_index, :));
+            
+            otherwise
+                reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is now known or unsupported.']);
+        end
+        
+        if image_data.ImageType == PTKImageType.Colormap
+            % Tags for RGB
+            metadata.SamplesPerPixel = 3;
+            metadata.PhotometricInterpretation = 'RGB';
+            metadata.PlanarConfiguration = 0;
+            metadata.NumberOfFrames = 1;
+            metadata.BitsAllocated = 8;
+            metadata.BitsStored = 8;
+            metadata.HighBit = 7;
+            [slice_data, ~] = PTKImageUtilities.GetImage(slice_data, [], PTKImageType.Colormap, [], []);
+            
+        else
+            % Tags for CT greyscale image
+            metadata.SamplesPerPixel = 1;
+            metadata.PhotometricInterpretation = 'MONOCHROME2';
+            metadata.BitsAllocated = 16;
+            metadata.BitsStored = 16;
+            metadata.HighBit = 15;
+        end
+                
+        slice_location = double(dicom_coordinates);
         
         metadata.InstanceNumber = double(slice_index);
-        metadata.ImagePositionPatient = [0; 0; slice_location];
-        metadata.SliceLocation = double(slice_location);
+        metadata.ImagePositionPatient = slice_location;
+        metadata.SliceLocation = slice_location(3);
 
         metadata.SOPInstanceUID = dicomuid; % MUST be unique for each image
         metadata.MediaStorageSOPInstanceUID = metadata.SOPInstanceUID;
