@@ -41,8 +41,8 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
     first_image_slice = PTKDicomUtilities.ReadDicomFileFromMetadata(metadata_grouping.Metadata{1}, reporting);
 
     % Pre-allocate image matrix
-    size_i = metadata_grouping.Metadata{1}.Height;
-    size_j = metadata_grouping.Metadata{1}.Width;
+    size_i = metadata_grouping.Metadata{1}.Rows;
+    size_j = metadata_grouping.Metadata{1}.Columns;
     size_k = num_slices;
     
     % Pre-allocate image matrix
