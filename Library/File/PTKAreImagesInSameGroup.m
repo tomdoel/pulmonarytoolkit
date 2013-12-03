@@ -115,16 +115,6 @@ function match = CompareMainTags(this_metadata, other_metadata)
         return;
     end
     
-    if ~CompareFields('Width', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('Height', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
     if ~CompareFields('PixelSpacing', this_metadata, other_metadata, true)
         match = false;
         return;
@@ -153,16 +143,6 @@ function match = CompareMainTags(this_metadata, other_metadata)
     
     % Verify the imaging parameters are the same
     if ~CompareFields('Modality', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('BitDepth', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('ColorType', this_metadata, other_metadata, true)
         match = false;
         return;
     end
