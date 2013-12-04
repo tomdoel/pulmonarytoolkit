@@ -29,7 +29,8 @@ classdef PTKCopyUID < PTKGuiPlugin
         function RunGuiPlugin(ptk_gui_app)
             image_info = ptk_gui_app.GetImageInfo;
             uid = image_info.ImageUid;
-            clipboard('copy', uid)
+            disp(['Current dataset UID is: ' uid]);
+            clipboard('copy', uid);
         end
     end
 end
