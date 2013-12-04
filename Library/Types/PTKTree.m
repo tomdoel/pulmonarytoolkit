@@ -32,8 +32,15 @@ classdef PTKTree < handle
             end
         end
         
-        % Remove this branch from the tree, connecting its children to its parent branch 
+        % Remove this branch from the tree
         function CutFromTree(obj)
+            if ~isempty(obj.Parent)
+                obj.Parent.Children = setdiff(obj.Parent.Children, obj);
+            end
+        end
+        
+        % Remove this branch from the tree, connecting its children to its parent branch
+        function CutAndSplice(obj)
             if ~isempty(obj.Parent)
                 obj.Parent.Children = [setdiff(obj.Parent.Children, obj), obj.Children];
             end
