@@ -40,13 +40,13 @@ classdef PTKPluginInformation
                         if isa(plugin_info_structure, 'PTKPlugin')
                             plugin_list{end + 1} = plugin_filename{1};
                         else
-                            reporting.ShowWarning('PTKPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a PTKPlugin class. I am ignoring this file. If this is not a PTKPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
+                            reporting.ShowWarning('PTKPluginInformation:FileNotPlugin', ['The file ' plugin_name ' was found in the Plugins directory but does not appear to be a PTKPlugin class. I am ignoring this file. If this is not a PTKPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
                         end
                     else
-                        reporting.ShowWarning('PTKPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a PTKPlugin class. I am ignoring this file. If this is not a PTKPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
+                        reporting.ShowWarning('PTKPluginInformation:FileNotPlugin', ['The file ' plugin_name ' was found in the Plugins directory but does not appear to be a PTKPlugin class. I am ignoring this file. If this is not a PTKPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], []);
                     end
                 catch ex
-                    reporting.ShowWarning('PTKPluginInformation:ParsePluginError', ['The file ' plugin_filename{1} ' was found in the Plugins directory but does not appear to be a PTKPlugin class, or contains errors. I am ignoring this file. If this is not a PTKPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], ex.message);
+                    reporting.ShowWarning('PTKPluginInformation:ParsePluginError', ['The file ' plugin_name ' was found in the Plugins directory but does not appear to be a PTKPlugin class, or contains errors. I am ignoring this file. If this is not a PTKPlugin class, you should remove thie file from the Plugins folder; otherwise check the file for errors.'], ex.message);
                 end
             end            
         end
