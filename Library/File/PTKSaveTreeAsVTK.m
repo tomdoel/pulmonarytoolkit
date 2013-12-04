@@ -40,6 +40,8 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
         reporting.Error('PTKSaveTreeAsVTK:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
     end
     
+    reporting.ShowProgress('Saving tree');
+    reporting.UpdateProgressValue(0);    
     
     % Get all branches in the tree
     linear_branch_list = tree_root.GetBranchesAsListUsingRecursion;
@@ -95,6 +97,8 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     end
     
     for branch_index = 1 : num_branches
+        reporting.UpdateProgressStage(branch_index, num_branches);
+        
         branch = linear_branch_list(branch_index);
         
         if isempty(branch.Parent)
@@ -151,6 +155,8 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     WritePointData(vtk_file_handle, pressure, flow_rate, radius, segment_index, branches_to_write, reporting);
     
     fclose(vtk_file_handle);
+    
+    reporting.CompleteProgress;
 end
 
 function WriteHeader(file_handle, reporting)
