@@ -140,6 +140,12 @@ classdef PTKDirectories < handle
             plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.PluginDirectoryName);
         end
         
+        function plugins_path = GetUserPath
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName);
+        end
+        
         function plugins_path = GetGuiPluginsPath
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
