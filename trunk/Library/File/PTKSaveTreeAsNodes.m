@@ -36,6 +36,9 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
         reporting.Error('PTKSaveTreeAsNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
     end
     
+    reporting.ShowProgress('Saving tree');
+    reporting.UpdateProgressValue(0);
+    
     node_file_name = fullfile(file_path, [filename_prefix '_node.txt']);
     element_file_name = fullfile(file_path, [filename_prefix '_element.txt']);
     
@@ -73,7 +76,10 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
     linear_branch_list(1).TemporaryIndex = 0;
     current_node_index = 1;    
     
+    
     for branch = linear_branch_list
+        reporting.UpdateProgressStage(current_node_index, num_branches);
+        
         parent_node_index = branch.TemporaryIndex;
         
         % Write branch to node file (the end point will be the node coordinate).
@@ -97,6 +103,7 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
     fclose(node_file_handle);
     fclose(element_file_handle);
     
+    reporting.CompleteProgress;
 end
    
     
