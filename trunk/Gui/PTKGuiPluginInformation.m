@@ -42,13 +42,13 @@ classdef PTKGuiPluginInformation
                         if isa(plugin_info_structure, 'PTKGuiPlugin')
                             plugin_list{end + 1} = plugin_filename{1};
                         else
-                            reporting.ShowWarning('PTKGuiPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a PTKGuiPlugin class. I am ignoring this file. If this is not a PTKGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
+                            reporting.ShowWarning('PTKGuiPluginInformation:FileNotPlugin', ['The file ' plugin_name ' was found in the GuiPlugins directory but does not appear to be a PTKGuiPlugin class. I am ignoring this file. If this is not a PTKGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
                         end
                     else
-                        reporting.ShowWarning('PTKGuiPluginInformation:FileNotPlugin', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a PTKGuiPlugin class. I am ignoring this file. If this is not a PTKGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
+                        reporting.ShowWarning('PTKGuiPluginInformation:FileNotPlugin', ['The file ' plugin_name ' was found in the GuiPlugins directory but does not appear to be a PTKGuiPlugin class. I am ignoring this file. If this is not a PTKGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], []);
                     end
                 catch ex
-                    reporting.ShowWarning('PTKGuiPluginInformation:ParsePluginError', ['The file ' plugin_filename{1} ' was found in the GuiPlugins directory but does not appear to be a PTKGuiPlugin class, or contains errors. I am ignoring this file. If this is not a PTKGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], ex.message);
+                    reporting.ShowWarning('PTKGuiPluginInformation:ParsePluginError', ['The file ' plugin_name ' was found in the GuiPlugins directory but does not appear to be a PTKGuiPlugin class, or contains errors. I am ignoring this file. If this is not a PTKGuiPlugin class, you should remove thie file from the GuiPlugins folder; otherwise check the file for errors.'], ex.message);
                 end
             end
         end
