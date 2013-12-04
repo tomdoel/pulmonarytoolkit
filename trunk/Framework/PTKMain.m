@@ -80,15 +80,17 @@ classdef PTKMain < handle
             
             dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
             
+            obj.RunLinkFile(dataset_uid, dataset);
         end
-
-
+        
         % Creates a PTKDataset object for a dataset specified by the path, 
         % filenames and/or uid specified in a PTKImageInfo object. The dataset is
         % imported from the specified path if it does not already exist.
         function dataset = CreateDatasetFromInfo(obj, new_image_info)
             [image_info, dataset_disk_cache] = PTKMain.ImportDataFromInfo(obj, new_image_info);
             dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
+            
+            obj.RunLinkFile(dataset.GetImageInfo.ImageUid, dataset);
         end
         
         function uids = ImportDataRecursive(obj, filename)
@@ -133,6 +135,7 @@ classdef PTKMain < handle
                     directories_to_do{end + 1} = new_dir;
                 end
             end
+            
             obj.Reporting.CompleteProgress;
         end
 
@@ -215,6 +218,13 @@ classdef PTKMain < handle
             end
         end
         
+        function RunLinkFile(obj, dataset_uid, dataset)
+            user_path = PTKDirectories.GetUserPath;
+            if PTKDiskUtilities.FileExists(user_path, 'PTKLinkDatasets.m');
+                PTKLinkDatasets(obj, dataset_uid, dataset, obj.Reporting);
+            end
+        end
+        
     end
     
     methods (Static, Access = private)
@@ -271,6 +281,8 @@ classdef PTKMain < handle
                     obj.Reporting.Error('PTKMain:UnknownImageFileFormat', 'Could not import the image because the file format was not recognised.');
             end
         end
+        
+        
     end
 end
 
