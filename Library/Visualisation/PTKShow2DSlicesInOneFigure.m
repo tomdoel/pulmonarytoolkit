@@ -10,6 +10,10 @@ function figure_handle = PTKShow2DSlicesInOneFigure(viewer_panel_handle, orienta
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
+    if nargin < 4
+        reporting = PTKReportingDefault;
+    end
+    
     % Number of plots along x axis
     num_plots_x = 3;
     
