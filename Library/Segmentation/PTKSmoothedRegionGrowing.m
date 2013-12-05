@@ -1,4 +1,4 @@
-function output_image = PTKSmoothedRegionGrowing(threshold_image, start_points_global, reporting)
+function output_image = PTKSmoothedRegionGrowing(threshold_image, start_points_global, smoothing_size_mm, reporting)
     % PTKSmoothedRegionGrowing. Performs 3D region growing through the supplied
     %     binary threshold image, starting from the specified points
     %
@@ -14,6 +14,8 @@ function output_image = PTKSmoothedRegionGrowing(threshold_image, start_points_g
     %                 in the set is array of points representing one region.
     %                 Each point is a global index. The region growing will 
     %                 begin from all these points simultaneously
+    %             smoothing_size_mm - amoung of smoothing. A larger value will
+    %                 give better results but will be slower
     %             reporting - a PTKReporting object for progress, warning and
     %                 error reporting.
     %
@@ -58,10 +60,6 @@ function output_image = PTKSmoothedRegionGrowing(threshold_image, start_points_g
         points_left(points_index_local) = false;
         output_image_raw(points_index_local) = region_index;
     end
-    
-    % The larger this value, the better the smoothing, but the slower the
-    % calculation
-    smoothing_size_mm = 8;
     
     % This controls the size of the element used to find the nearest neighbours
     growing_size_mm = 3;    
