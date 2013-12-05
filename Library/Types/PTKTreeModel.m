@@ -165,6 +165,9 @@ classdef PTKTreeModel < PTKTree
                 new_point = PTKCentrelinePoint(ptk_coordinates(1), ptk_coordinates(2), ptk_coordinates(3), properties);
                 obj.Centreline(end+1) = new_point;
             end
+            obj.StartPoint = obj.Centreline(1);
+            obj.EndPoint = obj.Centreline(end);
+            obj.Radius = radius;
             
             % Create copies of child branches and set the Children and Parent
             % properties correctly
