@@ -32,9 +32,14 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
+    if nargin < 6
+        reporting = PTKReportingDefault;
+    end
+    
     if nargin < 4
         reporting.Error('PTKSaveTreeAsVTK:BadArguments', 'No coordinate_system parameter specified');
     end
+    
     
     if ~isa(coordinate_system, 'PTKCoordinateSystem')
         reporting.Error('PTKSaveTreeAsVTK:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
