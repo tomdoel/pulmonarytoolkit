@@ -33,15 +33,6 @@ classdef PTKCapture2DImage < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            viewer_panel = ptk_gui_app.ImagePanel;
-%             viewer_panel.Orientation = PTKImageOrientation.Coronal;
-%             drawnow;
-            
-            % For capturing watershed countour around vessels on Patient 14 
-%             viewer_panel.ZoomTo([300, 368], [131, 222], [150, 236]);
-%             viewer_panel.ZoomTo([300, 370], [131+30, 222], [150, 220]);
-            
-%             viewer_panel.ZoomTo([250, 350], [125, 210], [150, 250]);
             drawnow;
             ptk_gui_app.Capture;
         end
