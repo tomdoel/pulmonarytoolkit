@@ -12,22 +12,28 @@ classdef PTKDicomDictionary < handle
 
     properties
         Dictionary
+        TagList
+        TagMap
     end
     
     methods
         function obj = PTKDicomDictionary(tags)
             obj.Dictionary = tags;
+            obj.MakeTagList;
+            obj.MakeTagMap;
         end
-        
-        function tag_list = TagList(obj)
+    end
+    
+    methods (Access = private)
+        function MakeTagList(obj)
             dict = obj.Dictionary;
-            tag_list = [dict.TagIndex];
+            obj.TagList = [dict.TagIndex];
         end
         
-        function tag_map = TagMap(obj)
-            tag_map = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
+        function MakeTagMap(obj)
+            obj.TagMap = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
             for t = obj.Dictionary;
-                tag_map(t.TagIndex) = t;
+                obj.TagMap(t.TagIndex) = t;
             end
         end
     end
@@ -36,6 +42,7 @@ classdef PTKDicomDictionary < handle
         
         function tags = GroupingTags
             tags = PTKDicomDictionaryItem.empty();
+            tags(end + 1) = PTKDicomDictionaryItem('0002,0000', 'UL', 'FileMetaInformationGroupLength');
             tags(end + 1) = PTKDicomDictionaryItem('0002,0010', 'UI', 'TransferSyntaxUID');
             tags(end + 1) = PTKDicomDictionaryItem('0020,000E', 'UI', 'SeriesInstanceUID');
             tags = PTKDicomDictionary(tags);
@@ -44,6 +51,7 @@ classdef PTKDicomDictionary < handle
         
         function tags = EssentialTags
             tags = PTKDicomDictionaryItem.empty();
+            tags(end + 1) = PTKDicomDictionaryItem('0002,0000', 'UL', 'FileMetaInformationGroupLength');
             tags(end + 1) = PTKDicomDictionaryItem('0002,0002', 'UI', 'MediaStorageSOPClassUID');
             tags(end + 1) = PTKDicomDictionaryItem('0002,0010', 'UI', 'TransferSyntaxUID');
             tags(end + 1) = PTKDicomDictionaryItem('0002,0012', 'UI', 'ImplementationClassUID');
@@ -240,7 +248,7 @@ classdef PTKDicomDictionary < handle
             tags(end + 1) = PTKDicomDictionaryItem('0008,1030', 'LO', 'StudyDescription');
             
             % We don't currently support SQ parsing
-%             tags(end + 1) = PTKDicomDictionaryItem('0008,1032', 'SQ', 'ProcedureCodeSequence');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,1032', 'SQ', 'ProcedureCodeSequence');
 
             tags(end + 1) = PTKDicomDictionaryItem('0008,103E', 'LO', 'SeriesDescription');
             tags(end + 1) = PTKDicomDictionaryItem('0008,1040', 'LO', 'InstitutionalDepartmentName');
@@ -265,7 +273,7 @@ classdef PTKDicomDictionary < handle
             tags(end + 1) = PTKDicomDictionaryItem('0008,113A', 'SQ', 'ReferencedWaveformSequence');
             
             % We don't currently support SQ parsing
-%             tags(end + 1) = PTKDicomDictionaryItem('0008,1140', 'SQ', 'ReferencedImageSequence');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,1140', 'SQ', 'ReferencedImageSequence');
             
             tags(end + 1) = PTKDicomDictionaryItem('0008,1145', 'SQ', 'ReferencedCurveSequence');
             tags(end + 1) = PTKDicomDictionaryItem('0008,114A', 'SQ', 'ReferencedInstanceSequence');
