@@ -382,7 +382,7 @@ classdef PTKDiskUtilities
                 end
             else
                 if isa(old_structure, 'PTKImage')
-                    reporting.Log(['Saving raw image data for ' filename_base]);
+                    reporting.LogVerbose(['Saving raw image data for ' filename_base]);
                     if next_index == 0
                         file_suffix = '';
                     else

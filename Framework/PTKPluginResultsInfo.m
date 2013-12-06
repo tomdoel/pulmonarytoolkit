@@ -72,7 +72,7 @@ classdef PTKPluginResultsInfo < handle
                     valid = false;
                     return;
                 else
-                    reporting.Log(['Dependencies Ok for plugin ' next_dependency.PluginName]);
+                    reporting.LogVerbose(['Dependencies Ok for plugin ' next_dependency.PluginName]);
                 end
             end
             
