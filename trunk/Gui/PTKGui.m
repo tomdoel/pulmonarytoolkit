@@ -74,7 +74,7 @@ classdef PTKGui < handle
             set(obj.TextVersionHandle, 'String', obj.GetSoftwareNameAndVersionForDisplay);
 
             obj.ImagePanel = PTKViewerPanel(obj.UipanelImageHandle);
-            obj.Reporting = PTKReporting(splash_screen, obj.ImagePanel);
+            obj.Reporting = PTKReporting(splash_screen, obj.ImagePanel, PTKSoftwareInfo.WriteVerboseEntriesToLogFile);
             obj.PluginsPanel = PTKPluginsPanel(obj.UipanelPluginsHandle, obj.Reporting);
             addlistener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);
             

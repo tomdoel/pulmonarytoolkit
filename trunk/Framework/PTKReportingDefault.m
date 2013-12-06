@@ -25,7 +25,7 @@ classdef PTKReportingDefault < PTKReporting
     
     methods
         function obj = PTKReportingDefault
-            obj = obj@PTKReporting(PTKProgressDialog, []);
+            obj = obj@PTKReporting(PTKProgressDialog, [], false);
         end        
     end
 end

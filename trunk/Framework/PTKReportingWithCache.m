@@ -53,6 +53,10 @@ classdef PTKReportingWithCache < PTKReportingInterface
             obj.Reporting.Log(message);
         end
         
+        function LogVerbose(obj, message)
+            obj.Reporting.LogVerbose(message);
+        end
+        
         function ShowMessage(obj, identifier, message)
             obj.WarningsCache.AddPendingMessages(identifier, message);
         end
