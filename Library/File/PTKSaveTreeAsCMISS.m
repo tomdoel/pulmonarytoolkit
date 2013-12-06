@@ -51,9 +51,30 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_sy
 
     % Create the node file (contains the coordinates and radius)
     ipnode_file_handle = fopen(ipnode_file_name, 'w');
+    if ipnode_file_handle == -1
+        reporting.Error('PTKSaveTreeAsCMISS:CreateFileFailed', ['I could not create the file ' ipnode_file_name '. Please check the disk permissions to ensure I have write access.']);
+    end
+    
     exnode_file_handle = fopen(exnode_file_name, 'w');
+    if exnode_file_handle == -1
+        fclose(ipnode_file_handle);
+        reporting.Error('PTKSaveTreeAsCMISS:CreateFileFailed', ['I could not create the file ' exnode_file_name '. Please check the disk permissions to ensure I have write access.']);
+    end
+    
     ipelem_file_handle = fopen(ipelem_file_name, 'w');
+    if ipelem_file_handle == -1
+        fclose(ipnode_file_handle);
+        fclose(exnode_file_handle);
+        reporting.Error('PTKSaveTreeAsCMISS:CreateFileFailed', ['I could not create the file ' ipelem_file_name '. Please check the disk permissions to ensure I have write access.']);
+    end
+    
     exelem_file_handle = fopen(exelem_file_name, 'w');
+    if exelem_file_handle == -1
+        fclose(ipnode_file_handle);
+        fclose(exnode_file_handle);
+        fclose(ipelem_file_handle);
+        reporting.Error('PTKSaveTreeAsCMISS:CreateFileFailed', ['I could not create the file ' exelem_file_name '. Please check the disk permissions to ensure I have write access.']);
+    end
     
     % Write header of ipnode file
     WriteIpnodeHeader(ipnode_file_handle, num_nodes);
