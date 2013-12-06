@@ -174,7 +174,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 end
  
                 if ~isempty(reporting)
-                    reporting.Log(['Loading raw image file ' full_raw_filename]);
+                    reporting.LogVerbose(['Loading raw image file ' full_raw_filename]);
                 end
                 
                 fid = fopen(full_raw_filename, 'rb');
