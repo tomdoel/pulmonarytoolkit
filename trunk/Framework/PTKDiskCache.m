@@ -125,9 +125,15 @@ classdef PTKDiskCache < handle
         % the "remove_framework_files" flag is set to true.
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
             
-            % Switch on recycle bin before deleting
+            % Store the state of the recycle bin
             state = recycle;
-            recycle('on');
+
+            % Set recycle to on or off depending on a software switch
+            if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
+                recycle('on');
+            else
+                recycle('off');
+            end
             
             % Remove cache files in the root directory for this dataset
             obj.RemoveFilesInDirectory(obj.CachePath, remove_framework_files, reporting);
