@@ -63,15 +63,21 @@ classdef PTKReporting < PTKReportingInterface
         ProgressStack
         CurrentProgressStackItem
         ParentProgressStackItem
+        VerboseMode
     end
     
     methods
-        function obj = PTKReporting(progress_dialog, viewing_panel)
+        function obj = PTKReporting(progress_dialog, viewing_panel, verbose_mode)
             if nargin > 0
                 obj.ProgressDialog = progress_dialog;
             end
             if nargin > 1
                 obj.ViewingPanel = viewing_panel;
+            end
+            if nargin > 2
+                obj.VerboseMode = verbose_mode;
+            else
+                obj.VerboseMode = false;
             end
             obj.LogFileName = PTKDirectories.GetLogFilePath;
             
@@ -79,6 +85,12 @@ classdef PTKReporting < PTKReportingInterface
         end
         
         function Log(obj, message)
+            [calling_function, ~] = PTKErrorUtilities.GetCallingFunction(2);
+            
+            obj.AppendToLogFile([calling_function ': ' message]);
+        end
+        
+        function LogVerbose(obj, message)
             [calling_function, ~] = PTKErrorUtilities.GetCallingFunction(2);
             
             obj.AppendToLogFile([calling_function ': ' message]);

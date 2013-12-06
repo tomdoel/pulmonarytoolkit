@@ -29,6 +29,9 @@ classdef MockReporting < PTKReportingInterface
         function Log(obj, message)
         end
         
+        function LogVerbose(obj, message)
+        end
+        
         function ShowMessage(obj, identifier, message)
         end
         

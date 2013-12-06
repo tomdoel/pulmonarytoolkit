@@ -30,6 +30,10 @@ classdef PTKReportingInterface < handle
         % Writes debugging information to the log file
         Log(obj, message)
         
+        % Writes debugging information to the log file, but only if in verbose
+        % mode
+        LogVerbose(obj, message)
+
         % Displays an information message to the user. This will generally be
         % written to the command window
         ShowMessage(obj, identifier, message)
