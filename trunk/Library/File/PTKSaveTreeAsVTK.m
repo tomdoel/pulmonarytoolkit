@@ -150,6 +150,10 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     
     vtk_file_name = fullfile(file_path, [filename_prefix '.vtk']);
     vtk_file_handle = fopen(vtk_file_name, 'w');
+    if vtk_file_handle == -1
+        reporting.Error('PTKSaveTreeAsVTK:CreateFileFailed', ['I could not create the file ' vtk_file_name '. Please check the disk permissions to ensure I have write access.']);
+    end
+    
     
     
     WriteHeader(vtk_file_handle, reporting);

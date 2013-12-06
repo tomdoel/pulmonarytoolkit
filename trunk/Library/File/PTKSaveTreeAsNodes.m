@@ -48,7 +48,15 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
 
     % Create the node file (contains the coordinates and radius)
     node_file_handle = fopen(node_file_name, 'w');
+    if node_file_handle == -1
+        reporting.Error('PTKSaveTreeAsNodes:CreateFileFailed', ['I could not create the file ' node_file_name '. Please check the disk permissions to ensure I have write access.']);
+    end
+    
     element_file_handle = fopen(element_file_name, 'w');
+    if element_file_handle == -1
+        fclose(node_file_handle);
+        reporting.Error('PTKSaveTreeAsNodes:CreateFileFailed', ['I could not create the file ' element_file_name '.']);
+    end
     
     % The first file entry is the number of nodes
     fprintf(node_file_handle, '%u\r\n', num_branches);
