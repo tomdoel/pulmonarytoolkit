@@ -50,14 +50,26 @@ classdef PTKViewerPanel < handle
     events
         MarkerPanelSelected
     end
+    
+    
+    properties (Access = private)
+        Tools
+        CineTool
+        WindowLevelTool
+        ZoomTool
+        PanTool
+        PanMatlabTool
+        ZoomMatlabTool
+    end
 
     properties (Access = private)
         FigureHandle
         CandidatePoints
         CursorIsACross = false
+        CurrentCursor = ''
         Parent
         ImageHandles = {[], [], []} % Handles to image and overlay
-        SelectedControl = 4 % The number of the selected button in the controls panel
+        SelectedControl = 'W/L'
         
         % Gui elements
         ControlPanel;
@@ -93,6 +105,8 @@ classdef PTKViewerPanel < handle
         % Used for programmatic pan, zoom, etc.
         LastCoordinates = [0, 0, 0]
         MouseIsDown = false
+        
+        ToolOnMouseDown
     end
 
     events
@@ -101,6 +115,16 @@ classdef PTKViewerPanel < handle
     
     methods
         function obj = PTKViewerPanel(parent)
+            
+            
+            obj.CineTool = PTKCineTool;
+            obj.WindowLevelTool = PTKWindowLevelTool;
+            obj.ZoomTool = PTKZoomTool;
+            obj.PanTool = PTKPanTool;
+            obj.PanMatlabTool = PTKPanMatlabTool(obj);
+            obj.ZoomMatlabTool = PTKZoomMatlabTool(obj);
+
+            
             font_size = 9;
             obj.AxisLimits = [];
             obj.AxisLimits{1} = {};
@@ -120,7 +144,9 @@ classdef PTKViewerPanel < handle
             obj.Axes = axes('Parent', obj.Parent);
             
             obj.MarkerPointManager = PTKMarkerPointManager(obj, obj.Axes);
-
+            
+            tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointManager, obj.WindowLevelTool, obj.CineTool};
+            
             obj.ControlPanel = uipanel('Parent', obj.Parent, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
 
             obj.OrientationPanel = uibuttongroup('Parent', obj.ControlPanel, 'BorderType', 'none', 'SelectionChangeFcn', @obj.OrientationCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
@@ -132,13 +158,16 @@ classdef PTKViewerPanel < handle
             orientation_buttons(3) = uicontrol('Style', 'togglebutton', 'Parent', obj.OrientationPanel, 'String', 'Ax', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Axial', 'TooltipString', 'View transverse slices (X-Y)');
             obj.OrientationButtons = orientation_buttons;
             
-            control_buttons = [0 0 0];
-            control_buttons(1) = uicontrol('Style', 'togglebutton', 'Parent', obj.MouseControlPanel, 'String', 'Zoom', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Zoom', 'TooltipString', 'Zoom tool');
-            control_buttons(2) = uicontrol('Style', 'togglebutton', 'Parent', obj.MouseControlPanel, 'String', 'Pan', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Pan', 'TooltipString', 'Pan tool');
-            control_buttons(3) = uicontrol('Style', 'togglebutton', 'Parent', obj.MouseControlPanel, 'String', 'Mark', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Mark', 'TooltipString', 'Select point');
-            control_buttons(4) = uicontrol('Style', 'togglebutton', 'Parent', obj.MouseControlPanel, 'String', 'W/L', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'W/L', 'TooltipString', 'Window/level tool. Drag mouse to change window and level.');
-            control_buttons(5) = uicontrol('Style', 'togglebutton', 'Parent', obj.MouseControlPanel, 'String', 'Cine', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Cine', 'TooltipString', 'Cine tool. Drag mouse to cine through slices');
-            obj.MouseControlButtons = control_buttons;
+            % Buttons for each tool
+            obj.MouseControlButtons = containers.Map;
+            obj.Tools = containers.Map;
+            
+            for tool_set = tool_list
+                tool = tool_set{1};
+                tag = tool.Tag;
+                obj.Tools(tag) = tool;
+                obj.MouseControlButtons(tag) = uicontrol('Style', 'togglebutton', 'Parent', obj.MouseControlPanel, 'String', tool.ButtonText, 'Units', 'pixels', 'FontSize', font_size, 'Tag', tool.Tag, 'TooltipString', tool.ToolTip);
+            end
 
             obj.WindowLevelPanel = uipanel('Parent', obj.ControlPanel, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             obj.ImageOverlayPanel = uipanel('Parent', obj.ControlPanel, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
@@ -208,7 +237,7 @@ classdef PTKViewerPanel < handle
             addlistener(obj, 'QuiverImage', 'PostSet', @obj.QuiverImagePointerChangedCallback);
             obj.SetQuiverImage(obj.QuiverImage);
             
-            obj.MarkerPointManager.Enable(obj.SelectedControl == 3);
+            obj.UpdateTools;
         end
 
         function RestoreKeyPressCallback(obj)
@@ -242,9 +271,13 @@ classdef PTKViewerPanel < handle
         end
         
         function in_marker_mode = IsInMarkerMode(obj)
-            in_marker_mode = obj.SelectedControl == 3;
+            in_marker_mode = strcmp(obj.SelectedControl, 'Mark');
         end
 
+        function in_edit_mode = IsInEditMode(obj)
+            in_edit_mode = strcmp(obj.SelectedControl, 'Edit');
+        end
+        
         function delete(obj)
             obj.DeleteImageChangedListeners;
         end
@@ -347,8 +380,55 @@ classdef PTKViewerPanel < handle
             set(obj.Axes, 'Position', old_position);            
         end
 
+        function SetWindowWithinLimits(obj, window)
+            window = max(window, get(obj.WindowSlider, 'Min'));
+            window = min(window, get(obj.WindowSlider, 'Max'));
+            obj.Window = window;            
+        end
+
+        function SetLevelWithinLimits(obj, level)
+            level = max(level, get(obj.LevelSlider, 'Min'));
+            level = min(level, get(obj.LevelSlider, 'Max'));
+            obj.Level = level;
+        end
+        
+        % Adjusts the image axes to make the image visible between the specified
+        % coordinates
+        function SetImageLimits(obj, min_coords, max_coords)
+            x_lim = [min_coords(1), max_coords(1)];
+            y_lim = [min_coords(2), max_coords(2)];
+            if x_lim(2) > x_lim(1)
+                set(obj.Axes, 'XLim', x_lim);
+            end
+            if y_lim(2) > y_lim(1)
+                set(obj.Axes, 'YLim', y_lim);
+            end
+        end
+        
+        % Gets the current limits of the visible image axes
+        function [min_coords, max_coords] = GetImageLimits(obj)
+            x_lim = get(obj.Axes, 'XLim');
+            y_lim = get(obj.Axes, 'YLim');
+            min_coords = [x_lim(1), y_lim(1)];
+            max_coords = [x_lim(2), y_lim(2)];
+        end
+        
+        function EnablePan(obj, enabled)
+            if enabled
+                pan(obj.Axes, 'on');
+            else
+                pan(obj.Axes, 'off');
+            end
+        end
+        
+        function EnableZoom(obj, enabled)
+            if enabled
+                zoom(obj.Axes, 'on');
+            else
+                zoom(obj.Axes, 'off');
+            end
+        end
     end
-    
     
     methods (Access=private)
         function SetImage(obj, new_image)
@@ -541,8 +621,8 @@ classdef PTKViewerPanel < handle
 
             % Add the 4 subpanels to the control panel
             button_width = 32;
-            orientation_width = 3*button_width;
-            mouse_controls_width = 5*button_width;
+            orientation_width = numel(obj.OrientationButtons)*button_width;
+            mouse_controls_width = (obj.MouseControlButtons.Count)*button_width;
             mouse_controls_position = parent_width_pixels - mouse_controls_width + 1;
             central_panels_width = max(1, (parent_width_pixels - mouse_controls_width - orientation_width)/2);
             windowlevel_panel_position = orientation_width + central_panels_width + 1;
@@ -557,11 +637,11 @@ classdef PTKViewerPanel < handle
             set(obj.OrientationButtons(3), 'Units', 'Pixels', 'Position', [1+button_width*2 1 button_width button_width]);
 
             % Setup mouse controls panel
-            set(obj.MouseControlButtons(1), 'Units', 'Pixels', 'Position', [1 1 button_width  button_width]);
-            set(obj.MouseControlButtons(2), 'Units', 'Pixels', 'Position', [1+button_width   1 button_width button_width]);
-            set(obj.MouseControlButtons(3), 'Units', 'Pixels', 'Position', [1+button_width*2 1 button_width button_width]);
-            set(obj.MouseControlButtons(4), 'Units', 'Pixels', 'Position', [1+button_width*3 1 button_width button_width]);
-            set(obj.MouseControlButtons(5), 'Units', 'Pixels', 'Position', [1+button_width*4 1 button_width button_width]);
+            button_list = obj.MouseControlButtons.values;
+            for button_index = 1 : obj.MouseControlButtons.Count
+                button = button_list{button_index};
+                set(button, 'Units', 'Pixels', 'Position', [1+button_width*(button_index - 1), 1, button_width, button_width]);
+            end
 
             % Setup image/overlay panel
             halfpanel_height = 16;
@@ -709,7 +789,10 @@ classdef PTKViewerPanel < handle
             obj.UpdateGui;
             obj.DrawImages(true, false, false);
             obj.UpdateStatus;
-            obj.MarkerPointManager.ImageChanged;
+            
+            for tool_set = obj.Tools.values
+                tool_set{1}.ImageChanged;
+            end
         end
 
         % This function should be called when the orientation is
@@ -720,7 +803,10 @@ classdef PTKViewerPanel < handle
             obj.UpdateGui;
             obj.DrawImages(true, true, true);
             obj.UpdateStatus;
-            obj.MarkerPointManager.NewSliceOrOrientation;
+            
+            for tool_set = obj.Tools.values
+                tool_set{1}.NewSliceOrOrientation;
+            end
         end
             
 
@@ -1021,7 +1107,11 @@ classdef PTKViewerPanel < handle
         % Slice number has changed
         function SliceNumberChangedCallback(obj, ~, ~, ~)
             obj.UpdateGui;
-            obj.MarkerPointManager.NewSliceOrOrientation;
+            
+            for tool_set = obj.Tools.values
+                tool_set{1}.NewSliceOrOrientation;
+            end
+            
             obj.DrawImages(true, true, true);
             obj.UpdateStatus;
         end
@@ -1061,173 +1151,95 @@ classdef PTKViewerPanel < handle
             obj.MarkerImageChanged;
         end
         
-        function MousePan(obj)
-            screen_coords = obj.GetScreenCoordinates;
-
-            pan_offset = screen_coords - obj.LastCoordinates;
-            x_lim = get(obj.Axes, 'XLim');
-            x_lim = x_lim - pan_offset(1);
-            y_lim = get(obj.Axes, 'YLim');
-            y_lim = y_lim - pan_offset(2);
-            set(obj.Axes, 'XLim', x_lim)
-            set(obj.Axes, 'YLim', y_lim)
-        end
-
-        function MouseZoom(obj)
-            screen_coords = obj.GetScreenCoordinates;
-
-            coords_offset = screen_coords - obj.LastCoordinates;
-            
-            x_lim = get(obj.Axes, 'XLim');
-            x_range = x_lim(2) - x_lim(1);
-            
-            y_lim = get(obj.Axes, 'YLim');
-            y_range = y_lim(2) - y_lim(1);
-            y_relative_movement = coords_offset(2)/y_range;
-
-            relative_scale = y_relative_movement;
-            x_range_scale = relative_scale*x_range/1;
-            y_range_scale = relative_scale*y_range/1;
-            
-            x_lim = [x_lim(1) - x_range_scale, x_lim(2) + x_range_scale];
-            
-            y_lim = [y_lim(1) - y_range_scale, y_lim(2) + y_range_scale];
-            
-            if (abs(x_lim(2) - x_lim(1)) > 10) && (abs(y_lim(2) - y_lim(1)) > 10) && ...
-                    (abs(x_lim(2) - x_lim(1)) < 1000) && (abs(y_lim(2) - y_lim(1)) < 500)
-                set(obj.Axes, 'XLim', x_lim)
-                set(obj.Axes, 'YLim', y_lim)
-            end
-            
-            obj.LastCoordinates = screen_coords;
-        end
-
-        % Change window and level via tool
-        function MouseWL(obj)
-            screen_coords = obj.GetScreenCoordinates;
-
-            coords_offset = screen_coords - obj.LastCoordinates;
-            
-            x_lim = get(obj.Axes, 'XLim');
-            x_range = x_lim(2) - x_lim(1);
-            x_relative_movement = coords_offset(1)/x_range;
-            
-            y_lim = get(obj.Axes, 'YLim');
-            y_range = y_lim(2) - y_lim(1);
-            y_relative_movement = coords_offset(2)/y_range;
-
-            new_window = obj.Window + x_relative_movement*100*30;
-            new_window = max(new_window, get(obj.WindowSlider, 'Min'));
-            new_window = min(new_window, get(obj.WindowSlider, 'Max'));
-            obj.Window = new_window;
-            
-            new_level = obj.Level + y_relative_movement*100*30;
-            new_level = max(new_level, get(obj.LevelSlider, 'Min'));
-            new_level = min(new_level, get(obj.LevelSlider, 'Max'));
-            obj.Level = new_level;
-            obj.LastCoordinates = screen_coords;
-        end
-
-        % Change window and level via tool
-        function MouseCine(obj)
-            screen_coords = obj.GetScreenCoordinates;
-
-            coords_offset = screen_coords - obj.LastCoordinates;
-            
-            y_lim = get(obj.Axes, 'YLim');
-            y_range = y_lim(2) - y_lim(1);
-            y_relative_movement = coords_offset(2)/y_range;
-            direction = sign(y_relative_movement);
-            y_relative_movement = abs(y_relative_movement);
-            y_relative_movement = 100*y_relative_movement;
-            y_relative_movement = ceil(y_relative_movement);
-
-            k_position = obj.SliceNumber(obj.Orientation);
-            k_position = k_position - direction*y_relative_movement;
-            obj.SliceNumber(obj.Orientation) = k_position;
-            obj.LastCoordinates = screen_coords;
-        end
-        
         % Mouse has moved over the figure
         function MouseHasMoved(obj, hObject, eventData)
-            if obj.MouseIsDown
-                selection_type = get(hObject, 'SelectionType');
-                
-                if strcmp(selection_type, 'extend')
-                    obj.MousePan;
-                elseif strcmp(selection_type, 'alt')
-                    obj.MouseZoom;
-                elseif obj.SelectedControl == 3
-                elseif obj.SelectedControl == 4
-                    obj.MouseWL;
-                elseif obj.SelectedControl == 5
-                    obj.MouseCine;
-                end
-            end
+            screen_coords = obj.GetScreenCoordinates;
+            last_coords = obj.LastCoordinates;
+            selection_type = get(hObject, 'SelectionType');
+            mouse_is_down = obj.MouseIsDown;
             
-            if obj.SelectedControl == 3
-                obj.MarkerPointManager.MouseMoved(obj.GetScreenCoordinates);
-            end
+            tool = obj.GetCurrentTool(mouse_is_down, selection_type);
+            tool.MouseHasMoved(obj, screen_coords, last_coords, mouse_is_down);
             
-            obj.UpdateCursor(hObject);          
+            obj.UpdateCursor(hObject, mouse_is_down, selection_type);
             obj.UpdateStatus();
             if (~isempty(obj.WindowButtonMotionFcn))
                 obj.WindowButtonMotionFcn(hObject, eventData);
             end
         end
         
-        function UpdateCursor(obj, hObject)
+        function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)
             global_coords = obj.GetImageCoordinates;
             point_is_in_image = obj.BackgroundImage.IsPointInImage(global_coords);
             if (~point_is_in_image)
                 obj.MouseIsDown = false;
             end
             
-            if (obj.SelectedControl == 3) && (point_is_in_image)
-                % Make cursor a cross, if it isn't already
-                if ~obj.CursorIsACross
-                    set(hObject, 'Pointer', 'cross');
-                    obj.CursorIsACross = true;
-                end
+            if point_is_in_image
+                current_tool = obj.GetCurrentTool(mouse_is_down, keyboard_modifier);
+                new_cursor = current_tool.Cursor;
             else
-                % Make cursor a pointer, if it currently a cross
-                if obj.CursorIsACross
-                    set(hObject, 'Pointer', 'arrow');
-                    obj.CursorIsACross = false;
+                new_cursor = 'arrow';
+            end
+            
+            if ~strcmp(obj.CurrentCursor, new_cursor)
+                set(hObject, 'Pointer', new_cursor);
+                obj.CurrentCursor = new_cursor;
+            end
+            
+        end
+        
+        % Returns the tool whch is currently selected. If keyboard_modifier is
+        % specified, then this may override the current tool
+        function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier)
+            if ~isempty(keyboard_modifier) && ~isempty(mouse_is_down) && mouse_is_down
+                if strcmp(keyboard_modifier, 'extend')
+                    tool = obj.PanTool;
+                    return;
+                elseif strcmp(keyboard_modifier, 'alt')
+                    tool = obj.ZoomTool;
+                    return;
                 end
             end
-
+            tool = obj.Tools(obj.SelectedControl);
         end
+                
 
         % Mouse has been clicked
         function MouseDown(obj, src, ~)
-            obj.LastCoordinates = obj.GetScreenCoordinates;
+            screen_coords = obj.GetScreenCoordinates;
+            obj.LastCoordinates = screen_coords;
             obj.MouseIsDown = true;
             selection_type = get(src, 'SelectionType');
-            if strcmp(selection_type, 'normal')
-                global_coords = obj.GetImageCoordinates;
-                if (obj.BackgroundImage.IsPointInImage(global_coords))
-                    if (obj.SelectedControl == 3)
-                        obj.MarkerPointManager.MouseDown(obj.GetScreenCoordinates);
-                    else
-                        notify(obj, 'MouseClickInImage', PTKEventData(global_coords));
-                    end
-                end
+            tool = obj.GetCurrentTool(true, selection_type);
+            global_coords = obj.GetImageCoordinates;
+            if (obj.BackgroundImage.IsPointInImage(global_coords))
+                tool.MouseDown(screen_coords);
+                obj.ToolOnMouseDown = tool;
+            else
+                notify(obj, 'MouseClickInImage', PTKEventData(global_coords));
+                obj.ToolOnMouseDown = [];
             end
+
+            obj.UpdateCursor(src, true, selection_type);
         end
 
         % Mouse has been clicked
         function MouseUp(obj, src, ~)
             obj.MouseIsDown = false;
-            
-            obj.LastCoordinates = obj.GetScreenCoordinates;
+            screen_coords = obj.GetScreenCoordinates;
+            obj.LastCoordinates = screen_coords;
             selection_type = get(src, 'SelectionType');
-            if (obj.SelectedControl == 3) && strcmp(selection_type, 'normal')
+
+            tool = obj.ToolOnMouseDown;
+            if ~isempty(tool)
                 global_coords = obj.GetImageCoordinates;
                 if (obj.BackgroundImage.IsPointInImage(global_coords))
-                    obj.MarkerPointManager.MouseUp(obj.GetScreenCoordinates);
+                    tool.MouseUp(screen_coords);
+                    obj.ToolOnMouseDown = [];
                 end
             end
+            obj.UpdateCursor(src, false, selection_type);
         end
         
         % Key has been clicked
@@ -1250,47 +1262,23 @@ classdef PTKViewerPanel < handle
                 obj.SetControl('Mark');
             elseif strcmpi(key, 'w')
                 obj.SetControl('W/L');
-            elseif strcmpi(key, 'e')
+            elseif strcmpi(key, 'n')
                 obj.SetControl('Cine');
+            elseif strcmpi(key, 'e')
+                obj.SetControl('Edit');
             elseif strcmpi(key, 'i')
                 obj.ShowImage = ~obj.ShowImage;
             elseif strcmpi(key, 't')
                 obj.BlackIsTransparent = ~obj.BlackIsTransparent;
             elseif strcmpi(key, 'o')
                 obj.ShowOverlay = ~obj.ShowOverlay;
-            elseif strcmpi(key, 'l') % L
-                obj.MarkerPointManager.ChangeShowTextLabels(~obj.MarkerPointManager.ShowTextLabels);
-            elseif strcmpi(key, '1') % one
-                obj.MarkerPointManager.ChangeCurrentColour(1);
-            elseif strcmpi(key, '2')
-                obj.MarkerPointManager.ChangeCurrentColour(2);
-            elseif strcmpi(key, '3')
-                obj.MarkerPointManager.ChangeCurrentColour(3);
-            elseif strcmpi(key, '4')
-                obj.MarkerPointManager.ChangeCurrentColour(4);
-            elseif strcmpi(key, '5')
-                obj.MarkerPointManager.ChangeCurrentColour(5);
-            elseif strcmpi(key, '6')
-                obj.MarkerPointManager.ChangeCurrentColour(6);
-            elseif strcmpi(key, '7')
-                obj.MarkerPointManager.ChangeCurrentColour(7);
-            elseif strcmpi(key, 'space')
-                obj.MarkerPointManager.GotoNearestMarker;
-            elseif strcmpi(key, 'backspace')
-                obj.MarkerPointManager.DeleteHighlightedMarker;
-            elseif strcmpi(key, 'leftarrow')
-                obj.MarkerPointManager.GotoPreviousMarker;
-            elseif strcmpi(key, 'rightarrow')
-                obj.MarkerPointManager.GotoNextMarker;
-            elseif strcmpi(key, 'pageup')
-                obj.MarkerPointManager.GotoFirstMarker;
-            elseif strcmpi(key, 'pagedown')
-                obj.MarkerPointManager.GotoLastMarker;
             elseif strcmpi(key, 'downarrow')
                 obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) + 1;
             elseif strcmpi(key, 'uparrow')
                 obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) - 1;
-            end            
+            else
+                obj.Tools(obj.SelectedControl).Keypress(key);
+            end
         end
         
         function OrientationCallback(obj, ~, eventdata, ~)
@@ -1325,33 +1313,30 @@ classdef PTKViewerPanel < handle
         end
         
         function SetControl(obj, tag_value)
-            switch tag_value
-                case 'Zoom'
-                    obj.SelectedControl = 1;
-                    obj.UpdateCursor(obj.FigureHandle);
-                    pan(obj.Axes, 'off'); zoom(obj.Axes, 'on');
-                    obj.RestoreKeyPressCallback;
-                case 'Pan'
-                    obj.SelectedControl = 2;
-                    obj.UpdateCursor(obj.FigureHandle);
-                    pan(obj.Axes, 'on'); zoom(obj.Axes, 'off');
-                    obj.RestoreKeyPressCallback;
-                case 'Mark'
-                    obj.SelectedControl = 3;
-                    pan(obj.Axes, 'off'); zoom(obj.Axes, 'off');
-                    obj.UpdateCursor(obj.FigureHandle);
-                    obj.notify('MarkerPanelSelected');
-                case 'W/L'
-                    obj.SelectedControl = 4;
-                    pan(obj.Axes, 'off'); zoom(obj.Axes, 'off');
-                    obj.UpdateCursor(obj.FigureHandle);
-                case 'Cine'
-                    obj.SelectedControl = 5;
-                    pan(obj.Axes, 'off'); zoom(obj.Axes, 'off');
-                    obj.UpdateCursor(obj.FigureHandle);
+            obj.SelectedControl = tag_value;
+            tool = obj.Tools(tag_value);
+            
+            % Matlab tools require the keypress callback to be reset
+            if tool.RestoreKeyPressCallbackWhenSelected
+                obj.RestoreKeyPressCallback;
             end
-            obj.MarkerPointManager.Enable(obj.SelectedControl == 3);
-            set(obj.MouseControlButtons(obj.SelectedControl), 'Value', 1);
+            
+            % Change the cursor
+            obj.UpdateCursor(obj.FigureHandle, [], []);
+            
+            % Run the code to enable or disable tools
+            obj.UpdateTools;
+            
+            % Enable the button for this tool
+            set(obj.MouseControlButtons(tag_value), 'Value', 1);
+        end
+        
+        function UpdateTools(obj)
+            tool_list = obj.Tools.values;
+            for tool_set = tool_list
+                tool = tool_set{1};
+                tool.Enable(strcmp(obj.SelectedControl, tool.Tag));
+            end
         end
 
         function ControlsCallback(obj, ~, eventdata, ~)

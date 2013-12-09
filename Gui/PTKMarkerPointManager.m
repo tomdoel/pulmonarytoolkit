@@ -1,4 +1,4 @@
-classdef PTKMarkerPointManager < handle
+classdef PTKMarkerPointManager < PTKTool
     % PTKMarkerPointManager. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -16,6 +16,14 @@ classdef PTKMarkerPointManager < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
+    properties
+        ButtonText = 'Mark'
+        Cursor = 'cross'
+        RestoreKeyPressCallbackWhenSelected = false
+        ToolTip = 'Add or modify marker points.'
+        Tag = 'Mark'
+    end
+  
     properties
         % When a marker is placed in close proximity to an existing marker of
         % the same colour, we assume that the user is actually trying to replace
@@ -68,6 +76,9 @@ classdef PTKMarkerPointManager < handle
         end
         
         function Enable(obj, enable)
+            if enable
+                notify(obj.ViewerPanel, 'MarkerPanelSelected');
+            end
             if (enable && ~obj.Enabled)
                 obj.ConvertMarkerImageToPoints(obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation), obj.ViewerPanel.Orientation);
             end
@@ -103,6 +114,41 @@ classdef PTKMarkerPointManager < handle
             end
         end
         
+        function processed = Keypress(obj, key_name)
+            processed = true;
+            if strcmpi(key_name, 'l') % L
+                obj.ChangeShowTextLabels(~obj.ShowTextLabels);
+            elseif strcmpi(key_name, '1') % one
+                obj.ChangeCurrentColour(1);
+            elseif strcmpi(key_name, '2')
+                obj.ChangeCurrentColour(2);
+            elseif strcmpi(key_name, '3')
+                obj.ChangeCurrentColour(3);
+            elseif strcmpi(key_name, '4')
+                obj.ChangeCurrentColour(4);
+            elseif strcmpi(key_name, '5')
+                obj.ChangeCurrentColour(5);
+            elseif strcmpi(key_name, '6')
+                obj.ChangeCurrentColour(6);
+            elseif strcmpi(key_name, '7')
+                obj.ChangeCurrentColour(7);
+            elseif strcmpi(key_name, 'space')
+                obj.GotoNearestMarker;
+            elseif strcmpi(key_name, 'backspace')
+                obj.DeleteHighlightedMarker;
+            elseif strcmpi(key_name, 'leftarrow')
+                obj.GotoPreviousMarker;
+            elseif strcmpi(key_name, 'rightarrow')
+                obj.GotoNextMarker;
+            elseif strcmpi(key_name, 'pageup')
+                obj.GotoFirstMarker;
+            elseif strcmpi(key_name, 'pagedown')
+                obj.GotoLastMarker;
+            else
+                processed = false;
+            end
+        end
+        
         function ChangeShowTextLabels(obj, show)
             obj.ShowTextLabels = show;
             if obj.Enabled
@@ -122,7 +168,7 @@ classdef PTKMarkerPointManager < handle
             obj.IsDragging = true;
         end
         
-        function MouseMoved(obj, coords)
+        function MouseHasMoved(obj, viewer_panel, coords, last_coords, mouse_is_down)
             if obj.Enabled
                 closest_marker = obj.GetMarkerForThisPoint(coords, []);
                 if isempty(closest_marker)
@@ -192,12 +238,6 @@ classdef PTKMarkerPointManager < handle
             end
         end
         
-        function DeleteHighlightedMarker(obj)
-            if ~isempty(obj.CurrentlyHighlightedMarker)
-                obj.CurrentlyHighlightedMarker.DeleteMarker;
-            end
-        end
-        
         function ChangeCurrentColour(obj, new_colour)
             obj.CurrentColour = new_colour;
         end
@@ -212,43 +252,7 @@ classdef PTKMarkerPointManager < handle
             
             obj.LockCallback = false;
         end
-        
-        % Find the image slice containing the last marker
-        function GotoPreviousMarker(obj)
-            maximum_skip = obj.ViewerPanel.SliceSkip;
-            orientation = obj.ViewerPanel.Orientation;
-            current_coordinate = obj.ViewerPanel.SliceNumber(orientation);
-            index_of_nearest_marker = obj.MarkerPointImage.GetIndexOfPreviousMarker(current_coordinate, maximum_skip, orientation);
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end
-        
-        function GotoNextMarker(obj)
-            maximum_skip = obj.ViewerPanel.SliceSkip;
-            orientation = obj.ViewerPanel.Orientation;
-            current_coordinate = obj.ViewerPanel.SliceNumber(orientation);
-            index_of_nearest_marker =  obj.MarkerPointImage.GetIndexOfNextMarker(current_coordinate, maximum_skip, orientation);            
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end
-        
-        function GotoNearestMarker(obj)
-            orientation = obj.ViewerPanel.Orientation;
-            current_coordinate = obj.ViewerPanel.SliceNumber(orientation);
-            index_of_nearest_marker = obj.MarkerPointImage.GetIndexOfNearestMarker(current_coordinate, orientation);
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end
-        
-        function GotoFirstMarker(obj)
-            orientation = obj.ViewerPanel.Orientation;
-            index_of_nearest_marker = obj.MarkerPointImage.GetIndexOfFirstMarker(orientation);
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end
-        
-        function GotoLastMarker(obj)
-            orientation = obj.ViewerPanel.Orientation;
-            index_of_nearest_marker = obj.MarkerPointImage.GetIndexOfLastMarker(orientation);
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end
-        
+                
         function MarkerPointsHaveBeenSaved(obj)
             obj.MarkerImageHasChanged = false;
         end
@@ -345,6 +349,48 @@ classdef PTKMarkerPointManager < handle
                 marker.RemoveGraphic;
             end
             obj.MarkerPoints = [];
+        end
+        
+        % Find the image slice containing the last marker
+        function GotoPreviousMarker(obj)
+            maximum_skip = obj.ViewerPanel.SliceSkip;
+            orientation = obj.ViewerPanel.Orientation;
+            current_coordinate = obj.ViewerPanel.SliceNumber(orientation);
+            index_of_nearest_marker = obj.MarkerPointImage.GetIndexOfPreviousMarker(current_coordinate, maximum_skip, orientation);
+            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
+        end
+        
+        function GotoNextMarker(obj)
+            maximum_skip = obj.ViewerPanel.SliceSkip;
+            orientation = obj.ViewerPanel.Orientation;
+            current_coordinate = obj.ViewerPanel.SliceNumber(orientation);
+            index_of_nearest_marker =  obj.MarkerPointImage.GetIndexOfNextMarker(current_coordinate, maximum_skip, orientation);            
+            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
+        end
+        
+        function GotoNearestMarker(obj)
+            orientation = obj.ViewerPanel.Orientation;
+            current_coordinate = obj.ViewerPanel.SliceNumber(orientation);
+            index_of_nearest_marker = obj.MarkerPointImage.GetIndexOfNearestMarker(current_coordinate, orientation);
+            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
+        end
+        
+        function GotoFirstMarker(obj)
+            orientation = obj.ViewerPanel.Orientation;
+            index_of_nearest_marker = obj.MarkerPointImage.GetIndexOfFirstMarker(orientation);
+            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
+        end
+        
+        function GotoLastMarker(obj)
+            orientation = obj.ViewerPanel.Orientation;
+            index_of_nearest_marker = obj.MarkerPointImage.GetIndexOfLastMarker(orientation);
+            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
+        end
+        
+        function DeleteHighlightedMarker(obj)
+            if ~isempty(obj.CurrentlyHighlightedMarker)
+                obj.CurrentlyHighlightedMarker.DeleteMarker;
+            end
         end
         
     end
