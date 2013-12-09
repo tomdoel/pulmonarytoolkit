@@ -18,6 +18,7 @@ classdef PTKPanTool < PTKTool
         RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Pan tool'
         Tag = 'Pan'
+        ShortcutKey = ''
     end
     
     properties (Access = private)

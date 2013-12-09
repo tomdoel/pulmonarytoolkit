@@ -14,6 +14,7 @@ classdef PTKTool < handle
         ButtonText
         Cursor
         RestoreKeyPressCallbackWhenSelected
+        ShortcutKey
         ToolTip
         Tag
     end

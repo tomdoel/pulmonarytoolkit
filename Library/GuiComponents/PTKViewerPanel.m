@@ -1254,18 +1254,6 @@ classdef PTKViewerPanel < handle
                 obj.Orientation = PTKImageOrientation.Sagittal;
             elseif strcmpi(key, 'a')
                 obj.Orientation = PTKImageOrientation.Axial;
-            elseif strcmpi(key, 'z')
-                obj.SetControl('Zoom');
-            elseif strcmpi(key, 'p')
-                obj.SetControl('Pan');
-            elseif strcmpi(key, 'm')
-                obj.SetControl('Mark');
-            elseif strcmpi(key, 'w')
-                obj.SetControl('W/L');
-            elseif strcmpi(key, 'n')
-                obj.SetControl('Cine');
-            elseif strcmpi(key, 'e')
-                obj.SetControl('Edit');
             elseif strcmpi(key, 'i')
                 obj.ShowImage = ~obj.ShowImage;
             elseif strcmpi(key, 't')
@@ -1277,6 +1265,13 @@ classdef PTKViewerPanel < handle
             elseif strcmpi(key, 'uparrow')
                 obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) - 1;
             else
+                % Shortcuts for selecting tools
+                for tool = obj.Tools.values
+                    if strcmpi(key, tool{1}.ShortcutKey)
+                        obj.SetControl(tool{1}.Tag);
+                        return
+                    end
+                end
                 obj.Tools(obj.SelectedControl).Keypress(key);
             end
         end
