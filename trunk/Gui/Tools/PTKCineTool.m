@@ -18,6 +18,7 @@ classdef PTKCineTool < PTKTool
         RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Cine tool. Drag mouse to cine through slices.'
         Tag = 'Cine'
+        ShortcutKey = 'n'
     end
     
     methods

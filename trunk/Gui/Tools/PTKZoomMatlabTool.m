@@ -18,6 +18,7 @@ classdef PTKZoomMatlabTool < PTKTool
         RestoreKeyPressCallbackWhenSelected = true
         ToolTip = 'Zoom tool'
         Tag = 'Zoom'
+        ShortcutKey = 'z'
     end
     
     properties (Access = private)    

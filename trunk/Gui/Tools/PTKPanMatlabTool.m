@@ -18,6 +18,7 @@ classdef PTKPanMatlabTool < PTKTool
         RestoreKeyPressCallbackWhenSelected = true
         ToolTip = 'Pan tool'
         Tag = 'Pan'
+        ShortcutKey = 'p'
     end
     
     properties (Access = private)

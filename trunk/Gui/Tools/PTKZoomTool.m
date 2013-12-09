@@ -18,6 +18,7 @@ classdef PTKZoomTool < PTKTool
         RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Zoom tool'
         Tag = 'Zoom'
+        ShortcutKey = ''
     end
     
     methods
