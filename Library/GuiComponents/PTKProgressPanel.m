@@ -132,6 +132,7 @@ classdef PTKProgressPanel < PTKProgressInterface
             if ~obj.Hold
                 obj.PanelVisibility = false;
             else
+                obj.SetProgressText('');
             end
             obj.Update;
         end

@@ -135,6 +135,7 @@ classdef PTKSplashScreen < PTKProgressInterface
             if ~obj.Hold
                 obj.Hide;
             else
+                obj.DialogText = '';
                 obj.Update;
             end
         end
