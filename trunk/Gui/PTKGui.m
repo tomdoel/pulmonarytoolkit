@@ -263,16 +263,20 @@ classdef PTKGui < handle
         
         function SaveMarkers(obj)
             if ~isempty(obj.Dataset)
+                obj.Reporting.ShowProgress('Saving Markers');                
                 markers = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
                 obj.Dataset.SaveData(PTKSoftwareInfo.MakerPointsCacheName, markers);
                 obj.ImagePanel.MarkerPointManager.MarkerPointsHaveBeenSaved;
+                obj.Reporting.CompleteProgress;
             end
         end
         
         function SaveMarkersBackup(obj)
             if ~isempty(obj.Dataset)
+                obj.Reporting.ShowProgress('Abandoning Markers');                
                 markers = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
                 obj.Dataset.SaveData('AbandonedMarkerPoints', markers);
+                obj.Reporting.CompleteProgress;
             end
         end
         
@@ -788,7 +792,9 @@ classdef PTKGui < handle
         end
         
         function delete(obj)
-            obj.Reporting.Log('Closing PTKGui');
+            if ~isempty(obj.Reporting);
+                obj.Reporting.Log('Closing PTKGui');
+            end
         end
         
         function PreviewImageChanged(obj, ~, event_data)
@@ -796,29 +802,31 @@ classdef PTKGui < handle
             obj.PluginsPanel.AddPreviewImage(plugin_name, obj.Dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
         end
         
-        function AutoSaveMarkers(obj)            
-            if obj.ImagePanel.MarkerPointManager.MarkerImageHasChanged && obj.MarkersHaveBeenLoaded
-                saved_marker_points = obj.Dataset.LoadData(PTKSoftwareInfo.MakerPointsCacheName);
-                current_marker_points = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
-                markers_changed = false;
-                if isempty(saved_marker_points)
-                    if any(current_marker_points.RawImage(:))
-                        markers_changed = true;
+        function AutoSaveMarkers(obj)
+            if ~isempty(obj.ImagePanel)
+                if obj.ImagePanel.MarkerPointManager.MarkerImageHasChanged && obj.MarkersHaveBeenLoaded
+                    saved_marker_points = obj.Dataset.LoadData(PTKSoftwareInfo.MakerPointsCacheName);
+                    current_marker_points = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
+                    markers_changed = false;
+                    if isempty(saved_marker_points)
+                        if any(current_marker_points.RawImage(:))
+                            markers_changed = true;
+                        end
+                    else
+                        if ~isequal(saved_marker_points.RawImage, current_marker_points.RawImage)
+                            markers_changed = true;
+                        end
                     end
-                else
-                    if ~isequal(saved_marker_points.RawImage, current_marker_points.RawImage)
-                        markers_changed = true;
-                    end
-                end
-                if markers_changed
-                    choice = questdlg('Do you want to save the current markers?', ...
-                        'Unsaved changes to markers', 'Save', 'Don''t save', 'Save');
-                    switch choice
-                        case 'Save'
-                            obj.SaveMarkers;
-                        case 'Don''t save'
-                            obj.SaveMarkersBackup;
-                            disp('Abandoned changes have been stored in AbandonedMarkerPoints.mat');
+                    if markers_changed
+                        choice = questdlg('Do you want to save the current markers?', ...
+                            'Unsaved changes to markers', 'Save', 'Don''t save', 'Save');
+                        switch choice
+                            case 'Save'
+                                obj.SaveMarkers;
+                            case 'Don''t save'
+                                obj.SaveMarkersBackup;
+                                disp('Abandoned changes have been stored in AbandonedMarkerPoints.mat');
+                        end
                     end
                 end
             end
