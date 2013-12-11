@@ -412,6 +412,30 @@ classdef PTKDiskUtilities
                 end
             end
         end
+        
+        function dir = GetDirectoryForFile(filename, reporting)
+            exist_result = exist(filename, 'file');
+            
+            if exist_result == 0
+                % Directory does not exist
+                reporting.Error('PTKMain:DirectoryDoesNotExist', 'The directory passed to PTKMain.ImportDataRecursive() does not exist.');
+            
+            elseif exist_result == 7
+                % Directory specified
+                dir = filename;
+                
+            elseif exist_result == 2
+                % File specified - try to extract a directory
+                [dir_path, ~, ~] = fileparts(filename);
+                exist_result_2 = exist(dir_path, 'file');
+                if exist_result_2 ~= 0
+                    reporting.Error('PTKMain:DirectoryDoesNotExist', 'The argument passed to PTKMain.ImportDataRecursive() does not exist or is not a directory.');
+                else
+                    dir = dir_path;
+                end
+            end
+            
+        end
     end
 end
 
