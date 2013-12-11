@@ -102,7 +102,7 @@ classdef PTKGui < handle
             
             % Check if any datasets in cache exist which are not part of the
             % drop-down menu
-            obj.AddAllDatasetsInCacheToDropDownMenu;
+            obj.AddAllDatasetsInCacheToDropDownMenu([], false);
             
             obj.DropDownLoadMenuManager = PTKDropDownLoadMenuManager(obj.Settings, obj.PopupmenuLoadHandle);
 
@@ -224,10 +224,10 @@ classdef PTKGui < handle
                 obj.SaveSettings;
                 
                 % Import all datasets from this path
-                obj.Ptk.ImportDataRecursive(folder_path);
+                uids = obj.Ptk.ImportDataRecursive(folder_path);
                 
                 % Add any new datasets to the menu
-                obj.AddAllDatasetsInCacheToDropDownMenu;
+                obj.AddAllDatasetsInCacheToDropDownMenu(uids, false);
                 
                 % Update the menu
                 obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;                
@@ -381,20 +381,50 @@ classdef PTKGui < handle
             obj.SetCurrentPluginAndUpdateFigureTitle([]);
         end
         
+        function RebuildDropDownLoadMenu(obj)
+            obj.AddAllDatasetsInCacheToDropDownMenu([], true);
+        end
+        
     end
     
     
     methods (Access = private)
         
-        function AddAllDatasetsInCacheToDropDownMenu(obj)
-            uids = PTKDirectories.GetUidsOfAllDatasetsInCache;
-            old_infos = obj.Settings.PreviousImageInfos;
+        % Checks the disk cache and adds any missing datasets to the drop-down
+        % load menu. Specifying a list of uids forces those datasets to update.
+        % The rebuild_menu flag builds the load menu from scratch
+        function AddAllDatasetsInCacheToDropDownMenu(obj, uids_to_update, rebuild_menu)
+            
+            % Get the complete list of cache folders, unless we are only
+            % updating specific uids
+            if isempty(uids_to_update) || rebuild_menu
+                uids = PTKDirectories.GetUidsOfAllDatasetsInCache;
+            else
+                uids = uids_to_update;
+            end
+            
+            % If we are rebuilding the menu or are updating specific uids then
+            % we force each menu entry to be updated
+            if ~isempty(uids_to_update) || rebuild_menu
+                rebuild_menu_for_each_uid = true;
+            else
+                rebuild_menu_for_each_uid = false;
+            end
+            
+            % If we are rebuilding the menu then remove existings entries
+            if rebuild_menu
+                old_infos = containers.Map;
+            else
+                old_infos = obj.Settings.PreviousImageInfos;
+            end
             settings_changed = false;
             
             for uid = uids
                 temporary_uid = uid{1};
-                if ~old_infos.isKey(temporary_uid)
-                    obj.Reporting.ShowMessage('PTKGui:UnimportedDaatsetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the settings file. I am adding this dataset to the quick load menu. This may occur if the settings file was recently removed.']);
+                if ~old_infos.isKey(temporary_uid) || rebuild_menu_for_each_uid
+                    if ~rebuild_menu
+                        obj.Reporting.ShowMessage('PTKGui:UnimportedDaatsetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the settings file. I am adding this dataset to the quick load menu. This may occur if the settings file was recently removed.']);
+                    end
                     try
                         cache_parent_directory = PTKDirectories.GetCacheDirectory;
                         temporary_disk_cache = PTKDiskCache(cache_parent_directory, temporary_uid, obj.Reporting);
