@@ -57,7 +57,15 @@ classdef PTKOriginalImage < PTKPlugin
                     reporting.Error(PTKSoftwareInfo.FileMissingErrorId, ['Cannot find any files in the folder ' image_path]);
                 end
             else
-                if ~PTKDiskUtilities.FileExists(image_path, filenames{1})
+                first_file = filenames{1};
+                if isa(first_file, 'PTKFilename')
+                    first_file_path = first_file.Path;
+                    first_file_name = first_file.Name;
+                else
+                    first_file_path = image_path;
+                    first_file_name = first_file;
+                end
+                if ~PTKDiskUtilities.FileExists(first_file_path, first_file_name)
                     reporting.Error(PTKSoftwareInfo.FileMissingErrorId, ['Cannot find the file ' fullfile(image_path, filenames{1})]);
                 end
             end
