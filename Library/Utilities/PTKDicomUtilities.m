@@ -63,9 +63,9 @@ classdef PTKDicomUtilities
             
             if max_1 > max_2
                 scale_1 = 1;
-                scale_2 = abs(direction_vector_1(scale_index_2)/direction_vector_2(scale_index_2));
+                scale_2 = direction_vector_1(scale_index_2)/direction_vector_2(scale_index_2);
             else
-                scale_1 = abs(direction_vector_2(scale_index_1)/direction_vector_1(scale_index_1));
+                scale_1 = direction_vector_2(scale_index_1)/direction_vector_1(scale_index_1);
                 scale_2 = 1;
             end
             
