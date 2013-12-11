@@ -46,12 +46,23 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
     sub_seg = segmentation.BlankCopy;
     sub_seg.ChangeRawImage(segmentation.RawImage == label);
     
+    sub_seg.CropToFit;
+    
+    
     % Perform a closing operation and filter the image to create a smoother appearance
     if small_structures
         morph_size = 1;
+        threshold = 0.2;
     else
         morph_size = 3;
+        threshold = 0.5;
     end
+
+    required_padding_mm = 2*threshold + morph_size;
+    required_padding = ceil(required_padding_mm/min(segmentation.VoxelSize)) + 1;
+    sub_seg.AddBorder(required_padding);
+    
+    disp(['Padding: ' num2str(required_padding)]);
     
     if morph_size > 0
         sub_seg.BinaryMorph(@imclose, morph_size);
@@ -61,12 +72,9 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
         sub_seg = PTKGaussianFilter(sub_seg, smoothing_size);
     end
     
-    % Draw the 3D surface
-    if small_structures
-        threshold = 0.2;
-    else
-        threshold = 0.5;
-    end
+    
+
+    
     
     [xc, yc, zc] = sub_seg.GetPTKCoordinates;
     [xc, yc, zc] = PTKImageCoordinateUtilities.ConvertFromPTKCoordinatesCoordwise(xc, yc, zc, coordinate_system, template_image);
