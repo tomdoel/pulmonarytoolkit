@@ -422,7 +422,7 @@ classdef PTKGui < handle
             for uid = uids
                 temporary_uid = uid{1};
                 if ~old_infos.isKey(temporary_uid) || rebuild_menu_for_each_uid
-                    if ~rebuild_menu
+                    if ~rebuild_menu_for_each_uid
                         obj.Reporting.ShowMessage('PTKGui:UnimportedDaatsetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the settings file. I am adding this dataset to the quick load menu. This may occur if the settings file was recently removed.']);
                     end
                     try
