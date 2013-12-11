@@ -39,6 +39,12 @@ function [is_dicom, header] = ReadDicomFile(file_path, file_name, tag_list, tag_
     file_data = file_data';
     fclose(file_id);
     
+    if numel(file_data) < 132
+        is_dicom = false;
+        header = [];
+        return;
+    end
+    
     % Check this is a Dicom file
     dicom_chars = char(file_data(129:132));
     is_dicom = strcmp(dicom_chars, 'DICM');
