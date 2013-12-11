@@ -94,51 +94,11 @@ classdef PTKMain < handle
         end
         
         function uids = ImportDataRecursive(obj, filename)
-            obj.Reporting.ShowProgress('Imorting data');
-            exist_result = exist(filename, 'file');
             
-            if exist_result == 0
-                % Directory does not exist
-                obj.Reporting.Error('PTKMain:DirectoryDoesNotExist', 'The directory passed to PTKMain.ImportDataRecursive() does not exist.');
-            
-            elseif exist_result == 7
-                % Directory specified
-                directories_to_do = {filename};
-                
-            elseif exist_result == 2
-                % File specified - try to extract a directory
-                [dir_path, ~, ~] = fileparts(filename);
-                exist_result_2 = exist(dir_path, 'file');
-                if exist_result_2 ~= 0
-                    obj.Reporting.Error('PTKMain:DirectoryDoesNotExist', 'The argument passed to PTKMain.ImportDataRecursive() does not exist or is not a directory.');
-                else
-                    directories_to_do = {dir_path};
-                end
-            end
-            
-            uids = {};
-            while ~isempty(directories_to_do)
-                current_dir = directories_to_do{end};
-                directories_to_do(end) = [];
-                
-                obj.Reporting.UpdateProgressMessage(['Importing data from: ' current_dir]);
-                
-                if obj.Reporting.HasBeenCancelled
-                    obj.Reporting.Error(PTKSoftwareInfo.CancelErrorId, 'User cancelled');
-                end
-                
-                new_uids = obj.ImportData(current_dir);
-                uids = cat(2, uids, new_uids);
-                next_dirs = PTKDiskUtilities.GetListOfDirectories(current_dir);
-                for dir_to_add = next_dirs
-                    new_dir = fullfile(current_dir, dir_to_add{1});
-                    directories_to_do{end + 1} = new_dir;
-                end
-            end
-            
-            obj.Reporting.CompleteProgress;
+            file_series_grouper = PTKGroupFilesIntoSeries(filename, obj.Reporting);
+            uids = ImportFromSeriesGrouper(obj, file_series_grouper);
+            return;
         end
-
         
         % Imports data into the Pulmonary Toolkit so that it can be accessed
         % from the CreateDatasetFromUid() method. The input argument is a string
@@ -147,77 +107,16 @@ classdef PTKMain < handle
         % path points to a directory, or to a DICOM file, then all image files in
         % the directory will be imported.
         function uids = ImportData(obj, filename)
-            uids = {};
-            
             % Only support a string input
             if ~ischar(filename)
                 obj.Reporting.Error('PTKMain:FileNotAsExpected', 'The file or directory passed to PTKMain.ImportData() is not of the expected type.');
             end
             
-            import_whole_directory = false;
-            dicom_filenames = {};
-            non_dicom_filenames = {};
-            
-            % Find out file type. 0=does not exist; 2=file; 7-directory
-            exist_result = exist(filename, 'file');
-            if exist_result == 0
-                obj.Reporting.Error('PTKMain:FileDoesNotExist', 'The file or directory passed to PTKMain.ImportData() does not exist.');
-                
-            elseif exist_result == 7
-                import_whole_directory = true;
-                [import_folder, ~] = PTKDiskUtilities.GetFullFileParts(filename);
-                
-            elseif exist_result == 2
-                [import_folder, filename_only] = PTKDiskUtilities.GetFullFileParts(filename);
-                if isdicom(filename)
-                    import_whole_directory = true;
-                else
-                    import_whole_directory = false;
-                    non_dicom_filenames = {filename_only};
-                end
-            else
-                obj.Reporting.Error('PTKMain:FileDoesNotExist', 'The file or directory passed to PTKMain.ImportData() does not exist.');
-            end
-            
-            if import_whole_directory
-                all_filenames = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(import_folder, '*'));
-                dicom_filenames = PTKDiskUtilities.RemoveNonDicomFiles(import_folder, all_filenames);
-                non_dicom_filenames = setdiff(all_filenames, dicom_filenames);
-            end
-            
-            if ~isempty(dicom_filenames)
-                image_info_dicom = PTKImageInfo(import_folder, dicom_filenames, PTKImageFileFormat.Dicom, [], [], []);
-                try
-                    [image_info_dicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_dicom);
-                    uids{end + 1} = image_info_dicom.ImageUid;
-                catch ex
-                    obj.Reporting.ShowWarning('PTKMain:DicomReadFail', ['The file ' fullfile(import_folder, dicom_filenames{1}) ' looks like a Dicom file, but I am unable to read it. I will ignore this file.'], ex.message);
-                end
-            end
-            
-            while ~isempty(non_dicom_filenames)
-                next_filename = non_dicom_filenames{1};
-                non_dicom_filenames(1) = [];
-                [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(import_folder, next_filename, [], obj.Reporting);
-                
-                % Remove duplicate filenames (which can happen when loading
-                % metadata files which have raw and metaheader files)
-                non_dicom_filenames = setdiff(non_dicom_filenames, principal_filename);
-                non_dicom_filenames = setdiff(non_dicom_filenames, secondary_filenames);
-                
-                if isempty(image_type)
-                    obj.Reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(import_folder, next_filename)], []);
-                else
-                    image_info_nondicom = PTKImageInfo(import_folder, principal_filename, image_type, [], [], []);
-                    [image_info_nondicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_nondicom);
-                    uids{end + 1} = image_info_nondicom.ImageUid;
-                end
-            end
-            if numel(uids) == 1
-                uids = uids{1};
-            end
+            file_series_grouper = PTKGroupFilesIntoSeries(filename, obj.Reporting);
+            uids = ImportFromSeriesGrouper(obj, file_series_grouper);
+            return
         end
-        
+                
         function RunLinkFile(obj, dataset_uid, dataset)
             user_path = PTKDirectories.GetUserPath;
             if PTKDiskUtilities.FileExists(user_path, 'PTKLinkDatasets.m');
@@ -225,6 +124,54 @@ classdef PTKMain < handle
             end
         end
         
+    end
+    
+    methods (Access = private)
+    
+        function uids = ImportFromSeriesGrouper(obj, grouper)
+            uids = [];
+            dicom_groups = grouper.DicomSeriesGroupings;
+            for dicom_group = dicom_groups.values
+                uids{end + 1} = obj.ImportDicomFiles(dicom_group{1}.Filenames);
+            end
+            
+            non_dicom_group = grouper.NonDicomGrouping;
+            non_dicom_uids =obj.ImportNonDicomFiles(non_dicom_group.Filenames);
+            uids = [uids, non_dicom_uids];
+        end
+        
+        function uid = ImportDicomFiles(obj, dicom_filenames)
+            uid = [];
+            image_info_dicom = PTKImageInfo(dicom_filenames{1}.Path, dicom_filenames, PTKImageFileFormat.Dicom, [], [], []);
+            try
+                [image_info_dicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_dicom);
+                uid = image_info_dicom.ImageUid;
+            catch ex
+                obj.Reporting.ShowWarning('PTKMain:DicomReadFail', ['The file ' dicom_filenames{1}.FullFile ' looks like a Dicom file, but I am unable to read it. I will ignore this file.'], ex.message);
+            end
+        end
+        
+        function uids = ImportNonDicomFiles(obj, non_dicom_filenames)
+            uids = {};
+            while ~isempty(non_dicom_filenames)
+                next_filename = non_dicom_filenames{1};
+                non_dicom_filenames(1) = [];
+                [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(next_filename.Path, next_filename.Name, [], obj.Reporting);
+                
+                % Remove duplicate filenames (which can happen when loading
+                % metadata files which have raw and metaheader files)
+                non_dicom_filenames = setdiff(non_dicom_filenames, principal_filename);
+                non_dicom_filenames = setdiff(non_dicom_filenames, secondary_filenames);
+                
+                if isempty(image_type)
+                    obj.Reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(import_folder, next_filename.FullFile)], []);
+                else
+                    image_info_nondicom = PTKImageInfo(import_folder, principal_filename, image_type, [], [], []);
+                    [image_info_nondicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_nondicom);
+                    uids{end + 1} = image_info_nondicom.ImageUid;
+                end
+            end
+        end
     end
     
     methods (Static, Access = private)
@@ -263,13 +210,21 @@ classdef PTKMain < handle
             study_uid = [];
             switch(image_info.ImageFileFormat)
                 case PTKImageFileFormat.Dicom
-                    filenames = PTKDiskUtilities.GetDirectoryFileList(image_info.ImagePath, '*');
-                    first_filename = fullfile(image_info.ImagePath, filenames{1});
-                    if (exist(first_filename, 'file') ~= 2)
+                    if ~isempty(image_info.ImageFilenames) && isa(image_info.ImageFilenames{1}, 'PTKFilename')
+                        first_path = image_info.ImageFilenames{1}.Path;
+                        first_filename = image_info.ImageFilenames{1}.Name;
+                        full_first_filename = image_info.ImageFilenames{1}.FullFile;
+                    else
+                        filenames = PTKDiskUtilities.GetDirectoryFileList(image_info.ImagePath, '*');
+                        first_filename = filenames{1};
+                        first_path = image_info.ImagePath;
+                        full_first_filename = fullfile(image_info.ImagePath, filenames{1});
+                    end
+                    if (exist(full_first_filename, 'file') ~= 2)
                        throw(MException('PTKMain:FileNotFound', ['The file ' first_filename ' does not exist']));
                     end
                     
-                    metadata = PTKDicomUtilities.ReadMetadata(image_info.ImagePath, filenames{1}, reporting);
+                    metadata = PTKDicomUtilities.ReadMetadata(first_path, first_filename, reporting);
                     image_uid = metadata.SeriesInstanceUID;
                     study_uid = metadata.StudyInstanceUID;
                     modality = metadata.Modality;
