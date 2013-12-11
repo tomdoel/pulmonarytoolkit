@@ -1,4 +1,4 @@
-function dicom_series = PTKGetDicomSeries(file_path, file_name, reporting)
+function dicom_series = PTKGetDicomSeries(file_path, file_name, tags_to_get, reporting)
     % PTKGetDicomSeries. Gets the series UID for a Dicom file
     %
     %
@@ -14,13 +14,11 @@ function dicom_series = PTKGetDicomSeries(file_path, file_name, reporting)
         reporting = PTKReportingDefault;
     end
 
-    tic
-    tags_to_get = PTKDicomDictionary.GroupingTags;
-    tag_map = tags_to_get.TagMap;
-    tag_list = tags_to_get.TagList;
-    toc
+    if isempty(tags_to_get)
+        tags_to_get = PTKDicomDictionary.GroupingTags;
+    end
     
-    header = PTKFastReadDicomHeader(file_path, file_name, tag_list, tag_map, reporting);
+    header = PTKFastReadDicomHeader(file_path, file_name, tags_to_get, reporting);
     if ~isempty(header)
         dicom_series = header.SeriesInstanceUID;
     end
