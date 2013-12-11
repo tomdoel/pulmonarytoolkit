@@ -160,11 +160,11 @@ classdef PTKMain < handle
                 
                 % Remove duplicate filenames (which can happen when loading
                 % metadata files which have raw and metaheader files)
-                non_dicom_filenames = setdiff(non_dicom_filenames, principal_filename);
-                non_dicom_filenames = setdiff(non_dicom_filenames, secondary_filenames);
+                non_dicom_filenames = PTKDiskUtilities.FilenameSetDiff(non_dicom_filenames, principal_filename, next_filename.Path);
+                non_dicom_filenames = PTKDiskUtilities.FilenameSetDiff(non_dicom_filenames, secondary_filenames, next_filename.Path);
                 
                 if isempty(image_type)
-                    obj.Reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(import_folder, next_filename.FullFile)], []);
+                    obj.Reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(next_filename.Path, next_filename.FullFile)], []);
                 else
                     image_info_nondicom = PTKImageInfo(import_folder, principal_filename, image_type, [], [], []);
                     [image_info_nondicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_nondicom);
