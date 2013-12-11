@@ -113,7 +113,12 @@ classdef PTKDropDownLoadMenuManager < handle
                     if isempty(infos{index}.ImageFilenames) || (length(infos{index}.ImageFilenames) > 1)
                         display_path = infos{index}.ImagePath;
                     else
-                        display_path = fullfile(infos{index}.ImagePath, infos{index}.ImageFilenames{1});
+                        first_filename = infos{index}.ImageFilenames{1};
+                        if isa(first_filename, 'PTKFilename')
+                            display_path = first_filename.FullFile;
+                        else
+                            display_path = fullfile(infos{index}.ImagePath, infos{index}.ImageFilenames{1});
+                        end
                     end
                     prev_paths{index} = display_path;
                 end
