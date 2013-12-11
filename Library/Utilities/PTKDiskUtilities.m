@@ -434,7 +434,23 @@ classdef PTKDiskUtilities
                     dir = dir_path;
                 end
             end
+        end
+        
+        function filename_set = FilenameSetDiff(filename_set, filenames_to_match, match_path)
+            if ~iscell(filenames_to_match)
+                filenames_to_match = {filenames_to_match};
+            end
+            file_set = PTKContainerUtilities.GetFieldValuesFromSet(filename_set, 'Name');
+            path_set = PTKContainerUtilities.GetFieldValuesFromSet(filename_set, 'Path');
+
+            matching_files = false(1, numel(file_set));
             
+            for match = filenames_to_match
+                matching_files = matching_files & strcmp(file_set, match);
+                matching_files = matching_files & strcmp(path_set, match_path);
+            end
+            
+            filename_set = filename_set(~matching_files);
         end
     end
 end
