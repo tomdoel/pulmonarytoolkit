@@ -45,13 +45,21 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     file_grouper = PTKFileGrouper;
     
     for file_index = 1 : num_slices
+        next_file = sorted_filenames{file_index};
+        if isa(next_file, 'PTKFilename')
+            file_path = next_file.Path;
+            file_name = next_file.Name;
+        else
+            file_path = image_path;
+            file_name = next_file;
+        end
         
-        if PTKDicomUtilities.PTKIsDicom(image_path, sorted_filenames{file_index})
-            file_grouper.AddFile(PTKDicomUtilities.ReadMetadata(image_path, sorted_filenames{file_index}, reporting));
+        if PTKDicomUtilities.PTKIsDicom(file_path, file_name)
+            file_grouper.AddFile(PTKDicomUtilities.ReadMetadata(file_path, file_name, reporting));
         else
             % If this is not a Dicom image we exclude it from the set and warn the
             % user
-            reporting.ShowWarning('PTKLoadMetadataFromDicomFiles:NotADicomFile', ['PTKLoadMetadataFromDicomFiles: The file ' file_name ' is not a DICOM file and will be removed from this series.']);
+            reporting.ShowWarning('PTKLoadMetadataFromDicomFiles:NotADicomFile', ['PTKLoadMetadataFromDicomFiles: The file ' fullfile(file_path, file_name) ' is not a DICOM file and will be removed from this series.']);
         end
         
         reporting.UpdateProgressValue(round(100*file_index/num_slices));
