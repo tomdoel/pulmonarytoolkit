@@ -12,7 +12,7 @@ classdef PTKFileSeriesGrouper < handle
     %        
 
     
-    properties (Access = private)
+    properties (SetAccess = private)
         DicomSeriesGroupings
         NonDicomGrouping
     end
@@ -30,9 +30,10 @@ classdef PTKFileSeriesGrouper < handle
                 obj.NonDicomGrouping.AddFile(filename);
             else
                 if obj.DicomSeriesGroupings.isKey(uid)
-                    obj.DicomSeriesGroupings(uid).AddFile(filename);
+                    group = obj.DicomSeriesGroupings(uid);
+                    group.AddFile(filename);
                 else
-                    obj.DicomSeriesGroupings(end + 1) = PTKFileSeriesGrouping(uid, filename);
+                    obj.DicomSeriesGroupings(uid) = PTKFileSeriesGrouping(uid, filename);
                 end
             end
         end
