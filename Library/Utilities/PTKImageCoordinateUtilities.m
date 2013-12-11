@@ -49,7 +49,7 @@ classdef PTKImageCoordinateUtilities
             direction_vectors = [i' - 2, j' - 2, k' - 2];
         end
 
-        % This function alters matrix indices to transform from a smaller matix to
+        % This function alters matrix indices to transform from a smaller matrix to
         % a bigger one
         function new_indices = OffsetIndices(indices, offset, size_small, size_big)
             indices_i = (indices - 1);
