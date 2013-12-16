@@ -50,7 +50,7 @@ end
 
 function results = GetSegmentsFromUpperRightLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
-    roi.ChangeRawImage(lobes.RawImage == 1);
+    roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightUpperLobe);
     segments = all_segments.UpperRightSegments;
     segments_remaining = segments;    
     airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
@@ -77,7 +77,7 @@ end
 
 function results = GetSegmentsFromMidRightLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
-    roi.ChangeRawImage(lobes.RawImage == 2);
+    roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightMiddleLobe);
     segments = all_segments.MiddleRightSegments;
     segments_remaining = segments;    
     airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
@@ -101,7 +101,7 @@ end
 
 function results = GetSegmentsFromLowerRightLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
-    roi.ChangeRawImage(lobes.RawImage == 4);
+    roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightLowerLobe);
     segments = all_segments.LowerRightSegments;
     segments_remaining = segments;    
     airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
@@ -134,7 +134,7 @@ end
 
 function results = GetSegmentsFromUpperLeftLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
-    roi.ChangeRawImage(lobes.RawImage == 5);
+    roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.LeftUpperLobe);
     segments = all_segments.UpperLeftSegments;
     segments_remaining = segments;
     airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
@@ -168,7 +168,7 @@ end
 
 function results = GetSegmentsFromLowerLeftLobe(airway_root, lobes, all_segments, reporting)
     roi = lobes.BlankCopy;
-    roi.ChangeRawImage(lobes.RawImage == 6);
+    roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.LeftLowerLobe);
     segments = all_segments.LowerLeftSegments;
     segments_remaining = segments;    
     airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
