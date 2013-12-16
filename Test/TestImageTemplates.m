@@ -26,6 +26,11 @@ classdef TestImageTemplates < PTKTest
             obj.Assert(image_templates.IsContextEnabled(PTKContext.LungROI), 'ROI context is enabled');
             obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftLung), 'Context is enabled');
             obj.Assert(image_templates.IsContextEnabled(PTKContext.RightLung), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightUpperLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightMiddleLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightLowerLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftUpperLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftLowerLobe), 'Context is enabled');
             
             
             
@@ -50,6 +55,11 @@ classdef TestImageTemplates < PTKTest
             obj.Assert(image_templates.IsContextEnabled(PTKContext.LungROI), 'ROI context is enabled');
             obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftLung), 'Context is enabled');
             obj.Assert(image_templates.IsContextEnabled(PTKContext.RightLung), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightUpperLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightMiddleLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightLowerLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftUpperLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftLowerLobe), 'Context is enabled');
             
             
             % Now force a failure for two more contexts (LungROI and LeftLung,
@@ -82,6 +92,11 @@ classdef TestImageTemplates < PTKTest
             obj.Assert(~image_templates.IsContextEnabled(PTKContext.LungROI), 'ROI context is enabled');
             obj.Assert(~image_templates.IsContextEnabled(PTKContext.LeftLung), 'Context is enabled');
             obj.Assert(image_templates.IsContextEnabled(PTKContext.RightLung), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightUpperLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightMiddleLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightLowerLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftUpperLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftLowerLobe), 'Context is enabled');
 
             
             
@@ -96,12 +111,27 @@ classdef TestImageTemplates < PTKTest
             mock_left_image.Title = 'left';
             mock_right_image = PTKImage;
             mock_right_image.Title = 'right';
+            mock_ru_image = PTKImage;
+            mock_ru_image.Title = 'ru';
+            mock_rm_image = PTKImage;
+            mock_rm_image.Title = 'rm';
+            mock_rl_image = PTKImage;
+            mock_rl_image.Title = 'rl';
+            mock_lu_image = PTKImage;
+            mock_lu_image.Title = 'lu';
+            mock_ll_image = PTKImage;
+            mock_ll_image.Title = 'll';
             
             % Check fetching the template images
             mock_dataset_results.AddMockResult('PTKLungROI', PTKContext.LungROI, mock_roi_image, [], [], true);
             mock_dataset_results.AddMockResult('PTKOriginalImage', PTKContext.OriginalImage, mock_full_image, [], [], true);
             mock_dataset_results.AddMockResult('PTKGetContextForSingleLung', PTKContext.LeftLung, mock_left_image, [], [], true);
             mock_dataset_results.AddMockResult('PTKGetContextForSingleLung', PTKContext.RightLung, mock_right_image, [], [], true);
+            mock_dataset_results.AddMockResult('PTKGetContextForLobe', PTKContext.RightUpperLobe, mock_ru_image, [], [], true);
+            mock_dataset_results.AddMockResult('PTKGetContextForLobe', PTKContext.RightMiddleLobe, mock_rm_image, [], [], true);
+            mock_dataset_results.AddMockResult('PTKGetContextForLobe', PTKContext.RightLowerLobe, mock_rl_image, [], [], true);
+            mock_dataset_results.AddMockResult('PTKGetContextForLobe', PTKContext.LeftUpperLobe, mock_lu_image, [], [], true);
+            mock_dataset_results.AddMockResult('PTKGetContextForLobe', PTKContext.LeftLowerLobe, mock_ll_image, [], [], true);
 
             roi_template_image = image_templates.GetTemplateImage(PTKContext.LungROI, null_dataset_stack);
             obj.Assert(strcmp(roi_template_image.Title, 'roi'), 'Correct template image returned');
@@ -115,14 +145,31 @@ classdef TestImageTemplates < PTKTest
             right_template_image = image_templates.GetTemplateImage(PTKContext.RightLung, null_dataset_stack);
             obj.Assert(strcmp(right_template_image.Title, 'right'), 'Correct template image returned');
 
+            ru_template_image = image_templates.GetTemplateImage(PTKContext.RightUpperLobe, null_dataset_stack);
+            obj.Assert(strcmp(ru_template_image.Title, 'ru'), 'Correct template image returned');
+
+            rm_template_image = image_templates.GetTemplateImage(PTKContext.RightMiddleLobe, null_dataset_stack);
+            obj.Assert(strcmp(rm_template_image.Title, 'rm'), 'Correct template image returned');
+            
+            rl_template_image = image_templates.GetTemplateImage(PTKContext.RightLowerLobe, null_dataset_stack);
+            obj.Assert(strcmp(rl_template_image.Title, 'rl'), 'Correct template image returned');
+            
+            lu_template_image = image_templates.GetTemplateImage(PTKContext.LeftUpperLobe, null_dataset_stack);
+            obj.Assert(strcmp(lu_template_image.Title, 'lu'), 'Correct template image returned');
+
+            ll_template_image = image_templates.GetTemplateImage(PTKContext.LeftLowerLobe, null_dataset_stack);
+            obj.Assert(strcmp(ll_template_image.Title, 'll'), 'Correct template image returned');
+            
             % Contexts should now all be enabled again
             obj.Assert(image_templates.IsContextEnabled(PTKContext.OriginalImage), 'Context is enabled');
             obj.Assert(image_templates.IsContextEnabled(PTKContext.LungROI), 'ROI context is enabled');
             obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftLung), 'Context is enabled');
             obj.Assert(image_templates.IsContextEnabled(PTKContext.RightLung), 'Context is enabled');
-            
-            
-            
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightUpperLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightMiddleLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.RightLowerLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftUpperLobe), 'Context is enabled');
+            obj.Assert(image_templates.IsContextEnabled(PTKContext.LeftLowerLobe), 'Context is enabled');
         end
     end    
 end
