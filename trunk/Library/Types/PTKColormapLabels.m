@@ -12,6 +12,12 @@ classdef PTKColormapLabels
     properties (Constant)
         RightLung = 1
         LeftLung = 2
+        
+        RightUpperLobe = 1
+        RightMiddleLobe = 2
+        RightLowerLobe = 4
+        LeftUpperLobe = 5
+        LeftLowerLobe = 6
     end
     
 end
