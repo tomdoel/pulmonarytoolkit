@@ -61,7 +61,7 @@ classdef PTKAirwayGrowing < PTKPlugin
             reporting.ShowProgress('RIGHT - upper');
             reporting.UpdateProgressStage(0, 5);
             lobes_fill = lobes.Copy;
-            lobes_fill.ChangeRawImage(lobes.RawImage == 1);
+            lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightUpperLobe);
             lobes_fill.CropToFit;
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, upper_right_start_segment, reporting)
@@ -69,7 +69,7 @@ classdef PTKAirwayGrowing < PTKPlugin
             reporting.ShowProgress('RIGHT - middle');
             reporting.UpdateProgressStage(1, 5);
             lobes_fill = lobes.Copy;
-            lobes_fill.ChangeRawImage(lobes.RawImage == 2);
+            lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightMiddleLobe);
             lobes_fill.CropToFit;
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, middle_right_start_segment, reporting)
@@ -77,7 +77,7 @@ classdef PTKAirwayGrowing < PTKPlugin
             reporting.ShowProgress('RIGHT - lower');
             reporting.UpdateProgressStage(2, 5);
             lobes_fill = lobes.Copy;
-            lobes_fill.ChangeRawImage(lobes.RawImage == 4);
+            lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightLowerLobe);
             lobes_fill.CropToFit;
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, lower_right_start_segment, reporting)
@@ -85,7 +85,7 @@ classdef PTKAirwayGrowing < PTKPlugin
             reporting.ShowProgress('LEFT - upper');
             reporting.UpdateProgressStage(3, 5);
             lobes_fill = lobes.Copy;
-            lobes_fill.ChangeRawImage(lobes.RawImage == 5);
+            lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.LeftUpperLobe);
             lobes_fill.CropToFit;
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, upper_left_start_segment, reporting)
@@ -93,7 +93,7 @@ classdef PTKAirwayGrowing < PTKPlugin
             reporting.ShowProgress('LEFT - lower');
             reporting.UpdateProgressStage(4, 5);
             lobes_fill = lobes.Copy;
-            lobes_fill.ChangeRawImage(lobes.RawImage == 6);
+            lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.LeftLowerLobe);
             lobes_fill.CropToFit;
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, lower_left_start_segment, reporting)
