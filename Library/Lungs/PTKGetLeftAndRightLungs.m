@@ -12,7 +12,7 @@ function results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lu
     
     min_volume_warning_limit = 2000;
     l_to_r_ratio_limit = 1.5;
-    
+    reporting.UpdateProgressAndMessage(25, 'Separating lungs');
     results = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting);
     
     reporting.UpdateProgressAndMessage(25, 'Closing right lung');
