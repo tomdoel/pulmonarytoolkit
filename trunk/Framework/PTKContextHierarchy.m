@@ -57,9 +57,11 @@ classdef PTKContextHierarchy < handle
             full_set =  PTKContextSetMapping(PTKContextSet.OriginalImage, []);
             roi_set = PTKContextSetMapping(PTKContextSet.LungROI, full_set);
             single_lung_set = PTKContextSetMapping(PTKContextSet.SingleLung, roi_set);
+            lobe_set = PTKContextSetMapping(PTKContextSet.Lobe, single_lung_set);
             obj.ContextSets(char(PTKContextSet.OriginalImage)) = full_set;
             obj.ContextSets(char(PTKContextSet.LungROI)) = roi_set;
             obj.ContextSets(char(PTKContextSet.SingleLung)) = single_lung_set;
+            obj.ContextSets(char(PTKContextSet.Lobe)) = lobe_set;
             
             % Create the hierarchy of contexts
             obj.Contexts = containers.Map;
@@ -67,10 +69,20 @@ classdef PTKContextHierarchy < handle
             roi_context = PTKContextMapping(PTKContext.LungROI, roi_set, @PTKCreateTemplateForLungROI, full_context);
             left_lung_context = PTKContextMapping(PTKContext.LeftLung, single_lung_set, @PTKCreateTemplateForSingleLung, roi_context);
             right_lung_context = PTKContextMapping(PTKContext.RightLung, single_lung_set, @PTKCreateTemplateForSingleLung, roi_context);
+            right_upper_lobe_context = PTKContextMapping(PTKContext.RightUpperLobe, lobe_set, @PTKCreateTemplateForLobe, right_lung_context);
+            right_middle_lobe_context = PTKContextMapping(PTKContext.RightMiddleLobe, lobe_set, @PTKCreateTemplateForLobe, right_lung_context);
+            right_lower_lobe_context = PTKContextMapping(PTKContext.RightLowerLobe, lobe_set, @PTKCreateTemplateForLobe, right_lung_context);
+            left_upper_lobe_context = PTKContextMapping(PTKContext.LeftUpperLobe, lobe_set, @PTKCreateTemplateForLobe, left_lung_context);
+            left_lower_lobe_context = PTKContextMapping(PTKContext.LeftLowerLobe, lobe_set, @PTKCreateTemplateForLobe, left_lung_context);
             obj.Contexts(char(PTKContext.OriginalImage)) = full_context;
             obj.Contexts(char(PTKContext.LungROI)) = roi_context;
             obj.Contexts(char(PTKContext.LeftLung)) = left_lung_context;
             obj.Contexts(char(PTKContext.RightLung)) = right_lung_context;
+            obj.Contexts(char(PTKContext.RightUpperLobe)) = right_upper_lobe_context;
+            obj.Contexts(char(PTKContext.RightMiddleLobe)) = right_middle_lobe_context;
+            obj.Contexts(char(PTKContext.RightLowerLobe)) = right_lower_lobe_context;
+            obj.Contexts(char(PTKContext.LeftUpperLobe)) = left_upper_lobe_context;
+            obj.Contexts(char(PTKContext.LeftLowerLobe)) = left_lower_lobe_context;
         end
         
         function [result, output_image, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
@@ -187,9 +199,12 @@ classdef PTKContextHierarchy < handle
                 result = full_result;
                 return
             end
+            
             template_image = obj.ImageTemplates.GetTemplateImage(context_mapping.Context, dataset_stack);
-            full_result.ResizeToMatch(template_image);
+            
+            % Make a copy before we resize
             result = full_result.Copy;
+            result.ResizeToMatch(template_image);
             
             if template_image.ImageExists
                 result.Clear;

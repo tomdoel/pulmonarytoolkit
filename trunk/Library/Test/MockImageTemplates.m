@@ -34,6 +34,7 @@ classdef MockImageTemplates < handle
             
             result_from_cache = obj.MockTemplateImages(key_name);
             template = result_from_cache.Template;
+            template = template.Copy;
         end
 
 

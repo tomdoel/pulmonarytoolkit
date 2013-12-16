@@ -2,7 +2,7 @@ classdef PTKContextSet
     % PTKContextSet. An enumeration used to specify the regions of interest
     %     over which a plugin can operate 
     %
-    %     A context set represents a set of contexts. A context is a ragion
+    %     A context set represents a set of contexts. A context is a region
     %     of interest for which the plugin can be executed. Therefore the
     %     context type repesents the set of contexts for which the plugin
     %     can be run.
@@ -32,7 +32,8 @@ classdef PTKContextSet
     enumeration
         OriginalImage,  % The full image
         LungROI,        % A region containing the lung and airways
-        SingleLung      % Left lung or right lung
+        SingleLung,      % Left lung or right lung
+        Lobe
     end
     
 end

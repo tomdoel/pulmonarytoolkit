@@ -19,7 +19,13 @@ classdef PTKContext
         RightLungROI,   % A region containing the right lung
         
         LeftLung,       % Results for the left lung
-        RightLung       % Results for the right lung
+        RightLung,      % Results for the right lung
+        
+        RightUpperLobe,
+        RightMiddleLobe,
+        RightLowerLobe,
+        LeftUpperLobe,
+        LeftLowerLobe
     end
     
 end
