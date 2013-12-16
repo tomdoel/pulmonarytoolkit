@@ -114,7 +114,7 @@ classdef PTKImageUtilities
             ball_element = ball_element <= (size_mm/2);
         end
         
-        function offset_indices = GetBallOffsetIndices(voxel_size, size_mm, image_size)
+        function [offset_indices, ball] = GetBallOffsetIndices(voxel_size, size_mm, image_size)
             ball = PTKImageUtilities.CreateBallStructuralElement(voxel_size, size_mm);
             ball_indices = find(ball);
             central_coord = 1 + round(size(ball) - 1)/2;
