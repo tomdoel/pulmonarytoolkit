@@ -2671,6 +2671,10 @@ classdef PTKDicomDictionary < handle
 %             tags(end + 1) = PTKDicomDictionaryItem('60xx,4000', 'LT', 'OverlayComments');
             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0000', 'UL', 'PixelDataGroupLength');
 %             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0010', 'OW/OB', 'PixelData');
+
+            tags(end + 1) = PTKDicomDictionaryItem('7FE0,0010', 'OB', 'PixelData');
+
+
             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0020', 'OW', 'CoefficientsSDVN');
             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0030', 'OW', 'CoefficientsSDHN');
             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0040', 'OW', 'CoefficientsSDDN');
