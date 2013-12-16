@@ -9,5 +9,5 @@ function template = PTKCreateTemplateForSingleLung(left_or_right_lung_mask, cont
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    template = left_or_right_lung_mask;
+    template = left_or_right_lung_mask.Copy;
 end
