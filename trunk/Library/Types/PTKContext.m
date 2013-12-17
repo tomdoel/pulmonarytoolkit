@@ -18,8 +18,10 @@ classdef PTKContext
         LeftLungROI,    % A region containing the left lung
         RightLungROI,   % A region containing the right lung
         
-        LeftLung,       % Results for the left lung
-        RightLung,      % Results for the right lung
+        Lungs,          % Left and right lung masks after removal of airways
+
+        LeftLung,       % Left lung mask
+        RightLung,      % Right lung mask
         
         RightUpperLobe,
         RightMiddleLobe,

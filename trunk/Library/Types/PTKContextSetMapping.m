@@ -4,7 +4,7 @@ classdef PTKContextSetMapping < handle
     %
     % This class is used by the Framework to store the relationship between
     % a context set (a set of related contexts) and its contexts; and 
-    % alo the hierarchy of contexts. For example, the LeftLung and RightLung
+    % also the hierarchy of contexts. For example, the LeftLung and RightLung
     % contexts are both in the context set SingleLung. The SingleLung set is a 
     % child of the LungROI context set.
     %
@@ -23,7 +23,7 @@ classdef PTKContextSetMapping < handle
         ContextList % The set of PTKContextMappings corresponding to contexts of this type 
         
         Parent      % Parent type (of type PTKContextSetMapping)
-        Children    % Parent type (of type PTKContextSetMapping)
+        Children    % Child type (of type PTKContextSetMapping)
     end
     
     methods
