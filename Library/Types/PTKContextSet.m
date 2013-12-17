@@ -32,8 +32,11 @@ classdef PTKContextSet
     enumeration
         OriginalImage,  % The full image
         LungROI,        % A region containing the lung and airways
-        SingleLung,      % Left lung or right lung
-        Lobe
+        Lungs,          % Left and right lungs
+        SingleLung,     % Left lung or right lung
+        Lobe,
+        
+        Any             % Valid for any context
     end
     
 end
