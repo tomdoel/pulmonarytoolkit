@@ -129,6 +129,11 @@ classdef TestContextHierarchy < PTKTest
             mock_lr_lung_image_raw_l(3:9, 6:8, 3:9) = true;
             mock_lr_lung_image_raw = uint8(mock_lr_lung_image_raw_r) + 2*uint8(mock_lr_lung_image_raw_l);
             
+            % Create template for both lungs
+            template_lungs = template_roi.BlankCopy;
+            template_lungs.ChangeRawImage(mock_lr_lung_image_raw > 0);
+            template_lungs.Title = 'TemplateLungs';
+            
             % Create templates for left and right lungs
             template_right = mock_roi_image.BlankCopy;
             template_right.ChangeRawImage(mock_lr_lung_image_raw_r);
@@ -138,6 +143,7 @@ classdef TestContextHierarchy < PTKTest
             % Add templates to the template class
             mock_image_templates.AddMockImage(PTKContext.OriginalImage, template_original);
             mock_image_templates.AddMockImage(PTKContext.LungROI, template_roi);
+            mock_image_templates.AddMockImage(PTKContext.Lungs, template_lungs);
             mock_image_templates.AddMockImage(PTKContext.LeftLung, template_left);
             mock_image_templates.AddMockImage(PTKContext.RightLung, template_right);
             
@@ -166,8 +172,14 @@ classdef TestContextHierarchy < PTKTest
             plugin3 = 'Plugin3';
             mock_plugin_info3 = [];
             mock_plugin_info3.GeneratePreview = true;
-            mock_plugin_info3.Context = PTKContextSet.SingleLung;
+            mock_plugin_info3.Context = PTKContextSet.Lungs;
             mock_plugin_info3.PluginType = 'ReplaceOverlay';
+            
+            plugin4 = 'Plugin3';
+            mock_plugin_info4 = [];
+            mock_plugin_info4.GeneratePreview = true;
+            mock_plugin_info4.Context = PTKContextSet.SingleLung;
+            mock_plugin_info4.PluginType = 'ReplaceOverlay';
             
             results = mock_roi_image.Copy;
             results_original = mock_original_image.Copy;
@@ -181,12 +193,14 @@ classdef TestContextHierarchy < PTKTest
             
             mock_dependency_tracker.AddMockResult(plugin, PTKContext.LungROI, dataset_uid, results, cache_info_input, true);
             mock_dependency_tracker.AddMockResult(plugin2, PTKContext.OriginalImage, dataset_uid, results_original, cache_info_input, true);
-            mock_dependency_tracker.AddMockResult(plugin3, PTKContext.LeftLung, dataset_uid, left_image, cache_info_input, true);
-            mock_dependency_tracker.AddMockResult(plugin3, PTKContext.RightLung, dataset_uid, right_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin3, PTKContext.Lungs, dataset_uid, results_original, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin4, PTKContext.LeftLung, dataset_uid, left_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin4, PTKContext.RightLung, dataset_uid, right_image, cache_info_input, true);
 
             mock_plugin = MockPlugin;
             mock_plugin2 = MockPlugin;
             mock_plugin3 = MockPlugin;
+            mock_plugin4 = MockPlugin;
             
 
             % Fetch a result for the LungROI from a plugin that has a
@@ -199,6 +213,17 @@ classdef TestContextHierarchy < PTKTest
             obj.Assert(strcmp(cache_info, cache_info), 'Expected run output');
             obj.Assert(isequal(result.RawImage, uint8(mock_roi_image.RawImage)), 'Image is correct ROI');
             obj.Assert(isequal(output_image.RawImage, uint8(mock_roi_image.RawImage)), 'Image is correct ROI');
+            
+            % Fetch a result for the lungs from a plugin that has a
+            % LungROI context set            
+            result = context_hierarchy.GetResult(plugin, PTKContext.Lungs, [], mock_plugin_info, mock_plugin, dataset_uid, [], false, false, mock_reporting);
+            [result, output_image, plugin_has_been_run, cache_info] = context_hierarchy.GetResult(plugin, PTKContext.Lungs, [], mock_plugin_info, mock_plugin, dataset_uid, [], force_generate_image, false, mock_reporting);
+            obj.Assert(strcmp(result.Title, results.Title), 'Expected result');
+            obj.Assert(strcmp(output_image.Title, mock_roi_image.Title), 'Expected image');
+            obj.Assert(plugin_has_been_run == true, 'Expected run output');
+            obj.Assert(strcmp(cache_info, cache_info), 'Expected run output');
+            obj.Assert(isequal(result.RawImage, uint8(mock_lr_lung_image.RawImage & mock_roi_image.RawImage)), 'Image is correct ROI');
+            obj.Assert(isequal(output_image.RawImage, uint8(mock_lr_lung_image.RawImage & mock_roi_image.RawImage)), 'Image is correct ROI');
             
             % Fetch a result for the left lung from a plugin that has a
             % LungROI context set            
@@ -235,15 +260,15 @@ classdef TestContextHierarchy < PTKTest
             
             % Fetch a result for the right lung from a plugin that has an
             % OriginalImage context set
-            result = context_hierarchy.GetResult(plugin3, PTKContext.OriginalImage, [], mock_plugin_info3, mock_plugin3, dataset_uid, [], false, false, mock_reporting);
-            [result, output_image, plugin_has_been_run, cache_info] = context_hierarchy.GetResult(plugin3, PTKContext.OriginalImage, [], mock_plugin_info3, mock_plugin3, dataset_uid, [], force_generate_image, false, mock_reporting);
-            obj.Assert(strcmp(result.LungROI.LeftLung.Title, left_image.Title), 'Expected result');
-            obj.Assert(strcmp(result.LungROI.RightLung.Title, right_image.Title), 'Expected result');
+            result = context_hierarchy.GetResult(plugin4, PTKContext.OriginalImage, [], mock_plugin_info4, mock_plugin4, dataset_uid, [], false, false, mock_reporting);
+            [result, output_image, plugin_has_been_run, cache_info] = context_hierarchy.GetResult(plugin4, PTKContext.OriginalImage, [], mock_plugin_info4, mock_plugin4, dataset_uid, [], force_generate_image, false, mock_reporting);
+            obj.Assert(strcmp(result.LungROI.Lungs.LeftLung.Title, left_image.Title), 'Expected result');
+            obj.Assert(strcmp(result.LungROI.Lungs.RightLung.Title, right_image.Title), 'Expected result');
             obj.Assert(plugin_has_been_run == true, 'Expected run output');
-            obj.Assert(strcmp(cache_info.LungROI.LeftLung, cache_info_input), 'Expected run output');
-            obj.Assert(strcmp(cache_info.LungROI.RightLung, cache_info_input), 'Expected run output');
-            obj.Assert(isequal(result.LungROI.LeftLung.RawImage, left_image.RawImage), 'Image is correct ROI');
-            obj.Assert(isequal(result.LungROI.RightLung.RawImage, right_image.RawImage), 'Image is correct ROI');
+            obj.Assert(strcmp(cache_info.LungROI.Lungs.LeftLung, cache_info_input), 'Expected run output');
+            obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung, cache_info_input), 'Expected run output');
+            obj.Assert(isequal(result.LungROI.Lungs.LeftLung.RawImage, left_image.RawImage), 'Image is correct ROI');
+            obj.Assert(isequal(result.LungROI.Lungs.RightLung.RawImage, right_image.RawImage), 'Image is correct ROI');
             
             
             expected_output_image = mock_original_image.Copy;
@@ -298,6 +323,11 @@ classdef TestContextHierarchy < PTKTest
             mock_lobe_image_raw = uint8(mock_lobe_image_raw_ru) + 2*uint8(mock_lobe_image_raw_rm) + ...
                 + 4*uint8(mock_lobe_image_raw_rl) + 5*uint8(mock_lobe_image_raw_lu) + 6*uint8(mock_lobe_image_raw_ll);
             
+            % Create template for both lungs
+            template_lungs = template_roi.BlankCopy;
+            template_lungs.ChangeRawImage(mock_lr_lung_image_raw > 0);
+            template_lungs.Title = 'TemplateLungs';
+            
             % Create templates for left and right lungs
             template_right = mock_roi_image.BlankCopy;
             template_right.ChangeRawImage(mock_lr_lung_image_raw_r);
@@ -317,6 +347,7 @@ classdef TestContextHierarchy < PTKTest
             template_ll.ChangeRawImage(mock_lobe_image_raw_ll);
             
 %             template_roi.CropToFit;
+            template_lungs.CropToFit;
             template_left.CropToFit;
             template_right.CropToFit;
             template_ru.CropToFit;
@@ -328,6 +359,7 @@ classdef TestContextHierarchy < PTKTest
             % Add templates to the template class
             mock_image_templates.AddMockImage(PTKContext.OriginalImage, template_original);
             mock_image_templates.AddMockImage(PTKContext.LungROI, template_roi);
+            mock_image_templates.AddMockImage(PTKContext.Lungs, template_lungs);
             mock_image_templates.AddMockImage(PTKContext.LeftLung, template_left);
             mock_image_templates.AddMockImage(PTKContext.RightLung, template_right);
             mock_image_templates.AddMockImage(PTKContext.RightUpperLobe, template_ru);
@@ -365,18 +397,27 @@ classdef TestContextHierarchy < PTKTest
             plugin3 = 'Plugin3';
             mock_plugin_info3 = [];
             mock_plugin_info3.GeneratePreview = true;
-            mock_plugin_info3.Context = PTKContextSet.SingleLung;
+            mock_plugin_info3.Context = PTKContextSet.Lungs;
             mock_plugin_info3.PluginType = 'ReplaceOverlay';
             
             plugin4 = 'Plugin4';
             mock_plugin_info4 = [];
             mock_plugin_info4.GeneratePreview = true;
-            mock_plugin_info4.Context = PTKContextSet.Lobe;
+            mock_plugin_info4.Context = PTKContextSet.SingleLung;
             mock_plugin_info4.PluginType = 'ReplaceOverlay';
+            
+            plugin5 = 'Plugin5';
+            mock_plugin_info5 = [];
+            mock_plugin_info5.GeneratePreview = true;
+            mock_plugin_info5.Context = PTKContextSet.Lobe;
+            mock_plugin_info5.PluginType = 'ReplaceOverlay';
             
             results = mock_roi_image.Copy;
             results_original = mock_original_image.Copy;
             
+            lungs_image = template_lungs.Copy;
+            lungs_image.ChangeRawImage(uint8(lungs_image.RawImage).*uint8(rand(lungs_image.ImageSize) > 0.5));
+            lungs_image.Title = 'LungsResultImage';
             left_image = template_left.Copy;
             left_image.ChangeRawImage(uint8(left_image.RawImage).*uint8(rand(left_image.ImageSize) > 0.5));
             left_image.Title = 'LeftResultImage';
@@ -401,18 +442,20 @@ classdef TestContextHierarchy < PTKTest
             
             mock_dependency_tracker.AddMockResult(plugin, PTKContext.LungROI, dataset_uid, results, cache_info_input, true);
             mock_dependency_tracker.AddMockResult(plugin2, PTKContext.OriginalImage, dataset_uid, results_original, cache_info_input, true);
-            mock_dependency_tracker.AddMockResult(plugin3, PTKContext.LeftLung, dataset_uid, left_image, cache_info_input, true);
-            mock_dependency_tracker.AddMockResult(plugin3, PTKContext.RightLung, dataset_uid, right_image, cache_info_input, true);
-            mock_dependency_tracker.AddMockResult(plugin4, PTKContext.RightUpperLobe, dataset_uid, ru_image, cache_info_input, true);
-            mock_dependency_tracker.AddMockResult(plugin4, PTKContext.RightMiddleLobe, dataset_uid, rm_image, cache_info_input, true);
-            mock_dependency_tracker.AddMockResult(plugin4, PTKContext.RightLowerLobe, dataset_uid, rl_image, cache_info_input, true);
-            mock_dependency_tracker.AddMockResult(plugin4, PTKContext.LeftUpperLobe, dataset_uid, lu_image, cache_info_input, true);
-            mock_dependency_tracker.AddMockResult(plugin4, PTKContext.LeftLowerLobe, dataset_uid, ll_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin3, PTKContext.Lungs, dataset_uid, lungs_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin4, PTKContext.LeftLung, dataset_uid, left_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin4, PTKContext.RightLung, dataset_uid, right_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin5, PTKContext.RightUpperLobe, dataset_uid, ru_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin5, PTKContext.RightMiddleLobe, dataset_uid, rm_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin5, PTKContext.RightLowerLobe, dataset_uid, rl_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin5, PTKContext.LeftUpperLobe, dataset_uid, lu_image, cache_info_input, true);
+            mock_dependency_tracker.AddMockResult(plugin5, PTKContext.LeftLowerLobe, dataset_uid, ll_image, cache_info_input, true);
 
             mock_plugin = MockPlugin;
             mock_plugin2 = MockPlugin;
             mock_plugin3 = MockPlugin;
             mock_plugin4 = MockPlugin;
+            mock_plugin5 = MockPlugin;
             
 
             result = context_hierarchy.GetResult(plugin, PTKContext.LungROI, [], mock_plugin_info, mock_plugin, dataset_uid, [], false, false, mock_reporting);
@@ -457,15 +500,15 @@ classdef TestContextHierarchy < PTKTest
             
             % Fetch a result for the whole lung from a plugin with a lung
             % context set
-            result = context_hierarchy.GetResult(plugin3, PTKContext.OriginalImage, [], mock_plugin_info3, mock_plugin3, dataset_uid, [], false, false, mock_reporting);
-            [result, output_image, plugin_has_been_run, cache_info] = context_hierarchy.GetResult(plugin3, PTKContext.OriginalImage, [], mock_plugin_info3, mock_plugin3, dataset_uid, [], force_generate_image, false, mock_reporting);
-            obj.Assert(strcmp(result.LungROI.LeftLung.Title, left_image.Title), 'Expected result');
-            obj.Assert(strcmp(result.LungROI.RightLung.Title, right_image.Title), 'Expected result');
+            result = context_hierarchy.GetResult(plugin4, PTKContext.OriginalImage, [], mock_plugin_info4, mock_plugin4, dataset_uid, [], false, false, mock_reporting);
+            [result, output_image, plugin_has_been_run, cache_info] = context_hierarchy.GetResult(plugin4, PTKContext.OriginalImage, [], mock_plugin_info4, mock_plugin4, dataset_uid, [], force_generate_image, false, mock_reporting);
+            obj.Assert(strcmp(result.LungROI.Lungs.LeftLung.Title, left_image.Title), 'Expected result');
+            obj.Assert(strcmp(result.LungROI.Lungs.RightLung.Title, right_image.Title), 'Expected result');
             obj.Assert(plugin_has_been_run == true, 'Expected run output');
-            obj.Assert(strcmp(cache_info.LungROI.LeftLung, cache_info_input), 'Expected run output');
-            obj.Assert(strcmp(cache_info.LungROI.RightLung, cache_info_input), 'Expected run output');
-            obj.Assert(isequal(result.LungROI.LeftLung.RawImage, left_image.RawImage), 'Image is correct ROI');
-            obj.Assert(isequal(result.LungROI.RightLung.RawImage, right_image.RawImage), 'Image is correct ROI');
+            obj.Assert(strcmp(cache_info.LungROI.Lungs.LeftLung, cache_info_input), 'Expected run output');
+            obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung, cache_info_input), 'Expected run output');
+            obj.Assert(isequal(result.LungROI.Lungs.LeftLung.RawImage, left_image.RawImage), 'Image is correct ROI');
+            obj.Assert(isequal(result.LungROI.Lungs.RightLung.RawImage, right_image.RawImage), 'Image is correct ROI');
             
             
             
@@ -530,21 +573,21 @@ classdef TestContextHierarchy < PTKTest
             
             % Fetch a result for the whole lung from a plugin with a lobe
             % context set
-            result = context_hierarchy.GetResult(plugin4, PTKContext.OriginalImage, [], mock_plugin_info4, mock_plugin4, dataset_uid, [], false, false, mock_reporting);
-            [result, output_image, plugin_has_been_run, cache_info] = context_hierarchy.GetResult(plugin4, PTKContext.OriginalImage, [], mock_plugin_info4, mock_plugin4, dataset_uid, [], force_generate_image, false, mock_reporting);
-            obj.Assert(strcmp(result.LungROI.LeftLung.LeftUpperLobe.Title, lu_image.Title), 'Expected result');
-            obj.Assert(strcmp(result.LungROI.RightLung.RightUpperLobe.Title, ru_image.Title), 'Expected result');
+            result = context_hierarchy.GetResult(plugin5, PTKContext.OriginalImage, [], mock_plugin_info5, mock_plugin5, dataset_uid, [], false, false, mock_reporting);
+            [result, output_image, plugin_has_been_run, cache_info] = context_hierarchy.GetResult(plugin5, PTKContext.OriginalImage, [], mock_plugin_info5, mock_plugin5, dataset_uid, [], force_generate_image, false, mock_reporting);
+            obj.Assert(strcmp(result.LungROI.Lungs.LeftLung.LeftUpperLobe.Title, lu_image.Title), 'Expected result');
+            obj.Assert(strcmp(result.LungROI.Lungs.RightLung.RightUpperLobe.Title, ru_image.Title), 'Expected result');
             obj.Assert(plugin_has_been_run == true, 'Expected run output');
-            obj.Assert(strcmp(cache_info.LungROI.LeftLung.LeftUpperLobe, cache_info_input), 'Expected run output');
-            obj.Assert(strcmp(cache_info.LungROI.LeftLung.LeftLowerLobe, cache_info_input), 'Expected run output');
-            obj.Assert(strcmp(cache_info.LungROI.RightLung.RightUpperLobe, cache_info_input), 'Expected run output');
-            obj.Assert(strcmp(cache_info.LungROI.RightLung.RightMiddleLobe, cache_info_input), 'Expected run output');
-            obj.Assert(strcmp(cache_info.LungROI.RightLung.RightLowerLobe, cache_info_input), 'Expected run output');
-            obj.Assert(isequal(result.LungROI.LeftLung.LeftUpperLobe.RawImage, lu_image.RawImage), 'Image is correct ROI');
-            obj.Assert(isequal(result.LungROI.LeftLung.LeftLowerLobe.RawImage, ll_image.RawImage), 'Image is correct ROI');
-            obj.Assert(isequal(result.LungROI.RightLung.RightUpperLobe.RawImage, ru_image.RawImage), 'Image is correct ROI');
-            obj.Assert(isequal(result.LungROI.RightLung.RightMiddleLobe.RawImage, rm_image.RawImage), 'Image is correct ROI');
-            obj.Assert(isequal(result.LungROI.RightLung.RightLowerLobe.RawImage, rl_image.RawImage), 'Image is correct ROI');
+            obj.Assert(strcmp(cache_info.LungROI.Lungs.LeftLung.LeftUpperLobe, cache_info_input), 'Expected run output');
+            obj.Assert(strcmp(cache_info.LungROI.Lungs.LeftLung.LeftLowerLobe, cache_info_input), 'Expected run output');
+            obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung.RightUpperLobe, cache_info_input), 'Expected run output');
+            obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung.RightMiddleLobe, cache_info_input), 'Expected run output');
+            obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung.RightLowerLobe, cache_info_input), 'Expected run output');
+            obj.Assert(isequal(result.LungROI.Lungs.LeftLung.LeftUpperLobe.RawImage, lu_image.RawImage), 'Image is correct ROI');
+            obj.Assert(isequal(result.LungROI.Lungs.LeftLung.LeftLowerLobe.RawImage, ll_image.RawImage), 'Image is correct ROI');
+            obj.Assert(isequal(result.LungROI.Lungs.RightLung.RightUpperLobe.RawImage, ru_image.RawImage), 'Image is correct ROI');
+            obj.Assert(isequal(result.LungROI.Lungs.RightLung.RightMiddleLobe.RawImage, rm_image.RawImage), 'Image is correct ROI');
+            obj.Assert(isequal(result.LungROI.Lungs.RightLung.RightLowerLobe.RawImage, rl_image.RawImage), 'Image is correct ROI');
 
             expected_output_image = mock_original_image.Copy;
             expected_output_image.Clear;
