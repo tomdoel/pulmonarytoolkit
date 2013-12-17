@@ -65,6 +65,7 @@ classdef PTKImageTemplates < handle
             % Add valid contexts
             obj.ValidContexts(char(PTKContext.OriginalImage)) = 'PTKOriginalImage';
             obj.ValidContexts(char(PTKContext.LungROI)) = 'PTKLungROI';
+            obj.ValidContexts(char(PTKContext.Lungs)) = 'PTKGetContextForLungs';
             obj.ValidContexts(char(PTKContext.LeftLung)) = 'PTKGetContextForSingleLung';
             obj.ValidContexts(char(PTKContext.RightLung)) = 'PTKGetContextForSingleLung';
             obj.ValidContexts(char(PTKContext.RightUpperLobe)) = 'PTKGetContextForLobe';
@@ -76,6 +77,7 @@ classdef PTKImageTemplates < handle
             % Add handles to the functions used to generate the templates
             obj.TemplateGenerationFunctions(char(PTKContext.OriginalImage)) = @PTKCreateTemplateForOriginalImage;
             obj.TemplateGenerationFunctions(char(PTKContext.LungROI)) = @PTKCreateTemplateForLungROI;
+            obj.TemplateGenerationFunctions(char(PTKContext.Lungs)) = @PTKCreateTemplateForLungs;
             obj.TemplateGenerationFunctions(char(PTKContext.LeftLung)) = @PTKCreateTemplateForSingleLung;
             obj.TemplateGenerationFunctions(char(PTKContext.RightLung)) = @PTKCreateTemplateForSingleLung;
             obj.TemplateGenerationFunctions(char(PTKContext.RightUpperLobe)) = @PTKCreateTemplateForLobe;
@@ -136,7 +138,7 @@ classdef PTKImageTemplates < handle
                         
                         % Create a new template image if required for this
                         % context, or if the template has changed
-                        if (~obj.TemplateImages.isKey(context)) || result_may_have_changed
+                        if (~obj.TemplateImages.isKey(context_char)) || result_may_have_changed
 
                             
                             if ~obj.TemplateGenerationFunctions.isKey(context_char)
