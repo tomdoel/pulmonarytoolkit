@@ -27,7 +27,7 @@ function density_values_g_ml = PTKConvertHuToDensity(hu_values)
     % density - in relaity this relationship depends on the material being
     % scanned and the calibration of the scanner
     alpha = (density_air_stp_mgmL - density_water_mgmL)/HU_air;
-    density_values_mgml = alpha*hu_values + density_water_mgmL;
+    density_values_mgml = alpha*double(hu_values) + density_water_mgmL;
     
     % Convert from mg/mL to g/ml
     density_values_g_ml = density_values_mgml/1000;
