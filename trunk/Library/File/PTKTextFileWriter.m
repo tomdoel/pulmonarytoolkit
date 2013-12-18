@@ -38,7 +38,7 @@ classdef PTKTextFileWriter < handle
         end
         
         function WriteLine(obj, text)
-            fprintf(obj.FileId, [text '\n']);
+            fprintf(obj.FileId, [strrep(text, '%', '%%') '\r\n']);
         end
         
         function is_eof = Eof(obj)
