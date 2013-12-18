@@ -41,7 +41,7 @@ classdef PTKAirwaysAndLungs < PTKPlugin
             % Get the results for the left and right lung segmentations
             [left_and_right_lungs_results, left_and_right_lungs_image] = dataset.GetResult('PTKLeftAndRightLungs');
             
-            % Make our output image the lugn segmentation
+            % Make our output image the lung segmentation
             results = left_and_right_lungs_image.BlankCopy;
             
             % Make an image matrix with 1 for right lung, 2 for left lung and 3
