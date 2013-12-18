@@ -415,6 +415,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                     src_start_crop(3) : src_end_crop(3),  ...
                     : );
                 obj.RawImage = new_rawimage;
+                obj.CheckForZeroImageSize;
             else
                 obj.LastImageSize = new_image_size;
             end
@@ -642,6 +643,8 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 
                 if isempty(bounds)
                     obj.RawImage = [];
+                    obj.CheckForZeroImageSize;
+
                     obj.NotifyImageChanged;
                     
                 else
@@ -664,6 +667,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 if isempty(bounds)
                     obj.RawImage = [];
                     obj.NotifyImageChanged;
+                    obj.CheckForZeroImageSize;
                     return;
                 end
                 
@@ -712,6 +716,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function Crop(obj, start_crop, end_crop)
             if obj.ImageExists
                 obj.RawImage = obj.RawImage(start_crop(1):end_crop(1), start_crop(2):end_crop(2), start_crop(3):end_crop(3));
+                obj.CheckForZeroImageSize;
             else
                 obj.LastImageSize = [1 + end_crop(1) - start_crop(1), 1 + end_crop(2) - start_crop(2), 1 + end_crop(3) - start_crop(3)];
             end
@@ -735,6 +740,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 
                 new_image(1+border_size:end-border_size, 1+border_size:end-border_size, 1+border_size:end-border_size) = obj.RawImage;
                 obj.RawImage = new_image;
+                obj.CheckForZeroImageSize;
             end
             obj.Origin = obj.Origin - added_size;
             obj.NotifyImageChanged;
@@ -823,6 +829,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 
                 % Find the nearest value for each point in the new grid
                 obj.RawImage = interpn(old_i_grid, old_j_grid, old_k_grid, obj.RawImage, new_i_grid, new_j_grid, new_k_grid, interpolation_function, 0);
+                obj.CheckForZeroImageSize;
             end
             
             obj.Origin = min_new_coords;
@@ -1025,7 +1032,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         % Returns the coordinates of all points in the image in global
-        % coordinates in mm, with the origin at the centre of the original image
+        % coordinates in mm, using PTK coordinates
         function [ic, jc, kc] = GetPTKCoordinates(obj)
             [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
             [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
@@ -1178,6 +1185,14 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         % Settings have changed
         function ImagePropertyChangedCallback(obj, ~, ~, ~)
             obj.NotifyImageChanged;
+        end
+        
+        % If a cropping operation removes the entire image, we need to set the
+        % LastImageSize to zero, otherwise it will be assumed the image is template 
+        function CheckForZeroImageSize(obj)
+            if isempty(obj.RawImage)
+                obj.LastImageSize = [0, 0, 0];
+            end
         end
     end
         
