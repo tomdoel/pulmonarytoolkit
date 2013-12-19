@@ -47,7 +47,7 @@ classdef PTKDatasetStack < handle
         % Create a new PTKDatasetStackItem object with an empty dependency list and a
         % new unique identifier. The push it to the end of the stack
         function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer)
-            if obj.PluginAlreadyExistsInStack(plugin_name, context)
+            if obj.PluginAlreadyExistsInStack(plugin_name, context, dataset_uid)
                 obj.Reporting.Error('PTKDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
             attributes = [];
@@ -101,12 +101,12 @@ classdef PTKDatasetStack < handle
     methods (Access = private)
         
         % Check if this plugin already exists in the stack
-        function plugin_exists = PluginAlreadyExistsInStack(obj, plugin_name, context)
+        function plugin_exists = PluginAlreadyExistsInStack(obj, plugin_name, context, this_dataset_uid)
             for index = 1 : length(obj.DatasetStack)
                 plugin_info = obj.DatasetStack(index);
                 this_name = plugin_info.InstanceIdentifier.PluginName;
                 this_context = plugin_info.InstanceIdentifier.Context;
-                if strcmp(plugin_name, this_name)
+                if strcmp(plugin_name, this_name) && strcmp(plugin_info.InstanceIdentifier.DatasetUid, this_dataset_uid)
                     % If both contexts are null we consider this equality - but
                     % Matlab does not consider 2 null values to be equal so we
                     % check for this case explicitly
