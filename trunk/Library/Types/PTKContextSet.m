@@ -35,6 +35,7 @@ classdef PTKContextSet
         Lungs,          % Left and right lungs
         SingleLung,     % Left lung or right lung
         Lobe,
+        Segment,
         
         Any             % Valid for any context
     end

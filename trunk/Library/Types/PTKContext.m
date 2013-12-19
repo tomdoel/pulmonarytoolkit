@@ -27,7 +27,31 @@ classdef PTKContext
         RightMiddleLobe,
         RightLowerLobe,
         LeftUpperLobe,
-        LeftLowerLobe
+        LeftLowerLobe,
+        
+        % Right lung segments
+        R_AP,
+        R_P,
+        R_AN,
+        R_L,
+        R_M,
+        R_S,
+        R_MB,
+        R_AB,
+        R_LB,
+        R_PB,
+        
+        % Left lung segments
+        L_APP,
+        L_APP2,
+        L_AN,
+        L_SL,
+        L_IL,
+        L_S,
+        L_AMB,
+        L_LB,
+        L_PB
+        
     end
     
 end
