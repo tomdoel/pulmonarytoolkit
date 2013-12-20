@@ -68,11 +68,6 @@ classdef PTKImageTemplates < handle
             obj.ValidContexts(char(PTKContext.Lungs)) = 'PTKGetContextForLungs';
             obj.ValidContexts(char(PTKContext.LeftLung)) = 'PTKGetContextForSingleLung';
             obj.ValidContexts(char(PTKContext.RightLung)) = 'PTKGetContextForSingleLung';
-            obj.ValidContexts(char(PTKContext.RightUpperLobe)) = 'PTKGetContextForLobe';
-            obj.ValidContexts(char(PTKContext.RightMiddleLobe)) = 'PTKGetContextForLobe';
-            obj.ValidContexts(char(PTKContext.RightLowerLobe)) = 'PTKGetContextForLobe';
-            obj.ValidContexts(char(PTKContext.LeftUpperLobe)) = 'PTKGetContextForLobe';
-            obj.ValidContexts(char(PTKContext.LeftLowerLobe)) = 'PTKGetContextForLobe';
 
             % Add handles to the functions used to generate the templates
             obj.TemplateGenerationFunctions(char(PTKContext.OriginalImage)) = @PTKCreateTemplateForOriginalImage;
@@ -80,11 +75,23 @@ classdef PTKImageTemplates < handle
             obj.TemplateGenerationFunctions(char(PTKContext.Lungs)) = @PTKCreateTemplateForLungs;
             obj.TemplateGenerationFunctions(char(PTKContext.LeftLung)) = @PTKCreateTemplateForSingleLung;
             obj.TemplateGenerationFunctions(char(PTKContext.RightLung)) = @PTKCreateTemplateForSingleLung;
-            obj.TemplateGenerationFunctions(char(PTKContext.RightUpperLobe)) = @PTKCreateTemplateForLobe;
-            obj.TemplateGenerationFunctions(char(PTKContext.RightMiddleLobe)) = @PTKCreateTemplateForLobe;
-            obj.TemplateGenerationFunctions(char(PTKContext.RightLowerLobe)) = @PTKCreateTemplateForLobe;
-            obj.TemplateGenerationFunctions(char(PTKContext.LeftUpperLobe)) = @PTKCreateTemplateForLobe;
-            obj.TemplateGenerationFunctions(char(PTKContext.LeftLowerLobe)) = @PTKCreateTemplateForLobe;
+            
+            % Lobes
+            for context = [PTKContext.RightUpperLobe, PTKContext.RightMiddleLobe, PTKContext.RightLowerLobe, PTKContext.LeftUpperLobe, PTKContext.LeftLowerLobe]
+                obj.ValidContexts(char(context)) = 'PTKGetContextForLobe';
+                obj.TemplateGenerationFunctions(char(context)) = @PTKCreateTemplateForLobe;
+            end
+
+            % Segments
+            for context = [PTKContext.R_AP, PTKContext.R_P, PTKContext.R_AN, PTKContext.R_L, ...
+                    PTKContext.R_M, PTKContext.R_S, PTKContext.R_MB, PTKContext.R_AB, ...
+                    PTKContext.R_LB, PTKContext.R_PB, PTKContext.L_APP, PTKContext.L_APP2, ...
+                    PTKContext.L_AN, PTKContext.L_SL, PTKContext.L_IL, PTKContext.L_S, ...
+                    PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB];
+                
+                obj.ValidContexts(char(context)) = 'PTKGetContextForSegment';
+                obj.TemplateGenerationFunctions(char(context)) = @PTKCreateTemplateForSegment;
+            end
             
             % Loads cached template data
             obj.Load;
