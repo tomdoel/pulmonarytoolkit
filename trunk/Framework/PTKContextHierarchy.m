@@ -59,12 +59,14 @@ classdef PTKContextHierarchy < handle
             lungs_set = PTKContextSetMapping(PTKContextSet.Lungs, roi_set);
             single_lung_set = PTKContextSetMapping(PTKContextSet.SingleLung, lungs_set);
             lobe_set = PTKContextSetMapping(PTKContextSet.Lobe, single_lung_set);
+            segment_set = PTKContextSetMapping(PTKContextSet.Segment, lobe_set);
             any_set = PTKContextSetMapping(PTKContextSet.Any, []);
             obj.ContextSets(char(PTKContextSet.OriginalImage)) = full_set;
             obj.ContextSets(char(PTKContextSet.LungROI)) = roi_set;
             obj.ContextSets(char(PTKContextSet.Lungs)) = lungs_set;
             obj.ContextSets(char(PTKContextSet.SingleLung)) = single_lung_set;
             obj.ContextSets(char(PTKContextSet.Lobe)) = lobe_set;
+            obj.ContextSets(char(PTKContextSet.Segment)) = segment_set;
             obj.ContextSets(char(PTKContextSet.Any)) = any_set;
             
             % Create the hierarchy of contexts
@@ -72,23 +74,57 @@ classdef PTKContextHierarchy < handle
             full_context =  PTKContextMapping(PTKContext.OriginalImage, full_set, @PTKCreateTemplateForOriginalImage, []);
             roi_context = PTKContextMapping(PTKContext.LungROI, roi_set, @PTKCreateTemplateForLungROI, full_context);
             lungs_context = PTKContextMapping(PTKContext.Lungs, lungs_set, @PTKCreateTemplateForLungs, roi_context);
-            left_lung_context = PTKContextMapping(PTKContext.LeftLung, single_lung_set, @PTKCreateTemplateForSingleLung, lungs_context);
-            right_lung_context = PTKContextMapping(PTKContext.RightLung, single_lung_set, @PTKCreateTemplateForSingleLung, lungs_context);
-            right_upper_lobe_context = PTKContextMapping(PTKContext.RightUpperLobe, lobe_set, @PTKCreateTemplateForLobe, right_lung_context);
-            right_middle_lobe_context = PTKContextMapping(PTKContext.RightMiddleLobe, lobe_set, @PTKCreateTemplateForLobe, right_lung_context);
-            right_lower_lobe_context = PTKContextMapping(PTKContext.RightLowerLobe, lobe_set, @PTKCreateTemplateForLobe, right_lung_context);
-            left_upper_lobe_context = PTKContextMapping(PTKContext.LeftUpperLobe, lobe_set, @PTKCreateTemplateForLobe, left_lung_context);
-            left_lower_lobe_context = PTKContextMapping(PTKContext.LeftLowerLobe, lobe_set, @PTKCreateTemplateForLobe, left_lung_context);
+
+            for context = [PTKContext.LeftLung, PTKContext.RightLung]
+                context_mapping = PTKContextMapping(context, single_lung_set, @PTKCreateTemplateForSingleLung, lungs_context);
+                obj.Contexts(char(context)) = context_mapping;
+            end
+
+            % Add right lobes
+            for context = [PTKContext.RightUpperLobe, PTKContext.RightMiddleLobe, PTKContext.RightLowerLobe]
+                context_mapping = PTKContextMapping(context, lobe_set, @PTKCreateTemplateForLobe, obj.Contexts(char(PTKContext.RightLung)));
+                obj.Contexts(char(context)) = context_mapping;
+            end
+
+            % Add left lobes
+            for context = [PTKContext.LeftUpperLobe, PTKContext.LeftLowerLobe]
+                context_mapping = PTKContextMapping(context, lobe_set, @PTKCreateTemplateForLobe, obj.Contexts(char(PTKContext.LeftLung)));
+                obj.Contexts(char(context)) = context_mapping;
+            end
+            
+            % Segments for upper right lobe
+            for context = [PTKContext.R_AP, PTKContext.R_P, PTKContext.R_AN]
+                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.RightUpperLobe)));
+                obj.Contexts(char(context)) = context_mapping;
+            end
+            
+            % Segments for middle right lobe
+            for context = [PTKContext.R_L, PTKContext.R_M]
+                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.RightMiddleLobe)));
+                obj.Contexts(char(context)) = context_mapping;
+            end
+            
+            % Segments for lower right lobe
+            for context = [PTKContext.R_S, PTKContext.R_MB, PTKContext.R_AB, PTKContext.R_LB, PTKContext.R_PB]
+                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.RightLowerLobe)));
+                obj.Contexts(char(context)) = context_mapping;
+            end
+            
+            % Segments for upper left lobe
+            for context = [PTKContext.L_APP, PTKContext.L_APP2, PTKContext.L_AN, PTKContext.L_SL, PTKContext.L_IL]
+                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.LeftUpperLobe)));
+                obj.Contexts(char(context)) = context_mapping;
+            end
+            
+            % Segments for lower left lobe
+            for context = [PTKContext.L_S, PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB]
+                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.LeftLowerLobe)));
+                obj.Contexts(char(context)) = context_mapping;
+            end
+        
             obj.Contexts(char(PTKContext.OriginalImage)) = full_context;
             obj.Contexts(char(PTKContext.LungROI)) = roi_context;
             obj.Contexts(char(PTKContext.Lungs)) = lungs_context;
-            obj.Contexts(char(PTKContext.LeftLung)) = left_lung_context;
-            obj.Contexts(char(PTKContext.RightLung)) = right_lung_context;
-            obj.Contexts(char(PTKContext.RightUpperLobe)) = right_upper_lobe_context;
-            obj.Contexts(char(PTKContext.RightMiddleLobe)) = right_middle_lobe_context;
-            obj.Contexts(char(PTKContext.RightLowerLobe)) = right_lower_lobe_context;
-            obj.Contexts(char(PTKContext.LeftUpperLobe)) = left_upper_lobe_context;
-            obj.Contexts(char(PTKContext.LeftLowerLobe)) = left_lower_lobe_context;
         end
         
         function [result, output_image, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
