@@ -36,7 +36,7 @@ classdef PTKAirwaysPrunedBySegment < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            segmental_bronchi_for_each_lobe = dataset.GetResult('PTKSegmentalBronchiForEachLobe');
+            segmental_bronchi_for_each_lobe = dataset.GetResult('PTKSegmentalBronchi');
             unpruned_segmental_centreline_tree = segmental_bronchi_for_each_lobe.StartBranches;
             
             airways_by_segment = dataset.GetResult('PTKSegmentsByNearestBronchus');
