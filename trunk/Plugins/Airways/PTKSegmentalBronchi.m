@@ -1,5 +1,5 @@
-classdef PTKSegmentalBronchiForEachLobe < PTKPlugin
-    % PTKSegmentalBronchiForEachLobe. Plugin to find the segmental bronchi in each lobe
+classdef PTKSegmentalBronchi < PTKPlugin
+    % PTKSegmentalBronchi. Plugin to find the segmental bronchi in each lobe
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
@@ -11,7 +11,7 @@ classdef PTKSegmentalBronchiForEachLobe < PTKPlugin
     %     Licence
     %     -------
     %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
  
