@@ -23,26 +23,32 @@ classdef PTKStack < handle
         end
         
         function Push(obj, stack_items)
+            % Places one or more items on the stack. stack_items can be a single
+            % object, a set or an array of objects
             obj.Stack = [obj.Stack PTKContainerUtilities.ConvertToSet(stack_items)];
         end
         
         function item = Pop(obj)
+            % Retrieves the item from the top of the stack
             item = obj.Stack{end};
             obj.Stack(end) = [];
         end
         
         function is_empty = IsEmpty(obj)
+            % Returns true if there are no items in the stack
             is_empty = isempty(obj.Stack);
         end
         
-        % Clears the stack and returns any remaining values in a set
         function all_values = GetAndClear(obj)
+            % Clears the stack and returns any remaining values in a set
             all_values = obj.Stack;
             obj.Stack = [];
         end
         
         function field_values = GetField(obj, field_name)
-             field_values = PTKContainerUtilities.GetFieldValuesFromSet(obj.Stack, field_name);
+            % Returns the values of the field field_name from every item in the
+            % stack
+            field_values = PTKContainerUtilities.GetFieldValuesFromSet(obj.Stack, field_name);
         end
     end
 end
