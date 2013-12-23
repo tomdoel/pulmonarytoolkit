@@ -55,9 +55,6 @@ classdef PTKSpongeModel < PTKPlugin
             left_and_right_lungs = application.GetResult('PTKLeftAndRightLungs');
             number_axial_slices = roi.ImageSize(3);
 
-            ct_air = -1000;
-            ct_water = 0;
-            
             reporting.UpdateProgressAndMessage(0, 'Calculating gas volume per slice');
             
             for axial_slice_number = 1 : number_axial_slices
@@ -81,11 +78,10 @@ classdef PTKSpongeModel < PTKPlugin
                             
                             gravity_slice_mask = gravity_slice_lr == left_right;
                             mask_indices = find(gravity_slice_mask);
+
+                            results_metrics = PTKSpongeModel.ComputeAirTissueFraction(gravity_slice, gravity_slice_mask, roi, reporting);
+                            fraction_air = results_metrics.AirFractionPercent/100;
                             
-                            density_values = gravity_slice(gravity_slice_mask(:));
-                            hu_values = roi.GreyscaleToHounsfield(density_values);
-                            mean_ct_value = mean(hu_values);
-                            fraction_air = mean_ct_value/(ct_air - ct_water);
                             [~, j_coordinates, ~] = ind2sub(size(gravity_slice_mask), mask_indices);
                             if ~isempty(j_coordinates)
                                 if left_right == 1
@@ -117,5 +113,40 @@ classdef PTKSpongeModel < PTKPlugin
 
 
         end
+        
+        
+        % We could use PTKComputeAirTissueFraction, but that requires PTKImage
+        % as inputs
+        function results = ComputeAirTissueFraction(roi, mask, template, reporting)
+            ct_air_hu = -1000;
+            ct_water_hu = 0;
+            
+            % Get the density values from the image
+            raw_values = roi(mask(:));
+            
+            % Convert to HU
+            hu_values = template.GreyscaleToHounsfield(raw_values);
+            
+            % Convert to g/ml
+            density_gml = PTKConvertHuToDensity(raw_values);
+            
+            mean_density_gml = mean(density_gml);
+            std_density_gml = std(density_gml);
+            
+            mean_density_hu = mean(double(hu_values));
+            std_density_hu = std(double(hu_values));
+
+            fraction_air = 100*mean_density_hu/(ct_air_hu - ct_water_hu);
+            fraction_tissue = 100 - fraction_air;
+            
+            results = PTKMetrics;
+            results.AddMetric('AirFractionPercent', fraction_air, '% of air');
+            results.AddMetric('TissueFractionPercent', fraction_tissue, '% of tissue');
+            results.AddMetric('MeanDensityGml', mean_density_gml, 'Mean density (g/ml)');
+            results.AddMetric('StdDensityGml', std_density_gml, 'Std of density (g/ml)');
+            results.AddMetric('MeanDensityHu', mean_density_hu, 'Mean density (HU)');
+            results.AddMetric('StdDensityHu', std_density_hu, 'Std of density (HU)');
+        end
+        
     end
 end
