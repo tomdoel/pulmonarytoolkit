@@ -34,7 +34,7 @@ classdef PTKGetContextForSegment < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
-            segment_mask = dataset.GetResult('PTKSegmentsByNearestBronchusFromGrowingTree', PTKContext.LungROI);
+            segment_mask = dataset.GetResult('PTKSegmentsByNearestGrowingBronchus', PTKContext.LungROI);
             results = PTKGetSegmentROI(segment_mask, context, reporting);
         end
     end

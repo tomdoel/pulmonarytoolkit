@@ -49,7 +49,7 @@ classdef PTKSegmentsByNearestGrowingBronchus < PTKPlugin
                 lobe_label = lobe_labels(lobe_index);
                 lobe_mask = lobes.BlankCopy;
                 lobe_mask.ChangeRawImage(lobes.RawImage == lobe_label);
-                segments_map = PTKSegmentsByNearestBronchusFromGrowingTree.ComputeForLobe(lobe_mask, acinar_map, segmental_labels{lobe_index}, reporting);
+                segments_map = PTKSegmentsByNearestGrowingBronchus.ComputeForLobe(lobe_mask, acinar_map, segmental_labels{lobe_index}, reporting);
                 results.ChangeSubImageWithMask(segments_map, lobe_mask);
             end
         end
