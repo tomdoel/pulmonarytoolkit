@@ -1,10 +1,10 @@
-function output_image = PTKSmoothedRegionGrowing(threshold_image, start_points_global, smoothing_size_mm, reporting)
-    % PTKSmoothedRegionGrowing. Performs 3D region growing through the supplied
-    %     binary threshold image, starting from the specified points
+function output_image = PTKSmoothedRegionGrowingMatlab(threshold_image, start_points_global, smoothing_size_mm, reporting)
+    % PTKSmoothedRegionGrowingMatlab. Performs 3D region growing for multiple
+    %     regions, with a smoothing constraint applied to the region boundaries.
     %
     %
     %     Syntax:
-    %         output_image = PTKSmoothedRegionGrowing(threshold_image, start_points_global, reporting)
+    %         output_image = PTKSmoothedRegionGrowingMatlab(threshold_image, start_points_global, reporting)
     %
     %         Inputs:
     %         ------
