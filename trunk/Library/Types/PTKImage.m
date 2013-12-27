@@ -727,7 +727,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         % Adds a blank border of border_size voxels to the image in all
         % dimensions
         function AddBorder(obj, border_size)
-            added_size = [border_size border_size border_size];
+            if numel(border_size) == 3
+                added_size = border_size;
+            else
+                added_size = [border_size border_size border_size];
+            end
             if ~obj.ImageExists
                 obj.LastImageSize = obj.LastImageSize + 2*added_size;
             else
@@ -738,7 +742,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                     new_image = zeros(obj.ImageSize + 2*added_size, class_name);
                 end
                 
-                new_image(1+border_size:end-border_size, 1+border_size:end-border_size, 1+border_size:end-border_size) = obj.RawImage;
+                new_image(1+added_size(1):end-added_size(1), 1+added_size(2):end-added_size(2), 1+added_size(3):end-added_size(3)) = obj.RawImage;
                 obj.RawImage = new_image;
                 obj.CheckForZeroImageSize;
             end
