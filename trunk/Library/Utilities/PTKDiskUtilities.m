@@ -196,7 +196,7 @@ classdef PTKDiskUtilities
         function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
             dicom_filenames = [];
             for index = 1 : length(filenames)
-                if (isdicom(fullfile(image_path, filenames{index}))) && (~strcmp(filenames{index}, 'DICOMDIR'))
+                if (PTKDicomUtilities.IsDicom(image_path, filenames{index}))
                     dicom_filenames{end + 1} = filenames{index};
                 end
             end
@@ -297,7 +297,7 @@ classdef PTKDiskUtilities
             end
             
             % Test for a DICOM image
-            if ~strcmp(image_filename, 'DICOMDIR') && isdicom(fullfile(image_path, image_filename))
+            if PTKDicomUtilities.IsDicom(image_path, image_filename)
                 image_type = PTKImageFileFormat.Dicom;
                 principal_filename = {image_filename};
                 secondary_filenames = {};

@@ -12,8 +12,18 @@ classdef PTKDicomUtilities
     methods (Static)
 
         % Returns true if this is a Dicom file
-        function is_dicom = PTKIsDicom(file_path, file_name)
-            is_dicom = isdicom(fullfile(file_path, file_name));
+        function is_dicom = IsDicom(file_path, file_name)
+    
+            if strcmp(file_name, 'DICOMDIR')
+                is_dicom = false;
+                return
+            end
+            
+            try
+                is_dicom = PTKIsDicom(file_path, file_name);
+            catch exception
+                is_dicom = isdicom(fullfile(file_path, file_name));
+            end
         end
         
         % Reads in Dicom metadata from the specified file
