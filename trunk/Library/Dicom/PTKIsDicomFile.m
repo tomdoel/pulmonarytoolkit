@@ -8,7 +8,8 @@ function is_dicom = PTKIsDicomFile(file_path, file_name, reporting)
     %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %        
+    %
+    
 
     if nargin < 3
         reporting = PTKReportingDefault;
