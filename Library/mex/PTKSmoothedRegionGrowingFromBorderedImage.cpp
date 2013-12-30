@@ -431,7 +431,7 @@ void SmoothedRegionGrowing(LabelledInputType* labelled_input_data, SmoothingElem
 // The main function call
 void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs, const mxArray* pointers_to_inputs[])
 {
-    mexPrintf("PTKSmoothedRegionGrowingFast2\n");
+    mexPrintf("PTKSmoothedRegionGrowingFromBorderedImage\n");
     
     // Check inputs
     if ((num_inputs < 2) || (num_inputs > 3)) {
@@ -439,7 +439,7 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     }
     
     if (num_outputs > 1) {
-        mexErrMsgTxt("PTKSmoothedRegionGrowingFast produces one output but you have requested more.");
+        mexErrMsgTxt("PTKSmoothedRegionGrowingFromBorderedImage produces one output but you have requested more.");
     }
     
     // Get the input images
@@ -497,6 +497,6 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     // Run the loop
     SmoothedRegionGrowing(labelled_input_data, smoothing_element_data, output_data, max_iterations, labelled_image_size, smoothing_element_size, max_iter_set_manually);
     
-    mexPrintf(" - Completed PTKSmoothedRegionGrowingFast2\n");
+    mexPrintf(" - Completed PTKSmoothedRegionGrowingFromBorderedImage\n");
     return;
 }
