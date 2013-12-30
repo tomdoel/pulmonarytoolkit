@@ -54,7 +54,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
             file_name = next_file;
         end
         
-        if PTKDicomUtilities.PTKIsDicom(file_path, file_name)
+        if PTKDicomUtilities.IsDicom(file_path, file_name)
             file_grouper.AddFile(PTKDicomUtilities.ReadMetadata(file_path, file_name, reporting));
         else
             % If this is not a Dicom image we exclude it from the set and warn the
