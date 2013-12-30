@@ -32,11 +32,6 @@ classdef PTKAirwayGrowingLabelledBySegment < PTKPlugin
     end
     
     methods (Static)
-        
-        % Note: PTKAirwayGrowingLabelledBySegment is the same as
-        % PTKSegmentsByNearestBronchusUsingSavedResults but using the internal
-        % growing algorithm
-        
         function results = RunPlugin(dataset, reporting)
             growing_centreline_tree = dataset.GetResult('PTKAirwayGrowing');
             growing_centreline_tree = growing_centreline_tree.Airways;
