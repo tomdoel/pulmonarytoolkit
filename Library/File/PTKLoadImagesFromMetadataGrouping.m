@@ -38,7 +38,7 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
     num_slices = length(metadata_grouping.Metadata);
 
     % Load image slice
-    first_image_slice = PTKDicomUtilities.ReadDicomFileFromMetadata(metadata_grouping.Metadata{1}, reporting);
+    first_image_slice = PTKDicomUtilities.ReadDicomImageFromMetadata(metadata_grouping.Metadata{1}, reporting);
 
     % Pre-allocate image matrix
     size_i = metadata_grouping.Metadata{1}.Rows;
@@ -56,7 +56,7 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
     image_wrapper.RawImage(:, :, 1) = first_image_slice;
     
     for file_index = 2 : num_slices        
-        PTKDicomUtilities.ReadDicomFileIntoWrapperFromMetadata(metadata_grouping.Metadata{file_index}, image_wrapper, file_index, reporting);
+        PTKDicomUtilities.ReadDicomImageIntoWrapperFromMetadata(metadata_grouping.Metadata{file_index}, image_wrapper, file_index, reporting);
         reporting.UpdateProgressValue(round(100*(file_index)/num_slices));
     end
     

@@ -15,7 +15,7 @@ function dicom_series = PTKGetDicomSeries(file_path, file_name, tags_to_get, rep
     end
 
     if isempty(tags_to_get)
-        tags_to_get = PTKDicomDictionary.GroupingTagsDictionary;
+        tags_to_get = PTKDicomDictionary.GroupingTagsDictionary(false);
     end
 
     try
