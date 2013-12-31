@@ -72,6 +72,8 @@ classdef PTKDicomDictionary < handle
             tags = PTKDicomDictionaryItem.empty();
             tags(end + 1) = PTKDicomDictionaryItem('0002,0000', 'UL', 'FileMetaInformationGroupLength');
             tags(end + 1) = PTKDicomDictionaryItem('0002,0010', 'UI', 'TransferSyntaxUID');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,0060', 'CS', 'Modality');
+            tags(end + 1) = PTKDicomDictionaryItem('0020,000D', 'UI', 'StudyInstanceUID');
             tags(end + 1) = PTKDicomDictionaryItem('0020,000E', 'UI', 'SeriesInstanceUID');
         end
         
