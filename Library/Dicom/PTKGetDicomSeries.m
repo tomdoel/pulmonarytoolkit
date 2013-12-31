@@ -19,7 +19,7 @@ function dicom_series = PTKGetDicomSeries(file_path, file_name, tags_to_get, rep
     end
 
     try
-        header = PTKFastReadDicomHeader(file_path, file_name, tags_to_get, reporting);
+        header = PTKReadDicomTags(file_path, file_name, tags_to_get, reporting);
     catch ex
         header = dicominfo(fullfile(file_path, file_name));
     end

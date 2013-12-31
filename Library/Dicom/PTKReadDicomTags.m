@@ -1,8 +1,8 @@
-function header = PTKFastReadDicomHeader(file_path, file_name, dictionary, reporting)
-    % PTKFastReadDicomHeader. Reads in metainformation from a Dicom file.
+function header = PTKReadDicomTags(file_path, file_name, dictionary, reporting)
+    % PTKReadDicomTags. Reads in metainformation from a Dicom file.
     %
     % Usage:
-    %     header = PTKFastReadDicomHeader(file_path, file_name, tag_list, tag_map, reporting)
+    %     header = PTKReadDicomTags(file_path, file_name, tag_list, tag_map, reporting)
     %
     %     file_path, file_name: path and filename of the Dicom file to read
     %
