@@ -62,10 +62,13 @@ function [is_dicom, header] = ReadDicomFile(file_path, file_name, tag_list, tag_
     is_little_endian = true;
     file_endian_matches_computer_endian = (computer_endian == PTKEndian.LittleEndian);
     
-    header = ParseFileData(file_data, data_pointer, tag_list, tag_map, is_explicit_vr, is_little_endian, file_endian_matches_computer_endian, reporting);
+    [header, is_little_endian] = ParseFileData(file_data, data_pointer, tag_list, tag_map, is_explicit_vr, is_little_endian, file_endian_matches_computer_endian, reporting);
+    if isfield(header, 'PixelData')
+        header.PixelData = PTKReconstructDicomImageFromHeader(header, is_little_endian, reporting);
+    end
 end
 
-function header = ParseFileData(file_data, data_pointer, tag_list, tag_map, is_explicit_vr, is_little_endian, file_endian_matches_computer_endian, reporting)
+function [header, is_little_endian] = ParseFileData(file_data, data_pointer, tag_list, tag_map, is_explicit_vr, is_little_endian, file_endian_matches_computer_endian, reporting)
     header = struct;
     data_size = uint32(numel(file_data));
     dicom_undefined_length_tag_id = 4294967295;
@@ -196,7 +199,7 @@ function header = ParseFileData(file_data, data_pointer, tag_list, tag_map, is_e
             if tag_32 == 131072 % FileMetaInformationGroupLength
                 end_of_meta_header = data_pointer + uint32(length) + parsed_value  - 1;
             end
-                
+
             % Add parsed value to our header
             header.(tag_map(tag_32).Name) = parsed_value;
         end

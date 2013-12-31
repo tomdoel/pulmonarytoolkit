@@ -39,15 +39,41 @@ classdef PTKDicomDictionary < handle
     end
     
     methods (Static)
+
+        function dictionary = GroupingTagsDictionary(add_pixel_data)
+            tags = PTKDicomDictionary.GroupingTags;
+            if add_pixel_data
+                tags(end + 1) = PTKDicomDictionary.PixelDataTag;
+            end
+            dictionary = PTKDicomDictionary(tags);
+        end
+        
+        function dictionary = EssentialTagsDictionary(add_pixel_data)
+            tags = PTKDicomDictionary.EssentialTags;
+            if add_pixel_data
+                tags(end + 1) = PTKDicomDictionary.PixelDataTag;
+            end
+            dictionary = PTKDicomDictionary(tags);
+        end
+        
+        function dictionary = AllTagsDictionary(add_pixel_data)
+            tags = PTKDicomDictionary.AllTags;
+            if add_pixel_data
+                tags(end + 1) = PTKDicomDictionary.PixelDataTag;
+            end
+            dictionary = PTKDicomDictionary(tags);
+        end
+        
+        function tag = PixelDataTag
+            tag = PTKDicomDictionaryItem('7FE0,0010', 'OB', 'PixelData');
+        end
         
         function tags = GroupingTags
             tags = PTKDicomDictionaryItem.empty();
             tags(end + 1) = PTKDicomDictionaryItem('0002,0000', 'UL', 'FileMetaInformationGroupLength');
             tags(end + 1) = PTKDicomDictionaryItem('0002,0010', 'UI', 'TransferSyntaxUID');
             tags(end + 1) = PTKDicomDictionaryItem('0020,000E', 'UI', 'SeriesInstanceUID');
-            tags = PTKDicomDictionary(tags);
         end
-        
         
         function tags = EssentialTags
             tags = PTKDicomDictionaryItem.empty();
@@ -96,9 +122,6 @@ classdef PTKDicomDictionary < handle
             tags(end + 1) = PTKDicomDictionaryItem('0028,1051', 'DS', 'WindowWidth');
             tags(end + 1) = PTKDicomDictionaryItem('0028,1052', 'DS', 'RescaleIntercept');
             tags(end + 1) = PTKDicomDictionaryItem('0028,1053', 'DS', 'RescaleSlope');
-            
-            tags(end + 1) = PTKDicomDictionaryItem('7FE0,0010', 'OB', 'PixelData');
-            tags = PTKDicomDictionary(tags);
         end
         
         function tags = AllTags
@@ -2670,10 +2693,6 @@ classdef PTKDicomDictionary < handle
 %             tags(end + 1) = PTKDicomDictionaryItem('60xx,3000', 'OW', 'OverlayData');
 %             tags(end + 1) = PTKDicomDictionaryItem('60xx,4000', 'LT', 'OverlayComments');
             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0000', 'UL', 'PixelDataGroupLength');
-%             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0010', 'OW/OB', 'PixelData');
-
-            tags(end + 1) = PTKDicomDictionaryItem('7FE0,0010', 'OB', 'PixelData');
-
 
             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0020', 'OW', 'CoefficientsSDVN');
             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0030', 'OW', 'CoefficientsSDHN');

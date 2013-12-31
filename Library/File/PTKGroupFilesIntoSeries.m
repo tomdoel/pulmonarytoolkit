@@ -11,7 +11,7 @@ function grouper = PTKGroupFilesIntoSeries(filename, reporting)
     %
     
     reporting.ShowProgress('Imorting data');
-    tags_to_get = PTKDicomDictionary.GroupingTags;
+    tags_to_get = PTKDicomDictionary.GroupingTagsDictionary;
     
     [import_folder, filename_only] = PTKDiskUtilities.GetFullFileParts(filename);
     grouper = PTKFileSeriesGrouper;
