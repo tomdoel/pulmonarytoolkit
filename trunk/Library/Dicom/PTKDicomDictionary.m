@@ -89,6 +89,7 @@ classdef PTKDicomDictionary < handle
             tags(end + 1) = PTKDicomDictionaryItem('0008,0020', 'DA', 'StudyDate');
             tags(end + 1) = PTKDicomDictionaryItem('0008,0021', 'DA', 'SeriesDate');
             tags(end + 1) = PTKDicomDictionaryItem('0008,0060', 'CS', 'Modality');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,0070', 'LO', 'Manufacturer');
             tags(end + 1) = PTKDicomDictionaryItem('0008,1030', 'LO', 'StudyDescription');
             tags(end + 1) = PTKDicomDictionaryItem('0008,103E', 'LO', 'SeriesDescription');
             
@@ -120,6 +121,7 @@ classdef PTKDicomDictionary < handle
             tags(end + 1) = PTKDicomDictionaryItem('0028,0101', 'US', 'BitsStored');
             tags(end + 1) = PTKDicomDictionaryItem('0028,0102', 'US', 'HighBit');
             tags(end + 1) = PTKDicomDictionaryItem('0028,0103', 'US', 'PixelRepresentation');
+            tags(end + 1) = PTKDicomDictionaryItem('0028,0120', 'SS', 'PixelPaddingValue');
             tags(end + 1) = PTKDicomDictionaryItem('0028,1050', 'DS', 'WindowCenter');
             tags(end + 1) = PTKDicomDictionaryItem('0028,1051', 'DS', 'WindowWidth');
             tags(end + 1) = PTKDicomDictionaryItem('0028,1052', 'DS', 'RescaleIntercept');
@@ -1192,7 +1194,7 @@ classdef PTKDicomDictionary < handle
 %             tags(end + 1) = PTKDicomDictionaryItem('0028,0109', 'US/SS', 'LargestPixelValueInSeries');
 %             tags(end + 1) = PTKDicomDictionaryItem('0028,0110', 'US/SS', 'SmallestPixelValueInPlane');
 %             tags(end + 1) = PTKDicomDictionaryItem('0028,0111', 'US/SS', 'LargestPixelValueInPlane');
-%             tags(end + 1) = PTKDicomDictionaryItem('0028,0120', 'US/SS', 'PixelPaddingValue');
+            tags(end + 1) = PTKDicomDictionaryItem('0028,0120', 'SS', 'PixelPaddingValue');
 %             tags(end + 1) = PTKDicomDictionaryItem('0028,0121', 'US/SS', 'PixelPaddingRangeLimit');
             tags(end + 1) = PTKDicomDictionaryItem('0028,0200', 'SS', 'ImageLocation');
             tags(end + 1) = PTKDicomDictionaryItem('0028,0300', 'CS', 'QualityControlImage');

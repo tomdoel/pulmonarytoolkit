@@ -11,11 +11,13 @@ function PTKRemovePaddingValues(image_wrapper, metadata, reporting)
     end
     
     % Check for unspecified padding value in GE images
-    if strcmp(metadata.Manufacturer, 'GE MEDICAL SYSTEMS')
-        extra_padding_pixels = find(image_wrapper.RawImage == -2000);
-        if ~isempty(extra_padding_pixels) && (metadata.PixelPaddingValue ~= -2000)
-            reporting.ShowWarning('PTKLoadImageFromDicomFiles:IncorrectPixelPadding', 'This image is from a GE scanner and appears to have an incorrect PixelPaddingValue. This is a known issue with the some GE scanners. I am assuming the padding value is -2000 and replacing with zero.', []);
-            image_wrapper.RawImage(extra_padding_pixels) = 0;
+    if isfield(metadata, 'Manufacturer')
+        if strcmp(metadata.Manufacturer, 'GE MEDICAL SYSTEMS')
+            extra_padding_pixels = find(image_wrapper.RawImage == -2000);
+            if ~isempty(extra_padding_pixels) && (metadata.PixelPaddingValue ~= -2000)
+                reporting.ShowWarning('PTKLoadImageFromDicomFiles:IncorrectPixelPadding', 'This image is from a GE scanner and appears to have an incorrect PixelPaddingValue. This is a known issue with the some GE scanners. I am assuming the padding value is -2000 and replacing with zero.', []);
+                image_wrapper.RawImage(extra_padding_pixels) = 0;
+            end
         end
     end    
 end
