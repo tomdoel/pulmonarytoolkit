@@ -27,17 +27,20 @@ function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to
     
     if isempty(header)
         % This does not appear to be a Dicom file
-        [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(next_filename.Path, next_filename.Name, [], obj.Reporting);
+        [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(file_path, file_name, [], reporting);
         
         modality = [];
-        file_name = principal_filename;
-        patient_id = principal_filename;
-        study_uid = principal_filename;
-        series_uid = principal_filename;
-        image_uid = principal_filename;
-        patient_name = principal_filename;
-        study_description = principal_filename;
-        series_description = principal_filename;
+        file_name = principal_filename{1};
+        patient_id = principal_filename{1};
+        study_uid = principal_filename{1};
+        series_uid = principal_filename{1};
+        image_uid = principal_filename{1};
+        patient_name = principal_filename{1};
+        study_description = '';
+        series_description = principal_filename{1};
+        date = '';
+        time = '';
+        
         
     else
         image_type = PTKImageFileFormat.Dicom;
