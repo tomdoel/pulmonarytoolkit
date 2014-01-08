@@ -1,0 +1,218 @@
+classdef PTKImageDatabase < handle
+    % PTKImageDatabase. Part of the internal framework of the Pulmonary Toolkit.
+    %
+    %     You should not use this class within your own code. It is intended to
+    %     be used internally within the framework of the Pulmonary Toolkit.
+    %
+    %     Licence
+    %     -------
+    %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+    %     Author: Tom Doel, 2014.  www.tomdoel.com
+    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
+    
+    properties (Access = private)
+        PatientMap
+        SeriesMap
+        IsNewlyCreated
+    end
+    
+    methods
+        function obj = PTKImageDatabase
+            obj.PatientMap = containers.Map;
+            obj.SeriesMap = containers.Map;
+        end
+        
+        function AddImage(obj, single_image_metainfo)
+            patient_id = single_image_metainfo.PatientId;
+            if ~obj.PatientMap.isKey(patient_id)
+                obj.AddPatient(single_image_metainfo.PatientName, single_image_metainfo.PatientId);
+            end
+            patient = obj.PatientMap(patient_id);
+            series = patient.AddImage(single_image_metainfo);
+            obj.SeriesMap(series.SeriesUid) = series;
+        end
+        
+        function AddPatient(obj, patient_name, patient_id)
+            obj.PatientMap(patient_id) = PTKImageDatabasePatient(patient_name, patient_id);
+        end
+        
+        function patient_info = GetPatients(obj)
+            patient_info = obj.PatientMap.values;
+            family_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
+            family_names = PTKContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
+
+            if isempty(family_names)
+                patient_info = [];
+                return
+            end
+            
+            % Remove any empty values to ensure sort works
+            empty_values = cellfun(@isempty, family_names);
+            family_names(empty_values) = {'Unknown'};
+            
+            [~, sorted_indices] = PTKTextUtilities.SortFilenames(family_names);
+            patient_info = patient_info(sorted_indices);
+        end
+        
+        function series_info = GetSeries(obj, series_uid)
+            series_info = obj.SeriesMap(series_uid);
+        end
+        
+        function series_exists = SeriesExists(obj, series_uid)
+            series_exists = obj.SeriesMap.isKey(series_uid);
+        end
+        
+        function [names, ids, family_names] = GetListOfPatientNames(obj)
+            ids = obj.PatientMap.keys;
+            values = obj.PatientMap.values;
+            names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');
+            family_names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'Name');
+            family_names = PTKContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
+
+            if isempty(family_names)
+                names = [];
+                ids = [];
+                family_names = [];
+                return;
+            end
+            % Remove any empty values to ensure sort works
+            empty_values = cellfun(@isempty, family_names);
+            family_names(empty_values) = {'Unknown'};
+            names(empty_values) = {'Unknown'};
+            
+            [~, sorted_indices] = PTKTextUtilities.SortFilenames(family_names);
+            names = names(sorted_indices);
+            ids = ids(sorted_indices);
+            family_names = family_names(sorted_indices);
+        end
+        
+        function DeleteSeries(obj, series_uid, reporting)
+            patient_id = obj.SeriesMap(series_uid).PatientId;
+            patient = obj.PatientMap(patient_id);
+            patient.DeleteSeries(series_uid);
+            if obj.PatientMap(patient_id).GetNumberOfSeries < 1
+                obj.PatientMap.remove(patient_id)
+            end
+            obj.SeriesMap.remove(series_uid)
+            obj.SaveDatabase(reporting);
+        end
+
+        function Rebuild(obj, uids_to_update, rebuild_all, reporting)
+            reporting.ShowProgress('Updating image database');
+            
+            % Checks the disk cache and adds any missing datasets to the database.
+            % Specifying a list of uids forces those datasets to update.
+            % The rebuild_menu flag builds the load menu from scratch
+            
+            % Get the complete list of cache folders, unless we are only
+            % updating specific uids
+            if isempty(uids_to_update) || rebuild_all
+                uids = PTKDirectories.GetUidsOfAllDatasetsInCache;
+            else
+                uids = uids_to_update;
+            end
+            
+            % If we are rebuilding the database or are updating specific uids then
+            % we force each entry to be updated
+            if ~isempty(uids_to_update) || rebuild_all
+                rebuild_for_each_uid = true;
+            else
+                rebuild_for_each_uid = false;
+            end
+            
+            % If we are rebuilding the menu then remove existings entries
+            if rebuild_all
+                obj.PatientMap = containers.Map;
+            end
+            
+            tags_to_get = PTKDicomDictionary.GroupingTagsDictionary(false);
+
+            stage_index = 0;
+            num_stages = numel(uids);
+            
+            for uid = uids
+                reporting.UpdateProgressStage(stage_index, num_stages);
+                stage_index = stage_index + 1;
+                temporary_uid = uid{1};
+                if ~obj.SeriesMap.isKey(temporary_uid) || rebuild_for_each_uid
+                    if ~rebuild_for_each_uid
+                        reporting.ShowMessage('PTKImageDatabase:UnimportedDatasetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the image database file. I am adding this dataset to the image database. This may occur if the database file was recently removed.']);
+                    end
+                    try
+                        cache_parent_directory = PTKDirectories.GetCacheDirectory;
+                        temporary_disk_cache = PTKDiskCache(cache_parent_directory, temporary_uid, reporting);
+                        temporary_image_info = temporary_disk_cache.Load(PTKSoftwareInfo.ImageInfoCacheName, [], reporting);
+
+                        file_path = temporary_image_info.ImagePath;
+                        file_names = temporary_image_info.ImageFilenames;
+                        for filename = file_names
+                            try
+                                next_filename = filename{1};
+                                if isa(next_filename, 'PTKFilename')
+                                    next_filepath = next_filename.Path;
+                                    next_filename = next_filename.Name;
+                                else
+                                    next_filepath = file_path;
+                                end
+
+                                single_image_metainfo = PTKGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
+                                obj.AddImage(single_image_metainfo);
+                            catch exc
+                                reporting.ShowWarning('PTKImageDatabase:AddImageFailed', ['An error occured when adding image ' fullfile(file_path, file_names{1}) ' to the databse. Error: ' exc.message], exc);
+                            end
+                        end
+                        
+                    catch exc
+                        reporting.ShowWarning('PTKImageDatabase:AddDatasetFailed', ['An error occured when adding dataset ' temporary_uid ' to the databse. Error: ' exc.message], exc);
+                    end
+                end                
+            end
+            
+            if ~isempty(uids)
+                obj.SaveDatabase(reporting);
+            end
+            
+            reporting.CompleteProgress;
+        end
+        
+        function SaveDatabase(obj, reporting)
+            database_filename = PTKDirectories.GetImageDatabaseFilePath;
+            
+            try
+                value = [];
+                value.database = obj;
+                PTKDiskUtilities.Save(database_filename, value);
+            catch ex
+                reporting.ErrorFromException('PTKImageDatabase:FailedtoSaveDatabaseFile', ['Unable to save database file ' database_filename], ex);
+            end
+        end        
+
+    end
+    
+    methods (Static)
+        function database = LoadDatabase(reporting)
+            try
+                database_filename = PTKDirectories.GetImageDatabaseFilePath;
+                if exist(database_filename, 'file')
+                    database_struct = PTKDiskUtilities.Load(database_filename);
+                    database = database_struct.database;
+                    database.IsNewlyCreated = false;                    
+                else
+                    reporting.ShowWarning('PTKImageDatabase:DatabaseFileNotFound', 'No image database file found. Will create new one on exit', []);
+                    database = PTKImageDatabase;
+                    database.IsNewlyCreated = true;
+                end
+                
+                if database.IsNewlyCreated
+                    database.Rebuild([], true, reporting);
+                end
+                
+            catch ex
+                reporting.ErrorFromException('PTKImageDatabase:FailedtoLoadDatabaseFile', ['Error when loading database file ' database_filename '. Try deleting this file.'], ex);
+            end
+        end
+        
+    end
+    
+end
