@@ -155,11 +155,15 @@ classdef PTKImageDatabase < handle
                                 else
                                     next_filepath = file_path;
                                 end
-
-                                single_image_metainfo = PTKGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
-                                obj.AddImage(single_image_metainfo);
+                                
+                                if PTKDiskUtilities.FileExists(next_filepath, next_filename)
+                                    single_image_metainfo = PTKGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
+                                    obj.AddImage(single_image_metainfo);
+                                else
+                                    reporting.ShowWarning('PTKImageDatabase:FileNotFound', ['The image ' fullfile(next_filepath, next_filename) ' could not be found. '], []);
+                                end
                             catch exc
-                                reporting.ShowWarning('PTKImageDatabase:AddImageFailed', ['An error occured when adding image ' fullfile(file_path, file_names{1}) ' to the databse. Error: ' exc.message], exc);
+                                reporting.ShowWarning('PTKImageDatabase:AddImageFailed', ['An error occured when adding image ' fullfile(next_filepath, next_filename) ' to the databse. Error: ' exc.message], exc);
                             end
                         end
                         
