@@ -32,7 +32,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     end
     
     % Show a progress dialog
-    reporting.ShowProgress('Loading image metadata');
+    reporting.ShowProgress('Reading image metadata');
     reporting.UpdateProgressValue(0);
     
     % Sort the filenames into numerical order. Normally, this ordering will be

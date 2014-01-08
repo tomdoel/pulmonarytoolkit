@@ -30,7 +30,7 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
         reporting = PTKReportingDefault;
     end
     
-    reporting.ShowProgress('Loading image data');
+    reporting.ShowProgress('Reading pixel data');
     reporting.UpdateProgressValue(0);
 
     image_wrapper = PTKWrapper;
@@ -44,6 +44,7 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
     size_i = metadata_grouping.Metadata{1}.Rows;
     size_j = metadata_grouping.Metadata{1}.Columns;
     size_k = num_slices;
+    samples_per_pixel = metadata_grouping.Metadata{1}.SamplesPerPixel;
     
     % Pre-allocate image matrix
     data_type = whos('first_image_slice');
@@ -52,8 +53,8 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
         reporting.ShowMessage('PTKLoadImagesFromMetadataList:SettingDatatypeToInt8', 'Char datatype detected. Setting to int8');
         data_type_class = 'int8';
     end
-    image_wrapper.RawImage = zeros(size_i, size_j, size_k, data_type_class);
-    image_wrapper.RawImage(:, :, 1) = first_image_slice;
+    image_wrapper.RawImage = zeros([size_i, size_j, size_k, samples_per_pixel], data_type_class);
+    image_wrapper.RawImage(:, :, 1, :) = first_image_slice;
     
     for file_index = 2 : num_slices        
         PTKDicomUtilities.ReadDicomImageIntoWrapperFromMetadata(metadata_grouping.Metadata{file_index}, image_wrapper, file_index, reporting);
