@@ -73,7 +73,7 @@ classdef PTKDicomUtilities
         function image_data = ReadDicomImageFromMetadata(metadata, reporting)
             try
                 try
-                    [file_path, file_name] = fileparts(metadata.Filename);
+                    [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
                     header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialTagsDictionary(true), reporting);
                     image_data = header.PixelData;
                     
@@ -91,12 +91,12 @@ classdef PTKDicomUtilities
         function ReadDicomImageIntoWrapperFromMetadata(metadata, image_wrapper, slice_index, reporting)
             try
                 try
-                    [file_path, file_name] = fileparts(metadata.Filename);
+                    [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
                     header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialTagsDictionary(true), reporting);
-                    image_wrapper.RawImage(:, :, slice_index) = header.PixelData;
+                    image_wrapper.RawImage(:, :, slice_index, :) = header.PixelData;
                     
                 catch exception
-                    image_wrapper.RawImage(:, :, slice_index) = dicomread(metadata);
+                    image_wrapper.RawImage(:, :, slice_index, :) = dicomread(metadata);
                 end
                 
             catch exception
@@ -107,6 +107,13 @@ classdef PTKDicomUtilities
         % Returns true if three images lie approximately on a straight line (determined
         % by the coordinates in the ImagePositionPatient Dicom tags)
         function match = AreImageLocationsConsistent(first_metadata, second_metadata, third_metadata)
+            
+            % If the ImagePositionPatient tag is not present, assume it is
+            % consistent
+            if (~isfield(first_metadata, 'ImagePositionPatient')) && (~isfield(second_metadata, 'ImagePositionPatient'))  && (~isfield(third_metadata, 'ImagePositionPatient'))
+                match = true;
+                return;
+            end
             
             % First get the image position
             first_position = first_metadata.ImagePositionPatient;
@@ -139,6 +146,33 @@ classdef PTKDicomUtilities
             
             tolerance_mm = 10;
             match = max_difference <= tolerance_mm;
+        end
+        
+        function name = PatientNameToString(patient_name)
+            if ischar(patient_name)
+                name = patient_name;
+            else
+                name = '';
+                if isstruct(patient_name)
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'FamilyName');
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'GivenName');
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'MiddleName');
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'NamePrefix');
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'NameSuffix');
+                end
+            end
+        end
+        
+        function new_text = AddOptionalField(text, struct_name, field_name)
+            new_text = text;
+            if isfield(struct_name, field_name) && ~isempty(struct_name.(field_name))
+                if isempty(text)
+                    prefix = '';
+                else
+                    prefix = ', ';
+                end
+                new_text = [text, prefix, struct_name.(field_name)];
+            end
         end
     end
 end
