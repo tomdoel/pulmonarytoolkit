@@ -45,6 +45,11 @@ classdef PTKDicomImage < PTKImage
             % 711.html
             voxelsize_z = slice_thickness;
              
+            if ndims(original_image.RawImage) > 3
+                reporting.ShowWarning('PTKDicomImage:ColourDicomImageNotSupported', 'Colour Dicom images are not supported. Converting to greyscale');
+                original_image.RawImage = mean(original_image.RawImage, 4);
+            end
+            
             if isfield(metadata, 'PixelSpacing')
                 voxel_size = [metadata.PixelSpacing' voxelsize_z];
             else
