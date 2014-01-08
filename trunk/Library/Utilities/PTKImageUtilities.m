@@ -32,7 +32,7 @@ classdef PTKImageUtilities
         end
 
         % Returns an RGB image from a colormap matrix
-        function [rgb_image alpha] = GetLabeledImage(image)
+        function [rgb_image, alpha] = GetLabeledImage(image)
             data_class = class(image);
             if strcmp(data_class, 'double') || strcmp(data_class, 'single')
                 rgb_image = label2rgb(round(image), 'lines');
@@ -311,8 +311,8 @@ classdef PTKImageUtilities
             results.MaxDistanceCombined = max_c;
         end
         
-        % Use Matlab's undocumented hardcopy() function to capture an image from a figure, avoiding the limitations of getframe()
         function frame = CaptureFigure(figure_handle, rect_screenpixels)
+            % Use Matlab's undocumented hardcopy() function to capture an image from a figure, avoiding the limitations of getframe()
             % Store current figure settings
             old_renderer     = get(figure_handle, 'Renderer');
             old_resize_fcn = get(figure_handle, 'ResizeFcn');
@@ -343,6 +343,102 @@ classdef PTKImageUtilities
             cdata = frame.cdata(1 + frame_height - (rect_screenpixels(2)+rect_screenpixels(4)) : frame_height - rect_screenpixels(2), rect_screenpixels(1):rect_screenpixels(1)+rect_screenpixels(3)-1, :);
             frame.cdata = cdata;
         end
+        
+        function rgb_image = GetButtonImage(image_preview, button_height, button_width, window_hu, level_hu, border)
+            if ~isempty(image_preview)
+                if islogical(image_preview.RawImage)
+                    button_image = zeros(button_height, button_width, 'uint8');
+                else
+                    button_image = zeros(button_height, button_width, class(image_preview.RawImage));
+                end
+                
+                max_height = min(button_height, image_preview.ImageSize(1));
+                max_width = min(button_width, image_preview.ImageSize(2));
+                
+                button_image(1:max_height, 1:max_width) = image_preview.RawImage(1:max_height, 1:max_width);
+                image_type = image_preview.ImageType;
+                image_preview_limits = image_preview.GlobalLimits;
+                
+                % Convert window and level from HU to greyscale values
+                level_grayscale = image_preview.RescaledToGrayscale(level_hu);
+                window_grayscale = window_hu;
+                if isa(image_preview, 'PTKDicomImage')
+                    if image_preview.IsCT && ~isempty(image_preview.RescaleSlope)
+                        window_grayscale = window_grayscale/image_preview.RescaleSlope;
+                    end
+                end
+                
+            else
+                button_image = zeros(button_height, button_width, 'uint8');
+                image_type = PTKImageType.Colormap;
+                image_preview_limits = [];
+                
+                level_grayscale = level_hu;
+                window_grayscale = window_hu;
+            end
+            
+            
+            button_background_colour = 0*[0.0 0.129 0.278];
+            button_text_colour = 150*[1, 1, 1];
+                        
+            if (image_type == 3) && isempty(image_preview_limits)
+                obj.Reporting.ShowWarning('PTKPluginsPanel:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
+                image_preview_limits = [1 100];
+            end
+            
+            [rgb_image, ~] = PTKImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale);
+            
+            final_fade_factor = 0.3;
+            rgb_image_factor = final_fade_factor*ones(size(rgb_image));
+            x_range = 1 : -1/(button_height - 1) : 0;
+            x_range = (1-final_fade_factor)*x_range + final_fade_factor;
+            rgb_image_factor(:, 1:button_height, :) = repmat(x_range, [button_height, 1, 3]);
+            rgb_image = uint8(round(rgb_image_factor.*double(rgb_image)));
+            for c = 1 : 3
+                color_slice = rgb_image(:, :, c);
+                color_slice(button_image(:) == 0) = button_background_colour(c);
+                color_slice(button_image(:) == 255) = button_text_colour(c);
+                rgb_image(:, :, c) = color_slice;
+                
+                if border > 0
+                    rgb_image(1:2, :, c) = button_text_colour(c);
+                    rgb_image(end, :, c) = button_text_colour(c);
+                    rgb_image(:, 1, c) = button_text_colour(c);
+                    rgb_image(:, end, c) = button_text_colour(c);
+                end
+            end
+        end
+        
+        function rgb_image = GetBlankRGBImage(button_height, button_width)
+            button_background_colour = [0.0, 0.129, 0.278];
+            button_background_colour_shift = shiftdim(button_background_colour, -1);
+            blank_image = ones([button_height, button_width]);
+            rgb_image = repmat(button_background_colour_shift, [button_height, button_width, 1]).*repmat(blank_image, [1, 1, 3]);
+            rgb_image = uint8(255*rgb_image);
+        end
+        
+        function orientation = GetPreferredOrientation(image_template)
+            voxel_size = image_template.VoxelSize;
+            [max_voxel_size, dir_with_largest_voxel_size] = max(voxel_size);
+            [min_voxel_size, ~] = min(voxel_size);
+            
+            if max_voxel_size/min_voxel_size > 7
+                orientation = PTKImageOrientation(dir_with_largest_voxel_size);
+            else
+                image_size = image_template.OriginalImageSize;
+                if numel(image_size) < 3
+                    image_size = [image_size, 1];
+                end
+                [max_image_size, ~] = max(image_size);
+                [min_image_size, dir_with_smallest_image_size] = min(image_size);
+                if max_image_size/min_image_size > 10
+                    orientation = PTKImageOrientation(dir_with_smallest_image_size);
+                else
+                    orientation = PTKImageOrientation.Coronal;
+                end
+            end
+        end
+        
     end
 end
 
