@@ -1,7 +1,7 @@
 classdef PTKAllPatientsSlidingPanel < PTKSlidingPanel
     % PTKAllPatientsSlidingPanel. Part of the gui for the Pulmonary Toolkit.
     %
-    %     This class is used internally within the PUlmonary Toolkit to help
+    %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
     %     PTKAllPatientsSlidingPanel represents the panel underneath the
@@ -18,10 +18,15 @@ classdef PTKAllPatientsSlidingPanel < PTKSlidingPanel
     %    
     
     methods
-        function obj = PTKAllPatientsSlidingPanel(parent, patient_database, reporting)
+        function obj = PTKAllPatientsSlidingPanel(parent, patient_database, gui_callback, reporting)
             obj = obj@PTKSlidingPanel(parent, reporting);
-            obj.FloatingPanel = PTKAllPatientsPanel(obj.PanelHandle, patient_database, reporting);
-            obj.Update;
+            obj.FloatingPanel = PTKAllPatientsPanel(obj, patient_database, gui_callback, reporting);
+            obj.AddChild(obj.FloatingPanel);
+        end
+        
+        function SelectSeries(obj, patient_id, series_uid, selected)
+            obj.SelectPatient(patient_id);
+            obj.FloatingPanel.SelectSeries(patient_id, series_uid, selected);
         end
         
         function SelectPatient(obj, patient_id)
@@ -32,23 +37,14 @@ classdef PTKAllPatientsSlidingPanel < PTKSlidingPanel
                 obj.Reporting.ShowWarning('PTKAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
                 return;
             end
-            
-            fixed_panel_position = get(obj.PanelHandle, 'Position');
-            fixed_panel_height = fixed_panel_position(4);
-            patient_panel_height = y_max - y_min;
-            
-            % If the patient panel height is greater than the height of the
-            % whole panel, then we scroll so that the patient panel is aligned
-            % at the top
-            if patient_panel_height >= fixed_panel_height
-                obj.ScrollPanelToThisYPosition(y_min, fixed_panel_position);
-                
-            % Otherwise, we scroll so that the patient panel is centred
-            else
-                offset = floor((fixed_panel_height - patient_panel_height)/2);
-                obj.ScrollPanelToThisYPosition(max(0, y_min - offset), fixed_panel_position);
-            end
+
+            obj.ScrollPanelToThisYPosition(y_min);
             
         end
+        
+        function DatabaseHasChanged(obj)
+            obj.FloatingPanel.DatabaseHasChanged;
+        end
+        
     end
 end
