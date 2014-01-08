@@ -1,7 +1,7 @@
 classdef PTKPanel < PTKUserInterfaceObject
     % PTKPanel. Part of the gui for the Pulmonary Toolkit.
     %
-    %     This class is used internally within the PUlmonary Toolkit to help
+    %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
     %     PTKPanel is used to build panels with the user interface.
@@ -13,23 +13,22 @@ classdef PTKPanel < PTKUserInterfaceObject
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
-
+    
     properties (Access = protected)
-        ParentHandle
-        PanelHandle
         Reporting
     end
     
     methods
         function obj = PTKPanel(parent_handle, reporting)
-            obj.ParentHandle = parent_handle;
-            obj.Reporting = reporting;
-            obj.PanelHandle = uipanel('Parent', parent_handle, 'BorderType', 'none', 'Units', 'pixels', ...
-                'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'ForegroundColor', 'white', 'ResizeFcn', '');
+            obj = obj@PTKUserInterfaceObject(parent_handle);
+            if nargin > 0
+                obj.Reporting = reporting;
+            end
         end
         
-        function Resize(obj, new_size)
-            set(obj.PanelHandle, 'Position', new_size);
+        function CreateGuiComponent(obj, position, reporting)
+            obj.GraphicalComponentHandle = uipanel('Parent', obj.Parent.GetContainerHandle(reporting), 'BorderType', 'none', 'Units', 'pixels', ...
+                'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'ForegroundColor', 'white', 'ResizeFcn', '', 'Position', position);
         end
     end
 

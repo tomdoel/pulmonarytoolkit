@@ -1,7 +1,7 @@
-classdef PTKAllPatientsPanel < PTKPanel
+classdef PTKAllPatientsPanel < PTKCompositePanel
     % PTKAllPatientsPanel.  Part of the gui for the Pulmonary Toolkit.
     %
-    %     This class is used internally within the PUlmonary Toolkit to help
+    %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
     %     PTKAllPatientsPanel represents the panel in the Patient Browser
@@ -18,50 +18,48 @@ classdef PTKAllPatientsPanel < PTKPanel
     properties (Access = private)
         PatientPanels
         PatientDatabase
+        GuiCallback
     end
     
     methods
-        function obj = PTKAllPatientsPanel(parent, patient_database, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKAllPatientsPanel(parent, patient_database, gui_callback, reporting)
+            obj = obj@PTKCompositePanel(parent, reporting);
             obj.PatientDatabase = patient_database;
+            obj.GuiCallback = gui_callback;
             
             obj.PatientPanels = containers.Map;
             
             obj.AddPatientPanels;
         end
-        
-        function Resize(obj, new_position)
-            obj.ResizePanels(new_position);      
-            Resize@PTKPanel(obj, new_position)
-        end
-        
-        function height = GetRequestedHeight(obj)
-            height = 0;
-            for panel = obj.PatientPanels.values
-                height = height + panel{1}.GetRequestedHeight;
-            end            
+
+        function DatabaseHasChanged(obj)
+            obj.RemoveAllPanels;
+            obj.PatientPanels = containers.Map;
+            obj.AddPatientPanels;
         end
         
         % This determines the y-coordinate (relative to the top of the patient
         % details panel) of the top and bottom of the patient panel
         function [y_min, y_max] = GetYPositionsForPatientId(obj, patient_id)
-            y_min = 0;
-            y_max = [];
-            panels = obj.PatientPanels.values;
-            panel_index = 1;
-            panel = panels{panel_index};
-            while ~strcmp(panel.Id, patient_id)
-                panel_index = panel_index + 1;
-                if panel_index > length(panels)
-                    y_min = [];
-                    return;
-                end
-                
-                y_min = y_min + panel.GetRequestedHeight;
-                panel = panels{panel_index};
+            if ~obj.PatientPanels.isKey(patient_id)
+                y_min = [];
+                y_max = [];
+                return;
             end
             
-            y_max = y_min + panel.GetRequestedHeight;
+            panel = obj.PatientPanels(patient_id);
+            
+            y_min = panel.CachedMinY;
+            y_max = panel.CachedMaxY;
+        end
+
+        function SelectSeries(obj, patient_id, series_uid, selected)
+            if obj.PatientPanels.isKey(patient_id)
+                panel = obj.PatientPanels(patient_id);
+                panel.SelectSeries(series_uid, selected);
+            else
+                obj.Reporting.ShowWarning('PTKAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
+            end
         end
         
     end
@@ -69,26 +67,14 @@ classdef PTKAllPatientsPanel < PTKPanel
     methods (Access = private)
                 
         function AddPatientPanels(obj)
-            for patient_detail = obj.PatientDatabase.GetPatientInfo
-                obj.AddPatientPanel(PTKPatientPanel(obj.PanelHandle, patient_detail{1}, obj.Reporting));
+            for patient_detail = obj.PatientDatabase.GetPatients
+                obj.AddPatientPanel(PTKPatientPanel(obj, patient_detail{1}, obj.GuiCallback, obj.Reporting));
             end
         end
         
         function AddPatientPanel(obj, panel)
             obj.PatientPanels(panel.Id) = panel;
-        end
-        
-        function ResizePanels(obj, new_position)
-            panel_width = new_position(3);
-            y_coord = 1;
-            patient_names = obj.PatientPanels.keys;
-            for patient_index = length(patient_names) : -1 : 1
-                key = patient_names{patient_index};
-                panel = obj.PatientPanels(key);
-                panel_size = [1, y_coord, panel_width, panel.GetRequestedHeight];
-                panel.Resize(panel_size);
-                y_coord = y_coord + panel.GetRequestedHeight;
-            end
+            obj.AddPanel(panel);
         end
         
     end
