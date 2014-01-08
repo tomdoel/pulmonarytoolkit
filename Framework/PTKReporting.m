@@ -91,9 +91,10 @@ classdef PTKReporting < PTKReportingInterface
         end
         
         function LogVerbose(obj, message)
-            [calling_function, ~] = PTKErrorUtilities.GetCallingFunction(2);
-            
-            obj.AppendToLogFile([calling_function ': ' message]);
+            if obj.VerboseMode
+                [calling_function, ~] = PTKErrorUtilities.GetCallingFunction(2);
+                obj.AppendToLogFile([calling_function ': ' message]);
+            end
         end
         
         function ShowMessage(obj, identifier, message)
