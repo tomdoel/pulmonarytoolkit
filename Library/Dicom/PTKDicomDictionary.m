@@ -72,7 +72,14 @@ classdef PTKDicomDictionary < handle
             tags = PTKDicomDictionaryItem.empty();
             tags(end + 1) = PTKDicomDictionaryItem('0002,0000', 'UL', 'FileMetaInformationGroupLength');
             tags(end + 1) = PTKDicomDictionaryItem('0002,0010', 'UI', 'TransferSyntaxUID');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,0018', 'UI', 'SOPInstanceUID');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,0021', 'DA', 'SeriesDate');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,0031', 'TM', 'SeriesTime');
             tags(end + 1) = PTKDicomDictionaryItem('0008,0060', 'CS', 'Modality');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,1030', 'LO', 'StudyDescription');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,103E', 'LO', 'SeriesDescription');
+            tags(end + 1) = PTKDicomDictionaryItem('0010,0010', 'PN', 'PatientName');
+            tags(end + 1) = PTKDicomDictionaryItem('0010,0020', 'LO', 'PatientID');
             tags(end + 1) = PTKDicomDictionaryItem('0020,000D', 'UI', 'StudyInstanceUID');
             tags(end + 1) = PTKDicomDictionaryItem('0020,000E', 'UI', 'SeriesInstanceUID');
         end
@@ -86,6 +93,7 @@ classdef PTKDicomDictionary < handle
                         
             tags(end + 1) = PTKDicomDictionaryItem('0008,0008', 'CS', 'ImageType');
             tags(end + 1) = PTKDicomDictionaryItem('0008,0016', 'UI', 'SOPClassUID');
+            tags(end + 1) = PTKDicomDictionaryItem('0008,0018', 'UI', 'SOPInstanceUID');
             tags(end + 1) = PTKDicomDictionaryItem('0008,0020', 'DA', 'StudyDate');
             tags(end + 1) = PTKDicomDictionaryItem('0008,0021', 'DA', 'SeriesDate');
             tags(end + 1) = PTKDicomDictionaryItem('0008,0060', 'CS', 'Modality');
