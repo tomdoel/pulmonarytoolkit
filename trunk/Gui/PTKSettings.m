@@ -31,6 +31,7 @@ classdef PTKSettings < handle
         SliceSkip = 10
         CurrentMarkerColour = 1
         ScreenPosition
+        PatientBrowserScreenPosition
     end
     
     methods (Static)
