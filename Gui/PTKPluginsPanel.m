@@ -67,7 +67,7 @@ classdef PTKPluginsPanel < handle
             if obj.PluginButtonHandlesMap.isKey(plugin_name)
                 button_handle = obj.PluginButtonHandlesMap(plugin_name);                
                 button_position = get(button_handle, 'Position');
-                rgb_image = obj.GetButtonImage(preview_image, button_position(4), button_position(3), window, level);
+                rgb_image = PTKImageUtilities.GetButtonImage(preview_image, button_position(4), button_position(3), window, level, 1);
                 set(button_handle, 'CData', rgb_image);
             end
         end
@@ -310,7 +310,7 @@ classdef PTKPluginsPanel < handle
                     'FontAngle', font_angle, 'ForegroundColor', 'white', 'FontUnits', 'pixels', 'FontSize', 11, 'Position', new_position);
                 
                 preview_image = [];
-                rgb_image = obj.GetButtonImage(preview_image, button_height, button_width, [], []);
+                rgb_image = PTKImageUtilities.GetButtonImage(preview_image, button_height, button_width, [], [], 1);
                 
                 set(button_handle, 'CData', rgb_image);
                 
@@ -444,68 +444,6 @@ classdef PTKPluginsPanel < handle
             end
         end
         
-        function rgb_image = GetButtonImage(image_preview, button_height, button_width, window_hu, level_hu)
-            if ~isempty(image_preview)
-                if islogical(image_preview.RawImage)
-                    button_image = zeros(button_height, button_width, 'uint8');
-                else
-                    button_image = zeros(button_height, button_width, class(image_preview.RawImage));
-                end
-                
-                max_height = min(button_height, image_preview.ImageSize(1));
-                max_width = min(button_width, image_preview.ImageSize(2));
-                
-                button_image(1:max_height, 1:max_width) = image_preview.RawImage(1:max_height, 1:max_width);
-                image_type = image_preview.ImageType;
-                image_preview_limits = image_preview.GlobalLimits;
-                
-                % Convert window and level from HU to greyscale values
-                level_grayscale = image_preview.RescaledToGrayscale(level_hu);
-                window_grayscale = window_hu;
-                if isa(image_preview, 'PTKDicomImage')
-                    if image_preview.IsCT && ~isempty(image_preview.RescaleSlope)
-                        window_grayscale = window_grayscale/image_preview.RescaleSlope;
-                    end
-                end
-                
-            else
-                button_image = zeros(button_height, button_width, 'uint8');
-                image_type = PTKImageType.Colormap;
-                image_preview_limits = [];
-                
-                level_grayscale = level_hu;
-                window_grayscale = window_hu;
-            end
-            
-            
-            button_background_colour = 0*[0.0 0.129 0.278];
-            button_text_colour = 150*[1, 1, 1];
-                        
-            if (image_type == 3) && isempty(image_preview_limits)
-                obj.Reporting.ShowWarning('PTKPluginsPanel:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
-                image_preview_limits = [1 100];
-            end
-            
-            [rgb_image, ~] = PTKImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale);
-            
-            final_fade_factor = 0.3;
-            rgb_image_factor = final_fade_factor*ones(size(rgb_image));
-            x_range = 1 : -1/(button_height - 1) : 0;
-            x_range = (1-final_fade_factor)*x_range + final_fade_factor;
-            rgb_image_factor(:, 1:button_height, :) = repmat(x_range, [button_height, 1, 3]);
-            rgb_image = uint8(round(rgb_image_factor.*double(rgb_image)));
-            for c = 1 : 3
-                color_slice = rgb_image(:, :, c);
-                color_slice(button_image(:) == 0) = button_background_colour(c);
-                color_slice(button_image(:) == 255) = button_text_colour(c);
-                rgb_image(:, :, c) = color_slice;
-                
-                rgb_image(1:2, :, c) = button_text_colour(c);
-                rgb_image(end, :, c) = button_text_colour(c);
-                rgb_image(:, 1, c) = button_text_colour(c);
-                rgb_image(:, end, c) = button_text_colour(c);
-            end
-        end
         
     end     
 end
