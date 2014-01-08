@@ -54,7 +54,7 @@ function image_data = PTKReconstructDicomImageFromHeader(header, is_little_endia
         number_of_frames = 1;
     end
     
-    data_type_size = bits_allocated/samples_per_pixel;
+    data_type_size = bits_allocated;
     if pixel_representation == 0 % unsigned
         if data_type_size == 8
             data_type = 'uint8';
@@ -100,22 +100,19 @@ function image_data = PTKReconstructDicomImageFromHeader(header, is_little_endia
         bitset(pixel_data, 14, 0, data_type);
         bitset(pixel_data, 15, 0, data_type);
         bitset(pixel_data, 16, 0, data_type);
-    elseif data_type_size == 16 && high_bit == 15
-    elseif ~(data_type_size == 8 && high_bit == 7)
-        error('Unsupported high bit');
     end
     
-    pixel_data_zeros = zeros([rows, cols, samples_per_pixel, number_of_frames], data_type);
+    pixel_data_zeros = zeros([cols, rows, samples_per_pixel, number_of_frames], data_type);
     
     if ((planar_configuration == 0) && (samples_per_pixel == 3))
         % Interlaced RGB data
         if number_of_frames > 1
             reporting.Error('PTKReconstructDicomImageFromHeader:UnsupportedNumberOfFrames', 'This function cannot read multiframe interlaced RGB images');
         end
-        words_in_channel = rows*cols;
-        pixel_data_zeros(1 : 3 : words_in_channel - 2) = pixel_data(1 : words_in_channel);
-        pixel_data_zeros(2 : 3 : words_in_channel - 1) = pixel_data(words_in_channel + 1 : 2*words_in_channel);
-        pixel_data_zeros(3 : 3 : words_in_channel) = pixel_data(2*words_in_channel + 1 : 3*words_in_channel);
+        words_in_channel = int32(rows)*int32(cols);
+        pixel_data_zeros(1 : words_in_channel) = pixel_data(1 : 3 : words_in_channel*3 - 2);
+        pixel_data_zeros(words_in_channel + 1 : 2*words_in_channel) = pixel_data(2 : 3 : words_in_channel*3 - 1);
+        pixel_data_zeros(2*words_in_channel + 1 : 3*words_in_channel) = pixel_data(3 : 3 : words_in_channel*3 - 0);
     else
         pixel_data_zeros(:) = pixel_data;
     end
