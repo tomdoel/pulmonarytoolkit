@@ -40,9 +40,9 @@ classdef PTKDiskCache < handle
             cache_directory = fullfile(cache_parent_directory, uuid);
             if ~exist(cache_directory, 'dir')
                 mkdir(cache_directory);
-                reporting.ShowMessage('PTKDiskCache:NewCacheDirectory', ['Creating disk cache : ' cache_directory]);
+                reporting.LogVerbose(['Creating disk cache : ' cache_directory]);
             else
-                reporting.ShowMessage('PTKDiskCache:ExistingCacheDirectory', ['Using disk cache : ' cache_directory]);
+                reporting.LogVerbose(['Using disk cache : ' cache_directory]);
             end
             
             obj.Uuid = uuid;
