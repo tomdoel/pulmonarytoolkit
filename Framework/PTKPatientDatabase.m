@@ -28,6 +28,12 @@ classdef PTKPatientDatabase < handle
             names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'Name');
         end
         
+        function [names, ids] = GetSortedListOfPatientNames(obj)
+            ids = obj.PatientMap.keys;
+            values = obj.PatientMap.values;
+            names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'Name');
+        end
+        
         function patient_info = GetPatientInfo(obj)
             patient_info = obj.PatientMap.values;
         end
