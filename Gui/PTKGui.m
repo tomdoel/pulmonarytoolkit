@@ -34,10 +34,20 @@ classdef PTKGui < handle
         UipanelImageHandle
         UipanelPluginsHandle
         PopupmenuLoadHandle
+        PatientBrowserButtonHandle
         TextVersionHandle
         UipanelVersionHandle
         
         CurrentPluginName
+        
+        PatientBrowser
+        PatientBrowserSelectedUid
+        PatientBrowserSelectedPatientId
+    end
+    
+    properties (Constant, Access = private)
+        LoadMenuHeight = 23
+        PatientBrowserWidth = 100
     end
     
     methods
@@ -53,8 +63,16 @@ classdef PTKGui < handle
             obj.UipanelImageHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [1 1 921 921], 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'BorderType', 'none');
             obj.UipanelPluginsHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [889 6 668 869], 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'BorderType', 'none');
             obj.UipanelVersionHandle = uipanel('Parent', obj.FigureHandle, 'Units', 'pixels', 'Position', [10 2 392 34], 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'BorderType', 'none');
-            obj.PopupmenuLoadHandle = uicontrol('Parent', obj.FigureHandle', 'Style', 'popupmenu', ...
-                'Units', 'pixels', 'Position', [8 912 1560 23], 'Callback', @obj.PopupmenuLoadCallback, 'String', 'Recent datasets');
+            
+            obj.PatientBrowserButtonHandle = uicontrol('Style', 'pushbutton', 'Parent', obj.FigureHandle, 'String', 'Patients', 'Tag', 'PatientBrowser', ...
+                'Callback', @obj.PatientBrowserButtonCallback, 'ToolTipString', 'Show the Patient Browser window', ...
+                'FontAngle', 'normal', 'ForegroundColor', 'white', 'FontUnits', 'pixels', 'FontSize', 11, ...
+                'Position', [8 912 obj.PatientBrowserWidth 23]);
+            rgb_image = PTKImageUtilities.GetButtonImage([], obj.LoadMenuHeight - 1, obj.PatientBrowserWidth, [], [], 1);
+            set(obj.PatientBrowserButtonHandle, 'CData', rgb_image);
+
+            obj.PopupmenuLoadHandle = uicontrol('Parent', obj.FigureHandle, 'Style', 'popupmenu', ...
+                'Units', 'pixels', 'Position', [8 912 1560 obj.LoadMenuHeight], 'Callback', @obj.PopupmenuLoadCallback, 'String', 'Recent datasets');
             obj.TextVersionHandle = uicontrol('Parent', obj.UipanelVersionHandle, 'Style', 'text', ...
                 'Units', 'pixels', 'Position', [10 2 392 34], 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, ...
                 'FontName', PTKSoftwareInfo.GuiFont, 'FontSize', 20.0, 'ForegroundColor', [1.0 0.694 0.392], 'HorizontalAlignment', 'left', ...
@@ -114,6 +132,7 @@ classdef PTKGui < handle
                 obj.LoadImages(image_info, splash_screen);
             else
                 obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
+                obj.UpdatePatientBrowser([], []);
             end
 
             obj.ImagePanel.ShowImage = true;
@@ -207,6 +226,10 @@ classdef PTKGui < handle
                     obj.Reporting.ShowMessage('PTKGuiApp:NoFilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
                     obj.LoadImages(image_info, obj.WaitDialogHandle);
+                    
+                    % Add any new datasets to the patient browser
+                    obj.DatabaseHasChanged;
+                    
                 end
             end
         end
@@ -230,7 +253,10 @@ classdef PTKGui < handle
                 obj.AddAllDatasetsInCacheToDropDownMenu(uids, false);
                 
                 % Update the menu
-                obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;                
+                obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
+                
+                % Add any new datasets to the patient browser
+                obj.DatabaseHasChanged;
             end
         end
                
@@ -370,6 +396,9 @@ classdef PTKGui < handle
             
             obj.SaveSettings;
             obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
+            
+            obj.Ptk.ImageDatabase.DeleteSeries(image_info.ImageUid, obj.Reporting);
+            obj.DatabaseHasChanged;
         end
         
         function DeleteOverlays(obj)
@@ -385,15 +414,19 @@ classdef PTKGui < handle
             obj.AddAllDatasetsInCacheToDropDownMenu([], true);
         end
         
+        function LoadFromPatientBrowser(obj, series_uid)
+            obj.LoadFromUid(series_uid);
+        end
+        
     end
     
     
     methods (Access = private)
         
-        % Checks the disk cache and adds any missing datasets to the drop-down
-        % load menu. Specifying a list of uids forces those datasets to update.
-        % The rebuild_menu flag builds the load menu from scratch
         function AddAllDatasetsInCacheToDropDownMenu(obj, uids_to_update, rebuild_menu)
+            % Checks the disk cache and adds any missing datasets to the drop-down
+            % load menu. Specifying a list of uids forces those datasets to update.
+            % The rebuild_menu flag builds the load menu from scratch
             
             % Get the complete list of cache folders, unless we are only
             % updating specific uids
@@ -423,7 +456,7 @@ classdef PTKGui < handle
                 temporary_uid = uid{1};
                 if ~old_infos.isKey(temporary_uid) || rebuild_menu_for_each_uid
                     if ~rebuild_menu_for_each_uid
-                        obj.Reporting.ShowMessage('PTKGui:UnimportedDaatsetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the settings file. I am adding this dataset to the quick load menu. This may occur if the settings file was recently removed.']);
+                        obj.Reporting.ShowMessage('PTKGui:UnimportedDatasetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the settings file. I am adding this dataset to the quick load menu. This may occur if the settings file was recently removed.']);
                     end
                     try
                         cache_parent_directory = PTKDirectories.GetCacheDirectory;
@@ -482,12 +515,26 @@ classdef PTKGui < handle
         
         % Executes when application closes
         function CustomCloseFunction(obj, src, ~)
+            obj.Reporting.ShowProgress('Saving settings');
+            
+            % Hide the Patient Browser, as it can take a short time to close
+            if ~isempty(obj.PatientBrowser)
+                obj.PatientBrowser.Hide;
+                drawnow;
+            end
+
             obj.ApplicationClosing();
             
+            if ~isempty(obj.PatientBrowser)
+                delete(obj.PatientBrowser);
+            end
+            
             % Note: this will delete the only reference to the application
-            % object handle, triggering its destruction which will save settings
+            % object handle, triggering its destruction
             delete(src);
             
+            % The progress dialog will porbably be destroyed before we get here
+%             obj.Reporting.CompleteProgress;
         end
         
         function ApplicationClosing(obj)
@@ -503,6 +550,58 @@ classdef PTKGui < handle
         % Item selected from the pop-up "quick load" menu
         function PopupmenuLoadCallback(obj, hObject, ~, ~)
             obj.LoadFromPopupMenu(get(hObject, 'Value'));
+        end
+        
+        function PatientBrowserButtonCallback(obj, ~, ~, ~)
+            % Patient browser button pushed
+            if isempty(obj.PatientBrowser)
+                if isempty(obj.Settings.PatientBrowserScreenPosition)
+                    parent_position =  [100 100 1000 500];
+                else
+                    parent_position = obj.Settings.PatientBrowserScreenPosition;
+                end
+                
+                obj.PatientBrowser = PTKPatientBrowser(obj.Ptk.ImageDatabase, obj, parent_position, obj.Reporting);
+                obj.PatientBrowser.SelectSeries(obj.PatientBrowserSelectedPatientId, obj.PatientBrowserSelectedUid);
+                
+                obj.PatientBrowser.Show(obj.Reporting);
+            else
+                if obj.PatientBrowser.IsVisible
+                    obj.PatientBrowser.BringToFront;
+                else
+                    obj.PatientBrowser.Show(obj.Reporting);
+                end
+            end
+        end
+        
+        function LoadFromUid(obj, series_uid)
+            selected_image_uid = series_uid;
+            
+            % Get the UID of the currently loaded dataset
+            if ~isempty(obj.Settings.ImageInfo) && ~isempty(obj.Settings.ImageInfo.ImageUid)
+                currently_loaded_image_UID = obj.Settings.ImageInfo.ImageUid;
+            else
+                currently_loaded_image_UID = [];
+            end
+
+            image_already_loaded = strcmp(selected_image_uid, currently_loaded_image_UID);
+            if isempty(selected_image_uid) && isempty(currently_loaded_image_UID)
+                image_already_loaded = true;
+            end
+            
+            % We prevent data re-loading when the same dataset is selected.
+            % Also, due to a Matlab/Java bug, this callback may be called twice 
+            % when an option is selected from the drop-down load menu using 
+            % keyboard shortcuts. This will prevent the loading function from
+            % being called twice
+            if ~image_already_loaded
+                if ~isempty(series_uid)
+                    obj.LoadImages(series_uid, obj.WaitDialogHandle);
+                else
+                    % Clear dataset
+                    obj.ClearDataset(obj.WaitDialogHandle);
+                end
+            end
         end
         
         function LoadFromPopupMenu(obj, index)            
@@ -536,8 +635,8 @@ classdef PTKGui < handle
                 if ~isempty(image_info)
                     obj.LoadImages(image_info, obj.WaitDialogHandle);
                 else
-                    obj.ClearDataset(obj.WaitDialogHandle);
                     % Clear dataset
+                    obj.ClearDataset(obj.WaitDialogHandle);
                 end
             end
         end
@@ -552,9 +651,9 @@ classdef PTKGui < handle
             end
         end
         
-        % Updates the "Show profile" check box according to the current running state
-        % of the Matlab profiler
         function UpdateProfilerStatus(obj)
+            % Updates the "Show profile" check box according to the current running state
+            % of the Matlab profiler
             profile_status = profile('status');
             if strcmp(profile_status.ProfilerStatus, 'on')
                 set(obj.ProfileCheckboxHandle, 'Value', true);
@@ -563,8 +662,8 @@ classdef PTKGui < handle
             end
         end
         
-        % Scroll wheel
         function WindowScrollWheelFcn(obj, src, eventdata)
+            % Scroll wheel
             current_point = get(obj.FigureHandle, 'CurrentPoint');
             scroll_count = eventdata.VerticalScrollCount; % positive = scroll down
             
@@ -584,11 +683,15 @@ classdef PTKGui < handle
             end
         end
         
-        function LoadImages(obj, image_info, wait_dialog)
-            wait_dialog.ShowAndHold('Please wait');
+        function LoadImages(obj, image_info_or_uid, wait_dialog)
+            wait_dialog.ShowAndHold('Loading dataset');
             
             try
-                new_dataset = obj.Ptk.CreateDatasetFromInfo(image_info);
+                if isa(image_info_or_uid, 'PTKImageInfo')
+                    new_dataset = obj.Ptk.CreateDatasetFromInfo(image_info_or_uid);
+                else
+                    new_dataset = obj.Ptk.CreateDatasetFromUid(image_info_or_uid);
+                end
 
                 obj.ClearImages;
                 delete(obj.Dataset);
@@ -631,6 +734,12 @@ classdef PTKGui < handle
                     obj.SetImage(lung_roi);
                 end
                 
+                
+                patient_id = lung_roi.MetaHeader.PatientID;
+                series_uid = lung_roi.MetaHeader.SeriesInstanceUID;
+                
+                obj.AutoOrientationAndWL(lung_roi);
+                
                 obj.Settings.ImageInfo = image_info;
                 
                 old_infos = obj.Settings.PreviousImageInfos;
@@ -650,6 +759,10 @@ classdef PTKGui < handle
                 end
 
             catch exc
+                % For the patient browser
+                patient_id = [];
+                series_uid = [];
+                
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                     obj.ClearDataset(obj.WaitDialogHandle);
                     obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled loading');
@@ -664,12 +777,27 @@ classdef PTKGui < handle
             end
             
             obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
+            obj.UpdatePatientBrowser(patient_id, series_uid);
             wait_dialog.Hide;
 
         end
         
+        function AutoOrientationAndWL(obj, lung_roi)
+            orientation = PTKImageUtilities.GetPreferredOrientation(lung_roi);
+            obj.ImagePanel.Orientation = orientation;
+            
+            if lung_roi.IsCT
+                obj.ImagePanel.Window = 1600;
+                obj.ImagePanel.Level = -600;
+            else
+                mean_value = round(mean(lung_roi.RawImage(:)));
+                obj.ImagePanel.Window = mean_value*2;
+                obj.ImagePanel.Level = mean_value;
+            end
+        end
+        
         function ClearDataset(obj, wait_dialog)
-            wait_dialog.ShowAndHold('Please wait');
+            wait_dialog.ShowAndHold('Clearing image data');
             
             try
                 obj.ClearImages;
@@ -699,7 +827,8 @@ classdef PTKGui < handle
                     obj.Reporting.ShowMessage('PTKGui:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
                 end
             end
-            
+
+            obj.UpdatePatientBrowser([], []);
             obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
             wait_dialog.Hide;
 
@@ -817,6 +946,9 @@ classdef PTKGui < handle
             if ~isempty(obj.Settings)
                 set(obj.FigureHandle, 'units', 'pixels');
                 obj.Settings.ScreenPosition = get(obj.FigureHandle, 'Position');
+                if ~isempty(obj.PatientBrowser)
+                    obj.Settings.PatientBrowserScreenPosition = obj.PatientBrowser.GetLastPosition;
+                end
                 obj.Settings.SaveSettings(obj.ImagePanel, obj.Reporting);
             end
         end
@@ -869,7 +1001,7 @@ classdef PTKGui < handle
             parent_width_pixels = parent_position(3);
             parent_height_pixels = parent_position(4);
             
-            load_menu_height = 23;
+            load_menu_height = obj.LoadMenuHeight;
             viewer_panel_height = max(1, parent_height_pixels - load_menu_height);
             viewer_panel_width = viewer_panel_height;
             
@@ -878,14 +1010,31 @@ classdef PTKGui < handle
             
             plugins_panel_height = max(1, parent_height_pixels - load_menu_height - version_panel_height);
             
+            patient_browser_width = obj.PatientBrowserWidth;
+            
             set(obj.UipanelImageHandle, 'Units', 'Pixels', 'Position', [1, 1, viewer_panel_width, viewer_panel_height]);
-            set(obj.PopupmenuLoadHandle, 'Units', 'Pixels', 'Position', [0, parent_height_pixels - load_menu_height, parent_width_pixels, load_menu_height]);
+            set(obj.PatientBrowserButtonHandle, 'Units', 'Pixels', 'Position', [8, parent_height_pixels - load_menu_height + 1, patient_browser_width, load_menu_height - 1]);
+            set(obj.PopupmenuLoadHandle, 'Units', 'Pixels', 'Position', [8 + patient_browser_width, parent_height_pixels - load_menu_height, parent_width_pixels - patient_browser_width - 8, load_menu_height]);
             set(obj.UipanelVersionHandle, 'Units', 'Pixels', 'Position', [viewer_panel_width, parent_height_pixels - load_menu_height - version_panel_height, version_panel_width, version_panel_height]);
             set(obj.UipanelPluginsHandle, 'Units', 'Pixels', 'Position', [viewer_panel_width, 0, version_panel_width, plugins_panel_height]);
             obj.PluginsPanel.Resize();
             
             if ~isempty(obj.WaitDialogHandle)
                 obj.WaitDialogHandle.Resize();
+            end
+        end
+        
+        function UpdatePatientBrowser(obj, patient_id, series_uid)
+            obj.PatientBrowserSelectedUid = series_uid;
+            obj.PatientBrowserSelectedPatientId = patient_id;
+            if ~isempty(obj.PatientBrowser)
+                obj.PatientBrowser.SelectSeries(patient_id, series_uid);
+            end
+        end
+        
+        function DatabaseHasChanged(obj)
+            if ~isempty(obj.PatientBrowser)
+                obj.PatientBrowser.DatabaseHasChanged;
             end
         end
         

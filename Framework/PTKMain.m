@@ -44,34 +44,41 @@ classdef PTKMain < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties
-        FrameworkCache
+    properties (SetAccess = private)
+        ImageDatabase      % Database of image files
+        FrameworkCache     % Information about mex files which is cached on disk
         Reporting          % Object for error and progress reporting
         ReportingWithCache % For the dataset, uses the same object, but warnings and messages are cached so multiple warnings can be displayed together
     end
 
     methods
         
-        % Constructor. If no error/progress reporting object is specified then a
-        % default object is created.
         function obj = PTKMain(reporting)
+            % Constructor. If no error/progress reporting object is specified then a
+            % default object is created.
             if nargin == 0
                 reporting = PTKReportingDefault;
             end
             obj.Reporting = reporting;
             obj.ReportingWithCache = PTKReportingWithCache(obj.Reporting);
             obj.FrameworkCache = PTKFrameworkCache.LoadCache(obj.Reporting);
+            obj.ImageDatabase = PTKImageDatabase.LoadDatabase(obj.Reporting);
+            obj.ImageDatabase.Rebuild([], false, obj.Reporting)
             PTKCompileMexFiles(obj.FrameworkCache, false, obj.Reporting);
         end
         
-        % Forces recompilation of mex files
         function Recompile(obj)
+            % Forces recompilation of mex files
             PTKCompileMexFiles(obj.FrameworkCache, true, obj.Reporting);
         end
         
-        % Creates a PTKDataset object for a dataset specified by the uid. The
-        % dataset must already be imported.
+        function RebuildDatabase(obj)
+            obj.ImageDatabase.Rebuild([], true, obj.Reporting)
+        end
+        
         function dataset = CreateDatasetFromUid(obj, dataset_uid)
+            % Creates a PTKDataset object for a dataset specified by the uid. The
+            % dataset must already be imported.
             dataset_disk_cache = PTKDatasetDiskCache(dataset_uid, obj.Reporting);
             image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
@@ -83,41 +90,58 @@ classdef PTKMain < handle
             obj.RunLinkFile(dataset_uid, dataset);
         end
         
-        % Creates a PTKDataset object for a dataset specified by the path, 
-        % filenames and/or uid specified in a PTKImageInfo object. The dataset is
-        % imported from the specified path if it does not already exist.
         function dataset = CreateDatasetFromInfo(obj, new_image_info)
-            [image_info, dataset_disk_cache] = PTKMain.ImportDataFromInfo(obj, new_image_info);
+            % Creates a PTKDataset object for a dataset specified by the path,
+            % filenames and/or uid specified in a PTKImageInfo object. The dataset is
+            % imported from the specified path if it does not already exist.
+            [image_info, dataset_disk_cache] = PTKMain.ImportDataFromInfo(new_image_info, obj.Reporting);
+            
+            % CreateDatasetFromInfo() can import new data, so we may need to add
+            % to the image database
+            if ~obj.ImageDatabase.SeriesExists(image_info.ImageUid)
+                obj.ImageDatabase.Rebuild({image_info.ImageUid}, false, obj.Reporting);
+            
+                % Save changes to the database
+                obj.ImageDatabase.SaveDatabase(obj.Reporting);
+            end
+
             dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
             
             obj.RunLinkFile(dataset.GetImageInfo.ImageUid, dataset);
         end
         
         function uids = ImportDataRecursive(obj, filename)
-            
-            file_series_grouper = PTKGroupFilesIntoSeries(filename, obj.Reporting);
-            uids = ImportFromSeriesGrouper(obj, file_series_grouper);
-            return;
+            % Identical to ImportData()
+            uids = obj.ImportData(filename);
         end
         
-        % Imports data into the Pulmonary Toolkit so that it can be accessed
-        % from the CreateDatasetFromUid() method. The input argument is a string
-        % containing the path to the data file to import. If the path points to
-        % a single (non-DICOM) file, then only the file will be imported. If the
-        % path points to a directory, or to a DICOM file, then all image files in
-        % the directory will be imported.
         function uids = ImportData(obj, filename)
+            % Imports data into the Pulmonary Toolkit so that it can be accessed
+            % from the CreateDatasetFromUid() method. The input argument is a string
+            % containing the path to the data file to import. If the path points to
+            % a single (non-DICOM) file, then only the file will be imported. If the
+            % path points to a directory, or to a DICOM file, then all image files in
+            % the directory and its subdirectories will be imported.
+            
             % Only support a string input
             if ~ischar(filename)
                 obj.Reporting.Error('PTKMain:FileNotAsExpected', 'The file or directory passed to PTKMain.ImportData() is not of the expected type.');
             end
             
-            file_series_grouper = PTKGroupFilesIntoSeries(filename, obj.Reporting);
-            uids = ImportFromSeriesGrouper(obj, file_series_grouper);
-            return
+            % Adds the files to the image database, which groups them into
+            % series
+            uids = PTKImageImporter(filename, obj.ImageDatabase, obj.ReportingWithCache);
+            
+            % Add the necessary files to the cache
+            obj.ImportSeries(uids);
+            
+            % Save changes to the database
+            obj.ImageDatabase.SaveDatabase(obj.Reporting);
         end
                 
         function RunLinkFile(obj, dataset_uid, dataset)
+            % This method is called to run a user-defined function for linking
+            % datasets
             user_path = PTKDirectories.GetUserPath;
             if PTKDiskUtilities.FileExists(user_path, 'PTKLinkDatasets.m');
                 PTKLinkDatasets(obj, dataset_uid, dataset, obj.Reporting);
@@ -127,36 +151,36 @@ classdef PTKMain < handle
     end
     
     methods (Access = private)
+        
+        function ImportSeries(obj, uids)
+            for series_uid = uids
+                series_info = obj.ImageDatabase.GetSeries(series_uid{1});
+                image_info = series_info.GetImageInfo;
+                PTKMain.ImportDataFromInfo(image_info, obj.Reporting);
+            end
+        end
     
         function uids = ImportFromSeriesGrouper(obj, grouper)
             uids = [];
             dicom_groups = grouper.DicomSeriesGroupings;
             for dicom_group = dicom_groups.values
-                uids{end + 1} = obj.ImportDicomFiles(dicom_group{1}.Filenames);
+                uids{end + 1} = PTKMain.ImportDicomFiles(dicom_group{1}.Filenames, obj.Reporting);
             end
             
             non_dicom_group = grouper.NonDicomGrouping;
-            non_dicom_uids =obj.ImportNonDicomFiles(non_dicom_group.Filenames);
+            non_dicom_uids = PTKMain.ImportNonDicomFiles(non_dicom_group.Filenames, obj.Reporting);
             uids = [uids, non_dicom_uids];
         end
+    end
+    
+    methods (Static, Access = private)
         
-        function uid = ImportDicomFiles(obj, dicom_filenames)
-            uid = [];
-            image_info_dicom = PTKImageInfo(dicom_filenames{1}.Path, dicom_filenames, PTKImageFileFormat.Dicom, [], [], []);
-            try
-                [image_info_dicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_dicom);
-                uid = image_info_dicom.ImageUid;
-            catch ex
-                obj.Reporting.ShowWarning('PTKMain:DicomReadFail', ['The file ' dicom_filenames{1}.FullFile ' looks like a Dicom file, but I am unable to read it. I will ignore this file.'], ex.message);
-            end
-        end
-        
-        function uids = ImportNonDicomFiles(obj, non_dicom_filenames)
+        function uids = ImportNonDicomFiles(non_dicom_filenames, reporting)
             uids = {};
             while ~isempty(non_dicom_filenames)
                 next_filename = non_dicom_filenames{1};
                 non_dicom_filenames(1) = [];
-                [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(next_filename.Path, next_filename.Name, [], obj.Reporting);
+                [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(next_filename.Path, next_filename.Name, [], reporting);
                 
                 % Remove duplicate filenames (which can happen when loading
                 % metadata files which have raw and metaheader files)
@@ -164,41 +188,51 @@ classdef PTKMain < handle
                 non_dicom_filenames = PTKDiskUtilities.FilenameSetDiff(non_dicom_filenames, secondary_filenames, next_filename.Path);
                 
                 if isempty(image_type)
-                    obj.Reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(next_filename.Path, next_filename.FullFile)], []);
+                    reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(next_filename.Path, next_filename.FullFile)], []);
                 else
                     image_info_nondicom = PTKImageInfo(import_folder, principal_filename, image_type, [], [], []);
-                    [image_info_nondicom, ~] = PTKMain.ImportDataFromInfo(obj, image_info_nondicom);
+                    [image_info_nondicom, ~] = PTKMain.ImportDataFromInfo(image_info_nondicom, reporting);
                     uids{end + 1} = image_info_nondicom.ImageUid;
                 end
             end
         end
-    end
-    
-    methods (Static, Access = private)
+        
+        function uid = ImportDicomFiles(dicom_filenames, reporting)
+            uid = [];
+            image_info_dicom = PTKImageInfo(dicom_filenames{1}.Path, dicom_filenames, PTKImageFileFormat.Dicom, [], [], []);
+            try
+                tic
+                [image_info_dicom, ~] = PTKMain.ImportDataFromInfo(image_info_dicom, reporting);
+                toc
+                uid = image_info_dicom.ImageUid;
+            catch ex
+                reporting.ShowWarning('PTKMain:DicomReadFail', ['The file ' dicom_filenames{1}.FullFile ' looks like a Dicom file, but I am unable to read it. I will ignore this file.'], ex.message);
+            end
+        end
         
         % Imports data into the Pulmonary Toolkit so that it can be accessed
         % from the CreateDatasetFromUid() method. The input argument is a
         % PTKImageInfo object containing the path, filenames and file type of
         % the data to import. If you do not know the file type, use the
         % ImportData() method instead.
-        function [image_info, dataset_disk_cache] = ImportDataFromInfo(obj, new_image_info)
+        function [image_info, dataset_disk_cache] = ImportDataFromInfo(new_image_info, reporting)
             
             if isempty(new_image_info.ImageUid)
-                [series_uid, study_uid, modality] = PTKMain.GetImageUID(new_image_info, obj.Reporting);
+                [series_uid, study_uid, modality] = PTKMain.GetImageUID(new_image_info, reporting);
                 new_image_info.ImageUid = series_uid;
                 new_image_info.StudyUid = study_uid;
                 new_image_info.Modality = modality;
             end
             
-            dataset_disk_cache = PTKDatasetDiskCache(new_image_info.ImageUid, obj.Reporting);
-            image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
+            dataset_disk_cache = PTKDatasetDiskCache(new_image_info.ImageUid, reporting);
+            image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, reporting);
             if isempty(image_info)
                 image_info = PTKImageInfo;
             end
 
             [image_info, anything_changed] = image_info.CopyNonEmptyFields(image_info, new_image_info);
             if (anything_changed)
-                dataset_disk_cache.SaveData(PTKSoftwareInfo.ImageInfoCacheName, image_info, obj.Reporting);
+                dataset_disk_cache.SaveData(PTKSoftwareInfo.ImageInfoCacheName, image_info, reporting);
             end
         end
         
