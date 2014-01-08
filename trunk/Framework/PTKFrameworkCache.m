@@ -56,7 +56,7 @@ classdef PTKFrameworkCache < handle
                 value.cache = obj;
                 PTKDiskUtilities.Save(cache_filename, value);
             catch ex
-                reporting.ErrorFromException('PTKFrameworkCache:FailedtoSaveCacheFile', ['Unable to save settings file ' cache_filename], ex);
+                reporting.ErrorFromException('PTKFrameworkCache:FailedtoSaveCacheFile', ['Unable to save framework cache file ' cache_filename], ex);
             end
         end        
     end

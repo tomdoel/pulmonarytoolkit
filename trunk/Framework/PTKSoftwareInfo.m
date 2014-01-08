@@ -57,6 +57,7 @@ classdef PTKSoftwareInfo < handle
         PreviewImageFileName = 'PreviewImages'
         SettingsFileName = 'PTKSettings.mat'
         FrameworkCacheFileName = 'PTKFrameworkCache.mat'
+        ImageDatabaseFileName = 'PTKImageDatabase.mat'
         MakerPointsCacheName = 'MarkerPoints'
         ImageInfoCacheName = 'ImageInfo'
         SchemaCacheName = 'Schema'
