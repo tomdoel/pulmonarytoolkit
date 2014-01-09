@@ -31,13 +31,14 @@ function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to
         
         modality = [];
         file_name = principal_filename{1};
-        patient_id = principal_filename{1};
-        study_uid = principal_filename{1};
-        series_uid = principal_filename{1};
-        image_uid = principal_filename{1};
-        patient_name = principal_filename{1};
+        series_uid = PTKDicomUtilities.GetIdentifierFromFilename(principal_filename{1});
+        patient_id = series_uid;
+        study_uid = [];
+        image_uid = series_uid;
+        patient_name = [];
+        patient_name.FamilyName = series_uid;
         study_description = '';
-        series_description = principal_filename{1};
+        series_description = series_uid;
         date = '';
         time = '';
         

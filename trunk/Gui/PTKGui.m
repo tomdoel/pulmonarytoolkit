@@ -734,10 +734,13 @@ classdef PTKGui < handle
                     obj.SetImage(lung_roi);
                 end
                 
-                
-                patient_id = lung_roi.MetaHeader.PatientID;
-                series_uid = lung_roi.MetaHeader.SeriesInstanceUID;
-                
+                series_uid = image_info.ImageUid;
+                if isfield(lung_roi.MetaHeader, 'PatientID')
+                    patient_id = lung_roi.MetaHeader.PatientID;
+                else
+                    patient_id = series_uid;
+                end
+
                 obj.AutoOrientationAndWL(lung_roi);
                 
                 obj.Settings.ImageInfo = image_info;

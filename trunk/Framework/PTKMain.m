@@ -263,7 +263,7 @@ classdef PTKMain < handle
                     study_uid = metadata.StudyInstanceUID;
                     modality = metadata.Modality;
                 case PTKImageFileFormat.Metaheader
-                    image_uid = image_info.ImageFilenames{1};
+                    image_uid = PTKDicomUtilities.GetIdentifierFromFilename(image_info.ImageFilenames{1});
                     study_uid = [];
                     modality = [];
                 otherwise
