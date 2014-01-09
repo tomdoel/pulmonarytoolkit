@@ -174,6 +174,10 @@ classdef PTKDicomUtilities
                 new_text = [text, prefix, struct_name.(field_name)];
             end
         end
+        
+        function uid = GetIdentifierFromFilename(file_name)
+            [~, uid, ~] = fileparts(file_name);
+        end
     end
 end
 

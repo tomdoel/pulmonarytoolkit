@@ -306,7 +306,7 @@ classdef PTKDiskUtilities
 
             % If all else fails, use the guess
             image_type = default_guess;
-            principal_filename = image_filename;
+            principal_filename = {image_filename};
             secondary_filenames = {};
         end
         
