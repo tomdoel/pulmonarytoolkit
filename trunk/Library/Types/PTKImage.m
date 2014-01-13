@@ -1006,6 +1006,16 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             
         end
         
+        % Given a set of coordinates in mm, compute the global coordinates of each
+        function global_coordinates = CoordinatesMmToGlobalCoordinatesUnrounded(obj, global_coordinates_mm)
+            if isempty(global_coordinates_mm)
+                global_coordinates = [];
+            else
+                global_coordinates = repmat([1, 1, 1], size(global_coordinates_mm, 1), 1) + global_coordinates_mm./repmat(obj.VoxelSize, size(global_coordinates_mm, 1), 1);
+            end
+            
+        end
+        
         function global_indices = GlobalCoordinatesToGlobalIndices(obj, coords)
             global_indices = PTKImageCoordinateUtilities.FastSub2ind(obj.OriginalImageSize, coords(:, 1), coords(:, 2), coords(:, 3));
         end
