@@ -87,7 +87,7 @@ classdef PTKAirwayForContext < PTKPlugin
                 airways_to_do.Push(next_airways.Children);
             end
             
-            error('No bronchus found');
+            bronchus = [];
         end
     end
 end
