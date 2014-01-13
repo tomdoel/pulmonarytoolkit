@@ -418,6 +418,16 @@ classdef PTKGui < handle
             obj.LoadFromUid(series_uid);
         end
         
+        function CloseAllFiguresExceptPtk(obj)
+            all_figure_handles = get(0, 'Children');
+            for figure_handle = all_figure_handles'
+                if (figure_handle ~= obj.FigureHandle) && (isempty(obj.PatientBrowser) || (figure_handle ~= obj.PatientBrowser.GetContainerHandle))
+                    if ishandle(figure_handle)
+                        delete(figure_handle);
+                    end
+                end
+            end
+        end
     end
     
     
