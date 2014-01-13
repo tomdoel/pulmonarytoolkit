@@ -23,6 +23,17 @@ classdef PTKPoint
                 obj.CoordZ = c_z;
             end
         end
-    end 
+    end
+    
+    methods (Static)
+        function diff = Difference(point_1, point_2)
+            diff = PTKPoint(point_1.CoordX - point_2.CoordX, point_1.CoordY - point_2.CoordY, point_1.CoordZ - point_2.CoordZ);
+        end
+        
+        function mag = Magnitude(point)
+            mag = norm([point.CoordX, point.CoordY, point.CoordZ]);
+        end
+
+    end
 end
 
