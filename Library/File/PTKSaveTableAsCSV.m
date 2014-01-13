@@ -27,12 +27,20 @@ function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
     for filter_index = 1 : 4
         filter = filters{filter_index};
         if isempty(filter)
-            ranges{filter_index} = table.IndexMaps{filter_index}.values;
-            names{filter_index} = table.NameMaps{filter_index}.values; 
-        else
-            ranges{filter_index} = table.IndexMaps{filter_index}(filter);
-            names{filter_index} = table.NameMaps{filter_index}(filter);
-        end    
+            filters{filter_index} = Sort(table.IndexMaps{filter_index}.keys, filter_index);
+        end
+    end
+    
+    for filter_index = 1 : 4
+        filter = filters{filter_index};    
+        names_filter = [];
+        ranges_filter = [];
+        for name = filter
+            names_filter{end + 1} = table.NameMaps{filter_index}(name{1});
+            ranges_filter{end + 1} = table.IndexMaps{filter_index}(name{1});
+        end
+        ranges{filter_index} = ranges_filter;
+        names{filter_index} = names_filter;
     end
     
     file_range = ranges{file_dim};
@@ -74,7 +82,7 @@ function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
                 [pi, mi, ci, si] = GetIndices(file_range_value, row_range_value, col_range_value, file_dim, row_dim, col_dim, other_dim);
                 cell_value = table.ResultsTable{pi, mi, ci, si};
                 if isnumeric(cell_value)
-                    cell_value_string = num2str(cell_value, '%5.1f');
+                    cell_value_string = num2str(cell_value, '%5.2f');
                 else
                     cell_value_string = char(cell_value);
                 end
@@ -100,5 +108,31 @@ function [pi, mi, ci, si] = GetIndices(file_range_value, row_range_value, col_ra
     si = table_indices(4);
 end
     
-    
+function sorted_values = Sort(values_to_sort, filter_index)
+    sorted_values = [];
+    if filter_index == 3
+        for context = GetContextLabels
+            char_context = char(context);
+            if ismember(char_context, values_to_sort)
+                sorted_values{end + 1} = char_context;
+                values_to_sort = setdiff(values_to_sort, char_context);
+            end
+        end
+        sorted_values = [sorted_values, values_to_sort];
+    else
+        sorted_values = values_to_sort;
+    end
+end
 
+function context_labels = GetContextLabels
+    context_labels = [
+        PTKContext.Lungs, PTKContext.RightLung, PTKContext.LeftLung, ...
+        PTKContext.RightUpperLobe, PTKContext.RightMiddleLobe, PTKContext.RightLowerLobe, ...
+        PTKContext.LeftUpperLobe, PTKContext.LeftLowerLobe, ...
+        PTKContext.R_AP, PTKContext.R_P, PTKContext.R_AN, ...
+        PTKContext.R_L, PTKContext.R_M, PTKContext.R_S, ...
+        PTKContext.R_MB, PTKContext.R_AB, PTKContext.R_LB, ...
+        PTKContext.R_PB, PTKContext.L_APP, PTKContext.L_APP2, ...
+        PTKContext.L_AN, PTKContext.L_SL, PTKContext.L_IL, ...
+        PTKContext.L_S, PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB];    
+end
