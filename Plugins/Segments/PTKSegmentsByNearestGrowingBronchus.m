@@ -20,7 +20,7 @@ classdef PTKSegmentsByNearestGrowingBronchus < PTKPlugin
     properties
         ButtonText = 'Segments'
         ToolTip = 'Finds the segments by dividing the volume according to the nearest bronchus from the airway growing tree'
-        Category = 'Synergy'
+        Category = 'Segments'
         
         AllowResultsToBeCached = true
         AlwaysRunPlugin = false
