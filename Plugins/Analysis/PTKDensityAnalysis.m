@@ -23,7 +23,7 @@ classdef PTKDensityAnalysis < PTKPlugin
 
         Context = PTKContextSet.Any
         AllowResultsToBeCached = true
-        AlwaysRunPlugin = false
+        AlwaysRunPlugin = true
         PluginType = 'DoNothing'
         HidePluginInDisplay = true
         FlattenPreviewImage = false
@@ -63,7 +63,11 @@ classdef PTKDensityAnalysis < PTKPlugin
     
             results = PTKComputeAirTissueFraction(roi, context_mask, reporting);
             [emphysema_results, ~] = PTKComputeEmphysemaFromMask(roi, context_no_airways);
-            results.Merge(emphysema_results);            
+            results.Merge(emphysema_results);
+            airway_metrics = dataset.GetResult('PTKAirwayAnalysis', context);
+            if ~isempty(airway_metrics)
+                results.Merge(airway_metrics, reporting);
+            end
         end
     end
 end
