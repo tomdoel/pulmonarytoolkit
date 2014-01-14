@@ -41,7 +41,7 @@ classdef PTKImageDatabase < handle
             patient_info = obj.PatientMap.values;
             family_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
             family_names = PTKContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
-            short_visible_names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
+            short_visible_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'ShortVisibleName');
 
             if isempty(family_names)
                 patient_info = [];
