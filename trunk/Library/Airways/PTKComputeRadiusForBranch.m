@@ -1,4 +1,4 @@
-function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d)
+function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d, reporting)
     % PTKComputeRadiusForBranch. Image-derived radius estimation of an airway.
     %
     %     PTKComputeRadiusForBranch creates a projection of the lung image
@@ -21,7 +21,8 @@ function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_dou
         points_indices = [first_point, points_indices];
     end
     
-    expected_radius_mm = mode(radius_approximation.RawImage(points_indices));
+    expected_radius_mm = GuessRadius(next_segment, radius_approximation);
+    
     [px, py, pz] = ind2sub(image_size, points_indices');
     knot = [px, py, pz];
     
@@ -102,13 +103,31 @@ function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_dou
     
     next_result.CentrelinePoints = knot;
     next_result.CentrelineSpline = spline';
-    next_result.Radius = radius_results.RadiusMean;
+    
+    if isempty(radius_results.RadiusMean) || isnan(radius_results.RadiusMean) || (radius_results.RadiusMean <= 0)
+        reporting.ShowWarning('PTKComputeRadiusForBranch:RadiusMeasurementFailed', 'Unable to compute the inner lumen radius for this broncus using FWHM; instead I am using an approximation based on the distance transform of the segmented lumen', []);
+        next_result.Radius = expected_radius_mm;
+    else
+        next_result.Radius = radius_results.RadiusMean;
+    end
+        
     next_result.WallThickness = radius_results.WallThicknessMean;
     
-    disp(['Generation:' int2str(generation_number) ', Radius: Expected:' radius_exp 'mm, Mean:' radius_mean ...
-        ' SD:' radius_std ' Min:' radius_min ' Max:' radius_max]);
-    disp(['Generation:' int2str(generation_number) ', Wall Thickness: Mean:' wt_mean ...
-        ' SD:' wt_std ' Min:' wt_min ' Max:' wt_max]);
+    if PTKSoftwareInfo.DebugMode        
+        disp(['Generation:' int2str(generation_number) ', Radius: Expected:' radius_exp 'mm, Mean:' radius_mean ...
+            ' SD:' radius_std ' Min:' radius_min ' Max:' radius_max]);
+        disp(['Generation:' int2str(generation_number) ', Wall Thickness: Mean:' wt_mean ...
+            ' SD:' wt_std ' Min:' wt_min ' Max:' wt_max]);
+    end
+end
+
+function expected_radius_mm = GuessRadius(bronchus, radius_approximation)
+    points_indices = bronchus.Points;
+    if ~isempty(bronchus.Parent)
+        first_point = bronchus.Parent.Points(end);
+        points_indices = [first_point, points_indices];
+    end
+    expected_radius_mm = mode(radius_approximation.RawImage(points_indices));
 end
 
 
