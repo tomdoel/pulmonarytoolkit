@@ -105,8 +105,8 @@ classdef PTKListOfPatientsPanel < PTKPanel
     methods (Access = private)
         
         function AddPatientsToListBox(obj)
-            [names, ids, family_names] = obj.PatientDatabase.GetListOfPatientNames;
-            set(obj.PatientListBox, 'String', family_names);
+            [names, ids, short_visible_names] = obj.PatientDatabase.GetListOfPatientNames;
+            set(obj.PatientListBox, 'String', short_visible_names);
             obj.PatientIds = ids;
         end
         

@@ -14,20 +14,17 @@ classdef PTKImageDatabasePatient < handle
     properties (SetAccess = private)
         Name
         VisibleName
+        ShortVisibleName
         PatientId
         SeriesMap
     end
     
     methods
         function obj = PTKImageDatabasePatient(name, id)
-            if nargin > 0                
+            if nargin > 0  
                 obj.Name = name;
-                visible_name = PTKDicomUtilities.PatientNameToString(name);
-                if isempty(visible_name)
-                    visible_name = 'Unknown';
-                end
-                obj.VisibleName = visible_name;
                 obj.PatientId = id;
+                obj.SetVisibleNames(name, id);
                 obj.SeriesMap = containers.Map;
             end
         end
@@ -68,5 +65,37 @@ classdef PTKImageDatabasePatient < handle
             num_series = double(obj.SeriesMap.Count);
         end
         
+    end
+    
+    methods (Access = private)
+        function SetVisibleNames(obj, name, id)
+            [visible_name, short_visible_name] = PTKDicomUtilities.PatientNameToString(name);
+            if isempty(visible_name)
+                if isempty(id)
+                    visible_name = 'Unknown';
+                else
+                    visible_name = id;
+                end
+            end
+            if isempty(short_visible_name)
+                if isempty(id)
+                    short_visible_name = 'Unknown';
+                else
+                    short_visible_name = id;
+                end
+            end
+            obj.VisibleName = visible_name;
+            obj.ShortVisibleName = short_visible_name;
+        end
+    end
+    
+    methods (Static)
+        function obj = loadobj(obj)
+            % This method is called when the object is loaded from disk.
+            % If the visible names are not set then set them now
+            if isempty(obj.ShortVisibleName) || isempty(obj.VisibleName)
+                obj.SetVisibleNames(obj.Name, obj.PatientId);
+            end
+        end
     end
 end

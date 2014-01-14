@@ -148,30 +148,41 @@ classdef PTKDicomUtilities
             match = max_difference <= tolerance_mm;
         end
         
-        function name = PatientNameToString(patient_name)
+        function [name, short_name] = PatientNameToString(patient_name)
             if ischar(patient_name)
                 name = patient_name;
             else
                 name = '';
+                short_name = '';
                 if isstruct(patient_name)
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'FamilyName');
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'GivenName');
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'MiddleName');
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'NamePrefix');
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'NameSuffix');
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'FamilyName', false);
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'GivenName', false);
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'MiddleName', false);
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'NamePrefix', false);
+                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'NameSuffix', false);
+                    
+                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'FamilyName', true);
+                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'GivenName', true);
+                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'MiddleName', true);
+                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'NamePrefix', true);
+                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'NameSuffix', true);
                 end
             end
         end
         
-        function new_text = AddOptionalField(text, struct_name, field_name)
-            new_text = text;
-            if isfield(struct_name, field_name) && ~isempty(struct_name.(field_name))
-                if isempty(text)
-                    prefix = '';
-                else
-                    prefix = ', ';
+        function new_text = AddOptionalField(text, struct_name, field_name, only_if_nonempty)
+            if isempty(text) || ~only_if_nonempty
+                new_text = text;
+                if isfield(struct_name, field_name) && ~isempty(struct_name.(field_name))
+                    if isempty(text)
+                        prefix = '';
+                    else
+                        prefix = ', ';
+                    end
+                    new_text = [text, prefix, struct_name.(field_name)];
                 end
-                new_text = [text, prefix, struct_name.(field_name)];
+            else
+                new_text = text;
             end
         end
         

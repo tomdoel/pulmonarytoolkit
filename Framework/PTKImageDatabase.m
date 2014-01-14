@@ -41,17 +41,19 @@ classdef PTKImageDatabase < handle
             patient_info = obj.PatientMap.values;
             family_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
             family_names = PTKContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
+            short_visible_names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
 
             if isempty(family_names)
                 patient_info = [];
                 return
             end
-            
+
+            % Sort by the short visible name
             % Remove any empty values to ensure sort works
-            empty_values = cellfun(@isempty, family_names);
-            family_names(empty_values) = {'Unknown'};
+            empty_values = cellfun(@isempty, short_visible_names);
+            short_visible_names(empty_values) = {'Unknown'};
+            [~, sorted_indices] = PTKTextUtilities.SortFilenames(short_visible_names);
             
-            [~, sorted_indices] = PTKTextUtilities.SortFilenames(family_names);
             patient_info = patient_info(sorted_indices);
         end
         
@@ -63,28 +65,30 @@ classdef PTKImageDatabase < handle
             series_exists = obj.SeriesMap.isKey(series_uid);
         end
         
-        function [names, ids, family_names] = GetListOfPatientNames(obj)
+        function [names, ids, short_visible_names] = GetListOfPatientNames(obj)
+            % Returns list of patient names, ids and fmaily names, sorted by the
+            % short visible name
             ids = obj.PatientMap.keys;
             values = obj.PatientMap.values;
             names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');
-            family_names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'Name');
-            family_names = PTKContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
+            short_visible_names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
 
-            if isempty(family_names)
+            if isempty(short_visible_names)
                 names = [];
                 ids = [];
-                family_names = [];
+                short_visible_names = [];
                 return;
             end
-            % Remove any empty values to ensure sort works
-            empty_values = cellfun(@isempty, family_names);
-            family_names(empty_values) = {'Unknown'};
-            names(empty_values) = {'Unknown'};
             
-            [~, sorted_indices] = PTKTextUtilities.SortFilenames(family_names);
+            % Sort by the short visible name
+            % Remove any empty values to ensure sort works
+            empty_values = cellfun(@isempty, short_visible_names);
+            short_visible_names(empty_values) = {'Unknown'};
+            [~, sorted_indices] = PTKTextUtilities.SortFilenames(short_visible_names);
+            
             names = names(sorted_indices);
             ids = ids(sorted_indices);
-            family_names = family_names(sorted_indices);
+            short_visible_names = short_visible_names(sorted_indices);
         end
         
         function DeleteSeries(obj, series_uid, reporting)
