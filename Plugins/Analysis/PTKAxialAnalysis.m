@@ -48,13 +48,10 @@ classdef PTKAxialAnalysis < PTKPlugin
             end
             
             % Get a mask for the current region to analyse
-            context_mask = dataset.GetTemplateImage(context);
-            if ~context_mask.ImageExists
-                context_mask = dataset.GetTemplateImage(PTKContext.Lungs);
-            end
-            
-            [~, airway_image] = dataset.GetResult('PTKAirways', PTKContext.LungROI);
+            context_mask = dataset.GetResult('PTKGetMaskForContext', context);
 
+            % Create a region mask excluding the airways
+            context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);
             
             % Divide the lung into bins along the cranial-caudal axis
             axial_bins = dataset.GetResult('PTKDivideLungsIntoAxialBins', PTKContext.Lungs);
@@ -66,12 +63,7 @@ classdef PTKAxialAnalysis < PTKPlugin
             bin_image.CropToFit;
             roi.ResizeToMatch(bin_image);
             context_mask.ResizeToMatch(bin_image);
-            airway_image.ResizeToMatch(bin_image);
-            
-            % Create a region mask excluding the airways
-            context_no_airways = context_mask.BlankCopy;
-            context_no_airways.ChangeRawImage(context_mask.RawImage & airway_image.RawImage ~= 1);
-            
+            context_no_airways.ResizeToMatch(bin_image);
             
             reporting.UpdateProgressAndMessage(0, 'Calculating metrics for each axial bin');
             
