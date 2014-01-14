@@ -34,7 +34,7 @@ function [results, airway_skeleton] = GetRadius(lung_image, airway_skeleton, rad
         reporting.UpdateProgressValue(round(100*segments_done/number_of_segments));
         segments_done = segments_done + 1;
         
-        next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d);
+        next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d, reporting);
         results{end+1} = next_result;
         
         next_segment.Radius = next_result.Radius;
