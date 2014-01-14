@@ -18,7 +18,7 @@ classdef PTKEmphysemaImage < PTKPlugin
     %
 
     properties
-        ButtonText = 'Emphysema<br>image'
+        ButtonText = 'Emphysema'
         ToolTip = 'Shows emphysema-like voxels'
         Category = 'Analysis'
 
@@ -35,27 +35,12 @@ classdef PTKEmphysemaImage < PTKPlugin
     end
     
     methods (Static)
-        function emphysema_results = RunPlugin(dataset, context, reporting)
-            lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
+        function emphysema_results_image = RunPlugin(dataset, context, reporting)
             roi = dataset.GetResult('PTKLungROI');
-            [~, airway_image] = dataset.GetResult('PTKAirways');
-            airway_image.ResizeToMatch(lung_mask);
-            lung_mask_raw = lung_mask.RawImage > 0;
-            lung_mask_raw(airway_image.RawImage == 1) = false;
-            lung_mask.ChangeRawImage(lung_mask_raw);            
-            
-            emphysema_results = PTKEmphysemaImage.GetEmphysemaImage(roi, lung_mask);
-            emphysema_results.ImageType = PTKImageType.Colormap;
-        end
-    end
-    
-    methods (Static, Access = private)
-        function emphysema_mask = GetEmphysemaImage(roi_data, mask)
-            emphysema_threshold_value_hu = -950;
-            emphysema_threshold_value = roi_data.HounsfieldToGreyscale(emphysema_threshold_value_hu);
-            emphysema_mask_raw = (roi_data.RawImage <= emphysema_threshold_value) & (mask.RawImage);
-            emphysema_mask = mask.BlankCopy;
-            emphysema_mask.ChangeRawImage(3*uint8(emphysema_mask_raw));
+            context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);
+            roi.ResizeToMatch(context_no_airways);
+            [~, emphysema_results_image] = PTKComputeEmphysemaFromMask(roi, context_no_airways);
+            emphysema_results_image.ImageType = PTKImageType.Colormap;
         end
     end
 end

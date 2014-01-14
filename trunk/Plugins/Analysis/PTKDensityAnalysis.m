@@ -23,7 +23,7 @@ classdef PTKDensityAnalysis < PTKPlugin
 
         Context = PTKContextSet.Any
         AllowResultsToBeCached = true
-        AlwaysRunPlugin = true
+        AlwaysRunPlugin = false
         PluginType = 'DoNothing'
         HidePluginInDisplay = true
         FlattenPreviewImage = false
@@ -44,22 +44,13 @@ classdef PTKDensityAnalysis < PTKPlugin
             end
             
             % Get a mask for the current region to analyse
-            context_mask = dataset.GetTemplateImage(context);
-            if ~context_mask.ImageExists
-                context_mask = dataset.GetTemplateImage(PTKContext.Lungs);
-            end
-            
-            context_mask.CropToFit;
+            context_mask = dataset.GetResult('PTKGetMaskForContext', context);
 
-            [~, airway_image] = dataset.GetResult('PTKAirways', PTKContext.LungROI);
+            % Create a region mask excluding the airways
+            context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);
             
             % Reduce all images to a consistent size
-            airway_image.ResizeToMatch(context_mask);
             roi.ResizeToMatch(context_mask);
-            
-            % Create a region mask excluding the airways
-            context_no_airways = context_mask.BlankCopy;
-            context_no_airways.ChangeRawImage(context_mask.RawImage & airway_image.RawImage ~= 1);            
     
             results = PTKComputeAirTissueFraction(roi, context_mask, reporting);
             [emphysema_results, ~] = PTKComputeEmphysemaFromMask(roi, context_no_airways);

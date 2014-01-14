@@ -9,15 +9,21 @@ function [metrics, emphysema_mask] = PTKComputeEmphysemaFromMask(roi_data, mask)
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
-    emphysema_threshold_value_hu = -950;
-    emphysema_threshold_value = roi_data.HounsfieldToGreyscale(emphysema_threshold_value_hu);
+    emphysema_threshold_value_hu_1 = -950;
+    emphysema_threshold_value_hu_2 = -910;
+    
+    emphysema_threshold_value_1 = roi_data.HounsfieldToGreyscale(emphysema_threshold_value_hu_1);
+    emphysema_threshold_value_2 = roi_data.HounsfieldToGreyscale(emphysema_threshold_value_hu_2);
     emphysema_threshold_value_percentile = 15;
-    emphysema_mask_raw = (roi_data.RawImage <= emphysema_threshold_value) & (mask.RawImage > 0);
+    lower_threshold = (roi_data.RawImage <= emphysema_threshold_value_1) & (mask.RawImage > 0);
+    upper_threshold = (roi_data.RawImage <= emphysema_threshold_value_2) & (mask.RawImage > 0);
+    emphysema_mask_raw = uint8(upper_threshold);
+    emphysema_mask_raw(lower_threshold) = 3;
     emphysema_mask = mask.BlankCopy;
     emphysema_mask.ChangeRawImage(emphysema_mask_raw);
     
     number_of_voxels_in_mask = sum(mask.RawImage(:));
-    emphysema_voxels_in_mask = sum(emphysema_mask_raw(mask.RawImage(:)));
+    emphysema_voxels_in_mask = sum(lower_threshold(:)); % We only count voxels in the lower threshold
     emphysema_percentage = 100*emphysema_voxels_in_mask/number_of_voxels_in_mask;
     
     if ~mask.ImageExists

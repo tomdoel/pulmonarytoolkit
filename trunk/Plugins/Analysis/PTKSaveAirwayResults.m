@@ -21,7 +21,7 @@ classdef PTKSaveAirwayResults < PTKPlugin
         Category = 'Analysis'
 
         Context = PTKContextSet.LungROI
-        AllowResultsToBeCached = true
+        AllowResultsToBeCached = false
         AlwaysRunPlugin = true
         PluginType = 'DoNothing'
         HidePluginInDisplay = false
