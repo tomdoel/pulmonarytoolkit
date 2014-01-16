@@ -27,7 +27,7 @@ function results = PTKGetWallThicknessForBranch(bronchus, image_roi, context, fi
         
         while (iter < max_iters) && (mean_centreline_difference > max_mean_centreline_difference)
             iter = iter + 1;
-            [new_centreline, ~, ~, ~, ~] = RecomputeAllCentreline(current_centreline, direction_vector, image_roi, radius_guess, figure_airways_3d, segment_label, segmented_image, plot_debug_graphs, context);
+            [new_centreline, ~, ~, ~, ~, ~] = RecomputeAllCentreline(current_centreline, direction_vector, image_roi, radius_guess, figure_airways_3d, segment_label, segmented_image, plot_debug_graphs, context);
             centreline_difference = CentrelineDifference(current_centreline, new_centreline);
             mean_centreline_difference = mean(centreline_difference);
             current_centreline = new_centreline;
@@ -44,7 +44,7 @@ function results = PTKGetWallThicknessForBranch(bronchus, image_roi, context, fi
         plot_debug_graphs = PTKSoftwareInfo.GraphicalDebugMode;
         central_centreline = current_centreline(first_radius_index : last_radius_index);
         
-        [new_centreline, radius_mean, radius_std, wall_thickness_mean, wall_thickness_std] = RecomputeAllCentreline(central_centreline, direction_vector, image_roi, radius_guess, figure_airways_3d, segment_label, segmented_image, plot_debug_graphs, context);
+        [new_centreline, radius_mean, radius_std, wall_thickness_mean, wall_thickness_std, wall_thickness_min] = RecomputeAllCentreline(central_centreline, direction_vector, image_roi, radius_guess, figure_airways_3d, segment_label, segmented_image, plot_debug_graphs, context);
         
         
         results = [];
@@ -52,6 +52,7 @@ function results = PTKGetWallThicknessForBranch(bronchus, image_roi, context, fi
         results.FWHMRadiusStd = radius_std;
         results.FWHMWallThicknessMean = wall_thickness_mean;
         results.FWHMWallThicknessStd = wall_thickness_std;
+        results.FWHMWallThicknessMin = wall_thickness_min;
         results.Centreline = new_centreline;
         results.GridOverlayImage = segmented_image;
     end
@@ -128,7 +129,7 @@ end
 
 
 
-function [new_centreline_points, mean_radius, std_radius, mean_wallthickness, std_wallthickness] = RecomputeAllCentreline(centre_points_mm, direction_vector, image_roi, radius_guess_mm, figure_airways_3d, segment_label, segmented_image, plot_debug_graphs, context)
+function [new_centreline_points, mean_radius, std_radius, mean_wallthickness, std_wallthickness, min_wall_thickness] = RecomputeAllCentreline(centre_points_mm, direction_vector, image_roi, radius_guess_mm, figure_airways_3d, segment_label, segmented_image, plot_debug_graphs, context)
     [x_coord_mm_cyl, y_coord_mm_cyl, z_coord_mm_cyl, radius_range_half, full_angle_range] = GetGridForCylinder(image_roi, radius_guess_mm, centre_points_mm, direction_vector);
     interpolated_image_cylinder = GetInterpolatedImage(x_coord_mm_cyl, y_coord_mm_cyl, z_coord_mm_cyl, image_roi, segmented_image, segment_label, centre_points_mm);
 
@@ -138,7 +139,7 @@ function [new_centreline_points, mean_radius, std_radius, mean_wallthickness, st
     end
     
     
-    [new_centrepoints, mean_radius, std_radius, mean_wallthickness, std_wallthickness] = FindWalls(interpolated_image_cylinder, image_roi, radius_range_half, full_angle_range, centre_points_mm, direction_vector, segment_label, radius_guess_mm, plot_debug_graphs, context);
+    [new_centrepoints, mean_radius, std_radius, mean_wallthickness, std_wallthickness, min_wall_thickness] = FindWalls(interpolated_image_cylinder, image_roi, radius_range_half, full_angle_range, centre_points_mm, direction_vector, segment_label, radius_guess_mm, plot_debug_graphs, context);
 
     new_centreline_points = new_centrepoints;    
 end
@@ -349,7 +350,7 @@ function [interpolated_image, centre_global_indices] = GetInterpolatedImage(x_co
     centre_global_indices = lung_roi.GlobalCoordinatesToGlobalIndices(round(centre_global_coordinates));    
 end
 
-function [new_centrepoints, mean_radius, std_radius, mean_wallthickness, std_wallthickness] = FindWalls(interpolated_volume, lung_roi, radius_range_half, full_angle_range, centre_points_mm, direction_vector, segment_label, radius_guess_mm, plot_debug_graphs, context)
+function [new_centrepoints, mean_radius, std_radius, mean_wallthickness, std_wallthickness, min_wall_thickness_along_whole_bronchus] = FindWalls(interpolated_volume, lung_roi, radius_range_half, full_angle_range, centre_points_mm, direction_vector, segment_label, radius_guess_mm, plot_debug_graphs, context)
 
     number_of_radii = size(interpolated_volume, 1);
     number_of_angles = size(interpolated_volume, 2);
@@ -392,7 +393,7 @@ function [new_centrepoints, mean_radius, std_radius, mean_wallthickness, std_wal
     
     % Compute the mean wall thickness for each centreline point
     valid_both = valid_values_inner & valid_values_outer;
-    [wall_thickness_mm_list, mean_wallthickness, std_wallthickness] = ComputeMeanWallThicknessForEachPoint(wall_thickness, valid_both);
+    [wall_thickness_mm_list, mean_wallthickness, std_wallthickness, min_wall_thickness_along_whole_bronchus] = ComputeMeanWallThicknessForEachPoint(wall_thickness, valid_both);
 
     if ~isempty(points_axes_handle)
         plot3(points_axes_handle, inner_x_coord_mm(valid_values_inner(:)), inner_y_coord_mm(valid_values_inner(:)), inner_z_coord_mm(valid_values_inner(:)), 'ro');
@@ -619,7 +620,7 @@ function [radius_mm_list, mean_radius_along_whole_bronchus, std_radius_along_who
     std_radius_along_whole_bronchus = std(all_radius_values);
 end
     
-function [wall_thickness_mm_list, mean_wall_thickness_along_whole_bronchus, std_wall_thickness_along_whole_bronchus] = ComputeMeanWallThicknessForEachPoint(wall_thickness_values, valid_radial_lines)
+function [wall_thickness_mm_list, mean_wall_thickness_along_whole_bronchus, std_wall_thickness_along_whole_bronchus, min_wall_thickness_along_whole_bronchus] = ComputeMeanWallThicknessForEachPoint(wall_thickness_values, valid_radial_lines)
     number_of_contributing_radii = sum(valid_radial_lines, 2);
     
     % Find the mean radius
@@ -632,6 +633,7 @@ function [wall_thickness_mm_list, mean_wall_thickness_along_whole_bronchus, std_
     all_wall_thickness_values = wall_thickness_values(valid_radial_lines(:));
     mean_wall_thickness_along_whole_bronchus = mean(all_wall_thickness_values);
     std_wall_thickness_along_whole_bronchus = std(all_wall_thickness_values);
+    min_wall_thickness_along_whole_bronchus = min(all_wall_thickness_values);
 end
 
 function new_centrepoints = ComputeNewCentrelinePoints(radius_value, valid_radial_lines, full_angle_range, centre_points_mm, direction_vector, points_axes_handle)
