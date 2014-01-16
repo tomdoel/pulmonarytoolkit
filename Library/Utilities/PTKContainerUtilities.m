@@ -11,9 +11,9 @@ classdef PTKContainerUtilities
     
     methods (Static)
 
-        % Returns a set of values, corresponding to the contents of the field
-        % 'field_name' in each structure in the set 'set'.
         function field_values = GetFieldValuesFromSet(set, field_name)
+            % Returns a set of values, corresponding to the contents of the field
+            % 'field_name' in each structure in the set 'set'.
             if isempty(set)
                 field_values = [];
                 return;
@@ -21,9 +21,9 @@ classdef PTKContainerUtilities
             field_values = cellfun(@(x)getfield(x, field_name), set, 'UniformOutput', false); %#ok<GFLD>
         end
         
-        % Returns a matrix of values, corresponding to the contents of the field
-        % 'field_name' in each structure in the set 'set'.
         function field_values = GetMatrixOfFieldValuesFromSet(set, field_name)
+            % Returns a matrix of values, corresponding to the contents of the field
+            % 'field_name' in each structure in the set 'set'.
             if isempty(set)
                 field_values = [];
                 return;
@@ -31,12 +31,11 @@ classdef PTKContainerUtilities
             field_values = cell2mat(PTKContainerUtilities.GetFieldValuesFromSet(set, field_name));
         end
         
-        % Converts the input values to a set of values, while preserving
-        % strings.
-        % If values is already a set, this does nothing. Otherwise, values is
-        % converted into a cell array. However, character arrays (ie strings)
-        % are converted into a cell array containing one string
         function values_set = ConvertToSet(values)
+            % Converts the input values to a set of values, while preserving strings.
+            % If values is already a set, this does nothing. Otherwise, values is
+            % converted into a cell array. However, character arrays (ie strings)
+            % are converted into a cell array containing one string
             if iscell(values)
                 values_set = values;
             elseif ischar(values)
@@ -44,6 +43,14 @@ classdef PTKContainerUtilities
             else
                 values_set = num2cell(values);
             end
+        end
+        
+        function cell_array = CellEmptyToNan(cell_array)
+            % Converts empty cells to NaN, enabling conversion of cell arrays to matrices without loss of empty elements
+            
+            empty = cellfun(@isempty, cell_array);
+            cell_array(empty) = {NaN};
+            
         end
     end
 end
