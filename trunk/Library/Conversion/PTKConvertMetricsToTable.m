@@ -1,4 +1,4 @@
-function results_table = PTKConvertMetricsToTable(results, patient_name, patient_id, reporting)
+function results_table = PTKConvertMetricsToTable(results, patient_name, patient_id, reporting, results_table)
     % PTKConvertMetricsToTable.
     %
     %
@@ -9,7 +9,9 @@ function results_table = PTKConvertMetricsToTable(results, patient_name, patient
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
    
-    results_table = PTKResultsTable;
+    if nargin < 5 || isempty(results_table)
+        results_table = PTKResultsTable;
+    end
     AddToTable(results_table, results, patient_id, reporting);
     results_table.AddPatientName(patient_id, patient_name);
 end
