@@ -177,6 +177,8 @@ classdef PTKImageDatabase < handle
                 end                
             end
             
+            reporting.UpdateProgressAndMessage(100, 'Saving changes to database');
+            
             if ~isempty(uids)
                 obj.SaveDatabase(reporting);
             end
