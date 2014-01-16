@@ -73,6 +73,11 @@ classdef PTKPlugin < handle
         %                    its own window
         PluginType
         
+        % Set to force the plugin to appear in a particular panel name in the gui.
+        % If you leave blank, the panel name will be the subdirectory under
+        % Plugins where the plugin is found
+        Category
+        
         % Should normally be set to false.
         % If true, this plugin will not have a button in the gui window
         HidePluginInDisplay
