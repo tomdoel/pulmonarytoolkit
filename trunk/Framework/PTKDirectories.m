@@ -185,7 +185,8 @@ classdef PTKDirectories < handle
             uids = {};
             for subdir = subdirectories
                 candidate_uid = subdir{1};
-                if 2 == exist(fullfile(cache_directory, candidate_uid, [PTKSoftwareInfo.ImageInfoCacheName '.mat']), 'file')
+                full_file_name = [cache_directory, filesep, candidate_uid, filesep, PTKSoftwareInfo.ImageInfoCacheName, '.mat'];
+                if 2 == exist(full_file_name, 'file')
                     uids{end+1} = candidate_uid;
                 end
             end
