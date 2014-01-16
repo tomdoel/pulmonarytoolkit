@@ -30,7 +30,11 @@ classdef PTKDropDownLoadMenuManager < handle
         function obj = PTKDropDownLoadMenuManager(settings, popupmenu_handle)
             obj.MenuHandle = popupmenu_handle;
             obj.Settings = settings;
-            obj.UpdateQuickLoadMenu;
+            
+            % There is no need to call obj.UpdateQuickLoadMenu here provided the
+            % menu is always updated after the first load in PTKGui.
+            % Update can be a bit slow so we don't want to call it twice on
+            % startup.
         end
         
         function UpdateQuickLoadMenu(obj)
