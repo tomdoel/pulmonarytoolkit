@@ -42,6 +42,9 @@ classdef PTKSplashScreen < PTKProgressInterface
         
         Hold = false;
         ShowProgressBar = false
+        
+        TimerRef
+        MaxTimeBetweenUpdates = 0.25
     end
         
     methods
@@ -90,7 +93,10 @@ classdef PTKSplashScreen < PTKProgressInterface
             obj.ProgressBarHandle.setValue(0);
 
             set(obj.FigureHandle, 'Visible', 'on');
+            obj.TimerRef = tic;
+
             obj.Hide;
+            
         end
         
         function Delete(obj)
@@ -179,7 +185,11 @@ classdef PTKSplashScreen < PTKProgressInterface
             set(obj.ProgressTitle, 'String', obj.DialogTitle);
             set(obj.Text, 'String', obj.DialogText);
             obj.ProgressBarHandle.setValue(obj.ProgressValue);
-            drawnow;
+            
+            if isempty(obj.TimerRef) || toc(obj.TimerRef) > obj.MaxTimeBetweenUpdates
+                obj.TimerRef = tic;
+                drawnow;
+            end
         end
         
         function ShowPanel(obj)
