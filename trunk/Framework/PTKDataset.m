@@ -226,6 +226,14 @@ classdef PTKDataset < handle
             obj.PostCallTidy;
         end
         
+        % Removes the cache file fodler associated with this dataset. This
+        % should not be called unless you are completely removing the dataset
+        function DeleteCacheForThisDataset(obj, varargin)
+            obj.PreCallTidy;
+            obj.LinkedDatasetChooser.GetDataset(varargin{:}).DeleteCacheForThisDataset;
+            obj.PostCallTidy;
+        end
+        
         % Check to see if a context has been disabled for this dataset, due to a 
         % failure when running the plugin that generates the template image for 
         % that context.

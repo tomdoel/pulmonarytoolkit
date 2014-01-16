@@ -170,8 +170,17 @@ classdef PTKDatasetResults < handle
         % each dataset. Clearing the cache files forces recomputation of all
         % results.
         function ClearCacheForThisDataset(obj, remove_framework_files)
-            obj.DatasetDiskCache.RemoveAllCachedFiles(remove_framework_files, obj.Reporting);
             obj.PreviewImages.Clear;
+            obj.DatasetDiskCache.RemoveAllCachedFiles(remove_framework_files, obj.Reporting);
+        end
+        
+        % Removes all the cache files associated with this dataset. Cache files
+        % store the results of plugins so they need only be computed once for
+        % each dataset. Clearing the cache files forces recomputation of all
+        % results.
+        function DeleteCacheForThisDataset(obj)
+            obj.PreviewImages.Clear;
+            obj.DatasetDiskCache.Delete(obj.Reporting);
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 

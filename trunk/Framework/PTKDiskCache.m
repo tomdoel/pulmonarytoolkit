@@ -120,6 +120,26 @@ classdef PTKDiskCache < handle
             obj.PrivateSave(name, value, info, context, reporting);
         end
         
+        function Delete(obj, reporting)
+            % Store the state of the recycle bin
+            state = recycle;
+
+            % Set recycle to on or off depending on a software switch
+            if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
+                recycle('on');
+            else
+                recycle('off');
+            end
+            
+            reporting.ShowMessage('PTKDiskCache:DeletingDirectory', ['Deleting directory: ' obj.CachePath]);
+            reporting.Log(['Deleting directory' obj.CachePath]);
+            rmdir(obj.CachePath, 's');
+            
+            % Restore previous recycle bin state
+            recycle(state);
+        end
+
+        
         % Remove all results files for this dataset. Does not remove certain
         % files such as dataset info and manually-created marker files, unless
         % the "remove_framework_files" flag is set to true.
@@ -162,7 +182,7 @@ classdef PTKDiskCache < handle
                 is_framework_file = PTKDirectories.IsFrameworkFile(file_name);
                 if (remove_framework_files || (~is_framework_file))
                     full_filename = fullfile(file_path, file_name);
-                    reporting.ShowMessage('PTKDiskCache:RecyclingCacheDirectory', ['Moving cache file to recycle bin: ' full_filename]);
+                    reporting.ShowMessage('PTKDiskCache:RecyclingCacheDirectory', ['Deleting: ' full_filename]);
                     
                     delete(full_filename);
                     reporting.Log(['Deleting ' full_filename]);
