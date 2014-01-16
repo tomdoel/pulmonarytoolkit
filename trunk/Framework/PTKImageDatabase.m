@@ -61,6 +61,10 @@ classdef PTKImageDatabase < handle
             series_info = obj.SeriesMap(series_uid);
         end
         
+        function uids = GetSeriesUids(obj)
+            uids = obj.SeriesMap.keys;
+        end
+        
         function series_exists = SeriesExists(obj, series_uid)
             series_exists = obj.SeriesMap.isKey(series_uid);
         end
@@ -135,6 +139,8 @@ classdef PTKImageDatabase < handle
             stage_index = 0;
             num_stages = numel(uids);
             
+            database_changed = false;
+            
             for uid = uids
                 reporting.UpdateProgressStage(stage_index, num_stages);
                 stage_index = stage_index + 1;
@@ -171,15 +177,17 @@ classdef PTKImageDatabase < handle
                             end
                         end
                         
+                        database_changed = true;
+                        
                     catch exc
                         reporting.ShowWarning('PTKImageDatabase:AddDatasetFailed', ['An error occured when adding dataset ' temporary_uid ' to the databse. Error: ' exc.message], exc);
                     end
                 end                
             end
             
-            reporting.UpdateProgressAndMessage(100, 'Saving changes to database');
             
-            if ~isempty(uids)
+            if database_changed
+                reporting.UpdateProgressAndMessage(100, 'Saving changes to database');
                 obj.SaveDatabase(reporting);
             end
             
