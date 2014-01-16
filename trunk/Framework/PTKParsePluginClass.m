@@ -16,6 +16,7 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
         
     new_plugin = [];
     new_plugin.PluginName = plugin_name;
+
     
     new_plugin.ToolTip = plugin_class.ToolTip;
     new_plugin.AlwaysRunPlugin = plugin_class.AlwaysRunPlugin;
@@ -23,7 +24,7 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
     new_plugin.PluginType = plugin_class.PluginType;
     new_plugin.ButtonText = plugin_class.ButtonText;
     
-    if isprop(plugin_class, 'Category') && ~isempty(plugin_class.Category)
+    if ~isempty(plugin_class.Category)
         new_plugin.Category = plugin_class.Category;
     else
         new_plugin.Category = [];

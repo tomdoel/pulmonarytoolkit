@@ -31,6 +31,10 @@ classdef PTKGuiPlugin < handle
         % This specifies the version of the Pulmonary Toolkit the plugin was
         % developed with.
         PTKVersion
+        
+        % Set to the panel name in the gui under which you wish the gui plugin
+        % to appear. Examples include "File" or you can create your own.
+        Category
 
         % Should normally be set to false.
         % If true, this plugin will not have a button in the gui window        
