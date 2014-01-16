@@ -91,6 +91,10 @@ classdef PTKDatasetDiskCache < handle
             cache_path = obj.OutputDiskCache.CachePath;
         end
         
+        function Delete(obj, reporting)
+            obj.ResultsDiskCache.Delete(reporting);
+        end
+        
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
             obj.ResultsDiskCache.RemoveAllCachedFiles(remove_framework_files, reporting);
         end
