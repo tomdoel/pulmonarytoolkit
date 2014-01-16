@@ -96,6 +96,9 @@ classdef PTKImageDatabase < handle
         end
         
         function DeleteSeries(obj, series_uid, reporting)
+            if ~obj.SeriesMap.isKey(series_uid)
+                return
+            end
             patient_id = obj.SeriesMap(series_uid).PatientId;
             patient = obj.PatientMap(patient_id);
             patient.DeleteSeries(series_uid);
