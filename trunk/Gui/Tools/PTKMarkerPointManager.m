@@ -23,7 +23,7 @@ classdef PTKMarkerPointManager < PTKTool
         ToolTip = 'Add or modify marker points.'
         Tag = 'Mark'
         ShortcutKey = 'm'
-end
+    end
   
     properties
         % When a marker is placed in close proximity to an existing marker of
