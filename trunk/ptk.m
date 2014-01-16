@@ -1,4 +1,4 @@
-% tdptk. Runs the Pulmonary Toolkit user interface
+% ptk. Runs the Pulmonary Toolkit user interface
 %
 %
 %     Licence
