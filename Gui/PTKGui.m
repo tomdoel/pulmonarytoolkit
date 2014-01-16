@@ -129,7 +129,8 @@ classdef PTKGui < handle
             image_info = obj.Settings.ImageInfo;
             
             if ~isempty(image_info)
-                obj.LoadImages(image_info, splash_screen);
+                splash_screen.SetProgressText('Loading images');
+                obj.InternalLoadImages(image_info);
             else
                 obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
                 obj.UpdatePatientBrowser([], []);
@@ -152,12 +153,6 @@ classdef PTKGui < handle
             splash_screen.Delete;
         end
 
-        % Causes the GUI to load the images specified either by the UID or the
-        % filenames
-        function Load(obj, image_info)
-            obj.LoadImages(image_info, obj.WaitDialogHandle);
-        end
-        
         % Causes the GUI to run the named plugin and display the result
         function RunPlugin(obj, plugin_name)
             if isempty(obj.Dataset)
@@ -225,7 +220,7 @@ classdef PTKGui < handle
                     msgbox('No valid DICOM files were found in this folder', [PTKSoftwareInfo.Name ': No image files found.']);
                     obj.Reporting.ShowMessage('PTKGuiApp:NoFilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
-                    obj.LoadImages(image_info, obj.WaitDialogHandle);
+                    obj.LoadImages(image_info);
                     
                     % Add any new datasets to the patient browser
                     obj.DatabaseHasChanged;
@@ -384,7 +379,7 @@ classdef PTKGui < handle
             obj.Settings.ImageInfo = [];
 
             if ~isempty(obj.Dataset)
-                obj.Dataset.ClearCacheForThisDataset(true);
+                obj.Dataset.DeleteCacheForThisDataset;
                 image_info = obj.Dataset.GetImageInfo;
                 
                 old_infos = obj.Settings.PreviousImageInfos;
@@ -392,13 +387,16 @@ classdef PTKGui < handle
                     old_infos.remove(image_info.ImageUid);
                     obj.Settings.PreviousImageInfos = old_infos;
                 end
+                
+                obj.Ptk.ImageDatabase.DeleteSeries(image_info.ImageUid, obj.Reporting);
+                obj.DatabaseHasChanged;
+                
+                delete(obj.Dataset);
+                obj.Dataset = [];
             end
             
             obj.SaveSettings;
-            obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
-            
-            obj.Ptk.ImageDatabase.DeleteSeries(image_info.ImageUid, obj.Reporting);
-            obj.DatabaseHasChanged;
+            obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;            
         end
         
         function DeleteOverlays(obj)
@@ -441,7 +439,7 @@ classdef PTKGui < handle
             % Get the complete list of cache folders, unless we are only
             % updating specific uids
             if isempty(uids_to_update) || rebuild_menu
-                uids = PTKDirectories.GetUidsOfAllDatasetsInCache;
+                uids = obj.Ptk.ImageDatabase.GetSeriesUids;
             else
                 uids = uids_to_update;
             end
@@ -461,6 +459,7 @@ classdef PTKGui < handle
                 old_infos = obj.Settings.PreviousImageInfos;
             end
             settings_changed = false;
+            database_changed = false;
             
             for uid = uids
                 temporary_uid = uid{1};
@@ -472,9 +471,25 @@ classdef PTKGui < handle
                         cache_parent_directory = PTKDirectories.GetCacheDirectory;
                         temporary_disk_cache = PTKDiskCache(cache_parent_directory, temporary_uid, obj.Reporting);
                         temporary_image_info = temporary_disk_cache.Load(PTKSoftwareInfo.ImageInfoCacheName, [], obj.Reporting);
-                        old_infos(temporary_uid) = temporary_image_info;
-                        obj.Settings.PreviousImageInfos = old_infos;
-                        settings_changed = true;
+                        if ~isempty(temporary_image_info)
+                            old_infos(temporary_uid) = temporary_image_info;
+                            obj.Settings.PreviousImageInfos = old_infos;
+                            settings_changed = true;
+                        else
+                            obj.Reporting.ShowWarning('PTKGui:DatasetHasNoImageInfo', 'A folder was found in the disk cache with no PKTImageInfo file. I am moving this folder to the recycle bin', []);
+                            temporary_disk_cache.DatasetDiskCache.Delete(obj.Reporting);
+                            if old_infos.isKey(temporary_uid)
+                                old_infos.remove(temporary_uid);
+                                obj.Settings.PreviousImageInfos = old_infos;
+                                settings_changed = true;
+                            end
+                            
+                            if obj.Ptk.SeriesExists(temporary_uid)
+                                obj.Ptk.ImageDatabase.DeleteSeries(temporary_uid, obj.Reporting);
+                                database_changed = true;
+                            end
+                            
+                        end
                     catch exc
                         obj.Reporting.ShowWarning('PTKGui:AddDatasetToMenuFailed', ['An error occured when adding dataset ' temporary_uid ' to the quick load menu. Error: ' exc.message], exc);
                     end
@@ -484,6 +499,11 @@ classdef PTKGui < handle
             if settings_changed
                 obj.SaveSettings;
             end
+            
+            if database_changed
+                obj.DatabaseHasChanged;
+            end
+
         end
         
         function RunPluginTryCatchBlock(obj, plugin_name)
@@ -606,7 +626,7 @@ classdef PTKGui < handle
             % being called twice
             if ~image_already_loaded
                 if ~isempty(series_uid)
-                    obj.LoadImages(series_uid, obj.WaitDialogHandle);
+                    obj.LoadImages(series_uid);
                 else
                     % Clear dataset
                     obj.ClearDataset(obj.WaitDialogHandle);
@@ -643,7 +663,7 @@ classdef PTKGui < handle
             % being called twice
             if ~image_already_loaded
                 if ~isempty(image_info)
-                    obj.LoadImages(image_info, obj.WaitDialogHandle);
+                    obj.LoadImages(image_info);
                 else
                     % Clear dataset
                     obj.ClearDataset(obj.WaitDialogHandle);
@@ -693,9 +713,13 @@ classdef PTKGui < handle
             end
         end
         
-        function LoadImages(obj, image_info_or_uid, wait_dialog)
-            wait_dialog.ShowAndHold('Loading dataset');
+        function LoadImages(obj, image_info_or_uid)
+            obj.WaitDialogHandle.ShowAndHold('Loading dataset');
+            obj.InternalLoadImages(image_info_or_uid);
+            obj.WaitDialogHandle.Hide;
+        end
             
+        function InternalLoadImages(obj, image_info_or_uid)
             try
                 if isa(image_info_or_uid, 'PTKImageInfo')
                     new_dataset = obj.Ptk.CreateDatasetFromInfo(image_info_or_uid);
@@ -791,7 +815,6 @@ classdef PTKGui < handle
             
             obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
             obj.UpdatePatientBrowser(patient_id, series_uid);
-            wait_dialog.Hide;
 
         end
         
