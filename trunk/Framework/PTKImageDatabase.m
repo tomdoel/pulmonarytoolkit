@@ -11,16 +11,25 @@ classdef PTKImageDatabase < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
+    properties (Constant)
+        CurrentVersionNumber = 2
+    end
+    
     properties (Access = private)
         PatientMap
         SeriesMap
         IsNewlyCreated
+        Version  
+        
+        VersionHasChanged
     end
     
     methods
         function obj = PTKImageDatabase
             obj.PatientMap = containers.Map;
             obj.SeriesMap = containers.Map;
+            obj.Version = obj.CurrentVersionNumber;
+            obj.VersionHasChanged = false;
         end
         
         function AddImage(obj, single_image_metainfo)
@@ -189,7 +198,7 @@ classdef PTKImageDatabase < handle
             end
             
             
-            if database_changed
+            if database_changed || obj.GetAndResetVersionChanged
                 reporting.UpdateProgressAndMessage(100, 'Saving changes to database');
                 obj.SaveDatabase(reporting);
             end
@@ -207,8 +216,14 @@ classdef PTKImageDatabase < handle
             catch ex
                 reporting.ErrorFromException('PTKImageDatabase:FailedtoSaveDatabaseFile', ['Unable to save database file ' database_filename], ex);
             end
-        end        
-
+        end
+    end
+    
+    methods (Access = private)
+        function has_changed = GetAndResetVersionChanged(obj)
+            has_changed = obj.VersionHasChanged;
+            obj.VersionHasChanged = false;
+        end
     end
     
     methods (Static)
@@ -218,7 +233,9 @@ classdef PTKImageDatabase < handle
                 if exist(database_filename, 'file')
                     database_struct = PTKDiskUtilities.Load(database_filename);
                     database = database_struct.database;
-                    database.IsNewlyCreated = false;                    
+                    database.IsNewlyCreated = false;
+                    database.VersionHasChanged = isempty(database.Version) || (database.Version ~= PTKImageDatabase.CurrentVersionNumber);
+                    database.Version = PTKImageDatabase.CurrentVersionNumber;
                 else
                     reporting.ShowWarning('PTKImageDatabase:DatabaseFileNotFound', 'No image database file found. Will create new one on exit', []);
                     database = PTKImageDatabase;
