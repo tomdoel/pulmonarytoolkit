@@ -106,6 +106,10 @@ classdef PTKMarkerPointManager < PTKTool
             obj.MarkerImageHasChanged = false;
         end
         
+        function OverlayImageChanged(obj)
+        end
+
+        
         function MarkerImageChanged(obj)
             if obj.Enabled
                 if ~obj.LockCallback

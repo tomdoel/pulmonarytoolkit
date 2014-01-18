@@ -61,6 +61,9 @@ classdef PTKWindowLevelTool < PTKTool
         function ImageChanged(obj)
         end
         
+        function OverlayImageChanged(obj)
+        end        
+        
     end
     
 end
