@@ -27,6 +27,7 @@ classdef PTKTool < handle
         Enable(obj, enabled)
         NewSliceOrOrientation(obj)
         ImageChanged(obj)
+        OverlayImageChanged(obj)
         Keypress(obj, key_name)
                 
     end

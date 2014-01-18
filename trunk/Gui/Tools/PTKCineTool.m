@@ -54,6 +54,9 @@ classdef PTKCineTool < PTKTool
         
         function ImageChanged(obj)
         end
+        
+        function OverlayImageChanged(obj)
+        end
               
         function processed = Keypress(obj, key_name)
             processed = false;

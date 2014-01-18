@@ -60,6 +60,7 @@ classdef PTKViewerPanel < handle
         PanTool
         PanMatlabTool
         ZoomMatlabTool
+        EditTool
     end
 
     properties (Access = private)
@@ -123,6 +124,7 @@ classdef PTKViewerPanel < handle
             obj.PanTool = PTKPanTool;
             obj.PanMatlabTool = PTKPanMatlabTool(obj);
             obj.ZoomMatlabTool = PTKZoomMatlabTool(obj);
+            obj.EditTool = PTKEditManager(obj);
 
             
             font_size = 9;
@@ -145,7 +147,7 @@ classdef PTKViewerPanel < handle
             
             obj.MarkerPointManager = PTKMarkerPointManager(obj, obj.Axes);
             
-            tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointManager, obj.WindowLevelTool, obj.CineTool};
+            tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointManager, obj.WindowLevelTool, obj.CineTool, obj.EditTool};
             
             obj.ControlPanel = uipanel('Parent', obj.Parent, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
 
@@ -813,6 +815,11 @@ classdef PTKViewerPanel < handle
         function OverlayImageChanged(obj)
             obj.UpdateAxes;
             obj.DrawImages(false, true, false);
+            
+            for tool_set = obj.Tools.values
+                tool_set{1}.OverlayImageChanged;
+            end
+            
         end
         
         function UpdateGuiForNewImage(obj)
