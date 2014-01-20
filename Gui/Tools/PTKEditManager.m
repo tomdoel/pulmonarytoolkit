@@ -80,7 +80,7 @@ classdef PTKEditManager < PTKTool
               
         function InitialiseEditMode(obj)
             if ~isempty(obj.ViewerPanel.OverlayImage)
-                if ~obj.ViewerPanel.OverlayImage.IsEmpty
+                if obj.ViewerPanel.OverlayImage.ImageExists
                     colours = unique(obj.ViewerPanel.OverlayImage.RawImage);
                     obj.FixedOuterBoundary = numel(colours) > 2;
                 end
