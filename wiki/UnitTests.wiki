@@ -17,9 +17,9 @@ You can also run a specific test
 {{{
 PTKRunTests test_name
 }}}
-where test_name is the name of the test class to run, or you can run multiple tests by passing them as a cell array, e.g.
+where test_name is the name of the test class you want to run. You can run multiple tests by passing them as a cell array, e.g.
 {{{
-PTKRunTests({'test_name', 'test_name', 'test_name})
+PTKRunTests({'first test name', 'second test name', 'third test name'})
 }}}
 
 
