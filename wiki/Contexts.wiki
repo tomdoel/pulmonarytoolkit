@@ -34,17 +34,6 @@ What happens when you specify a Context depends on how the Plugin operates (see 
 
 A Plugin's Context property specifies the Context Set it uses. The possible values are the numerations of PTKContextSet. If you don't specify a Context property, then PTKContextSet.LungROI is assumed. The ContextSet you specify is the range of Contexts for which you permit this Plugin to be called. The Pulmonary Toolkit will only call the Plugin for the Contexts within this ContextSet
 
-== 'Any' Context Set
+== 'Any' Context Set ==
 
 Now think of an algorithm for computing the volume of a lung region, or for computing the percentage of emphysema in a region. These algorithms could run on any desired region inside the lung. In this case, you can set the Context Set to `PTKContextSet.Any`, and Plugin can run over any set of Contexts you specify.
-
-
-
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
