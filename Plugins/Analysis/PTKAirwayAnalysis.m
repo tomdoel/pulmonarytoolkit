@@ -51,6 +51,7 @@ classdef PTKAirwayAnalysis < PTKPlugin
                 results = [];
             else
                 results = PTKMetrics;
+                results.AddMetric('LengthMm', bronchus.LengthMm, 'Airway length (mm)');
                 results.AddMetric('Radius', bronchus_results.FWHMRadiusMean, 'Mean airway lumen radius (mm)');
                 results.AddMetric('WallThickness', bronchus_results.FWHMWallThicknessMean, 'Mean airway wall thickness (mm)');
                 results.AddMetric('RadiusStd', bronchus_results.FWHMRadiusStd, 'Std of airway lumen radius (mm)');
