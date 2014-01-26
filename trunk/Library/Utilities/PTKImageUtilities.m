@@ -12,13 +12,13 @@ classdef PTKImageUtilities
     methods (Static)
         
         % Returns a 2D image slice and alpha information
-        function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level)
+        function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level, map)
             switch image_type
                 case PTKImageType.Grayscale
                     rescaled_image_slice = PTKImageUtilities.RescaleImage(image_slice, window, level);
                     [rgb_slice, alpha_slice] = PTKImageUtilities.GetBWImage(rescaled_image_slice);
                 case PTKImageType.Colormap
-                    [rgb_slice, alpha_slice] = PTKImageUtilities.GetLabeledImage(image_slice);
+                    [rgb_slice, alpha_slice] = PTKImageUtilities.GetLabeledImage(image_slice, map);
                 case PTKImageType.Scaled
                     [rgb_slice, alpha_slice] = PTKImageUtilities.GetColourMap(image_slice, limits);
             end
@@ -32,18 +32,26 @@ classdef PTKImageUtilities
         end
 
         % Returns an RGB image from a colormap matrix
-        function [rgb_image, alpha] = GetLabeledImage(image)
-            data_class = class(image);
-            if strcmp(data_class, 'double') || strcmp(data_class, 'single')
-                rgb_image = label2rgb(round(image), 'lines');
+        function [rgb_image, alpha] = GetLabeledImage(image, map)
+            if isempty(map)
+                if isa(image, 'double') || isa(image, 'single')
+                    rgb_image = label2rgb(round(image), 'lines');
+                else
+                    rgb_image = label2rgb(image, 'lines');
+                end
+                alpha = int8(image ~= 0);
             else
-                rgb_image = label2rgb(image, 'lines');
+                if isa(image, 'double') || isa(image, 'single')
+                    rgb_image = label2rgb(map(round(image + 1)), 'lines');
+                else
+                    rgb_image = label2rgb(map(image + 1), 'lines');
+                end
+                alpha = int8(image ~= 0);
             end
-            alpha = int8(image ~= 0);
         end
 
         % Returns an RGB image from a scaled floating point scalar image
-        function [rgb_image alpha] = GetColourMap(image, image_limits)
+        function [rgb_image, alpha] = GetColourMap(image, image_limits)
             image_limits(1) = min(0, image_limits(1));
             image_limits(2) = max(0, image_limits(2));
             positive_mask = image >= 0;
@@ -386,7 +394,7 @@ classdef PTKImageUtilities
                 image_preview_limits = [1 100];
             end
             
-            [rgb_image, ~] = PTKImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale);
+            [rgb_image, ~] = PTKImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale, []);
             
             final_fade_factor = 0.3;
             rgb_image_factor = final_fade_factor*ones(size(rgb_image));

@@ -88,7 +88,8 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     campos([0, -1600, 0]);
     
     % Get a list of all labels in the segmentation image
-    segmentation_labels = setdiff(unique(segmentation.RawImage(:)), 0);
+    raw_image = segmentation.GetMappedRawImage;
+    segmentation_labels = setdiff(unique(raw_image(:)), 0);
     
     number_of_segmentations = length(segmentation_labels);
     
