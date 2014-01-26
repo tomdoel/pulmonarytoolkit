@@ -117,7 +117,8 @@ classdef PTKPlugin < handle
     
     methods (Abstract, Static)
         
-        % Generates the results for this plugin. The results can be a PTKImage or
+        % Generates the results for this plugin.
+        % The results can be a PTKImage or
         % any kind of Matlab structure. Plugins should generally return an
         % output image as their result, but some plugins (such as PTKAirways)
         % generate information which cannot be stored in a simple image. For
@@ -131,14 +132,27 @@ classdef PTKPlugin < handle
     
     methods (Static)
 
-        % Generates a results image from the results returned by RunPlugin. If
-        % the result is itself an image, there is no need to override this
-        % function as this image will be returned. If the result is a data
-        % structure, this function should generate an illustrative output image
-        % based on the results. For example, the PTKAirways plugin returns a
-        % heirarchical data structure describing the airway tree. This functin
-        % is then used to turn the structure into an image.
         function results = GenerateImageFromResults(results, ~, ~)
+            % Generates a results image from the results returned by RunPlugin.
+            % If the result is itself an image, there is no need to override this
+            % function as this image will be returned. If the result is a data
+            % structure, this function should generate an illustrative output image
+            % based on the results. For example, the PTKAirways plugin returns a
+            % heirarchical data structure describing the airway tree. This functin
+            % is then used to turn the structure into an image.
+        end
+        
+        
+        function result = GetEditedResult(result, edited_result, ~)
+            % Modifies a plugin result based on manual editing of the output image. 
+            % The default behaviour is that the edited result replaces the
+            % result, provided they are both of the same type.
+            % However, plugins may choose to modify the original result based on
+            % an edited result, in which case the plugin must override this
+            % method and define its desired behaviour.
+            if strcmp(class(result), class(edited_result))
+                result = edited_result;
+            end
         end
     end
 end

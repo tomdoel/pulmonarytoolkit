@@ -116,12 +116,35 @@ classdef PTKDatasetResults < handle
         end
         
         % Load data from a cache file associated with this dataset
-        function SaveEditedPluginResult(obj, plugin_name, context, edited_result, cached_cache_info)
-            if isempty(context)
-                context = PTKContext.LungROI;
+        function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack)
+            obj.Reporting.PushProgress;
+            if nargin < 4
+                input_context = [];
             end
             
-            obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, edited_result, cached_cache_info, obj.Reporting);
+            % Get information about the plugin
+            plugin_class = feval(plugin_name);
+            plugin_info = PTKParsePluginClass(plugin_name, plugin_class, obj.Reporting);
+            
+            % Update the progress dialog with the current plugin being run
+            obj.Reporting.UpdateProgressMessage(['Saving edit for ' plugin_info.ButtonText]);
+            
+            
+            % In debug mode we don't try to catch exceptions so that the
+            % debugger will stop at the right place
+            if PTKSoftwareInfo.DebugMode
+                obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, obj.Reporting);
+            else
+                try
+                    obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, obj.Reporting);
+                catch ex
+                    dataset_stack.ClearStack;
+                    rethrow(ex);
+                end
+            end
+
+            obj.Reporting.CompleteProgress;
+            obj.Reporting.PopProgress;
         end
         
         % Gets the path of the folder where the results for this dataset are

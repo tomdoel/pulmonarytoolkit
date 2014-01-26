@@ -16,12 +16,14 @@ classdef MockPluginDependencyTracker < handle
     
     properties
         MockResults
+        SavedMockResults
     end
     
     methods
         
         function obj = MockPluginDependencyTracker()
             obj.MockResults = containers.Map;            
+            obj.SavedMockResults = containers.Map;
         end
         
         function AddMockResult(obj, name, context, dataset_uid, result_to_add, cache_info, has_been_run)
@@ -36,7 +38,7 @@ classdef MockPluginDependencyTracker < handle
         end
         
         function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
-                    
+
             key_name = [plugin_name '.' char(context) '.' dataset_uid];
             
             result_from_cache = obj.MockResults(key_name);
@@ -44,6 +46,10 @@ classdef MockPluginDependencyTracker < handle
             cache_info = result_from_cache.CacheInfo;
             plugin_has_been_run = result_from_cache.HasBeenRun;
             
+        end
+        
+        function SaveEditedResult(obj, plugin_name, context, result, reporting)
+            obj.SavedMockResults([plugin_name '.' char(context)]) = result;
         end
 
         function valid = CheckDependencyValid(obj, next_dependency, reporting)

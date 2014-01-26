@@ -131,16 +131,7 @@ classdef PTKDataset < handle
             end
             
             obj.PreCallTidy;
-            
-            [cached_result, cached_cache_info] = obj.GetResultWithCacheInfo(plugin_name, context, varargin);
-            
-            if ~strcmp(class(cached_result), class(edited_result))
-                obj.Reporting.Error('PTKDataset:EditedResultClassMismatch', 'The edited result passed to SaveEditedResult() must be of the same class as the result being edited.');
-            end
-            
-            cached_cache_info.InstanceIdentifier.Attributes.IsEditedResult = true;
-            cached_cache_info.MarkEdited;
-            obj.LinkedDatasetChooser.GetDataset(varargin{:}).SaveEditedPluginResult(plugin_name, context, edited_result, cached_cache_info);
+            obj.LinkedDatasetChooser.GetDataset(varargin{:}).SaveEditedPluginResult(plugin_name, context, edited_result, obj.DatasetStack);
             obj.PostCallTidy;
         end
         
