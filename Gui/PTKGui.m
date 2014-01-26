@@ -39,6 +39,7 @@ classdef PTKGui < handle
         UipanelVersionHandle
         
         CurrentPluginName
+        CurrentContext
         
         PatientBrowser
         PatientBrowserSelectedUid
@@ -199,7 +200,7 @@ classdef PTKGui < handle
             wait_dialog.ShowAndHold(['Saving edited result for ' plugin_text]);
             
             
-            obj.Dataset.SaveEditedResult(plugin_name, edited_result);
+            obj.Dataset.SaveEditedResult(plugin_name, edited_result, obj.CurrentContext);
             
             wait_dialog.Hide;
         end
@@ -517,16 +518,31 @@ classdef PTKGui < handle
             if strcmp(new_plugin.PluginType, 'DoNothing')
                 obj.Dataset.GetResult(plugin_name);
             else
-                [~, new_image] = obj.Dataset.GetResult(plugin_name);
+                
+                % Determine the context we require (full image, lung ROI, etc).
+                % Normally we keep the last context, but if a context plugin is
+                % selected, we switch to the new context
+                context_to_request = obj.CurrentContext;
+                if strcmp(new_plugin.PluginType, 'ReplaceImage')
+                    if isa(new_plugin.Context, 'PTKContext')
+                        context_to_request = new_plugin.Context;
+                    elseif new_plugin.Context == PTKContextSet.OriginalImage
+                        context_to_request = PTKContext.OriginalImage;
+                    elseif new_plugin.Context == PTKContextSet.LungROI
+                        context_to_request = PTKContext.LungROI;
+                    end
+                end
+                
+                [~, new_image] = obj.Dataset.GetResult(plugin_name, context_to_request);
                 if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
                     
                     if isempty(new_image)
                         obj.Reporting.Error('PTKGui:EmptyImage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
                     end
                     if isequal(new_image.ImageSize, obj.ImagePanel.BackgroundImage.ImageSize) && isequal(new_image.Origin, obj.ImagePanel.BackgroundImage.Origin)
-                        obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text)
+                        obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap)
                     else
-                        obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text);
+                        obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap);
                     end
                     obj.SetCurrentPluginAndUpdateFigureTitle(plugin_name);
                 elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
@@ -537,7 +553,7 @@ classdef PTKGui < handle
                     end
                     
                 elseif strcmp(new_plugin.PluginType, 'ReplaceImage')
-                    obj.SetImage(new_image);
+                    obj.SetImage(new_image, context_to_request);
                 end
             end
         end
@@ -744,7 +760,7 @@ classdef PTKGui < handle
                     if obj.Dataset.IsContextEnabled(PTKContext.LungROI)
                         try
                             lung_roi = obj.Dataset.GetResult('PTKLungROI');
-                            obj.SetImage(lung_roi);
+                            obj.SetImage(lung_roi, PTKContext.LungROI);
                         catch exc
                             if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                                 obj.Reporting.Log('LoadImages cancelled by user');
@@ -765,7 +781,7 @@ classdef PTKGui < handle
                     % Force the image to be saved so that it doesn't have to be
                     % reloaded each time
                     lung_roi = obj.Dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage, [], true);
-                    obj.SetImage(lung_roi);
+                    obj.SetImage(lung_roi, PTKContext.OriginalImage);
                 end
                 
                 series_uid = image_info.ImageUid;
@@ -942,8 +958,9 @@ classdef PTKGui < handle
             obj.RunPlugin(plugin_name);
         end
                 
-        function SetImage(obj, new_image)
+        function SetImage(obj, new_image, context)
             obj.ImagePanel.BackgroundImage = new_image;
+            obj.CurrentContext = context;
             
             if obj.ImagePanel.OverlayImage.ImageExists
                 obj.ImagePanel.OverlayImage.ResizeToMatch(new_image);
@@ -958,15 +975,27 @@ classdef PTKGui < handle
             end
         end
                 
-        function ReplaceOverlayImageAdjustingSize(obj, new_image, title)
+        function ReplaceOverlayImageAdjustingSize(obj, new_image, title, colour_label_map, new_parent_map, new_child_map)
             new_image.ResizeToMatch(obj.ImagePanel.BackgroundImage);
             obj.ImagePanel.OverlayImage.ChangeRawImage(new_image.RawImage, new_image.ImageType);
             obj.ImagePanel.OverlayImage.Title = title;
+            if ~isempty(colour_label_map)
+                obj.ImagePanel.OverlayImage.ChangeColorLabelMap(colour_label_map);
+            end
+            if ~(isempty(new_parent_map)  && isempty(new_child_map))
+                obj.ImagePanel.OverlayImage.ChangeColorLabelParentChildMap(new_parent_map, new_child_map)
+            end
         end
         
-        function ReplaceOverlayImage(obj, new_image, image_type, title)
+        function ReplaceOverlayImage(obj, new_image, image_type, title, colour_label_map, new_parent_map, new_child_map)
             obj.ImagePanel.OverlayImage.ChangeRawImage(new_image, image_type);
             obj.ImagePanel.OverlayImage.Title = title;
+            if ~isempty(colour_label_map)
+                obj.ImagePanel.OverlayImage.ChangeColorLabelMap(colour_label_map);
+            end
+            if ~(isempty(new_parent_map)  && isempty(new_child_map))
+                obj.ImagePanel.OverlayImage.ChangeColorLabelParentChildMap(new_parent_map, new_child_map)
+            end
         end
         
         function ReplaceQuiverImageAdjustingSize(obj, new_image)
