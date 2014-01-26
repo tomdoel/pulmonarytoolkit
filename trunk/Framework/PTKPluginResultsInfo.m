@@ -29,8 +29,8 @@ classdef PTKPluginResultsInfo < handle
         end
         
         % Adds dependency record for a particular plugin result
-        function AddCachedPluginInfo(obj, plugin_name, cache_info, context, reporting)
-            plugin_key = obj.GetKey(plugin_name, context);
+        function AddCachedPluginInfo(obj, plugin_name, cache_info, context, is_edited, reporting)
+            plugin_key = obj.GetKey(plugin_name, context, is_edited);
             if obj.ResultsInfo.isKey(plugin_key)
                 reporting.Error('PTKPluginResultsInfo:CachedInfoAlreadyPresent', 'Cached plugin info already present');
             end
@@ -38,15 +38,15 @@ classdef PTKPluginResultsInfo < handle
         end
         
         % Removes the dependency record for a particular plugin result
-        function DeleteCachedPluginInfo(obj, plugin_name, context, ~)
-            plugin_key = obj.GetKey(plugin_name, context);
+        function DeleteCachedPluginInfo(obj, plugin_name, context, is_edited, ~)
+            plugin_key = obj.GetKey(plugin_name, context, is_edited);
             if obj.ResultsInfo.isKey(plugin_key)
                 obj.ResultsInfo.remove(plugin_key);
             end
         end
         
         function valid = CheckDependencyValid(obj, next_dependency, reporting)
-            plugin_key = obj.GetKey(next_dependency.PluginName, next_dependency.Context);
+            plugin_key = obj.GetKey(next_dependency.PluginName, next_dependency.Context, next_dependency.Attributes.IsEditedResult);
             
             % The full list should always contain the most recent dependency
             % uid, unless the dependencies file was deleted
@@ -81,11 +81,15 @@ classdef PTKPluginResultsInfo < handle
     end
     
     methods (Static, Access = private)
-        function plugin_key = GetKey(plugin_name, context)
+        function plugin_key = GetKey(plugin_name, context, is_edited)
             if isempty(context)
                 plugin_key = plugin_name;
             else
                 plugin_key = [plugin_name '.' char(context)];
+            end
+            
+            if is_edited
+                plugin_key = [plugin_key, '_Edited'];
             end
         end
     end

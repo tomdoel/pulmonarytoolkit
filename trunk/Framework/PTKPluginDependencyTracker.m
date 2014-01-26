@@ -122,7 +122,7 @@ classdef PTKPluginDependencyTracker < handle
                 if allow_results_to_be_cached && ~isempty(result)
                     obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, reporting);
                 else
-                    obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, reporting);
+                    obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, false, reporting);
                 end
                 
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependencies);
@@ -149,6 +149,7 @@ classdef PTKPluginDependencyTracker < handle
                 dependency_list_for_edit = PTKDependencyList;
                 dependency_list_for_edit.AddDependency(edited_dependency, reporting);
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_edit);
+                cache_info.MarkEdited;
             end
         end
 
@@ -160,6 +161,7 @@ classdef PTKPluginDependencyTracker < handle
             attributes.IsEditedResult = true;
             instance_identifier = PTKDependency(plugin_name, context, PTKSystemUtilities.GenerateUid, dataset_uid, attributes);
             new_cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
+            new_cache_info.MarkEdited;
 
             obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, result, new_cache_info, reporting);
         end
