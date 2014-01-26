@@ -239,20 +239,25 @@ classdef PTKEditManager < PTKTool
                 
                 
                 halfsize = floor(local_size/2);
-                midpoint = 1 + halfsize;
                 min_coords = local_image_coords - halfsize;
                 max_coords = local_image_coords + halfsize;
                 
                 min_clipping = max(0, 1 - min_coords);
                 max_clipping = max(0, max_coords - image_size);
+
+                midpoint = 1 + halfsize - min_clipping;
                 
                 min_coords = max(1, min_coords);
                 max_coords = min(max_coords, image_size);
                 
                 raw_image = obj.ViewerPanel.OverlayImage.RawImage;
                 subimage = raw_image(min_coords(1):max_coords(1), min_coords(2):max_coords(2), min_coords(3):max_coords(3));
-%                 dt_subimage_first = bwdist(subimage == closest_colour);
                 dt_subimage_second = bwdist(subimage == second_closest_colour);
+                
+                filtered_dt = PTKGaussianFilter(PTKImage(dt_subimage_second, PTKImageType.Grayscale, voxel_size), 2);
+                dt_subimage_second = filtered_dt.RawImage;
+                
+                
                 dt_value = dt_subimage_second(midpoint(1), midpoint(2), midpoint(3));
                 
                 brush_min_coords = 1 + min_clipping;
