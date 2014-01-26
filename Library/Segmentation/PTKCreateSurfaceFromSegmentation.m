@@ -63,8 +63,6 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
     required_padding = ceil(required_padding_mm/min(segmentation.VoxelSize)) + 1;
     sub_seg.AddBorder(required_padding);
     
-    disp(['Padding: ' num2str(required_padding)]);
-    
     if morph_size > 0
         sub_seg.BinaryMorph(@imclose, morph_size);
     end
@@ -72,9 +70,6 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
     if smoothing_size > 0
         sub_seg = PTKGaussianFilter(sub_seg, smoothing_size);
     end
-    
-    
-
     
     
     [xc, yc, zc] = sub_seg.GetPTKCoordinates;
