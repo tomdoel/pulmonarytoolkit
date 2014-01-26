@@ -281,6 +281,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
             
             obj.RawImage = new_image;
+            obj.ColorLabelMap = [];
             obj.NotifyImageChanged;
         end
         
