@@ -533,16 +533,20 @@ classdef PTKGui < handle
                     end
                 end
                 
-                [~, new_image] = obj.Dataset.GetResult(plugin_name, context_to_request);
+                [~, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
+                image_title = plugin_text;
+                if cache_info.IsEdited
+                    image_title = ['EDITED ', image_title];
+                end
                 if strcmp(new_plugin.PluginType, 'ReplaceOverlay')
                     
                     if isempty(new_image)
                         obj.Reporting.Error('PTKGui:EmptyImage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
                     end
                     if isequal(new_image.ImageSize, obj.ImagePanel.BackgroundImage.ImageSize) && isequal(new_image.Origin, obj.ImagePanel.BackgroundImage.Origin)
-                        obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, plugin_text, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap)
+                        obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, image_title, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap)
                     else
-                        obj.ReplaceOverlayImageAdjustingSize(new_image, plugin_text, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap);
+                        obj.ReplaceOverlayImageAdjustingSize(new_image, image_title, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap);
                     end
                     obj.SetCurrentPluginAndUpdateFigureTitle(plugin_name);
                 elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
