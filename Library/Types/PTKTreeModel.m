@@ -28,6 +28,8 @@ classdef PTKTreeModel < PTKTree
         SegmentIndex
         
         BranchProperties
+        
+        BronchusIndex % Used in the manual correction of airways labelling by lobe
     end
     
     properties (SetAccess = protected)
