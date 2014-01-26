@@ -180,7 +180,7 @@ classdef PTKContextHierarchy < handle
             end
         end
         
-        function SaveEditedResult(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, reporting)
+        function SaveEditedResult(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
             % This function saves a manually edited result which will plugins
             % may use to modify their results
             
@@ -190,7 +190,7 @@ classdef PTKContextHierarchy < handle
                 input_context = PTKContext.LungROI;
             end
             
-            obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, reporting)
+            obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
         end
         
     end
@@ -320,7 +320,7 @@ classdef PTKContextHierarchy < handle
             end
         end
         
-        function SaveEditedResultForAllContexts(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, reporting)
+        function SaveEditedResultForAllContexts(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
             
             % Determines the type of context supported by the plugin
             plugin_context_set = plugin_info.Context;
@@ -341,7 +341,7 @@ classdef PTKContextHierarchy < handle
             % plugin context is of type 'Any', then proceed to save the results
             % for this context.
             if (plugin_context_set == input_context_set) || (plugin_context_set == PTKContextSet.Any)
-                obj.DependencyTracker.SaveEditedResult(plugin_name, input_context, edited_result_image, reporting);
+                obj.DependencyTracker.SaveEditedResult(plugin_name, input_context, edited_result_image, dataset_uid, reporting);
 
             % Otherwise, if the input's context set is lower in the hierarchy
             % than that of the plugin, then resize the input to match the plugin

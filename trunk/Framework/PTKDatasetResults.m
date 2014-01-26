@@ -117,6 +117,7 @@ classdef PTKDatasetResults < handle
         
         % Load data from a cache file associated with this dataset
         function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack)
+            dataset_uid = obj.ImageInfo.ImageUid;
             obj.Reporting.PushProgress;
             if nargin < 4
                 input_context = [];
@@ -133,10 +134,10 @@ classdef PTKDatasetResults < handle
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
             if PTKSoftwareInfo.DebugMode
-                obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, obj.Reporting);
+                obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, obj.Reporting);
             else
                 try
-                    obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, obj.Reporting);
+                    obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, obj.Reporting);
                 catch ex
                     dataset_stack.ClearStack;
                     rethrow(ex);

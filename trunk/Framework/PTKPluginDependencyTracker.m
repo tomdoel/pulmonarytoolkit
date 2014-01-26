@@ -152,7 +152,7 @@ classdef PTKPluginDependencyTracker < handle
             end
         end
 
-        function SaveEditedResult(obj, plugin_name, context, result, reporting)
+        function SaveEditedResult(obj, plugin_name, context, result, dataset_uid, reporting)
             % Saves the result of a plugin after semi-automatic editing
             
             attributes = [];
@@ -161,7 +161,7 @@ classdef PTKPluginDependencyTracker < handle
             instance_identifier = PTKDependency(plugin_name, context, PTKSystemUtilities.GenerateUid, dataset_uid, attributes);
             new_cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
 
-            obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, result, new_cache_info, context, reporting);
+            obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, result, new_cache_info, reporting);
         end
         
         function valid = CheckDependencyValid(obj, next_dependency, reporting)
