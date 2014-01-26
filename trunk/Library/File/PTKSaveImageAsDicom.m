@@ -153,7 +153,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
             metadata.BitsAllocated = 8;
             metadata.BitsStored = 8;
             metadata.HighBit = 7;
-            [slice_data, ~] = PTKImageUtilities.GetImage(slice_data, [], PTKImageType.Colormap, [], []);
+            [slice_data, ~] = PTKImageUtilities.GetImage(slice_data, [], PTKImageType.Colormap, [], [], []);
             
         else
             % Tags for CT greyscale image
