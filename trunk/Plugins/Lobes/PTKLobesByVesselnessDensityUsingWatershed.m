@@ -136,7 +136,7 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
             dilated_airways = zeros(airways.ImageSize, 'int8');
             for colour = colour_range
                 next_image = airways.Copy;
-                next_image.ChangeRawImage(next_image.RawImage == colour);
+                next_image.ChangeRawImage(next_image.GetMappedRawImage == colour);
                 
                 % Dilate the airways
                 next_image.BinaryMorph(@imdilate, 5);
