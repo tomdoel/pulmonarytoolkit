@@ -9,7 +9,8 @@ classdef PTKTool < handle
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
-        
+     
+    
     properties (Abstract = true)
         ButtonText
         Cursor
@@ -18,6 +19,10 @@ classdef PTKTool < handle
         ToolTip
         Tag
     end
+    
+    properties (SetAccess = protected)
+        ContextMenu
+    end    
     
     methods (Abstract)
         
