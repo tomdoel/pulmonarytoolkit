@@ -56,7 +56,7 @@ classdef PTKPluginDependencyTracker < handle
                 
                 [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, context, reporting);
                 
-                % Check dependencies of the result. If the are invalid, set the
+                % Check dependencies of the result. If they are invalid, set the
                 % result to null to force a re-run of the plugin
                 if ~isempty(cache_info)
                     dependencies = cache_info.DependencyList;
@@ -136,10 +136,31 @@ classdef PTKPluginDependencyTracker < handle
             else
                 plugin_has_been_run = false;
             end
+            
+            % Fetch the edited result, if it exists
+            if obj.DatasetDiskCache.EditedResultExists(plugin_name, context, reporting)
+                [edited_result, edited_cache_info] = obj.DatasetDiskCache.LoadEditedPluginResult(plugin_name, context, reporting);
+
+                % Call the plugin to create an edited output
+                result = plugin_class.GetEditedResult(result, edited_result, reporting);
+                
+                % Get the dependency for this edit and add to calling functions
+                edited_dependency = edited_cache_info.InstanceIdentifier;
+                dependency_list_for_edit = PTKDependencyList;
+                dependency_list_for_edit.AddDependency(edited_dependency, reporting);
+                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_edit);
+            end
         end
 
-        % Saves the result of a plugin after semi-automatic editing
-        function SaveEditedResult(obj, plugin_name, context, result, new_cache_info, reporting)
+        function SaveEditedResult(obj, plugin_name, context, result, reporting)
+            % Saves the result of a plugin after semi-automatic editing
+            
+            attributes = [];
+            attributes.IgnoreDependencyChecks = false;
+            attributes.IsEditedResult = true;
+            instance_identifier = PTKDependency(plugin_name, context, PTKSystemUtilities.GenerateUid, dataset_uid, attributes);
+            new_cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
+
             obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, result, new_cache_info, context, reporting);
         end
         

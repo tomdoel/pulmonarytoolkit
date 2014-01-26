@@ -128,9 +128,28 @@ classdef PTKContextHierarchy < handle
         end
         
         function [result, output_image, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
+
             % Determines the context and context type requested by the calling function
             if isempty(output_context)
-                output_context = PTKContext.LungROI;
+             
+                
+                % If a specific context has been specified in the plugin, we use
+                % this (note this is not normally the case, as plugins usually
+                % specify a PTKContextSet rather than a PTKContext)
+                if isa(plugin_info.Context, 'PTKContext')
+                    output_context = plugin_info.Context;
+
+                % If the plugin specifies a PTKContextSet of type
+                % PTKContextSet.OriginalImage, then we choose to return a ontext
+                % of PTKContext.OriginalImage
+                elseif plugin_info.Context == PTKContextSet.OriginalImage
+                    output_context = PTKContext.OriginalImage;
+                    
+                % In all other cases we choose a default context of the lung ROI
+                else
+                    output_context = PTKContext.LungROI;
+                end
+                
             end
             
             context_list = [];
@@ -160,10 +179,24 @@ classdef PTKContextHierarchy < handle
                 end
             end
         end
+        
+        function SaveEditedResult(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, reporting)
+            % This function saves a manually edited result which will plugins
+            % may use to modify their results
+            
+            % Determines the context and context type requested by the calling function
+            if isempty(input_context)
+                reporting.Error('PTKContextHierarchy:NoContextSpecified', 'When calling SaveEditedResult(), the contex of the input image must be specified.');
+                input_context = PTKContext.LungROI;
+            end
+            
+            obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, reporting)
+        end
+        
     end
     
     methods (Access = private)
-        function [result, output_image, plugin_has_been_run, cache_info] = GetResultRecursive(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+        function [result, output_image, plugin_has_been_run, cache_info] = GetResultRecursive(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name, output_context);
             
             [result, output_image, plugin_has_been_run, cache_info] = obj.GetResultForAllContexts(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
@@ -233,18 +266,25 @@ classdef PTKContextHierarchy < handle
                 end
                 
             % If the plugin's context set is lower in the hierarchy, then get
-            % run the plugin for all lower contexts and concatenate the results
+            % the plugin result for all lower contexts and concatenate the results
             elseif plugin_context_set_mapping.IsOtherContextSetHigher(output_context_set_mapping)
                 child_context_mappings = output_context_mapping.Children;
-                result = [];
                 output_image_template = obj.ImageTemplates.GetTemplateImage(output_context, dataset_stack);
-                cache_info = [];
+                cache_info = PTKCompositeResult;
                 plugin_has_been_run = false;
                 first_run = true;
                 for child_mapping = child_context_mappings
                     child_context = child_mapping{1}.Context;
                     [this_result, this_output_image, this_plugin_has_been_run, this_cache_info] = obj.GetResultRecursive(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
                     if first_run
+                        if isa(this_result, 'PTKImage')
+                            result = this_result.Copy;
+                            result.ResizeToMatch(output_image_template);
+                            result.Clear;
+                        else
+                            result = PTKCompositeResult;
+                        end
+                        
                         if isempty(this_output_image)
                             output_image = [];
                         else
@@ -257,11 +297,21 @@ classdef PTKContextHierarchy < handle
                     
                     template_image_for_this_result = obj.ImageTemplates.GetTemplateImage(child_context, dataset_stack);
                     
-                    result.(char(child_context)) = this_result;
+                    if isa(this_result, 'PTKImage')
+                        % If the result is an image, we add the image to the
+                        % appropriate part of the final image using the context
+                        % mask.
+                        result.ChangeSubImageWithMask(this_result, template_image_for_this_result);
+                    else
+                        % Otherwise, we add the result as a new field in the
+                        % composite results
+                        result.AddField(char(child_context), this_result);
+                    end
+                    
                     if ~isempty(output_image) && ~isempty(this_output_image)
                         output_image.ChangeSubImageWithMask(this_output_image, template_image_for_this_result);
                     end
-                    cache_info.(char(child_context)) = this_cache_info;
+                    cache_info.AddField(char(child_context), this_cache_info);
                     plugin_has_been_run = plugin_has_been_run || this_plugin_has_been_run;
                     
                 end
@@ -270,11 +320,88 @@ classdef PTKContextHierarchy < handle
             end
         end
         
+        function SaveEditedResultForAllContexts(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, reporting)
+            
+            % Determines the type of context supported by the plugin
+            plugin_context_set = plugin_info.Context;
+            if isempty(plugin_context_set)
+                plugin_context_set = PTKContextSet.LungROI;
+            end
+            plugin_context_set_mapping = obj.ContextSets(char(plugin_context_set));
+            
+            % Determines the context and context type requested by the calling function
+            if isempty(input_context)
+                input_context = PTKContext.LungROI;
+            end
+            input_context_mapping = obj.Contexts(char(input_context));
+            input_context_set_mapping = input_context_mapping.ContextSet;
+            input_context_set = input_context_set_mapping.ContextSet;
+            
+            % If the input and output contexts are of the same type, or if the
+            % plugin context is of type 'Any', then proceed to save the results
+            % for this context.
+            if (plugin_context_set == input_context_set) || (plugin_context_set == PTKContextSet.Any)
+                obj.DependencyTracker.SaveEditedResult(plugin_name, input_context, edited_result_image, reporting);
+
+            % Otherwise, if the input's context set is lower in the hierarchy
+            % than that of the plugin, then resize the input to match the plugin
+            elseif input_context_set_mapping.IsOtherContextSetHigher(plugin_context_set_mapping)
+                
+                higher_context_mapping = input_context_mapping.Parent;
+                if isempty(higher_context_mapping)
+                    reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
+                end
+                parent_contet = higher_context_mapping.Context;
+                parent_image_template = obj.ImageTemplates.GetTemplateImage(parent_contet, dataset_stack);
+                new_edited_image_for_context_image = edited_result_image.Copy;
+                new_edited_image_for_context_image.ResizeToMatch(parent_image_template);
+                obj.SaveEditedResultForAllContexts(plugin_name, parent_contet, new_edited_image_for_context_image, plugin_info, dataset_stack, reporting);
+
+
+            % If the plugin's context set is lower in the hierarchy, then get
+            % reduce the edited image input to each lower context in turn and save to each
+            elseif plugin_context_set_mapping.IsOtherContextSetHigher(input_context_set_mapping)
+                
+                child_context_mappings = input_context_mapping.Children;
+                
+                for child_mapping = child_context_mappings
+                    child_context = child_mapping{1}.Context;
+                    
+                    % Create a new image from the edited result, reduced to this
+                    % context
+                    new_edited_image_for_context_image = obj.ReduceResultToContext(edited_result_image, child_mapping{1}, dataset_stack);
+                    
+                    % Save this new image
+                    obj.SaveEditedResultForAllContexts(plugin_name, child_context, new_edited_image_for_context_image, plugin_info, dataset_stack, reporting);
+                end
+                
+
+            else
+                reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
+            end
+        end
+        
+        
         function result = ReduceResultToContext(obj, full_result, context_mapping, dataset_stack)
+            % Extracts out a result for a particular context
+            
+            % If the result is a composite result, then get the result for this
+            % context            
+            if isa(full_result, 'PTKCompositeResult') && full_result.IsField(char(context_mapping.Context))
+                result = full_result.(char(context_mapping.Context));
+                return
+            end
+            
+            % Otherwise, we can only perform the reduction if the result it a
+            % PTKImage
             if ~isa(full_result, 'PTKImage')
                 result = full_result;
                 return
             end
+            
+            % Resize an image to match the template for a particular context,
+            % and extract out only the part of the image specified by the
+            % context map
             
             template_image = obj.ImageTemplates.GetTemplateImage(context_mapping.Context, dataset_stack);
             

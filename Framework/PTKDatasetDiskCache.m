@@ -36,12 +36,12 @@ classdef PTKDatasetDiskCache < handle
 
         % Fetches a cached result for a plugin
         function [value, cache_info] = LoadPluginResult(obj, plugin_name, context, reporting)
-            if obj.EditedResultsDiskCache.Exists(plugin_name, context, reporting);
-                [value, cache_info] = obj.EditedResultsDiskCache.Load(plugin_name, context, reporting);
-                reporting.ShowMessage('PTKDatasetDiskCache:UsingEditedValue', ['Loading edited result for plugin ' plugin_name]);
-            else
-                [value, cache_info] = obj.ResultsDiskCache.Load(plugin_name, context, reporting);
-            end
+            [value, cache_info] = obj.ResultsDiskCache.Load(plugin_name, context, reporting);
+        end
+        
+        % Fetches edited cached result for a plugin
+        function [value, cache_info] = LoadEditedPluginResult(obj, plugin_name, context, reporting)
+            [value, cache_info] = obj.EditedResultsDiskCache.Load(plugin_name, context, reporting);
         end
         
         % Stores a plugin result in the disk cache and updates cached dependency
@@ -104,6 +104,10 @@ classdef PTKDatasetDiskCache < handle
             exists = exists || obj.EditedResultsDiskCache.Exists(name, context, reporting);
         end
 
+        function exists = EditedResultExists(obj, name, context, reporting)
+            exists = obj.EditedResultsDiskCache.Exists(name, context, reporting);
+        end
+        
         function valid = CheckDependencyValid(obj, next_dependency, reporting)
             valid = obj.PluginResultsInfo.CheckDependencyValid(next_dependency, reporting);
         end
