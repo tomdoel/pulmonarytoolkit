@@ -44,7 +44,8 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
     
     % Isolate this colour component
     sub_seg = segmentation.BlankCopy;
-    sub_seg.ChangeRawImage(segmentation.RawImage == label);
+    raw_image = segmentation.GetMappedRawImage;
+    sub_seg.ChangeRawImage(raw_image == label);
     
     sub_seg.CropToFit;
     
