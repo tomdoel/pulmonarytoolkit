@@ -61,6 +61,8 @@ classdef PTKViewerPanel < handle
         PanMatlabTool
         ZoomMatlabTool
         EditTool
+        ReplaceColourTool
+        MapColourTool
     end
 
     properties (Access = private)
@@ -118,13 +120,6 @@ classdef PTKViewerPanel < handle
         function obj = PTKViewerPanel(parent)
             
             
-            obj.CineTool = PTKCineTool;
-            obj.WindowLevelTool = PTKWindowLevelTool;
-            obj.ZoomTool = PTKZoomTool;
-            obj.PanTool = PTKPanTool;
-            obj.PanMatlabTool = PTKPanMatlabTool(obj);
-            obj.ZoomMatlabTool = PTKZoomMatlabTool(obj);
-            obj.EditTool = PTKEditManager(obj);
 
             
             font_size = 9;
@@ -146,8 +141,17 @@ classdef PTKViewerPanel < handle
             obj.Axes = axes('Parent', obj.Parent);
             
             obj.MarkerPointManager = PTKMarkerPointManager(obj, obj.Axes);
-            
-            tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointManager, obj.WindowLevelTool, obj.CineTool, obj.EditTool};
+            obj.CineTool = PTKCineTool;
+            obj.WindowLevelTool = PTKWindowLevelTool;
+            obj.ZoomTool = PTKZoomTool;
+            obj.PanTool = PTKPanTool;
+            obj.PanMatlabTool = PTKPanMatlabTool(obj);
+            obj.ZoomMatlabTool = PTKZoomMatlabTool(obj);
+            obj.EditTool = PTKEditManager(obj);
+            obj.ReplaceColourTool = PTKReplaceColourTool(obj, obj.Axes);
+            obj.MapColourTool = PTKMapColourTool(obj, obj.Axes);
+           
+            tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointManager, obj.WindowLevelTool, obj.CineTool, obj.EditTool, obj.ReplaceColourTool, obj.MapColourTool};
             
             obj.ControlPanel = uipanel('Parent', obj.Parent, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
 
@@ -1032,7 +1036,7 @@ classdef PTKViewerPanel < handle
                         end
                     end
 
-                    [rgb_slice, alpha_slice] = obj.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, obj.BlackIsTransparent);
+                    [rgb_slice, alpha_slice] = obj.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, obj.BlackIsTransparent, image_object.ColorLabelMap);
                     alpha_slice = double(alpha_slice)*opacity/100;
                     
                     % Special code to highlight one colour
@@ -1337,7 +1341,11 @@ classdef PTKViewerPanel < handle
             tool_list = obj.Tools.values;
             for tool_set = tool_list
                 tool = tool_set{1};
-                tool.Enable(strcmp(obj.SelectedControl, tool.Tag));
+                tool_is_enabled = strcmp(obj.SelectedControl, tool.Tag);
+                tool.Enable(tool_is_enabled);
+                if tool_is_enabled
+                    set(obj.Axes, 'uicontextmenu', tool.ContextMenu);
+                end
             end
         end
 
@@ -1373,7 +1381,7 @@ classdef PTKViewerPanel < handle
     end
     methods (Access = private, Static)
         
-        function [rgb_slice alpha_slice] = GetImage(image_slice, limits, image_type, window, level, black_is_transparent)
+        function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level, black_is_transparent, map)
             switch image_type
                 case PTKImageType.Grayscale
                     rescaled_image_slice = PTKViewerPanel.RescaleImage(image_slice, window, level);
@@ -1382,29 +1390,36 @@ classdef PTKViewerPanel < handle
                     if limits(1) < 0
                         image_slice = image_slice - limits(1);
                     end
-                    [rgb_slice, alpha_slice] = PTKViewerPanel.GetLabeledImage(image_slice);
+                    [rgb_slice, alpha_slice] = PTKViewerPanel.GetLabeledImage(image_slice, map);
                 case PTKImageType.Scaled
                     [rgb_slice, alpha_slice] = PTKViewerPanel.GetColourMap(image_slice, limits, black_is_transparent);
             end
             
         end
         
-        function [rgb_image alpha] = GetBWImage(image)
+        function [rgb_image, alpha] = GetBWImage(image)
             rgb_image = (cat(3, image, image, image));
             alpha = ones(size(image));
         end
 
-        function [rgb_image alpha] = GetLabeledImage(image)
-            data_class = class(image);
-            if strcmp(data_class, 'double') || strcmp(data_class, 'single')
-                rgb_image = label2rgb(round(image), 'lines');
+        function [rgb_image, alpha] = GetLabeledImage(image, map)
+            if isempty(map)
+                if isa(image, 'double') || isa(image, 'single')
+                    rgb_image = label2rgb(round(image), 'lines');
+                else
+                    rgb_image = label2rgb(image, 'lines');
+                end
             else
-                rgb_image = label2rgb(image, 'lines');
+                if isa(image, 'double') || isa(image, 'single')
+                    rgb_image = label2rgb(map(round(image + 1)), 'lines');
+                else
+                    rgb_image = label2rgb(map(image + 1), 'lines');
+                end
             end
             alpha = int8(image ~= 0);
         end
 
-        function [rgb_image alpha] = GetColourMap(image, image_limits, black_is_transparent)
+        function [rgb_image, alpha] = GetColourMap(image, image_limits, black_is_transparent)
             image_limits(1) = min(-1, image_limits(1));
             image_limits(2) = max(1, image_limits(2));
             positive_mask = image >= 0;
