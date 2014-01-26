@@ -1,4 +1,4 @@
-function [results_image, start_branches] = PTKGetAirwaysLabelledByLobe(template, airway_results, airway_centreline_tree, reporting)
+function start_branches = PTKGetAirwaysLabelledByLobe(template, airway_centreline_tree, reporting)
     % PTKGetAirwaysLabelledByLobe. Label segmented bronchi according to the
     % lobes they serve.
     % 
@@ -11,27 +11,12 @@ function [results_image, start_branches] = PTKGetAirwaysLabelledByLobe(template,
     %     template : A PTKImage representing the region of interest used by the
     %         centreline algorithm
     %
-    %     airway_results : the root PTKTreeSegment of a segmented airway tree
-    %         structure produced by PTKAirwayRegionGrowingWithExplosionControl
-    %
     %     airway_centreline_tree : the root PTKTreeModel of a segmented airway
     %         tree centreline produced by PTKAirwayCentreline
     %
     %     reporting : A PTKReporting object used for error and warning messages
     %
     % Outputs:
-    %
-    %     results_image : An image showing the segmented airways labelled by lobe.
-    %         The following colours are used:
-    %             1 (blue)   : Right upper lobe
-    %             2 (green)  : Right middle lobe
-    %             4 (cyan)   : Right lower lobe
-    %             5 (magenta): Left lower lobe
-    %             6 (yellow) : Left upper lobe
-    %
-    %             3 (red)    : Uncertain - unable to allocate to a lobe
-    %             7 (grey)   : Airways supplying more than one lobe (before the
-    %                          lobar bifurcations)
     %
     %    start_branches : a structure containing the first branch for each lobe
     %
@@ -79,8 +64,6 @@ function [results_image, start_branches] = PTKGetAirwaysLabelledByLobe(template,
     start_branches.RightMid = right_mid_startindices;
     start_branches.RightLower = right_lower_startindices;
     start_branches.LeftUncertain = uncertain_segments;
-    
-    results_image = PTKColourBranchesByLobe(start_branches, airway_results.AirwayTree, template);
 end
 
 

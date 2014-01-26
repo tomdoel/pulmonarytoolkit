@@ -10,7 +10,7 @@ function start_branches = PTKGetSegmentalBronchiCentrelinesForEachLobe(airway_tr
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    [~, start_branches] = PTKGetAirwaysLabelledByLobe(template, airway_results, airway_tree, reporting);
+    start_branches = PTKGetAirwaysLabelledByLobe(template, airway_tree, reporting);
     start_branches = PTKReallocateAirwaysByLobe(start_branches, lobes, reporting);
 
     left_upper_start_branches = GetMatchingBranches(airway_tree, start_branches.LeftUpper);

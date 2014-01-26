@@ -8,12 +8,6 @@ classdef PTKReallocateAirwaysLabelledByLobe < PTKPlugin
     %
     %     Plugins should not be run directly from your code.
     %
-    %     PTKAirwaysLabelledByLobe calls the PTKAirways plugin to segment the
-    %     airway tree and the PTKAirwayCentreline plguin to obtain the airway
-    %     skeleon. It then calls the library function PTKGetAirwaysLabelledByLobe
-    %     to allocate each broncus to the unique lobe it serves. Bronchi serving
-    %     more than one lobe are not displayed.
-    %
     %     The resulting image is a labelled image with nonzero values
     %     representing bronchi allocated to the following lobes:
     %         1 - Upper right lobe
