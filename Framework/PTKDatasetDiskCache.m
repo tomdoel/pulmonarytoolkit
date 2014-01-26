@@ -47,25 +47,25 @@ classdef PTKDatasetDiskCache < handle
         % Stores a plugin result in the disk cache and updates cached dependency
         % information
         function SavePluginResult(obj, plugin_name, result, cache_info, context, reporting)
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context);
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, false, reporting);
             obj.ResultsDiskCache.SaveWithInfo(plugin_name, result, cache_info, context, reporting);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, false, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
         % Stores a plugin result after semi-automatic editing in the edited
         % results disk cache and updates cached dependency information
         function SaveEditedPluginResult(obj, plugin_name, context, edited_result, cache_info, reporting)
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context);
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, true, reporting);
             obj.EditedResultsDiskCache.SaveWithInfo(plugin_name, edited_result, cache_info, context, reporting);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, true, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
         % Caches Dependency information
-        function CachePluginInfo(obj, plugin_name, cache_info, context, reporting)
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, reporting);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, reporting);
+        function CachePluginInfo(obj, plugin_name, cache_info, context, is_edited, reporting)
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, is_edited, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, is_edited, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
