@@ -63,6 +63,10 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         Preview = []
         
         GlobalLimits
+        
+        ColorLabelMap
+        ColourLabelChildMap
+        ColourLabelParentMap
     end
 
     properties (Access = private)
@@ -126,6 +130,24 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             addlistener(obj, 'ImageType', 'PostSet', @obj.ImagePropertyChangedCallback);
             addlistener(obj, 'Title', 'PostSet', @obj.ImagePropertyChangedCallback);
             addlistener(obj, 'GlobalOrigin', 'PostSet', @obj.ImagePropertyChangedCallback);            
+        end
+        
+        function ChangeColorLabelMap(obj, new_colourmap)
+            obj.ColorLabelMap = new_colourmap;
+            obj.NotifyImageChanged;
+        end
+        
+        function ChangeColorLabelParentChildMap(obj, new_parent_map, new_child_map)
+            obj.ColourLabelParentMap = new_parent_map;
+            obj.ColourLabelChildMap = new_child_map;
+        end
+        
+        function raw_image = GetMappedRawImage(obj)
+            if isempty(obj.ColorLabelMap)
+                raw_image = obj.RawImage;
+            else
+                raw_image = obj.ColorLabelMap(obj.RawImage + 1);
+            end
         end
         
         function orientation = Find2DOrientation(obj)
