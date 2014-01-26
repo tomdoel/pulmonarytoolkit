@@ -129,7 +129,7 @@ classdef PTKLobesByVesselDistanceTransform < PTKPlugin
             dilated_airways = zeros(airways.ImageSize, 'int8');
             for colour = colour_range
                 next_image = airways.Copy;
-                next_image.ChangeRawImage(next_image.RawImage == colour);
+                next_image.ChangeRawImage(next_image.GetMappedRawImage == colour);
                 next_image.BinaryMorph(@imdilate, 5);
                 dilated_airways = dilated_airways + colour*int8(next_image.RawImage);
             end
