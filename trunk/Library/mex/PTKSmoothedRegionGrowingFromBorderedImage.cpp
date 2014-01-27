@@ -431,8 +431,6 @@ void SmoothedRegionGrowing(LabelledInputType* labelled_input_data, SmoothingElem
 // The main function call
 void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs, const mxArray* pointers_to_inputs[])
 {
-    mexPrintf("PTKSmoothedRegionGrowingFromBorderedImage\n");
-    
     // Check inputs
     if ((num_inputs < 2) || (num_inputs > 3)) {
         mexErrMsgTxt("Two inputs are required: the labeled input image and the structural element to use for smoothing. The third optional input is the maximum number of iterations");
@@ -496,7 +494,5 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     
     // Run the loop
     SmoothedRegionGrowing(labelled_input_data, smoothing_element_data, output_data, max_iterations, labelled_image_size, smoothing_element_size, max_iter_set_manually);
-    
-    mexPrintf(" - Completed PTKSmoothedRegionGrowingFromBorderedImage\n");
     return;
 }

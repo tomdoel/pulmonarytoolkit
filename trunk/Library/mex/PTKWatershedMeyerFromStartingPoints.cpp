@@ -95,8 +95,6 @@ struct classcomp {
 // The main function call
 void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs, const mxArray* pointers_to_inputs[])
 {
-    mexPrintf("PTKWatershedMeyerFromStartingPoints\n"); 
-    
     // Check inputs
     if ((num_inputs < 2) || (num_inputs > 3)) {
         mexErrMsgTxt("Two inputs are required: the image and a label matrix of the staring points. The third optional input is the maximum number of iterations");
@@ -170,26 +168,6 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
     offsets[4] = size_i*size_j;
     offsets[5] = -size_i*size_j;
 
-//     const int number_of_nearest_neighbours = 26;
-//     int offsets[number_of_nearest_neighbours];
-//     {
-//         int index_offset = 0;
-//         
-//         for (int i = -1; i < 2; i++) {
-//             for (int j = -1; j < 2; j++) {
-//                 for (int k = -1; k < 2; k++) {
-//                     if ((i != 0) || (j != 0) || (k != 0)) {
-//                         offsets[index_offset] = i*multiples[0] + j*multiples[1] + k*multiples[2];
-//                         mexPrintf("-Offset %d\n", offsets[index_offset]);
-//                         index_offset++;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-
-
-    mexPrintf("-Initial population\n");
 
     // Initialise the output data
     for (int point_index = 0; point_index < number_of_points; point_index++) {
@@ -220,8 +198,6 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
             }
         }
     }
-    
-    mexPrintf("-Starting Loop\n");
             
     // Iterate over remaining points
     while (!points_to_do.empty()) {
@@ -292,7 +268,7 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
         iteration_number++;
         if (iteration_number > max_iterations) {
             if (max_iter_set_manually) {
-                mexWarnMsgTxt("Terminating as the specified maximum iteration number has been reached");
+//                 mexWarnMsgTxt("Terminating as the specified maximum iteration number has been reached");
                 return;
             } else {
                 mexErrMsgTxt("Error: Maximum number of iterations has been exceeded");
@@ -300,6 +276,5 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
         }
     }
     
-    mexPrintf(" - Completed PTKWatershedMeyerFromStartingPoints\n");
     return;
 }

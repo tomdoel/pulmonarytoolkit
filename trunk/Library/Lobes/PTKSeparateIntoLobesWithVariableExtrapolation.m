@@ -38,7 +38,6 @@ function [lobes_raw, fissure_plane] = PTKSeparateIntoLobesWithVariableExtrapolat
             compute_again = true;
         else
             compute_again = false;
-            disp(['Final extrapolation:' int2str(extrapolation)]);
         end
     end
 end
