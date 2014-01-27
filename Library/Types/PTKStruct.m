@@ -34,5 +34,13 @@ classdef PTKStruct < dynamicprops
                 obj.AddField(field_name, other_struct.(field_name));
             end
         end
+        
+        function result = GetFirstResult(obj)
+            result = obj;
+            while isa(result, 'PTKStruct')
+                result_properties = properties(result);
+                result = result.(result_properties{1});
+            end
+        end
     end
 end
