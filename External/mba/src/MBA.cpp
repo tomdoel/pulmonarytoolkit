@@ -168,7 +168,7 @@ void MBA::smoothMatrix(GenMatrixType& matrix, int no_iter)
 
 void MBA::smoothZeros(int no_iter) 
 {
-    cout << "Smoothing zeros with " << no_iter << " iterations.\n";
+//     cout << "Smoothing zeros with " << no_iter << " iterations.\n";
     if (no_iter == 0)
 	return;
 

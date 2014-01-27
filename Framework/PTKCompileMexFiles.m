@@ -158,11 +158,11 @@ function mex_files_to_compile_map = GetMexFilesToCompile(root_dir, reporting)
     mex_files_to_compile = PTKMexInfo.empty(0);
     mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKFastEigenvalues', 'cpp', mex_dir, [], []);
     mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKFastIsSimplePoint', 'cpp', mex_dir, [], []);
-    mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKWatershedFromStartingPoints', 'cpp', mex_dir, [], []);
-    mex_files_to_compile(end + 1) = PTKMexInfo(2, 'PTKWatershedMeyerFromStartingPoints', 'cpp', mex_dir, [], []);
+    mex_files_to_compile(end + 1) = PTKMexInfo(2, 'PTKWatershedFromStartingPoints', 'cpp', mex_dir, [], []);
+    mex_files_to_compile(end + 1) = PTKMexInfo(3, 'PTKWatershedMeyerFromStartingPoints', 'cpp', mex_dir, [], []);
     mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKSmoothedRegionGrowingFromBorderedImage', 'cpp', mex_dir, [], []);
     
-    mex_files_to_compile(end + 1) = PTKMexInfo(1, 'mba_surface_interpolation', 'cpp', fullfile(root_dir, 'External', 'gerardus', 'matlab', 'PointsToolbox'), ...
+    mex_files_to_compile(end + 1) = PTKMexInfo(2, 'mba_surface_interpolation', 'cpp', fullfile(root_dir, 'External', 'gerardus', 'matlab', 'PointsToolbox'), ...
         {'-IExternal', ['-I' fullfile('External', 'mba', 'include')]}, ...
         {fullfile('External', 'mba', 'src', 'MBA.cpp'), fullfile('External', 'mba', 'src', 'UCBsplines.cpp'), ...
         fullfile('External', 'mba', 'src', 'UCBsplineSurface.cpp'), fullfile('External', 'mba', 'src', 'MBAdata.cpp')});

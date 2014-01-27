@@ -88,8 +88,6 @@ struct classcomp {
 // The main function call
 void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs, const mxArray* pointers_to_inputs[])
 {
-    mexPrintf("PTKWatershedFromStartingPoints\n"); 
-    
     // Check inputs
     if (num_inputs != 2) {
         mexErrMsgTxt("Two inputs are required: the image and a label matrix of the staring points.");
@@ -212,6 +210,5 @@ void mexFunction(int num_outputs, mxArray* pointers_to_outputs[], int num_inputs
         }
     }
     
-    mexPrintf(" - Completed PTKWatershedFromStartingPoints\n");
     return;
 }
