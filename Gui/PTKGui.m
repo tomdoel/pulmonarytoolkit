@@ -414,6 +414,7 @@ classdef PTKGui < handle
         end
         
         function LoadFromPatientBrowser(obj, series_uid)
+            obj.BringToFront;
             obj.LoadFromUid(series_uid);
         end
         
@@ -621,6 +622,8 @@ classdef PTKGui < handle
                 
                 obj.PatientBrowser.Show(obj.Reporting);
             else
+                obj.PatientBrowser.SelectSeries(obj.PatientBrowserSelectedPatientId, obj.PatientBrowserSelectedUid);
+                
                 if obj.PatientBrowser.IsVisible
                     obj.PatientBrowser.BringToFront;
                 else
@@ -628,6 +631,13 @@ classdef PTKGui < handle
                 end
             end
         end
+        
+        function BringToFront(obj)
+            if ishandle(obj.FigureHandle)
+                figure(obj.FigureHandle);
+            end
+        end
+        
         
         function LoadFromUid(obj, series_uid)
             selected_image_uid = series_uid;
