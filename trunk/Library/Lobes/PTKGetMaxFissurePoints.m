@@ -121,7 +121,6 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
         
     end
     
-    disp(['Final dilate size: ' num2str(dilate_size_mm) 'mm']);
     [x_all, y_all, z_all] = PointsToArrays(points_coords_new);
     maximum_fissureness_indices = PTKImageCoordinateUtilities.FastSub2ind(image_size, x_all(:), y_all(:), z_all(:));
     ref_image(maximum_fissureness_indices) = 1;

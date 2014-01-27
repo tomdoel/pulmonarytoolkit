@@ -1,6 +1,5 @@
 classdef PTKDensityAnalysis < PTKPlugin
-    % PTKDensityAnalysis. Plugin for performing analysis of density using bins
-    % along the cranial-caudal axis
+    % PTKDensityAnalysis. Plugin for performing analysis of density
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
