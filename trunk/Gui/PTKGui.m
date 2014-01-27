@@ -534,6 +534,11 @@ classdef PTKGui < handle
                 end
                 
                 [~, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
+                
+                if isa(cache_info, 'PTKCompositeResult')
+                    cache_info = cache_info.GetFirstResult;
+                end
+                
                 image_title = plugin_text;
                 if cache_info.IsEdited
                     image_title = ['EDITED ', image_title];
