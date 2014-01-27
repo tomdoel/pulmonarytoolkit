@@ -27,6 +27,9 @@ classdef PTKTree < handle
         
         function root = GetRoot(obj)
             root = obj;
+            if numel(root) > 0
+                root = root(1);
+            end
             while ~isempty(root.Parent)
                 root = root.Parent;
             end

@@ -36,6 +36,11 @@ classdef PTKAirwayAnalysis < PTKPlugin
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
             bronchus = dataset.GetResult('PTKAirwayForContext', context);
+            
+            if isstruct(bronchus)
+                bronchus = bronchus.AirwayForContext;
+            end
+            
             if numel(bronchus) > 1
                 if bronchus(1).Radius >= bronchus(2).Radius
                     bronchus = bronchus(1);
@@ -47,10 +52,8 @@ classdef PTKAirwayAnalysis < PTKPlugin
             image_roi = dataset.GetResult('PTKLungROI', PTKContext.LungROI);
             bronchus_results = PTKGetWallThicknessForBranch(bronchus, image_roi, context, [], []);
             
-            if isempty(bronchus_results)
-                results = [];
-            else
-                results = PTKMetrics;
+            results = PTKMetrics;
+            if ~isempty(bronchus_results)
                 results.AddMetric('LengthMm', bronchus.LengthMm, 'Airway length (mm)');
                 results.AddMetric('Radius', bronchus_results.FWHMRadiusMean, 'Mean airway lumen radius (mm)');
                 results.AddMetric('WallThickness', bronchus_results.FWHMWallThicknessMean, 'Mean airway wall thickness (mm)');

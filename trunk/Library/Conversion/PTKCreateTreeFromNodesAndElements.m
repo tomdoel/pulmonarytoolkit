@@ -30,7 +30,8 @@ function root_branch = PTKCreateTreeFromNodesAndElements(node_index_list, xc, yc
         
         % Build up the centreline until we reach a bifurcation, or the end of
         % the tree
-        centreline = next_node.CentrelinePoint;        
+        centreline = next_node.CentrelinePoint;
+        node_file_index = centreline.Parameters.NodeFileIndex;
         while numel(next_node.Children) == 1
             next_node = next_node.Children;
             centreline(end + 1) = next_node.CentrelinePoint;
@@ -39,6 +40,7 @@ function root_branch = PTKCreateTreeFromNodesAndElements(node_index_list, xc, yc
         current_branch.Centreline = centreline;
         current_branch.StartPoint = centreline(1);
         current_branch.EndPoint = centreline(end);
+        current_branch.TemporaryIndex = node_file_index;
         
         % At a bifurcation, create a new branch for each child
         for child_node = next_node.Children

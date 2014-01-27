@@ -6,7 +6,7 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     %     Syntax
     %     ------
     %
-    %         dicom_image = PTKLoad3DRawAndMetaFiles(image_data, path, filename, data_type, reporting)
+    %         dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, reporting)
     %
     %             dicom_image     is a PTKDicomImage class containing the image
     %             path            The path where the files are located. For the

@@ -48,7 +48,6 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     
     % Subsequent lines are node_number, x, y, z, radius, final_node?(y or n)
     node_data = textscan(fid, '%u%f%f%f%f%c', num_nodes, 'Delimiter', ',');
-%     node_data = textscan(fid, '%u%f%f%f%f%f%f%f%f%c', num_nodes, 'Delimiter', ',');
     fclose(fid);
     
     
@@ -97,6 +96,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
 %         new_branch.Length = branch_length;
 %         new_branch.StartPoint = first_point;
         new_branch.EndPoint = last_point;
+        new_branch.TemporaryIndex = node_number;
         
         branches(node_number) = new_branch;
     end
