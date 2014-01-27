@@ -32,11 +32,19 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
         reporting.Error('PTKLoadTreeFromChaste:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
     end
     
+    if ~PTKDiskUtilities.FileExists(file_path, node_filename)
+        reporting.Error('PTKLoadTreeFromChaste:FileDoesNotExist', ['The node file ', node_file ,' does not exist']);
+    end
+    
+    if ~PTKDiskUtilities.FileExists(file_path, edge_filename)
+        reporting.Error('PTKLoadTreeFromChaste:FileDoesNotExist', ['The element file ', element_file ,' does not exist']);
+    end
+    
     node_file = fullfile(file_path, node_filename);
     element_file = fullfile(file_path, edge_filename);
     
+    
     % Read node file
-    disp(['node_file:' node_file]);
     fid = fopen(node_file);
     
     % First line is the number of nodes, number of dimensions, number of
