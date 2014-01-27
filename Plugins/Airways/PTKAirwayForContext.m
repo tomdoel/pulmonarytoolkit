@@ -37,42 +37,45 @@ classdef PTKAirwayForContext < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
-            results = [];
+            bronchi = [];
             switch context
                 case {PTKContext.Lungs, PTKContext.LungROI, PTKContext.OriginalImage}
                     airways = dataset.GetResult('PTKAirwayCentreline');
-                    results =  airways.AirwayCentrelineTree;
+                    bronchi =  airways.AirwayCentrelineTree;
                 case {PTKContext.LeftLung}
                     airways = dataset.GetResult('PTKAirwaysLabelledByLobe');
-                    results = airways.StartBranches.Left;
+                    bronchi = airways.StartBranches.Left;
                 case {PTKContext.RightLung}
                     airways = dataset.GetResult('PTKAirwaysLabelledByLobe');
-                    results = airways.StartBranches.Right;
+                    bronchi = airways.StartBranches.Right;
                 case {PTKContext.LeftUpperLobe}
                     airways = dataset.GetResult('PTKAirwaysLabelledByLobe');
-                    results = airways.StartBranches.LeftUpper;
+                    bronchi = airways.StartBranches.LeftUpper;
                 case {PTKContext.LeftLowerLobe}
                     airways = dataset.GetResult('PTKAirwaysLabelledByLobe');
-                    results = airways.StartBranches.LeftLower;
+                    bronchi = airways.StartBranches.LeftLower;
                 case {PTKContext.RightUpperLobe}
                     airways = dataset.GetResult('PTKAirwaysLabelledByLobe');
-                    results = airways.StartBranches.RightUpper;
+                    bronchi = airways.StartBranches.RightUpper;
                 case {PTKContext.RightLowerLobe}
                     airways = dataset.GetResult('PTKAirwaysLabelledByLobe');
-                    results = airways.StartBranches.RightLower;
+                    bronchi = airways.StartBranches.RightLower;
                 case {PTKContext.RightMiddleLobe}
                     airways = dataset.GetResult('PTKAirwaysLabelledByLobe');
-                    results = airways.StartBranches.RightMid;
+                    bronchi = airways.StartBranches.RightMid;
                 case {PTKContext.R_AP, PTKContext.R_P, PTKContext.R_AN, PTKContext.R_L, ...
                         PTKContext.R_M, PTKContext.R_S, PTKContext.R_MB, PTKContext.R_AB, PTKContext.R_LB, ...
                         PTKContext.R_PB, PTKContext.L_APP, PTKContext.L_APP2, PTKContext.L_AN, PTKContext.L_SL, ...
                         PTKContext.L_IL, PTKContext.L_S, PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB}
                     airways = dataset.GetResult('PTKSegmentsByNearestBronchus');
-                    results = PTKAirwayForContext.FindSegmentalBronchus(airways.AirwaysBySegment.Trachea, context);
+                    bronchi = PTKAirwayForContext.FindSegmentalBronchus(airways.AirwaysBySegment.Trachea, context);
             end
-            for branch = results
+            for branch = bronchi
                 branch.GenerateBranchParameters;
             end
+            
+            results = [];
+            results.AirwayForContext = bronchi;
         end
         
         function bronchus = FindSegmentalBronchus(airways, context)

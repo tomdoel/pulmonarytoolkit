@@ -33,10 +33,12 @@ function AddToTable(table, results, patient_id, reporting)
             metric_object = slice_map(slice_name);
             metric_names = metric_object.GetListOfMetrics;
             for metric_name_set = metric_names'
-                metric_name = metric_name_set{1};
-                value = metric_object.(metric_name);
-                table.AddCell(patient_id, metric_name, context_name, slice_name, value, reporting);
-                table.AddMetricName(metric_name, metric_object.MetricNameMap(metric_name));
+                if ~isempty(metric_name_set)
+                    metric_name = metric_name_set{1};
+                    value = metric_object.(metric_name);
+                    table.AddCell(patient_id, metric_name, context_name, slice_name, value, reporting);
+                    table.AddMetricName(metric_name, metric_object.MetricNameMap(metric_name));
+                end
             end
         end
     end    

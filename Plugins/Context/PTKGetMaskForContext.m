@@ -37,7 +37,7 @@ classdef PTKGetMaskForContext < PTKPlugin
         function results = RunPlugin(dataset, context, reporting)
             % Get a mask for the current region to analyse
             results = dataset.GetTemplateImage(context);
-            if ~results.ImageExists
+            if (context == PTKContext.LungROI) || (context == PTKContext.OriginalImage)
                 results = dataset.GetTemplateImage(PTKContext.Lungs);
             end
             
