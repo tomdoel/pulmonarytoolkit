@@ -53,8 +53,17 @@ classdef PTKPatientPanel < PTKPanel
             obj.Enabled = false;
             obj.PatientDetails = patient_details;
             obj.GuiCallback = gui_callback;
-            obj.Name = patient_details.VisibleName;
+            
             obj.Id = patient_details.PatientId;
+
+            if isempty(patient_details.VisibleName)
+                name = patient_details.PatientId;
+            elseif isempty(patient_details.PatientId)
+                name = patient_details.VisibleName;
+            else
+                name = [patient_details.VisibleName, ' - ', patient_details.PatientId];
+            end
+            obj.Name = name;
 
             obj.PanelHeight = obj.PatientNameHeight + patient_details.GetNumberOfSeries*PTKSeriesDescription.SeriesTextHeight + 2*obj.BorderSpace;
             obj.PatientNamePosition_Y = 1 + obj.GetRequestedHeight - obj.PatientNameHeight - obj.BorderSpace;
