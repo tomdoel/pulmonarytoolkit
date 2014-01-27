@@ -62,14 +62,15 @@ classdef PTKDatasetResults < handle
             obj.ContextHierarchy = PTKContextHierarchy(obj.DependencyTracker, obj.ImageTemplates, reporting);
         end
 
-        % Returns the results of a plugin. If a valid result is cached on disk,
-        % this wil be returned provided all the dependencies are valid.
-        % Otherwise the plugin will be executed and the new result returned.
-        % The optional context parameter specifies the region of interest to which the output result will be framed.
-        % Specifying a second argument also produces a representative image from
-        % the results. For plugins whose result is an image, this will generally be the
-        % same as the results.
         function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context, allow_results_to_be_cached_override)
+            % Returns the results of a plugin. If a valid result is cached on disk,
+            % this wil be returned provided all the dependencies are valid.
+            % Otherwise the plugin will be executed and the new result returned.
+            % The optional context parameter specifies the region of interest to which the output result will be framed.
+            % Specifying a second argument also produces a representative image from
+            % the results. For plugins whose result is an image, this will generally be the
+            % same as the results.
+
             obj.Reporting.PushProgress;
             if nargin < 4
                 context = [];
@@ -98,25 +99,29 @@ classdef PTKDatasetResults < handle
             obj.Reporting.PopProgress;
         end
 
-        % Returns a PTKImageInfo structure with image information, including the
-        % UID, filenames and file path
         function image_info = GetImageInfo(obj)
+            % Returns a PTKImageInfo structure with image information, including the
+            % UID, filenames and file path
+        
             image_info = obj.ImageInfo;
         end
         
-        % Save data as a cache file associated with this dataset
-        % Used for marker points
         function SaveData(obj, name, data)
+            % Save data as a cache file associated with this dataset
+            % Used for marker points
+        
             obj.DatasetDiskCache.SaveData(name, data, obj.Reporting);
         end
         
-        % Load data from a cache file associated with this dataset
         function data = LoadData(obj, name)
+            % Load data from a cache file associated with this dataset
+        
             data = obj.DatasetDiskCache.LoadData(name, obj.Reporting);
         end
         
-        % Load data from a cache file associated with this dataset
         function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack)
+            % Load data from a cache file associated with this dataset
+            
             dataset_uid = obj.ImageInfo.ImageUid;
             obj.Reporting.PushProgress;
             if nargin < 4
@@ -148,27 +153,29 @@ classdef PTKDatasetResults < handle
             obj.Reporting.PopProgress;
         end
         
-        % Gets the path of the folder where the results for this dataset are
-        % stored
         function dataset_cache_path = GetDatasetCachePath(obj)
+            % Gets the path of the folder where the results for this dataset are
+            % stored
+        
             dataset_cache_path = obj.DatasetDiskCache.GetCachePath(obj.Reporting);
         end
         
-        % Gets the path of the folder where the edited results for this dataset are
-        % stored
         function cache_path = GetEditedResultsPath(obj)
+            % Gets the path of the folder where the edited results for this dataset are stored
+            
            cache_path = obj.DatasetDiskCache.GetEditedResultsPath(obj.Reporting);
         end
         
-        % Gets the path of the folder where the output for this dataset are
-        % stored
         function cache_path = GetOutputPath(obj)
-           cache_path = obj.DatasetDiskCache.GetOutputPath(obj.Reporting);
+            % Gets the path of the folder where the output for this dataset are stored
+        
+            cache_path = obj.DatasetDiskCache.GetOutputPath(obj.Reporting);
         end
         
-        % Gets the path of the folder where the output files for this dataset are
-        % stored
         function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
+            % Gets the path of the folder where the output files for this dataset are
+            % stored
+        
             results_directory = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
             image_info = obj.GetImageInfo;
             uid = image_info.ImageUid;
@@ -178,39 +185,43 @@ classdef PTKDatasetResults < handle
             end      
         end        
         
-        % Returns an empty template image for the specified context
-        % See PTKImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, dataset_stack)
+            % Returns an empty template image for the specified context
+            % See PTKImageTemplates.m for valid contexts
+        
             template_image = obj.ImageTemplates.GetTemplateImage(context, dataset_stack);
         end
         
-        % Gets a thumbnail image of the last result for this plugin
         function preview = GetPluginPreview(obj, plugin_name)
+            % Gets a thumbnail image of the last result for this plugin
+        
             preview = obj.PreviewImages.GetPreview(plugin_name);
         end
 
-        % Removes all the cache files associated with this dataset. Cache files
-        % store the results of plugins so they need only be computed once for
-        % each dataset. Clearing the cache files forces recomputation of all
-        % results.
         function ClearCacheForThisDataset(obj, remove_framework_files)
+            % Removes all the cache files associated with this dataset. Cache files
+            % store the results of plugins so they need only be computed once for
+            % each dataset. Clearing the cache files forces recomputation of all
+            % results.
+        
             obj.PreviewImages.Clear;
             obj.DatasetDiskCache.RemoveAllCachedFiles(remove_framework_files, obj.Reporting);
         end
         
-        % Removes all the cache files associated with this dataset. Cache files
-        % store the results of plugins so they need only be computed once for
-        % each dataset. Clearing the cache files forces recomputation of all
-        % results.
         function DeleteCacheForThisDataset(obj)
+            % Removes all the cache files associated with this dataset. Cache files
+            % store the results of plugins so they need only be computed once for
+            % each dataset. Clearing the cache files forces recomputation of all
+            % results.
+        
             obj.PreviewImages.Clear;
             obj.DatasetDiskCache.Delete(obj.Reporting);
         end
         
-        % Check to see if a context has been disabled for this dataset, due to a 
-        % failure when running the plugin that generates the template image for 
-        % that context.
         function context_is_enabled = IsContextEnabled(obj, context)
+            % Check to see if a context has been disabled for this dataset, due to a
+            % failure when running the plugin that generates the template image for
+            % that context.
             context_is_enabled = obj.ImageTemplates.IsContextEnabled(context);
         end
         
@@ -238,8 +249,8 @@ classdef PTKDatasetResults < handle
 
     methods (Access = private)
                 
-        % Returns the plugin result, computing if necessary
         function [result, cache_info, output_image, plugin_has_been_run] = RunPluginWithOptionalImageGeneration(obj, plugin_name, plugin_info, plugin_class, generate_image, dataset_stack, context, allow_results_to_be_cached)
+            % Returns the plugin result, computing if necessary
             
             preview_exists = obj.PreviewImages.DoesPreviewExist(plugin_name);
             

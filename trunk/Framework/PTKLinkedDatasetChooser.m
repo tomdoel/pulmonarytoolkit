@@ -42,10 +42,11 @@ classdef PTKLinkedDatasetChooser < handle
             obj.LinkedDatasetChooserList(linked_name) = linked_dataset_chooser;
         end
         
-        % Returns a handle to the DatasetResults object for a particular linked
-        % dataset. The dataset is identified by its uid in varargin, or an empty
-        % input will return the primary dataset.
         function dataset_results = GetDataset(obj, varargin)
+            % Returns a handle to the DatasetResults object for a particular linked
+            % dataset. The dataset is identified by its uid in varargin, or an empty
+            % input will return the primary dataset.
+            
             dataset_results = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults;
         end
     end

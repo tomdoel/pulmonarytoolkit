@@ -98,8 +98,8 @@ classdef PTKImageTemplates < handle
         end
         
         
-        % Returns an image template for the requested context
         function template = GetTemplateImage(obj, context, dataset_stack)
+            % Returns an image template for the requested context
             
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
@@ -127,10 +127,10 @@ classdef PTKImageTemplates < handle
         end
 
 
-        % Check to see if a plugin which has been run is associated with any of
-        % the contexts. If it is, create a new template image for that context
-        % if one does not already exist
         function UpdateTemplates(obj, plugin_name, context, result_image, result_may_have_changed)
+            % Check to see if a plugin which has been run is associated with any of
+            % the contexts. If it is, create a new template image for that context
+            % if one does not already exist
             
             % Check whether the plugin that has been run is the template for
             % this context
@@ -167,10 +167,11 @@ classdef PTKImageTemplates < handle
         end
 
 
-        % Check to see if a context has been disabled for this dataset, due to a 
-        % failure when running the plugin that generates the template image for 
-        % that context.
         function context_is_enabled = IsContextEnabled(obj, context)
+            % Check to see if a context has been disabled for this dataset, due to a
+            % failure when running the plugin that generates the template image for
+            % that context.
+        
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
                 obj.Reporting.Error('PTKImageTemplates:UnknownContext', 'Context not recogised');
@@ -182,8 +183,9 @@ classdef PTKImageTemplates < handle
         end
         
 
-        % Stores the fact that a plugin has been run
         function NoteAttemptToRunPlugin(obj, plugin_name, context)
+            % Stores the fact that a plugin has been run
+            
             if obj.ValidContexts.isKey(char(context))
                 context_plugin_name = obj.ValidContexts(char(context));
                 if strcmp(plugin_name, context_plugin_name)                    
@@ -197,22 +199,25 @@ classdef PTKImageTemplates < handle
     
     methods (Access = private)
 
-        % Cache a template image for this context
         function SetTemplateImage(obj, context, template_image)
+            % Cache a template image for this context
+            
             obj.TemplateImages(char(context)) = template_image;
             obj.Save;
         end
         
-        % Cache a template image for this context
         function MarkTemplateImage(obj, context)
+            % Cache a template image for this context
+            
             if ~obj.TemplatePluginsRun.isKey(char(context))
                 obj.TemplatePluginsRun(char(context)) = true;
                 obj.Save;
             end
         end
         
-        % Retrieves previous templates from the disk cache
         function Load(obj)
+            % Retrieves previous templates from the disk cache
+        
             if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.ImageTemplatesCacheName, [], obj.Reporting)
                 info = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.ImageTemplatesCacheName, obj.Reporting);
                 obj.TemplateImages = info.TemplateImages;
@@ -220,8 +225,9 @@ classdef PTKImageTemplates < handle
             end
         end
         
-        % Stores current templates in the disk cache
         function Save(obj)
+            % Stores current templates in the disk cache
+            
             info = [];
             info.TemplateImages = obj.TemplateImages;
             info.TemplatePluginsRun = obj.TemplatePluginsRun;
