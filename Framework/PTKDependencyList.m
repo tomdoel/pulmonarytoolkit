@@ -28,15 +28,17 @@ classdef PTKDependencyList < handle
             obj.DependencyList = PTKDependency.empty;
         end
         
-        % Adds a single dependency to the list
         function AddDependency(obj, dependency, reporting)
+            % Adds a single dependency to the list
+        
             if ~obj.DependencyAlreadyExists(dependency, reporting)
                 obj.DependencyList(end+1) = dependency;
             end
         end
         
-        % Adds multiple dependencies to the list
         function AddDependenciesList(obj, dependencies, reporting)
+            % Adds multiple dependencies to the list
+            
             new_dependency_list = dependencies.DependencyList;
             for index = 1 : length(new_dependency_list);
                 obj.AddDependency(new_dependency_list(index), reporting);
@@ -47,8 +49,9 @@ classdef PTKDependencyList < handle
     
     methods (Access = private)
         
-        % Check if this dependency already exists
         function dependency_exists = DependencyAlreadyExists(obj, new_dependency, reporting)
+            % Check if this dependency already exists
+            
             for index = 1 : length(obj.DependencyList)
                 dependency = obj.DependencyList(index);
                 

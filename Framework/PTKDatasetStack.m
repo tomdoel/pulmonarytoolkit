@@ -44,9 +44,10 @@ classdef PTKDatasetStack < handle
             obj.Reporting = reporting;
         end
     
-        % Create a new PTKDatasetStackItem object with an empty dependency list and a
-        % new unique identifier. The push it to the end of the stack
         function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer)
+            % Create a new PTKDatasetStackItem object with an empty dependency list and a
+            % new unique identifier. The push it to the end of the stack
+        
             if obj.PluginAlreadyExistsInStack(plugin_name, context, dataset_uid)
                 obj.Reporting.Error('PTKDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
@@ -58,40 +59,44 @@ classdef PTKDatasetStack < handle
             obj.DatasetStack(end + 1) = cache_info;
         end
         
-        % Remove a plugin from the call stack and return the updated info object
-        % for this plugin
         function cache_info = Pop(obj)
+            % Remove a plugin from the call stack and return the updated info object
+            % for this plugin
+        
             cache_info = obj.DatasetStack(end);
             cache_info.StopAndDeleteTimer;
             obj.DatasetStack(end) = [];
         end
         
-        % Adds the specified plugin as a dependency of every plugin which is
-        % currently being executed in the call stack
         function AddDependenciesToAllPluginsInStack(obj, dependencies)
+            % Adds the specified plugin as a dependency of every plugin which is
+            % currently being executed in the call stack
+            
             for index = 1 : length(obj.DatasetStack)
                 dataset_stack_item = obj.DatasetStack(index);
                 dataset_stack_item.AddDependencies(dependencies, obj.Reporting);
             end
         end
         
-        % Clear the stack. This may be necessary if a plugin failed during
-        % execution, leaving the call stack in a bad state.
         function ClearStack(obj)
+            % Clear the stack. This may be necessary if a plugin failed during
+            % execution, leaving the call stack in a bad state.
+        
             obj.DatasetStack = PTKDatasetStackItem.empty;
         end
         
-        % Pause the timer used to generate SelfTime for the most recent plugin
-        % on the stack
         function PauseTiming(obj)
+            % Pause the timer used to generate SelfTime for the most recent plugin
+            % on the stack
             if ~isempty(obj.DatasetStack) && ~isempty(obj.DatasetStack(end).ExecutionTimer)
                 obj.DatasetStack(end).ExecutionTimer.Pause;
             end
         end
 
-        % Resume the timer used to generate SelfTime for the most recent plugin
-        % on the stack
         function ResumeTiming(obj)
+            % Resume the timer used to generate SelfTime for the most recent plugin
+            % on the stack
+        
             if ~isempty(obj.DatasetStack) && ~isempty(obj.DatasetStack(end).ExecutionTimer)
                 obj.DatasetStack(end).ExecutionTimer.Resume;
             end
@@ -100,8 +105,9 @@ classdef PTKDatasetStack < handle
     
     methods (Access = private)
         
-        % Check if this plugin already exists in the stack
         function plugin_exists = PluginAlreadyExistsInStack(obj, plugin_name, context, this_dataset_uid)
+            % Check if this plugin already exists in the stack
+        
             for index = 1 : length(obj.DatasetStack)
                 plugin_info = obj.DatasetStack(index);
                 this_name = plugin_info.InstanceIdentifier.PluginName;

@@ -34,48 +34,55 @@ classdef PTKDatasetDiskCache < handle
             obj.LoadCachedPluginResultsFile(reporting);
         end
 
-        % Fetches a cached result for a plugin
         function [value, cache_info] = LoadPluginResult(obj, plugin_name, context, reporting)
+            % Fetches a cached result for a plugin
+            
             [value, cache_info] = obj.ResultsDiskCache.Load(plugin_name, context, reporting);
         end
         
-        % Fetches edited cached result for a plugin
         function [value, cache_info] = LoadEditedPluginResult(obj, plugin_name, context, reporting)
+            % Fetches edited cached result for a plugin
+        
             [value, cache_info] = obj.EditedResultsDiskCache.Load(plugin_name, context, reporting);
         end
         
-        % Stores a plugin result in the disk cache and updates cached dependency
-        % information
         function SavePluginResult(obj, plugin_name, result, cache_info, context, reporting)
+            % Stores a plugin result in the disk cache and updates cached dependency
+            % information
+        
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, false, reporting);
             obj.ResultsDiskCache.SaveWithInfo(plugin_name, result, cache_info, context, reporting);
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, false, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
-        % Stores a plugin result after semi-automatic editing in the edited
-        % results disk cache and updates cached dependency information
         function SaveEditedPluginResult(obj, plugin_name, context, edited_result, cache_info, reporting)
+            % Stores a plugin result after semi-automatic editing in the edited
+            % results disk cache and updates cached dependency information
+        
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, true, reporting);
             obj.EditedResultsDiskCache.SaveWithInfo(plugin_name, edited_result, cache_info, context, reporting);
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, true, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
-        % Caches Dependency information
         function CachePluginInfo(obj, plugin_name, cache_info, context, is_edited, reporting)
+            % Caches Dependency information
+            
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, is_edited, reporting);
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, is_edited, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
-        % Saves additional data associated with this dataset to the cache
         function SaveData(obj, data_filename, value, reporting)
+            % Saves additional data associated with this dataset to the cache
+            
             obj.ResultsDiskCache.Save(data_filename, value, [], reporting);
         end
         
-        % Loads additional data associated with this dataset from the cache
         function value = LoadData(obj, data_filename, reporting)
+            % Loads additional data associated with this dataset from the cache
+            
             value = obj.ResultsDiskCache.Load(data_filename, [], reporting);
         end
         

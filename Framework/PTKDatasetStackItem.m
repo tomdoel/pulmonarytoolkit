@@ -51,9 +51,9 @@ classdef PTKDatasetStackItem < handle
             end
         end
         
-        % Adds more plugin result which this particular plugin result depends
-        % on.
         function AddDependencies(obj, dependencies, reporting)
+            % Adds more plugin result which this particular plugin result depends on.
+        
             obj.DependencyList.AddDependenciesList(dependencies, reporting);
         end
         

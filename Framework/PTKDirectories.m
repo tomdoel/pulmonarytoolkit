@@ -29,48 +29,55 @@ classdef PTKDirectories < handle
             end
         end
 
-        % Get the parent folder in which dataset cache folders are stored
         function cache_directory = GetCacheDirectory
+            % Get the parent folder in which dataset cache folders are stored
+            
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             cache_directory = PTKSoftwareInfo.DiskCacheFolderName;
             cache_directory = fullfile(application_directory, cache_directory);
         end
 
-        % Returns the full path to the settings file
         function settings_file_path = GetSettingsFilePath
+            % Returns the full path to the settings file
+            
             settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             settings_filename = PTKSoftwareInfo.SettingsFileName;
             settings_file_path = fullfile(settings_dir, settings_filename);
         end
         
-        % Returns the full path to root of the PTK source code        
         function source_directory = GetSourceDirectory
+            % Returns the full path to root of the PTK source code
+        
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
             source_directory = fullfile(path_root, '..');
         end
         
-        % Returns the full path to root of the PTK test source code        
         function source_directory = GetTestSourceDirectory
+            % Returns the full path to root of the PTK test source code
+        
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
             source_directory = fullfile(path_root, '..', PTKSoftwareInfo.TestSourceDirectory);
         end
         
-        % Returns the full path to the mex file directory
         function mex_source_directory = GetMexSourceDirectory
+            % Returns the full path to the mex file directory
+            
             mex_source_directory = fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.MexSourceDirectory);
         end
 
-        % Returns the full path to the directory used for storing results        
         function results_directory = GetOutputDirectoryAndCreateIfNecessary
+            % Returns the full path to the directory used for storing results
+            
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             results_directory = fullfile(application_directory, PTKSoftwareInfo.OutputDirectoryName);
             PTKDiskUtilities.CreateDirectoryIfNecessary(results_directory);
         end
         
-        % Returns the full path to the directory used for storing results
         function edited_results_directory = GetEditedResultsDirectoryAndCreateIfNecessary
+            % Returns the full path to the directory used for storing results
+            
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             edited_results_directory = fullfile(application_directory, PTKSoftwareInfo.EditedResultsDirectoryName);
             PTKDiskUtilities.CreateDirectoryIfNecessary(edited_results_directory);
@@ -78,6 +85,7 @@ classdef PTKDirectories < handle
         
         function settings_file_path = GetFrameworkCacheFilePath
             % Returns the full path to the framework cache file
+            
             settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             cache_filename = PTKSoftwareInfo.FrameworkCacheFileName;
             settings_file_path = fullfile(settings_dir, cache_filename);
@@ -85,6 +93,7 @@ classdef PTKDirectories < handle
         
         function settings_file_path = GetImageDatabaseFilePath
             % Returns the full path to the image database file
+            
             settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             cache_filename = PTKSoftwareInfo.ImageDatabaseFileName;
             settings_file_path = fullfile(settings_dir, cache_filename);
