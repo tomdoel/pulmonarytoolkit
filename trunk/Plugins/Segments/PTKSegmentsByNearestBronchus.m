@@ -19,8 +19,8 @@ classdef PTKSegmentsByNearestBronchus < PTKPlugin
     
     properties
         ButtonText = 'Segments <BR>(nearest bronchus)'
-        ToolTip = 'Segments'
-        Category = 'Lobes'
+        ToolTip = 'Approximation for the pulmonary segments based on the nearest bronchus'
+        Category = 'Segments'
         
         AllowResultsToBeCached = true
         AlwaysRunPlugin = false
