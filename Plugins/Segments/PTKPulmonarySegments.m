@@ -39,48 +39,8 @@ classdef PTKPulmonarySegments < PTKPlugin
             
             acinar_map = dataset.GetResult('PTKAcinarMapLabelledBySegment');
             lobes = dataset.GetResult('PTKLobesFromFissurePlane');
-            results = lobes.BlankCopy;
-            results.ChangeRawImage(zeros(lobes.ImageSize, 'uint8'));
             
-            lobe_labels = [1, 2, 4, 5, 6];
-            segmental_labels = {[1,2,3], [4,5], [6,7,8,9,10], [11,13,14,15], [18,18,19,20]};
-            
-            for lobe_index = 1 : 5
-                lobe_label = lobe_labels(lobe_index);
-                lobe_mask = lobes.BlankCopy;
-                lobe_mask.ChangeRawImage(lobes.RawImage == lobe_label);
-                segments_map = PTKPulmonarySegments.ComputeSmoothedSegmentsForLobe(lobe_mask, acinar_map, segmental_labels{lobe_index}, reporting);
-                results.ChangeSubImageWithMask(segments_map, lobe_mask);
-            end
+            results = PTKGetPulmonarySegments(lobes, acinar_map, reporting);
         end
-        
-        function segment_map = ComputeSmoothedSegmentsForLobe(lobe_mask, acinar_map, segmental_labels, reporting)
-            smoothing_size_mm = 20;
-            template = lobe_mask.BlankCopy;
-            lobe_mask.CropToFit;
-            acinar_map_cropped = acinar_map.Copy;
-            acinar_map_cropped.ResizeToMatch(lobe_mask);
-            starting_indices = [];
-            for segment_index = 1 : numel(segmental_labels)
-                segment_label = segmental_labels(segment_index);
-                segmental_indices = find(acinar_map_cropped.RawImage == segment_label);
-                global_segmental_indices = acinar_map_cropped.LocalToGlobalIndices(segmental_indices);
-                starting_indices{segment_index} = global_segmental_indices;
-            end
-            segment_map = PTKSmoothedRegionGrowing(lobe_mask, starting_indices, smoothing_size_mm, reporting);
-            segment_map.ResizeToMatch(template);
-        end
-        
-        function segment_map = ComputeForLobe(lobe_mask, acinar_map, segmental_labels, reporting)
-            nn_mask = false(lobe_mask.ImageSize);
-            for segment_index = segmental_labels
-                nn_mask(acinar_map.RawImage == segment_index) = true;
-            end
-            [~, nn_index] = bwdist(nn_mask);
-            segment_map = acinar_map.RawImage(nn_index);
-        end
-        
-        function results = GenerateImageFromResults(results, ~, ~)
-        end        
     end
 end
