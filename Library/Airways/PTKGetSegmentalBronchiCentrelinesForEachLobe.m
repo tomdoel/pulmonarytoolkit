@@ -1,4 +1,4 @@
-function start_branches = PTKGetSegmentalBronchiCentrelinesForEachLobe(airway_tree, airway_results, airway_image, lobes, template, reporting)
+function start_branches = PTKGetSegmentalBronchiCentrelinesForEachLobe(airway_tree, lobes, template, reporting)
     % PTKGetSegmentalBronchiCentrelinesForEachLobe. Given a segmented airway tree, finds the bronchus
     %     corresponding to each pulmonary segment
     %
