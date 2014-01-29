@@ -161,6 +161,13 @@ function largest_branches = GetLargestBranches(start_branches, number_of_generat
         return;
     end     
     
+    % Remove any permutations which involve false branches
+    permutations = PTKTreeUtilities.RemovePermutationsWithFalseBranches(permutations);
+    if isempty(permutations)
+        largest_branches = [];
+        return;
+    end
+
     largest_branches = PTKTreeUtilities.GetLargestBranchesFromPermutations(permutations);
     
     % Now get the corresponding branches from the original tree
