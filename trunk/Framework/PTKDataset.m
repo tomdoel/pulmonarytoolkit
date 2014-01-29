@@ -81,6 +81,13 @@ classdef PTKDataset < handle
             obj.LinkedDatasetChooser.AddLinkedDataset(linked_name, linked_dataset_chooser);
         end
 
+        function is_linked_dataset = IsLinkedDataset(obj, linked_name_or_uid)
+            % Returns true if another dataset has been linked to this one, using
+            % the name or uid specified
+            
+            is_linked_dataset = obj.LinkedDatasetChooser.IsLinkedDataset(linked_name_or_uid);
+        end
+        
         function [result, output_image] = GetResult(obj, plugin_name, varargin)
             % GetResult: Returns the results of a plugin.
             % If a valid result is cached on disk,
