@@ -10,13 +10,13 @@ classdef PTKImageDatabaseSeries < handle
     %        
 
     properties (Constant)
-        CurrentVersionNumber = 2
+        CurrentVersionNumber = 3
     end
     
     properties (SetAccess = private)
         Name
         StudyName
-        ImageMap % Array of PTKFilename objects
+        ImageMap
         Modality
         Date
         Time
@@ -45,25 +45,25 @@ classdef PTKImageDatabaseSeries < handle
                 obj.ImageFileFormat = single_image_metainfo.ImageFileFormat;
                 obj.StudyUid = single_image_metainfo.StudyUid;
                 
-                obj.ImageMap = PTKFilename.empty;
+                obj.ImageMap = containers.Map;
                 
                 obj.Version = obj.CurrentVersionNumber;
             end
         end
         
         function AddImage(obj, single_image_metainfo)
-            obj.ImageMap(end + 1) = PTKFilename(single_image_metainfo.ImagePath, single_image_metainfo.ImageFilename);
+            obj.ImageMap(single_image_metainfo.ImageUid) = PTKFilename(single_image_metainfo.ImagePath, single_image_metainfo.ImageFilename);
         end
         
         function num_images = NumberOfImages(obj)
-            num_images = numel(obj.ImageMap);
+            num_images = obj.ImageMap.Count;
         end
         
         function image_info = GetImageInfo(obj)
             filenames_cells = [];
-            filenames_objects = obj.ImageMap;
+            filenames_objects = obj.ImageMap.values;
             for image_index = 1 : numel(filenames_objects);
-                filenames_cells{end + 1} = filenames_objects(image_index);
+                filenames_cells{end + 1} = filenames_objects{image_index};
             end
             path = obj.FirstImagePath;
             image_type = obj.ImageFileFormat;
@@ -92,10 +92,10 @@ classdef PTKImageDatabaseSeries < handle
                 obj.ImageFileFormat = image_infos{1}.ImageFileFormat;
                 obj.StudyUid = image_infos{1}.StudyUid;
         
-                filenames = PTKFilename.empty;
+                filenames = containsers.Map;
                 for image_index = 1 : numel(image_infos);
                     single_image_info = image_infos{image_index};
-                    filenames(end + 1) = PTKFilename(single_image_info.ImagePath, single_image_info.ImageFilename);
+                    filenames(single_image_info.ImageUid) = PTKFilename(single_image_info.ImagePath, single_image_info.ImageFilename);
                 end
                 
                 % Replace the map with the array of PTKFilename objects
@@ -103,6 +103,18 @@ classdef PTKImageDatabaseSeries < handle
                 
                 obj.Version = obj.CurrentVersionNumber;
                 
+            elseif (obj.Version == 2)
+                % Version 3 changes the image list to a map to UIDs
+                % The database will be rebuilt, so the following is a temporary change to get the
+                % database in a good state before the rebuild happens
+                image_map = containers.Map;
+                for image_index = 1 : numel(obj.ImageMap);
+                    image_uid = int2str(image_index);
+                    image_map(image_uid) = obj.ImageMap(image_index);
+                end
+                obj.ImageMap = image_map;
+                
+                obj.Version = obj.CurrentVersionNumber;
             end
         end
     end

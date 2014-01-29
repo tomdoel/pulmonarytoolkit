@@ -12,7 +12,7 @@ classdef PTKImageDatabase < handle
     %
     
     properties (Constant)
-        CurrentVersionNumber = 2
+        CurrentVersionNumber = 3
     end
     
     properties (Access = private)
@@ -123,7 +123,7 @@ classdef PTKImageDatabase < handle
             
             % Checks the disk cache and adds any missing datasets to the database.
             % Specifying a list of uids forces those datasets to update.
-            % The rebuild_menu flag builds the load menu from scratch
+            % The rebuild_menu flag builds the database from scratch
             
             % Get the complete list of cache folders, unless we are only
             % updating specific uids
@@ -144,6 +144,7 @@ classdef PTKImageDatabase < handle
             % If we are rebuilding the menu then remove existings entries
             if rebuild_all
                 obj.PatientMap = containers.Map;
+                obj.SeriesMap = containers.Map;
             end
             
             tags_to_get = PTKDicomDictionary.GroupingTagsDictionary(false);
@@ -235,6 +236,13 @@ classdef PTKImageDatabase < handle
                     database = database_struct.database;
                     database.IsNewlyCreated = false;
                     database.VersionHasChanged = isempty(database.Version) || (database.Version ~= PTKImageDatabase.CurrentVersionNumber);
+                    
+                    % Version 3 has changes to the maps used to store filenames; this requires a
+                    % rebuild of the image database
+                    if database.Version == 2
+                        database.Rebuild([], true, reporting);
+                    end
+                    
                     database.Version = PTKImageDatabase.CurrentVersionNumber;
                 else
                     reporting.ShowWarning('PTKImageDatabase:DatabaseFileNotFound', 'No image database file found. Will create new one on exit', []);
