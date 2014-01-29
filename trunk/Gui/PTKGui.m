@@ -392,6 +392,7 @@ classdef PTKGui < handle
                 obj.Ptk.ImageDatabase.DeleteSeries(image_info.ImageUid, obj.Reporting);
                 obj.DatabaseHasChanged;
                 
+                obj.ClearImages;                
                 delete(obj.Dataset);
                 obj.Dataset = [];
             end
