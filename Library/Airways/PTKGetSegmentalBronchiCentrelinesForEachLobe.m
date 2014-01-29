@@ -79,9 +79,20 @@ end
 
 function lower_left_segments = GetSegmentsForLowerLeftLobe(left_lower_start_branches, reporting)
     SetLobeIndex(left_lower_start_branches, 5);
-    max_generations_to_search = 2;
-    [first_continuation, first_segment] = OrderChildrenByLength(left_lower_start_branches, reporting);
+    
+    % If one of the start branches has no child branch, then select this as one of
+    % the segments; otherwise perform a heuristic based on branch length
+    number_of_children = cellfun(@numel, {left_lower_start_branches.Children});
+    zero_child_index = find(number_of_children == 0, 1);
+    if numel(zero_child_index) == 1
+        first_segment = left_lower_start_branches(zero_child_index);
+        first_continuation = setdiff(left_lower_start_branches, first_segment);
+    else
+        [first_continuation, first_segment] = OrderChildrenByLength(left_lower_start_branches, reporting);
+    end
+    
     SetSegmentIndex(first_segment, PTKPulmonarySegmentLabels.L_S);
+    max_generations_to_search = 2;
     final_segments = GetLargestBranches(first_continuation, max_generations_to_search, 3, reporting);
     if isempty(final_segments)
         reporting.Error('PTKGetSegmentalBronchiCentrelinesForEachLobe:PermutationsDoNotMatchSegmentNumber', 'Could not subdivide the tree into exactly the desired number of branches');
