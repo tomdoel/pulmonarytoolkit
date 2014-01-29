@@ -170,7 +170,7 @@ function results = GetSegmentsFromLowerLeftLobe(airway_root, lobes, all_segments
     roi = lobes.BlankCopy;
     roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.LeftLowerLobe);
     segments = all_segments.LowerLeftSegments;
-    segments_remaining = segments;    
+    segments_remaining = segments;
     airways_image = PTKGetAirwayImageFromCentreline(segments, airway_root, roi, true);
     [results, d1, d2, is, js, ks] = DivideImageCropped(airways_image, roi);
     
