@@ -52,6 +52,18 @@ classdef PTKContainerUtilities
             cell_array(empty) = {NaN};
             
         end
+        
+        function value_array = GetMatrixOfPropertyValues(object_list, property_name, value_for_nulls)
+            % Gets an array of property values from the object array, converting any empty
+            % values into the parameter value_for_nulls
+            
+            value_array = {object_list.(property_name)};
+            empty_value = cellfun(@isempty, value_array);
+            if any(empty_value)
+                value_array{empty_value} = value_for_nulls;
+            end
+            value_array = cell2mat(value_array);
+        end
     end
 end
 
