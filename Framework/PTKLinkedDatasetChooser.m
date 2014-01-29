@@ -8,8 +8,9 @@ classdef PTKLinkedDatasetChooser < handle
     %     By default, each dataset acts independently, but you can link datasets
     %     together (for example, if you wanted to register images between two
     %     datasets). When datasets are linked, one is the primary dataset, and
-    %     linked results are stored in the primary cache. Plugins can choose
-    %     which of the linked datasets from which they access results.
+    %     linked results are stored in the primary cache. The primary dataset
+    %     may access results from any of its linked datasets (but not vice
+    %     versa). Linking can be nested.
     %
     %
     %     Licence
@@ -37,17 +38,29 @@ classdef PTKLinkedDatasetChooser < handle
         end
 
         function AddLinkedDataset(obj, linked_name, linked_dataset_chooser)
+            % Links a different dataset to this one, using the specified name.
+            % The name exists only within the scope of this dataset, and is used
+            % to identify the linked dataset from which results should be
+            % obtained.
+            
             linked_uid = linked_dataset_chooser.PrimaryDatasetUid;
             obj.LinkedDatasetChooserList(linked_uid) = linked_dataset_chooser;
             obj.LinkedDatasetChooserList(linked_name) = linked_dataset_chooser;
         end
         
         function dataset_results = GetDataset(obj, varargin)
-            % Returns a handle to the DatasetResults object for a particular linked
-            % dataset. The dataset is identified by its uid in varargin, or an empty
+            % Returns a handle to the DatasetResults object for a particular linked dataset.
+            % The dataset is identified by its uid in varargin, or an empty
             % input will return the primary dataset.
             
             dataset_results = obj.FindLinkedDatasetChooser(varargin{:}).PrimaryDatasetResults;
+        end
+        
+        function is_linked_dataset = IsLinkedDataset(obj, linked_name_or_uid)
+            % Returns true if another dataset has been linked to this one, using
+            % the name or uid specified
+            
+            is_linked_dataset = obj.LinkedDatasetChooserList.isKey(linked_name_or_uid);
         end
     end
 
