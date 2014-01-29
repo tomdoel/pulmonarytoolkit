@@ -114,6 +114,19 @@ classdef PTKTreeUtilities < handle
             largest_branches = permutations{largest_branch_index};
         end
         
+        function pruned_permutations = RemovePermutationsWithFalseBranches(permutations)
+            pruned_permutations = [];
+            for index = 1 : length(permutations)
+                next_permutation = permutations{index};
+                source_branches = PTKTreeUtilities.BranchesToSourceBranches(next_permutation);
+                source_branches = unique(source_branches);
+                
+                if numel(source_branches) == numel(next_permutation)
+                    pruned_permutations{end + 1} = next_permutation;
+                end
+            end
+            
+        end
         
         function source_branches = BranchesToSourceBranches(branches)
             source_branches = PTKTreeModel.empty();
