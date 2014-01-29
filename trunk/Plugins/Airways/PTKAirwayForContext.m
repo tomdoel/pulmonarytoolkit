@@ -20,7 +20,7 @@ classdef PTKAirwayForContext < PTKPlugin
 
     properties
         ButtonText = 'Bronchus for<br>context'
-        ToolTip = 'Performs density analysis in bins along the cranial-caudal axis'
+        ToolTip = 'Plugin for returning the main bronchi serving the lung regions for a given context'
         Category = 'Analysis'
 
         Context = PTKContextSet.Any
