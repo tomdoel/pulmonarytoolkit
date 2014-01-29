@@ -33,11 +33,11 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
     end
     
     if ~PTKDiskUtilities.FileExists(file_path, node_filename)
-        reporting.Error('PTKLoadTreeFromChaste:FileDoesNotExist', ['The node file ', node_file ,' does not exist']);
+        reporting.Error('PTKLoadTreeFromChaste:FileDoesNotExist', ['The node file ', node_filename ,' does not exist']);
     end
     
     if ~PTKDiskUtilities.FileExists(file_path, edge_filename)
-        reporting.Error('PTKLoadTreeFromChaste:FileDoesNotExist', ['The element file ', element_file ,' does not exist']);
+        reporting.Error('PTKLoadTreeFromChaste:FileDoesNotExist', ['The edge file ', edge_filename ,' does not exist']);
     end
     
     node_file = fullfile(file_path, node_filename);
