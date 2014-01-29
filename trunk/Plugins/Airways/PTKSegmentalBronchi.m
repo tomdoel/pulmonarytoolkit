@@ -33,7 +33,6 @@ classdef PTKSegmentalBronchi < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            [airway_results, airway_image] = dataset.GetResult('PTKAirways');
             lobes = dataset.GetResult('PTKLobesFromFissurePlane');
             centreline_tree = dataset.GetResult('PTKAirwayCentreline');
             results_image = dataset.GetTemplateImage(PTKContext.LungROI);
