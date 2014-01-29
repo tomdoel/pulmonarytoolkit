@@ -66,12 +66,33 @@ classdef PTKTreeModel < PTKTree
         function SplitChildBranchesIntoBifurcations(obj)
             while numel(obj.Children) > 2
                 children = obj.Children;
-                child_radius = [children.Radius];
-                [~, sorted_indices] = sort(child_radius, 'descend');
-                largest_child = children(sorted_indices(1));
-                second_largest_chid = children(sorted_indices(2));
                 
-                other_children = children(sorted_indices(2:end));
+                child_lobe_numbers = PTKContainerUtilities.GetMatrixOfPropertyValues(children, 'LobeIndex', -1);
+                
+                largest_child = [];
+                
+                % Find the child branch which is not one of the most common indices
+                child_lobe_numbers_reduced = child_lobe_numbers(child_lobe_numbers > 0);                
+                if ~isempty(child_lobe_numbers_reduced)
+                    most_common_lobe_number = mode(child_lobe_numbers_reduced);
+                    children_not_with_most_common_number = children(child_lobe_numbers ~= most_common_lobe_number);
+                    if (numel(children_not_with_most_common_number) > 0) && (numel(children_not_with_most_common_number) < (numel(children) - 1))
+                        largest_child = children(find(children_not_with_most_common_number, 1));
+                    end
+                end
+                    
+                if isempty(largest_child)
+                    child_radius = [children.Radius];
+                    [~, sorted_indices] = sort(child_radius, 'descend');
+                    largest_child = children(sorted_indices(1));
+                    second_largest_child = children(sorted_indices(2));
+                    other_children = setdiff(children, largest_child);
+                else
+                    other_children = setdiff(children. largest_child);
+                    child_radius = [other_children.Radius];
+                    [~, sorted_indices] = sort(child_radius, 'descend');
+                    second_largest_child = children(sorted_indices(1));
+                end
                 
                 % Remove all other branches except the largest
                 obj.Children = largest_child;
@@ -87,19 +108,27 @@ classdef PTKTreeModel < PTKTree
                 % Set parameters for new branch
                 new_branch.StartPoint = obj.EndPoint;
                 new_branch.EndPoint = obj.EndPoint;
-                new_branch.Radius = second_largest_chid.Radius;
-                new_branch.WallThickness = second_largest_chid.Radius;
+                new_branch.Radius = second_largest_child.Radius;
+                new_branch.WallThickness = second_largest_child.Radius;
                 
                 new_branch.Centreline = obj.Centreline(end);
                 new_branch.SmoothedCentreline = obj.Centreline(end);
-                new_branch.Density = second_largest_chid.Density;
+                new_branch.Density = second_largest_child.Density;
                 
-                new_branch.LobeIndex = second_largest_chid.LobeIndex;
-                new_branch.SegmentIndex = second_largest_chid.LobeIndex;
-                
-                new_branch.BranchProperties = second_largest_chid.BranchProperties;
+                other_child_segment_indices = PTKContainerUtilities.GetMatrixOfPropertyValues(other_children, 'SegmentIndex', -1);
                 
                 
+                if all(other_child_segment_indices == other_child_segment_indices(1))
+                    new_branch.SegmentIndex = second_largest_child.SegmentIndex;
+                end
+                
+                other_child_lobe_indices = PTKContainerUtilities.GetMatrixOfPropertyValues(other_children, 'LobeIndex', -1);
+                if all(other_child_lobe_indices == other_child_lobe_indices(1))
+                    new_branch.LobeIndex = second_largest_child.LobeIndex;
+                end
+                
+                
+                new_branch.BranchProperties = second_largest_child.BranchProperties;
             end
             
         end
