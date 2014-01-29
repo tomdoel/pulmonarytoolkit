@@ -60,7 +60,7 @@ classdef PTKListOfPatientsPanel < PTKPanel
             if isempty(obj.LastSelectedPatientId);
                 patient_index = [];
             else
-                patient_index = find(ismember(obj.PatientIds, obj.LastSelectedPatientId));
+                patient_index = find(ismember(obj.PatientIds, obj.LastSelectedPatientId), 1);
             end
             obj.LockSetPatient = true;
             set(obj.PatientListBox, 'Value', patient_index);
@@ -90,7 +90,7 @@ classdef PTKListOfPatientsPanel < PTKPanel
             
             if obj.ComponentHasBeenCreated
                 if selected
-                    patient_index = find(ismember(obj.PatientIds, patient_id));
+                    patient_index = find(ismember(obj.PatientIds, patient_id), 1);
                 else
                     patient_index = [];
                 end
