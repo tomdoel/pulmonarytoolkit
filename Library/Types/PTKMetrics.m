@@ -29,7 +29,11 @@ classdef PTKMetrics < dynamicprops
             property_list = setdiff(property_list, 'MetricNameMap');
         end
         
-        function Merge(obj, metrics, reporting)
+        function Merge(obj, metrics, reporting, prefix, user_visible_prefix)
+            if nargin < 4
+                prefix = [];
+                user_visible_prefix = [];
+            end
             if ~isa(metrics, 'PTKMetrics')
                 reporting.Error('PTKMetrics:NotAMetricsClass', 'The argument passed to Merge() was not of type PTKMetrics');
             end
@@ -37,7 +41,7 @@ classdef PTKMetrics < dynamicprops
             metric_list = metrics.GetListOfMetrics;
             for i = 1 : length(metric_list)
                 metric = metric_list{i};
-                obj.AddMetric(metric, metrics.(metric), metrics.MetricNameMap(metric));
+                obj.AddMetric([prefix, metric], metrics.(metric), [user_visible_prefix, metrics.MetricNameMap(metric)]);
             end
         end
     end
