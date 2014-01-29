@@ -54,15 +54,32 @@ function matched_branches = MatchBranches(labelled_branches, unlabelled_branches
     
     remaining_branches = unlabelled_branches;
     matched_branches = PTKPair.empty;
+    unmatched_branches = PTKTreeModel.empty;
     
     for branch = labelled_branches
         matching_branches = GetBranchesMatchingThisBranch(remaining_branches, branch);
-        if numel(matching_branches) ~= 1
-            reporting.Error('PTKMatchSegmentalParameters:UnabelToMatchTrees', 'Could not match the airway trees');
+        
+        if isempty(matching_branches)
+            unmatched_branches(end + 1) = branch;
+        else
+            if numel(matching_branches) > 1
+                reporting.Error('PTKMatchSegmentalParameters:UnabelToMatchTrees', 'Could not match the airway trees: More than one branch with the same end coordinates.');
+            end
+            matched_branches(end + 1) = PTKPair(branch, matching_branches);
+            remaining_branches = setdiff(remaining_branches, matching_branches);
         end
-        matched_branches(end + 1) = PTKPair(branch, matching_branches);
-        remaining_branches = setdiff(remaining_branches, matching_branches);
-    end 
+    end
+    
+    if ~isempty(unmatched_branches)
+        if numel(unmatched_branches) == 1
+            matched_branches(end + 1) = PTKPair(unmatched_branches, remaining_branches);
+            reporting.ShowWarning('PTKMapSegmentalParameters:BranchMismatch', 'At a bifurcation, one of the child branches did not match.', []);
+        else
+            reporting.Error('PTKMapSegmentalParameters:UnabelToMatchTrees', 'Could not match the airway trees: More then one branch with un-matching end coordinates.');
+        end
+        
+    end
+    
     
 end
 
