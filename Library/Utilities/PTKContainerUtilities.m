@@ -60,7 +60,7 @@ classdef PTKContainerUtilities
             value_array = {object_list.(property_name)};
             empty_value = cellfun(@isempty, value_array);
             if any(empty_value)
-                value_array{empty_value} = value_for_nulls;
+                value_array(empty_value) = {value_for_nulls};
             end
             value_array = cell2mat(value_array);
         end
