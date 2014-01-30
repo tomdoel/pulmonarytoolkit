@@ -1075,6 +1075,13 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
         end
         
+        function [xc, yc, zc] = GetDicomCoordinates(obj)
+            % Returns the coordinates of all points in the image in Dicom coordinates in mm
+            
+            [ic, jc, kc] = GetPTKCoordinates(obj);
+            [xc, yc, zc] = PTKImageCoordinateUtilities.PTKToDicomCoordinatesCoordwise(ic, jc, kc, obj);
+        end
+        
         function [xc, yc, zc] = GlobalCoordinatesMmToCornerCoordinates(obj, ic, jc, kc)
             voxel_size = obj.VoxelSize;
             

@@ -34,6 +34,18 @@ classdef PTKPoint
             mag = norm([point.CoordX, point.CoordY, point.CoordZ]);
         end
 
+        function point = SetCoordinate(point, dimension, value)
+            switch dimension
+                case PTKImageOrientation.Coronal
+                    point.CoordY = value;
+                case PTKImageOrientation.Sagittal
+                    point.CoordX = value;
+                case PTKImageOrientation.Axial
+                    point.CoordZ = value;
+                otherwise
+                    error('Unknown dimension');
+            end
+        end
     end
 end
 
