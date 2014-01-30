@@ -160,7 +160,7 @@ function mex_files_to_compile_map = GetMexFilesToCompile(root_dir, reporting)
     mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKFastIsSimplePoint', 'cpp', mex_dir, [], []);
     mex_files_to_compile(end + 1) = PTKMexInfo(2, 'PTKWatershedFromStartingPoints', 'cpp', mex_dir, [], []);
     mex_files_to_compile(end + 1) = PTKMexInfo(3, 'PTKWatershedMeyerFromStartingPoints', 'cpp', mex_dir, [], []);
-    mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKSmoothedRegionGrowingFromBorderedImage', 'cpp', mex_dir, [], []);
+    mex_files_to_compile(end + 1) = PTKMexInfo(2, 'PTKSmoothedRegionGrowingFromBorderedImage', 'cpp', mex_dir, [], []);
     
     mex_files_to_compile(end + 1) = PTKMexInfo(2, 'mba_surface_interpolation', 'cpp', fullfile(root_dir, 'External', 'gerardus', 'matlab', 'PointsToolbox'), ...
         {'-IExternal', ['-I' fullfile('External', 'mba', 'include')]}, ...

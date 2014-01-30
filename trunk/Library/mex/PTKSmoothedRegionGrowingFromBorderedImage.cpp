@@ -419,7 +419,6 @@ void SmoothedRegionGrowing(LabelledInputType* labelled_input_data, SmoothingElem
         
     }
     
-    mexPrintf("-Ending after %i iterations and freeing memory\n", iteration_number);
     mxFree(neighbour_counts);    
     
 }
