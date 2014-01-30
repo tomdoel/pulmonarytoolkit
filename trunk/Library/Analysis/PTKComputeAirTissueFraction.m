@@ -18,7 +18,7 @@ function results = PTKComputeAirTissueFraction(roi, mask, reporting)
     hu_values = roi.GreyscaleToHounsfield(raw_values);
     
     % Convert to g/ml
-    density_gml = PTKConvertHuToDensity(raw_values);
+    density_gml = PTKConvertHuToDensity(hu_values);
     
     mean_density_gml = mean(density_gml);
     std_density_gml = std(density_gml);
