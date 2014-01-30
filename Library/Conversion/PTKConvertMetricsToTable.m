@@ -51,7 +51,8 @@ function field_map = GetFieldMap(results, table)
         for field_name_set = field_names'
             field_name = field_name_set{1};
             field_map(field_name) = results.(field_name);
-            table.AddContextName(field_name, field_name);
+            visible_field_name = PTKGetUserVisibleNameForContext(field_name);
+            table.AddContextName(field_name, visible_field_name);
         end  
     else
         field_map('') = results;
