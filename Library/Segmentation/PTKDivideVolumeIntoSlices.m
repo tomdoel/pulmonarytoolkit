@@ -69,7 +69,5 @@ function results = PTKDivideVolumeIntoSlices(region_mask, dimension, reporting)
     
     results = [];
     results.BinImage = bin_image;
-    results.BinLocations = bin_locations;
-    results.BinDistancesFromBase = bin_distance_from_base;
     results.BinRegions = regions;
 end
