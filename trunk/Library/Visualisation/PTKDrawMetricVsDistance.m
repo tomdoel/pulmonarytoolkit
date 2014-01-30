@@ -12,14 +12,16 @@ function figure_handle = PTKDrawMetricVsDistance(table, patient_name, metric, me
     
     
     x_label = table.NameMaps{2}(metric);
+
+    number_of_graphs = numel(context_list);
+    errorbar_offsets = linspace(-0.2*number_of_graphs, 0.2*number_of_graphs, number_of_graphs);
     
-    errorbar_offsets = linspace(-0.2, 0.2, numel(context_list));
-    colours = {[0, 0, 1], [1, 0, 0], [0, 1, 0], [1, 0, 1], [0, 1, 1], [0, 0, 0]};
+    colours = {[0, 0, 1], [1, 0, 0], [0, 0.7, 0], [0.7, 0, 0.7], [0, 0.7, 0.7], [0, 0, 0]};
     while numel(colours) < numel(context_list)
         colours = [colours, colours];
     end
     
-    symbols = {'d', 's', '+', '*', 'o', '^', 'v', 'p', 'h'};
+    symbols = {'d', 's', 'p', 'h', '*', 'o', '^', 'v', '+'};
     while numel(symbols) < numel(context_list)
         symbols = [symbols, symbols];
     end
@@ -41,7 +43,11 @@ function figure_handle = PTKDrawMetricVsDistance(table, patient_name, metric, me
         context = context_list(context_list_index);
         next_context_result = GetResultsFromTable(table, char(context), metric, metric_std);
         max_y = max(max_y, max(next_context_result.distance_from_origin));
-        max_x = max(max_x, max((next_context_result.x_values + next_context_result.std_values/2)));
+        if isempty(next_context_result.std_values)
+            max_x = max(max_x, max((next_context_result.x_values)));
+        else
+            max_x = max(max_x, max((next_context_result.x_values + next_context_result.std_values/2)));
+        end
         context_results{context_list_index} = next_context_result;
         legend_strings{context_list_index} = table.NameMaps{3}(char(context));
     end
@@ -52,7 +58,13 @@ function figure_handle = PTKDrawMetricVsDistance(table, patient_name, metric, me
     
     max_x = 0.3*ceil(max_x/.3);
     
-    if max_x > 0.3
+    if max_x > 1
+        power_of_10 = log10(max_x);
+        frac = power_of_10 - floor(power_of_10);
+        power_of_10 = floor(power_of_10) + (frac > 0.7) - 1;
+        x_tick_spacing = max_x / 5;
+        x_tick_spacing = (10^power_of_10)*round(x_tick_spacing/(10^power_of_10));
+    elseif max_x > 0.3
         x_tick_spacing = 0.1;
     else
         x_tick_spacing = 0.05;
@@ -101,7 +113,11 @@ end
 function results = GetResultsFromTable(table, context, metric, metric_std)
     results = [];
     results.x_values = GetValueListFromTable(table, context, metric);
-    results.std_values = GetValueListFromTable(table, context, metric_std);
+    if ~isempty(metric_std)
+        results.std_values = GetValueListFromTable(table, context, metric_std);
+    else
+        results.std_values = [];
+    end
     results.distance_from_origin = GetValueListFromTable(table, context, 'DistanceFromLungBaseMm');
     results.volume_bin = GetValueListFromTable(table, context, 'VolumeCm3');
 end
@@ -115,22 +131,32 @@ end
 
 function PlotForLung(results, axes_handle, colour, symbol, errorbar_offset, marker_size, line_width, marker_line_width)
     
+    y_positions = [];
+    valid_values = logical.empty;
+    
     % Plot error bars
     for index = 1 : length(results.x_values)
         volume_mm3 = 1000*results.volume_bin(index);
         x_values = results.x_values(index);
         distance_percent = results.distance_percentage_values(index);
         y_position = distance_percent + errorbar_offset;
-        stdev = results.std_values(index);
+        y_positions(index) = y_position;
         
+        valid_values(index) = volume_mm3 >= 5000;
         % Use a cut-off of 5ml
-        if (volume_mm3 >= 5000)
-            h_line = line('Parent', axes_handle, 'XData', [x_values - stdev/2, x_values + stdev/2], 'YData', [y_position, y_position], 'Color', colour, 'LineStyle', '-', 'LineWidth', line_width);
-            set(get(get(h_line,'Annotation'),'LegendInformation'), 'IconDisplayStyle','off'); % Exclude line from legend
+        if valid_values(index)
+            if ~isempty(results.std_values)
+                stdev = results.std_values(index);
+                h_line = line('Parent', axes_handle, 'XData', [x_values - stdev/2, x_values + stdev/2], 'YData', [y_position, y_position], 'Color', colour, 'LineStyle', '-', 'LineWidth', line_width);
+                set(get(get(h_line,'Annotation'),'LegendInformation'), 'IconDisplayStyle','off'); % Exclude line from legend
+            end
         end
     end
     
     % Plot markers
-    plot(axes_handle, results.x_values, results.distance_percentage_values, symbol, 'LineWidth', marker_line_width, 'MarkerEdgeColor', colour, 'Color', colour, 'MarkerSize', marker_size, 'MarkerFaceColor', min(1, colour + 0.5));
+    
+    xv = results.x_values(valid_values);
+    yv = y_positions(valid_values);
+    plot(axes_handle, xv, yv, symbol, 'LineWidth', marker_line_width, 'MarkerEdgeColor', colour, 'Color', colour, 'MarkerSize', marker_size, 'MarkerFaceColor', min(1, colour + 0.5));
     
 end

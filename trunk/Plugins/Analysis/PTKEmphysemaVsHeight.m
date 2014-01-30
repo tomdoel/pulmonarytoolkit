@@ -18,7 +18,7 @@ classdef PTKEmphysemaVsHeight < PTKPlugin
     %
     
     properties
-        ButtonText = 'Emphysema vs Height'
+        ButtonText = 'Emphysema vs Z'
         ToolTip = 'Shows a graph of the emphysema derived from the CT numbers vs height'
         Category = 'Analysis'
 
@@ -35,6 +35,26 @@ classdef PTKEmphysemaVsHeight < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
+            lung_roi = dataset.GetResult('PTKLungROI');
+            if ~lung_roi.IsCT
+                reporting.ShowMessage('PTKEmphysemaVsHeight:NotCTImage', 'Cannot perform analysis as this is not a CT image');
+                return;
+            end
+            
+            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
+            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            segments = dataset.GetResult('PTKSegmentsByNearestGrowingBronchus');
+            surface = dataset.GetResult('PTKLungSurface');
+            left_and_right_lungs.ChangeRawImage(left_and_right_lungs.RawImage.*uint8(~surface.RawImage));
+            emphysema_image = dataset.GetResult('PTKEmphysemaImage');
+            emphysema_image.ResizeToMatch(left_and_right_lungs);
+            output_path = dataset.GetOutputPathAndCreateIfNecessary;
+            PTKEmphysemaVsHeight.DrawGraphForZAxis(lung_roi, emphysema_image, output_path, left_and_right_lungs, lobes, segments)
+            
+            results = [];            
+        end
+        
+        function DrawGraphForZAxis(lung_roi, emphysema_image, output_path, left_and_right_lungs, lobes, segments)
             label_font_size = 10;
             legend_font_size = 9;
             widthheightratio = 4/3;
@@ -46,23 +66,35 @@ classdef PTKEmphysemaVsHeight < PTKPlugin
             
             marker_size = 8;
             
-            results = [];
-
-            lung_roi = dataset.GetResult('PTKLungROI');
+            figure_handle = figure;
+            set(figure_handle, 'Units', 'centimeters');
+            graph_size = [page_width_cm, (page_width_cm/widthheightratio)];
             
-            if ~lung_roi.IsCT
-                reporting.ShowMessage('PTKEmphysemaVsHeight:NotCTImage', 'Cannot perform analysis as this is not a CT image');
-                return;
-            end
+            axes_handle = gca;
+            set(figure_handle, 'Name', [lung_roi.Title ' : Emphysema vs cranial-caudal distance']);
+            set(figure_handle, 'PaperPositionMode', 'auto');
+            set(figure_handle, 'position', [0,0, graph_size]);
+            hold(axes_handle, 'on');
 
-            [~, emphysema_image] = dataset.GetResult('PTKEmphysemaPercentage');
             
-            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
             [global_gravity_bin_boundaries, lung_height_mm] = PTKEmphysemaVsHeight.GetGravityBins(left_and_right_lungs);
-            surface = dataset.GetResult('PTKLungSurface');
-            left_and_right_lungs.ChangeRawImage(left_and_right_lungs.RawImage.*uint8(~surface.RawImage));
             left_lung_results = PTKEmphysemaVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 2), global_gravity_bin_boundaries, lung_height_mm, emphysema_image);
             right_lung_results = PTKEmphysemaVsHeight.ComputeForLung(lung_roi, find(left_and_right_lungs.RawImage(:) == 1), global_gravity_bin_boundaries, lung_height_mm, emphysema_image);
+
+            ru = PTKEmphysemaVsHeight.ComputeForLung(lung_roi, find(lobes.RawImage(:) == 1), global_gravity_bin_boundaries, lung_height_mm, emphysema_image);
+            rl = PTKEmphysemaVsHeight.ComputeForLung(lung_roi, find(lobes.RawImage(:) == 4), global_gravity_bin_boundaries, lung_height_mm, emphysema_image);
+            rm = PTKEmphysemaVsHeight.ComputeForLung(lung_roi, find(lobes.RawImage(:) == 2), global_gravity_bin_boundaries, lung_height_mm, emphysema_image);
+            lu = PTKEmphysemaVsHeight.ComputeForLung(lung_roi, find(lobes.RawImage(:) == 5), global_gravity_bin_boundaries, lung_height_mm, emphysema_image);
+            ll = PTKEmphysemaVsHeight.ComputeForLung(lung_roi, find(lobes.RawImage(:) == 6), global_gravity_bin_boundaries, lung_height_mm, emphysema_image);
+            
+%             segment_results = [];
+%             segment_labels = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 19, 20};
+% 
+%             
+%             for segment_index = segment_labels
+%                 label = segment_index{1};
+%                 segment_results{label} = PTKEmphysemaVsHeight.ComputeForLung(lung_roi, find(segments.RawImage(:) == label), global_gravity_bin_boundaries, lung_height_mm, emphysema_image);
+%             end
             
             max_y = max([(left_lung_results.emphysema_percentages) (right_lung_results.emphysema_percentages)]);
             max_y = 5*ceil(max_y/5);
@@ -73,16 +105,6 @@ classdef PTKEmphysemaVsHeight < PTKPlugin
                 y_tick_spacing = 1;
             end
 
-            figure_handle = figure;
-            set(figure_handle, 'Units', 'centimeters');
-            graph_size = [page_width_cm, (page_width_cm/widthheightratio)];
-            
-            axes_handle = gca;
-            set(figure_handle, 'Name', [lung_roi.Title ' : Emphysema vs gravitational height']);
-            set(figure_handle, 'PaperPositionMode', 'auto');
-            set(figure_handle, 'position', [0,0, graph_size]);
-            hold(axes_handle, 'on');
-
             y_ticks = 0 : y_tick_spacing : max_y;
 
             % Draw lines at 10% gravity intervals
@@ -92,21 +114,38 @@ classdef PTKEmphysemaVsHeight < PTKPlugin
             end
             
             % Plot the markers and error bars
-            PTKEmphysemaVsHeight.PlotForLung(left_lung_results, axes_handle, [0, 0, 1], 'd', 0.2, marker_size, line_width, marker_line_width);
-            PTKEmphysemaVsHeight.PlotForLung(right_lung_results, axes_handle, [1, 0, 0], 's', -0.2, marker_size, line_width, marker_line_width);
+%             PTKEmphysemaVsHeight.PlotForLung(left_lung_results, axes_handle, [0, 0, 1], 'd', 0.2, marker_size, line_width, marker_line_width);
+%             PTKEmphysemaVsHeight.PlotForLung(right_lung_results, axes_handle, [1, 0, 0], 's', -0.2, marker_size, line_width, marker_line_width);
 
+            PTKEmphysemaVsHeight.PlotForLung(ru, axes_handle, [0, 0, 1], 's-', -0.2, marker_size, line_width, marker_line_width);
+            PTKEmphysemaVsHeight.PlotForLung(rl, axes_handle, [0, 1, 0], 's-', -0.2, marker_size, line_width, marker_line_width);
+            PTKEmphysemaVsHeight.PlotForLung(rm, axes_handle, [0, 1, 1], 's-', -0.2, marker_size, line_width, marker_line_width);
+            PTKEmphysemaVsHeight.PlotForLung(lu, axes_handle, [1, 0, 1], 'd-', -0.2, marker_size, line_width, marker_line_width);
+            PTKEmphysemaVsHeight.PlotForLung(ll, axes_handle, [1, 1, 0], 'd-', -0.2, marker_size, line_width, marker_line_width);
+
+%             for segment_index = segment_labels
+%                 label = segment_index{1};
+%                 PTKEmphysemaVsHeight.PlotForLung(segment_results{label}, axes_handle, [0, 0, 1], 'x--', -0.2, marker_size, line_width, marker_line_width);
+%             end
+            
+            
             % Create the legend
-            legend_strings = {'Left', 'Right'};
+%             legend_strings = {'Left', 'Right'};
+            legend_strings = {'RU', 'RL', 'RM', 'LU', 'LL'};
+            segment_legend_strings = {'R_AP', 'R_P', 'R_AN', 'R_L', 'R_M', 'R_S', 'R_MB', 'R_AB', 'R_LB', 'R_PB', ...
+                'L_AP', 'L_APP2', 'L_AN', 'L_SL', 'L_IL', 'L_S', 'L_AMB', 'L_LB' 'L_PB'};
+            legend_strings = [legend_strings, segment_legend_strings];
+            
             legend(legend_strings, 'FontName', font_name, 'FontSize', legend_font_size, 'Location', 'East');
             
             % Set the axes
             ylabel(axes_handle, 'Emphysema (%)', 'FontName', font_name, 'FontSize', label_font_size);
             set(gca, 'YTick', y_ticks)
             set(gca, 'YTickLabel', sprintf('%1.1f|', y_ticks))
-            xlabel(axes_handle, 'Gravitational height (%)', 'FontName', font_name, 'FontSize', label_font_size);
+            xlabel(axes_handle, 'Cranial-caudal distance from base (%)', 'FontName', font_name, 'FontSize', label_font_size);
             axis([0 100 min(y_ticks) max_y]);
             
-            PTKEmphysemaVsHeight.SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle, resolution_dpi);
+            PTKEmphysemaVsHeight.SaveToFile(output_path, left_lung_results, right_lung_results, figure_handle, resolution_dpi);
         end
         
         function [global_gravity_bin_boundaries, lung_height_mm] = GetGravityBins(whole_lung_mask)
@@ -122,7 +161,7 @@ classdef PTKEmphysemaVsHeight < PTKPlugin
             global_gravity_bin_boundaries = global_gravity_bin_boundaries + k_offset_mm;
         end
         
-        function results = ComputeForLung(lung_roi,  voxels_in_lung_indices, global_gravity_bin_boundaries, lung_height_mm, emphysema_image)
+        function results = ComputeForLung(lung_roi, voxels_in_lung_indices, global_gravity_bin_boundaries, lung_height_mm, emphysema_image)
             
             results = [];
             
@@ -140,7 +179,7 @@ classdef PTKEmphysemaVsHeight < PTKPlugin
             emphysema_plot = [];
             volume_bin = [];
             
-            emphysema_image.ChangeRawImage(uint8(emphysema_image.RawImage > 0));
+            emphysema_image.ChangeRawImage(uint8(emphysema_image.RawImage == 3));
             
             for gravity_bin = gravity_bins
                 in_bin = (height >= gravity_bin) & (height < (gravity_bin + gravity_bin_size));
@@ -170,9 +209,8 @@ classdef PTKEmphysemaVsHeight < PTKPlugin
     end
     
     methods (Static, Access = private)
-        function SaveToFile(dataset, left_lung_results, right_lung_results, figure_handle, resolution)
-            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
-            results_file_name = fullfile(results_directory, ['EmphysemaVsHeight.txt']);
+        function SaveToFile(output_path, left_lung_results, right_lung_results, figure_handle, resolution)
+            results_file_name = fullfile(output_path, ['EmphysemaVsCranialCaudalDistance.txt']);
             file_handle = fopen(results_file_name, 'w');
             
             number_points = length(left_lung_results.emphysema_percentages);
@@ -188,7 +226,7 @@ classdef PTKEmphysemaVsHeight < PTKPlugin
             
             fclose(file_handle);
             
-            figure_filename_2 = fullfile(results_directory, ['EmphysemaVsHeight']);
+            figure_filename_2 = fullfile(output_path, ['EmphysemaVsCranialCaudalDistance']);
             resolution_str = ['-r' num2str(resolution)];
             
             print(figure_handle, '-depsc2', resolution_str, figure_filename_2);   % Export to .eps
