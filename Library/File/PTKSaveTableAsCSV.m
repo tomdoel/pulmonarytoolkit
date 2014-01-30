@@ -61,9 +61,9 @@ function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
     end
     
     
-    for file_range_set = file_range
-        file_range_value = file_range_set{1};
-        file_appendix = names{file_dim}(file_range_value);
+    for file_range_index = 1 : numel(file_range)
+        file_range_value = file_range{file_range_index};
+        file_appendix = names{file_dim}(file_range_index);
         file_appendix = file_appendix{1};
         
         text_file_writer = PTKTextFileWriter(file_path, [file_name '_' file_appendix '.csv'], reporting);
