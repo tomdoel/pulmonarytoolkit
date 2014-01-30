@@ -452,6 +452,14 @@ classdef PTKDiskUtilities
             
             filename_set = filename_set(~matching_files);
         end
+        
+        function SaveFigure(figure_handle, figure_filename)
+            resolution_dpi = 300;
+            resolution_str = ['-r' num2str(resolution_dpi)];
+            
+            print(figure_handle, '-depsc2', resolution_str, figure_filename);   % Export to .eps
+            print(figure_handle, '-dpng', resolution_str, figure_filename);     % Export .png
+        end
     end
 end
 
