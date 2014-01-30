@@ -1,6 +1,6 @@
-classdef PTKAxialAnalysis < PTKPlugin
-    % PTKAxialAnalysis. Plugin for performing analysis of density using bins
-    % along the cranial-caudal axis
+classdef PTKCoronalAnalysis < PTKPlugin
+    % PTKCoronalAnalysis. Plugin for performing analysis of density using bins
+    % along the anterior-posterior axis
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
@@ -21,8 +21,8 @@ classdef PTKAxialAnalysis < PTKPlugin
     %
 
     properties
-        ButtonText = 'Axial<br>analysis'
-        ToolTip = 'Performs density analysis in bins along the cranial-caudal axis'
+        ButtonText = 'Coronal<br>analysis'
+        ToolTip = 'Performs density analysis in bins along the anterior-posterior axis'
         Category = 'Analysis'
 
         Context = PTKContextSet.Any
@@ -43,7 +43,7 @@ classdef PTKAxialAnalysis < PTKPlugin
             % Get the density image
             roi = dataset.GetResult('PTKLungROI', PTKContext.LungROI);
             if ~roi.IsCT
-                reporting.ShowMessage('PTKAxialAnalysis:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
+                reporting.ShowMessage('PTKCoronalAnalysis:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
                 return;
             end
             
@@ -54,7 +54,7 @@ classdef PTKAxialAnalysis < PTKPlugin
             context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);
             
             % Divide the lung into bins along the cranial-caudal axis
-            bins = dataset.GetResult('PTKDivideLungsIntoAxialBins', PTKContext.Lungs);
+            bins = dataset.GetResult('PTKDivideLungsIntoCoronalBins', PTKContext.Lungs);
             
             results = PTKMultipleRegionAnalysis(bins, roi, context_mask, context_no_airways, reporting);
         end

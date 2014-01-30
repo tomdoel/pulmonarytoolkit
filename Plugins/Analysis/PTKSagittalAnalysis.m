@@ -1,6 +1,6 @@
-classdef PTKAxialAnalysis < PTKPlugin
-    % PTKAxialAnalysis. Plugin for performing analysis of density using bins
-    % along the cranial-caudal axis
+classdef PTKSagittalAnalysis < PTKPlugin
+    % PTKSagittalAnalysis. Plugin for performing analysis of density using bins
+    % along the left-right axis
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
@@ -16,13 +16,13 @@ classdef PTKAxialAnalysis < PTKPlugin
     %     Licence
     %     -------
     %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
+    %     Author: Tom Doel, 2014.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     properties
-        ButtonText = 'Axial<br>analysis'
-        ToolTip = 'Performs density analysis in bins along the cranial-caudal axis'
+        ButtonText = 'Sagittal<br>analysis'
+        ToolTip = 'Performs density analysis in bins along the left-right axis'
         Category = 'Analysis'
 
         Context = PTKContextSet.Any
@@ -43,7 +43,7 @@ classdef PTKAxialAnalysis < PTKPlugin
             % Get the density image
             roi = dataset.GetResult('PTKLungROI', PTKContext.LungROI);
             if ~roi.IsCT
-                reporting.ShowMessage('PTKAxialAnalysis:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
+                reporting.ShowMessage('PTKCoronalAnalysis:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
                 return;
             end
             
@@ -54,7 +54,7 @@ classdef PTKAxialAnalysis < PTKPlugin
             context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);
             
             % Divide the lung into bins along the cranial-caudal axis
-            bins = dataset.GetResult('PTKDivideLungsIntoAxialBins', PTKContext.Lungs);
+            bins = dataset.GetResult('PTKDivideLungsIntoCoronalBins', PTKContext.Lungs);
             
             results = PTKMultipleRegionAnalysis(bins, roi, context_mask, context_no_airways, reporting);
         end
