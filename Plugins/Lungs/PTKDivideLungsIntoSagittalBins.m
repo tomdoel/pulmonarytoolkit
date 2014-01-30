@@ -1,6 +1,6 @@
-classdef PTKDivideLungsIntoAxialBins < PTKPlugin
-    % PTKDivideLungsIntoAxialBins. Plugin for dividing the lungs into bins along
-    % the cranial-caudal axis
+classdef PTKDivideLungsIntoSagittalBins < PTKPlugin
+    % PTKDivideLungsIntoSagittalBins. Plugin for dividing the lungs into bins along
+    % the left-right axis
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
@@ -13,13 +13,13 @@ classdef PTKDivideLungsIntoAxialBins < PTKPlugin
     %     Licence
     %     -------
     %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
+    %     Author: Tom Doel, 2014.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     properties
-        ButtonText = 'Axial<br>bins'
-        ToolTip = 'Divides the lungs into bins along the cranial-caudal axis'
+        ButtonText = 'Sagittal<br>bins'
+        ToolTip = 'Divides the lungs into bins along the left-right axis'
         Category = 'Lungs'
         
         AllowResultsToBeCached = true
@@ -37,7 +37,7 @@ classdef PTKDivideLungsIntoAxialBins < PTKPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             whole_lung_mask = dataset.GetTemplateImage(PTKContext.Lungs);
-            orientation = PTKImageOrientation.Axial;            
+            orientation = PTKImageOrientation.Sagittal;            
             results = PTKDivideVolumeIntoSlices(whole_lung_mask, orientation, reporting);
         end
         
