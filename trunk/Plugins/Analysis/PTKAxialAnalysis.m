@@ -55,44 +55,9 @@ classdef PTKAxialAnalysis < PTKPlugin
             
             % Divide the lung into bins along the cranial-caudal axis
             axial_bins = dataset.GetResult('PTKDivideLungsIntoAxialBins', PTKContext.Lungs);
-            bin_image = axial_bins.BinImage;
-            bin_locations = axial_bins.BinLocations;
-            bin_distance_from_base = axial_bins.BinDistancesFromBase;
             
-            % Reduce all images to a consistent size
-            bin_image.CropToFit;
-            roi.ResizeToMatch(bin_image);
-            context_mask.ResizeToMatch(bin_image);
-            context_no_airways.ResizeToMatch(bin_image);
-            
-            reporting.UpdateProgressAndMessage(0, 'Calculating metrics for each axial bin');
-            
-            results = PTKMetrics.empty;
-            
-            % Iterate over each bin
-            for bin_index = 1 : numel(bin_locations)
-                reporting.UpdateProgressStage(bin_index, numel(bin_locations));
-
-                % Create a mask for this bin
-                mask = bin_image.BlankCopy;
-                mask.ChangeRawImage(bin_image.RawImage == bin_index & context_mask.RawImage);
-                mask.CropToFit;
-                
-                % Create a mask for this bin excluding the airways
-                no_airways_mask = bin_image.BlankCopy;
-                no_airways_mask.ChangeRawImage(bin_image.RawImage == bin_index & context_no_airways.RawImage);
-                no_airways_mask.ResizeToMatch(mask);
-                
-                roi_reduced = roi.Copy;
-                roi_reduced.ResizeToMatch(mask);
-                bin_results = PTKComputeAirTissueFraction(roi_reduced, mask, reporting);
-                [emphysema_results, ~] = PTKComputeEmphysemaFromMask(roi_reduced, no_airways_mask);
-                bin_results.Merge(emphysema_results);
-                bin_results.AddMetric('DistanceFromLungBaseMm', bin_distance_from_base(bin_index), 'Distance from lung base (mm)');
-                bin_results.AddMetric('BinCoordinateMm', bin_locations(bin_index), 'Coordinate along cranial-caudal axis (mm)');
-                
-                results(end + 1) = bin_results;
-            end
+            results = PTKMultipleRegionAnalysis(axial_bins, roi, context_mask, context_no_airways, reporting);
         end
+        
     end
 end
