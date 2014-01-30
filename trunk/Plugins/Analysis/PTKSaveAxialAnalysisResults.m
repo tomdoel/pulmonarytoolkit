@@ -39,18 +39,46 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
+            
+            % Generate the results over the lungs and lobes
+            contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
+            results = dataset.GetResult('PTKAxialAnalysis', contexts);            
+            
+            % Convert the results into a PTKResultsTable
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
             template = dataset.GetTemplateImage(PTKContext.LungROI);
-            patient_name = template.MetaHeader.PatientName.FamilyName;
+            patient_name = [template.MetaHeader.PatientName.FamilyName '-'  template.MetaHeader.PatientID];
+            table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
-            contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
-            results = dataset.GetResult('PTKAxialAnalysis', contexts);
-            
-            table = PTKConvertMetricsToTable(results, patient_name, uid, PTKReportingDefault);
-            
-            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
+            % Save the results table as a series of CSV files
+            results_directory = dataset.GetOutputPathAndCreateIfNecessary;            
             PTKSaveTableAsCSV(results_directory, 'AxialResults', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, [], reporting);
+            
+            % Generate graphs of the results
+            figure_title = 'Density vs axial distance';
+            y_label = 'Distance along axial axis (%)';
+            
+            context_list_both_lungs = [PTKContext.Lungs];
+            PTKDensityVsHeightAxial.DrawGraphAndSave(table, patient_name, figure_title, y_label, context_list_both_lungs, results_directory, '_CombinedLungs');
+
+            context_list_single_lungs = [PTKContext.LeftLung, PTKContext.RightLung];
+            PTKSaveAxialAnalysisResults.DrawGraphAndSave(table, patient_name, figure_title, y_label, context_list_single_lungs, results_directory, '_Lungs');
+            
+            context_list_lobes = [PTKContext.LeftLowerLobe, PTKContext.LeftUpperLobe, PTKContext.RightLowerLobe, PTKContext.RightMiddleLobe, PTKContext.RightUpperLobe];                        
+            PTKSaveAxialAnalysisResults.DrawGraphAndSave(table, patient_name, figure_title, y_label, context_list_lobes, results_directory, '_Lobes');
+            
+            results = [];
         end
     end
+    
+    methods (Static, Access = private)
+        function DrawGraphAndSave(table, patient_name, figure_title, y_label, context_list, results_directory, file_suffix)
+            figure_handle = PTKDrawMetricVsDistance(table, patient_name, 'MeanDensityGml', 'StdDensityGml', figure_title, y_label, context_list);
+            PTKDiskUtilities.SaveFigure(figure_handle, fullfile(results_directory, ['DensityVsAxialDistance' file_suffix]));
+            
+            figure_handle = PTKDrawMetricVsDistance(table, patient_name, 'EmphysemaPercentage', [], figure_title, y_label, context_list);
+            PTKDiskUtilities.SaveFigure(figure_handle, fullfile(results_directory, ['EmphysemaVsAxialDistance' file_suffix]));            
+        end
+    end        
 end
