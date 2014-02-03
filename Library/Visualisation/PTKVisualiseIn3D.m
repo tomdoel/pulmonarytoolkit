@@ -97,6 +97,10 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     coordinate_system = PTKCoordinateSystem.PTK;
     template_image = [];
 
+    ambient_strength =0.4;
+    diffuse_strength = 0.7;
+    specular_strength = 1;    
+    
     % Separate the segmentation into components; one for each colour.
     % Iterate through these components and draw each separately
     for label_index = 1 : number_of_segmentations
@@ -111,7 +115,7 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
 
         [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, reporting);
         
-        p = patch(fv, 'EdgeColor', 'none', 'FaceColor', cm_color);
+        p = patch(fv, 'EdgeColor', 'none', 'FaceColor', cm_color, 'AmbientStrength', ambient_strength, 'SpecularStrength', specular_strength, 'DiffuseStrength', diffuse_strength);
         
         % Using isonormals improves the image quality but is slow for large
         % images
@@ -121,8 +125,8 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     
     % Add lighting
     cl = camlight('left');
-    set(cl, 'Position', [300, 300, -300]);
-    
+    set(cl, 'Position', [400, 500, -50]);
+
     reporting.UpdateProgressValue(100);
     reporting.CompleteProgress;
 end
