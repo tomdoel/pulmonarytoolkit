@@ -63,8 +63,14 @@ function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
     
     for file_range_index = 1 : numel(file_range)
         file_range_value = file_range{file_range_index};
+        
         file_appendix = names{file_dim}(file_range_index);
         file_appendix = file_appendix{1};
+        
+        % Remove puntuation and spaces so the filename will be valid
+        file_appendix = strrep(file_appendix, '%', 'Percentage');
+        file_appendix = strrep(file_appendix, ' ', '_');
+        file_appendix(ismember(file_appendix,' *,.:;!?/<>\^%"')) = [];
         
         text_file_writer = PTKTextFileWriter(file_path, [file_name '_' file_appendix '.csv'], reporting);
         
@@ -72,6 +78,8 @@ function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
         
         for row_range_index = 1 : numel(row_range)
             row_range_value = row_range{row_range_index};
+            
+            % Get the user visible name for the row
             row_name = names{row_dim}(row_range_index);
             col_text = row_name{1};
             
