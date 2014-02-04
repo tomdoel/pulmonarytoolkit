@@ -36,19 +36,24 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
     end
     
     label_font_size = 10;
-
     x_tick_label_size = 10;
+    y_tick_label_size = 8;
+    x_lung_label_size = 8;
     if numel(context_list) > 10
         x_tick_label_size = 5;
     end
     
+    right_lung_colour = [0.7, 0, 0];
+    left_lung_colour = [0, 0, 0.7];
     
-    legend_font_size = 9;
+    legend_font_size = 5;
     widthheightratio = 4/3;
     page_width_cm = 13;
     font_name = PTKSoftwareInfo.GraphFont;
     marker_line_width = 1;
+    context_line_width = 1;
     marker_size = 8;
+    legend_marker_size = 6;
     
     legend_strings = {};
     
@@ -61,7 +66,13 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
     
     for context_list_index = 1 : numel(context_list)
         if ~isempty(context_list{context_list_index})
-            context_labels{end + 1} = table.NameMaps{3}(char(context_list{context_list_index}));
+            context_text_label = table.NameMaps{3}(char(context_list{context_list_index}));
+            if length(context_text_label) > 2
+                if strcmp(context_text_label(1:2), 'R_') || strcmp(context_text_label(1:2), 'L_')
+                    context_text_label = context_text_label(3:end);
+                end
+            end
+            context_labels{end + 1} = context_text_label;
         end
     end
     
@@ -78,6 +89,14 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
     x_ticks = [];
     max_x = 0;
     
+    plots = [];
+    right_lung_segments_label_position = [];
+    left_lung_segments_label_position = [];
+    
+    x_ticks_color_map = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
+    x_ticks_label_map = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
+
+    
     for patient_iterator = 1 : number_of_subjects
         patient_uid = patient_uids{patient_iterator};
         patient_index = table.IndexMaps{1}(patient_uid);
@@ -88,13 +107,40 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
         x_coord = 1;
         
         for context_list_index = 1 : numel(context_list)
-            if ~isempty(context_list{context_list_index})
-                context_table_index = table.IndexMaps{3}(char(context_list(context_list_index)));
+            this_context = char(context_list{context_list_index});
+            if ~isempty(this_context)
+                context_colour = [0.1, 0.1, 0.1];
+                if length(this_context) > 1
+                    if strcmp(this_context(1:2), 'R_')
+                        context_colour = right_lung_colour;
+                    elseif strcmp(this_context(1:2), 'L_')
+                        context_colour = left_lung_colour;
+                    end
+                end
+                
+                    
+                if strcmp(this_context, 'R_M')
+                    right_lung_segments_label_position = x_coord + 0.5;
+                elseif strcmp(this_context, 'L_IL')
+                    left_lung_segments_label_position = x_coord;
+                end
+                context_table_index = table.IndexMaps{3}(char(this_context));
                 result = table.ResultsTable{patient_index, metrix_index, context_table_index, :};
                 if ~isempty(result)
                     x_coords(end + 1) = x_coord;
                     x_ticks = union(x_ticks, x_coord);
                     y_coords(end + 1) = result;
+                    x_ticks_color_map(x_coord) = {context_colour};
+                                        
+                    context_text_label = table.NameMaps{3}(this_context);
+                    if length(context_text_label) > 2
+                        if strcmp(context_text_label(1:2), 'R_') || strcmp(context_text_label(1:2), 'L_')
+                            context_text_label = context_text_label(3:end);
+                        end
+                    end
+                    context_labels{end + 1} = context_text_label;
+                    
+                    x_ticks_label_map(x_coord) = {context_text_label};
                 end
             end
             x_coord = x_coord + 1;            
@@ -102,7 +148,17 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
         
         colour = colours{patient_iterator};
         symbol = symbols{patient_iterator};
-        plot(axes_handle, x_coords, y_coords, symbol, 'LineWidth', marker_line_width, 'MarkerEdgeColor', colour, 'Color', colour, 'MarkerSize', marker_size, 'MarkerFaceColor', min(1, colour + 0.5));
+        marker_face_colour = min(1, colour + 0.5);
+        
+        plots_info = [];
+        plots_info.X = x_coords;
+        plots_info.Y = y_coords;
+        plots_info.Symbol = symbol;
+        plots_info.Colour = colour;
+        plots_info.MarkerFaceColour = marker_face_colour;
+        
+        plots{patient_iterator} = plots_info;
+        
 
         % Find the maxima and maxima
         if isempty(min_y)
@@ -125,15 +181,50 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
     min_y = y_tick_spacing*floor(min_y/y_tick_spacing);
     y_ticks = min_y : y_tick_spacing : max_y;
         
-    % Create the legend
-    legend(legend_strings, 'FontName', font_name, 'FontSize', legend_font_size, 'Location', 'NorthEast');
-    
+    % Draw lines for each context
+    for x_tick_index = 1 : numel(x_ticks)
+        x_tick = x_ticks(x_tick_index);
+        context_line_colour = x_ticks_color_map(x_tick);
+        
+        h_line = line('Parent', axes_handle, 'XData', [x_tick, x_tick], 'YData', [min_y, max_y], 'Color', context_line_colour{1}, 'LineStyle', ':', 'LineWidth', context_line_width);
+        set(get(get(h_line,'Annotation'),'LegendInformation'), 'IconDisplayStyle','off'); % Exclude line from legend
+        
+        y_offset_ticklabel = abs(max_y - min_y)/60;
+        context_label = x_ticks_label_map(x_tick);
+        text(x_tick, min_y - y_offset_ticklabel, context_label{1}, 'FontSize', x_tick_label_size, 'clipping', 'off', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', 'Color', context_line_colour{1});
+    end
+
     % Set the axes
-    set(gca, 'XTick', x_ticks)
-    set(gca, 'XTickLabel', context_labels, 'FontSize', x_tick_label_size);
-    set(gca, 'YTick', y_ticks)
     ylabel(axes_handle, y_label, 'FontName', font_name, 'FontSize', label_font_size);
+    set(gca, 'XTick', [])
+    set(gca, 'XTickLabel', '');
+    set(gca, 'YTick', y_ticks, 'FontSize', y_tick_label_size)
     axis([0 max_x min_y max_y]);
+    
+    % Now draw the plots
+    for patient_iterator = 1 : number_of_subjects
+        plots_info = plots{patient_iterator};
+        plot(axes_handle, plots_info.X, plots_info.Y, plots_info.Symbol, 'LineWidth', marker_line_width, 'MarkerEdgeColor', plots_info.Colour, 'Color', plots_info.Colour, 'MarkerSize', marker_size, 'MarkerFaceColor', plots_info.MarkerFaceColour);
+    end
+    
+    if ~isempty(right_lung_segments_label_position) && ~isempty(left_lung_segments_label_position)
+        y_offset = abs(max_y - min_y)/15;
+        text(right_lung_segments_label_position, min_y - y_offset, 'Right lung', 'FontSize', x_lung_label_size, 'clipping', 'off', 'HorizontalAlignment', 'center', 'Color', right_lung_colour);
+        text(left_lung_segments_label_position, min_y - y_offset, 'Left lung', 'FontSize', x_lung_label_size, 'clipping', 'off', 'HorizontalAlignment', 'center', 'Color', left_lung_colour);
+    end
+
+    
+    
+    % Create the legend
+    legend_handle = legend(legend_strings, 'FontName', font_name, 'FontSize', legend_font_size, 'Location', 'NorthEast');    
+    legend_children = get(legend_handle, 'Children');
+    for child = legend_children'
+        if strcmp(get(child, 'Type'), 'line')
+            if ~strcmp(get(child, 'Marker'), 'none')
+                set(child, 'MarkerSize', legend_marker_size);
+            end
+        end
+    end
 end
 
 
