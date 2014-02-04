@@ -61,19 +61,9 @@ function figure_handle = PTKDrawMetricVsMetric(table, metric_x, metric_y, contex
     end
     
     % Work out tick spacing for x and y axes
-    power_of_10 = log10(max_x);
-    frac = power_of_10 - floor(power_of_10);
-    power_of_10 = floor(power_of_10) + (frac > 0.7) - 1;
-    x_tick_spacing = max_x / 5;
-    x_tick_spacing = (10^power_of_10)*round(x_tick_spacing/(10^power_of_10));
+    x_tick_spacing = PTKGraphUtilities.GetOptimalTickSpacing(0, max_x);
+    y_tick_spacing = PTKGraphUtilities.GetOptimalTickSpacing(0, max_y);
 
-    power_of_10 = log10(max_y);
-    frac = power_of_10 - floor(power_of_10);
-    power_of_10 = floor(power_of_10) + (frac > 0.7) - 1;
-    y_tick_spacing = max_y / 5;
-    y_tick_spacing = (10^power_of_10)*round(y_tick_spacing/(10^power_of_10));
-    
-    
     figure_handle = figure;
     set(figure_handle, 'Units', 'centimeters');
     graph_size = [page_width_cm, (page_width_cm/widthheightratio)];
