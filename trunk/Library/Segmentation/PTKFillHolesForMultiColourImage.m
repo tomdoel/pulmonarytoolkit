@@ -1,7 +1,7 @@
-function filled_image = PTKFillHolesForDualColourImageColours(original_image, colour_1, colour_2)
-    % PTKFillHolesForDualColourImageColours. Fills in holes in a colourmap image
+function filled_image_raw = PTKFillHolesForMultiColourImage(filled_image_raw)
+    % PTKFillHolesForMultiColourImage. Fills in holes in a colourmap image
     %
-    %     PTKFillHolesForDualColourImageColours takes in a indexed image and fills in any completely
+    %     PTKFillHolesForMultiColourImage takes in a indexed image and fills in any completely
     %     enclosed holes, where holes are regions of one the the colours 
     %     surrounded completely by other the other colour or zero.
     %
@@ -12,15 +12,10 @@ function filled_image = PTKFillHolesForDualColourImageColours(original_image, co
     %     Author: Tom Doel, 2014.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
-        
-    filled_image = FillHolesInImage(original_image, colour_1, colour_2);
-    filled_image = FillHolesInImage(filled_image, colour_2, colour_1);
-end
-
-function filled_image_raw = FillHolesInImage(filled_image_raw, colour_1, colour_2)
-    both_colours = [colour_1, colour_2];
-    for colour = [colour_1, colour_2]
-        other_colour = setdiff(both_colours, colour);
+    
+    colours = unique(filled_image_raw(:));
+    
+    for colour = colours'
         connected_components_structure =  bwconncomp(filled_image_raw == colour, 6);
         labeled_components = labelmatrix(connected_components_structure);
         if connected_components_structure.NumObjects > 0
@@ -37,7 +32,11 @@ function filled_image_raw = FillHolesInImage(filled_image_raw, colour_1, colour_
             largest_index = sorted_largest_areas_indices(1);
             labeled_components(labeled_components == largest_index) = 0;
             
-            filled_image_raw(labeled_components > 0) = other_colour;
+            % Points in labeled_components will be removed
+            % Find nearest neighbours to 
+            [~, nn_index] = bwdist(labeled_components == 0);
+            
+            filled_image_raw(labeled_components > 0) = filled_image_raw(nn_index(labeled_components > 0));
         end
     end
 end
