@@ -11,14 +11,14 @@ function is_dicom = PTKIsDicomFile(file_path, file_name, reporting)
     %
     
 
-    if nargin < 3
-        reporting = PTKReportingDefault;
-    end
     
-    full_file_name = fullfile(file_path, file_name);
+    full_file_name = [file_path, filesep, file_name];
     
     file_id = fopen(full_file_name);
     if file_id <= 0
+        if nargin < 3
+            reporting = PTKReportingDefault;
+        end
         reporting.Error('PTKIsDicomFile:OpenFileFailed', ['Unable to open file ' full_file_name]);
     end
 
