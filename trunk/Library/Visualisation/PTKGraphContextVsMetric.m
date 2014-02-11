@@ -1,7 +1,27 @@
-function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
-    % PTKGraphContextVsMetric.
+function figure_handle = PTKGraphContextVsMetric(table, metric, context_list, patient_uids)
+    % PTKGraphContextVsMetric. Plots a graph showing measurement values against lung regions for one or more subjects
+    % 
+    % PTKGraphContextVsMetric creates a figure and plots a graph showing measurements for particular lung regions, for one or more patients.
     %
+    % The data to plot must be held in a PTKResultsTable. You specify which contexts (regions), which metric (measurement) and which patients to plot.
+    % The contexts (regions) will be shown along the x-axis, and the values of the metric will be shown on the y-axis.
     %
+    % Labels and ticks will be automatically generated from the data.
+    %
+    % Note the figure is optimised for exporting to a file, not for displaying on-screen. The on-screen figure is not intended for viewing and may have font and graphic sizes in the wrong proportions. To view the figure in its correct proportions, you should export the figure as a graphics file (e.g. png or jpg) and then view the file.
+    %
+    % Syntax:
+    %     figure_handle = PTKGraphContextVsMetric(table, metric, context_list, patient_uids)
+    %
+    % Inputs:
+    %     table - a PTKResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
+    %     metric - a string containing the id of the metric to plot. This must correspond to the metic id in the table.
+    %     context_list - Set to [] to plot all contexts, otherwise specify a set of one or more contexts or context sets to plot. Contexts will appear on the x-axis.
+    %     patient_uids - Set to [] to plot all patients, otherwise specify a set of one of more patient UIDs to appear on the graph.
+    %         Each patient will appear with different markers and will appear in the legend.
+    %
+    % Output:
+    %     figure_handle - the handle of the generated figure. Use this handle to export the figure to an image file
     %
     %     Licence
     %     -------
@@ -9,6 +29,10 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
     %     Author: Tom Doel, 2014.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
+    
+    if nargin < 4
+        patient_uids = table.NameMaps{1}.keys;
+    end
     
     y_label = table.NameMaps{2}(metric);
     
@@ -23,14 +47,14 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
     
     
     
-    number_of_subjects = table.IndexMaps{1}.Count;
+    number_of_subjects = numel(patient_uids);
     
-    colours = {[0, 0, 1], [1, 0, 0], [0, 0, 0], [0, 0.7, 0], [0.7, 0, 0.7], [0, 0.7, 0.7]};
+    colours = {[0, 0.7, 0.7], [0, 0, 1], [1, 0, 0], [0.7, 0, 0.7], [0, 0.7, 0], [0, 0, 0]};
     while numel(colours) < number_of_subjects
         colours = [colours, colours];
     end
     
-    symbols = {'d', 's', 'o', 'p', 'h', '^', '*', 'v', '+'};
+    symbols = {'^', 'd', 'p', 'h', 's', 'o', '^', '*', 'v', '+'};
     while numel(symbols) < number_of_subjects
         symbols = [symbols, symbols];
     end
@@ -57,11 +81,9 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
     
     legend_strings = {};
     
-    patient_uids = table.NameMaps{1}.keys;
-    
     max_y = 0;
     min_y = [];
-
+    
     context_labels = {};
     
     for context_list_index = 1 : numel(context_list)
@@ -95,7 +117,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
     
     x_ticks_color_map = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
     x_ticks_label_map = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
-
+    
     
     for patient_iterator = 1 : number_of_subjects
         patient_uid = patient_uids{patient_iterator};
@@ -118,7 +140,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
                     end
                 end
                 
-                    
+                
                 if strcmp(this_context, 'R_M')
                     right_lung_segments_label_position = x_coord + 0.5;
                 elseif strcmp(this_context, 'L_IL')
@@ -131,7 +153,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
                     x_ticks = union(x_ticks, x_coord);
                     y_coords(end + 1) = result;
                     x_ticks_color_map(x_coord) = {context_colour};
-                                        
+                    
                     context_text_label = table.NameMaps{3}(this_context);
                     if length(context_text_label) > 2
                         if strcmp(context_text_label(1:2), 'R_') || strcmp(context_text_label(1:2), 'L_')
@@ -143,7 +165,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
                     x_ticks_label_map(x_coord) = {context_text_label};
                 end
             end
-            x_coord = x_coord + 1;            
+            x_coord = x_coord + 1;
         end
         
         colour = colours{patient_iterator};
@@ -159,7 +181,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
         
         plots{patient_iterator} = plots_info;
         
-
+        
         % Find the maxima and maxima
         if isempty(min_y)
             min_y = min(y_coords(:));
@@ -177,10 +199,10 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
     y_tick_spacing = PTKGraphUtilities.GetOptimalTickSpacing(min_y, max_y);
     
     
-
+    
     min_y = y_tick_spacing*floor(min_y/y_tick_spacing);
     y_ticks = min_y : y_tick_spacing : max_y;
-        
+    
     % Draw lines for each context
     for x_tick_index = 1 : numel(x_ticks)
         x_tick = x_ticks(x_tick_index);
@@ -193,7 +215,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
         context_label = x_ticks_label_map(x_tick);
         text(x_tick, min_y - y_offset_ticklabel, context_label{1}, 'FontSize', x_tick_label_size, 'clipping', 'off', 'HorizontalAlignment', 'center', 'VerticalAlignment', 'top', 'Color', context_line_colour{1});
     end
-
+    
     % Set the axes
     ylabel(axes_handle, y_label, 'FontName', font_name, 'FontSize', label_font_size);
     set(gca, 'XTick', [])
@@ -212,11 +234,11 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list)
         text(right_lung_segments_label_position, min_y - y_offset, 'Right lung', 'FontSize', x_lung_label_size, 'clipping', 'off', 'HorizontalAlignment', 'center', 'Color', right_lung_colour);
         text(left_lung_segments_label_position, min_y - y_offset, 'Left lung', 'FontSize', x_lung_label_size, 'clipping', 'off', 'HorizontalAlignment', 'center', 'Color', left_lung_colour);
     end
-
+    
     
     
     % Create the legend
-    legend_handle = legend(legend_strings, 'FontName', font_name, 'FontSize', legend_font_size, 'Location', 'NorthEast');    
+    legend_handle = legend(legend_strings, 'FontName', font_name, 'FontSize', legend_font_size, 'Location', 'NorthEast');
     legend_children = get(legend_handle, 'Children');
     for child = legend_children'
         if strcmp(get(child, 'Type'), 'line')
