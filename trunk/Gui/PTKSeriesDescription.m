@@ -193,6 +193,7 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
     
     methods (Access = private)
         function SeriesClicked(obj, ~, ~)
+            obj.Select(true);
             obj.GuiCallback.LoadFromPatientBrowser(obj.PatientId, obj.SeriesUid);
         end
     end
