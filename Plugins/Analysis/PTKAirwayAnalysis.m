@@ -60,6 +60,7 @@ classdef PTKAirwayAnalysis < PTKPlugin
                 results.AddMetric('RadiusStd', bronchus_results.FWHMRadiusStd, 'Std of airway lumen radius (mm)');
                 results.AddMetric('WallThicknessStd', bronchus_results.FWHMWallThicknessStd, 'Std of airway wall thickness (mm)');
                 results.AddMetric('WallThicknessMin', bronchus_results.FWHMWallThicknessMin, 'Minimum airway wall thickness (mm)');
+                results.AddMetric('WallThicknessMeanRadiusRatio', bronchus_results.FWHMWallThicknessMean/bronchus_results.FWHMRadiusMean, 'Ratio of mean airway wall thickness to mean radius');                
             end
         end
     end
