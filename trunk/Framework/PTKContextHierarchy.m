@@ -190,7 +190,8 @@ classdef PTKContextHierarchy < handle
                 input_context = PTKContext.LungROI;
             end
             
-            obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
+            obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
+
         end
         
     end
@@ -355,7 +356,7 @@ classdef PTKContextHierarchy < handle
                 parent_image_template = obj.ImageTemplates.GetTemplateImage(parent_contet, dataset_stack);
                 new_edited_image_for_context_image = edited_result_image.Copy;
                 new_edited_image_for_context_image.ResizeToMatch(parent_image_template);
-                obj.SaveEditedResultForAllContexts(plugin_name, parent_contet, new_edited_image_for_context_image, plugin_info, dataset_stack, reporting);
+                obj.SaveEditedResultForAllContexts(plugin_name, parent_contet, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);
 
 
             % If the plugin's context set is lower in the hierarchy, then get
@@ -372,9 +373,8 @@ classdef PTKContextHierarchy < handle
                     new_edited_image_for_context_image = obj.ReduceResultToContext(edited_result_image, child_mapping{1}, dataset_stack);
                     
                     % Save this new image
-                    obj.SaveEditedResultForAllContexts(plugin_name, child_context, new_edited_image_for_context_image, plugin_info, dataset_stack, reporting);
+                    obj.SaveEditedResultForAllContexts(plugin_name, child_context, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);
                 end
-                
 
             else
                 reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
