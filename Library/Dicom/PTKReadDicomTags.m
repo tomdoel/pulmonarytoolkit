@@ -225,7 +225,7 @@ function parsed_value = GetValueForTag(data_bytes, vr_type, file_endian_matches_
             parsed_value = ReadNumber(data_bytes, 'double', file_endian_matches_computer_endian);
         case 'IS' % Integer string
             parsed_value = int32(sscanf(char(data_bytes), '%f\\'));
-        case 'OB' % Other byte strng
+        case 'OB' % Other byte string
             % NB may have unknown length
             parsed_value = ReadNumber(data_bytes, 'int8', file_endian_matches_computer_endian);
         case 'OW' % Other word string
