@@ -1,7 +1,7 @@
 #summary The data structure used to store multiple results
 = PTKResultsTable =
 
-_This entry is a stub and will be expanded in the future_
+_This entry is incomplete and will be expanded in the future_
 
 PTKResultsTable is a class used to store measurement/analysis results.
 
@@ -23,4 +23,14 @@ For example, if you have a patient with UID specified by my_uid, then use IndexM
 
 Similarly, if you want the index of the metric "WallThickness", this is given by IndexMaps{2}("WallThickness")
 
-The slice number is for when you are performing axial/coronal/sagittal analysis of the image by dividing it into bins along the axis. See the AxialMetrics / CoronalMetrics / SagittalMetrics plugins for how this works.
+The slice number is for when you are performing axial/coronal/sagittal analysis of the image by dividing it into bins along the axis. See the AxialMetrics / CoronalMetrics / SagittalMetrics plugins for how this works
+
+The NameMaps property stores the human-readable name for each metric, context or patient. These values will be used to generate the axes labels in the graphs, and the column and row labels in the CSV files.
+
+
+
+Useful functions to use with PTKResultsTable:
+ * `PTKSaveTableAsCSV` uses your table to generate one or more CSV files (which can be loaded into Excel). You specify what appears in the rows and columns of the table.
+* `PTKGraphContextVsMetric.m` draws a graph showing the value of a particular metric for one or more contexts, and for one or more patients
+* `PTKDrawMetricVsMetric.m` 
+ * `PTKDrawMetricVsDistance.m` generates a graph for slice analysis (axial/coronal/sagittal analysis)
