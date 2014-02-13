@@ -218,9 +218,16 @@ classdef PTKImageUtilities
         % Calculates an approximate distance transform for a non-isotropic input
         % image
         function dt = GetNonisotropicDistanceTransform(binary_image)
-            dt = PTKImageUtilities.MakeImageApproximatelyIsotropic(binary_image, '*nearest');
-            dt.ChangeRawImage(bwdist(logical(dt.RawImage)));
-            dt.Resample(binary_image.VoxelSize, '*nearest');
+            voxel_size = binary_image.VoxelSize;
+            if max(voxel_size) >= 1.5*min(voxel_size)
+                dt = PTKImageUtilities.MakeImageApproximatelyIsotropic(binary_image, '*nearest');
+                dt.ChangeRawImage(bwdist(logical(dt.RawImage)));
+                dt.Resample(binary_image.VoxelSize, '*nearest');
+                dt.ResizeToMatch(binary_image);
+            else
+                dt = binary_image.Copy;
+                dt.ChangeRawImage(bwdist(logical(dt.RawImage)));
+            end
             dt.ImageType = PTKImageType.Scaled;
         end
 
