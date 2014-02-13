@@ -46,6 +46,10 @@ classdef PTKProgressPanel < PTKProgressInterface
         CurrentlyDisplayedProgressValue
         CurrentlyDisplayedVisibility = false
         ProgressBarCurrentlyVisible = false;
+        
+        TimerRef
+        MaxTimeBetweenUpdates = 0.25
+        ChangePending
     end
     
     properties (GetAccess = private, Constant)
@@ -58,6 +62,7 @@ classdef PTKProgressPanel < PTKProgressInterface
         
         
         function obj = PTKProgressPanel(parent)
+            obj.ChangePending = false;
             obj.CurrentlyDisplayedDialogTitle = '';
             obj.CurrentlyDisplayedDialogText = '';
             obj.CurrentlyDisplayedProgressValue = [];
@@ -175,10 +180,19 @@ classdef PTKProgressPanel < PTKProgressInterface
             changed = obj.UpdateProgressValue || changed;
             changed = obj.UpdateVisibility || changed;
             changed = obj.UpdateProgressBarVisibility || changed;
+            
             if changed
-                drawnow;
-                changed = false;
+                obj.ChangePending = true;
             end
+            
+            if obj.ChangePending
+                if isempty(obj.TimerRef) || toc(obj.TimerRef) > obj.MaxTimeBetweenUpdates
+                    obj.TimerRef = tic;
+                    drawnow;
+                    obj.ChangePending = false;
+                end
+            end
+
         end
         
         function changed = UpdateDialogTitle(obj)
@@ -201,7 +215,7 @@ classdef PTKProgressPanel < PTKProgressInterface
         
         function changed = UpdateProgressValue(obj)
             changed = false;
-            if ~isequal(obj.ProgressValue, obj.CurrentlyDisplayedProgressValue)
+            if isempty(obj.CurrentlyDisplayedProgressValue) || (obj.ProgressValue ~= obj.CurrentlyDisplayedProgressValue)
                 obj.ProgressBarHandle.setValue(obj.ProgressValue);
                 obj.CurrentlyDisplayedProgressValue = obj.ProgressValue;
                 changed = true;
