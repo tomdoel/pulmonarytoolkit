@@ -69,7 +69,7 @@ classdef PTKResultsTable < handle
             if ~new_value
                 current_value = obj.ResultsTable{patient_index, metric_index, context_index, slice_number_index};
                 if ~isempty(current_value)
-                    reporting.Error('PTKResultsTable:ValueBeingOverwritten', 'The value you are adding overwrites an existing value');
+                    reporting.ShowWarning('PTKResultsTable:ValueBeingOverwritten', 'The value you are adding overwrites an existing value', []);
                 end
             end
             
