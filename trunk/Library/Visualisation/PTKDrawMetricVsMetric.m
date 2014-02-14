@@ -36,8 +36,6 @@ function figure_handle = PTKDrawMetricVsMetric(table, metric_x, metric_y, contex
     marker_line_width = 1;
     marker_size = 8;
     
-    max_y = 0;
-    max_x = 0;
     context_results = {};
     legend_strings = {};
     
@@ -61,8 +59,8 @@ function figure_handle = PTKDrawMetricVsMetric(table, metric_x, metric_y, contex
     end
     
     % Work out tick spacing for x and y axes
-    x_tick_spacing = PTKGraphUtilities.GetOptimalTickSpacing(0, max_x);
-    y_tick_spacing = PTKGraphUtilities.GetOptimalTickSpacing(0, max_y);
+    [x_tick_spacing, min_x, max_x] = PTKGraphUtilities.GetOptimalTickSpacing(0, max_x);
+    [y_tick_spacing, min_y, max_y] = PTKGraphUtilities.GetOptimalTickSpacing(0, max_y);
 
     figure_handle = figure;
     set(figure_handle, 'Units', 'centimeters');
