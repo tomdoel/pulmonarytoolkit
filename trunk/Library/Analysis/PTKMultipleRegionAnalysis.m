@@ -1,4 +1,4 @@
-function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, context_no_airways, reporting)
+function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, context_no_airways, distance_label, reporting)
     % PTKMultipleRegionAnalysis. Calculates metrics based on bins
     %
     %
@@ -48,7 +48,7 @@ function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, cont
         [emphysema_results, ~] = PTKComputeEmphysemaFromMask(roi_reduced, no_airways_mask);
         bin_results.Merge(emphysema_results);
         bin_results.AddMetric('RegionNumber', bin_number, 'Region Number');
-        bin_results.AddMetric('DistanceFromLungBaseMm', distance_from_origin, 'Distance from edge of lung (mm)');
+        bin_results.AddMetric('DistanceFromLungBaseMm', distance_from_origin, distance_label);
         bin_results.AddMetric('RegionCoordinateX', coordinates.CoordX, 'Region Coordinates X (mm)');
         bin_results.AddMetric('RegionCoordinateY', coordinates.CoordY, 'Region Coordinates Y (mm)');
         bin_results.AddMetric('RegionCoordinateZ', coordinates.CoordZ, 'Region Coordinates Z (mm)');

@@ -56,7 +56,7 @@ classdef PTKCoronalAnalysis < PTKPlugin
             % Divide the lung into bins along the cranial-caudal axis
             bins = dataset.GetResult('PTKDivideLungsIntoCoronalBins', PTKContext.Lungs);
             
-            results = PTKMultipleRegionAnalysis(bins, roi, context_mask, context_no_airways, reporting);
+            results = PTKMultipleRegionAnalysis(bins, roi, context_mask, context_no_airways, 'Coronal distance from lung edge (mm)', reporting);
         end
         
     end
