@@ -360,6 +360,9 @@ classdef PTKGui < handle
             obj.Reporting.ProgressDialog.Hide;
             frame = obj.ImagePanel.Capture;
             path_name = obj.Settings.SaveImagePath;
+            if isempty(path_name) || path_name == 0
+                path_name = [];
+            end
             
             [filename, path_name, filter_index] = obj.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && filter_index > 0
