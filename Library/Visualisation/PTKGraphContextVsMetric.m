@@ -36,6 +36,13 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list, pa
     
     y_label = table.NameMaps{2}(metric);
     
+    figure_title = y_label;
+    
+    if numel(patient_uids) == 1
+        figure_title = [figure_title, ' : ', table.NameMaps{1}(patient_uids{1})];
+    end
+
+    
     if nargin < 3 || isempty(context_list)
         context_list = table.IndexMaps{3}.keys;
     end
@@ -103,7 +110,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list, pa
     graph_size = [page_width_cm, (page_width_cm/widthheightratio)];
     
     axes_handle = gca;
-    set(figure_handle, 'Name', y_label);
+    set(figure_handle, 'Name', figure_title);
     set(figure_handle, 'PaperPositionMode', 'auto');
     set(figure_handle, 'position', [0,0, graph_size]);
     hold(axes_handle, 'on');

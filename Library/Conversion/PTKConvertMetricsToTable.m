@@ -41,7 +41,7 @@ function AddToTable(table, results, patient_id, reporting)
                 end
             end
         end
-    end    
+    end
 end
 
 function field_map = GetFieldMap(results, table)

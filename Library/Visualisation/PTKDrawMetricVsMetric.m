@@ -13,6 +13,7 @@ function figure_handle = PTKDrawMetricVsMetric(table, metric_x, metric_y, contex
     
     x_label = table.NameMaps{2}(metric_x);
     y_label = table.NameMaps{2}(metric_y);
+    figure_title = [x_label ' : ' y_label];
 
     number_of_subjects = table.IndexMaps{1}.Count;
     number_of_points_per_subject = numel(context_list);
@@ -67,7 +68,7 @@ function figure_handle = PTKDrawMetricVsMetric(table, metric_x, metric_y, contex
     graph_size = [page_width_cm, (page_width_cm/widthheightratio)];
     
     axes_handle = gca;
-    set(figure_handle, 'Name', [x_label ' : ' y_label]);
+    set(figure_handle, 'Name', figure_title);
     set(figure_handle, 'PaperPositionMode', 'auto');
     set(figure_handle, 'position', [0,0, graph_size]);
     hold(axes_handle, 'on');

@@ -56,7 +56,7 @@ classdef PTKAxialAnalysis < PTKPlugin
             % Divide the lung into bins along the cranial-caudal axis
             bins = dataset.GetResult('PTKDivideLungsIntoAxialBins', PTKContext.Lungs);
             
-            results = PTKMultipleRegionAnalysis(bins, roi, context_mask, context_no_airways, reporting);
+            results = PTKMultipleRegionAnalysis(bins, roi, context_mask, context_no_airways, 'Axial distance from lung base (mm)', reporting);
         end
         
     end
