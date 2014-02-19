@@ -1,4 +1,4 @@
-function filled_image_raw = PTKFillHolesForMultiColourImage(filled_image_raw)
+function filled_image_raw = PTKFillHolesForMultiColourImage(filled_image_raw, allow_fill_with_background)
     % PTKFillHolesForMultiColourImage. Fills in holes in a colourmap image
     %
     %     PTKFillHolesForMultiColourImage takes in a indexed image and fills in any completely
@@ -33,8 +33,12 @@ function filled_image_raw = PTKFillHolesForMultiColourImage(filled_image_raw)
             labeled_components(labeled_components == largest_index) = 0;
             
             % Points in labeled_components will be removed
-            % Find nearest neighbours to 
-            [~, nn_index] = bwdist(labeled_components == 0);
+            % Find nearest neighbours
+            if allow_fill_with_background
+                [~, nn_index] = bwdist(labeled_components == 0);
+            else
+                [~, nn_index] = bwdist(labeled_components == 0 & filled_image_raw ~= 0);
+            end
             
             filled_image_raw(labeled_components > 0) = filled_image_raw(nn_index(labeled_components > 0));
         end
