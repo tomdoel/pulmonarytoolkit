@@ -140,7 +140,6 @@ classdef PTKReplaceColourTool < PTKTool
             if obj.Enabled
                 if obj.ViewerPanel.OverlayImage.ImageExists
                     obj.StartBrush(coords);
-                    obj.ApplyBrush(coords);
                 end
             end
         end
@@ -154,12 +153,14 @@ classdef PTKReplaceColourTool < PTKTool
             global_image_coords = round(obj.GetGlobalImageCoordinates(coords));
             local_image_coords = obj.ViewerPanel.OverlayImage.GlobalToLocalCoordinates(global_image_coords);
             segmentation_colour = obj.ViewerPanel.OverlayImage.RawImage(local_image_coords(1), local_image_coords(2), local_image_coords(3));
-            
-            obj.FromColour = segmentation_colour;
-            
+                        
             if segmentation_colour == 0
                 return;
             end
+            
+            obj.FromColour = segmentation_colour;
+            
+            obj.ApplyBrush(coords);            
         end
         
         function ApplyBrush(obj, coords)
@@ -204,7 +205,7 @@ classdef PTKReplaceColourTool < PTKTool
                 subimage(clipped_brush) = obj.Colour;
                 
             else
-                subimage_mask = clipped_brush & (subimage == segmentation_colour);
+                subimage_mask = clipped_brush & (subimage > 0);
                 connected_components_structure =  bwconncomp(subimage_mask, 6);
                 labeled_components = labelmatrix(connected_components_structure);
                 central_component_label = labeled_components(midpoint(1), midpoint(2), midpoint(3));
