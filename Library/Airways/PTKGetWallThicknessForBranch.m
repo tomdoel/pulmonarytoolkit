@@ -4,7 +4,6 @@ function results = PTKGetWallThicknessForBranch(bronchus, image_roi, context, fi
     else
         segment_label = PTKPulmonarySegmentLabels(bronchus.SegmentIndex);
         centreline = bronchus.Centreline;
-%         disp(['Number of points in centreline:', int2str(numel(centreline))]);
         
         radius_guess = bronchus.Radius;
         if (radius_guess == 0) || isnan(radius_guess)
@@ -358,10 +357,7 @@ function [new_centrepoints, mean_radius, std_radius, mean_wallthickness, std_wal
     
     radius_values_repeated = repmat(radius_range_half', [1, number_of_angles, number_of_centreline_points]);
     
-    % Find half maximum intensity value across the whole bronchus
-    half_maximum = ComputeHalfMaximum(interpolated_volume, lung_roi);
-    
-    [inner_radius_values, valid_values_inner, outer_radius_values, valid_values_outer, wall_thickness] = FindWallRadius(interpolated_volume, half_maximum, radius_values_repeated, radius_guess_mm, lung_roi, segment_label, plot_debug_graphs, context);
+    [inner_radius_values, valid_values_inner, outer_radius_values, valid_values_outer, wall_thickness] = FindWallRadius(interpolated_volume, radius_values_repeated, radius_guess_mm, lung_roi, segment_label, plot_debug_graphs, context);
 
     if plot_debug_graphs
         % 3D figure showing points on the centreline and inner walls
@@ -393,6 +389,12 @@ function [new_centrepoints, mean_radius, std_radius, mean_wallthickness, std_wal
     
     % Compute the mean wall thickness for each centreline point
     valid_both = valid_values_inner & valid_values_outer;
+    
+    % Remove the upper and lower 25% of WT values
+    all_wt_values = wall_thickness(valid_both);
+    wt_limits = prctile(all_wt_values, [25, 75]);
+    valid_both = valid_both & ((wall_thickness >= wt_limits(1)) | (wall_thickness <= wt_limits(2)));
+    
     [wall_thickness_mm_list, mean_wallthickness, std_wallthickness, min_wall_thickness_along_whole_bronchus] = ComputeMeanWallThicknessForEachPoint(wall_thickness, valid_both);
 
     if ~isempty(points_axes_handle)
@@ -461,15 +463,17 @@ function pointwise_norm = PointwiseNorm(xc, yc, zc)
 end
 
 
-function [inner_radius_values, valid_values_inner, outer_radius_values, valid_values_outer, wall_thickness] = FindWallRadius(interpolated_volume, half_maximum, radius_values_repeated, radius_guess_mm, lung_roi, segment_label, plot_debug_graphs, context)
-    
+function [inner_radius_values, valid_values_inner, outer_radius_values, valid_values_outer, wall_thickness] = FindWallRadius(interpolated_volume, radius_values_repeated, radius_guess_mm, lung_roi, segment_label, plot_debug_graphs, context)
+
     % Choose a region of interest for the inner wall and set values outside to
     % zero, so that they don't contribute to the half maximum value or to the
     % inner wall locations
     radius_limit_mm = 2*radius_guess_mm;
     points_in_inner_wall_region = radius_values_repeated < radius_limit_mm;
     interpolated_volume_inner = interpolated_volume;
-    interpolated_volume_inner(~points_in_inner_wall_region) = 0;    
+    interpolated_volume_inner(~points_in_inner_wall_region) = 0;
+    
+    half_maximum = ComputeHalfMaximum(interpolated_volume_inner, lung_roi);
     
     number_of_angles = size(interpolated_volume_inner, 2);
     number_of_centreline_points = size(interpolated_volume_inner, 3);
@@ -483,6 +487,12 @@ function [inner_radius_values, valid_values_inner, outer_radius_values, valid_va
     
     % Mask of radial lines where some point went above the half maximum value
     valid_values_inner = any(values_above_halfmax, 1);
+    
+    nan_values = isnan(interpolated_volume_inner);
+    nan_values = any(nan_values, 1);
+    
+    valid_values_inner2 = valid_values_inner & ~nan_values;
+    valid_values_inner2_extended = repmat(valid_values_inner2, [size(interpolated_volume_inner, 1), 1, 1]);
     
     % Indices of first point in each radial line which went above half maximum
     [~, indices_halfpoint] = max(values_above_halfmax, [], 1);
@@ -506,6 +516,32 @@ function [inner_radius_values, valid_values_inner, outer_radius_values, valid_va
     % Compute the inner radius of the bronchial wall
     radius_step = radius_values_repeated(2, 1, 1) - radius_values_repeated(1, 1, 1);
     inner_radius_values = sum(radius_values_repeated.*mask_indices_before_halfpoint, 1) + subvoxel_halfmaximum_index_offset*radius_step;
+    
+    
+    if plot_debug_graphs
+        % Image showing the interpolated CT values
+        im_ct = PTKDicomImage(interpolated_volume, lung_roi.RescaleSlope, lung_roi.RescaleIntercept, [1 1 1], 'CT', '', []);
+        im_ct.ImageType = PTKImageType.Grayscale;
+        v_ct = PTKViewer(im_ct);
+        v_ct.Title = [char(context), ': CT cartesian'];
+        v_ct.ViewerPanelHandle.Window = 1600;
+        v_ct.ViewerPanelHandle.Level = -600;
+        v_ct.ViewerPanelHandle.Orientation = PTKImageOrientation.Axial;
+        
+        im_overlay = im_ct.BlankCopy;
+        im_overlay_raw = zeros(im_ct.ImageSize, 'uint8');
+        v_ct.ViewerPanelHandle.OverlayImage = im_overlay;
+        im_overlay.ImageType = PTKImageType.Colormap;
+        
+        im_overlay_raw(mask_indices_halfpoint & valid_values_inner2_extended) = 3;
+        im_overlay_raw(mask_indices_before_halfpoint & valid_values_inner2_extended) = 2;
+        im_overlay.ChangeRawImage(im_overlay_raw);
+    end
+    
+    
+    
+    
+    
     
     
     
@@ -574,6 +610,41 @@ function [inner_radius_values, valid_values_inner, outer_radius_values, valid_va
 
 end
 
+% function half_maximum = ComputeHalfMaximumForEachRadialLine(interpolated_volume, lung_roi)
+%     
+%     % We will clip the maximum considered values to prevent high-density non-airway tissue
+%     % from affecting the maxima calculations
+%     max_hu_cutoff = 0;
+%     max_intensity_cutoff = lung_roi.HounsfieldToGreyscale(max_hu_cutoff);
+%     
+%     % Remove any values above the maximum density cutoff
+%     interpolated_volume(interpolated_volume > max_intensity_cutoff) = 0;
+%     
+%     % Find the maxima for each radial line (r is the first dimension)
+%     [max_vals, max_indices] = max(interpolated_volume, [], 1);
+%     
+% %     % Find all radial lines where the density is above the cutoff
+% %     maxima_above_cutoff = max_vals(:) > max_intensity_cutoff;
+% %     
+% %     % We find the maximum value for the whole bronchus, excluding all the radial
+% %     % lines where any points went above the cutoff
+% %     if isempty(maxima_above_cutoff)
+% %         disp('Warning: all radial lines have a maximum exceeding the threshold');
+% %         maximum_intensity = max_intensity_cutoff;
+% %     else
+% %         maximum_intensity = max(max_vals(maxima_above_cutoff));
+% %         if numel(maxima_above_cutoff) < numel(max_vals)/2
+% %             disp('Warning: more than half of the radial lines have a maximum exceeding the threshold');
+% %         end
+% %     end
+%     
+%     % Compute the half maximum value
+%     minimum_intensty = min(interpolated_volume(:));
+%     half_maximum = minimum_intensty + (maximum_intensity-minimum_intensty)/2;
+% end
+
+
+
 function half_maximum = ComputeHalfMaximum(interpolated_volume, lung_roi)
     % Finds the half maximum value of the intensity across the whole bronchus
     
@@ -590,11 +661,11 @@ function half_maximum = ComputeHalfMaximum(interpolated_volume, lung_roi)
     
     % We find the maximum value for the whole bronchus, excluding all the radial
     % lines where any points went above the cutoff
-    if isempty(maxima_above_cutoff)
+    if all(maxima_above_cutoff(:))
         disp('Warning: all radial lines have a maximum exceeding the threshold');
         maximum_intensity = max_intensity_cutoff;
     else
-        maximum_intensity = max(max_vals(maxima_above_cutoff));
+        maximum_intensity = max(max_vals(~maxima_above_cutoff));
         if numel(maxima_above_cutoff) < numel(max_vals)/2
             disp('Warning: more than half of the radial lines have a maximum exceeding the threshold');
         end
