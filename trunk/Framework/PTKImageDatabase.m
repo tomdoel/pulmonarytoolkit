@@ -147,7 +147,7 @@ classdef PTKImageDatabase < handle
                 obj.SeriesMap = containers.Map;
             end
             
-            tags_to_get = PTKDicomDictionary.GroupingTagsDictionary(false);
+            tags_to_get = [];
 
             stage_index = 0;
             num_stages = numel(uids);
@@ -155,7 +155,6 @@ classdef PTKImageDatabase < handle
             database_changed = false;
             
             for uid = uids
-                reporting.UpdateProgressStage(stage_index, num_stages);
                 stage_index = stage_index + 1;
                 temporary_uid = uid{1};
                 if ~obj.SeriesMap.isKey(temporary_uid) || rebuild_for_each_uid
@@ -163,6 +162,8 @@ classdef PTKImageDatabase < handle
                         reporting.ShowMessage('PTKImageDatabase:UnimportedDatasetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the image database file. I am adding this dataset to the image database. This may occur if the database file was recently removed.']);
                     end
                     try
+                        % Only update the progress for datasets we are actually checking
+                        reporting.UpdateProgressStage(stage_index, num_stages);
                         cache_parent_directory = PTKDirectories.GetCacheDirectory;
                         temporary_disk_cache = PTKDiskCache(cache_parent_directory, temporary_uid, reporting);
                         temporary_image_info = temporary_disk_cache.Load(PTKSoftwareInfo.ImageInfoCacheName, [], reporting);
@@ -180,6 +181,9 @@ classdef PTKImageDatabase < handle
                                 end
                                 
                                 if PTKDiskUtilities.FileExists(next_filepath, next_filename)
+                                    if isempty(tags_to_get)
+                                        tags_to_get = PTKDicomDictionary.GroupingTagsDictionary(false);
+                                    end
                                     single_image_metainfo = PTKGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
                                     obj.AddImage(single_image_metainfo);
                                 else
