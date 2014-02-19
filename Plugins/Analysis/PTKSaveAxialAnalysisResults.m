@@ -74,11 +74,12 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
     methods (Static, Access = private)
         function DrawGraphAndSave(table, context_list, results_directory, file_suffix, x_label, reporting)
             figure_handle = PTKGraphMetricVsDistance(table, 'MeanDensityGml', 'StdDensityGml', context_list, [], x_label, reporting);
-            
             PTKDiskUtilities.SaveFigure(figure_handle, fullfile(results_directory, ['DensityVsAxialDistance' file_suffix]));
+            close(figure_handle);
             
             figure_handle = PTKGraphMetricVsDistance(table, 'EmphysemaPercentage', [], context_list, [], x_label, reporting);            
             PTKDiskUtilities.SaveFigure(figure_handle, fullfile(results_directory, ['EmphysemaVsAxialDistance' file_suffix]));
+            close(figure_handle);
         end
     end        
 end

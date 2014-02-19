@@ -56,29 +56,30 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
             PTKSaveTableAsCSV(results_directory, 'SagittalResults', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, [], reporting);
             
             % Generate graphs of the results
-            figure_title = 'Density vs sagittal distance';
             y_label = 'Distance along sagittal axis (%)';
             
             context_list_both_lungs = [PTKContext.Lungs];
-            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(table, patient_name, figure_title, y_label, context_list_both_lungs, results_directory, '_CombinedLungs');
+            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(table, y_label, context_list_both_lungs, results_directory, '_CombinedLungs', reporting);
 
             context_list_single_lungs = [PTKContext.LeftLung, PTKContext.RightLung];
-            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(table, patient_name, figure_title, y_label, context_list_single_lungs, results_directory, '_Lungs');
+            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(table, y_label, context_list_single_lungs, results_directory, '_Lungs', reporting);
             
             context_list_lobes = [PTKContext.LeftLowerLobe, PTKContext.LeftUpperLobe, PTKContext.RightLowerLobe, PTKContext.RightMiddleLobe, PTKContext.RightUpperLobe];                        
-            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(table, patient_name, figure_title, y_label, context_list_lobes, results_directory, '_Lobes');
+            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(table, y_label, context_list_lobes, results_directory, '_Lobes', reporting);
             
             results = [];
         end
     end
     
     methods (Static, Access = private)
-        function DrawGraphAndSave(table, patient_name, figure_title, y_label, context_list, results_directory, file_suffix)
-            figure_handle = PTKDrawMetricVsDistance(table, patient_name, 'MeanDensityGml', 'StdDensityGml', figure_title, y_label, context_list);
+        function DrawGraphAndSave(table, y_label, context_list, results_directory, file_suffix, reporting)
+            figure_handle = PTKGraphMetricVsDistance(table, 'MeanDensityGml', 'StdDensityGml', context_list, [], y_label, reporting);
             PTKDiskUtilities.SaveFigure(figure_handle, fullfile(results_directory, ['DensityVsSagittalDistance' file_suffix]));
+            close(figure_handle);
             
-            figure_handle = PTKDrawMetricVsDistance(table, patient_name, 'EmphysemaPercentage', [], figure_title, y_label, context_list);
+            figure_handle = PTKGraphMetricVsDistance(table, 'EmphysemaPercentage', [], context_list, [], y_label, reporting);            
             PTKDiskUtilities.SaveFigure(figure_handle, fullfile(results_directory, ['EmphysemaVsSagittalDistance' file_suffix]));            
+            close(figure_handle);
         end
     end        
 end
