@@ -46,9 +46,6 @@ classdef PTKLobarHistogram < PTKPlugin
                 return;
             end
             
-            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
-            
-            
             label_font_size = 8;
             legend_font_size = 4;
             compartment_font_size = 6;
