@@ -43,165 +43,38 @@ end
     
 function match = CompareMainTags(this_metadata, other_metadata)
         
-    % Verify that this is the same patient
-    if ~CompareFields('PatientName', this_metadata, other_metadata, true)
+    % Check for exact matches in certain fields
+    fields_to_compare = {'PatientName', 'PatientID', 'PatientBirthDate', ...
+        'StudyInstanceUID', 'SeriesInstanceUID', 'StudyID', 'StudyDescription', 'SeriesNumber', ...
+        'SeriesDescription', 'StudyDate', 'SeriesDate', 'Rows', 'Columns', 'PixelSpacing', ...
+        'PatientPosition', 'FrameOfReferenceUID', 'Modality', 'MediaStorageSOPClassUID', ...
+        'ImageType', 'SOPClassUID', 'ImplementationClassUID', 'ImagesInAcquisition', ...
+        'SamplesPerPixel', 'PhotometricInterpretation', 'BitsAllocated', 'BitsStored', ...
+        'HighBit', 'PixelRepresentation'};
+    
+    is_field_this = isfield(this_metadata, fields_to_compare);
+    is_field_other = isfield(other_metadata, fields_to_compare);
+    
+    % Fields should exist in both metadata or neither
+    if any(is_field_other ~= is_field_this)
         match = false;
         return;
     end
     
-    if ~CompareFields('PatientID', this_metadata, other_metadata, true)
+    fields_to_compare = fields_to_compare(is_field_this);
+
+    for field_name = fields_to_compare
+         if ~isequal(this_metadata.(field_name{1}), other_metadata.(field_name{1}))
+             match = false;
+             return;
+         end
+    
+    end
+  
+    if ~CompareFieldsInexactMatch('ImageOrientationPatient', this_metadata, other_metadata)
         match = false;
         return;
     end
-    
-    if ~CompareFields('PatientBirthDate', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    
-    
-    % Verify that this is the same study and series
-    if ~CompareFields('StudyInstanceUID', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('SeriesInstanceUID', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('StudyID', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('StudyDescription', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('SeriesNumber', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('SeriesDescription', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('StudyDate', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('SeriesDate', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    
-    
-    % Verify the image dimensions are the same
-    if ~CompareFields('Rows', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('Columns', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('PixelSpacing', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    
-    % Verify the patient location and orientation are the same
-    if ~CompareFields('PatientPosition', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('ImageOrientationPatient', this_metadata, other_metadata, false)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('FrameOfReferenceUID', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    
-    
-    
-    
-    % Verify the imaging parameters are the same
-    if ~CompareFields('Modality', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('MediaStorageSOPClassUID', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('ImageType', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('SOPClassUID', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('ImplementationClassUID', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('ImagesInAcquisition', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('SamplesPerPixel', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('PhotometricInterpretation', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('BitsAllocated', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('BitsStored', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('HighBit', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
-    if ~CompareFields('PixelRepresentation', this_metadata, other_metadata, true)
-        match = false;
-        return;
-    end
-    
     
     % Verify that the images contain the same tags relating to slice location
     if isfield(this_metadata, 'SliceLocation') ~= isfield(other_metadata, 'SliceLocation')
@@ -218,7 +91,7 @@ function match = CompareMainTags(this_metadata, other_metadata)
     match = true;
 end
 
-function matches = CompareFields(field_name, this_metadata, other_metadata, exact_match)
+function matches = CompareFieldsInexactMatch(field_name, this_metadata, other_metadata)
     
     % If this field does not exist in either metadata, then return a
     % true match
@@ -244,11 +117,7 @@ function matches = CompareFields(field_name, this_metadata, other_metadata, exac
         return;
     end
     
-    if exact_match || ~isnumeric(field_this)
-        matches = isequal(field_this, field_other);
-    else
-        % Inexact numeric match
-        matches = max(field_this(:) - field_other(:)) < 0.5;
-    end
+    % Inexact numeric match
+    matches = max(field_this(:) - field_other(:)) < 0.5;
 end
 
