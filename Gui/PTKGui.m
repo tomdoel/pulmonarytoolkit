@@ -44,6 +44,8 @@ classdef PTKGui < handle
         PatientBrowser
         PatientBrowserSelectedUid
         PatientBrowserSelectedPatientId
+        
+        LastWindowSize % Keep track of window size to preent unnecessary resize
     end
     
     properties (Constant, Access = private)
@@ -816,15 +818,24 @@ classdef PTKGui < handle
 
                 obj.AutoOrientationAndWL(lung_roi);
                 
-                obj.Settings.ImageInfo = image_info;
+                settings_changed = false;
+                
+                if ~isequal(image_info, obj.Settings.ImageInfo)
+                    obj.Settings.ImageInfo = image_info;
+                    settings_changed = true;
+                end
                 
                 old_infos = obj.Settings.PreviousImageInfos;
                 if ~old_infos.isKey(image_info.ImageUid)
                     old_infos(image_info.ImageUid) = image_info;
                     obj.Settings.PreviousImageInfos = old_infos;
+                    settings_changed = true;
                 end
                 
-                obj.SaveSettings;
+                % Save settings if anything has changed
+                if settings_changed
+                    obj.SaveSettings;
+                end
                 
                 obj.SetCurrentPluginAndUpdateFigureTitle([]);
                 
@@ -1088,6 +1099,12 @@ classdef PTKGui < handle
             parent_position = get(obj.FigureHandle, 'Position');
             parent_width_pixels = parent_position(3);
             parent_height_pixels = parent_position(4);
+            
+            new_size = [parent_width_pixels, parent_height_pixels];
+            if isequal(new_size, obj.LastWindowSize)
+                return;
+            end
+            obj.LastWindowSize = new_size;
             
             load_menu_height = obj.LoadMenuHeight;
             viewer_panel_height = max(1, parent_height_pixels - load_menu_height);
