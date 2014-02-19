@@ -44,7 +44,11 @@ classdef PTKFissurePlaneHorizontal < PTKPlugin
             right_upper_lung.ChangeRawImage(right_upper_lung.RawImage == 1);
             
             results = PTKFissurePlaneHorizontal.GetRightLungResults(max_fissure_points, right_upper_lung, application.GetResult('PTKGetRightLungROI'), reporting);
-            results.ResizeToMatch(left_and_right_lungs);
+            if ~isempty(results)
+                results.ResizeToMatch(left_and_right_lungs);
+            else
+                results = application.GetResult('PTKFissurePlaneOblique');
+            end
             results.ImageType = PTKImageType.Colormap;
         end
         
@@ -68,6 +72,9 @@ classdef PTKFissurePlaneHorizontal < PTKPlugin
                 [~, fissure_plane] = PTKSeparateIntoLobesWithVariableExtrapolation(max_fissure_points_m, lung_mask, right_lung_roi.ImageSize, 20, reporting);
                 fissure_plane(lung_mask.RawImage == 0) = 0;
                 fissures_right = 2*uint8(fissure_plane == 3);
+            else
+                right_results = [];
+                return;
             end
             
             right_results = right_lung_roi.BlankCopy;
