@@ -27,6 +27,8 @@ classdef PTKEditManager < PTKTool
         BrushSize = 15 % Minimum size of the gaussian used to adjust the distance tranform
         
         LockToBorderDistance = 10 % When the mouse is closer to the border then this, the brush will actually be applied on the border
+        
+        MinimumEditVolume = [20, 20, 20] % Post-edit processing (such as removing orphaned regions) is applied to this grid
     end
     
     properties (SetAccess = private)
@@ -47,12 +49,15 @@ classdef PTKEditManager < PTKTool
         Enabled = false
         
         OverlayChangeLock
+        
+        UndoStack
     end
     
     methods
         function obj = PTKEditManager(viewer_panel)
             obj.ViewerPanel = viewer_panel;
             obj.OverlayChangeLock = false;
+            obj.UndoStack = PTKUndoStack([], 5);
             obj.InitialiseEditMode;
         end
         
@@ -62,7 +67,12 @@ classdef PTKEditManager < PTKTool
         end
         
         function processed = Keypress(obj, key_name)
-            processed = false;
+            processed = true;
+            if strcmpi(key_name, 'u')
+                obj.RevertEdit;
+            else
+                processed = false;
+            end
         end
         
         function NewSliceOrOrientation(obj)
@@ -79,10 +89,11 @@ classdef PTKEditManager < PTKTool
         end
               
         function InitialiseEditMode(obj)
+            obj.UndoStack.Clear;
             if ~isempty(obj.ViewerPanel.OverlayImage)
                 if obj.ViewerPanel.OverlayImage.ImageExists
                     colours = unique(obj.ViewerPanel.OverlayImage.RawImage);
-                    obj.FixedOuterBoundary = numel(colours) > 2;
+                    obj.FixedOuterBoundary = numel(colours) > 3;
                 end
             end
         end
@@ -154,9 +165,7 @@ classdef PTKEditManager < PTKTool
             
             slice_number = obj.ViewerPanel.SliceNumber(orientation);
             image_slice = obj.ViewerPanel.OverlayImage.GetSlice(slice_number, obj.ViewerPanel.Orientation);
-            
-            
-%             dt_closest =  bwdist(image_slice == closest_colour);
+                        
             dt_second_closest =  bwdist(image_slice == second_closest_colour);
             
             distance = dt_second_closest(x_coord, y_coord);
@@ -185,19 +194,19 @@ classdef PTKEditManager < PTKTool
         function MouseDown(obj, coords)
             if obj.Enabled
                 if obj.ViewerPanel.OverlayImage.ImageExists
-%                 obj.IsDragging = true;
+                    obj.ViewerPanel.ShowWaitCursor;
+                    
                     obj.StartBrush(coords);
+                    obj.ApplyBrush(coords);
+                    
+                    obj.ViewerPanel.HideWaitCursor;
+
                 end
             end
         end
         
         function MouseUp(obj, coords)
             if obj.Enabled
-                    obj.ApplyBrush(coords);
-                
-%                 if obj.IsDragging
-%                     obj.IsDragging = false;
-%                 end
             end
         end
 
@@ -233,7 +242,7 @@ classdef PTKEditManager < PTKTool
                 end
                 
                 gaussian_size = max(obj.BrushSize, distance_2d/2);
-                gaussian_image = PTKNormalisedGaussianKernel(voxel_size, gaussian_size);
+                gaussian_image = PTKNormalisedGaussianKernel(voxel_size, gaussian_size, obj.MinimumEditVolume);
                 
                 local_size = size(gaussian_image);
                 
@@ -251,10 +260,16 @@ classdef PTKEditManager < PTKTool
                 max_coords = min(max_coords, image_size);
                 
                 raw_image = obj.ViewerPanel.OverlayImage.RawImage;
-                subimage = raw_image(min_coords(1):max_coords(1), min_coords(2):max_coords(2), min_coords(3):max_coords(3));
-                dt_subimage_second = bwdist(subimage == second_closest_colour);
                 
-                filtered_dt = PTKGaussianFilter(PTKImage(dt_subimage_second, PTKImageType.Grayscale, voxel_size), 2);
+                cropped_image = obj.ViewerPanel.OverlayImage.Copy;
+                cropped_image.Crop(min_coords, max_coords);
+                subimage = cropped_image.RawImage;
+                
+                dt_subimage_second = cropped_image.BlankCopy;
+                dt_subimage_second.ChangeRawImage(cropped_image.RawImage == second_closest_colour);
+                dt_subimage_second = PTKImageUtilities.GetNonisotropicDistanceTransform(dt_subimage_second);
+                
+                filtered_dt = PTKGaussianFilter(dt_subimage_second, 2);
                 dt_subimage_second = filtered_dt.RawImage;
                 
                 
@@ -268,29 +283,49 @@ classdef PTKEditManager < PTKTool
                 add_mask = add_mask(brush_min_coords(1) : brush_max_coords(1), brush_min_coords(2) : brush_max_coords(2), brush_min_coords(3) : brush_max_coords(3));
                 
                 dt_subimage_second = dt_subimage_second + add_mask;
-%                 dt_subimage_first = dt_subimage_first - add_mask;
                 
-                old_subimage = subimage;
+                old_subimage = cropped_image.RawImage;
                 
+                % Get new segmentation based on the modified distance transform
                 subimage(old_subimage == closest_colour & dt_subimage_second <= 0) = second_closest_colour;
-
-                subimage = PTKFillHolesForDualColourImageColours(subimage, closest_colour, second_closest_colour);
+                
+                % Perform a morphological opening to force disconnection of neighbouring
+                % segments, which will be removed in the hole filling step
+                cropped_image_copy = cropped_image.BlankCopy;
+                cropped_image_copy.ChangeRawImage(subimage == closest_colour);
+                cropped_image_copy.BinaryMorph(@imopen, 2);
+                subimage((subimage == closest_colour) & (~cropped_image_copy.RawImage)) = second_closest_colour;
+                
+                % Fill holes for all colours
+                subimage = PTKFillHolesForMultiColourImage(subimage, ~obj.FixedOuterBoundary);
                 
                 raw_image(min_coords(1):max_coords(1), min_coords(2):max_coords(2), min_coords(3):max_coords(3)) = subimage;
                 
+                obj.ApplyEditToImage(raw_image);
                 
                 
-                obj.OverlayChangeLock = true;
-                obj.ViewerPanel.OverlayImage.ChangeRawImage(raw_image);
-                obj.OverlayChangeLock = false;
 
             end
         end
         
+        function ApplyEditToImage(obj, new_image)
+            obj.OverlayChangeLock = true;
+            current_image = obj.ViewerPanel.OverlayImage.RawImage;
+            obj.UndoStack.Push({current_image});
+            obj.ViewerPanel.OverlayImage.ChangeRawImage(new_image);
+            obj.OverlayChangeLock = false;
+        end
+        
+        function RevertEdit(obj)
+            old_image = obj.UndoStack.Pop;
+            if ~isempty(old_image)
+                obj.OverlayChangeLock = true;
+                obj.ViewerPanel.OverlayImage.ChangeRawImage(old_image);
+                obj.OverlayChangeLock = false;
+            end
+        end
         
         function MouseHasMoved(obj, viewer_panel, coords, last_coords, mouse_is_down)
-%             if obj.Enabled
-%             end
         end        
         
         function image_coords = GetImageCoordinates(obj, coords)
