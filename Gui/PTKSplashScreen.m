@@ -45,6 +45,10 @@ classdef PTKSplashScreen < PTKProgressInterface
         
         TimerRef
         MaxTimeBetweenUpdates = 0.25
+        
+        PanelIsShown = false
+        LastText
+        LastTitle
     end
         
     methods
@@ -182,8 +186,16 @@ classdef PTKSplashScreen < PTKProgressInterface
     
     methods (Access = private)
         function Update(obj)
-            set(obj.ProgressTitle, 'String', obj.DialogTitle);
-            set(obj.Text, 'String', obj.DialogText);
+            if isempty(obj.LastTitle) || ~strcmp(obj.DialogTitle, obj.LastTitle)
+                set(obj.ProgressTitle, 'String', obj.DialogTitle);
+                obj.LastTitle = obj.DialogTitle;
+            end
+            
+            if isempty(obj.LastText) || ~strcmp(obj.DialogText, obj.LastText)
+                set(obj.Text, 'String', obj.DialogText);
+                obj.LastText = obj.DialogText;
+            end
+            
             obj.ProgressBarHandle.setValue(obj.ProgressValue);
             
             if isempty(obj.TimerRef) || toc(obj.TimerRef) > obj.MaxTimeBetweenUpdates
@@ -193,7 +205,7 @@ classdef PTKSplashScreen < PTKProgressInterface
         end
         
         function ShowPanel(obj)
-            if obj.Disabled
+            if obj.Disabled || obj.PanelIsShown
                 return;
             end            
             set(obj.Text, 'Visible', 'on');
@@ -206,11 +218,12 @@ classdef PTKSplashScreen < PTKProgressInterface
             set(obj.Cancel, 'Visible', 'on');
             set(obj.ProgressBarHandle, 'visible', 1);
             
-            
+            obj.PanelIsShown = true;            
         end
         
         function HidePanel(obj)
-            if obj.Disabled
+            
+            if obj.Disabled || ~obj.PanelIsShown
                 return;
             end
             
@@ -219,6 +232,7 @@ classdef PTKSplashScreen < PTKProgressInterface
             set(obj.Quit, 'Visible', 'off');
             set(obj.Cancel, 'Visible', 'off');
             set(obj.ProgressBarHandle, 'visible', 0);
+            obj.PanelIsShown = false;
         end
         
         function CancelButton(obj, ~, ~)
