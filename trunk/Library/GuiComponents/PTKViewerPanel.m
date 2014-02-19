@@ -110,6 +110,8 @@ classdef PTKViewerPanel < handle
         MouseIsDown = false
         
         ToolOnMouseDown
+        
+        LastCursor
     end
 
     events
@@ -434,6 +436,24 @@ classdef PTKViewerPanel < handle
                 zoom(obj.Axes, 'off');
             end
         end
+        
+        function ShowWaitCursor(obj)
+            if isempty(obj.LastCursor)
+                obj.LastCursor = get(obj.FigureHandle, 'Pointer');
+            end
+            
+            set(obj.FigureHandle, 'Pointer', 'watch');
+            drawnow;
+
+        end
+        
+        function HideWaitCursor(obj)
+            set(obj.FigureHandle, 'Pointer', obj.LastCursor);
+            obj.LastCursor = [];
+            drawnow;
+        end
+        
+        
     end
     
     methods (Access=private)
@@ -1022,8 +1042,16 @@ classdef PTKViewerPanel < handle
                     image_slice = obj.GetImageSlice(image_object);
                     image_type = image_object.ImageType;
 
-                    if (image_type == PTKImageType.Scaled) || (image_type == PTKImageType.Colormap)
+                    if (image_type == PTKImageType.Scaled)
                         limits = image_object.Limits;
+                    elseif (image_type == PTKImageType.Colormap)
+                        
+                        % For unsigned types, we don't need the limits (see GetImage() below)
+                        if isa(image_slice, 'uint8') || isa(image_slice, 'uint16')
+                            limits = [];
+                        else
+                            limits = image_object.Limits;
+                        end
                     else
                         limits = [];
                     end
@@ -1377,8 +1405,9 @@ classdef PTKViewerPanel < handle
             end
         end
 
-        
     end
+    
+    
     methods (Access = private, Static)
         
         function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level, black_is_transparent, map)
@@ -1387,7 +1416,11 @@ classdef PTKViewerPanel < handle
                     rescaled_image_slice = PTKViewerPanel.RescaleImage(image_slice, window, level);
                     [rgb_slice, alpha_slice] = PTKViewerPanel.GetBWImage(rescaled_image_slice);
                 case PTKImageType.Colormap
-                    if limits(1) < 0
+                    
+                    % An empty limits indicates the value should never be below zero. This saves
+                    % having to fetch the actual limits in the calling function, which is slow if
+                    % done interactively
+                    if ~isempty(limits) && limits(1) < 0
                         image_slice = image_slice - limits(1);
                     end
                     [rgb_slice, alpha_slice] = PTKViewerPanel.GetLabeledImage(image_slice, map);
