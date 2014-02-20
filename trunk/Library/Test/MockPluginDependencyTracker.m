@@ -48,8 +48,8 @@ classdef MockPluginDependencyTracker < handle
             
         end
         
-        function SaveEditedResult(obj, plugin_name, context, result, reporting)
-            obj.SavedMockResults([plugin_name '.' char(context)]) = result;
+        function SaveEditedResult(obj, plugin_name, context, result, dataset_uid, reporting)
+            obj.SavedMockResults([plugin_name '.' char(context) '.' dataset_uid]) = result;
         end
 
         function valid = CheckDependencyValid(obj, next_dependency, reporting)
