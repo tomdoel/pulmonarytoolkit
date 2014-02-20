@@ -274,19 +274,35 @@ classdef PTKImageCoordinateUtilities
         function flip = GetFlip(orientation, reporting)
             % The orientation vector is formed of cosines. Typically these will
             % be 1s and 0s but we allow for small variations in the angles.
-            orientation_vector = round(abs(orientation));
+            orientation_vector = round(abs(orientation(1:6)));
             
             if isequal(orientation_vector, [1, 0, 0, 0, 1, 0]) || isequal(orientation_vector, [1; 0; 0; 0; 1; 0])
                 flip = [false, false, true];
-            elseif isequal(orientation_vector, [0, 1, 0, 1, 0, 0]) || isequal(orientation_vector, [1; 0; 0; 0; 1; 0])
+            elseif isequal(orientation_vector, [0, 1, 0, 1, 0, 0]) || isequal(orientation_vector, [0; 1; 0; 1; 0; 0])
                 flip = [false, false, true];
             elseif isequal(orientation_vector, [1, 0, 0, 0, 0, 1]) || isequal(orientation_vector, [1; 0; 0; 0; 0; 1])
-                flip = [false, false, false];
+                flip = [false, false, true];
             elseif isequal(orientation_vector, [0, 1, 0, 0, 0, 1]) || isequal(orientation_vector, [0; 1; 0; 0; 0; 1])
                 flip = [false, false, false];
             else
                 reporting.Error('PTKImageCoordinateUtilities:UnknownOrientationVector', 'GetDimensionIndexFromOrientation() was called with an unknown orientation vector.');
             end
+            
+            if numel(orientation) == 9
+                orientation_sum = orientation(1:3) + orientation(4:6)+ orientation(7:9);;
+            else
+                orientation_sum = orientation(1:3) + orientation(4:6);
+            end
+            
+            if round(orientation_sum(1)) == -1
+                flip(2) = ~flip(2);
+            end
+            if round(orientation_sum(2)) == -1
+                flip(1) = ~flip(1);
+            end
+            if round(orientation_sum(3)) == -1
+                flip(3) = ~flip(3);
+            end            
         end
         
         function spline_points = CreateSplineCurve(points, num_points)
