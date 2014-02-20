@@ -56,8 +56,8 @@ classdef TestContextHierarchy < PTKTest
             % Test saving an edited version of this result
             edited_image_1 = PTKImage;
             edited_image_1.Title = 'Edited Image 1';
-            context_hierarchy.SaveEditedResult(plugin_1, PTKContext.LungROI, edited_image_1, mock_plugin_info, [], mock_reporting);            
-            saved_edited_result = mock_dependency_tracker.SavedMockResults([plugin_1 '.' char(PTKContext.LungROI)]);
+            context_hierarchy.SaveEditedResult(plugin_1, PTKContext.LungROI, edited_image_1, mock_plugin_info, [], dataset_uid_1, mock_reporting);
+            saved_edited_result = mock_dependency_tracker.SavedMockResults([plugin_1 '.' char(PTKContext.LungROI) '.' dataset_uid_1]);
             obj.Assert(strcmp(saved_edited_result.Title, edited_image_1.Title), 'Expected image');
             
 
@@ -86,8 +86,8 @@ classdef TestContextHierarchy < PTKTest
             % Test saving an edited version of this result
             edited_image_2 = PTKImage;
             edited_image_2.Title = 'Edited Image 2';
-            context_hierarchy.SaveEditedResult(plugin_2, PTKContext.OriginalImage, edited_image_2, mock_plugin_info_2, [], mock_reporting);            
-            saved_edited_result = mock_dependency_tracker.SavedMockResults([plugin_2 '.' char(PTKContext.OriginalImage)]);
+            context_hierarchy.SaveEditedResult(plugin_2, PTKContext.OriginalImage, edited_image_2, mock_plugin_info_2, [], dataset_uid_1, mock_reporting);            
+            saved_edited_result = mock_dependency_tracker.SavedMockResults([plugin_2 '.' char(PTKContext.OriginalImage) '.' dataset_uid_1]);
             obj.Assert(strcmp(saved_edited_result.Title, edited_image_2.Title), 'Expected image');
             
         end
@@ -145,8 +145,8 @@ classdef TestContextHierarchy < PTKTest
             edited_image_1 = output_image.Copy;
             edited_image_1.ChangeRawImage(edited_image_1.RawImage + 10);
             edited_image_1.Title = 'Edited Image 1';
-            context_hierarchy.SaveEditedResult(plugin_2, PTKContext.LungROI, edited_image_1, mock_plugin_info_2, [], mock_reporting);            
-            saved_edited_result_oi = mock_dependency_tracker.SavedMockResults([plugin_2 '.' char(PTKContext.OriginalImage)]);
+            context_hierarchy.SaveEditedResult(plugin_2, PTKContext.LungROI, edited_image_1, mock_plugin_info_2, [], dataset_uid_2, mock_reporting);
+            saved_edited_result_oi = mock_dependency_tracker.SavedMockResults([plugin_2 '.' char(PTKContext.OriginalImage) '.' dataset_uid_2]);
             obj.Assert(strcmp(saved_edited_result_oi.Title, edited_image_1.Title), 'Expected image');
             obj.Assert(isequal(saved_edited_result_oi.ImageSize, image_2.ImageSize), 'Image has been resized');
         end
@@ -619,8 +619,8 @@ classdef TestContextHierarchy < PTKTest
             edited_image_1 = output_image.Copy;
             edited_image_1.ChangeRawImage(edited_image_1.RawImage + 10);
             edited_image_1.Title = 'Edited Image 1';
-            context_hierarchy.SaveEditedResult(plugin, PTKContext.RightLung, edited_image_1, mock_plugin_info, [], mock_reporting);            
-            saved_edited_result_oi = mock_dependency_tracker.SavedMockResults([plugin '.' char(PTKContext.LungROI)]);
+            context_hierarchy.SaveEditedResult(plugin, PTKContext.RightLung, edited_image_1, mock_plugin_info, [], dataset_uid, mock_reporting);
+            saved_edited_result_oi = mock_dependency_tracker.SavedMockResults([plugin '.' char(PTKContext.LungROI) '.' dataset_uid]);
             obj.Assert(strcmp(saved_edited_result_oi.Title, edited_image_1.Title), 'Expected image');
             obj.Assert(isequal(saved_edited_result_oi.ImageSize, mock_roi_image.ImageSize), 'Image has been resized');
 
@@ -776,12 +776,12 @@ classdef TestContextHierarchy < PTKTest
             edited_image_2 = output_image.Copy;
             edited_image_2.ChangeRawImage(edited_image_2.RawImage + 10);            
             edited_image_2.Title = 'Edited Image 2';
-            context_hierarchy.SaveEditedResult(plugin5, PTKContext.LungROI, edited_image_2, mock_plugin_info5, [], mock_reporting);            
-            saved_edited_result_lu = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.LeftUpperLobe)]);
-            saved_edited_result_ll = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.LeftLowerLobe)]);
-            saved_edited_result_ru = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.RightUpperLobe)]);
-            saved_edited_result_rm = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.RightMiddleLobe)]);
-            saved_edited_result_rl = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.RightLowerLobe)]);
+            context_hierarchy.SaveEditedResult(plugin5, PTKContext.LungROI, edited_image_2, mock_plugin_info5, [], dataset_uid, mock_reporting);
+            saved_edited_result_lu = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.LeftUpperLobe) '.' dataset_uid]);
+            saved_edited_result_ll = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.LeftLowerLobe) '.' dataset_uid]);
+            saved_edited_result_ru = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.RightUpperLobe) '.' dataset_uid]);
+            saved_edited_result_rm = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.RightMiddleLobe) '.' dataset_uid]);
+            saved_edited_result_rl = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.RightLowerLobe) '.' dataset_uid]);
             
             expected_result_lu = edited_image_2.Copy;
             expected_result_lu.ResizeToMatch(lu_image);
