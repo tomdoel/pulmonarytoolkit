@@ -51,6 +51,16 @@ classdef PTKImageDatabaseSeries < handle
             end
         end
         
+        function visible_path = GetVisiblePath(obj)
+            if obj.ImageMap.Count == 1
+                filenames = obj.ImageMap.values;
+                first_filename = filenames{1};
+                visible_path = first_filename.FullFile;                
+            else
+                visible_path = obj.FirstImagePath;
+            end
+        end
+        
         function AddImage(obj, single_image_metainfo)
             obj.ImageMap(single_image_metainfo.ImageUid) = PTKFilename(single_image_metainfo.ImagePath, single_image_metainfo.ImageFilename);
         end
