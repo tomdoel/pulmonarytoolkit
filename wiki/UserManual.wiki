@@ -1,4 +1,5 @@
 #summary Guide to using the Pulmonary Toolkit.
+#sidebar UserManualSidebar
 
 = Introduction =
 
@@ -6,45 +7,3 @@ This manual covers using the Pulmonary Toolkit both as a user and as a programme
 
 The manual consists of wiki pages. Not all pages have been written yet,
 
-
-=Section 1: Installing the Pulmonary Toolkit=
-
- * [Installing Installing the Pulmonary Toolkit]
-
-=Section 2: the user interface=
-
- * [ImportingAndLoadingData Importing and loading data]
- * [PatientBrowser Selecting data with the Patient Browser]
- * [UserInterface Reading a dataset]
- * [Segmenting Segmenting the lungs, lobes, airways and segments]
- * [Visualisation Visualising segmentations in 2D and 3D]
- * [Analysis Running analysis]
- * [ManualCorrection Manual correction of segmentation results]
-
-=Section 3: Essential programming concepts=
- * [Contexts Contexts (regions of interest)]
- * [Plugins Plugins]
- * [Metrics Metrics (measurement results)]
- * [PTKResultsTable Table data structure for storing results]
- * [PTKImage Image format]
-
-=Section 4: Using PTK through Scripting=
- * The PTKMain object
-
-=Section 5: More PTK features
- * Built-in timing functions
- * Handling of errors, warnings and logging
-
-=Section 6: Useful library functions
- * [Visualisation Visualisation]
- * Importing and exporting images, airway trees
- * Saving data to CSV files
- * Plotting graphs
-
-=Section 7: Writing your own plugins and libraries=
- * [Plugins Writing a Plugin class]
-
-=Section 8: Architecture=
- * How a plugin call works
- * Dependency checking
- * Files and directories
