@@ -22,6 +22,9 @@ classdef PTKImageDatabase < handle
         Version  
         
         VersionHasChanged
+        
+        CachedSortedPaths
+        CachedSortedUids
     end
     
     methods
@@ -40,10 +43,6 @@ classdef PTKImageDatabase < handle
             patient = obj.PatientMap(patient_id);
             series = patient.AddImage(single_image_metainfo);
             obj.SeriesMap(series.SeriesUid) = series;
-        end
-        
-        function AddPatient(obj, patient_name, patient_id)
-            obj.PatientMap(patient_id) = PTKImageDatabasePatient(patient_name, patient_id);
         end
         
         function patient_info = GetPatients(obj)
@@ -76,6 +75,31 @@ classdef PTKImageDatabase < handle
         
         function series_exists = SeriesExists(obj, series_uid)
             series_exists = obj.SeriesMap.isKey(series_uid);
+        end
+        
+        function [paths, uids] = GetListOfPaths(obj)
+            if ~isempty(obj.CachedSortedPaths) && ~isempty(obj.CachedSortedUids)
+                paths = obj.CachedSortedPaths;
+                uids = obj.CachedSortedUids;
+                return;
+            end
+            
+            if obj.SeriesMap.isempty
+                paths = [];
+                uids = [];
+            else
+                uids = obj.SeriesMap.keys;
+                values = obj.SeriesMap.values;
+                paths = PTKContainerUtilities.GetFieldValuesFromSet(values, 'GetVisiblePath');
+                
+                % Sort the uids and paths by the pathname
+                [~, sorted_indices] = PTKTextUtilities.SortFilenames(paths);
+                paths = paths(sorted_indices);
+                uids = uids(sorted_indices);
+            end
+            obj.CachedSortedPaths = paths;
+            obj.CachedSortedUids = uids;
+
         end
         
         function [names, ids, short_visible_names] = GetListOfPatientNames(obj)
@@ -114,7 +138,8 @@ classdef PTKImageDatabase < handle
             if obj.PatientMap(patient_id).GetNumberOfSeries < 1
                 obj.PatientMap.remove(patient_id)
             end
-            obj.SeriesMap.remove(series_uid)
+            obj.SeriesMap.remove(series_uid);
+            obj.InvalidateCachedPaths;
             obj.SaveDatabase(reporting);
         end
 
@@ -205,6 +230,7 @@ classdef PTKImageDatabase < handle
             
             if database_changed || obj.GetAndResetVersionChanged
                 reporting.UpdateProgressAndMessage(100, 'Saving changes to database');
+                obj.InvalidateCachedPaths;
                 obj.SaveDatabase(reporting);
             end
             
@@ -229,6 +255,16 @@ classdef PTKImageDatabase < handle
             has_changed = obj.VersionHasChanged;
             obj.VersionHasChanged = false;
         end
+        
+        function InvalidateCachedPaths(obj)
+            obj.CachedSortedPaths = [];
+            obj.CachedSortedUids = [];            
+        end
+        
+        function AddPatient(obj, patient_name, patient_id)
+            obj.PatientMap(patient_id) = PTKImageDatabasePatient(patient_name, patient_id);
+        end
+        
     end
     
     methods (Static)

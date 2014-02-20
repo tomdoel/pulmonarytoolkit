@@ -22,14 +22,16 @@ classdef PTKDropDownLoadMenuManager < handle
         
     properties (Access = private)
         MenuHandle
+        ImageDatabase
         Settings
-        SortedInfoList
+        SortedUidList
     end
     
     methods
-        function obj = PTKDropDownLoadMenuManager(settings, popupmenu_handle)
+        function obj = PTKDropDownLoadMenuManager(settings, popupmenu_handle, image_database)
             obj.MenuHandle = popupmenu_handle;
             obj.Settings = settings;
+            obj.ImageDatabase = image_database;
             
             % There is no need to call obj.UpdateQuickLoadMenu here provided the
             % menu is always updated after the first load in PTKGui.
@@ -38,34 +40,24 @@ classdef PTKDropDownLoadMenuManager < handle
         end
         
         function UpdateQuickLoadMenu(obj)
-            prev_infos = obj.Settings.PreviousImageInfos;
-            if isempty(prev_infos)
-                sorted_infos = [];
-                sorted_paths = [];
-            else
-                prev_paths = PTKDropDownLoadMenuManager.GetListOfPaths(prev_infos);
-                
-                [~, sorted_indices] = PTKTextUtilities.SortFilenames(prev_paths);
-                sorted_paths = prev_paths(sorted_indices);
-                sorted_infos = prev_infos.values;
-                sorted_infos = sorted_infos(sorted_indices);
-            end
+            [sorted_paths, sorted_uids] = obj.ImageDatabase.GetListOfPaths;
             
-            obj.SortedInfoList = sorted_infos;
+            obj.SortedUidList = sorted_uids;
             
             obj.SetMenuText(sorted_paths);
 
             obj.SelectCurrentlyLoadedDataset;
         end
         
-        function image_info = GetImageInfoForIndex(obj, index)
-            previous_infos = obj.SortedInfoList;
-            if isempty(previous_infos) || (index == 1)
-                image_info = [];
+        function image_uid = GetImageUidForIndex(obj, index)
+            previous_uids = obj.SortedUidList;
+            if isempty(previous_uids) || (index == 1)
+                image_uid = [];
             else
-                image_info = previous_infos{index - 1};
+                image_uid = previous_uids{index - 1};
             end
         end
+        
     end
     
     methods (Access = private)
@@ -97,39 +89,13 @@ classdef PTKDropDownLoadMenuManager < handle
         % currently loaded dataset. An empty value means 'No Dataset'.
         function current_index = GetCurrentlyLoadedInfoIndex(obj)
             current_index = [];
-            uids = PTKContainerUtilities.GetFieldValuesFromSet(obj.SortedInfoList, 'ImageUid');
+            uids = obj.SortedUidList;
             if ~isempty(obj.Settings.ImageInfo) && ~isempty(obj.Settings.ImageInfo.ImageUid)
                 current_uid = obj.Settings.ImageInfo.ImageUid;
                 current_index = find(ismember(uids, current_uid), 1);
             end
         end
         
-    end
-    
-    methods (Static, Access = private)
-        
-        % Constructs a list of paths from a list of PTKImageInfos.
-        function prev_paths = GetListOfPaths(prev_infos)
-            infos = prev_infos.values;
-            prev_paths = [];
-            for index = 1 : length(infos)
-                if ~isempty(infos{index})
-                    if isempty(infos{index}.ImageFilenames) || (length(infos{index}.ImageFilenames) > 1)
-                        display_path = infos{index}.ImagePath;
-                    else
-                        first_filename = infos{index}.ImageFilenames{1};
-                        if isa(first_filename, 'PTKFilename')
-                            display_path = first_filename.FullFile;
-                        else
-                            display_path = fullfile(infos{index}.ImagePath, infos{index}.ImageFilenames{1});
-                        end
-                    end
-                    prev_paths{index} = display_path;
-                end
-            end
-        end
-        
-    end
-    
+    end    
 end
 

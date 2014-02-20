@@ -121,11 +121,7 @@ classdef PTKGui < handle
                 set(obj.FigureHandle, 'Position', obj.Settings.ScreenPosition);
             end
             
-            % Check if any datasets in cache exist which are not part of the
-            % drop-down menu
-            obj.AddAllDatasetsInCacheToDropDownMenu([], false);
-            
-            obj.DropDownLoadMenuManager = PTKDropDownLoadMenuManager(obj.Settings, obj.PopupmenuLoadHandle);
+            obj.DropDownLoadMenuManager = PTKDropDownLoadMenuManager(obj.Settings, obj.PopupmenuLoadHandle, obj.Ptk.ImageDatabase);
 
             obj.PluginsPanel.AddPlugins(@obj.RunPluginCallback, @obj.RunGuiPluginCallback, []);
             
@@ -247,14 +243,12 @@ classdef PTKGui < handle
                 % Import all datasets from this path
                 uids = obj.Ptk.ImportDataRecursive(folder_path);
                 
-                % Add any new datasets to the menu
-                obj.AddAllDatasetsInCacheToDropDownMenu(uids, false);
+                % Add any new datasets to the patient browser
+                obj.DatabaseHasChanged;
                 
                 % Update the menu
                 obj.DropDownLoadMenuManager.UpdateQuickLoadMenu;
                 
-                % Add any new datasets to the patient browser
-                obj.DatabaseHasChanged;
             end
         end
                
@@ -388,12 +382,6 @@ classdef PTKGui < handle
                 obj.Dataset.DeleteCacheForThisDataset;
                 image_info = obj.Dataset.GetImageInfo;
                 
-                old_infos = obj.Settings.PreviousImageInfos;
-                if old_infos.isKey(image_info.ImageUid)
-                    old_infos.remove(image_info.ImageUid);
-                    obj.Settings.PreviousImageInfos = old_infos;
-                end
-                
                 obj.Ptk.ImageDatabase.DeleteSeries(image_info.ImageUid, obj.Reporting);
                 obj.DatabaseHasChanged;
                 
@@ -415,10 +403,6 @@ classdef PTKGui < handle
             obj.SetCurrentPluginAndUpdateFigureTitle([]);
         end
         
-        function RebuildDropDownLoadMenu(obj)
-            obj.AddAllDatasetsInCacheToDropDownMenu([], true);
-        end
-        
         function LoadFromPatientBrowser(obj, series_uid)
             obj.BringToFront;
             obj.LoadFromUid(series_uid);
@@ -438,81 +422,6 @@ classdef PTKGui < handle
     
     
     methods (Access = private)
-        
-        function AddAllDatasetsInCacheToDropDownMenu(obj, uids_to_update, rebuild_menu)
-            % Checks the disk cache and adds any missing datasets to the drop-down
-            % load menu. Specifying a list of uids forces those datasets to update.
-            % The rebuild_menu flag builds the load menu from scratch
-            
-            % Get the complete list of cache folders, unless we are only
-            % updating specific uids
-            if isempty(uids_to_update) || rebuild_menu
-                uids = obj.Ptk.ImageDatabase.GetSeriesUids;
-            else
-                uids = uids_to_update;
-            end
-            
-            % If we are rebuilding the menu or are updating specific uids then
-            % we force each menu entry to be updated
-            if ~isempty(uids_to_update) || rebuild_menu
-                rebuild_menu_for_each_uid = true;
-            else
-                rebuild_menu_for_each_uid = false;
-            end
-            
-            % If we are rebuilding the menu then remove existings entries
-            if rebuild_menu
-                old_infos = containers.Map;
-            else
-                old_infos = obj.Settings.PreviousImageInfos;
-            end
-            settings_changed = false;
-            database_changed = false;
-            
-            for uid = uids
-                temporary_uid = uid{1};
-                if ~old_infos.isKey(temporary_uid) || rebuild_menu_for_each_uid
-                    if ~rebuild_menu_for_each_uid
-                        obj.Reporting.ShowMessage('PTKGui:UnimportedDatasetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the settings file. I am adding this dataset to the quick load menu. This may occur if the settings file was recently removed.']);
-                    end
-                    try
-                        cache_parent_directory = PTKDirectories.GetCacheDirectory;
-                        temporary_disk_cache = PTKDiskCache(cache_parent_directory, temporary_uid, obj.Reporting);
-                        temporary_image_info = temporary_disk_cache.Load(PTKSoftwareInfo.ImageInfoCacheName, [], obj.Reporting);
-                        if ~isempty(temporary_image_info)
-                            old_infos(temporary_uid) = temporary_image_info;
-                            obj.Settings.PreviousImageInfos = old_infos;
-                            settings_changed = true;
-                        else
-                            obj.Reporting.ShowWarning('PTKGui:DatasetHasNoImageInfo', 'A folder was found in the disk cache with no PKTImageInfo file. I am moving this folder to the recycle bin', []);
-                            temporary_disk_cache.DatasetDiskCache.Delete(obj.Reporting);
-                            if old_infos.isKey(temporary_uid)
-                                old_infos.remove(temporary_uid);
-                                obj.Settings.PreviousImageInfos = old_infos;
-                                settings_changed = true;
-                            end
-                            
-                            if obj.Ptk.SeriesExists(temporary_uid)
-                                obj.Ptk.ImageDatabase.DeleteSeries(temporary_uid, obj.Reporting);
-                                database_changed = true;
-                            end
-                            
-                        end
-                    catch exc
-                        obj.Reporting.ShowWarning('PTKGui:AddDatasetToMenuFailed', ['An error occured when adding dataset ' temporary_uid ' to the quick load menu. Error: ' exc.message], exc);
-                    end
-                end                
-            end
-            
-            if settings_changed
-                obj.SaveSettings;
-            end
-            
-            if database_changed
-                obj.DatabaseHasChanged;
-            end
-
-        end
         
         function RunPluginTryCatchBlock(obj, plugin_name)
             wait_dialog = obj.WaitDialogHandle;
@@ -676,15 +585,10 @@ classdef PTKGui < handle
         end
         
         function LoadFromPopupMenu(obj, index)            
-            image_info = obj.DropDownLoadMenuManager.GetImageInfoForIndex(index);
 
             % Get the UID of the newly selected dataset
-            if isempty(image_info)
-                selected_image_uid = [];
-            else
-                selected_image_uid = image_info.ImageUid;
-            end
-            
+            selected_image_uid = obj.DropDownLoadMenuManager.GetImageUidForIndex(index);
+
             % Get the UID of the currently loaded dataset
             if ~isempty(obj.Settings.ImageInfo) && ~isempty(obj.Settings.ImageInfo.ImageUid)
                 currently_loaded_image_UID = obj.Settings.ImageInfo.ImageUid;
@@ -703,8 +607,8 @@ classdef PTKGui < handle
             % keyboard shortcuts. This will prevent the loading function from
             % being called twice
             if ~image_already_loaded
-                if ~isempty(image_info)
-                    obj.LoadImages(image_info);
+                if ~isempty(selected_image_uid)
+                    obj.LoadImages(selected_image_uid);
                 else
                     % Clear dataset
                     obj.ClearDataset(obj.WaitDialogHandle);
@@ -822,13 +726,6 @@ classdef PTKGui < handle
                 
                 if ~isequal(image_info, obj.Settings.ImageInfo)
                     obj.Settings.ImageInfo = image_info;
-                    settings_changed = true;
-                end
-                
-                old_infos = obj.Settings.PreviousImageInfos;
-                if ~old_infos.isKey(image_info.ImageUid)
-                    old_infos(image_info.ImageUid) = image_info;
-                    obj.Settings.PreviousImageInfos = old_infos;
                     settings_changed = true;
                 end
                 
