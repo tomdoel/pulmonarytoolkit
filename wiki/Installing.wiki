@@ -1,5 +1,5 @@
 #summary How to install the Pulmonary Toolkit and enable all features
-
+#sidebar UserManualSidebar
 
 = Requirements =
 
