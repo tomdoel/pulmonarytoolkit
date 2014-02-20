@@ -1,4 +1,4 @@
-classdef PTKViewer < handle
+classdef PTKViewer < PTKFigure
     % PTKViewer. A standalone image viewer for showing 3D images slice-by-slice
     %
     %     PTKViewer uses PTKViewerPanel to create a visualisation window for the
@@ -29,66 +29,49 @@ classdef PTKViewer < handle
     %    
 
     properties
-        FigureHandle
         ViewerPanelHandle
-        ImageHandle
-    end
-
-    properties (Dependent = true)
-        Title
     end
 
     methods
-        function obj = PTKViewer(image, type)
-            obj.FigureHandle = figure;
-            set(obj.FigureHandle, 'NumberTitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none');
-            obj.ViewerPanelHandle = PTKViewerPanel(obj.FigureHandle);
+        function obj = PTKViewer(image, type, reporting)
+            if nargin < 3
+                reporting = PTKReportingDefault;
+            end
+            
             if nargin < 1
                 image = [];
             end
             if isa(image, 'PTKImage')
-                obj.ImageHandle = image;
+                image_handle = image;
                 if ~isempty(image.Title)
-                    obj.Title = image.Title;
+                    title = image.Title;
                 else
-                    obj.Title = 'PTKViewer';
+                    title = 'PTKViewer';
                 end
             else
                 if nargin < 2
-                    obj.ImageHandle = PTKImage(image);
+                    image_handle = PTKImage(image);
                 else
-                    obj.ImageHandle = PTKImage(image, type);
+                    image_handle = PTKImage(image, type);
                 end
-                obj.Title = 'PTKViewer';
+                title = 'PTKViewer';
             end
-            obj.ViewerPanelHandle.BackgroundImage = obj.ImageHandle;
+            
+            % Call the base class to initialise the hidden window
+            obj = obj@PTKFigure(title, [], reporting);
 
-            % Set custom function for application closing
-            set(obj.FigureHandle, 'CloseRequestFcn', @obj.CustomCloseFunction);
-
+            % Set the initial size
+            obj.Resize([100 50 700 600]);
+            
+            % Create the figure
+            obj.Show(reporting);
+            
+            obj.ViewerPanelHandle = PTKViewerPanel(obj.GraphicalComponentHandle);            
+            obj.ViewerPanelHandle.BackgroundImage = image_handle;            
         end
         
         function delete(obj)
             delete(obj.ViewerPanelHandle);
-            if ishandle(obj.FigureHandle)
-                delete(obj.FigureHandle);
-            end
-        end
-
-        function title = get.Title(obj)
-            title = get(obj.FigureHandle, 'Name');
-        end
-        
-        function set.Title(obj, title)
-            set(obj.FigureHandle, 'Name', title);
-        end
-
-    end
-
-    methods (Access = private)
-
-        function CustomCloseFunction(obj, ~, ~)
-            delete(obj);
         end
 
     end
