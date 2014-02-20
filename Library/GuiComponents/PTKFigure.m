@@ -10,13 +10,17 @@ classdef PTKFigure < PTKUserInterfaceObject
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
-    properties (Access = protected)
+    properties
         Title
+    end
+    
+    properties (Access = protected)
         Reporting
         ArrowPointer
     end
     
     properties (Access = private)
+        CachedTitle
         OldResizeFunction;
         OldWindowScrollWheelFunction
     end
@@ -40,6 +44,13 @@ classdef PTKFigure < PTKUserInterfaceObject
                 % Remove custom handlers
                 set(obj.GraphicalComponentHandle, 'ResizeFcn', @obj.OldResizeFunction);
                 set(obj.GraphicalComponentHandle, 'WindowScrollWheelFcn', @obj.OldWindowScrollWheelFunction);
+            end
+        end
+        
+        function set.Title(obj, title)
+            obj.Title = title;
+            if ishandle(obj.GraphicalComponentHandle)
+                set(obj.FigureHandle, 'Name', title);
             end
         end
         
@@ -89,10 +100,10 @@ classdef PTKFigure < PTKUserInterfaceObject
             end
         end
 
-        function CustomCloseFunction(obj, src, ~)
+        function CustomCloseFunction(obj, ~, ~)
             % Our default figure behaviour is to destroy the object and its
             % controls on close
-            delete(src);
+            delete(obj);
         end
 
         function CustomWindowButtonDownFunction(obj, src, eventdata)
