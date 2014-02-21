@@ -39,6 +39,7 @@ classdef PTKDivideLungsIntoSagittalBins < PTKPlugin
             whole_lung_mask = dataset.GetTemplateImage(PTKContext.Lungs);
             orientation = PTKImageOrientation.Sagittal;            
             results = PTKDivideVolumeIntoSlices(whole_lung_mask, orientation, reporting);
+            reporting.ChangeViewingOrientation(PTKImageOrientation.Coronal);
         end
         
         function results = GenerateImageFromResults(bins_results, image_templates, reporting)
