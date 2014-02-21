@@ -116,6 +116,10 @@ classdef PTKReportingWithCache < PTKReportingInterface
             orientation = obj.Reporting.GetOrientation;
         end
         
+        function ChangeViewingOrientation(obj, orientation)
+            obj.Reporting.ChangeViewingOrientation(orientation);
+        end
+        
         function marker_image = GetMarkerImage(obj)
             marker_image = obj.Reporting.GetMarkerImage;
         end
