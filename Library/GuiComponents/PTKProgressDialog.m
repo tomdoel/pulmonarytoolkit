@@ -96,6 +96,9 @@ classdef PTKProgressDialog < PTKProgressInterface
         function Resize(~)
         end
         
+        function delete(obj)
+            obj.Hide;
+        end        
     end
     
     methods (Access = private)
@@ -109,9 +112,6 @@ classdef PTKProgressDialog < PTKProgressInterface
             end
         end
         
-        function delete(obj)
-            obj.Hide;
-        end
         
     end
 end
