@@ -15,7 +15,6 @@ classdef PTKFigure < PTKUserInterfaceObject
     end
     
     properties (Access = protected)
-        Reporting
         ArrowPointer
     end
     
@@ -26,10 +25,9 @@ classdef PTKFigure < PTKUserInterfaceObject
     end
 
     methods
-        function obj = PTKFigure(title, position, reporting)
+        function obj = PTKFigure(title, position)
             obj = obj@PTKUserInterfaceObject([]);
             obj.Title = title;
-            obj.Reporting = reporting;
             obj.ArrowPointer = 'arrow';
             
             % Set the initial position. If this is not set, you must call

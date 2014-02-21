@@ -6,6 +6,14 @@ classdef PTKViewer < PTKFigure
     %     matrix is supplied, the type argument can be supplied to ensure the
     %     image is displayed as expected.
     %
+    %     Syntax:
+    %         obj = PTKViewer;
+    %         obj = PTKViewer(image);
+    %         obj = PTKViewer(image, image_type);
+    %         obj = PTKViewer(image, image_type, reporting);
+    %         obj = PTKViewer(image, overlay_image);
+    %         obj = PTKViewer(image, overlay_image, reporting);
+    %
     %     Examples
     %     --------
     %
@@ -15,6 +23,9 @@ classdef PTKViewer < PTKFigure
     %         % Displays my_image as a greyscale image, where my_image is a 3D image.
     %         % If my_Image is a PTKImage, the type will be ignored
     %         PTKViewer(my_image, PTKImageType.Grayscale);
+    %
+    %         % Displays my_image in the background with overlay_image as an overlay
+    %         viewer = PTKViewer(my_image, overlay_image);
     %
     %         % Displays my_image as a greyscale image, and overlay_image as an indexed colour image
     %         viewer = PTKViewer(my_image, PTKImageType.Grayscale);
@@ -31,43 +42,81 @@ classdef PTKViewer < PTKFigure
     properties
         ViewerPanelHandle
     end
+    
+    properties (SetAccess = private)
+        Image
+        Overlay
+    end
 
     methods
-        function obj = PTKViewer(image, type, reporting)
-            if nargin < 3
-                reporting = PTKReportingDefault;
-            end
+        function obj = PTKViewer(image, overlay_or_type, reporting)
             
             if nargin < 1
                 image = [];
             end
+            
+            % The second argument can be the type of the image, or an overlay image
+            if nargin < 2
+                overlay = [];
+                type = [];
+            else
+                if isa(overlay_or_type, 'PTKImageType')
+                    overlay = [];
+                    type = overlay_or_type;
+                elseif isa(overlay_or_type, 'PTKImage')
+                    overlay = overlay_or_type;
+                    type = [];
+                end
+            end
+            
+            if nargin < 3
+                reporting = PTKReportingDefault;
+            end
+            
             if isa(image, 'PTKImage')
                 image_handle = image;
                 if ~isempty(image.Title)
                     title = image.Title;
-                else
-                    title = 'PTKViewer';
                 end
             else
-                if nargin < 2
+                if isempty(type)
                     image_handle = PTKImage(image);
                 else
                     image_handle = PTKImage(image, type);
                 end
-                title = 'PTKViewer';
+            end
+
+            if isa(overlay, 'PTKImage')
+                overlay_handle = overlay;
+                if isempty(title) && ~isempty(image.Title)
+                    title = image.Title;
+                end
+            else
+                overlay_handle = PTKImage(overlay);
+            end
+            
+            if isempty(title)
+                title = 'PTK Viewer';
             end
             
             % Call the base class to initialise the hidden window
-            obj = obj@PTKFigure(title, [], reporting);
+            obj = obj@PTKFigure(title, [100 50 700 600]);
 
-            % Set the initial size
-            obj.Resize([100 50 700 600]);
+            obj.Image = image_handle;
+            obj.Overlay = overlay_handle;
             
             % Create the figure
             obj.Show(reporting);
             
-            obj.ViewerPanelHandle = PTKViewerPanel(obj.GraphicalComponentHandle);            
-            obj.ViewerPanelHandle.BackgroundImage = image_handle;            
+        end
+        
+        function CreateGuiComponent(obj, position, reporting)
+            CreateGuiComponent@PTKFigure(obj, position, reporting);
+            
+            obj.ViewerPanelHandle = PTKViewerPanel(obj.GraphicalComponentHandle);
+            obj.ViewerPanelHandle.BackgroundImage = obj.Image;               
+            obj.ViewerPanelHandle.OverlayImage = obj.Overlay;
+            obj.ViewerPanelHandle.SliceNumber = max(1, round(obj.Image.ImageSize/2));
         end
         
         function delete(obj)
