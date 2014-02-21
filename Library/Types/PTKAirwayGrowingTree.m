@@ -182,7 +182,7 @@ classdef PTKAirwayGrowingTree < PTKTreeModel
                 end
                 end_point_mm = branch.EndPoint;
                 if isnan(end_point_mm)
-                    reporting.Error('PTKGrowingTreeBySegment:Nan', 'NaN found in branch coordinate');
+                    reporting.Error('PTKAirwayGrowingTree:Nan', 'NaN found in branch coordinate');
                 end
                 
                 all_starts(index, :) = [start_point_mm.CoordX, start_point_mm.CoordY, start_point_mm.CoordZ];
@@ -192,7 +192,7 @@ classdef PTKAirwayGrowingTree < PTKTreeModel
             end
             
             if terminal_index ~= num_terminal_branches + 1
-                reporting.Error('PTKGrowingTreeBySegment:TerminalBranchCountMismatch', 'A code error occurred: the termina branch count was not as expected');
+                reporting.Error('PTKAirwayGrowingTree:TerminalBranchCountMismatch', 'A code error occurred: the termina branch count was not as expected');
             end
             
             %     all_local_indices = GetAirwayModelAsLocalIndices(all_starts, all_ends);
