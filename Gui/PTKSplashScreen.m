@@ -64,7 +64,9 @@ classdef PTKSplashScreen < PTKProgressInterface & PTKFigure
             obj.Hide;
             
             % Create the figure
-            obj.Show(PTKReportingDefault);            
+            obj.Show(PTKReportingDefault);
+            
+            drawnow;
         end
         
         function Delete(obj)
