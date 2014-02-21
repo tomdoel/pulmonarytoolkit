@@ -194,18 +194,27 @@ classdef PTKDiskUtilities
             end
         end
         
-        function [filename, path_name, filter_index] = SaveImageDialogBox(path_name)
+        function [filename, path_name, save_type] = SaveImageDialogBox(path_name)
             % Dialog for exporting a 2D image
             filespec = {...
                 '*.tif', 'TIF (*.tif)';
                 '*.jpg', 'JPG (*.jpg)';
                 };
             
-            if exist(path_name, 'dir') ~= 7
+            if isempty(path_name) || ~ischar(path_name) || exist(path_name, 'dir') ~= 7
                 path_name = '';
             end
             
             [filename, path_name, filter_index] = uiputfile(filespec, 'Save image as', fullfile(path_name, ''));
+            switch filter_index
+                case 1
+                    save_type = 'tif';
+                case 2
+                    save_type = 'jpg';
+                otherwise
+                    save_type = [];
+            end
+            
         end
 
         function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
@@ -476,6 +485,22 @@ classdef PTKDiskUtilities
             print(figure_handle, '-depsc2', resolution_str, figure_filename);   % Export to .eps
             print(figure_handle, '-dpng', resolution_str, figure_filename);     % Export .png
         end
+        
+        function SaveImageCapture(capture, file_name, save_type, reporting)
+            reporting.ShowProgress('Exporting image');
+            if isa(file_name, 'PTKFilename');
+                file_name = file_name.FullFile;
+            end
+            switch save_type
+                case 'tif'
+                    imwrite(capture.cdata, file_name, 'tif');
+                case 'jpg'
+                    imwrite(capture.cdata, file_name, 'jpg', 'Quality', 70);
+                otherwise
+                    reporting.Error('PTKDiskUtilities:SaveImageCapture:UnknownImageType', ['SaveImageCapture() does not support the image type ', save_type]);
+            end
+            reporting.CompleteProgress;
+        end        
     end
 end
 
