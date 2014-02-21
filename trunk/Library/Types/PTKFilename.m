@@ -23,7 +23,13 @@ classdef PTKFilename
         end
         
         function file_name = FullFile(obj)
-            file_name= fullfile(obj.Path, obj.Name);
+            if isempty(obj.Path)
+                file_name = obj.Name;
+            elseif isempty(obj.Name)
+                file_name = obj.Path;
+            else
+                file_name = fullfile(obj.Path, obj.Name);
+            end
         end
     end
 end
