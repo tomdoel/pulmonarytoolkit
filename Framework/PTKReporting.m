@@ -147,7 +147,7 @@ classdef PTKReporting < PTKReportingInterface
         function ShowProgress(obj, text)
             adjusted_text = obj.AdjustProgressText(text);
             
-            if ~isempty(obj.ProgressDialog)
+            if ~isempty(obj.ProgressDialog) && isvalid(obj.ProgressDialog)
                 if nargin > 1
                     obj.ProgressDialog.SetProgressText(adjusted_text);
                 else
@@ -220,6 +220,12 @@ classdef PTKReporting < PTKReportingInterface
             end
         end
         
+        function ChangeViewingOrientation(obj, orientation)
+            if ~isempty(obj.ViewingPanel)
+                obj.ViewingPanel.Orientation = orientation;
+            end
+        end
+        
         function orientation = GetOrientation(obj)
             if ~isempty(obj.ViewingPanel)
                 orientation = obj.ViewingPanel.Orientation;
@@ -270,6 +276,10 @@ classdef PTKReporting < PTKReportingInterface
         function ShowAndClearPendingMessages(obj)
         end
         
+        function SetViewerPanel(obj, viewer_panel)
+            obj.ViewingPanel = viewer_panel;
+        end
+        
     end
     
     methods (Access = private)
@@ -308,6 +318,7 @@ classdef PTKReporting < PTKReportingInterface
                 obj.CurrentProgressStackItem.MaxPosition = adjusted_value + scale*value_change;
             end
         end
+        
     end
 end
 

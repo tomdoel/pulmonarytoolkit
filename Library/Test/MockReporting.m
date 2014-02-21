@@ -74,6 +74,9 @@ classdef MockReporting < PTKReportingInterface
         function ChangeViewingPosition(obj, coordinates)
         end
         
+        function ChangeViewingOrientation(obj, orientation)
+        end
+        
         function orientation = GetOrientation(obj)
         end
         

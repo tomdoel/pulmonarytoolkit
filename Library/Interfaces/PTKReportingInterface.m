@@ -84,9 +84,12 @@ classdef PTKReportingInterface < handle
         % coordinates
         ChangeViewingPosition(obj, coordinates)
         
-        % Obtains the current orientation of the GUI (if it exists), where
-        % 1 = coronal, 2 = sagittal, 3 = axial
+        % Obtains the current orientation of the GUI (if it exists)
         orientation = GetOrientation(obj)
+        
+        % Instructs the GUI (if it exists) to change the current view
+        % orientation, where Orientation is of type PTKImageOrientation
+        ChangeViewingOrientation(obj, orientation)
         
         % Obtains the current marker image from the GUI (if it exists). Only
         % used by plugins which need to interact with the marker image used wit
