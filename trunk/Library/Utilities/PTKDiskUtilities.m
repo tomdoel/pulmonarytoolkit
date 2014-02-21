@@ -11,8 +11,8 @@ classdef PTKDiskUtilities
     
     methods (Static)
         
-        % Determine if the raw image file associated with a PTKImage results file exists in the cahce
         function exists = FileExists(path_name, filename)
+            % Determine if the raw image file associated with a PTKImage results file exists in the cahce
             exists = exist(fullfile(path_name, filename), 'file');
         end
         
@@ -56,8 +56,8 @@ classdef PTKDiskUtilities
             end
         end
         
-        % Returns a path to the user's home folder
         function home_directory = GetUserDirectory
+            % Returns a path to the user's home folder
             if (ispc)
                 home_directory = getenv('USERPROFILE');
             else
@@ -79,8 +79,8 @@ classdef PTKDiskUtilities
             cd(current_path)
         end
         
-        % Returns a list of files in the specified directory
         function file_list = GetDirectoryFileList(path, filename)
+            % Returns a list of files in the specified directory
             files = dir(fullfile(path, filename));
             number_files = length(files);
             file_list = {};
@@ -93,8 +93,8 @@ classdef PTKDiskUtilities
             end
         end
         
-        % Returns a list of subdirectories in the specified directory
         function dir_list = GetListOfDirectories(path)
+            % Returns a list of subdirectories in the specified directory
             files = dir(fullfile(path, '*'));
             number_files = length(files);
             dir_list = {};
@@ -107,13 +107,14 @@ classdef PTKDiskUtilities
             end
         end
         
-        % Returns a list of all subdirectories in the specified directory, its
-        % subdictories and so on
-        % The list is returned as an array of PTKPairs. In each PTKPair, the
-        % First property is the directory path (relative to the root_path
-        % specified in the input parameter), and the Second property is the
-        % just the name of the deepest subdirectory
         function dir_list = GetRecursiveListOfDirectories(root_path)
+            % Returns a list of all subdirectories in the specified directory, its
+            % subdictories and so on
+            % The list is returned as an array of PTKPairs. In each PTKPair, the
+            % First property is the directory path (relative to the root_path
+            % specified in the input parameter), and the Second property is the
+            % just the name of the deepest subdirectory
+            
             dirs_to_do = PTKStack(PTKPair(root_path, ''));
             dirs_found = PTKStack;
             while ~dirs_to_do.IsEmpty
@@ -128,8 +129,8 @@ classdef PTKDiskUtilities
             dir_list = dirs_found.GetAndClear;
         end
         
-        % Opens an explorer/finder window at the specified path
         function OpenDirectoryWindow(directory_path)
+            % Opens an explorer/finder window at the specified path
            if ispc
                
                if ~exist(directory_path, 'dir')
@@ -145,8 +146,8 @@ classdef PTKDiskUtilities
            end
         end
         
-        % Displays a dialog for selecting files
         function [path, filenames, filter_index] = ChooseFiles(text_to_display, path, allow_multiple_files, file_spec)
+            % Displays a dialog for selecting files
             
             if isempty(path)
                 path = PTKDiskUtilities.GetUserDirectory;
@@ -174,8 +175,8 @@ classdef PTKDiskUtilities
             end
         end
         
-        % Displays a dialog for selecting a folder
         function folder_path = ChooseDirectory(text_to_display, folder_path)
+            % Displays a dialog for selecting a folder
             
             if isempty(folder_path)
                 folder_path = PTKDiskUtilities.GetUserDirectory;
@@ -191,6 +192,20 @@ classdef PTKDiskUtilities
             if folder_path == 0
                 folder_path = [];
             end
+        end
+        
+        function [filename, path_name, filter_index] = SaveImageDialogBox(path_name)
+            % Dialog for exporting a 2D image
+            filespec = {...
+                '*.tif', 'TIF (*.tif)';
+                '*.jpg', 'JPG (*.jpg)';
+                };
+            
+            if exist(path_name, 'dir') ~= 7
+                path_name = '';
+            end
+            
+            [filename, path_name, filter_index] = uiputfile(filespec, 'Save image as', fullfile(path_name, ''));
         end
 
         function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
@@ -332,9 +347,10 @@ classdef PTKDiskUtilities
             secondary_filenames = {raw_filename};
         end
         
-        % Returns a list of Matlab classes found in the specified directory which
-        % inherit from the given superclass
         function list_of_test_classes = GetListOfClassFiles(directory, superclass_name)
+            % Returns a list of Matlab classes found in the specified directory which
+            % inherit from the given superclass
+            
             list_of_test_classes = {};
             list_of_files = PTKDiskUtilities.GetDirectoryFileList(directory, '*.m');
             for file_name = list_of_files

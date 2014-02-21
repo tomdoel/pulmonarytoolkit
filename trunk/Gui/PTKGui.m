@@ -360,7 +360,7 @@ classdef PTKGui < handle
                 path_name = [];
             end
             
-            [filename, path_name, filter_index] = obj.SaveImageDialogBox(path_name);
+            [filename, path_name, filter_index] = PTKDiskUtilities.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && filter_index > 0
                 obj.Settings.SaveImagePath = path_name;
                 obj.SaveSettings;
@@ -1040,20 +1040,5 @@ classdef PTKGui < handle
             end
         end
         
-    end
-    
-    methods (Static, Access = private)
-        function [filename, path_name, filter_index] = SaveImageDialogBox(path_name)
-            filespec = {...
-                '*.tif', 'TIF (*.tif)';
-                '*.jpg', 'JPG (*.jpg)';
-                };
-            
-            if exist(path_name, 'dir') ~= 7
-                path_name = '';
-            end
-            
-            [filename, path_name, filter_index] = uiputfile(filespec, 'Save image as', fullfile(path_name, ''));
-        end
     end
 end
