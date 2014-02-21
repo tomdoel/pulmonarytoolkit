@@ -27,14 +27,15 @@ classdef PTKViewerPanel < handle
     %    
     
 
+    
     properties (SetObservable)
         Orientation = PTKImageOrientation.Coronal
         OverlayOpacity = 50
         ShowImage = true
         ShowOverlay = true
         BlackIsTransparent = true
-        Window = 1000
-        Level = 1000
+        Window = 1600
+        Level = -600
         SliceNumber = [1 1 1]
         SliceSkip = 10
         BackgroundImage
@@ -120,10 +121,6 @@ classdef PTKViewerPanel < handle
     
     methods
         function obj = PTKViewerPanel(parent)
-            
-            
-
-            
             font_size = 9;
             obj.AxisLimits = [];
             obj.AxisLimits{1} = {};
