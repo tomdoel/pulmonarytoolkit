@@ -1,4 +1,4 @@
-classdef PTKSplashScreen < PTKProgressInterface
+classdef PTKSplashScreen < PTKProgressInterface & PTKFigure
     % PTKSplashScreen. A splash screen dialog which also reports progress informaton
     %
     %     PTKSplashScreen creates a dialog with the application logo and version
@@ -14,12 +14,7 @@ classdef PTKSplashScreen < PTKProgressInterface
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
-    properties (Dependent = true)
-        Title
-    end
-
     properties (Access = private)
-        FigureHandle
         Image
         TitleText
         BodyText
@@ -33,7 +28,6 @@ classdef PTKSplashScreen < PTKProgressInterface
         Quit
         UserClickedCancel = false
 
-        Parent
         IncrementThreshold = 5
         HandleToWaitDialog
         DialogText
@@ -53,16 +47,37 @@ classdef PTKSplashScreen < PTKProgressInterface
         
     methods
         function obj = PTKSplashScreen
+            
+            % Calculate the figure windows size
             set(0, 'Units', 'pixels');
             screen_size = get(0, 'ScreenSize');
-            obj.FigureHandle = figure('Color', [1 1 1], 'Units', 'Pixels', 'ToolBar', 'none', 'Visible', 'off', 'Resize', 'off', 'MenuBar', 'none');
-            position = get(obj.FigureHandle, 'Position');
-            position(3) = 926; position(4) = 474;
+            position = [1, 1, 926, 474];
             position(1) = max(1, round((screen_size(3) - position(3))/2));
             position(2) = max(1, round((screen_size(4) - position(4))/2));
-            set(obj.FigureHandle, 'Position', position);
-            set(obj.FigureHandle, 'NumberTitle', 'off');
-            obj.Image = axes('Units', 'Pixels', 'Position', [30, 100, 333, 314]);
+            
+            % Call the base class to initialise the hidden window
+            obj = obj@PTKFigure('', position);            
+            
+            obj.TimerRef = tic;
+            
+            % Hide the progress bar
+            obj.Hide;
+            
+            % Create the figure
+            obj.Show(PTKReportingDefault);            
+        end
+        
+        function Delete(obj)
+            delete(obj.GraphicalComponentHandle);
+        end        
+
+        function CreateGuiComponent(obj, position, reporting)
+            CreateGuiComponent@PTKFigure(obj, position, reporting);
+
+            % Override the colour and resize behaviour
+            set(obj.GraphicalComponentHandle, 'Color', [1 1 1], 'Resize', 'off');
+            
+            obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', [30, 100, 333, 314]);
             logo = imread(PTKSoftwareInfo.SplashScreenImageFile);
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
@@ -70,8 +85,6 @@ classdef PTKSplashScreen < PTKProgressInterface
             obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 240, 460, 110], 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
             set(obj.BodyText, 'String', sprintf(['Version ' PTKSoftwareInfo.Version ' \n\n' PTKSoftwareInfo.WebsiteUrl]));
             
-            
-
             % Create the progress reporting
             panel_background_colour = [1 1 1];
             text_color = [0.0 0.129 0.278];
@@ -83,38 +96,19 @@ classdef PTKSplashScreen < PTKProgressInterface
             progress_bar_position = [450, 80, 400, 18];
             
             
-            obj.ProgressTitle = uicontrol('parent', obj.FigureHandle, 'style', 'text', 'units', 'pixel', 'Position', title_position, ...
+            obj.ProgressTitle = uicontrol('parent', obj.GraphicalComponentHandle, 'style', 'text', 'units', 'pixel', 'Position', title_position, ...
                 'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 24, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour);
-            obj.Text = uicontrol('parent', obj.FigureHandle, 'style', 'text', 'units', 'pixel', 'Position', text_position, ...
+            obj.Text = uicontrol('parent', obj.GraphicalComponentHandle, 'style', 'text', 'units', 'pixel', 'Position', text_position, ...
                 'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 16, 'Fore', text_color, 'Back', panel_background_colour);
-            obj.Cancel = uicontrol('parent', obj.FigureHandle, 'string', 'Cancel', ...
+            obj.Cancel = uicontrol('parent', obj.GraphicalComponentHandle, 'string', 'Cancel', ...
                 'FontUnits', 'pixels', 'Position', cancel_position, 'Callback', @obj.CancelButton);
-            obj.Quit = uicontrol('parent', obj.FigureHandle, 'string', 'Force Quit', ...
+            obj.Quit = uicontrol('parent', obj.GraphicalComponentHandle, 'string', 'Force Quit', ...
                 'FontUnits', 'pixels', 'Position', quit_position, 'Callback', @obj.QuitButton);
             
-            [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', ...
-                progress_bar_position, obj.FigureHandle);
+            [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', progress_bar_position, obj.GraphicalComponentHandle);
             obj.ProgressBarHandle.setValue(0);
-
-            set(obj.FigureHandle, 'Visible', 'on');
-            obj.TimerRef = tic;
-
-            obj.Hide;
-            
-        end
-        
-        function Delete(obj)
-            delete(obj.FigureHandle);
-        end
-        
-        function title = get.Title(obj)
-            title = get(obj.FigureHandle, 'Name');
-        end
-        
-        function set.Title(obj, title)
-            set(obj.FigureHandle, 'Name', title);
-        end
-               
+        end        
+                       
         function ShowAndHold(obj, text)
             if nargin < 2
                 text = 'Please wait';
@@ -177,9 +171,6 @@ classdef PTKSplashScreen < PTKProgressInterface
         function cancelled = CancelClicked(obj)
             cancelled = obj.UserClickedCancel;
             obj.UserClickedCancel = false;
-        end
-        
-        function Resize(~, ~)
         end
         
     end

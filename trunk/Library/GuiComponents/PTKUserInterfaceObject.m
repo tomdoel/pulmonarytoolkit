@@ -109,7 +109,7 @@ classdef PTKUserInterfaceObject < handle
             obj.CreateVisibleComponents(reporting);
             
             % Make the graphical object visible
-            obj.UpdateAllComponentVisibility(reporting);
+            obj.UpdateAllComponentVisibility;
         end
 
         function Hide(obj)
@@ -207,10 +207,10 @@ classdef PTKUserInterfaceObject < handle
             end
         end
         
-        function UpdateAllComponentVisibility(obj, reporting)
+        function UpdateAllComponentVisibility(obj)
             % Updates this visibility of this component and all its children
             for child = obj.Children
-                child{1}.UpdateAllComponentVisibility(reporting);
+                child{1}.UpdateAllComponentVisibility;
             end
             
             obj.UpdateComponentVisibility;

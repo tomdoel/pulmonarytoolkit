@@ -17,11 +17,13 @@ classdef PTKPatientBrowser < PTKFigure
         
         LastSeriesSelected
         LastPatientSelected
+        Reporting
     end
 
     methods
         function obj = PTKPatientBrowser(image_database, gui_callback, position, reporting)
-            obj = obj@PTKFigure('Patient Browser : Pulmonary Toolkit', [], reporting);
+            obj = obj@PTKFigure('Patient Browser : Pulmonary Toolkit', []);
+            obj.Reporting = reporting;
             obj.ArrowPointer = 'hand';
             obj.GuiCallback = gui_callback;
             obj.LockLoad = false;
