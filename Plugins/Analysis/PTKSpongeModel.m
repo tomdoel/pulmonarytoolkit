@@ -110,7 +110,7 @@ classdef PTKSpongeModel < PTKPlugin
             results.ChangeRawImage(results_raw);
             results.ImageType = PTKImageType.Colormap;
             
-
+            reporting.ChangeViewingOrientation(PTKImageOrientation.Axial);
 
         end
         
