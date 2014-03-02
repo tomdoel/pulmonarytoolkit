@@ -69,9 +69,12 @@ classdef PTKPatientBrowserPanel < PTKPanel
             
         end
         
-        function input_has_been_processed = Scroll(obj, scroll_count, current_point)
-            input_has_been_processed = obj.AllPatientsSlidingPanel.Scroll(scroll_count, current_point);
-        end
 
     end
+    
+    methods (Access = protected)
+        function input_has_been_processed = Scroll(obj, current_point, scroll_count)
+            input_has_been_processed = obj.AllPatientsSlidingPanel.Scroll(scroll_count, current_point);
+        end
+    end        
 end
