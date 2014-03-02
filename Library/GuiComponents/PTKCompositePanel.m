@@ -15,13 +15,22 @@ classdef PTKCompositePanel < PTKUserInterfaceObject
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
+    properties
+        LeftMargin = 0;
+        RightMargin = 0;
+        TopMargin = 0
+        BottomMargin = 0
+        VerticalSpacing = 0
+    end
+    
     properties (Access = protected)
         Reporting
     end
     
     properties (Access = private)
         Panels
-        CachedHeight
+        CachedPanelHeight
+        CachedPanelWidth
     end
     
     methods
@@ -39,17 +48,18 @@ classdef PTKCompositePanel < PTKUserInterfaceObject
             Resize@PTKUserInterfaceObject(obj, new_position);
             
             panel_width = new_position(3);
-            y_coord_from_top = 1;
+            y_coord_from_top = 1 + obj.TopMargin;
             parent_panel_height = new_position(4) + new_position(2);
             
-            total_height = obj.GetRequestedHeight;
+            panel_width_excluding_margins = panel_width - obj.LeftMargin - obj.RightMargin;
+            total_height = obj.GetRequestedHeight(panel_width);
 
             visible_y_min_from_base = - new_position(2);
             visible_y_max_from_base = visible_y_min_from_base + parent_panel_height;
             
             for panel_index = 1 : numel(obj.Panels)
                 panel = obj.Panels(panel_index);
-                panel_height = panel.GetRequestedHeight;
+                panel_height = panel.GetRequestedHeight(panel_width_excluding_margins);
                 panel.CachedMinY = y_coord_from_top;
                 panel.CachedMaxY = y_coord_from_top + panel_height;
 
@@ -58,7 +68,7 @@ classdef PTKCompositePanel < PTKUserInterfaceObject
 
                 panel_y_coord = panel_min_y_from_base + new_position(2);
                 
-                panel_size = [1, panel_y_coord, panel_width, panel_height];
+                panel_size = [1 + obj.LeftMargin, panel_y_coord, panel_width_excluding_margins, panel_height];
                 panel.Resize(panel_size);
 
                 % Determine if current panel is visible
@@ -70,35 +80,38 @@ classdef PTKCompositePanel < PTKUserInterfaceObject
                     panel.Disable;
                 end
 
-                y_coord_from_top = y_coord_from_top + panel_height;
+                y_coord_from_top = y_coord_from_top + panel_height + obj.VerticalSpacing;
+            end
+        end
+        
+        function height = GetRequestedHeight(obj, width)
 
-            end
-        end
-        
-        function height = GetRequestedHeight(obj)
-            if ~isempty(obj.CachedHeight)
-                height = obj.CachedHeight;
-            else
-                height = 0;
+            if isempty(obj.CachedPanelHeight) || (width ~= obj.CachedPanelWidth)
+                width_excluding_margins = width - obj.LeftMargin - obj.RightMargin;
+                height = obj.TopMargin;
                 for panel = obj.Panels
-                    height = height + panel.GetRequestedHeight;
+                    height = height + panel.GetRequestedHeight(width_excluding_margins) + obj.VerticalSpacing;
                 end
-                obj.CachedHeight = height;
+                height = height - obj.VerticalSpacing + obj.BottomMargin;
+                obj.CachedPanelHeight = height;
+                obj.CachedPanelWidth = width;
             end
+            height = obj.CachedPanelHeight;
         end
-        
-    end
-    
-    methods (Access = protected)
         
         function child_coords = ParentToChildCoordinates(obj, parent_coords)
             child_coords = parent_coords;
         end
+    end
+    
+    methods (Access = protected)
+        
         
         function AddPanel(obj, panel)
             obj.Panels = [obj.Panels, panel];
             obj.AddChild(panel);
-            obj.CachedHeight = [];
+            obj.CachedPanelWidth = [];
+            obj.CachedPanelHeight = [];
         end
         
         function RemoveAllPanels(obj)
@@ -108,7 +121,8 @@ classdef PTKCompositePanel < PTKUserInterfaceObject
             
             obj.Children = [];
             obj.Panels = [];
-            obj.CachedHeight = [];
+            obj.CachedPanelWidth = [];
+            obj.CachedPanelHeight = [];
         end
     end
 end

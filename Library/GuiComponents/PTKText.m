@@ -24,7 +24,6 @@ classdef PTKText < PTKUserInterfaceObject
         Text
         Tag
         ToolTip
-        BorderWidth
         Selected
     end
     
@@ -78,7 +77,7 @@ classdef PTKText < PTKUserInterfaceObject
     
     methods (Access = protected)
         
-        function input_has_been_processed = MouseDown(obj, click_point)
+        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
             % This method is called when the mouse is clicked inside the control
             input_has_been_processed = true;
             notify(obj, 'TextClicked');

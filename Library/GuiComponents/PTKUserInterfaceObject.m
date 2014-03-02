@@ -55,6 +55,9 @@ classdef PTKUserInterfaceObject < handle
         end
         
         function AddChild(obj, child, reporting)
+            % Add a child object to this object. After creating a PTKUserInterfaceObject,
+            % you must call this method on the parent object in order to add the new object.
+            
             if ~isa(child, 'PTKUserInterfaceObject')
                 reporting.Error('PTKUserInterfaceObject:ChildNotAPTKUserInterfaceObject', 'This child obect passed to AddChild is not of type PTKUserInterfaceObject');
             end
@@ -63,6 +66,14 @@ classdef PTKUserInterfaceObject < handle
         end
         
         function Resize(obj, new_position)
+            % Call to change the positon and size of the object.
+            % Resize can be called even if the actual underlying graphical object hasn't
+            % been created yet - the new position will be cached and applied when it is
+            % created.
+            % You would normally override this method for any figures and panels you create,
+            % in order to provide your desired layout management.
+            % When you override this method, you should call this base class.
+            
             obj.ResizeRequired = false;
             if ~isempty(obj.GraphicalComponentHandle) && obj.IsVisible && ~obj.LockResize
                 set(obj.GraphicalComponentHandle, 'Position', new_position);
@@ -71,8 +82,32 @@ classdef PTKUserInterfaceObject < handle
             obj.Position = new_position;
         end
         
+        function ObjectHasBeenResized(obj)
+            % This function is called when the underlying graphics object has been resized.
+            % Most commonly, this will happen when a figure is resized by the user.
+            % We want to ensure all the child objects are correctly resized, so Resize() is
+            % called, but we don't want to modify the position of this particular object (as
+            % that would trigger a recursive resize call), so we set the LockResize flag to
+            % protect this particular control from resize.
+            
+            new_position = get(obj.GraphicalComponentHandle, 'Position');
+            
+            % Updage the last known position of the control, since the control has been
+            % modified externally
+            obj.LastHandlePosition = new_position;
+            
+            % Lock resize to prevent this control from being modified
+            obj.LockResize = true;
+            
+            % Call Resize (which will typically be overridden by the subclass)
+            obj.Resize(new_position);
+            
+            % Release the lock
+            obj.LockResize = false;            
+        end
         
-        function height = GetRequestedHeight(~)
+        
+        function height = GetRequestedHeight(obj, width)
             % Returns a value for the height of the object. A null value indicates
             % the caller can choose the height
             height = [];
@@ -141,6 +176,22 @@ classdef PTKUserInterfaceObject < handle
                 end
             end
         end
+        
+        function child_coords = ParentToChildCoordinates(obj, parent_coords)
+            component_position = obj.Position;
+            child_coords = parent_coords - component_position(1:2) + 1;
+        end
+        
+        function figure_handle = GetParentFigure(obj)
+            % Returns handle to the PTKFigure parent object
+            
+            figure_handle = obj;
+            while ~isempty(figure_handle) && ~isa(figure_handle, 'PTKFigure')
+                figure_handle = figure_handle.Parent;
+            end
+            
+        end
+        
     end
 
     methods (Access = protected)
@@ -160,9 +211,13 @@ classdef PTKUserInterfaceObject < handle
                 % Create this component if necessary
                 if ~obj.ComponentHasBeenCreated
                     if isempty(obj.Position)
-                        reporting.Error('PTKUserInterfaceObject:NoSizeSet', 'The control does not have a valid position because the Resize() function has not been called.');
+                        reporting.Error('PTKUserInterfaceObject:NoSizeSet', 'The control does not have a valid position because the Resize() function has not been called. This error may be caused if you forget to add a PTKUserInterfaceObject to its parent using AddChild().');
                     end
                     obj.CreateGuiComponent(obj.Position, reporting);
+
+                    % Ensure the parent PTKFigure receives keyboard input from this control
+                    obj.CaptureKeyboardInput;
+                    
                     obj.ComponentHasBeenCreated = true;
                     obj.LastHandlePosition = obj.Position;
                     obj.LastHandleVisible = false;
@@ -217,50 +272,129 @@ classdef PTKUserInterfaceObject < handle
             
         end
         
-        function input_has_been_processed = MouseDown(obj, click_point)
+        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
             % This method is called when the mouse is clicked inside the control
             input_has_been_processed = false;
         end
         
-        function child_coords = ParentToChildCoordinates(obj, parent_coords)
-            component_position = obj.Position;
-            child_coords = parent_coords - component_position(1:2) + 1;
+        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src)
+            % This method is called when the mouse is clicked inside the control
+            input_has_been_processed = false;
         end
         
-        function input_has_been_processed = CallMouseDown(obj, click_point)
-            % Called when the mousewheel is used to scroll
+        function input_has_been_processed = Keypressed(obj, click_point, key)
+            % This method is called when the mouse is clicked inside the control
+            input_has_been_processed = false;
+        end
+        
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+            % This method is called when the mouse is moved
+            input_has_been_processed = false;
+        end
+        
+        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src)
+            % This method is called when the mouse is moved
+            input_has_been_processed = false;
+        end
+        
+        function input_has_been_processed = Scroll(obj, click_point, scroll_count)
+            % This method is called when the mouse is clicked inside the control
+            input_has_been_processed = false;
+        end
+        
+        
+    
+        function ProcessActivityToSpecificObject(obj, processing_object, function_name, click_point, varargin)
+            % Sends an activity to a specific user interface object
             
-            component_position = obj.Position;
+            % Get the coordinates relative to the child
+            child_coordinates = obj.GetChildCoordinates(processing_object, click_point);
+            
+            % Call the function on the specified object with the modified coordinates
+            processing_object.(function_name)(child_coordinates, varargin{:});            
+        end
+        
+        function processing_object = ProcessActivity(obj, function_name, click_point, varargin)
+            % Send a mouse down call to the right component
             
             if obj.IsVisible
-                if (click_point(1) >= component_position(1) && click_point(2) >= component_position(2) && ...
-                        click_point(1) < component_position(1) + component_position(3) && ...
-                        click_point(2) < component_position(2) + component_position(4))
+                if obj.IsPointInControl(click_point)
                     
                     new_click_point = obj.ParentToChildCoordinates(click_point);
                     
-                    % If the action was inside this control, then we treat as
-                    % handled
-                    input_has_been_processed = true;
-                    
-                    if obj.MouseDown(new_click_point)
-                        % This object has handled the click, so we exit
-                        return;
-                    else
-                        % Try iterating through the children to process the
-                        % action
-                        for child = obj.Children;
-                            if child{1}.CallMouseDown(new_click_point);
-                                return;
-                            end
+                    % Try iterating through the children to process the
+                    % action
+                    for child = obj.Children;
+                        processing_object = child{1}.ProcessActivity(function_name, new_click_point, varargin{:});
+                        if ~isempty(processing_object)
+                            return;
                         end
                     end
+                    
+                    % Otherwise try to get this control itself to handle the action
+                    if obj.(function_name)(new_click_point, varargin{:});
+                        processing_object = obj;
+                    else
+                        processing_object = [];
+                    end
+                    return;
                 end
             end
             
             % Action was not handled
-            input_has_been_processed = false;
+            processing_object = [];
         end
+
+        function click_point = GetChildCoordinates(obj, child_object, click_point)
+            % Modifies coordinates to they are relative to a child object
+            
+            % Create a stack of objects in the parent-child hierarchy
+            object_hierarchy = obj.GetObjectHierarchy(child_object);
+            
+            % Use the hierarchy to modify the coordinates
+            while ~object_hierarchy.IsEmpty
+                next_object = object_hierarchy.Pop;
+                click_point = next_object.ParentToChildCoordinates(click_point);
+            end
+        end
+                
+        
+        function object_hierarchy = GetObjectHierarchy(obj, processing_object)
+            object_hierarchy = PTKStack;
+            while (obj ~= processing_object)
+                object_hierarchy.Push(processing_object);
+                processing_object = processing_object.Parent;
+            end
+            object_hierarchy.Push(processing_object);
+        end
+        
+        function CaptureKeyboardInput(obj)
+            if ~isempty(obj.GraphicalComponentHandle)
+                controls = findobj(obj.GraphicalComponentHandle, 'Style','pushbutton', '-or', 'Style', 'checkbox', '-or', 'Style', 'togglebutton', '-or', 'Style', 'text', '-or', 'Style', 'slider', '-or', 'Style', 'popupmenu');
+                for control = controls
+                    parent = obj.GetParentFigure;
+                    set(control, 'KeyPressFcn', @parent.CustomKeyPressedFunction);
+                end
+            end
+        end
+    
+    end
+    
+    methods (Access = private)
+        
+        function point_within_control = IsPointInControl(obj, point_coords)
+            component_position = obj.Position;
+            point_within_control = false;
+            
+            if obj.IsVisible
+                if (point_coords(1) >= component_position(1) && point_coords(2) >= component_position(2) && ...
+                        point_coords(1) < component_position(1) + component_position(3) && ...
+                        point_coords(2) < component_position(2) + component_position(4)) 
+                    point_within_control = true;
+                end
+            end
+        end
+        
     end
     
     methods (Access = protected, Static)

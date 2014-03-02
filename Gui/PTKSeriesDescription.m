@@ -163,7 +163,7 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
             end
         end
         
-        function height = GetRequestedHeight(obj)
+        function height = GetRequestedHeight(obj, width)
             height = obj.SeriesTextHeight;
         end
         
@@ -183,9 +183,7 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
             num_images_position = [num_images_x, y_base, obj.NumImagesWidth, obj.SeriesTextHeight];
             num_images_suffix_position = [num_images_suffix_x, y_base, obj.NumImagesSuffixWidth, obj.SeriesTextHeight];
         end
-    end
-    
-    methods (Access = protected)
+        
         function child_coords = ParentToChildCoordinates(obj, parent_coords)
             child_coords = parent_coords;
         end

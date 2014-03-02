@@ -16,12 +16,14 @@ classdef PTKFigure < PTKUserInterfaceObject
     
     properties (Access = protected)
         ArrowPointer
+        DefaultKeyHandlingObject % If a keypress is not handled by any objects, then the default object may handle it
     end
     
     properties (Access = private)
         CachedTitle
         OldResizeFunction;
         OldWindowScrollWheelFunction
+        MouseCapturingObject % This is the PTKUserInterfaceObject which has captured the mouse input after a mouse down
     end
 
     methods
@@ -48,7 +50,7 @@ classdef PTKFigure < PTKUserInterfaceObject
         function set.Title(obj, title)
             obj.Title = title;
             if ishandle(obj.GraphicalComponentHandle)
-                set(obj.FigureHandle, 'Name', title);
+                set(obj.GraphicalComponentHandle, 'Name', title);
             end
         end
         
@@ -59,9 +61,13 @@ classdef PTKFigure < PTKUserInterfaceObject
         end
         
         function CreateGuiComponent(obj, position, reporting)
+            
+            % The busy action can be set to 'cancel' (ignore callbacks which come in while
+            % this one is being processed) or 'queue' (queue up all callbacks)
             obj.GraphicalComponentHandle = figure('Color', PTKSoftwareInfo.BackgroundColour, 'Visible', 'off', ...
                 'numbertitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none', ...
-                'Units', 'pixels', 'Position', position, 'Name', obj.Title, 'Pointer', obj.ArrowPointer);
+                'Units', 'pixels', 'Position', position, 'Name', obj.Title, 'Pointer', obj.ArrowPointer, ...
+                'Interruptible', 'off', 'BusyAction', 'cancel');
             
             % Store old custom handlers for this figure
             obj.OldWindowScrollWheelFunction = get(obj.GraphicalComponentHandle, 'WindowScrollWheelFcn');
@@ -71,7 +77,9 @@ classdef PTKFigure < PTKUserInterfaceObject
             set(obj.GraphicalComponentHandle, 'CloseRequestFcn', @obj.CustomCloseFunction);
             set(obj.GraphicalComponentHandle, 'WindowScrollWheelFcn', @obj.CustomWindowScrollWheelFunction);
             set(obj.GraphicalComponentHandle, 'WindowButtonDownFcn', @obj.CustomWindowButtonDownFunction);
-
+            set(obj.GraphicalComponentHandle, 'WindowButtonUpFcn', @obj.CustomWindowButtonUpFunction);            
+            set(obj.GraphicalComponentHandle, 'WindowButtonMotionFcn', @obj.CustomWindowButtonMotionFunction);
+            set(obj.GraphicalComponentHandle, 'KeyPressFcn', @obj.CustomKeyPressedFunction);
             set(obj.GraphicalComponentHandle, 'ResizeFcn', @obj.CustomResize);
         end
         
@@ -83,15 +91,29 @@ classdef PTKFigure < PTKUserInterfaceObject
             Resize@PTKUserInterfaceObject(obj, new_position);
         end
 
+        function RestoreCustomKeyPressCallback(obj)
+            % For the zoom and pan tools, we need to disable the Matlab fuctions
+            % that prevent custom keyboard callbacks being used; otherwise our
+            % keyboard shortcuts will be sent to the command line
+            
+            hManager = uigetmodemanager(obj.GraphicalComponentHandle);
+            set(hManager.WindowListenerHandles, 'Enable', 'off');
+        end
+        
+        function CustomKeyPressedFunction(obj, src, eventdata)
+            current_point = get(obj.GraphicalComponentHandle, 'CurrentPoint') + obj.Position(1:2) - 1;
+            processing_object = obj.ProcessActivity('Keypressed', current_point, eventdata.Key);
+            if isempty(processing_object) && ~isempty(obj.DefaultKeyHandlingObject)
+                obj.ProcessActivityToSpecificObject(obj.DefaultKeyHandlingObject, 'Keypressed', current_point, eventdata.Key);
+            end
+        end        
+        
     end
 
     methods (Access = protected)
         
         function CustomResize(obj, eventdata, handles)
-            parent_position = get(obj.GraphicalComponentHandle, 'Position');
-            obj.LockResize = true;
-            obj.Resize(parent_position);
-            obj.LockResize = false;
+            obj.ObjectHasBeenResized;
             
             if (~isempty(obj.OldResizeFunction))
                 obj.OldResizeFunction(eventdata, handles);
@@ -105,26 +127,45 @@ classdef PTKFigure < PTKUserInterfaceObject
         end
 
         function CustomWindowButtonDownFunction(obj, src, eventdata)
-            obj.CallMouseDown(get(src, 'CurrentPoint') + obj.Position(1:2) - 1);
+            % Called when mouse button is pressed
+            selection_type = get(src, 'SelectionType');
+            
+            % The object which processed the MouseDown will capture mouse input until a
+            % MouseUp event
+            obj.MouseCapturingObject = obj.ProcessActivity('MouseDown', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
         end
         
-        
-        function CustomWindowScrollWheelFunction(obj, src, eventdata)
-            current_point = get(obj.GraphicalComponentHandle, 'CurrentPoint');
-            scroll_count = eventdata.VerticalScrollCount; % positive = scroll down
+        function CustomWindowButtonUpFunction(obj, src, eventdata)
+            % Called when mouse button is released
             
-            % Give the child controls the option of processing scrollwheel input
-            for child = obj.Children
-                if (child{1}.Scroll(scroll_count, current_point))
-                    return;
-                end
+            % MouseUp events are always sent to the object which originally received the
+            % MouseDown, regardless of where the cursor is now
+            selection_type = get(src, 'SelectionType');
+            if ~isempty(obj.MouseCapturingObject)
+                obj.ProcessActivityToSpecificObject(obj.MouseCapturingObject, 'MouseUp', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
             end
-               
-            % If no child has processed the scrollwheel input then call the old handler
-            if (~isempty(obj.OldWindowScrollWheelFunction))
-                obj.OldWindowScrollWheelFunction(src, eventdata);
+            
+            obj.MouseCapturingObject = [];
+        end
+        
+        function CustomWindowButtonMotionFunction(obj, src, eventdata)
+            % Called when mouse is moved
+            
+            % If the mouse button is currently down, the mouse move is processed by the
+            % object which received the MouseDown event, regardless of where the mouse
+            % cursor currently is. Otherwise, the mouse move event goes to the object under
+            % the cursor
+            selection_type = get(src, 'SelectionType');
+            if isempty(obj.MouseCapturingObject)
+                obj.ProcessActivity('MouseHasMoved', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
+            else
+                obj.ProcessActivityToSpecificObject(obj.MouseCapturingObject, 'MouseDragged', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
             end
         end
 
+        function CustomWindowScrollWheelFunction(obj, src, eventdata)
+            scroll_count = eventdata.VerticalScrollCount; % positive = scroll down
+            obj.ProcessActivity('Scroll', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, scroll_count);
+        end
     end
 end

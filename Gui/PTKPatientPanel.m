@@ -66,7 +66,7 @@ classdef PTKPatientPanel < PTKPanel
             obj.Name = name;
 
             obj.PanelHeight = obj.PatientNameHeight + patient_details.GetNumberOfSeries*PTKSeriesDescription.SeriesTextHeight + 2*obj.BorderSpace;
-            obj.PatientNamePosition_Y = 1 + obj.GetRequestedHeight - obj.PatientNameHeight - obj.BorderSpace;
+            obj.PatientNamePosition_Y = 1 + obj.PanelHeight - obj.PatientNameHeight - obj.BorderSpace;
         end
         
         function delete(obj)
@@ -97,7 +97,7 @@ classdef PTKPatientPanel < PTKPanel
             end
         end
         
-        function height = GetRequestedHeight(obj)
+        function height = GetRequestedHeight(obj, width)
             height = obj.PanelHeight;
         end
         
