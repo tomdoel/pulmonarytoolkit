@@ -21,7 +21,7 @@ classdef PTKPanel < PTKUserInterfaceObject
     methods
         function obj = PTKPanel(parent_handle, reporting)
             obj = obj@PTKUserInterfaceObject(parent_handle);
-            if nargin > 0
+            if nargin > 1
                 obj.Reporting = reporting;
             end
         end
