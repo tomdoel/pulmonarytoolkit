@@ -56,17 +56,22 @@ classdef PTKDependencyList < handle
                 dependency = obj.DependencyList(index);
                 
                 if strcmp(dependency.PluginName, new_dependency.PluginName) && strcmp(dependency.DatasetUid, new_dependency.DatasetUid) && (dependency.Context == new_dependency.Context)
-                    dependency_exists = true;
-                    if ~strcmp(dependency.Uid, new_dependency.Uid)
-                        if (dependency.Attributes.IgnoreDependencyChecks && new_dependency.Attributes.IgnoreDependencyChecks)
-                            reporting.ShowWarning('PTKDependencyList:PermittedDependencyMismatch', ['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
-                        elseif (dependency.Attributes.IsEditedResult ~= new_dependency.Attributes.IsEditedResult)
-                            reporting.ShowWarning('PTKDependencyList:EditedResult', ['Using an edited result for plugin ' dependency.PluginName '.'], []);
-                        else
-                            reporting.Error('PTKDependencyList:DependencyMismatch', ['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
-                        end
+                    if strcmp(dependency.Uid, new_dependency.Uid)
+                        dependency_exists = true;
+                        return;
+                    else
+                         if isfield(dependency.Attributes, 'IsEditedResult') && isfield(new_dependency.Attributes, 'IsEditedResult') && (dependency.Attributes.IsEditedResult ~= new_dependency.Attributes.IsEditedResult)
+                            disp(['Accepting duplicate dependency due to edited result for ' dependency.PluginName]);
+                         else
+                             if (dependency.Attributes.IgnoreDependencyChecks && new_dependency.Attributes.IgnoreDependencyChecks)
+                                 dependency_exists = true;
+                                 reporting.ShowWarning('PTKDependencyList:PermittedDependencyMismatch', ['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
+                                 return;
+                             else
+                                 reporting.Error('PTKDependencyList:DependencyMismatch', ['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
+                             end
+                         end
                     end
-                    return;
                 end
             end
             dependency_exists = false;

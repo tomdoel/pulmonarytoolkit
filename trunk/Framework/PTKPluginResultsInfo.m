@@ -45,13 +45,25 @@ classdef PTKPluginResultsInfo < handle
             end
         end
         
-        function valid = CheckDependencyValid(obj, next_dependency, reporting)
+        function [valid, edited_key_exists] = CheckDependencyValid(obj, next_dependency, reporting)
+            
             if isfield(next_dependency.Attributes, 'IsEditedResult')
                 is_edited_result = next_dependency.Attributes.IsEditedResult;
             else
                 is_edited_result = false;
             end
-            plugin_key = obj.GetKey(next_dependency.PluginName, next_dependency.Context, is_edited_result);
+            
+            
+            plugin_key_nonedited = obj.GetKey(next_dependency.PluginName, next_dependency.Context, false);
+            plugin_key_edited = obj.GetKey(next_dependency.PluginName, next_dependency.Context, true);
+            
+            edited_key_exists = obj.ResultsInfo.isKey(plugin_key_edited);
+            
+            if is_edited_result
+                plugin_key = plugin_key_edited;
+            else
+                plugin_key = plugin_key_nonedited;
+            end
             
             % The full list should always contain the most recent dependency
             % uid, unless the dependencies file was deleted
