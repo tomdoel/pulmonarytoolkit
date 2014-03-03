@@ -359,7 +359,7 @@ classdef PTKImageUtilities
             frame.cdata = cdata;
         end
         
-        function rgb_image = GetButtonImage(image_preview, button_height, button_width, window_hu, level_hu, border)
+        function rgb_image = GetButtonImage(image_preview, button_width, button_height, window_hu, level_hu, border)
             if ~isempty(image_preview)
                 if islogical(image_preview.RawImage)
                     button_image = zeros(button_height, button_width, 'uint8');
