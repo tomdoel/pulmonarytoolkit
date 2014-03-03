@@ -18,23 +18,16 @@ classdef PTKSettings < handle
     properties
         OverlayOpacity = 50
         ImageInfo = []
-        Window = 1000
-        Level = 1000
         SliceNumber = [1 1 1]
-        Orientation = PTKImageOrientation.Coronal
-        ShowImage = true
-        ShowOverlay = true
         SaveImagePath = ''
-        ClosestDistanceForReplaceMarker = 5
         ShowTextLabels = true
-        SliceSkip = 10
         CurrentMarkerColour = 1
         ScreenPosition
         PatientBrowserScreenPosition
     end
     
     methods (Static)
-        function settings = LoadSettings(viewer_panel, reporting)
+        function settings = LoadSettings(reporting)
             try
                 settings_filename = PTKDirectories.GetSettingsFilePath;
                 if exist(settings_filename, 'file')
@@ -49,18 +42,6 @@ classdef PTKSettings < handle
                 reporting.ErrorFromException('PTKSettings:FailedtoLoadSettingsFile', ['Error when loading settings file ' settings_filename '. Try deleting this file.'], ex);
             end
             
-            viewer_panel.Window = settings.Window;
-            viewer_panel.Level = settings.Level;
-            viewer_panel.OverlayOpacity = settings.OverlayOpacity;
-            viewer_panel.Level = settings.Level;
-            viewer_panel.SliceNumber = settings.SliceNumber;
-            viewer_panel.Orientation = settings.Orientation;
-            viewer_panel.ShowImage = settings.ShowImage;
-            viewer_panel.ShowOverlay = settings.ShowOverlay;
-            viewer_panel.MarkerPointManager.ClosestDistanceForReplaceMarker = settings.ClosestDistanceForReplaceMarker;
-            viewer_panel.MarkerPointManager.ChangeShowTextLabels(settings.ShowTextLabels);
-            viewer_panel.SliceSkip = settings.SliceSkip;
-            viewer_panel.MarkerPointManager.ChangeCurrentColour(settings.CurrentMarkerColour);
             
         end
         
@@ -70,18 +51,18 @@ classdef PTKSettings < handle
         function obj = PTKSettings
         end
         
+        function ApplySettingsToViewerPanel(obj, viewer_panel)
+            viewer_panel.OverlayOpacity = obj.OverlayOpacity;
+            viewer_panel.SliceNumber = obj.SliceNumber;
+            viewer_panel.MarkerPointManager.ChangeShowTextLabels(obj.ShowTextLabels);
+            viewer_panel.MarkerPointManager.ChangeCurrentColour(obj.CurrentMarkerColour);
+        end
+        
         function SaveSettings(obj, viewer_panel, reporting)
             % Also save settings from the image panel
             obj.OverlayOpacity = viewer_panel.OverlayOpacity;
-            obj.Window = viewer_panel.Window;
-            obj.Level = viewer_panel.Level;
             obj.SliceNumber = viewer_panel.SliceNumber;
-            obj.Orientation = viewer_panel.Orientation;
-            obj.ShowImage = viewer_panel.ShowImage;
-            obj.ShowOverlay = viewer_panel.ShowOverlay;
-            obj.ClosestDistanceForReplaceMarker = viewer_panel.MarkerPointManager.ClosestDistanceForReplaceMarker;
             obj.ShowTextLabels = viewer_panel.MarkerPointManager.ShowTextLabels;
-            obj.SliceSkip = viewer_panel.SliceSkip;
             obj.CurrentMarkerColour = viewer_panel.MarkerPointManager.CurrentColour;
             
             settings_filename = PTKDirectories.GetSettingsFilePath;
