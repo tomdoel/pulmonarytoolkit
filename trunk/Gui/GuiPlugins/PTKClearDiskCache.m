@@ -32,11 +32,8 @@ classdef PTKClearDiskCache < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            % Delete files from the disk cache
+            % Delete files from the disk cache and update the plugin previews
             ptk_gui_app.ClearCacheForThisDataset;
-            
-            % Refresh the preview images
-            ptk_gui_app.RefreshPlugins;
         end
     end
     

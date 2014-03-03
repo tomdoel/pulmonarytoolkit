@@ -1,4 +1,4 @@
-classdef PTKViewerPanel < handle
+classdef PTKViewerPanel < PTKPanel
     % PTKViewerPanel. Creates a data viewer window for imaging 3D data slice-by-slice.
     %
     %     PTKViewerPanel creates a visualisation window on the supplied
@@ -71,7 +71,6 @@ classdef PTKViewerPanel < handle
         CandidatePoints
         CursorIsACross = false
         CurrentCursor = ''
-        Parent
         ImageHandles = {[], [], []} % Handles to image and overlay
         SelectedControl = 'W/L'
         
@@ -99,10 +98,6 @@ classdef PTKViewerPanel < handle
         AxisLimits;
         PreviousOrientation;
 
-        % Callbacks
-        ResizeFunction;
-        WindowButtonMotionFcn;
-        
         % Handles to listeners for image changes
         ImageChangedListeners = {[], [], []}
         
@@ -115,13 +110,10 @@ classdef PTKViewerPanel < handle
         LastCursor
     end
 
-    events
-        MouseClickInImage
-    end
-    
     methods
         function obj = PTKViewerPanel(parent)
-            font_size = 9;
+            obj = obj@PTKPanel(parent);
+            
             obj.AxisLimits = [];
             obj.AxisLimits{1} = {};
             obj.AxisLimits{2} = {};
@@ -132,16 +124,20 @@ classdef PTKViewerPanel < handle
             obj.BackgroundImage = PTKImage;
             obj.OverlayImage = PTKImage;
             obj.QuiverImage = PTKImage;
+            
+            obj.MarkerPointManager = PTKMarkerPointManager(obj);            
+        end
+        
+        function CreateGuiComponent(obj, position, reporting)
+            CreateGuiComponent@PTKPanel(obj, position, reporting);
 
+            font_size = 9;
             
-            obj.Parent = parent;
+            obj.SliceSlider = uicontrol('Style', 'slider', 'Parent', obj.GraphicalComponentHandle, 'TooltipString', 'Scroll through slices');
+            obj.Axes = axes('Parent', obj.GraphicalComponentHandle);
             
-            obj.SliceSlider = uicontrol('Style', 'slider', 'Parent', obj.Parent, 'TooltipString', 'Scroll through slices');
-            obj.Axes = axes('Parent', obj.Parent);
-            
-            obj.MarkerPointManager = PTKMarkerPointManager(obj, obj.Axes);
-            obj.CineTool = PTKCineTool;
-            obj.WindowLevelTool = PTKWindowLevelTool;
+            obj.CineTool = PTKCineTool(obj);
+            obj.WindowLevelTool = PTKWindowLevelTool(obj);
             obj.ZoomTool = PTKZoomTool;
             obj.PanTool = PTKPanTool;
             obj.PanMatlabTool = PTKPanMatlabTool(obj);
@@ -152,7 +148,7 @@ classdef PTKViewerPanel < handle
            
             tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointManager, obj.WindowLevelTool, obj.CineTool, obj.EditTool, obj.ReplaceColourTool, obj.MapColourTool};
             
-            obj.ControlPanel = uipanel('Parent', obj.Parent, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.ControlPanel = uipanel('Parent', obj.GraphicalComponentHandle, 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
 
             obj.OrientationPanel = uibuttongroup('Parent', obj.ControlPanel, 'BorderType', 'none', 'SelectionChangeFcn', @obj.OrientationCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             obj.MouseControlPanel = uibuttongroup('Parent', obj.ControlPanel, 'BorderType', 'none', 'SelectionChangeFcn', @obj.ControlsCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
@@ -190,28 +186,14 @@ classdef PTKViewerPanel < handle
             obj.WindowSlider = uicontrol('Style', 'slider', 'Min', 0, 'Max', 1, 'Value', 1, 'Parent', obj.WindowLevelPanel, 'Callback', @obj.WindowSliderCallback, 'TooltipString', 'Change window (contrast)');
             obj.LevelSlider = uicontrol('Style', 'slider', 'Min', 0, 'Max', 1, 'Value', 0, 'Parent', obj.WindowLevelPanel, 'Callback', @obj.LevelSliderCallback, 'TooltipString', 'Change level (brightness)');
             
-            obj.ResizeFunction = get(parent, 'ResizeFcn');
-            
-            figure_handle = ancestor(parent, 'figure');
-            obj.FigureHandle = figure_handle;
-            obj.WindowButtonMotionFcn = get(figure_handle, 'WindowButtonMotionFcn');
+            obj.FigureHandle = obj.Parent.GetContainerHandle;
+            parent = obj.FigureHandle;
             
             obj.UpdateGui;
             obj.UpdateStatus;
-            obj.Resize;
+            obj.Resize(position);
             
             hold(obj.Axes, 'on');
-
-            set(parent, 'ResizeFcn', @obj.CustomResize);
-            set(figure_handle, 'WindowButtonMotionFcn', @obj.MouseHasMoved);
-            set(figure_handle, 'WindowButtonUpFcn', @obj.MouseUp);
-            set(figure_handle, 'WindowButtonDownFcn', @obj.MouseDown);
-            set(figure_handle, 'WindowScrollWheelFcn', @obj.WindowScrollWheelFcn);
-            set(figure_handle, 'KeyPressFcn', @obj.KeyPressed);
-            
-
-            obj.CaptureKeyboardInput(figure_handle);
-            
             
             % Add custom listeners to allow continuous callbacks from the
             % sliders
@@ -244,14 +226,20 @@ classdef PTKViewerPanel < handle
             
             obj.UpdateTools;
         end
-
-        function RestoreKeyPressCallback(obj)
-            % For the zoom and pan tools, we need to disable the Matlab fuctions
-            % that prevent custom keyboard callbacks being used; otherwise our
-            % keyboard shortcuts will be sent to the command line
-            hManager = uigetmodemanager(obj.FigureHandle);
-            set(hManager.WindowListenerHandles, 'Enable', 'off');
-            set(obj.FigureHandle, 'KeyPressFcn', @obj.KeyPressed);
+        
+        function Resize(obj, position)
+            Resize@PTKPanel(obj, position);
+            
+            if ~isempty(obj.OrientationPanel)
+                obj.ResizePanel(position);
+            end
+        end
+        
+        function axes_handle = GetAxesHandle(obj, reporting)
+            axes_handle = obj.Axes;
+            if isempty(obj.Axes)
+                reporting.Error('PTKViewerPanel:AxesNotCreated', 'Program error: GetAxesHandle called before axes were created.');
+            end
         end
 
         function EnterFcn(~, figHandle, ~)
@@ -260,13 +248,6 @@ classdef PTKViewerPanel < handle
         
         function GetFocus(obj)
             figure(obj.FigureHandle);
-        end
-        
-        function CaptureKeyboardInput(obj, figure_handle)
-            controls = findobj(figure_handle, 'Style','pushbutton', '-or', 'Style', 'checkbox', '-or', 'Style', 'togglebutton', '-or', 'Style', 'text', '-or', 'Style', 'slider');
-            for control = controls
-                set(control, 'KeyPressFcn', @obj.KeyPressed);
-            end
         end
         
         function ClearOverlays(obj)
@@ -450,6 +431,13 @@ classdef PTKViewerPanel < handle
             drawnow;
         end
         
+    end
+    
+    methods (Access = protected)
+        function input_has_been_processed = Scroll(obj, current_point, scroll_count)
+            obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) + scroll_count;
+            input_has_been_processed = true;
+        end
         
     end
     
@@ -484,7 +472,7 @@ classdef PTKViewerPanel < handle
                 error('The image must be of class PTKImage');                
             end
             
-            no_current_image = isempty(obj.ImageHandles{image_number});
+            no_current_image = isempty(obj.ImageHandles{1});
 
             % Create an image handle if one doesn't already exist
             if isempty(obj.ImageHandles{image_number})
@@ -622,10 +610,7 @@ classdef PTKViewerPanel < handle
             end
         end
         
-        function Resize(obj)
-            set(obj.Parent, 'Units', 'Pixels');
-
-            parent_position = get(obj.Parent, 'Position');
+        function ResizePanel(obj, parent_position)
             parent_width_pixels = parent_position(3);
             parent_height_pixels = parent_position(4);
             
@@ -828,7 +813,7 @@ classdef PTKViewerPanel < handle
             obj.UpdateStatus;
             
             for tool_set = obj.Tools.values
-                tool_set{1}.NewSliceOrOrientation;
+                tool_set{1}.NewOrientation;
             end
         end
             
@@ -846,6 +831,9 @@ classdef PTKViewerPanel < handle
         function UpdateGuiForNewImage(obj)
             main_image = obj.BackgroundImage;
             if ~isempty(main_image) && main_image.ImageExists
+                
+                obj.AutoOrientationAndWL(main_image);
+                
                 set(obj.OpacitySlider, 'Min', 0);
                 set(obj.OpacitySlider, 'Max', 100);
                 limits = main_image.Limits;
@@ -873,6 +861,19 @@ classdef PTKViewerPanel < handle
                 end
             end
         end
+        
+        function AutoOrientationAndWL(obj, new_image)
+            obj.Orientation = PTKImageUtilities.GetPreferredOrientation(new_image);
+            
+            if new_image.IsCT
+                obj.Window = 1600;
+                obj.Level = -600;
+            else
+                mean_value = round(mean(new_image.RawImage(:)));
+                obj.Window = mean_value*2;
+                obj.Level = mean_value;
+            end
+        end        
         
         function UpdateGuiForNewOrientation(obj)
             main_image = obj.BackgroundImage;
@@ -1091,13 +1092,7 @@ classdef PTKViewerPanel < handle
         % Callbacks %
         %%%%%%%%%%%%%
         
-        
-        % Scroll wheel used to cine through slices
-        function WindowScrollWheelFcn(obj, ~, eventdata)
-            scroll_count = eventdata.VerticalScrollCount; % positive = scroll down            
-            obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) + scroll_count;
-        end
-                
+
         % Show overlay checkbox
         function OverlayCheckboxCallback(obj, hObject, ~, ~)
             obj.ShowOverlay = get(hObject, 'Value');
@@ -1145,7 +1140,7 @@ classdef PTKViewerPanel < handle
             obj.UpdateGui;
             
             for tool_set = obj.Tools.values
-                tool_set{1}.NewSliceOrOrientation;
+                tool_set{1}.NewSlice;
             end
             
             obj.DrawImages(true, true, true);
@@ -1187,22 +1182,6 @@ classdef PTKViewerPanel < handle
             obj.MarkerImageChanged;
         end
         
-        % Mouse has moved over the figure
-        function MouseHasMoved(obj, hObject, eventData)
-            screen_coords = obj.GetScreenCoordinates;
-            last_coords = obj.LastCoordinates;
-            selection_type = get(hObject, 'SelectionType');
-            mouse_is_down = obj.MouseIsDown;
-            
-            tool = obj.GetCurrentTool(mouse_is_down, selection_type);
-            tool.MouseHasMoved(obj, screen_coords, last_coords, mouse_is_down);
-            
-            obj.UpdateCursor(hObject, mouse_is_down, selection_type);
-            obj.UpdateStatus();
-            if (~isempty(obj.WindowButtonMotionFcn))
-                obj.WindowButtonMotionFcn(hObject, eventData);
-            end
-        end
         
         function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)
             global_coords = obj.GetImageCoordinates;
@@ -1239,76 +1218,42 @@ classdef PTKViewerPanel < handle
             end
             tool = obj.Tools(obj.SelectedControl);
         end
-                
-
-        % Mouse has been clicked
-        function MouseDown(obj, src, ~)
-            screen_coords = obj.GetScreenCoordinates;
-            obj.LastCoordinates = screen_coords;
-            obj.MouseIsDown = true;
-            selection_type = get(src, 'SelectionType');
-            tool = obj.GetCurrentTool(true, selection_type);
-            global_coords = obj.GetImageCoordinates;
-            if (obj.BackgroundImage.IsPointInImage(global_coords))
-                tool.MouseDown(screen_coords);
-                obj.ToolOnMouseDown = tool;
-            else
-                notify(obj, 'MouseClickInImage', PTKEventData(global_coords));
-                obj.ToolOnMouseDown = [];
-            end
-
-            obj.UpdateCursor(src, true, selection_type);
-        end
-
-        % Mouse has been clicked
-        function MouseUp(obj, src, ~)
-            obj.MouseIsDown = false;
-            screen_coords = obj.GetScreenCoordinates;
-            obj.LastCoordinates = screen_coords;
-            selection_type = get(src, 'SelectionType');
-
-            tool = obj.ToolOnMouseDown;
-            if ~isempty(tool)
-                global_coords = obj.GetImageCoordinates;
-                if (obj.BackgroundImage.IsPointInImage(global_coords))
-                    tool.MouseUp(screen_coords);
-                    obj.ToolOnMouseDown = [];
-                end
-            end
-            obj.UpdateCursor(src, false, selection_type);
-        end
         
-        % Key has been clicked
-        function KeyPressed(obj, ~, eventdata)
-            obj.ShortcutKeys(eventdata.Key);
-        end
-        
-        function ShortcutKeys(obj, key)
+        function input_has_been_processed = ShortcutKeys(obj, key)
             if strcmpi(key, 'c')
                 obj.Orientation = PTKImageOrientation.Coronal;
+                input_has_been_processed = true;
             elseif strcmpi(key, 's')
                 obj.Orientation = PTKImageOrientation.Sagittal;
+                input_has_been_processed = true;
             elseif strcmpi(key, 'a')
                 obj.Orientation = PTKImageOrientation.Axial;
+                input_has_been_processed = true;
             elseif strcmpi(key, 'i')
                 obj.ShowImage = ~obj.ShowImage;
+                input_has_been_processed = true;
             elseif strcmpi(key, 't')
                 obj.BlackIsTransparent = ~obj.BlackIsTransparent;
+                input_has_been_processed = true;
             elseif strcmpi(key, 'o')
                 obj.ShowOverlay = ~obj.ShowOverlay;
+                input_has_been_processed = true;
             elseif strcmpi(key, 'downarrow')
                 obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) + 1;
+                input_has_been_processed = true;
             elseif strcmpi(key, 'uparrow')
                 obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) - 1;
+                input_has_been_processed = true;
             else
                 % Shortcuts for selecting tools
                 for tool = obj.Tools.values
                     if strcmpi(key, tool{1}.ShortcutKey)
                         obj.SetControl(tool{1}.Tag);
+                        input_has_been_processed = true;
                         return
                     end
                 end
-                obj.Tools(obj.SelectedControl).Keypress(key);
+                input_has_been_processed = obj.Tools(obj.SelectedControl).Keypressed(key);
             end
         end
         
@@ -1324,7 +1269,6 @@ classdef PTKViewerPanel < handle
         end
         
         
-        
         function SliderCallback(obj, hObject, ~)
             obj.SliceNumber(obj.Orientation) = round(get(hObject,'Value'));
         end
@@ -1336,27 +1280,22 @@ classdef PTKViewerPanel < handle
             end
         end
         
-        function CustomResize(obj, eventdata, handles)
-            obj.Resize;
-            if (~isempty(obj.ResizeFunction))
-                obj.ResizeFunction(eventdata, handles);
-            end
-        end
         
         function SetControl(obj, tag_value)
             obj.SelectedControl = tag_value;
             tool = obj.Tools(tag_value);
             
-            % Matlab tools require the keypress callback to be reset
-            if tool.RestoreKeyPressCallbackWhenSelected
-                obj.RestoreKeyPressCallback;
-            end
             
             % Change the cursor
             obj.UpdateCursor(obj.FigureHandle, [], []);
             
             % Run the code to enable or disable tools
             obj.UpdateTools;
+            
+            % Matlab tools require the keypress callback to be reset
+            if tool.RestoreKeyPressCallbackWhenSelected
+                obj.GetParentFigure.RestoreCustomKeyPressCallback;
+            end
             
             % Enable the button for this tool
             set(obj.MouseControlButtons(tag_value), 'Value', 1);
@@ -1377,15 +1316,7 @@ classdef PTKViewerPanel < handle
         function ControlsCallback(obj, ~, eventdata, ~)
             obj.SetControl(get(eventdata.NewValue, 'Tag'));
         end
-        
 
-% TODO
-%         % Executes when figure closes, to ensure the listeners are removed
-%         function CustomCloseFunction(obj, ~, ~)
-%             obj.DeleteImageChangedListeners;
-%             delete(obj);
-%         end
-%         
         function DeleteImageChangedListeners(obj)
             for image_number = 1 : 3
                 if ~isempty(obj.ImageChangedListeners{image_number})
@@ -1403,6 +1334,87 @@ classdef PTKViewerPanel < handle
         end
 
     end
+    
+    methods (Access = protected)
+        function input_has_been_processed = Keypressed(obj, click_point, key)
+            input_has_been_processed = obj.ShortcutKeys(key);
+        end
+        
+        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
+            % This method is called when the mouse is clicked inside the control
+            
+            screen_coords = obj.GetScreenCoordinates;
+            obj.LastCoordinates = screen_coords;
+            obj.MouseIsDown = true;
+            tool = obj.GetCurrentTool(true, selection_type);
+            global_coords = obj.GetImageCoordinates;
+            if (obj.BackgroundImage.IsPointInImage(global_coords))
+                tool.MouseDown(screen_coords);
+                obj.ToolOnMouseDown = tool;
+                input_has_been_processed = true;
+            else
+                obj.ToolOnMouseDown = [];
+                input_has_been_processed = false;
+            end
+
+            obj.UpdateCursor(src, true, selection_type);
+            
+        end
+
+        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src)
+            % This method is called when the mouse is released inside the control
+            
+            input_has_been_processed = true;
+            obj.MouseIsDown = false;
+
+            screen_coords = obj.GetScreenCoordinates;
+            obj.LastCoordinates = screen_coords;
+
+
+            tool = obj.ToolOnMouseDown;
+            if ~isempty(tool)
+                global_coords = obj.GetImageCoordinates;
+                if (obj.BackgroundImage.IsPointInImage(global_coords))
+                    tool.MouseUp(screen_coords);
+                    obj.ToolOnMouseDown = [];
+                end
+            end
+            obj.UpdateCursor(src, false, selection_type);
+            
+        end
+        
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+            % Mouse has moved over the figure
+
+            screen_coords = obj.GetScreenCoordinates;
+            last_coords = obj.LastCoordinates;
+            
+            tool = obj.GetCurrentTool(false, selection_type);
+            tool.MouseHasMoved(obj, screen_coords, last_coords);
+            
+            obj.UpdateCursor(src, false, selection_type);
+            obj.UpdateStatus();
+            input_has_been_processed = true;
+        end
+        
+        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src)
+            % Mouse dragged over the figure
+
+            screen_coords = obj.GetScreenCoordinates;
+            last_coords = obj.LastCoordinates;
+            
+            tool = obj.GetCurrentTool(true, selection_type);
+            tool.MouseDragged(obj, screen_coords, last_coords);
+            
+            obj.UpdateCursor(src, true, selection_type);
+            obj.UpdateStatus();
+            input_has_been_processed = true;
+        end
+                
+        
+    end
+    
+    
     
     
     methods (Access = private, Static)

@@ -51,6 +51,7 @@ classdef PTKViewer < PTKFigure
     methods
         function obj = PTKViewer(image, overlay_or_type, reporting)
             
+            
             if nargin < 1
                 image = [];
             end
@@ -72,6 +73,8 @@ classdef PTKViewer < PTKFigure
             if nargin < 3
                 reporting = PTKReportingDefault;
             end
+            
+            title = 'PTK Viewer';
             
             if isa(image, 'PTKImage')
                 image_handle = image;
@@ -100,10 +103,15 @@ classdef PTKViewer < PTKFigure
             end
             
             % Call the base class to initialise the hidden window
-            obj = obj@PTKFigure(title, [100 50 700 600]);
+            obj = obj@PTKFigure(title, []);
 
+            obj.ViewerPanelHandle = PTKViewerPanel(obj);
+            obj.AddChild(obj.ViewerPanelHandle);
+            
             obj.Image = image_handle;
             obj.Overlay = overlay_handle;
+            
+            obj.Resize([100 50 700 600]);
             
             % Create the figure
             obj.Show(reporting);
@@ -113,15 +121,18 @@ classdef PTKViewer < PTKFigure
         function CreateGuiComponent(obj, position, reporting)
             CreateGuiComponent@PTKFigure(obj, position, reporting);
             
-            obj.ViewerPanelHandle = PTKViewerPanel(obj.GraphicalComponentHandle);
             obj.ViewerPanelHandle.BackgroundImage = obj.Image;               
             obj.ViewerPanelHandle.OverlayImage = obj.Overlay;
             obj.ViewerPanelHandle.SliceNumber = max(1, round(obj.Image.ImageSize/2));
         end
         
-        function delete(obj)
-            delete(obj.ViewerPanelHandle);
+        function Resize(obj, position)
+            Resize@PTKFigure(obj, position);
+            
+            parent_width_pixels = max(1, position(3));
+            parent_height_pixels = max(1, position(4));
+            panel_position = [1 1 parent_width_pixels parent_height_pixels];
+            obj.ViewerPanelHandle.Resize(panel_position);
         end
-
     end
 end
