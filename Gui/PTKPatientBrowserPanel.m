@@ -68,13 +68,5 @@ classdef PTKPatientBrowserPanel < PTKPanel
             obj.AllPatientsSlidingPanel.Resize([1+list_panel_width 1 info_panel_width panel_height_pixels]);
             
         end
-        
-
     end
-    
-    methods (Access = protected)
-        function input_has_been_processed = Scroll(obj, current_point, scroll_count)
-            input_has_been_processed = obj.AllPatientsSlidingPanel.Scroll(scroll_count, current_point);
-        end
-    end        
 end
