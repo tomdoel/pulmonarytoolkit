@@ -51,6 +51,8 @@ classdef PTKEditManager < PTKTool
         OverlayChangeLock
         
         UndoStack
+        
+        EditModeInitialised = false
     end
     
     methods
@@ -58,15 +60,18 @@ classdef PTKEditManager < PTKTool
             obj.ViewerPanel = viewer_panel;
             obj.OverlayChangeLock = false;
             obj.UndoStack = PTKUndoStack([], 5);
-            obj.InitialiseEditMode;
+%             obj.InitialiseEditMode;
         end
         
         
         function Enable(obj, enable)
+            if enable && ~obj.EditModeInitialised
+                obj.InitialiseEditMode;
+            end
             obj.Enabled = enable;
         end
         
-        function processed = Keypress(obj, key_name)
+        function processed = Keypressed(obj, key_name)
             processed = true;
             if strcmpi(key_name, 'u')
                 obj.RevertEdit;
@@ -75,11 +80,16 @@ classdef PTKEditManager < PTKTool
             end
         end
         
-        function NewSliceOrOrientation(obj)
+        function NewSlice(obj)
+        end
+        
+        function NewOrientation(obj)
         end
         
         function ImageChanged(obj)
-            obj.InitialiseEditMode;
+            if obj.Enabled
+                obj.InitialiseEditMode;
+            end
         end
         
         function OverlayImageChanged(obj)
@@ -89,6 +99,7 @@ classdef PTKEditManager < PTKTool
         end
               
         function InitialiseEditMode(obj)
+            obj.EditModeInitialised = true;
             obj.UndoStack.Clear;
             if ~isempty(obj.ViewerPanel.OverlayImage)
                 if obj.ViewerPanel.OverlayImage.ImageExists
@@ -325,7 +336,10 @@ classdef PTKEditManager < PTKTool
             end
         end
         
-        function MouseHasMoved(obj, viewer_panel, coords, last_coords, mouse_is_down)
+        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+        end
+        
+        function MouseHasMoved(obj, viewer_panel, coords, last_coords)
         end        
         
         function image_coords = GetImageCoordinates(obj, coords)

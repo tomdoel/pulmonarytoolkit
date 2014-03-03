@@ -51,7 +51,6 @@ classdef PTKMarkerPointManager < PTKTool
     properties (Access = private)
         MarkerPointImage
         MarkerPoints
-        AxesHandle
         ViewerPanel
         CurrentlyHighlightedMarker
         SliceNumber
@@ -64,9 +63,8 @@ classdef PTKMarkerPointManager < PTKTool
     end
     
     methods
-        function obj = PTKMarkerPointManager(viewer_panel, axes_handle)
+        function obj = PTKMarkerPointManager(viewer_panel)
             obj.ViewerPanel = viewer_panel;
-            obj.AxesHandle = axes_handle;
             obj.MarkerPointImage = PTKMarkerPointImage;
         end
         
@@ -89,6 +87,14 @@ classdef PTKMarkerPointManager < PTKTool
             end
             
             obj.Enabled = enable;
+        end
+        
+        function NewSlice(obj)
+            obj.NewSliceOrOrientation;
+        end
+        
+        function NewOrientation(obj)
+            obj.NewSliceOrOrientation;
         end
         
         function NewSliceOrOrientation(obj)
@@ -119,7 +125,7 @@ classdef PTKMarkerPointManager < PTKTool
             end
         end
         
-        function processed = Keypress(obj, key_name)
+        function processed = Keypressed(obj, key_name)
             processed = true;
             if strcmpi(key_name, 'l') % L
                 obj.ChangeShowTextLabels(~obj.ShowTextLabels);
@@ -173,7 +179,7 @@ classdef PTKMarkerPointManager < PTKTool
             obj.IsDragging = true;
         end
         
-        function MouseHasMoved(obj, viewer_panel, coords, last_coords, mouse_is_down)
+        function MouseHasMoved(obj, viewer_panel, coords, last_coords)
             if obj.Enabled
                 closest_marker = obj.GetMarkerForThisPoint(coords, []);
                 if isempty(closest_marker)
@@ -183,6 +189,10 @@ classdef PTKMarkerPointManager < PTKTool
                 end
             end
         end        
+        
+        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+        end
+        
         
         function MouseUp(obj, coords)
             if obj.Enabled
@@ -286,7 +296,8 @@ classdef PTKMarkerPointManager < PTKTool
         end
                 
         function new_marker = NewMarker(obj, coords, colour)
-            new_marker = PTKMarkerPoint(coords, obj.AxesHandle, colour, obj, obj.CoordinateLimits);
+            axes = obj.ViewerPanel.GetAxesHandle;
+            new_marker = PTKMarkerPoint(coords, axes, colour, obj, obj.CoordinateLimits);
             
             if isempty(obj.MarkerPoints)
                 obj.MarkerPoints = new_marker;
