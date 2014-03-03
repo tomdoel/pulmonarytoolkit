@@ -49,7 +49,6 @@ classdef PTKPluginDependencyTracker < handle
         % cached result, or if the dependencies are invalid, or if the
         % "AlwaysRunPlugin" property is set, then the plugin is executed.
         function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
-            
             % Fetch plugin result from the disk cache
             result = [];
             if ~plugin_info.AlwaysRunPlugin
@@ -60,7 +59,7 @@ classdef PTKPluginDependencyTracker < handle
                 % result to null to force a re-run of the plugin
                 if ~isempty(cache_info)
                     dependencies = cache_info.DependencyList;
-                    if ~PTKPluginDependencyTracker.CheckDependenciesValid(linked_dataset_chooser, dependencies)
+                    if ~PTKPluginDependencyTracker.CheckDependenciesValid(linked_dataset_chooser, dependencies, reporting)
                         reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
                         result = [];
                     end
@@ -166,8 +165,8 @@ classdef PTKPluginDependencyTracker < handle
             obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, result, new_cache_info, reporting);
         end
         
-        function valid = CheckDependencyValid(obj, next_dependency, reporting)
-            valid = obj.DatasetDiskCache.CheckDependencyValid(next_dependency, reporting);
+        function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
+            [valid, edited_result_exists] = obj.DatasetDiskCache.CheckDependencyValid(next_dependency, reporting);
         end
     end
     
@@ -199,15 +198,33 @@ classdef PTKPluginDependencyTracker < handle
         
         % Checks the dependencies in this result with the current dependency
         % list, and determine if the dependencies are still valid
-        function valid = CheckDependenciesValid(linked_dataset_chooser, dependencies)
+        function valid = CheckDependenciesValid(linked_dataset_chooser, dependencies, reporting)
             
             dependency_list = dependencies.DependencyList;
+
+            % Build up a list of dependencies which are edited values
+            known_edited_values = {};
+            for index = 1 : length(dependency_list)
+                next_dependency = dependency_list(index);
+                if isfield(next_dependency.Attributes, 'IsEditedResult') && (next_dependency.Attributes.IsEditedResult)
+                    known_edited_values{end + 1} = next_dependency.PluginName;
+                end
+            end
             
             for index = 1 : length(dependency_list)
                 next_dependency = dependency_list(index);
                 
                 dataset_uid = next_dependency.DatasetUid;
-                if ~linked_dataset_chooser.GetDataset(dataset_uid).CheckDependencyValid(next_dependency);
+                [valid, edited_result_exists] = linked_dataset_chooser.GetDataset(dataset_uid).CheckDependencyValid(next_dependency);
+                if ~valid
+                    valid = false;
+                    return;
+                end
+                
+                % If the dependency is based on a non-edited result, but we have an edited
+                % result in the cache, then this plugin result is invalid
+                if edited_result_exists && ~ismember(next_dependency.PluginName, known_edited_values)
+                    reporting.Log(['The result for dependency ' next_dependency.PluginName '(' char(next_dependency.Context) ') has been edited - forcing re-run for plugin.']);
                     valid = false;
                     return;
                 end

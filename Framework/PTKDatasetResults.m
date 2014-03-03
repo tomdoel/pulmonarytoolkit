@@ -242,8 +242,8 @@ classdef PTKDatasetResults < handle
             end
         end
 
-        function valid = CheckDependencyValid(obj, next_dependency)
-            valid = obj.DependencyTracker.CheckDependencyValid(next_dependency, obj.Reporting);
+        function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency)
+            [valid, edited_result_exists] = obj.DependencyTracker.CheckDependencyValid(next_dependency, obj.Reporting);
         end
     end
 
