@@ -75,7 +75,7 @@ classdef PTKMapColourTool < PTKTool
             end
         end
         
-        function processed = Keypress(obj, key_name)
+        function processed = Keypressed(obj, key_name)
             processed = true;
             if strcmpi(key_name, 'space')
                 obj.ShowMenu;
@@ -109,7 +109,10 @@ classdef PTKMapColourTool < PTKTool
             set(obj.ContextMenu, 'Visible', 'on');
         end
         
-        function NewSliceOrOrientation(obj)
+        function NewSlice(obj)
+        end
+        
+        function NewOrientation(obj)
         end
         
         function ImageChanged(obj)
@@ -209,8 +212,12 @@ classdef PTKMapColourTool < PTKTool
             obj.Colour = colour;
         end
         
-        function MouseHasMoved(obj, viewer_panel, coords, last_coords, mouse_is_down)
+        function MouseHasMoved(obj, viewer_panel, coords, last_coords)
         end
+        
+        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+        end
+        
         
         function image_coords = GetImageCoordinates(obj, coords)
             image_coords = zeros(1, 3);

@@ -73,7 +73,7 @@ classdef PTKReplaceColourTool < PTKTool
             end
         end
         
-        function processed = Keypress(obj, key_name)
+        function processed = Keypressed(obj, key_name)
             processed = true;
             if strcmpi(key_name, 'space')
                 obj.ShowMenu;
@@ -107,7 +107,10 @@ classdef PTKReplaceColourTool < PTKTool
             obj.Colour = new_colour;
         end
         
-        function NewSliceOrOrientation(obj)
+        function NewSlice(obj)
+        end
+        
+        function NewOrientation(obj)
         end
         
         function ImageChanged(obj)
@@ -228,9 +231,12 @@ classdef PTKReplaceColourTool < PTKTool
             obj.Colour = colour;
         end
         
-        function MouseHasMoved(obj, viewer_panel, coords, last_coords, mouse_is_down)
+        function MouseHasMoved(obj, viewer_panel, coords, last_coords)
             %             if obj.Enabled
             %             end
+        end
+        
+        function MouseDragged(obj, viewer_panel, coords, last_coords)
         end
         
         function image_coords = GetImageCoordinates(obj, coords)

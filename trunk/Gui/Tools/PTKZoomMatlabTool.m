@@ -31,7 +31,10 @@ classdef PTKZoomMatlabTool < PTKTool
             obj.ViewerPanel = viewer_panel;
         end
         
-        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords, mouse_is_down)
+        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
+        end
+        
+        function MouseDragged(obj, viewer_panel, coords, last_coords)
         end
         
         function MouseDown(obj, screen_coords)
@@ -44,7 +47,10 @@ classdef PTKZoomMatlabTool < PTKTool
             obj.ViewerPanel.EnableZoom(enabled);
         end
         
-        function NewSliceOrOrientation(obj)
+        function NewSlice(obj)
+        end
+        
+        function NewOrientation(obj)
         end
         
         function ImageChanged(obj)
@@ -53,7 +59,7 @@ classdef PTKZoomMatlabTool < PTKTool
         function OverlayImageChanged(obj)
         end
         
-        function processed = Keypress(obj, key_name)
+        function processed = Keypressed(obj, key_name)
             processed = false;
         end        
     end

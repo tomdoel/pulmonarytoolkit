@@ -30,7 +30,10 @@ classdef PTKPanMatlabTool < PTKTool
             obj.ViewerPanel = viewer_panel;
         end
         
-        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords, mouse_is_down)
+        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
+        end
+        
+        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
         end
         
         function MouseDown(obj, screen_coords)
@@ -43,7 +46,10 @@ classdef PTKPanMatlabTool < PTKTool
             obj.ViewerPanel.EnablePan(enabled);
         end
         
-        function NewSliceOrOrientation(obj)
+        function NewSlice(obj)
+        end
+        
+        function NewOrientation(obj)
         end
         
         function ImageChanged(obj)
@@ -52,7 +58,7 @@ classdef PTKPanMatlabTool < PTKTool
         function OverlayImageChanged(obj)
         end
         
-        function processed = Keypress(obj, key_name)
+        function processed = Keypressed(obj, key_name)
             processed = false;
         end
 

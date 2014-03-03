@@ -21,11 +21,25 @@ classdef PTKWindowLevelTool < PTKTool
         ShortcutKey = 'w'
     end
     
+    properties (Access = private)
+        ViewerPanel
+        StartCoords
+        StartWindow
+        StartLevel
+    end
+    
     methods
-        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords, mouse_is_down)
-            if mouse_is_down
+        function obj = PTKWindowLevelTool(viewer_panel)
+            obj.ViewerPanel = viewer_panel;
+        end
+        
+        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
+        end
+        
+        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+            if ~isempty(obj.StartCoords)            
                 [min_coords, max_coords] = viewer_panel.GetImageLimits;
-                coords_offset = screen_coords - last_coords;
+                coords_offset = screen_coords - obj.StartCoords;
                 
                 x_range = max_coords(1) - min_coords(1);
                 x_relative_movement = coords_offset(1)/x_range;
@@ -33,19 +47,22 @@ classdef PTKWindowLevelTool < PTKTool
                 y_range = max_coords(2) - min_coords(2);
                 y_relative_movement = coords_offset(2)/y_range;
                 
-                new_window = viewer_panel.Window + x_relative_movement*100*30;
+                new_window = obj.StartWindow + x_relative_movement*100*30;
                 viewer_panel.SetWindowWithinLimits(new_window);
                 
-                new_level = viewer_panel.Level + y_relative_movement*100*30;
+                new_level = obj.StartLevel + y_relative_movement*100*30;
                 viewer_panel.SetLevelWithinLimits(new_level);
             end
         end
         
-        function processed = Keypress(obj, key_name)
+        function processed = Keypressed(obj, key_name)
             processed = false;
         end
         
         function MouseDown(obj, screen_coords)
+            obj.StartCoords = screen_coords;
+            obj.StartWindow = obj.ViewerPanel.Window;
+            obj.StartLevel = obj.ViewerPanel.Level;
         end
         
         function MouseUp(obj, screen_coords)
@@ -54,8 +71,16 @@ classdef PTKWindowLevelTool < PTKTool
         function Enable(obj, enabled)
         end
         
+        function NewSlice(obj)
+            obj.StartCoords = [];
+            obj.StartWindow = [];
+            obj.StartLevel = [];
+        end
         
-        function NewSliceOrOrientation(obj)
+        function NewOrientation(obj)
+            obj.StartCoords = [];
+            obj.StartWindow = [];
+            obj.StartLevel = [];
         end
         
         function ImageChanged(obj)

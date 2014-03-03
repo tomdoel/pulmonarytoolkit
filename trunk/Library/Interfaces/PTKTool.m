@@ -26,14 +26,16 @@ classdef PTKTool < handle
     
     methods (Abstract)
         
-        MouseHasMoved(obj, viewer_panel, screen_coords, last_coords, mouse_is_down)
+        MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
+        MouseDragged(obj, viewer_panel, screen_coords, last_coords)
         MouseDown(obj, screen_coords)
         MouseUp(obj, screen_coords)
         Enable(obj, enabled)
-        NewSliceOrOrientation(obj)
+        NewSlice(obj)
+        NewOrientation(obj)
         ImageChanged(obj)
         OverlayImageChanged(obj)
-        Keypress(obj, key_name)
+        Keypressed(obj, key_name)
                 
     end
     

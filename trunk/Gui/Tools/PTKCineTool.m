@@ -21,11 +21,24 @@ classdef PTKCineTool < PTKTool
         ShortcutKey = 'n'
     end
     
+    properties (Access = private)
+        ViewerPanel
+        StartCoords
+        StartKPosition
+    end
+    
     methods
+        function obj = PTKCineTool(viewer_panel)
+            obj.ViewerPanel = viewer_panel;
+        end
+    
         function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords, mouse_is_down)
-            if mouse_is_down
+        end    
+
+        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+            if ~isempty(obj.StartCoords)
                 [min_coords, max_coords] = viewer_panel.GetImageLimits;
-                coords_offset = screen_coords - last_coords;
+                coords_offset = screen_coords -  obj.StartCoords;
                 
                 y_range = max_coords(2) - min_coords(1);
                 y_relative_movement = coords_offset(2)/y_range;
@@ -34,13 +47,15 @@ classdef PTKCineTool < PTKTool
                 y_relative_movement = 100*y_relative_movement;
                 y_relative_movement = ceil(y_relative_movement);
                 
-                k_position = viewer_panel.SliceNumber(viewer_panel.Orientation);
-                k_position = k_position - direction*y_relative_movement;
+                k_position = obj.StartKPosition - direction*y_relative_movement;
                 viewer_panel.SliceNumber(viewer_panel.Orientation) = k_position;
+                
             end
         end
         
         function MouseDown(obj, screen_coords)
+            obj.StartCoords = screen_coords;
+            obj.StartKPosition = obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation);
         end
         
         function MouseUp(obj, screen_coords)
@@ -49,16 +64,23 @@ classdef PTKCineTool < PTKTool
         function Enable(obj, enabled)
         end
         
-        function NewSliceOrOrientation(obj)
+        function NewSlice(obj)
+        end
+        
+        function NewOrientation(obj)
+            obj.StartCoords = [];
+            obj.StartKPosition = [];
         end
         
         function ImageChanged(obj)
+            obj.StartCoords = [];
+            obj.StartKPosition = [];
         end
         
         function OverlayImageChanged(obj)
         end
               
-        function processed = Keypress(obj, key_name)
+        function processed = Keypressed(obj, key_name)
             processed = false;
         end
         
