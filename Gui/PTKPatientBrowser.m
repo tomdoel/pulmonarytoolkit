@@ -70,6 +70,10 @@ classdef PTKPatientBrowser < PTKFigure
             end
         end
 
+        function DeleteFromPatientBrowser(obj, series_uids)
+            obj.GuiCallback.DeleteDatasets(series_uids);
+        end
+        
         function Show(obj, reporting)
             obj.LockLoad = false;
             Show@PTKFigure(obj, reporting);
@@ -77,6 +81,12 @@ classdef PTKPatientBrowser < PTKFigure
         
         function position = GetLastPosition(obj)
             position = get(obj.GraphicalComponentHandle, 'Position');
+        end
+        
+        function AddData(obj, tag)
+            obj.GuiCallback.BringToFront;
+            obj.GuiCallback.ImportMultipleFiles;
+            obj.BringToFront;
         end
     end
 

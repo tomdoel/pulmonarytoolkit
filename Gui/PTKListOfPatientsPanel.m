@@ -19,8 +19,11 @@ classdef PTKListOfPatientsPanel < PTKPanel
         PatientDatabase
         PatientListBox
         PatientTextControl
+        AddButton
+        DeleteButton
         AllPatientsPanel
         
+        GuiCallback
         PatientIds
         LockSetPatient
         LastSelectedPatientId
@@ -28,17 +31,28 @@ classdef PTKListOfPatientsPanel < PTKPanel
     
     properties (Constant, Access = private)
         ControlPanelHeight = 40
+        ButtonSize = 32
+        ButtonSpacing = 4
         FontSize = 30
         PatientText = 'Patient'
         PatientTextFontSize = 30;
     end
     
     methods
-        function obj = PTKListOfPatientsPanel(parent, all_patients_panel, patient_database, reporting)
+        function obj = PTKListOfPatientsPanel(parent, all_patients_panel, patient_database, gui_callback, reporting)
             obj = obj@PTKPanel(parent, reporting);
             obj.LockSetPatient = false;
             obj.PatientDatabase = patient_database;
             obj.AllPatientsPanel = all_patients_panel;
+            obj.GuiCallback = gui_callback;
+            obj.AddButton = PTKButton(obj, '+', 'Import images', 'Add', @obj.AddButtonClicked);
+            obj.AddButton.FontSize = obj.PatientTextFontSize;
+            obj.AddButton.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
+            obj.AddChild(obj.AddButton);
+            obj.DeleteButton = PTKButton(obj, '-', 'Delete this patient', 'Delete', @obj.DeleteButtonClicked);
+            obj.DeleteButton.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
+            obj.DeleteButton.FontSize = obj.PatientTextFontSize;
+            obj.AddChild(obj.DeleteButton);
         end
         
         function delete(obj)
@@ -72,9 +86,16 @@ classdef PTKListOfPatientsPanel < PTKPanel
             panel_width = panel_position(3);
             panel_height = panel_position(4);
             list_box_height = max(1, panel_height - obj.ControlPanelHeight);
-            patient_text_position = [1 list_box_height, panel_position(3), obj.ControlPanelHeight];
+            patient_text_position = [1 list_box_height, panel_position(3) - 2*obj.ButtonSize - obj.ButtonSpacing, obj.ControlPanelHeight];
             set(obj.PatientTextControl, 'Position', patient_text_position);
             set(obj.PatientListBox, 'Position', [1 1, panel_width, list_box_height]);
+            
+            
+            delete_button_position = [panel_position(3)-2*obj.ButtonSize - obj.ButtonSpacing, list_box_height + obj.ButtonSpacing, obj.ButtonSize, obj.ButtonSize];
+            add_button_position = [panel_position(3)-obj.ButtonSize, list_box_height + obj.ButtonSpacing, obj.ButtonSize, obj.ButtonSize];
+            
+            obj.AddButton.Resize(add_button_position);
+            obj.DeleteButton.Resize(delete_button_position);
         end
         
         function DatabaseHasChanged(obj)
@@ -100,13 +121,44 @@ classdef PTKListOfPatientsPanel < PTKPanel
             end
         end
         
+        function AddButtonClicked(obj, tag)
+            obj.GuiCallback.AddData;
+        end
+        
+        function DeleteButtonClicked(obj, tag)
+            index_selected = get(obj.PatientListBox, 'Value');
+            if ~isempty(index_selected)
+                patient_id = obj.PatientIds{index_selected};
+                obj.AllPatientsPanel.DeletePatient(patient_id);
+            end
+        end
     end
-    
+
     methods (Access = private)
         
         function AddPatientsToListBox(obj)
             [names, ids, short_visible_names] = obj.PatientDatabase.GetListOfPatientNames;
-            set(obj.PatientListBox, 'String', short_visible_names);
+            current_index_selected = get(obj.PatientListBox, 'Value');
+            if isempty(obj.PatientIds) || isempty(current_index_selected)
+                new_index = [];
+            else
+                current_patient_id = obj.PatientIds{current_index_selected};
+                new_index = find(strcmp(ids, current_patient_id), 1, 'first');
+            end
+            
+            if isempty(ids)
+                new_index = [];
+            else
+                if isempty(new_index)
+                    if numel(ids) > numel(obj.PatientIds)
+                        new_index = 1;
+                    else
+                        new_index = numel(ids);
+                    end
+                end
+            end
+            
+            set(obj.PatientListBox, 'String', short_visible_names, 'Value', new_index);
             obj.PatientIds = ids;
         end
         

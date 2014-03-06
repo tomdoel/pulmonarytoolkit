@@ -42,6 +42,10 @@ classdef PTKAllPatientsSlidingPanel < PTKSlidingPanel
             
         end
         
+        function DeletePatient(obj, patient_id)
+            obj.FloatingPanel.DeletePatient(patient_id);
+        end
+
         function DatabaseHasChanged(obj)
             obj.FloatingPanel.DatabaseHasChanged;
         end

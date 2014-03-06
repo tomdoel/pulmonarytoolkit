@@ -62,6 +62,16 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
             end
         end
         
+        function DeletePatient(obj, patient_id)
+            if obj.PatientPanels.isKey(patient_id)
+                panel = obj.PatientPanels(patient_id);
+                panel.DeletePatient;
+            else
+                obj.Reporting.ShowWarning('PTKAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
+            end
+        end
+        
+        
     end
     
     methods (Access = private)

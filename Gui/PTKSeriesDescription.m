@@ -124,12 +124,17 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
                 obj.NumImagesSuffixControl.HorizontalAlignment = 'left';
                 obj.AddChild(obj.NumImagesSuffixControl);
                 
-                obj.TextClickedListeners = [];
                 obj.TextClickedListeners = addlistener(obj.ModalityControl, 'TextClicked', @obj.SeriesClicked);
-                obj.TextClickedListeners(2) = addlistener(obj.DescriptionControl, 'TextClicked', @obj.SeriesClicked);
-                obj.TextClickedListeners(3) = addlistener(obj.DateControl, 'TextClicked', @obj.SeriesClicked);
-                obj.TextClickedListeners(4) = addlistener(obj.NumImagesControl, 'TextClicked', @obj.SeriesClicked);
-                obj.TextClickedListeners(5) = addlistener(obj.NumImagesSuffixControl, 'TextClicked', @obj.SeriesClicked);
+                obj.TextClickedListeners(end + 1) = addlistener(obj.DescriptionControl, 'TextClicked', @obj.SeriesClicked);
+                obj.TextClickedListeners(end + 1) = addlistener(obj.DateControl, 'TextClicked', @obj.SeriesClicked);
+                obj.TextClickedListeners(end + 1) = addlistener(obj.NumImagesControl, 'TextClicked', @obj.SeriesClicked);
+                obj.TextClickedListeners(end + 1) = addlistener(obj.NumImagesSuffixControl, 'TextClicked', @obj.SeriesClicked);
+                
+                obj.TextClickedListeners = addlistener(obj.ModalityControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.TextClickedListeners(end + 1) = addlistener(obj.DescriptionControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.TextClickedListeners(end + 1) = addlistener(obj.DateControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.TextClickedListeners(end + 1) = addlistener(obj.NumImagesControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.TextClickedListeners(end + 1) = addlistener(obj.NumImagesSuffixControl, 'TextRightClicked', @obj.SeriesRightClicked);
             end
         end
         
@@ -143,6 +148,14 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
             obj.DateControl.Select(selected);
             obj.NumImagesControl.Select(selected);
             obj.NumImagesSuffixControl.Select(selected);
+        end
+        
+        function Highlight(obj, highlighted)
+            obj.ModalityControl.Highlight(highlighted);
+            obj.DescriptionControl.Highlight(highlighted);
+            obj.DateControl.Highlight(highlighted);
+            obj.NumImagesControl.Highlight(highlighted);
+            obj.NumImagesSuffixControl.Highlight(highlighted);
         end
         
         function CreateGuiComponent(obj, position, reporting)
@@ -159,8 +172,7 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
             obj.DateControl.Resize(date_position);
             obj.NumImagesControl.Resize(num_images_position);
             obj.NumImagesSuffixControl.Resize(num_images_suffix_position);
-            if obj.IsVisible
-            end
+            obj.Highlight(false);
         end
         
         function height = GetRequestedHeight(obj, width)
@@ -189,10 +201,64 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
         end
     end
     
+    methods (Access = protected)
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+            % This method is called when the mouse is moved
+
+            obj.Highlight(true);
+            input_has_been_processed = true;
+        end
+
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+            % This method is called when the mouse exits a control which previously
+            % processed a MouseHasMoved event
+            
+            obj.Highlight(false);
+            input_has_been_processed = true;
+        end
+        
+    end
+    
     methods (Access = private)
         function SeriesClicked(obj, ~, ~)
             obj.Select(true);
             obj.GuiCallback.LoadFromPatientBrowser(obj.PatientId, obj.SeriesUid);
         end
+        
+        function SeriesRightClicked(obj, ~, ~)
+            if isempty(get(obj.DescriptionControl.GraphicalComponentHandle, 'uicontextmenu'))
+                context_menu = uicontextmenu;
+                context_menu_delete = uimenu(context_menu, 'Label', 'Delete this series', 'Callback', @obj.DeleteDataset);
+                context_menu_patient = uimenu(context_menu, 'Label', 'Delete this patient', 'Callback', @obj.DeletePatient);
+                set(obj.DescriptionControl.GraphicalComponentHandle, 'uicontextmenu', context_menu);
+                set(obj.DateControl.GraphicalComponentHandle, 'uicontextmenu', context_menu);
+                set(obj.ModalityControl.GraphicalComponentHandle, 'uicontextmenu', context_menu);
+                set(obj.NumImagesControl.GraphicalComponentHandle, 'uicontextmenu', context_menu);
+                set(obj.NumImagesSuffixControl.GraphicalComponentHandle, 'uicontextmenu', context_menu);
+            end
+        end
+
+        function DeletePatient(obj, ~, ~)
+            obj.Parent.DeletePatient;
+        end
+        
+        function DeleteDataset(obj, ~, ~)
+            choice = questdlg('Do you want to delete this dataset?', ...
+                'Delete dataset', 'Delete', 'Don''t delete', 'Don''t delete');
+            switch choice
+                case 'Delete'
+                    parent_figure = obj.GetParentFigure;
+                    parent_figure.ShowWaitCursor;
+                    obj.GuiCallback.DeleteFromPatientBrowser(obj.SeriesUid);
+                    
+                    % Note that at this point the SeriesDescription object may have been deleted, so
+                    % we can't use 'obj'
+                    parent_figure.HideWaitCursor;
+                case 'Don''t delete'
+            end
+            
+            
+        end
+        
     end
 end
