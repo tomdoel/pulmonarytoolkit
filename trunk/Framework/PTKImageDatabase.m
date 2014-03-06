@@ -128,19 +128,31 @@ classdef PTKImageDatabase < handle
             short_visible_names = short_visible_names(sorted_indices);
         end
         
-        function DeleteSeries(obj, series_uid, reporting)
-            if ~obj.SeriesMap.isKey(series_uid)
-                return
+        function DeleteSeries(obj, series_uids, reporting)
+            if ~iscell(series_uids)
+                series_uids = {series_uids};
             end
-            patient_id = obj.SeriesMap(series_uid).PatientId;
-            patient = obj.PatientMap(patient_id);
-            patient.DeleteSeries(series_uid);
-            if obj.PatientMap(patient_id).GetNumberOfSeries < 1
-                obj.PatientMap.remove(patient_id)
+            
+            anything_changed = false;
+            
+            for series_uid_cell = series_uids
+                series_uid = series_uid_cell{1};
+            
+                if obj.SeriesMap.isKey(series_uid)
+                    anything_changed = true;
+                    patient_id = obj.SeriesMap(series_uid).PatientId;
+                    patient = obj.PatientMap(patient_id);
+                    patient.DeleteSeries(series_uid);
+                    if obj.PatientMap(patient_id).GetNumberOfSeries < 1
+                        obj.PatientMap.remove(patient_id);
+                    end
+                    obj.SeriesMap.remove(series_uid);
+                end
             end
-            obj.SeriesMap.remove(series_uid);
-            obj.InvalidateCachedPaths;
-            obj.SaveDatabase(reporting);
+            if anything_changed
+                obj.InvalidateCachedPaths;
+                obj.SaveDatabase(reporting);
+            end
         end
 
         function Rebuild(obj, uids_to_update, rebuild_all, reporting)
