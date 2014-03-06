@@ -865,7 +865,7 @@ classdef PTKViewerPanel < PTKPanel
         function AutoOrientationAndWL(obj, new_image)
             obj.Orientation = PTKImageUtilities.GetPreferredOrientation(new_image);
             
-            if new_image.IsCT
+            if isa(new_image, 'PTKDicomImage') && new_image.IsCT
                 obj.Window = 1600;
                 obj.Level = -600;
             else
