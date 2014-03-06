@@ -43,7 +43,7 @@ classdef PTKImageDatabasePatient < handle
         end
         
         function DeleteSeries(obj, series_uid)
-            obj.SeriesMap.remove(series_uid)
+            obj.SeriesMap.remove(series_uid);
         end
         
         
