@@ -25,10 +25,13 @@ classdef PTKText < PTKUserInterfaceObject
         Tag
         ToolTip
         Selected
+        Highlighted
     end
     
     events
         TextClicked
+        TextRightClicked
+        TextShiftClicked
     end
     
     methods
@@ -40,6 +43,7 @@ classdef PTKText < PTKUserInterfaceObject
             obj.FontSize = 11;
             obj.HorizontalAlignment = 'left';
             obj.Selected = false;
+            obj.Highlighted = false;
         end
         
         function delete(obj)
@@ -48,14 +52,14 @@ classdef PTKText < PTKUserInterfaceObject
         function Select(obj, selected)
             if (selected ~= obj.Selected)
                 obj.Selected = selected;
-                if ~isempty(obj.GraphicalComponentHandle)
-                    if obj.Selected
-                        background_colour = obj.SelectedColour;
-                    else
-                        background_colour = PTKSoftwareInfo.BackgroundColour;
-                    end
-                    set(obj.GraphicalComponentHandle, 'BackgroundColor', background_colour);
-                end
+                obj.UpdateBackgroundColour;
+            end
+        end
+        
+        function Highlight(obj, highlighted)
+            if (highlighted ~= obj.Highlighted)
+                obj.Highlighted = highlighted;
+                obj.UpdateBackgroundColour;
             end
         end
         
@@ -79,9 +83,31 @@ classdef PTKText < PTKUserInterfaceObject
         
         function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
             % This method is called when the mouse is clicked inside the control
+
             input_has_been_processed = true;
-            notify(obj, 'TextClicked');
+            
+            if strcmp(selection_type, 'extend')
+                notify(obj, 'TextShiftClicked');
+            elseif strcmp(selection_type, 'alt')
+                notify(obj, 'TextRightClicked');
+            else
+                notify(obj, 'TextClicked');
+            end
         end
         
+        function UpdateBackgroundColour(obj)
+            if ~isempty(obj.GraphicalComponentHandle)
+                if obj.Selected
+                    background_colour = obj.SelectedColour;
+                else
+                    background_colour = PTKSoftwareInfo.BackgroundColour;
+                end
+
+                if obj.Highlighted
+                    background_colour = min(1, background_colour + 0.2);
+                end
+                set(obj.GraphicalComponentHandle, 'BackgroundColor', background_colour);
+            end
+        end
     end
 end
