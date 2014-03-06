@@ -24,6 +24,8 @@ classdef PTKFigure < PTKUserInterfaceObject
         OldResizeFunction;
         OldWindowScrollWheelFunction
         MouseCapturingObject % This is the PTKUserInterfaceObject which has captured the mouse input after a mouse down
+        MouseOverObject % This is the PTKUserInterfaceObject which last processed a MouseHasMoved event
+        LastCursor
     end
 
     methods
@@ -67,7 +69,7 @@ classdef PTKFigure < PTKUserInterfaceObject
             obj.GraphicalComponentHandle = figure('Color', PTKSoftwareInfo.BackgroundColour, 'Visible', 'off', ...
                 'numbertitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none', ...
                 'Units', 'pixels', 'Position', position, 'Name', obj.Title, 'Pointer', obj.ArrowPointer, ...
-                'Interruptible', 'off', 'BusyAction', 'cancel');
+                'Interruptible', 'off', 'BusyAction', 'queue');
             
             % Store old custom handlers for this figure
             obj.OldWindowScrollWheelFunction = get(obj.GraphicalComponentHandle, 'WindowScrollWheelFcn');
@@ -106,7 +108,24 @@ classdef PTKFigure < PTKUserInterfaceObject
             if isempty(processing_object) && ~isempty(obj.DefaultKeyHandlingObject)
                 obj.ProcessActivityToSpecificObject(obj.DefaultKeyHandlingObject, 'Keypressed', current_point, eventdata.Key);
             end
-        end        
+        end
+        
+        function ShowWaitCursor(obj)
+            if isempty(obj.LastCursor)
+                obj.LastCursor = get(obj.GraphicalComponentHandle, 'Pointer');
+            end
+            
+            set(obj.GraphicalComponentHandle, 'Pointer', 'watch');
+            drawnow;
+
+        end
+        
+        function HideWaitCursor(obj)
+            set(obj.GraphicalComponentHandle, 'Pointer', obj.LastCursor);
+            obj.LastCursor = [];
+            drawnow;
+        end
+        
         
     end
 
@@ -141,7 +160,7 @@ classdef PTKFigure < PTKUserInterfaceObject
             % MouseUp events are always sent to the object which originally received the
             % MouseDown, regardless of where the cursor is now
             selection_type = get(src, 'SelectionType');
-            if ~isempty(obj.MouseCapturingObject)
+            if ~isempty(obj.MouseCapturingObject) && isvalid(obj.MouseCapturingObject)
                 obj.ProcessActivityToSpecificObject(obj.MouseCapturingObject, 'MouseUp', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
             end
             
@@ -156,8 +175,12 @@ classdef PTKFigure < PTKUserInterfaceObject
             % cursor currently is. Otherwise, the mouse move event goes to the object under
             % the cursor
             selection_type = get(src, 'SelectionType');
-            if isempty(obj.MouseCapturingObject)
-                obj.ProcessActivity('MouseHasMoved', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
+            if isempty(obj.MouseCapturingObject) || ~isvalid(obj.MouseCapturingObject)
+                mouse_over_object = obj.ProcessActivity('MouseHasMoved', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
+                if ~isempty(obj.MouseOverObject) && isvalid(obj.MouseOverObject) && (isempty(mouse_over_object) || (mouse_over_object ~= obj.MouseOverObject))
+                    obj.ProcessActivityToSpecificObject(obj.MouseOverObject, 'MouseExit', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
+                end
+                obj.MouseOverObject = mouse_over_object;
             else
                 obj.ProcessActivityToSpecificObject(obj.MouseCapturingObject, 'MouseDragged', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
             end
