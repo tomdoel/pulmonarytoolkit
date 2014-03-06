@@ -181,23 +181,58 @@ classdef PTKGuiDataset < handle
         end
         
         function DeleteImageInfo(obj)
-            obj.Settings.ImageInfo = [];
-
-            if ~isempty(obj.Dataset)
-                obj.Dataset.DeleteCacheForThisDataset;
-                image_info = obj.Dataset.GetImageInfo;
-                
-                obj.Ptk.ImageDatabase.DeleteSeries(image_info.ImageUid, obj.Reporting);
-                obj.Gui.DatabaseHasChanged;
-                
-                obj.Gui.ClearImages;                
-                delete(obj.Dataset);
-                obj.Dataset = [];
+            obj.DeleteDatasets(obj.GetUidOfCurrentDataset);
+        end
+        
+        function DeleteDatasets(obj, series_uids)
+            % Removes a dataset from the database and deletes its disk cache. If the dataset
+            % is currently loaded then we must also clear the current dataset
+            
+            % Get the UID of the currently loaded dataset
+            currently_loaded_series_UID = obj.GetUidOfCurrentDataset;
+            
+            if ~iscell(series_uids)
+                series_uids = {series_uids};
             end
             
-            obj.Gui.SaveSettings;
-            obj.Gui.UpdateQuickLoadMenu;            
+            anything_changed = false;
+            
+            for series_uid_cell = series_uids
+                series_uid = series_uid_cell{1};
+
+                % Test whether the dataset to delete is the current dataset
+                is_dataset_currently_loaded = strcmp(series_uid, currently_loaded_series_UID);
+                if is_dataset_currently_loaded
+                    dataset_to_delete = obj.Dataset;
+                    obj.Settings.ImageInfo = [];
+                else
+                    dataset_to_delete = obj.Ptk.CreateDatasetFromUid(series_uid);
+                end
+                
+                if ~isempty(dataset_to_delete)
+                    dataset_to_delete.DeleteCacheForThisDataset;
+                    
+                    anything_changed = true;
+                    
+                    delete(dataset_to_delete);
+                end
+                
+                if is_dataset_currently_loaded
+                    obj.Gui.ClearImages;
+                    obj.Dataset = [];
+                    obj.Gui.SaveSettings;
+                end
+            
+            end
+            
+            obj.Ptk.ImageDatabase.DeleteSeries(series_uids, obj.Reporting);
+            
+            if anything_changed
+                obj.Gui.DatabaseHasChanged;
+                obj.Gui.UpdateQuickLoadMenu;
+            end
         end
+        
         
         function InternalLoadImages(obj, image_info_or_uid)
             try

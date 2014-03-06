@@ -25,7 +25,7 @@ classdef PTKPatientBrowserPanel < PTKPanel
         function obj = PTKPatientBrowserPanel(parent, patient_database, gui_callback, reporting)
             obj = obj@PTKPanel(parent, reporting);
             obj.AllPatientsSlidingPanel = PTKAllPatientsSlidingPanel(obj, patient_database, gui_callback, reporting);
-            obj.ListOfPatientsPanel = PTKListOfPatientsPanel(obj, obj.AllPatientsSlidingPanel, patient_database, reporting);
+            obj.ListOfPatientsPanel = PTKListOfPatientsPanel(obj, obj.AllPatientsSlidingPanel, patient_database, gui_callback, reporting);
             obj.AddChild(obj.AllPatientsSlidingPanel);
             obj.AddChild(obj.ListOfPatientsPanel);
         end
@@ -66,7 +66,6 @@ classdef PTKPatientBrowserPanel < PTKPanel
             % Resize the child panels
             obj.ListOfPatientsPanel.Resize([1 1 list_panel_width panel_height_pixels]);
             obj.AllPatientsSlidingPanel.Resize([1+list_panel_width 1 info_panel_width panel_height_pixels]);
-            
         end
     end
 end

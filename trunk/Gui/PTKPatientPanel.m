@@ -37,6 +37,8 @@ classdef PTKPatientPanel < PTKPanel
         PatientNamePosition_Y
         
         LastSelectedSeriesUid
+        
+        TextClickedListeners
     end
     
     properties (Constant, Access = private)
@@ -67,16 +69,17 @@ classdef PTKPatientPanel < PTKPanel
 
             obj.PanelHeight = obj.PatientNameHeight + patient_details.GetNumberOfSeries*PTKSeriesDescription.SeriesTextHeight + 2*obj.BorderSpace;
             obj.PatientNamePosition_Y = 1 + obj.PanelHeight - obj.PatientNameHeight - obj.BorderSpace;
-        end
-        
-        function delete(obj)
-            obj.DeleteIfHandle(obj.PatientNameTextControl);
+                        
+            obj.PatientNameTextControl = PTKText(obj, obj.Name, ['Patient name: ', obj.Name], 'PatientName');
+            obj.PatientNameTextControl.FontSize = obj.PatientNameFontSize;
+            obj.AddChild(obj.PatientNameTextControl);
+            obj.TextClickedListeners = addlistener(obj.PatientNameTextControl, 'TextRightClicked', @obj.PatientRightClicked);
         end
         
         function CreateGuiComponent(obj, position, reporting)
             CreateGuiComponent@PTKPanel(obj, position, reporting);
             patient_text_position = [obj.PatientNameLeftPadding position(4)-obj.PatientNameHeight-obj.BorderSpace position(3)-obj.PatientNameLeftPadding obj.PatientNameHeight];
-            obj.PatientNameTextControl = uicontrol('Style', 'text', 'Parent', obj.GetContainerHandle(reporting), 'Units', 'pixels', 'FontSize', obj.PatientNameFontSize, 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'ForegroundColor', 'white', 'HorizontalAlignment', 'left', 'String', obj.Name, 'Position', patient_text_position);
+            
             obj.AddStudies(position);
             
             % A series may already have been selected
@@ -88,7 +91,7 @@ classdef PTKPatientPanel < PTKPanel
         function Resize(obj, new_position)
             Resize@PTKPanel(obj, new_position);
             patient_text_position = [obj.PatientNameLeftPadding new_position(4)-obj.PatientNameHeight-obj.BorderSpace new_position(3)-obj.PatientNameLeftPadding obj.PatientNameHeight];
-            set(obj.PatientNameTextControl, 'Units', 'Pixels', 'Position', patient_text_position);
+            obj.PatientNameTextControl.Resize(patient_text_position);
             
             for series_index = 1 : numel(obj.SeriesDescriptions)
                 y_position = obj.BorderSpace+(series_index-1)*PTKSeriesDescription.SeriesTextHeight;
@@ -115,10 +118,52 @@ classdef PTKPatientPanel < PTKPanel
                 end
             end
         end
+
+        function DeletePatientSelected(obj, ~, ~)
+            obj.DeletePatient;
+        end
+
+        function DeletePatient(obj)
+            choice = questdlg('Do you want to delete this patient?', ...
+                'Delete patient', 'Delete', 'Don''t delete', 'Don''t delete');
+            switch choice
+                case 'Delete'
+                    parent_figure = obj.GetParentFigure;
+                    parent_figure.ShowWaitCursor;
+                    obj.GuiCallback.BringToFront;
+
+                    series_descriptions = obj.SeriesDescriptions;
+                    
+                    gui_callback = obj.GuiCallback;
+                    series_uids = {};
+                    
+                    for series_index = 1 : numel(series_descriptions)
+                        series_uids{series_index} = series_descriptions(series_index).SeriesUid;
+                    end
+
+                    % Note that obj may be deleted during this loop as the patient panels are
+                    % rebuilt, so we can't reference obj at all from here on
+                    % for line
+                    gui_callback.DeleteFromPatientBrowser(series_uids);
+                    
+                    parent_figure.BringToFront;
+                    parent_figure.HideWaitCursor;
+                    
+                case 'Don''t delete'
+            end
+        end
         
     end
     
     methods (Access = private)
+        
+        function PatientRightClicked(obj, ~, ~)
+            if isempty(get(obj.PatientNameTextControl.GraphicalComponentHandle, 'uicontextmenu'))
+                context_menu = uicontextmenu;
+                context_menu_patient = uimenu(context_menu, 'Label', 'Delete this patient', 'Callback', @obj.DeletePatientSelected);
+                set(obj.PatientNameTextControl.GraphicalComponentHandle, 'uicontextmenu', context_menu);
+            end
+        end        
         
         function AddStudies(obj, new_position)
             datasets = obj.PatientDetails.GetListOfSeries;

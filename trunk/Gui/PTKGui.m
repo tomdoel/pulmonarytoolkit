@@ -188,6 +188,8 @@ classdef PTKGui < PTKFigure
         function uids = ImportMultipleFiles(obj)
             % Prompts the user for file(s) to import
             
+            obj.WaitDialogHandle.ShowAndHold('Import data');
+            
             folder_path = PTKDiskUtilities.ChooseDirectory('Select a directory from which files will be imported', obj.Settings.SaveImagePath);
             
             % An empty folder_path means the user has cancelled
@@ -199,8 +201,13 @@ classdef PTKGui < PTKFigure
                 obj.SaveSettings;
                 
                 % Import all datasets from this path
-                uids = obj.GuiDataset.ImportDataRecursive(folder_path);                
+                uids = obj.GuiDataset.ImportDataRecursive(folder_path);
+
+                % Bring Patient Browser to the front after import
+                obj.PatientBrowserFactory.Show;
             end
+            
+            obj.WaitDialogHandle.Hide;
         end
                
         function SaveBackgroundImage(obj)
@@ -337,14 +344,26 @@ classdef PTKGui < PTKFigure
         end        
         
         function UpdatePatientBrowser(obj, patient_id, series_uid)
-            obj.PatientBrowserFactory.UpdatePatientBrowser(patient_id, series_uid)
+            obj.PatientBrowserFactory.UpdatePatientBrowser(patient_id, series_uid);
         end
         
         function LoadFromPopupMenu(obj, uid)
             obj.LoadFromUid(uid, obj.WaitDialogHandle);
         end
 
+        function DeleteImageInfo(obj)
+            obj.GuiDataset.DeleteImageInfo;
+        end
+
+        function DeleteFromPatientBrowser(obj, series_uids)
+            obj.WaitDialogHandle.ShowAndHold('Deleting data');
+            obj.DeleteDatasets(series_uids);
+            obj.WaitDialogHandle.Hide;
+        end
         
+        function DeleteDatasets(obj, series_uids)
+            obj.GuiDataset.DeleteDatasets(series_uids);
+        end
     end
     
     methods (Access = protected)
@@ -384,9 +403,6 @@ classdef PTKGui < PTKFigure
             obj.Resize;
         end
         
-        function PatientBrowserButtonCallback(obj, ~, ~, ~)
-            obj.PatientBrowserFactory.Show;
-        end
         
         function MarkerPanelSelected(obj, ~, ~)
             if ~obj.MarkersHaveBeenLoaded
