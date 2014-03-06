@@ -66,7 +66,7 @@ classdef PTKSlidingPanel < PTKPanel
             current_value = current_value + 2*scroll_count;
             
             current_value = min(current_value, obj.FloatingPanel.GetRequestedHeight(obj.GetFloatingPanelWidth(false)));
-            current_value = max(current_value, 1);
+            current_value = max(current_value, 0);
             
             obj.ScrollPanelToThisYPosition(current_value);
             input_has_been_processed = true;
@@ -125,6 +125,7 @@ classdef PTKSlidingPanel < PTKPanel
             overlap_height = max(0, floating_panel_height - fixed_panel_size(4));
             slider_is_visible = overlap_height > 0;
 
+            obj.FloatingPanelYPosition = min(obj.FloatingPanelYPosition, overlap_height);
             if slider_is_visible            
                 y_pos = obj.FloatingPanelYPosition - overlap_height;
             else
