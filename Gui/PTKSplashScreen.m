@@ -65,6 +65,7 @@ classdef PTKSplashScreen < PTKProgressInterface & PTKFigure
             
             % Create the figure
             obj.Show(PTKReportingDefault);
+            set(obj.ProgressBarHandle, 'visible', 0);
             
             drawnow;
         end
@@ -91,24 +92,25 @@ classdef PTKSplashScreen < PTKProgressInterface & PTKFigure
             panel_background_colour = [1 1 1];
             text_color = [0.0 0.129 0.278];
             
-            title_position = [450, 140, 400, 30];
-            text_position = [450, 90, 400, 40];
+            title_position = [450, 150, 400, 30];
+            text_position = [450, 100, 400, 40];
             cancel_position = [580, 20, 140, 30];
             quit_position = [750, 20, 70, 30];
             progress_bar_position = [450, 80, 400, 18];
             
             
             obj.ProgressTitle = uicontrol('parent', obj.GraphicalComponentHandle, 'style', 'text', 'units', 'pixel', 'Position', title_position, ...
-                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 24, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour);
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 24, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
             obj.Text = uicontrol('parent', obj.GraphicalComponentHandle, 'style', 'text', 'units', 'pixel', 'Position', text_position, ...
-                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 16, 'Fore', text_color, 'Back', panel_background_colour);
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 16, 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
             obj.Cancel = uicontrol('parent', obj.GraphicalComponentHandle, 'string', 'Cancel', ...
-                'FontUnits', 'pixels', 'Position', cancel_position, 'Callback', @obj.CancelButton);
+                'FontUnits', 'pixels', 'Position', cancel_position, 'Visible', 'off', 'Callback', @obj.CancelButton);
             obj.Quit = uicontrol('parent', obj.GraphicalComponentHandle, 'string', 'Force Quit', ...
-                'FontUnits', 'pixels', 'Position', quit_position, 'Callback', @obj.QuitButton);
+                'FontUnits', 'pixels', 'Position', quit_position, 'Visible', 'off', 'Callback', @obj.QuitButton);
             
             [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', progress_bar_position, obj.GraphicalComponentHandle);
             obj.ProgressBarHandle.setValue(0);
+            set(obj.ProgressBarHandle, 'visible', 0);
         end        
                        
         function ShowAndHold(obj, text)
