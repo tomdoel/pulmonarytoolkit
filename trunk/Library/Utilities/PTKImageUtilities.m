@@ -359,7 +359,7 @@ classdef PTKImageUtilities
             frame.cdata = cdata;
         end
         
-        function rgb_image = GetButtonImage(image_preview, button_width, button_height, window_hu, level_hu, border)
+        function rgb_image = GetButtonImage(image_preview, button_width, button_height, window_hu, level_hu, border, background_colour)
             if ~isempty(image_preview)
                 if islogical(image_preview.RawImage)
                     button_image = zeros(button_height, button_width, 'uint8');
@@ -393,7 +393,7 @@ classdef PTKImageUtilities
             end
             
             
-            button_background_colour = 0*[0.0 0.129 0.278];
+            button_background_colour = uint8(255*background_colour);
             button_text_colour = 150*[1, 1, 1];
                         
             if (image_type == 3) && isempty(image_preview_limits)
