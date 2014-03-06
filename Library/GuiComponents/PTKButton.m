@@ -25,6 +25,7 @@ classdef PTKButton < PTKUserInterfaceObject
         Text
         ToolTip
         RGBImage
+        BackgroundColour
     end
     
     properties (Access = protected)
@@ -39,13 +40,14 @@ classdef PTKButton < PTKUserInterfaceObject
             obj.ToolTip = tooltip;
             obj.Tag = tag;
             obj.Callback = callback;
+            obj.BackgroundColour = [0, 0, 0];
         end
         
         function CreateGuiComponent(obj, position, reporting)
             
             % If no image gas been specified then create a blank image
             if isempty(obj.RGBImage)
-                obj.RGBImage = PTKImageUtilities.GetButtonImage([], position(3), position(4), [], [], 1);
+                obj.RGBImage = PTKImageUtilities.GetButtonImage([], position(3), position(4), [], [], 1, obj.BackgroundColour);
             end
             
             obj.GraphicalComponentHandle = uicontrol('Style', 'pushbutton', 'Parent', obj.Parent.GetContainerHandle(reporting), ...
@@ -60,7 +62,7 @@ classdef PTKButton < PTKUserInterfaceObject
             else
                 button_size = obj.Position(3:4);
             end
-            obj.RGBImage = PTKImageUtilities.GetButtonImage(preview_image, button_size(1), button_size(2), window, level, 1);
+            obj.RGBImage = PTKImageUtilities.GetButtonImage(preview_image, button_size(1), button_size(2), window, level, 1, obj.BackgroundColour);
             if obj.ComponentHasBeenCreated
                 set(obj.GraphicalComponentHandle, 'CData', obj.RGBImage);
             end
