@@ -192,6 +192,15 @@ classdef PTKUserInterfaceObject < handle
             
         end
         
+        function ShowWaitCursor(obj)
+            obj.GetParentFigure.ShowWaitCursor;
+        end
+        
+        function HideWaitCursor(obj)
+            obj.GetParentFigure.HideWaitCursor;
+        end
+        
+        
     end
 
     methods (Access = protected)
@@ -289,6 +298,12 @@ classdef PTKUserInterfaceObject < handle
         
         function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
             % This method is called when the mouse is moved
+            input_has_been_processed = false;
+        end
+        
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+            % This method is called when the mouse exits a control which previously
+            % processed a MouseHasMoved event
             input_has_been_processed = false;
         end
         
