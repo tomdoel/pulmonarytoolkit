@@ -36,7 +36,15 @@ classdef PTKTool < handle
         ImageChanged(obj)
         OverlayImageChanged(obj)
         Keypressed(obj, key_name)
-                
+
+    end
+    
+    methods
+        
+        function is_enabled = IsEnabled(obj, mode, sub_mode)
+            is_enabled = true;
+        end
+        
     end
     
 end
