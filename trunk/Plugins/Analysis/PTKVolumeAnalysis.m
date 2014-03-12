@@ -23,6 +23,7 @@ classdef PTKVolumeAnalysis < PTKPlugin
         ButtonText = 'Volume analysis'
         ToolTip = 'Measures volumes of regions'
         Category = 'Analysis'
+        Mode = 'Analysis'
 
         AllowResultsToBeCached = true
         AlwaysRunPlugin = true

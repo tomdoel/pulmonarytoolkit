@@ -35,6 +35,9 @@ classdef PTKLobesFromFissurePlane < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
+        
+        EnableModes = PTKModes.EditMode
+        SubMode = PTKSubModes.FixedBoundariesEditing
     end
     
     methods (Static)

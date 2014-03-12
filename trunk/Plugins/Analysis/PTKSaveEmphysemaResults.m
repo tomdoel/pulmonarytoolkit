@@ -19,6 +19,7 @@ classdef PTKSaveEmphysemaResults < PTKPlugin
         ButtonText = 'Emphysema metrics'
         ToolTip = 'Calculates emphysema percentage and percentile density for the lungs and lobes'
         Category = 'Analysis'
+        Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
         AllowResultsToBeCached = true

@@ -19,6 +19,7 @@ classdef PTKSaveVolumeResults < PTKPlugin
         ButtonText = 'Volume metrics'
         ToolTip = 'Calculates volumes for the lungs and lobes'
         Category = 'Analysis'
+        Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
         AllowResultsToBeCached = true
