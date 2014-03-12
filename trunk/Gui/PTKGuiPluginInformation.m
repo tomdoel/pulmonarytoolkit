@@ -62,11 +62,11 @@ classdef PTKGuiPluginInformation
             
             for plugin_filename = plugin_list
                 
-                plugin_name = plugin_filename{1};
+                plugin_name = plugin_filename{1}.First;
                 
                 try
                     % get information from the plugin
-                    new_plugin = PTKGuiPluginInformation.LoadPluginInfoStructure(plugin_name.First, reporting);
+                    new_plugin = PTKGuiPluginInformation.LoadPluginInfoStructure(plugin_name, reporting);
                     if isempty(new_plugin.Category)
                         if ~isempty(plugin_filename{1}.Second)
                             new_plugin.Category = plugin_filename{1}.Second;
@@ -74,7 +74,6 @@ classdef PTKGuiPluginInformation
                             new_plugin.Category = PTKSoftwareInfo.DefaultCategoryName;
                         end
                         
-                        new_plugin.Category = plugin_filename{1}.Second;
                     end
                     
                     if ~new_plugin.HidePluginInDisplay
@@ -90,7 +89,7 @@ classdef PTKGuiPluginInformation
                     end
                     
                 catch ex
-                    reporting.ShowWarning('PTKGuiPluginInformation:InvalidGuiPlugin', ['The file ' plugin_name.First ' was found in GuiPlugins directory but does not appear to be a PTKGuiPlugin class, or contains errors.'], []);
+                    reporting.ShowWarning('PTKGuiPluginInformation:InvalidGuiPlugin', ['The file ' plugin_name ' was found in GuiPlugins directory but does not appear to be a PTKGuiPlugin class, or contains errors.'], []);
                 end
             end
         end
