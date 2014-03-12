@@ -25,12 +25,14 @@ classdef PTKGui < PTKFigure
         WaitDialogHandle
         MarkersHaveBeenLoaded = false
         
-        PluginsPanel
         VersionPanel
+        ModeTabControl
         DropDownLoadMenu
 
         PatientBrowserButton
         PatientBrowserFactory
+        
+        ModeTabChangedListener
         
         LastWindowSize % Keep track of window size to prevent unnecessary resize
     end
@@ -50,7 +52,7 @@ classdef PTKGui < PTKFigure
             
             % Call the base class to initialise the figure class
             obj = obj@PTKFigure(PTKSoftwareInfo.Name, []);
-            
+
             % Set up the viewer panel and apply settings
             obj.ImagePanel = PTKViewerPanel(obj);
             obj.AddChild(obj.ImagePanel);
@@ -62,13 +64,14 @@ classdef PTKGui < PTKFigure
             % the new progress panel when these have been created.
             obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile);
             obj.Reporting.Log('New session of PTKGui');
+            
 
             % Load the settings file
             obj.Settings = PTKSettings.LoadSettings(obj.Reporting);
             obj.Settings.ApplySettingsToViewerPanel(obj.ImagePanel);                        
             
             % Create the object which manages the current dataset
-            obj.GuiDataset = PTKGuiDataset(obj, obj.Settings, obj.Reporting);
+            obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.Settings, obj.Reporting);
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
@@ -79,10 +82,8 @@ classdef PTKGui < PTKFigure
             obj.PatientBrowserButton = PTKButton(obj, 'Patients', 'Open the Patient Browser', 'PatientBrowser', @pb.Show);
             obj.AddChild(obj.PatientBrowserButton);
             
-            % Plugins panel
-            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
-            obj.AddChild(obj.PluginsPanel);            
-            obj.PluginsPanel.AddPlugins([]);
+            obj.ModeTabControl = PTKModeTabControl(obj, obj.Reporting);
+            obj.AddChild(obj.ModeTabControl);
 
             % Drop down quick load menu
             obj.DropDownLoadMenu = PTKDropDownLoadMenu(obj, obj, obj.Settings);
@@ -120,6 +121,13 @@ classdef PTKGui < PTKFigure
             % Create the figure and graphical components
             obj.Show(obj.Reporting);
             
+            
+            % Currently we need to select an active tab after the control is visible
+            obj.ModeTabControl.ChangeSelectedTab('file');
+            obj.UpdateModeTabControl([]);
+            
+            obj.ModeTabChangedListener = addlistener(obj.ModeTabControl, 'TabChangedEvent', @obj.ModeTabChanged);
+            
             % Create a progress panel which will replace the progress dialog
             obj.WaitDialogHandle = PTKProgressPanel(obj.ImagePanel.GraphicalComponentHandle);
             
@@ -127,10 +135,14 @@ classdef PTKGui < PTKFigure
             obj.Reporting.ProgressDialog = obj.WaitDialogHandle;            
             
             % Ensure the GUI stack ordering is correct
-            obj.ReorderPanels
-            
+%             obj.ReorderPanels;
+
             % Wait until the GUI is visible before removing the splash screen
             splash_screen.Delete;
+        end
+        
+        function ChangeMode(obj, mode)
+            obj.GuiDataset.ChangeMode(mode);
         end
         
         function CreateGuiComponent(obj, position, reporting)
@@ -138,28 +150,12 @@ classdef PTKGui < PTKFigure
 
             obj.Reporting.SetViewerPanel(obj.ImagePanel);            
             addlistener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);
-
         end
         
-        function SaveEditedResult(obj, edited_result)
-            % Causes the GUI to run the named plugin and display the result
-            if ~obj.GuiDataset.DatasetIsLoaded
-                msgbox(['Cannot save the edited result as no dataset is currently loaded'], [PTKSoftwareInfo.Name ': Cannot save edited result'], 'error');
-                obj.Reporting.ShowMessage('PTKGui:NoDataset', 'Cannot save the edited result as no dataset is currently loaded');
-                return
-            end
-            
-            if ~obj.GuiDataset.IsPluginResultLoaded
-                msgbox(['Cannot save the edited result as no plugin result is currently loaded'], [PTKSoftwareInfo.Name ': Cannot save edited result'], 'error');
-                obj.Reporting.ShowMessage('PTKGui:NoPlugin', 'Cannot save the edited result as no plugin result is currently loaded');
-                return
-            end
-            
-            obj.Reporting.ShowProgress(['Saving edited result for ', obj.GuiDataset.CurrentVisiblePluginName]);
-            obj.GuiDataset.SaveEditedResult(edited_result);
-            obj.Reporting.CompleteProgress;
+        function SaveEditedResult(obj)
+            obj.GuiDataset.SaveEditedResult;
         end
-
+        
         
         % Prompts the user for file(s) to load
         function SelectFilesAndLoad(obj)
@@ -337,6 +333,7 @@ classdef PTKGui < PTKFigure
         end
         
         function delete(obj)
+            delete(obj.ModeTabChangedListener);
             if ~isempty(obj.Reporting);
                 obj.Reporting.Log('Closing PTKGui');
             end
@@ -364,6 +361,29 @@ classdef PTKGui < PTKFigure
         function DeleteDatasets(obj, series_uids)
             obj.GuiDataset.DeleteDatasets(series_uids);
         end
+        
+        function mode = GetMode(obj)
+            mode = obj.GuiDataset.GetMode;
+        end
+        
+        function RunGuiPluginCallback(obj, plugin_name)
+            
+            wait_dialog = obj.WaitDialogHandle;
+            
+            plugin_info = eval(plugin_name);
+            wait_dialog.ShowAndHold([plugin_info.ButtonText]);
+
+            plugin_info.RunGuiPlugin(obj);
+            
+            wait_dialog.Hide;
+        end
+        
+        function RunPluginCallback(obj, plugin_name)
+            wait_dialog = obj.WaitDialogHandle;
+            obj.GuiDataset.RunPlugin(plugin_name, wait_dialog);
+        end
+        
+        
     end
     
     methods (Access = protected)
@@ -384,6 +404,8 @@ classdef PTKGui < PTKFigure
 
             CustomCloseFunction@PTKFigure(obj, src);
         end
+        
+        
         
         
     end
@@ -412,8 +434,7 @@ classdef PTKGui < PTKFigure
                 wait_dialog.Hide;
             end
         end
-
-
+        
         function LoadFromUid(obj, series_uid, wait_dialog_handle)
             
             % Get the UID of the currently loaded dataset
@@ -466,23 +487,6 @@ classdef PTKGui < PTKFigure
         end
 
 
-        function RunGuiPluginCallback(obj, plugin_name)
-            
-            wait_dialog = obj.WaitDialogHandle;
-            
-            plugin_info = eval(plugin_name);
-            wait_dialog.ShowAndHold([plugin_info.ButtonText]);
-
-            plugin_info.RunGuiPlugin(obj);
-            
-            wait_dialog.Hide;
-        end
-        
-        
-        function RunPluginCallback(obj, plugin_name)
-            wait_dialog = obj.WaitDialogHandle;
-            obj.GuiDataset.RunPlugin(plugin_name, wait_dialog);
-        end
                 
                 
         function ReplaceOverlayImageAdjustingSize(obj, new_image, title, colour_label_map, new_parent_map, new_child_map)
@@ -569,7 +573,7 @@ classdef PTKGui < PTKFigure
             viewer_panel_height = max(1, parent_height_pixels - load_menu_height);
             viewer_panel_width = viewer_panel_height;
             
-            version_panel_height = 35;
+            version_panel_height = obj.VersionPanel.GetRequestedHeight;
             version_panel_width = max(1, parent_width_pixels - viewer_panel_width);
             
             plugins_panel_height = max(1, parent_height_pixels - load_menu_height - version_panel_height);
@@ -578,12 +582,10 @@ classdef PTKGui < PTKFigure
             
             obj.ImagePanel.Resize([1, 1, viewer_panel_width, viewer_panel_height]);
             
-            obj.PluginsPanel.Resize([viewer_panel_width + 1, 0, version_panel_width, plugins_panel_height]);
+            obj.ModeTabControl.Resize([viewer_panel_width + 1, 0, version_panel_width, plugins_panel_height]);
             
-            if ~isempty(obj.VersionPanel);
-                height_additional = 3;
-                obj.VersionPanel.Resize([viewer_panel_width + 1, 1 + plugins_panel_height, version_panel_width, version_panel_height + height_additional]);
-            end
+            height_additional = 3;
+            obj.VersionPanel.Resize([viewer_panel_width + 1, plugins_panel_height, version_panel_width, version_panel_height + height_additional]);
                         
             obj.PatientBrowserButton.Resize([8, parent_height_pixels - load_menu_height + 1, patient_browser_width, load_menu_height - 1]);
             
@@ -596,12 +598,20 @@ classdef PTKGui < PTKFigure
             end
         end
 
-
+        function ModeTabChanged(obj, ~, event_data)
+            mode = obj.ModeTabControl.GetPluginMode(event_data.Data);
+            obj.GuiDataset.ModeTabChanged(mode);
+        end
+        
     end
     
     methods
 
         %%% Callbacks from GuiDataset
+        
+        function UpdateModeTabControl(obj, plugin_info)
+            obj.ModeTabControl.UpdateMode(plugin_info);
+        end
         
         function UpdateQuickLoadMenu(obj)
             [sorted_paths, sorted_uids] = obj.GuiDataset.GetListOfPaths;
@@ -613,7 +623,7 @@ classdef PTKGui < PTKFigure
         end
         
         function AddPreviewImage(obj, plugin_name, dataset)
-            obj.PluginsPanel.AddPreviewImage(plugin_name, dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
+            obj.ModeTabControl.AddPreviewImage(plugin_name, dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
         end
         
         function ClearImages(obj)
@@ -626,7 +636,7 @@ classdef PTKGui < PTKFigure
         end
         
         function RefreshPluginsForDataset(obj, dataset)
-            obj.PluginsPanel.RefreshPlugins(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level)
+            obj.ModeTabControl.RefreshPlugins(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level)
         end
         
         function SetImage(obj, new_image)
@@ -645,16 +655,16 @@ classdef PTKGui < PTKFigure
             end
         end
         
-        function UpdateFigureTitle(obj, current_plugin_name)
+        function UpdateFigureTitle(obj, current_plugin_name, is_edited)
             
             figure_title = PTKSoftwareInfo.Name;
             if isa(obj.ImagePanel.BackgroundImage, 'PTKImage')
                 patient_name = obj.ImagePanel.BackgroundImage.Title;
                 if ~isempty(current_plugin_name) && obj.ImagePanel.OverlayImage.ImageExists
-                    overlay_name = obj.ImagePanel.OverlayImage.Title;
-                    if ~isempty(overlay_name)
-                        patient_name = [patient_name ' (' overlay_name ')'];
+                    if is_edited
+                        current_plugin_name = ['EDITED ', current_plugin_name];
                     end
+                    patient_name = [patient_name ' (' current_plugin_name ')'];
                 end
                 if ~isempty(figure_title)
                     figure_title = [patient_name ' : ' figure_title];
@@ -669,7 +679,7 @@ classdef PTKGui < PTKFigure
         end
         
         function AddAllPreviewImagesToButtons(obj, dataset)
-            obj.PluginsPanel.AddAllPreviewImagesToButtons(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
+            obj.ModeTabControl.AddAllPreviewImagesToButtons(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
         end
 
         function ReplaceOverlayImageCallback(obj, new_image, image_title)
@@ -694,6 +704,10 @@ classdef PTKGui < PTKFigure
             end
         end
 
+        function UpdateGuiDatasetAndPluginName(obj, series_name, patient_visible_name, plugin_visible_name, is_edited)
+            obj.UpdateFigureTitle(plugin_visible_name, is_edited);
+            obj.VersionPanel.UpdatePatientName(series_name, patient_visible_name, plugin_visible_name, is_edited);
+        end
 
         
         %%% Callbacks and also called from within this class

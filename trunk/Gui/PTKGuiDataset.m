@@ -18,6 +18,7 @@ classdef PTKGuiDataset < handle
     end
     
     properties (SetAccess = private)
+        CurrentPluginInfo
         CurrentPluginName
         CurrentContext
         CurrentVisiblePluginName
@@ -26,22 +27,43 @@ classdef PTKGuiDataset < handle
     properties (Access = private)
         Dataset
         Gui
+        ModeSwitcher
         Ptk
         Reporting
-        Settings        
+        Settings 
     end
     
     properties (Constant, Access = private)
     end
     
     methods
-        function obj = PTKGuiDataset(gui, settings, reporting)
+        function obj = PTKGuiDataset(gui, viewer_panel, settings, reporting)
+            obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, reporting);
+
             obj.Gui = gui;
             obj.Reporting = reporting;
             obj.Settings = settings;
             obj.Ptk = PTKMain(reporting);
         end
+        
+        function ModeTabChanged(obj, mode_name)
+            if strcmp(mode_name, 'all')
+                mode_name = '';
+            end
+            obj.ChangeMode(mode_name)
+        end
+        
+        function ChangeMode(obj, mode)
+            obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.CurrentPluginInfo, obj.CurrentPluginName, obj.CurrentVisiblePluginName, obj.CurrentContext);
+        end        
 
+        function mode = GetMode(obj)
+            mode = obj.ModeSwitcher.CurrentMode;
+            if isempty(mode)
+                obj.Reporting.Error('PTKGui::NoMode', 'The operation is not possible in this mode');
+            end
+        end
+        
         function is_dataset = DatasetIsLoaded(obj)
             is_dataset = ~isempty(obj.Dataset);
         end
@@ -144,6 +166,7 @@ classdef PTKGuiDataset < handle
         
         function ClearDataset(obj)
             try
+                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
                 obj.Gui.ClearImages;
                 delete(obj.Dataset);
 
@@ -155,7 +178,7 @@ classdef PTKGuiDataset < handle
                 
                 obj.Gui.SaveSettings;
                 
-                obj.SetCurrentPluginAndUpdateFigureTitle([]);
+                obj.SetDatasetAndPluginName([], [], [], [], false);
                 
             catch exc
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
@@ -176,8 +199,8 @@ classdef PTKGuiDataset < handle
         end
         
         
-        function SaveEditedResult(obj, edited_result)
-            obj.Dataset.SaveEditedResult(obj.CurrentPluginName, edited_result, obj.CurrentContext);            
+        function SaveEditedResult(obj)
+            obj.ModeSwitcher.SaveEditedResult;
         end
         
         function DeleteImageInfo(obj)
@@ -218,6 +241,7 @@ classdef PTKGuiDataset < handle
                 end
                 
                 if is_dataset_currently_loaded
+                    obj.ModeSwitcher.UpdateMode([], [], [], [], []);
                     obj.Gui.ClearImages;
                     obj.Dataset = [];
                     obj.Gui.SaveSettings;
@@ -242,6 +266,8 @@ classdef PTKGuiDataset < handle
                     new_dataset = obj.Ptk.CreateDatasetFromUid(image_info_or_uid);
                 end
 
+                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                
                 obj.Gui.ClearImages;
                 delete(obj.Dataset);
 
@@ -302,7 +328,7 @@ classdef PTKGuiDataset < handle
                     obj.Gui.SaveSettings;
                 end
                 
-                obj.SetCurrentPluginAndUpdateFigureTitle([]);
+                obj.SetDatasetAndPluginName(image_info, [], [], [], false);
                 
                 obj.Gui.AddAllPreviewImagesToButtons(obj.Dataset);
 
@@ -359,11 +385,16 @@ classdef PTKGuiDataset < handle
             % Indicates that the currently loaded result has been deleted or modified in
             % such a way that it is no longer representative of the plugin 
             
-            obj.SetCurrentPluginAndUpdateFigureTitle([]);
+            obj.SetDatasetAndPluginName(obj.Settings.ImageInfo, [], [], [], false);
         end
         
+        function UpdateFigureTitle(obj, visible_plugin_name, is_edited)
+            obj.Gui.UpdateFigureTitle(visible_plugin_name, is_edited);
+        end
         
-        
+        function OverlayImageChanged(obj)
+            obj.ModeSwitcher.OverlayImageChanged;
+        end
     end
     
     methods (Access = private)
@@ -404,8 +435,9 @@ classdef PTKGuiDataset < handle
                     if isempty(new_image)
                         obj.Reporting.Error('PTKGui:EmptyImage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
                     end
+                    obj.ModeSwitcher.PrePluginCall;
                     obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);                    
-                    obj.SetCurrentPluginAndUpdateFigureTitle(plugin_name, visible_name);
+                    obj.SetDatasetAndPluginName(obj.Settings.ImageInfo, new_plugin, plugin_name, visible_name, cache_info.IsEdited);
                     
                 elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
                     
@@ -427,13 +459,26 @@ classdef PTKGuiDataset < handle
             obj.Gui.SetImage(new_image);
         end        
        
-        function SetCurrentPluginAndUpdateFigureTitle(obj, plugin_name, visible_name)
+        function SetDatasetAndPluginName(obj, image_info, plugin_info, plugin_name, plugin_visible_name, is_edited)
             if isempty(plugin_name)
-                visible_name = [];
+                plugin_visible_name = [];
             end
+            obj.CurrentPluginInfo = plugin_info;
             obj.CurrentPluginName = plugin_name;
-            obj.CurrentVisiblePluginName = visible_name;
-            obj.Gui.UpdateFigureTitle(plugin_name);
+            obj.CurrentVisiblePluginName = plugin_visible_name;
+            obj.ModeSwitcher.UpdateMode(obj.Dataset, obj.CurrentPluginInfo, obj.CurrentPluginName, obj.CurrentVisiblePluginName, obj.CurrentContext);
+            obj.Gui.UpdateModeTabControl(plugin_info);
+
+            if isempty(image_info)
+                series_name = '';
+                patient_visible_name = 'No Patient';
+            else
+                series_info = obj.GetImageDatabase.GetSeries(image_info.ImageUid);
+                patient_info = obj.GetImageDatabase.GetPatient(series_info.PatientId);
+                patient_visible_name = patient_info.ShortVisibleName;
+                series_name = series_info.Name;
+            end
+            obj.Gui.UpdateGuiDatasetAndPluginName(series_name, patient_visible_name, plugin_visible_name, is_edited);
         end
         
     end
