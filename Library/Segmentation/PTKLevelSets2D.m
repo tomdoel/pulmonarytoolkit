@@ -7,9 +7,9 @@ function result = PTKLevelSets2D(original_image, initial_mask, bounds, figure_ha
     %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %    
+    %
     
-
+    
     result = initial_mask.BlankCopy;
     result.ImageType = PTKImageType.Colormap;
     
@@ -25,16 +25,16 @@ function result = PTKLevelSets2D(original_image, initial_mask, bounds, figure_ha
     options.upper_bound = single(bounds(2)); % Typical value 330;
     options.lower_bound = single(bounds(1)); % Typical value 0;
     options.curv_multiple = 1;
-
+    
     result_raw = SolveLevelSets(original_image, initial_mask, options, figure_handle, reporting);
-
+    
     result.ChangeRawImage(result_raw);
 end
 
 function result = SolveLevelSets(original_image, initial_mask, options, figure_handle, reporting)
     initial_mask = initial_mask.RawImage;
     im = double(original_image.RawImage);
-
+    
     if ~isempty(figure_handle)
         figure(figure_handle);
         imagesc(im); hold on; colormap gray; colorbar; axis square;
@@ -45,12 +45,12 @@ function result = SolveLevelSets(original_image, initial_mask, options, figure_h
     end
     
     psi = initialise(initial_mask);
-
+    
     force_handle = @force_combined;
-    gaussian_im = gaussian_filter(im, 0, options.std_dev);
+    gaussian_im = GaussianFilter(im, options.std_dev);
     
     im = gaussian_im;
-
+    
     contour_handle = [];
     
     if ~isempty(figure_handle)
@@ -66,7 +66,7 @@ function result = SolveLevelSets(original_image, initial_mask, options, figure_h
     
     while (iter < options.num_iterations) && (~converged)
         iter = iter + 1;
-    
+        
         psi = NextContour(psi, im, gaussian_im, options, force_handle);
         
         if any(isnan(psi))
@@ -169,13 +169,13 @@ function phi = initialise(mask)
 end
 
 function curv = curvature(phi)
-
+    
     gX = convn(phi, [-1 0 1]/2, 'same');
     gY = convn(phi, [-1;0;1]/2, 'same');
     gXX = convn(phi, [-1 2 -1]/4, 'same');
     gYY = convn(phi, [-1;2;-1]/4, 'same');
     gXY = convn(phi, [-1 0 1; 0 0 0; 1 0 -1]./4, 'same');
-
+    
     modgrad = ( gX.^2 + gY.^2 );
     curv = ( gXX .* gY.^2 + gYY .* gX.^2 - 2 * gX .* gY .* gXY ) ./ ( modgrad .^ (3/2) + .01 ) ;
 end
@@ -189,4 +189,29 @@ function phi2 = re_initialise(phi)
     
     [x2,y2]=ndgrid(1:4:size(phi,1), 1:4:size(phi,2));
     phi2 = interpn(dist,x2,y2);
+end
+
+function gaussian_image = GaussianFilter(image, sigma)
+    
+    resolution=[1 1 1];
+    epsilon=1e-3;
+    
+    hsize = 2*max(ceil((sigma ./ resolution).*sqrt(-2*log(sqrt(2*pi).*(sigma ./ resolution)*epsilon))))+1;
+    
+    n = 1 : hsize;
+    center = hsize/2 + 0.5;
+    
+    sigmax = sigma/resolution(1);
+    sigmay = sigma/resolution(2);
+    
+    kerx = zeros(1,1,hsize);
+    kery = zeros(1,1,hsize);
+    
+    kerx(1,1,:)=(1/((2*pi*sigmax.^2).^(1/2))) * exp(-((n-center).^2)/(2*sigmax.^2));
+    kery(1,1,:)=(1/((2*pi*sigmay.^2).^(1/2))) * exp(-((n-center).^2)/(2*sigmay.^2));
+    
+    kerx = kerx./sum(kerx);
+    kery = kery./sum(kery);
+    
+    gaussian_image=convn(convn(image,shiftdim(kerx,2),'same'),shiftdim(kery,1),'same');
 end
