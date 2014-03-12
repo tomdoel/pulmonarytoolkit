@@ -65,6 +65,10 @@ classdef PTKImageDatabase < handle
             patient_info = patient_info(sorted_indices);
         end
         
+        function patient_info = GetPatient(obj, patient_id)
+            patient_info = obj.PatientMap(patient_id);
+        end
+        
         function series_info = GetSeries(obj, series_uid)
             series_info = obj.SeriesMap(series_uid);
         end
