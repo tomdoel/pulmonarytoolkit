@@ -21,6 +21,7 @@ classdef PTKAboutPtk < PTKGuiPlugin
         ToolTip = 'Shows a dialog with more information about this program'
         Category = 'File'
         Visibility = 'Always'
+        Mode = 'File'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

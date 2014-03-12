@@ -23,6 +23,7 @@ classdef PTKRemoveDataset < PTKGuiPlugin
         ToolTip = 'Remove this dataset from the Toolkit'
         Category = 'File'
         Visibility = 'Dataset'
+        Mode = 'File'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

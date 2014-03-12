@@ -19,6 +19,7 @@ classdef PTKCloseFigures < PTKGuiPlugin
         ToolTip = 'Close all open Matlab figures except the PTK gui'
         Category = 'View'
         Visibility = 'Dataset'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

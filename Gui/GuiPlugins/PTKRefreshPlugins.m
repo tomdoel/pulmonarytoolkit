@@ -23,6 +23,7 @@ classdef PTKRefreshPlugins < PTKGuiPlugin
         ToolTip = 'Check for new plugins'
         Category = 'File'
         Visibility = 'Always'
+        Mode = 'File'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

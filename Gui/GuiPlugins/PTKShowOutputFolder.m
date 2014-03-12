@@ -20,6 +20,7 @@ classdef PTKShowOutputFolder < PTKGuiPlugin
         ToolTip = 'Opens a folder containing the output files for the current dataset'
         Category = 'File'
         Visibility = 'Dataset'
+        Mode = 'Analysis'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

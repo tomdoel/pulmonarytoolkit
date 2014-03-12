@@ -23,6 +23,7 @@ classdef PTKSaveMarkers < PTKGuiPlugin
         ToolTip = 'Saves the current marker into the cache file MarkerPoints for this dataset'
         Category = 'File'
         Visibility = 'Dataset'
+        Mode = 'File'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
