@@ -119,8 +119,14 @@ classdef PTKDatasetResults < handle
             data = obj.DatasetDiskCache.LoadData(name, obj.Reporting);
         end
         
+        function DeleteEditedPluginResult(obj, plugin_name)
+            % Delete edit data from a cache file associated with this dataset
+            
+            obj.DatasetDiskCache.DeleteEditedPluginResult(plugin_name, obj.Reporting);
+        end
+        
         function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack)
-            % Load data from a cache file associated with this dataset
+            % Load edit data from a cache file associated with this dataset
             
             dataset_uid = obj.ImageInfo.ImageUid;
             obj.Reporting.PushProgress;

@@ -30,9 +30,9 @@ classdef PTKDiskCache < handle
     
     methods
         
-        % Create a disk cache object, and associated folder, for the dataset
-        % associated with this unique identifier
         function obj = PTKDiskCache(cache_parent_directory, uuid, reporting)
+            % Create a disk cache object, and associated folder, for the dataset
+            % associated with this unique identifier
             if ~exist(cache_parent_directory, 'dir')
                 mkdir(cache_parent_directory);
             end
@@ -59,20 +59,20 @@ classdef PTKDiskCache < handle
             end
         end
         
-        % Determine if a results file exists in the cahce
         function exists = Exists(obj, name, context, ~)
+            % Determine if a results file exists in the cahce
             filename = [fullfile(obj.CachePath, char(context), name) '.mat'];
             exists = exist(filename, 'file');
         end
         
-        % Determine if the raw image file associated with a PTKImage results file exists in the cahce
         function exists = RawFileExists(obj, name, context, ~)
+            % Determine if the raw image file associated with a PTKImage results file exists in the cahce
             filename = [fullfile(obj.CachePath, char(context), name) '.raw'];
             exists = exist(filename, 'file');
         end
 
-        % Load a result from the cache
         function [result, info] = Load(obj, name, context, reporting)
+            % Load a result from the cache
             if obj.Exists(name, context, reporting)
                 file_path = fullfile(obj.CachePath, char(context));
                 
@@ -109,18 +109,21 @@ classdef PTKDiskCache < handle
             end
         end
         
-        
-        % Save a result to the cache
         function Save(obj, name, value, context, reporting)
+            % Save a result to the cache
+            
             obj.PrivateSave(name, value, [], context, reporting);
         end
 
-        % Save a result to the cache
         function SaveWithInfo(obj, name, value, info, context, reporting)
+            % Save a result to the cache
+            
             obj.PrivateSave(name, value, info, context, reporting);
         end
         
         function Delete(obj, reporting)
+            % Deletes the disk cache
+            
             % Store the state of the recycle bin
             state = recycle;
 
@@ -140,10 +143,10 @@ classdef PTKDiskCache < handle
         end
 
         
-        % Remove all results files for this dataset. Does not remove certain
-        % files such as dataset info and manually-created marker files, unless
-        % the "remove_framework_files" flag is set to true.
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
+            % Remove all results files for this dataset. Does not remove certain
+            % files such as dataset info and manually-created marker files, unless
+            % the "remove_framework_files" flag is set to true.
             
             % Store the state of the recycle bin
             state = recycle;
@@ -156,26 +159,39 @@ classdef PTKDiskCache < handle
             end
             
             % Remove cache files in the root directory for this dataset
-            obj.RemoveFilesInDirectory(obj.CachePath, remove_framework_files, reporting);
+            obj.RemoveFilesInDirectory(obj.CachePath, '*', remove_framework_files, reporting);
             
             % Remove cache files in the context directories for this dataset
             dir_list = PTKDiskUtilities.GetListOfDirectories(obj.CachePath);
             for next_dir = dir_list
-                obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), remove_framework_files, reporting);
+                obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), '*', remove_framework_files, reporting);
             end
             
             % Restore previous recycle bin state
             recycle(state);
         end
         
+        function dir_list = DeleteFileForAllContexts(obj, name, reporting)
+            % Delete particular files from all context folders in this dataset
+            
+            % Remove cache files in the root directory for this dataset
+            obj.RemoveFilesInDirectory(obj.CachePath, name, false, reporting);
+            
+            % Remove cache files in the context directories for this dataset
+            dir_list = PTKDiskUtilities.GetListOfDirectories(obj.CachePath);
+            for next_dir = dir_list
+                obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), name, false, reporting);
+            end
+        end
+
     end
         
     methods (Static, Access = private)
     
-        function RemoveFilesInDirectory(file_path, remove_framework_files, reporting)
+        function RemoveFilesInDirectory(file_path, name, remove_framework_files, reporting)
             
-            file_list = PTKDiskUtilities.GetDirectoryFileList(file_path, '*.raw');
-            file_list_2 = PTKDiskUtilities.GetDirectoryFileList(file_path, '*.mat');
+            file_list = PTKDiskUtilities.GetDirectoryFileList(file_path, [name, '.raw']);
+            file_list_2 = PTKDiskUtilities.GetDirectoryFileList(file_path, [name, '.mat']);
             file_list = cat(2, file_list, file_list_2);
             for index = 1 : length(file_list)
                 file_name = file_list{index};
