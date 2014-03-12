@@ -22,6 +22,7 @@ classdef PTKWindowLevelLung < PTKGuiPlugin
         ToolTip = 'Changes the window and level settings to standard lung values (Window 1600HU Level -600HU)'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

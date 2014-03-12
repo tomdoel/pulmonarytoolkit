@@ -22,8 +22,9 @@ classdef PTKSaveOverlay < PTKGuiPlugin
     properties
         ButtonText = 'Save Overlay'
         ToolTip = 'Save the current overlay view to a file'
-        Category = 'File'
+        Category = 'Export'
         Visibility = 'Overlay'
+        Mode = 'File'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

@@ -24,6 +24,7 @@ classdef PTKShowCacheFolder < PTKGuiPlugin
         ToolTip = 'Opens a folder containing the cache files for the current dataset'
         Category = 'File'
         Visibility = 'Dataset'
+        Mode = 'File'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

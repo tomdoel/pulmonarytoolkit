@@ -23,6 +23,7 @@ classdef PTKVisualiseIn2D < PTKGuiPlugin
         ToolTip = 'Opens a new window showing the current 2D background image'
         Category = 'View'
         Visibility = 'Overlay'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

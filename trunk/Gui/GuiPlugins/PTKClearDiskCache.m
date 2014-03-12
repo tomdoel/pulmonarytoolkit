@@ -23,6 +23,7 @@ classdef PTKClearDiskCache < PTKGuiPlugin
         ToolTip = 'Clear all cached results for this dataset'
         Category = 'File'
         Visibility = 'Dataset'
+        Mode = 'File'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
