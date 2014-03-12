@@ -45,6 +45,8 @@ function PTKAddPaths(varargin)
         
         path_folders{end + 1} = fullfile('External', 'gerardus', 'matlab', 'PointsToolbox');
         path_folders{end + 1} = fullfile('External', 'stlwrite');
+        path_folders{end + 1} = fullfile('External', 'npReg');
+        path_folders{end + 1} = fullfile('External', 'npReg', 'npRegLib');
         
         AddToPath(path_root, path_folders)
         
