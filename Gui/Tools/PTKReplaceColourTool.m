@@ -33,10 +33,6 @@ classdef PTKReplaceColourTool < PTKTool
     properties (SetAccess = private)
         % Blue, Green, Red, Cyan, Magenta, Yellow, Grey
         Colours = {[0 0 0], [0.4 0.4 1.0], [0 0.8 0], [0.8 0 0], [0 0.8 0.8], [0.9 0 0.9],  [0.8 0.8 0.4], [0.7 0.7 0.7]}
-        
-        % Keep a record of when we have unsaved changes to markers
-        ImageHasChanged = false
-        
     end
     
     properties (Access = private)
@@ -64,6 +60,10 @@ classdef PTKReplaceColourTool < PTKTool
             
         end
         
+        function is_enabled = IsEnabled(obj, mode, sub_mode)
+            is_enabled = ~isempty(mode) && ~isempty(sub_mode) && strcmp(mode, PTKModes.EditMode) && ...
+                (strcmp(sub_mode, PTKSubModes.EditBoundariesEditing) || strcmp(sub_mode, PTKSubModes.FixedBoundariesEditing));
+        end
         
         function Enable(obj, enable)
             current_status = obj.Enabled;
