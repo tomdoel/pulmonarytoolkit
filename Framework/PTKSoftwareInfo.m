@@ -18,7 +18,7 @@ classdef PTKSoftwareInfo < handle
     properties (Constant)
         
         % Version numbers
-        Version = '0.3'
+        Version = '0.4'
         DicomVersion = '0.1'
         DiskCacheSchema = '0.1'
         XMLVersion = '0.1'
@@ -37,6 +37,10 @@ classdef PTKSoftwareInfo < handle
 
         % Appearance
         BackgroundColour = [0, 0.129, 0.278]
+        SelectedBackgroundColour = [1.0 0.694 0.392]
+        TextPrimaryColour = [1.0 1.0 1.0]
+        TextSecondaryColour = [1.0 0.694 0.392]
+        TextContrastColour = [0, 0.129, 0.278]
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica'
         DefaultCategoryName = 'Uncategorised'
