@@ -18,14 +18,14 @@ classdef PTKPluginsSlidingPanel < PTKSlidingPanel
     %    
     
     methods
-        function obj = PTKPluginsSlidingPanel(parent, run_plugin_callback, run_gui_plugin_callback, reporting)
+        function obj = PTKPluginsSlidingPanel(parent, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback, reporting)
             obj = obj@PTKSlidingPanel(parent, reporting);
-            obj.FloatingPanel = PTKPluginsPanel(obj, run_plugin_callback, run_gui_plugin_callback, reporting);
+            obj.FloatingPanel = PTKPluginsPanel(obj, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback, reporting);
             obj.AddChild(obj.FloatingPanel);
         end
         
         function AddPlugins(obj, current_dataset)
-            obj.FloatingPanel.AddPlugins(current_dataset);
+            obj.FloatingPanel.AddPlugins(current_dataset); 
         end
         
         function AddAllPreviewImagesToButtons(obj, current_dataset, window, level)
@@ -40,6 +40,9 @@ classdef PTKPluginsSlidingPanel < PTKSlidingPanel
             obj.FloatingPanel.RefreshPlugins(current_dataset, window, level)
         end
         
+        function mode = GetMode(obj)
+            mode = obj.FloatingPanel.PluginModeName;
+        end
 
     end
 end
