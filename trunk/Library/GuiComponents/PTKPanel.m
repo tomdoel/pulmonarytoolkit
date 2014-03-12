@@ -18,9 +18,14 @@ classdef PTKPanel < PTKUserInterfaceObject
         Reporting
     end
     
+    properties
+        BackgroundColour
+    end
+    
     methods
         function obj = PTKPanel(parent_handle, reporting)
             obj = obj@PTKUserInterfaceObject(parent_handle);
+            obj.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
             if nargin > 1
                 obj.Reporting = reporting;
             end
@@ -28,7 +33,7 @@ classdef PTKPanel < PTKUserInterfaceObject
         
         function CreateGuiComponent(obj, position, reporting)
             obj.GraphicalComponentHandle = uipanel('Parent', obj.Parent.GetContainerHandle(reporting), 'BorderType', 'none', 'Units', 'pixels', ...
-                'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'ForegroundColor', 'white', 'ResizeFcn', '', 'Position', position);
+                'BackgroundColor', obj.BackgroundColour, 'ForegroundColor', 'white', 'ResizeFcn', '', 'Position', position);
         end
     end
 
