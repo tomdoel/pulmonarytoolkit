@@ -15,7 +15,12 @@ classdef PTKPluginsPanel < PTKCompositePanel
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
+    properties (SetAccess = private)
+        PluginModeName
+    end
+    
     properties (Access = private)
+        
         % Plugin information grouped by category
         PluginsByCategory
         GuiPluginsByCategory
@@ -27,11 +32,18 @@ classdef PTKPluginsPanel < PTKCompositePanel
         % Callbacks for when plugin buttons are clicked
         RunPluginCallback
         RunGuiPluginCallback
+        
+        OrganisedPlugins
+        ModeName        
     end
     
     methods
-        function obj = PTKPluginsPanel(parent, run_plugin_callback, run_gui_plugin_callback, reporting)
+        function obj = PTKPluginsPanel(parent, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback, reporting)
             obj = obj@PTKCompositePanel(parent, reporting);
+            
+            obj.OrganisedPlugins = organised_plugins;
+            obj.ModeName = mode_name;
+            obj.PluginModeName = plugin_mode_name;
             
             obj.TopMargin = 5;
             obj.BottomMargin = 5;
@@ -71,9 +83,10 @@ classdef PTKPluginsPanel < PTKCompositePanel
 
         function AddPlugins(obj, current_dataset)
             % This function adds buttons for all files in the Plugins directory
+
+            gui_plugins_by_category = obj.OrganisedPlugins.GetGuiPluginsForMode(obj.ModeName);
+            plugins_by_category = obj.OrganisedPlugins.GetPluginsForMode(obj.ModeName);
             
-            gui_plugins_by_category = PTKGuiPluginInformation.GetPluginInformation(obj.Reporting);
-            plugins_by_category = PTKPluginInformation.GetPluginInformation(obj.Reporting);
             obj.PluginsByCategory = plugins_by_category;
             obj.GuiPluginsByCategory = gui_plugins_by_category;
             obj.AddPluginCategoryPanels(gui_plugins_by_category, plugins_by_category, current_dataset);
