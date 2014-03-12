@@ -50,8 +50,13 @@ classdef PTKViewerPanel < PTKPanel
     
     events
         MarkerPanelSelected
+        OverlayImageChangedEvent % An event to indicate if the overlay image has changed
     end
-    
+
+    properties (SetAccess = private)
+        Mode
+        SubMode        
+    end
     
     properties (Access = private)
         Tools
@@ -66,6 +71,10 @@ classdef PTKViewerPanel < PTKPanel
         MapColourTool
     end
 
+    properties (SetAccess = private)
+        EditFixedOuterBoundary
+    end
+    
     properties (Access = private)
         FigureHandle
         CandidatePoints
@@ -113,6 +122,9 @@ classdef PTKViewerPanel < PTKPanel
     methods
         function obj = PTKViewerPanel(parent)
             obj = obj@PTKPanel(parent);
+            
+            obj.Mode = '';
+            obj.SubMode = '';
             
             obj.AxisLimits = [];
             obj.AxisLimits{1} = {};
@@ -215,7 +227,6 @@ classdef PTKViewerPanel < PTKPanel
             addlistener(obj, 'BlackIsTransparent', 'PostSet', @obj.SettingsChangedCallback);
             addlistener(obj, 'OpaqueColour', 'PostSet', @obj.SettingsChangedCallback);
             
-                                    
             % Listen for image change events
             addlistener(obj, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
             obj.SetImage(obj.BackgroundImage);
@@ -431,6 +442,40 @@ classdef PTKViewerPanel < PTKPanel
             drawnow;
         end
         
+        function SetControl(obj, tag_value)
+            obj.SelectedControl = tag_value;
+            tool = obj.Tools(tag_value);
+            
+            
+            % Change the cursor
+            obj.UpdateCursor(obj.FigureHandle, [], []);
+            
+            % Run the code to enable or disable tools
+            obj.UpdateTools;
+            
+            % Matlab tools require the keypress callback to be reset
+            if tool.RestoreKeyPressCallbackWhenSelected
+                obj.GetParentFigure.RestoreCustomKeyPressCallback;
+            end
+            
+            % Enable the button for this tool
+            set(obj.MouseControlButtons(tag_value), 'Value', 1);
+        end
+        
+        function SetModes(obj, mode, submode)
+            obj.Mode = mode;
+            obj.SubMode = submode;
+            obj.ModeChanged;
+            if strcmp(submode, PTKSubModes.ColourRemapEditing)
+                obj.SetControl('Map');
+            elseif strcmp(submode, PTKSubModes.EditBoundariesEditing)
+                obj.SetControl('Edit');
+            elseif strcmp(submode, PTKSubModes.FixedBoundariesEditing)
+                obj.SetControl('Edit');
+            else
+                obj.SetControl('W/L');
+            end
+        end
     end
     
     methods (Access = protected)
@@ -628,9 +673,24 @@ classdef PTKViewerPanel < PTKPanel
             set(obj.SliceSlider, 'Units', 'Pixels', 'Position', [0 control_panel_height slice_slider_width slice_slider_height]);
 
             % Add the 4 subpanels to the control panel
-            button_width = 32;
+            button_width = 32;            
+            
+            % Setup mouse controls panel
+            number_of_enabled_control_buttons = 0;
+            
+            for tool_tag = obj.Tools.keys
+                tool = obj.Tools(tool_tag{1});
+                button = obj.MouseControlButtons(tool_tag{1});
+                if tool.IsEnabled(obj.Mode, obj.SubMode)
+                    number_of_enabled_control_buttons = number_of_enabled_control_buttons + 1;
+                    set(button, 'Units', 'Pixels', 'Position', [1+button_width*(number_of_enabled_control_buttons - 1), 1, button_width, button_width], 'Visible', 'on');
+                else
+                    set(button, 'Visible', 'off');
+                end
+            end
+            
             orientation_width = numel(obj.OrientationButtons)*button_width;
-            mouse_controls_width = (obj.MouseControlButtons.Count)*button_width;
+            mouse_controls_width = (number_of_enabled_control_buttons)*button_width;
             mouse_controls_position = parent_width_pixels - mouse_controls_width + 1;
             central_panels_width = max(1, (parent_width_pixels - mouse_controls_width - orientation_width)/2);
             windowlevel_panel_position = orientation_width + central_panels_width + 1;
@@ -644,12 +704,6 @@ classdef PTKViewerPanel < PTKPanel
             set(obj.OrientationButtons(2), 'Units', 'Pixels', 'Position', [1+button_width 1 button_width button_width]);
             set(obj.OrientationButtons(3), 'Units', 'Pixels', 'Position', [1+button_width*2 1 button_width button_width]);
 
-            % Setup mouse controls panel
-            button_list = obj.MouseControlButtons.values;
-            for button_index = 1 : obj.MouseControlButtons.Count
-                button = button_list{button_index};
-                set(button, 'Units', 'Pixels', 'Position', [1+button_width*(button_index - 1), 1, button_width, button_width]);
-            end
 
             % Setup image/overlay panel
             halfpanel_height = 16;
@@ -826,6 +880,7 @@ classdef PTKViewerPanel < PTKPanel
                 tool_set{1}.OverlayImageChanged;
             end
             
+            notify(obj, 'OverlayImageChangedEvent');
         end
         
         function UpdateGuiForNewImage(obj)
@@ -1135,6 +1190,11 @@ classdef PTKViewerPanel < PTKPanel
             obj.UpdateStatus;
         end
         
+        % Mode has changed
+        function ModeChanged(obj)
+            obj.ResizePanel(obj.Position);
+        end
+        
         % Slice number has changed
         function SliceNumberChangedCallback(obj, ~, ~, ~)
             obj.UpdateGui;
@@ -1278,27 +1338,6 @@ classdef PTKViewerPanel < PTKPanel
             if ~obj.ShowOverlay
                 obj.ShowOverlay = true;
             end
-        end
-        
-        
-        function SetControl(obj, tag_value)
-            obj.SelectedControl = tag_value;
-            tool = obj.Tools(tag_value);
-            
-            
-            % Change the cursor
-            obj.UpdateCursor(obj.FigureHandle, [], []);
-            
-            % Run the code to enable or disable tools
-            obj.UpdateTools;
-            
-            % Matlab tools require the keypress callback to be reset
-            if tool.RestoreKeyPressCallbackWhenSelected
-                obj.GetParentFigure.RestoreCustomKeyPressCallback;
-            end
-            
-            % Enable the button for this tool
-            set(obj.MouseControlButtons(tag_value), 'Value', 1);
         end
         
         function UpdateTools(obj)
