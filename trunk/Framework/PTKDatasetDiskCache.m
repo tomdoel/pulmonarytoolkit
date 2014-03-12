@@ -106,6 +106,15 @@ classdef PTKDatasetDiskCache < handle
             obj.ResultsDiskCache.RemoveAllCachedFiles(remove_framework_files, reporting);
         end
         
+        function DeleteEditedPluginResult(obj, plugin_name, reporting)
+            % Deletes edited results associated with a particular plugin
+            
+            dir_list = obj.EditedResultsDiskCache.DeleteFileForAllContexts(plugin_name, reporting);
+            for context = dir_list
+                obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context{1}, true, reporting);
+            end
+        end
+        
         function exists = Exists(obj, name, context, reporting)
             exists = obj.ResultsDiskCache.Exists(name, context, reporting);
             exists = exists || obj.EditedResultsDiskCache.Exists(name, context, reporting);

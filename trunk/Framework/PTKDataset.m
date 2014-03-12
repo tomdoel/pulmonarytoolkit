@@ -232,6 +232,15 @@ classdef PTKDataset < handle
             obj.PostCallTidy;
         end
         
+        function DeleteEditedResult(obj, plugin_name, varargin)
+            % Delete edit data from a cache file associated with this dataset
+            
+            obj.PreCallTidy;
+            obj.LinkedDatasetChooser.GetDataset(varargin{:}).DeleteEditedPluginResult(plugin_name);
+            obj.PostCallTidy;
+        end
+        
+        
         function context_is_enabled = IsContextEnabled(obj, context, varargin)
             % Check to see if a context has been disabled for this dataset, due to a
             % failure when running the plugin that generates the template image for
