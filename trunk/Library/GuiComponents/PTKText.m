@@ -16,8 +16,11 @@ classdef PTKText < PTKUserInterfaceObject
     
     properties
         FontSize
+        FontColour
         HorizontalAlignment
-        SelectedColour = [1, 0.45, 0]
+        SelectedColour
+        SelectedFontColour
+        Clickable
     end
     
     properties (Access = private)
@@ -44,6 +47,11 @@ classdef PTKText < PTKUserInterfaceObject
             obj.HorizontalAlignment = 'left';
             obj.Selected = false;
             obj.Highlighted = false;
+            obj.FontColour = PTKSoftwareInfo.TextPrimaryColour;
+            obj.SelectedColour = PTKSoftwareInfo.SelectedBackgroundColour;
+            obj.SelectedFontColour = PTKSoftwareInfo.TextContrastColour;
+            
+            obj.Clickable = true;
         end
         
         function delete(obj)
@@ -67,15 +75,25 @@ classdef PTKText < PTKUserInterfaceObject
             text_size = [position(1), position(2), position(3), position(4)];
             if obj.Selected
                 background_colour =  obj.SelectedColour;
+                text_colour = obj.SelectedFontColour;
             else
                 background_colour = PTKSoftwareInfo.BackgroundColour;
+                text_colour = obj.FontColour;
             end
             
             obj.GraphicalComponentHandle = uicontrol('Style', 'text', 'Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'String', obj.Text, ...
                 'Tag', obj.Tag, 'ToolTipString', obj.ToolTip, ...
                 'BackgroundColor', background_colour, ...
-                'FontAngle', 'normal', 'ForegroundColor', 'white', 'FontUnits', 'pixels', 'FontSize', obj.FontSize, ...
-                'HorizontalAlignment', obj.HorizontalAlignment, 'Position', text_size, 'Enable', 'inactive');
+                'FontAngle', 'normal', 'ForegroundColor', text_colour, 'FontUnits', 'pixels', 'FontSize', obj.FontSize, ...
+                'HorizontalAlignment', obj.HorizontalAlignment, ...
+                'Position', text_size, 'Enable', 'inactive');
+        end
+        
+        function ChangeText(obj, new_text)
+            obj.Text = new_text;
+            if obj.ComponentHasBeenCreated && ishandle(obj.GraphicalComponentHandle)
+                set(obj.GraphicalComponentHandle, 'String', new_text);
+            end
         end
     end
     
@@ -84,14 +102,19 @@ classdef PTKText < PTKUserInterfaceObject
         function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
             % This method is called when the mouse is clicked inside the control
 
+            if ~obj.Clickable
+                input_has_been_processed = false;
+                return;
+            end
+            
             input_has_been_processed = true;
             
             if strcmp(selection_type, 'extend')
-                notify(obj, 'TextShiftClicked');
+                notify(obj, 'TextShiftClicked', PTKEventData(obj.Tag));
             elseif strcmp(selection_type, 'alt')
-                notify(obj, 'TextRightClicked');
+                notify(obj, 'TextRightClicked', PTKEventData(obj.Tag));
             else
-                notify(obj, 'TextClicked');
+                notify(obj, 'TextClicked', PTKEventData(obj.Tag));
             end
         end
         
@@ -99,14 +122,16 @@ classdef PTKText < PTKUserInterfaceObject
             if ~isempty(obj.GraphicalComponentHandle)
                 if obj.Selected
                     background_colour = obj.SelectedColour;
+                    text_colour = obj.SelectedFontColour;
                 else
                     background_colour = PTKSoftwareInfo.BackgroundColour;
+                    text_colour = obj.FontColour;
                 end
 
                 if obj.Highlighted
                     background_colour = min(1, background_colour + 0.2);
                 end
-                set(obj.GraphicalComponentHandle, 'BackgroundColor', background_colour);
+                set(obj.GraphicalComponentHandle, 'BackgroundColor', background_colour, 'ForegroundColor', text_colour);
             end
         end
     end

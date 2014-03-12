@@ -56,6 +56,10 @@ classdef PTKSlidingPanel < PTKPanel
             obj.UpdateFloatingPanelPosition(true);
         end
         
+        function ScrollToTop(obj)
+            obj.ScrollPanelToThisYPosition(0);
+        end
+        
     end
     
     methods (Access = protected)
