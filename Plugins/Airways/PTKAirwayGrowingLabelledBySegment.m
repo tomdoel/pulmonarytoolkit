@@ -18,7 +18,7 @@ classdef PTKAirwayGrowingLabelledBySegment < PTKPlugin
     properties
         ButtonText = 'Growing bronchi<br>labelled by segment'
         ToolTip = 'Finds the segmental bronchi in each lobe'
-        Category = 'Synergy'
+        Category = 'Airways'
  
         AllowResultsToBeCached = true
         AlwaysRunPlugin = false
