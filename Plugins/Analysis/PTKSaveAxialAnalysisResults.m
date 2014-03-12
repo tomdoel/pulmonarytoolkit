@@ -24,6 +24,7 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
         ButtonText = 'Axial metrics'
         ToolTip = 'Performs density analysis in bins along the cranial-caudal axis'
         Category = 'Analysis'
+        Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
         AllowResultsToBeCached = true

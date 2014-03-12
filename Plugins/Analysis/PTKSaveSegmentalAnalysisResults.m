@@ -24,6 +24,7 @@ classdef PTKSaveSegmentalAnalysisResults < PTKPlugin
         ButtonText = 'Segmental metrics'
         ToolTip = 'Performs density analysis in bins along the cranial-caudal axis'
         Category = 'Analysis'
+        Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
         AllowResultsToBeCached = true

@@ -24,6 +24,7 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
         ButtonText = 'Coronal metrics'
         ToolTip = 'Performs density analysis in bins along the anterior-posterior axis'
         Category = 'Analysis'
+        Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
         AllowResultsToBeCached = true

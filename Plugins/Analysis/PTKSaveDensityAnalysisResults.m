@@ -20,6 +20,7 @@ classdef PTKSaveDensityAnalysisResults < PTKPlugin
         ButtonText = 'Density metrics'
         ToolTip = 'Performs density analysis'
         Category = 'Analysis'
+        Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
         AllowResultsToBeCached = true

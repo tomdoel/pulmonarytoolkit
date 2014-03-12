@@ -19,6 +19,7 @@ classdef PTKSaveAirwayResults < PTKPlugin
         ButtonText = 'Airway metrics'
         ToolTip = 'Calculates airway radius and wall thickness'
         Category = 'Analysis'
+        Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
         AllowResultsToBeCached = false

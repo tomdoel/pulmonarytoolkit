@@ -24,6 +24,7 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
         ButtonText = 'Sagittal metrics'
         ToolTip = 'Performs density analysis in bins along the left-right axis'
         Category = 'Analysis'
+        Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
         AllowResultsToBeCached = true
