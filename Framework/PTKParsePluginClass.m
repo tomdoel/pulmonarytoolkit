@@ -42,4 +42,22 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
     else
         new_plugin.Context = [];
     end
+    
+    if isprop(plugin_class, 'Mode')
+        new_plugin.Mode = plugin_class.Mode;
+    else
+        new_plugin.Mode = [];
+    end
+    
+    if isprop(plugin_class, 'EnableModes')
+        new_plugin.EnableModes = plugin_class.EnableModes;
+    else
+        new_plugin.EnableModes = {};
+    end
+    
+    if isprop(plugin_class, 'SubMode')
+        new_plugin.SubMode = plugin_class.SubMode;
+    else
+        new_plugin.SubMode = [];
+    end
 end
