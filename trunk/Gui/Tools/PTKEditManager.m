@@ -31,13 +31,6 @@ classdef PTKEditManager < PTKTool
         MinimumEditVolume = [20, 20, 20] % Post-edit processing (such as removing orphaned regions) is applied to this grid
     end
     
-    properties (SetAccess = private)
-        
-        % Keep a record of when we have unsaved changes to markers
-        ImageHasChanged = false
-        
-    end
-    
     properties (Access = private)
         Colours
         
@@ -60,9 +53,12 @@ classdef PTKEditManager < PTKTool
             obj.ViewerPanel = viewer_panel;
             obj.OverlayChangeLock = false;
             obj.UndoStack = PTKUndoStack([], 5);
-%             obj.InitialiseEditMode;
         end
         
+        function is_enabled = IsEnabled(obj, mode, sub_mode)
+            is_enabled = ~isempty(mode) && ~isempty(sub_mode) && strcmp(mode, PTKModes.EditMode) && ...
+                (strcmp(sub_mode, PTKSubModes.EditBoundariesEditing) || strcmp(sub_mode, PTKSubModes.FixedBoundariesEditing));
+        end
         
         function Enable(obj, enable)
             if enable && ~obj.EditModeInitialised
@@ -101,12 +97,8 @@ classdef PTKEditManager < PTKTool
         function InitialiseEditMode(obj)
             obj.EditModeInitialised = true;
             obj.UndoStack.Clear;
-            if ~isempty(obj.ViewerPanel.OverlayImage)
-                if obj.ViewerPanel.OverlayImage.ImageExists
-                    colours = unique(obj.ViewerPanel.OverlayImage.RawImage);
-                    obj.FixedOuterBoundary = numel(colours) > 3;
-                end
-            end
+            
+            obj.FixedOuterBoundary = strcmp(obj.ViewerPanel.SubMode, PTKSubModes.FixedBoundariesEditing);
         end
 
         

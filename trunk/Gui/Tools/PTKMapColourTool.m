@@ -66,6 +66,9 @@ classdef PTKMapColourTool < PTKTool
             
         end
         
+        function is_enabled = IsEnabled(obj, mode, sub_mode)
+            is_enabled = ~isempty(mode) && ~isempty(sub_mode) && strcmp(mode, PTKModes.EditMode) && strcmp(sub_mode, PTKSubModes.ColourRemapEditing);
+        end
         
         function Enable(obj, enable)
             current_status = obj.Enabled;
