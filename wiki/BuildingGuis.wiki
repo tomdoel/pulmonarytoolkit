@@ -20,7 +20,7 @@ The core GUI classes are found in Library/GuiComponents. All graphical objects i
 
 Base classes
  * `PTKUserInterfaceObject` - base class for graphical components. All classes must inherit from this
- * `PTKFigure` -  you must have at least one PTKFigure object. This contains a Matlab figure on which the controls are placed
+ * `PTKFigure` -  you must have at least one `PTKFigure` object. This contains a Matlab figure on which the controls are placed
 
 Controls
  * PTKText
@@ -75,11 +75,11 @@ end
  * `PTKFigure` is hidden by default. Call `Show()` to make it visible. 
  * You can create the underlying PTK object at any point. The actual graphical components are generally created when they first become visible, via the `CreateGuiComponent()` method.
  * The `Resize()` method will remember the component's size, even if it currently has not been created yet (i.e. it is still invisible). When it becomes visible, it will be created with the correct size. This means you can lay out your GUI before it has been created, so when it comes visible it already has the correct size and layout.
- * If you are using Matlab gui components directly, you cannot create them in your constructor because there is go graphical handle yet to which you can attach them. You must instead create them in the `CreateGuiComponent()` method. Call the superclass method and you will then have a Matlab handle obj.GraphicalComponentHandle which you can use to create your Matlab gui object. NB If you are resiing these Matlab GUI objects in `Resize()` you will need to put a null check on them so they don't get resized before they have been created.
+ * If you are using Matlab gui components directly, you cannot create them in your constructor because there is go graphical handle yet to which you can attach them. You must instead create them in the `CreateGuiComponent()` method. Call the superclass method and you will then have a Matlab handle `obj.GraphicalComponentHandle` which you can use to create your Matlab gui object. NB If you are resiing these Matlab GUI objects in `Resize()` you will need to put a null check on them so they don't get resized before they have been created.
 
 
 
 == Examples ==
- * `PTKViewer.m` is an example viewer application built using the `PTKGui` classes. `PTKViewer` itself is a `PTKFigure` object, containing a single panel (PTKViewerPanel)
- * `PTKPatientBrowser` is a `PTKFigure` object containing 2 panels. The left panel is PTKListOfPatientsPanel, which is a PTKPanel containing a listbox text and button controls. The right panel is a scrolling panel `PTKPatientsSlidingPanel`, which is a `PTKSlidingPanel` containing a `PTKCompositePanel` consisting of multiple  PTKPanels of class `PTKPatientPanel`. 
- * `PTKGu`i is a `PTKFigure` object containing multiple panels including a `PTKTabControl` which contains the plugin panels.
+ * `PTKViewer.m` is an example viewer application built using the `PTKGui` classes. `PTKViewer` itself is a `PTKFigure` object, containing a single panel (`PTKViewerPanel`)
+ * `PTKPatientBrowser` is a `PTKFigure` object containing 2 panels. The left panel is `PTKListOfPatientsPanel`, which is a PTKPanel containing a listbox text and button controls. The right panel is a scrolling panel `PTKPatientsSlidingPanel`, which is a `PTKSlidingPanel` containing a `PTKCompositePanel` consisting of multiple  `PTKPanel`s of class `PTKPatientPanel`. 
+ * `PTKGui` is a `PTKFigure` object containing multiple panels including a `PTKTabControl` which contains the plugin panels.
