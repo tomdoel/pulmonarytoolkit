@@ -1,4 +1,5 @@
 #summary The PTK unit test framework
+#sidebar UserManualSidebar
 
 = Unit tests =
 
