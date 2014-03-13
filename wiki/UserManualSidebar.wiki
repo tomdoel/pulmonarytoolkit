@@ -17,6 +17,7 @@ Not all pages are available yet!
  * [ImportingAndLoadingData Importing and loading data]
  * [PatientBrowser Selecting data with the Patient Browser]
  * [UserInterface Reading a dataset]
+ * [KeyboardShortcuts Keyboard shortcuts]
  * [Segmenting Segmenting the lungs, lobes, airways and segments]
  * [Visualisation Visualising segmentations in 2D and 3D]
  * [Analysis Running analysis]
@@ -49,3 +50,6 @@ Not all pages are available yet!
  * How a plugin call works
  * Dependency checking
  * Files and directories
+ * [ErrorAndProgressReporting Error and progress reporting]
+ * [CodingStandards Coding standards]
+ * [UnitTests Unit test framework]
