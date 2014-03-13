@@ -42,6 +42,7 @@ Not all pages are available yet!
  * Importing and exporting images, airway trees
  * Saving data to CSV files
  * Plotting graphs
+ * [BuildingGuis Building your own GUIs]
 
 ===Section 7: Writing your own plugins and libraries===
  * [Plugins Writing a Plugin class]
