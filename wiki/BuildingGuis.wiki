@@ -40,9 +40,9 @@ To modify control behaviour for individual controls, create the control and then
 
 == Building GUIs - essential concepts ==
 
-* You should create a `PTKFigure` object which will be the figure upon which your GUI is based. Generally you do this by creating a new class which inherits from `PTKFigure`. This is your basic interface window.
+ * You should create a `PTKFigure` object which will be the figure upon which your GUI is based. Generally you do this by creating a new class which inherits from `PTKFigure`. This is your basic interface window.
 
-* Create other controls - typically in the constructor. You must call `AddChild()` on the parent class to add a control. For example:
+ * Create other controls - typically in the constructor. You must call `AddChild()` on the parent class to add a control. For example:
 
 {{{
 MyFigure < PTKFigure
@@ -71,11 +71,11 @@ methods  (Access = private)
 end
 }}}
 
- * Override the `Resize()` method to define the layout of your GUI. Remember to call the superclass Resize() method (this is important!)
+ * Override the `Resize()` method to define the layout of your GUI. Remember to call the superclass `Resize()` method (this is important!)
  * `PTKFigure` is hidden by default. Call `Show()` to make it visible. 
  * You can create the underlying PTK object at any point. The actual graphical components are generally created when they first become visible, via the `CreateGuiComponent()` method.
  * The `Resize()` method will remember the component's size, even if it currently has not been created yet (i.e. it is still invisible). When it becomes visible, it will be created with the correct size. This means you can lay out your GUI before it has been created, so when it comes visible it already has the correct size and layout.
- * If you are using Matlab gui components directly, you cannot create them in your constructor because there is go graphical handle yet to which you can attach them. You must instead create them in the `CreateGuiComponent()` method. Call the superclass method and you will then have a Matlab handle `obj.GraphicalComponentHandle` which you can use to create your Matlab gui object. NB If you are resiing these Matlab GUI objects in `Resize()` you will need to put a null check on them so they don't get resized before they have been created.
+ * If you are using Matlab gui components directly, you cannot create them in your constructor because there is go graphical handle yet to which you can attach them. You must instead create them in the `CreateGuiComponent()` method. Call the superclass method and you will then have a Matlab handle `obj.GraphicalComponentHandle` which you can use to create your Matlab gui object. NB If you are resizing these Matlab GUI objects in `Resize()` you will need to put a null check on them so they don't get resized before they have been created.
 
 
 
