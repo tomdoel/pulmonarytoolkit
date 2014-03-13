@@ -13,9 +13,10 @@ These are the shortcuts used when using the graphical user interface (GUI) of th
 == Mode ==
  * `Z` - zoom mode
  * `P` - pan mode
- * `E` - cine mode (drag to cine)
+ * `N` - cine mode (drag to cine)
  * `M` - marker mode
  * `W` - window/level mode (grad to change window and level)
+ * `E` - edit mode (when available)
 
 == Image viewing ==
  * `I` - toggle image on/off
