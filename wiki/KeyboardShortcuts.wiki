@@ -1,4 +1,5 @@
 #summary Keyboard and mouse shortcuts for PTKViewer and the Pulmonary Toolkit.
+#sidebar UserManualSidebar
 
 These are the shortcuts used when using the graphical user interface (GUI) of the Toolkit.
 
