@@ -1,4 +1,5 @@
 #summary The PTKReporting interface and how to report errors, warnings, messages and progress
+#sidebar UserManualSidebar
 
 = Error and Progress Reporting =
 
