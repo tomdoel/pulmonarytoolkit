@@ -12,9 +12,6 @@ classdef PTKTabControl < PTKPanel
     %    
     
 
-    properties (Access = private)
-    end
-
     properties (Access = protected)
         TabPanel
         TabMap
@@ -39,12 +36,12 @@ classdef PTKTabControl < PTKPanel
             obj.TabMap(tag) = panel;
             obj.AddChild(panel);
             
-            % ToDo: If no current tab exists, then select this one
-%             if isempty(obj.CurrentPanelTag)
-%                 obj.ChangeSelectedTab(tag);
-%             else
-%                 panel.Disable;
-%             end
+            % If no current tab exists, then select this one
+            if isempty(obj.CurrentPanelTag)
+                obj.ChangeSelectedTab(tag);
+            else
+                panel.Disable;
+            end
             
             % Ensure tab panel will be created last
             obj.Reorder;

@@ -44,13 +44,11 @@ classdef PTKSlidingPanel < PTKPanel
             % Resize the fixed panel
             Resize@PTKPanel(obj, fixed_panel_size);
 
-            % The panel height will affect the slider limits and hence its
-            % value
-            obj.AutoAdjustSliderLimits(true);
-            
             % Position the slider bar
             obj.Slider.Resize([fixed_panel_size(3) - PTKSlider.SliderWidth + 1, 1, PTKSlider.SliderWidth, fixed_panel_size(4)]);
-
+            
+            obj.AutoAdjustSliderLimits(true);
+            
             % Resize the floating panel. Note this uses the slider position,
             % therefore the slider update should happen first
             obj.UpdateFloatingPanelPosition(true);
