@@ -121,11 +121,7 @@ classdef PTKGui < PTKFigure
             % Create the figure and graphical components
             obj.Show(obj.Reporting);
             
-            
-            % Currently we need to select an active tab after the control is visible
-            obj.ModeTabControl.ChangeSelectedTab('file');
-            obj.UpdateModeTabControl([]);
-            
+            % Add listener for switching modes when the tab is changed
             obj.ModeTabChangedListener = addlistener(obj.ModeTabControl, 'TabChangedEvent', @obj.ModeTabChanged);
             
             % Create a progress panel which will replace the progress dialog
@@ -135,7 +131,7 @@ classdef PTKGui < PTKFigure
             obj.Reporting.ProgressDialog = obj.WaitDialogHandle;            
             
             % Ensure the GUI stack ordering is correct
-%             obj.ReorderPanels;
+            obj.ReorderPanels;
 
             % Wait until the GUI is visible before removing the splash screen
             splash_screen.Delete;

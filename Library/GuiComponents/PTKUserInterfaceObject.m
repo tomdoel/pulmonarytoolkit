@@ -14,6 +14,7 @@ classdef PTKUserInterfaceObject < handle
         Parent
         Children
         ParentWindowVisible
+        ParentWindowEnabled
         Enabled
         Position
         GraphicalComponentHandle % Handle to the uicontrol/uipanel object (if there is one)
@@ -37,8 +38,10 @@ classdef PTKUserInterfaceObject < handle
             end
             if isempty(parent)
                 obj.ParentWindowVisible = false;
+                obj.ParentWindowEnabled = true;
             else
                 obj.ParentWindowVisible = parent.ParentWindowVisible;
+                obj.ParentWindowEnabled = parent.ParentWindowEnabled;
             end
             obj.Enabled = true;
             obj.ComponentHasBeenCreated = false;
@@ -116,18 +119,28 @@ classdef PTKUserInterfaceObject < handle
         
         function Enable(obj, reporting)
             % Enables this component
-            obj.Enabled = true;
             
-            % Ensure any controls are created
-            obj.CreateVisibleComponents(reporting);
-            
+            if ~obj.Enabled
+                obj.Enabled = true;
+                
+                % Set the flag determining inherited enabled-ness for this window and all children
+                obj.SetAllParentEnabled(obj.ParentWindowEnabled);
+                
+                % Ensure any controls are created
+                obj.CreateVisibleComponents(reporting);
+            end
+                
             % Make the graphical object visible
-            obj.UpdateComponentVisibility;
+            obj.UpdateAllComponentVisibility;
         end
         
         function Disable(obj)
             % Disables this interface component
+            
             obj.Enabled = false;
+            
+            % Set the flag determining inherited enabled-ness for this window and all children
+            obj.SetAllParentEnabled(obj.ParentWindowEnabled);
             
             % Make the graphical object hidden
             obj.UpdateComponentVisibility;
@@ -163,7 +176,7 @@ classdef PTKUserInterfaceObject < handle
         end
      
         function is_visible = IsVisible(obj)
-            is_visible = obj.Enabled && obj.ParentWindowVisible;
+            is_visible = obj.Enabled && obj.ParentWindowVisible && obj.ParentWindowEnabled;
         end
         
         function handle = GetContainerHandle(obj, reporting)
@@ -213,6 +226,14 @@ classdef PTKUserInterfaceObject < handle
             end
         end
 
+        function SetAllParentEnabled(obj, enabled)
+            % Recursively sets parent enabled flag of all components
+            obj.ParentWindowEnabled = enabled;
+            for child = obj.Children
+                child{1}.SetAllParentEnabled(enabled && obj.Enabled);
+            end
+        end
+        
         function CreateVisibleComponents(obj, reporting)
             % Creates graphical controls for all visible objects
             if obj.IsVisible
