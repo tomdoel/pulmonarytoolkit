@@ -11,11 +11,7 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     %             dicom_image     is a PTKDicomImage class containing the image
     %             path            The path where the files are located. For the
     %                             current directory, use .
-    %             filenames       can be a single string containspecify the location to save the DICOM data. One 2D file
-    %                             will be created for each image slice in the z direction. 
-    %                             Each file is numbered, starting from 0.
-    %                             So if filename is 'MyImage.DCM' then the files will be
-    %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
+    %             filenames       the filename of the header file to load.
     %             reporting       Optional - an object implementing the PTKReporting 
     %                             interface for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
@@ -142,5 +138,4 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     modality = 'CT';
     dicom_image = PTKDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid, header_data);
     dicom_image.Title = filenames{1};
-
-
+end
