@@ -36,6 +36,10 @@ classdef PTKGetMaskForContextExcludingAirways < PTKPlugin
     methods (Static)
         function context_no_airways = RunPlugin(dataset, context, reporting)
             context_mask = dataset.GetResult('PTKGetMaskForContext', context);
+            if ~context_mask.ImageExists
+                context_no_airways = [];
+                return;
+            end
             [~, airway_image] = dataset.GetResult('PTKAirways', PTKContext.LungROI);
             
             % Reduce all images to a consistent size
