@@ -43,6 +43,7 @@ classdef PTKImageDatabase < handle
             patient = obj.PatientMap(patient_id);
             series = patient.AddImage(single_image_metainfo);
             obj.SeriesMap(series.SeriesUid) = series;
+            obj.InvalidateCachedPaths;
         end
         
         function patient_info = GetPatients(obj)
