@@ -18,22 +18,22 @@ classdef PTKOrganisedPlugins < handle
     end
     
     methods
-        function obj = PTKOrganisedPlugins(reporting)
-            obj.Repopulate(reporting);
+        function obj = PTKOrganisedPlugins(settings, reporting)
+            obj.Repopulate(settings, reporting);
         end
         
-        function Repopulate(obj, reporting)
+        function Repopulate(obj, settings, reporting)
             obj.Modes = containers.Map;
             obj.GuiModes = containers.Map;
             plugin_list = obj.GetListOfPossiblePluginNames;
             for plugin_filename = plugin_list
                 plugin_name = plugin_filename{1}.First;
-                obj.AddPluginFromName(plugin_name, plugin_filename, false, reporting);
+                obj.AddPluginFromName(plugin_name, plugin_filename, false, settings, reporting);
             end
             gui_plugin_list = obj.GetListOfPossibleGuiPluginNames;
             for plugin_filename = gui_plugin_list
                 plugin_name = plugin_filename{1}.First;
-                obj.AddPluginFromName(plugin_name, plugin_filename, true, reporting);
+                obj.AddPluginFromName(plugin_name, plugin_filename, true, settings, reporting);
             end
         end
         
@@ -55,13 +55,16 @@ classdef PTKOrganisedPlugins < handle
     end
     
     methods (Access = private)
-        function AddPluginFromName(obj, plugin_name, plugin_filename, is_gui_plugin, reporting)
+        function AddPluginFromName(obj, plugin_name, plugin_filename, is_gui_plugin, settings, reporting)
             try
                 if (exist(plugin_name, 'class') == 8)
                     plugin_handle = str2func(plugin_name);
                     plugin_class_object = feval(plugin_handle);
                     if isa(plugin_class_object, 'PTKPlugin') || isa(plugin_class_object, 'PTKGuiPlugin')
-                        if ~plugin_class_object.HidePluginInDisplay
+                        
+                        hide_plugin = plugin_class_object.HidePluginInDisplay || (~settings.DeveloperMode && isprop(plugin_class_object, 'Visibility') && strcmp(plugin_class_object.Visibility, 'Developer'));
+                        
+                        if ~hide_plugin
                             obj.AddPluginClass(plugin_class_object, plugin_name, is_gui_plugin, plugin_filename, reporting)
                         end
                     else

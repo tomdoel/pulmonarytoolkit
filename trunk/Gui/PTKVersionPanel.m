@@ -19,12 +19,13 @@ classdef PTKVersionPanel < PTKPanel
         PatientNameText
         PatientDetailsText
         CurrentResultText
+        ProfileCheckbox
+        DeveloperModeCheckbox
         
-        ModePanel
-        
-        TextVersionHandle
         TextBlankHandle
-        ProfileCheckboxHandle
+        
+        Gui
+        Settings
     end
     
     properties (Constant, Access = private)
@@ -47,20 +48,38 @@ classdef PTKVersionPanel < PTKPanel
         PatientNameFontSize = 40
         
         VerticalSpacing = 10
-        CheckboxVerticalOffset = 10
+        CheckboxVerticalOffset = 20
+        CheckboxHeight = 20
+        CheckboxFontSize = 10
         
         PatientDetailsHeight = 20
         PatientDetailsFontSize = 20
     end
     
     methods
-        function obj = PTKVersionPanel(parent, reporting)
+        function obj = PTKVersionPanel(parent, gui, settings, reporting)
             obj = obj@PTKPanel(parent, reporting);
+            
+            obj.Gui = gui;
+            obj.Settings = settings;
             
             obj.SoftwareNameText = PTKText(obj, [PTKSoftwareInfo.Name ' version ' PTKSoftwareInfo.Version] , '', 'SoftwareName');
             obj.SoftwareNameText.FontSize = obj.SoftwareNameFontSize;
             obj.SoftwareNameText.FontColour = PTKSoftwareInfo.TextSecondaryColour;
             obj.AddChild(obj.SoftwareNameText);
+
+            obj.DeveloperModeCheckbox = PTKCheckbox(obj, 'Developer mode', 'Enabled developer mode', 'DeveloperMode');
+            obj.DeveloperModeCheckbox.FontSize = obj.CheckboxFontSize;
+            obj.DeveloperModeCheckbox.ChangeChecked(obj.Settings.DeveloperMode);
+            obj.AddChild(obj.DeveloperModeCheckbox);
+            
+            % Add the listener after setting the checkbox value above
+            obj.AddEventListener(obj.DeveloperModeCheckbox, 'CheckChanged', @obj.DeveloperCheckChanged);
+            
+            obj.ProfileCheckbox = PTKCheckbox(obj, 'Enable Profiler', 'Starts or stops the Matlab profiler', 'Profiler');
+            obj.ProfileCheckbox.FontSize = obj.CheckboxFontSize;
+            obj.AddChild(obj.ProfileCheckbox);
+            obj.AddEventListener(obj.ProfileCheckbox, 'CheckChanged', @obj.ProfileCheckChanged);
 
             obj.PatientNameText = PTKText(obj, obj.NoPatientText, '', 'PatientName');
             obj.PatientNameText.FontSize = obj.PatientNameFontSize;
@@ -74,9 +93,10 @@ classdef PTKVersionPanel < PTKPanel
             obj.CurrentResultText.FontSize = obj.CurrentResultFontSize;
             obj.CurrentResultText.FontColour = PTKSoftwareInfo.TextSecondaryColour;
             obj.AddChild(obj.CurrentResultText);
-        end
-        
-        function delete(obj)
+            
+            % Update the profile checkbox with the current status of the Matlab
+            % profilers
+            obj.UpdateProfilerStatus;                        
         end
         
         function UpdatePatientName(obj, series_name, patient_visible_name, plugin_visible_name, is_edited)
@@ -101,28 +121,13 @@ classdef PTKVersionPanel < PTKPanel
         function CreateGuiComponent(obj, panel_position, reporting)
             CreateGuiComponent@PTKPanel(obj, panel_position, reporting);
 
-            software_name_y = panel_position(4) - obj.TopMargin - obj.SoftwareNameHeight;
-            
-            componenent_width = panel_position(3) - obj.LeftMargin - obj.RightMargin;
-            checkbox_xpos = obj.LeftMargin + obj.SoftwareNameWidth + obj.HorizontalSpacing;
-            checkbox_width = max(10, componenent_width - checkbox_xpos);
-            profile_checkbox_position = [checkbox_xpos, software_name_y + obj.CheckboxVerticalOffset, checkbox_width, obj.SoftwareNameHeight - obj.CheckboxVerticalOffset];
-            
-            
-            
             blank_text_position = [1, 1, panel_position(3), panel_position(4)];
                         
             obj.TextBlankHandle = uicontrol('Parent', obj.GraphicalComponentHandle, 'Style', 'text', ...
                 'Units', 'pixels', 'Position', blank_text_position, 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, ...
                 'FontName', PTKSoftwareInfo.GuiFont, 'FontSize', 20.0, 'ForegroundColor', [1.0 0.694 0.392], 'HorizontalAlignment', 'left', ...
                 'FontWeight', 'bold');
-            obj.ProfileCheckboxHandle = uicontrol('Parent', obj.GraphicalComponentHandle, 'Style', 'checkbox', 'String', 'Enable profiler', ...
-                'Units', 'pixels', 'Position', profile_checkbox_position, 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'ForegroundColor', [1 1 1], ...
-                'Callback', @obj.ProfileCheckboxCallback);
             
-            % Update the profile checkbox with the current status of the Matlab
-            % profilers
-            obj.UpdateProfilerStatus;            
         end
         
         function Resize(obj, panel_position)
@@ -147,12 +152,12 @@ classdef PTKVersionPanel < PTKPanel
             
             checkbox_xpos = obj.LeftMargin + obj.SoftwareNameWidth + obj.HorizontalSpacing;
             checkbox_width = max(10, componenent_width - checkbox_xpos);
-            profile_checkbox_position = [checkbox_xpos, software_name_y + obj.CheckboxVerticalOffset, checkbox_width, obj.SoftwareNameHeight - obj.CheckboxVerticalOffset];
 
-            if ~isempty(obj.ProfileCheckboxHandle)
-                set(obj.ProfileCheckboxHandle, 'Position', profile_checkbox_position);
-            end
+            developer_checkbox_position = [checkbox_xpos, software_name_y + obj.CheckboxVerticalOffset, checkbox_width, obj.CheckboxHeight];
+            profile_checkbox_position = [checkbox_xpos, software_name_y, checkbox_width, obj.CheckboxHeight];
             
+            obj.DeveloperModeCheckbox.Resize(developer_checkbox_position);
+            obj.ProfileCheckbox.Resize(profile_checkbox_position);            
         end
         
         function height = GetRequestedHeight(obj, width)            
@@ -162,10 +167,23 @@ classdef PTKVersionPanel < PTKPanel
     end
     
     methods (Access = private)
-        % Profile checkbox
-        % Enables or disables (and shows) Matlab's profiler
-        function ProfileCheckboxCallback(obj, hObject, ~, ~)
-            if get(hObject,'Value')
+        
+        function DeveloperCheckChanged(obj, ~, event_data)
+            % Enters or exits developer mode
+            enabled = event_data.Data;
+            obj.Settings.DeveloperMode = enabled;
+            if enabled
+                obj.ProfileCheckbox.Enable(obj.Reporting);
+            else
+                obj.ProfileCheckbox.Disable;
+            end
+            obj.Gui.RefreshPlugins;
+        end
+        
+        function ProfileCheckChanged(obj, ~, event_data)
+            % Enables or disables (and shows) Matlab's profiler when the profile checkbox is
+            % changed
+            if event_data.Data
                 profile on
             else
                 profile viewer
@@ -183,9 +201,9 @@ classdef PTKVersionPanel < PTKPanel
             % of the Matlab profiler
             profile_status = profile('status');
             if strcmp(profile_status.ProfilerStatus, 'on')
-                set(obj.ProfileCheckboxHandle, 'Value', true);
+                obj.ProfileCheckbox.ChangeChecked(true);
             else
-                set(obj.ProfileCheckboxHandle, 'Value', false);
+                obj.ProfileCheckbox.ChangeChecked(false);
             end
         end
         

@@ -14,6 +14,7 @@ classdef PTKModeTabControl < PTKTabControl
 
     properties (Access = private)
         OrganisedPlugins
+        Settings
         Gui
         
         FilePanel
@@ -24,14 +25,14 @@ classdef PTKModeTabControl < PTKTabControl
         
         TabEnabled
     end
-    
-    
 
     methods
-        function obj = PTKModeTabControl(parent, reporting)
+        function obj = PTKModeTabControl(parent, settings, reporting)
             obj = obj@PTKTabControl(parent, reporting);
             
-            obj.OrganisedPlugins = PTKOrganisedPlugins(reporting);
+            obj.Settings = settings;
+            
+            obj.OrganisedPlugins = PTKOrganisedPlugins(settings, reporting);
             obj.TabEnabled = containers.Map;
             
             obj.Gui = parent;
@@ -40,7 +41,6 @@ classdef PTKModeTabControl < PTKTabControl
             obj.AddTab(obj.FilePanel, 'File', 'file', 'Import data');
             obj.FilePanel.AddPlugins([]);
             
-            % Plugins panel
             obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Home', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
             obj.AddTab(obj.PluginsPanel, 'Segment', 'segment', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
@@ -64,65 +64,62 @@ classdef PTKModeTabControl < PTKTabControl
         end
         
         function AddPreviewImage(obj, plugin_name, dataset, window, level)
-            obj.PluginsPanel.AddPreviewImage(plugin_name, dataset, window, level);
+            for tab = obj.TabMap.values
+                tab{1}.AddPreviewImage(plugin_name, dataset, window, level);
+            end
         end
         
         function RefreshPlugins(obj, dataset, window, level)
-            obj.PluginsPanel.RefreshPlugins(dataset, window, level)
+            obj.OrganisedPlugins.Repopulate(obj.Settings, obj.Reporting)
+            for tab = obj.TabMap.values
+                tab{1}.RefreshPlugins(dataset, window, level);
+            end
         end
         
         function AddAllPreviewImagesToButtons(obj, dataset, window, level)
-            obj.PluginsPanel.AddAllPreviewImagesToButtons(dataset, window, level);
+            for tab = obj.TabMap.values
+                tab{1}.AddAllPreviewImagesToButtons(dataset, window, level);
+            end
         end
-                
-        function ReorderPanels(obj)
-            % Ensure the stack order is correct, to stop the scrolling panels appearing on
-            % top of the version panel or drop-down menu
-            
-            child_handles = get(obj.GraphicalComponentHandle, 'Children');
-            tab_panel = obj.TabPanel.GraphicalComponentHandle;
-            other_handles = setdiff(child_handles, tab_panel);
-            
-            reordered_handles = [tab_panel; other_handles];
-            set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
+        
+        function ForceEnableAllTabs(obj)
+            for tab_key = obj.TabMap.keys
+                obj.TabPanel.EnableTab(tab_key{1});
+            end
         end
         
         function UpdateMode(obj, plugin_info)
-            if obj.ComponentHasBeenCreated
-                force_change = false;
-                first_enabled_tab = [];
-                for tab_key = obj.TabMap.keys
-                    tab = obj.TabMap(tab_key{1});
-                    tab_mode_name = tab.GetMode;
-                    if strcmp(tab_mode_name, 'all')
+            force_change = false;
+            first_enabled_tab = [];
+            for tab_key = obj.TabMap.keys
+                tab = obj.TabMap(tab_key{1});
+                tab_mode_name = tab.GetMode;
+                if strcmp(tab_mode_name, 'all')
+                    if isempty(first_enabled_tab)
+                        first_enabled_tab = tab_key{1};
+                    end
+                else
+                    if isempty(plugin_info) || ~any(strcmp(tab_mode_name, plugin_info.EnableModes))
+                        obj.TabPanel.DisableTab(tab_key{1});
+                        if strcmp(tab_key{1}, obj.CurrentPanelTag)
+                            force_change = true;
+                        end
+                    else
+                        obj.TabPanel.EnableTab(tab_key{1});
                         if isempty(first_enabled_tab)
                             first_enabled_tab = tab_key{1};
                         end
-                    else
-                        if isempty(plugin_info) || ~any(strcmp(tab_mode_name, plugin_info.EnableModes))
-                            obj.TabPanel.DisableTab(tab_key{1});
-                            if strcmp(tab_key{1}, obj.CurrentPanelTag)
-                                force_change = true;
-                            end
-                        else
-                            obj.TabPanel.EnableTab(tab_key{1});
-                            if isempty(first_enabled_tab)
-                                first_enabled_tab = tab_key{1};
-                            end
-                        end
                     end
                 end
-                if force_change && ~isempty(first_enabled_tab)
-                    obj.ChangeSelectedTab(first_enabled_tab);
-                end
+            end
+            if force_change && ~isempty(first_enabled_tab)
+                obj.ChangeSelectedTab(first_enabled_tab);
             end
         end
         
         function Resize(obj, panel_position)
             Resize@PTKTabControl(obj, panel_position);
         end
-
-                
     end
     
     methods (Access = private)

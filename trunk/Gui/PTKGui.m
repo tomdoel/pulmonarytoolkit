@@ -82,7 +82,7 @@ classdef PTKGui < PTKFigure
             obj.PatientBrowserButton = PTKButton(obj, 'Patients', 'Open the Patient Browser', 'PatientBrowser', @pb.Show);
             obj.AddChild(obj.PatientBrowserButton);
             
-            obj.ModeTabControl = PTKModeTabControl(obj, obj.Reporting);
+            obj.ModeTabControl = PTKModeTabControl(obj, obj.Settings, obj.Reporting);
             obj.AddChild(obj.ModeTabControl);
 
             % Drop down quick load menu
@@ -90,7 +90,7 @@ classdef PTKGui < PTKFigure
             obj.AddChild(obj.DropDownLoadMenu);
             
             % Create the panel showing the software name and version.
-            obj.VersionPanel = PTKVersionPanel(obj, obj.Reporting);
+            obj.VersionPanel = PTKVersionPanel(obj, obj, obj.Settings, obj.Reporting);
             obj.AddChild(obj.VersionPanel);
             
             % Load the most recent dataset
@@ -118,8 +118,16 @@ classdef PTKGui < PTKFigure
             end
             obj.Resize(position);
             
+            % We need to force all the tabs to be created at this point, to ensure the
+            % ordering is correct. The following Show() command will create the tabs, but
+            % only if they are eabled
+            obj.ModeTabControl.ForceEnableAllTabs;
+            
             % Create the figure and graphical components
             obj.Show(obj.Reporting);
+            
+            % After creating all the tabs, we now re-disable the ones that should be hidden
+            obj.GuiDataset.UpdateModeTabControl;
             
             % Add listener for switching modes when the tab is changed
             obj.ModeTabChangedListener = addlistener(obj.ModeTabControl, 'TabChangedEvent', @obj.ModeTabChanged);
