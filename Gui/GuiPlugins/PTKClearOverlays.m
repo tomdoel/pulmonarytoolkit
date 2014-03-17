@@ -21,13 +21,13 @@ classdef PTKClearOverlays < PTKGuiPlugin
         ButtonText = 'Clear Overlay'
         ToolTip = 'Clear the overlay'
         Category = 'View'
-        Visibility = 'Overlay'
         Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
+        Visibility = 'Developer'
     end
     
     methods (Static)

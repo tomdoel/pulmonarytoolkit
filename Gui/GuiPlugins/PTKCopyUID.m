@@ -17,7 +17,7 @@ classdef PTKCopyUID < PTKGuiPlugin
         ButtonText = 'Copy UID'
         ToolTip = 'Copy the UID of the current dataset to the clipboard'
         Category = 'File'
-        Visibility = 'Dataset'
+        Visibility = 'Developer'
         Mode = 'File'
 
         HidePluginInDisplay = false
