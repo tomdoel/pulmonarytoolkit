@@ -23,7 +23,7 @@ classdef PTKShowCacheFolder < PTKGuiPlugin
         ButtonText = 'Open Cache'
         ToolTip = 'Opens a folder containing the cache files for the current dataset'
         Category = 'File'
-        Visibility = 'Dataset'
+        Visibility = 'Developer'
         Mode = 'File'
 
         HidePluginInDisplay = false
