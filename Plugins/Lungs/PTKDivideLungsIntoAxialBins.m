@@ -32,6 +32,7 @@ classdef PTKDivideLungsIntoAxialBins < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Context = PTKContextSet.Lungs
+        Visibility = 'Developer'
     end
     
     methods (Static)

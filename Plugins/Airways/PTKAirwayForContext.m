@@ -33,6 +33,7 @@ classdef PTKAirwayForContext < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         GeneratePreview = false
+        Visibility = 'Developer'
     end
     
     methods (Static)

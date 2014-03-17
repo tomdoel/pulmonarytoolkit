@@ -36,6 +36,7 @@ classdef PTKOriginalImage < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Context = PTKContextSet.OriginalImage
+        Visibility = 'Developer'
     end
     
     methods (Static)
