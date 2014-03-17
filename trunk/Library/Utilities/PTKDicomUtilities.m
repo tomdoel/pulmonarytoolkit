@@ -31,7 +31,7 @@ classdef PTKDicomUtilities
             try
                 try
                     metadata = PTKReadDicomTags(file_path, file_name, dictionary, reporting);
-                    metadata.Filename = fullfile(file_path, file_name);
+                    metadata.Filename = [file_path, filesep, file_name];
                     
                 catch exception
                     metadata = dicominfo(fullfile(file_path, file_name));
