@@ -32,8 +32,6 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
         NumImagesText
         NumImagesSuffixText
         
-        TextClickedListeners
-        
         GuiCallback
     end
     
@@ -124,22 +122,18 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
                 obj.NumImagesSuffixControl.HorizontalAlignment = 'left';
                 obj.AddChild(obj.NumImagesSuffixControl);
                 
-                obj.TextClickedListeners = addlistener(obj.ModalityControl, 'TextClicked', @obj.SeriesClicked);
-                obj.TextClickedListeners(end + 1) = addlistener(obj.DescriptionControl, 'TextClicked', @obj.SeriesClicked);
-                obj.TextClickedListeners(end + 1) = addlistener(obj.DateControl, 'TextClicked', @obj.SeriesClicked);
-                obj.TextClickedListeners(end + 1) = addlistener(obj.NumImagesControl, 'TextClicked', @obj.SeriesClicked);
-                obj.TextClickedListeners(end + 1) = addlistener(obj.NumImagesSuffixControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddListener(obj.ModalityControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddListener(obj.DescriptionControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddListener(obj.DateControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddListener(obj.NumImagesControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddListener(obj.NumImagesSuffixControl, 'TextClicked', @obj.SeriesClicked);
                 
-                obj.TextClickedListeners = addlistener(obj.ModalityControl, 'TextRightClicked', @obj.SeriesRightClicked);
-                obj.TextClickedListeners(end + 1) = addlistener(obj.DescriptionControl, 'TextRightClicked', @obj.SeriesRightClicked);
-                obj.TextClickedListeners(end + 1) = addlistener(obj.DateControl, 'TextRightClicked', @obj.SeriesRightClicked);
-                obj.TextClickedListeners(end + 1) = addlistener(obj.NumImagesControl, 'TextRightClicked', @obj.SeriesRightClicked);
-                obj.TextClickedListeners(end + 1) = addlistener(obj.NumImagesSuffixControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddListener(obj.ModalityControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddListener(obj.DescriptionControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddListener(obj.DateControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddListener(obj.NumImagesControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddListener(obj.NumImagesSuffixControl, 'TextRightClicked', @obj.SeriesRightClicked);
             end
-        end
-        
-        function delete(obj)
-            delete(obj.TextClickedListeners);
         end
         
         function Select(obj, selected)
