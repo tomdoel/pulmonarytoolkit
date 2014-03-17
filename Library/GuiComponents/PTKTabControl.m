@@ -78,9 +78,7 @@ classdef PTKTabControl < PTKPanel
             end
             notify(obj, 'TabChangedEvent', PTKEventData(tag));
         end
-    end
-    
-    methods (Access = private)
+        
         function Reorder(obj)
             children = obj.Children;
             tab_panel = obj.TabPanel;
@@ -93,6 +91,6 @@ classdef PTKTabControl < PTKPanel
             
             other_children{end + 1} = tab_panel;
             obj.Children = other_children;
-        end
+        end        
     end
 end
