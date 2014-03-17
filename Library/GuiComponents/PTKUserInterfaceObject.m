@@ -25,11 +25,16 @@ classdef PTKUserInterfaceObject < handle
         LastHandlePosition % Stores the last position set to the handle of the graphics component
         LastHandleVisible  % Stores the last visibility state set to the handle of the graphics component
 
+        EventListeners
     end
     
     methods (Abstract)
         CreateGuiComponent(obj, position, reporting)
     end
+    
+    events
+        ControlCreated
+    end    
     
     methods
         function obj = PTKUserInterfaceObject(parent)
@@ -51,6 +56,8 @@ classdef PTKUserInterfaceObject < handle
         end
         
         function delete(obj)
+            delete(obj.EventListeners);
+
             for child = obj.Children
                 delete(child{1});
             end
@@ -128,6 +135,9 @@ classdef PTKUserInterfaceObject < handle
                 
                 % Ensure any controls are created
                 obj.CreateVisibleComponents(reporting);
+                
+                % Fire an event to indicate the control has just been created
+                notify(obj, 'ControlCreated');
             end
                 
             % Make the graphical object visible
@@ -213,10 +223,30 @@ classdef PTKUserInterfaceObject < handle
             obj.GetParentFigure.HideWaitCursor;
         end
         
-        
+        function SendToBottom(obj, bottom_component)
+            if obj.ComponentHasBeenCreated && bottom_component.ComponentHasBeenCreated
+                
+                child_handles = get(obj.GraphicalComponentHandle, 'Children');
+                handle_for_bottom = bottom_component.GraphicalComponentHandle;
+                other_handles = setdiff(child_handles, handle_for_bottom);
+                reordered_handles = [other_handles; handle_for_bottom];
+                set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
+            end
+        end        
     end
 
     methods (Access = protected)
+        
+        function AddEventListener(obj, control, event_name, function_handle)
+            % Adds a new event listener tied to the lifetime of this object
+            new_listener = addlistener(control, event_name, function_handle);
+            if isempty(obj.EventListeners)
+                obj.EventListeners = new_listener;
+            else
+                obj.EventListeners(end + 1) = new_listener;
+            end
+        end
+        
         
         function SetAllVisibility(obj)
             % Recursively sets visibility of all components to true
