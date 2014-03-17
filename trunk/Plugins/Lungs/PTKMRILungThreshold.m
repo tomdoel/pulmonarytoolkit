@@ -32,6 +32,7 @@ classdef PTKMRILungThreshold < PTKPlugin
         GeneratePreview = true
         
         Context = PTKContextSet.OriginalImage
+        Visibility = 'Developer'
     end
     
     methods (Static)
