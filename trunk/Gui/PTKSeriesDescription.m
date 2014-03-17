@@ -122,17 +122,17 @@ classdef PTKSeriesDescription < PTKUserInterfaceObject
                 obj.NumImagesSuffixControl.HorizontalAlignment = 'left';
                 obj.AddChild(obj.NumImagesSuffixControl);
                 
-                obj.AddListener(obj.ModalityControl, 'TextClicked', @obj.SeriesClicked);
-                obj.AddListener(obj.DescriptionControl, 'TextClicked', @obj.SeriesClicked);
-                obj.AddListener(obj.DateControl, 'TextClicked', @obj.SeriesClicked);
-                obj.AddListener(obj.NumImagesControl, 'TextClicked', @obj.SeriesClicked);
-                obj.AddListener(obj.NumImagesSuffixControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddEventListener(obj.ModalityControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddEventListener(obj.DescriptionControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddEventListener(obj.DateControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddEventListener(obj.NumImagesControl, 'TextClicked', @obj.SeriesClicked);
+                obj.AddEventListener(obj.NumImagesSuffixControl, 'TextClicked', @obj.SeriesClicked);
                 
-                obj.AddListener(obj.ModalityControl, 'TextRightClicked', @obj.SeriesRightClicked);
-                obj.AddListener(obj.DescriptionControl, 'TextRightClicked', @obj.SeriesRightClicked);
-                obj.AddListener(obj.DateControl, 'TextRightClicked', @obj.SeriesRightClicked);
-                obj.AddListener(obj.NumImagesControl, 'TextRightClicked', @obj.SeriesRightClicked);
-                obj.AddListener(obj.NumImagesSuffixControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddEventListener(obj.ModalityControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddEventListener(obj.DescriptionControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddEventListener(obj.DateControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddEventListener(obj.NumImagesControl, 'TextRightClicked', @obj.SeriesRightClicked);
+                obj.AddEventListener(obj.NumImagesSuffixControl, 'TextRightClicked', @obj.SeriesRightClicked);
             end
         end
         
