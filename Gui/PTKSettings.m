@@ -24,6 +24,7 @@ classdef PTKSettings < handle
         CurrentMarkerColour = 1
         ScreenPosition
         PatientBrowserScreenPosition
+        DeveloperMode = false
     end
     
     methods (Static)
@@ -59,6 +60,7 @@ classdef PTKSettings < handle
         end
         
         function SaveSettings(obj, viewer_panel, reporting)
+            
             % Also save settings from the image panel
             obj.OverlayOpacity = viewer_panel.OverlayOpacity;
             obj.SliceNumber = viewer_panel.SliceNumber;
