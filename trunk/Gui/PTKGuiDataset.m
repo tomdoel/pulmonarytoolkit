@@ -395,6 +395,10 @@ classdef PTKGuiDataset < handle
         function OverlayImageChanged(obj)
             obj.ModeSwitcher.OverlayImageChanged;
         end
+        
+        function UpdateModeTabControl(obj)
+            obj.Gui.UpdateModeTabControl(obj.CurrentPluginInfo);
+        end
     end
     
     methods (Access = private)
@@ -457,7 +461,8 @@ classdef PTKGuiDataset < handle
         function SetImage(obj, new_image, context)
             obj.CurrentContext = context;
             obj.Gui.SetImage(new_image);
-        end        
+        end
+        
        
         function SetDatasetAndPluginName(obj, image_info, plugin_info, plugin_name, plugin_visible_name, is_edited)
             if isempty(plugin_name)
