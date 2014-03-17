@@ -53,7 +53,9 @@ function node = AddNodesForClass(node, data, xml_doc_node, reporting)
         node.appendChild(CreateTextNode(char(data), xml_doc_node, reporting));
     end
     
-    property_list = properties(data);
+    class_properties = PTKContainerUtilities.GetFieldValuesFromSet(mc.Properties, 'Name');
+    public_properties = properties(data);
+    property_list = union(class_properties, public_properties);
     for i = 1 : length(property_list)
         next_property = property_list{i};
         node.appendChild(CreateNodeForPropertyMatrix('Property', next_property, data.(next_property), xml_doc_node, reporting));
