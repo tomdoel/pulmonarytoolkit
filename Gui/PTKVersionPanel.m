@@ -73,13 +73,18 @@ classdef PTKVersionPanel < PTKPanel
             obj.DeveloperModeCheckbox.ChangeChecked(obj.Settings.DeveloperMode);
             obj.AddChild(obj.DeveloperModeCheckbox);
             
-            % Add the listener after setting the checkbox value above
+            % Add listener for changes to the developer mode check box
             obj.AddEventListener(obj.DeveloperModeCheckbox, 'CheckChanged', @obj.DeveloperCheckChanged);
             
+            % Add the profiler checkbox but disable if developer mode is off
             obj.ProfileCheckbox = PTKCheckbox(obj, 'Enable Profiler', 'Starts or stops the Matlab profiler', 'Profiler');
             obj.ProfileCheckbox.FontSize = obj.CheckboxFontSize;
             obj.AddChild(obj.ProfileCheckbox);
+            if ~obj.Settings.DeveloperMode
+                obj.ProfileCheckbox.Disable;
+            end
             obj.AddEventListener(obj.ProfileCheckbox, 'CheckChanged', @obj.ProfileCheckChanged);
+            
 
             obj.PatientNameText = PTKText(obj, obj.NoPatientText, '', 'PatientName');
             obj.PatientNameText.FontSize = obj.PatientNameFontSize;
