@@ -30,6 +30,7 @@ classdef PTKAirwaysLungsAndVessels < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
+        Visibility = 'Developer'
     end
     
     methods (Static)
