@@ -76,9 +76,18 @@ classdef PTKMain < handle
             obj.ImageDatabase.Rebuild([], true, obj.Reporting)
         end
         
+        function dataset_exists = DatasetExists(obj, dataset_uid)
+            dataset_exists = 7 == exist(fullfile(PTKDirectories.GetCacheDirectory, dataset_uid), 'dir');
+        end
+
         function dataset = CreateDatasetFromUid(obj, dataset_uid)
             % Creates a PTKDataset object for a dataset specified by the uid. The
             % dataset must already be imported.
+            
+            if ~obj.DatasetExists(dataset_uid)
+                obj.Reporting.Error('PTKMain:UidNotFound', 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
+            end
+            
             dataset_disk_cache = PTKDatasetDiskCache(dataset_uid, obj.Reporting);
             image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
