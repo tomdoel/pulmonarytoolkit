@@ -24,8 +24,8 @@ classdef PTKShowOutputFolder < PTKGuiPlugin
 
         HidePluginInDisplay = false
         PTKVersion = '1'
-        ButtonWidth = 4
-        ButtonHeight = 1
+        ButtonWidth = 6
+        ButtonHeight = 2
     end
     
     methods (Static)
