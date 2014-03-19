@@ -21,7 +21,7 @@ classdef PTKDensityInterpolation < PTKPlugin
     properties
         ButtonText = 'Density Interpolation'
         ToolTip = 'Recomputes image density with different sized voxels'
-        Category = 'Analysis'
+        Category = 'Lungs'
 
         AllowResultsToBeCached = true
         AlwaysRunPlugin = false
@@ -32,6 +32,7 @@ classdef PTKDensityInterpolation < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         GeneratePreview = false
+        Visibility = 'Developer'
     end
     
     methods (Static)

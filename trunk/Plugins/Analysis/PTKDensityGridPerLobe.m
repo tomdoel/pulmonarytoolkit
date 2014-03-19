@@ -20,7 +20,7 @@ classdef PTKDensityGridPerLobe < PTKPlugin
     properties
         ButtonText = 'Density grid<br> per lobe'
         ToolTip = 'Compute the lung density averaged over a 3x3x3 neighbourhood'
-        Category = 'Analysis'
+        Category = 'Export'
 
         AllowResultsToBeCached = false
         AlwaysRunPlugin = true
@@ -31,6 +31,7 @@ classdef PTKDensityGridPerLobe < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         GeneratePreview = false
+        Visibility = 'Developer'
     end
     
     methods (Static)
