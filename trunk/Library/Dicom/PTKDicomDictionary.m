@@ -105,6 +105,8 @@ classdef PTKDicomDictionary < handle
             tags(end + 1) = PTKDicomDictionaryItem('0010,0020', 'LO', 'PatientID');
             tags(end + 1) = PTKDicomDictionaryItem('0010,0030', 'DA', 'PatientsBirthDate');
             
+            tags(end + 1) = PTKDicomDictionaryItem('0018,1250', 'SH', 'ReceiveCoilName');
+            
             tags(end + 1) = PTKDicomDictionaryItem('0018,5100', 'CS', 'PatientPosition');
             
             tags(end + 1) = PTKDicomDictionaryItem('0020,000D', 'UI', 'StudyInstanceUID');
