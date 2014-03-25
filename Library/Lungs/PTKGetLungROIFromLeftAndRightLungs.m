@@ -1,5 +1,5 @@
 function mask = PTKGetLungROIFromLeftAndRightLungs(left_and_right_lung_mask, context, reporting)
-    % PTKGetRightLungROIFromLeftAndRightLungs. Extracts a region of interest for the left or right lung given the original image and the left and right lung mask.
+    % PTKGetLungROIFromLeftAndRightLungs. Extracts a region of interest for the left or right lung given the original image and the left and right lung mask.
     %
     %
     %     Licence
