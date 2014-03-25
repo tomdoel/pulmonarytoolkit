@@ -166,8 +166,8 @@ allfields = {'Display';'SimilarityMeasure';'Regularizer';'BoundaryCond'; ...
 try 
     % assume we have the npReg Toolbox
     npRegtbx = true;
-    npRegfields = npRegOptionGetFields;  
-    allfields = [allfields; optimfields];
+    npRegfields = npRegOptionGetFields;
+    allfields = unique([allfields; npRegfields]);
 catch
     lasterrstruct = lasterror;
     if strcmp(lasterrstruct.identifier, 'MATLAB:UndefinedFunction')
