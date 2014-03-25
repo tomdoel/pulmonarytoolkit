@@ -49,9 +49,11 @@ classdef PTKMRIToGasMRIMatrix < PTKPlugin
             
             % Compute the translation matrix using the metadata from the images
             mr_to_gas_affine_matrix = PTKImageCoordinateUtilities.GetAffineTranslationFromPatientPosition(gas_lung, mr_lung);
+            gas_to_mr_affine_matrix = PTKImageCoordinateUtilities.GetAffineTranslationFromPatientPosition(mr_lung, gas_lung);
             
             results = [];
             results.MrGasMrMatrix = mr_to_gas_affine_matrix;
+            results.GasMrMrMatrix = gas_to_mr_affine_matrix;
         end
     end
 end
