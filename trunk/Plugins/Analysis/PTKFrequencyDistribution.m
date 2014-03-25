@@ -73,7 +73,7 @@ classdef PTKFrequencyDistribution < PTKPlugin
             legend_strings = {'Whole lung', 'Left lung', 'Right lung'};
 
             % Lobes
-            lobes = application.GetResult('PTKLobesFromFissurePlane');
+            lobes = application.GetResult('PTKLobes');
             PTKFrequencyDistribution.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
             PTKFrequencyDistribution.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
             PTKFrequencyDistribution.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);

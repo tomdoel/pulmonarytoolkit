@@ -48,7 +48,7 @@ classdef PTKLobarVolume < PTKPlugin
             left_results = PTKLobarVolume.Analyse(roi, left_lung);
             right_results = PTKLobarVolume.Analyse(roi, right_lung);
             
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobes');
             ur_results = PTKLobarVolume.Analyse(roi, lobes.RawImage == 1);
             mr_results = PTKLobarVolume.Analyse(roi, lobes.RawImage == 2);
             lr_results = PTKLobarVolume.Analyse(roi, lobes.RawImage == 4);

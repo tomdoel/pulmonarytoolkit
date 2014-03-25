@@ -39,7 +39,7 @@ classdef PTKDensityGridPerLobe < PTKPlugin
             reporting.ShowProgress('Computing lobes and density');
             
             % Get the lobe mask
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobes');
             
             lung_excluding_surface = dataset.GetResult('PTKLungsExcludingSurface');
 

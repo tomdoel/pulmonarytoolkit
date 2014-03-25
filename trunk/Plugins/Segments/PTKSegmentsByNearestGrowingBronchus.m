@@ -39,7 +39,7 @@ classdef PTKSegmentsByNearestGrowingBronchus < PTKPlugin
         function results = RunPlugin(dataset, reporting)
             
             acinar_map = dataset.GetResult('PTKAcinarMapLabelledBySegment');
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobes');
             results = lobes.BlankCopy;
             results.ChangeRawImage(zeros(lobes.ImageSize, 'uint8'));
             

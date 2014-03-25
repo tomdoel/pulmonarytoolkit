@@ -39,7 +39,7 @@ classdef PTKDensityAverage < PTKPlugin
         function results = RunPlugin(dataset, reporting)
             reporting.ShowProgress('Fetching ROI');
             lung_roi = dataset.GetResult('PTKLungROI');
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobes');
             lobes_mask = lobes.BlankCopy;
             lobes_mask.ChangeRawImage(lobes.RawImage > 0);
             

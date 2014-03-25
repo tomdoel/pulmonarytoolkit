@@ -22,7 +22,7 @@ classdef PTKLobesFromFissurePlane < PTKPlugin
     %
     
     properties
-        ButtonText = 'Lobes'
+        ButtonText = 'Lobes (fissure plane)'
         ToolTip = ''
         Category = 'Lobes'
 
@@ -35,9 +35,7 @@ classdef PTKLobesFromFissurePlane < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
-        
-        EnableModes = PTKModes.EditMode
-        SubMode = PTKSubModes.FixedBoundariesEditing
+        Visibility = 'Developer'
     end
     
     methods (Static)

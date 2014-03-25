@@ -45,7 +45,7 @@ classdef PTKReallocateAirwaysLabelledByLobe < PTKPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             airways_by_lobe = dataset.GetResult('PTKAirwaysLabelledByLobe');
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobes');
             [airway_results, airway_image] = dataset.GetResult('PTKAirways');
 
             new_start_branches = PTKReallocateAirwaysByLobe(airways_by_lobe.StartBranches, lobes, reporting);
