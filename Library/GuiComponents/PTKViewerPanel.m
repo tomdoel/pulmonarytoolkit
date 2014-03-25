@@ -466,12 +466,16 @@ classdef PTKViewerPanel < PTKPanel
             obj.Mode = mode;
             obj.SubMode = submode;
             obj.ModeChanged;
-            if strcmp(submode, PTKSubModes.ColourRemapEditing)
-                obj.SetControl('Map');
-            elseif strcmp(submode, PTKSubModes.EditBoundariesEditing)
-                obj.SetControl('Edit');
-            elseif strcmp(submode, PTKSubModes.FixedBoundariesEditing)
-                obj.SetControl('Edit');
+            if strcmp(mode, PTKModes.EditMode)
+                if strcmp(submode, PTKSubModes.ColourRemapEditing)
+                    obj.SetControl('Map');
+                elseif strcmp(submode, PTKSubModes.EditBoundariesEditing)
+                    obj.SetControl('Edit');
+                elseif strcmp(submode, PTKSubModes.FixedBoundariesEditing)
+                    obj.SetControl('Edit');
+                else
+                    obj.SetControl('W/L');
+                end
             else
                 obj.SetControl('W/L');
             end
@@ -1117,7 +1121,13 @@ classdef PTKViewerPanel < PTKPanel
                         end
                     end
 
-                    [rgb_slice, alpha_slice] = obj.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, obj.BlackIsTransparent, image_object.ColorLabelMap);
+                    % Only the overlay image can have transarency
+                    if image_number == 2
+                        black_is_transparent = obj.BlackIsTransparent;
+                    else
+                        black_is_transparent = false;
+                    end
+                    [rgb_slice, alpha_slice] = obj.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, black_is_transparent, image_object.ColorLabelMap);
                     alpha_slice = double(alpha_slice)*opacity/100;
                     
                     % Special code to highlight one colour
