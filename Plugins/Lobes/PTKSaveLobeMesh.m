@@ -38,7 +38,7 @@ classdef PTKSaveLobeMesh < PTKPlugin
         function results = RunPlugin(dataset, reporting)
             reporting.ShowProgress('Creating mesh for lobes');
 
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobes');
             
             lobe_names = {'RU', 'RM', 'RL', 'LU', 'LL'};
             lobe_index_colours = [1, 2, 4, 5, 6];

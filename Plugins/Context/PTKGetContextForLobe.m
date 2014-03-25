@@ -38,7 +38,7 @@ classdef PTKGetContextForLobe < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
-            lobe_mask = dataset.GetResult('PTKLobesFromFissurePlane', PTKContext.LungROI);
+            lobe_mask = dataset.GetResult('PTKLobes', PTKContext.LungROI);
             results = PTKGetLobeROI(lobe_mask, context, reporting);
         end
     end

@@ -40,7 +40,7 @@ classdef PTKSegmentsByNearestBronchus < PTKPlugin
             airway_results = dataset.GetResult('PTKAirways');
             left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
             segmental_bronchi_for_lobes = dataset.GetResult('PTKSegmentalBronchi');
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobes');
             [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchus(airway_results.AirwayTree, left_and_right_lungs, segmental_bronchi_for_lobes.StartBranches, lobes, reporting);
             results = [];
             results.AirwaysBySegmentImage = segment_image_map;

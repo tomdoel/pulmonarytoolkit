@@ -88,7 +88,7 @@ classdef PTKLobarHistogram < PTKPlugin
             graph_data.Right = PTKLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage == 1, 'b', axes_handle);
 
             % Lobes
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobes');
             graph_data.RightUpper = PTKLobarHistogram.Histogram(roi, lobes.RawImage == 1, 'b', axes_handle);
             graph_data.RightMid =  PTKLobarHistogram.Histogram(roi, lobes.RawImage == 2, 'g', axes_handle);
             graph_data.RightLower = PTKLobarHistogram.Histogram(roi, lobes.RawImage == 4, 'c', axes_handle);

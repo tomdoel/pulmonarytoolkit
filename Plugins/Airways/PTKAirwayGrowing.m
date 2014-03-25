@@ -36,7 +36,7 @@ classdef PTKAirwayGrowing < PTKPlugin
         function results = RunPlugin(dataset, reporting)
 
             left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
-            lobes = dataset.GetResult('PTKLobesFromFissurePlane');
+            lobes = dataset.GetResult('PTKLobes');
                         
             airways_by_lobe = dataset.GetResult('PTKReallocateAirwaysLabelledByLobe');
             

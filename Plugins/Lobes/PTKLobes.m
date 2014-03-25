@@ -1,8 +1,7 @@
-classdef PTKPulmonarySegments < PTKPlugin
-    % PTKPulmonarySegments. Plugin for approximating the pulmonary
-    % segments
+classdef PTKLobes < PTKPlugin
+    % PTKLobes. Plugin to segment the pulmonary lobes.
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
     %     See PTKPlugin.m for more information on how to run plugins.
     %
@@ -13,14 +12,14 @@ classdef PTKPulmonarySegments < PTKPlugin
     %     Licence
     %     -------
     %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Author: Tom Doel, 2014.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %    
+    %
     
     properties
-        ButtonText = 'Segments'
-        ToolTip = 'Finds an approximate segmentation of the pulmonary segments'
-        Category = 'Segments'
+        ButtonText = 'Lobes'
+        ToolTip = 'Segment the pulmonary lobes'
+        Category = 'Lobes'
         
         AllowResultsToBeCached = true
         AlwaysRunPlugin = false
@@ -31,16 +30,20 @@ classdef PTKPulmonarySegments < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
+        
+        EnableModes = PTKModes.EditMode
+        SubMode = PTKSubModes.EditBoundariesEditing
     end
     
     methods (Static)
-        
         function results = RunPlugin(dataset, reporting)
-            
-            acinar_map = dataset.GetResult('PTKAcinarMapLabelledBySegment');
-            lobes = dataset.GetResult('PTKLobes');
-            
-            results = PTKGetPulmonarySegments(lobes, acinar_map, reporting);
+            if dataset.IsGasMRI
+                results = dataset.GetResult('PTKLobeMapForGasMRI');
+            elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
+                results = dataset.GetResult('PTKLobeMapForMRI');
+            else
+                results = dataset.GetResult('PTKLobesFromFissurePlane');
+            end
         end
     end
 end
