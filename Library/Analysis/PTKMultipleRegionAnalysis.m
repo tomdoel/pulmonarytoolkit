@@ -8,6 +8,11 @@ function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, cont
     %     Author: Tom Doel, 2014.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
+    results = PTKMetrics.empty;
+
+    if isempty(context_mask) || ~context_mask.ImageExists
+        return;
+    end
     
     bin_image = slice_bins.BinImage;
     bin_regions = slice_bins.BinRegions;
@@ -20,7 +25,6 @@ function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, cont
     
     reporting.UpdateProgressAndMessage(0, 'Calculating metrics for each bin');
     
-    results = PTKMetrics.empty;
     
     
     % Iterate over each bin
