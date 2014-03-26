@@ -175,7 +175,7 @@ classdef PTKDataset < handle
         function dataset_cache_path = GetOutputPath(obj, varargin)
             % Gets the path of the folder where the output for this dataset are stored
             obj.PreCallTidy;
-            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetOutputPath;
+            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetOutputPathAndCreateIfNecessary;
             obj.PostCallTidy;
         end
 
