@@ -23,7 +23,7 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Sagittal metrics'
         ToolTip = 'Performs density analysis in bins along the left-right axis'
-        Category = 'Analysis'
+        Category = 'Slice analysis'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -34,7 +34,7 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
         FlattenPreviewImage = false
         PTKVersion = '2'
         ButtonWidth = 6
-        ButtonHeight = 1
+        ButtonHeight = 2
         GeneratePreview = false
     end
     
@@ -53,33 +53,32 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
             table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
-            results_directory = dataset.GetOutputPathAndCreateIfNecessary;            
-            PTKSaveTableAsCSV(results_directory, 'SagittalResults', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, [], reporting);
+            dataset.SaveTableAsCSV('PTKSaveSagittalAnalysisResults', 'Sagittal metrics', 'SagittalResults', 'Density analysis in bins along the left-right axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
             
             % Generate graphs of the results
             y_label = 'Distance along sagittal axis (%)';
             
             context_list_both_lungs = [PTKContext.Lungs];
-            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(table, y_label, context_list_both_lungs, results_directory, '_CombinedLungs', reporting);
+            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(dataset, table, y_label, context_list_both_lungs, '_CombinedLungs', reporting);
 
             context_list_single_lungs = [PTKContext.LeftLung, PTKContext.RightLung];
-            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(table, y_label, context_list_single_lungs, results_directory, '_Lungs', reporting);
+            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(dataset, table, y_label, context_list_single_lungs, '_Lungs', reporting);
             
             context_list_lobes = [PTKContext.LeftLowerLobe, PTKContext.LeftUpperLobe, PTKContext.RightLowerLobe, PTKContext.RightMiddleLobe, PTKContext.RightUpperLobe];                        
-            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(table, y_label, context_list_lobes, results_directory, '_Lobes', reporting);
+            PTKSaveSagittalAnalysisResults.DrawGraphAndSave(dataset, table, y_label, context_list_lobes,  '_Lobes', reporting);
             
             results = [];
         end
     end
     
     methods (Static, Access = private)
-        function DrawGraphAndSave(table, y_label, context_list, results_directory, file_suffix, reporting)
+        function DrawGraphAndSave(dataset, table, y_label, context_list, file_suffix, reporting)
             figure_handle = PTKGraphMetricVsDistance(table, 'MeanDensityGml', 'StdDensityGml', context_list, [], y_label, reporting);
-            PTKDiskUtilities.SaveFigure(figure_handle, fullfile(results_directory, ['DensityVsSagittalDistance' file_suffix]));
+            dataset.SaveFigure(figure_handle, 'PTKSaveSagittalAnalysisResults', 'Sagittal metrics', ['DensityVsSagittalDistance' file_suffix], 'Graph of density vs distance along the left-right axis');
             close(figure_handle);
             
             figure_handle = PTKGraphMetricVsDistance(table, 'EmphysemaPercentage', [], context_list, [], y_label, reporting);            
-            PTKDiskUtilities.SaveFigure(figure_handle, fullfile(results_directory, ['EmphysemaVsSagittalDistance' file_suffix]));            
+            dataset.SaveFigure(figure_handle, 'PTKSaveSagittalAnalysisResults', 'Sagittal metrics', ['EmphysemaVsSagittalDistance' file_suffix], 'Graph of emphysema vs distance along the left-right axis');
             close(figure_handle);
         end
     end        

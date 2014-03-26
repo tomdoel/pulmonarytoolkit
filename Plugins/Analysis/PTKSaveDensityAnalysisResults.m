@@ -30,7 +30,7 @@ classdef PTKSaveDensityAnalysisResults < PTKPlugin
         FlattenPreviewImage = false
         PTKVersion = '2'
         ButtonWidth = 6
-        ButtonHeight = 1
+        ButtonHeight = 2
         GeneratePreview = false
     end
     
@@ -46,8 +46,7 @@ classdef PTKSaveDensityAnalysisResults < PTKPlugin
             
             table = PTKConvertMetricsToTable(results, patient_name, uid, PTKReportingDefault);
             
-            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
-            PTKSaveTableAsCSV(results_directory, 'DensityResults', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, [], reporting);
+            dataset.SaveTableAsCSV('PTKSaveDensityAnalysisResults', 'Density metrics', 'DensityResults', 'Density analysis in bins along the left-right axis', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
         end
     end
 end

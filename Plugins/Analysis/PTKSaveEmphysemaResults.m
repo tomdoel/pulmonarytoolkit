@@ -29,7 +29,7 @@ classdef PTKSaveEmphysemaResults < PTKPlugin
         FlattenPreviewImage = false
         PTKVersion = '2'
         ButtonWidth = 6
-        ButtonHeight = 1
+        ButtonHeight = 2
         GeneratePreview = false
     end
     
@@ -45,9 +45,7 @@ classdef PTKSaveEmphysemaResults < PTKPlugin
             
             table = PTKConvertMetricsToTable(results, patient_name, uid, PTKReportingDefault);
             
-            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
-
-            PTKSaveTableAsCSV(results_directory, 'EmphysemaResults', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, [], reporting);
+            dataset.SaveTableAsCSV('PTKSaveEmphysemaResults', 'Emphysema metrics', 'EmphysemaResults', 'CT density-based emphysema analysis', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
         end
     end
 end

@@ -31,7 +31,7 @@ classdef PTKVolumeAnalysis < PTKPlugin
         HidePluginInDisplay = true
         FlattenPreviewImage = true
         ButtonWidth = 6
-        ButtonHeight = 1
+        ButtonHeight = 2
         GeneratePreview = false
         Context = PTKContextSet.Any
         PTKVersion = '2'
@@ -40,12 +40,17 @@ classdef PTKVolumeAnalysis < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
-            lung_mask = dataset.GetTemplateImage(context);
-            if ~lung_mask.ImageExists
-                lung_mask = dataset.GetTemplateImage(PTKContext.Lungs);
+            
+            % Get a mask for the current region to analyse
+            context_mask = dataset.GetResult('PTKGetMaskForContext', context);
+            
+            % Special case if this context doesn't exist for this dataset
+            if isempty(context_mask) || ~context_mask.ImageExists
+                results = PTKMetrics.empty;
+                return;
             end
             
-            results = PTKComputeVolumeFromSegmentation(lung_mask, reporting);
+            results = PTKComputeVolumeFromSegmentation(context_mask, reporting);
         end
     end
 end

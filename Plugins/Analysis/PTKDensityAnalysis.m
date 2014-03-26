@@ -28,7 +28,7 @@ classdef PTKDensityAnalysis < PTKPlugin
         FlattenPreviewImage = false
         PTKVersion = '2'
         ButtonWidth = 6
-        ButtonHeight = 1
+        ButtonHeight = 2
         GeneratePreview = false
     end
     
@@ -44,7 +44,13 @@ classdef PTKDensityAnalysis < PTKPlugin
             
             % Get a mask for the current region to analyse
             context_mask = dataset.GetResult('PTKGetMaskForContext', context);
-
+            
+            % Special case if this context doesn't exist for this dataset
+            if isempty(context_mask) || ~context_mask.ImageExists
+                results = PTKMetrics.empty;
+                return;
+            end
+            
             % Create a region mask excluding the airways
             context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);
             

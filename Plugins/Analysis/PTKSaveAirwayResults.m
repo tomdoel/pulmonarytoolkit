@@ -29,7 +29,7 @@ classdef PTKSaveAirwayResults < PTKPlugin
         FlattenPreviewImage = false
         PTKVersion = '2'
         ButtonWidth = 6
-        ButtonHeight = 1
+        ButtonHeight = 2
         GeneratePreview = false
     end
     
@@ -45,9 +45,7 @@ classdef PTKSaveAirwayResults < PTKPlugin
             
             table = PTKConvertMetricsToTable(results, patient_name, uid, PTKReportingDefault);
             
-            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
-
-            PTKSaveTableAsCSV(results_directory, 'AirwayResults', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, [], reporting);
+            dataset.SaveTableAsCSV('PTKSaveAirwayResults', 'Airway metrics', 'AirwayResults', 'Measurements of airway radius and wall thickness', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
         end
     end
 end

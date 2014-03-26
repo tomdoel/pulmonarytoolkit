@@ -30,26 +30,31 @@ classdef PTKEmphysemaAnalysis < PTKPlugin
         FlattenPreviewImage = true
         PTKVersion = '2'
         ButtonWidth = 6
-        ButtonHeight = 1
+        ButtonHeight = 2
         GeneratePreview = false
     end
     
     methods (Static)
         function emphysema_results = RunPlugin(dataset, context, reporting)
-            lung_mask = dataset.GetTemplateImage(context);
-            if ~lung_mask.ImageExists
-                lung_mask = dataset.GetTemplateImage(PTKContext.Lungs);
+            
+            % Get a mask for the current region to analyse
+            context_mask = dataset.GetResult('PTKGetMaskForContext', context);
+
+            % Special case if this context doesn't exist for this dataset
+            if isempty(context_mask) || ~context_mask.ImageExists
+                emphysema_results = PTKMetrics.empty;
+                return;
             end
             
             roi = dataset.GetResult('PTKLungROI', PTKContext.LungROI);
             [~, airway_image] = dataset.GetResult('PTKAirways', PTKContext.LungROI);
-            roi.ResizeToMatch(lung_mask);
-            airway_image.ResizeToMatch(lung_mask);
-            lung_mask_raw = lung_mask.RawImage;
+            roi.ResizeToMatch(context_mask);
+            airway_image.ResizeToMatch(context_mask);
+            lung_mask_raw = context_mask.RawImage;
             lung_mask_raw(airway_image.RawImage == 1) = 0;
-            lung_mask.ChangeRawImage(lung_mask_raw);
+            context_mask.ChangeRawImage(lung_mask_raw);
             
-            emphysema_results = PTKComputeEmphysemaFromMask(roi, lung_mask);
+            emphysema_results = PTKComputeEmphysemaFromMask(roi, context_mask);
         end
     end
 end
