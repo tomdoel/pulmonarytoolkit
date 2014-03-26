@@ -16,7 +16,7 @@ classdef PTKShowOutputFolder < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Open Output Folder'
+        ButtonText = 'Open the results folder (output folder) for this dataset'
         ToolTip = 'Opens a folder containing the output files for the current dataset'
         Category = 'File'
         Visibility = 'Dataset'
@@ -24,7 +24,7 @@ classdef PTKShowOutputFolder < PTKGuiPlugin
 
         HidePluginInDisplay = false
         PTKVersion = '1'
-        ButtonWidth = 6
+        ButtonWidth = 14
         ButtonHeight = 2
     end
     
