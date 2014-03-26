@@ -137,10 +137,10 @@ classdef PTKDiskUtilities
                    error('Directory not found');
                end
                
-               dos(['explorer.exe ' directory_path]);
+               dos(['explorer.exe "' directory_path '"']);
            
            elseif ismac
-               unix(['Open ' directory_path]);
+               unix(['Open "' directory_path '"']);
            else
                warning('PTKDiskUtilities:NotImplementedForUnix', 'Not implemented for unix');
            end
