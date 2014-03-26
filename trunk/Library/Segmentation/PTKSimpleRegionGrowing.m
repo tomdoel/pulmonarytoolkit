@@ -59,7 +59,7 @@ function output_image = PTKSimpleRegionGrowing(threshold_image, start_points_glo
     while ~isempty(next_points)
         if mod(iteration, 100) == 0
             points_to_do = sum(threshold_image(:));
-            reporting.UpdateProgressValue(round(100*(number_of_points_to_grow - points_to_do)/number_of_points_to_grow));
+            reporting.UpdateProgressStage(number_of_points_to_grow - points_to_do, number_of_points_to_grow);
         end
         iteration = iteration + 1;
         all_points = GetNeighbouringPoints(next_points, linear_offsets);

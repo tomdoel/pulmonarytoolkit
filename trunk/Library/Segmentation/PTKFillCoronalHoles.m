@@ -20,7 +20,7 @@ function lung_image = PTKFillCoronalHoles(lung_image, is_right, reporting)
     
     lung_image.AddBorder(10);
     for coronal_index = 11 : lung_image.ImageSize(1) - 10
-        reporting.UpdateProgressValue(round(100*(coronal_index - 11)/(lung_image.ImageSize(1) - 20)));
+        reporting.UpdateProgressStage(coronal_index - 11, lung_image.ImageSize(1) - 20);
         coronal_slice = lung_image.GetSlice(coronal_index, PTKImageOrientation.Coronal);
         if ~isempty(is_right)
             coronal_slice = OpenOrClose(coronal_slice, is_right, opening_size, closing_size, reporting);
@@ -30,6 +30,7 @@ function lung_image = PTKFillCoronalHoles(lung_image, is_right, reporting)
         lung_image.ReplaceImageSlice(coronal_slice, coronal_index, PTKImageOrientation.Coronal);
     end    
     lung_image.RemoveBorder(10);
+    reporting.CompleteProgress;
 end
 
 function mask = OpenOrClose(mask, is_right, opening_size, closing_size, reporting)
@@ -55,7 +56,12 @@ function mask = OpenOrClose(mask, is_right, opening_size, closing_size, reportin
     other_border_indices = threshold.LocalToGlobalIndices(find(raw_image == 2));
     
     start_points = {right_border_indices, other_border_indices};
+    
+    reporting.PushProgress;
     regions = PTKMultipleRegionGrowing(threshold, start_points, reporting);
+    reporting.PopProgress;
+    
+    
     regions.RemoveBorder(1);
     closed_region = (regions.RawImage == 1);
     mask(closed_region) = closed_image(closed_region);

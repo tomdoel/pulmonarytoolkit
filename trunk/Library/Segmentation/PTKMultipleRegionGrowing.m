@@ -73,7 +73,7 @@ function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_g
         
         if mod(iteration, 20) == 0
             points_to_do = sum(threshold_image_raw(:));
-            reporting.UpdateProgressValue(round(100*(number_of_points_to_grow - points_to_do)/number_of_points_to_grow));
+            reporting.UpdateProgressStage(number_of_points_to_grow - points_to_do, number_of_points_to_grow);
         end
         
         iteration = iteration + 1;

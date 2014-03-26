@@ -130,7 +130,9 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, sta
             next_image = int16((lung_image.RawImage >= min_value) & (lung_image.RawImage <= max_value));
             
             next_image_open.ChangeRawImage(next_image);
+            reporting.PushProgress;
             next_image = PTKSimpleRegionGrowing(next_image_open, start_points_global, reporting);
+            reporting.PopProgress;
             next_image = next_image.RawImage;
         end
         max_value = max_value - increment;
