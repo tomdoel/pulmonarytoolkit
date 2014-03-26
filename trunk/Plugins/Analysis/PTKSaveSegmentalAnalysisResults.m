@@ -34,7 +34,7 @@ classdef PTKSaveSegmentalAnalysisResults < PTKPlugin
         FlattenPreviewImage = false
         PTKVersion = '2'
         ButtonWidth = 6
-        ButtonHeight = 1
+        ButtonHeight = 2
         GeneratePreview = false
     end
     
@@ -45,18 +45,22 @@ classdef PTKSaveSegmentalAnalysisResults < PTKPlugin
             uid = image_info.ImageUid;
             template = dataset.GetTemplateImage(PTKContext.LungROI);
             patient_name = template.MetaHeader.PatientName.FamilyName;
-            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
 
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe, PTKContextSet.Segment};
             
             axial_results = dataset.GetResult('PTKAxialAnalysis', contexts);
             axial_table = PTKConvertMetricsToTable(axial_results, patient_name, uid, PTKReportingDefault);
-            PTKSaveTableAsCSV(results_directory, 'AxialResults_Segmental', axial_table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, [], reporting);
+            dataset.SaveTableAsCSV('PTKSaveSegmentalAnalysisResults', 'Segmental axial metrics', 'AxialResults_Segmental', 'Segmental analysis in bins along the cranial-caudal axis', axial_table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
             results.AxialResults = axial_results;
-            
+
+            coronal_results = dataset.GetResult('PTKCoronalAnalysis', contexts);
+            coronal_table = PTKConvertMetricsToTable(coronal_results, patient_name, uid, PTKReportingDefault);
+            dataset.SaveTableAsCSV('PTKSaveSegmentalAnalysisResults', 'Segmental coronal metrics', 'CoronalResults_Segmental', 'Segmental analysis in bins along the anterior-posterior axis', coronal_table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
+            results.CoronalResults = coronal_results;
+
             density_results = dataset.GetResult('PTKDensityAnalysis', contexts);
             density_table = PTKConvertMetricsToTable(density_results, patient_name, uid, PTKReportingDefault);
-            PTKSaveTableAsCSV(results_directory, 'DensityResults_Segmental', density_table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, [], reporting);
+            dataset.SaveTableAsCSV('PTKSaveSegmentalAnalysisResults', 'Segmental metrics', 'DensityResults_Segmental', 'Density analysis for the pulmonary segments', density_table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
             results.DensityResults = density_results;
         end
     end

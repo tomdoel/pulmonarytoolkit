@@ -29,7 +29,7 @@ classdef PTKSaveVolumeResults < PTKPlugin
         FlattenPreviewImage = false
         PTKVersion = '2'
         ButtonWidth = 6
-        ButtonHeight = 1
+        ButtonHeight = 2
         GeneratePreview = false
     end
     
@@ -45,8 +45,7 @@ classdef PTKSaveVolumeResults < PTKPlugin
             
             table = PTKConvertMetricsToTable(results, patient_name, uid, PTKReportingDefault);
             
-            results_directory = dataset.GetOutputPathAndCreateIfNecessary;
-            PTKSaveTableAsCSV(results_directory, 'VolumeResults', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, [], reporting);
+            dataset.SaveTableAsCSV('PTKSaveVolumeResults', 'Volume metrics', 'VolumeResults', 'Anaysis of lung region volumes', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
         end
     end
 end
