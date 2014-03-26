@@ -64,7 +64,9 @@ classdef PTKMRILevelSetsInitialiser < PTKPlugin
             else
                 is_right = mask_colour == 1;
             end
+            reporting.PushProgress;
             results = PTKFillCoronalHoles(lung_mask, is_right, reporting);
+            reporting.PopProgress;
 
             results.ImageType = PTKImageType.Colormap;
         end
