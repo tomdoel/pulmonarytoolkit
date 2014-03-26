@@ -144,6 +144,11 @@ classdef PTKReportingWithCache < PTKReportingInterface
         function ShowCachedWarning(obj, identifier, message, supplementary_info)
              obj.Reporting.ShowWarning(identifier, message, supplementary_info);
         end
+        
+        function OpenPath(obj, file_path, message)
+            obj.Reporting.OpenPath(file_path, message);
+        end
+
     end
     
 end

@@ -116,6 +116,9 @@ classdef PTKReportingInterface < handle
         
         % Used to update any viewing panels attached to this reporting object
         UpdateOverlaySubImage(obj, new_image)
+        
+        % Signals that a path should be opened or otherwise alerted to the user
+        OpenPath(obj, file_path, message)
 
     end
 end
