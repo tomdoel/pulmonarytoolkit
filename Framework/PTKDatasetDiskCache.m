@@ -22,14 +22,12 @@ classdef PTKDatasetDiskCache < handle
         
         ResultsDiskCache % stores automatically generated plugin results for internal use
         EditedResultsDiskCache % Stores manual corrections to results
-        OutputDiskCache % stores exported results which can be loaded by other applications
     end
     
     methods
         function obj = PTKDatasetDiskCache(dataset_uid, reporting)
             obj.ResultsDiskCache = PTKDiskCache(PTKDirectories.GetCacheDirectory, dataset_uid, reporting);
             obj.EditedResultsDiskCache = PTKDiskCache(PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, reporting);
-            obj.OutputDiskCache = PTKDiskCache(PTKDirectories.GetOutputDirectoryAndCreateIfNecessary, dataset_uid, reporting);
             
             obj.LoadCachedPluginResultsFile(reporting);
         end
@@ -93,11 +91,7 @@ classdef PTKDatasetDiskCache < handle
         function cache_path = GetEditedResultsPath(obj, ~)
            cache_path = obj.EditedResultsDiskCache.CachePath;
         end
-        
-        function cache_path = GetOutputPath(obj, ~)
-            cache_path = obj.OutputDiskCache.CachePath;
-        end
-        
+ 
         function Delete(obj, reporting)
             obj.ResultsDiskCache.Delete(reporting);
         end
