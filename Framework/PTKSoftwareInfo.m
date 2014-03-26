@@ -67,6 +67,7 @@ classdef PTKSoftwareInfo < handle
         ImageInfoCacheName = 'ImageInfo'
         SchemaCacheName = 'Schema'
         ImageTemplatesCacheName = 'ImageTemplates'
+        OutputFolderCacheName = 'OutputFolder'
         SplashScreenImageFile = 'PTKLogo.jpg'
 
         
