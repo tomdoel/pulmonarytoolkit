@@ -158,7 +158,9 @@ classdef PTKReporting < PTKReportingInterface
         
         function CompleteProgress(obj)
             if ~isempty(obj.ProgressDialog)
-                obj.ProgressDialog.Complete;
+                if isempty(obj.ProgressStack)
+                    obj.ProgressDialog.Complete;
+                end
             end
         end
         
