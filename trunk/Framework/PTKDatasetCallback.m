@@ -110,6 +110,14 @@ classdef PTKDatasetCallback < handle
             % stored
             
             dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetOutputPathAndCreateIfNecessary;
-        end        
+        end
+        
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, varargin)
+            obj.LinkedDatasetChooser.GetDataset(varargin{:}).SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters);
+        end
+
+        function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description, varargin)
+            obj.LinkedDatasetChooser.GetDataset(varargin{:}).SaveFigure(figure_handle, plugin_name, subfolder_name, file_name, description);
+        end
     end
 end

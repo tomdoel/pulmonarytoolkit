@@ -39,6 +39,7 @@ classdef PTKDatasetResults < handle
         DatasetDiskCache     % Reads and writes to the disk cache for this dataset
         DependencyTracker    % Tracks plugin usage to construct dependency lists 
         ImageTemplates       % Template images for different contexts
+        OutputFolder         % Saves files to the output folder
         Reporting            % Object for error and progress reporting
         PreviewImages        % Stores the thumbnail preview images
         ImageInfo            % Information about this dataset
@@ -57,6 +58,7 @@ classdef PTKDatasetResults < handle
             obj.ExternalWrapperNotifyFunction = external_notify_function;
             obj.Reporting = reporting;
             obj.ImageTemplates = PTKImageTemplates(obj, dataset_disk_cache, reporting);
+            obj.OutputFolder = PTKOutputFolder(dataset_disk_cache, reporting);
             obj.PreviewImages = PTKPreviewImages(dataset_disk_cache, reporting);
             obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache);
             obj.ContextHierarchy = PTKContextHierarchy(obj.DependencyTracker, obj.ImageTemplates, reporting);
@@ -92,7 +94,11 @@ classdef PTKDatasetResults < handle
             % Update the progress dialog with the current plugin being run
             obj.Reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
             
+            % Run the plugin
             [result, cache_info, output_image, plugin_has_been_run] = obj.RunPluginWithOptionalImageGeneration(plugin_name, plugin_info, plugin_class, generate_results, dataset_stack, context, allow_results_to_be_cached);
+            
+            % Open any output folders which have been written to by the plugin
+            obj.OutputFolder.OpenChangedFolders;
             
             obj.Reporting.CompleteProgress;
             
@@ -250,6 +256,14 @@ classdef PTKDatasetResults < handle
 
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency)
             [valid, edited_result_exists] = obj.DependencyTracker.CheckDependencyValid(next_dependency, obj.Reporting);
+        end
+
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters)
+            obj.OutputFolder.SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters);
+        end
+        
+        function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description)
+            obj.OutputFolder.SaveFigure(figure_handle, plugin_name, subfolder_name, file_name, description);
         end
     end
 
