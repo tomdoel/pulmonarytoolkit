@@ -12,14 +12,22 @@ classdef PTKTextUtilities < handle
 
     methods (Static)
     
-        % Strips out HTML code from the provided string
         function text = RemoveHtml(html_text)
+            % Strips out HTML code from the provided string
+            
             text = regexprep(html_text, '<.*?>', ' ');
             text = regexprep(text, '  ', ' ');
         end
         
-        % Sorts a list of filenames, taking into account numbers
+        function file_name = MakeFilenameValid(file_name)
+            % Strips out invalid characters from a filename
+            
+            file_name = regexprep(file_name, '  ', ' ');
+            file_name(ismember(file_name, ' %*,.:;!?/<>\^%"')) = [];
+        end
+        
         function [sorted_filenames, sorted_indices] = SortFilenames(original_filenames)
+            % Sorts a list of filenames, taking into account numbers
             
             if isempty(original_filenames)
                 sorted_filenames = [];
@@ -56,8 +64,9 @@ classdef PTKTextUtilities < handle
             sorted_filenames = original_filenames(sorted_indices');
         end
         
-        % Returns just the main filenames, removing the path and filetype
         function filenames_stripped = StripFileparts(filenames)
+            % Returns just the main filenames, removing the path and filetype
+            
             cell_input = iscell(filenames);
             if ~cell_input
                 filenames = {filenames};
