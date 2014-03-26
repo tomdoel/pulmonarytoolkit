@@ -58,7 +58,7 @@ classdef PTKDatasetResults < handle
             obj.ExternalWrapperNotifyFunction = external_notify_function;
             obj.Reporting = reporting;
             obj.ImageTemplates = PTKImageTemplates(obj, dataset_disk_cache, reporting);
-            obj.OutputFolder = PTKOutputFolder(dataset_disk_cache, reporting);
+            obj.OutputFolder = PTKOutputFolder(dataset_disk_cache, obj.ImageTemplates, image_info, reporting);
             obj.PreviewImages = PTKPreviewImages(dataset_disk_cache, reporting);
             obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache);
             obj.ContextHierarchy = PTKContextHierarchy(obj.DependencyTracker, obj.ImageTemplates, reporting);
@@ -178,20 +178,14 @@ classdef PTKDatasetResults < handle
            cache_path = obj.DatasetDiskCache.GetEditedResultsPath(obj.Reporting);
         end
         
-        function cache_path = GetOutputPath(obj)
-            % Gets the path of the folder where the output for this dataset are stored
-        
-            cache_path = obj.DatasetDiskCache.GetOutputPath(obj.Reporting);
-        end
-        
         function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
             % Gets the path of the folder where the output files for this dataset are
             % stored
         
-            results_directory = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
-            image_info = obj.GetImageInfo;
-            uid = image_info.ImageUid;
-            dataset_cache_path = fullfile(results_directory, uid);
+            % Make sure the main output directory exists
+            PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
+            
+            dataset_cache_path = obj.OutputFolder.GetOutputPath;
             if ~exist(dataset_cache_path, 'dir')
                 mkdir(dataset_cache_path);
             end      
