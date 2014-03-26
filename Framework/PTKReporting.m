@@ -280,6 +280,17 @@ classdef PTKReporting < PTKReportingInterface
             obj.ViewingPanel = viewer_panel;
         end
         
+        function OpenPath(obj, file_path, message)
+            % If there is a viewing panel, we assume this is a GUI-based application, and so
+            % it is acceptable to open a window to the file path. Otherwise we display a
+            % message
+            
+            if isempty(obj.ViewingPanel)
+                disp([message, ': ', file_path]);
+            else
+                PTKDiskUtilities.OpenDirectoryWindow(file_path);
+            end
+        end
     end
     
     methods (Access = private)
@@ -318,7 +329,6 @@ classdef PTKReporting < PTKReportingInterface
                 obj.CurrentProgressStackItem.MaxPosition = adjusted_value + scale*value_change;
             end
         end
-        
     end
 end
 

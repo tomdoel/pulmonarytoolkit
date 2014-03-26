@@ -59,8 +59,6 @@ classdef PTKProgressPanel < PTKProgressInterface
     end
     
     methods
-        
-        
         function obj = PTKProgressPanel(parent)
             obj.ChangePending = false;
             obj.CurrentlyDisplayedDialogTitle = '';

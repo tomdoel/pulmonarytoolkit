@@ -101,6 +101,8 @@ classdef MockReporting < PTKReportingInterface
         function UpdateOverlaySubImage(obj, new_image)
         end
         
+        function OpenPath(obj, file_path, message)
+        end
         
     end
 end

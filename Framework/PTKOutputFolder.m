@@ -65,9 +65,7 @@ classdef PTKOutputFolder < handle
         function OpenChangedFolders(obj)
             obj.ChangedFolders = unique(obj.ChangedFolders);
             for folder = obj.ChangedFolders'
-                
-                % Todo
-                PTKDiskUtilities.OpenDirectoryWindow(folder{1});
+                obj.Reporting.OpenPath(folder{1}, 'New analysis result files have been added to the following output path');
             end
             obj.ChangedFolders = [];
         end
