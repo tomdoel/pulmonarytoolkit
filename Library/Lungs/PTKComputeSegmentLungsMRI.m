@@ -113,7 +113,7 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, sta
     
     new_image = zeros(lung_image.ImageSize, 'int16');
     next_image = new_image;
-    min_value = 0;
+    min_value = lung_image.Limits(1);
     max_value = lung_image.RawImage(start_point(1), start_point(2), start_point(3));
 
     increments = [50 10 1];
