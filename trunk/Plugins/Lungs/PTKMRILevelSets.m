@@ -38,7 +38,7 @@ classdef PTKMRILevelSets < PTKPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             left_and_right_lungs_initial = dataset.GetResult('PTKMRILevelSetsInitialiser');
-            roi = dataset.GetResult('PTKLungROI');
+            roi = dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage);
             left_roi = PTKGetLeftLungROIFromLeftAndRightLungs(roi, left_and_right_lungs_initial, reporting);
             right_roi = PTKGetRightLungROIFromLeftAndRightLungs(roi, left_and_right_lungs_initial, reporting);
             results = dataset.GetTemplateImage(PTKContext.LungROI);

@@ -12,6 +12,7 @@ function lung_roi = PTKGetLeftLungROIFromLeftAndRightLungs(lung_image, left_and_
     mask = left_and_right_lung_mask.Copy;
     mask.ChangeRawImage(uint8(mask.RawImage == 2));
     mask.CropToFitWithBorder(5);
+    mask.AddBorder(5);
     lung_roi = lung_image.Copy;
     lung_roi.ResizeToMatch(mask);
 end
