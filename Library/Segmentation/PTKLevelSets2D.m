@@ -191,12 +191,18 @@ function phi2 = re_initialise(phi)
     phi2 = interpn(dist,x2,y2);
 end
 
-function gaussian_image = GaussianFilter(image, sigma)
+function gaussian_image = GaussianFilter(unfiltered_image, sigma)
+    % 2D Gaussian filter
     
-    resolution=[1 1 1];
+    % Shift the image so zero is the minimum, because the convolution uses
+    % zero-padding
+    intensity_offset = min(unfiltered_image(:));
+    unfiltered_image = unfiltered_image - intensity_offset;
+    
+    resolution=[1 1];
     epsilon=1e-3;
     
-    hsize = 2*max(ceil((sigma ./ resolution).*sqrt(-2*log(sqrt(2*pi).*(sigma ./ resolution)*epsilon))))+1;
+    hsize = 2*max(ceil((sigma ./ resolution).*sqrt(-2*log(sqrt(2*pi).*(sigma ./ resolution)*epsilon)))) + 1;
     
     n = 1 : hsize;
     center = hsize/2 + 0.5;
@@ -213,5 +219,7 @@ function gaussian_image = GaussianFilter(image, sigma)
     kerx = kerx./sum(kerx);
     kery = kery./sum(kery);
     
-    gaussian_image=convn(convn(image,shiftdim(kerx,2),'same'),shiftdim(kery,1),'same');
+    gaussian_image = convn(convn(unfiltered_image, shiftdim(kerx, 2), 'same'), shiftdim(kery, 1), 'same');
+    
+    gaussian_image = gaussian_image + intensity_offset;
 end
