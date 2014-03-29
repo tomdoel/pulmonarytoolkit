@@ -47,7 +47,16 @@ function filtered_image = PTKGaussianFilter(original_image, filter_size_mm)
     kerk = kerk./sum(kerk);
    
     filtered_image = original_image.BlankCopy;
-    filtered_image.ChangeRawImage(convn(convn(convn(original_image.RawImage, shiftdim(keri, 2), 'same'), shiftdim(kerj, 1), 'same'), kerk, 'same'));
+    
+    % Shift the image so zero is the minimum, because the convolution uses
+    % zero-padding
+    raw_image = single(original_image.RawImage);
+    
+    intensity_offset = min(raw_image(:));
+    raw_image = raw_image - intensity_offset;
+    raw_image = convn(convn(convn(raw_image, shiftdim(keri, 2), 'same'), shiftdim(kerj, 1), 'same'), kerk, 'same');
+    raw_image = raw_image + intensity_offset;
+    filtered_image.ChangeRawImage(raw_image);
 end
 
 
