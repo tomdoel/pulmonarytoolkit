@@ -47,7 +47,7 @@ function lung_image = PTKGetLungROIForGasMRI(lung_image, reporting)
     lung_threshold.RemoveBorder(1);
     
     % Crop the original image to the main region of the threshold image
-    lung_threshold.CropToFit;
+    lung_threshold.CropToFitWithBorder(5);
     lung_image.ResizeToMatch(lung_threshold);
     
     reporting.CompleteProgress;
