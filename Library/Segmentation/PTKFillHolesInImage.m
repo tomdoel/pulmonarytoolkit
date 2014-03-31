@@ -28,6 +28,10 @@ end
 
 function filled_image = FillHolesInImage(original_image)
     connected_components_structure =  bwconncomp(original_image.RawImage == 0, 6);
+    if connected_components_structure.NumObjects == 0
+        filled_image =  original_image;
+        return;
+    end
     labeled_components = labelmatrix(connected_components_structure);
     edge_components = GetAllUnqiueValuesFromImageBoundaries(labeled_components);
     for component_index = edge_components'

@@ -35,19 +35,22 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     
     reporting.UpdateProgressMessage('Finding approximate MRI lung segmentation by region growing');
 
-    original_image = PTKGaussianFilter(original_image, filter_size_mm);
+    min_image = original_image.Limits(1);
+    filtered_image = original_image.BlankCopy;
+    filtered_image.ChangeRawImage(original_image.RawImage - min_image);
+    filtered_image = PTKGaussianFilter(filtered_image, filter_size_mm);
     
     if (nargin < 4)
         reporting.UpdateProgressMessage('Automatically selecting a point in the lung parenchyma');
-        start_point_right = AutoFindLungPoint(original_image, false);
-        start_point_left = AutoFindLungPoint(original_image, true);
+        start_point_right = AutoFindLungPoint(filtered_image, false);
+        start_point_left = AutoFindLungPoint(filtered_image, true);
     end
     
     reporting.UpdateProgressMessage('Finding optimal threshold values');
-    new_image_left = original_image.Copy;
-    new_image_right = original_image.Copy;
+    new_image_left = filtered_image.Copy;
+    new_image_right = filtered_image.Copy;
     
-    coronal_mode = original_image.VoxelSize(1) > 5;
+    coronal_mode = filtered_image.VoxelSize(1) > 5;
     
     [image_raw_left, bounds_left] = FindMaximumRegionNotTouchingSides(new_image_left, start_point_left, coronal_mode, reporting);
     [image_raw_right, bounds_right] = FindMaximumRegionNotTouchingSides(new_image_right, start_point_right, coronal_mode, reporting);
@@ -74,6 +77,8 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     bounds(1) = min(bounds_left(1), bounds_right(1));
     bounds(2) = max(bounds_left(2), bounds_right(2));
     
+    bounds = bounds + cast(min_image, class(bounds));
+    
     reporting.PopProgress;
 end
 
@@ -81,9 +86,9 @@ function lung_point = AutoFindLungPoint(original_image, find_left)
     image_size = original_image.ImageSize;
     centre_point = round(image_size/2);
     if (find_left)
-        adjust_centrepoint = -1;
-    else
         adjust_centrepoint = 1;
+    else
+        adjust_centrepoint = -1;
     end
     centre_point(2) = centre_point(2) + adjust_centrepoint*round(image_size(2)/8);
     search_size = round(image_size/10);
@@ -101,10 +106,15 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, sta
     
     % This code deals with the case where there are missing thick coronal slices
     if coronal_mode
+        min_lung_image = lung_image.Limits(1);
         lung_image.AddBorder(1);
         start_point = start_point + 1;
         lung_image_raw = lung_image.RawImage;
         max_lung_image = lung_image.Limits(2);
+        lung_image_raw(:, 1, :) = min_lung_image;
+        lung_image_raw(:, end, :) = min_lung_image;
+        lung_image_raw(:, :, 1) = min_lung_image;
+        lung_image_raw(:, :, end) = min_lung_image;
         lung_image_raw(1, :, :) = max_lung_image;
         lung_image_raw(end, :, :) = max_lung_image;
         lung_image.ChangeRawImage(lung_image_raw);
