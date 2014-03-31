@@ -21,26 +21,26 @@ classdef PTKOutputFolder < handle
         
         DatasetDiskCache % Used for persisting the records between sessions
         Reporting % Callback for error reporting
-        ImageTemplates % Used for fetching the patient name
+        ImageUid
         
         ChangedFolders % List of output folders which have been modified since last call to OpenChangedFolders
     end
     
     methods
-        function obj = PTKOutputFolder(dataset_disk_cache, image_templates, image_info, reporting)
+        function obj = PTKOutputFolder(dataset_disk_cache, image_info, reporting)
             obj.DatasetDiskCache = dataset_disk_cache;
-            obj.ImageTemplates = image_templates;
+            obj.ImageUid = image_info.ImageUid;
             obj.Reporting = reporting;
             
             obj.OutputRecords = PTKOutputInfo.empty;
             
             % Loads cached template data
-            obj.Load(image_info);
+            obj.Load;
         end
         
-        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters)
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, dataset_stack)
             date_text = date;
-            output_folder = obj.OutputFolder;
+            output_folder = obj.GetOutputPath(dataset_stack);
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
             new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
@@ -50,9 +50,9 @@ classdef PTKOutputFolder < handle
             obj.ChangedFolders{end + 1} = file_path;
         end
 
-        function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description)
+        function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description, dataset_stack)
             date_text = date;
-            output_folder = obj.OutputFolder;
+            output_folder = obj.GetOutputPath(dataset_stack);
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
             new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
@@ -70,7 +70,10 @@ classdef PTKOutputFolder < handle
             obj.ChangedFolders = [];
         end
         
-        function cache_path = GetOutputPath(obj)
+        function cache_path = GetOutputPath(obj, dataset_stack)
+            if isempty(obj.OutputFolder)
+                obj.CreateNewOutputFolder(dataset_stack)
+            end
             cache_path = obj.OutputFolder;
         end        
     end
@@ -83,7 +86,7 @@ classdef PTKOutputFolder < handle
             obj.Save;
         end
         
-        function Load(obj, image_info)
+        function Load(obj)
             % Retrieves previous records from the disk cache
         
             if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.OutputFolderCacheName, [], obj.Reporting)
@@ -92,10 +95,10 @@ classdef PTKOutputFolder < handle
                 if isfield(info, 'OutputFolder')
                     obj.OutputFolder = info.OutputFolder;
                 else
-                    obj.CreateNewOutputFolder(image_info);
+                    obj.OutputFolder = [];
                 end
             else
-                obj.CreateNewOutputFolder(image_info);
+                obj.OutputFolder = [];
             end
         end
         
@@ -107,10 +110,10 @@ classdef PTKOutputFolder < handle
             obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.OutputFolderCacheName, info, obj.Reporting);
         end
         
-        function CreateNewOutputFolder(obj, image_info)
+        function CreateNewOutputFolder(obj, dataset_stack)
             root_output_path = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
             
-            template = obj.ImageTemplates.GetTemplateImage(PTKContext.LungROI);
+            template = obj.ImageTemplates.GetTemplateImage(PTKContext.LungROI, dataset_stack);
             metadata = template.MetaHeader;
             
             if isfield(metadata, 'PatientName')
@@ -122,7 +125,7 @@ classdef PTKOutputFolder < handle
             end
 
             if isempty(subfolder)
-                subfolder = image_info.ImageUid;
+                subfolder = obj.ImageUid;
             end
             
             subfolder = PTKTextUtilities.MakeFilenameValid(subfolder);
