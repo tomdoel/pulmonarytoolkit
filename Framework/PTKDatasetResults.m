@@ -58,7 +58,7 @@ classdef PTKDatasetResults < handle
             obj.ExternalWrapperNotifyFunction = external_notify_function;
             obj.Reporting = reporting;
             obj.ImageTemplates = PTKImageTemplates(obj, dataset_disk_cache, reporting);
-            obj.OutputFolder = PTKOutputFolder(dataset_disk_cache, obj.ImageTemplates, image_info, reporting);
+            obj.OutputFolder = PTKOutputFolder(dataset_disk_cache, image_info, reporting);
             obj.PreviewImages = PTKPreviewImages(dataset_disk_cache, reporting);
             obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache);
             obj.ContextHierarchy = PTKContextHierarchy(obj.DependencyTracker, obj.ImageTemplates, reporting);
@@ -178,14 +178,14 @@ classdef PTKDatasetResults < handle
            cache_path = obj.DatasetDiskCache.GetEditedResultsPath(obj.Reporting);
         end
         
-        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
+        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, dataset_stack)
             % Gets the path of the folder where the output files for this dataset are
             % stored
         
             % Make sure the main output directory exists
             PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
             
-            dataset_cache_path = obj.OutputFolder.GetOutputPath;
+            dataset_cache_path = obj.OutputFolder.GetOutputPath(dataset_stack);
             if ~exist(dataset_cache_path, 'dir')
                 mkdir(dataset_cache_path);
             end      
@@ -252,12 +252,12 @@ classdef PTKDatasetResults < handle
             [valid, edited_result_exists] = obj.DependencyTracker.CheckDependencyValid(next_dependency, obj.Reporting);
         end
 
-        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters)
-            obj.OutputFolder.SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters);
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, dataset_stack)
+            obj.OutputFolder.SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, dataset_stack);
         end
         
-        function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description)
-            obj.OutputFolder.SaveFigure(figure_handle, plugin_name, subfolder_name, file_name, description);
+        function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description, dataset_stack)
+            obj.OutputFolder.SaveFigure(figure_handle, plugin_name, subfolder_name, file_name, description, dataset_stack);
         end
     end
 
