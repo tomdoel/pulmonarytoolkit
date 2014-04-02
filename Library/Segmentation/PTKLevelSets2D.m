@@ -70,8 +70,14 @@ function result = SolveLevelSets(original_image, initial_mask, options, figure_h
         psi = NextContour(psi, im, gaussian_im, options, force_handle);
         
         if any(isnan(psi))
-            disp('NaN found: terminating');
+            reporting.ShowMessage('PTKLevelSets2D:NanFound', 'Terminating the level set algorthm because a NaN was found.');
             converged = true;
+        end
+        
+        result = (psi > 0);
+        if IsTouchingSides(result)
+            reporting.ShowMessage('PTKLevelSets2D:BoundaryConnection', 'Terminating the level set algorthm because the segmentation connected with the image boundary.');
+            return;
         end
         
         
@@ -114,6 +120,19 @@ function result = SolveLevelSets(original_image, initial_mask, options, figure_h
     
     result = (psi > 0);
 end
+
+
+
+function is_touching_sides = IsTouchingSides(image_to_check)
+    is_touching_sides = CheckSide(image_to_check(:, 1)) || CheckSide(image_to_check(:, end)) ...
+        || CheckSide(image_to_check(1, :)) || CheckSide(image_to_check(end, :));
+end
+
+function any_nonzero = CheckSide(side)
+    any_nonzero = any(side(:));
+end
+
+
 
 function UpdateOverlayImage(phi, template, reporting)
     mask_ini = (phi>0);
