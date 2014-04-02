@@ -1,9 +1,10 @@
-classdef PTKDeleteEdited < PTKGuiPlugin
-    % PTKDeleteEdited.
+classdef PTKExportEditedImage < PTKGuiPlugin
+    % PTKExportEditedImage. Gui Plugin 
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
+    %     PTKExportEditedImage is a Gui Plugin for the TD Pulmonary Toolkit.
     %
     %
     %     Licence
@@ -14,9 +15,9 @@ classdef PTKDeleteEdited < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Delete all editing'
-        ToolTip = ''
-        Category = 'Edit'
+        ButtonText = 'Export Edit'
+        ToolTip = 'Exports the current edit to an external file'
+        Category = 'Import / Export'
         Visibility = 'Overlay'
         Mode = 'Edit'
 
@@ -28,9 +29,7 @@ classdef PTKDeleteEdited < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            
-            % ToDo
-            ptk_gui_app.GetMode.DeleteAllEditsWithPrompt;
+            ptk_gui_app.GetMode.ExportEdit;
         end
     end
 end
