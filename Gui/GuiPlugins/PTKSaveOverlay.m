@@ -34,7 +34,7 @@ classdef PTKSaveOverlay < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.SaveOverlayImage();
+            ptk_gui_app.SaveOverlayImage;
         end
     end
 end
