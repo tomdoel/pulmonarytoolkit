@@ -24,6 +24,7 @@ classdef PTKEditMode < handle
     properties (Access = private)
         ViewerPanel
         GuiDataset
+        Settings
         Reporting
         
         Dataset
@@ -40,9 +41,10 @@ classdef PTKEditMode < handle
     end
     
     methods
-        function obj = PTKEditMode(viewer_panel, gui_dataset, reporting)
+        function obj = PTKEditMode(viewer_panel, gui_dataset, settings, reporting)
             obj.ViewerPanel = viewer_panel;
             obj.GuiDataset = gui_dataset;
+            obj.Settings = settings;
             obj.Reporting = reporting;
             obj.UnsavedChanges = false;
             obj.IgnoreOverlayChanges = true;
@@ -124,7 +126,38 @@ classdef PTKEditMode < handle
                 obj.UnLockImageChangedCallback;
             end
         end
+        
+        function ImportEdit(obj)
+            if ~isempty(obj.PluginName)
+                obj.LockImageChangedCallback;
                 
+                choice = questdlg('You are about to import an edited result. This will delete and replace any existing edits you have made for this plugin. Do you wish to continue?', ...
+                    'Import edited results', 'Import', 'Cancel', 'Import');
+                switch choice
+                    case 'Import'
+                        obj.ChooseAndReplaceEdit;
+                    case 'Cancel'
+                end
+                obj.UnLockImageChangedCallback;
+            end
+        end
+        
+        function ExportEdit(obj)
+            obj.SaveEdit;
+            edited_result = obj.ViewerPanel.OverlayImage.Copy;
+            patient_name = obj.ViewerPanel.BackgroundImage.Title;
+            template = obj.GuiDataset.GetTemplateImage;
+            edited_result.ResizeToMatch(template);
+            path_name = obj.Settings.SaveImagePath;
+            
+            path_name = PTKSaveAs(edited_result, patient_name, path_name, obj.Reporting);
+            if ~isempty(path_name)
+                obj.Settings.SaveImagePath = path_name;
+                obj.GuiDataset.SaveSettings;
+            end
+        end
+
+
         function OverlayImageChanged(obj, ~, ~)
             if obj.ImageOverlayLock < 1
                 obj.UnsavedChanges = true;
@@ -160,12 +193,48 @@ classdef PTKEditMode < handle
             obj.UnsavedChanges = false;
             obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
             obj.GuiDataset.UpdateFigureTitle(obj.VisiblePluginName, false);
+            obj.GuiDataset.ChangeMode(PTKModes.EditMode);
             obj.Reporting.CompleteProgress;            
         end
 
-        function RevertEdit(obj)
-            edited_result = obj.ImageBeforeEdit;
-            ptk_gui_app.SaveEditedResult(edited_result);
+        function ChooseAndReplaceEdit(obj)
+            if ~isempty(obj.PluginName)
+                obj.LockImageChangedCallback;
+                obj.Reporting.ShowProgress(['Replacing edited image for ', obj.VisiblePluginName]);
+                
+                image_info = PTKChooseImagingFiles(obj.Settings.SaveImagePath, obj.Reporting);
+                
+                if ~isempty(image_info)
+                    obj.Settings.SaveImagePath = image_info.ImagePath;
+                    obj.GuiDataset.SaveSettings;
+                    
+                    current_overlay = obj.ViewerPanel.OverlayImage;
+                    edited_result = PTKLoadImages(image_info, obj.Reporting);
+                    edited_result.ImageType = current_overlay.ImageType;
+                    
+                    template = obj.GuiDataset.GetTemplateImage;
+                    if ~isequal(template.ImageSize, edited_result.ImageSize)
+                        msgbox(['The edited results image cannot be imported as the image size does not match the original image'], [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'error');
+                    elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
+                        msgbox(['The edited results image cannot be imported as the voxel size does not match the original image'], [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'error');
+                    else
+                        obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
+                        obj.UnsavedChanges = false;
+                        obj.GuiDataset.UpdateFigureTitle(obj.VisiblePluginName, true);
+                        
+                        % Update the loaded results
+                        obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
+                        obj.GuiDataset.UpdateFigureTitle(obj.VisiblePluginName, false);
+                        
+                        % Ensure we are back in edit mode, as RunPlugin will have left this
+                        obj.GuiDataset.ChangeMode(PTKModes.EditMode);
+                    end
+                end
+                
+                obj.Reporting.CompleteProgress;
+                obj.UnLockImageChangedCallback;
+            end
+            
         end
     end
 end

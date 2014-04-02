@@ -38,7 +38,7 @@ classdef PTKGuiDataset < handle
     
     methods
         function obj = PTKGuiDataset(gui, viewer_panel, settings, reporting)
-            obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, reporting);
+            obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, settings, reporting);
 
             obj.Gui = gui;
             obj.Reporting = reporting;
@@ -398,6 +398,10 @@ classdef PTKGuiDataset < handle
         
         function UpdateModeTabControl(obj)
             obj.Gui.UpdateModeTabControl(obj.CurrentPluginInfo);
+        end
+        
+        function SaveSettings(obj)
+            obj.Gui.SaveSettings;
         end
     end
     
