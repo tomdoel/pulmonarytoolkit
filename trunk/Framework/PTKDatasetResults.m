@@ -211,6 +211,7 @@ classdef PTKDatasetResults < handle
             % results.
         
             obj.PreviewImages.Clear;
+            obj.ImageTemplates.ClearCache;
             obj.DatasetDiskCache.RemoveAllCachedFiles(remove_framework_files, obj.Reporting);
         end
         

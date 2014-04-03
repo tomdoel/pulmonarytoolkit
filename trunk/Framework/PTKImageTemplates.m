@@ -194,6 +194,12 @@ classdef PTKImageTemplates < handle
             end
         end
         
+        function ClearCache(obj)
+            % Clears cached templates
+            obj.TemplateImages = containers.Map;
+            obj.TemplatePluginsRun  = containers.Map;
+        end
+        
     end
     
     
