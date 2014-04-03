@@ -102,13 +102,13 @@ function lung_point = AutoFindLungPoint(original_image, find_left)
     lung_point = lung_point + start_point - [1 1 1];
 end
 
-function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, start_point, coronal_mode, reporting)
+function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, local_start_point, coronal_mode, reporting)
     
     % This code deals with the case where there are missing thick coronal slices
     if coronal_mode
         min_lung_image = lung_image.Limits(1);
         lung_image.AddBorder(1);
-        start_point = start_point + 1;
+        local_start_point = local_start_point + 1;
         lung_image_raw = lung_image.RawImage;
         max_lung_image = lung_image.Limits(2);
         lung_image_raw(:, 1, :) = min_lung_image;
@@ -120,16 +120,97 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, sta
         lung_image.ChangeRawImage(lung_image_raw);
     end
     
+    min_value = lung_image.Limits(1);
+    max_value = floor(lung_image.RawImage(local_start_point(1), local_start_point(2), local_start_point(3)));
     
+    if coronal_mode
+        new_image = lung_image.BlankCopy;
+        new_image.ChangeRawImage(zeros(lung_image.ImageSize, 'int16'));
+        first_coronal_slice_index = local_start_point(1);
+        [new_image_slice, bounds_middle_slice, first_slice_points] = GetVariableThresholdForSlice(first_coronal_slice_index, lung_image, min_value, max_value, {local_start_point}, coronal_mode, reporting);
+        new_image.ChangeSubImage(new_image_slice);
+        next_points = first_slice_points;
+        for coronal_index = first_coronal_slice_index + 1 : lung_image.ImageSize(1)
+            if ~isempty(next_points)
+                [new_image_slice, bounds_slice, next_points] = GetVariableThresholdForSlice(coronal_index, lung_image, min_value, max_value, next_points, coronal_mode, reporting);
+                new_image.ChangeSubImage(new_image_slice);
+            end
+        end
+        next_points = first_slice_points;
+        for coronal_index = first_coronal_slice_index - 1 : - 1 : 1
+            if ~isempty(next_points)
+                [new_image_slice, bounds_slice, next_points] = GetVariableThresholdForSlice(coronal_index, lung_image, min_value, max_value, next_points, coronal_mode, reporting);
+                new_image.ChangeSubImage(new_image_slice);
+            end
+        end
+        bounds = bounds_middle_slice;
+    else
+        [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_value, local_start_point, coronal_mode, reporting);
+    end
+    
+    if coronal_mode
+        lung_image.RemoveBorder(1);
+        new_image = new_image.RawImage(2:end-1, 2:end-1, 2:end-1);
+    end
+end
+
+function [new_image_slice, bounds, next_points] = GetVariableThresholdForSlice(coronal_index, lung_image, min_value, max_value, local_start_points, coronal_mode, reporting)
+    lung_image_slice = lung_image.Copy;
+    new_origin = lung_image.Origin;
+    new_origin(1) = new_origin(1) + coronal_index - 2;
+    for local_start_point_index = 1 : numel(local_start_points)
+        next_local_startpoint = local_start_points{local_start_point_index};
+        next_local_startpoint(1) = 2;
+        local_start_points{local_start_point_index} = next_local_startpoint;
+    end
+    
+    % Put this slice into a 3-imae thick slice so that the 3D region-growing will work
+    new_image_size = lung_image.ImageSize;
+    new_image_size(1) = 3;
+    lung_image_slice.ResizeToMatchOriginAndSize(new_origin, new_image_size);
+    lung_image_slice_raw = lung_image_slice.RawImage;
+    lung_image_slice_raw(1, :, :) = lung_image.Limits(2);
+    lung_image_slice_raw(3, :, :) = lung_image.Limits(2);
+    lung_image_slice.ChangeRawImage(lung_image_slice_raw);
+    
+    [new_image, bounds] = GetVariableThreshold(lung_image_slice, min_value, max_value, local_start_points, coronal_mode, reporting);
+    
+    % Extract out the resulting mask
+    output_slice_origin = new_origin;
+    output_slice_origin(1) = output_slice_origin(1) + 1;
+    output_slice_size = new_image_size;
+    output_slice_size(1) = 1;
+    lung_image_slice.ResizeToMatchOriginAndSize(new_origin, new_image_size);
+    new_image_slice = lung_image_slice.BlankCopy;
+    new_image_slice.ResizeToMatchOriginAndSize(output_slice_origin, output_slice_size);
+    new_image_slice.ChangeRawImage(new_image(2, :, :));
+   
+    next_points = GetNextSetOfStartPoints(new_image_slice);
+end
+
+function next_points = GetNextSetOfStartPoints(new_image_slice)
+    eroded_image_slice = new_image_slice.Copy;
+    eroded_image_slice.BinaryMorph(@imerode, 20);
+    next_points = find(eroded_image_slice.RawImage);
+    if numel(next_points) < 20
+        next_points = find(new_image_slice.RawImage);
+    end
+    [loc_i, loc_j, loc_k] = ind2sub(new_image_slice.ImageSize, next_points);
+    next_points = [];
+    for index = 1 : numel(loc_i)
+        next_points{index} = [loc_i(index), loc_j(index), loc_k(index)];
+    end
+end
+
+function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_value, start_point, coronal_mode, reporting)
     new_image = zeros(lung_image.ImageSize, 'int16');
     next_image = new_image;
-    min_value = lung_image.Limits(1);
-    max_value = floor(lung_image.RawImage(start_point(1), start_point(2), start_point(3)));
-
+    
     increments = [50 10 1];
     
-    start_points_global = [];
-    start_points_global{1} = lung_image.LocalToGlobalCoordinates(start_point);
+    start_point_matrix = cell2mat(start_point');
+    start_points_global = lung_image.LocalToGlobalCoordinates(start_point_matrix);
+    start_points_global = num2cell(start_points_global, 2)';
     
     next_image_open = lung_image.BlankCopy;
     
@@ -151,11 +232,6 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, sta
     
     bounds = [min_value max_value];
     new_image = logical(new_image);
-    
-    if coronal_mode
-        lung_image.RemoveBorder(1);
-        new_image = new_image(2:end-1, 2:end-1, 2:end-1);
-    end
 end
 
 function is_touching_sides = IsTouchingSides(image_to_check, coronal_mode)
