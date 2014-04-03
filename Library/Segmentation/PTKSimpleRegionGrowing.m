@@ -43,12 +43,9 @@ function output_image = PTKSimpleRegionGrowing(threshold_image, start_points_glo
     segmented_image = zeros(threshold_image.ImageSize, 'uint8');
     
     [linear_offsets, ~] = PTKImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
-    next_points = zeros(length(start_points_global), 1);
-    for i = 1 : length(next_points)
-        start_point = start_points_global{i};
-        start_point = threshold_image.GlobalToLocalCoordinates(start_point);
-        next_points(i) = sub2ind(threshold_image.ImageSize, start_point(1), start_point(2), start_point(3));
-    end    
+    start_points_matrix = cell2mat(start_points_global');
+    start_points_matrix = threshold_image.GlobalToLocalCoordinates(start_points_matrix);
+    next_points = PTKImageCoordinateUtilities.FastSub2ind(threshold_image.ImageSize, start_points_matrix(:, 1), start_points_matrix(:, 2), start_points_matrix(:, 3));
 
     threshold_image = logical(threshold_image.RawImage);
     number_points = length(segmented_image(:));
