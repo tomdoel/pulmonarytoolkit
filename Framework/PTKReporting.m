@@ -153,13 +153,15 @@ classdef PTKReporting < PTKReportingInterface
                 else
                     obj.ProgressDialog.ProgressText();                    
                 end
+                obj.CurrentProgressStackItem.Visible = true;
             end
         end
         
         function CompleteProgress(obj)
             if ~isempty(obj.ProgressDialog)
-                if isempty(obj.ProgressStack)
+                if isempty(obj.ProgressStack) || ~obj.ParentProgressStackItem.Visible
                     obj.ProgressDialog.Complete;
+                    obj.CurrentProgressStackItem.Visible = false;
                 end
             end
         end
@@ -169,6 +171,7 @@ classdef PTKReporting < PTKReportingInterface
             
             if ~isempty(obj.ProgressDialog)
                 obj.ProgressDialog.SetProgressText(adjusted_text);
+                obj.CurrentProgressStackItem.Visible = true;
             end
         end
         
@@ -177,6 +180,7 @@ classdef PTKReporting < PTKReportingInterface
             
             if ~isempty(obj.ProgressDialog)
                 obj.ProgressDialog.SetProgressValue(adjusted_value);
+                obj.CurrentProgressStackItem.Visible = true;
             end
             obj.CheckForCancel;
         end
@@ -187,6 +191,7 @@ classdef PTKReporting < PTKReportingInterface
             adjusted_value = obj.AdjustProgressValue(progress_value, value_change);
             if ~isempty(obj.ProgressDialog)
                 obj.ProgressDialog.SetProgressValue(adjusted_value);
+                obj.CurrentProgressStackItem.Visible = true;
             end
             obj.CheckForCancel;
         end
@@ -197,7 +202,9 @@ classdef PTKReporting < PTKReportingInterface
             
             if ~isempty(obj.ProgressDialog)
                 obj.ProgressDialog.SetProgressAndMessage(adjusted_value, adjusted_text);
+                obj.CurrentProgressStackItem.Visible = true;
             end
+            
             obj.CheckForCancel;
 
         end
@@ -261,6 +268,8 @@ classdef PTKReporting < PTKReportingInterface
             obj.ProgressStack(end + 1) = obj.ParentProgressStackItem;
             obj.ParentProgressStackItem = obj.CurrentProgressStackItem;
             obj.CurrentProgressStackItem = PTKProgressStackItem('', obj.ParentProgressStackItem.MinPosition, obj.ParentProgressStackItem.MaxPosition);
+            obj.CurrentProgressStackItem.Visible = obj.ParentProgressStackItem.Visible;
+
         end
             
         function PopProgress(obj)
