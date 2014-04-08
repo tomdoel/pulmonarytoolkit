@@ -21,6 +21,7 @@ classdef PTKProgressStackItem < handle
         MinPosition
         MaxPosition
         LastProgressValue
+        Visible
     end
     
     methods
@@ -31,6 +32,7 @@ classdef PTKProgressStackItem < handle
                 obj.MaxPosition = max_pos;
                 obj.LastProgressValue = 0;
             end
+            obj.Visible = false;
         end
     end
 end
