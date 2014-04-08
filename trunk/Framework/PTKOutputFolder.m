@@ -20,6 +20,7 @@ classdef PTKOutputFolder < handle
         OutputRecords % Records of files stored in the Output folder
         
         DatasetDiskCache % Used for persisting the records between sessions
+        ImageTemplates
         Reporting % Callback for error reporting
         ImageUid
         
@@ -27,8 +28,9 @@ classdef PTKOutputFolder < handle
     end
     
     methods
-        function obj = PTKOutputFolder(dataset_disk_cache, image_info, reporting)
+        function obj = PTKOutputFolder(dataset_disk_cache, image_info, image_templates, reporting)
             obj.DatasetDiskCache = dataset_disk_cache;
+            obj.ImageTemplates = image_templates;
             obj.ImageUid = image_info.ImageUid;
             obj.Reporting = reporting;
             
