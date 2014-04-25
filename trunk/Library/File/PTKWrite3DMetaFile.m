@@ -71,6 +71,8 @@ function PTKWrite3DMetaFile(header_filename, image, resolution, data_type, offse
     
     if (strcmp(data_type, 'char') || strcmp(data_type, 'uint8'))
         fprintf(fid, 'ElementType = MET_UCHAR\n');
+    elseif(strcmp(data_type, 'ushort'))
+        fprintf(fid, 'ElementType = MET_USHORT\n');
     elseif(strcmp(data_type, 'short'))
         fprintf(fid, 'ElementType = MET_SHORT\n');
     end
