@@ -203,6 +203,15 @@ classdef PTKDataset < handle
             obj.PostCallTidy;
         end
         
+        function template_image = GetTemplateMask(obj, context, varargin)
+            % Returns a template image mask for the specified context
+            % See PTKImageTemplates.m for valid contexts
+            
+            obj.PreCallTidy;
+            template_image = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetTemplateMask(context, obj.DatasetStack);
+            obj.PostCallTidy;
+        end
+        
         function preview = GetPluginPreview(obj, plugin_name, varargin)
             % Gets a thumbnail image of the last result for this plugin
 

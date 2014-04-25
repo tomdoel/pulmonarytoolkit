@@ -125,6 +125,20 @@ classdef PTKImageTemplates < handle
             template = obj.TemplateImages(char(context));
             template = template.Copy;
         end
+        
+        function template = GetTemplateMask(obj, context, dataset_stack)
+            % Returns a mask image for the context. Unlike a template image, which can be an
+            % empty image, the mask alweays has a binary image representing the lungs or
+            % regions of the lungs corresponding to the context
+            
+            if (context == PTKContext.LungROI) || (context == PTKContext.OriginalImage)
+                template = obj.GetTemplateImage(PTKContext.Lungs, dataset_stack);
+            else
+                template = obj.GetTemplateImage(context, dataset_stack);
+            end
+            
+            template.CropToFit;
+        end
 
 
         function UpdateTemplates(obj, plugin_name, context, result_image, result_may_have_changed)

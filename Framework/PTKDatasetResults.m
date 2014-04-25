@@ -198,6 +198,13 @@ classdef PTKDatasetResults < handle
             template_image = obj.ImageTemplates.GetTemplateImage(context, dataset_stack);
         end
         
+        function template_image = GetTemplateMask(obj, context, dataset_stack)
+            % Returns a template image mask for the specified context
+            % See PTKImageTemplates.m for valid contexts
+        
+            template_image = obj.ImageTemplates.GetTemplateMask(context, dataset_stack);
+        end
+        
         function preview = GetPluginPreview(obj, plugin_name)
             % Gets a thumbnail image of the last result for this plugin
         

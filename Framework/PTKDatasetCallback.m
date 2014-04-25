@@ -91,6 +91,13 @@ classdef PTKDatasetCallback < handle
             template_image = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetTemplateImage(context, obj.DatasetStack);
         end
         
+        function template_image = GetTemplateMask(obj, context, varargin)
+            % Returns a template image mask for the specified context
+            % See PTKImageTemplates.m for valid contexts
+            
+            template_image = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetTemplateMask(context, obj.DatasetStack);
+        end
+        
         function context_is_enabled = IsContextEnabled(obj, context, varargin)
             % Check to see if a context has been disabled for this dataset, due to a
             % failure when running the plugin that generates the template image for
