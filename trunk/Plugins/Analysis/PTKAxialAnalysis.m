@@ -48,7 +48,7 @@ classdef PTKAxialAnalysis < PTKPlugin
             end
             
             % Get a mask for the current region to analyse
-            context_mask = dataset.GetResult('PTKGetMaskForContext', context);
+            context_mask = dataset.GetTemplateMask(context);
 
             % Create a region mask excluding the airways
             context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);

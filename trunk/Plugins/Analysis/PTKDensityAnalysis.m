@@ -43,7 +43,7 @@ classdef PTKDensityAnalysis < PTKPlugin
             end
             
             % Get a mask for the current region to analyse
-            context_mask = dataset.GetResult('PTKGetMaskForContext', context);
+            context_mask = dataset.GetTemplateMask(context);
             
             % Special case if this context doesn't exist for this dataset
             if isempty(context_mask) || ~context_mask.ImageExists
