@@ -454,6 +454,16 @@ classdef PTKImageUtilities
             end
         end
         
+        function is_signed = IsSigned(image_object)
+            % Returns true if the image datatype is signed
+            
+            switch class(image_object.RawImage(1))
+                case {'uint8', 'uint16', 'uint32', 'uint64'}
+                    is_signed = false;
+                otherwise
+                    is_signed = true;
+            end
+        end
     end
 end
 
