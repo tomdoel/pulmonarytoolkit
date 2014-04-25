@@ -414,7 +414,7 @@ classdef PTKDiskUtilities
                         file_suffix = ['_' int2str(next_index)];
                     end
                     raw_image_file_name = [filename_base file_suffix];
-                    header = old_structure.SaveRawImage(file_path, raw_image_file_name);
+                    header = old_structure.SaveRawImage(file_path, raw_image_file_name, PTKSoftwareInfo.Compression, reporting);
                     next_index = next_index + 1;
                     new_structure = header;
                 else
@@ -500,7 +500,27 @@ classdef PTKDiskUtilities
                     reporting.Error('PTKDiskUtilities:SaveImageCapture:UnknownImageType', ['SaveImageCapture() does not support the image type ', save_type]);
             end
             reporting.CompleteProgress;
-        end        
+        end
+        
+        function compression_supported = CompressionSupported(compression, data_type)
+            compression_supported = true;
+            
+            switch compression
+                case 'png'
+                    switch data_type
+                        case {'int32', 'uint32', 'int64', 'uint64'}
+                            compression_supported = false;
+                            return;
+                    end
+                case 'tiff'
+                    switch data_type
+                        case {'int32', 'uint32', 'int64', 'uint64', 'single', 'double'}
+                            compression_supported = false;
+                            return;
+                    end
+            end
+            
+        end
     end
 end
 
