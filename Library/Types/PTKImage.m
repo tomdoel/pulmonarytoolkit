@@ -55,6 +55,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         CachedDataType
         CachedImageSize
         CachedRawImageFilename
+        CachedRawImageCompression
         
         LastImageSize = []
         LastDataType = []
@@ -77,7 +78,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         % List of properties which should be ignored when testing equality
         % between two PTKImage objects.
         PropertiesToIgnoreOnComparison = {'CachedDataType', 'LastDataType', 'CachedImageSize', ...
-            'CachedRawImageFilename', ...
+            'CachedRawImageFilename', 'CachedRawImageCompression', ...
             'OriginalImageSize', 'CachedDataIsValid', 'CachedLimits'} 
     end
     
@@ -163,62 +164,38 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
         end
 
-        % For a disk-cached image header, this loads the raw data
         function LoadRawImage(obj, file_path, reporting)
+            % For a disk-cached image header, this loads the raw data
+            
             if (nargin < 3)
                 reporting = [];
             end
            
             if isempty(obj.RawImage) && ~isempty(obj.CachedRawImageFilename)
-                raw_filename = obj.CachedRawImageFilename;
-                full_raw_filename = fullfile(file_path, raw_filename);
-                if ~exist(full_raw_filename, 'file');
-                    throw(MException('PTKImage:RawFileNotFound', ['The raw file ' raw_filename ' does not exist']));
+                
+                if ~isempty(reporting)
+                    reporting.LogVerbose(['Loading raw image file ' obj.CachedRawImageFilename]);
                 end
                 
-                data_type = obj.CachedDataType;
-                image_size = obj.CachedImageSize;
+                obj.RawImage = PTKLoadPtkRawImage(file_path, obj.CachedRawImageFilename, obj.CachedDataType, obj.CachedImageSize, obj.CachedRawImageCompression, reporting);
+                
+                % Clear cached values
                 obj.CachedImageSize = [];
                 obj.CachedDataType = [];
                 obj.CachedRawImageFilename = [];
-                
-                if strcmp(data_type, 'logical')
-                    obj.RawImage = false(image_size);
-                else
-                    obj.RawImage = zeros(image_size, data_type);
-                end
+                obj.CachedRawImageCompression = [];
 
-                % Logical data is saved in bitwise format
-                if strcmp(data_type, 'logical')
-                    file_data_type = 'ubit1';
-                else
-                    file_data_type = data_type;
-                end
- 
-                if ~isempty(reporting)
-                    reporting.LogVerbose(['Loading raw image file ' full_raw_filename]);
-                end
-                
-                fid = fopen(full_raw_filename, 'rb');
-                data = fread(fid, ['*' file_data_type]);
-                if numel(data) == numel(obj.RawImage)
-                    obj.RawImage(:) = data(:);
-                else
-                    obj.RawImage(:) = data(1:numel(obj.RawImage(:)));
-                end
-                fclose(fid);
-                    
                 obj.NotifyImageChangedCacheStillValid
 
             end
         end
 
-        % Saves the raw image data. Optionally returns a header object which
-        % contains the image object without the image data, and with the 
-        % filename stored so that it can be reloaded using a call to
-        % LoadRawImage
-        function header_file = SaveRawImage(obj, file_path, file_name)
-            data_type = class(obj.RawImage);
+        function header_file = SaveRawImage(obj, file_path, file_name, compression, reporting)
+            % Saves the raw image data. Optionally returns a header object which
+            % contains the image object without the image data, and with the
+            % filename stored so that it can be reloaded using a call to
+            % LoadRawImage
+        
             raw_filename = [file_name '.raw'];
 
             % Create a header file if requested. The header is the image object 
@@ -228,30 +205,20 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 
                 % We cache these values in the image class so they can be retrieved
                 % when loading the raw data
-                header_file.CachedDataType = data_type;
+                header_file.CachedDataType = class(obj.RawImage);
                 header_file.CachedImageSize = obj.ImageSize;
                 header_file.CachedRawImageFilename = raw_filename;
-                
+                header_file.CachedRawImageCompression = compression;
             end
-
-            % Logical data will be saved in bitwise format
-            if strcmp(data_type, 'logical')
-                file_data_type = 'ubit1';
-            else
-                file_data_type = data_type;
-            end
-
-            % Save raw image data
-            full_raw_filename = fullfile(file_path, raw_filename);
-            fid = fopen(full_raw_filename, 'wb');
-            fwrite(fid, obj.RawImage, file_data_type);
-            fclose(fid);
+            
+            PTKSavePtkRawImage(obj.RawImage, file_path, raw_filename, compression, reporting);
         end
         
-        % Replaces the underlying raw image data. This function is used for
-        % applying data which relates to the same original image; hence the
-        % image size must be the same.
         function ChangeRawImage(obj, new_image, image_type)
+            % Replaces the underlying raw image data. This function is used for
+            % applying data which relates to the same original image; hence the
+            % image size must be the same.
+        
             if (nargin > 2)
                 obj.ImageType = image_type;
             end
@@ -285,10 +252,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             obj.NotifyImageChanged;
         end
         
-        % Returns a raw image suitable for use with Matlab's plottin functions
-        % such as isosurface. The k-direction is inverted since the orientation
-        % for PTKImage is is opposite to that for Matlab's 3D axes
         function raw_image = GetRawImageForPlotting(obj)
+            % Returns a raw image suitable for use with Matlab's plottin functions
+            % such as isosurface. The k-direction is inverted since the orientation
+            % for PTKImage is is opposite to that for Matlab's 3D axes
+            
             raw_image = flipdim(obj.RawImage, 3);
         end
         
