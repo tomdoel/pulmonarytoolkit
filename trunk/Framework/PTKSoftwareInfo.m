@@ -70,6 +70,8 @@ classdef PTKSoftwareInfo < handle
         OutputFolderCacheName = 'OutputFolder'
         SplashScreenImageFile = 'PTKLogo.jpg'
 
+        % Compression to use when saving cache images
+        Compression = 'deflate'
         
         % Debugging and optional arguments
         DebugMode = false
