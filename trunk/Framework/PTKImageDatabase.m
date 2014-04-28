@@ -46,7 +46,7 @@ classdef PTKImageDatabase < handle
             obj.InvalidateCachedPaths;
         end
         
-        function patient_info = GetPatients(obj)
+        function [patient_info, patient_info_grouped] = GetPatients(obj)
             patient_info = obj.PatientMap.values;
             family_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
             family_names = PTKContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
@@ -61,9 +61,28 @@ classdef PTKImageDatabase < handle
             % Remove any empty values to ensure sort works
             empty_values = cellfun(@isempty, short_visible_names);
             short_visible_names(empty_values) = {'Unknown'};
-            [~, sorted_indices] = PTKTextUtilities.SortFilenames(short_visible_names);
+            [sorted_visible_names, sorted_indices] = PTKTextUtilities.SortFilenames(short_visible_names);
             
             patient_info = patient_info(sorted_indices);
+            
+            % Merge together patients with same name if this is specified by the settings
+            if PTKSoftwareInfo.GroupPatientsWithSameName
+                unique_names = sorted_visible_names;
+                
+                % We don't want 'Unknown' patient names to be grouped together, so temporarily
+                % assign them each a unique random name
+                random_name = PTKSystemUtilities.GenerateUid;
+                for empty_index = 1 : find(empty_values)
+                    unique_names{empty_index} = [random_name, int2str(empty_index)];
+                end
+                
+                [un, idx_last, idx] = unique(unique_names);
+                unique_idx = accumarray(idx(:), (1:length(idx))', [], @(x) {x});
+                patient_info_grouped = cellfun(@(x) [patient_info{x}], unique_idx, 'UniformOutput', false);
+                patient_info_grouped = patient_info_grouped';
+            else
+                patient_info_grouped =  [];
+            end
         end
         
         function patient_info = GetPatient(obj, patient_id)
@@ -131,6 +150,22 @@ classdef PTKImageDatabase < handle
             names = names(sorted_indices);
             ids = ids(sorted_indices);
             short_visible_names = short_visible_names(sorted_indices);
+            
+            % Merge together patients with same name if this is specified by the settings
+            if PTKSoftwareInfo.GroupPatientsWithSameName
+                
+                % Get unique names, but don't group together 'Unknown' patients
+                unique_names = short_visible_names;
+                random_name = PTKSystemUtilities.GenerateUid;
+                for empty_index = 1 : find(empty_values)
+                    unique_names{empty_index} = [random_name, int2str(empty_index)];
+                end
+                
+                [unique_names, ia, ic] = unique(unique_names);
+                short_visible_names = unique_names;
+                ids = ids(ia);
+                names = names(ia);
+            end
         end
         
         function DeleteSeries(obj, series_uids, reporting)

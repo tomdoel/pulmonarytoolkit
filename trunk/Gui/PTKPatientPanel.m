@@ -5,7 +5,7 @@ classdef PTKPatientPanel < PTKPanel
     %     build the user interface.
     %
     %     PTKPatientPanel represents the panel showing patient details in the
-    %     Patient Browser.
+    %     Patient Browser. 
     %
     %     Licence
     %     -------
@@ -51,23 +51,41 @@ classdef PTKPatientPanel < PTKPanel
     
     methods
         function obj = PTKPatientPanel(parent, patient_details, gui_callback, reporting)
+            % Create a new panel showing the series information for one or more patients,
+            % each defined by the patient_details vector. This vector may have more than one
+            % patient details object if there is more than one patient id corresponding to
+            % the same patient, which could occur due to anonymisation
+            
             obj = obj@PTKPanel(parent, reporting);
             obj.Enabled = false;
             obj.PatientDetails = patient_details;
             obj.GuiCallback = gui_callback;
             
-            obj.Id = patient_details.PatientId;
+            obj.Id = patient_details(1).PatientId;
 
-            if isempty(patient_details.VisibleName)
-                name = patient_details.PatientId;
-            elseif isempty(patient_details.PatientId)
-                name = patient_details.VisibleName;
+            if isempty(patient_details(1).VisibleName)
+                % If there is no patient name, show the patient id
+                name = patient_details(1).PatientId;
+                
+            elseif isempty(patient_details(1).PatientId)
+                % If there is no patient id, show the patient name
+                name = patient_details(1).VisibleName;
+                
             else
-                name = [patient_details.VisibleName, ' - ', patient_details.PatientId];
+                if numel(patient_details) > 1 || strcmp(patient_details(1).VisibleName, patient_details(1).PatientId)
+                    % If there is more than one patient ID, or the ID is the same as the name, we
+                    % only show the patient name
+                    name = patient_details(1).VisibleName;
+                    
+                else
+                    % Otherwise show the name and the ID
+                    name = [patient_details(1).VisibleName, ' - ', patient_details(1).PatientId];
+                end
             end
             obj.Name = name;
 
-            obj.PanelHeight = obj.PatientNameHeight + patient_details.GetNumberOfSeries*PTKSeriesDescription.SeriesTextHeight + 2*obj.BorderSpace;
+            total_number_of_series = sum(arrayfun(@(x) x.GetNumberOfSeries, patient_details));
+            obj.PanelHeight = obj.PatientNameHeight + total_number_of_series*PTKSeriesDescription.SeriesTextHeight + 2*obj.BorderSpace;
             obj.PatientNamePosition_Y = 1 + obj.PanelHeight - obj.PatientNameHeight - obj.BorderSpace;
                         
             obj.PatientNameTextControl = PTKText(obj, obj.Name, ['Patient name: ', obj.Name], 'PatientName');
@@ -160,13 +178,17 @@ classdef PTKPatientPanel < PTKPanel
         function PatientRightClicked(obj, ~, ~)
             if isempty(get(obj.PatientNameTextControl.GraphicalComponentHandle, 'uicontextmenu'))
                 context_menu = uicontextmenu;
-                context_menu_patient = uimenu(context_menu, 'Label', 'Delete this patient', 'Callback', @obj.DeletePatientSelected);
+                context_menu_patient = uimenu(context_menu, 'Label', 'Delete this patient', 'Callback', @obj.DeletePatientSelected); %#ok<NASGU>
                 set(obj.PatientNameTextControl.GraphicalComponentHandle, 'uicontextmenu', context_menu);
             end
         end        
         
         function AddStudies(obj, new_position)
-            datasets = obj.PatientDetails.GetListOfSeries;
+            datasets = [];
+            for patient_details = obj.PatientDetails
+                datasets = [datasets, patient_details.GetListOfSeries];
+            end
+            
             obj.SeriesDescriptions = PTKSeriesDescription.empty;
 
             for series_index = 1 : length(datasets)
