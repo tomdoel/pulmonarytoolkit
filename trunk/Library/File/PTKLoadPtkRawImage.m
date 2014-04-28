@@ -28,7 +28,7 @@ end
 
 function raw_image = LoadCompressed(full_raw_filename, data_type, image_size, format, reporting)
     
-    if ~PTKDiskUtilities.CompressionSupported(format, data_type)
+    if ~PTKDiskUtilities.CompressionSupported(format, data_type, reporting)
         reporting.LogVerbose([format, ' compression not supported for image data type ', data_type]);
         disp([format, ' compression not supported for image data type ', data_type]);
         raw_image = LoadUncompressed(full_raw_filename, data_type, image_size);

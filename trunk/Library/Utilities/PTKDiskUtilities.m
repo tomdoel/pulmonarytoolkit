@@ -414,7 +414,7 @@ classdef PTKDiskUtilities
                         file_suffix = ['_' int2str(next_index)];
                     end
                     raw_image_file_name = [filename_base file_suffix];
-                    header = old_structure.SaveRawImage(file_path, raw_image_file_name, PTKSoftwareInfo.Compression, reporting);
+                    header = old_structure.SaveRawImage(file_path, raw_image_file_name, reporting);
                     next_index = next_index + 1;
                     new_structure = header;
                 else
@@ -502,22 +502,27 @@ classdef PTKDiskUtilities
             reporting.CompleteProgress;
         end
         
-        function compression_supported = CompressionSupported(compression, data_type)
+        function compression_supported = CompressionSupported(compression, data_type, reporting)
             compression_supported = true;
             
             switch compression
+                case {[], ''}
+                    return;
+                    
                 case 'png'
                     switch data_type
                         case {'int32', 'uint32', 'int64', 'uint64'}
                             compression_supported = false;
                             return;
                     end
-                case 'tiff'
+                case {'tiff', 'deflate'}
                     switch data_type
-                        case {'int32', 'uint32', 'int64', 'uint64', 'single', 'double'}
+                        case {'int32', 'uint32', 'int64', 'uint64'}
                             compression_supported = false;
                             return;
                     end
+                otherwise
+                    reporting.Error('PTKDiskUtilities:CompressionSupported:UnknownCompressionType', ['I do not recognise the compression types  ', compression]);
             end
             
         end
