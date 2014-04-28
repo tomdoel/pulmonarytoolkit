@@ -26,13 +26,16 @@ end
 function SaveCompressed(full_raw_filename, raw_image, format, param1, param2, reporting)
     image_class = class(raw_image);
 
-    if ~PTKDiskUtilities.CompressionSupported(format, image_class)
+    if ~PTKDiskUtilities.CompressionSupported(format, image_class, reporting)
         reporting.LogVerbose([format, ' compression not supported for image data type ', image_class]);
         disp([format, ' compression not supported for image data type ', image_class]);
         SaveUncompressed(full_raw_filename, raw_image);
         return;
     end
     
+    image_data_size_3d = size(raw_image);
+    image_data_size_2d = [image_data_size_3d(1)*image_data_size_3d(2), image_data_size_3d(3)];
+    output_size = image_data_size_2d;
     switch image_class
         case 'int8'
             output_class = 'uint8';
@@ -42,18 +45,22 @@ function SaveCompressed(full_raw_filename, raw_image, format, param1, param2, re
             output_class = 'uint32';
         case 'int64'
             output_class = 'uint64';
+        case 'single'
+            output_class = 'uint16';
+            output_size(2) = 2*output_size(2);
+        case 'double'
+            output_class = 'uint16';
+            output_size(2) = 2*output_size(2);
         otherwise
             output_class = image_class;
     end
     
-    image_data_size_3d = size(raw_image);
-    image_data_size_2d = [image_data_size_3d(1)*image_data_size_3d(2), image_data_size_3d(3)];
     raw_image = reshape(raw_image, image_data_size_2d);
     
     if strcmp(output_class, image_class)
         raw_image_write = raw_image;
     else
-        raw_image_write = zeros(size(raw_image), output_class);
+        raw_image_write = zeros(output_size, output_class);
         raw_image_write(:) = typecast(raw_image(:), output_class);
     end
     
