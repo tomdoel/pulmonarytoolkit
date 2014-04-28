@@ -77,7 +77,16 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
     methods (Access = private)
                 
         function AddPatientPanels(obj)
-            for patient_detail = obj.PatientDatabase.GetPatients
+            [patient_info, patient_info_grouped] = obj.PatientDatabase.GetPatients;
+            
+            % Merge together patients with same name if this is specified by the settings
+            if PTKSoftwareInfo.GroupPatientsWithSameName
+                patient_info_list = patient_info_grouped;
+            else
+                patient_info_list = patient_info;
+            end
+
+            for patient_detail = patient_info_list
                 obj.AddPatientPanel(PTKPatientPanel(obj, patient_detail{1}, obj.GuiCallback, obj.Reporting));
             end
         end

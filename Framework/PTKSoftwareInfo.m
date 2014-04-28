@@ -45,6 +45,10 @@ classdef PTKSoftwareInfo < handle
         GuiFont = 'Helvetica'
         DefaultCategoryName = 'Uncategorised'
         
+        % If this parameter to true, then the patient browser will group together
+        % datasets with the same patient name, even if the patient ID is different
+        GroupPatientsWithSameName = true
+        
         % Directories
         DiskCacheFolderName = 'ResultsCache'
         OutputDirectoryName = 'Output'
