@@ -170,19 +170,21 @@ classdef PTKFigure < PTKUserInterfaceObject
         function CustomWindowButtonMotionFunction(obj, src, eventdata)
             % Called when mouse is moved
             
-            % If the mouse button is currently down, the mouse move is processed by the
-            % object which received the MouseDown event, regardless of where the mouse
-            % cursor currently is. Otherwise, the mouse move event goes to the object under
-            % the cursor
-            selection_type = get(src, 'SelectionType');
-            if isempty(obj.MouseCapturingObject) || ~isvalid(obj.MouseCapturingObject)
-                mouse_over_object = obj.ProcessActivity('MouseHasMoved', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
-                if ~isempty(obj.MouseOverObject) && isvalid(obj.MouseOverObject) && (isempty(mouse_over_object) || (mouse_over_object ~= obj.MouseOverObject))
-                    obj.ProcessActivityToSpecificObject(obj.MouseOverObject, 'MouseExit', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
+            if ishandle(obj)
+                % If the mouse button is currently down, the mouse move is processed by the
+                % object which received the MouseDown event, regardless of where the mouse
+                % cursor currently is. Otherwise, the mouse move event goes to the object under
+                % the cursor
+                selection_type = get(src, 'SelectionType');
+                if isempty(obj.MouseCapturingObject) || ~isvalid(obj.MouseCapturingObject)
+                    mouse_over_object = obj.ProcessActivity('MouseHasMoved', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
+                    if ~isempty(obj.MouseOverObject) && isvalid(obj.MouseOverObject) && (isempty(mouse_over_object) || (mouse_over_object ~= obj.MouseOverObject))
+                        obj.ProcessActivityToSpecificObject(obj.MouseOverObject, 'MouseExit', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
+                    end
+                    obj.MouseOverObject = mouse_over_object;
+                else
+                    obj.ProcessActivityToSpecificObject(obj.MouseCapturingObject, 'MouseDragged', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
                 end
-                obj.MouseOverObject = mouse_over_object;
-            else
-                obj.ProcessActivityToSpecificObject(obj.MouseCapturingObject, 'MouseDragged', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
             end
         end
 
