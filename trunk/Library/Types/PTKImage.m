@@ -197,10 +197,16 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             % LoadRawImage
         
             image_class = class(obj.RawImage(1));
-            if PTKDiskUtilities.CompressionSupported(PTKSoftwareInfo.Compression, image_class, reporting)
-                compression = PTKSoftwareInfo.Compression;
-            else
+            
+            if length(size(obj.RawImage)) ~= 3
+                % Compression currently only supports 3D images
                 compression = [];
+            else
+                if PTKDiskUtilities.CompressionSupported(PTKSoftwareInfo.Compression, image_class, reporting)
+                    compression = PTKSoftwareInfo.Compression;
+                else
+                    compression = [];
+                end
             end
             
             raw_filename = [file_name '.raw'];
