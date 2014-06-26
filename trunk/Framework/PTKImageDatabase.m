@@ -54,6 +54,7 @@ classdef PTKImageDatabase < handle
 
             if isempty(family_names)
                 patient_info = [];
+                patient_info_grouped = [];
                 return
             end
 
