@@ -32,7 +32,7 @@ classdef PTKLobes < PTKPlugin
         GeneratePreview = true
         
         EnableModes = PTKModes.EditMode
-        SubMode = PTKSubModes.EditBoundariesEditing
+        SubMode = PTKSubModes.FixedBoundariesEditing
     end
     
     methods (Static)
