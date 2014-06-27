@@ -170,7 +170,7 @@ classdef PTKFigure < PTKUserInterfaceObject
         function CustomWindowButtonMotionFunction(obj, src, eventdata)
             % Called when mouse is moved
             
-            if ishandle(obj)
+            if isvalid(obj)
                 % If the mouse button is currently down, the mouse move is processed by the
                 % object which received the MouseDown event, regardless of where the mouse
                 % cursor currently is. Otherwise, the mouse move event goes to the object under
