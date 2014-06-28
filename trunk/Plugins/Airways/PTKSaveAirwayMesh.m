@@ -41,18 +41,18 @@ classdef PTKSaveAirwayMesh < PTKPlugin
             results.ChangeRawImage(results.RawImage > 0);
             
             smoothing_size = 1;
-            filepath = dataset.GetOutputPathAndCreateIfNecessary;
             filename = 'PrunedAirwaysSurfaceMesh.stl';
             results_upsampled = results.Copy;
             results_upsampled.AddBorder(6);
-            results_upsampled.DownsampleImage(0.25)
+            results_upsampled.DownsampleImage(0.25);
 
             % Specifies the coordinate system to use when saving out files
             coordinate_system = PTKCoordinateSystem.DicomUntranslated;
             
             template_image = results;
-            PTKCreateSurfaceMesh(filepath, filename, results, smoothing_size, true, coordinate_system, template_image, reporting);
             
+            small_structures = true;
+            dataset.SaveSurfaceMesh('PTKSaveAirwayMesh', 'Airway mesh', filename, 'Surface mesh of the segmented airways down to the level of the pulmonary segments' , results, smoothing_size, small_structures, coordinate_system, template_image);
         end
         
         function results = GenerateImageFromResults(results, image_templates, reporting)

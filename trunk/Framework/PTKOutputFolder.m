@@ -64,6 +64,18 @@ classdef PTKOutputFolder < handle
             obj.ChangedFolders{end + 1} = file_path;
         end
         
+        function SaveSurfaceMesh(obj, plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, dataset_stack)
+            date_text = date;
+            output_folder = obj.GetOutputPath(dataset_stack);
+            file_path = fullfile(output_folder, subfolder_name);
+            ptk_file_name = PTKFilename(file_path, file_name);
+            new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
+            PTKDiskUtilities.CreateDirectoryIfNecessary(file_path);
+            PTKCreateSurfaceMesh(file_path, file_name, segmentation, smoothing_size, small_structures, coordinate_system, template_image, obj.Reporting);
+            obj.AddRecord(new_record);
+            obj.ChangedFolders{end + 1} = file_path;
+        end
+
         function OpenChangedFolders(obj)
             obj.ChangedFolders = unique(obj.ChangedFolders);
             for folder = obj.ChangedFolders'
