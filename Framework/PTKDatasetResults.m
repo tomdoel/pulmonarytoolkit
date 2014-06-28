@@ -267,6 +267,10 @@ classdef PTKDatasetResults < handle
         function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description, dataset_stack)
             obj.OutputFolder.SaveFigure(figure_handle, plugin_name, subfolder_name, file_name, description, dataset_stack);
         end
+
+        function SaveSurfaceMesh(obj, plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, dataset_stack)
+            obj.OutputFolder.SaveSurfaceMesh(plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, dataset_stack)
+        end
     end
 
     methods (Access = private)
