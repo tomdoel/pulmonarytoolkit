@@ -86,7 +86,7 @@ function PTKCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, 
         [fv, ~] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, reporting);
         
         current_filename = filename;
-        stlwrite(fullfile(filepath, current_filename), fv)
+        stlwrite(fullfile(filepath, current_filename), fv);
     end
     
     reporting.UpdateProgressValue(100);

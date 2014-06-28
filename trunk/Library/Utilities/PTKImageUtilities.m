@@ -464,6 +464,15 @@ classdef PTKImageUtilities
                     is_signed = true;
             end
         end
+        
+        function binary_image = GetLargestConnectedComponent(binary_image)
+            cc = bwconncomp(binary_image);
+            num_pixels = cellfun(@numel, cc.PixelIdxList);
+            [~, largest_component_index] = max(num_pixels);
+            binary_image(:) = false;
+            binary_image(cc.PixelIdxList{largest_component_index}) = true;
+        end
+        
     end
 end
 
