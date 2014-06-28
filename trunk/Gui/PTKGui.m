@@ -506,8 +506,8 @@ classdef PTKGui < PTKFigure
         end
 
 
-        function ReplaceOverlayImage(obj, new_image, image_type, title, colour_label_map, new_parent_map, new_child_map)
-            obj.ImagePanel.OverlayImage.ChangeRawImage(new_image, image_type);
+        function ReplaceOverlayImage(obj, new_image, title, colour_label_map, new_parent_map, new_child_map)
+            obj.ImagePanel.OverlayImage.ChangeRawImage(new_image.RawImage, new_image.ImageType);
             obj.ImagePanel.OverlayImage.Title = title;
             if ~isempty(colour_label_map)
                 obj.ImagePanel.OverlayImage.ChangeColorLabelMap(colour_label_map);
@@ -688,7 +688,7 @@ classdef PTKGui < PTKFigure
 
         function ReplaceOverlayImageCallback(obj, new_image, image_title)
             if isequal(new_image.ImageSize, obj.ImagePanel.BackgroundImage.ImageSize) && isequal(new_image.Origin, obj.ImagePanel.BackgroundImage.Origin)
-                obj.ReplaceOverlayImage(new_image.RawImage, new_image.ImageType, image_title, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap)
+                obj.ReplaceOverlayImage(new_image, image_title, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap)
             else
                 obj.ReplaceOverlayImageAdjustingSize(new_image, image_title, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap);
             end
