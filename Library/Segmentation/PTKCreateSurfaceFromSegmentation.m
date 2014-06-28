@@ -71,6 +71,13 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
         sub_seg = PTKGaussianFilter(sub_seg, smoothing_size);
     end
     
+    % The smoothing may split the segmentation, so we consider only the main component,
+    % and remove any other components by setting their value to zero
+    surviving_components = sub_seg.RawImage >= 0.2;
+    surviving_components = xor(surviving_components, PTKImageUtilities.GetLargestConnectedComponent(surviving_components));
+    sub_seg_raw = sub_seg.RawImage;
+    sub_seg_raw(surviving_components) = 0;
+    sub_seg.ChangeRawImage(sub_seg_raw);
     
     [xc, yc, zc] = sub_seg.GetPTKCoordinates;
     [xc, yc, zc] = PTKImageCoordinateUtilities.ConvertFromPTKCoordinatesCoordwise(xc, yc, zc, coordinate_system, template_image);
