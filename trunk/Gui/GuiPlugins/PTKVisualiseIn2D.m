@@ -54,7 +54,7 @@ classdef PTKVisualiseIn2D < PTKGuiPlugin
                 image_size = ptk_gui_app.ImagePanel.BackgroundImage.ImageSize;
                 voxel_size = ptk_gui_app.ImagePanel.BackgroundImage.VoxelSize;
                 
-                [dim_x_index, dim_y_index, dim_z_index] = PTKVisualiseIn2D.GetXYDimensionIndex(direction);
+                [dim_x_index, dim_y_index, dim_z_index] = PTKImageCoordinateUtilities.GetXYDimensionIndex(direction);
                 x_range = [1, image_size(dim_x_index)];
                 y_range = [1, image_size(dim_y_index)];
                 pixel_ratio = [voxel_size(dim_y_index) voxel_size(dim_x_index) voxel_size(dim_z_index)];
@@ -96,25 +96,8 @@ classdef PTKVisualiseIn2D < PTKGuiPlugin
     end
     
     methods (Static, Access = private)
-        function [dim_x_index dim_y_index dim_z_index] = GetXYDimensionIndex(orientation)
-            switch orientation
-                case PTKImageOrientation.Coronal
-                    dim_x_index = 2;
-                    dim_y_index = 3;
-                    dim_z_index = 1;
-                case PTKImageOrientation.Sagittal
-                    dim_x_index = 1;
-                    dim_y_index = 3;
-                    dim_z_index = 2;
-                case PTKImageOrientation.Axial
-                    dim_x_index = 2;
-                    dim_y_index = 1;
-                    dim_z_index = 3;
-            end
-        end
-        
-        % Displays a figure full-screen
         function Maximize(fig)
+            % Displays a figure full-screen
             
             if nargin==0, fig=gcf; end
             

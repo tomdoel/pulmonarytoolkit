@@ -32,8 +32,6 @@ classdef PTKGui < PTKFigure
         PatientBrowserButton
         PatientBrowserFactory
         
-        ModeTabChangedListener
-        
         LastWindowSize % Keep track of window size to prevent unnecessary resize
     end
     
@@ -53,7 +51,7 @@ classdef PTKGui < PTKFigure
             % Call the base class to initialise the figure class
             obj = obj@PTKFigure(PTKSoftwareInfo.Name, []);
 
-            % Set up the viewer panel and apply settings
+            % Set up the viewer panel
             obj.ImagePanel = PTKViewerPanel(obj);
             obj.AddChild(obj.ImagePanel);
             
@@ -65,10 +63,9 @@ classdef PTKGui < PTKFigure
             obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile);
             obj.Reporting.Log('New session of PTKGui');
             
-
             % Load the settings file
             obj.Settings = PTKSettings.LoadSettings(obj.Reporting);
-            obj.Settings.ApplySettingsToViewerPanel(obj.ImagePanel);                        
+            obj.Settings.ApplySettingsToViewerPanel(obj.ImagePanel);       
             
             % Create the object which manages the current dataset
             obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.Settings, obj.Reporting);
@@ -130,7 +127,7 @@ classdef PTKGui < PTKFigure
             obj.GuiDataset.UpdateModeTabControl;
             
             % Add listener for switching modes when the tab is changed
-            obj.ModeTabChangedListener = addlistener(obj.ModeTabControl, 'TabChangedEvent', @obj.ModeTabChanged);
+            obj.AddEventListener(obj.ModeTabControl, 'PanelChangedEvent', @obj.ModeTabChanged);
             
             % Create a progress panel which will replace the progress dialog
             obj.WaitDialogHandle = PTKProgressPanel(obj.ImagePanel.GraphicalComponentHandle);
@@ -240,9 +237,9 @@ classdef PTKGui < PTKFigure
         function SaveMarkers(obj)
             if obj.GuiDataset.DatasetIsLoaded
                 obj.Reporting.ShowProgress('Saving Markers');
-                markers = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
+                markers = obj.ImagePanel.GetMarkerPointManager.GetMarkerImage;
                 obj.GuiDataset.SaveMarkers(markers);
-                obj.ImagePanel.MarkerPointManager.MarkerPointsHaveBeenSaved;
+                obj.ImagePanel.GetMarkerPointManager.MarkerPointsHaveBeenSaved;
                 obj.Reporting.CompleteProgress;
             end
         end
@@ -250,7 +247,7 @@ classdef PTKGui < PTKFigure
         function SaveMarkersBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded
                 obj.Reporting.ShowProgress('Abandoning Markers');                
-                markers = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
+                markers = obj.ImagePanel.GetMarkerPointManager.GetMarkerImage;
                 obj.GuiDataset.SaveAbandonedMarkers(markers);
                 obj.Reporting.CompleteProgress;
             end
@@ -258,7 +255,7 @@ classdef PTKGui < PTKFigure
         
         function SaveMarkersManualBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded
-                markers = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
+                markers = obj.ImagePanel.GetMarkerPointManager.GetMarkerImage;
                 obj.GuiDataset.SaveMarkersManualBackup(markers);
             end
         end
@@ -333,11 +330,10 @@ classdef PTKGui < PTKFigure
         
         function Resize(obj, new_position)
             Resize@PTKFigure(obj, new_position);
-            obj.ResizeGui(new_position);
+            obj.ResizeGui(new_position, false);
         end
         
         function delete(obj)
-            delete(obj.ModeTabChangedListener);
             if ~isempty(obj.Reporting);
                 obj.Reporting.Log('Closing PTKGui');
             end
@@ -386,14 +382,24 @@ classdef PTKGui < PTKFigure
             wait_dialog = obj.WaitDialogHandle;
             obj.GuiDataset.RunPlugin(plugin_name, wait_dialog);
         end
-        
-        
+         
     end
+    
+    
+    
     
     methods (Access = protected)
         
-        % Executes when application closes
+        function input_has_been_processed = Keypressed(obj, click_point, key)
+            % Shortcut keys are normally processed by the object over which the mouse
+            % pointer is located. If a key hasn't been processed, we divert it to the viewer
+            % panel so that viewer panel shortcuts will work from other parts of the GUI.            
+            input_has_been_processed = obj.ImagePanel.ShortcutKeys(key);
+        end
+
+        
         function CustomCloseFunction(obj, src, ~)
+            % Executes when application closes
             obj.Reporting.ShowProgress('Saving settings');
             
             % Hide the Patient Browser, as it can take a short time to close
@@ -409,15 +415,15 @@ classdef PTKGui < PTKFigure
             CustomCloseFunction@PTKFigure(obj, src);
         end
         
-        
-        
-        
     end
     
+    
+    
+    
+    
+    
+    
     methods (Access = private)
-        
-        
-
         
         function ApplicationClosing(obj)
             obj.AutoSaveMarkers;
@@ -485,7 +491,7 @@ classdef PTKGui < PTKFigure
             if isempty(new_image)
                 disp('No previous markers found for this image');
             else
-                obj.ImagePanel.MarkerPointManager.ChangeMarkerImage(new_image);
+                obj.ImagePanel.GetMarkerPointManager.ChangeMarkerImage(new_image);
             end
             obj.MarkersHaveBeenLoaded = true;
         end
@@ -533,9 +539,9 @@ classdef PTKGui < PTKFigure
 
         function AutoSaveMarkers(obj)
             if ~isempty(obj.ImagePanel)
-                if ~isempty(obj.ImagePanel.MarkerPointManager) && obj.ImagePanel.MarkerPointManager.MarkerImageHasChanged && obj.MarkersHaveBeenLoaded
+                if ~isempty(obj.ImagePanel.GetMarkerPointManager) && obj.ImagePanel.GetMarkerPointManager.MarkerImageHasChanged && obj.MarkersHaveBeenLoaded
                     saved_marker_points = obj.GuiDataset.LoadMarkers;
-                    current_marker_points = obj.ImagePanel.MarkerPointManager.GetMarkerImage;
+                    current_marker_points = obj.ImagePanel.GetMarkerPointManager.GetMarkerImage;
                     markers_changed = false;
                     if isempty(saved_marker_points)
                         if any(current_marker_points.RawImage(:))
@@ -562,20 +568,24 @@ classdef PTKGui < PTKFigure
         end
 
         
-        function ResizeGui(obj, parent_position)
+        function ResizeGui(obj, parent_position, force_resize)
             
             parent_width_pixels = parent_position(3);
             parent_height_pixels = parent_position(4);
             
             new_size = [parent_width_pixels, parent_height_pixels];
-            if isequal(new_size, obj.LastWindowSize)
+            if isequal(new_size, obj.LastWindowSize) && ~force_resize
                 return;
             end
             obj.LastWindowSize = new_size;
             
             load_menu_height = obj.LoadMenuHeight;
             viewer_panel_height = max(1, parent_height_pixels - load_menu_height);
-            viewer_panel_width = viewer_panel_height;
+            
+            
+            image_height_pixels = viewer_panel_height - obj.ImagePanel.ControlPanelHeight;
+            image_width_pixels = obj.GetSuggestedWidth(image_height_pixels);
+            viewer_panel_width = image_width_pixels + PTKSlider.SliderWidth;
             
             version_panel_height = obj.VersionPanel.GetRequestedHeight;
             version_panel_width = max(1, parent_width_pixels - viewer_panel_width);
@@ -656,6 +666,13 @@ classdef PTKGui < PTKFigure
                 obj.ImagePanel.QuiverImage.ResizeToMatch(new_image);
             else
                 obj.ImagePanel.QuiverImage = new_image.BlankCopy;
+            end
+            
+            % Force a resize. This is so that the image panel can resize itself to optimally
+            % fit the image. If however the image panel is changed to retain a fixed size
+            % between datasets, then this resize is not necessary.
+            if obj.ComponentHasBeenCreated
+                obj.ResizeGui(obj.Position, true);
             end
         end
         
@@ -739,5 +756,28 @@ classdef PTKGui < PTKFigure
             set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
         end
 
+    end
+    
+    methods (Access = private)
+        
+        function suggested_width_pixels = GetSuggestedWidth(obj, image_height_pixels)
+            % Computes the width of the viewer so that the coronal view fills the whole window
+            
+            image_size_mm = obj.ImagePanel.BackgroundImage.ImageSize.*obj.ImagePanel.BackgroundImage.VoxelSize;
+
+            % We choose coronal orientation as the preferred orientation
+            % Note we could change this to the current orientation
+            % (obj.ImagePanel.Orientation), but if we did this we would need to force a
+            % GUI resize whenever the orientation was changed
+            optimal_direction_orientation = obj.ImagePanel.Orientation;
+            [dim_x_index, dim_y_index, dim_z_index] = PTKImageCoordinateUtilities.GetXYDimensionIndex(optimal_direction_orientation);
+            
+            image_height_mm = image_size_mm(dim_y_index);
+            image_width_mm = image_size_mm(dim_x_index);
+            suggested_width_pixels = ceil(image_width_mm*image_height_pixels/image_height_mm);
+            
+            suggested_width_pixels = max(suggested_width_pixels, ceil((2/3)*image_height_pixels));
+            suggested_width_pixels = min(suggested_width_pixels, ceil((5/3)*image_height_pixels));
+        end
     end
 end

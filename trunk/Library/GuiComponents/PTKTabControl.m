@@ -1,4 +1,4 @@
-classdef PTKTabControl < PTKPanel
+classdef PTKTabControl < PTKMultiPanel
     % PTKTabControl. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -14,72 +14,46 @@ classdef PTKTabControl < PTKPanel
 
     properties (Access = protected)
         TabPanel
-        TabMap
-        CurrentPanelTag
-    end
-    
-    events
-        TabChangedEvent
     end
     
     methods
         function obj = PTKTabControl(parent, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+            obj = obj@PTKMultiPanel(parent, reporting);
             
             obj.TabPanel = PTKTabPanel(obj, reporting);
             obj.AddChild(obj.TabPanel);
-            obj.TabMap = containers.Map;
         end
         
-        function AddTab(obj, panel, name, tag, tooltip)
-            obj.TabPanel.AddTab(name, tag, tooltip);
-            obj.TabMap(tag) = panel;
-            obj.AddChild(panel);
+        function AddTabbedPanel(obj, panel, name, tag, tooltip)
+            % Adds a panel and corresponding tab
             
-            % If no current tab exists, then select this one
-            if isempty(obj.CurrentPanelTag)
-                obj.ChangeSelectedTab(tag);
-            else
-                panel.Disable;
-            end
+            obj.TabPanel.AddTab(name, tag, tooltip);
+            obj.AddPanel(panel, tag);
             
             % Ensure tab panel will be created last
             obj.Reorder;
         end
         
-        function Resize(obj, panel_position)
-            Resize@PTKPanel(obj, panel_position);
+        function Resize(obj, multi_panel_position)
             
+            % Call the PTKPanel superclass, not the PTKMultiPanel, since we are reducing the
+            % height to fit in the tab panel
+            Resize@PTKPanel(obj, multi_panel_position);
+
             tab_panel_height = obj.TabPanel.GetRequestedHeight;
-            tab_panel_y_position = panel_position(4) - tab_panel_height;
-            obj.TabPanel.Resize([1, 1 + tab_panel_y_position, panel_position(3), tab_panel_height]);
-
+            tab_panel_y_position = multi_panel_position(4) - tab_panel_height;
+            obj.TabPanel.Resize([1, 1 + tab_panel_y_position, multi_panel_position(3), tab_panel_height]);
+            
+            panel_position = [1, 1, multi_panel_position(3), tab_panel_y_position];
+            
             % ToDo: We should only need to resize the current tab
-            for panel = obj.TabMap.values
-                panel{1}.Resize([1, 1, panel_position(3), tab_panel_y_position]);
+            for panel = obj.PanelMap.values
+                panel{1}.Resize(panel_position);
             end
-        end
-        
-        function ChangeSelectedTab(obj, tag)
-            if ~strcmp(tag, obj.CurrentPanelTag)
-                obj.TabPanel.ChangeSelectedTab(tag);
-            end
-        end
-
-        function TabChanged(obj, tag)
-            obj.CurrentPanelTag = tag;
-            for panel_key = obj.TabMap.keys
-                tab = obj.TabMap(panel_key{1});
-                if strcmp(tag, panel_key{1})
-                    tab.Enable(obj.Reporting);
-                else
-                    tab.Disable;
-                end
-            end
-            notify(obj, 'TabChangedEvent', PTKEventData(tag));
         end
         
         function Reorder(obj)
+            % Ensures the tab panel is on top
             children = obj.Children;
             tab_panel = obj.TabPanel;
             other_children = {};

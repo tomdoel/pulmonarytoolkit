@@ -55,8 +55,8 @@ classdef PTKSettings < handle
         function ApplySettingsToViewerPanel(obj, viewer_panel)
             viewer_panel.OverlayOpacity = obj.OverlayOpacity;
             viewer_panel.SliceNumber = obj.SliceNumber;
-            viewer_panel.MarkerPointManager.ChangeShowTextLabels(obj.ShowTextLabels);
-            viewer_panel.MarkerPointManager.ChangeCurrentColour(obj.CurrentMarkerColour);
+            viewer_panel.GetMarkerPointManager.ChangeShowTextLabels(obj.ShowTextLabels);
+            viewer_panel.GetMarkerPointManager.ChangeCurrentColour(obj.CurrentMarkerColour);
         end
         
         function SaveSettings(obj, viewer_panel, reporting)
@@ -64,8 +64,8 @@ classdef PTKSettings < handle
             % Also save settings from the image panel
             obj.OverlayOpacity = viewer_panel.OverlayOpacity;
             obj.SliceNumber = viewer_panel.SliceNumber;
-            obj.ShowTextLabels = viewer_panel.MarkerPointManager.ShowTextLabels;
-            obj.CurrentMarkerColour = viewer_panel.MarkerPointManager.CurrentColour;
+            obj.ShowTextLabels = viewer_panel.GetMarkerPointManager.ShowTextLabels;
+            obj.CurrentMarkerColour = viewer_panel.GetMarkerPointManager.CurrentColour;
             
             settings_filename = PTKDirectories.GetSettingsFilePath;
             

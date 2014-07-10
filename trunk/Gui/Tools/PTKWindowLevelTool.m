@@ -23,14 +23,16 @@ classdef PTKWindowLevelTool < PTKTool
     
     properties (Access = private)
         ViewerPanel
+        Callback
         StartCoords
         StartWindow
         StartLevel
     end
     
     methods
-        function obj = PTKWindowLevelTool(viewer_panel)
+        function obj = PTKWindowLevelTool(viewer_panel, callback)
             obj.ViewerPanel = viewer_panel;
+            obj.Callback = callback;
         end
         
         function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
@@ -38,7 +40,7 @@ classdef PTKWindowLevelTool < PTKTool
         
         function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
             if ~isempty(obj.StartCoords)            
-                [min_coords, max_coords] = viewer_panel.GetImageLimits;
+                [min_coords, max_coords] = obj.Callback.GetImageLimits;
                 coords_offset = screen_coords - obj.StartCoords;
                 
                 x_range = max_coords(1) - min_coords(1);
@@ -48,10 +50,10 @@ classdef PTKWindowLevelTool < PTKTool
                 y_relative_movement = coords_offset(2)/y_range;
                 
                 new_window = obj.StartWindow + x_relative_movement*100*30;
-                viewer_panel.SetWindowWithinLimits(new_window);
+                obj.Callback.SetWindowWithinLimits(new_window);
                 
                 new_level = obj.StartLevel + y_relative_movement*100*30;
-                viewer_panel.SetLevelWithinLimits(new_level);
+                obj.Callback.SetLevelWithinLimits(new_level);
             end
         end
         

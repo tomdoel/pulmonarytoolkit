@@ -49,6 +49,9 @@ classdef PTKTabPanel < PTKPanel
             obj.AddChild(obj.BlankText);
             
             obj.OrderedTabs = {};
+            
+            % Add listener for switching modes when the tab is changed
+            obj.AddEventListener(tab_control, 'PanelChangedEvent', @obj.TabChanged);
         end
         
         function AddTab(obj, name, tag, tooltip)
@@ -81,18 +84,6 @@ classdef PTKTabPanel < PTKPanel
             end
         end
         
-        function ChangeSelectedTab(obj, tag)
-            for tab_key = obj.Tabs.keys
-                tab = obj.Tabs(tab_key{1});
-                if strcmp(tab_key{1}, tag)
-                    tab.Select(true);
-                else
-                    tab.Select(false);
-                end
-            end
-            obj.TabControl.TabChanged(tag); 
-        end
-        
         function EnableTab(obj, tag)
             tab = obj.Tabs(tag);
             if ~tab.Enabled
@@ -116,8 +107,21 @@ classdef PTKTabPanel < PTKPanel
     end
     
     methods (Access = private)
+        
+        function TabChanged(obj, ~, event_data)
+            tag = event_data.Data;
+            for tab_key = obj.Tabs.keys
+                tab = obj.Tabs(tab_key{1});
+                if strcmp(tab_key{1}, tag)
+                    tab.Select(true);
+                else
+                    tab.Select(false);
+                end
+            end
+        end
+        
         function TabClicked(obj, ~, tag_data)
-            obj.ChangeSelectedTab(tag_data.Data);
+            obj.TabControl.ChangeSelectedTab(tag_data.Data);
         end
         
         function ResizePreTabEnable(obj, panel_position, tab_to_enable)

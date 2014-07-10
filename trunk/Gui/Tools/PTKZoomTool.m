@@ -21,12 +21,20 @@ classdef PTKZoomTool < PTKTool
         ShortcutKey = ''
     end
     
+    properties (Access = private)
+        Callback
+    end    
+    
     methods
+        function obj = PTKZoomTool(callback)
+            obj.Callback = callback;
+        end
+        
         function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
         end
         
         function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
-            [min_coords, max_coords] = viewer_panel.GetImageLimits;
+            [min_coords, max_coords] = obj.Callback.GetImageLimits;
             x_range = max_coords(1) - min_coords(1);
             y_range = max_coords(2) - min_coords(2);
             
@@ -44,7 +52,7 @@ classdef PTKZoomTool < PTKTool
             
             if (abs(x_lim(2) - x_lim(1)) > 10) && (abs(y_lim(2) - y_lim(1)) > 10) && ...
                     (abs(x_lim(2) - x_lim(1)) < 1000) && (abs(y_lim(2) - y_lim(1)) < 800)
-                viewer_panel.SetImageLimits([x_lim(1), y_lim(1)], [x_lim(2), y_lim(2)]);
+                obj.Callback.SetImageLimits([x_lim(1), y_lim(1)], [x_lim(2), y_lim(2)]);
             end
         end
         

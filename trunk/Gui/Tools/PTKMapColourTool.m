@@ -20,9 +20,6 @@ classdef PTKMapColourTool < PTKTool
         Tag = 'Map'
         ShortcutKey = 'b'
         
-    end
-    
-    properties
         FixedOuterBoundary = true % When this is set to true, the outer boundary cannot be changed
         
         BrushSize = 5 % Minimum size of the gaussian used to adjust the distance tranform
@@ -38,32 +35,22 @@ classdef PTKMapColourTool < PTKTool
         
         % Keep a record of when we have unsaved changes to markers
         ImageHasChanged = false
-        
     end
     
     properties (Access = private)
-        
         ViewerPanel
         FromColour
         Colour
-        
-        
         Enabled = false
-        
         OverlayChangeLock
+        ContextMenu
     end
     
     methods
-        function obj = PTKMapColourTool(viewer_panel, axes)
+        function obj = PTKMapColourTool(viewer_panel)
             obj.ViewerPanel = viewer_panel;
             obj.OverlayChangeLock = false;
             obj.InitialiseEditMode;
-            
-            
-            
-            figure_handle = ancestor(axes, 'figure');
-            obj.AddContextMenu(figure_handle);
-            
         end
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)
@@ -109,7 +96,7 @@ classdef PTKMapColourTool < PTKTool
         end
         
         function ShowMenu(obj)
-            set(obj.ContextMenu, 'Visible', 'on');
+            set(obj.GetContextMenu, 'Visible', 'on');
         end
         
         function NewSlice(obj)
@@ -249,29 +236,30 @@ classdef PTKMapColourTool < PTKTool
             global_image_coords = obj.ViewerPanel.BackgroundImage.LocalToGlobalCoordinates(local_image_coords);
         end
         
-    end
-    
-    methods (Access = private)
-        function AddContextMenu(obj, figure_handle)
-            obj.ContextMenu = uicontextmenu('Parent', figure_handle);
-            menu_erase = @(x, y) obj.ChangeColourCallback(x, y, 0);
-            menu_blue = @(x, y) obj.ChangeColourCallback(x, y, 1);
-            menu_green = @(x, y) obj.ChangeColourCallback(x, y, 2);
-            menu_red = @(x, y) obj.ChangeColourCallback(x, y, 3);
-            menu_cyan = @(x, y) obj.ChangeColourCallback(x, y, 4);
-            menu_magenta = @(x, y) obj.ChangeColourCallback(x, y, 5);
-            menu_yellow = @(x, y) obj.ChangeColourCallback(x, y, 6);
-            menu_grey = @(x, y) obj.ChangeColourCallback(x, y, 7);
-            
-            uimenu(obj.ContextMenu, 'Label', '  Erase', 'Callback', menu_erase, 'ForegroundColor', obj.Colours{1});
-            uimenu(obj.ContextMenu, 'Label', 'Change lobe to:', 'Separator', 'on', 'Enable', 'off');
-            uimenu(obj.ContextMenu, 'Label', '  Right upper', 'Callback', menu_blue, 'ForegroundColor', obj.Colours{2});
-            uimenu(obj.ContextMenu, 'Label', '  Right middle', 'Callback', menu_green, 'ForegroundColor', obj.Colours{3});
-            uimenu(obj.ContextMenu, 'Label', '  Uncertain', 'Callback', menu_red, 'ForegroundColor', obj.Colours{4});
-            uimenu(obj.ContextMenu, 'Label', '  Right lower', 'Callback', menu_cyan, 'ForegroundColor', obj.Colours{5});
-            uimenu(obj.ContextMenu, 'Label', '  Left upper', 'Callback', menu_magenta, 'ForegroundColor', obj.Colours{6});
-            uimenu(obj.ContextMenu, 'Label', '  Left lower', 'Callback', menu_yellow, 'ForegroundColor', obj.Colours{7});
-            uimenu(obj.ContextMenu, 'Label', '  Multiple', 'Callback', menu_grey, 'ForegroundColor', obj.Colours{8});
+        function menu = GetContextMenu(obj)
+            if isempty(obj.ContextMenu)
+                figure_handle = obj.ViewerPanel.GetParentFigure.GetContainerHandle;
+                obj.ContextMenu = uicontextmenu('Parent', figure_handle);
+                menu_erase = @(x, y) obj.ChangeColourCallback(x, y, 0);
+                menu_blue = @(x, y) obj.ChangeColourCallback(x, y, 1);
+                menu_green = @(x, y) obj.ChangeColourCallback(x, y, 2);
+                menu_red = @(x, y) obj.ChangeColourCallback(x, y, 3);
+                menu_cyan = @(x, y) obj.ChangeColourCallback(x, y, 4);
+                menu_magenta = @(x, y) obj.ChangeColourCallback(x, y, 5);
+                menu_yellow = @(x, y) obj.ChangeColourCallback(x, y, 6);
+                menu_grey = @(x, y) obj.ChangeColourCallback(x, y, 7);
+                
+                uimenu(obj.ContextMenu, 'Label', '  Erase', 'Callback', menu_erase, 'ForegroundColor', obj.Colours{1});
+                uimenu(obj.ContextMenu, 'Label', 'Change lobe to:', 'Separator', 'on', 'Enable', 'off');
+                uimenu(obj.ContextMenu, 'Label', '  Right upper', 'Callback', menu_blue, 'ForegroundColor', obj.Colours{2});
+                uimenu(obj.ContextMenu, 'Label', '  Right middle', 'Callback', menu_green, 'ForegroundColor', obj.Colours{3});
+                uimenu(obj.ContextMenu, 'Label', '  Uncertain', 'Callback', menu_red, 'ForegroundColor', obj.Colours{4});
+                uimenu(obj.ContextMenu, 'Label', '  Right lower', 'Callback', menu_cyan, 'ForegroundColor', obj.Colours{5});
+                uimenu(obj.ContextMenu, 'Label', '  Left upper', 'Callback', menu_magenta, 'ForegroundColor', obj.Colours{6});
+                uimenu(obj.ContextMenu, 'Label', '  Left lower', 'Callback', menu_yellow, 'ForegroundColor', obj.Colours{7});
+                uimenu(obj.ContextMenu, 'Label', '  Multiple', 'Callback', menu_grey, 'ForegroundColor', obj.Colours{8});
+            end
+            menu = obj.ContextMenu;
         end
         
         function closest_colour = GetClosestColour2D(obj, local_image_coords)
