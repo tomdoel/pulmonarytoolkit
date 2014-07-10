@@ -22,12 +22,12 @@ classdef PTKPanMatlabTool < PTKTool
     end
     
     properties (Access = private)
-        ViewerPanel
+        Callback
     end
     
     methods
-        function obj = PTKPanMatlabTool(viewer_panel)
-            obj.ViewerPanel = viewer_panel;
+        function obj = PTKPanMatlabTool(callback)
+            obj.Callback = callback;
         end
         
         function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
@@ -43,7 +43,7 @@ classdef PTKPanMatlabTool < PTKTool
         end
         
         function Enable(obj, enabled)
-            obj.ViewerPanel.EnablePan(enabled);
+            obj.Callback.EnablePan(enabled);
         end
         
         function NewSlice(obj)

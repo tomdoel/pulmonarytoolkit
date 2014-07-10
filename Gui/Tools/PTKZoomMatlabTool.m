@@ -22,13 +22,13 @@ classdef PTKZoomMatlabTool < PTKTool
     end
     
     properties (Access = private)    
-        ViewerPanel
+        Callback
     end
     
     methods
         
-        function obj = PTKZoomMatlabTool(viewer_panel)
-            obj.ViewerPanel = viewer_panel;
+        function obj = PTKZoomMatlabTool(callback)
+            obj.Callback = callback;
         end
         
         function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
@@ -44,7 +44,7 @@ classdef PTKZoomMatlabTool < PTKTool
         end
         
         function Enable(obj, enabled)
-            obj.ViewerPanel.EnableZoom(enabled);
+            obj.Callback.EnableZoom(enabled);
         end
         
         function NewSlice(obj)

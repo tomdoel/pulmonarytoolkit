@@ -1,4 +1,4 @@
-classdef PTKCompositePanel < PTKUserInterfaceObject
+classdef PTKCompositePanel < PTKVirtualPanel
     % PTKCompositePanel.  Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -23,10 +23,6 @@ classdef PTKCompositePanel < PTKUserInterfaceObject
         VerticalSpacing = 0
     end
     
-    properties (Access = protected)
-        Reporting
-    end
-    
     properties (Access = private)
         Panels
         CachedPanelHeight
@@ -35,17 +31,12 @@ classdef PTKCompositePanel < PTKUserInterfaceObject
     
     methods
         function obj = PTKCompositePanel(parent, reporting)
-            obj = obj@PTKUserInterfaceObject(parent);
-            obj.Reporting = reporting;
+            obj = obj@PTKVirtualPanel(parent, reporting);
             obj.Panels = [];
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            % There is no underlying graphical object to create
-        end
-        
         function Resize(obj, new_position)
-            Resize@PTKUserInterfaceObject(obj, new_position);
+            Resize@PTKVirtualPanel(obj, new_position);
             
             panel_width = new_position(3);
             y_coord_from_top = 1 + obj.TopMargin;
@@ -98,14 +89,9 @@ classdef PTKCompositePanel < PTKUserInterfaceObject
             end
             height = obj.CachedPanelHeight;
         end
-        
-        function child_coords = ParentToChildCoordinates(obj, parent_coords)
-            child_coords = parent_coords;
-        end
     end
     
     methods (Access = protected)
-        
         
         function AddPanel(obj, panel)
             obj.Panels = [obj.Panels, panel];
@@ -124,5 +110,6 @@ classdef PTKCompositePanel < PTKUserInterfaceObject
             obj.CachedPanelWidth = [];
             obj.CachedPanelHeight = [];
         end
+
     end
 end

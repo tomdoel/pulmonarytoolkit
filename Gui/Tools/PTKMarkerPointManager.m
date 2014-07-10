@@ -52,6 +52,7 @@ classdef PTKMarkerPointManager < PTKTool
         MarkerPointImage
         MarkerPoints
         ViewerPanel
+        Callback
         CurrentlyHighlightedMarker
         SliceNumber
         Orientation
@@ -63,8 +64,9 @@ classdef PTKMarkerPointManager < PTKTool
     end
     
     methods
-        function obj = PTKMarkerPointManager(viewer_panel)
+        function obj = PTKMarkerPointManager(viewer_panel, callback)
             obj.ViewerPanel = viewer_panel;
+            obj.Callback = callback;
             obj.MarkerPointImage = PTKMarkerPointImage;
         end
         
@@ -296,7 +298,7 @@ classdef PTKMarkerPointManager < PTKTool
         end
                 
         function new_marker = NewMarker(obj, coords, colour)
-            axes = obj.ViewerPanel.GetAxesHandle;
+            axes = obj.Callback.GetAxesHandle;
             new_marker = PTKMarkerPoint(coords, axes, colour, obj, obj.CoordinateLimits);
             
             if isempty(obj.MarkerPoints)

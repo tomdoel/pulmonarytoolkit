@@ -20,9 +20,6 @@ classdef PTKReplaceColourTool < PTKTool
         Tag = 'Paint'
         ShortcutKey = 'r'
         
-    end
-    
-    properties
         PaintOverBackground = false % When false, acts as a replace brush
         
         BrushSize = 5 % Minimum size of the gaussian used to adjust the distance tranform
@@ -41,23 +38,18 @@ classdef PTKReplaceColourTool < PTKTool
         FromColour
         Colour
         
-        
         Enabled = false
         
         OverlayChangeLock
+        
+        ContextMenu
     end
     
     methods
-        function obj = PTKReplaceColourTool(viewer_panel, axes)
+        function obj = PTKReplaceColourTool(viewer_panel)
             obj.ViewerPanel = viewer_panel;
             obj.OverlayChangeLock = false;
             obj.InitialiseEditMode;
-            
-            
-            
-            figure_handle = ancestor(axes, 'figure');
-            obj.AddContextMenu(figure_handle);
-            
         end
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)
@@ -266,29 +258,31 @@ classdef PTKReplaceColourTool < PTKTool
             global_image_coords = obj.ViewerPanel.BackgroundImage.LocalToGlobalCoordinates(local_image_coords);
         end
         
-    end
-    
-    methods (Access = private)
-        function AddContextMenu(obj, figure_handle)
-            obj.ContextMenu = uicontextmenu('Parent', figure_handle);
-            menu_erase = @(x, y) obj.ChangeColourCallback(x, y, 0);
-            menu_blue = @(x, y) obj.ChangeColourCallback(x, y, 1);
-            menu_green = @(x, y) obj.ChangeColourCallback(x, y, 2);
-            menu_red = @(x, y) obj.ChangeColourCallback(x, y, 3);
-            menu_cyan = @(x, y) obj.ChangeColourCallback(x, y, 4);
-            menu_magenta = @(x, y) obj.ChangeColourCallback(x, y, 5);
-            menu_yellow = @(x, y) obj.ChangeColourCallback(x, y, 6);
-            menu_grey = @(x, y) obj.ChangeColourCallback(x, y, 7);
+        function menu = GetContextMenu(obj)
+            if isempty(obj.ContextMenu)
+                figure_handle = obj.ViewerPanel.GetParentFigure.GetContainerHandle;
+                obj.ContextMenu = uicontextmenu('Parent', figure_handle);
+                menu_erase = @(x, y) obj.ChangeColourCallback(x, y, 0);
+                menu_blue = @(x, y) obj.ChangeColourCallback(x, y, 1);
+                menu_green = @(x, y) obj.ChangeColourCallback(x, y, 2);
+                menu_red = @(x, y) obj.ChangeColourCallback(x, y, 3);
+                menu_cyan = @(x, y) obj.ChangeColourCallback(x, y, 4);
+                menu_magenta = @(x, y) obj.ChangeColourCallback(x, y, 5);
+                menu_yellow = @(x, y) obj.ChangeColourCallback(x, y, 6);
+                menu_grey = @(x, y) obj.ChangeColourCallback(x, y, 7);
+                
+                uimenu(obj.ContextMenu, 'Label', 'Erase', 'Callback', menu_erase, 'ForegroundColor', obj.Colours{1});
+                uimenu(obj.ContextMenu, 'Label', 'Change colour to:', 'Separator', 'on', 'Enable', 'off');
+                uimenu(obj.ContextMenu, 'Label', '  Blue', 'Callback', menu_blue, 'ForegroundColor', obj.Colours{2});
+                uimenu(obj.ContextMenu, 'Label', '  Green', 'Callback', menu_green, 'ForegroundColor', obj.Colours{3});
+                uimenu(obj.ContextMenu, 'Label', '  Red', 'Callback', menu_red, 'ForegroundColor', obj.Colours{4});
+                uimenu(obj.ContextMenu, 'Label', '  Cyan', 'Callback', menu_cyan, 'ForegroundColor', obj.Colours{5});
+                uimenu(obj.ContextMenu, 'Label', '  Magenta', 'Callback', menu_magenta, 'ForegroundColor', obj.Colours{6});
+                uimenu(obj.ContextMenu, 'Label', '  Yellow', 'Callback', menu_yellow, 'ForegroundColor', obj.Colours{7});
+                uimenu(obj.ContextMenu, 'Label', '  Grey', 'Callback', menu_grey, 'ForegroundColor', obj.Colours{8});
+            end
             
-            uimenu(obj.ContextMenu, 'Label', 'Erase', 'Callback', menu_erase, 'ForegroundColor', obj.Colours{1});
-            uimenu(obj.ContextMenu, 'Label', 'Change colour to:', 'Separator', 'on', 'Enable', 'off');
-            uimenu(obj.ContextMenu, 'Label', '  Blue', 'Callback', menu_blue, 'ForegroundColor', obj.Colours{2});
-            uimenu(obj.ContextMenu, 'Label', '  Green', 'Callback', menu_green, 'ForegroundColor', obj.Colours{3});
-            uimenu(obj.ContextMenu, 'Label', '  Red', 'Callback', menu_red, 'ForegroundColor', obj.Colours{4});
-            uimenu(obj.ContextMenu, 'Label', '  Cyan', 'Callback', menu_cyan, 'ForegroundColor', obj.Colours{5});
-            uimenu(obj.ContextMenu, 'Label', '  Magenta', 'Callback', menu_magenta, 'ForegroundColor', obj.Colours{6});
-            uimenu(obj.ContextMenu, 'Label', '  Yellow', 'Callback', menu_yellow, 'ForegroundColor', obj.Colours{7});
-            uimenu(obj.ContextMenu, 'Label', '  Grey', 'Callback', menu_grey, 'ForegroundColor', obj.Colours{8});
+            menu = obj.ContextMenu;
         end
         
     end

@@ -20,10 +20,6 @@ classdef PTKTool < handle
         Tag
     end
     
-    properties (SetAccess = protected)
-        ContextMenu
-    end    
-    
     methods (Abstract)
         
         MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
@@ -40,6 +36,10 @@ classdef PTKTool < handle
     end
     
     methods
+        
+        function menu = GetContextMenu(obj)
+            menu = [];
+        end
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)
             is_enabled = true;

@@ -26,6 +26,8 @@ classdef PTKUserInterfaceObject < handle
         LastHandleVisible  % Stores the last visibility state set to the handle of the graphics component
 
         EventListeners
+        
+        VisibleParameter = 'on' % Defines the argument for component visibility
     end
     
     methods (Abstract)
@@ -247,6 +249,9 @@ classdef PTKUserInterfaceObject < handle
             end
         end
         
+        function PostCreation(obj, position, reporting)
+            % Called after the compent and all its children have been created
+        end
         
         function SetAllVisibility(obj)
             % Recursively sets visibility of all components to true
@@ -295,6 +300,8 @@ classdef PTKUserInterfaceObject < handle
                 for child = obj.Children
                     child{1}.CreateVisibleComponents(reporting);
                 end
+                
+                obj.PostCreation(obj.Position, reporting);
             end
         end
 
@@ -307,7 +314,7 @@ classdef PTKUserInterfaceObject < handle
                 if is_visible
                     % Show the component if it is hidden, or update the position if it has changed
                     if isequal(obj.LastHandleVisible, false) || (~isequal(obj.LastHandlePosition, obj.Position))
-                        set(obj.GraphicalComponentHandle, 'Visible', 'on', 'Position', obj.Position);
+                        set(obj.GraphicalComponentHandle, 'Visible', obj.VisibleParameter, 'Position', obj.Position);
                         obj.LastHandleVisible = true;
                         obj.LastHandlePosition = obj.Position;
                     end
@@ -467,9 +474,8 @@ classdef PTKUserInterfaceObject < handle
         
         function DeleteIfHandle(handle)
             % Removes a graphics handle
-            if ishandle(handle)
-                delete(handle)
-            end
+            
+            PTKSystemUtilities.DeleteIfHandle(handle);
         end
         
     end
