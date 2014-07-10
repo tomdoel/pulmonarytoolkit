@@ -4,7 +4,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     % PTKGraphMetricVsDistance draws a figure based on results which have been
     % computed by dividing images into bins along one of their axes. See the plugins 
     % PTKSaveAxialAnalysisResults, PTKSaveCoronalAnalysisResults,
-    % PTKSaveSaggitalAnalysisResults for examples of how to compute these
+    % PTKSaveSagittalAnalysisResults for examples of how to compute these
     % measurements along the corresponding axes. Once the measurments have been
     % computed and stored in a PTKResultsTable object, call PTKGraphMetricVsDistance
     % to plot a graph based on these results for one or more subjects.
