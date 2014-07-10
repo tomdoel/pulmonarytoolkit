@@ -490,6 +490,32 @@ classdef PTKImageCoordinateUtilities
             end
         end
         
+        function [dim_x_index, dim_y_index, dim_z_index] = GetXYDimensionIndex(orientation)
+            switch orientation
+                case PTKImageOrientation.Coronal
+                    dim_x_index = 2;
+                    dim_y_index = 3;
+                    dim_z_index = 1;
+                case PTKImageOrientation.Sagittal
+                    dim_x_index = 1;
+                    dim_y_index = 3;
+                    dim_z_index = 2;
+                case PTKImageOrientation.Axial
+                    dim_x_index = 2;
+                    dim_y_index = 1;
+                    dim_z_index = 3;
+            end
+        end
+        
+        function offset_voxels = GetOriginOffsetVoxels(from_image, to_image)
+            if ~isempty(to_image.GlobalOrigin) && ~isempty(from_image.GlobalOrigin)
+                offset_mm = to_image.GlobalOrigin - from_image.GlobalOrigin;
+                offset_voxels = offset_mm./from_image.VoxelSize;
+            else
+                offset_voxels = [0, 0, 0];
+            end
+        end
+        
     end
 end
 

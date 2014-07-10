@@ -64,6 +64,24 @@ classdef PTKSystemUtilities
             end
         end
 
+        function DeleteIfValid(object_handle)
+            % Deletes an object
+            
+            if ~isempty(object_handle)
+                if isvalid(object_handle)
+                    delete(object_handle)
+                end
+            end
+        end
+        
+        function DeleteIfHandle(handle)
+            % Removes a graphics handle
+            
+            if ishandle(handle)
+                delete(handle)
+            end
+        end
+        
     end
 end
 
