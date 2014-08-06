@@ -8,7 +8,7 @@ classdef PTKDeformationFieldCTToGasMRI < PTKPlugin
     %     Plugins should not be run directly from your code.
     %
     %     PTKDeformationFieldCTToGasMRI solves the fluid registration problem
-    %     between a CT left lung image and a gas MRI image, by solving the
+    %     between a CT left or right lung image and a gas MRI image, by solving the
     %     registation between CT and MRI and then applying a rigid transform
     %     between MRI and gas MRI,
     %
