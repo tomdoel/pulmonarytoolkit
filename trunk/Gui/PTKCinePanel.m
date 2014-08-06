@@ -37,10 +37,10 @@ classdef PTKCinePanel < PTKVirtualPanel
             obj.ControlPanel = control_panel;
 
             obj.Slider = PTKSlider(obj);
-            obj.AddChild(obj.Slider);
+            obj.AddChild(obj.Slider, obj.Reporting);
             
-            obj.Axes = PTKImageOverlayAxes(obj.ViewerPanel);
-            obj.AddChild(obj.Axes);
+            obj.Axes = PTKImageOverlayAxes(obj.ViewerPanel, reporting);
+            obj.AddChild(obj.Axes, obj.Reporting);
             
             obj.SliderValueChangedListener = addlistener(obj.Slider, 'SliderValueChanged', @obj.SliderValueChanged);            
         end

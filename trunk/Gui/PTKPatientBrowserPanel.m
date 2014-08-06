@@ -26,8 +26,8 @@ classdef PTKPatientBrowserPanel < PTKPanel
             obj = obj@PTKPanel(parent, reporting);
             obj.AllPatientsSlidingPanel = PTKAllPatientsSlidingPanel(obj, patient_database, gui_callback, reporting);
             obj.ListOfPatientsPanel = PTKListOfPatientsPanel(obj, obj.AllPatientsSlidingPanel, patient_database, gui_callback, reporting);
-            obj.AddChild(obj.AllPatientsSlidingPanel);
-            obj.AddChild(obj.ListOfPatientsPanel);
+            obj.AddChild(obj.AllPatientsSlidingPanel, obj.Reporting);
+            obj.AddChild(obj.ListOfPatientsPanel, obj.Reporting);
         end
 
         function SelectSeries(obj, patient_id, series_uid, selected)

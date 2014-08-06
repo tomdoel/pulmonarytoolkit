@@ -21,7 +21,7 @@ classdef PTKAllPatientsSlidingPanel < PTKSlidingPanel
         function obj = PTKAllPatientsSlidingPanel(parent, patient_database, gui_callback, reporting)
             obj = obj@PTKSlidingPanel(parent, reporting);
             obj.FloatingPanel = PTKAllPatientsPanel(obj, patient_database, gui_callback, reporting);
-            obj.AddChild(obj.FloatingPanel);
+            obj.AddChild(obj.FloatingPanel, obj.Reporting);
         end
         
         function SelectSeries(obj, patient_id, series_uid, selected)
