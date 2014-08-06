@@ -21,7 +21,7 @@ classdef PTKTabControl < PTKMultiPanel
             obj = obj@PTKMultiPanel(parent, reporting);
             
             obj.TabPanel = PTKTabPanel(obj, reporting);
-            obj.AddChild(obj.TabPanel);
+            obj.AddChild(obj.TabPanel, reporting);
         end
         
         function AddTabbedPanel(obj, panel, name, tag, tooltip)
@@ -65,6 +65,6 @@ classdef PTKTabControl < PTKMultiPanel
             
             other_children{end + 1} = tab_panel;
             obj.Children = other_children;
-        end        
+        end
     end
 end

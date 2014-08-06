@@ -16,11 +16,13 @@ classdef PTKText < PTKUserInterfaceObject
     
     properties
         FontSize
+        Bold
         FontColour
         HorizontalAlignment
         SelectedColour
         SelectedFontColour
         Clickable
+        BackgroundColour
     end
     
     properties (Access = private)
@@ -41,6 +43,7 @@ classdef PTKText < PTKUserInterfaceObject
         function obj = PTKText(parent, text, tooltip, tag)
             obj = obj@PTKUserInterfaceObject(parent);
             obj.Text = text;
+            obj.Bold = false;
             obj.ToolTip = tooltip;
             obj.Tag = tag;
             obj.FontSize = 11;
@@ -50,6 +53,7 @@ classdef PTKText < PTKUserInterfaceObject
             obj.FontColour = PTKSoftwareInfo.TextPrimaryColour;
             obj.SelectedColour = PTKSoftwareInfo.SelectedBackgroundColour;
             obj.SelectedFontColour = PTKSoftwareInfo.TextContrastColour;
+            obj.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
             
             obj.Clickable = true;
         end
@@ -74,16 +78,22 @@ classdef PTKText < PTKUserInterfaceObject
                 background_colour =  obj.SelectedColour;
                 text_colour = obj.SelectedFontColour;
             else
-                background_colour = PTKSoftwareInfo.BackgroundColour;
+                background_colour = obj.BackgroundColour;
                 text_colour = obj.FontColour;
+            end
+            
+            if obj.Bold
+                weight = 'bold';
+            else
+                weight = 'normal';
             end
             
             obj.GraphicalComponentHandle = uicontrol('Style', 'text', 'Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'String', obj.Text, ...
                 'Tag', obj.Tag, 'ToolTipString', obj.ToolTip, ...
                 'BackgroundColor', background_colour, ...
                 'FontAngle', 'normal', 'ForegroundColor', text_colour, 'FontUnits', 'pixels', 'FontSize', obj.FontSize, ...
-                'HorizontalAlignment', obj.HorizontalAlignment, ...
-                'Position', text_size, 'Enable', 'inactive');
+                'HorizontalAlignment', obj.HorizontalAlignment, 'FontWeight', weight, ...
+                'Position', text_size, 'Enable', 'inactive', 'Clipping', 'off');
         end
         
         function ChangeText(obj, new_text)
@@ -121,7 +131,7 @@ classdef PTKText < PTKUserInterfaceObject
                     background_colour = obj.SelectedColour;
                     text_colour = obj.SelectedFontColour;
                 else
-                    background_colour = PTKSoftwareInfo.BackgroundColour;
+                    background_colour = obj.BackgroundColour;
                     text_colour = obj.FontColour;
                 end
 

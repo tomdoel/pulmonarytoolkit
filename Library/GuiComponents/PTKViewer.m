@@ -106,7 +106,7 @@ classdef PTKViewer < PTKFigure
             obj = obj@PTKFigure(title, []);
 
             obj.ViewerPanelHandle = PTKViewerPanel(obj);
-            obj.AddChild(obj.ViewerPanelHandle);
+            obj.AddChild(obj.ViewerPanelHandle, reporting);
             
             obj.Image = image_handle;
             obj.Overlay = overlay_handle;
