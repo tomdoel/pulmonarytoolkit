@@ -48,11 +48,11 @@ classdef PTKListOfPatientsPanel < PTKPanel
             obj.AddButton = PTKButton(obj, '+', 'Import images', 'Add', @obj.AddButtonClicked);
             obj.AddButton.FontSize = obj.PatientTextFontSize;
             obj.AddButton.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
-            obj.AddChild(obj.AddButton);
+            obj.AddChild(obj.AddButton, obj.Reporting);
             obj.DeleteButton = PTKButton(obj, '-', 'Delete this patient', 'Delete', @obj.DeleteButtonClicked);
             obj.DeleteButton.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
             obj.DeleteButton.FontSize = obj.PatientTextFontSize;
-            obj.AddChild(obj.DeleteButton);
+            obj.AddChild(obj.DeleteButton, obj.Reporting);
         end
         
         function delete(obj)

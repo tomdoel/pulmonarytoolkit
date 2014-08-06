@@ -69,7 +69,7 @@ classdef PTKPluginGroupPanel < PTKPanel
                 current_plugin = category_map(char(current_plugin_key));
                 
                 button_handle = PTKPluginButton(obj, callback_function_handle, current_plugin);
-                obj.AddChild(button_handle);
+                obj.AddChild(button_handle, obj.Reporting);
                 
                 obj.PluginButtonHandlesMap(char(current_plugin_key)) = button_handle;
             end

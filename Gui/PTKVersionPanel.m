@@ -66,12 +66,12 @@ classdef PTKVersionPanel < PTKPanel
             obj.SoftwareNameText = PTKText(obj, [PTKSoftwareInfo.Name ' version ' PTKSoftwareInfo.Version] , '', 'SoftwareName');
             obj.SoftwareNameText.FontSize = obj.SoftwareNameFontSize;
             obj.SoftwareNameText.FontColour = PTKSoftwareInfo.TextSecondaryColour;
-            obj.AddChild(obj.SoftwareNameText);
+            obj.AddChild(obj.SoftwareNameText, obj.Reporting);
 
             obj.DeveloperModeCheckbox = PTKCheckbox(obj, 'Developer mode', 'Enabled developer mode', 'DeveloperMode');
             obj.DeveloperModeCheckbox.FontSize = obj.CheckboxFontSize;
             obj.DeveloperModeCheckbox.ChangeChecked(obj.Settings.DeveloperMode);
-            obj.AddChild(obj.DeveloperModeCheckbox);
+            obj.AddChild(obj.DeveloperModeCheckbox, obj.Reporting);
             
             % Add listener for changes to the developer mode check box
             obj.AddEventListener(obj.DeveloperModeCheckbox, 'CheckChanged', @obj.DeveloperCheckChanged);
@@ -79,7 +79,7 @@ classdef PTKVersionPanel < PTKPanel
             % Add the profiler checkbox but disable if developer mode is off
             obj.ProfileCheckbox = PTKCheckbox(obj, 'Enable Profiler', 'Starts or stops the Matlab profiler', 'Profiler');
             obj.ProfileCheckbox.FontSize = obj.CheckboxFontSize;
-            obj.AddChild(obj.ProfileCheckbox);
+            obj.AddChild(obj.ProfileCheckbox, obj.Reporting);
             if ~obj.Settings.DeveloperMode
                 obj.ProfileCheckbox.Disable;
             end
@@ -88,16 +88,16 @@ classdef PTKVersionPanel < PTKPanel
 
             obj.PatientNameText = PTKText(obj, obj.NoPatientText, '', 'PatientName');
             obj.PatientNameText.FontSize = obj.PatientNameFontSize;
-            obj.AddChild(obj.PatientNameText);
+            obj.AddChild(obj.PatientNameText, obj.Reporting);
             
             obj.PatientDetailsText = PTKText(obj, 'No details', '', 'PatientDetails');
             obj.PatientDetailsText.FontSize = obj.PatientDetailsFontSize;
-            obj.AddChild(obj.PatientDetailsText);
+            obj.AddChild(obj.PatientDetailsText, obj.Reporting);
 
             obj.CurrentResultText = PTKText(obj, '', '', 'CurrentResult');
             obj.CurrentResultText.FontSize = obj.CurrentResultFontSize;
             obj.CurrentResultText.FontColour = PTKSoftwareInfo.TextSecondaryColour;
-            obj.AddChild(obj.CurrentResultText);
+            obj.AddChild(obj.CurrentResultText, obj.Reporting);
             
             % Update the profile checkbox with the current status of the Matlab
             % profilers
