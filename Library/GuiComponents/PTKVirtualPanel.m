@@ -37,5 +37,9 @@ classdef PTKVirtualPanel < PTKUserInterfaceObject
         function child_coords = ParentToChildCoordinates(obj, parent_coords)
             child_coords = parent_coords;
         end
+        
+        function parent_coords = ChildToParentCoordinates(obj, child_coords)
+            parent_coords = child_coords;
+        end        
     end
 end
