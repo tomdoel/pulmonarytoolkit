@@ -359,7 +359,7 @@ classdef PTKImageUtilities
             frame.cdata = cdata;
         end
         
-        function rgb_image = GetButtonImage(image_preview, button_width, button_height, window_hu, level_hu, border, background_colour)
+        function rgb_image = GetButtonImage(image_preview, button_width, button_height, window_hu, level_hu, border, background_colour, border_colour)
             if ~isempty(image_preview)
                 if islogical(image_preview.RawImage)
                     button_image = zeros(button_height, button_width, 'uint8');
@@ -409,17 +409,29 @@ classdef PTKImageUtilities
             x_range = (1-final_fade_factor)*x_range + final_fade_factor;
             rgb_image_factor(:, 1:button_height, :) = repmat(x_range, [button_height, 1, 3]);
             rgb_image = uint8(round(rgb_image_factor.*double(rgb_image)));
+            
+            rgb_image = PTKImageUtilities.AddBorderToRGBImage(rgb_image, button_image, border, button_background_colour, button_text_colour, border_colour, []);
+        end
+        
+        function rgb_image = AddBorderToRGBImage(rgb_image, mask_image, border_size, button_background_colour, button_foreground_colour, border_colour, contrast_colour)
             for c = 1 : 3
                 color_slice = rgb_image(:, :, c);
-                color_slice(button_image(:) == 0) = button_background_colour(c);
-                color_slice(button_image(:) == 255) = button_text_colour(c);
+                color_slice(mask_image(:) == 0) = button_background_colour(c);
+                color_slice(mask_image(:) == 255) = button_foreground_colour(c);
                 rgb_image(:, :, c) = color_slice;
                 
-                if border > 0
-                    rgb_image(1:2, :, c) = button_text_colour(c);
-                    rgb_image(end, :, c) = button_text_colour(c);
-                    rgb_image(:, 1, c) = button_text_colour(c);
-                    rgb_image(:, end, c) = button_text_colour(c);
+                if border_size > 0
+                    if ~isempty(contrast_colour)
+                        rgb_image(1+border_size+1, :, c) = contrast_colour(c);
+                        rgb_image(end-border_size-1, :, c) = contrast_colour(c);
+                        rgb_image(:, border_size+1, c) = contrast_colour(c);
+                        rgb_image(:, end-border_size:end, c) = contrast_colour(c);
+                    end
+                    rgb_image(1:1+border_size, :, c) = border_colour(c);
+                    rgb_image(end-border_size+1:end, :, c) = border_colour(c);
+                    rgb_image(:, 1:border_size, c) = border_colour(c);
+                    rgb_image(:, end-border_size+1:end, c) = border_colour(c);
+                    
                 end
             end
         end
