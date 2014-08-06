@@ -58,7 +58,7 @@ classdef PTKSlider < PTKUserInterfaceObject
         
         function SetSliderValue(obj, value)
             obj.SliderValue = value;
-            if obj.IsVisible
+            if obj.ComponentHasBeenCreated
                 obj.SliderValueSetInProgress = true;
                 set(obj.GraphicalComponentHandle, 'Value', value);
                 obj.SliderValueSetInProgress = false;
@@ -68,15 +68,14 @@ classdef PTKSlider < PTKUserInterfaceObject
         function SetSliderLimits(obj, min, max)
             obj.SliderMin = min;
             obj.SliderMax = max;
-            if obj.IsVisible
-                set(obj.GraphicalComponentHandle, 'Min', min);
-                set(obj.GraphicalComponentHandle, 'Max', max);
+            if obj.ComponentHasBeenCreated
+                set(obj.GraphicalComponentHandle, 'Min', min, 'Max', max);
             end
         end
         
         function SetSliderSteps(obj, steps)
             obj.SliderSteps = steps;
-            if obj.IsVisible
+            if obj.ComponentHasBeenCreated
                 set(obj.GraphicalComponentHandle, 'SliderStep', steps);
             end
         end
