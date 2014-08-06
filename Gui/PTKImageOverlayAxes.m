@@ -1,4 +1,4 @@
-classdef PTKImageOverlayAxes < PTKAxes
+classdef PTKImageOverlayAxes < PTKImageAxes
     % PTKImageOverlayAxes. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -25,21 +25,21 @@ classdef PTKImageOverlayAxes < PTKAxes
     end
     
     methods
-        function obj = PTKImageOverlayAxes(parent)
-            obj = obj@PTKAxes(parent);
+        function obj = PTKImageOverlayAxes(parent, reporting)
+            obj = obj@PTKImageAxes(parent);
             
             % Add the screen images to the axes
             obj.BackgroundScreenImage = PTKScreenImage(obj);
-            obj.AddChild(obj.BackgroundScreenImage);
+            obj.AddChild(obj.BackgroundScreenImage, reporting);
             obj.OverlayScreenImage = PTKScreenImage(obj);
-            obj.AddChild(obj.OverlayScreenImage);
+            obj.AddChild(obj.OverlayScreenImage, reporting);
             obj.QuiverScreenImage = PTKScreenQuiverImage(obj);
-            obj.AddChild(obj.QuiverScreenImage);
+            obj.AddChild(obj.QuiverScreenImage, reporting);
             
         end
         
         function Resize(obj, position)
-            Resize@PTKAxes(obj, position);
+            Resize@PTKImageAxes(obj, position);
             
             obj.BackgroundScreenImage.Resize(position);
             obj.OverlayScreenImage.Resize(position);
