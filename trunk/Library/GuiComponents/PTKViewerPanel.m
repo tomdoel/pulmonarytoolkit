@@ -84,12 +84,12 @@ classdef PTKViewerPanel < PTKPanel
             
             % Create the coontrol panel
             obj.ControlPanel = PTKViewerPanelToolbar(obj, obj.Tools, obj.Reporting);
-            obj.AddChild(obj.ControlPanel);
+            obj.AddChild(obj.ControlPanel, obj.Reporting);
 
             % Create the renderer object, which handles the image processing in the viewer
             obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.ControlPanel, obj.Reporting);
             obj.ToolCallback.SetRenderer(obj.ViewerPanelMultiView);
-            obj.AddChild(obj.ViewerPanelMultiView);
+            obj.AddChild(obj.ViewerPanelMultiView, obj.Reporting);
         end
         
         function CreateGuiComponent(obj, position, reporting)

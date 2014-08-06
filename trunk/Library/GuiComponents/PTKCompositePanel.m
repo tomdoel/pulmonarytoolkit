@@ -95,7 +95,7 @@ classdef PTKCompositePanel < PTKVirtualPanel
         
         function AddPanel(obj, panel)
             obj.Panels = [obj.Panels, panel];
-            obj.AddChild(panel);
+            obj.AddChild(panel, obj.Reporting);
             obj.CachedPanelWidth = [];
             obj.CachedPanelHeight = [];
         end

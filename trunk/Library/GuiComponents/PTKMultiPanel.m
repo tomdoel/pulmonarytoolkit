@@ -28,7 +28,7 @@ classdef PTKMultiPanel < PTKPanel
         
         function AddPanel(obj, panel, tag)
             obj.PanelMap(tag) = panel;
-            obj.AddChild(panel);
+            obj.AddChild(panel, obj.Reporting);
             
             % If no current tab exists, then select this one
             if isempty(obj.CurrentPanelTag)
