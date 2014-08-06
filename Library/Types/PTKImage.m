@@ -884,8 +884,9 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             obj.NotifyImageChanged;
         end
         
-        % Creates a thumbnail preview image
         function GeneratePreview(obj, preview_size, flatten_before_preview)
+            % Creates a thumbnail preview image
+            
             slice_position = round(obj.ImageSize(1)/2);
 
             if flatten_before_preview
