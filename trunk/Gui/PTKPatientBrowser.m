@@ -29,7 +29,7 @@ classdef PTKPatientBrowser < PTKFigure
             obj.LockLoad = false;
 
             obj.BrowserPanel = PTKPatientBrowserPanel(obj, image_database, obj, reporting);
-            obj.AddChild(obj.BrowserPanel);
+            obj.AddChild(obj.BrowserPanel, obj.Reporting);
             
             obj.Resize(position);
         end
@@ -69,7 +69,15 @@ classdef PTKPatientBrowser < PTKFigure
                 obj.LockLoad = false;
             end
         end
+        
+        function DeleteDataset(obj, series_uid)
+            obj.GuiCallback.DeleteDataset(series_uid);
+        end
 
+        function DeletePatient(obj, patient_id)
+            obj.GuiCallback.DeletePatient(patient_id);
+        end
+        
         function DeleteFromPatientBrowser(obj, series_uids)
             obj.GuiCallback.DeleteDatasets(series_uids);
         end
