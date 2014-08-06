@@ -12,8 +12,13 @@ classdef PTKDiskUtilities
     methods (Static)
         
         function exists = FileExists(path_name, filename)
-            % Determine if the raw image file associated with a PTKImage results file exists in the cahce
-            exists = exist(fullfile(path_name, filename), 'file');
+            % Determine if the file exists
+            exists = 2 == exist(fullfile(path_name, filename), 'file');
+        end
+        
+        function exists = DirectoryExists(path_name)
+            % Determine if the directory exists
+            exists = 7 == exist(path_name, 'dir');
         end
         
         function RecycleFile(path_name, filename, reporting)
@@ -71,7 +76,7 @@ classdef PTKDiskUtilities
                 filename = '';
             else
                 [relative_pathname, name, ext] = fileparts(path_or_filename);
-                filename = [name ext];                
+                filename = [name ext];
             end
             current_path = pwd;
             cd(relative_pathname);
@@ -234,7 +239,7 @@ classdef PTKDiskUtilities
         end
 
         function CreateDirectoryIfNecessary(dir_name)
-            if ~exist(dir_name, 'dir')
+            if ~(exist(dir_name, 'dir') == 7)
                 mkdir(dir_name);
             end
         end
