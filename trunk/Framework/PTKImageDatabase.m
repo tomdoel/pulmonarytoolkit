@@ -46,7 +46,7 @@ classdef PTKImageDatabase < handle
             obj.InvalidateCachedPaths;
         end
         
-        function [patient_info, patient_info_grouped] = GetPatients(obj)
+        function patient_info = GetPatients(obj)
             patient_info = obj.PatientMap.values;
             family_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
             family_names = PTKContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
@@ -54,7 +54,6 @@ classdef PTKImageDatabase < handle
 
             if isempty(family_names)
                 patient_info = [];
-                patient_info_grouped = [];
                 return
             end
 
@@ -81,10 +80,40 @@ classdef PTKImageDatabase < handle
                 unique_idx = accumarray(idx(:), (1:length(idx))', [], @(x) {x});
                 patient_info_grouped = cellfun(@(x) [patient_info{x}], unique_idx, 'UniformOutput', false);
                 patient_info_grouped = patient_info_grouped';
-            else
-                patient_info_grouped =  [];
+                
+                patient_info = patient_info_grouped;
             end
         end
+        
+        function patient_info = GetAllPatientInfosForThisPatient(obj, patient_id)
+            if PTKSoftwareInfo.GroupPatientsWithSameName
+                patient_info_grouped = obj.GetPatients;
+                for group = patient_info_grouped
+                    for group_member = group{1}
+                        if strcmp(group_member.PatientId, patient_id)
+                            patient_info = group;
+                            return;
+                        end
+                    end
+                end
+                patient_info = [];
+                return;
+            else
+                patient_info = obj.GetPatient(patient_id);
+            end
+        end
+        
+        function datasets = GetAllSeriesForThisPatient(obj, patient_id)
+            datasets = [];
+            all_details = obj.GetAllPatientInfosForThisPatient(patient_id);
+            for patient_details_cell = all_details
+                for patient_details = all_details{1}
+                    datasets = [datasets, patient_details.GetListOfSeries];
+                end
+            end
+            
+        end
+        
         
         function patient_info = GetPatient(obj, patient_id)
             patient_info = obj.PatientMap(patient_id);
