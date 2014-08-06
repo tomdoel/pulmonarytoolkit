@@ -30,7 +30,7 @@ classdef PTKSlidingPanel < PTKPanel
         function obj = PTKSlidingPanel(parent_handle, reporting)
             obj = obj@PTKPanel(parent_handle, reporting);
             obj.Slider = PTKSlider(obj);
-            obj.AddChild(obj.Slider);
+            obj.AddChild(obj.Slider, obj.Reporting);
             obj.FloatingPanelYPosition = 0;
             obj.SliderValueChangedListener = addlistener(obj.Slider, 'SliderValueChanged', @obj.SliderValueChanged);
         end
@@ -85,7 +85,21 @@ classdef PTKSlidingPanel < PTKPanel
             
             obj.FloatingPanelYPosition = y_top;
             obj.SetSliderFromFloatingPanelYPosition;
-            obj.UpdateFloatingPanelPosition(false);
+            obj.UpdateFloatingPanelPosition(false); 
+        end
+        
+        function ScrollToShow(obj, y_top, y_bottom)
+            % Moves the sliding panel so that all coordinates between y_top and y_bottom are
+            % visible
+            
+            fixed_panel_height = obj.Position(4);
+            if y_bottom > (obj.FloatingPanelYPosition + fixed_panel_height)
+                obj.ScrollPanelToThisYPosition(y_bottom - fixed_panel_height);
+            end
+            if y_top < obj.FloatingPanelYPosition
+                obj.ScrollPanelToThisYPosition(y_top);
+            end
+            
             
         end
         
@@ -185,7 +199,6 @@ classdef PTKSlidingPanel < PTKPanel
             else
                 obj.Slider.Disable;
             end
-            
         end
         
     end
