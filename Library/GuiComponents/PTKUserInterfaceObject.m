@@ -34,10 +34,6 @@ classdef PTKUserInterfaceObject < handle
         CreateGuiComponent(obj, position, reporting)
     end
     
-    events
-        ControlCreated
-    end    
-    
     methods
         function obj = PTKUserInterfaceObject(parent)
             if nargin > 0
@@ -58,11 +54,7 @@ classdef PTKUserInterfaceObject < handle
         end
         
         function delete(obj)
-            delete(obj.EventListeners);
-
-            for child = obj.Children
-                delete(child{1});
-            end
+            obj.RemoveAndDeleteChildren
             obj.DeleteIfHandle(obj.GraphicalComponentHandle);
         end
         
@@ -75,6 +67,21 @@ classdef PTKUserInterfaceObject < handle
             end
             obj.Children{end + 1} = child;
             obj.ResizeRequired = true;
+            
+            if obj.ComponentHasBeenCreated && obj.IsVisible
+                child.Show(reporting);
+            end
+        end
+        
+        function RemoveAndDeleteChildren(obj)
+            % Remove and delete all child graphic objects
+
+            delete(obj.EventListeners);
+
+            for child = obj.Children
+                delete(child{1});
+            end
+            obj.Children = [];
         end
         
         function Resize(obj, new_position)
@@ -87,6 +94,8 @@ classdef PTKUserInterfaceObject < handle
             % When you override this method, you should call this base class.
             
             obj.ResizeRequired = false;
+            new_position(3) = max(1, new_position(3));
+            new_position(4) = max(1, new_position(4));
             if ~isempty(obj.GraphicalComponentHandle) && obj.IsVisible && ~obj.LockResize
                 set(obj.GraphicalComponentHandle, 'Position', new_position);
                 obj.LastHandlePosition = new_position;
@@ -135,11 +144,13 @@ classdef PTKUserInterfaceObject < handle
                 % Set the flag determining inherited enabled-ness for this window and all children
                 obj.SetAllParentEnabled(obj.ParentWindowEnabled);
                 
-                % Ensure any controls are created
-                obj.CreateVisibleComponents(reporting);
+                % If the component has never been displayed, it may not have a position
+                if isempty(obj.Position) && ~isempty(obj.Parent)
+                    obj.Parent.Resize(obj.Parent.Position);
+                end
                 
-                % Fire an event to indicate the control has just been created
-                notify(obj, 'ControlCreated');
+                % Ensure any controls are created
+                obj.CreateVisibleComponents(reporting);                
             end
                 
             % Make the graphical object visible
@@ -202,9 +213,23 @@ classdef PTKUserInterfaceObject < handle
             end
         end
         
+        function screen_coords = GetScreenPosition(obj)
+            if isempty(obj.Parent)
+                screen_coords = [1, 0];
+            else
+                screen_coords = obj.ChildToParentCoordinates(obj.Parent.GetScreenPosition);
+            end
+            
+        end
+        
         function child_coords = ParentToChildCoordinates(obj, parent_coords)
             component_position = obj.Position;
             child_coords = parent_coords - component_position(1:2) + 1;
+        end
+        
+        function parent_coords = ChildToParentCoordinates(obj, child_coords)
+            component_position = obj.Position;
+            parent_coords = child_coords + component_position(1:2) - 1;
         end
         
         function figure_handle = GetParentFigure(obj)
@@ -308,22 +333,33 @@ classdef PTKUserInterfaceObject < handle
         function UpdateComponentVisibility(obj)
             % Change the visibility of the uicomponent in the Handle
             
-            if ~isempty(obj.GraphicalComponentHandle)
+            if obj.ComponentHasBeenCreated
                 is_visible = obj.IsVisible;
                 
-                if is_visible
-                    % Show the component if it is hidden, or update the position if it has changed
-                    if isequal(obj.LastHandleVisible, false) || (~isequal(obj.LastHandlePosition, obj.Position))
-                        set(obj.GraphicalComponentHandle, 'Visible', obj.VisibleParameter, 'Position', obj.Position);
-                        obj.LastHandleVisible = true;
-                        obj.LastHandlePosition = obj.Position;
+                % If there is no underlying graphical object, we apply visibility to all the
+                % child objects
+                if isempty(obj.GraphicalComponentHandle)
+                    if ~is_visible
+                        for child = obj.Children
+                            child{1}.UpdateComponentVisibility;
+                        end
                     end
-                    
                 else
-                    % Hide the component if necessary
-                    if obj.LastHandleVisible
-                        set(obj.GraphicalComponentHandle, 'Visible', 'off');
-                        obj.LastHandleVisible = false;
+                    
+                    if is_visible
+                        % Show the component if it is hidden, or update the position if it has changed
+                        if isequal(obj.LastHandleVisible, false) || (~isequal(obj.LastHandlePosition, obj.Position))
+                            set(obj.GraphicalComponentHandle, 'Visible', obj.VisibleParameter, 'Position', obj.Position);
+                            obj.LastHandleVisible = true;
+                            obj.LastHandlePosition = obj.Position;
+                        end
+                        
+                    else
+                        % Hide the component if necessary
+                        if obj.LastHandleVisible
+                            set(obj.GraphicalComponentHandle, 'Visible', 'off');
+                            obj.LastHandleVisible = false;
+                        end
                     end
                 end
             end
