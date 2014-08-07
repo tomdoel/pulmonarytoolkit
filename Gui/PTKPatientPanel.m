@@ -26,13 +26,12 @@ classdef PTKPatientPanel < PTKPanel
 
     properties (Access = private)
         PatientNameTextControl
-        SeriesDescriptions
+        
+        SeriesDescriptionsList
         
         PatientDetails
         GuiCallback
         
-        CachedTableSize
-        CachedPanelLocation
         PanelHeight
         PatientNamePosition_Y
         
@@ -46,7 +45,11 @@ classdef PTKPatientPanel < PTKPanel
         PatientNameHeight = 40
         PatientNameWidth = 200
         PatientNameLeftPadding = 10        
-        BorderSpace = 10;
+        TopMargin = 10
+        BottomMargin = 10
+        ListTopMargin = 5
+        ListBottomMargin = 5
+        SpacingBetweenSeries = 0
     end
     
     methods
@@ -85,37 +88,34 @@ classdef PTKPatientPanel < PTKPanel
             obj.Name = name;
 
             total_number_of_series = sum(arrayfun(@(x) x.GetNumberOfSeries, patient_details));
-            obj.PanelHeight = obj.PatientNameHeight + total_number_of_series*PTKSeriesDescription.SeriesTextHeight + 2*obj.BorderSpace;
-            obj.PatientNamePosition_Y = 1 + obj.PanelHeight - obj.PatientNameHeight - obj.BorderSpace;
+            obj.PanelHeight = obj.PatientNameHeight + total_number_of_series*PTKSeriesDescription.SeriesTextHeight + ...
+                max(0, total_number_of_series-1)*obj.SpacingBetweenSeries + obj.ListTopMargin + obj.ListBottomMargin + obj.TopMargin + obj.BottomMargin;
+            obj.PatientNamePosition_Y = 1 + obj.PanelHeight - obj.PatientNameHeight - obj.TopMargin;
                         
             obj.PatientNameTextControl = PTKText(obj, obj.Name, ['Patient name: ', obj.Name], 'PatientName');
             obj.PatientNameTextControl.FontSize = obj.PatientNameFontSize;
-            obj.AddChild(obj.PatientNameTextControl);
+            obj.AddChild(obj.PatientNameTextControl, obj.Reporting);
             obj.TextClickedListeners = addlistener(obj.PatientNameTextControl, 'TextRightClicked', @obj.PatientRightClicked);
+            
+            obj.SeriesDescriptionsList = PTKListBox(obj, reporting);
+            obj.SeriesDescriptionsList.TopMargin = obj.ListTopMargin;
+            obj.SeriesDescriptionsList.BottomMargin = obj.ListBottomMargin;
+            obj.SeriesDescriptionsList.SpacingBetweenItems = obj.SpacingBetweenSeries;
+            obj.AddChild(obj.SeriesDescriptionsList, obj.Reporting);
         end
         
         function CreateGuiComponent(obj, position, reporting)
             CreateGuiComponent@PTKPanel(obj, position, reporting);
-            patient_text_position = [obj.PatientNameLeftPadding position(4)-obj.PatientNameHeight-obj.BorderSpace position(3)-obj.PatientNameLeftPadding obj.PatientNameHeight];
-            
             obj.AddStudies(position);
-            
-            % A series may already have been selected
-            if ~isempty(obj.LastSelectedSeriesUid)
-                obj.SelectSeries(obj.LastSelectedSeriesUid, true);
-            end
         end
         
         function Resize(obj, new_position)
             Resize@PTKPanel(obj, new_position);
-            patient_text_position = [obj.PatientNameLeftPadding new_position(4)-obj.PatientNameHeight-obj.BorderSpace new_position(3)-obj.PatientNameLeftPadding obj.PatientNameHeight];
+            patient_text_position = [obj.PatientNameLeftPadding 1+new_position(4)-obj.PatientNameHeight-obj.TopMargin new_position(3)-obj.PatientNameLeftPadding obj.PatientNameHeight];
             obj.PatientNameTextControl.Resize(patient_text_position);
             
-            for series_index = 1 : numel(obj.SeriesDescriptions)
-                y_position = obj.BorderSpace+(series_index-1)*PTKSeriesDescription.SeriesTextHeight;
-                series_description_location = [1, y_position, new_position(3), PTKSeriesDescription.SeriesTextHeight];
-                obj.SeriesDescriptions(series_index).Resize(series_description_location);
-            end
+            list_height = max(1, new_position(4) - obj.PatientNameHeight - obj.TopMargin - obj.BottomMargin);
+            obj.SeriesDescriptionsList.Resize([1, obj.BottomMargin, new_position(3), list_height]);
         end
         
         function height = GetRequestedHeight(obj, width)
@@ -123,18 +123,7 @@ classdef PTKPatientPanel < PTKPanel
         end
         
         function SelectSeries(obj, series_uid, selected)
-            if selected
-                obj.LastSelectedSeriesUid = series_uid;
-            else
-                obj.LastSelectedSeriesUid = [];
-            end
-            
-            for series_index = 1 : numel(obj.SeriesDescriptions)
-                sd = obj.SeriesDescriptions(series_index);
-                if strcmp(sd.SeriesUid, series_uid)
-                    sd.Select(selected);
-                end
-            end
+            obj.SeriesDescriptionsList.SelectItem(series_uid, selected);
         end
 
         function DeletePatientSelected(obj, ~, ~)
@@ -142,33 +131,16 @@ classdef PTKPatientPanel < PTKPanel
         end
 
         function DeletePatient(obj)
-            choice = questdlg('Do you want to delete this patient?', ...
-                'Delete patient', 'Delete', 'Don''t delete', 'Don''t delete');
-            switch choice
-                case 'Delete'
-                    parent_figure = obj.GetParentFigure;
-                    parent_figure.ShowWaitCursor;
-                    obj.GuiCallback.BringToFront;
-
-                    series_descriptions = obj.SeriesDescriptions;
-                    
-                    gui_callback = obj.GuiCallback;
-                    series_uids = {};
-                    
-                    for series_index = 1 : numel(series_descriptions)
-                        series_uids{series_index} = series_descriptions(series_index).SeriesUid;
-                    end
-
-                    % Note that obj may be deleted during this loop as the patient panels are
-                    % rebuilt, so we can't reference obj at all from here on
-                    % for line
-                    gui_callback.DeleteFromPatientBrowser(series_uids);
-                    
-                    parent_figure.BringToFront;
-                    parent_figure.HideWaitCursor;
-                    
-                case 'Don''t delete'
-            end
+            parent_figure = obj.GetParentFigure;
+            parent_figure.ShowWaitCursor;
+            obj.GuiCallback.BringToFront;
+            
+            gui_callback = obj.GuiCallback;
+            patient_id = obj.Id;
+            gui_callback.DeletePatient(patient_id);
+            
+            parent_figure.BringToFront;
+            parent_figure.HideWaitCursor;
         end
         
     end
@@ -181,7 +153,7 @@ classdef PTKPatientPanel < PTKPanel
                 context_menu_patient = uimenu(context_menu, 'Label', 'Delete this patient', 'Callback', @obj.DeletePatientSelected); %#ok<NASGU>
                 set(obj.PatientNameTextControl.GraphicalComponentHandle, 'uicontextmenu', context_menu);
             end
-        end        
+        end
         
         function AddStudies(obj, new_position)
             datasets = [];
@@ -189,16 +161,11 @@ classdef PTKPatientPanel < PTKPanel
                 datasets = [datasets, patient_details.GetListOfSeries];
             end
             
-            obj.SeriesDescriptions = PTKSeriesDescription.empty;
-
+            obj.SeriesDescriptionsList.ClearItems;
+            
             for series_index = 1 : length(datasets)
-                y_position = obj.BorderSpace+(series_index - 1)*PTKSeriesDescription.SeriesTextHeight;
-                series_description_location = [1, y_position, new_position(3), PTKSeriesDescription.SeriesTextHeight];
-                
                 series = datasets{series_index};
-                obj.SeriesDescriptions(series_index) = PTKSeriesDescription(obj, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, obj.Id, series.SeriesUid, obj.GuiCallback);
-                obj.SeriesDescriptions(series_index).Resize(series_description_location);
-                obj.AddChild(obj.SeriesDescriptions(series_index));
+                obj.SeriesDescriptionsList.AddItem(PTKSeriesDescription(obj.SeriesDescriptionsList, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, obj.Id, series.SeriesUid, obj.GuiCallback, obj.Reporting));
             end
         end
 
