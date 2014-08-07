@@ -64,7 +64,7 @@ classdef PTKText < PTKUserInterfaceObject
                 obj.UpdateBackgroundColour;
             end
         end
-        
+
         function Highlight(obj, highlighted)
             if (highlighted ~= obj.Highlighted)
                 obj.Highlighted = highlighted;

@@ -29,6 +29,7 @@ classdef PTKButton < PTKUserInterfaceObject
         BackgroundColour = [0, 0, 0]
         
         Selected = false
+        Highlighted = false;
         
         ShowTextOnButton
         
@@ -104,20 +105,9 @@ classdef PTKButton < PTKUserInterfaceObject
         function Select(obj, is_selected)
             if obj.Selected ~= is_selected
                 obj.Selected = is_selected;
-                mask_image = ones(size(obj.RGBImage));
-                if is_selected
-                    border_colour = obj.SelectedColour;
-                else
-                    border_colour = obj.UnSelectedColour;
-                end
-                obj.RGBImage = PTKImageUtilities.AddBorderToRGBImage(obj.RGBImage, mask_image, obj.BorderSize, obj.BackgroundColour, obj.UnSelectedColour, border_colour, obj.BackgroundColour);
-                
-                if obj.ComponentHasBeenCreated
-                    set(obj.GraphicalComponentHandle, 'CData', obj.RGBImage);
-                end
+                obj.UpdateBackgroundColour;
             end
-        end
-        
+        end        
     end
     
     methods (Access = protected)
@@ -125,6 +115,51 @@ classdef PTKButton < PTKUserInterfaceObject
             obj.Select(true);
             notify(obj, 'ButtonClicked', PTKEventData(obj.Tag));
             obj.Callback(obj.Tag);
+            obj.Select(false);
+        end
+        
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+            % This method is called when the mouse is moved
+
+            obj.Highlight(true);
+            input_has_been_processed = true;
+        end
+
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+            % This method is called when the mouse exits a control which previously
+            % processed a MouseHasMoved event
+            
+            obj.Highlight(false);
+            input_has_been_processed = true;
+        end
+        
+    end
+    
+    methods (Access = private)
+        function Highlight(obj, highlighted)
+            if (highlighted ~= obj.Highlighted)
+                obj.Highlighted = highlighted;
+                obj.UpdateBackgroundColour;
+            end            
+        end
+        
+        function UpdateBackgroundColour(obj)
+            mask_image = ones(size(obj.RGBImage));
+            if obj.Selected
+                border_colour = obj.SelectedColour;
+            else
+                border_colour = obj.UnSelectedColour;
+            end
+            
+            if obj.Highlighted
+                border_colour = min(255, border_colour + 100);
+            end
+            
+            obj.RGBImage = PTKImageUtilities.AddBorderToRGBImage(obj.RGBImage, mask_image, obj.BorderSize, obj.BackgroundColour, obj.UnSelectedColour, border_colour, obj.BackgroundColour);
+            
+            if obj.ComponentHasBeenCreated
+                set(obj.GraphicalComponentHandle, 'CData', obj.RGBImage);
+            end
         end        
     end
 end

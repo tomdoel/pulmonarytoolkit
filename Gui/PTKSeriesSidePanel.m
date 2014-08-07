@@ -46,11 +46,11 @@ classdef PTKSeriesSidePanel < PTKListBoxWithTitle
     end
     
     methods (Access = protected)
-        function AddButtonClicked(obj, tag)
+        function AddButtonClicked(obj, ~, event_data)
             obj.GuiCallback.ImportMultipleFiles;
         end
         
-        function DeleteButtonClicked(obj, tag)
+        function DeleteButtonClicked(obj, ~, event_data)
             series_uid = obj.ListBox.SelectedTag;
             if ~isempty(series_uid)
                 

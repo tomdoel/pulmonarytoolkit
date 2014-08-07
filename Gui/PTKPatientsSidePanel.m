@@ -43,11 +43,11 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
     
     methods (Access = protected)
         
-        function AddButtonClicked(obj, tag)
+        function AddButtonClicked(obj, ~, event_data)
             obj.GuiCallback.ImportMultipleFiles;
         end
         
-        function DeleteButtonClicked(obj, tag)
+        function DeleteButtonClicked(obj, ~, event_data)
             patient_id = obj.ListBox.SelectedTag;
             if ~isempty(patient_id)
                 obj.GuiCallback.DeletePatient(patient_id);
