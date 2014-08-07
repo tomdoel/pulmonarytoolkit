@@ -39,7 +39,6 @@ classdef PTKSidePanel < PTKPanel
     methods
         function obj = PTKSidePanel(parent, patient_database, state, gui_callback, reporting)
             obj = obj@PTKPanel(parent, reporting);
-%             obj.Enabled = true;
             
             obj.GuiState = state;
             obj.SidePanelAxes = PTKLineAxes(obj);
