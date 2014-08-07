@@ -22,6 +22,8 @@ classdef PTKGuiDataset < handle
         CurrentPluginName
         CurrentContext
         CurrentVisiblePluginName
+        
+        GuiDatasetState
     end
     
     properties (Access = private)
@@ -38,6 +40,7 @@ classdef PTKGuiDataset < handle
     
     methods
         function obj = PTKGuiDataset(gui, viewer_panel, settings, reporting)
+            obj.GuiDatasetState = PTKGuiDatasetState;
             obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, settings, reporting);
 
             obj.Gui = gui;
@@ -178,7 +181,7 @@ classdef PTKGuiDataset < handle
                 
                 obj.Gui.SaveSettings;
                 
-                obj.SetDatasetAndPluginName([], [], [], [], false);
+                obj.SetNoDataset;
                 
             catch exc
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
@@ -195,6 +198,7 @@ classdef PTKGuiDataset < handle
 
             obj.Gui.AddAllPreviewImagesToButtons([]);
             obj.Gui.UpdatePatientBrowser([], []);
+
             obj.Gui.UpdateQuickLoadMenu;
         end
         
@@ -334,6 +338,8 @@ classdef PTKGuiDataset < handle
 
                 obj.Gui.LoadMarkersIfRequired;
 
+                obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid);
+                
             catch exc
                 % For the patient browser
                 patient_id = [];
@@ -351,11 +357,13 @@ classdef PTKGuiDataset < handle
                     msgbox(exc.message, [PTKSoftwareInfo.Name ': Cannot load dataset'], 'error');
                     obj.Reporting.ShowMessage('PTKGui:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
                 end
+                
+                obj.GuiDatasetState.ClearPatientAndSeries;
+                
             end
             
             obj.Gui.UpdateQuickLoadMenu;
             obj.Gui.UpdatePatientBrowser(patient_id, series_uid);
-
         end
         
         % Causes the GUI to run the named plugin and display the result
@@ -402,6 +410,11 @@ classdef PTKGuiDataset < handle
         
         function SaveSettings(obj)
             obj.Gui.SaveSettings;
+        end
+        
+        function SetNoDataset(obj)
+            obj.SetDatasetAndPluginName([], [], [], [], false);
+            obj.GuiDatasetState.ClearPatientAndSeries;            
         end
     end
     
@@ -488,6 +501,7 @@ classdef PTKGuiDataset < handle
                 series_name = series_info.Name;
             end
             obj.Gui.UpdateGuiDatasetAndPluginName(series_name, patient_visible_name, plugin_visible_name, is_edited);
+            obj.Gui.UpdateToolbar;
         end
         
     end
