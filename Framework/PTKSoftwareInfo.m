@@ -56,9 +56,11 @@ classdef PTKSoftwareInfo < handle
         ApplicationSettingsFolderName = 'TDPulmonaryToolkit'
         PluginDirectoryName = 'Plugins'
         GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')
+        GuiToolDirectoryName = fullfile('Gui', 'Toolbar')
         MexSourceDirectory = fullfile('Library', 'mex')
         UserDirectoryName = 'User'
         TestSourceDirectory = 'Test'
+        IconFolder = fullfile('Gui', 'Icons')
 
         % Filenames
         LogFileName = 'log.txt'
@@ -85,6 +87,7 @@ classdef PTKSoftwareInfo < handle
         DemoMode = false % If true, user plugins will be ignored
         WriteVerboseEntriesToLogFile = false
         RecycleWhenDeletingCacheFiles = false
+        ToolbarEnabled = false
         
         % Do not change this
         CancelErrorId = 'PTKMain:UserCancel'

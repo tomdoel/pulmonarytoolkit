@@ -25,6 +25,9 @@ classdef PTKGui < PTKFigure
         WaitDialogHandle
         MarkersHaveBeenLoaded = false
         
+        SidePanel
+        ToolbarPanel
+
         VersionPanel
         ModeTabControl
         DropDownLoadMenu
@@ -38,6 +41,7 @@ classdef PTKGui < PTKFigure
     properties (Constant, Access = private)
         LoadMenuHeight = 23
         PatientBrowserWidth = 100
+        SidePanelWidth = 250
     end
     
     methods
@@ -53,7 +57,7 @@ classdef PTKGui < PTKFigure
 
             % Set up the viewer panel
             obj.ImagePanel = PTKViewerPanel(obj);
-            obj.AddChild(obj.ImagePanel);
+            obj.AddChild(obj.ImagePanel, obj.Reporting);
             
             % Any unhandled keyboard input goes to the viewer panel
             obj.DefaultKeyHandlingObject = obj.ImagePanel;
@@ -63,12 +67,21 @@ classdef PTKGui < PTKFigure
             obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile);
             obj.Reporting.Log('New session of PTKGui');
             
+            % Create the panel of tools across the bottom of the interface
+            if PTKSoftwareInfo.ToolbarEnabled
+                obj.ToolbarPanel = PTKToolbarPanel(obj, obj, obj.Reporting);
+                obj.AddChild(obj.ToolbarPanel, obj.Reporting);
+            end
+            
             % Load the settings file
             obj.Settings = PTKSettings.LoadSettings(obj.Reporting);
             obj.Settings.ApplySettingsToViewerPanel(obj.ImagePanel);       
             
             % Create the object which manages the current dataset
             obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.Settings, obj.Reporting);
+            
+            obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj, obj.Reporting);
+            obj.AddChild(obj.SidePanel, obj.Reporting);
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
@@ -77,18 +90,18 @@ classdef PTKGui < PTKFigure
             % Patient Browser button
             pb = obj.PatientBrowserFactory;
             obj.PatientBrowserButton = PTKButton(obj, 'Patients', 'Open the Patient Browser', 'PatientBrowser', @pb.Show);
-            obj.AddChild(obj.PatientBrowserButton);
+            obj.AddChild(obj.PatientBrowserButton, obj.Reporting);
             
             obj.ModeTabControl = PTKModeTabControl(obj, obj.Settings, obj.Reporting);
-            obj.AddChild(obj.ModeTabControl);
+            obj.AddChild(obj.ModeTabControl, obj.Reporting);
 
             % Drop down quick load menu
             obj.DropDownLoadMenu = PTKDropDownLoadMenu(obj, obj, obj.Settings);
-            obj.AddChild(obj.DropDownLoadMenu);
+            obj.AddChild(obj.DropDownLoadMenu, obj.Reporting);
             
             % Create the panel showing the software name and version.
             obj.VersionPanel = PTKVersionPanel(obj, obj, obj.Settings, obj.Reporting);
-            obj.AddChild(obj.VersionPanel);
+            obj.AddChild(obj.VersionPanel, obj.Reporting);
             
             % Load the most recent dataset
             image_info = obj.Settings.ImageInfo;
@@ -104,6 +117,8 @@ classdef PTKGui < PTKFigure
             else
                 obj.UpdateQuickLoadMenu;
                 obj.PatientBrowserFactory.UpdatePatientBrowser([], []);
+                obj.GuiDataset.SetNoDataset;
+
             end            
             
             % Resizing has to be done before we call Show(), and will ensure the GUI is
@@ -284,6 +299,12 @@ classdef PTKGui < PTKFigure
             obj.GuiDataset.ClearCacheForThisDataset;
         end
         
+        function plugin_name = GetCurrentPluginName(obj)
+            plugin_name = obj.GuiDataset.CurrentPluginName;
+        end
+        
+        function patient_id = GetCurrentPatientId(obj)
+        end
 
         function Capture(obj)
             % Captures an image from the viewer, including the background and transparent
@@ -314,6 +335,12 @@ classdef PTKGui < PTKFigure
         
         function LoadFromPatientBrowser(obj, series_uid)
             obj.BringToFront;
+            obj.LoadFromUid(series_uid, obj.WaitDialogHandle);
+        end
+        
+        function LoadPatient(obj, patient_id)
+            datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(patient_id);
+            series_uid = datasets{1}.SeriesUid;
             obj.LoadFromUid(series_uid, obj.WaitDialogHandle);
         end
         
@@ -358,6 +385,40 @@ classdef PTKGui < PTKFigure
             obj.WaitDialogHandle.Hide;
         end
         
+        function DeleteDataset(obj, series_uid)
+            choice = questdlg('Do you want to delete this series?', ...
+                'Delete dataset', 'Delete', 'Don''t delete', 'Don''t delete');
+            switch choice
+                case 'Delete'
+                    obj.DeleteFromPatientBrowser(series_uid);
+                case 'Don''t delete'
+            end
+        end
+        
+        function DeletePatient(obj, patient_id)
+            choice = questdlg('Do you want to delete this patient?', ...
+                'Delete patient', 'Delete', 'Don''t delete', 'Don''t delete');
+            switch choice
+                case 'Delete'
+                    obj.BringToFront;
+                    
+                    series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(patient_id);
+                    
+                    series_uids = {};
+                    
+                    for series_index = 1 : numel(series_descriptions)
+                        series_uids{series_index} = series_descriptions{series_index}.SeriesUid;
+                    end
+                    
+                    % Note that obj may be deleted during this loop as the patient panels are
+                    % rebuilt, so we can't reference obj at all from here on
+                    % for line
+                    obj.DeleteFromPatientBrowser(series_uids);
+                    
+                case 'Don''t delete'
+            end
+        end
+        
         function DeleteDatasets(obj, series_uids)
             obj.GuiDataset.DeleteDatasets(series_uids);
         end
@@ -375,12 +436,22 @@ classdef PTKGui < PTKFigure
 
             plugin_info.RunGuiPlugin(obj);
             
+            obj.UpdateToolbar;
+            
             wait_dialog.Hide;
         end
         
         function RunPluginCallback(obj, plugin_name)
             wait_dialog = obj.WaitDialogHandle;
             obj.GuiDataset.RunPlugin(plugin_name, wait_dialog);
+        end
+        
+        function dataset_is_loaded = IsDatasetLoaded(obj)
+            dataset_is_loaded = obj.GuiDataset.DatasetIsLoaded;
+        end
+        
+        function ToolClicked(obj)
+            obj.UpdateToolbar;
         end
          
     end
@@ -580,7 +651,17 @@ classdef PTKGui < PTKFigure
             obj.LastWindowSize = new_size;
             
             load_menu_height = obj.LoadMenuHeight;
-            viewer_panel_height = max(1, parent_height_pixels - load_menu_height);
+            if PTKSoftwareInfo.ToolbarEnabled
+                toolbar_height = obj.ToolbarPanel.ToolbarHeight;
+            else
+                toolbar_height = 0;
+            end
+            viewer_panel_height = max(1, parent_height_pixels - load_menu_height - toolbar_height);
+            
+            side_panel_height = max(1, parent_height_pixels);
+            side_panel_width = obj.SidePanelWidth;
+            
+            obj.SidePanel.Resize([1, 1, side_panel_width, side_panel_height]);
             
             
             image_height_pixels = viewer_panel_height - obj.ImagePanel.ControlPanelHeight;
@@ -588,23 +669,31 @@ classdef PTKGui < PTKFigure
             viewer_panel_width = image_width_pixels + PTKSlider.SliderWidth;
             
             version_panel_height = obj.VersionPanel.GetRequestedHeight;
-            version_panel_width = max(1, parent_width_pixels - viewer_panel_width);
+            version_panel_width = max(1, parent_width_pixels - viewer_panel_width - side_panel_width);
             
-            plugins_panel_height = max(1, parent_height_pixels - load_menu_height - version_panel_height);
+            plugins_panel_height = max(1, parent_height_pixels - load_menu_height - version_panel_height - toolbar_height);
             
             patient_browser_width = obj.PatientBrowserWidth;
             
-            obj.ImagePanel.Resize([1, 1, viewer_panel_width, viewer_panel_height]);
+            image_panel_position = 2 + side_panel_width;
+            obj.ImagePanel.Resize([image_panel_position, toolbar_height, viewer_panel_width, viewer_panel_height]);
+
+            if PTKSoftwareInfo.ToolbarEnabled
+                toolbar_width = parent_width_pixels - image_panel_position;
+                obj.ToolbarPanel.Resize([image_panel_position, 1, toolbar_width, toolbar_height]);
+            end
             
-            obj.ModeTabControl.Resize([viewer_panel_width + 1, 0, version_panel_width, plugins_panel_height]);
+            right_side_position = image_panel_position + viewer_panel_width + 1;
+            
+            obj.ModeTabControl.Resize([right_side_position, toolbar_height, version_panel_width, plugins_panel_height]);
             
             height_additional = 3;
-            obj.VersionPanel.Resize([viewer_panel_width + 1, plugins_panel_height, version_panel_width, version_panel_height + height_additional]);
+            obj.VersionPanel.Resize([right_side_position, toolbar_height + plugins_panel_height, version_panel_width, version_panel_height + height_additional]);
                         
-            obj.PatientBrowserButton.Resize([8, parent_height_pixels - load_menu_height + 1, patient_browser_width, load_menu_height - 1]);
+            obj.PatientBrowserButton.Resize([side_panel_width + 8, parent_height_pixels - load_menu_height + 1, patient_browser_width, load_menu_height - 1]);
             
             if ~isempty(obj.DropDownLoadMenu);
-                obj.DropDownLoadMenu.Resize([8 + patient_browser_width, parent_height_pixels - load_menu_height, parent_width_pixels - patient_browser_width - 8, load_menu_height]);
+                obj.DropDownLoadMenu.Resize([side_panel_width + 8 + patient_browser_width, parent_height_pixels - load_menu_height, parent_width_pixels - patient_browser_width - 8, load_menu_height]);
             end
             
             if ~isempty(obj.WaitDialogHandle)
@@ -634,6 +723,7 @@ classdef PTKGui < PTKFigure
 
         function DatabaseHasChanged(obj)
             obj.PatientBrowserFactory.DatabaseHasChanged;
+            obj.SidePanel.DatabaseHasChanged;
         end
         
         function AddPreviewImage(obj, plugin_name, dataset)
@@ -729,6 +819,12 @@ classdef PTKGui < PTKFigure
             obj.UpdateFigureTitle(plugin_visible_name, is_edited);
             obj.VersionPanel.UpdatePatientName(series_name, patient_visible_name, plugin_visible_name, is_edited);
         end
+        
+        function UpdateToolbar(obj)
+            if PTKSoftwareInfo.ToolbarEnabled
+                obj.ToolbarPanel.Update(obj);
+            end
+        end
 
         
         %%% Callbacks and also called from within this class
@@ -765,11 +861,12 @@ classdef PTKGui < PTKFigure
             
             image_size_mm = obj.ImagePanel.BackgroundImage.ImageSize.*obj.ImagePanel.BackgroundImage.VoxelSize;
 
-            % We choose coronal orientation as the preferred orientation
+            % We choose the preferred orientation based on the image
             % Note we could change this to the current orientation
             % (obj.ImagePanel.Orientation), but if we did this we would need to force a
             % GUI resize whenever the orientation was changed
-            optimal_direction_orientation = obj.ImagePanel.Orientation;
+            optimal_direction_orientation = PTKImageUtilities.GetPreferredOrientation(obj.ImagePanel.BackgroundImage);
+            
             [dim_x_index, dim_y_index, dim_z_index] = PTKImageCoordinateUtilities.GetXYDimensionIndex(optimal_direction_orientation);
             
             image_height_mm = image_size_mm(dim_y_index);
