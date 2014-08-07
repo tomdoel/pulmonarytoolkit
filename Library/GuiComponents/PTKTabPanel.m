@@ -46,7 +46,7 @@ classdef PTKTabPanel < PTKPanel
             
             obj.BlankText = PTKText(obj, '', '', 'blank');
             obj.BlankText.Clickable = false;
-            obj.AddChild(obj.BlankText);
+            obj.AddChild(obj.BlankText, reporting);
             
             obj.OrderedTabs = {};
             
@@ -59,7 +59,7 @@ classdef PTKTabPanel < PTKPanel
             tab_text_control.FontColour = PTKSoftwareInfo.TextSecondaryColour;
             tab_text_control.FontSize = obj.FontSize;
             tab_text_control.HorizontalAlignment = 'center';
-            obj.AddChild(tab_text_control);
+            obj.AddChild(tab_text_control, obj.Reporting);
             obj.Tabs(tag) = tab_text_control;
             obj.OrderedTabs{end + 1} = tag;
             
@@ -88,7 +88,7 @@ classdef PTKTabPanel < PTKPanel
             tab = obj.Tabs(tag);
             if ~tab.Enabled
                 obj.Resize(obj.Position);
-                obj.ResizePreTabEnable(obj.Position, tag)
+                obj.ResizePreTabEnable(obj.Position, tag);
                 tab.Enable(obj.Reporting);
                 obj.TabControl.Reorder;
             end
@@ -129,6 +129,7 @@ classdef PTKTabPanel < PTKPanel
             number_of_enabled_tabs = obj.GetNumberOfEnabledTabs;
             tab_width = (panel_position(3) - obj.LeftMargin - obj.RightMargin - (number_of_tabs - 1)*obj.TabSpacing)/number_of_enabled_tabs;
             tab_height = panel_position(4) - obj.TopMargin - obj.BottomMargin;
+            tab_width = max(1, tab_width);
             enabled_tab_index = 1;
             for all_tab_index = 1 : number_of_tabs
                 tab_tag = obj.OrderedTabs{all_tab_index};
