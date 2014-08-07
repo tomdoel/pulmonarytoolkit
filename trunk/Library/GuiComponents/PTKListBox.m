@@ -55,8 +55,7 @@ classdef PTKListBox < PTKPanel
                 obj.Items(item_index).Resize(item_location);
                 
                 % Determine if current panel is visible
-                item_is_visible = (item_location(2) < new_position(4)) && ((item_location(2) + item_location(4)) > 0);
-
+                item_is_visible = (item_location(2) < new_position(4) && ((item_location(2) + item_location(4)) >= -new_position(2)));
                 if item_is_visible
                     obj.Items(item_index).Enable(obj.Reporting);
                 else

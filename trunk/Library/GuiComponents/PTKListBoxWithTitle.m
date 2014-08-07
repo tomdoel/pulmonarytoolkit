@@ -24,7 +24,7 @@ classdef PTKListBoxWithTitle < PTKPanel
         LeftMargin = 0
         RightMargin = 0
         TopMargin = 0
-        BottomMargin = 20
+        BottomMargin = 0
         InnerLeftMargin = 15
         InnerRightMargin = 5
         InnerTopMargin = 0
@@ -40,7 +40,7 @@ classdef PTKListBoxWithTitle < PTKPanel
             obj.ListBox.SetBorders(obj.InnerLeftMargin, obj.InnerRightMargin, obj.InnerTopMargin, obj.InnerBottomMargin, obj.SpacingBetweenItems);
             obj.AddChild(obj.ListBox, obj.Reporting);
             
-            obj.TitlePanel = PTKListBoxControlPanel(parent, title_text, add_button_tooltip, delete_button_tooltip, reporting);
+            obj.TitlePanel = PTKListBoxControlPanel(obj, title_text, add_button_tooltip, delete_button_tooltip, reporting);
             obj.AddChild(obj.TitlePanel, obj.Reporting);
             obj.AddEventListener(obj.TitlePanel, 'AddButtonEvent', @obj.AddButtonClicked);
             obj.AddEventListener(obj.TitlePanel, 'DeleteButtonEvent', @obj.DeleteButtonClicked);
@@ -63,14 +63,14 @@ classdef PTKListBoxWithTitle < PTKPanel
             list_box_width = max(1, panel_width - obj.LeftMargin - obj.RightMargin);
             list_box_height = max(1, panel_height - obj.ControlPanelHeight - obj.LowerPanelHeight - obj.TopMargin - obj.BottomMargin);
             title_panel_position = [1, panel_height - obj.ControlPanelHeight-1, panel_width, obj.ControlPanelHeight];
-            lower_panel_position = [1, 1, panel_width, obj.LowerPanelHeight];
+            lower_panel_position = [1, obj.BottomMargin, panel_width, obj.LowerPanelHeight];
             obj.TitlePanel.Resize(title_panel_position);
             obj.ListBox.Resize([obj.LeftMargin, obj.BottomMargin + obj.LowerPanelHeight, list_box_width, list_box_height]);
             obj.LowerPanel.Resize(lower_panel_position);
         end
         
         function height = GetRequestedHeight(obj, width)
-            height = obj.ListBox.GetRequestedHeight(width) + obj.ControlPanelHeight;
+            height = obj.ListBox.GetRequestedHeight(width) + obj.ControlPanelHeight + obj.LowerPanelHeight + obj.TopMargin + obj.BottomMargin;
         end
         
     end

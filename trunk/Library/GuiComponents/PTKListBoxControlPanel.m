@@ -13,6 +13,7 @@ classdef PTKListBoxControlPanel < PTKPanel
         TitleFontSize = 11
         ButtonSize = 16
         ButtonSpacing = 4
+        Bold = true
     end
     
     properties (Access = private)
@@ -33,6 +34,7 @@ classdef PTKListBoxControlPanel < PTKPanel
             % Construct the title panel
             obj.TitleText = PTKText(obj, title_text, '', 'ListTitle');
             obj.TitleText.FontSize = obj.TitleFontSize;
+            obj.TitleText.Bold = obj.Bold;
             obj.AddChild(obj.TitleText, obj.Reporting);
             
             obj.AddButton = PTKButton(obj, '+', add_button_tooltip, 'Add', @obj.AddButtonClicked);
@@ -56,7 +58,7 @@ classdef PTKListBoxControlPanel < PTKPanel
             text_position = [1, 0, text_width, panel_height];
             obj.TitleText.Resize(text_position);
             
-            delete_button_position = [text_width, obj.ButtonSpacing, obj.ButtonSize, obj.ButtonSize];
+            delete_button_position = [text_width - 2*obj.ButtonSize - obj.ButtonSpacing, obj.ButtonSpacing, obj.ButtonSize, obj.ButtonSize];
             add_button_position = [panel_width - obj.ButtonSize, obj.ButtonSpacing, obj.ButtonSize, obj.ButtonSize];
             
             obj.AddButton.Resize(add_button_position);
