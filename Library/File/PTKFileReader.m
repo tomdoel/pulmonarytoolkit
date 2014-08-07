@@ -19,23 +19,27 @@ classdef PTKFileReader < handle
             obj.Reporting = reporting;
             full_file_name = fullfile(file_path, file_name);
 
-            switch transfer_syntax.Endian
-                case PTKEndian.BigEndian
-                    file_encoding = 'b';
-                case PTKEndian.LittleEndian
-                    file_encoding = 'l';
-                otherwise
-                    error('Unknown file encoding');
+            if isempty(transfer_syntax)
+                file_id = fopen(full_file_name, 'r');
+            else
+                switch transfer_syntax.Endian
+                    case PTKEndian.BigEndian
+                        file_encoding = 'b';
+                    case PTKEndian.LittleEndian
+                        file_encoding = 'l';
+                    otherwise
+                        error('Unknown file encoding');
+                end
+                
+                switch transfer_syntax.CharacterEncoding
+                    case PTKCharacterEncoding.UTF8
+                        character_encoding = 'UTF-8';
+                    otherwise
+                        error('Unknown character encoding');
+                end
+                
+                file_id = fopen(full_file_name, 'r', file_encoding, character_encoding);
             end
-
-            switch transfer_syntax.CharacterEncoding
-                case PTKDicomCharacterEncoding.UTF8
-                    character_encoding = 'UTF-8';
-                otherwise
-                    error('Unknown character encoding');
-            end
-
-            file_id = fopen(full_file_name, 'r', file_encoding, character_encoding);
 
             if (file_id == -1)
                 reporting.Error('PTKFileReader:CannotOpenFile', ['Unable to open file ' full_file_name]);
@@ -43,6 +47,20 @@ classdef PTKFileReader < handle
                 obj.FileId = file_id;
             end
 
+        end
+        
+        function delete(obj)
+            obj.Close;
+        end
+        
+        function data = ReadWords(obj, data_type, number_of_words)
+            [data, count] = fread(obj.FileId, [1, number_of_words], data_type);
+            if count ~= number_of_words
+                reporting.Error('PTKFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
+            end
+            if strcmp(data_type, 'char')
+                data = char(data);
+            end
         end
         
         function data = ReadData(obj, data_type, number_of_bytes)
@@ -54,7 +72,10 @@ classdef PTKFileReader < handle
                 number_of_words = ceil(number_of_bytes/bytes_in_type);
             end
             
-            data = fread(obj.FileId, [1, number_of_words], data_type);
+            [data, count] = fread(obj.FileId, [1, number_of_words], data_type);
+            if count ~= number_of_words
+                reporting.Error('PTKFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
+            end
             if strcmp(data_type, 'char')
                 data = char(data);
             end
@@ -71,16 +92,19 @@ classdef PTKFileReader < handle
             end
         end
         
-        function delete(obj)
-            obj.Close;
-        end
-        
         function more_data = MoreDataToRead(obj)
             more_data = ~feof(obj.FileId);
         end
         
         function Skip(obj, number_of_bytes)
             fseek(obj.FileId, 'cof', number_of_bytes);
+        end
+        
+        function GoToFilePosition(obj, bytes_from_beginning)
+            status = fseek(obj.FileId, bytes_from_beginning, 'bof');
+            if status == -1
+                obj.Reporting.Error('PTKFileReader:Requested position is beyond the end of the file.');
+            end
         end
 
     end
