@@ -52,15 +52,15 @@ classdef PTKCinePanel < PTKVirtualPanel
         function Resize(obj, position)
             Resize@PTKUserInterfaceObject(obj, position);
             
-            % Resize slider
-            slider_position = [position(1), position(2), obj.Slider.SliderWidth, position(4)];
-            obj.Slider.Resize(slider_position);
-            
             % Resize axes
-            axis_x = position(1) + obj.Slider.SliderWidth;
             axis_width = max(1, position(3) - obj.Slider.SliderWidth);
-            axes_position = [axis_x, position(2), axis_width, position(4)];
+            axes_position = [1, position(2), axis_width, position(4)];
             obj.Axes.Resize(axes_position);
+            
+            % Resize slider
+            slider_x = position(1) + axis_width;
+            slider_position = [slider_x, position(2), obj.Slider.SliderWidth, position(4)];
+            obj.Slider.Resize(slider_position);            
         end
         
         function SetSliceNumber(obj, slice_number)
