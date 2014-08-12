@@ -52,7 +52,7 @@ classdef PTKSidePanel < PTKPanel
             obj.AddChild(obj.SeriesSidePanel, obj.Reporting);
             
             obj.Repopulate;
-            
+
             % Add listener for changes to the loaded series
             obj.AddEventListener(obj.GuiState, 'SeriesUidChangedEvent', @obj.SeriesChanged);            
         end
@@ -115,12 +115,6 @@ classdef PTKSidePanel < PTKPanel
     end
     
     methods (Access = private)
-        function PatientChanged(obj, ~, ~)
-            obj.PatientsSidePanel.UpdateSidePanel(obj.GuiState.CurrentPatientId);
-            obj.SeriesSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
-            obj.Resize(obj.Position);
-        end
-        
         function SeriesChanged(obj, ~, ~)
             % This event fires when the loaded series has been changed.
             

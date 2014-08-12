@@ -106,7 +106,7 @@ classdef PTKEditMode < handle
                 edited_result = obj.ViewerPanel.OverlayImage;
                 obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
                 obj.UnsavedChanges = false;
-                obj.GuiDataset.UpdateFigureTitle(obj.VisiblePluginName, true);
+                obj.GuiDataset.UpdateEditedStatus(true);
                 obj.Reporting.CompleteProgress;
                 obj.UnLockImageChangedCallback;                
             end
@@ -181,7 +181,7 @@ classdef PTKEditMode < handle
                 edited_result = obj.ViewerPanel.OverlayImage;
                 obj.Dataset.SaveData('AbandonedEdits', edited_result);
                 obj.UnsavedChanges = false;
-                obj.GuiDataset.UpdateFigureTitle(obj.VisiblePluginName, true);
+                obj.GuiDataset.UpdateEditedStatus(true);
                 obj.Reporting.CompleteProgress;
                 obj.UnLockImageChangedCallback;                
             end            
@@ -192,7 +192,7 @@ classdef PTKEditMode < handle
             obj.Dataset.DeleteEditedResult(obj.PluginName);
             obj.UnsavedChanges = false;
             obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
-            obj.GuiDataset.UpdateFigureTitle(obj.VisiblePluginName, false);
+            obj.GuiDataset.UpdateEditedStatus(false);
             obj.GuiDataset.ChangeMode(PTKModes.EditMode);
             obj.Reporting.CompleteProgress;            
         end
@@ -220,11 +220,11 @@ classdef PTKEditMode < handle
                     else
                         obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
                         obj.UnsavedChanges = false;
-                        obj.GuiDataset.UpdateFigureTitle(obj.VisiblePluginName, true);
+                        obj.GuiDataset.UpdateEditedStatus(true);
                         
                         % Update the loaded results
                         obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
-                        obj.GuiDataset.UpdateFigureTitle(obj.VisiblePluginName, false);
+                        obj.GuiDataset.UpdateEditedStatus(false);
                         
                         % Ensure we are back in edit mode, as RunPlugin will have left this
                         obj.GuiDataset.ChangeMode(PTKModes.EditMode);
