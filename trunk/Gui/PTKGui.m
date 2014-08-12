@@ -25,6 +25,7 @@ classdef PTKGui < PTKFigure
         WaitDialogHandle
         MarkersHaveBeenLoaded = false
         
+        PatientNamePanel
         SidePanel
         ToolbarPanel
 
@@ -55,6 +56,9 @@ classdef PTKGui < PTKFigure
             % Call the base class to initialise the figure class
             obj = obj@PTKFigure(PTKSoftwareInfo.Name, []);
 
+            % Set the figure title to the sotware name and version
+            obj.Title = [PTKSoftwareInfo.Name, ' ', PTKSoftwareInfo.Version];
+            
             % Set up the viewer panel
             obj.ImagePanel = PTKViewerPanel(obj);
             obj.AddChild(obj.ImagePanel, obj.Reporting);
@@ -102,6 +106,9 @@ classdef PTKGui < PTKFigure
             % Create the panel showing the software name and version.
             obj.VersionPanel = PTKVersionPanel(obj, obj, obj.Settings, obj.Reporting);
             obj.AddChild(obj.VersionPanel, obj.Reporting);
+            
+            obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.Settings, obj.GuiDataset.GuiDatasetState, obj.Reporting);
+            obj.AddChild(obj.PatientNamePanel, obj.Reporting);
             
             % Load the most recent dataset
             image_info = obj.Settings.ImageInfo;
@@ -656,7 +663,10 @@ classdef PTKGui < PTKFigure
             else
                 toolbar_height = 0;
             end
-            viewer_panel_height = max(1, parent_height_pixels - load_menu_height - toolbar_height);
+            
+            patient_name_panel_height = obj.PatientNamePanel.GetRequestedHeight;
+            
+            viewer_panel_height = max(1, parent_height_pixels - toolbar_height - patient_name_panel_height);
             
             side_panel_height = max(1, parent_height_pixels);
             side_panel_width = obj.SidePanelWidth;
@@ -668,6 +678,8 @@ classdef PTKGui < PTKFigure
             image_width_pixels = obj.GetSuggestedWidth(image_height_pixels);
             viewer_panel_width = image_width_pixels + PTKSlider.SliderWidth;
             
+            patient_name_panel_width = viewer_panel_width;
+            
             version_panel_height = obj.VersionPanel.GetRequestedHeight;
             version_panel_width = max(1, parent_width_pixels - viewer_panel_width - side_panel_width);
             
@@ -678,6 +690,9 @@ classdef PTKGui < PTKFigure
             image_panel_position = 2 + side_panel_width;
             obj.ImagePanel.Resize([image_panel_position, toolbar_height, viewer_panel_width, viewer_panel_height]);
 
+            patient_name_panel_y_position = toolbar_height + viewer_panel_height;
+            obj.PatientNamePanel.Resize([image_panel_position, patient_name_panel_y_position, patient_name_panel_width, patient_name_panel_height]);
+            
             if PTKSoftwareInfo.ToolbarEnabled
                 toolbar_width = parent_width_pixels - image_panel_position;
                 obj.ToolbarPanel.Resize([image_panel_position, 1, toolbar_width, toolbar_height]);
@@ -690,10 +705,10 @@ classdef PTKGui < PTKFigure
             height_additional = 3;
             obj.VersionPanel.Resize([right_side_position, toolbar_height + plugins_panel_height, version_panel_width, version_panel_height + height_additional]);
                         
-            obj.PatientBrowserButton.Resize([side_panel_width + 8, parent_height_pixels - load_menu_height + 1, patient_browser_width, load_menu_height - 1]);
+            obj.PatientBrowserButton.Resize([right_side_position + 8, parent_height_pixels - load_menu_height + 1, patient_browser_width, load_menu_height - 1]);
             
             if ~isempty(obj.DropDownLoadMenu);
-                obj.DropDownLoadMenu.Resize([side_panel_width + 8 + patient_browser_width, parent_height_pixels - load_menu_height, parent_width_pixels - patient_browser_width - 8, load_menu_height]);
+                obj.DropDownLoadMenu.Resize([right_side_position + 8 + patient_browser_width, parent_height_pixels - load_menu_height, version_panel_width - patient_browser_width - 8, load_menu_height]);
             end
             
             if ~isempty(obj.WaitDialogHandle)
@@ -766,29 +781,6 @@ classdef PTKGui < PTKFigure
             end
         end
         
-        function UpdateFigureTitle(obj, current_plugin_name, is_edited)
-            
-            figure_title = PTKSoftwareInfo.Name;
-            if isa(obj.ImagePanel.BackgroundImage, 'PTKImage')
-                patient_name = obj.ImagePanel.BackgroundImage.Title;
-                if ~isempty(current_plugin_name) && obj.ImagePanel.OverlayImage.ImageExists
-                    if is_edited
-                        current_plugin_name = ['EDITED ', current_plugin_name];
-                    end
-                    patient_name = [patient_name ' (' current_plugin_name ')'];
-                end
-                if ~isempty(figure_title)
-                    figure_title = [patient_name ' : ' figure_title];
-                end
-            end
-            
-            % Remove HTML tags
-            figure_title = PTKTextUtilities.RemoveHtml(figure_title);
-            
-            % Set window title
-            obj.Title = figure_title;
-        end
-        
         function AddAllPreviewImagesToButtons(obj, dataset)
             obj.ModeTabControl.AddAllPreviewImagesToButtons(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
         end
@@ -813,11 +805,6 @@ classdef PTKGui < PTKFigure
             if obj.ImagePanel.IsInMarkerMode
                 obj.LoadMarkers;
             end
-        end
-
-        function UpdateGuiDatasetAndPluginName(obj, series_name, patient_visible_name, plugin_visible_name, is_edited)
-            obj.UpdateFigureTitle(plugin_visible_name, is_edited);
-            obj.VersionPanel.UpdatePatientName(series_name, patient_visible_name, plugin_visible_name, is_edited);
         end
         
         function UpdateToolbar(obj)

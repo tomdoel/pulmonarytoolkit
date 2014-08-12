@@ -14,15 +14,8 @@ classdef PTKGuiDataset < handle
     %
     
     
-    properties
-    end
-    
     properties (SetAccess = private)
-        CurrentPluginInfo
-        CurrentPluginName
         CurrentContext
-        CurrentVisiblePluginName
-        
         GuiDatasetState
     end
     
@@ -33,9 +26,6 @@ classdef PTKGuiDataset < handle
         Ptk
         Reporting
         Settings 
-    end
-    
-    properties (Constant, Access = private)
     end
     
     methods
@@ -57,7 +47,7 @@ classdef PTKGuiDataset < handle
         end
         
         function ChangeMode(obj, mode)
-            obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.CurrentPluginInfo, obj.CurrentPluginName, obj.CurrentVisiblePluginName, obj.CurrentContext);
+            obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
         end        
 
         function mode = GetMode(obj)
@@ -332,13 +322,24 @@ classdef PTKGuiDataset < handle
                     obj.Gui.SaveSettings;
                 end
                 
-                obj.SetDatasetAndPluginName(image_info, [], [], [], false);
+                obj.GuiDatasetState.ClearPlugin;
+                obj.UpdateModes;
                 
+                if isempty(image_info)
+                    patient_visible_name = [];
+                    series_name = [];
+                else
+                    series_info = obj.GetImageDatabase.GetSeries(image_info.ImageUid);
+                    patient_info = obj.GetImageDatabase.GetPatient(series_info.PatientId);
+                    patient_visible_name = patient_info.ShortVisibleName;
+                    series_name = series_info.Name;
+                end
+
                 obj.Gui.AddAllPreviewImagesToButtons(obj.Dataset);
 
                 obj.Gui.LoadMarkersIfRequired;
 
-                obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid);
+                obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid, patient_visible_name, series_name);
                 
             catch exc
                 % For the patient browser
@@ -393,19 +394,16 @@ classdef PTKGuiDataset < handle
             % Indicates that the currently loaded result has been deleted or modified in
             % such a way that it is no longer representative of the plugin 
             
-            obj.SetDatasetAndPluginName(obj.Settings.ImageInfo, [], [], [], false);
+            obj.GuiDatasetState.ClearPlugin;
+            obj.UpdateModes;
         end
-        
-        function UpdateFigureTitle(obj, visible_plugin_name, is_edited)
-            obj.Gui.UpdateFigureTitle(visible_plugin_name, is_edited);
-        end
-        
+
         function OverlayImageChanged(obj)
             obj.ModeSwitcher.OverlayImageChanged;
         end
         
         function UpdateModeTabControl(obj)
-            obj.Gui.UpdateModeTabControl(obj.CurrentPluginInfo);
+            obj.Gui.UpdateModeTabControl(obj.GuiDatasetState.CurrentPluginInfo);
         end
         
         function SaveSettings(obj)
@@ -413,8 +411,9 @@ classdef PTKGuiDataset < handle
         end
         
         function SetNoDataset(obj)
-            obj.SetDatasetAndPluginName([], [], [], [], false);
             obj.GuiDatasetState.ClearPatientAndSeries;            
+            obj.GuiDatasetState.ClearPlugin;
+            obj.UpdateModes;
         end
     end
     
@@ -457,8 +456,9 @@ classdef PTKGuiDataset < handle
                         obj.Reporting.Error('PTKGui:EmptyImage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
                     end
                     obj.ModeSwitcher.PrePluginCall;
-                    obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);                    
-                    obj.SetDatasetAndPluginName(obj.Settings.ImageInfo, new_plugin, plugin_name, visible_name, cache_info.IsEdited);
+                    obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);
+                    obj.GuiDatasetState.SetPlugin(new_plugin, plugin_name, visible_name, cache_info.IsEdited);
+                    obj.UpdateModes;
                     
                 elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
                     
@@ -481,26 +481,13 @@ classdef PTKGuiDataset < handle
         end
         
        
-        function SetDatasetAndPluginName(obj, image_info, plugin_info, plugin_name, plugin_visible_name, is_edited)
-            if isempty(plugin_name)
-                plugin_visible_name = [];
-            end
-            obj.CurrentPluginInfo = plugin_info;
-            obj.CurrentPluginName = plugin_name;
-            obj.CurrentVisiblePluginName = plugin_visible_name;
-            obj.ModeSwitcher.UpdateMode(obj.Dataset, obj.CurrentPluginInfo, obj.CurrentPluginName, obj.CurrentVisiblePluginName, obj.CurrentContext);
-            obj.Gui.UpdateModeTabControl(plugin_info);
-
-            if isempty(image_info)
-                series_name = '';
-                patient_visible_name = 'No Patient';
-            else
-                series_info = obj.GetImageDatabase.GetSeries(image_info.ImageUid);
-                patient_info = obj.GetImageDatabase.GetPatient(series_info.PatientId);
-                patient_visible_name = patient_info.ShortVisibleName;
-                series_name = series_info.Name;
-            end
-            obj.Gui.UpdateGuiDatasetAndPluginName(series_name, patient_visible_name, plugin_visible_name, is_edited);
+        function UpdateEditedStatus(obj, is_edited)
+            obj.GuiDatasetState.UpdateEditStatus(is_edited);
+        end
+            
+        function UpdateModes(obj)
+            obj.ModeSwitcher.UpdateMode(obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
+            obj.Gui.UpdateModeTabControl(obj.GuiDatasetState.CurrentPluginInfo);
             obj.Gui.UpdateToolbar;
         end
         
