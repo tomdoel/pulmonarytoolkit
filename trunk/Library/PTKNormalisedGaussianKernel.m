@@ -60,9 +60,9 @@ function kernel = PTKNormalisedGaussianKernel(voxel_size_mm, filter_size_mm, min
     kerj = kerj./sum(kerj);
     kerk = kerk./sum(kerk);
    
-    ker1 = repmat(shiftdim(keri, 2), 1, grid_size_j, grid_size_k);
-    ker2 = repmat(shiftdim(kerj, 1), grid_size_i, 1, grid_size_k);
-    ker3 = repmat(kerk, grid_size_i, grid_size_j, 1);
+    ker1 = repmat(shiftdim(keri, 2), [1, grid_size_j, grid_size_k]);
+    ker2 = repmat(shiftdim(kerj, 1), [grid_size_i, 1, grid_size_k]);
+    ker3 = repmat(kerk, [grid_size_i, grid_size_j, 1]);
     kernel = ker1.*ker2.*ker3;
     
     kernel = kernel/max(kernel(:));
