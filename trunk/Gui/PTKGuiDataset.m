@@ -415,6 +415,12 @@ classdef PTKGuiDataset < handle
             obj.GuiDatasetState.ClearPlugin;
             obj.UpdateModes;
         end
+        
+        function UpdateEditedStatus(obj, is_edited)
+            obj.GuiDatasetState.UpdateEditStatus(is_edited);
+        end
+            
+        
     end
     
     methods (Access = private)
@@ -481,10 +487,6 @@ classdef PTKGuiDataset < handle
         end
         
        
-        function UpdateEditedStatus(obj, is_edited)
-            obj.GuiDatasetState.UpdateEditStatus(is_edited);
-        end
-            
         function UpdateModes(obj)
             obj.ModeSwitcher.UpdateMode(obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
             obj.Gui.UpdateModeTabControl(obj.GuiDatasetState.CurrentPluginInfo);
