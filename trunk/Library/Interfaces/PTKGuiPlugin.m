@@ -69,5 +69,15 @@ classdef PTKGuiPlugin < handle
         % Implement this method with the code you with to run.
         RunGuiPlugin(ptk_gui_app)
         
-    end    
+    end
+    
+    methods (Static)
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = true;
+        end
+        
+        function is_selected = IsSelected(ptk_gui_app)
+            is_selected = false;
+        end
+    end
 end
