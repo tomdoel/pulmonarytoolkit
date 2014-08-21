@@ -57,7 +57,7 @@ classdef PTKText < PTKUserInterfaceObject
             
             obj.Clickable = true;
         end
-        
+
         function Select(obj, selected)
             if (selected ~= obj.Selected)
                 obj.Selected = selected;
