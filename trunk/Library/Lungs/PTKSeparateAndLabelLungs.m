@@ -26,6 +26,12 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
         % 3D approach failed. Try slice-by-slice coronal approach
         results = both_lungs.Copy;
         results.ImageType = PTKImageType.Colormap;
+        
+        % Create a mask of voxels which could not be allocated to left or right lungs
+        voxels_to_remap = both_lungs.Copy;
+        voxels_to_remap.Clear;
+        
+        any_slice_failure = false;
         for coronal_index = 1 : lung_roi.ImageSize(1)
             lung_roi_slice = PTKImage(lung_roi.GetSlice(coronal_index, PTKImageOrientation.Coronal));
             both_lungs_slice = PTKImage(both_lungs.GetSlice(coronal_index, PTKImageOrientation.Coronal));
@@ -33,7 +39,9 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
             if any(both_lungs_slice.RawImage(:))
                 success = SeparateLungs(both_lungs_slice, lung_roi_slice, unclosed_lungs_slice, max_iter, true, reporting);
                 if ~success
+                    any_slice_failure = true;
                     reporting.ShowMessage('PTKSeparateAndLabelLungs:FailureInCoronalSlice', ['Failed to separate left and right lungs in a coronal slice after ' int2str(max_iter) ' opening attempts.']);
+                    voxels_to_remap.ReplaceImageSlice(both_lungs_slice.RawImage, coronal_index, PTKImageOrientation.Coronal);
                     both_lungs_slice.Clear;
                 end
                 
@@ -41,6 +49,17 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
             results_slice = both_lungs_slice;
             results.ReplaceImageSlice(results_slice.RawImage, coronal_index, PTKImageOrientation.Coronal);
         end
+        
+        if any_slice_failure
+            [~, nearest_index] = bwdist(results.RawImage > 0);
+            nearest_value = results.RawImage;
+            nearest_value(:) = results.RawImage(nearest_index(:));
+            voxel_indices_to_remap = voxels_to_remap.RawImage(:) > 0;
+            results_image = results.RawImage;
+            results_image(voxel_indices_to_remap) = nearest_value(voxel_indices_to_remap);
+            results.ChangeRawImage(results_image);
+        end
+        
         both_lungs = results;
     end
 end
