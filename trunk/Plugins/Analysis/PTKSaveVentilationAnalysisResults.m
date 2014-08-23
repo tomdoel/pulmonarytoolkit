@@ -16,9 +16,9 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
     %
 
     properties
-        ButtonText = 'Ventilation metrics'
+        ButtonText = 'Ventilation analysis'
         ToolTip = 'Performs ventilated volume analysis'
-        Category = 'Analysis'
+        Category = 'Multi-modal analysis'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -45,7 +45,7 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
             
             table = PTKConvertMetricsToTable(results, patient_name, uid, PTKReportingDefault);
             
-            dataset.SaveTableAsCSV('PTKSaveVentilationAnalysisResults', 'Ventilation metrics', 'VentilationResults', 'Ventilated volume', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveVentilationAnalysisResults', 'Ventilation analysis', 'VentilationResults', 'Ventilated volume', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
         end
     end
 end
