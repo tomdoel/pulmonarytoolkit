@@ -53,7 +53,7 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
             table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
-            dataset.SaveTableAsCSV('PTKSaveCoronalAnalysisResults', 'Coronal metrics', 'CoronalResults', 'Density analysis in bins along the anterior-posterior axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveCoronalAnalysisResults', 'Coronal analysis', 'CoronalResults', 'Density analysis in bins along the anterior-posterior axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
             
             % Generate graphs of the results
             y_label = 'Distance along coronal axis (%)';
@@ -74,11 +74,11 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
     methods (Static, Access = private)
         function DrawGraphAndSave(dataset, table, y_label, context_list, file_suffix, reporting)
             figure_handle = PTKGraphMetricVsDistance(table, 'MeanDensityGml', 'StdDensityGml', context_list, [], y_label, reporting);
-            dataset.SaveFigure(figure_handle, 'PTKSaveCoronalAnalysisResults', 'Coronal metrics', ['DensityVsCoronalDistance' file_suffix], 'Graph of density vs distance along the anterior-posterior axis');
+            dataset.SaveFigure(figure_handle, 'PTKSaveCoronalAnalysisResults', 'Coronal analysis', ['DensityVsCoronalDistance' file_suffix], 'Graph of density vs distance along the anterior-posterior axis');
             close(figure_handle);
             
             figure_handle = PTKGraphMetricVsDistance(table, 'EmphysemaPercentage', [], context_list, [], y_label, reporting);            
-            dataset.SaveFigure(figure_handle, 'PTKSaveCoronalAnalysisResults', 'Coronal metrics', ['EmphysemaVsCoronalDistance' file_suffix], 'Graph of emphysema vs distance along the anterior-posterior axis');
+            dataset.SaveFigure(figure_handle, 'PTKSaveCoronalAnalysisResults', 'Coronal analysis', ['EmphysemaVsCoronalDistance' file_suffix], 'Graph of emphysema vs distance along the anterior-posterior axis');
             close(figure_handle);
         end
     end        

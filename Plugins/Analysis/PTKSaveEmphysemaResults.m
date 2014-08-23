@@ -16,7 +16,7 @@ classdef PTKSaveEmphysemaResults < PTKPlugin
     %
 
     properties
-        ButtonText = 'Emphysema metrics'
+        ButtonText = 'Emphysema analysis'
         ToolTip = 'Calculates emphysema percentage and percentile density for the lungs and lobes'
         Category = 'Analysis'
         Mode = 'Analysis'
@@ -45,7 +45,7 @@ classdef PTKSaveEmphysemaResults < PTKPlugin
             
             table = PTKConvertMetricsToTable(results, patient_name, uid, PTKReportingDefault);
             
-            dataset.SaveTableAsCSV('PTKSaveEmphysemaResults', 'Emphysema metrics', 'EmphysemaResults', 'CT density-based emphysema analysis', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveEmphysemaResults', 'Emphysema analysis', 'EmphysemaResults', 'CT density-based emphysema analysis', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
         end
     end
 end

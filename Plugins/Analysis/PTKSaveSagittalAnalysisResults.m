@@ -21,7 +21,7 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
     %
 
     properties
-        ButtonText = 'Sagittal metrics'
+        ButtonText = 'Sagittal analysis'
         ToolTip = 'Performs density analysis in bins along the left-right axis'
         Category = 'Slice analysis'
         Mode = 'Analysis'
@@ -53,7 +53,7 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
             table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
-            dataset.SaveTableAsCSV('PTKSaveSagittalAnalysisResults', 'Sagittal metrics', 'SagittalResults', 'Density analysis in bins along the left-right axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveSagittalAnalysisResults', 'Sagittal analysis', 'SagittalResults', 'Density analysis in bins along the left-right axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
             
             % Generate graphs of the results
             y_label = 'Distance along sagittal axis (%)';
@@ -74,11 +74,11 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
     methods (Static, Access = private)
         function DrawGraphAndSave(dataset, table, y_label, context_list, file_suffix, reporting)
             figure_handle = PTKGraphMetricVsDistance(table, 'MeanDensityGml', 'StdDensityGml', context_list, [], y_label, reporting);
-            dataset.SaveFigure(figure_handle, 'PTKSaveSagittalAnalysisResults', 'Sagittal metrics', ['DensityVsSagittalDistance' file_suffix], 'Graph of density vs distance along the left-right axis');
+            dataset.SaveFigure(figure_handle, 'PTKSaveSagittalAnalysisResults', 'Sagittal analysis', ['DensityVsSagittalDistance' file_suffix], 'Graph of density vs distance along the left-right axis');
             close(figure_handle);
             
             figure_handle = PTKGraphMetricVsDistance(table, 'EmphysemaPercentage', [], context_list, [], y_label, reporting);            
-            dataset.SaveFigure(figure_handle, 'PTKSaveSagittalAnalysisResults', 'Sagittal metrics', ['EmphysemaVsSagittalDistance' file_suffix], 'Graph of emphysema vs distance along the left-right axis');
+            dataset.SaveFigure(figure_handle, 'PTKSaveSagittalAnalysisResults', 'Sagittal analysis', ['EmphysemaVsSagittalDistance' file_suffix], 'Graph of emphysema vs distance along the left-right axis');
             close(figure_handle);
         end
     end        

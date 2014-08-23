@@ -21,7 +21,7 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
     %
 
     properties
-        ButtonText = 'Axial metrics'
+        ButtonText = 'Axial analysis'
         ToolTip = 'Performs density analysis in bins along the cranial-caudal axis'
         Category = 'Slice analysis'
         Mode = 'Analysis'
@@ -53,7 +53,7 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
             table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
-            dataset.SaveTableAsCSV('PTKSaveAxialAnalysisResults', 'Axial metrics', 'AxialResults', 'Density analysis in bins along the cranial-caudal axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveAxialAnalysisResults', 'Axial analysis', 'AxialResults', 'Density analysis in bins along the cranial-caudal axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
             
             x_label = 'Distance along axial axis (%)';
             
@@ -74,11 +74,11 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
     methods (Static, Access = private)
         function DrawGraphAndSave(dataset, table, context_list, file_suffix, x_label, reporting)
             figure_handle = PTKGraphMetricVsDistance(table, 'MeanDensityGml', 'StdDensityGml', context_list, [], x_label, reporting);
-            dataset.SaveFigure(figure_handle, 'PTKSaveAxialAnalysisResults', 'Axial metrics', ['DensityVsAxialDistance' file_suffix], 'Graph of density vs distance along axial axis');
+            dataset.SaveFigure(figure_handle, 'PTKSaveAxialAnalysisResults', 'Axial analysis', ['DensityVsAxialDistance' file_suffix], 'Graph of density vs distance along axial axis');
             close(figure_handle);
             
             figure_handle = PTKGraphMetricVsDistance(table, 'EmphysemaPercentage', [], context_list, [], x_label, reporting);            
-            dataset.SaveFigure(figure_handle, 'PTKSaveAxialAnalysisResults', 'Axial metrics', ['EmphysemaVsAxialDistance' file_suffix], 'Graph of emphysema percentage vs distance along axial axis');
+            dataset.SaveFigure(figure_handle, 'PTKSaveAxialAnalysisResults', 'Axial analysis', ['EmphysemaVsAxialDistance' file_suffix], 'Graph of emphysema percentage vs distance along axial axis');
             close(figure_handle);
         end
     end        
