@@ -31,6 +31,7 @@ classdef PTKLungMaskForRegistration < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Context = PTKContextSet.SingleLung
+        Visibility = 'Developer'
     end
     
     methods (Static)
