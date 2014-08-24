@@ -90,7 +90,7 @@ function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
                 [pi, mi, ci, si] = GetIndices(file_range_value, row_range_value, col_range_value, file_dim, row_dim, col_dim, other_dim);
                 cell_value = table.ResultsTable{pi, mi, ci, si};
                 if isnumeric(cell_value)
-                    cell_value_string = num2str(cell_value, '%5.2f');
+                    cell_value_string = num2str(cell_value, '%5.3f');
                 else
                     cell_value_string = char(cell_value);
                 end
