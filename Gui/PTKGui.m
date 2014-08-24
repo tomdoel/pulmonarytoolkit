@@ -102,13 +102,10 @@ classdef PTKGui < PTKFigure
                 obj.Reporting.ShowProgress('Loading images');
                 obj.GuiDataset.InternalLoadImages(image_info);
             
-                % There is no need to call obj.UpdateQuickLoadMenu here provided the
-                % menu is always updated during the InternalLoadImages.
-                % Update can be a bit slow so we don't want to call it twice on
-                % startup.
+                % There is no need to call UpdatePatientBrowser here provided the
+                % PB is always updated during the InternalLoadImages.
                 
             else
-                obj.UpdateQuickLoadMenu;
                 obj.PatientBrowserFactory.UpdatePatientBrowser([], []);
                 obj.GuiDataset.SetNoDataset;
 
@@ -719,10 +716,6 @@ classdef PTKGui < PTKFigure
             obj.ModeTabControl.UpdateMode(plugin_info);
         end
         
-        function UpdateQuickLoadMenu(obj)
-            [sorted_paths, sorted_uids] = obj.GuiDataset.GetListOfPaths;
-        end
-
         function DatabaseHasChanged(obj)
             obj.PatientBrowserFactory.DatabaseHasChanged;
             obj.SidePanel.DatabaseHasChanged;
