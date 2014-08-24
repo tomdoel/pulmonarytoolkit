@@ -9,7 +9,7 @@ function results = PTKMapLobesToImage(lobes, gas_image_template, fluid_deformati
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    lobes_ct_right = lobes;
+    lobes_ct_right = lobes.Copy;
     lobes_ct_left = lobes_ct_right.Copy;
     results = gas_image_template.Copy;
     
