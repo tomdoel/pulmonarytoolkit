@@ -38,7 +38,7 @@ classdef PTKVentilationAnalysis < PTKPlugin
         function results = RunPlugin(dataset, context, reporting)
             
             if ~dataset.IsGasMRI
-                reporting.ShowMessage('PTKDensityAnalysis:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
+                reporting.ShowMessage('PTKVentilationAnalysis:NotGasMRIImage', 'Cannot perform ventilation analysis as this is not a gas MRI image');
                 return;
             end
 
@@ -57,7 +57,7 @@ classdef PTKVentilationAnalysis < PTKPlugin
             % Reduce all images to a consistent size
             ventilation_mask.ResizeToMatch(context_mask);
     
-            results = PTKComputeVentilatedVolume(ventilation_mask, context_mask.RawImage);
+            results = PTKComputeVentilatedVolume(ventilation_mask, context_mask);
         end
     end
 end
