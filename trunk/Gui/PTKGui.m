@@ -17,11 +17,11 @@ classdef PTKGui < PTKFigure
     properties (SetAccess = private)
         ImagePanel
         Reporting
+        Settings
     end
     
     properties (Access = private)
         GuiDataset
-        Settings
         WaitDialogHandle
         MarkersHaveBeenLoaded = false
         
@@ -29,11 +29,8 @@ classdef PTKGui < PTKFigure
         SidePanel
         ToolbarPanel
 
-        VersionPanel
         ModeTabControl
-        DropDownLoadMenu
 
-        PatientBrowserButton
         PatientBrowserFactory
         
         LastWindowSize % Keep track of window size to prevent unnecessary resize
@@ -59,8 +56,10 @@ classdef PTKGui < PTKFigure
             % Set the figure title to the sotware name and version
             obj.Title = [PTKSoftwareInfo.Name, ' ', PTKSoftwareInfo.Version];
             
+            show_control_panel_in_viewer = PTKSoftwareInfo.ViewerPanelToolbarEnabled;
+            
             % Set up the viewer panel
-            obj.ImagePanel = PTKViewerPanel(obj);
+            obj.ImagePanel = PTKViewerPanel(obj, show_control_panel_in_viewer);
             obj.AddChild(obj.ImagePanel, obj.Reporting);
             
             % Any unhandled keyboard input goes to the viewer panel
@@ -71,15 +70,15 @@ classdef PTKGui < PTKFigure
             obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile);
             obj.Reporting.Log('New session of PTKGui');
             
-            % Create the panel of tools across the bottom of the interface
-            if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = PTKToolbarPanel(obj, obj, obj.Reporting);
-                obj.AddChild(obj.ToolbarPanel, obj.Reporting);
-            end
-            
             % Load the settings file
             obj.Settings = PTKSettings.LoadSettings(obj.Reporting);
-            obj.Settings.ApplySettingsToViewerPanel(obj.ImagePanel);       
+            obj.Settings.ApplySettingsToViewerPanel(obj.ImagePanel);
+            
+            % Create the panel of tools across the bottom of the interface
+            if PTKSoftwareInfo.ToolbarEnabled
+                obj.ToolbarPanel = PTKToolbarPanel(obj, obj, obj.Settings, obj.Reporting);
+                obj.AddChild(obj.ToolbarPanel, obj.Reporting);
+            end
             
             % Create the object which manages the current dataset
             obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.Settings, obj.Reporting);
@@ -91,22 +90,9 @@ classdef PTKGui < PTKFigure
             % PB may take time to load if there are many datasets
             obj.PatientBrowserFactory = PTKPatientBrowserFactory(obj, obj.GuiDataset, obj.Settings, obj.Reporting);
 
-            % Patient Browser button
-            pb = obj.PatientBrowserFactory;
-            obj.PatientBrowserButton = PTKButton(obj, 'Patients', 'Open the Patient Browser', 'PatientBrowser', @pb.Show);
-            obj.AddChild(obj.PatientBrowserButton, obj.Reporting);
-            
             obj.ModeTabControl = PTKModeTabControl(obj, obj.Settings, obj.Reporting);
             obj.AddChild(obj.ModeTabControl, obj.Reporting);
 
-            % Drop down quick load menu
-            obj.DropDownLoadMenu = PTKDropDownLoadMenu(obj, obj, obj.Settings);
-            obj.AddChild(obj.DropDownLoadMenu, obj.Reporting);
-            
-            % Create the panel showing the software name and version.
-            obj.VersionPanel = PTKVersionPanel(obj, obj, obj.Settings, obj.Reporting);
-            obj.AddChild(obj.VersionPanel, obj.Reporting);
-            
             obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.Settings, obj.GuiDataset.GuiDatasetState, obj.Reporting);
             obj.AddChild(obj.PatientNamePanel, obj.Reporting);
             
@@ -162,6 +148,10 @@ classdef PTKGui < PTKFigure
 
             % Wait until the GUI is visible before removing the splash screen
             splash_screen.Delete;
+        end
+        
+        function ShowPatientBrowser(obj)
+            obj.PatientBrowserFactory.Show;
         end
         
         function ChangeMode(obj, mode)
@@ -307,7 +297,7 @@ classdef PTKGui < PTKFigure
         end
         
         function plugin_name = GetCurrentPluginName(obj)
-            plugin_name = obj.GuiDataset.CurrentPluginName;
+            plugin_name = obj.GuiDataset.GuiDatasetState.CurrentPluginName;
         end
         
         function patient_id = GetCurrentPatientId(obj)
@@ -631,14 +621,21 @@ classdef PTKGui < PTKFigure
                         end
                     end
                     if markers_changed
-                        choice = questdlg('Do you want to save the current markers?', ...
-                            'Unsaved changes to markers', 'Save', 'Don''t save', 'Save');
-                        switch choice
-                            case 'Save'
-                                obj.SaveMarkers;
-                            case 'Don''t save'
-                                obj.SaveMarkersBackup;
-                                disp('Abandoned changes have been stored in AbandonedMarkerPoints.mat');
+                        
+                        % Depending on the software settings, the user can be prompted before saving
+                        % changes to the markers
+                        if PTKSoftwareInfo.ConfirmBeforeSavingMarkers
+                            choice = questdlg('Do you want to save the changes you have made to the current markers?', ...
+                                'Unsaved changes to markers', 'Delete changes', 'Save', 'Save');
+                            switch choice
+                                case 'Save'
+                                    obj.SaveMarkers;
+                                case 'Don''t save'
+                                    obj.SaveMarkersBackup;
+                                    disp('Abandoned changes have been stored in AbandonedMarkerPoints.mat');
+                            end
+                        else
+                            obj.SaveMarkers;
                         end
                     end
                 end
@@ -657,7 +654,6 @@ classdef PTKGui < PTKFigure
             end
             obj.LastWindowSize = new_size;
             
-            load_menu_height = obj.LoadMenuHeight;
             if PTKSoftwareInfo.ToolbarEnabled
                 toolbar_height = obj.ToolbarPanel.ToolbarHeight;
             else
@@ -673,19 +669,20 @@ classdef PTKGui < PTKFigure
             
             obj.SidePanel.Resize([1, 1, side_panel_width, side_panel_height]);
             
+            if obj.ImagePanel.ShowControlPanel
+                image_height_pixels = viewer_panel_height - obj.ImagePanel.ControlPanelHeight;
+            else
+                image_height_pixels = viewer_panel_height;
+            end
             
-            image_height_pixels = viewer_panel_height - obj.ImagePanel.ControlPanelHeight;
             image_width_pixels = obj.GetSuggestedWidth(image_height_pixels);
             viewer_panel_width = image_width_pixels + PTKSlider.SliderWidth;
             
             patient_name_panel_width = viewer_panel_width;
             
-            version_panel_height = obj.VersionPanel.GetRequestedHeight;
-            version_panel_width = max(1, parent_width_pixels - viewer_panel_width - side_panel_width);
+            mode_panel_width = max(1, parent_width_pixels - viewer_panel_width - side_panel_width);
             
-            plugins_panel_height = max(1, parent_height_pixels - load_menu_height - version_panel_height - toolbar_height);
-            
-            patient_browser_width = obj.PatientBrowserWidth;
+            plugins_panel_height = max(1, parent_height_pixels - toolbar_height);
             
             image_panel_position = 2 + side_panel_width;
             obj.ImagePanel.Resize([image_panel_position, toolbar_height, viewer_panel_width, viewer_panel_height]);
@@ -694,22 +691,13 @@ classdef PTKGui < PTKFigure
             obj.PatientNamePanel.Resize([image_panel_position, patient_name_panel_y_position, patient_name_panel_width, patient_name_panel_height]);
             
             if PTKSoftwareInfo.ToolbarEnabled
-                toolbar_width = parent_width_pixels - image_panel_position;
+                toolbar_width = parent_width_pixels;
                 obj.ToolbarPanel.Resize([image_panel_position, 1, toolbar_width, toolbar_height]);
             end
             
             right_side_position = image_panel_position + viewer_panel_width + 1;
             
-            obj.ModeTabControl.Resize([right_side_position, toolbar_height, version_panel_width, plugins_panel_height]);
-            
-            height_additional = 3;
-            obj.VersionPanel.Resize([right_side_position, toolbar_height + plugins_panel_height, version_panel_width, version_panel_height + height_additional]);
-                        
-            obj.PatientBrowserButton.Resize([right_side_position + 8, parent_height_pixels - load_menu_height + 1, patient_browser_width, load_menu_height - 1]);
-            
-            if ~isempty(obj.DropDownLoadMenu);
-                obj.DropDownLoadMenu.Resize([right_side_position + 8 + patient_browser_width, parent_height_pixels - load_menu_height, version_panel_width - patient_browser_width - 8, load_menu_height]);
-            end
+            obj.ModeTabControl.Resize([right_side_position, toolbar_height, mode_panel_width, plugins_panel_height]);
             
             if ~isempty(obj.WaitDialogHandle)
                 obj.WaitDialogHandle.Resize();
@@ -733,7 +721,6 @@ classdef PTKGui < PTKFigure
         
         function UpdateQuickLoadMenu(obj)
             [sorted_paths, sorted_uids] = obj.GuiDataset.GetListOfPaths;
-            obj.DropDownLoadMenu.UpdateQuickLoadMenu(sorted_paths, sorted_uids);
         end
 
         function DatabaseHasChanged(obj)
@@ -831,11 +818,14 @@ classdef PTKGui < PTKFigure
             % top of the version panel or drop-down menu
             
             child_handles = get(obj.GraphicalComponentHandle, 'Children');
-            popupmenu_handle = obj.DropDownLoadMenu.GraphicalComponentHandle;
-            version_handle = obj.VersionPanel.GraphicalComponentHandle;
-            other_handles = setdiff(child_handles, popupmenu_handle);
-            other_handles = setdiff(other_handles, version_handle);
-            reordered_handles = [version_handle; popupmenu_handle; other_handles];
+            
+            if isempty(obj.ToolbarPanel)
+                toolbar_handle = [];
+            else
+                toolbar_handle = obj.ToolbarPanel.GraphicalComponentHandle;
+            end
+            other_handles = setdiff(child_handles, toolbar_handle);
+            reordered_handles = [other_handles, toolbar_handle];
             set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
         end
 
