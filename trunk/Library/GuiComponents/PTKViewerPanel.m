@@ -57,6 +57,11 @@ classdef PTKViewerPanel < PTKPanel
     end
     
     properties (Access = private)
+        LevelMin
+        LevelMax
+        WindowMin
+        WindowMax
+        
         FigureHandle
         ToolCallback
         Tools
@@ -65,12 +70,20 @@ classdef PTKViewerPanel < PTKPanel
         ViewerPanelCallback
     end
     
+    properties
+        ShowControlPanel = true
+    end
+    
     methods
         
-        function obj = PTKViewerPanel(parent)
+        function obj = PTKViewerPanel(parent, show_control_panel)
             % Creates a PTKViewerPanel
             
             obj = obj@PTKPanel(parent);
+            
+            if nargin > 1
+                obj.ShowControlPanel = show_control_panel;
+            end
             
             % These image objects must be created here, not in the properties section, to
             % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
@@ -83,8 +96,10 @@ classdef PTKViewerPanel < PTKPanel
             obj.Tools = PTKToolList(obj.ToolCallback, obj);
             
             % Create the coontrol panel
-            obj.ControlPanel = PTKViewerPanelToolbar(obj, obj.Tools, obj.Reporting);
-            obj.AddChild(obj.ControlPanel, obj.Reporting);
+            if obj.ShowControlPanel
+                obj.ControlPanel = PTKViewerPanelToolbar(obj, obj.Tools, obj.Reporting);
+                obj.AddChild(obj.ControlPanel, obj.Reporting);
+            end
 
             % Create the renderer object, which handles the image processing in the viewer
             obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.ControlPanel, obj.Reporting);
@@ -107,10 +122,19 @@ classdef PTKViewerPanel < PTKPanel
             parent_width_pixels = position(3);
             parent_height_pixels = position(4);
             image_width = parent_width_pixels;
-            control_panel_height = obj.ControlPanelHeight;
+            
+            if obj.ShowControlPanel
+                control_panel_height = obj.ControlPanelHeight;
+                control_panel_width = image_width;
+            else
+                control_panel_height = 0;
+                control_panel_width = 0;
+            end
+            
             image_height = max(1, parent_height_pixels - control_panel_height);
-            control_panel_position = [1, 1, image_width, control_panel_height];
-            image_panel_position = [1, control_panel_height, image_width, image_height];            
+            
+            control_panel_position = [1, 1, control_panel_width, control_panel_height];
+            image_panel_position = [1, 1 + control_panel_height, image_width, image_height];
             
             % Resize the image and slider
             obj.ViewerPanelMultiView.Resize(image_panel_position);
@@ -118,7 +142,9 @@ classdef PTKViewerPanel < PTKPanel
             obj.ViewerPanelMultiView.UpdateAxes;
             
             % Resize the control panel
-            obj.ControlPanel.Resize(control_panel_position);
+            if obj.ShowControlPanel
+                obj.ControlPanel.Resize(control_panel_position);
+            end
         end
         
         function marker_point_manager = GetMarkerPointManager(obj)
@@ -169,7 +195,10 @@ classdef PTKViewerPanel < PTKPanel
             obj.ViewerPanelMultiView.UpdateCursor(obj.FigureHandle, [], []);
             
             obj.Tools.SetControl(tag_value);
-            obj.ControlPanel.SetControl(tag_value);
+            
+            if obj.ShowControlPanel
+                obj.ControlPanel.SetControl(tag_value);
+            end
 
         end
         
@@ -211,10 +240,97 @@ classdef PTKViewerPanel < PTKPanel
             elseif strcmpi(key, 'uparrow')
                 obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) - 1;
                 input_has_been_processed = true;
+            elseif strcmpi(key, 'c')
+                obj.Orientation = PTKImageOrientation.Coronal;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 's')
+                obj.Orientation = PTKImageOrientation.Sagittal;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 'a')
+                obj.Orientation = PTKImageOrientation.Axial;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 'i')
+                obj.ShowImage = ~obj.ShowImage;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 't')
+                obj.BlackIsTransparent = ~obj.BlackIsTransparent;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 'o')
+                obj.ShowOverlay = ~obj.ShowOverlay;
+                input_has_been_processed = true;
             else
-                % Otherwise allow the control panel and its tools to process shortcut keys
-                input_has_been_processed = obj.ControlPanel.ShortcutKeys(key);
+                input_has_been_processed = obj.Tools.ShortcutKeys(key, obj.SelectedControl);
             end
+        end
+     
+        function [window_min, window_max] = GetWindowLimits(obj)
+            % Returns the minimum and maximum values from the window slider
+            
+            window_min = obj.WindowMin;
+            window_max = obj.WindowMax;
+        end
+        
+        function SetWindowLimits(obj, window_min, window_max)
+            % Sets the minimum and maximum values for the level slider
+            
+            obj.WindowMin = window_min;
+            obj.WindowMax = window_max;
+
+            if obj.ShowControlPanel
+                obj.ControlPanel.UpdateWindowLimits;
+            end
+        end
+        
+        function [level_min, level_max] = GetLevelLimits(obj)
+            % Returns the minimum and maximum values from the level slider
+            
+            level_min = obj.LevelMin;
+            level_max = obj.LevelMax;
+        end
+        
+        function SetLevelLimits(obj, level_min, level_max)
+            % Sets the minimum and maximum values for the level slider
+            
+            obj.LevelMin = level_min;
+            obj.LevelMax = level_max;
+
+            if obj.ShowControlPanel
+                obj.ControlPanel.UpdateLevelLimits;
+            end
+        end
+        
+        function ModifyWindowLevelLimits(obj)
+            % This function is used to change the max window and min/max level
+            % values after the window or level has been changed to a value outside
+            % of the limits
+            
+            changed = false;
+            
+            if obj.Level > obj.LevelMax
+                obj.LevelMax = obj.Level;
+                changed = true;
+            end
+            if obj.Level < obj.LevelMin
+                obj.LevelMin = obj.ViewerPanel.Level;
+                changed = true;
+            end
+            if obj.Window > obj.WindowMax
+                obj.WindowMax = obj.Window;
+                changed = true;
+            end
+
+            if obj.Window < 0
+                obj.Window = 0;
+                changed = true;
+            end
+
+            if obj.ShowControlPanel && changed
+                obj.ControlPanel.UpdateLevelLimits;
+            end
+        end        
+        
+        function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier)
+            tool = obj.Tools.GetCurrentTool(mouse_is_down, keyboard_modifier, obj.SelectedControl);
         end
         
     end
@@ -248,13 +364,17 @@ classdef PTKViewerPanel < PTKPanel
         
         function UpdateStatus(obj)
             global_coords = obj.ViewerPanelMultiView.GetImageCoordinates;
-            obj.ControlPanel.UpdateStatus(global_coords);
+            if obj.ShowControlPanel
+                obj.ControlPanel.UpdateStatus(global_coords);
+            end
         end
         
         function ResizeControlPanel(obj)
             control_panel_position = obj.Position;
             control_panel_position(4) = obj.ControlPanelHeight;
-            obj.ControlPanel.Resize(control_panel_position);            
+            if obj.ShowControlPanel
+                obj.ControlPanel.Resize(control_panel_position);
+            end
         end
 
     end

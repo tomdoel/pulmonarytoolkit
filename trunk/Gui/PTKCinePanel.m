@@ -213,7 +213,9 @@ classdef PTKCinePanel < PTKVirtualPanel
        
         function UpdateStatus(obj)
             global_coords = obj.GetImageCoordinates;
-            obj.ControlPanel.UpdateStatus(global_coords);
+            if ~isempty(obj.ControlPanel)
+                obj.ControlPanel.UpdateStatus(global_coords);
+            end
         end
         
     end
@@ -224,7 +226,7 @@ classdef PTKCinePanel < PTKVirtualPanel
             % Returns the tool whch is currently selected. If keyboard_modifier is
             % specified, then this may override the current tool
             
-            tool = obj.ControlPanel.GetCurrentTool(mouse_is_down, keyboard_modifier);
+            tool = obj.ViewerPanel.GetCurrentTool(mouse_is_down, keyboard_modifier);
         end
         
         function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
