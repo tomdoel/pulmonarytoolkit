@@ -1,5 +1,5 @@
-classdef PTKLobeMapForGasMRI < PTKPlugin
-    % PTKLobeMapForGasMRI.
+classdef PTKLobeMapForDWGasMRI < PTKPlugin
+    % PTKLobeMapForDWGasMRI.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
@@ -17,7 +17,7 @@ classdef PTKLobeMapForGasMRI < PTKPlugin
     %
     
     properties
-        ButtonText = 'Gas MRI<Br>lobe map'
+        ButtonText = 'DW Gas MRI<Br>lobe map'
         ToolTip = ''
         Category = 'Lobes'
         AllowResultsToBeCached = true
@@ -36,7 +36,7 @@ classdef PTKLobeMapForGasMRI < PTKPlugin
         
         function results = RunPlugin(dataset, reporting)
             lobes = dataset.GetResult('PTKLobes', [], 'CT');
-            gas_image_template = dataset.GetTemplateImage(PTKContext.OriginalImage);
+            gas_image_template = dataset.GetTemplateImage(PTKContext.OriginalImage, 'XeDiff0');
             fluid_deformation_field_right = dataset.GetResult('PTKDeformationFieldCTToGasMRI', PTKContext.RightLung);
             fluid_deformation_field_left = dataset.GetResult('PTKDeformationFieldCTToGasMRI', PTKContext.LeftLung);
             lung_ct_right = dataset.GetResult('PTKLungMaskForRegistration', PTKContext.RightLung, 'CT');
