@@ -88,10 +88,14 @@ classdef PTKSoftwareInfo < handle
         WriteVerboseEntriesToLogFile = false
         RecycleWhenDeletingCacheFiles = false
         ToolbarEnabled = false
+        ViewerPanelToolbarEnabled = true
         
         % Do not change this
         CancelErrorId = 'PTKMain:UserCancel'
         FileMissingErrorId = 'PTKMain:FileMissing'
+        
+        % If true, the user will be prompted before marker changes are saved
+        ConfirmBeforeSavingMarkers = false
     end
 
     methods (Static)
