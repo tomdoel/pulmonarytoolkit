@@ -169,7 +169,7 @@ classdef PTKViewerPanelCallback < handle
             
             % If the window or level values have been externally set outside the
             % slider range, then we modify the slider range to accommodate this
-            obj.Toolbar.ModifyWindowLevelLimits;
+            obj.ViewerPanel.ModifyWindowLevelLimits;
             
             obj.UpdateGui;
             obj.ViewerPanelRenderer.DrawImages(true, true, true);
@@ -228,7 +228,10 @@ classdef PTKViewerPanelCallback < handle
         
         function UpdateGui(obj)
             main_image = obj.ViewerPanel.BackgroundImage;
-            obj.Toolbar.UpdateGui(main_image);
+            
+            if ~isempty(obj.Toolbar)
+                obj.Toolbar.UpdateGui(main_image);
+            end
             
             if ~isempty(main_image) && main_image.ImageExists
                 image_size = main_image.ImageSize;
@@ -254,7 +257,7 @@ classdef PTKViewerPanelCallback < handle
                     limits = limits_hu;
                 end
 
-                obj.Toolbar.SetWindowLimits(0, max(1, 3*(limits(2) - limits(1))));
+                obj.ViewerPanel.SetWindowLimits(0, max(1, 3*(limits(2) - limits(1))));
                 if obj.ViewerPanel.Window < 0
                     obj.ViewerPanel.Window = 0;
                 end
@@ -262,7 +265,8 @@ classdef PTKViewerPanelCallback < handle
                     obj.ViewerPanel.Window = max(1, limits(2) - limits(1));
                 end
                 
-                obj.Toolbar.SetLevelLimits(limits(1), max(limits(1)+1, limits(2)));
+                obj.ViewerPanel.SetLevelLimits(limits(1), max(limits(1)+1, limits(2)));
+                
                 if obj.ViewerPanel.Level < limits(1)
                     obj.ViewerPanel.Level = limits(1);
                 end
@@ -303,11 +307,13 @@ classdef PTKViewerPanelCallback < handle
                 obj.ViewerPanel.Window = mean_value*2;
                 obj.ViewerPanel.Level = mean_value;
             end
-        end        
+        end
         
         function UpdateStatus(obj)
             global_coords = obj.ViewerPanelRenderer.GetImageCoordinates;
-            obj.Toolbar.UpdateStatus(global_coords);            
+            if ~isempty(obj.Toolbar)
+                obj.Toolbar.UpdateStatus(global_coords);
+            end
         end
         
     end

@@ -102,8 +102,7 @@ classdef PTKViewerPanelToolbar < PTKPanel
             
             obj.ResizePanel(position);
         end
-        
-        
+
         function delete(obj)
         end
         
@@ -115,31 +114,17 @@ classdef PTKViewerPanelToolbar < PTKPanel
             end
         end
         
-        function SetWindowLimits(obj, window_min, window_max)
+        function UpdateWindowLimits(obj)
             % Sets the minimum and maximum values for the window slider
-            
+
+            [window_min, window_max] = obj.ViewerPanel.GetWindowLimits;
             set(obj.WindowSlider, 'Min', window_min, 'Max', window_max);
         end
         
-        function [window_min, window_max] = GetWindowLimits(obj)
-            % Returns the minimum and maximum values from the window slider
-            
-            min_max = get(obj.WindowSlider, {'Min', 'Max'});
-            window_min = min_max{1};
-            window_max = min_max{2};
-        end
-        
-        function [level_min, level_max] = GetLevelLimits(obj)
-            % Returns the minimum and maximum values from the level slider
-            
-            min_max = get(obj.LevelSlider, {'Min', 'Max'});
-            level_min = min_max{1};
-            level_max = min_max{2};
-        end
-        
-        function SetLevelLimits(obj, level_min, level_max)
+        function UpdateLevelLimits(obj)
             % Sets the minimum and maximum values for the level slider
             
+            [level_min, level_max] = obj.ViewerPanel.GetLevelLimits;
             set(obj.LevelSlider, 'Min', level_min, 'Max', level_max);
         end
         
@@ -166,49 +151,6 @@ classdef PTKViewerPanelToolbar < PTKPanel
                     set(obj.LevelSlider, 'Value', obj.ViewerPanel.Level);
                     set(obj.OpacitySlider, 'Value', obj.ViewerPanel.OverlayOpacity);
                 end
-            end
-        end
-        
-        function ModifyWindowLevelLimits(obj)
-            % This function is used to change the max window and min/max level
-            % values after the window or level has been changed to a value outside
-            % of the limits
-            
-            if obj.ViewerPanel.Level > get(obj.LevelSlider, 'Max')
-                set(obj.LevelSlider, 'Max', obj.ViewerPanel.Level);
-            end
-            if obj.ViewerPanel.Level < get(obj.LevelSlider, 'Min')
-                set(obj.LevelSlider, 'Min', obj.ViewerPanel.Level);
-            end
-            if obj.ViewerPanel.Window > get(obj.WindowSlider, 'Max')
-                set(obj.WindowSlider, 'Max', obj.ViewerPanel.Window);
-            end
-            if obj.ViewerPanel.Window < 0
-                obj.ViewerPanel.Window = 0;
-            end
-        end
-     
-        function input_has_been_processed = ShortcutKeys(obj, key)
-            if strcmpi(key, 'c')
-                obj.ViewerPanel.Orientation = PTKImageOrientation.Coronal;
-                input_has_been_processed = true;
-            elseif strcmpi(key, 's')
-                obj.ViewerPanel.Orientation = PTKImageOrientation.Sagittal;
-                input_has_been_processed = true;
-            elseif strcmpi(key, 'a')
-                obj.ViewerPanel.Orientation = PTKImageOrientation.Axial;
-                input_has_been_processed = true;
-            elseif strcmpi(key, 'i')
-                obj.ViewerPanel.ShowImage = ~obj.ViewerPanel.ShowImage;
-                input_has_been_processed = true;
-            elseif strcmpi(key, 't')
-                obj.ViewerPanel.BlackIsTransparent = ~obj.ViewerPanel.BlackIsTransparent;
-                input_has_been_processed = true;
-            elseif strcmpi(key, 'o')
-                obj.ViewerPanel.ShowOverlay = ~obj.ViewerPanel.ShowOverlay;
-                input_has_been_processed = true;
-            else
-                input_has_been_processed = obj.Tools.ShortcutKeys(key, obj.ViewerPanel.SelectedControl);
             end
         end
         
@@ -273,11 +215,6 @@ classdef PTKViewerPanelToolbar < PTKPanel
             
             obj.SetStatus(status_text);
         end
-        
-        function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier)
-            tool = obj.Tools.GetCurrentTool(mouse_is_down, keyboard_modifier, obj.ViewerPanel.SelectedControl);
-        end
-        
     end
     
     

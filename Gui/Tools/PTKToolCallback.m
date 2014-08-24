@@ -68,7 +68,7 @@ classdef PTKToolCallback < handle
             if isempty(obj.Toolbar)
                 obj.Reporting.Error('PTKToolCallback:ToolbarDoesNotExist', 'Toolbar has not been set');
             end
-            [window_min, window_max] = obj.Toolbar.GetWindowLimits;
+            [window_min, window_max] = obj.ViewerPanel.GetWindowLimits;
             window = max(window, window_min);
             window = min(window, window_max);
             obj.ViewerPanel.Window = window;            
@@ -80,7 +80,7 @@ classdef PTKToolCallback < handle
             if isempty(obj.Toolbar)
                 obj.Reporting.Error('PTKToolCallback:ToolbarDoesNotExist', 'Toolbar has not been set');
             end            
-            [level_min, level_max] = obj.Toolbar.GetLevelLimits;
+            [level_min, level_max] = obj.ViewerPanel.GetLevelLimits;
             level = max(level, level_min);
             level = min(level, level_max);
             obj.ViewerPanel.Level = level;
