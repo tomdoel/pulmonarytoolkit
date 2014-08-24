@@ -155,7 +155,9 @@ classdef PTKButton < PTKUserInterfaceObject
                 border_colour = min(255, border_colour + 100);
             end
             
-            obj.RGBImage = PTKImageUtilities.AddBorderToRGBImage(obj.RGBImage, mask_image, obj.BorderSize, obj.BackgroundColour, obj.UnSelectedColour, border_colour, obj.BackgroundColour);
+            if ~isempty(obj.RGBImage)
+                obj.RGBImage = PTKImageUtilities.AddBorderToRGBImage(obj.RGBImage, mask_image, obj.BorderSize, obj.BackgroundColour, obj.UnSelectedColour, border_colour, obj.BackgroundColour);
+            end
             
             if obj.ComponentHasBeenCreated
                 set(obj.GraphicalComponentHandle, 'CData', obj.RGBImage);
