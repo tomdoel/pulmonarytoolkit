@@ -50,7 +50,7 @@ function SaveCompressed(full_raw_filename, raw_image, format, param1, param2, re
             output_size(2) = 2*output_size(2);
         case 'double'
             output_class = 'uint16';
-            output_size(2) = 2*output_size(2);
+            output_size(2) = 4*output_size(2);
         otherwise
             output_class = image_class;
     end
