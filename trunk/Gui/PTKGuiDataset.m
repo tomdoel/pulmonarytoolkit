@@ -74,9 +74,6 @@ classdef PTKGuiDataset < handle
             
             % Add any new datasets to the patient browser
             obj.Gui.DatabaseHasChanged;
-            
-            % Update the menu
-            obj.Gui.UpdateQuickLoadMenu;
         end
         
         function [sorted_paths, sorted_uids] = GetListOfPaths(obj)
@@ -188,8 +185,6 @@ classdef PTKGuiDataset < handle
 
             obj.Gui.AddAllPreviewImagesToButtons([]);
             obj.Gui.UpdatePatientBrowser([], []);
-
-            obj.Gui.UpdateQuickLoadMenu;
         end
         
         
@@ -247,7 +242,6 @@ classdef PTKGuiDataset < handle
             
             if anything_changed
                 obj.Gui.DatabaseHasChanged;
-                obj.Gui.UpdateQuickLoadMenu;
             end
         end
         
@@ -363,7 +357,6 @@ classdef PTKGuiDataset < handle
                 
             end
             
-            obj.Gui.UpdateQuickLoadMenu;
             obj.Gui.UpdatePatientBrowser(patient_id, series_uid);
         end
         

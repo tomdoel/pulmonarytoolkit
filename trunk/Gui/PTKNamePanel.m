@@ -4,8 +4,8 @@ classdef PTKNamePanel < PTKPanel
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKVersionPanel shows the name of the current patient and segmentatin
-    %     overlay
+    %     PTKNamePanel shows the name of the current patient, dataset, segmentatin
+    %     overlay and whether the result has been edited
     %
     %     Licence
     %     -------
