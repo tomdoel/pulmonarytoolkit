@@ -1,4 +1,4 @@
-function results = PTKComputeVentilatedVolume(ventilation_mask, raw_region_mask)
+function results = PTKComputeVentilatedVolume(ventilation_mask, region_mask)
     % PTKComputeVentilatedVolume. Computes the percentage of a region showing
     %     ventilation in gas MRI images
     %
@@ -10,10 +10,10 @@ function results = PTKComputeVentilatedVolume(ventilation_mask, raw_region_mask)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
 
     ventilation_mask_raw = ventilation_mask.RawImage > 0;
-    ventilation_mask_raw = ventilation_mask_raw & raw_region_mask;
+    ventilation_mask_raw = ventilation_mask_raw & region_mask.RawImage > 0;
     
     sum_ventilated_voxels = sum(ventilation_mask_raw(:));
-    sum_region_voxels = sum(raw_region_mask(:));
+    sum_region_voxels = sum(region_mask.RawImage(:));
     
     percentage_ventilated = 100*sum_ventilated_voxels/sum_region_voxels;
     
