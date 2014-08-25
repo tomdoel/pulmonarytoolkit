@@ -33,6 +33,9 @@ classdef PTKLineAxes < PTKAxes
         function CreateGuiComponent(obj, position, reporting)
             CreateGuiComponent@PTKAxes(obj, position, reporting);
             switch obj.LinePosition
+                case 'left'
+                    x_position = [1, 1];
+                    y_position = [position(2), position(2) + position(4)];
                 case 'right'
                     x_position = [position(3), position(3)];
                     y_position = [position(2), position(2) + position(4)];
@@ -41,7 +44,7 @@ classdef PTKLineAxes < PTKAxes
                     y_position = [position(4) - 3, position(4) - 3];
                 case 'bottom'
                     x_position = [1, position(3)];
-                    y_position = [1, 1];
+                    y_position = [position(2) + 1, position(2) + 1];
                 otherwise
                     reporting.Error('PTKLineAxes:UnknownLinePosition', 'Code error: the specified line position is unknown');
             end
@@ -51,6 +54,11 @@ classdef PTKLineAxes < PTKAxes
         function Resize(obj, position)
             Resize@PTKAxes(obj, position);
             switch obj.LinePosition
+                case 'left'
+                    x_position = [1, position(1) + position(3)];
+                    y_position = [1, position(2) + position(4)];
+                    x_limits = [1, position(3)];
+                    y_limits = [1, position(4)];
                 case 'right'
                     x_position = [position(3), position(3)];
                     y_position = [position(2), position(2) + position(4)];
@@ -63,7 +71,7 @@ classdef PTKLineAxes < PTKAxes
                     y_limits = [1, position(4)];
                 case 'bottom'
                     x_position = [1, position(3)];
-                    y_position = [1, 1];
+                    y_position = [position(2) + 1, position(2) + 1];
                     x_limits = [1, position(3)];
                     y_limits = [1, position(4)];
                 otherwise

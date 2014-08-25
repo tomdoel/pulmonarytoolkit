@@ -29,6 +29,7 @@ classdef PTKGui < PTKFigure
         SidePanel
         ToolbarPanel
 
+        OrganisedPlugins
         ModeTabControl
 
         PatientBrowserFactory
@@ -74,12 +75,6 @@ classdef PTKGui < PTKFigure
             obj.Settings = PTKSettings.LoadSettings(obj.Reporting);
             obj.Settings.ApplySettingsToViewerPanel(obj.ImagePanel);
             
-            % Create the panel of tools across the bottom of the interface
-            if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = PTKToolbarPanel(obj, obj, obj.Settings, obj.Reporting);
-                obj.AddChild(obj.ToolbarPanel, obj.Reporting);
-            end
-            
             % Create the object which manages the current dataset
             obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.Settings, obj.Reporting);
             
@@ -90,7 +85,16 @@ classdef PTKGui < PTKFigure
             % PB may take time to load if there are many datasets
             obj.PatientBrowserFactory = PTKPatientBrowserFactory(obj, obj.GuiDataset, obj.Settings, obj.Reporting);
 
-            obj.ModeTabControl = PTKModeTabControl(obj, obj.Settings, obj.Reporting);
+            % Map of all plugins visible in the GUI
+            obj.OrganisedPlugins = PTKOrganisedPlugins(obj.Settings, obj, obj.Reporting);
+
+            % Create the panel of tools across the bottom of the interface
+            if PTKSoftwareInfo.ToolbarEnabled
+                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, obj, obj.Settings, obj.Reporting);
+                obj.AddChild(obj.ToolbarPanel, obj.Reporting);
+            end
+            
+            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins, obj.Settings, obj.Reporting);
             obj.AddChild(obj.ModeTabControl, obj.Reporting);
 
             obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.Settings, obj.GuiDataset.GuiDatasetState, obj.Reporting);
@@ -818,7 +822,7 @@ classdef PTKGui < PTKFigure
                 toolbar_handle = obj.ToolbarPanel.GraphicalComponentHandle;
             end
             other_handles = setdiff(child_handles, toolbar_handle);
-            reordered_handles = [other_handles, toolbar_handle];
+            reordered_handles = [other_handles; toolbar_handle];
             set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
         end
 

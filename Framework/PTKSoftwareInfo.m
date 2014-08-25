@@ -24,7 +24,7 @@ classdef PTKSoftwareInfo < handle
         XMLVersion = '0.1'
         PTKVersion = '2'
         MatlabMinimumMajorVersion = 7
-        MatlabMinimumMinorVersion = 11
+        MatlabMinimumMinorVersion = 12
         MatlabAdvisedMajorVersion = 7
         MatlabAdvisedMinorVersion = 14
 
@@ -44,6 +44,7 @@ classdef PTKSoftwareInfo < handle
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica'
         DefaultCategoryName = 'Uncategorised'
+        DefaultMode = 'Home'
         
         % If this parameter to true, then the patient browser will group together
         % datasets with the same patient name, even if the patient ID is different

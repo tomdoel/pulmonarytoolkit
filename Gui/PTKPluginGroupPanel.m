@@ -29,14 +29,14 @@ classdef PTKPluginGroupPanel < PTKPanel
     end
     
     methods
-        function obj = PTKPluginGroupPanel(parent, category, current_category_map, callback_function_handle, reporting)
+        function obj = PTKPluginGroupPanel(parent, category, current_category_map, reporting)
             obj = obj@PTKPanel(parent, reporting);
             obj.Enabled = false;
             
             obj.Category = category;
             obj.CurrentCategoryMap = current_category_map;
             
-            obj.AddPlugins(current_category_map, callback_function_handle);
+            obj.AddPlugins(current_category_map);
         end
         
         function CreateGuiComponent(obj, position, reporting)
@@ -59,7 +59,7 @@ classdef PTKPluginGroupPanel < PTKPanel
             height = obj.CachedPanelHeight;
         end
         
-        function AddPlugins(obj, category_map, callback_function_handle)
+        function AddPlugins(obj, category_map)
             obj.CachedPanelHeight = [];
             obj.CachedPanelWidth = [];
             obj.PluginButtonHandlesMap = containers.Map;
@@ -68,6 +68,7 @@ classdef PTKPluginGroupPanel < PTKPanel
             for current_plugin_key = category_map.keys
                 current_plugin = category_map(char(current_plugin_key));
                 
+                callback_function_handle = @current_plugin.RunPlugin;
                 button_handle = PTKPluginButton(obj, callback_function_handle, current_plugin);
                 obj.AddChild(button_handle, obj.Reporting);
                 
@@ -120,10 +121,10 @@ classdef PTKPluginGroupPanel < PTKPanel
                 button_width = button_handle.ButtonWidth;
                 button_height = button_handle.ButtonHeight;
                                 
-                current_plugin.X = position_x;
-                current_plugin.Y = position_y;
-                current_plugin.W = button_width;
-                current_plugin.H = button_height;
+                current_plugin.ParsedPluginInfo.X = position_x;
+                current_plugin.ParsedPluginInfo.Y = position_y;
+                current_plugin.ParsedPluginInfo.W = button_width;
+                current_plugin.ParsedPluginInfo.H = button_height;
                 
                 last_y_coordinate = position_y;
                 row_height = max(row_height, button_height);
@@ -147,10 +148,10 @@ classdef PTKPluginGroupPanel < PTKPanel
             for current_plugin_key = category_map.keys
                 current_plugin = category_map(char(current_plugin_key));
                 
-                position_x = current_plugin.X;
-                button_width = current_plugin.W;
-                button_height = current_plugin.H;
-                position_y = obj.CachedPanelHeight - button_height - header_height - current_plugin.Y;
+                position_x = current_plugin.ParsedPluginInfo.X;
+                button_width = current_plugin.ParsedPluginInfo.W;
+                button_height = current_plugin.ParsedPluginInfo.H;
+                position_y = obj.CachedPanelHeight - button_height - header_height - current_plugin.ParsedPluginInfo.Y;
                 
                 new_position = [position_x, position_y, button_width, button_height];
                 

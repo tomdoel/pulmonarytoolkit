@@ -23,10 +23,8 @@ classdef PTKPluginsPanel < PTKCompositePanel
         
         % Plugin information grouped by category
         PluginsByCategory
-        GuiPluginsByCategory
         
         % The plugin panels for each category
-        GuiPluginPanels
         PluginPanels
 
         % Callbacks for when plugin buttons are clicked
@@ -51,7 +49,6 @@ classdef PTKPluginsPanel < PTKCompositePanel
             obj.LeftMargin = 5;
             obj.RightMargin = 5;
             
-            obj.GuiPluginPanels = containers.Map;
             obj.PluginPanels = containers.Map;
             
             obj.RunPluginCallback = run_plugin_callback;
@@ -61,10 +58,6 @@ classdef PTKPluginsPanel < PTKCompositePanel
         function AddAllPreviewImagesToButtons(obj, current_dataset, window, level)
             % Causes each plugin panel to refresh the preview images for every button using
             % the supplied dataset
-            
-            for panel = obj.GuiPluginPanels.values
-                panel{1}.AddAllPreviewImagesToButtons(current_dataset, window, level);
-            end
             
             for panel = obj.PluginPanels.values
                 panel{1}.AddAllPreviewImagesToButtons(current_dataset, window, level);
@@ -84,12 +77,10 @@ classdef PTKPluginsPanel < PTKCompositePanel
         function AddPlugins(obj, current_dataset)
             % This function adds buttons for all files in the Plugins directory
 
-            gui_plugins_by_category = obj.OrganisedPlugins.GetGuiPluginsForMode(obj.ModeName);
-            plugins_by_category = obj.OrganisedPlugins.GetPluginsForMode(obj.ModeName);
+            plugins_by_category = obj.OrganisedPlugins.GetAllPluginsForMode(obj.ModeName);
             
             obj.PluginsByCategory = plugins_by_category;
-            obj.GuiPluginsByCategory = gui_plugins_by_category;
-            obj.AddPluginCategoryPanels(gui_plugins_by_category, plugins_by_category, current_dataset);
+            obj.AddPluginCategoryPanels(plugins_by_category);
         end
 
         function RefreshPlugins(obj, current_dataset, window, level)
@@ -109,24 +100,14 @@ classdef PTKPluginsPanel < PTKCompositePanel
     
     methods (Access = private)
 
-        function AddPluginCategoryPanels(obj, gui_plugins_by_category, plugins_by_category, current_dataset)
+        function AddPluginCategoryPanels(obj, plugins_by_category)
             % Add panels for each plugin category
             
-            obj.GuiPluginPanels = containers.Map;
             obj.PluginPanels = containers.Map;
-                        
-            % Add gui-level plugins first
-            for category = gui_plugins_by_category.keys
-                current_category_map = gui_plugins_by_category(char(category));
-                new_panel_handle = PTKPluginGroupPanel(obj, category, current_category_map, obj.RunGuiPluginCallback, obj.Reporting);
-                obj.GuiPluginPanels(char(category)) = new_panel_handle;
-                obj.AddPanel(new_panel_handle);
-            end
             
-            % Now add dataset-level plugins
             for category = plugins_by_category.keys
                 current_category_map = plugins_by_category(char(category));
-                new_panel_handle = PTKPluginGroupPanel(obj, category, current_category_map, obj.RunPluginCallback, obj.Reporting);
+                new_panel_handle = PTKPluginGroupPanel(obj, category, current_category_map, obj.Reporting);
                 obj.PluginPanels(char(category)) = new_panel_handle;
                 obj.AddPanel(new_panel_handle);
             end
