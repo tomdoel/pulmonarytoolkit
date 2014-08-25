@@ -41,7 +41,7 @@ classdef PTKSidePanel < PTKPanel
             obj = obj@PTKPanel(parent, reporting);
             
             obj.GuiState = state;
-            obj.SidePanelAxes = PTKLineAxes(obj);
+            obj.SidePanelAxes = PTKLineAxes(obj, 'right');
             obj.SidePanelAxes.SetLimits([1, 1], [1, 1]);
             obj.AddChild(obj.SidePanelAxes, obj.Reporting);
             
