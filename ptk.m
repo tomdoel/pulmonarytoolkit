@@ -17,7 +17,7 @@ PTKAddPaths;
 
 % Create the splash screen - do this early so the user knows something is
 % hapenning
-splash_screen = PTKSplashScreen;
+splash_screen = PTKSplashScreen.GetSplashScreen;
 splash_screen.ShowAndHold('Initialising');
 
 % Verify that an appropriate version of Matlab is being run

@@ -1,10 +1,13 @@
-classdef PTKSplashScreen < PTKProgressInterface & PTKFigure
+classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
     % PTKSplashScreen. A splash screen dialog which also reports progress informaton
     %
     %     PTKSplashScreen creates a dialog with the application logo and version
     %     information. It also displays progress information, for use during the
     %     application startup for reporting progress before the user interface
     %     is visible.
+    %
+    %     PTKSplashScreen is a singleton. You cannot create it using the
+    %     constructor; instead call PTKSplashScreen.GetSplashScreen;
     %
     %
     %     Licence
@@ -45,7 +48,17 @@ classdef PTKSplashScreen < PTKProgressInterface & PTKFigure
         LastTitle
     end
         
-    methods
+    methods (Static)
+        function splash_screen = GetSplashScreen
+            persistent SplashScreen
+            if isempty(SplashScreen) || ~isvalid(SplashScreen)
+                SplashScreen = PTKSplashScreen;
+            end
+            splash_screen = SplashScreen;
+        end
+    end
+    
+    methods (Access = private)
         function obj = PTKSplashScreen
             
             % Calculate the figure windows size
@@ -69,8 +82,10 @@ classdef PTKSplashScreen < PTKProgressInterface & PTKFigure
             
             drawnow;
         end
-        
-        function Delete(obj)
+    end
+    
+    methods
+        function delete(obj)
             delete(obj.GraphicalComponentHandle);
         end        
 
