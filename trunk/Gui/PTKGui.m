@@ -48,7 +48,7 @@ classdef PTKGui < PTKFigure
 
             % Create the splash screen if it doesn't already exist
             if nargin < 1 || isempty(splash_screen) || ~isa(splash_screen, 'PTKProgressInterface')
-                splash_screen = PTKSplashScreen;
+                splash_screen = PTKSplashScreen.GetSplashScreen;
             end
             
             % Call the base class to initialise the figure class
@@ -148,7 +148,7 @@ classdef PTKGui < PTKFigure
             obj.ReorderPanels;
 
             % Wait until the GUI is visible before removing the splash screen
-            splash_screen.Delete;
+            splash_screen.delete;
         end
         
         function ShowPatientBrowser(obj)
