@@ -115,7 +115,13 @@ classdef PTKButton < PTKUserInterfaceObject
             obj.Select(true);
             notify(obj, 'ButtonClicked', PTKEventData(obj.Tag));
             obj.Callback(obj.Tag);
-            obj.Select(false);
+            
+            % It is possible that the callback may lead to a rebuild of the interface and
+            % thus deletion of the button that triggered the callback; in which case we
+            % can't continue with the select
+            if isvalid(obj)
+                obj.Select(false);
+            end
         end
         
         function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
