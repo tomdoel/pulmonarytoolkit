@@ -16,6 +16,7 @@ classdef PTKModeTabControl < PTKTabControl
         OrganisedPlugins
         Settings
         Gui
+        Line
         
         FilePanel
         ViewPanel
@@ -27,14 +28,14 @@ classdef PTKModeTabControl < PTKTabControl
     end
 
     methods
-        function obj = PTKModeTabControl(parent, settings, reporting)
+        function obj = PTKModeTabControl(parent, organised_plugins, settings, reporting)
             obj = obj@PTKTabControl(parent, reporting);
             
             obj.Settings = settings;
             
-            obj.OrganisedPlugins = PTKOrganisedPlugins(settings, reporting);
+            obj.OrganisedPlugins = organised_plugins;
             obj.TabEnabled = containers.Map;
-            
+
             obj.Gui = parent;
 
             obj.FilePanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'File', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
@@ -56,6 +57,10 @@ classdef PTKModeTabControl < PTKTabControl
             obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
             obj.AddTabbedPanel(obj.AnalysisPanel, 'Analyse', 'analysis', 'Perform analysis and save as tables and graphs');
             obj.AnalysisPanel.AddPlugins([]);
+            
+            obj.Line = PTKLineAxes(obj, 'left');
+            obj.Line.SetLimits([1, 1], [1, 1]);
+            obj.AddChild(obj.Line, obj.Reporting);            
         end
         
         function mode = GetPluginMode(obj, mode_tag)
@@ -118,6 +123,7 @@ classdef PTKModeTabControl < PTKTabControl
         end
         
         function Resize(obj, panel_position)
+            obj.Line.Resize(panel_position);
             Resize@PTKTabControl(obj, panel_position);
         end
     end

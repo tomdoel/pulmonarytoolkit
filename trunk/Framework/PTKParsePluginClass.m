@@ -1,4 +1,4 @@
-function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
+function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, suggested_category, reporting)
     % PTKParsePluginClass. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -23,7 +23,17 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
     new_plugin.AllowResultsToBeCached = plugin_class.AllowResultsToBeCached;
     new_plugin.PluginType = plugin_class.PluginType;
     new_plugin.ButtonText = plugin_class.ButtonText;
-    new_plugin.Category = plugin_class.Category;    
+    
+    if ~isempty(plugin_class.Category)
+        new_plugin.Category = plugin_class.Category;
+    else
+        if ~isempty(suggested_category)
+            new_plugin.Category = suggested_category;
+        else
+            new_plugin.Category = PTKSoftwareInfo.DefaultCategoryName;
+        end
+    end
+    
     new_plugin.HidePluginInDisplay = plugin_class.HidePluginInDisplay;
     new_plugin.ButtonWidth = plugin_class.ButtonWidth;
     new_plugin.ButtonHeight = plugin_class.ButtonHeight;
@@ -38,10 +48,10 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
         new_plugin.Context = [];
     end
     
-    if ismember('Mode', property_list);
+    if ismember('Mode', property_list) && ~isempty(plugin_class.Mode);
         new_plugin.Mode = plugin_class.Mode;
     else
-        new_plugin.Mode = [];
+        new_plugin.Mode = PTKSoftwareInfo.DefaultMode;
     end
     
     if ismember('EnableModes', property_list);
@@ -54,5 +64,11 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, reporting)
         new_plugin.SubMode = plugin_class.SubMode;
     else
         new_plugin.SubMode = [];
+    end
+    
+    if ismember('Location', property_list);
+        new_plugin.Location = plugin_class.Location;
+    else
+        new_plugin.Location = 100;
     end
 end

@@ -21,7 +21,8 @@ classdef PTKPluginButton < PTKButton
     end
     
     methods
-        function obj = PTKPluginButton(parent, callback, plugin_info)
+        function obj = PTKPluginButton(parent, callback, plugin_wrapper)
+            plugin_info = plugin_wrapper.ParsedPluginInfo;
             tooltip_string = ['<HTML>' plugin_info.ToolTip];
             
             if (plugin_info.AlwaysRunPlugin)

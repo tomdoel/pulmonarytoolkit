@@ -1,4 +1,4 @@
-function new_plugin = PTKParseGuiPluginClass(plugin_name, plugin_class, reporting)
+function new_plugin = PTKParseGuiPluginClass(plugin_name, plugin_class, suggested_category, reporting)
     % PTKParseGuiPluginClass. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -22,26 +22,38 @@ function new_plugin = PTKParseGuiPluginClass(plugin_name, plugin_class, reportin
     if ~isempty(plugin_class.Category)
         new_plugin.Category = plugin_class.Category;
     else
-        new_plugin.Category = [];
+        if ~isempty(suggested_category)
+            new_plugin.Category = suggested_category;
+        else
+            new_plugin.Category = PTKSoftwareInfo.DefaultCategoryName;
+        end
     end
     new_plugin.HidePluginInDisplay = plugin_class.HidePluginInDisplay;
     new_plugin.ButtonWidth = plugin_class.ButtonWidth;
     new_plugin.ButtonHeight = plugin_class.ButtonHeight;
     new_plugin.AlwaysRunPlugin = false; % Ensures plugin name is not in italics
     
-    if isprop(plugin_class, 'Visibility')
+    property_list = properties(plugin_class);
+    
+    if ismember('Visibility', property_list)
         new_plugin.Visibility = plugin_class.Visibility;
     end
     
-    if isprop(plugin_class, 'Mode')
+    if ismember('Mode', property_list) && ~isempty(plugin_class.Mode)
         new_plugin.Mode = plugin_class.Mode;
     else
-        new_plugin.Mode = [];
+        new_plugin.Mode = PTKSoftwareInfo.DefaultMode;
     end
     
-    if isprop(plugin_class, 'SubMode')
+    if ismember('SubMode', property_list)
         new_plugin.SubMode = plugin_class.SubMode;
     else
         new_plugin.SubMode = [];
     end
+    
+    if ismember('Location', property_list);
+        new_plugin.Location = plugin_class.Location;
+    else
+        new_plugin.Location = 100;
+    end    
 end
