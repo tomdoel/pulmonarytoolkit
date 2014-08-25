@@ -96,9 +96,9 @@ classdef PTKViewerPanelToolbar < PTKPanel
 
             % Add custom listeners to allow continuous callbacks from the
             % sliders
-            obj.AddEventListener(obj.OpacitySlider, 'ActionEvent', @obj.OpacitySliderCallback);
-            obj.AddEventListener(obj.WindowSlider, 'ActionEvent', @obj.WindowSliderCallback);
-            obj.AddEventListener(obj.LevelSlider, 'ActionEvent', @obj.LevelSliderCallback);
+            obj.AddEventListener(obj.OpacitySlider, 'ContinuousValueChange', @obj.OpacitySliderCallback);
+            obj.AddEventListener(obj.WindowSlider, 'ContinuousValueChange', @obj.WindowSliderCallback);
+            obj.AddEventListener(obj.LevelSlider, 'ContinuousValueChange', @obj.LevelSliderCallback);
             
             obj.ResizePanel(position);
         end
