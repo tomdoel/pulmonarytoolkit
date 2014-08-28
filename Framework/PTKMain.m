@@ -45,8 +45,7 @@ classdef PTKMain < handle
     %
     
     properties (SetAccess = private)
-        ImageDatabase      % Database of image files
-        FrameworkCache     % Information about mex files which is cached on disk
+        FrameworkSingleton
         Reporting          % Object for error and progress reporting
         ReportingWithCache % For the dataset, uses the same object, but warnings and messages are cached so multiple warnings can be displayed together
     end
@@ -61,19 +60,19 @@ classdef PTKMain < handle
             end
             obj.Reporting = reporting;
             obj.ReportingWithCache = PTKReportingWithCache(obj.Reporting);
-            obj.FrameworkCache = PTKFrameworkCache.LoadCache(obj.Reporting);
-            obj.ImageDatabase = PTKImageDatabase.LoadDatabase(obj.Reporting);
-            obj.ImageDatabase.Rebuild([], false, obj.Reporting)
-            PTKCompileMexFiles(obj.FrameworkCache, false, obj.Reporting);
+            obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(obj.Reporting);
         end
         
         function Recompile(obj)
             % Forces recompilation of mex files
-            PTKCompileMexFiles(obj.FrameworkCache, true, obj.Reporting);
+            
+            obj.FrameworkSingleton.Recompile(obj.Reporting);
         end
         
         function RebuildDatabase(obj)
-            obj.ImageDatabase.Rebuild([], true, obj.Reporting)
+            % Forces rebuilding of the image database
+            
+            obj.FrameworkSingleton.RebuildDatabase(obj.Reporting);
         end
         
         function dataset_exists = DatasetExists(obj, dataset_uid)
@@ -85,13 +84,13 @@ classdef PTKMain < handle
             % dataset must already be imported.
             
             if ~obj.DatasetExists(dataset_uid)
-                obj.Reporting.Error('PTKMain:UidNotFound', 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
+                obj.Reporting.Error(PTKSoftwareInfo.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
             dataset_disk_cache = PTKDatasetDiskCache(dataset_uid, obj.Reporting);
             image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
-                obj.Reporting.Error('PTKMain:UidNotFound', 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
+                obj.Reporting.Error(PTKSoftwareInfo.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
             dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
@@ -105,14 +104,7 @@ classdef PTKMain < handle
             % imported from the specified path if it does not already exist.
             [image_info, dataset_disk_cache] = PTKMain.ImportDataFromInfo(new_image_info, obj.Reporting);
             
-            % CreateDatasetFromInfo() can import new data, so we may need to add
-            % to the image database
-            if ~obj.ImageDatabase.SeriesExists(image_info.ImageUid)
-                obj.ImageDatabase.Rebuild({image_info.ImageUid}, false, obj.Reporting);
-            
-                % Save changes to the database
-                obj.ImageDatabase.SaveDatabase(obj.Reporting);
-            end
+            obj.FrameworkSingleton.AddToDatabase(image_info.ImageUid, obj.Reporting)
 
             dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
             
@@ -139,13 +131,17 @@ classdef PTKMain < handle
             
             % Adds the files to the image database, which groups them into
             % series
-            uids = PTKImageImporter(filename, obj.ImageDatabase, obj.ReportingWithCache);
+            uids = obj.FrameworkSingleton.ImportData(filename, obj.ReportingWithCache);
             
             % Add the necessary files to the cache
             obj.ImportSeries(uids);
             
             % Save changes to the database
-            obj.ImageDatabase.SaveDatabase(obj.Reporting);
+            obj.FrameworkSingleton.SaveImageDatabase(obj.Reporting);
+            
+            % Tell the image database to fire a database changed event. We do this here
+            % rather than during the import to prevent multiple events being fired
+            obj.FrameworkSingleton.ReportChangesToDatabase;
         end
                 
         function RunLinkFile(obj, dataset_uid, dataset)
@@ -157,13 +153,46 @@ classdef PTKMain < handle
             end
         end
         
+        function image_database = GetImageDatabase(obj)
+            image_database = obj.FrameworkSingleton.GetImageDatabase;
+        end
+        
+        function DeleteDatasets(obj, series_uids)
+            if ~iscell(series_uids)
+                series_uids = {series_uids};
+            end
+            
+            for series_uid_cell = series_uids
+                series_uid = series_uid_cell{1};
+
+                dataset_to_delete = [];
+                try
+                    dataset_to_delete = obj.CreateDatasetFromUid(series_uid);
+                catch exc
+                    %
+                    if PTKSoftwareInfo.IsErrorUidNotFound(exc.identifier)
+                        obj.Reporting.ShowMessage('PTKMain:UidNotFound', ['Failed to delete dataset because its UID could not be found']);
+                    else
+                        rethrow exc
+                    end
+                end
+                
+                if ~isempty(dataset_to_delete)
+                    dataset_to_delete.DeleteCacheForThisDataset;
+                    delete(dataset_to_delete);
+                end
+            end
+            
+            obj.GetImageDatabase.DeleteSeries(series_uids, obj.Reporting);
+        end
+        
     end
     
     methods (Access = private)
         
         function ImportSeries(obj, uids)
             for series_uid = uids
-                series_info = obj.ImageDatabase.GetSeries(series_uid{1});
+                series_info = obj.FrameworkSingleton.GetSeriesInfo(series_uid{1});
                 image_info = series_info.GetImageInfo;
                 PTKMain.ImportDataFromInfo(image_info, obj.Reporting);
             end
@@ -180,6 +209,7 @@ classdef PTKMain < handle
             non_dicom_uids = PTKMain.ImportNonDicomFiles(non_dicom_group.Filenames, obj.Reporting);
             uids = [uids, non_dicom_uids];
         end
+        
     end
     
     methods (Static, Access = private)
@@ -219,12 +249,12 @@ classdef PTKMain < handle
             end
         end
         
-        % Imports data into the Pulmonary Toolkit so that it can be accessed
-        % from the CreateDatasetFromUid() method. The input argument is a
-        % PTKImageInfo object containing the path, filenames and file type of
-        % the data to import. If you do not know the file type, use the
-        % ImportData() method instead.
         function [image_info, dataset_disk_cache] = ImportDataFromInfo(new_image_info, reporting)
+            % Imports data into the Pulmonary Toolkit so that it can be accessed
+            % from the CreateDatasetFromUid() method. The input argument is a
+            % PTKImageInfo object containing the path, filenames and file type of
+            % the data to import. If you do not know the file type, use the
+            % ImportData() method instead.
             
             if isempty(new_image_info.ImageUid)
                 [series_uid, study_uid, modality] = PTKMain.GetImageUID(new_image_info, reporting);
@@ -246,10 +276,10 @@ classdef PTKMain < handle
         end
         
                 
-        % We need a unique identifier for each dataset. For DICOM files we use
-        % the series instance UID. For other files we use the filename, which
-        % will fail if two imported images have the same filename
         function [image_uid, study_uid, modality] = GetImageUID(image_info, reporting)
+            % We need a unique identifier for each dataset. For DICOM files we use
+            % the series instance UID. For other files we use the filename, which
+            % will fail if two imported images have the same filename
             study_uid = [];
             switch(image_info.ImageFileFormat)
                 case PTKImageFileFormat.Dicom
