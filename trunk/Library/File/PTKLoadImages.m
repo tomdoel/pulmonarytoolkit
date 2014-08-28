@@ -35,12 +35,16 @@ function image = PTKLoadImages(image_info, reporting)
         end
     end
     
-    switch image_file_format
-        case PTKImageFileFormat.Dicom
-            image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting);
-        case PTKImageFileFormat.Metaheader
-            image = PTKLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
-        otherwise
-            reporting.Error('PTKOriginalImage:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
+    if isempty(image_file_format)
+        reporting.Error(PTKSoftwareInfo.FileFormatUnknownErrorId, 'Could not load the image because the file format was not recognised.');
+    else
+        switch image_file_format
+            case PTKImageFileFormat.Dicom
+                image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting);
+            case PTKImageFileFormat.Metaheader
+                image = PTKLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
+            otherwise
+                reporting.Error('PTKOriginalImage:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
+        end
     end
 end
