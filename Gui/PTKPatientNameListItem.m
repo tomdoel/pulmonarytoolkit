@@ -66,7 +66,7 @@ classdef PTKPatientNameListItem < PTKListItem
         function ItemRightClicked(obj, src, eventdata)
             ItemRightClicked@PTKListItem(obj, src, eventdata);
             
-            if isempty(get(obj.DescriptionControl.GraphicalComponentHandle, 'uicontextmenu'))
+            if isempty(get(obj.PatientNameText.GraphicalComponentHandle, 'uicontextmenu'))
                 context_menu = uicontextmenu;
                 context_menu_patient = uimenu(context_menu, 'Label', 'Delete this patient', 'Callback', @obj.DeletePatient);
                 obj.SetContextMenu(context_menu);
