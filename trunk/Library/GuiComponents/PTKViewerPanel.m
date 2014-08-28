@@ -311,7 +311,7 @@ classdef PTKViewerPanel < PTKPanel
                 changed = true;
             end
             if obj.Level < obj.LevelMin
-                obj.LevelMin = obj.ViewerPanel.Level;
+                obj.LevelMin = obj.Level;
                 changed = true;
             end
             if obj.Window > obj.WindowMax
