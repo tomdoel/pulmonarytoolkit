@@ -69,12 +69,14 @@ function uids = ImportFilesInDirectory(database, directory, tags_to_get, reporti
     uids = [];
     all_filenames = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(directory, '*'));
     for filename = all_filenames
-        if ~strcmp(filename{1}, 'DICOMDIR') %&& PTKIsDicomFile(directory, filename{1})
+        if ~strcmp(filename{1}, 'DICOMDIR')
             single_image_metainfo = PTKGetSingleImageInfo(directory, filename{1}, tags_to_get, reporting);
-            database.AddImage(single_image_metainfo);
-            new_uid = single_image_metainfo.SeriesUid;
-            if ~ismember(new_uid, uids)
-                uids{end + 1} = new_uid;
+            if ~isempty(single_image_metainfo.ImageFileFormat)
+                database.AddImage(single_image_metainfo);
+                new_uid = single_image_metainfo.SeriesUid;
+                if ~ismember(new_uid, uids)
+                    uids{end + 1} = new_uid;
+                end
             end
         end
     end
