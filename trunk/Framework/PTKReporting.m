@@ -120,10 +120,15 @@ classdef PTKReporting < PTKReportingInterface
         
         function Error(obj, identifier, message)
             [calling_function, stack] = PTKErrorUtilities.GetCallingFunction(2);
+            
+            if ischar(calling_function) && length(calling_function) >= 12 && strcmp(calling_function(1:12), 'PTKReporting')
+                [calling_function, stack] = PTKErrorUtilities.GetCallingFunction(3);
+            end
 
             msgStruct = [];
             msgStruct.message = ['Error in function ' calling_function ': ' message];
-            if PTKSoftwareInfo.IsErrorCancel(identifier) || PTKSoftwareInfo.IsErrorFileMissing(identifier)
+            if PTKSoftwareInfo.IsErrorCancel(identifier) || PTKSoftwareInfo.IsErrorFileMissing(identifier) ...
+                    || PTKSoftwareInfo.IsErrorUnknownFormat(identifier) || PTKSoftwareInfo.IsErrorUidNotFound(identifier)
                 msgStruct.identifier = identifier;
             else
                 msgStruct.identifier = [ 'PTKMain:' identifier];
