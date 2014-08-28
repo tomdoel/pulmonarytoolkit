@@ -20,7 +20,7 @@ classdef PTKAboutPtk < PTKGuiPlugin
         ButtonText = 'About'
         ToolTip = 'Shows a dialog with more information about this program'
         Category = 'File'
-        Visibility = 'Always'
+        Visibility = 'Developer'
         Mode = 'File'
 
         HidePluginInDisplay = false
@@ -31,7 +31,7 @@ classdef PTKAboutPtk < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(~)
-            PTKSplashScreen;
+            PTKSplashScreen.GetSplashScreen;
         end
     end
 end
