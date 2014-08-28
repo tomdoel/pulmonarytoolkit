@@ -67,8 +67,8 @@ classdef PTKDataset < handle
 
     methods
         
-        % PTKDataset is created by the PTKMain class
         function obj = PTKDataset(image_info, dataset_disk_cache, reporting)
+            % PTKDataset is created by the PTKMain class
             obj.DatasetStack = PTKDatasetStack(reporting);
             obj.Reporting = reporting;
             obj.LinkedDatasetChooser = PTKLinkedDatasetChooser(image_info, @obj.notify, dataset_disk_cache, reporting);
