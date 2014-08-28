@@ -214,9 +214,9 @@ classdef PTKEditMode < handle
                     
                     template = obj.GuiDataset.GetTemplateImage;
                     if ~isequal(template.ImageSize, edited_result.ImageSize)
-                        msgbox(['The edited results image cannot be imported as the image size does not match the original image'], [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'error');
+                        uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
                     elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
-                        msgbox(['The edited results image cannot be imported as the voxel size does not match the original image'], [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'error');
+                        uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
                     else
                         obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
                         obj.UnsavedChanges = false;
