@@ -15,6 +15,11 @@ classdef PTKImageDatabase < handle
         CurrentVersionNumber = 3
     end
     
+    events
+        DatabaseHasChanged
+        SeriesHasBeenDeleted
+    end
+    
     properties (Access = private)
         PatientMap
         SeriesMap
@@ -217,11 +222,13 @@ classdef PTKImageDatabase < handle
                         obj.PatientMap.remove(patient_id);
                     end
                     obj.SeriesMap.remove(series_uid);
+                    notify(obj, 'SeriesHasBeenDeleted', PTKEventData(series_uid));
                 end
             end
             if anything_changed
                 obj.InvalidateCachedPaths;
                 obj.SaveDatabase(reporting);
+                notify(obj, 'DatabaseHasChanged');
             end
         end
 
@@ -314,6 +321,7 @@ classdef PTKImageDatabase < handle
                 reporting.UpdateProgressAndMessage(100, 'Saving changes to database');
                 obj.InvalidateCachedPaths;
                 obj.SaveDatabase(reporting);
+                notify(obj, 'DatabaseHasChanged');
             end
             
             reporting.CompleteProgress;
@@ -329,6 +337,10 @@ classdef PTKImageDatabase < handle
             catch ex
                 reporting.ErrorFromException('PTKImageDatabase:FailedtoSaveDatabaseFile', ['Unable to save database file ' database_filename], ex);
             end
+        end
+        
+        function ReportChangesToDatabase(obj)
+            notify(obj, 'DatabaseHasChanged');
         end
     end
     
