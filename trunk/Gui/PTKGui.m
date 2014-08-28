@@ -77,7 +77,7 @@ classdef PTKGui < PTKFigure
             
             % Create the object which manages the current dataset
             obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.Settings, obj.Reporting);
-            
+
             obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj, obj.Reporting);
             obj.AddChild(obj.SidePanel, obj.Reporting);
             
@@ -171,8 +171,8 @@ classdef PTKGui < PTKFigure
         end
         
         
-        % Prompts the user for file(s) to load
         function SelectFilesAndLoad(obj)
+            % Prompts the user for file(s) to load
             image_info = PTKChooseImagingFiles(obj.Settings.SaveImagePath, obj.Reporting);
             
             % An empty image_info means the user has cancelled
@@ -183,13 +183,10 @@ classdef PTKGui < PTKFigure
                 obj.SaveSettings;
                 
                 if (image_info.ImageFileFormat == PTKImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
-                    msgbox('No valid DICOM files were found in this folder', [PTKSoftwareInfo.Name ': No image files found.']);
+                    uiwait(msgbox('No valid DICOM files were found in this folder', [PTKSoftwareInfo.Name ': No image files found.']));
                     obj.Reporting.ShowMessage('PTKGuiApp:NoFilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
                     obj.LoadImages(image_info);
-                    
-                    % Add any new datasets to the patient browser
-                    obj.DatabaseHasChanged;
                     
                 end
             end
@@ -825,7 +822,6 @@ classdef PTKGui < PTKFigure
             reordered_handles = [other_handles; toolbar_handle];
             set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
         end
-
     end
     
     methods (Access = private)

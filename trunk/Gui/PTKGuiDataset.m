@@ -25,7 +25,9 @@ classdef PTKGuiDataset < handle
         ModeSwitcher
         Ptk
         Reporting
-        Settings 
+        Settings
+        DatabaseHasChangedEventListener
+        SeriesHasBeenDeletedEventListener 
     end
     
     methods
@@ -37,6 +39,13 @@ classdef PTKGuiDataset < handle
             obj.Reporting = reporting;
             obj.Settings = settings;
             obj.Ptk = PTKMain(reporting);
+            obj.DatabaseHasChangedEventListener = addlistener(obj.GetImageDatabase, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
+            obj.SeriesHasBeenDeletedEventListener = addlistener(obj.GetImageDatabase, 'SeriesHasBeenDeleted', @obj.SeriesHasBeenDeleted);
+        end
+        
+        function delete(obj)
+            delete(obj.DatabaseHasChangedEventListener);
+            delete(obj.SeriesHasBeenDeletedEventListener);
         end
         
         function ModeTabChanged(obj, mode_name)
@@ -66,14 +75,11 @@ classdef PTKGuiDataset < handle
         end
         
         function image_database = GetImageDatabase(obj)
-            image_database = obj.Ptk.ImageDatabase;
+            image_database = obj.Ptk.GetImageDatabase;
         end
         
         function uids = ImportDataRecursive(obj, folder_path)
             uids = obj.Ptk.ImportDataRecursive(folder_path);
-            
-            % Add any new datasets to the patient browser
-            obj.Gui.DatabaseHasChanged;
         end
         
         function [sorted_paths, sorted_uids] = GetListOfPaths(obj)
@@ -172,14 +178,9 @@ classdef PTKGuiDataset < handle
                 
             catch exc
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
-                    obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled loading');
-                elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
-                    msgbox('This dataset is missing. It will be removed from the load menu.', [PTKSoftwareInfo.Name ': Cannot find dataset'], 'error');
-                    obj.Reporting.ShowMessage('PTKGui:FileNotFound', 'The original data is missing. I am removing this dataset.');
-                    obj.DeleteImageInfo
+                    obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled');
                 else
-                    msgbox(exc.message, [PTKSoftwareInfo.Name ': Cannot load dataset'], 'error');
-                    obj.Reporting.ShowMessage('PTKGui:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
+                    obj.Reporting.ShowMessage('PTKGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
                 end
             end
 
@@ -198,55 +199,17 @@ classdef PTKGuiDataset < handle
         
         function DeleteDatasets(obj, series_uids)
             % Removes a dataset from the database and deletes its disk cache. If the dataset
-            % is currently loaded then we must also clear the current dataset
+            % is currently loaded then the callback from the image database will case the
+            % current dataset to be cleared.
             
-            % Get the UID of the currently loaded dataset
-            currently_loaded_series_UID = obj.GetUidOfCurrentDataset;
-            
-            if ~iscell(series_uids)
-                series_uids = {series_uids};
-            end
-            
-            anything_changed = false;
-            
-            for series_uid_cell = series_uids
-                series_uid = series_uid_cell{1};
-
-                % Test whether the dataset to delete is the current dataset
-                is_dataset_currently_loaded = strcmp(series_uid, currently_loaded_series_UID);
-                if is_dataset_currently_loaded
-                    dataset_to_delete = obj.Dataset;
-                    obj.Settings.ImageInfo = [];
-                else
-                    dataset_to_delete = obj.Ptk.CreateDatasetFromUid(series_uid);
-                end
-                
-                if ~isempty(dataset_to_delete)
-                    dataset_to_delete.DeleteCacheForThisDataset;
-                    
-                    anything_changed = true;
-                    
-                    delete(dataset_to_delete);
-                end
-                
-                if is_dataset_currently_loaded
-                    obj.ModeSwitcher.UpdateMode([], [], [], [], []);
-                    obj.Gui.ClearImages;
-                    obj.Dataset = [];
-                    obj.Gui.SaveSettings;
-                end
-            
-            end
-            
-            obj.Ptk.ImageDatabase.DeleteSeries(series_uids, obj.Reporting);
-            
-            if anything_changed
-                obj.Gui.DatabaseHasChanged;
-            end
+            obj.Ptk.DeleteDatasets(series_uids)
         end
         
         
         function InternalLoadImages(obj, image_info_or_uid)
+            
+            delete_image_info = false;
+            
             try
                 if isa(image_info_or_uid, 'PTKImageInfo')
                     new_dataset = obj.Ptk.CreateDatasetFromInfo(image_info_or_uid);
@@ -343,14 +306,27 @@ classdef PTKGuiDataset < handle
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowProgress('Cancelling load');
                     obj.ClearDataset;
-                    obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled loading');
+                    obj.Reporting.ShowMessage('PTKGuiDataset:LoadingCancelled', 'User cancelled loading');
                 elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
-                    msgbox('This dataset is missing. It will be removed from the load menu.', [PTKSoftwareInfo.Name ': Cannot find dataset'], 'error');
-                    obj.Reporting.ShowMessage('PTKGui:FileNotFound', 'The original data is missing. I am removing this dataset.');
-                    obj.GuiDataset.DeleteImageInfo
+                    uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [PTKSoftwareInfo.Name ': Cannot find dataset'], 'modal'));
+                    obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
+                    delete_image_info = true;
+                elseif PTKSoftwareInfo.IsErrorUnknownFormat(exc.identifier)
+                    uiwait(errordlg('This is not an image file or the format is not supported by PTK. It will be removed from the Patient Browser.', [PTKSoftwareInfo.Name ': Cannot load this image'], 'modal'));
+                    obj.Reporting.ShowMessage('PTKGuiDataset:FormatNotSupported', 'The original data is missing. I am removing this dataset.');
+                    delete_image_info = true;
                 else
-                    msgbox(exc.message, [PTKSoftwareInfo.Name ': Cannot load dataset'], 'error');
-                    obj.Reporting.ShowMessage('PTKGui:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
+                    uiwait(errordlg(exc.message, [PTKSoftwareInfo.Name ': Cannot load dataset'], 'modal'));
+                    obj.Reporting.ShowMessage('PTKGuiDataset:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
+                end
+
+                % We do this outside the catch block, in case it throws another exception
+                if delete_image_info
+                    try
+                        obj.DeleteImageInfo;
+                    catch exc
+                        obj.Reporting.ShowMessage('PTKGuiDataset:DeleteImageInfoFailed', ['Failed to delete dataset due to error: ' exc.message]);
+                    end
                 end
                 
                 obj.GuiDatasetState.ClearPatientAndSeries;
@@ -375,7 +351,7 @@ classdef PTKGuiDataset < handle
                     if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                         obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                     else
-                        msgbox(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [PTKSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'error');
+                        uiwait(errordlg(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [PTKSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'modal'));
                         obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     end
                 end
@@ -404,7 +380,7 @@ classdef PTKGuiDataset < handle
         end
         
         function SetNoDataset(obj)
-            obj.GuiDatasetState.ClearPatientAndSeries;            
+            obj.GuiDatasetState.ClearPatientAndSeries;
             obj.GuiDatasetState.ClearPlugin;
             obj.UpdateModes;
         end
@@ -417,6 +393,19 @@ classdef PTKGuiDataset < handle
     end
     
     methods (Access = private)
+        
+        function DatabaseHasChanged(obj, ~, ~)
+            obj.Gui.DatabaseHasChanged;
+        end
+
+        function SeriesHasBeenDeleted(obj, series_uid, ~)
+            % If the currently loaded dataset has been removed from the database, then clear
+            % and delete
+            if strcmp(series_uid, obj.GetUidOfCurrentDataset)
+                obj.ClearDataset;
+            end
+        end
+        
         function RunPluginTryCatchBlock(obj, plugin_name, wait_dialog)
             new_plugin = PTKPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
             visible_name = PTKTextUtilities.RemoveHtml(new_plugin.ButtonText);
