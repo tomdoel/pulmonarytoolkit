@@ -30,6 +30,7 @@ classdef PTKAirwayGrowing < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Visibility = 'Developer'
     end
     
     methods (Static)
