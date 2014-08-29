@@ -1,4 +1,4 @@
-classdef PTKViewerPanelCallback < handle
+classdef PTKViewerPanelCallback < PTKBaseClass
     % PTKViewerPanelCallback. Class to handle PTKViewerPanel callback events
     %
     %
@@ -40,22 +40,22 @@ classdef PTKViewerPanelCallback < handle
             obj.NewQuiverImage;
             
             % Change in orientation requires a redraw of axes
-            addlistener(obj.ViewerPanel, 'Orientation', 'PostSet', @obj.OrientationChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'Orientation', @obj.OrientationChangedCallback);
             
             % Other changes require redraw of gui
-            addlistener(obj.ViewerPanel, 'SliceNumber', 'PostSet', @obj.SliceNumberChangedCallback);
-            addlistener(obj.ViewerPanel, 'Level', 'PostSet', @obj.SettingsChangedCallback);
-            addlistener(obj.ViewerPanel, 'Window', 'PostSet', @obj.SettingsChangedCallback);
-            addlistener(obj.ViewerPanel, 'OverlayOpacity', 'PostSet', @obj.SettingsChangedCallback);
-            addlistener(obj.ViewerPanel, 'ShowImage', 'PostSet', @obj.SettingsChangedCallback);
-            addlistener(obj.ViewerPanel, 'ShowOverlay', 'PostSet', @obj.SettingsChangedCallback);
-            addlistener(obj.ViewerPanel, 'BlackIsTransparent', 'PostSet', @obj.SettingsChangedCallback);
-            addlistener(obj.ViewerPanel, 'OpaqueColour', 'PostSet', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'SliceNumber', @obj.SliceNumberChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'OverlayOpacity', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'ShowImage', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'ShowOverlay', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'BlackIsTransparent', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.SettingsChangedCallback);
             
             % Listen for image change events
-            addlistener(obj.ViewerPanel, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
-            addlistener(obj.ViewerPanel, 'OverlayImage', 'PostSet', @obj.OverlayImagePointerChangedCallback);
-            addlistener(obj.ViewerPanel, 'QuiverImage', 'PostSet', @obj.QuiverImagePointerChangedCallback);
+            obj.BackgroundImageChangedListener = addlistener(obj.ViewerPanel, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
+            obj.OverlayImageChangedListener = addlistener(obj.ViewerPanel, 'OverlayImage', 'PostSet', @obj.OverlayImagePointerChangedCallback);
+            obj.QuiverImageChangedListener = addlistener(obj.ViewerPanel, 'QuiverImage', 'PostSet', @obj.QuiverImagePointerChangedCallback);
         end
         
         function delete(obj)

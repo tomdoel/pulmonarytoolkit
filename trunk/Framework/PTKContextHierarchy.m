@@ -1,4 +1,4 @@
-classdef PTKContextHierarchy < handle
+classdef PTKContextHierarchy < PTKBaseClass
     % PTKContextHierarchy. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     This class is used to switch beteen different contexts.

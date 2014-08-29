@@ -22,7 +22,6 @@ classdef PTKSlidingPanel < PTKPanel
     properties (Access = private)
         FloatingPanelYPosition
         Slider
-        SliderValueChangedListener
         CachedPanelWidth
     end
     
@@ -32,13 +31,9 @@ classdef PTKSlidingPanel < PTKPanel
             obj.Slider = PTKSlider(obj);
             obj.AddChild(obj.Slider, obj.Reporting);
             obj.FloatingPanelYPosition = 0;
-            obj.SliderValueChangedListener = addlistener(obj.Slider, 'SliderValueChanged', @obj.SliderValueChanged);
+            obj.AddEventListener(obj.Slider, 'SliderValueChanged', @obj.SliderValueChanged);
         end
-        
-        function delete(obj)
-            delete(obj.SliderValueChangedListener);
-        end
-        
+
         function Resize(obj, fixed_panel_size)
             
             % Resize the fixed panel

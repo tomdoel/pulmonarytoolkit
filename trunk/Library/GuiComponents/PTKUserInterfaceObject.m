@@ -1,4 +1,4 @@
-classdef PTKUserInterfaceObject < handle
+classdef PTKUserInterfaceObject < PTKBaseClass
     % PTKUserInterfaceObject. Base class for PTK user interface components
     %
     %
@@ -24,8 +24,6 @@ classdef PTKUserInterfaceObject < handle
         
         LastHandlePosition % Stores the last position set to the handle of the graphics component
         LastHandleVisible  % Stores the last visibility state set to the handle of the graphics component
-
-        EventListeners
         
         VisibleParameter = 'on' % Defines the argument for component visibility
     end
@@ -75,8 +73,6 @@ classdef PTKUserInterfaceObject < handle
         
         function RemoveAndDeleteChildren(obj)
             % Remove and delete all child graphic objects
-
-            delete(obj.EventListeners);
 
             for child = obj.Children
                 delete(child{1});
@@ -263,16 +259,6 @@ classdef PTKUserInterfaceObject < handle
     end
 
     methods (Access = protected)
-        
-        function AddEventListener(obj, control, event_name, function_handle)
-            % Adds a new event listener tied to the lifetime of this object
-            new_listener = addlistener(control, event_name, function_handle);
-            if isempty(obj.EventListeners)
-                obj.EventListeners = new_listener;
-            else
-                obj.EventListeners(end + 1) = new_listener;
-            end
-        end
         
         function PostCreation(obj, position, reporting)
             % Called after the compent and all its children have been created

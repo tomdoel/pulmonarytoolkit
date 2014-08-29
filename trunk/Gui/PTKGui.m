@@ -163,7 +163,7 @@ classdef PTKGui < PTKFigure
             CreateGuiComponent@PTKFigure(obj, position, reporting);
 
             obj.Reporting.SetViewerPanel(obj.ImagePanel);            
-            addlistener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);
+            obj.AddEventListener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);
         end
         
         function SaveEditedResult(obj)
@@ -179,8 +179,7 @@ classdef PTKGui < PTKFigure
             if ~isempty(image_info)
                 % Save the path in the settings so that future load dialogs 
                 % will start from there
-                obj.Settings.SaveImagePath = image_info.ImagePath;
-                obj.SaveSettings;
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
                 
                 if (image_info.ImageFileFormat == PTKImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
                     uiwait(msgbox('No valid DICOM files were found in this folder', [PTKSoftwareInfo.Name ': No image files found.']));
@@ -204,8 +203,7 @@ classdef PTKGui < PTKFigure
                 
                 % Save the path in the settings so that future load dialogs 
                 % will start from there
-                obj.Settings.SaveImagePath = folder_path;
-                obj.SaveSettings;
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
                 
                 % Import all datasets from this path
                 uids = obj.GuiDataset.ImportDataRecursive(folder_path);
@@ -224,8 +222,7 @@ classdef PTKGui < PTKFigure
             
             path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.Settings.SaveImagePath = path_name;
-                obj.SaveSettings;
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
             end
         end
         
@@ -239,8 +236,7 @@ classdef PTKGui < PTKFigure
             
             path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.Settings.SaveImagePath = path_name;
-                obj.SaveSettings;
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
             end
         end
         
@@ -308,8 +304,7 @@ classdef PTKGui < PTKFigure
             path_name = obj.Settings.SaveImagePath;            
             [filename, path_name, save_type] = PTKDiskUtilities.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && ischar(path_name)
-                obj.Settings.SaveImagePath = path_name;
-                obj.SaveSettings;
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
             end
             if (filename ~= 0)
                 % Hide the progress bar before capture
@@ -356,6 +351,7 @@ classdef PTKGui < PTKFigure
         end
         
         function delete(obj)
+            delete(obj.GuiDataset);
             if ~isempty(obj.Reporting);
                 obj.Reporting.Log('Closing PTKGui');
             end
@@ -803,7 +799,8 @@ classdef PTKGui < PTKFigure
                 set(obj.GraphicalComponentHandle, 'units', 'pixels');
                 obj.Settings.ScreenPosition = get(obj.GraphicalComponentHandle, 'Position');
                 obj.Settings.PatientBrowserScreenPosition = obj.PatientBrowserFactory.GetScreenPosition;
-                obj.Settings.SaveSettings(obj.ImagePanel, obj.Reporting);
+                obj.Settings.UpdateSettingsFromViewerPanel(obj.ImagePanel);
+                obj.Settings.SaveSettings(obj.Reporting);
             end
         end
         

@@ -1,4 +1,4 @@
-classdef PTKMain < handle
+classdef PTKMain < PTKBaseClass
     % PTKMain. Imports and provides access to data from the Pulmonary Toolkit
     %
     %     PTKMain provides access to data from the Pulmonary Toolkit, and allows 

@@ -1,4 +1,4 @@
-classdef PTKTemplateCallback < handle
+classdef PTKTemplateCallback < PTKBaseClass
     % PTKTemplateCallback. Used by plugins to fetch empty template images
     %
     %     Template images are empty images with metadata matching the current

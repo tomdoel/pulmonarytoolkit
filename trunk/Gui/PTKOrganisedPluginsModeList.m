@@ -1,4 +1,4 @@
-classdef PTKOrganisedPluginsModeList < handle
+classdef PTKOrganisedPluginsModeList < PTKBaseClass
     % PTKOrganisedPluginsModeList. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
