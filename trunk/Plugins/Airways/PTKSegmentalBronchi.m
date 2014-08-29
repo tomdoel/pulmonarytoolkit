@@ -29,7 +29,8 @@ classdef PTKSegmentalBronchi < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
-    end
+        Visibility = 'Developer'
+end
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
