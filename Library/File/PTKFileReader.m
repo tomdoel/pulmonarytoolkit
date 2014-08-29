@@ -1,4 +1,4 @@
-classdef PTKFileReader < handle
+classdef PTKFileReader < PTKBaseClass
     % PTKFileReader. A helper class to assist with parsing a text file
     %
     %

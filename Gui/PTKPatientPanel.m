@@ -95,7 +95,7 @@ classdef PTKPatientPanel < PTKPanel
             obj.PatientNameTextControl = PTKText(obj, obj.Name, ['Patient name: ', obj.Name], 'PatientName');
             obj.PatientNameTextControl.FontSize = obj.PatientNameFontSize;
             obj.AddChild(obj.PatientNameTextControl, obj.Reporting);
-            obj.TextClickedListeners = addlistener(obj.PatientNameTextControl, 'TextRightClicked', @obj.PatientRightClicked);
+            obj.AddEventListener(obj.PatientNameTextControl, 'TextRightClicked', @obj.PatientRightClicked);
             
             obj.SeriesDescriptionsList = PTKListBox(obj, reporting);
             obj.SeriesDescriptionsList.TopMargin = obj.ListTopMargin;

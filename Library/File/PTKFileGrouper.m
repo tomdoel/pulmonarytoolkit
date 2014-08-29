@@ -1,4 +1,4 @@
-classdef PTKFileGrouper < handle
+classdef PTKFileGrouper < PTKBaseClass
     % PTKFileGrouper. Used to separate a series of Dicom images into groups of coherent images
     %
     %     PTKFileGrouper splits a series of Dicom images into 'bins' or 'groups'

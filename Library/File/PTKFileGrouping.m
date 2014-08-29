@@ -1,4 +1,4 @@
-classdef PTKFileGrouping < handle
+classdef PTKFileGrouping < PTKBaseClass
     % PTKFileGrouping. Stores a set of Dicom metadata structures, corresponding
     %     to a coherent sequence of images
     %

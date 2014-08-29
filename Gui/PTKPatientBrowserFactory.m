@@ -1,4 +1,4 @@
-classdef PTKPatientBrowserFactory < handle
+classdef PTKPatientBrowserFactory < PTKBaseClass
     % PTKPatientBrowserFactory. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help

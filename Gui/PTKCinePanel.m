@@ -20,7 +20,6 @@ classdef PTKCinePanel < PTKVirtualPanel
         ControlPanel
         Slider
         ViewerPanel
-        SliderValueChangedListener
         
         % Used for programmatic pan, zoom, etc.
         LastCoordinates = [0, 0, 0]
@@ -42,13 +41,9 @@ classdef PTKCinePanel < PTKVirtualPanel
             obj.Axes = PTKImageOverlayAxes(obj.ViewerPanel, reporting);
             obj.AddChild(obj.Axes, obj.Reporting);
             
-            obj.SliderValueChangedListener = addlistener(obj.Slider, 'SliderValueChanged', @obj.SliderValueChanged);            
+            obj.AddEventListener(obj.Slider, 'SliderValueChanged', @obj.SliderValueChanged);            
         end
-        
-        function delete(obj)
-            delete(obj.SliderValueChangedListener);
-        end
-        
+
         function Resize(obj, position)
             Resize@PTKUserInterfaceObject(obj, position);
             

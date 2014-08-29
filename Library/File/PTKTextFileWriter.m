@@ -1,4 +1,4 @@
-classdef PTKTextFileWriter < handle
+classdef PTKTextFileWriter < PTKBaseClass
     % PTKTextFileWriter. A helper class to assist with writing a text file
     %
     %
