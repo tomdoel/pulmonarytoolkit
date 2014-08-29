@@ -152,8 +152,7 @@ classdef PTKEditMode < handle
             
             path_name = PTKSaveAs(edited_result, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.Settings.SaveImagePath = path_name;
-                obj.GuiDataset.SaveSettings;
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
             end
         end
 
@@ -205,8 +204,7 @@ classdef PTKEditMode < handle
                 image_info = PTKChooseImagingFiles(obj.Settings.SaveImagePath, obj.Reporting);
                 
                 if ~isempty(image_info)
-                    obj.Settings.SaveImagePath = image_info.ImagePath;
-                    obj.GuiDataset.SaveSettings;
+                    obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
                     
                     current_overlay = obj.ViewerPanel.OverlayImage;
                     edited_result = PTKLoadImages(image_info, obj.Reporting);
