@@ -91,6 +91,8 @@ classdef PTKSoftwareInfo < handle
         ToolbarEnabled = false
         ViewerPanelToolbarEnabled = true
         
+        MonitorClassInstances = true % Used for testing to ensure objects are destroyed
+        
         % Do not change this
         CancelErrorId = 'PTKMain:UserCancel'
         FileMissingErrorId = 'PTKMain:FileMissing'
