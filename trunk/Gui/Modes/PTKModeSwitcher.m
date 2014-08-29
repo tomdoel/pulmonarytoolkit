@@ -1,4 +1,4 @@
-classdef PTKModeSwitcher < handle
+classdef PTKModeSwitcher < PTKBaseClass
     % PTKModeSwitcher. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -26,7 +26,7 @@ classdef PTKModeSwitcher < handle
     methods
         function obj = PTKModeSwitcher(viewer_panel, gui_dataset, settings, reporting)
             obj.ViewerPanel = viewer_panel;
-            obj.OverlayImageChangedListener = addlistener(viewer_panel, 'OverlayImageChangedEvent', @obj.OverlayImageChanged);
+            obj.AddEventListener(viewer_panel, 'OverlayImageChangedEvent', @obj.OverlayImageChanged);
             obj.Modes = containers.Map;
             obj.Modes(PTKModes.EditMode) = PTKEditMode(viewer_panel, gui_dataset, settings, reporting);
             obj.CurrentMode = [];

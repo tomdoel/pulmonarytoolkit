@@ -1,4 +1,4 @@
-classdef PTKSettings < handle
+classdef PTKSettings < PTKBaseClass
     % PTKSettings. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -59,13 +59,28 @@ classdef PTKSettings < handle
             viewer_panel.GetMarkerPointManager.ChangeCurrentColour(obj.CurrentMarkerColour);
         end
         
-        function SaveSettings(obj, viewer_panel, reporting)
-            
-            % Also save settings from the image panel
+        function UpdateSettingsFromViewerPanel(obj, viewer_panel)
             obj.OverlayOpacity = viewer_panel.OverlayOpacity;
             obj.SliceNumber = viewer_panel.SliceNumber;
             obj.ShowTextLabels = viewer_panel.GetMarkerPointManager.ShowTextLabels;
             obj.CurrentMarkerColour = viewer_panel.GetMarkerPointManager.CurrentColour;
+        end
+        
+        function SetLastImageInfo(obj, image_info, reporting)
+            if ~isequal(image_info, obj.ImageInfo)
+                obj.ImageInfo = image_info;
+                obj.SaveSettings(reporting);
+            end
+        end
+        
+        function SetLastSaveImagePath(obj, image_path, reporting)
+            if ~isempty(image_path) && ischar(image_path) && ~strcmp(image_path, obj.SaveImagePath)
+                obj.SaveImagePath = image_path;
+                obj.SaveSettings(reporting);
+            end
+        end
+        
+        function SaveSettings(obj, reporting)
             
             settings_filename = PTKDirectories.GetSettingsFilePath;
             

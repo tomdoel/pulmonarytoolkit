@@ -1,4 +1,4 @@
-classdef PTKGuiDataset < handle
+classdef PTKGuiDataset < PTKBaseClass
     % PTKGuiDataset. Handles the interaction between the GUI and the PTK interfaces
     %
     %
@@ -26,8 +26,6 @@ classdef PTKGuiDataset < handle
         Ptk
         Reporting
         Settings
-        DatabaseHasChangedEventListener
-        SeriesHasBeenDeletedEventListener 
     end
     
     methods
@@ -39,15 +37,10 @@ classdef PTKGuiDataset < handle
             obj.Reporting = reporting;
             obj.Settings = settings;
             obj.Ptk = PTKMain(reporting);
-            obj.DatabaseHasChangedEventListener = addlistener(obj.GetImageDatabase, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
-            obj.SeriesHasBeenDeletedEventListener = addlistener(obj.GetImageDatabase, 'SeriesHasBeenDeleted', @obj.SeriesHasBeenDeleted);
+            obj.AddEventListener(obj.GetImageDatabase, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
+            obj.AddEventListener(obj.GetImageDatabase, 'SeriesHasBeenDeleted', @obj.SeriesHasBeenDeleted);
         end
-        
-        function delete(obj)
-            delete(obj.DatabaseHasChangedEventListener);
-            delete(obj.SeriesHasBeenDeletedEventListener);
-        end
-        
+
         function ModeTabChanged(obj, mode_name)
             if strcmp(mode_name, 'all')
                 mode_name = '';
@@ -152,12 +145,7 @@ classdef PTKGuiDataset < handle
         end
         
         function currently_loaded_image_UID = GetUidOfCurrentDataset(obj)
-            
-            if ~isempty(obj.Settings.ImageInfo) && ~isempty(obj.Settings.ImageInfo.ImageUid)
-                currently_loaded_image_UID = obj.Settings.ImageInfo.ImageUid;
-            else
-                currently_loaded_image_UID = [];
-            end
+            currently_loaded_image_UID = obj.GuiDatasetState.CurrentSeriesUid;
         end
         
         function ClearDataset(obj)
@@ -168,11 +156,7 @@ classdef PTKGuiDataset < handle
 
                 obj.Dataset = [];
                 
-                image_info = [];                
-
-                obj.Settings.ImageInfo = image_info;
-                
-                obj.Gui.SaveSettings;
+                obj.Settings.SetLastImageInfo([], obj.Reporting);
                 
                 obj.SetNoDataset;
                 
@@ -223,7 +207,7 @@ classdef PTKGuiDataset < handle
                 delete(obj.Dataset);
 
                 obj.Dataset = new_dataset;
-                obj.Dataset.addlistener('PreviewImageChanged', @obj.PreviewImageChanged);
+                obj.AddEventListener(new_dataset, 'PreviewImageChanged', @obj.PreviewImageChanged);
                 
                 image_info = obj.Dataset.GetImageInfo;
                 modality = image_info.Modality;
@@ -267,20 +251,8 @@ classdef PTKGuiDataset < handle
                     patient_id = series_uid;
                 end
 
-                settings_changed = false;
-                
-                if ~isequal(image_info, obj.Settings.ImageInfo)
-                    obj.Settings.ImageInfo = image_info;
-                    settings_changed = true;
-                end
-                
-                % Save settings if anything has changed
-                if settings_changed
-                    obj.Gui.SaveSettings;
-                end
-                
-                obj.GuiDatasetState.ClearPlugin;
-                obj.UpdateModes;
+                % Update and save settings if anything has changed
+                obj.Settings.SetLastImageInfo(image_info, obj.Reporting);
                 
                 if isempty(image_info)
                     patient_visible_name = [];
@@ -291,12 +263,16 @@ classdef PTKGuiDataset < handle
                     patient_visible_name = patient_info.ShortVisibleName;
                     series_name = series_info.Name;
                 end
+                
+                obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid, patient_visible_name, series_name);
+                obj.GuiDatasetState.ClearPlugin;
+                obj.UpdateModes;
+                
 
                 obj.Gui.AddAllPreviewImagesToButtons(obj.Dataset);
 
                 obj.Gui.LoadMarkersIfRequired;
 
-                obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid, patient_visible_name, series_name);
                 
             catch exc
                 % For the patient browser
@@ -373,10 +349,6 @@ classdef PTKGuiDataset < handle
         
         function UpdateModeTabControl(obj)
             obj.Gui.UpdateModeTabControl(obj.GuiDatasetState.CurrentPluginInfo);
-        end
-        
-        function SaveSettings(obj)
-            obj.Gui.SaveSettings;
         end
         
         function SetNoDataset(obj)
