@@ -18,6 +18,11 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
     properties (Access = private)
         PatientDatabase
         GuiCallback
+        PatientIdMap
+    end
+    
+    properties (SetAccess = private)    
+        CurrentPatientId
     end
     
     methods
@@ -31,12 +36,18 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
             obj.AddPatientsToListBox(patient_id);
         end
         
-        function UpdateSidePanel(obj, patient_id)
-            obj.ListBox.SelectItem(patient_id, true);
+        function patient_has_changed = UpdateSidePanel(obj, patient_id)
+            mapped_patient_id = obj.PatientIdMap(patient_id);
+            patient_has_changed = ~strcmp(mapped_patient_id, obj.CurrentPatientId);
+            if patient_has_changed
+                obj.ListBox.SelectItem(mapped_patient_id, true);
+            end
+            obj.CurrentPatientId = mapped_patient_id;
         end
         
         
         function SelectPatient(obj, patient_id, selected)
+            patient_id = obj.PatientIdMap(patient_id);
             obj.ListBox.SelectItem(patient_id, selected);
         end        
     end
@@ -48,7 +59,7 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
         end
         
         function DeleteButtonClicked(obj, ~, event_data)
-            patient_id = obj.ListBox.SelectedTag;
+            patient_id = obj.ListBox.GetListBox.SelectedTag;
             if ~isempty(patient_id)
                 obj.GuiCallback.DeletePatient(patient_id);
             end
@@ -57,7 +68,8 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
     
     methods (Access = private)
         function AddPatientsToListBox(obj, patient_id)
-            [names, ids, short_visible_names] = obj.PatientDatabase.GetListOfPatientNames;
+            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames;
+            obj.PatientIdMap = patient_id_map;
             obj.ListBox.ClearItems;
             
             for index = 1 : numel(ids)
