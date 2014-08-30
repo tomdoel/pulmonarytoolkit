@@ -82,13 +82,21 @@ classdef PTKDirectories < PTKBaseClass
             edited_results_directory = fullfile(application_directory, PTKSoftwareInfo.EditedResultsDirectoryName);
             PTKDiskUtilities.CreateDirectoryIfNecessary(edited_results_directory);
         end
-        
-        function settings_file_path = GetFrameworkCacheFilePath
+
+        function framework_file_path = GetFrameworkCacheFilePath
             % Returns the full path to the framework cache file
             
             settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             cache_filename = PTKSoftwareInfo.FrameworkCacheFileName;
-            settings_file_path = fullfile(settings_dir, cache_filename);
+            framework_file_path = fullfile(settings_dir, cache_filename);
+        end
+        
+        function linking_file_path = GetLinkingCacheFilePath
+            % Returns the full path to the linking cache file
+            
+            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            cache_filename = PTKSoftwareInfo.LinkingCacheFileName;
+            linking_file_path = fullfile(settings_dir, cache_filename);
         end
         
         function settings_file_path = GetImageDatabaseFilePath
