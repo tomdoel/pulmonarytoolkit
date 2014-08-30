@@ -19,11 +19,15 @@ classdef PTKViewerPanelCallback < PTKBaseClass
         ViewerPanelRenderer
         Reporting
         
-        % Handles to listeners for image changes
+        % Handles to listeners for changes within image objects
         BackgroundImageChangedListener
         OverlayImageChangedListener
         QuiverImageChangedListener
         
+        % Handles to listeners for new image instances replacing existing ones
+        BackgroundImagePointerChangedListener
+        OverlayImagePointerChangedListener
+        QuiverImagePointerChangedListener
     end
     
     methods
@@ -53,15 +57,18 @@ classdef PTKViewerPanelCallback < PTKBaseClass
             obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.SettingsChangedCallback);
             
             % Listen for image change events
-            obj.BackgroundImageChangedListener = addlistener(obj.ViewerPanel, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
-            obj.OverlayImageChangedListener = addlistener(obj.ViewerPanel, 'OverlayImage', 'PostSet', @obj.OverlayImagePointerChangedCallback);
-            obj.QuiverImageChangedListener = addlistener(obj.ViewerPanel, 'QuiverImage', 'PostSet', @obj.QuiverImagePointerChangedCallback);
+            obj.BackgroundImagePointerChangedListener = addlistener(obj.ViewerPanel, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
+            obj.OverlayImagePointerChangedListener = addlistener(obj.ViewerPanel, 'OverlayImage', 'PostSet', @obj.OverlayImagePointerChangedCallback);
+            obj.QuiverImagePointerChangedListener = addlistener(obj.ViewerPanel, 'QuiverImage', 'PostSet', @obj.QuiverImagePointerChangedCallback);
         end
         
         function delete(obj)
             PTKSystemUtilities.DeleteIfHandle(obj.BackgroundImageChangedListener)
             PTKSystemUtilities.DeleteIfHandle(obj.OverlayImageChangedListener)
             PTKSystemUtilities.DeleteIfHandle(obj.QuiverImageChangedListener)
+            PTKSystemUtilities.DeleteIfHandle(obj.BackgroundImagePointerChangedListener)
+            PTKSystemUtilities.DeleteIfHandle(obj.OverlayImagePointerChangedListener)
+            PTKSystemUtilities.DeleteIfHandle(obj.QuiverImagePointerChangedListener)
         end
         
     end
