@@ -219,8 +219,7 @@ classdef PTKGuiDataset < PTKBaseClass
                 if ~load_full_data
                     if obj.Dataset.IsContextEnabled(PTKContext.LungROI)
                         try
-                            lung_roi = obj.Dataset.GetResult('PTKLungROI');
-                            obj.SetImage(lung_roi, PTKContext.LungROI);
+                            new_image = obj.Dataset.GetResult('PTKLungROI');
                         catch exc
                             if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                                 obj.Reporting.Log('LoadImages cancelled by user');
@@ -240,13 +239,12 @@ classdef PTKGuiDataset < PTKBaseClass
                 if load_full_data
                     % Force the image to be saved so that it doesn't have to be
                     % reloaded each time
-                    lung_roi = obj.Dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage, [], true);
-                    obj.SetImage(lung_roi, PTKContext.OriginalImage);
+                    new_image = obj.Dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage, [], true);
                 end
                 
                 series_uid = image_info.ImageUid;
-                if isfield(lung_roi.MetaHeader, 'PatientID')
-                    patient_id = lung_roi.MetaHeader.PatientID;
+                if isfield(new_image.MetaHeader, 'PatientID')
+                    patient_id = new_image.MetaHeader.PatientID;
                 else
                     patient_id = series_uid;
                 end
@@ -268,6 +266,14 @@ classdef PTKGuiDataset < PTKBaseClass
                 obj.GuiDatasetState.ClearPlugin;
                 obj.UpdateModes;
                 
+                % Set the image after updating the GuiState. This is necessary because setting
+                % the image triggers a GUI resize, and the side panels need to be repopulated
+                % first
+                if load_full_data
+                    obj.SetImage(new_image, PTKContext.OriginalImage);
+                else
+                    obj.SetImage(new_image, PTKContext.LungROI);
+                end
 
                 obj.Gui.AddAllPreviewImagesToButtons(obj.Dataset);
 
