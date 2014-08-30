@@ -58,7 +58,7 @@ classdef PTKFrameworkCache < handle
             catch ex
                 reporting.ErrorFromException('PTKFrameworkCache:FailedtoSaveCacheFile', ['Unable to save framework cache file ' cache_filename], ex);
             end
-        end        
+        end
     end
 end
 
