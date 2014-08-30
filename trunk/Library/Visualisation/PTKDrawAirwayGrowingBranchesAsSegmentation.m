@@ -46,7 +46,7 @@ function results = PTKDrawAirwayGrowingBranchesAsSegmentation(airway_tree, templ
         end
         end_point_mm = branch.EndPoint;
         if isnan(end_point_mm.CoordX)
-            disp('*');
+            reporting.Warning('PTKDrawAirwayGrowingBranchesAsSegmentation:NaNFound', 'The airway growing tree contains invalid end coordinates. This may indicate a failure in the algorithm.', []);
         end
         
         all_starts(index, :) = [start_point_mm.CoordX, start_point_mm.CoordY, start_point_mm.CoordZ];
