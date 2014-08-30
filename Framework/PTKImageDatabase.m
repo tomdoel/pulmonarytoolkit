@@ -161,7 +161,7 @@ classdef PTKImageDatabase < handle
 
         end
         
-        function [names, ids, short_visible_names] = GetListOfPatientNames(obj)
+        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj)
             % Returns list of patient names, ids and fmaily names, sorted by the
             % short visible name
             ids = obj.PatientMap.keys;
@@ -186,6 +186,7 @@ classdef PTKImageDatabase < handle
             ids = ids(sorted_indices);
             short_visible_names = short_visible_names(sorted_indices);
             
+            
             % Merge together patients with same name if this is specified by the settings
             if PTKSoftwareInfo.GroupPatientsWithSameName
                 
@@ -197,9 +198,19 @@ classdef PTKImageDatabase < handle
                 end
                 
                 [unique_names, ia, ic] = unique(unique_names);
+
+                
                 short_visible_names = unique_names;
-                ids = ids(ia);
+                ids_subset = ids(ia);
                 names = names(ia);
+
+                % A map of all patient IDs to the main patient ID for each patient group
+                patient_id_map = containers.Map(ids, ids_subset(ic));
+                
+                ids = ids_subset;
+                
+            else
+                patient_id_map = containers.Map(ids, ids);
             end
         end
         

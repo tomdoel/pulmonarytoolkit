@@ -58,7 +58,9 @@ function node = AddNodesForClass(node, data, xml_doc_node, reporting)
     property_list = union(class_properties, public_properties);
     for i = 1 : length(property_list)
         next_property = property_list{i};
-        node.appendChild(CreateNodeForPropertyMatrix('Property', next_property, data.(next_property), xml_doc_node, reporting));
+        if ~strcmp(next_property, 'EventListeners')
+            node.appendChild(CreateNodeForPropertyMatrix('Property', next_property, data.(next_property), xml_doc_node, reporting));
+        end
     end
 end
 
