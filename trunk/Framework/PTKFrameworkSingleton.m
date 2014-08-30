@@ -27,6 +27,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     properties (Access = private)
         ImageDatabase      % Database of image files
         FrameworkCache     % Information about mex files which is cached on disk
+        LinkedDatasetRecorder
     end
         
     methods (Static)
@@ -55,10 +56,6 @@ classdef (Sealed) PTKFrameworkSingleton < handle
             % to the image database
             if ~obj.ImageDatabase.SeriesExists(image_uid)
                 obj.ImageDatabase.Rebuild({image_uid}, false, reporting);
-                
-                % Save changes to the database
-                % TODO: is this necessary here?
-                obj.ImageDatabase.SaveDatabase(reporting);
             end
         end
         
@@ -82,11 +79,15 @@ classdef (Sealed) PTKFrameworkSingleton < handle
             image_database = obj.ImageDatabase;
         end
         
+        function linked_recorder = GetLinkedDatasetRecorder(obj)
+            linked_recorder = obj.LinkedDatasetRecorder;
+        end
     end
     
     methods (Access = private)
         function obj = PTKFrameworkSingleton(reporting)
             obj.FrameworkCache = PTKFrameworkCache.LoadCache(reporting);
+            obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
             obj.ImageDatabase = PTKImageDatabase.LoadDatabase(reporting);
             obj.ImageDatabase.Rebuild([], false, reporting)
             PTKCompileMexFiles(obj.FrameworkCache, false, reporting);

@@ -78,7 +78,7 @@ classdef PTKGui < PTKFigure
             % Create the object which manages the current dataset
             obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.Settings, obj.Reporting);
 
-            obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj, obj.Reporting);
+            obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder, obj, obj.Reporting);
             obj.AddChild(obj.SidePanel, obj.Reporting);
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
@@ -179,7 +179,7 @@ classdef PTKGui < PTKFigure
             if ~isempty(image_info)
                 % Save the path in the settings so that future load dialogs 
                 % will start from there
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
                 
                 if (image_info.ImageFileFormat == PTKImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
                     uiwait(msgbox('No valid DICOM files were found in this folder', [PTKSoftwareInfo.Name ': No image files found.']));
@@ -203,7 +203,7 @@ classdef PTKGui < PTKFigure
                 
                 % Save the path in the settings so that future load dialogs 
                 % will start from there
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
+                obj.Settings.SetLastSaveImagePath(folder_path, obj.Reporting);
                 
                 % Import all datasets from this path
                 uids = obj.GuiDataset.ImportDataRecursive(folder_path);
@@ -222,7 +222,7 @@ classdef PTKGui < PTKFigure
             
             path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
             end
         end
         
@@ -236,7 +236,7 @@ classdef PTKGui < PTKFigure
             
             path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
             end
         end
         
@@ -304,7 +304,7 @@ classdef PTKGui < PTKFigure
             path_name = obj.Settings.SaveImagePath;            
             [filename, path_name, save_type] = PTKDiskUtilities.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && ischar(path_name)
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath);
+                obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
             end
             if (filename ~= 0)
                 % Hide the progress bar before capture
@@ -376,6 +376,20 @@ classdef PTKGui < PTKFigure
             obj.WaitDialogHandle.Hide;
         end
         
+        function UnlinkDataset(obj, series_uid)
+            if obj.GuiDataset.GetLinkedRecorder.IsPrimaryDataset(series_uid)
+                choice = questdlg('This dataset is linked to multiple other datasets. Do you want to unlink all these datasets?', ...
+                    'Unlink dataset', 'Unlink', 'Don''t unlink', 'Don''t unlink');
+                switch choice
+                    case 'Unlink'
+                        obj.GuiDataset.GetLinkedRecorder.RemoveLink(series_uid, obj.Reporting);
+                    case 'Don''t unlink'
+                end
+            else
+                obj.GuiDataset.GetLinkedRecorder.RemoveLink(series_uid, obj.Reporting);
+            end
+        end     
+
         function DeleteDataset(obj, series_uid)
             choice = questdlg('Do you want to delete this series?', ...
                 'Delete dataset', 'Delete', 'Don''t delete', 'Don''t delete');

@@ -21,6 +21,7 @@ classdef PTKLinkedDatasetChooser < PTKBaseClass
     %
 
     properties (Access = private)
+        LinkedRecorderSingleton
         PrimaryDatasetResults % Handle to the PTKDatasetResults object for this dataset
         LinkedDatasetChooserList % Handles to PTKLinkedDatasetChooser objects for all linked datasets, including this one
         PrimaryDatasetUid     % The uid of this dataset
@@ -28,7 +29,8 @@ classdef PTKLinkedDatasetChooser < PTKBaseClass
     end
     
     methods
-        function obj = PTKLinkedDatasetChooser(image_info, external_notify_function, dataset_disk_cache, reporting)
+        function obj = PTKLinkedDatasetChooser(image_info, external_notify_function, dataset_disk_cache, linked_recorder_singleton, reporting)
+            obj.LinkedRecorderSingleton = linked_recorder_singleton;
             primary_dataset_results = PTKDatasetResults(image_info, obj, external_notify_function, dataset_disk_cache, reporting);
             obj.PrimaryDatasetUid = primary_dataset_results.GetImageInfo.ImageUid;
             obj.PrimaryDatasetResults = primary_dataset_results;
@@ -46,6 +48,8 @@ classdef PTKLinkedDatasetChooser < PTKBaseClass
             linked_uid = linked_dataset_chooser.PrimaryDatasetUid;
             obj.LinkedDatasetChooserList(linked_uid) = linked_dataset_chooser;
             obj.LinkedDatasetChooserList(linked_name) = linked_dataset_chooser;
+            
+            obj.LinkedRecorderSingleton.AddLink(obj.PrimaryDatasetUid, linked_uid, linked_name, obj.Reporting);
         end
         
         function dataset_results = GetDataset(obj, varargin)

@@ -38,7 +38,8 @@ classdef PTKLinkedDatasetRecorder < PTKBaseClass
                     linked_recorder = PTKLinkedDatasetRecorder;
                 end
             catch ex
-                reporting.ErrorFromException('PTKLinkedDatasetRecorder:FailedtoLoadCacheFile', ['Error when loading cache file ' linked_recorder_filename '. Try deleting this file.'], ex);
+                reporting.ShowWarning('PTKLinkedDatasetRecorder:FailedtoLoadCacheFile', ['Error when loading cache file ' linked_recorder_filename '. Any existing links between datasets will be lost'], ex);
+                linked_recorder = PTKLinkedDatasetRecorder;
             end
         end
         

@@ -56,7 +56,7 @@ classdef PTKDataset < handle
         
         % Object for error and progress reporting. PTKDataset uses this to clean
         % up reporting in the case of error conditions.
-        Reporting         
+        Reporting
     end
     
     events
@@ -67,11 +67,11 @@ classdef PTKDataset < handle
 
     methods
         
-        function obj = PTKDataset(image_info, dataset_disk_cache, reporting)
+        function obj = PTKDataset(image_info, dataset_disk_cache, linked_recorder_singleton, reporting)
             % PTKDataset is created by the PTKMain class
             obj.DatasetStack = PTKDatasetStack(reporting);
             obj.Reporting = reporting;
-            obj.LinkedDatasetChooser = PTKLinkedDatasetChooser(image_info, @obj.notify, dataset_disk_cache, reporting);
+            obj.LinkedDatasetChooser = PTKLinkedDatasetChooser(image_info, @obj.notify, dataset_disk_cache, linked_recorder_singleton, reporting);
         end
         
         function LinkDataset(obj, linked_name, dataset_to_link)

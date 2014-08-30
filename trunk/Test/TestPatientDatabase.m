@@ -27,7 +27,7 @@ classdef TestPatientDatabase < PTKTest
             patient_database.AddDataset(series_4);
             patient_database.AddDataset(series_5);
             
-            [patient_names, ids] = patient_database.GetListOfPatientNames;
+            [patient_names, ids, patient_id_map] = patient_database.GetListOfPatientNames;
             obj.Assert(isequal(ids, {'A', 'B', 'C'}), 'Patient IDs are grouped correctly');
             obj.Assert(isequal(patient_names, {'Patient A', 'Patient B', 'Patient C'}), 'Patient IDs are grouped correctly');
         end

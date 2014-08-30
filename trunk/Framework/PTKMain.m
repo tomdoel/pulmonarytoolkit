@@ -93,7 +93,7 @@ classdef PTKMain < PTKBaseClass
                 obj.Reporting.Error(PTKSoftwareInfo.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
-            dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
+            dataset = PTKDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetRecorder, obj.ReportingWithCache);
             
             obj.RunLinkFile(dataset_uid, dataset);
         end
@@ -106,7 +106,7 @@ classdef PTKMain < PTKBaseClass
             
             obj.FrameworkSingleton.AddToDatabase(image_info.ImageUid, obj.Reporting)
 
-            dataset = PTKDataset(image_info, dataset_disk_cache, obj.ReportingWithCache);
+            dataset = PTKDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetRecorder, obj.ReportingWithCache);
             
             obj.RunLinkFile(dataset.GetImageInfo.ImageUid, dataset);
         end

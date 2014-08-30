@@ -71,6 +71,10 @@ classdef PTKGuiDataset < PTKBaseClass
             image_database = obj.Ptk.GetImageDatabase;
         end
         
+        function linked_recorder = GetLinkedRecorder(obj)
+            linked_recorder = obj.Ptk.FrameworkSingleton.GetLinkedDatasetRecorder;
+        end
+        
         function uids = ImportDataRecursive(obj, folder_path)
             uids = obj.Ptk.ImportDataRecursive(folder_path);
         end
