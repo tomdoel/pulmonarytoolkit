@@ -102,6 +102,11 @@ classdef PTKSoftwareInfo < handle
         
         % If true, the user will be prompted before marker changes are saved
         ConfirmBeforeSavingMarkers = false
+        
+        % Registration parameters
+        ShowRegistrationConvergence = false
+        RegistrationBodyForceTol = 0.01
+        RegistrationBodyForceDiffTol = 0.001
     end
 
     methods (Static)
