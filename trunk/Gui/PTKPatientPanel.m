@@ -22,6 +22,7 @@ classdef PTKPatientPanel < PTKPanel
     properties (SetAccess = private)
         Name
         Id
+        AllIds
     end
 
     properties (Access = private)
@@ -65,6 +66,7 @@ classdef PTKPatientPanel < PTKPanel
             obj.GuiCallback = gui_callback;
             
             obj.Id = patient_details(1).PatientId;
+            obj.AllIds = {patient_details.('PatientId')};
 
             if isempty(patient_details(1).VisibleName)
                 % If there is no patient name, show the patient id

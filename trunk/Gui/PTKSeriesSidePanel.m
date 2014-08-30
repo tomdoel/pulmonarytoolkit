@@ -51,7 +51,7 @@ classdef PTKSeriesSidePanel < PTKListBoxWithTitle
         end
         
         function DeleteButtonClicked(obj, ~, event_data)
-            series_uid = obj.ListBox.SelectedTag;
+            series_uid = obj.ListBox.GetListBox.SelectedTag;
             if ~isempty(series_uid)
                 
                 parent_figure = obj.GetParentFigure;

@@ -17,6 +17,7 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
     
     properties (Access = private)
         PatientPanels
+        PatientPanelsMap
         PatientDatabase
         GuiCallback
     end
@@ -28,6 +29,7 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
             obj.GuiCallback = gui_callback;
             
             obj.PatientPanels = containers.Map;
+            obj.PatientPanelsMap = containers.Map;
             
             obj.AddPatientPanels;
         end
@@ -35,27 +37,28 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
         function DatabaseHasChanged(obj)
             obj.RemoveAllPanels;
             obj.PatientPanels = containers.Map;
+            obj.PatientPanelsMap = containers.Map;
             obj.AddPatientPanels;
         end
         
         % This determines the y-coordinate (relative to the top of the patient
         % details panel) of the top and bottom of the patient panel
         function [y_min, y_max] = GetYPositionsForPatientId(obj, patient_id)
-            if ~obj.PatientPanels.isKey(patient_id)
+            if ~obj.PatientPanelsMap.isKey(patient_id)
                 y_min = [];
                 y_max = [];
                 return;
             end
             
-            panel = obj.PatientPanels(patient_id);
+            panel = obj.PatientPanelsMap(patient_id);
             
             y_min = panel.CachedMinY;
             y_max = panel.CachedMaxY;
         end
 
         function SelectSeries(obj, patient_id, series_uid, selected)
-            if obj.PatientPanels.isKey(patient_id)
-                panel = obj.PatientPanels(patient_id);
+            if obj.PatientPanelsMap.isKey(patient_id)
+                panel = obj.PatientPanelsMap(patient_id);
                 panel.SelectSeries(series_uid, selected);
             else
                 obj.Reporting.ShowWarning('PTKAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
@@ -63,8 +66,8 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
         end
         
         function DeletePatient(obj, patient_id)
-            if obj.PatientPanels.isKey(patient_id)
-                panel = obj.PatientPanels(patient_id);
+            if obj.PatientPanelsMap.isKey(patient_id)
+                panel = obj.PatientPanelsMap(patient_id);
                 panel.DeletePatient;
             else
                 obj.Reporting.ShowWarning('PTKAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
@@ -87,6 +90,9 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
         
         function AddPatientPanel(obj, panel)
             obj.PatientPanels(panel.Id) = panel;
+            for id = panel.AllIds
+                obj.PatientPanelsMap(id{1}) = panel;
+            end
             obj.AddPanel(panel);
         end
         
