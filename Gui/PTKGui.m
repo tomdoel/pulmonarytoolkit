@@ -268,6 +268,7 @@ classdef PTKGui < PTKFigure
 
         function RefreshPlugins(obj)
             obj.GuiDataset.RefreshPlugins;
+            obj.ResizeGui(obj.Position, true);
         end
 
         function dataset_cache_path = GetDatasetCachePath(obj)
