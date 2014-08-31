@@ -37,7 +37,7 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
         end
         
         function patient_has_changed = UpdateSidePanel(obj, patient_id)
-            mapped_patient_id = obj.PatientIdMap(patient_id);
+            mapped_patient_id = obj.GetMappedPatientId(patient_id);
             patient_has_changed = ~strcmp(mapped_patient_id, obj.CurrentPatientId);
             if patient_has_changed
                 obj.ListBox.SelectItem(mapped_patient_id, true);
@@ -47,8 +47,8 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
         
         
         function SelectPatient(obj, patient_id, selected)
-            patient_id = obj.PatientIdMap(patient_id);
-            obj.ListBox.SelectItem(patient_id, selected);
+            mapped_patient_id = obj.GetMappedPatientId(patient_id);
+            obj.ListBox.SelectItem(mapped_patient_id, selected);
         end        
     end
     
@@ -67,6 +67,14 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
     end
     
     methods (Access = private)
+        function mapped_patient_id = GetMappedPatientId(obj, patient_id)
+            if isempty(patient_id)
+                mapped_patient_id = [];
+            else
+                mapped_patient_id = obj.PatientIdMap(patient_id);
+            end
+        end
+            
         function AddPatientsToListBox(obj, patient_id)
             [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames;
             obj.PatientIdMap = patient_id_map;
