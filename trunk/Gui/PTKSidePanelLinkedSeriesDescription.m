@@ -39,18 +39,21 @@ classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
     
     properties (Constant, Access = private)
         SeriesFontSize = 16
+        
+        LinkedFontSize = 12
         NumImagesFontSize = 14
         LinkedXOffset = 0
-        ModalityXOffset = 0
+
         NumberXOffset = 10
-        LinkedWidth = 35;
+        LinkedWidth = 55;
+        MoadlityXOffset = 0
         ModalityWidth = 35
         MinDescriptionWidth = 100
         NumImagesWidth = 40
     end
     
     methods
-        function obj = PTKSidePanelLinkedSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, gui_callback, reporting)
+        function obj = PTKSidePanelLinkedSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, link_name_text, gui_callback, reporting)
             obj = obj@PTKListItem(parent, uid, reporting);
             obj.TextHeight = obj.SeriesTextHeight;
             obj.SeriesUid = uid;
@@ -74,14 +77,17 @@ classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
 
                 num_images_text = ['(', int2str(num_images), ')'];
                     
+                obj.LinkedNameText = [link_name_text, '>'];
                 obj.ModalityText = modality;
                 obj.DescriptionText = description_text;
                 obj.NumImagesText = num_images_text;
                 
-                obj.LinkedNameControl = PTKText(obj, obj.ModalityText, 'Name of linking tag', 'Link');
-                obj.LinkedNameControl.FontSize = obj.SeriesFontSize;
+                obj.LinkedNameControl = PTKText(obj, obj.LinkedNameText, 'Name of linking tag', 'Link');
+                obj.LinkedNameControl.FontSize = obj.LinkedFontSize;
+                obj.LinkedNameControl.Bold = true;
                 obj.LinkedNameControl.HorizontalAlignment = 'left';
                 obj.AddTextItem(obj.LinkedNameControl, reporting);
+                obj.LinkedNameControl.BackgroundColour = [0.3, 0.3, 1];
                 
                 obj.ModalityControl = PTKText(obj, obj.ModalityText, 'Select this series', 'Modality');
                 obj.ModalityControl.FontSize = obj.SeriesFontSize;
@@ -123,9 +129,9 @@ classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
             width = location(3);
             
             linked_position = [location(1) + obj.LinkedXOffset, y_base, obj.LinkedWidth, obj.SeriesTextHeight];
-            modality_position = [linked_position(1) + obj.ModalityXOffset, y_base, obj.ModalityWidth, obj.SeriesTextHeight];
+            modality_position = [linked_position(1) + obj.LinkedWidth + obj.MoadlityXOffset, y_base, obj.ModalityWidth, obj.SeriesTextHeight];
             description_x = modality_position(1) + modality_position(3);
-            description_width = max(obj.MinDescriptionWidth, width - obj.ModalityXOffset - obj.ModalityWidth - obj.NumImagesWidth);
+            description_width = max(obj.MinDescriptionWidth, width - obj.LinkedXOffset - obj.ModalityWidth - obj.NumImagesWidth - obj.LinkedWidth - obj.MoadlityXOffset);
             description_position = [description_x, y_base, description_width, obj.SeriesTextHeight];
             
             num_images_x = description_x + description_width;

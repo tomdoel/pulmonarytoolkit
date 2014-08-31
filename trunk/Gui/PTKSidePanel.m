@@ -147,15 +147,12 @@ classdef PTKSidePanel < PTKPanel
     methods (Static, Access = private)
         function panel_heights = GetPanelHeights(panels, width, total_height)
             num_panels = numel(panels);
-            panel_indices = 1 : num_panels;
             requested_heights = [];
             for panel = panels
                 requested_heights(end + 1) = panel{1}.GetRequestedHeight(width);
             end
             panel_heights = zeros(size(requested_heights));
             [sorted_heights, sorted_heights_indices] = sort(requested_heights, 'ascend');
-            
-            panel_indices = panel_indices(sorted_heights_indices);
             
             height_remaining = total_height;
             for sorted_panel_index = 1 : num_panels
@@ -167,7 +164,7 @@ classdef PTKSidePanel < PTKPanel
                     panel_height = height_divided;
                 end
                 panel_heights(sorted_heights_indices(sorted_panel_index)) = panel_height;
-                height_remaining = height_remaining - sorted_heights(sorted_panel_index);
+                height_remaining = height_remaining - panel_height;
             end
             
         end        

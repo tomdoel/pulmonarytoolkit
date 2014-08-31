@@ -70,33 +70,49 @@ classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
             
             % Get uids for every series associated with this patient
             datasets = obj.PatientDatabase.GetAllSeriesForThisPatient(patient_id);
-            uids = PTKContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid');
+            all_uids = PTKContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid');
             obj.ListBox.ClearItems;
             
             link_map = obj.LinkedRecorder.LinkMap;
             linked_uids_list = {};
-            for uid = uids
+            linked_name_list = {};
+            for uid = all_uids
                 if link_map.isKey(uid{1})
                     link_record = link_map(uid{1});
                     linked_uids_list{end + 1} = uid{1};
+                    linked_name_list{end + 1} = PTKLinkedSeriesSidePanel.GuessPrimaryName(link_record);
+                    
                     linked_uids_list = [linked_uids_list, link_record.LinkMap.keys];
+                    linked_name_list = [linked_name_list, link_record.LinkMap.values];
                 end
             end
             
             if ~isempty(linked_uids_list)
-                % Extract only the series which are part of thr linked list map
-                [uid_found_map, series_index] = ismember(linked_uids_list, uids);
+                % Extract only the series which are part of the linked list map
+                [uid_found_map, series_index] = ismember(linked_uids_list, all_uids);
                 linked_series = datasets(series_index(uid_found_map));
-                
-                
+                                
                 for series_index = 1 : length(linked_series)
                     series = linked_series{series_index};
-                    series_item = PTKSidePanelLinkedSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, obj.GuiCallback, obj.Reporting);
+                    link_name_text = linked_name_list{series_index};
+                    series_item = PTKSidePanelLinkedSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, link_name_text, obj.GuiCallback, obj.Reporting);
                     
                     obj.ListBox.AddItem(series_item);
                 end
                 
                 obj.ListBox.SelectItem(series_uid, true);
+            end
+        end
+    end
+    
+    methods (Static, Access = private)
+        function name = GuessPrimaryName(link_record)
+            % The primary dataset in a set of links does not have a name, but it is useful
+            % to assign one as a visual clue in the GUI
+            name = 'Primary';
+            names = link_record.LinkMap.values;
+            if ismember('MR', names) && ismember('CT', names)
+                name = 'XE';
             end
         end
     end
