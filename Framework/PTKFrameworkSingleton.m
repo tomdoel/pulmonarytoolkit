@@ -14,7 +14,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     %     instances of PTKMain get access to.
     %
     %     PTKFrameworkSingleton is a singleton. It cannot be created using the
-    %     constructor; instead call PTKSplasPTKFrameworkSingletonhScreen.GetFrameworkSingleton;
+    %     constructor; instead call PTKFrameworkSingleton.GetFrameworkSingleton;
     %
     %
     %     Licence
