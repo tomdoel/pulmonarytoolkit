@@ -112,7 +112,7 @@ classdef PTKToolbarPanel < PTKPanel
                 icon = [];
             end
             tool_group = obj.ButtonGroups(category_key);
-            new_button = PTKToolButton(obj, tool, icon, obj.GuiApp, obj.Reporting);
+            new_button = PTKPluginLabelButton(obj, tool, icon, obj.GuiApp, obj.Reporting);
             tool_group.AddButton(new_button, obj.Reporting);
             tool_struct = [];
             tool_struct.Button = new_button;
