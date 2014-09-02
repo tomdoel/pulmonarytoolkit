@@ -30,7 +30,7 @@ classdef PTKToolbarPanel < PTKPanel
     end
     
     methods
-        function obj = PTKToolbarPanel(parent, organised_plugins, gui_app, settings, reporting)
+        function obj = PTKToolbarPanel(parent, organised_plugins, gui_app, reporting)
             obj = obj@PTKPanel(parent, reporting);
             
             obj.GuiApp = gui_app;

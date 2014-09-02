@@ -52,14 +52,16 @@ classdef PTKSettings < PTKBaseClass
         function obj = PTKSettings
         end
         
-        function ApplySettingsToViewerPanel(obj, viewer_panel)
+        function ApplySettingsToGui(obj, gui, viewer_panel)
+            gui.DeveloperMode = obj.DeveloperMode;
             viewer_panel.OverlayOpacity = obj.OverlayOpacity;
             viewer_panel.SliceNumber = obj.SliceNumber;
             viewer_panel.GetMarkerPointManager.ChangeShowTextLabels(obj.ShowTextLabels);
             viewer_panel.GetMarkerPointManager.ChangeCurrentColour(obj.CurrentMarkerColour);
         end
         
-        function UpdateSettingsFromViewerPanel(obj, viewer_panel)
+        function UpdateSettingsFromGui(obj, gui, viewer_panel)
+            obj.DeveloperMode = gui.DeveloperMode;
             obj.OverlayOpacity = viewer_panel.OverlayOpacity;
             obj.SliceNumber = viewer_panel.SliceNumber;
             obj.ShowTextLabels = viewer_panel.GetMarkerPointManager.ShowTextLabels;
@@ -78,6 +80,11 @@ classdef PTKSettings < PTKBaseClass
                 obj.SaveImagePath = image_path;
                 obj.SaveSettings(reporting);
             end
+        end
+        
+        function SetPosition(obj, main_screen_position, patient_browser_position)
+            obj.ScreenPosition = main_screen_position;
+            obj.PatientBrowserScreenPosition = patient_browser_position;
         end
         
         function SaveSettings(obj, reporting)

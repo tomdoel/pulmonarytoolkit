@@ -16,8 +16,12 @@ classdef PTKGui < PTKFigure
     
     properties (SetAccess = private)
         ImagePanel
+        GuiSingleton
         Reporting
-        Settings
+    end
+    
+    properties (SetObservable)
+        DeveloperMode = false
     end
     
     properties (Access = private)
@@ -71,37 +75,39 @@ classdef PTKGui < PTKFigure
             obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile);
             obj.Reporting.Log('New session of PTKGui');
             
+            % Get the singleton, which gives access to the settings
+            obj.GuiSingleton = PTKGuiSingleton.GetGuiSingleton(obj.Reporting);
+            
             % Load the settings file
-            obj.Settings = PTKSettings.LoadSettings(obj.Reporting);
-            obj.Settings.ApplySettingsToViewerPanel(obj.ImagePanel);
+            obj.GuiSingleton.GetSettings.ApplySettingsToGui(obj, obj.ImagePanel);
             
             % Create the object which manages the current dataset
-            obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.Settings, obj.Reporting);
+            obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder, obj, obj.Reporting);
             obj.AddChild(obj.SidePanel, obj.Reporting);
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
-            obj.PatientBrowserFactory = PTKPatientBrowserFactory(obj, obj.GuiDataset, obj.Settings, obj.Reporting);
+            obj.PatientBrowserFactory = PTKPatientBrowserFactory(obj, obj.GuiDataset, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             % Map of all plugins visible in the GUI
-            obj.OrganisedPlugins = PTKOrganisedPlugins(obj.Settings, obj, obj.Reporting);
+            obj.OrganisedPlugins = PTKOrganisedPlugins(obj, obj.Reporting);
 
             % Create the panel of tools across the bottom of the interface
             if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, obj, obj.Settings, obj.Reporting);
+                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, obj, obj.Reporting);
                 obj.AddChild(obj.ToolbarPanel, obj.Reporting);
             end
             
-            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins, obj.Settings, obj.Reporting);
+            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins, obj.Reporting);
             obj.AddChild(obj.ModeTabControl, obj.Reporting);
 
-            obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.Settings, obj.GuiDataset.GuiDatasetState, obj.Reporting);
+            obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState, obj.Reporting);
             obj.AddChild(obj.PatientNamePanel, obj.Reporting);
             
             % Load the most recent dataset
-            image_info = obj.Settings.ImageInfo;
+            image_info = obj.GuiSingleton.GetSettings.ImageInfo;
             if ~isempty(image_info)
                 obj.Reporting.ShowProgress('Loading images');
                 obj.GuiDataset.InternalLoadImages(image_info);
@@ -117,10 +123,9 @@ classdef PTKGui < PTKFigure
             
             % Resizing has to be done before we call Show(), and will ensure the GUI is
             % correctly laid out when it is shown
-            if isempty(obj.Settings.ScreenPosition)
+            position = obj.GuiSingleton.GetSettings.ScreenPosition;
+            if isempty(position)
                 position = [0, 0, PTKSystemUtilities.GetMonitorDimensions];
-            else
-                position = obj.Settings.ScreenPosition;
             end
             obj.Resize(position);
             
@@ -147,6 +152,8 @@ classdef PTKGui < PTKFigure
             % Ensure the GUI stack ordering is correct
             obj.ReorderPanels;
 
+            obj.AddPostSetListener(obj, 'DeveloperMode', @obj.DeveloperModeChangedCallback);
+            
             % Wait until the GUI is visible before removing the splash screen
             splash_screen.delete;
         end
@@ -173,13 +180,13 @@ classdef PTKGui < PTKFigure
         
         function SelectFilesAndLoad(obj)
             % Prompts the user for file(s) to load
-            image_info = PTKChooseImagingFiles(obj.Settings.SaveImagePath, obj.Reporting);
+            image_info = PTKChooseImagingFiles(obj.GuiSingleton.GetSettings.SaveImagePath, obj.Reporting);
             
             % An empty image_info means the user has cancelled
             if ~isempty(image_info)
                 % Save the path in the settings so that future load dialogs 
                 % will start from there
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
+                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
                 
                 if (image_info.ImageFileFormat == PTKImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
                     uiwait(msgbox('No valid DICOM files were found in this folder', [PTKSoftwareInfo.Name ': No image files found.']));
@@ -196,14 +203,14 @@ classdef PTKGui < PTKFigure
             
             obj.WaitDialogHandle.ShowAndHold('Import data');
             
-            folder_path = PTKDiskUtilities.ChooseDirectory('Select a directory from which files will be imported', obj.Settings.SaveImagePath);
+            folder_path = PTKDiskUtilities.ChooseDirectory('Select a directory from which files will be imported', obj.GuiSingleton.GetSettings.SaveImagePath);
             
             % An empty folder_path means the user has cancelled
             if ~isempty(folder_path)
                 
                 % Save the path in the settings so that future load dialogs 
                 % will start from there
-                obj.Settings.SetLastSaveImagePath(folder_path, obj.Reporting);
+                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(folder_path, obj.Reporting);
                 
                 % Import all datasets from this path
                 uids = obj.GuiDataset.ImportDataRecursive(folder_path);
@@ -218,11 +225,11 @@ classdef PTKGui < PTKFigure
         function SaveBackgroundImage(obj)
             patient_name = obj.ImagePanel.BackgroundImage.Title;
             image_data = obj.ImagePanel.BackgroundImage;
-            path_name = obj.Settings.SaveImagePath;
+            path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             
             path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
+                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
             end
         end
         
@@ -232,11 +239,11 @@ classdef PTKGui < PTKFigure
             template = obj.GuiDataset.GetTemplateImage;
             background_image.ResizeToMatch(template);
             image_data = background_image;
-            path_name = obj.Settings.SaveImagePath;
+            path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             
             path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
+                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
             end
         end
         
@@ -302,10 +309,10 @@ classdef PTKGui < PTKFigure
             % Captures an image from the viewer, including the background and transparent
             % overlay. Prompts the user for a filename
             
-            path_name = obj.Settings.SaveImagePath;            
+            path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             [filename, path_name, save_type] = PTKDiskUtilities.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && ischar(path_name)
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
+                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
             end
             if (filename ~= 0)
                 % Hide the progress bar before capture
@@ -505,11 +512,17 @@ classdef PTKGui < PTKFigure
         function ApplicationClosing(obj)
             obj.AutoSaveMarkers;
             obj.SaveSettings;
-        end        
+        end
         
-        % Executes when figure is resized
         function ResizeCallback(obj, ~, ~, ~)
+            % Executes when figure is resized
             obj.Resize;
+        end
+        
+        function DeveloperModeChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the DeveloperMode property is changed
+            
+            obj.RefreshPlugins;
         end
         
         
@@ -810,12 +823,13 @@ classdef PTKGui < PTKFigure
         
         
         function SaveSettings(obj)
-            if ~isempty(obj.Settings)
+            settings = obj.GuiSingleton.GetSettings;
+            if ~isempty(settings)
                 set(obj.GraphicalComponentHandle, 'units', 'pixels');
-                obj.Settings.ScreenPosition = get(obj.GraphicalComponentHandle, 'Position');
-                obj.Settings.PatientBrowserScreenPosition = obj.PatientBrowserFactory.GetScreenPosition;
-                obj.Settings.UpdateSettingsFromViewerPanel(obj.ImagePanel);
-                obj.Settings.SaveSettings(obj.Reporting);
+                settings = obj.GuiSingleton.GetSettings;
+                settings.SetPosition(get(obj.GraphicalComponentHandle, 'Position'), obj.PatientBrowserFactory.GetScreenPosition);
+                settings.UpdateSettingsFromGui(obj, obj.ImagePanel);
+                settings.SaveSettings(obj.Reporting);
             end
         end
         

@@ -19,18 +19,18 @@ classdef PTKOrganisedPlugins < PTKBaseClass
     end
     
     methods
-        function obj = PTKOrganisedPlugins(settings, gui_app, reporting)
+        function obj = PTKOrganisedPlugins(gui_app, reporting)
             obj.GuiApp = gui_app;
             obj.OrganisedPluginsModeList = PTKOrganisedPluginsModeList;
-            obj.Repopulate(settings, reporting);
+            obj.Repopulate(reporting);
         end
         
-        function Repopulate(obj, settings, reporting)            
+        function Repopulate(obj, reporting)
             obj.OrganisedPluginsModeList.Clear;
             plugin_list = obj.GetListOfPossiblePluginNames;
-            obj.OrganisedPluginsModeList.AddList(plugin_list, settings, obj.GuiApp, reporting);
+            obj.OrganisedPluginsModeList.AddList(plugin_list, obj.GuiApp, reporting);
             gui_plugin_list = obj.GetListOfPossibleGuiPluginNames;
-            obj.OrganisedPluginsModeList.AddList(gui_plugin_list, settings, obj.GuiApp, reporting);
+            obj.OrganisedPluginsModeList.AddList(gui_plugin_list, obj.GuiApp, reporting);
         end
 
         function plugin_list = GetAllPluginsForMode(obj, mode)
