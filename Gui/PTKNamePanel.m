@@ -23,7 +23,6 @@ classdef PTKNamePanel < PTKPanel
         
         Gui
         GuiState
-        Settings
     end
     
     properties (Constant, Access = private)
@@ -42,12 +41,11 @@ classdef PTKNamePanel < PTKPanel
     end
     
     methods
-        function obj = PTKNamePanel(parent, gui, settings, gui_state, reporting)
+        function obj = PTKNamePanel(parent, gui, gui_state, reporting)
             obj = obj@PTKPanel(parent, reporting);
             
             obj.Gui = gui;
             obj.GuiState = gui_state;
-            obj.Settings = settings;
             
             obj.PatientNameText = PTKText(obj, obj.NoPatientText, '', 'PatientName');
             obj.PatientNameText.FontSize = obj.PatientNameFontSize;

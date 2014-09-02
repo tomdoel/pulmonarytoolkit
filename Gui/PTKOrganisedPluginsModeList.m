@@ -33,10 +33,10 @@ classdef PTKOrganisedPluginsModeList < PTKBaseClass
             end
         end        
 
-        function AddList(obj, plugin_list, settings, gui_app, reporting)
+        function AddList(obj, plugin_list, gui_app, reporting)
             for plugin_filename = plugin_list
                 plugin_name = plugin_filename{1}.First;
-                plugin_wrapper = PTKPluginWrapperBase.AddPluginFromName(plugin_name, plugin_filename, settings, gui_app, reporting);
+                plugin_wrapper = PTKPluginWrapperBase.AddPluginFromName(plugin_name, plugin_filename, gui_app, reporting);
                 if ~isempty(plugin_wrapper)
                     obj.Add(plugin_name, plugin_wrapper.ParsedPluginInfo.Mode, plugin_wrapper.ParsedPluginInfo.Category, plugin_wrapper);
                 end

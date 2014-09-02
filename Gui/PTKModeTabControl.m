@@ -14,7 +14,6 @@ classdef PTKModeTabControl < PTKTabControl
 
     properties (Access = private)
         OrganisedPlugins
-        Settings
         Gui
         Line
         
@@ -28,10 +27,8 @@ classdef PTKModeTabControl < PTKTabControl
     end
 
     methods
-        function obj = PTKModeTabControl(parent, organised_plugins, settings, reporting)
+        function obj = PTKModeTabControl(parent, organised_plugins, reporting)
             obj = obj@PTKTabControl(parent, reporting);
-            
-            obj.Settings = settings;
             
             obj.OrganisedPlugins = organised_plugins;
             obj.TabEnabled = containers.Map;
@@ -75,7 +72,7 @@ classdef PTKModeTabControl < PTKTabControl
         end
         
         function RefreshPlugins(obj, dataset, window, level)
-            obj.OrganisedPlugins.Repopulate(obj.Settings, obj.Reporting)
+            obj.OrganisedPlugins.Repopulate(obj.Reporting)
             for panel = obj.PanelMap.values
                 panel{1}.RefreshPlugins(dataset, window, level);
             end
