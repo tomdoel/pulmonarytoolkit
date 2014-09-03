@@ -27,10 +27,8 @@ classdef PTKSetDeveloperMode < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            % Enters or exits developer mode
-            enabled = ~ptk_gui_app.Settings.DeveloperMode;
-            ptk_gui_app.Settings.DeveloperMode = enabled;
-            ptk_gui_app.RefreshPlugins;
+            % Toggles developer mode
+            ptk_gui_app.DeveloperMode = ~ptk_gui_app.DeveloperMode;
         end
         
         function enabled = IsEnabled(ptk_gui_app)
@@ -38,7 +36,7 @@ classdef PTKSetDeveloperMode < PTKGuiPlugin
         end
         
         function is_selected = IsSelected(ptk_gui_app)
-            is_selected = ptk_gui_app.Settings.DeveloperMode;
+            is_selected = ptk_gui_app.DeveloperMode;
         end        
     end
 end
