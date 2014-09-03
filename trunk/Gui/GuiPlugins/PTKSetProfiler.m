@@ -37,7 +37,7 @@ classdef PTKSetProfiler < PTKGuiPlugin
         end
         
         function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.Settings.DeveloperMode;
+            enabled = ptk_gui_app.DeveloperMode;
         end
         
         function is_selected = IsSelected(ptk_gui_app)
