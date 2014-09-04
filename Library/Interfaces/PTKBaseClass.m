@@ -22,7 +22,11 @@ classdef PTKBaseClass < handle
         end
         
         function delete(obj)
-            delete(obj.EventListeners);
+            for listener = obj.EventListeners
+                delete(listener{1});
+            end
+            obj.EventListeners = [];
+
             if PTKSoftwareInfo.MonitorClassInstances
                 PTKClassMonitor.GetClassMonitor.ObjectDeleted(class(obj));
             end
@@ -35,24 +39,15 @@ classdef PTKBaseClass < handle
             % Adds a new event listener tied to the lifetime of this object
             
             new_listener = addlistener(control, event_name, function_handle);
-            if isempty(obj.EventListeners)
-                obj.EventListeners = new_listener;
-            else
-                obj.EventListeners(end + 1) = new_listener;
-            end
+            obj.EventListeners{end + 1} = new_listener;
         end
         
         function AddPostSetListener(obj, control, event_name, function_handle)
             % Adds a new event listener tied to the lifetime of this object, for the PostSet
             % operation
             
-            new_listener = addlistener(control, event_name, 'PostSet', function_handle);
-            
-            if isempty(obj.EventListeners)
-                obj.EventListeners = new_listener;
-            else
-                obj.EventListeners(end + 1) = new_listener;
-            end
+            new_listener = addlistener(control, event_name, 'PostSet', function_handle);            
+            obj.EventListeners{end + 1} = new_listener;
         end
         
     end
