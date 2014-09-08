@@ -75,7 +75,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             % Remove and delete all child graphic objects
 
             for child = obj.Children
-                delete(child{1});
+                PTKSystemUtilities.DeleteIfHandle(child{1});
             end
             obj.Children = [];
         end
