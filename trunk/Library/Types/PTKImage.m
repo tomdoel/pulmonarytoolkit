@@ -196,7 +196,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             % filename stored so that it can be reloaded using a call to
             % LoadRawImage
         
-            image_class = class(obj.RawImage(1));
+            image_class = class(obj.RawImage);
             
             if length(size(obj.RawImage)) ~= 3
                 % Compression currently only supports 3D images
