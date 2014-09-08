@@ -63,12 +63,12 @@ classdef PTKViewerPanelCallback < PTKBaseClass
         end
         
         function delete(obj)
-            PTKSystemUtilities.DeleteIfHandle(obj.BackgroundImageChangedListener)
-            PTKSystemUtilities.DeleteIfHandle(obj.OverlayImageChangedListener)
-            PTKSystemUtilities.DeleteIfHandle(obj.QuiverImageChangedListener)
-            PTKSystemUtilities.DeleteIfHandle(obj.BackgroundImagePointerChangedListener)
-            PTKSystemUtilities.DeleteIfHandle(obj.OverlayImagePointerChangedListener)
-            PTKSystemUtilities.DeleteIfHandle(obj.QuiverImagePointerChangedListener)
+            PTKSystemUtilities.DeleteIfHandle(obj.BackgroundImageChangedListener);
+            PTKSystemUtilities.DeleteIfHandle(obj.OverlayImageChangedListener);
+            PTKSystemUtilities.DeleteIfHandle(obj.QuiverImageChangedListener);
+            PTKSystemUtilities.DeleteIfHandle(obj.BackgroundImagePointerChangedListener);
+            PTKSystemUtilities.DeleteIfHandle(obj.OverlayImagePointerChangedListener);
+            PTKSystemUtilities.DeleteIfHandle(obj.QuiverImagePointerChangedListener);
         end
         
     end
