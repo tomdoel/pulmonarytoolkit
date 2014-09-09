@@ -28,11 +28,11 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
 
     % Get the coordinates of every voxel in the lung segmentation
     candidate_indices = find(lung_segmentation.RawImage);
-
+    
     % An image for debugging
     ref_image = zeros(image_size, 'uint8');
     ref_image(candidate_indices) = 2;
-    
+
     % Remove points with low fissureness
     max_fissureness = max(fissureness.RawImage(candidate_indices));
     fissureness_threshold = max_fissureness/3;
@@ -41,6 +41,11 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     candidate_indices = candidate_indices((fissureness.RawImage(candidate_indices) > fissureness_threshold) & (image_roi.RawImage(candidate_indices) > intensity_threshold));
     ref_image(candidate_indices) = 4;
 
+    if isempty(candidate_indices)
+        maximum_fissureness_indices = [];
+        return;
+    end
+    
     % Find a rotation matrix
     [eigv, m] = GetRotationMatrix(indices_for_model, image_size);
     
@@ -78,6 +83,11 @@ function [maximum_fissureness_indices, ref_image] = GetFissurePoints(indices_for
     simplex_index = pointLocation(dt, x1_all', y1_all');
     is_valid = ~isnan(simplex_index);
     candidate_indices_ok = candidate_indices(is_valid);
+    
+    if isempty(candidate_indices_ok)
+        maximum_fissureness_indices = [];
+        return;
+    end
     
     % Turn into x,y,z vectors
     [x_all, y_all, z_all] = PTKImageCoordinateUtilities.FastInd2sub(image_size, candidate_indices_ok);
