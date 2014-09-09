@@ -20,8 +20,7 @@ function result = PTKGetFissurePlane(max_fissure_points, image_size, extrapolati
     
     result = zeros(image_size, 'uint8');
     result(:) = 0;
-     result(approximant_indices) = 1;
-    
+    result(approximant_indices) = 1;
 end
 
 function model_indices = GetModelIndices(candidate_indices, image_size, extrapolation_multiple)

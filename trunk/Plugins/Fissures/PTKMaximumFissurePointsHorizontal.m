@@ -44,7 +44,7 @@ classdef PTKMaximumFissurePointsHorizontal < PTKPlugin
             fissureness_roi = application.GetResult('PTKFissurenessROIHorizontal');
             lung_mask = application.GetResult('PTKLobesFromFissurePlaneOblique');
                         
-            results = PTKMaximumFissurePointsHorizontal.GetResultsForLung(fissure_approximation, fissureness_roi.RightMidFissure, application.GetResult('PTKGetRightLungROI'), lung_mask, 1, 3);
+            results = PTKMaximumFissurePointsHorizontal.GetResultsForLung(fissure_approximation, fissureness_roi.RightMidFissure, application.GetResult('PTKGetRightLungROI'), lung_mask, 1, 3, reporting);
             results.ResizeToMatch(fissure_approximation);
             results.ImageType = PTKImageType.Colormap;
         end
@@ -55,7 +55,7 @@ classdef PTKMaximumFissurePointsHorizontal < PTKPlugin
     
     methods (Static, Access = private)
         
-        function results = GetResultsForLung(fissure_approximation, fissureness_roi, lung_roi, lung_mask, lung_colour, fissure_colour)
+        function results = GetResultsForLung(fissure_approximation, fissureness_roi, lung_roi, lung_mask, lung_colour, fissure_colour, reporting)
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage == lung_colour));
             
             fissure_approximation.ResizeToMatch(lung_roi);
@@ -63,7 +63,12 @@ classdef PTKMaximumFissurePointsHorizontal < PTKPlugin
             lung_mask.ResizeToMatch(lung_roi);
             lung_mask.ResizeToMatch(lung_roi);
             
-            [~, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == fissure_colour, lung_mask, fissureness_roi, lung_roi, lung_roi.ImageSize);
+            [max_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == fissure_colour, lung_mask, fissureness_roi, lung_roi, lung_roi.ImageSize);
+            
+            max_fissure_indices = [];
+            if isempty(max_fissure_indices)
+                reporting.ShowWarning('PTKMaximumFissurePointsHorizontal:FissurePointsNotFound', ['The horizontal fissure could not be found.']);
+            end
             
             ref_image(ref_image == 1) = 8;
             

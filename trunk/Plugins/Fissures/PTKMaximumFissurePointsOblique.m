@@ -44,8 +44,8 @@ classdef PTKMaximumFissurePointsOblique < PTKPlugin
             fissure_approximation = application.GetResult('PTKFissureApproximation');
             left_and_right_lungs = application.GetResult('PTKLeftAndRightLungs');
             
-            results_left = PTKMaximumFissurePointsOblique.GetResultsForLung(fissure_approximation, fissureness_roi.LeftMainFissure, application.GetResult('PTKGetLeftLungROI'), left_and_right_lungs, 2, 6);
-            results_right = PTKMaximumFissurePointsOblique.GetResultsForLung(fissure_approximation, fissureness_roi.RightMainFissure, application.GetResult('PTKGetRightLungROI'), left_and_right_lungs, 1, 2);
+            results_left = PTKMaximumFissurePointsOblique.GetResultsForLung(fissure_approximation, fissureness_roi.LeftMainFissure, application.GetResult('PTKGetLeftLungROI'), left_and_right_lungs, 2, 6, 'left', reporting);
+            results_right = PTKMaximumFissurePointsOblique.GetResultsForLung(fissure_approximation, fissureness_roi.RightMainFissure, application.GetResult('PTKGetRightLungROI'), left_and_right_lungs, 1, 2, 'right', reporting);
             
             results = PTKCombineLeftAndRightImages(application.GetTemplateImage(PTKContext.LungROI), results_left, results_right, left_and_right_lungs);
             results.ImageType = PTKImageType.Colormap;
@@ -56,7 +56,7 @@ classdef PTKMaximumFissurePointsOblique < PTKPlugin
     end    
     
     methods (Static, Access = private)
-        function results = GetResultsForLung(fissure_approximation, fissureness_roi, lung_roi, left_and_right_lungs, lung_colour, fissure_colour)
+        function results = GetResultsForLung(fissure_approximation, fissureness_roi, lung_roi, left_and_right_lungs, lung_colour, fissure_colour, lung_name, reporting)
             lung_mask = left_and_right_lungs.Copy;
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage == lung_colour));
             
@@ -64,7 +64,11 @@ classdef PTKMaximumFissurePointsOblique < PTKPlugin
             fissure_approximation.ResizeToMatch(lung_roi);
             lung_mask.ResizeToMatch(lung_roi);
             
-            [~, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == fissure_colour, lung_mask, fissureness_roi, lung_roi, lung_roi.ImageSize);
+            [max_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == fissure_colour, lung_mask, fissureness_roi, lung_roi, lung_roi.ImageSize);
+            
+            if isempty(max_fissure_indices)
+                reporting.ShowWarning('PTKMaximumFissurePointsOblique:FissurePointsNotFound', ['The oblique fissure could not be found in the ' lung_name ' lung']);
+            end
             
             results = lung_roi.BlankCopy;
             results.ChangeRawImage(ref_image);
