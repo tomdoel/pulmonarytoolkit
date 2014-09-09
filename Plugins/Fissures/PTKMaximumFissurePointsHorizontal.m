@@ -65,7 +65,6 @@ classdef PTKMaximumFissurePointsHorizontal < PTKPlugin
             
             [max_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == fissure_colour, lung_mask, fissureness_roi, lung_roi, lung_roi.ImageSize);
             
-            max_fissure_indices = [];
             if isempty(max_fissure_indices)
                 reporting.ShowWarning('PTKMaximumFissurePointsHorizontal:FissurePointsNotFound', ['The horizontal fissure could not be found.']);
             end
