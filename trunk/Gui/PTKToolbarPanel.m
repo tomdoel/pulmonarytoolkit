@@ -14,8 +14,8 @@ classdef PTKToolbarPanel < PTKPanel
     %    
     
     properties (Access = private)
-        ButtonGroups
-        OrderedButtonGroupList
+        ControlGroups
+        OrderedControlGroupList
         GuiApp
         OrganisedPlugins
         ToolMap
@@ -34,8 +34,8 @@ classdef PTKToolbarPanel < PTKPanel
             obj = obj@PTKPanel(parent, reporting);
             
             obj.GuiApp = gui_app;
-            obj.ButtonGroups = containers.Map;
-            obj.OrderedButtonGroupList = {};
+            obj.ControlGroups = containers.Map;
+            obj.OrderedControlGroupList = {};
             obj.ToolMap = containers.Map;
             obj.OrganisedPlugins = organised_plugins;
             
@@ -56,7 +56,7 @@ classdef PTKToolbarPanel < PTKPanel
             
             
             x_position = obj.LeftMargin;
-            for tool_group = obj.OrderedButtonGroupList
+            for tool_group = obj.OrderedControlGroupList
                 tool_group_panel = tool_group{1};
                 panel_height = tool_group_panel.GetRequestedHeight;
                 y_position = max(0, toolbar_position(2) + round((toolbar_position(4) - panel_height)/2));
@@ -68,11 +68,11 @@ classdef PTKToolbarPanel < PTKPanel
         end
         
         function Update(obj, gui_app)
-            % Calls each group panel and updates the buttons. In some cases, buttons will
+            % Calls each group panel and updates the controls. In some cases, controls will
             % become enabled that were previously disabled; this requires the position
-            % (since this may not have been set if this is the first time the button has been made visible)
+            % (since this may not have been set if this is the first time the control has been made visible)
             
-            for tool_group = obj.OrderedButtonGroupList
+            for tool_group = obj.OrderedControlGroupList
                 tool_group_panel = tool_group{1};
                 tool_group_panel.Update(gui_app);
             end
@@ -100,10 +100,10 @@ classdef PTKToolbarPanel < PTKPanel
         function AddTool(obj, tool)
             tool_name = class(tool);
             category_key = tool.Category;
-            if ~obj.ButtonGroups.isKey(category_key)
+            if ~obj.ControlGroups.isKey(category_key)
                 new_group = PTKLabelButtonGroup(obj, category_key, '', category_key, obj.Reporting);
-                obj.ButtonGroups(category_key) = new_group;
-                obj.OrderedButtonGroupList{end + 1} = new_group;
+                obj.ControlGroups(category_key) = new_group;
+                obj.OrderedControlGroupList{end + 1} = new_group;
                 obj.AddChild(new_group, obj.Reporting);
             end
             if isprop(tool, 'Icon')
@@ -111,11 +111,15 @@ classdef PTKToolbarPanel < PTKPanel
             else
                 icon = [];
             end
-            tool_group = obj.ButtonGroups(category_key);
-            new_button = PTKPluginLabelButton(obj, tool, icon, obj.GuiApp, obj.Reporting);
-            tool_group.AddButton(new_button, obj.Reporting);
+            tool_group = obj.ControlGroups(category_key);
+            if isa(tool, 'PTKGuiPluginSlider')
+                new_control = PTKPluginLabelSlider(obj, tool, icon, obj.GuiApp, obj.Reporting);
+            else
+                new_control = PTKPluginLabelButton(obj, tool, icon, obj.GuiApp, obj.Reporting);
+            end
+            tool_group.AddControl(new_control, obj.Reporting);
             tool_struct = [];
-            tool_struct.Button = new_button;
+            tool_struct.Control = new_control;
             tool_struct.ToolObject = tool;
             obj.ToolMap(tool_name) = tool_struct;
         end

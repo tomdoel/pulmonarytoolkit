@@ -24,6 +24,10 @@ classdef PTKSlider < PTKUserInterfaceObject
         SliderValueSetInProgress % Used to stop a forced change in the slider value triggering a change notification
     end
     
+    properties
+        IsHorizontal
+    end
+    
     properties (Constant)
         SliderWidth = 15
     end
@@ -40,11 +44,12 @@ classdef PTKSlider < PTKUserInterfaceObject
             obj.SliderMax = 100;
             obj.SliderSteps = [1, 10];
             obj.SliderValueSetInProgress = false;
+            obj.IsHorizontal = false;
         end
 
         function CreateGuiComponent(obj, position, reporting)
             % Create the sider
-            obj.GraphicalComponentHandle = uicontrol('Style', 'slider', 'Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'Value', 0, 'Position', position, 'Min', obj.SliderMin, 'Max', obj.SliderMax, 'SliderStep', obj.SliderSteps);
+            obj.GraphicalComponentHandle = uicontrol('Style', 'slider', 'Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'Position', position, 'Min', obj.SliderMin, 'Max', obj.SliderMax, 'SliderStep', obj.SliderSteps, 'Value', obj.SliderValue);
             obj.AddEventListener(obj.GraphicalComponentHandle, 'ContinuousValueChange', @obj.SliderCallback);
         end
         
@@ -72,9 +77,23 @@ classdef PTKSlider < PTKUserInterfaceObject
             end
         end
         
-    end
-    
-    methods (Access = protected)
+        function Resize(obj, position)
+            
+            % In Matlab, the orientation of the slider depends on whether the width is
+            % greater than the height. We however want to ensure the slider maintains its
+            % correct orientation as the GUI is resized
+            if obj.IsHorizontal
+                if position(3) < position(4)
+                    position(4) = max(1, position(3) - 1);
+                end
+            else
+                if position(4) < position(3)
+                    position(3) = max(1, position(4) - 1);
+                end                    
+            end
+            Resize@PTKUserInterfaceObject(obj, position);
+        end        
+        
     end
     
     methods (Access = private)
