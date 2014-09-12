@@ -56,8 +56,12 @@ classdef PTKListOfPatientsPanel < PTKPanel
         end
         
         function delete(obj)
-            delete(obj.PatientListBox);
-            delete(obj.PatientTextControl);
+            if ishandle(obj.PatientListBox)
+                delete(obj.PatientListBox);
+            end
+            if ishandle(obj.PatientTextControl)
+                delete(obj.PatientTextControl);
+            end
         end
         
         function CreateGuiComponent(obj, position, reporting)
