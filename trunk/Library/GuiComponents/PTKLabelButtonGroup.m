@@ -38,11 +38,7 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
         
         function new_control = AddControl(obj, new_control, reporting)
             
-%             if isempty(obj.Controls)
-%                 obj.Controls = new_control;
-%             else
-                obj.Controls{end + 1} = new_control;
-%             end
+            obj.Controls{end + 1} = new_control;
             obj.AddChild(new_control, reporting);
             
             if isa(new_control, 'PTKButton')
