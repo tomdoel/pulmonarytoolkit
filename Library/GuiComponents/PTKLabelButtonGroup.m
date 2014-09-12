@@ -13,7 +13,7 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
     %
     
     properties (Access = private)
-        Buttons
+        Controls
         Title
     end
 
@@ -36,23 +36,28 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
             obj.AddChild(obj.Title, reporting);
         end
         
-        function new_button = AddButton(obj, new_button, reporting)
+        function new_control = AddControl(obj, new_control, reporting)
             
-            if isempty(obj.Buttons)
-                obj.Buttons = new_button;
-            else
-                obj.Buttons(end + 1) = new_button;
+%             if isempty(obj.Controls)
+%                 obj.Controls = new_control;
+%             else
+                obj.Controls{end + 1} = new_control;
+%             end
+            obj.AddChild(new_control, reporting);
+            
+            if isa(new_control, 'PTKButton')
+                obj.AddEventListener(new_control, 'ButtonClicked', @obj.ButtonClickedCallback);
+            elseif isa(new_control, 'PTKSlider')
+                obj.AddEventListener(new_control, 'SliderValueChanged', @obj.SliderCallback);
             end
-            obj.AddChild(new_button, reporting);
-            obj.AddEventListener(new_button, 'ButtonClicked', @obj.ButtonClickedCallback);
         end
         
         function width = GetWidth(obj)
             width = obj.LeftMargin + obj.RightMargin;
             number_of_enabled_buttons = 0;
-            for button = obj.Buttons
-                if button.Enabled
-                    width = width + button.GetWidth;
+            for button = obj.Controls
+                if button{1}.Enabled
+                    width = width + button{1}.GetWidth;
                     number_of_enabled_buttons = number_of_enabled_buttons + 1;
                 end
             end
@@ -62,25 +67,25 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
         function Resize(obj, new_position)
             Resize@PTKVirtualPanel(obj, new_position);
             
-            button_x = new_position(1) + obj.LeftMargin;
+            control_x = new_position(1) + obj.LeftMargin;
             total_width = obj.GetWidth;
 
-            button_height = 0;
+            control_height = 0;
             
-            for button = obj.Buttons
-                if button.Enabled
-                    y_start = new_position(2) + max(0, round((new_position(4) - obj.VerticalSpacing - obj.TitleTextHeight - button.GetRequestedHeight)/2));
-                    button_width = button.GetWidth;
-                    button.Resize([button_x, y_start, button_width, button.GetRequestedHeight]);
-                    button_x = button_x + button_width + obj.ButtonHorizontalSpacing;
-                    button_height = max(button_height, button.GetRequestedHeight);
+            for control = obj.Controls
+                if control{1}.Enabled
+                    y_start = new_position(2) + max(0, round((new_position(4) - obj.VerticalSpacing - obj.TitleTextHeight - control{1}.GetRequestedHeight)/2));
+                    button_width = control{1}.GetWidth;
+                    control{1}.Resize([control_x, y_start, button_width, control{1}.GetRequestedHeight]);
+                    control_x = control_x + button_width + obj.ButtonHorizontalSpacing;
+                    control_height = max(control_height, control{1}.GetRequestedHeight);
                 end
             end
             
-            vertical_gap = max(0, new_position(4) - obj.VerticalSpacing - obj.TitleTextHeight - button_height);
+            vertical_gap = max(0, new_position(4) - obj.VerticalSpacing - obj.TitleTextHeight - control_height);
             vertical_gap = round(vertical_gap/2);
-            button_y = new_position(2) + vertical_gap;
-            text_y = button_y + button_height + obj.VerticalSpacing;
+            control_y = new_position(2) + vertical_gap;
+            text_y = control_y + control_height + obj.VerticalSpacing;
             text_width = total_width;
             
             obj.Title.Resize([new_position(1), text_y, text_width, obj.TitleTextHeight]);
@@ -89,16 +94,16 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
         function Update(obj, gui_app)
             % Calls each label button and updates its status.
             
-            for button = obj.Buttons
-                enabled = button.UpdateToolEnabled(gui_app);
-                if enabled ~= button.Enabled
+            for control = obj.Controls
+                enabled = control{1}.UpdateToolEnabled(gui_app);
+                if enabled ~= control{1}.Enabled
                     if enabled
-                        if isempty(button.Position)
-                            button.Resize([0 0 1 1]);
+                        if isempty(control{1}.Position)
+                            control{1}.Resize([0 0 1 1]);
                         end
-                        button.Enable(obj.Reporting);
+                        control{1}.Enable(obj.Reporting);
                     else
-                        button.Disable;
+                        control{1}.Disable;
                     end
                 end
             end
@@ -107,9 +112,9 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
         
         function height = GetRequestedHeight(obj, width)
             height = 0;
-            for button = obj.Buttons
-                if button.Enabled
-                    height = max(height, button.GetRequestedHeight);
+            for control = obj.Controls
+                if control{1}.Enabled
+                    height = max(height, control{1}.GetRequestedHeight);
                 end
             end
             height = height + obj.TitleTextHeight + obj.VerticalSpacing;
@@ -118,11 +123,14 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
     
     methods (Access = private)
         function ButtonClickedCallback(obj, src, event)
-            for button = obj.Buttons
-                if src ~= button
-                    button.Select(false);
+            for control = obj.Controls
+                if src ~= control{1}
+                    control{1}.Select(false);
                 end
             end
         end
+        
+        function SliderCallback(obj, hObject, ~)
+        end        
     end
 end
