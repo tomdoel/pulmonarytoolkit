@@ -456,11 +456,13 @@ classdef PTKUserInterfaceObject < PTKBaseClass
         
         function object_hierarchy = GetObjectHierarchy(obj, processing_object)
             object_hierarchy = PTKStack;
-            while (obj ~= processing_object)
+            while (obj ~= processing_object && isvalid(processing_object))
                 object_hierarchy.Push(processing_object);
                 processing_object = processing_object.Parent;
             end
-            object_hierarchy.Push(processing_object);
+            if isvalid(processing_object)
+                object_hierarchy.Push(processing_object);
+            end
         end
         
         function CaptureKeyboardInput(obj)
