@@ -41,7 +41,7 @@ classdef PTKView3D < PTKGuiPlugin
             current_name = ptk_gui_app.GetCurrentPluginName;
             switch current_name
                 case {'PTKAirways', 'PTKAirwaysLabelledByBronchus', 'PTKAirwaysLabelledByLobe', ...
-                'PTKAirwaysPrunedBySegment', 'PTKSegmentalBronchi'}
+                'PTKAirwaysPrunedBySegment', 'PTKSegmentalBronchi', 'PTKVesselness'}
                     airways = true;
                 otherwise
                     airways = false;
@@ -67,7 +67,10 @@ classdef PTKView3D < PTKGuiPlugin
                         
                     end
                 end
-                PTKVisualiseIn3D([], segmentation, smoothing_size, airways, ptk_gui_app.Reporting);
+                limit_to_one_component_per_index = false;
+                minimum_component_volume_mm3 = 0;
+                
+                PTKVisualiseIn3D([], segmentation, smoothing_size, airways, limit_to_one_component_per_index, minimum_component_volume_mm3, ptk_gui_app.Reporting);
             end
         end
         

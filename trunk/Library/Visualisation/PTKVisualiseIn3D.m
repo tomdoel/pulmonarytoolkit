@@ -1,4 +1,4 @@
-function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing_size, small_structures, reporting)
+function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing_size, small_structures, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting)
     % PTKVisualiseIn3D. Opens a new Matlab figure and visualises the
     % segmentation image in 3D.
     %
@@ -19,6 +19,18 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     %     small_structures - set to true for improved visualisation of
     %         narrow structures such as airways and vessels
     %
+    %     limit_to_one_component_per_index - set this flag to true if each colour
+    %         index in the image represents only a single, large object.
+    %         This will prevent the appearance of orphaned 'island' components caused by the
+    %         image smoothing and surface rendering approximations.
+    % 
+    %     minimum_component_volume_mm3 - if two or more separate components in the
+    %         image could share the same colour index, but you want to prevent the
+    %         appearance of orphaned 'island' components caused by the
+    %         image smoothing and surface rendering approximations, then set this to
+    %         an appropriate minimum volume value. Any components smaller than this
+    %         value will not be rendered.
+    %    
     %     reporting - a PTKReporting object for progress, warning and
     %         error reporting.
     %
@@ -113,7 +125,7 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
         this_colour = (mod(label-1, 60)) + 1;
         cm_color = cm(this_colour, :);
 
-        [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, reporting);
+        [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting);
         
         p = patch(fv, 'EdgeColor', 'none', 'FaceColor', cm_color, 'AmbientStrength', ambient_strength, 'SpecularStrength', specular_strength, 'DiffuseStrength', diffuse_strength);
         
