@@ -34,8 +34,9 @@ classdef PTKLinkedDatasetRecorder < PTKBaseClass
                     linked_recorder = PTKLoadXml(linked_recorder_filename, reporting);
                     linked_recorder = linked_recorder.LinkingCache;
                 else
-                    reporting.ShowWarning('PTKLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No cache file found. Will create new one on exit', []);
+                    reporting.ShowWarning('PTKLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No linking cache file found. Will create new one on exit', []);
                     linked_recorder = PTKLinkedDatasetRecorder;
+                    linked_recorder.Save(reporting);
                 end
             catch ex
                 reporting.ShowWarning('PTKLinkedDatasetRecorder:FailedtoLoadCacheFile', ['Error when loading cache file ' linked_recorder_filename '. Any existing links between datasets will be lost'], ex);
