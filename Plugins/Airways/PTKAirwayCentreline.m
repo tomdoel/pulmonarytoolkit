@@ -64,10 +64,10 @@ classdef PTKAirwayCentreline < PTKPlugin
                 removed_voxels = airway_segmented_image.GlobalToLocalIndices(removed_voxels);
                 airway_results_raw = airway_segmented_image.RawImage;
                 airway_results_raw(airway_results_raw == 3) = 0;
-                airway_results_raw(removed_voxels) = 0;                
+                airway_results_raw(removed_voxels) = 0;
                 airway_segmented_image.ChangeRawImage(airway_results_raw);
                 
-                PTKVisualiseIn3D(figure_airways_3d, airway_segmented_image, 0.5, true, reporting);
+                PTKVisualiseIn3D(figure_airways_3d, airway_segmented_image, 0.5, true, false, 0, reporting);
             else
                 figure_airways_3d = [];
             end

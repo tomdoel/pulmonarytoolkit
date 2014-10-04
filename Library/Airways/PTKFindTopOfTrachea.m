@@ -93,7 +93,7 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     if debug_mode
         debug_image.ChangeRawImage(partial_image.RawImage);
         reporting.UpdateOverlaySubImage(debug_image);
-        PTKVisualiseIn3D([], debug_image, [], true, reporting);
+        PTKVisualiseIn3D([], debug_image, [], true, true, 0, reporting);
         pause;
     end
     
@@ -106,7 +106,7 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     if debug_mode
         debug_image.ChangeRawImage(partial_image2);
         reporting.UpdateOverlayImage(debug_image);
-        PTKVisualiseIn3D([], debug_image, [], true, reporting);
+        PTKVisualiseIn3D([], debug_image, [], true, true, 0, reporting);
         pause;
     end
     
@@ -116,7 +116,7 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     if debug_mode
         debug_image.ChangeRawImage(result);
         reporting.UpdateOverlayImage(debug_image);
-        PTKVisualiseIn3D([], debug_image, [], true, reporting);
+        PTKVisualiseIn3D([], debug_image, [], true, true, 0, reporting);
         pause;
     end
     

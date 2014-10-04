@@ -1,4 +1,4 @@
-function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, reporting)
+function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting)
     % PTKCreateSurfaceFromSegmentation. Creates a surface mesh from a segmentation volume.
     %
     %     Inputs
@@ -24,6 +24,18 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
     %     template_image  A PTKImage providing voxel size and image size
     %         parameters, which may be required depending on the coordinate
     %         system
+    %
+    %     limit_to_one_component_per_index - set this flag to true if each colour
+    %         index in the image represents only a single, large object.
+    %         This will prevent the appearance of orphaned 'island' components caused by the
+    %         image smoothing and surface rendering approximations.
+    % 
+    %     minimum_component_volume_mm3 - if two or more separate components in the
+    %         image could share the same colour index, but you want to prevent the
+    %         appearance of orphaned 'island' components caused by the
+    %         image smoothing and surface rendering approximations, then set this to
+    %         an appropriate minimum volume value. Any components smaller than this
+    %         value will not be rendered.
     %
     %     reporting - a PTKReporting object for progress, warning and
     %         error reporting.
@@ -71,12 +83,28 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
         sub_seg = PTKGaussianFilter(sub_seg, smoothing_size);
     end
     
-    % The smoothing may split the segmentation, so we consider only the main component,
-    % and remove any other components by setting their value to zero
-    surviving_components = sub_seg.RawImage >= 0.2;
-    surviving_components = xor(surviving_components, PTKImageUtilities.GetLargestConnectedComponent(surviving_components));
+    if limit_to_one_component_per_index
+        
+        % The smoothing may split the segmentation, so we consider only the main component,
+        % and remove any other components by setting their value to zero
+        surviving_components = sub_seg.RawImage >= threshold;
+        surviving_components = xor(surviving_components, PTKImageUtilities.GetLargestConnectedComponent(surviving_components));
+    else
+
+        cc = bwconncomp(sub_seg.RawImage >= threshold);
+        num_pixels = cellfun(@numel, cc.PixelIdxList);
+        voxel_threshold = minimum_component_volume_mm3/prod(segmentation.VoxelSize);
+        larger_elements = num_pixels > voxel_threshold;
+        surviving_components = false(sub_seg.ImageSize);
+        for index = 1 : numel(larger_elements)
+            if larger_elements(index)
+                surviving_components(cc.PixelIdxList{index}) = true;
+            end
+        end
+    end
+    
     sub_seg_raw = sub_seg.RawImage;
-    sub_seg_raw(surviving_components) = 0;
+    sub_seg_raw(~surviving_components) = 0;
     sub_seg.ChangeRawImage(sub_seg_raw);
     
     [xc, yc, zc] = sub_seg.GetPTKCoordinates;
