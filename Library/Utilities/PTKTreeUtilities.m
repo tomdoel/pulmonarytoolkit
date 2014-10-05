@@ -231,6 +231,23 @@ classdef PTKTreeUtilities < handle
             end
         end
         
+        function end_voxel = GetEndmostPoint(start_branches)
+            while ~isempty(start_branches)
+                final_generation = start_branches;
+                start_branches = [];
+                for next_branch = start_branches
+                    start_branches = [start_branches, next_branch{1}.Children];
+                end
+            end
+
+            centreline_length = [];
+            for index = 1 : numel(final_generation)
+                centreline_length(index) = numel(final_generation(index).Centreline);
+            end
+            [~, max_index] = max(centreline_length);
+            end_voxel = final_generation(max_index).Centreline(end);
+        end
+        
         function voxels = GetCentrelineVoxelsForTheseBranchesExtended(start_branches, template)
             voxels = [];
             if isempty(start_branches)
@@ -249,7 +266,7 @@ classdef PTKTreeUtilities < handle
             
             % Add nearest neighbours to the list of voxels, otherwise it is possible for
             % a diagnoally-connected centreline segment to pass through a
-            % diagnoally-connected airway segment
+            % diagnonally-connected airway segment
             voxels = PTKImageCoordinateUtilities.AddNearestNeighbours(voxels, template);
         end
 
