@@ -14,6 +14,8 @@ function results_image = PTKGetAirwayImageFromCentreline(label_bronchi, airway_r
     
     results_image = template.BlankCopy;
     
+    % Create a vector containing every centreline voxel in the tree, and a cell
+    % array, containing a vector of centreline points for each label segment
     all_centreline_voxels = [];
     segment_centreline_voxels_extended = [];
     for label_bronchus_index = 1 : length(label_bronchi)
@@ -27,6 +29,14 @@ function results_image = PTKGetAirwayImageFromCentreline(label_bronchi, airway_r
     
     bronchi_to_do = airway_root;
     
+    % Find the voxel index of the endpoint of each label bronchus. We want to ensure
+    % that the bronchus 
+    endpoint_voxels = [];
+    for label_bronchus_index = 1 : length(label_bronchi)
+        end_centreline_point = PTKTreeUtilities.GetEndmostPoint(label_bronchi(label_bronchus_index));
+        endpoint_voxels(label_bronchus_index) = PTKTreeUtilities.CentrelinePointsToLocalIndices(end_centreline_point, template);
+    end
+    
     while ~isempty(bronchi_to_do)
         airway_bronchus = bronchi_to_do(end);
         bronchi_to_do(end) = [];
@@ -35,18 +45,25 @@ function results_image = PTKGetAirwayImageFromCentreline(label_bronchi, airway_r
         
         label_bronchus_indices = [];
         
-        number_of_centreline_points_in_bronchus = sum(ismember(all_centreline_voxels, voxel_indices_in_segment));
-        
-        % Search through all segments to see if the voxels match a bronchus
-        % Only match bronchi if more than 50% of the centreline voxels in the
-        % bronchus are part of this bronchus
         for label_bronchus_index = 1 : length(label_bronchi)
-            number_of_centreline_points_in_bronchus_for_this_centreline = sum(ismember(segment_centreline_voxels_extended{label_bronchus_index}, voxel_indices_in_segment));
-            if number_of_centreline_points_in_bronchus_for_this_centreline > (number_of_centreline_points_in_bronchus/2)
-                label_bronchus_indices = [label_bronchus_indices, label_bronchus_index];
+            if ismember(endpoint_voxels(label_bronchus_index), voxel_indices_in_segment)
+                label_bronchus_indices = label_bronchus_index;
             end
         end
         
+        if isempty(label_bronchus_indices)
+            number_of_centreline_points_in_bronchus = sum(ismember(all_centreline_voxels, voxel_indices_in_segment));
+            
+            % Search through all segments to see if the voxels match a bronchus
+            % Only match bronchi if more than 50% of the centreline voxels in the
+            % bronchus are part of this bronchus
+            for label_bronchus_index = 1 : length(label_bronchi)
+                number_of_centreline_points_in_bronchus_for_this_centreline = sum(ismember(segment_centreline_voxels_extended{label_bronchus_index}, voxel_indices_in_segment));
+                if number_of_centreline_points_in_bronchus_for_this_centreline > (number_of_centreline_points_in_bronchus/2)
+                    label_bronchus_indices = [label_bronchus_indices, label_bronchus_index];
+                end
+            end
+        end
         % Colour the bronchus if it matches only one segment; otherwise colour it grey 
         if length(label_bronchus_indices) == 1
             if colour_by_segment_index
