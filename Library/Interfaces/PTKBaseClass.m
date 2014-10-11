@@ -22,15 +22,13 @@ classdef PTKBaseClass < handle
         end
         
         function delete(obj)
-            if isvalid(obj)
-                for listener = obj.EventListeners
-                    delete(listener{1});
-                end
-                obj.EventListeners = [];
-                
-                if PTKSoftwareInfo.MonitorClassInstances
-                    PTKClassMonitor.GetClassMonitor.ObjectDeleted(class(obj));
-                end
+            for listener = obj.EventListeners
+                delete(listener{1});
+            end
+            obj.EventListeners = [];
+            
+            if PTKSoftwareInfo.MonitorClassInstances
+                PTKClassMonitor.GetClassMonitor.ObjectDeleted(class(obj));
             end
         end
     end
