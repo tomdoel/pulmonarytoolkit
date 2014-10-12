@@ -247,6 +247,21 @@ classdef PTKTreeSegment < PTKTree
             
         end
         
+        function PruneAcceptedVoxels(obj)
+            pruned_voxels = [];
+            for index = 1 : length(obj.AcceptedVoxelIndices)
+                next_voxel_set = obj.AcceptedVoxelIndices{index};
+                size_voxel_set = numel(next_voxel_set);
+                if (index == 1) || (size_voxel_set <= last_size)
+                    pruned_voxels{index} = next_voxel_set;
+                    last_size = size_voxel_set;
+                else
+                    obj.AcceptedVoxelIndices = pruned_voxels;
+                    return;
+                end
+            end
+            
+        end
         
     end
         
