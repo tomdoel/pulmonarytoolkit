@@ -269,7 +269,44 @@ classdef PTKTreeUtilities < handle
             % diagnonally-connected airway segment
             voxels = PTKImageCoordinateUtilities.AddNearestNeighbours(voxels, template);
         end
+        
+        function PruneTree(tree_root)
+            % remove each end branch from the tree
+            bronchi_to_do = PTKStack(tree_root);
+            while ~bronchi_to_do.IsEmpty
+                next_bronchus = bronchi_to_do.Pop;
+                children = next_bronchus.Children;
+                
+                if isempty(children)
+                    next_bronchus.CutFromTree;
+                else
+                    bronchi_to_do.Push(children);
+                end
+            end
+            
+        end
 
+        function PruneTreeByLength(tree_root, min_length)
+            % Recursvely prune each end branch of the tree which is less than the minimum length
+            
+            bronchi_to_do = PTKStack(tree_root);
+            while ~bronchi_to_do.IsEmpty
+                next_bronchus = bronchi_to_do.Pop;
+                children = next_bronchus.Children;
+                
+                if isempty(children)
+                    
+                    branch_length = next_bronchus.LengthMm;
+                    if branch_length < min_length
+                      next_bronchus.CutFromTree;
+                      bronchi_to_do.Push(next_bronchus.Parent);
+                    end
+                else
+                    bronchi_to_do.Push(children);
+                end
+            end
+            
+        end
     end
 end
 
