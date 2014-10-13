@@ -24,6 +24,9 @@ classdef PTKImageTemplates < PTKBaseClass
         % Template images for each context
         TemplateImages
         
+        % Dependencies for each template image
+        TemplateDependencies
+        
         % Template-related plugins which have been run. The idea is that we will 
         % know that a template is not available because the plugin was run but 
         % no template was generated
@@ -58,6 +61,7 @@ classdef PTKImageTemplates < PTKBaseClass
             % values results in every instance of this claas sharing the same
             % map instance
             obj.TemplateImages = containers.Map;
+            obj.TemplateDependencies = containers.Map;
             obj.ValidContexts  = containers.Map;
             obj.TemplateGenerationFunctions = containers.Map;
             obj.TemplatePluginsRun = containers.Map;
@@ -106,12 +110,17 @@ classdef PTKImageTemplates < PTKBaseClass
                 obj.Reporting.Error('PTKImageTemplates:UnknownContext', 'Context not recogised');
             end
             
+            template_exists = obj.TemplateImages.isKey(char(context));
+            
+            % The dependency list will only not exist if a previous version of the template
+            % file was being used
+            dependency_list_exists = obj.TemplateDependencies.isKey(char(context));
+            
             % If the template does not already exist, generate it now by calling
             % the appropriate plugin and creating a template copy
-            if ~obj.TemplateImages.isKey(char(context))
+            if ~template_exists || ~dependency_list_exists
                 obj.Reporting.ShowWarning('PTKImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
                 obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), dataset_stack, context);
-                
 
                 % The call to GetResult should have automatically created the
                 % template image - check that this has happened
@@ -141,10 +150,20 @@ classdef PTKImageTemplates < PTKBaseClass
         end
 
 
-        function UpdateTemplates(obj, plugin_name, context, result_image, result_may_have_changed)
+        function UpdateTemplates(obj, plugin_name, context, result_image, result_may_have_changed, cache_info)
             % Check to see if a plugin which has been run is associated with any of
             % the contexts. If it is, create a new template image for that context
             % if one does not already exist
+            
+            % The cache info may be returned as a heirarchy, so extract out the first
+            % stack item. This should be sufficient for parsing the dependency list
+            while isa(cache_info, 'PTKCompositeResult')
+                fields = fieldnames(cache_info);
+                cache_info = cache_info.(fields{1});
+            end
+            dependencies = cache_info.DependencyList;
+            
+            obj.InvalidateIfInDependencyList(plugin_name);
             
             % Check whether the plugin that has been run is the template for
             % this context
@@ -161,7 +180,6 @@ classdef PTKImageTemplates < PTKBaseClass
                         % context, or if the template has changed
                         if (~obj.TemplateImages.isKey(context_char)) || result_may_have_changed
 
-                            
                             if ~obj.TemplateGenerationFunctions.isKey(context_char)
                                 obj.Reporting.Error('PTKImageTemplates:TemplateGenerationFunctionNotFound', 'Code error: the function handle required to generate this template was not found in the map.');
                             end
@@ -172,7 +190,7 @@ classdef PTKImageTemplates < PTKBaseClass
                             % Set the template image. Note: this may be an empty
                             % image (indicating the entire cropped region) or a
                             % boolean mask
-                            obj.SetTemplateImage(context, template_image);
+                            obj.SetTemplateImage(context, template_image, dependencies);
                         end
                     end
                     
@@ -214,20 +232,36 @@ classdef PTKImageTemplates < PTKBaseClass
             obj.TemplatePluginsRun  = containers.Map;
         end
         
+        function InvalidateIfInDependencyList(obj, plugin_name)
+            % Remove any templates whch depend on the given plugin name
+            
+            for template_name = obj.TemplateDependencies.keys
+                dependency_list = obj.TemplateDependencies(template_name{1});
+                for dependency = dependency_list.DependencyList
+                    dependency_name = dependency.PluginName;
+                    if strcmp(dependency_name, plugin_name)
+                        obj.Reporting.Log(['PTKImageTemplates: Context ' template_name{1} ' is now invalid']);
+                        obj.TemplateImages.remove(template_name{1});
+                        obj.TemplateDependencies.remove(template_name{1});
+                    end
+                end
+            end
+        end
     end
     
     
     methods (Access = private)
 
-        function SetTemplateImage(obj, context, template_image)
+        function SetTemplateImage(obj, context, template_image, dependencies)
             % Cache a template image for this context
             
             obj.TemplateImages(char(context)) = template_image;
+            obj.TemplateDependencies(char(context)) = dependencies;
+
             obj.Save;
         end
         
         function MarkTemplateImage(obj, context)
-            % Cache a template image for this context
             
             if ~obj.TemplatePluginsRun.isKey(char(context))
                 obj.TemplatePluginsRun(char(context)) = true;
@@ -240,8 +274,15 @@ classdef PTKImageTemplates < PTKBaseClass
         
             if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.ImageTemplatesCacheName, [], obj.Reporting)
                 info = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.ImageTemplatesCacheName, obj.Reporting);
-                obj.TemplateImages = info.TemplateImages;
-                obj.TemplatePluginsRun = info.TemplatePluginsRun;
+                if isfield(info, 'TemplateDependencies')
+                    obj.TemplateDependencies = info.TemplateDependencies;
+                    obj.TemplateImages = info.TemplateImages;
+                    obj.TemplatePluginsRun = info.TemplatePluginsRun;
+                else
+                    obj.TemplateDependencies = containers.Map;
+                    obj.TemplateImages = containers.Map;
+                    obj.TemplatePluginsRun = containers.Map;
+                end
             end
         end
         
@@ -251,6 +292,7 @@ classdef PTKImageTemplates < PTKBaseClass
             info = [];
             info.TemplateImages = obj.TemplateImages;
             info.TemplatePluginsRun = obj.TemplatePluginsRun;
+            info.TemplateDependencies = obj.TemplateDependencies;
             obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.ImageTemplatesCacheName, info, obj.Reporting);
         end
     end
