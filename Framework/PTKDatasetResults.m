@@ -132,7 +132,7 @@ classdef PTKDatasetResults < handle
         end
         
         function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack)
-            % Load edit data from a cache file associated with this dataset
+            % Save edit data to a cache file associated with this dataset
             
             dataset_uid = obj.ImageInfo.ImageUid;
             obj.Reporting.PushProgress;
