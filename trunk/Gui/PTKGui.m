@@ -229,7 +229,7 @@ classdef PTKGui < PTKFigure
             
             path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
+                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
         end
         
@@ -243,7 +243,7 @@ classdef PTKGui < PTKFigure
             
             path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
+                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
         end
         
