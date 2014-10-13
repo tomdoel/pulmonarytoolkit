@@ -152,7 +152,7 @@ classdef PTKEditMode < handle
             
             path_name = PTKSaveAs(edited_result, patient_name, path_name, obj.Reporting);
             if ~isempty(path_name)
-                obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
+                obj.Settings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
         end
 
