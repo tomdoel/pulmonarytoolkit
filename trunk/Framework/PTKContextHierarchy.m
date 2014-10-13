@@ -140,7 +140,7 @@ classdef PTKContextHierarchy < PTKBaseClass
                     output_context = plugin_info.Context;
 
                 % If the plugin specifies a PTKContextSet of type
-                % PTKContextSet.OriginalImage, then we choose to return a ontext
+                % PTKContextSet.OriginalImage, then we choose to return a context
                 % of PTKContext.OriginalImage
                 elseif plugin_info.Context == PTKContextSet.OriginalImage
                     output_context = PTKContext.OriginalImage;
@@ -181,7 +181,7 @@ classdef PTKContextHierarchy < PTKBaseClass
         end
         
         function SaveEditedResult(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
-            % This function saves a manually edited result which will plugins
+            % This function saves a manually edited result which plugins
             % may use to modify their results
             
             % Determines the context and context type requested by the calling function
@@ -192,6 +192,8 @@ classdef PTKContextHierarchy < PTKBaseClass
             
             obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
 
+            % Invalidate any image templates which depend on this plugin
+            obj.ImageTemplates.InvalidateIfInDependencyList(plugin_name)
         end
         
     end
@@ -204,7 +206,7 @@ classdef PTKContextHierarchy < PTKBaseClass
             
             % Allow the context manager to construct a template image from this
             % result if required
-            obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, result, plugin_has_been_run);
+            obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, result, plugin_has_been_run, cache_info);
         end
         
         function [result, output_image, plugin_has_been_run, cache_info] = GetResultForAllContexts(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
