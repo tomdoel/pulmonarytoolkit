@@ -53,8 +53,8 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
             airways_by_lobe = dataset.GetResult('PTKAirwaysLabelledByLobe');
             airways_by_lobe = airways_by_lobe.AirwaysByLobeImage;
             
-            results_left = PTKLobesByVesselnessDensityUsingWatershed.GetLeftLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe);
-            results_right = PTKLobesByVesselnessDensityUsingWatershed.GetRightLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe);
+            results_left = PTKLobesByVesselnessDensityUsingWatershed.GetLeftLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe, reporting);
+            results_right = PTKLobesByVesselnessDensityUsingWatershed.GetRightLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe, reporting);
             results = PTKCombineLeftAndRightImages(dataset.GetTemplateImage(PTKContext.LungROI), results_left, results_right, left_and_right_lungs);
             results.ImageType = PTKImageType.Colormap;
         end
@@ -63,7 +63,7 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
     
     methods (Static, Access = private)
         
-        function results_left = GetLeftLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe)
+        function results_left = GetLeftLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe, reporting)
             left_lung_roi = dataset.GetResult('PTKGetLeftLungROI');
             left_lung_mask = left_and_right_lungs.Copy;
             left_lung_mask.ResizeToMatch(left_lung_roi);
@@ -76,7 +76,7 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
             airways_by_lobe = airways_by_lobe.Copy;
             airways_by_lobe.ResizeToMatch(left_lung_roi);
             
-            airways_by_lobe = PTKLobesByVesselnessDensityUsingWatershed.DilateAirwaysAndIntialWatershed(airways_by_lobe, [5 6], left_lung_mask, vessel_density);
+            airways_by_lobe = PTKLobesByVesselnessDensityUsingWatershed.TryDilationSizes(airways_by_lobe, [5 6], left_lung_mask, vessel_density, reporting);
             airways_by_lobe = int8(5*(airways_by_lobe == 5) + 6*(airways_by_lobe == 6));
             airways_by_lobe(~(left_lung_mask.RawImage)) = -1;
             
@@ -89,7 +89,7 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
         end
         
         
-        function results_right = GetRightLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe)
+        function results_right = GetRightLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe, reporting)
             right_lung_roi = dataset.GetResult('PTKGetRightLungROI');
             right_lung_mask = left_and_right_lungs.Copy;
             right_lung_mask.ResizeToMatch(right_lung_roi);
@@ -102,7 +102,7 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
             airways_by_lobe = airways_by_lobe.Copy;
             airways_by_lobe.ResizeToMatch(right_lung_roi);
             
-            airways_by_lobe = PTKLobesByVesselnessDensityUsingWatershed.DilateAirwaysAndIntialWatershed(airways_by_lobe, [1 2 4], right_lung_mask, vessel_density);
+            airways_by_lobe = PTKLobesByVesselnessDensityUsingWatershed.TryDilationSizes(airways_by_lobe, [1 2 4], right_lung_mask, vessel_density, reporting);
             airways_by_lobe_1 = int8(1*(airways_by_lobe == 1) + 1*(airways_by_lobe == 2) + 4*(airways_by_lobe == 4));
             airways_by_lobe_1(~(right_lung_mask.RawImage)) = -1;
             
@@ -127,12 +127,26 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
             results_right.ImageType = PTKImageType.Colormap;
         end
         
-        % To ensure each set of airways gets a chance to grow without getting
-        % trapped in a local region of high-vesselness, dilate each airway and
-        % then allow it to grow according to the vessel density for a limited
-        % number of iterations (controlled by the initial_volume parameter)
-        function dilated_airways = DilateAirwaysAndIntialWatershed(airways, colour_range, lung_mask, vessel_density)
+        function dilated_airways = TryDilationSizes(airways, colour_range, lung_mask, vessel_density, reporting)
             initial_volume_mm3 = 4000;
+            for dilation_size = [5, 10, 15, 20, 25]
+                dilated_airways = PTKLobesByVesselnessDensityUsingWatershed.DilateAirwaysAndIntialWatershed(airways, colour_range, lung_mask, vessel_density, dilation_size, initial_volume_mm3);
+                unique_values = unique(dilated_airways(:));
+                if all(ismember(colour_range, unique_values))
+                    return;
+                end
+                reporting.ShowMessage('PTKLobesByVesselnessDensityUsingWatershed:IncreasingAirwayDilation', ['Increasing the airway dilation because starting points were not found for all lobar bronchi.']);                
+            end
+            reporting.ShowMessage('PTKLobesByVesselnessDensityUsingWatershed:IncreasingAirwayDilation', ['Starting points were not found for all lobar bronchi.']);
+        end
+        
+        
+        function dilated_airways = DilateAirwaysAndIntialWatershed(airways, colour_range, lung_mask, vessel_density, dilation_size, initial_volume_mm3)
+            % To ensure each set of airways gets a chance to grow without getting
+            % trapped in a local region of high-vesselness, dilate each airway and
+            % then allow it to grow according to the vessel density for a limited
+            % number of iterations (controlled by the initial_volume parameter)
+
             max_iterations = round(initial_volume_mm3/prod(lung_mask.VoxelSize));
             dilated_airways = zeros(airways.ImageSize, 'int8');
             for colour = colour_range
@@ -140,7 +154,7 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
                 next_image.ChangeRawImage(next_image.GetMappedRawImage == colour);
                 
                 % Dilate the airways
-                next_image.BinaryMorph(@imdilate, 5);
+                next_image.BinaryMorph(@imdilate, dilation_size);
 
                 % Now perform a watershed for a limited number of iterations
                 airways_by_lobe = int8(next_image.RawImage);
