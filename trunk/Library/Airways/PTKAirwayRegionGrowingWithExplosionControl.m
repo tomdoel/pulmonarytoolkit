@@ -153,7 +153,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
 
     last_progress_value = 0;
 
-    segments_in_progress = first_segment.AddNewVoxelsAndGetNewSegments(start_point_index_global, image_size_global);
+    segments_in_progress = first_segment.AddNewVoxelsAndGetNewSegments(start_point_index_global, image_size_global, reporting);
 
 
     while ~isempty(segments_in_progress)
@@ -233,7 +233,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
             % Add points to the current segment and retrieve a list of segments
             % which reqire further processing - this can comprise of the current
             % segment if it is incomplete, or child segments if it has bifurcated
-            next_segments = current_segment.AddNewVoxelsAndGetNewSegments(indices_of_new_points_global, image_size_global);
+            next_segments = current_segment.AddNewVoxelsAndGetNewSegments(indices_of_new_points_global, image_size_global, reporting);
             
             if debug_mode
                 colour_index = 2;
