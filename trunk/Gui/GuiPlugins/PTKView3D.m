@@ -19,6 +19,7 @@ classdef PTKView3D < PTKGuiPlugin
 
     properties
         ButtonText = '3D'
+        SelectedText = '3D'        
         ToolTip = 'Visualise the current overlay in 3D'
         Category = 'View'
         Visibility = 'Overlay'
@@ -41,7 +42,8 @@ classdef PTKView3D < PTKGuiPlugin
             current_name = ptk_gui_app.GetCurrentPluginName;
             switch current_name
                 case {'PTKAirways', 'PTKAirwaysLabelledByBronchus', 'PTKAirwaysLabelledByLobe', ...
-                'PTKAirwaysPrunedBySegment', 'PTKSegmentalBronchi', 'PTKVesselness'}
+                'PTKAirwaysPrunedBySegment', 'PTKSegmentalBronchi', 'PTKVesselness', 'PTKPrunedAirways', ...
+                'PTKPrunedAirwaysByLobe'}
                     airways = true;
                 otherwise
                     airways = false;

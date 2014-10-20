@@ -20,6 +20,7 @@ classdef PTKVisualiseIn2D < PTKGuiPlugin
 
     properties
         ButtonText = '2D'
+        SelectedText = '2D'        
         ToolTip = 'Opens a new window showing the current 2D background image'
         Category = 'View'
         Visibility = 'Overlay'

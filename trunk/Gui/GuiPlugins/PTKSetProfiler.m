@@ -13,7 +13,8 @@ classdef PTKSetProfiler < PTKGuiPlugin
     %    
     
     properties
-        ButtonText = 'Enable profiler'
+        ButtonText = 'Profiler'
+        SelectedText = 'Profiler Off'
         ToolTip = 'Starts or stops the Matlab profiler'
         Category = 'Show / hide'
         Visibility = 'Developer'
@@ -43,6 +44,6 @@ classdef PTKSetProfiler < PTKGuiPlugin
         function is_selected = IsSelected(ptk_gui_app)
             profile_status = profile('status');
             is_selected = strcmp(profile_status.ProfilerStatus, 'on');
-        end        
+        end
     end
 end

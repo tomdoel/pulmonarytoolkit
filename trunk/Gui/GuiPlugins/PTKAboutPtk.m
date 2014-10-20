@@ -18,6 +18,7 @@ classdef PTKAboutPtk < PTKGuiPlugin
     
     properties
         ButtonText = 'About'
+        SelectedText = 'About'
         ToolTip = 'Shows a dialog with more information about this program'
         Category = 'File'
         Visibility = 'Developer'
