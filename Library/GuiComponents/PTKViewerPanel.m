@@ -47,6 +47,7 @@ classdef PTKViewerPanel < PTKPanel
         OverlayImage           % The colour transparent overlay image
         QuiverImage            % A vector quiver plot showing directions
         OpaqueColour           % If set, then this colour will always be shown at full opacity in the overlay
+        PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
     end
     
     properties (SetAccess = private)
