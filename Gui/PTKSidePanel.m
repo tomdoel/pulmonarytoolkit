@@ -66,6 +66,11 @@ classdef PTKSidePanel < PTKPanel
         
         function Resize(obj, new_position)
             Resize@PTKPanel(obj, new_position);
+            
+            % new_position contains the coordinates of the main panel relative the parent.
+            % Child panels have coordinates relative to the main panel, so we need to reset
+            % the origin
+            new_position(1 : 2) = [1, 1];
             obj.SidePanelAxes.Resize(new_position);
             
             new_position(3) = new_position(3) - 2;
