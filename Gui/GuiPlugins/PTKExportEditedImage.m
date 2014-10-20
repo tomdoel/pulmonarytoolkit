@@ -16,6 +16,7 @@ classdef PTKExportEditedImage < PTKGuiPlugin
 
     properties
         ButtonText = 'Export Edit'
+        SelectedText = 'Export Edit'
         ToolTip = 'Exports the current edit to an external file'
         Category = 'Import / Export'
         Visibility = 'Overlay'

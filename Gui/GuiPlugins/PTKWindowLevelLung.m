@@ -19,6 +19,7 @@ classdef PTKWindowLevelLung < PTKGuiPlugin
     
     properties
         ButtonText = 'Lung'
+        SelectedText = 'Lung'
         ToolTip = 'Changes the window and level settings to standard lung values (Window 1600HU Level -600HU)'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'
@@ -28,6 +29,7 @@ classdef PTKWindowLevelLung < PTKGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
+        Icon = 'wl_lung.tif'
     end
     
     methods (Static)

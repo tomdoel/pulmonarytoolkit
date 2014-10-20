@@ -19,6 +19,7 @@ classdef PTKClearOverlays < PTKGuiPlugin
     
     properties
         ButtonText = 'Clear Overlay'
+        SelectedText = 'Clear Overlay'
         ToolTip = 'Clear the overlay'
         Category = 'View'
         Mode = 'View'

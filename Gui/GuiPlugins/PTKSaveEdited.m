@@ -15,6 +15,7 @@ classdef PTKSaveEdited < PTKGuiPlugin
 
     properties
         ButtonText = 'Save'
+        SelectedText = 'Save'
         ToolTip = ''
         Category = 'Edit'
         Visibility = 'Overlay'
