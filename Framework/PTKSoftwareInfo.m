@@ -41,6 +41,9 @@ classdef PTKSoftwareInfo < handle
         TextPrimaryColour = [1.0 1.0 1.0]
         TextSecondaryColour = [1.0 0.694 0.392]
         TextContrastColour = [0, 0.129, 0.278]
+        IconHighlightColour = [0.7 0.7 0.7]
+        IconSelectedColour = [0.6 0.6 0]
+        IconHighlightSelectedColour = [1 1 0]
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica'
         DefaultCategoryName = 'Uncategorised'
