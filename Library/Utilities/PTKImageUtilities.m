@@ -108,6 +108,19 @@ classdef PTKImageUtilities
             end
         end
         
+        function disk_element = CreateDiskStructuralElement(pixel_size, size_mm)
+            strel_size_voxels = ceil(size_mm./(2*pixel_size));
+            ispan = -strel_size_voxels(1) : strel_size_voxels(1);
+            jspan = -strel_size_voxels(2) : strel_size_voxels(2);
+            [i, j] = ndgrid(ispan, jspan);
+            i = i.*pixel_size(1);
+            j = j.*pixel_size(2);
+            disk_element = zeros(size(i));
+            disk_element(:) = sqrt(i(:).^2 + j(:).^2);
+            disk_element = disk_element <= (size_mm/2);
+        end
+        
+        
         function ball_element = CreateBallStructuralElement(voxel_size, size_mm)
             strel_size_voxels = ceil(size_mm./(2*voxel_size));
             ispan = -strel_size_voxels(1) : strel_size_voxels(1);
@@ -436,6 +449,23 @@ classdef PTKImageUtilities
             end
         end
         
+        function border_image = GetBorderImage(image_size, border_size)
+            border_image = false(image_size);
+            border_image(1:1+border_size, :) = true;
+            border_image(end-border_size+1:end, :) = true;
+            border_image(:, 1:border_size) = true;
+            border_image(:, end-border_size+1:end) = true;
+        end
+        
+
+        function rgb_image = AddHighlightToRGBImage(rgb_image, highlight_mask_image, highlight_colour)
+            for index = 1 : 3
+                image_layer = rgb_image(:, :, index);
+                image_layer(highlight_mask_image) = highlight_colour(index);
+                rgb_image(:, :, index) = image_layer;
+            end
+        end
+        
         function rgb_image = GetBlankRGBImage(button_height, button_width)
             button_background_colour = [0.0, 0.129, 0.278];
             button_background_colour_shift = shiftdim(button_background_colour, -1);
@@ -485,6 +515,23 @@ classdef PTKImageUtilities
             binary_image(cc.PixelIdxList{largest_component_index}) = true;
         end
         
+        function original_image = HighlightRGBImage(original_image, background_colour)
+            image_dilated = PTKImageUtilities.GetRGBImageHighlight(original_image, background_colour);
+            highlight_colour = [255, 255, 0];
+            for index = 1 : 3
+                image_layer = original_image(:, :, index);
+                image_layer(image_dilated) = highlight_colour(index);
+                original_image(:, :, index) = image_layer;
+            end
+        end
+        
+        function image_highlight = GetRGBImageHighlight(original_image, background_colour)
+            background = (original_image(:, :, 1) == background_colour(1)) & (original_image(:, :, 2) == background_colour(2)) & (original_image(:, :, 3) == background_colour(3));
+            
+            disk_element = PTKImageUtilities.CreateDiskStructuralElement([1, 1], 4);
+            image_highlight = imdilate(~background, disk_element);
+            image_highlight = image_highlight & background;
+        end
     end
 end
 
