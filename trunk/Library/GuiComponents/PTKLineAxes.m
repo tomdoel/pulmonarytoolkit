@@ -55,7 +55,7 @@ classdef PTKLineAxes < PTKAxes
             Resize@PTKAxes(obj, position);
             switch obj.LinePosition
                 case 'left'
-                    x_position = [1, position(1) + position(3)];
+                    x_position = [1, 1];
                     y_position = [1, position(2) + position(4)];
                     x_limits = [1, position(3)];
                     y_limits = [1, position(4)];
