@@ -1,4 +1,4 @@
-function figure_handle = PTKVisualiseTreeModelCentreline(parent_branch, voxel_size, centreline_only)
+function figure_handle = PTKVisualiseTreeModelCentreline(parent_branch, voxel_size, centreline_only, hide_nodes)
     % PTKVisualiseTreeModelCentreline. Draws a simplified visualisation of a tree centreline
     %
     %     Syntax
@@ -62,8 +62,11 @@ function figure_handle = PTKVisualiseTreeModelCentreline(parent_branch, voxel_si
                 z_smoothed = [branch.Parent.Centreline(end).CoordZ(end), z_smoothed];
             end
             
-            plot3(x_smoothed', y_smoothed', z_smoothed', 'b', 'LineWidth', 1.5);
-            plot3(x_smoothed', y_smoothed', z_smoothed', 'ro');
+            if hide_nodes
+                plot3(x_smoothed', y_smoothed', z_smoothed', 'b', 'LineWidth', 3);
+            else
+                plot3(x_smoothed', y_smoothed', z_smoothed', 'ro');
+            end
         else
             centreline = branch.Centreline;
             x_coords = [centreline.CoordX];
