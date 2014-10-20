@@ -108,15 +108,15 @@ classdef PTKWavefront < handle
         % Add new voxels to this segment, and returns a list of all segments
         % that require further processing (including this one, and any child
         % segments which have been created as a result of bifurcations)
-        function segments_to_do = AddNewVoxelsAndGetNewSegments(obj, indices_of_new_points, image_size)
+        function segments_to_do = AddNewVoxelsAndGetNewSegments(obj, indices_of_new_points, image_size, reporting)
             
             % Check that indices are unique
             if (numel(indices_of_new_points) ~= numel(unique(indices_of_new_points)))
-                error('duplicates - program error');
+                reporting.Error('PTKWavefront:Duplicates', 'Algorithm error - some points have been duplicated');
             end
             
             if any(ismember(indices_of_new_points, obj.CurrentBranch.GetAcceptedVoxels))
-                error('duplicates');
+                reporting.Error('PTKWavefront:Duplicates', 'Algorithm error - some points have been duplicated');
             end
                         
             % First we move voxels at the rear of the wavefront into the
@@ -189,7 +189,7 @@ classdef PTKWavefront < handle
             end
             
             if length(growing_branches) < 1
-                error('No growing branches - program error');
+                reporting.Error('PTKWavefront:NoGrowingBranches', 'Algorithm error - no growing branches');
             end
             
             if length(growing_branches) == 1
@@ -219,12 +219,11 @@ classdef PTKWavefront < handle
                 obj.CompleteThisSegment;
 
                 if isempty(obj.CurrentBranch.GetAcceptedVoxels)
-                   disp('*'); 
+                    reporting.Warning('PTKWavefront:EmptyBranch', 'Algorithm error - no points in final branch');
                 end
                 
             end
 
-            
         end
         
         
