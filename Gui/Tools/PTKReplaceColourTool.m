@@ -22,8 +22,6 @@ classdef PTKReplaceColourTool < PTKTool
         
         PaintOverBackground = false % When false, acts as a replace brush
         
-        BrushSize = 5 % Minimum size of the gaussian used to adjust the distance tranform
-        
         Brush
     end
     
@@ -50,6 +48,7 @@ classdef PTKReplaceColourTool < PTKTool
             obj.ViewerPanel = viewer_panel;
             obj.OverlayChangeLock = false;
             obj.InitialiseEditMode;
+            obj.AddPostSetListener(obj.ViewerPanel, 'PaintBrushSize', @obj.BrushSizeChangedCallback);            
         end
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)
@@ -119,7 +118,7 @@ classdef PTKReplaceColourTool < PTKTool
             obj.Colour = 1;
             if ~isempty(obj.ViewerPanel.OverlayImage)
                 if obj.ViewerPanel.OverlayImage.ImageExists
-                    obj.Brush = PTKImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.BrushSize);
+                    obj.Brush = PTKImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.ViewerPanel.PaintBrushSize);
                     
                     % For binary images, switch to paint over mode. For other
                     % images, switch to replace colour mode
@@ -283,6 +282,14 @@ classdef PTKReplaceColourTool < PTKTool
             end
             
             menu = obj.ContextMenu;
+        end
+        
+    end
+    
+    methods (Access = private)
+        
+        function BrushSizeChangedCallback(obj, ~, ~, ~)
+            obj.Brush = PTKImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.ViewerPanel.PaintBrushSize);
         end
         
     end
