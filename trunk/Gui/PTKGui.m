@@ -154,6 +154,20 @@ classdef PTKGui < PTKFigure
 
             obj.AddPostSetListener(obj, 'DeveloperMode', @obj.DeveloperModeChangedCallback);
             
+            % Listen for changes in the viewer panel controls
+            obj.AddPostSetListener(obj.ImagePanel, 'SelectedControl', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'Orientation', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'SliceNumber', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'Level', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'Window', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'OverlayOpacity', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'ShowImage', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'ShowOverlay', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'BlackIsTransparent', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'OpaqueColour', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'SliceSkip', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'PaintBrushSize', @obj.ViewerPanelControlsChangedCallback);
+            
             % Wait until the GUI is visible before removing the splash screen
             splash_screen.delete;
         end
@@ -312,7 +326,7 @@ classdef PTKGui < PTKFigure
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             [filename, path_name, save_type] = PTKDiskUtilities.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && ischar(path_name)
-                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
+                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
             if (filename ~= 0)
                 % Hide the progress bar before capture
@@ -473,6 +487,13 @@ classdef PTKGui < PTKFigure
     
     
     methods (Access = protected)
+        
+        function ViewerPanelControlsChangedCallback(obj, ~, ~, ~)
+            % This methods is called when controls in the viewer panel have changed
+            
+            obj.UpdateToolbar;
+        end
+        
         
         function input_has_been_processed = Keypressed(obj, click_point, key)
             % Shortcut keys are normally processed by the object over which the mouse
@@ -686,10 +707,10 @@ classdef PTKGui < PTKFigure
             
             viewer_panel_height = max(1, parent_height_pixels - toolbar_height - patient_name_panel_height);
             
-            side_panel_height = max(1, parent_height_pixels);
+            side_panel_height = max(1, parent_height_pixels - toolbar_height);
             side_panel_width = obj.SidePanelWidth;
             
-            obj.SidePanel.Resize([1, 1, side_panel_width, side_panel_height]);
+            obj.SidePanel.Resize([1, 1 + toolbar_height, side_panel_width, side_panel_height]);
             
             if obj.ImagePanel.ShowControlPanel
                 image_height_pixels = viewer_panel_height - obj.ImagePanel.ControlPanelHeight;
@@ -714,7 +735,7 @@ classdef PTKGui < PTKFigure
             
             if PTKSoftwareInfo.ToolbarEnabled
                 toolbar_width = parent_width_pixels;
-                obj.ToolbarPanel.Resize([image_panel_position, 1, toolbar_width, toolbar_height]);
+                obj.ToolbarPanel.Resize([1, 1, toolbar_width, toolbar_height]);
             end
             
             right_side_position = image_panel_position + viewer_panel_width + 1;
@@ -778,6 +799,9 @@ classdef PTKGui < PTKFigure
                 obj.ImagePanel.QuiverImage = new_image.BlankCopy;
             end
             
+            % Make image visible when it is altered
+            obj.ImagePanel.ShowImage = true;
+            
             % Force a resize. This is so that the image panel can resize itself to optimally
             % fit the image. If however the image panel is changed to retain a fixed size
             % between datasets, then this resize is not necessary.
@@ -796,6 +820,9 @@ classdef PTKGui < PTKFigure
             else
                 obj.ReplaceOverlayImageAdjustingSize(new_image, image_title, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap);
             end
+            
+            % Make overlay visible when it is altered
+            obj.ImagePanel.ShowOverlay = true;
         end
         
         function ReplaceQuiverImageCallback(obj, new_image)
