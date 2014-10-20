@@ -97,9 +97,11 @@ classdef PTKText < PTKUserInterfaceObject
         end
         
         function ChangeText(obj, new_text)
-            obj.Text = new_text;
-            if obj.ComponentHasBeenCreated && ishandle(obj.GraphicalComponentHandle)
-                set(obj.GraphicalComponentHandle, 'String', new_text);
+            if ~strcmp(obj.Text, new_text)
+                obj.Text = new_text;
+                if obj.ComponentHasBeenCreated && ishandle(obj.GraphicalComponentHandle)
+                    set(obj.GraphicalComponentHandle, 'String', new_text);
+                end
             end
         end
     end
