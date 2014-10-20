@@ -45,7 +45,7 @@ classdef PTKShowAirwaysPrunedBySegmentCentreline < PTKPlugin
 
             template_image = image_templates.GetTemplateImage(PTKContext.LungROI);
             start_tree = airway_results.StartBranches.Trachea;
-            PTKVisualiseTreeModelCentreline(start_tree, template_image.VoxelSize, true);
+            PTKVisualiseTreeModelCentreline(start_tree, template_image.VoxelSize, true, false);
         end        
     end
 end
