@@ -17,6 +17,7 @@ classdef PTKShowOutputFolder < PTKGuiPlugin
 
     properties
         ButtonText = 'Open the results folder (output folder) for this dataset'
+        SelectedText = 'Open the results folder (output folder) for this dataset'
         ToolTip = 'Opens a folder containing the output files for the current dataset'
         Category = 'File'
         Visibility = 'Dataset'

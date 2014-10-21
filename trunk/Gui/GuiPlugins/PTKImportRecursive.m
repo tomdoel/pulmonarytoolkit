@@ -19,11 +19,14 @@ classdef PTKImportRecursive < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Import'
+        ButtonText = 'Import Data'
+        SelectedText = 'Import Data'
         ToolTip = 'Prompts the user to select a directory to import data from. All data in this directory and its subdirectories will be imported.'
-        Category = 'File'
+        Category = 'Dataset'
         Visibility = 'Always'
         Mode = 'File'
+        Icon = 'add.png'
+        Location = 1
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -35,5 +38,14 @@ classdef PTKImportRecursive < PTKGuiPlugin
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.ImportMultipleFiles();
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = true;
+        end
+        
+        function is_selected = IsSelected(ptk_gui_app)
+            is_selected = false;
+        end        
+        
     end
 end

@@ -20,7 +20,9 @@ classdef PTKCapture2DImage < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Capture Image'
+        ButtonText = 'Capture'
+        SelectedText = 'Capture'
+        
         ToolTip = 'Save image and overlay view to files'
         Category = 'Export'
         Visibility = 'Dataset'
@@ -30,6 +32,8 @@ classdef PTKCapture2DImage < PTKGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
+
+        Icon = 'camera.png'
     end
     
     methods (Static)
@@ -37,8 +41,13 @@ classdef PTKCapture2DImage < PTKGuiPlugin
             drawnow;
             ptk_gui_app.Capture;
         end
-    end
-    
-    methods (Static, Access = private)
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded;
+        end
+        
+        function is_selected = IsSelected(ptk_gui_app)
+            is_selected = false;
+        end                
     end
 end
