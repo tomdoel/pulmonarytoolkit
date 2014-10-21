@@ -30,6 +30,14 @@ classdef PTKPluginLabelButton < PTKLabelButton
             enabled = obj.Tool.IsEnabled(gui_app);
             selected = obj.Tool.IsSelected(gui_app);
             obj.Select(selected);
+
+            % If the tool defines SelectedText then it has special behaviour - different text
+            % for selected or unselected
+            if selected
+                obj.Text.ChangeText(obj.Tool.SelectedText);
+            else
+                obj.Text.ChangeText(obj.Tool.ButtonText);
+            end
         end
     end
     

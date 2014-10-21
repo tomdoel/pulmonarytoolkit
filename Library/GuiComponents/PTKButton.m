@@ -26,6 +26,8 @@ classdef PTKButton < PTKUserInterfaceObject
         Text
         ToolTip
         RGBImage
+        OriginalImage
+        ImageHighlight
         BackgroundColour = [0, 0, 0]
         
         Selected = false
@@ -33,8 +35,12 @@ classdef PTKButton < PTKUserInterfaceObject
         
         ShowTextOnButton
         
-        SelectedColour = uint8(255*(PTKSoftwareInfo.SelectedBackgroundColour));
-        UnSelectedColour = uint8([150, 150, 150]);
+        SelectedColour
+        UnSelectedColour
+        HighlightColour
+        HighlightSelectedColour
+        
+        AutoUpdateStatus = false
     end
     
     events
@@ -54,29 +60,47 @@ classdef PTKButton < PTKUserInterfaceObject
             obj.Tag = tag;
             obj.Callback = callback;
             obj.ShowTextOnButton = true;
+            obj.SelectedColour = uint8(255*(PTKSoftwareInfo.SelectedBackgroundColour));
+            obj.UnSelectedColour = uint8([150, 150, 150]);
+            obj.HighlightColour = min(255, obj.UnSelectedColour + 100);
+            obj.HighlightSelectedColour = min(255, obj.SelectedColour + 100);
         end
         
-        function AddAndResizeImage(obj, new_image)
+        function AddAndResizeImageWithHighlightMask(obj, new_image, mask_colour_rgb)
+            
             if isempty(new_image)
-                obj.RGBImage = [];
+                obj.OriginalImage = [];
             else
                 new_image_size = [obj.ButtonHeight - 2*obj.BorderSize, obj.ButtonWidth - 2*obj.BorderSize];
                 rgb_image = zeros([obj.ButtonHeight, obj.ButtonWidth, 3], class(new_image));
                 rgb_image(1+obj.BorderSize:end-obj.BorderSize, 1+obj.BorderSize:end-obj.BorderSize, 1) = imresize(new_image(:, :, 1), new_image_size, 'bilinear');
                 rgb_image(1+obj.BorderSize:end-obj.BorderSize, 1+obj.BorderSize:end-obj.BorderSize, 2) = imresize(new_image(:, :, 2), new_image_size, 'bilinear');
                 rgb_image(1+obj.BorderSize:end-obj.BorderSize, 1+obj.BorderSize:end-obj.BorderSize, 3) = imresize(new_image(:, :, 3), new_image_size, 'bilinear');
-                mask_image = ones(size(rgb_image));
-                rgb_image = PTKImageUtilities.AddBorderToRGBImage(rgb_image, mask_image, obj.BorderSize, obj.BackgroundColour, obj.UnSelectedColour, obj.UnSelectedColour, obj.BackgroundColour);
-                obj.RGBImage = rgb_image;
+                background = rgb_image(:, :, 1) == mask_colour_rgb(1) & rgb_image(:, :, 2) == mask_colour_rgb(2) & rgb_image(:, :, 3) == mask_colour_rgb(3);
+
+                obj.ImageHighlight = PTKImageUtilities.GetRGBImageHighlight(rgb_image, mask_colour_rgb);
+                
+                for index = 1 : 3
+                    rgb_slice = rgb_image(:, :, index);
+                    rgb_slice(background) = round(255*PTKSoftwareInfo.BackgroundColour(index));
+                    rgb_image(:, :, index) = rgb_slice;
+                end
+                obj.OriginalImage = rgb_image;
             end
+            
+            obj.UpdateImageHighlight;
         end
         
         function CreateGuiComponent(obj, position, reporting)
             
-            % If no image gas been specified then create a blank image
-            if isempty(obj.RGBImage)
-                obj.RGBImage = PTKImageUtilities.GetButtonImage([], position(3), position(4), [], [], obj.BorderSize, obj.BackgroundColour, obj.UnSelectedColour);
+            % If no image has been specified then create a blank image
+            if isempty(obj.OriginalImage)
+                obj.OriginalImage = PTKImageUtilities.GetButtonImage([], position(3), position(4), [], [], obj.BorderSize, obj.BackgroundColour, obj.UnSelectedColour);
+                button_size = size(obj.RGBImage);
+                obj.ImageHighlight = PTKImageUtilities.GetBorderImage(button_size(1:2), obj.BorderSize);
             end
+            
+            obj.UpdateRGBImageCache;
             
             if obj.ShowTextOnButton
                 button_text = obj.Text;
@@ -96,16 +120,17 @@ classdef PTKButton < PTKUserInterfaceObject
             else
                 button_size = obj.Position(3:4);
             end
-            obj.RGBImage = PTKImageUtilities.GetButtonImage(preview_image, button_size(1), button_size(2), window, level, 1, obj.BackgroundColour, obj.UnSelectedColour);
-            if obj.ComponentHasBeenCreated
-                set(obj.GraphicalComponentHandle, 'CData', obj.RGBImage);
-            end
+            obj.OriginalImage = PTKImageUtilities.GetButtonImage(preview_image, button_size(1), button_size(2), window, level, 1, obj.BackgroundColour, obj.UnSelectedColour);
+            button_size = size(obj.RGBImage);
+            obj.ImageHighlight = PTKImageUtilities.GetBorderImage(button_size(1:2), obj.BorderSize);
+
+            obj.UpdateImageHighlight
         end
         
         function Select(obj, is_selected)
             if obj.Selected ~= is_selected
                 obj.Selected = is_selected;
-                obj.UpdateBackgroundColour;
+                obj.UpdateImageHighlight;
             end
         end        
     end
@@ -119,7 +144,7 @@ classdef PTKButton < PTKUserInterfaceObject
             % It is possible that the callback may lead to a rebuild of the interface and
             % thus deletion of the button that triggered the callback; in which case we
             % can't continue with the select
-            if isvalid(obj)
+            if isvalid(obj) && ~obj.AutoUpdateStatus
                 obj.Select(false);
             end
         end
@@ -145,28 +170,39 @@ classdef PTKButton < PTKUserInterfaceObject
         function Highlight(obj, highlighted)
             if (highlighted ~= obj.Highlighted)
                 obj.Highlighted = highlighted;
-                obj.UpdateBackgroundColour;
+                obj.UpdateImageHighlight;
             end            
         end
         
-        function UpdateBackgroundColour(obj)
-            mask_image = ones(size(obj.RGBImage));
-            if obj.Selected
-                border_colour = obj.SelectedColour;
-            else
-                border_colour = obj.UnSelectedColour;
-            end
-            
-            if obj.Highlighted
-                border_colour = min(255, border_colour + 100);
-            end
-            
-            if ~isempty(obj.RGBImage)
-                obj.RGBImage = PTKImageUtilities.AddBorderToRGBImage(obj.RGBImage, mask_image, obj.BorderSize, obj.BackgroundColour, obj.UnSelectedColour, border_colour, obj.BackgroundColour);
-            end
+        function UpdateImageHighlight(obj)
+            obj.UpdateRGBImageCache;
             
             if obj.ComponentHasBeenCreated
                 set(obj.GraphicalComponentHandle, 'CData', obj.RGBImage);
+            end
+        end
+        
+        function UpdateRGBImageCache(obj)
+            % Take the button image from the OriginalImage cache property, and a highlight
+            % of the appropriate colour, and then put into the RGBImage cache property
+            
+            if isempty(obj.OriginalImage)
+                obj.RGBImage = [];
+            else
+                if obj.Selected
+                    if obj.Highlighted
+                        highlight_colour = obj.HighlightSelectedColour;
+                    else
+                        highlight_colour = obj.SelectedColour;
+                    end
+                else
+                    if obj.Highlighted
+                        highlight_colour = obj.HighlightColour;
+                    else
+                        highlight_colour = obj.UnSelectedColour;
+                    end
+                end
+                obj.RGBImage = PTKImageUtilities.AddHighlightToRGBImage(obj.OriginalImage, obj.ImageHighlight, highlight_colour);
             end
         end        
     end
