@@ -20,7 +20,8 @@ classdef PTKSaveImage < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Save Image'
+        ButtonText = 'Export Volume'
+        SelectedText = 'Export Volume'
         ToolTip = 'Save the current image view to files'
         Category = 'Export'
         Visibility = 'Dataset'
@@ -30,11 +31,23 @@ classdef PTKSaveImage < PTKGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
+        
+        Icon = 'export_image.png'
+        Location = 5
+        
     end
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.SaveBackgroundImage();
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded;
+        end
+        
+        function is_selected = IsSelected(ptk_gui_app)
+            is_selected = false;
+        end        
     end
 end

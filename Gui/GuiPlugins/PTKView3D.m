@@ -31,7 +31,7 @@ classdef PTKView3D < PTKGuiPlugin
         ButtonHeight = 1
         
         Icon = 'seg_lobes.tif'
-        Location = 4        
+        Location = 6
     end
     
     methods (Static)

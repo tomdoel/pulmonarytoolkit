@@ -13,7 +13,8 @@ classdef PTKSetDeveloperMode < PTKGuiPlugin
     %    
     
     properties
-        ButtonText = 'Developer tools'
+        ButtonText = 'Developer Tools'
+        SelectedText = 'Developer Tools Off'
         ToolTip = 'Enables or disabled developer mode'
         Category = 'Show / hide'
         Visibility = 'Always'
@@ -23,6 +24,9 @@ classdef PTKSetDeveloperMode < PTKGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
+        
+        Icon = 'developer_tools.png'
+
     end
     
     methods (Static)
@@ -37,6 +41,6 @@ classdef PTKSetDeveloperMode < PTKGuiPlugin
         
         function is_selected = IsSelected(ptk_gui_app)
             is_selected = ptk_gui_app.DeveloperMode;
-        end        
+        end
     end
 end

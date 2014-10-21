@@ -19,11 +19,14 @@ classdef PTKRemoveDataset < PTKGuiPlugin
     %    
     
     properties
-        ButtonText = 'Delete Dataset'
+        ButtonText = 'Delete dataset'
+        SelectedText = 'Delete dataset'
         ToolTip = 'Remove this dataset from the Toolkit'
-        Category = 'File'
+        Category = 'Dataset'
         Visibility = 'Dataset'
         Mode = 'File'
+        Icon = 'bin.png'
+        Location = 2
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -36,6 +39,14 @@ classdef PTKRemoveDataset < PTKGuiPlugin
             % Delete files from the disk cache
             ptk_gui_app.DeleteImageInfo;
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded;
+        end
+        
+        function is_selected = IsSelected(ptk_gui_app)
+            is_selected = false;
+        end        
     end
     
 end

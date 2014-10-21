@@ -17,6 +17,7 @@ classdef PTKShowPatientBrowser < PTKGuiPlugin
     
     properties
         ButtonText = 'Patient Browser'
+        SelectedText = 'Patient Browser'
         ToolTip = 'Shows the Patient Browser'
         Category = 'Dataset'
         Visibility = 'Always'
@@ -27,6 +28,8 @@ classdef PTKShowPatientBrowser < PTKGuiPlugin
         ButtonWidth = 4
         ButtonHeight = 1
         Location = 0
+        Icon = 'patient_browser.png'
+
     end
     
     methods (Static)
