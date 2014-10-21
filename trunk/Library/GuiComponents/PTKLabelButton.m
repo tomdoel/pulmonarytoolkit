@@ -12,7 +12,7 @@ classdef PTKLabelButton < PTKVirtualPanel
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties (Access = private)
+    properties (Access = protected)
         Button
         Text
     end
@@ -38,7 +38,14 @@ classdef PTKLabelButton < PTKVirtualPanel
             obj.Button.ButtonHeight = obj.ButtonHeight;
             obj.Button.UnSelectedColour = [50, 50, 50];
             obj.Button.ShowTextOnButton = false;
-            obj.Button.AddAndResizeImage(icon);
+            obj.Button.AddAndResizeImageWithHighlightMask(icon, [0, 0, 0]);
+            obj.Button.AutoUpdateStatus = true;
+            
+            obj.Button.UnSelectedColour = uint8(255*(PTKSoftwareInfo.BackgroundColour));
+            obj.Button.SelectedColour = uint8(255*(PTKSoftwareInfo.IconSelectedColour));
+            obj.Button.HighlightColour = uint8(255*(PTKSoftwareInfo.IconHighlightColour));
+            obj.Button.HighlightSelectedColour = uint8(255*(PTKSoftwareInfo.IconHighlightSelectedColour));            
+
             obj.AddChild(obj.Button, reporting);
             obj.Text = PTKText(parent, text, tooltip, tag);
             obj.Text.HorizontalAlignment = 'center';

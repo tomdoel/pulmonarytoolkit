@@ -57,10 +57,13 @@ classdef PTKGuiPlugin < handle
         % button for this plugin
         ToolTip
         
-        % The text to appear on the button in the gui. Also used in reporting of
+        % The text to appear on the button in the gui when the button is not selected. Also used in reporting of
         % progress. Note that HTML tags are allowed - use <BR> for a newline in 
         % the button text
         ButtonText
+        
+        % The text that appears on the button when the tool is selected
+        SelectedText
     end
     
     methods (Abstract, Static)
