@@ -34,17 +34,23 @@ classdef PTKTabControl < PTKMultiPanel
             obj.Reorder;
         end
         
-        function Resize(obj, multi_panel_position)
+        function Resize(obj, position)
             
             % Call the PTKPanel superclass, not the PTKMultiPanel, since we are reducing the
             % height to fit in the tab panel
-            Resize@PTKPanel(obj, multi_panel_position);
+            Resize@PTKPanel(obj, position);
+            
+            % The inner position takes into account any borders
+            inner_position = obj.InnerPosition;
 
             tab_panel_height = obj.TabPanel.GetRequestedHeight;
-            tab_panel_y_position = multi_panel_position(4) - tab_panel_height;
-            obj.TabPanel.Resize([1, 1 + tab_panel_y_position, multi_panel_position(3), tab_panel_height]);
+            main_panel_height = inner_position(4) - tab_panel_height;
+            tab_panel_y_position = inner_position(2) + main_panel_height;
             
-            panel_position = [1, 1, multi_panel_position(3), tab_panel_y_position];
+            tab_panel_position = [inner_position(1), tab_panel_y_position, inner_position(3), tab_panel_height];
+            panel_position = [inner_position(1), inner_position(2), inner_position(3), main_panel_height];
+
+            obj.TabPanel.Resize(tab_panel_position);
             
             % ToDo: We should only need to resize the current tab
             for panel = obj.PanelMap.values

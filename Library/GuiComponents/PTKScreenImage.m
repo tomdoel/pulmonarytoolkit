@@ -61,7 +61,10 @@ classdef PTKScreenImage < PTKPositionlessUserInterfaceObject
             obj.CData = [];
             obj.AlphaData = [];
             if obj.ComponentHasBeenCreated && ishandle(obj.GraphicalComponentHandle)
-                set(obj.GraphicalComponentHandle, 'CData', [], 'AlphaData', []);
+                % You can't set the AlphaData property to an empty matrix -
+                % it must be set to 1 otherwise you get weird rendering
+                % artefacts
+                set(obj.GraphicalComponentHandle, 'CData', [], 'AlphaData', 1);
             end
         end
         

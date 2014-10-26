@@ -85,14 +85,6 @@ classdef PTKFigure < PTKUserInterfaceObject
             set(obj.GraphicalComponentHandle, 'ResizeFcn', @obj.CustomResize);
         end
         
-        function Resize(obj, position)
-            width_pixels = max(1, position(3));
-            height_pixels = max(1, position(4));
-            new_position = [position(1) position(2) width_pixels height_pixels];
-            
-            Resize@PTKUserInterfaceObject(obj, new_position);
-        end
-
         function RestoreCustomKeyPressCallback(obj)
             % For the zoom and pan tools, we need to disable the Matlab fuctions
             % that prevent custom keyboard callbacks being used; otherwise our

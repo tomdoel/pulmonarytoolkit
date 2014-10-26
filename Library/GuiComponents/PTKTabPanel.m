@@ -33,7 +33,6 @@ classdef PTKTabPanel < PTKPanel
     
     properties (Access = private)
         BlankText
-        Line
     end
 
     methods
@@ -41,17 +40,16 @@ classdef PTKTabPanel < PTKPanel
             obj = obj@PTKPanel(tab_control, reporting);
             obj.TabControl = tab_control;
             obj.FontSize = 16;
-            obj.TabHeight = 25;
+            obj.TabHeight = 26;
             obj.FontColour = [1 1 1];
+            obj.BottomBorder = true;
+            
             obj.Tabs = containers.Map;
             
             obj.BlankText = PTKText(obj, '', '', 'blank');
+            
             obj.BlankText.Clickable = false;
             obj.AddChild(obj.BlankText, reporting);
-            
-            obj.Line = PTKLineAxes(obj, 'bottom');
-            obj.Line.SetLimits([1, 1], [1, 1]);
-            obj.AddChild(obj.Line, obj.Reporting);            
             
             obj.OrderedTabs = {};
             
@@ -77,8 +75,9 @@ classdef PTKTabPanel < PTKPanel
         
         function Resize(obj, panel_position)
             Resize@PTKPanel(obj, panel_position);
-            obj.ResizePreTabEnable(panel_position, '');
-            obj.Line.Resize([1, 1, panel_position(3), panel_position(4)]);            
+            
+            inner_position = obj.InnerPosition;
+            obj.ResizePreTabEnable(inner_position, '');
         end
         
         function number_of_tabs = GetNumberOfEnabledTabs(obj)
@@ -94,7 +93,7 @@ classdef PTKTabPanel < PTKPanel
             tab = obj.Tabs(tag);
             if ~tab.Enabled
                 obj.Resize(obj.Position);
-                obj.ResizePreTabEnable(obj.Position + [0, 2, 0, -2], tag);
+                obj.ResizePreTabEnable(obj.InnerPosition, tag);
                 tab.Enable(obj.Reporting);
                 obj.TabControl.Reorder;
             end
@@ -142,12 +141,12 @@ classdef PTKTabPanel < PTKPanel
                 tab = obj.Tabs(tab_tag);
                 if tab.Enabled || strcmp(tab_tag, tab_to_enable)
                     tab_x = round(obj.LeftMargin + (enabled_tab_index-1)*(tab_width + obj.TabSpacing));
-                    tab.Resize([tab_x, obj.BottomMargin, tab_width, tab_height]);
+                    tab.Resize([panel_position(1) + tab_x, panel_position(2) + obj.BottomMargin, tab_width, tab_height]);
                     enabled_tab_index = enabled_tab_index + 1;
                 end
             end
             
-            obj.BlankText.Resize([1, 2, panel_position(3), panel_position(4)]);
+            obj.BlankText.Resize([panel_position(1), panel_position(2), panel_position(3), panel_position(4)]);
         end
         
     end    

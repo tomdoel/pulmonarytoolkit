@@ -727,24 +727,26 @@ classdef PTKGui < PTKFigure
             
             plugins_panel_height = max(1, parent_height_pixels - toolbar_height);
             
-            image_panel_position = 2 + side_panel_width;
-            obj.ImagePanel.Resize([image_panel_position, toolbar_height, viewer_panel_width, viewer_panel_height]);
+            image_panel_x_position = 1 + side_panel_width;
+            image_panel_y_position = 1 + toolbar_height;
+            obj.ImagePanel.Resize([image_panel_x_position, image_panel_y_position, viewer_panel_width, viewer_panel_height]);
 
-            patient_name_panel_y_position = toolbar_height + viewer_panel_height;
-            obj.PatientNamePanel.Resize([image_panel_position, patient_name_panel_y_position, patient_name_panel_width, patient_name_panel_height]);
+            patient_name_panel_y_position = 1 + toolbar_height + viewer_panel_height;
+            obj.PatientNamePanel.Resize([image_panel_x_position, patient_name_panel_y_position, patient_name_panel_width, patient_name_panel_height]);
             
             if PTKSoftwareInfo.ToolbarEnabled
                 toolbar_width = parent_width_pixels;
                 obj.ToolbarPanel.Resize([1, 1, toolbar_width, toolbar_height]);
             end
             
-            right_side_position = image_panel_position + viewer_panel_width + 1;
+            right_side_position = image_panel_x_position + viewer_panel_width;
             
-            obj.ModeTabControl.Resize([right_side_position, toolbar_height, mode_panel_width, plugins_panel_height]);
+            obj.ModeTabControl.Resize([right_side_position, 1 + toolbar_height, mode_panel_width, plugins_panel_height]);
             
             if ~isempty(obj.WaitDialogHandle)
                 obj.WaitDialogHandle.Resize();
             end
+            
         end
 
         function ModeTabChanged(obj, ~, event_data)
@@ -881,6 +883,12 @@ classdef PTKGui < PTKFigure
         
         function suggested_width_pixels = GetSuggestedWidth(obj, image_height_pixels)
             % Computes the width of the viewer so that the coronal view fills the whole window
+            
+            % If no dataset, then just make the viewer square
+            if ~obj.GuiDataset.DatasetIsLoaded
+                suggested_width_pixels = image_height_pixels;
+                return;
+            end
             
             image_size_mm = obj.ImagePanel.BackgroundImage.ImageSize.*obj.ImagePanel.BackgroundImage.VoxelSize;
 
