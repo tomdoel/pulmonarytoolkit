@@ -15,7 +15,6 @@ classdef PTKSidePanel < PTKPanel
     %    
     
     properties (Access = private)
-        SidePanelAxes
         PatientsSidePanel
         ProtocolSidePanel
         SeriesSidePanel
@@ -39,10 +38,9 @@ classdef PTKSidePanel < PTKPanel
         function obj = PTKSidePanel(parent, patient_database, state, linked_recorder, gui_callback, reporting)
             obj = obj@PTKPanel(parent, reporting);
             
+            obj.RightBorder = true;
+            
             obj.GuiState = state;
-            obj.SidePanelAxes = PTKLineAxes(obj, 'right');
-            obj.SidePanelAxes.SetLimits([1, 1], [1, 1]);
-            obj.AddChild(obj.SidePanelAxes, obj.Reporting);
             
             obj.PatientsSidePanel = PTKPatientsSidePanel(obj, patient_database, gui_callback, reporting);
             obj.AddChild(obj.PatientsSidePanel, obj.Reporting);
@@ -67,13 +65,8 @@ classdef PTKSidePanel < PTKPanel
         function Resize(obj, new_position)
             Resize@PTKPanel(obj, new_position);
             
-            % new_position contains the coordinates of the main panel relative the parent.
-            % Child panels have coordinates relative to the main panel, so we need to reset
-            % the origin
-            new_position(1 : 2) = [1, 1];
-            obj.SidePanelAxes.Resize(new_position);
-            
-            new_position(3) = new_position(3) - 2;
+            % After calling Resize@PTKPanel, the position will have been adjusted due to the border
+            new_position = obj.InnerPosition;
             
             available_height = new_position(4) - 2*obj.SpacingBetweenLists;
             

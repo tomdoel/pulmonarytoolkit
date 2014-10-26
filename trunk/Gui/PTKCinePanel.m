@@ -49,7 +49,7 @@ classdef PTKCinePanel < PTKVirtualPanel
             
             % Resize axes
             axis_width = max(1, position(3) - obj.Slider.SliderWidth);
-            axes_position = [1, position(2), axis_width, position(4)];
+            axes_position = [position(1), position(2), axis_width, position(4)];
             obj.Axes.Resize(axes_position);
             
             % Resize slider

@@ -47,6 +47,8 @@ classdef PTKNamePanel < PTKPanel
             obj.Gui = gui;
             obj.GuiState = gui_state;
             
+            obj.BottomBorder = true;
+            
             obj.PatientNameText = PTKText(obj, obj.NoPatientText, '', 'PatientName');
             obj.PatientNameText.FontSize = obj.PatientNameFontSize;
             obj.PatientNameText.Bold = true;
@@ -93,11 +95,11 @@ classdef PTKNamePanel < PTKPanel
             
             componenent_width = panel_position(3) - obj.LeftMargin - obj.RightMargin;
 
-            patient_name_y = panel_position(4) - obj.TopMargin - obj.PatientNameHeight;
+            patient_name_y = 1 + panel_position(4) - obj.TopMargin - obj.PatientNameHeight;
             patient_details_y = patient_name_y - obj.VerticalSpacing - obj.PatientDetailsHeight;
             
-            obj.PatientNameText.Resize([obj.LeftMargin, patient_name_y, componenent_width, obj.PatientNameHeight]);
-            obj.PatientDetailsText.Resize([obj.LeftMargin, patient_details_y, componenent_width, obj.PatientDetailsHeight]);
+            obj.PatientNameText.Resize([1 + obj.LeftMargin, patient_name_y, componenent_width, obj.PatientNameHeight]);
+            obj.PatientDetailsText.Resize([1 + obj.LeftMargin, patient_details_y, componenent_width, obj.PatientDetailsHeight]);
         end
         
         function height = GetRequestedHeight(obj, width)            

@@ -19,12 +19,10 @@ classdef PTKToolbarPanel < PTKPanel
         GuiApp
         OrganisedPlugins
         ToolMap
-        ToolbarLine
     end
     
     properties (Constant)
         ToolbarHeight = 100
-        LeftBorder = 10
         LeftMargin = 10
         HorizontalSpacing = 10
     end
@@ -33,15 +31,13 @@ classdef PTKToolbarPanel < PTKPanel
         function obj = PTKToolbarPanel(parent, organised_plugins, gui_app, reporting)
             obj = obj@PTKPanel(parent, reporting);
             
+            obj.TopBorder = true;
+            
             obj.GuiApp = gui_app;
             obj.ControlGroups = containers.Map;
             obj.OrderedControlGroupList = {};
             obj.ToolMap = containers.Map;
             obj.OrganisedPlugins = organised_plugins;
-            
-            obj.ToolbarLine = PTKLineAxes(obj, 'top');
-            obj.ToolbarLine.SetLimits([1, 1], [1, 1]);
-            obj.AddChild(obj.ToolbarLine, obj.Reporting);            
             
             obj.AddTools;
         end
@@ -49,17 +45,14 @@ classdef PTKToolbarPanel < PTKPanel
         function Resize(obj, new_position)
             Resize@PTKPanel(obj, new_position);
 
-            obj.ToolbarLine.Resize([1, 1, new_position(3), new_position(4)]);
-            
             toolbar_position = new_position;
-            toolbar_position(4) = max(1, toolbar_position(4) - 3);
+            toolbar_position(4) = max(1, toolbar_position(4));
             
-            
-            x_position = obj.LeftMargin;
+            x_position = 1 + obj.LeftMargin;
             for tool_group = obj.OrderedControlGroupList
                 tool_group_panel = tool_group{1};
                 panel_height = tool_group_panel.GetRequestedHeight;
-                y_position = max(0, toolbar_position(2) + round((toolbar_position(4) - panel_height)/2));
+                y_position = max(1, toolbar_position(2) + round((toolbar_position(4) - panel_height)/2));
                 if tool_group_panel.Enabled
                     tool_group_panel.Resize([x_position, y_position, tool_group_panel.GetWidth, panel_height]);
                     x_position = x_position + obj.HorizontalSpacing + tool_group_panel.GetWidth;
