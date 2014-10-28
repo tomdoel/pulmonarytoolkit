@@ -70,6 +70,10 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
         function SetSliderSteps(obj, steps)
             obj.CinePanel2D.SetSliderSteps(steps);
         end
+        
+        function EnableSlider(obj, enabled)
+            obj.CinePanel2D.EnableSlider(enabled);
+        end
           
         function UpdateAxes(obj)
             obj.CinePanel2D.UpdateAxes;

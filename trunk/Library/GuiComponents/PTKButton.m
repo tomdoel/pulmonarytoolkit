@@ -177,7 +177,7 @@ classdef PTKButton < PTKUserInterfaceObject
         function UpdateImageHighlight(obj)
             obj.UpdateRGBImageCache;
             
-            if obj.ComponentHasBeenCreated
+            if obj.ComponentHasBeenCreated && ishandle(obj.GraphicalComponentHandle)
                 set(obj.GraphicalComponentHandle, 'CData', obj.RGBImage);
             end
         end

@@ -54,7 +54,7 @@ classdef PTKCinePanel < PTKVirtualPanel
             
             % Resize slider
             slider_x = position(1) + axis_width;
-            slider_position = [slider_x, position(2), obj.Slider.SliderWidth, position(4)];
+            slider_position = [slider_x, position(2) - 1, obj.Slider.SliderWidth, position(4)];
             obj.Slider.Resize(slider_position);            
         end
         
@@ -73,6 +73,14 @@ classdef PTKCinePanel < PTKVirtualPanel
             obj.Slider.SetSliderSteps(steps);
         end
   
+        function EnableSlider(obj, enabled)
+            if enabled
+                obj.Slider.Enable(obj.Reporting);
+            else
+                obj.Slider.Disable;
+            end
+        end
+
         function SliderValueChanged(obj, ~, ~)
             obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation) = round(obj.Slider.SliderValue);
         end

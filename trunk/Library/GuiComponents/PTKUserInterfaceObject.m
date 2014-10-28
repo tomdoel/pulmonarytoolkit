@@ -296,7 +296,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
                     
                     obj.ComponentHasBeenCreated = true;
                     obj.LastHandlePosition = obj.Position;
-                    obj.LastHandleVisible = false;
+                    obj.LastHandleVisible = [];
                 end
                 
                 % In some cases child obejcts may be created after the last
@@ -334,7 +334,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
                     
                     if is_visible
                         % Show the component if it is hidden, or update the position if it has changed
-                        if isequal(obj.LastHandleVisible, false) || (~isequal(obj.LastHandlePosition, obj.Position))
+                        if isempty(obj.LastHandleVisible) || isequal(obj.LastHandleVisible, false) || (~isequal(obj.LastHandlePosition, obj.Position))
                             set(obj.GraphicalComponentHandle, 'Visible', obj.VisibleParameter, 'Position', obj.Position);
                             obj.LastHandleVisible = true;
                             obj.LastHandlePosition = obj.Position;
@@ -342,7 +342,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
                         
                     else
                         % Hide the component if necessary
-                        if obj.LastHandleVisible
+                        if isempty(obj.LastHandleVisible) || obj.LastHandleVisible
                             set(obj.GraphicalComponentHandle, 'Visible', 'off');
                             obj.LastHandleVisible = false;
                         end

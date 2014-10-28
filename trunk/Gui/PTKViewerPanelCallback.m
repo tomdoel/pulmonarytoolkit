@@ -300,6 +300,9 @@ classdef PTKViewerPanelCallback < PTKBaseClass
                 obj.ViewerPanelRenderer.SetSliceNumber(obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation));
                 obj.ViewerPanelRenderer.SetSliderLimits(slider_min, slider_max);
                 obj.ViewerPanelRenderer.SetSliderSteps([1/(slider_max - slider_min), 10/(slider_max-slider_min)]);
+                obj.ViewerPanelRenderer.EnableSlider(obj.ViewerPanel.BackgroundImage.ImageSize(obj.ViewerPanel.Orientation) > 1);
+            else
+                obj.ViewerPanelRenderer.EnableSlider(false);
             end
         end
         
