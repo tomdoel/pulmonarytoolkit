@@ -480,11 +480,14 @@ classdef PTKGui < PTKFigure
         function ToolClicked(obj)
             obj.UpdateToolbar;
         end
-         
+    
+        function ClearDataset(obj)
+            obj.WaitDialogHandle.ShowAndHold('Clearing dataset');
+            obj.GuiDataset.ClearDataset;
+            obj.WaitDialogHandle.Hide;
+        end
+        
     end
-    
-    
-    
     
     methods (Access = protected)
         
@@ -519,14 +522,8 @@ classdef PTKGui < PTKFigure
 
             CustomCloseFunction@PTKFigure(obj, src);
         end
-        
+    
     end
-    
-    
-    
-    
-    
-    
     
     methods (Access = private)
         
@@ -589,11 +586,6 @@ classdef PTKGui < PTKFigure
         end
 
 
-        function ClearDataset(obj)
-            obj.WaitDialogHandle.ShowAndHold('Clearing dataset');
-            obj.GuiDataset.ClearDataset;
-            obj.WaitDialogHandle.Hide;
-        end
 
 
         function LoadMarkers(obj)

@@ -35,7 +35,6 @@ classdef PTKImageOverlayAxes < PTKImageAxes
             obj.AddChild(obj.OverlayScreenImage, reporting);
             obj.QuiverScreenImage = PTKScreenQuiverImage(obj);
             obj.AddChild(obj.QuiverScreenImage, reporting);
-            
         end
         
         function Resize(obj, position)

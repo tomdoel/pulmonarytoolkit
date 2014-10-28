@@ -65,9 +65,6 @@ classdef PTKToolCallback < handle
         function SetWindowWithinLimits(obj, window)
             % Sets the window subject to the current constraints
             
-            if isempty(obj.Toolbar)
-                obj.Reporting.Error('PTKToolCallback:ToolbarDoesNotExist', 'Toolbar has not been set');
-            end
             [window_min, window_max] = obj.ViewerPanel.GetWindowLimits;
             window = max(window, window_min);
             window = min(window, window_max);
@@ -77,9 +74,6 @@ classdef PTKToolCallback < handle
         function SetLevelWithinLimits(obj, level)
             % Sets the level subject to the current constraints
             
-            if isempty(obj.Toolbar)
-                obj.Reporting.Error('PTKToolCallback:ToolbarDoesNotExist', 'Toolbar has not been set');
-            end            
             [level_min, level_max] = obj.ViewerPanel.GetLevelLimits;
             level = max(level, level_min);
             level = min(level, level_max);

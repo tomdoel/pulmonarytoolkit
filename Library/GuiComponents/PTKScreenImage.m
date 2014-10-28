@@ -37,7 +37,11 @@ classdef PTKScreenImage < PTKPositionlessUserInterfaceObject
                 set(obj.GraphicalComponentHandle, 'XData', obj.XData, 'YData', obj.YData);
             end
             if ~isempty(obj.CData)
-                set(obj.GraphicalComponentHandle, 'CData', obj.CData, 'AlphaData', obj.AlphaData, 'AlphaDataMapping', 'none');
+                alpha_slice = obj.AlphaData;
+                if isempty(alpha_slice)
+                    alpha_slice = 1;
+                end
+                set(obj.GraphicalComponentHandle, 'CData', obj.CData, 'AlphaData', alpha_slice, 'AlphaDataMapping', 'none');
             end
         end
         
@@ -52,6 +56,11 @@ classdef PTKScreenImage < PTKPositionlessUserInterfaceObject
         function SetImageData(obj, rgb_slice, alpha_slice)
             obj.CData = rgb_slice;
             obj.AlphaData = alpha_slice;
+            
+            if isempty(alpha_slice)
+                alpha_slice = 1;
+            end
+            
             if obj.ComponentHasBeenCreated && ishandle(obj.GraphicalComponentHandle)
                 set(obj.GraphicalComponentHandle, 'CData', rgb_slice, 'AlphaData', alpha_slice, 'AlphaDataMapping', 'none');
             end
