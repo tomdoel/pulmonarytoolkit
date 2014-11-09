@@ -17,20 +17,26 @@ classdef PTKToolbarPanel < PTKPanel
         ControlGroups
         OrderedControlGroupList
         GuiApp
+        ModeName
+        PluginModeName
         OrganisedPlugins
         ToolMap
     end
     
     properties (Constant)
         ToolbarHeight = 100
+        RowHeight = 100
         LeftMargin = 10
+        RightMargin = 20
         HorizontalSpacing = 10
     end
     
     methods
-        function obj = PTKToolbarPanel(parent, organised_plugins, gui_app, reporting)
+        function obj = PTKToolbarPanel(parent, organised_plugins, mode_name, plugin_mode_name, gui_app, reporting)
             obj = obj@PTKPanel(parent, reporting);
             
+            obj.ModeName = mode_name;
+            obj.PluginModeName = plugin_mode_name;
             obj.TopBorder = true;
             
             obj.GuiApp = gui_app;
@@ -45,17 +51,30 @@ classdef PTKToolbarPanel < PTKPanel
         function Resize(obj, new_position)
             Resize@PTKPanel(obj, new_position);
 
-            toolbar_position = new_position;
-            toolbar_position(4) = max(1, toolbar_position(4));
+            panel_height = max(1, new_position(4));
+            row_height = obj.RowHeight;
+            panel_top = new_position(2) + panel_height;
+            y_column_base = panel_top - row_height;
             
-            x_position = 1 + obj.LeftMargin;
+            min_x = 1 + obj.LeftMargin;
+            max_x = new_position(3) - obj.RightMargin;
+            x_position = min_x;
+            
             for tool_group = obj.OrderedControlGroupList
                 tool_group_panel = tool_group{1};
-                panel_height = tool_group_panel.GetRequestedHeight;
-                y_position = max(1, toolbar_position(2) + round((toolbar_position(4) - panel_height)/2));
+                group_panel_height = tool_group_panel.GetRequestedHeight;
+                group_panel_width = tool_group_panel.GetWidth;
+                
+                if (x_position > min_x) && (x_position + group_panel_width > max_x)
+                    x_position = min_x;
+                    y_column_base = y_column_base - row_height;
+                end
+                
+                y_offset = round((row_height - group_panel_height)/2);
+                y_position = max(1, y_column_base - y_offset);
                 if tool_group_panel.Enabled
-                    tool_group_panel.Resize([x_position, y_position, tool_group_panel.GetWidth, panel_height]);
-                    x_position = x_position + obj.HorizontalSpacing + tool_group_panel.GetWidth;
+                    tool_group_panel.Resize([x_position, y_position, group_panel_width, group_panel_height]);
+                    x_position = x_position + obj.HorizontalSpacing + group_panel_width;
                 end
             end
         end
@@ -80,11 +99,27 @@ classdef PTKToolbarPanel < PTKPanel
             height = obj.ToolbarHeight;
         end
         
+        function mode = GetMode(obj)
+            mode = obj.PluginModeName;
+        end
+
+        function AddPlugins(obj, current_dataset)
+        end
+        
+        function AddAllPreviewImagesToButtons(obj, current_dataset, window, level)
+        end
+        
+        function AddPreviewImage(obj, plugin_name, current_dataset, window, level)
+        end
+
+        function RefreshPlugins(obj, current_dataset, window, level)
+        end
+        
     end
     
     methods (Access = private)
         function AddTools(obj)
-            tools = obj.OrganisedPlugins.GetOrderedPlugins('Toolbar');
+            tools = obj.OrganisedPlugins.GetOrderedPlugins(obj.ModeName);
             for tool = tools
                 obj.AddTool(tool{1}.PluginObject);
             end

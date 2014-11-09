@@ -96,7 +96,7 @@ classdef PTKGui < PTKFigure
 
             % Create the panel of tools across the bottom of the interface
             if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, obj, obj.Reporting);
+                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', 'all', obj, obj.Reporting);
                 obj.AddChild(obj.ToolbarPanel, obj.Reporting);
             end
             
@@ -837,6 +837,7 @@ classdef PTKGui < PTKFigure
             if PTKSoftwareInfo.ToolbarEnabled
                 obj.ToolbarPanel.Update(obj);
             end
+            obj.ModeTabControl.UpdateDynamicPanels;
         end
 
         

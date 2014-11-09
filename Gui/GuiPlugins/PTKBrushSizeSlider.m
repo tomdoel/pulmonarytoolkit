@@ -32,6 +32,9 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
         SmallStep = 0.01
         LargeStep = 0.1
         DefaultValue = 50
+        
+        EditBoxPosition = 110
+        EditBoxWidth = 40
     end
     
     methods (Static)
@@ -47,9 +50,10 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
             is_selected = true;
         end
         
-        function [instance_handle, property_name] = GetHandleAndProperty(ptk_gui_app)
+        function [instance_handle, value_property_name, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
             instance_handle = ptk_gui_app.ImagePanel;
-            property_name = 'PaintBrushSize';
+            value_property_name = 'PaintBrushSize';
+            limits_property_name = [];
         end
         
     end

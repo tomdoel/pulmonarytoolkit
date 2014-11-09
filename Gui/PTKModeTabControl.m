@@ -87,6 +87,9 @@ classdef PTKModeTabControl < PTKTabControl
             end
         end
         
+        function UpdateDynamicPanels(obj)
+        end
+        
         function UpdateMode(obj, plugin_info)
             force_change = false;
             first_enabled_tab = [];

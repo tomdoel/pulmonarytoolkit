@@ -117,15 +117,20 @@ classdef PTKViewerPanelToolbar < PTKPanel
         function UpdateWindowLimits(obj)
             % Sets the minimum and maximum values for the window slider
 
-            [window_min, window_max] = obj.ViewerPanel.GetWindowLimits;
-            set(obj.WindowSlider, 'Min', window_min, 'Max', window_max);
+            window_limits = obj.ViewerPanel.WindowLimits;
+            if ~isempty(window_limits)
+                set(obj.WindowSlider, 'Min', window_limits(1), 'Max', window_limits(2));
+            end
+            
         end
         
         function UpdateLevelLimits(obj)
             % Sets the minimum and maximum values for the level slider
             
-            [level_min, level_max] = obj.ViewerPanel.GetLevelLimits;
-            set(obj.LevelSlider, 'Min', level_min, 'Max', level_max);
+            level_limits = obj.ViewerPanel.LevelLimits;
+            if ~isempty(level_limits)
+                set(obj.LevelSlider, 'Min', level_limits(1), 'Max', level_limits(2));
+            end
         end
         
         function SetStatus(obj, status_text)

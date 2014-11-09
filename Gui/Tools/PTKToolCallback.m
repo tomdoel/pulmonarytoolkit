@@ -65,19 +65,23 @@ classdef PTKToolCallback < handle
         function SetWindowWithinLimits(obj, window)
             % Sets the window subject to the current constraints
             
-            [window_min, window_max] = obj.ViewerPanel.GetWindowLimits;
-            window = max(window, window_min);
-            window = min(window, window_max);
-            obj.ViewerPanel.Window = window;            
+            window_limits = obj.ViewerPanel.WindowLimits;
+            if ~isempty(window_limits)
+                window = max(window, window_limits(1));
+                window = min(window, window_limits(2));
+                obj.ViewerPanel.Window = window;
+            end
         end
 
         function SetLevelWithinLimits(obj, level)
             % Sets the level subject to the current constraints
             
-            [level_min, level_max] = obj.ViewerPanel.GetLevelLimits;
-            level = max(level, level_min);
-            level = min(level, level_max);
-            obj.ViewerPanel.Level = level;
+            level_limits = obj.ViewerPanel.LevelLimits;
+            if ~isempty(level_limits)
+                level = max(level, level_limits(1));
+                level = min(level, level_limits(2));
+                obj.ViewerPanel.Level = level;
+            end
         end
 
         function axes_handle = GetAxes(obj)
