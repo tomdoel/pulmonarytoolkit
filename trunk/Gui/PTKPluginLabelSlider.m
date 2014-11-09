@@ -18,6 +18,7 @@ classdef PTKPluginLabelSlider < PTKLabelSlider
     properties (Access = private)
         GuiApp
         Tool
+        FixToInteger = true
     end
     
     methods
@@ -26,14 +27,39 @@ classdef PTKPluginLabelSlider < PTKLabelSlider
             obj.GuiApp = gui_app;
             obj.Tool = tool;
             
-            [instance_handle, property_name] = tool.GetHandleAndProperty(gui_app);
-            value = instance_handle.(property_name);
+            [instance_handle, value_property_name, limits_property_name] = tool.GetHandleAndProperty(gui_app);
+            value = instance_handle.(value_property_name);
             
-            obj.Slider.SetSliderLimits(tool.MinValue, tool.MaxValue);
+            if ~isempty(limits_property_name)
+                limits = instance_handle.(limits_property_name);
+                if ~isempty(limits)
+                    min_slider = limits(1);
+                    max_slider = limits(2);
+                else
+                    min_slider = tool.MinValue;
+                    max_slider = tool.MaxValue;
+                end
+            else
+                min_slider = tool.MinValue;
+                max_slider = tool.MaxValue;
+            end
+            
+            obj.Slider.SetSliderLimits(min_slider, max_slider);
             obj.Slider.SetSliderSteps([tool.SmallStep, tool.LargeStep]);
             obj.Slider.SetSliderValue(value);
             
-            obj.AddPostSetListener(instance_handle, property_name, @obj.SliderChangedCallback);
+            obj.EditBoxPosition = tool.EditBoxPosition;
+            obj.EditBoxWidth = tool.EditBoxWidth;
+            
+            if ~isempty(obj.EditBox)
+                obj.EditBox.SetText(num2str(value, '%.6g'));
+            end
+            
+            obj.AddPostSetListener(instance_handle, value_property_name, @obj.PropertyChangedCallback);
+            
+            if ~isempty(limits_property_name)
+                obj.AddPostSetListener(instance_handle, limits_property_name, @obj.PropertyLimitsChangedCallback);
+            end
         end
 
         function enabled = UpdateToolEnabled(obj, gui_app)
@@ -45,16 +71,44 @@ classdef PTKPluginLabelSlider < PTKLabelSlider
         function SliderCallback(obj, hObject, arg2)
             SliderCallback@PTKLabelSlider(obj, hObject, arg2);
             
-            [instance_handle, property_name] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
+            [instance_handle, value_property_name, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
             
             value = obj.Slider.SliderValue;
-            instance_handle.(property_name) = value;
+            if obj.FixToInteger
+                value = round(value);
+            end
+            instance_handle.(value_property_name) = value;
+            obj.EditBox.SetText(num2str(value, '%.6g'));
         end
         
-        function SliderChangedCallback(obj, ~, ~, ~)
-            [instance_handle, property_name] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
-            value = instance_handle.(property_name);            
-            obj.Slider.SetSliderValue(value);            
+        function EditBoxCallback(obj, hObject, arg2)
+            EditBoxCallback@PTKLabelSlider(obj, hObject, arg2);
+            
+            [instance_handle, value_property_name, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
+            
+            value = round(str2double(obj.EditBox.Text));
+            instance_handle.(value_property_name) = value;
+            obj.Slider.SetSliderValue(value);
         end
+        
+        function PropertyChangedCallback(obj, ~, ~, ~)
+            [instance_handle, value_property_name, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
+            value = instance_handle.(value_property_name);            
+            obj.Slider.SetSliderValue(value);
+            obj.EditBox.SetText(num2str(value, '%.6g'));
+        end
+        
+        function PropertyLimitsChangedCallback(obj, ~, ~, ~)
+            [instance_handle, ~, limits_property_name] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
+            limits = instance_handle.(limits_property_name);            
+            obj.Slider.SetSliderLimits(limits(1), limits(2));
+            range = limits(2) - limits(1);
+            if abs(range) >= 100
+                obj.FixToInteger = true;
+            else
+                obj.FixToInteger = false;
+            end
+        end
+        
     end    
 end

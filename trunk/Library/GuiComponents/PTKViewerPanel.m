@@ -50,6 +50,11 @@ classdef PTKViewerPanel < PTKPanel
         PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
     end
     
+    properties (SetObservable, SetAccess = private)
+        WindowLimits           % The limits of the image window (in HU for CT images)  
+        LevelLimits            % The limits of the image level (in HU for CT images)  
+    end
+    
     properties (SetAccess = private)
         Mode = ''       % Specifies the current editing mode
         SubMode = ''    % Specifies the current editing submode
@@ -274,26 +279,17 @@ classdef PTKViewerPanel < PTKPanel
         function SetWindowLimits(obj, window_min, window_max)
             % Sets the minimum and maximum values for the level slider
             
-            obj.WindowMin = window_min;
-            obj.WindowMax = window_max;
-
+            obj.WindowLimits = [window_min, window_max];
+            
             if obj.ShowControlPanel
                 obj.ControlPanel.UpdateWindowLimits;
             end
         end
         
-        function [level_min, level_max] = GetLevelLimits(obj)
-            % Returns the minimum and maximum values from the level slider
-            
-            level_min = obj.LevelMin;
-            level_max = obj.LevelMax;
-        end
-        
         function SetLevelLimits(obj, level_min, level_max)
             % Sets the minimum and maximum values for the level slider
             
-            obj.LevelMin = level_min;
-            obj.LevelMax = level_max;
+            obj.LevelLimits = [level_min, level_max];
 
             if obj.ShowControlPanel
                 obj.ControlPanel.UpdateLevelLimits;

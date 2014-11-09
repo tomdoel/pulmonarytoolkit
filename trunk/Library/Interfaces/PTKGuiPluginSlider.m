@@ -14,13 +14,16 @@ classdef PTKGuiPluginSlider < PTKGuiPlugin
         MaxValue
         SmallStep
         LargeStep
-        DefaultValue
+        DefaultValue        
+        EditBoxPosition
+        EditBoxWidth
     end
     
     methods (Static)
-        function [instance_handle, property_name] = GetHandleAndProperty(ptk_gui_app)
+        function [instance_handle, value_property_name, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
             instance_handle = @ptk_gui_app.ImagePanel;
-            property_name = 'OverlayOpacity';
+            value_property_name = [];
+            limits_property_name = [];
         end
     end        
 end

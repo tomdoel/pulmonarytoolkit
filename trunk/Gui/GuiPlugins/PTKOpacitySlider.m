@@ -5,7 +5,7 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
     %     be used by the gui of the Pulmonary Toolkit.
     %
     %     PTKOpacitySlider is a Gui Plugin for changing the opacity of the
-    %     segmentatin overlay
+    %     segmentation overlay
     %
     %
     %     Licence
@@ -34,6 +34,9 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
         SmallStep = 0.01
         LargeStep = 0.1
         DefaultValue = 50
+        
+        EditBoxPosition = 130
+        EditBoxWidth = 40
     end
     
     methods (Static)
@@ -48,9 +51,10 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
             is_selected = true;
         end
         
-        function [instance_handle, property_name] = GetHandleAndProperty(ptk_gui_app)
+        function [instance_handle, value_property_name, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
             instance_handle = ptk_gui_app.ImagePanel;
-            property_name = 'OverlayOpacity';
+            value_property_name = 'OverlayOpacity';
+            limits_property_name = [];
         end
         
     end
