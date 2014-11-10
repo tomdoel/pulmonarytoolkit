@@ -120,6 +120,15 @@ classdef PTKSoftwareInfo < handle
             minor_version = version_matrix(2);
         end
         
+        function toolbox_installed = IsImageProcessingToolboxInstalled
+            matlab_version = ver;
+            toolbox_installed = any(strcmp('Image Processing Toolbox', {matlab_version.Name}));
+        end
+
+        function toolbox_licensed = IsImageProcessingToolboxLicensed
+            toolbox_licensed = license('test', 'image_toolbox');
+        end
+        
         function is_cancel_id = IsErrorCancel(error_id)
             is_cancel_id = strcmp(error_id, PTKSoftwareInfo.CancelErrorId);
         end

@@ -44,5 +44,13 @@ function PTKCheckMatlabVersion
            warning('PTKCheckMatlabVersion:MatlabVersionBelowAdvised', ['Your Matlab version is lower than the recommended version for the Pulmonary Toolkit. Some features may not work as expected. Recommended Matlab version:' advised_version_string]);
        end
     end
+    
+    if ~PTKSoftwareInfo.IsImageProcessingToolboxInstalled
+        warning('PTKCheckMatlabVersion:NoImageProcessingToolbox', 'The Matlab Image Processing Toolbox is not installed. Some parts of the PTK will not work correctly.');
+    else
+        if ~PTKSoftwareInfo.IsImageProcessingToolboxLicensed
+            warning('PTKCheckMatlabVersion:ImageProcessingToolboxUnlicensed', 'The Matlab Image Processing Toolbox is not licensed. Some parts of the PTK will not work correctly.');
+        end
+    end    
 end
 
