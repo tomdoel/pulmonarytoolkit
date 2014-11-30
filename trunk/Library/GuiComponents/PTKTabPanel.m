@@ -109,6 +109,11 @@ classdef PTKTabPanel < PTKPanel
                 obj.Resize(obj.Position);
             end
         end
+        
+        function enabled = IsTabEnabled(obj, tag)
+            tab = obj.Tabs(tag);
+            enabled = tab.Enabled;
+        end
     end
     
     methods (Access = private)
