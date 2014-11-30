@@ -118,6 +118,14 @@ classdef PTKModeTabControl < PTKTabControl
                 obj.ChangeSelectedTab(first_enabled_tab);
             end
         end
+        
+        function enabled = IsTabEnabled(obj, panel_mode_name)
+            enabled = obj.TabPanel.IsTabEnabled(panel_mode_name);
+        end
+        
+        function mode = GetModeName(obj)
+            mode = obj.CurrentPanelTag;
+        end
     end
     
     methods (Access = private)
