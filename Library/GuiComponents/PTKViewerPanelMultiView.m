@@ -16,13 +16,20 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
         CinePanel2D
     end
 
+    events
+        MousePositionChanged
+    end
+    
     methods
-        function obj = PTKViewerPanelMultiView(viewer_panel, toolbar, reporting)
+        function obj = PTKViewerPanelMultiView(viewer_panel, reporting)
             obj = obj@PTKMultiPanel(viewer_panel, reporting);
             
-            obj.CinePanel2D = PTKCinePanel(viewer_panel, toolbar, obj.Reporting);
+            obj.CinePanel2D = PTKCinePanel(viewer_panel, obj.Reporting);
             
             obj.AddPanel(obj.CinePanel2D, 'View2D');
+            
+            % Change in mouse position
+            obj.AddEventListener(obj.CinePanel2D, 'MousePositionChanged', @obj.MousePositionChangedCallback);
         end
         
         function CreateGuiComponent(obj, position, reporting)
@@ -87,5 +94,8 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
             global_coords = obj.CinePanel2D.GetImageCoordinates;
         end
 
+        function MousePositionChangedCallback(obj, ~, image_coordinates, ~)
+            notify(obj, 'MousePositionChanged', image_coordinates);
+        end
     end    
 end
