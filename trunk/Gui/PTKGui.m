@@ -454,6 +454,10 @@ classdef PTKGui < PTKFigure
             mode = obj.GuiDataset.GetMode;
         end
         
+        function mode = GetModeName(obj)
+            mode = obj.ModeTabControl.GetModeName;
+        end
+        
         function RunGuiPluginCallback(obj, plugin_name)
             
             wait_dialog = obj.WaitDialogHandle;
@@ -486,7 +490,6 @@ classdef PTKGui < PTKFigure
             obj.GuiDataset.ClearDataset;
             obj.WaitDialogHandle.Hide;
         end
-        
     end
     
     methods (Access = protected)
@@ -869,6 +872,14 @@ classdef PTKGui < PTKFigure
             other_handles = setdiff(child_handles, toolbar_handle);
             reordered_handles = [other_handles; toolbar_handle];
             set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
+        end
+        
+        function SetTab(obj, tab_name)
+            obj.ModeTabControl.ChangeSelectedTab(tab_name);
+        end
+        
+        function enabled = IsTabEnabled(obj, panel_mode_name)
+            enabled = obj.ModeTabControl.IsTabEnabled(panel_mode_name);
         end
     end
     
