@@ -1,7 +1,7 @@
-classdef PTKLabelButtonGroup < PTKVirtualPanel
-    % PTKLabelButtonGroup. Part of the gui for the Pulmonary Toolkit.
+classdef PTKLabelButtonGroupWithTitle < PTKVirtualPanel
+    % PTKLabelButtonGroupWithTitle. Part of the gui for the Pulmonary Toolkit.
     %
-    %     PTKLabelButtonGroup is used to display a group of label buttons
+    %     PTKLabelButtonGroupWithTitle is used to display a group of label buttons
     %
     %
     %
@@ -18,6 +18,8 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
     end
 
     properties
+        TitleTextHeight = 15
+        VerticalSpacing = 3
         ButtonHorizontalSpacing = 0
         LeftMargin = 0
         RightMargin = 0
@@ -25,8 +27,13 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
     end
     
     methods
-        function obj = PTKLabelButtonGroup(parent, title, tooltip, tag, reporting)
+        function obj = PTKLabelButtonGroupWithTitle(parent, title, tooltip, tag, reporting)
             obj = obj@PTKVirtualPanel(parent, reporting);
+            obj.Title = PTKText(parent, title, tooltip, tag);
+            obj.Title.HorizontalAlignment = 'center';
+            obj.Title.FontSize = obj.LabelFontSize;
+            obj.Title.Bold = true;
+            obj.AddChild(obj.Title, reporting);
         end
         
         function new_control = AddControl(obj, new_control, reporting)
@@ -57,18 +64,27 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
             Resize@PTKVirtualPanel(obj, new_position);
             
             control_x = new_position(1) + obj.LeftMargin;
+            total_width = obj.GetWidth;
 
             control_height = 0;
             
             for control = obj.Controls
                 if control{1}.Enabled
-                    y_start = new_position(2) + max(0, round((new_position(4) - control{1}.GetRequestedHeight)/2));
+                    y_start = new_position(2) + max(0, round((new_position(4) - obj.VerticalSpacing - obj.TitleTextHeight - control{1}.GetRequestedHeight)/2));
                     button_width = control{1}.GetWidth;
                     control{1}.Resize([control_x, y_start, button_width, control{1}.GetRequestedHeight]);
                     control_x = control_x + button_width + obj.ButtonHorizontalSpacing;
                     control_height = max(control_height, control{1}.GetRequestedHeight);
                 end
             end
+            
+            vertical_gap = max(0, new_position(4) - obj.VerticalSpacing - obj.TitleTextHeight - control_height);
+            vertical_gap = round(vertical_gap/2);
+            control_y = new_position(2) + vertical_gap;
+            text_y = control_y + control_height + obj.VerticalSpacing;
+            text_width = total_width;
+            
+            obj.Title.Resize([new_position(1), text_y, text_width, obj.TitleTextHeight]);
         end
         
         function Update(obj, gui_app)
@@ -97,6 +113,7 @@ classdef PTKLabelButtonGroup < PTKVirtualPanel
                     height = max(height, control{1}.GetRequestedHeight);
                 end
             end
+            height = height + obj.TitleTextHeight + obj.VerticalSpacing;
         end
     end
     
