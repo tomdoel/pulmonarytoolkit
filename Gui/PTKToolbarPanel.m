@@ -24,8 +24,8 @@ classdef PTKToolbarPanel < PTKPanel
     end
     
     properties (Constant)
-        ToolbarHeight = 100
-        RowHeight = 100
+        ToolbarHeight = 85
+        RowHeight = 85
         LeftMargin = 10
         RightMargin = 20
         HorizontalSpacing = 10
@@ -71,7 +71,7 @@ classdef PTKToolbarPanel < PTKPanel
                 end
                 
                 y_offset = round((row_height - group_panel_height)/2);
-                y_position = max(1, y_column_base - y_offset);
+                y_position = max(1, y_column_base + y_offset);
                 if tool_group_panel.Enabled
                     tool_group_panel.Resize([x_position, y_position, group_panel_width, group_panel_height]);
                     x_position = x_position + obj.HorizontalSpacing + group_panel_width;
@@ -137,7 +137,7 @@ classdef PTKToolbarPanel < PTKPanel
             if isprop(tool, 'Icon')
                 icon = imread(fullfile(PTKSoftwareInfo.IconFolder, tool.Icon));
             else
-                icon = [];
+                icon = imread(fullfile(PTKSoftwareInfo.IconFolder, PTKSoftwareInfo.DefaultPluginIcon));
             end
             tool_group = obj.ControlGroups(category_key);
             if isa(tool, 'PTKGuiPluginSlider')
