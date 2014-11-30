@@ -32,6 +32,7 @@ classdef PTKGui < PTKFigure
         PatientNamePanel
         SidePanel
         ToolbarPanel
+        StatusPanel
 
         OrganisedPlugins
         ModeTabControl
@@ -84,8 +85,14 @@ classdef PTKGui < PTKFigure
             % Create the object which manages the current dataset
             obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
+            % Create the side panel showing available datasets
             obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder, obj, obj.Reporting);
             obj.AddChild(obj.SidePanel, obj.Reporting);
+            
+            % Create the status panel showing image coordinates and
+            % values of the voxel under the cursor
+            obj.StatusPanel = PTKStatusPanel(obj, obj.ImagePanel, obj.Reporting);
+            obj.AddChild(obj.StatusPanel);
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
@@ -698,15 +705,17 @@ classdef PTKGui < PTKFigure
                 toolbar_height = 0;
             end
             
+            status_panel_height = obj.StatusPanel.GetRequestedHeight;
+            
             patient_name_panel_height = obj.PatientNamePanel.GetRequestedHeight;
             
             viewer_panel_height = max(1, parent_height_pixels - toolbar_height - patient_name_panel_height);
             
-            side_panel_height = max(1, parent_height_pixels - toolbar_height);
+            side_panel_height = max(1, parent_height_pixels - toolbar_height - status_panel_height);
             side_panel_width = obj.SidePanelWidth;
             
-            obj.SidePanel.Resize([1, 1 + toolbar_height, side_panel_width, side_panel_height]);
-            
+            obj.SidePanel.Resize([1, 1 + toolbar_height + status_panel_height, side_panel_width, side_panel_height]);
+
             if obj.ImagePanel.ShowControlPanel
                 image_height_pixels = viewer_panel_height - obj.ImagePanel.ControlPanelHeight;
             else
@@ -720,7 +729,7 @@ classdef PTKGui < PTKFigure
             
             mode_panel_width = max(1, parent_width_pixels - viewer_panel_width - side_panel_width);
             
-            plugins_panel_height = max(1, parent_height_pixels - toolbar_height);
+            plugins_panel_height = max(1, parent_height_pixels - toolbar_height - status_panel_height);
             
             image_panel_x_position = 1 + side_panel_width;
             image_panel_y_position = 1 + toolbar_height;
@@ -736,7 +745,8 @@ classdef PTKGui < PTKFigure
             
             right_side_position = image_panel_x_position + viewer_panel_width;
             
-            obj.ModeTabControl.Resize([right_side_position, 1 + toolbar_height, mode_panel_width, plugins_panel_height]);
+            obj.ModeTabControl.Resize([right_side_position, 1 + toolbar_height + status_panel_height, mode_panel_width, plugins_panel_height]);
+            obj.StatusPanel.Resize([right_side_position, 1 + toolbar_height, mode_panel_width, status_panel_height]);
             
             if ~isempty(obj.WaitDialogHandle)
                 obj.WaitDialogHandle.Resize();
