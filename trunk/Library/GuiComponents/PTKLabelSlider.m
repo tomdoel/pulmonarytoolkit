@@ -21,7 +21,7 @@ classdef PTKLabelSlider < PTKVirtualPanel
     properties
         SliderWidth = 150
         SliderHeight = 50
-        TextHeight = 25
+        TextHeight = 15
         VerticalSpacing = 2
         SliderHorizontalSpacing = 10
         LabelFontSize = 9
