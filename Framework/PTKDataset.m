@@ -78,7 +78,7 @@ classdef PTKDataset < handle
             % Associates another dataset to this (e.g. multiple datasets for the
             % same patient)
             linked_dataset_chooser = dataset_to_link.LinkedDatasetChooser;
-            obj.LinkedDatasetChooser.AddLinkedDataset(linked_name, linked_dataset_chooser);
+            obj.LinkedDatasetChooser.AddLinkedDataset(linked_name, linked_dataset_chooser, obj.Reporting);
         end
 
         function is_linked_dataset = IsLinkedDataset(obj, linked_name_or_uid)
