@@ -69,10 +69,12 @@ classdef PTKStatusPanel < PTKPanel
                         value_text = num2str(voxel_value, 3);
                     end
                     
+                    value_combined_text = [' I:' value_text];
+                    
                     rescaled_value = mouse_cursor_status.RescaledValue;
                     rescale_units = mouse_cursor_status.RescaleUnits;
                     if ~isempty(rescale_units) && ~isempty(rescaled_value)
-                        rescale_text = [rescale_units ':' int2str(rescaled_value)];
+                        rescale_text = [' ' rescale_units ':' int2str(rescaled_value)];
                     end
                     
                     if isempty(mouse_cursor_status.OverlayValue)
@@ -88,7 +90,7 @@ classdef PTKStatusPanel < PTKPanel
                     end
                 else
                     overlay_text = '';
-                    value_text = '-';
+                    value_combined_text = '';
                     switch orientation
                         case PTKImageOrientation.Coronal
                             j_text = '--';
@@ -103,7 +105,7 @@ classdef PTKStatusPanel < PTKPanel
                     
                 end
                 
-                status_text = ['X:' j_text ' Y:' i_text ' Z:' k_text ' I:' value_text ' ' rescale_text overlay_text];
+                status_text = ['X:' j_text ' Y:' i_text ' Z:' k_text value_combined_text rescale_text overlay_text];
             end
             
             obj.SetStatus(status_text);
