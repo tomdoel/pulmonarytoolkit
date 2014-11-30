@@ -39,7 +39,7 @@ classdef PTKLinkedDatasetChooser < PTKBaseClass
             obj.Reporting = reporting;
         end
 
-        function AddLinkedDataset(obj, linked_name, linked_dataset_chooser)
+        function AddLinkedDataset(obj, linked_name, linked_dataset_chooser, reporting)
             % Links a different dataset to this one, using the specified name.
             % The name exists only within the scope of this dataset, and is used
             % to identify the linked dataset from which results should be
@@ -49,7 +49,7 @@ classdef PTKLinkedDatasetChooser < PTKBaseClass
             obj.LinkedDatasetChooserList(linked_uid) = linked_dataset_chooser;
             obj.LinkedDatasetChooserList(linked_name) = linked_dataset_chooser;
             
-            obj.LinkedRecorderSingleton.AddLink(obj.PrimaryDatasetUid, linked_uid, linked_name, obj.Reporting);
+            obj.LinkedRecorderSingleton.AddLink(obj.PrimaryDatasetUid, linked_uid, linked_name, reporting);
         end
         
         function dataset_results = GetDataset(obj, varargin)
