@@ -30,6 +30,7 @@ classdef PTKViewerPanel < PTKPanel
     events
         MarkerPanelSelected      % An event to indicate if the marker control has been selected
         OverlayImageChangedEvent % An event to indicate if the overlay image has changed
+        MouseCursorStatusChanged % An event to indicate if the MouseCursorStatus property has changed
     end
     
     properties (SetObservable)
@@ -60,6 +61,7 @@ classdef PTKViewerPanel < PTKPanel
         SubMode = ''    % Specifies the current editing submode
         EditFixedOuterBoundary   % Specifies whether the current edit can modify the segmentation outer boundary
         ControlPanelHeight = 33
+        MouseCursorStatus      % A class of type PTKMouseCursorStatus showing data representing the voxel under the cursor
     end
     
     properties (Access = private)
@@ -91,6 +93,8 @@ classdef PTKViewerPanel < PTKPanel
                 obj.ShowControlPanel = show_control_panel;
             end
             
+            obj.MouseCursorStatus = PTKMouseCursorStatus;
+            
             % These image objects must be created here, not in the properties section, to
             % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
             obj.BackgroundImage = PTKImage;
@@ -108,7 +112,7 @@ classdef PTKViewerPanel < PTKPanel
             end
 
             % Create the renderer object, which handles the image processing in the viewer
-            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.ControlPanel, obj.Reporting);
+            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.Reporting);
             obj.ToolCallback.SetRenderer(obj.ViewerPanelMultiView);
             obj.AddChild(obj.ViewerPanelMultiView, obj.Reporting);
         end
@@ -232,10 +236,6 @@ classdef PTKViewerPanel < PTKPanel
             end
         end
         
-        function renderer = GetRenderer(obj)
-            renderer = obj.ViewerPanelMultiView;
-        end
-       
         function input_has_been_processed = ShortcutKeys(obj, key)
             % Process shortcut keys for the viewer panel.
             
@@ -338,9 +338,8 @@ classdef PTKViewerPanel < PTKPanel
             % Called after the compent and all its children have been created
             
             obj.ViewerPanelCallback = PTKViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.ControlPanel, obj.Reporting);
-            obj.UpdateStatus;
         end            
-        
+
         function input_has_been_processed = Keypressed(obj, click_point, key)
             % Processes keys pressed while mouse is over the viewer window
             
@@ -358,13 +357,6 @@ classdef PTKViewerPanel < PTKPanel
     
     
     methods (Access = private)
-        
-        function UpdateStatus(obj)
-            global_coords = obj.ViewerPanelMultiView.GetImageCoordinates;
-            if obj.ShowControlPanel
-                obj.ControlPanel.UpdateStatus(global_coords);
-            end
-        end
         
         function ResizeControlPanel(obj)
             control_panel_position = obj.Position;

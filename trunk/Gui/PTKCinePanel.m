@@ -17,7 +17,6 @@ classdef PTKCinePanel < PTKVirtualPanel
     
     properties (Access = private)
         Axes
-        ControlPanel
         Slider
         ViewerPanel
         
@@ -29,11 +28,14 @@ classdef PTKCinePanel < PTKVirtualPanel
         CurrentCursor = ''
     end
     
+    events
+        MousePositionChanged
+    end
+
     methods
-        function obj = PTKCinePanel(viewer_panel, control_panel, reporting)
+        function obj = PTKCinePanel(viewer_panel, reporting)
             obj = obj@PTKVirtualPanel(viewer_panel, reporting);
             obj.ViewerPanel = viewer_panel;
-            obj.ControlPanel = control_panel;
 
             obj.Slider = PTKSlider(obj);
             obj.AddChild(obj.Slider, obj.Reporting);
@@ -213,14 +215,6 @@ classdef PTKCinePanel < PTKVirtualPanel
             end
             global_coords = obj.ViewerPanel.BackgroundImage.LocalToGlobalCoordinates([i, j, k]);
         end
-       
-        function UpdateStatus(obj)
-            global_coords = obj.GetImageCoordinates;
-            if ~isempty(obj.ControlPanel)
-                obj.ControlPanel.UpdateStatus(global_coords);
-            end
-        end
-        
     end
     
     methods (Access = protected)
@@ -285,7 +279,7 @@ classdef PTKCinePanel < PTKVirtualPanel
             tool.MouseHasMoved(obj, screen_coords, last_coords);
             
             obj.UpdateCursor(src, false, selection_type);
-            obj.UpdateStatus;
+            obj.UpdateStatus(true);
             input_has_been_processed = true;
         end
         
@@ -299,10 +293,21 @@ classdef PTKCinePanel < PTKVirtualPanel
             tool.MouseDragged(obj.ViewerPanel, screen_coords, last_coords);
             
             obj.UpdateCursor(src, true, selection_type);
-            obj.UpdateStatus;
+            obj.UpdateStatus(true);
             input_has_been_processed = true;
         end
  
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+            % This method is called when the mouse exits a control which previously
+            % processed a MouseHasMoved event
+            
+            obj.UpdateStatus(false);
+            input_has_been_processed = false;
+        end
+        
+        function UpdateStatus(obj, in_image)
+            image_coordinates = obj.GetImageCoordinates;
+            notify(obj, 'MousePositionChanged', PTKEventData(PTKCoordsInImage(image_coordinates, in_image)));
+        end
     end
-    
 end

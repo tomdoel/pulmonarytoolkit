@@ -16,7 +16,7 @@ classdef PTKViewerPanelCallback < PTKBaseClass
         Tools
         Toolbar
         ViewerPanel
-        ViewerPanelRenderer
+        ViewerPanelMultiView
         Reporting
         
         % Handles to listeners for changes within image objects
@@ -32,16 +32,19 @@ classdef PTKViewerPanelCallback < PTKBaseClass
     
     methods
         
-        function obj = PTKViewerPanelCallback(viewing_panel, viewing_panel_renderer, tools, toolbar, reporting)
+        function obj = PTKViewerPanelCallback(viewing_panel, viewing_panel_multi_view, tools, toolbar, reporting)
             obj.Tools = tools;
             obj.Toolbar = toolbar;
             obj.ViewerPanel = viewing_panel;
-            obj.ViewerPanelRenderer = viewing_panel_renderer;
+            obj.ViewerPanelMultiView = viewing_panel_multi_view;
             obj.Reporting = reporting;
             
             obj.NewBackgroundImage;
             obj.NewOverlayImage;
             obj.NewQuiverImage;
+            
+            % Change in mouse position
+            obj.AddEventListener(obj.ViewerPanelMultiView, 'MousePositionChanged', @obj.MousePositionChangedCallback);
             
             % Change in orientation requires a redraw of axes
             obj.AddPostSetListener(obj.ViewerPanel, 'Orientation', @obj.OrientationChangedCallback);
@@ -50,7 +53,7 @@ classdef PTKViewerPanelCallback < PTKBaseClass
             obj.AddPostSetListener(obj.ViewerPanel, 'SliceNumber', @obj.SliceNumberChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.SettingsChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'OverlayOpacity', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'OverlayOpacity', @obj.OverlayTransparencyChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'ShowImage', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'ShowOverlay', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'BlackIsTransparent', @obj.SettingsChangedCallback);
@@ -60,6 +63,9 @@ classdef PTKViewerPanelCallback < PTKBaseClass
             obj.BackgroundImagePointerChangedListener = addlistener(obj.ViewerPanel, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
             obj.OverlayImagePointerChangedListener = addlistener(obj.ViewerPanel, 'OverlayImage', 'PostSet', @obj.OverlayImagePointerChangedCallback);
             obj.QuiverImagePointerChangedListener = addlistener(obj.ViewerPanel, 'QuiverImage', 'PostSet', @obj.QuiverImagePointerChangedCallback);
+            
+            % Status update should be done post-creation
+            obj.UpdateStatus;
         end
         
         function delete(obj)
@@ -154,10 +160,10 @@ classdef PTKViewerPanelCallback < PTKBaseClass
         function OrientationChangedCallback(obj, ~, ~)
             % This methods is called when the orientation has changed
             
-            obj.ViewerPanelRenderer.UpdateAxes;
+            obj.ViewerPanelMultiView.UpdateAxes;
             obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
-            obj.ViewerPanelRenderer.DrawImages(true, true, true);
+            obj.ViewerPanelMultiView.DrawImages(true, true, true);
             obj.UpdateStatus;
             obj.Tools.NewOrientation;
         end
@@ -167,19 +173,29 @@ classdef PTKViewerPanelCallback < PTKBaseClass
             
             obj.UpdateGui;
             obj.Tools.NewSlice;
-            obj.ViewerPanelRenderer.DrawImages(true, true, true);
+            obj.ViewerPanelMultiView.DrawImages(true, true, true);
             obj.UpdateStatus;
         end
         
+        function OverlayTransparencyChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the overlay opacity value has
+            % changed
+            
+            if ~obj.ViewerPanel.ShowOverlay
+                obj.ViewerPanel.ShowOverlay = true;
+            end
+            obj.SettingsChangedCallback([], [], []);
+        end
+        
         function SettingsChangedCallback(obj, ~, ~, ~)
-            % This methods is called when the settings have changed
+            % This method is called when the settings have changed
             
             % If the window or level values have been externally set outside the
             % slider range, then we modify the slider range to accommodate this
             obj.ViewerPanel.ModifyWindowLevelLimits;
             
             obj.UpdateGui;
-            obj.ViewerPanelRenderer.DrawImages(true, true, true);
+            obj.ViewerPanelMultiView.DrawImages(true, true, true);
             obj.UpdateStatus;
         end
         
@@ -204,13 +220,13 @@ classdef PTKViewerPanelCallback < PTKBaseClass
         function ImageChanged(obj)
             % This function is called when the background image is modified
             
-            obj.ViewerPanelRenderer.ClearAxesCache;
+            obj.ViewerPanelMultiView.ClearAxesCache;
             obj.AutoChangeOrientation;
-            obj.ViewerPanelRenderer.UpdateAxes;
+            obj.ViewerPanelMultiView.UpdateAxes;
             obj.UpdateGuiForNewImage;
             obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
-            obj.ViewerPanelRenderer.DrawImages(true, false, false);
+            obj.ViewerPanelMultiView.DrawImages(true, false, false);
             obj.UpdateStatus;
             
             obj.Tools.ImageChanged;
@@ -219,8 +235,8 @@ classdef PTKViewerPanelCallback < PTKBaseClass
         function OverlayImageChanged(obj)
             % This function is called when the overlay image is modified
             
-            obj.ViewerPanelRenderer.UpdateAxes;
-            obj.ViewerPanelRenderer.DrawImages(false, true, false);
+            obj.ViewerPanelMultiView.UpdateAxes;
+            obj.ViewerPanelMultiView.DrawImages(false, true, false);
             obj.Tools.OverlayImageChanged;
             
             notify(obj.ViewerPanel, 'OverlayImageChangedEvent');
@@ -248,7 +264,7 @@ classdef PTKViewerPanelCallback < PTKBaseClass
                 if obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation) < 1
                     obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation) = 1;
                 end
-                obj.ViewerPanelRenderer.SetSliceNumber(obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation));
+                obj.ViewerPanelMultiView.SetSliceNumber(obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation));
             end
         end
         
@@ -297,12 +313,12 @@ classdef PTKViewerPanelCallback < PTKBaseClass
                     obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation) = 1;
                 end
 
-                obj.ViewerPanelRenderer.SetSliceNumber(obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation));
-                obj.ViewerPanelRenderer.SetSliderLimits(slider_min, slider_max);
-                obj.ViewerPanelRenderer.SetSliderSteps([1/(slider_max - slider_min), 10/(slider_max-slider_min)]);
-                obj.ViewerPanelRenderer.EnableSlider(obj.ViewerPanel.BackgroundImage.ImageSize(obj.ViewerPanel.Orientation) > 1);
+                obj.ViewerPanelMultiView.SetSliceNumber(obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation));
+                obj.ViewerPanelMultiView.SetSliderLimits(slider_min, slider_max);
+                obj.ViewerPanelMultiView.SetSliderSteps([1/(slider_max - slider_min), 10/(slider_max-slider_min)]);
+                obj.ViewerPanelMultiView.EnableSlider(obj.ViewerPanel.BackgroundImage.ImageSize(obj.ViewerPanel.Orientation) > 1);
             else
-                obj.ViewerPanelRenderer.EnableSlider(false);
+                obj.ViewerPanelMultiView.EnableSlider(false);
             end
         end
         
@@ -321,12 +337,63 @@ classdef PTKViewerPanelCallback < PTKBaseClass
                 obj.ViewerPanel.Level = mean_value*2;
             end
         end
+
+        function MousePositionChangedCallback(obj, src, image_coordinates, ~)
+            obj.UpdateStatusWithCoords(image_coordinates.Data.Coords, image_coordinates.Data.InImage);
+        end
         
         function UpdateStatus(obj)
-            global_coords = obj.ViewerPanelRenderer.GetImageCoordinates;
-            if ~isempty(obj.Toolbar)
-                obj.Toolbar.UpdateStatus(global_coords);
+            global_coords = obj.ViewerPanelMultiView.GetImageCoordinates;
+            obj.UpdateStatusWithCoords(global_coords, true);
+        end
+        
+        function UpdateStatusWithCoords(obj, global_coords, in_image)
+            
+            main_image = obj.ViewerPanel.BackgroundImage;
+            overlay_image = obj.ViewerPanel.OverlayImage;
+            
+            % Whether the cursor is within the volume of the image (whether
+            % or not this part of the image is visible)
+            image_exists = ~(isempty(main_image) || ~main_image.ImageExists);
+            
+            
+            if image_exists
+                if main_image.IsPointInImage(global_coords) && in_image
+                    voxel_value = main_image.GetVoxel(global_coords);
+                    [rescale_value, rescale_units] = main_image.GetRescaledValue(global_coords);
+                    
+                    if isempty(overlay_image) || ~overlay_image.ImageExists || ~overlay_image.IsPointInImage(global_coords);
+                        overlay_value = [];
+                    else
+                        overlay_value = overlay_image.GetVoxel(global_coords);
+                    end
+                    
+                else
+                    voxel_value = [];
+                    overlay_value = [];
+                    rescale_value = [];
+                    rescale_units = [];
+                end
+            else
+                voxel_value = [];
+                overlay_value = [];
+                rescale_value = [];
+                rescale_units = [];
             end
+            
+            cursor_status = obj.ViewerPanel.MouseCursorStatus;
+            
+            % Cursor status is a handle object so we can modify the instance
+            cursor_status.GlobalCoordX = global_coords(1);
+            cursor_status.GlobalCoordY = global_coords(2);
+            cursor_status.GlobalCoordZ = global_coords(3);
+            cursor_status.ImageExists = image_exists;
+            cursor_status.ImageValue = voxel_value;
+            cursor_status.OverlayValue = overlay_value;
+            cursor_status.RescaledValue = rescale_value;
+            obj.ViewerPanel.MouseCursorStatus.RescaleUnits = rescale_units;
+            
+            notify(obj.ViewerPanel, 'MouseCursorStatusChanged');
         end
         
     end
