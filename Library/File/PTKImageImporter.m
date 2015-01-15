@@ -70,13 +70,17 @@ function uids = ImportFilesInDirectory(database, directory, tags_to_get, reporti
     all_filenames = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(directory, '*'));
     for filename = all_filenames
         if ~strcmp(filename{1}, 'DICOMDIR')
-            single_image_metainfo = PTKGetSingleImageInfo(directory, filename{1}, tags_to_get, reporting);
-            if ~isempty(single_image_metainfo.ImageFileFormat)
-                database.AddImage(single_image_metainfo);
-                new_uid = single_image_metainfo.SeriesUid;
-                if ~ismember(new_uid, uids)
-                    uids{end + 1} = new_uid;
+            try
+                single_image_metainfo = PTKGetSingleImageInfo(directory, filename{1}, tags_to_get, reporting);
+                if ~isempty(single_image_metainfo.ImageFileFormat)
+                    database.AddImage(single_image_metainfo);
+                    new_uid = single_image_metainfo.SeriesUid;
+                    if ~ismember(new_uid, uids)
+                        uids{end + 1} = new_uid;
+                    end
                 end
+            catch ex
+                reporting.ShowWarning('PTKImageImporter:ImportFileFailed', ['Failed to import file ' filename{1} ' due to error: ' ex.message]);
             end
         end
     end

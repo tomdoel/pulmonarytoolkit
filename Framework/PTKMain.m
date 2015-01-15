@@ -191,10 +191,12 @@ classdef PTKMain < PTKBaseClass
     methods (Access = private)
         
         function ImportSeries(obj, uids)
-            for series_uid = uids
-                series_info = obj.FrameworkSingleton.GetSeriesInfo(series_uid{1});
-                image_info = series_info.GetImageInfo;
-                PTKMain.ImportDataFromInfo(image_info, obj.Reporting);
+            if ~isempty(uids)
+                for series_uid = uids
+                    series_info = obj.FrameworkSingleton.GetSeriesInfo(series_uid{1});
+                    image_info = series_info.GetImageInfo;
+                    PTKMain.ImportDataFromInfo(image_info, obj.Reporting);
+                end
             end
         end
     

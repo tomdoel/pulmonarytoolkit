@@ -47,11 +47,24 @@ function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to
         image_type = PTKImageFileFormat.Dicom;
         
         modality = SetFromHeader(header, 'Modality', []);
-        patient_id = SetFromHeader(header, 'PatientID', []);
         study_uid = SetFromHeader(header, 'StudyInstanceUID', []);
         series_uid = SetFromHeader(header, 'SeriesInstanceUID', []);
+        
+        if isempty(series_uid)
+            % If no series uid then we derive this from the image filename
+            [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(file_path, file_name, [], reporting);
+            series_uid = PTKDicomUtilities.GetIdentifierFromFilename(principal_filename{1});
+        end
+        
+        patient_id = SetFromHeader(header, 'PatientID', series_uid);        
+        
         image_uid = SetFromHeader(header, 'SOPInstanceUID', []);
         patient_name = SetFromHeader(header, 'PatientName', []);
+        
+        if isempty(patient_name)
+            patient_name = [];
+            patient_name.FamilyName = [];
+        end
         study_description = SetFromHeader(header, 'StudyDescription', []);
         series_description = SetFromHeader(header, 'SeriesDescription', []);
         date = SetFromHeader(header, 'SeriesDate', []);
