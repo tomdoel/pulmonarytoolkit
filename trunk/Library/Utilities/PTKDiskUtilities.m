@@ -274,6 +274,18 @@ classdef PTKDiskUtilities
             
             meta_header = [];
             
+            data_filename_index = find(ismember(meta_header_data{1}, 'ElementDataFile'));
+            if ~isempty(data_filename_index)
+                values_array = meta_header_data{2};
+                data_filename = values_array{data_filename_index};
+                if strcmp(data_filename, 'LOCAL')
+                    reporting.ShowWarning('PTKDiskUtilities:LocalDataNotSupported', 'PTK does not currently support image files with data embedded in the same file as the metaheader.');
+                    meta_header = [];
+                    return;
+                end
+            end
+            
+            
             for index = 1 : length(meta_header_data{1});
                 meta_header.(genvarname(meta_header_data{1}{index})) = meta_header_data{2}{index};
             end
@@ -293,7 +305,7 @@ classdef PTKDiskUtilities
                 image_type = PTKImageFileFormat.Metaheader;
                 [is_meta_header, raw_filename] = PTKDiskUtilities.IsFileMetaHeader(fullfile(image_path, image_filename), reporting);
                 if ~is_meta_header
-                    reporting.Error('PTKDiskUtilities:OpenMHDFileFailed', ['Unable to read metaheader file ' header_filename]);
+                    reporting.Error('PTKDiskUtilities:OpenMHDFileFailed', ['Unable to read metaheader file ' image_filename]);
                 end
                 principal_filename = {image_filename};
                 secondary_filenames = {raw_filename};
