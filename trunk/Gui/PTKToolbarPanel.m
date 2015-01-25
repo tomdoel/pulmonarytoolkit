@@ -135,9 +135,9 @@ classdef PTKToolbarPanel < PTKPanel
                 obj.AddChild(new_group, obj.Reporting);
             end
             if isprop(tool, 'Icon')
-                icon = imread(fullfile(PTKSoftwareInfo.IconFolder, tool.Icon));
+                icon = imread(fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.IconFolder, tool.Icon));
             else
-                icon = imread(fullfile(PTKSoftwareInfo.IconFolder, PTKSoftwareInfo.DefaultPluginIcon));
+                icon = imread(fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.IconFolder, PTKSoftwareInfo.DefaultPluginIcon));
             end
             tool_group = obj.ControlGroups(category_key);
             if isa(tool, 'PTKGuiPluginSlider')
