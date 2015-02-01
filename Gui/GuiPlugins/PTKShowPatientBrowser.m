@@ -21,13 +21,13 @@ classdef PTKShowPatientBrowser < PTKGuiPlugin
         ToolTip = 'Shows the Patient Browser'
         Category = 'Dataset'
         Visibility = 'Always'
-        Mode = 'File'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
-        Location = 0
+        Location = 1
         Icon = 'patient_browser.png'
 
     end

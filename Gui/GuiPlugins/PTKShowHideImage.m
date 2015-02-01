@@ -20,7 +20,7 @@ classdef PTKShowHideImage < PTKGuiPlugin
         ToolTip = 'Shows or hides the background image'
         Category = 'Show / hide'
         Visibility = 'Dataset'
-        Mode = 'Toolbar'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

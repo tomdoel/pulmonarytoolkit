@@ -20,7 +20,7 @@ classdef PTKShowHideOverlay < PTKGuiPlugin
         ToolTip = 'Shows or hides the overlay segmentation image'
         Category = 'Show / Hide'
         Visibility = 'Dataset'
-        Mode = 'Toolbar'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'

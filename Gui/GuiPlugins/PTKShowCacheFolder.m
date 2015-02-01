@@ -25,12 +25,13 @@ classdef PTKShowCacheFolder < PTKGuiPlugin
         ToolTip = 'Opens a folder containing the cache files for the current dataset'
         Category = 'File'
         Visibility = 'Developer'
-        Mode = 'File'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
+        Location = 17
     end
     
     methods (Static)
@@ -38,5 +39,9 @@ classdef PTKShowCacheFolder < PTKGuiPlugin
             dataset_cache_path = ptk_gui_app.GetDatasetCachePath;
             PTKDiskUtilities.OpenDirectoryWindow(dataset_cache_path);
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.DeveloperMode && ptk_gui_app.IsDatasetLoaded;
+        end        
     end
 end

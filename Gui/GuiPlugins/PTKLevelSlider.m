@@ -21,13 +21,13 @@ classdef PTKLevelSlider < PTKGuiPluginSlider
         ToolTip = 'Change the level'
         Category = 'Window / Level'
         Visibility = 'Dataset'
-        Mode = 'Toolbar'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 1
-        Location = 9
+        Location = 6
 
         MinValue = 0
         MaxValue = 100

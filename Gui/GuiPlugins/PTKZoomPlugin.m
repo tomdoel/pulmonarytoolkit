@@ -27,7 +27,7 @@ classdef PTKZoomPlugin < PTKGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'zoom.png'
-        Location = 14
+        Location = 15
     end
     
     methods (Static)

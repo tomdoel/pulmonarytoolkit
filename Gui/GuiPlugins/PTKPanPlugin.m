@@ -27,7 +27,7 @@ classdef PTKPanPlugin < PTKGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'pan.png'
-        Location = 12
+        Location = 14
     end
     
     methods (Static)

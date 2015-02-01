@@ -24,9 +24,9 @@ classdef PTKRemoveDataset < PTKGuiPlugin
         ToolTip = 'Remove this dataset from the Toolkit'
         Category = 'Dataset'
         Visibility = 'Dataset'
-        Mode = 'File'
+        Mode = 'Toolbar'
         Icon = 'bin.png'
-        Location = 2
+        Location = 3
 
         HidePluginInDisplay = false
         PTKVersion = '1'

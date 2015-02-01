@@ -23,15 +23,15 @@ classdef PTKView3D < PTKGuiPlugin
         ToolTip = 'Visualise the current overlay in 3D'
         Category = 'View'
         Visibility = 'Overlay'
-        Mode = 'View'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
         
-        Icon = 'seg_lobes.tif'
-        Location = 6
+        Icon = 'view3d.png'
+        Location = 7
     end
     
     methods (Static)

@@ -25,7 +25,7 @@ classdef PTKSaveImage < PTKGuiPlugin
         ToolTip = 'Save the current image view to files'
         Category = 'Export'
         Visibility = 'Dataset'
-        Mode = 'File'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -33,8 +33,7 @@ classdef PTKSaveImage < PTKGuiPlugin
         ButtonHeight = 1
         
         Icon = 'export_image.png'
-        Location = 5
-        
+        Location = 20        
     end
     
     methods (Static)

@@ -24,9 +24,9 @@ classdef PTKImportRecursive < PTKGuiPlugin
         ToolTip = 'Prompts the user to select a directory to import data from. All data in this directory and its subdirectories will be imported.'
         Category = 'Dataset'
         Visibility = 'Always'
-        Mode = 'File'
+        Mode = 'Toolbar'
         Icon = 'add.png'
-        Location = 1
+        Location = 2
 
         HidePluginInDisplay = false
         PTKVersion = '1'

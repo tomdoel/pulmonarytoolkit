@@ -27,7 +27,7 @@ classdef PTKSetWLTool < PTKGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'windowlevel.png'
-        Location = 13
+        Location = 12
     end
     
     methods (Static)

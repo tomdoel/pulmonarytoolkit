@@ -26,7 +26,7 @@ classdef PTKCapture2DImage < PTKGuiPlugin
         ToolTip = 'Save image and overlay view to files'
         Category = 'Export'
         Visibility = 'Dataset'
-        Mode = 'File'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -34,6 +34,7 @@ classdef PTKCapture2DImage < PTKGuiPlugin
         ButtonHeight = 1
 
         Icon = 'camera.png'
+        Location = 19
     end
     
     methods (Static)

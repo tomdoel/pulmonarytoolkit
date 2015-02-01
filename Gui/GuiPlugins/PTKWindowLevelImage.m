@@ -19,8 +19,8 @@ classdef PTKWindowLevelImage < PTKGuiPlugin
     %    
     
     properties
-        ButtonText = 'Image'
-        SelectedText = 'Image'
+        ButtonText = 'Image preset'
+        SelectedText = 'Image preset'
         ToolTip = 'Changes the window and level settings to values specified in the image'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'
@@ -30,7 +30,8 @@ classdef PTKWindowLevelImage < PTKGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Icon = 'wl_image.tif'
+        Icon = 'wl_image.png'
+        Location = 4
     end
     
     methods (Static)
