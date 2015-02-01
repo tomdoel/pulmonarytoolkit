@@ -37,20 +37,22 @@ classdef PTKDatasetCallback < handle
         LinkedDatasetChooser  % Sends the API calls to the correct dataset
         DatasetStack          % Handle to the current call stack for the primary dataset
         DefaultContext        % The context for any results requested
+        Reporting
     end
     
     methods
-        function obj = PTKDatasetCallback(linked_dataset_chooser, dataset_call_stack, default_context)
+        function obj = PTKDatasetCallback(linked_dataset_chooser, dataset_call_stack, default_context, reporting)
             obj.DatasetStack = dataset_call_stack;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DefaultContext = default_context;
+            obj.Reporting = reporting;
         end
         
         function is_linked_dataset = IsLinkedDataset(obj, linked_name_or_uid)
             % Returns true if another dataset has been linked to this one, using
             % the name or uid specified
             
-            is_linked_dataset = obj.LinkedDatasetChooser.IsLinkedDataset(linked_name_or_uid);
+            is_linked_dataset = obj.LinkedDatasetChooser.IsLinkedDataset(linked_name_or_uid, obj.Reporting);
         end        
 
         function [result, output_image] = GetResult(obj, plugin_name, context, varargin)
@@ -71,9 +73,9 @@ classdef PTKDatasetCallback < handle
             end
             
             if nargout > 1
-                [result, ~, output_image] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, []);
+                [result, ~, output_image] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, obj.Reporting, []);
             else
-                [result, ~] = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, []);
+                [result, ~] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, obj.Reporting, []);
             end
         end
 
@@ -81,21 +83,21 @@ classdef PTKDatasetCallback < handle
             % Returns a PTKImageInfo structure with image information, including the
             % UID, filenames and file path
             
-            image_info = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetImageInfo;
+            image_info = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetImageInfo(obj.Reporting);
         end
         
         function template_image = GetTemplateImage(obj, context, varargin)
             % Returns an empty template image for the specified context
             % See PTKImageTemplates.m for valid contexts
             
-            template_image = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetTemplateImage(context, obj.DatasetStack);
+            template_image = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetTemplateImage(context, obj.DatasetStack, obj.Reporting);
         end
         
         function template_image = GetTemplateMask(obj, context, varargin)
             % Returns a template image mask for the specified context
             % See PTKImageTemplates.m for valid contexts
             
-            template_image = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetTemplateMask(context, obj.DatasetStack);
+            template_image = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetTemplateMask(context, obj.DatasetStack, obj.Reporting);
         end
         
         function context_is_enabled = IsContextEnabled(obj, context, varargin)
@@ -103,32 +105,32 @@ classdef PTKDatasetCallback < handle
             % failure when running the plugin that generates the template image for
             % that context.
         
-            context_is_enabled = obj.LinkedDatasetChooser.GetDataset(varargin{:}).IsContextEnabled(context);
+            context_is_enabled = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).IsContextEnabled(context, obj.Reporting);
         end
         
         function is_gas_mri = IsGasMRI(obj, varargin)
             % Returns if this dataset is a gas MRI type
             
-            is_gas_mri = obj.LinkedDatasetChooser.GetDataset(varargin{:}).IsGasMRI(obj.DatasetStack);
+            is_gas_mri = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).IsGasMRI(obj.DatasetStack, obj.Reporting);
         end
         
         function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, varargin)
             % Gets the path of the folder where the output files for this dataset are
             % stored
             
-            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(varargin{:}).GetOutputPathAndCreateIfNecessary(obj.DatasetStack);
+            dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetOutputPathAndCreateIfNecessary(obj.DatasetStack, obj.Reporting);
         end
         
         function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, varargin)
-            obj.LinkedDatasetChooser.GetDataset(varargin{:}).SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, obj.DatasetStack);
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, obj.DatasetStack, obj.Reporting);
         end
 
         function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description, varargin)
-            obj.LinkedDatasetChooser.GetDataset(varargin{:}).SaveFigure(figure_handle, plugin_name, subfolder_name, file_name, description, obj.DatasetStack);
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveFigure(figure_handle, plugin_name, subfolder_name, file_name, description, obj.DatasetStack, obj.Reporting);
         end
 
         function SaveSurfaceMesh(obj, plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, varargin)
-            obj.LinkedDatasetChooser.GetDataset(varargin{:}).SaveSurfaceMesh(plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, obj.DatasetStack);
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveSurfaceMesh(plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, obj.DatasetStack, obj.Reporting);
         end
     end
 end

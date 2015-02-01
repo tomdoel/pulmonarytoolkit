@@ -38,7 +38,7 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
         end
         
         
-        function cache_info = GetCacheInfo(obj, plugin_name)
+        function cache_info = GetCacheInfo(obj, plugin_name, reporting)
             [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, reporting);
             if isempty(result) || isempty(cache_info)
                 reporting.ShowWarning('PTKPluginDependencyTracker:NoCacheInfo', ['No cached value was found for plugin ' plugin_name '.'], []);
@@ -69,12 +69,12 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
                 % plugins in the callstack
                 if ~isempty(result) && ~isempty(cache_info)
                     dependencies = cache_info.DependencyList;
-                    dataset_stack.AddDependenciesToAllPluginsInStack(dependencies);
+                    dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
                     
                     dependency = cache_info.InstanceIdentifier;
                     dependency_list_for_this_plugin = PTKDependencyList;
                     dependency_list_for_this_plugin.AddDependency(dependency, reporting);
-                    dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin);
+                    dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
                 end
                 
             end
@@ -92,9 +92,9 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
                 % being called (plugin_name) and the UID of the dataset the
                 % result is being requested from; however, the stack belongs to
                 % the primary dataset
-                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions);
+                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions, reporting);
                 
-                dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context);
+                dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
 
                 % This is the actual call which runs the plugin
                 if strcmp(plugin_info.PTKVersion, '1')
@@ -124,12 +124,12 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
                     obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, false, reporting);
                 end
                 
-                dataset_stack.AddDependenciesToAllPluginsInStack(dependencies);
+                dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
                 
                 dependency = new_cache_info.InstanceIdentifier;
                 dependency_list_for_this_plugin = PTKDependencyList;
                 dependency_list_for_this_plugin.AddDependency(dependency, reporting);
-                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin);
+                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
                 
                 cache_info = new_cache_info;
             else
@@ -147,7 +147,7 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
                 edited_dependency = edited_cache_info.InstanceIdentifier;
                 dependency_list_for_edit = PTKDependencyList;
                 dependency_list_for_edit.AddDependency(edited_dependency, reporting);
-                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_edit);
+                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_edit, reporting);
                 cache_info.MarkEdited;
             end
         end
@@ -215,7 +215,7 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
                 next_dependency = dependency_list(index);
                 
                 dataset_uid = next_dependency.DatasetUid;
-                [valid, edited_result_exists] = linked_dataset_chooser.GetDataset(dataset_uid).CheckDependencyValid(next_dependency);
+                [valid, edited_result_exists] = linked_dataset_chooser.GetDataset(dataset_uid).CheckDependencyValid(next_dependency, reporting);
                 if ~valid
                     valid = false;
                     return;

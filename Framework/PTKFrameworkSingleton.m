@@ -28,6 +28,8 @@ classdef (Sealed) PTKFrameworkSingleton < handle
         ImageDatabase      % Database of image files
         FrameworkCache     % Information about mex files which is cached on disk
         LinkedDatasetRecorder
+        DatasetMemoryCache % Stores PTKDatasetDiskCache objects in memory
+        LinkedDatasetChooserMemoryCache
     end
         
     methods (Static)
@@ -82,12 +84,22 @@ classdef (Sealed) PTKFrameworkSingleton < handle
         function linked_recorder = GetLinkedDatasetRecorder(obj)
             linked_recorder = obj.LinkedDatasetRecorder;
         end
+        
+        function dataset_memory_cache = GetDatasetMemoryCache(obj)
+            dataset_memory_cache = obj.DatasetMemoryCache;
+        end
+        
+        function linked_recorder_memory_cache = GetLinkedDatasetChooserMemoryCache(obj)
+            linked_recorder_memory_cache = obj.LinkedDatasetChooserMemoryCache;
+        end
     end
     
     methods (Access = private)
         function obj = PTKFrameworkSingleton(reporting)
             obj.FrameworkCache = PTKFrameworkCache.LoadCache(reporting);
             obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
+            obj.DatasetMemoryCache = PTKDatasetMemoryCache;
+            obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(obj.LinkedDatasetRecorder);
             obj.ImageDatabase = PTKImageDatabase.LoadDatabase(reporting);
             obj.ImageDatabase.Rebuild([], false, reporting)
             PTKCompileMexFiles(obj.FrameworkCache, false, reporting);

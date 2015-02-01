@@ -21,7 +21,6 @@ classdef PTKOutputFolder < PTKBaseClass
         
         DatasetDiskCache % Used for persisting the records between sessions
         ImageTemplates
-        Reporting % Callback for error reporting
         ImageUid
         
         ChangedFolders % List of output folders which have been modified since last call to OpenChangedFolders
@@ -32,61 +31,60 @@ classdef PTKOutputFolder < PTKBaseClass
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ImageTemplates = image_templates;
             obj.ImageUid = image_info.ImageUid;
-            obj.Reporting = reporting;
             
             obj.OutputRecords = PTKOutputInfo.empty;
             
             % Loads cached template data
-            obj.Load;
+            obj.Load(reporting);
         end
         
-        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, dataset_stack)
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, dataset_stack, reporting)
             date_text = date;
-            output_folder = obj.GetOutputPath(dataset_stack);
+            output_folder = obj.GetOutputPath(dataset_stack, reporting);
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
             new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
             PTKDiskUtilities.CreateDirectoryIfNecessary(file_path);
-            PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, obj.Reporting);
-            obj.AddRecord(new_record);
+            PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting);
+            obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
         end
 
-        function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description, dataset_stack)
+        function SaveFigure(obj, figure_handle, plugin_name, subfolder_name, file_name, description, dataset_stack, reporting)
             date_text = date;
-            output_folder = obj.GetOutputPath(dataset_stack);
+            output_folder = obj.GetOutputPath(dataset_stack, reporting);
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
             new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
             PTKDiskUtilities.CreateDirectoryIfNecessary(file_path);
             PTKDiskUtilities.SaveFigure(figure_handle, fullfile(file_path, file_name));
-            obj.AddRecord(new_record);
+            obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
         end
         
-        function SaveSurfaceMesh(obj, plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, dataset_stack)
+        function SaveSurfaceMesh(obj, plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, dataset_stack, reporting)
             date_text = date;
-            output_folder = obj.GetOutputPath(dataset_stack);
+            output_folder = obj.GetOutputPath(dataset_stack, reporting);
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
             new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
             PTKDiskUtilities.CreateDirectoryIfNecessary(file_path);
-            PTKCreateSurfaceMesh(file_path, file_name, segmentation, smoothing_size, small_structures, coordinate_system, template_image, obj.Reporting);
-            obj.AddRecord(new_record);
+            PTKCreateSurfaceMesh(file_path, file_name, segmentation, smoothing_size, small_structures, coordinate_system, template_image, reporting);
+            obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
         end
 
-        function OpenChangedFolders(obj)
+        function OpenChangedFolders(obj, reporting)
             obj.ChangedFolders = unique(obj.ChangedFolders);
             for folder = obj.ChangedFolders'
-                obj.Reporting.OpenPath(folder{1}, 'New analysis result files have been added to the following output path');
+                reporting.OpenPath(folder{1}, 'New analysis result files have been added to the following output path');
             end
             obj.ChangedFolders = [];
         end
         
-        function cache_path = GetOutputPath(obj, dataset_stack)
+        function cache_path = GetOutputPath(obj, dataset_stack, reporting)
             if isempty(obj.OutputFolder)
-                obj.CreateNewOutputFolder(dataset_stack)
+                obj.CreateNewOutputFolder(dataset_stack, reporting)
             end
             cache_path = obj.OutputFolder;
         end        
@@ -95,16 +93,16 @@ classdef PTKOutputFolder < PTKBaseClass
     
     methods (Access = private)
 
-        function AddRecord(obj, new_record)
+        function AddRecord(obj, new_record, reporting)
             obj.OutputRecords(end + 1) = new_record;
-            obj.Save;
+            obj.Save(reporting);
         end
         
-        function Load(obj)
+        function Load(obj, reporting)
             % Retrieves previous records from the disk cache
         
-            if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.OutputFolderCacheName, [], obj.Reporting)
-                info = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.OutputFolderCacheName, obj.Reporting);
+            if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.OutputFolderCacheName, [], reporting)
+                info = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.OutputFolderCacheName, reporting);
                 obj.OutputRecords = info.OutputRecords;
                 if isfield(info, 'OutputFolder')
                     obj.OutputFolder = info.OutputFolder;
@@ -116,18 +114,18 @@ classdef PTKOutputFolder < PTKBaseClass
             end
         end
         
-        function Save(obj)
+        function Save(obj, reporting)
             % Stores current records in the disk cache
             
             info = [];
             info.OutputRecords = obj.OutputRecords;
-            obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.OutputFolderCacheName, info, obj.Reporting);
+            obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.OutputFolderCacheName, info, reporting);
         end
         
-        function CreateNewOutputFolder(obj, dataset_stack)
+        function CreateNewOutputFolder(obj, dataset_stack, reporting)
             root_output_path = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
             
-            template = obj.ImageTemplates.GetTemplateImage(PTKContext.LungROI, dataset_stack);
+            template = obj.ImageTemplates.GetTemplateImage(PTKContext.LungROI, dataset_stack, reporting);
             metadata = template.MetaHeader;
             
             if isfield(metadata, 'PatientName')
