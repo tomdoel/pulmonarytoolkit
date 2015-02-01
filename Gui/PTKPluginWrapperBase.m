@@ -63,10 +63,10 @@ classdef PTKPluginWrapperBase < handle
                             end
                         end
                     else
-                        reporting.ShowWarning('PTKPluginWrapper:FileNotPlugin', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class. I am ignoring this file. If this is not a plugin class, you should remove thie file from the plugin directory; otherwise check the file for errors.'], []);
+                        reporting.ShowWarning('PTKPluginWrapper:FileNotPlugin', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class. I am ignoring this file. If this is not a plugin class, you should remove this file from the plugin directory; otherwise check the file for errors.'], []);
                     end
                 else
-                    reporting.ShowWarning('PTKPluginWrapper:FileNotPlugin', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class. I am ignoring this file. If this is not a plugin class, you should remove thie file from the plugin directory; otherwise check the file for errors.'], []);
+                    reporting.ShowWarning('PTKPluginWrapper:FileNotPlugin', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class. I am ignoring this file. If this is not a plugin class, you should remove this file from the plugin directory; otherwise check the file for errors.'], []);
                 end
             catch ex
                 reporting.ShowWarning('PTKPluginWrapper:ParsePluginError', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class, or contains errors. I am ignoring this file. If this is not a plugin class, you should remove thie file from the plugin directory; otherwise check the file for errors.'], ex.message);
