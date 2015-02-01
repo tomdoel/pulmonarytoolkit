@@ -18,7 +18,7 @@ classdef PTKSoftwareInfo < handle
     properties (Constant)
         
         % Version numbers
-        Version = '0.41'
+        Version = '0.5'
         DicomVersion = '0.1'
         DiskCacheSchema = '0.1'
         XMLVersion = '0.1'
@@ -94,8 +94,8 @@ classdef PTKSoftwareInfo < handle
         DemoMode = false % If true, user plugins will be ignored
         WriteVerboseEntriesToLogFile = false
         RecycleWhenDeletingCacheFiles = false
-        ToolbarEnabled = false
-        ViewerPanelToolbarEnabled = true
+        ToolbarEnabled = true
+        ViewerPanelToolbarEnabled = false
         
         MonitorClassInstances = true % Used for testing to ensure objects are destroyed
         
