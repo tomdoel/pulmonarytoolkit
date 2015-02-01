@@ -32,9 +32,9 @@ classdef MockDatasetResults < handle
             obj.MockResults([name '.' char(context)]) = result;
         end
 
-        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context)
+        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context, reporting)
             
-            obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name, context);
+            obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name, context, reporting);
 
             key_name = [plugin_name '.' char(context)];
             
@@ -55,26 +55,26 @@ classdef MockDatasetResults < handle
         
         % Returns an empty template image for the specified context
         % See PTKImageTemplates.m for valid contexts
-        function template_image = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack)
+        function template_image = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack, reporting)
         end
         
         % Check to see if a context has been disabled for this dataset, due to a 
         % failure when running the plugin that generates the template image for 
         % that context.
-        function context_is_enabled = IsContextEnabled(obj, context)
+        function context_is_enabled = IsContextEnabled(obj, context, reporting)
         end
         
         % ToDo: This check is based on series description and should be more
         % general
-        function is_gas_mri = IsGasMRI(obj, linked_dataset_chooser, dataset_stack)
+        function is_gas_mri = IsGasMRI(obj, linked_dataset_chooser, dataset_stack, reporting)
         end
 
         % Gets the path of the folder where the output files for this dataset are
         % stored
-        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj)
+        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, reporting)
         end        
         
-        function valid = CheckDependencyValid(obj, next_dependency)
+        function valid = CheckDependencyValid(obj, next_dependency, reporting)
         end
     end    
 end
