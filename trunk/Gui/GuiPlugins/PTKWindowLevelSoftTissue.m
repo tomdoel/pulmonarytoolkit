@@ -18,8 +18,8 @@ classdef PTKWindowLevelSoftTissue < PTKGuiPlugin
     %    
     
     properties
-        ButtonText = 'Soft Tissue'
-        SelectedText = 'Soft Tissue'
+        ButtonText = 'Soft tissue preset'
+        SelectedText = 'Soft tissue preset'
         ToolTip = 'Changes the window and level settings to standard soft tissue values (Window 350HU Level 40HU)'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'
@@ -29,7 +29,8 @@ classdef PTKWindowLevelSoftTissue < PTKGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Icon = 'wl_softtissue.tif'
+        Icon = 'wl_softtissue.png'
+        Location = 3
     end
     
     methods (Static)
@@ -37,5 +38,14 @@ classdef PTKWindowLevelSoftTissue < PTKGuiPlugin
             ptk_gui_app.ImagePanel.Window = 350;
             ptk_gui_app.ImagePanel.Level = 40;
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded;
+        end
+        
+        function is_selected = IsSelected(ptk_gui_app)
+            is_selected = ptk_gui_app.ImagePanel.Window == 350 && ptk_gui_app.ImagePanel.Level == 40;
+        end
+        
     end
 end

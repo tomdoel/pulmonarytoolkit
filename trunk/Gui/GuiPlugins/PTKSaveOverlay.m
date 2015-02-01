@@ -33,8 +33,7 @@ classdef PTKSaveOverlay < PTKGuiPlugin
         ButtonHeight = 1
         
         Icon = 'export_overlay.png'
-        Location = 5
-        
+        Location = 21
     end
     
     methods (Static)

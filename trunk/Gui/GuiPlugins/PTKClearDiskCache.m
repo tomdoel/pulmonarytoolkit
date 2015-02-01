@@ -22,14 +22,15 @@ classdef PTKClearDiskCache < PTKGuiPlugin
         ButtonText = 'Delete Cache'
         SelectedText = 'Delete Cache'
         ToolTip = 'Clear all cached results for this dataset'
-        Category = 'File'
+        Category = 'Delete cache'
         Visibility = 'Dataset'
-        Mode = 'File'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
+        Location = 13
     end
     
     methods (Static)
@@ -37,6 +38,10 @@ classdef PTKClearDiskCache < PTKGuiPlugin
             % Delete files from the disk cache and update the plugin previews
             ptk_gui_app.ClearCacheForThisDataset;
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.DeveloperMode && ptk_gui_app.IsDatasetLoaded;
+        end        
     end
     
 end

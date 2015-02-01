@@ -27,7 +27,7 @@ classdef PTKSetCineTool < PTKGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'cine.png'
-        Location = 10
+        Location = 13
     end
     
     methods (Static)

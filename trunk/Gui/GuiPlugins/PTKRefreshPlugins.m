@@ -24,17 +24,22 @@ classdef PTKRefreshPlugins < PTKGuiPlugin
         ToolTip = 'Check for new plugins'
         Category = 'File'
         Visibility = 'Developer'
-        Mode = 'File'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
+        Location = 15
     end
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.RefreshPlugins;
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.DeveloperMode;
+        end        
     end
 end

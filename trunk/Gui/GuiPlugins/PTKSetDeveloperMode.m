@@ -13,10 +13,10 @@ classdef PTKSetDeveloperMode < PTKGuiPlugin
     %    
     
     properties
-        ButtonText = 'Developer Tools'
-        SelectedText = 'Developer Tools Off'
+        ButtonText = 'Developer tools'
+        SelectedText = 'Developer tools off'
         ToolTip = 'Enables or disabled developer mode'
-        Category = 'Show / hide'
+        Category = 'Developer tools'
         Visibility = 'Always'
         Mode = 'View'
 
@@ -26,7 +26,7 @@ classdef PTKSetDeveloperMode < PTKGuiPlugin
         ButtonHeight = 1
         
         Icon = 'developer_tools.png'
-
+        Location = 18
     end
     
     methods (Static)

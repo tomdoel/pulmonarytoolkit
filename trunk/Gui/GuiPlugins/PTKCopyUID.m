@@ -18,13 +18,15 @@ classdef PTKCopyUID < PTKGuiPlugin
         SelectedText = 'Copy UID'
         ToolTip = 'Copy the UID of the current dataset to the clipboard'
         Category = 'File'
-        Visibility = 'Developer'
-        Mode = 'File'
+        Visibility = 'Dataset'
+        Mode = 'View'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
+        
+        Location = 14        
     end
     
     methods (Static)
@@ -34,5 +36,9 @@ classdef PTKCopyUID < PTKGuiPlugin
             disp(['Current dataset UID is: ' uid]);
             clipboard('copy', uid);
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.DeveloperMode && ptk_gui_app.IsDatasetLoaded;
+        end        
     end
 end

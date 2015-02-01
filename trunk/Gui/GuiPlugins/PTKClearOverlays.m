@@ -29,11 +29,16 @@ classdef PTKClearOverlays < PTKGuiPlugin
         ButtonWidth = 4
         ButtonHeight = 1
         Visibility = 'Developer'
+        Location = 11
     end
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.DeleteOverlays;
+        end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists;
         end
     end
 end

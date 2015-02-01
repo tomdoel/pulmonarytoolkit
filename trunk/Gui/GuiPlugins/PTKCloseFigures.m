@@ -26,11 +26,17 @@ classdef PTKCloseFigures < PTKGuiPlugin
         ButtonWidth = 4
         ButtonHeight = 1
         Visibility = 'Developer'
+        Location = 10
     end
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.CloseAllFiguresExceptPtk();
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.DeveloperMode;
+        end
+        
     end
 end
