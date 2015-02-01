@@ -30,10 +30,10 @@ classdef PTKPanTool < PTKTool
             obj.Callback = callback;
         end
         
-        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
+        function MouseHasMoved(obj, screen_coords, last_coords)
         end
         
-        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+        function MouseDragged(obj, screen_coords, last_coords)
             [min_coords, max_coords] = obj.Callback.GetImageLimits;
             pan_offset = screen_coords - last_coords;
             x_lim = [min_coords(1), max_coords(1)];

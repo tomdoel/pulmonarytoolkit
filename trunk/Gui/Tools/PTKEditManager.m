@@ -328,10 +328,10 @@ classdef PTKEditManager < PTKTool
             end
         end
         
-        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+        function MouseDragged(obj, screen_coords, last_coords)
         end
         
-        function MouseHasMoved(obj, viewer_panel, coords, last_coords)
+        function MouseHasMoved(obj, coords, last_coords)
         end        
         
         function image_coords = GetImageCoordinates(obj, coords)

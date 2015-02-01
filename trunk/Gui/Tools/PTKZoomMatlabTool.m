@@ -31,10 +31,10 @@ classdef PTKZoomMatlabTool < PTKTool
             obj.Callback = callback;
         end
         
-        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
+        function MouseHasMoved(obj, screen_coords, last_coords)
         end
         
-        function MouseDragged(obj, viewer_panel, coords, last_coords)
+        function MouseDragged(obj, coords, last_coords)
         end
         
         function MouseDown(obj, screen_coords)
