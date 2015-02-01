@@ -53,7 +53,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
         
         function delete(obj)
             obj.RemoveAndDeleteChildren
-            obj.DeleteIfHandle(obj.GraphicalComponentHandle);
+            obj.DeleteIfGraphicsHandle(obj.GraphicalComponentHandle);
         end
         
         function AddChild(obj, child, reporting)
@@ -75,7 +75,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             % Remove and delete all child graphic objects
 
             for child = obj.Children
-                PTKSystemUtilities.DeleteIfHandle(child{1});
+                PTKSystemUtilities.DeleteIfValidObject(child{1});
             end
             obj.Children = [];
         end
@@ -496,12 +496,17 @@ classdef PTKUserInterfaceObject < PTKBaseClass
     
     methods (Access = protected, Static)
         
-        function DeleteIfHandle(handle)
-            % Removes a graphics handle
+        function DeleteIfValidObject(handle)
+            % Removes an object
             
-            PTKSystemUtilities.DeleteIfHandle(handle);
+            PTKSystemUtilities.DeleteIfValidObject(handle);
         end
         
+        function DeleteIfGraphicsHandle(handle)
+            % Removes a graphics handle
+            
+            PTKSystemUtilities.DeleteIfGraphicsHandle(handle);
+        end
     end
     
 end

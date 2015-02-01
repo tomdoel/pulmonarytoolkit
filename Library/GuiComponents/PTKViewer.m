@@ -105,7 +105,7 @@ classdef PTKViewer < PTKFigure
             % Call the base class to initialise the hidden window
             obj = obj@PTKFigure(title, []);
 
-            obj.ViewerPanelHandle = PTKViewerPanel(obj);
+            obj.ViewerPanelHandle = PTKViewerPanel(obj, true, reporting);
             obj.AddChild(obj.ViewerPanelHandle, reporting);
             
             obj.Image = image_handle;

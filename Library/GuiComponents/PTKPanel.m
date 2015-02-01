@@ -80,7 +80,8 @@ classdef PTKPanel < PTKUserInterfaceObject
                 inner_position(3) = inner_position(3) - 1;
             end
             if obj.TopBorder
-                inner_position(4) = inner_position(4) - 1;
+                % FIXME: -2 instead of -1 to ensure top line is visible
+                inner_position(4) = inner_position(4) - 2;
             end
             if obj.BottomBorder
                 inner_position(2) = inner_position(2) + 1;
@@ -100,7 +101,8 @@ classdef PTKPanel < PTKUserInterfaceObject
                 inner_position(3) = inner_position(3) - 1;
             end
             if obj.TopBorder
-                inner_position(4) = inner_position(4) - 1;
+                % FIXME: -2 instead of -1 to ensure top line is visible
+                inner_position(4) = inner_position(4) - 2;
             end
             if obj.BottomBorder
                 inner_position(2) = inner_position(2) + 1;
@@ -113,7 +115,7 @@ classdef PTKPanel < PTKUserInterfaceObject
         function BorderChangedCallback(obj, ~, ~, ~)
             if isempty(obj.BorderAxes) && (obj.LeftBorder || obj.RightBorder || obj.TopBorder || obj.BottomBorder)
                 obj.BorderAxes = PTKLineAxes(obj);
-                obj.AddChild(obj.BorderAxes);
+                obj.AddChild(obj.BorderAxes, obj.Reporting);
             end
         end
     end

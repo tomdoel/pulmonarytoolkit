@@ -21,7 +21,7 @@ classdef PTKScreenQuiverImage < PTKScreenImage
     
     methods
         
-        function obj = PTKScreenQuiverImage(parent)
+        function obj = PTKScreenQuiverImage(parent, image_source)
             obj = obj@PTKScreenImage(parent);
         end
         
