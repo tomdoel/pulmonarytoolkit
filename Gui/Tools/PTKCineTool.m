@@ -34,10 +34,10 @@ classdef PTKCineTool < PTKTool
             obj.ViewerPanel = viewer_panel;
         end
     
-        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords, mouse_is_down)
+        function MouseHasMoved(obj, screen_coords, last_coords, mouse_is_down)
         end    
 
-        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+        function MouseDragged(obj, screen_coords, last_coords)
             if ~isempty(obj.StartCoords)
                 [min_coords, max_coords] = obj.Callback.GetImageLimits;
                 coords_offset = screen_coords -  obj.StartCoords;
@@ -50,7 +50,7 @@ classdef PTKCineTool < PTKTool
                 y_relative_movement = ceil(y_relative_movement);
                 
                 k_position = obj.StartKPosition - direction*y_relative_movement;
-                obj.ViewerPanel.SliceNumber(viewer_panel.Orientation) = k_position;
+                obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation) = k_position;
             end
         end
         

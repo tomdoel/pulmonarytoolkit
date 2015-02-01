@@ -181,7 +181,7 @@ classdef PTKMarkerPointManager < PTKTool
             obj.IsDragging = true;
         end
         
-        function MouseHasMoved(obj, viewer_panel, coords, last_coords)
+        function MouseHasMoved(obj, coords, last_coords)
             if obj.Enabled
                 closest_marker = obj.GetMarkerForThisPoint(coords, []);
                 if isempty(closest_marker)
@@ -192,7 +192,7 @@ classdef PTKMarkerPointManager < PTKTool
             end
         end        
         
-        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+        function MouseDragged(obj, screen_coords, last_coords)
         end
         
         

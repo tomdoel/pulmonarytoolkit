@@ -35,10 +35,10 @@ classdef PTKWindowLevelTool < PTKTool
             obj.Callback = callback;
         end
         
-        function MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
+        function MouseHasMoved(obj, screen_coords, last_coords)
         end
         
-        function MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+        function MouseDragged(obj, screen_coords, last_coords)
             if ~isempty(obj.StartCoords)            
                 [min_coords, max_coords] = obj.Callback.GetImageLimits;
                 coords_offset = screen_coords - obj.StartCoords;
