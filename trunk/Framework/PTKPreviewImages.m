@@ -18,22 +18,20 @@ classdef PTKPreviewImages < PTKBaseClass
     
     properties (Access = private)
         DatasetDiskCache       % disk cache for this dataset
-        Reporting  % error/progress reporting
         Previews        % preview thumnail images
     end
     
     methods
         function obj = PTKPreviewImages(dataset_disk_cache, reporting)
             obj.DatasetDiskCache = dataset_disk_cache;
-            obj.LoadPreviewFile;
-            obj.Reporting = reporting;
+            obj.LoadPreviewFile(reporting);
         end
 
         % Add a new thumbnail preview
-        function AddPreview(obj, plugin_name, preview_image)
+        function AddPreview(obj, plugin_name, preview_image, reporting)
             if ~obj.Previews.isKey(plugin_name) || (preview_image ~= obj.Previews(plugin_name));
                 obj.Previews(plugin_name) = preview_image;
-                obj.SavePreviewFile;
+                obj.SavePreviewFile(reporting);
             end
         end
         
@@ -43,7 +41,7 @@ classdef PTKPreviewImages < PTKBaseClass
         end
         
         % Fetch a cached preview image
-        function preview_image = GetPreview(obj, plugin_name)
+        function preview_image = GetPreview(obj, plugin_name, reporting)
             if obj.Previews.isKey(plugin_name)
                 preview_image = obj.Previews(plugin_name);
             else
@@ -53,9 +51,9 @@ classdef PTKPreviewImages < PTKBaseClass
         
         % Erase previews. Typically you would do this when erasing the disk
         % cache, so that previews do not become stale
-        function Clear(obj)
+        function Clear(obj, reporting)
             obj.Previews = containers.Map;
-            obj.SavePreviewFile;
+            obj.SavePreviewFile(reporting);
         end
         
     end
@@ -63,8 +61,8 @@ classdef PTKPreviewImages < PTKBaseClass
     methods (Access = private)
         
         % Cache previews on disk
-        function LoadPreviewFile(obj)
-            cached_previews = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.PreviewImageFileName, obj.Reporting);
+        function LoadPreviewFile(obj, reporting)
+            cached_previews = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.PreviewImageFileName, reporting);
             if isempty(cached_previews)
                 obj.Previews = containers.Map;
             else
@@ -73,8 +71,8 @@ classdef PTKPreviewImages < PTKBaseClass
         end
         
         % Load cached previews from disk
-        function SavePreviewFile(obj)
-            obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.PreviewImageFileName, obj.Previews, obj.Reporting);
+        function SavePreviewFile(obj, reporting)
+            obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.PreviewImageFileName, obj.Previews, reporting);
         end
     end
     

@@ -33,29 +33,25 @@ classdef PTKDatasetStack < handle
         % The stack - an array of PTKDatasetStackItem objects; one for each plugin which is
         % currently being executed.
         DatasetStack
-
-        % Callback for errors, warnings and logs
-        Reporting
     end
     
     methods
-        function obj =  PTKDatasetStack(reporting)
+        function obj =  PTKDatasetStack
             obj.DatasetStack = PTKDatasetStackItem.empty;
-            obj.Reporting = reporting;
         end
     
-        function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer)
+        function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer, reporting)
             % Create a new PTKDatasetStackItem object with an empty dependency list and a
             % new unique identifier. The push it to the end of the stack
         
             if obj.PluginAlreadyExistsInStack(plugin_name, context, dataset_uid)
-                obj.Reporting.Error('PTKDatasetStack:RecursivePluginCall', 'Recursive plugin call');
+                reporting.Error('PTKDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
             attributes = [];
             attributes.IgnoreDependencyChecks = ignore_dependency_checks;
             attributes.IsEditedResult = is_edited_result;
             instance_identifier = PTKDependency(plugin_name, context, PTKSystemUtilities.GenerateUid, dataset_uid, attributes);
-            cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, ignore_dependency_checks, start_timer, obj.Reporting);
+            cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, ignore_dependency_checks, start_timer, reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end
         
@@ -68,13 +64,13 @@ classdef PTKDatasetStack < handle
             obj.DatasetStack(end) = [];
         end
         
-        function AddDependenciesToAllPluginsInStack(obj, dependencies)
+        function AddDependenciesToAllPluginsInStack(obj, dependencies, reporting)
             % Adds the specified plugin as a dependency of every plugin which is
             % currently being executed in the call stack
             
             for index = 1 : length(obj.DatasetStack)
                 dataset_stack_item = obj.DatasetStack(index);
-                dataset_stack_item.AddDependencies(dependencies, obj.Reporting);
+                dataset_stack_item.AddDependencies(dependencies, reporting);
             end
         end
         

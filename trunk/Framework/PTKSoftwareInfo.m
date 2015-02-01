@@ -18,7 +18,7 @@ classdef PTKSoftwareInfo < handle
     properties (Constant)
         
         % Version numbers
-        Version = '0.4'
+        Version = '0.41'
         DicomVersion = '0.1'
         DiskCacheSchema = '0.1'
         XMLVersion = '0.1'
@@ -65,6 +65,8 @@ classdef PTKSoftwareInfo < handle
         UserDirectoryName = 'User'
         TestSourceDirectory = 'Test'
         IconFolder = fullfile('Gui', 'Icons')
+        
+        DefaultPluginIcon = 'default_plugin.png'
 
         % Filenames
         LogFileName = 'log.txt'
@@ -126,7 +128,8 @@ classdef PTKSoftwareInfo < handle
         end
 
         function toolbox_licensed = IsImageProcessingToolboxLicensed
-            toolbox_licensed = license('test', 'image_toolbox');
+            [error_code, error_message] = license('checkout', 'image_toolbox');
+            toolbox_licensed = error_code == 1;
         end
         
         function is_cancel_id = IsErrorCancel(error_id)

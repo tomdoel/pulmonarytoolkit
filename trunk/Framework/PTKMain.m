@@ -87,13 +87,14 @@ classdef PTKMain < PTKBaseClass
                 obj.Reporting.Error(PTKSoftwareInfo.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
-            dataset_disk_cache = PTKDatasetDiskCache(dataset_uid, obj.Reporting);
+            dataset_disk_cache = obj.FrameworkSingleton.GetDatasetMemoryCache.GetDatasetDiskCache(dataset_uid, obj.Reporting);
+            
             image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
                 obj.Reporting.Error(PTKSoftwareInfo.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
-            dataset = PTKDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetRecorder, obj.ReportingWithCache);
+            dataset = PTKDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
             
             obj.RunLinkFile(dataset_uid, dataset);
         end
@@ -102,11 +103,11 @@ classdef PTKMain < PTKBaseClass
             % Creates a PTKDataset object for a dataset specified by the path,
             % filenames and/or uid specified in a PTKImageInfo object. The dataset is
             % imported from the specified path if it does not already exist.
-            [image_info, dataset_disk_cache] = PTKMain.ImportDataFromInfo(new_image_info, obj.Reporting);
+            [image_info, dataset_disk_cache] = obj.ImportDataFromInfo(new_image_info, obj.Reporting);
             
             obj.FrameworkSingleton.AddToDatabase(image_info.ImageUid, obj.Reporting)
 
-            dataset = PTKDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetRecorder, obj.ReportingWithCache);
+            dataset = PTKDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
             
             obj.RunLinkFile(dataset.GetImageInfo.ImageUid, dataset);
         end
@@ -204,19 +205,15 @@ classdef PTKMain < PTKBaseClass
             uids = [];
             dicom_groups = grouper.DicomSeriesGroupings;
             for dicom_group = dicom_groups.values
-                uids{end + 1} = PTKMain.ImportDicomFiles(dicom_group{1}.Filenames, obj.Reporting);
+                uids{end + 1} = obj.ImportDicomFiles(dicom_group{1}.Filenames, obj.Reporting);
             end
             
             non_dicom_group = grouper.NonDicomGrouping;
-            non_dicom_uids = PTKMain.ImportNonDicomFiles(non_dicom_group.Filenames, obj.Reporting);
+            non_dicom_uids = obj.ImportNonDicomFiles(non_dicom_group.Filenames, obj.Reporting);
             uids = [uids, non_dicom_uids];
         end
         
-    end
-    
-    methods (Static, Access = private)
-        
-        function uids = ImportNonDicomFiles(non_dicom_filenames, reporting)
+        function uids = ImportNonDicomFiles(obj, non_dicom_filenames, reporting)
             uids = {};
             while ~isempty(non_dicom_filenames)
                 next_filename = non_dicom_filenames{1};
@@ -232,18 +229,18 @@ classdef PTKMain < PTKBaseClass
                     reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(next_filename.Path, next_filename.FullFile)], []);
                 else
                     image_info_nondicom = PTKImageInfo(import_folder, principal_filename, image_type, [], [], []);
-                    [image_info_nondicom, ~] = PTKMain.ImportDataFromInfo(image_info_nondicom, reporting);
+                    [image_info_nondicom, ~] = obj.ImportDataFromInfo(image_info_nondicom, reporting);
                     uids{end + 1} = image_info_nondicom.ImageUid;
                 end
             end
         end
         
-        function uid = ImportDicomFiles(dicom_filenames, reporting)
+        function uid = ImportDicomFiles(obj, dicom_filenames, reporting)
             uid = [];
             image_info_dicom = PTKImageInfo(dicom_filenames{1}.Path, dicom_filenames, PTKImageFileFormat.Dicom, [], [], []);
             try
                 tic
-                [image_info_dicom, ~] = PTKMain.ImportDataFromInfo(image_info_dicom, reporting);
+                [image_info_dicom, ~] = obj.ImportDataFromInfo(image_info_dicom, reporting);
                 toc
                 uid = image_info_dicom.ImageUid;
             catch ex
@@ -251,7 +248,7 @@ classdef PTKMain < PTKBaseClass
             end
         end
         
-        function [image_info, dataset_disk_cache] = ImportDataFromInfo(new_image_info, reporting)
+        function [image_info, dataset_disk_cache] = ImportDataFromInfo(obj, new_image_info, reporting)
             % Imports data into the Pulmonary Toolkit so that it can be accessed
             % from the CreateDatasetFromUid() method. The input argument is a
             % PTKImageInfo object containing the path, filenames and file type of
@@ -265,7 +262,7 @@ classdef PTKMain < PTKBaseClass
                 new_image_info.Modality = modality;
             end
             
-            dataset_disk_cache = PTKDatasetDiskCache(new_image_info.ImageUid, reporting);
+            dataset_disk_cache = obj.FrameworkSingleton.GetDatasetMemoryCache.GetDatasetDiskCache(new_image_info.ImageUid, reporting);
             image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, reporting);
             if isempty(image_info)
                 image_info = PTKImageInfo;
@@ -276,8 +273,10 @@ classdef PTKMain < PTKBaseClass
                 dataset_disk_cache.SaveData(PTKSoftwareInfo.ImageInfoCacheName, image_info, reporting);
             end
         end
+    end
+    
+    methods (Static, Access = private)
         
-                
         function [image_uid, study_uid, modality] = GetImageUID(image_info, reporting)
             % We need a unique identifier for each dataset. For DICOM files we use
             % the series instance UID. For other files we use the filename, which

@@ -17,12 +17,14 @@ classdef PTKTemplateCallback < PTKBaseClass
     properties (Access = private)
         LinkedDatasetChooser  % Sends the API calls to the correct dataset
         DatasetStack       % Handle to the current call stack for the primary dataset
+        Reporting
     end
     
     methods
-        function obj = PTKTemplateCallback(linked_dataset_chooser, dataset_call_stack)
+        function obj = PTKTemplateCallback(linked_dataset_chooser, dataset_call_stack, reporting)
             obj.DatasetStack = dataset_call_stack;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
+            obj.Reporting = reporting;
         end
         
         % Returns an image template for the requested context
@@ -33,7 +35,7 @@ classdef PTKTemplateCallback < PTKBaseClass
             if nargin < 3
                 dataset_name = [];
             end
-            template = obj.LinkedDatasetChooser.GetDataset(dataset_name).GetTemplateImage(context, obj.DatasetStack);
+            template = obj.LinkedDatasetChooser.GetDataset(dataset_name).GetTemplateImage(context, obj.DatasetStack, obj.Reporting);
         end
     end
 end
