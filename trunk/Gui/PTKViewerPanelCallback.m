@@ -69,12 +69,12 @@ classdef PTKViewerPanelCallback < PTKBaseClass
         end
         
         function delete(obj)
-            PTKSystemUtilities.DeleteIfHandle(obj.BackgroundImageChangedListener);
-            PTKSystemUtilities.DeleteIfHandle(obj.OverlayImageChangedListener);
-            PTKSystemUtilities.DeleteIfHandle(obj.QuiverImageChangedListener);
-            PTKSystemUtilities.DeleteIfHandle(obj.BackgroundImagePointerChangedListener);
-            PTKSystemUtilities.DeleteIfHandle(obj.OverlayImagePointerChangedListener);
-            PTKSystemUtilities.DeleteIfHandle(obj.QuiverImagePointerChangedListener);
+            PTKSystemUtilities.DeleteIfValidObject(obj.BackgroundImageChangedListener);
+            PTKSystemUtilities.DeleteIfValidObject(obj.OverlayImageChangedListener);
+            PTKSystemUtilities.DeleteIfValidObject(obj.QuiverImageChangedListener);
+            PTKSystemUtilities.DeleteIfValidObject(obj.BackgroundImagePointerChangedListener);
+            PTKSystemUtilities.DeleteIfValidObject(obj.OverlayImagePointerChangedListener);
+            PTKSystemUtilities.DeleteIfValidObject(obj.QuiverImagePointerChangedListener);
         end
         
     end
@@ -92,7 +92,7 @@ classdef PTKViewerPanelCallback < PTKBaseClass
             obj.ImageChanged;
             
             % Remove existing listener
-            PTKSystemUtilities.DeleteIfValid(obj.BackgroundImageChangedListener);
+            PTKSystemUtilities.DeleteIfValidObject(obj.BackgroundImageChangedListener);
             
             % Listen for image change events
             obj.BackgroundImageChangedListener = addlistener(obj.ViewerPanel.BackgroundImage, 'ImageChanged', @obj.ImageChangedCallback);
@@ -116,7 +116,7 @@ classdef PTKViewerPanelCallback < PTKBaseClass
             end
             
             % Remove existing listener
-            PTKSystemUtilities.DeleteIfValid(obj.OverlayImageChangedListener);
+            PTKSystemUtilities.DeleteIfValidObject(obj.OverlayImageChangedListener);
             
             % Listen for image change events
             obj.OverlayImageChangedListener = addlistener(obj.ViewerPanel.OverlayImage, 'ImageChanged', @obj.OverlayImageChangedCallback);
@@ -139,7 +139,7 @@ classdef PTKViewerPanelCallback < PTKBaseClass
             end
             
             % Remove existing listener
-            PTKSystemUtilities.DeleteIfValid(obj.QuiverImageChangedListener);
+            PTKSystemUtilities.DeleteIfValidObject(obj.QuiverImageChangedListener);
             
             % Listen for image change events
             obj.QuiverImageChangedListener = addlistener(obj.ViewerPanel.QuiverImage, 'ImageChanged', @obj.OverlayImageChangedCallback);

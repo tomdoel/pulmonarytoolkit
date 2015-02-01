@@ -64,18 +64,18 @@ classdef PTKGui < PTKFigure
             
             show_control_panel_in_viewer = PTKSoftwareInfo.ViewerPanelToolbarEnabled;
             
+            % Create the reporting object. Later we will update it with the viewer panel and
+            % the new progress panel when these have been created.
+            obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile);
+            obj.Reporting.Log('New session of PTKGui');
+                        
             % Set up the viewer panel
-            obj.ImagePanel = PTKViewerPanel(obj, show_control_panel_in_viewer);
+            obj.ImagePanel = PTKViewerPanel(obj, show_control_panel_in_viewer, obj.Reporting);
             obj.AddChild(obj.ImagePanel, obj.Reporting);
             
             % Any unhandled keyboard input goes to the viewer panel
             obj.DefaultKeyHandlingObject = obj.ImagePanel;
 
-            % Create the reporting object. Later we will update it with the viewer panel and
-            % the new progress panel when these have been created.
-            obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile);
-            obj.Reporting.Log('New session of PTKGui');
-            
             % Get the singleton, which gives access to the settings
             obj.GuiSingleton = PTKGuiSingleton.GetGuiSingleton(obj.Reporting);
             
@@ -92,7 +92,7 @@ classdef PTKGui < PTKFigure
             % Create the status panel showing image coordinates and
             % values of the voxel under the cursor
             obj.StatusPanel = PTKStatusPanel(obj, obj.ImagePanel, obj.Reporting);
-            obj.AddChild(obj.StatusPanel);
+            obj.AddChild(obj.StatusPanel, obj.Reporting);
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
@@ -338,7 +338,7 @@ classdef PTKGui < PTKFigure
             if (filename ~= 0)
                 % Hide the progress bar before capture
                 obj.Reporting.ProgressDialog.Hide;
-                frame = obj.ImagePanel.Capture;
+                frame = obj.ImagePanel.Capture(obj.BackgroundImage.ImageSize, obj.Orientation);
                 PTKDiskUtilities.SaveImageCapture(frame, PTKFilename(path_name, filename), save_type, obj.Reporting)
             end
         end
@@ -381,10 +381,10 @@ classdef PTKGui < PTKFigure
         
         function delete(obj)
             delete(obj.GuiDataset);
+
             if ~isempty(obj.Reporting);
                 obj.Reporting.Log('Closing PTKGui');
             end
-            delete@PTKFigure(obj);
         end        
         
         function UpdatePatientBrowser(obj, patient_id, series_uid)

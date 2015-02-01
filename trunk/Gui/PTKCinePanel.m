@@ -14,33 +14,23 @@ classdef PTKCinePanel < PTKVirtualPanel
     %     Author: Tom Doel, 2014.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
-    
-    properties (Access = private)
+
+    properties (Access = protected)
         Axes
+        ImageSource
         Slider
-        ViewerPanel
-        
-        % Used for programmatic pan, zoom, etc.
-        LastCoordinates = [0, 0, 0]
-        MouseIsDown = false
-        ToolOnMouseDown
-        LastCursor
-        CurrentCursor = ''
     end
     
-    events
-        MousePositionChanged
-    end
-
     methods
-        function obj = PTKCinePanel(viewer_panel, reporting)
-            obj = obj@PTKVirtualPanel(viewer_panel, reporting);
-            obj.ViewerPanel = viewer_panel;
+        function obj = PTKCinePanel(parent, image_source, image_overlay_axes, reporting)
+            obj = obj@PTKVirtualPanel(parent, reporting);
 
+            obj.ImageSource = image_source;
+            
             obj.Slider = PTKSlider(obj);
             obj.AddChild(obj.Slider, obj.Reporting);
             
-            obj.Axes = PTKImageOverlayAxes(obj.ViewerPanel, reporting);
+            obj.Axes = image_overlay_axes;
             obj.AddChild(obj.Axes, obj.Reporting);
             
             obj.AddEventListener(obj.Slider, 'SliderValueChanged', @obj.SliderValueChanged);            
@@ -83,16 +73,12 @@ classdef PTKCinePanel < PTKVirtualPanel
             end
         end
 
-        function SliderValueChanged(obj, ~, ~)
-            obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation) = round(obj.Slider.SliderValue);
-        end
-        
-        function frame = Capture(obj)
+        function frame = Capture(obj, image_size, orientation)
             drawnow;
             
             origin = [0.5, 0.5, 0.5];
-            image_limit = origin + obj.ViewerPanel.BackgroundImage.ImageSize;
-            switch obj.ViewerPanel.Orientation
+            image_limit = origin + image_size;
+            switch orientation
                 case PTKImageOrientation.Coronal
                     xlim_image = [origin(2), image_limit(2)];
                     ylim_image = [origin(3), image_limit(3)];
@@ -110,18 +96,9 @@ classdef PTKCinePanel < PTKVirtualPanel
         function ZoomTo(obj, i_limits, j_limits, k_limits)
             % Changes the current axis limits to the specified global coordinates
             % i_limits = [minimum_i, maximum_i] and the same for j, k.
-                        
-            % Convert global coordinates to local coordinates
-            origin = obj.ViewerPanel.BackgroundImage.Origin;
-            i_limits_local = i_limits - origin(1) + 1;
-            j_limits_local = j_limits - origin(2) + 1;
-            k_limits_local = k_limits - origin(3) + 1;
+
+            obj.Axes.ZoomTo(obj, i_limits, j_limits, k_limits);
             
-            obj.Axes.ZoomTo(obj, obj.ViewerPanel.Orientation, i_limits_local, j_limits_local, k_limits_local);
-            
-            % Update the currently displayed slice to be the centre of the
-            % requested box
-            obj.ViewerPanel.SliceNumber = [round((i_limits_local(2)+i_limits_local(1))/2), round((j_limits_local(2)+j_limits_local(1))/2), round((k_limits_local(2)+k_limits_local(1))/2)];
         end
         
         function ClearAxesCache(obj)
@@ -129,19 +106,7 @@ classdef PTKCinePanel < PTKVirtualPanel
         end
             
         function UpdateAxes(obj)
-            obj.Axes.UpdateAxesAndScreenImages(obj.ViewerPanel.BackgroundImage, obj.ViewerPanel.OverlayImage, obj.ViewerPanel.QuiverImage, obj.ViewerPanel.Orientation);
-        end
-        
-        function DrawImages(obj, update_background, update_overlay, update_quiver)
-            if update_background
-                obj.Axes.DrawBackgroundImage(obj.ViewerPanel);
-            end
-            if update_overlay
-                obj.Axes.DrawOverlayImage(obj.ViewerPanel);
-            end
-            if update_quiver
-                obj.Axes.DrawQuiverImage(obj.ViewerPanel.ShowOverlay, obj.ViewerPanel);
-            end
+            obj.Axes.UpdateAxes;
         end
         
         function screen_coords = GetScreenCoordinates(obj)
@@ -166,148 +131,10 @@ classdef PTKCinePanel < PTKVirtualPanel
             axes_object = obj.Axes;
         end
        
-        function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)
-            global_coords = obj.GetImageCoordinates;
-            point_is_in_image = obj.ViewerPanel.BackgroundImage.IsPointInImage(global_coords);
-            if (~point_is_in_image)
-                obj.MouseIsDown = false;
-            end
-            
-            if point_is_in_image
-                current_tool = obj.GetCurrentTool(mouse_is_down, keyboard_modifier);
-                new_cursor = current_tool.Cursor;
-            else
-                new_cursor = 'arrow';
-            end
-            
-            if ~strcmp(obj.CurrentCursor, new_cursor)
-                set(hObject, 'Pointer', new_cursor);
-                obj.CurrentCursor = new_cursor;
-            end
-            
-        end
-        
-        function global_coords = GetImageCoordinates(obj)
-            coords = round(obj.GetCurrentPoint);
-            if (~isempty(coords))
-                i_screen = coords(2,1);
-                j_screen = coords(2,2);
-                k_screen = obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation);
-                
-                switch obj.ViewerPanel.Orientation
-                    case PTKImageOrientation.Coronal
-                        i = k_screen;
-                        j = i_screen;
-                        k = j_screen;
-                    case PTKImageOrientation.Sagittal
-                        i = i_screen;
-                        j = k_screen;
-                        k = j_screen;
-                    case PTKImageOrientation.Axial
-                        i = j_screen;
-                        j = i_screen;
-                        k = k_screen;
-                end
-            else
-                i = 1;
-                j = 1;
-                k = 1;
-            end
-            global_coords = obj.ViewerPanel.BackgroundImage.LocalToGlobalCoordinates([i, j, k]);
-        end
     end
     
     methods (Access = protected)
-        
-        function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier)
-            % Returns the tool whch is currently selected. If keyboard_modifier is
-            % specified, then this may override the current tool
-            
-            tool = obj.ViewerPanel.GetCurrentTool(mouse_is_down, keyboard_modifier);
-        end
-        
-        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
-            % This method is called when the mouse is clicked inside the control
-            
-            screen_coords = obj.GetScreenCoordinates;
-            obj.LastCoordinates = screen_coords;
-            obj.MouseIsDown = true;
-            tool = obj.GetCurrentTool(true, selection_type);
-            global_coords = obj.GetImageCoordinates;
-            if (obj.ViewerPanel.BackgroundImage.IsPointInImage(global_coords))
-                tool.MouseDown(screen_coords);
-                obj.ToolOnMouseDown = tool;
-                input_has_been_processed = true;
-            else
-                obj.ToolOnMouseDown = [];
-                input_has_been_processed = false;
-            end
-
-            obj.UpdateCursor(src, true, selection_type);
-            
-        end
-
-        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src)
-            % This method is called when the mouse is released inside the control
-            
-            input_has_been_processed = true;
-            obj.MouseIsDown = false;
-
-            screen_coords = obj.GetScreenCoordinates;
-            obj.LastCoordinates = screen_coords;
-
-
-            tool = obj.ToolOnMouseDown;
-            if ~isempty(tool)
-                global_coords = obj.GetImageCoordinates;
-                if (obj.ViewerPanel.BackgroundImage.IsPointInImage(global_coords))
-                    tool.MouseUp(screen_coords);
-                    obj.ToolOnMouseDown = [];
-                end
-            end
-            obj.UpdateCursor(src, false, selection_type);
-            
-        end
-        
-        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
-            % Mouse has moved over the figure
-
-            screen_coords = obj.GetScreenCoordinates;
-            last_coords = obj.LastCoordinates;
-            
-            tool = obj.GetCurrentTool(false, selection_type);
-            tool.MouseHasMoved(obj, screen_coords, last_coords);
-            
-            obj.UpdateCursor(src, false, selection_type);
-            obj.UpdateStatus(true);
-            input_has_been_processed = true;
-        end
-        
-        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src)
-            % Mouse dragged over the figure
-
-            screen_coords = obj.GetScreenCoordinates;
-            last_coords = obj.LastCoordinates;
-            
-            tool = obj.GetCurrentTool(true, selection_type);
-            tool.MouseDragged(obj.ViewerPanel, screen_coords, last_coords);
-            
-            obj.UpdateCursor(src, true, selection_type);
-            obj.UpdateStatus(true);
-            input_has_been_processed = true;
-        end
- 
-        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
-            % This method is called when the mouse exits a control which previously
-            % processed a MouseHasMoved event
-            
-            obj.UpdateStatus(false);
-            input_has_been_processed = false;
-        end
-        
-        function UpdateStatus(obj, in_image)
-            image_coordinates = obj.GetImageCoordinates;
-            notify(obj, 'MousePositionChanged', PTKEventData(PTKCoordsInImage(image_coordinates, in_image)));
+        function SliderValueChanged(obj, ~, ~)
         end
     end
 end

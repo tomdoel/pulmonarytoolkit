@@ -16,7 +16,6 @@ classdef PTKModeTabControl < PTKTabControl
         OrganisedPlugins
         Gui
         
-        FilePanel
         ViewPanel
         PluginsPanel
         EditPanel
@@ -36,18 +35,13 @@ classdef PTKModeTabControl < PTKTabControl
             
             obj.LeftBorder = true;
 
-            obj.FilePanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'File', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
-            obj.AddTabbedPanel(obj.FilePanel, 'File', 'file', 'Import data');
-            obj.FilePanel.AddPlugins([]);
+            obj.ViewPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'View', 'all', obj.Gui, obj.Reporting);
+            obj.AddTabbedPanel(obj.ViewPanel, 'View', 'viewbar', 'Visualisation');
             
             obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Home', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
             obj.AddTabbedPanel(obj.PluginsPanel, 'Segment', 'segment', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
 
-            obj.ViewPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'View', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
-            obj.AddTabbedPanel(obj.ViewPanel, 'View', 'view', 'Visualisation');
-            obj.ViewPanel.AddPlugins([]);
-            
             obj.EditPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'edit', 'Manual correction of results');
             obj.EditPanel.AddPlugins([]);
@@ -88,6 +82,7 @@ classdef PTKModeTabControl < PTKTabControl
         end
         
         function UpdateDynamicPanels(obj)
+            obj.ViewPanel.Update(obj.Gui);
         end
         
         function UpdateMode(obj, plugin_info)
