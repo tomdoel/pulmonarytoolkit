@@ -20,7 +20,6 @@ classdef PTKModeSwitcher < PTKBaseClass
     properties (Access = private)
         ViewerPanel
         Modes
-        OverlayImageChangedListener
     end
     
     methods
@@ -31,10 +30,6 @@ classdef PTKModeSwitcher < PTKBaseClass
             obj.Modes(PTKModes.EditMode) = PTKEditMode(viewer_panel, gui_dataset, settings, reporting);
             obj.CurrentMode = [];
             obj.CurrentModeString = [];
-        end
-        
-        function delete(obj)
-            delete(obj.OverlayImageChangedListener);
         end
         
         function SwitchMode(obj, mode, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
