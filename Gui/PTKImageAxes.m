@@ -12,14 +12,18 @@ classdef PTKImageAxes < PTKAxes
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties (Access = private)
+    properties (Access = protected)
+        ImageSource
+        
         AxisLimits
         PreviousOrientation
     end
     
     methods
-        function obj = PTKImageAxes(parent)
+        function obj = PTKImageAxes(parent, image_source)
             obj = obj@PTKAxes(parent);
+            
+            obj.ImageSource = image_source;
             
             % Always hide the axes
             obj.VisibleParameter = 'off';
@@ -46,7 +50,8 @@ classdef PTKImageAxes < PTKAxes
             obj.AxisLimits{3} = PTKAxisCache;
         end
         
-        function [x_range, y_range] = UpdateAxes(obj, background_image, orientation)
+        function [x_range, y_range] = UpdateAxes(obj)
+            orientation = obj.ImageSource.GetOrientation;
             if ~isempty(obj.PreviousOrientation)
                 [x_lim, y_lim] = obj.GetLimits;
 
@@ -69,7 +74,7 @@ classdef PTKImageAxes < PTKAxes
 
             % Use the cached axes limit value if available
             if isempty(obj.PreviousOrientation) || isempty(obj.AxisLimits{orientation}.XLim)
-                [x_lim, y_lim, x_range, y_range, data_aspect_ratio] = obj.ComputeNewAxisLimits(background_image, orientation);
+                [x_lim, y_lim, x_range, y_range, data_aspect_ratio] = obj.ComputeNewAxisLimits(orientation);
                 obj.SetLimitsAndRatio(x_lim, y_lim, data_aspect_ratio, []);
                 obj.AxisLimits{orientation}.AxesAspectRatio = axes_ratio;
                 obj.AxisLimits{orientation}.XRange = x_range;
@@ -83,6 +88,43 @@ classdef PTKImageAxes < PTKAxes
             obj.PreviousOrientation = orientation;
         end
         
+        function ZoomTo(obj, i_limits, j_limits, k_limits)
+
+            orientation = obj.ImageSource.GetOrientation;
+            
+            % Convert global coordinates to local coordinates
+            origin = obj.ImageSource.GetOrigin;
+            i_limits_local = i_limits - origin(1) + 1;
+            j_limits_local = j_limits - origin(2) + 1;
+            k_limits_local = k_limits - origin(3) + 1;
+            
+            % Update the cached axis limits
+            obj.AxisLimits{PTKImageOrientation.Coronal}.XLim = j_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Coronal}.YLim = k_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Sagittal}.XLim = i_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Sagittal}.YLim = k_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Axial}.XLim = j_limits_local;
+            obj.AxisLimits{PTKImageOrientation.Axial}.YLim = i_limits_local;
+
+            % Update the current axis limits
+            switch orientation
+                case PTKImageOrientation.Coronal
+                    obj.SetLimits(j_limits_local, k_limits_local)
+                case PTKImageOrientation.Sagittal
+                    obj.SetLimits(i_limits_local, k_limits_local)
+                case PTKImageOrientation.Axial
+                    obj.SetLimits(j_limits_local, i_limits_local)
+            end
+            
+            % Update the currently displayed slice to be the centre of the
+            % requested box
+            obj.ImageSource.SetSliceNumber(round((i_limits_local(2)+i_limits_local(1))/2), round((j_limits_local(2)+j_limits_local(1))/2), round((k_limits_local(2)+k_limits_local(1))/2));
+        end
+        
+    end
+    
+    methods (Access = private)
+        
         function [x_lim, y_lim, x_range, y_range, data_aspect_ratio, axes_reset_object] = GetPreviousAxisLimits(obj, orientation)
             x_lim = obj.AxisLimits{orientation}.XLim;
             y_lim = obj.AxisLimits{orientation}.YLim;
@@ -92,9 +134,9 @@ classdef PTKImageAxes < PTKAxes
             axes_reset_object = obj.AxisLimits{orientation}.ResetAxisData;
         end
         
-        function [x_lim, y_lim, x_range, y_range, data_aspect_ratio] = ComputeNewAxisLimits(obj, background_image, orientation)
-            image_size = background_image.ImageSize;
-            voxel_size = background_image.VoxelSize;
+        function [x_lim, y_lim, x_range, y_range, data_aspect_ratio] = ComputeNewAxisLimits(obj, orientation)
+            image_size = obj.ImageSource.GetImageSize;
+            voxel_size = obj.ImageSource.GetVoxelSize;
             axes_width_screenpixels = obj.Position(3);
             axes_height_screenpixels = obj.Position(4);
             
@@ -136,28 +178,5 @@ classdef PTKImageAxes < PTKAxes
             end
             
         end
-        
-        function ZoomTo(obj, orientation, i_limits_local, j_limits_local, k_limits_local)
-            
-            % Update the cached axis limits
-            obj.AxisLimits{PTKImageOrientation.Coronal}.XLim = j_limits_local;
-            obj.AxisLimits{PTKImageOrientation.Coronal}.YLim = k_limits_local;
-            obj.AxisLimits{PTKImageOrientation.Sagittal}.XLim = i_limits_local;
-            obj.AxisLimits{PTKImageOrientation.Sagittal}.YLim = k_limits_local;
-            obj.AxisLimits{PTKImageOrientation.Axial}.XLim = j_limits_local;
-            obj.AxisLimits{PTKImageOrientation.Axial}.YLim = i_limits_local;
-
-            % Update the current axis limits
-            switch orientation
-                case PTKImageOrientation.Coronal
-                    obj.SetLimits(j_limits_local, k_limits_local)
-                case PTKImageOrientation.Sagittal
-                    obj.SetLimits(i_limits_local, k_limits_local)
-                case PTKImageOrientation.Axial
-                    obj.SetLimits(j_limits_local, i_limits_local)
-            end
-            
-        end
-        
     end
 end
