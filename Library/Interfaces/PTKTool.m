@@ -22,8 +22,8 @@ classdef PTKTool < PTKBaseClass
     
     methods (Abstract)
         
-        MouseHasMoved(obj, viewer_panel, screen_coords, last_coords)
-        MouseDragged(obj, viewer_panel, screen_coords, last_coords)
+        MouseHasMoved(obj, screen_coords, last_coords)
+        MouseDragged(obj, screen_coords, last_coords)
         MouseDown(obj, screen_coords)
         MouseUp(obj, screen_coords)
         Enable(obj, enabled)
