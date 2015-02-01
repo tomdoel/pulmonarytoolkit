@@ -46,6 +46,8 @@ classdef PTKGui < PTKFigure
         LoadMenuHeight = 23
         PatientBrowserWidth = 100
         SidePanelWidth = 250
+        ModePanelMinimumWidth = 250
+        ImageMinimumWidth = 200
     end
     
     methods
@@ -722,12 +724,23 @@ classdef PTKGui < PTKFigure
                 image_height_pixels = viewer_panel_height;
             end
             
-            image_width_pixels = obj.GetSuggestedWidth(image_height_pixels);
+            image_width_pixels = max(obj.ImageMinimumWidth, obj.GetSuggestedWidth(image_height_pixels));
             viewer_panel_width = image_width_pixels + PTKSlider.SliderWidth;
             
-            patient_name_panel_width = viewer_panel_width;
             
             mode_panel_width = max(1, parent_width_pixels - viewer_panel_width - side_panel_width);
+
+            % The right panel has a minimum width
+            viewer_panel_reduction = max(0, obj.ModePanelMinimumWidth - mode_panel_width);
+            
+            % The image has a minimum width
+            viewer_panel_reduction = viewer_panel_reduction - max(0, (obj.ImageMinimumWidth - (image_width_pixels - viewer_panel_reduction)));
+            
+            viewer_panel_width = viewer_panel_width - viewer_panel_reduction;
+            mode_panel_width = mode_panel_width + viewer_panel_reduction;
+
+            patient_name_panel_width = viewer_panel_width;
+
             
             plugins_panel_height = max(1, parent_height_pixels - toolbar_height - status_panel_height);
             
