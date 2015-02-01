@@ -30,7 +30,7 @@ classdef PTKStatusPanel < PTKPanel
             
             obj.ViewerPanel = viewer_panel;
             obj.StatusText = PTKText(obj, 'No Image', 'Coordinates of the voxel, relative to the image, the value of the voxel under the cursor, and the value of the overlay under the cursor', 'StatusText');
-            obj.AddChild(obj.StatusText);
+            obj.AddChild(obj.StatusText, obj.Reporting);
             obj.AddEventListener(viewer_panel, 'MouseCursorStatusChanged', @obj.MouseCursorStatusChangedCallback);                        
         end
         
