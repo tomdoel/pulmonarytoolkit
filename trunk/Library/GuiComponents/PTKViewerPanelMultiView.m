@@ -24,7 +24,7 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
         function obj = PTKViewerPanelMultiView(viewer_panel, reporting)
             obj = obj@PTKMultiPanel(viewer_panel, reporting);
             
-            obj.CinePanel2D = PTKCinePanel(viewer_panel, obj.Reporting);
+            obj.CinePanel2D = PTKCinePanelWithTools(obj, viewer_panel, obj.Reporting);
             
             obj.AddPanel(obj.CinePanel2D, 'View2D');
             
@@ -50,8 +50,8 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
             obj.CinePanel2D.ZoomTo(i_limits, j_limits, k_limits);
         end
 
-        function frame = Capture(obj)
-            frame = obj.CinePanel2D.Capture;
+        function frame = Capture(obj, image_size, orientation)
+            frame = obj.CinePanel2D.Capture(image_size, orientation);
         end
         
         function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)

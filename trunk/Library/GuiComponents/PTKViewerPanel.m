@@ -84,14 +84,12 @@ classdef PTKViewerPanel < PTKPanel
     
     methods
         
-        function obj = PTKViewerPanel(parent, show_control_panel)
+        function obj = PTKViewerPanel(parent, show_control_panel, reporting)
             % Creates a PTKViewerPanel
             
-            obj = obj@PTKPanel(parent);
+            obj = obj@PTKPanel(parent, reporting);
             
-            if nargin > 1
-                obj.ShowControlPanel = show_control_panel;
-            end
+            obj.ShowControlPanel = show_control_panel;
             
             obj.MouseCursorStatus = PTKMouseCursorStatus;
             
@@ -190,10 +188,10 @@ classdef PTKViewerPanel < PTKPanel
             obj.ViewerPanelMultiView.ZoomTo(i_limits, j_limits, k_limits);
         end
         
-        function frame = Capture(obj)
+        function frame = Capture(obj, image_size, orientation)
             % Captures a 2D image from the currently displayed slice
             
-            frame = obj.ViewerPanelMultiView.Capture;
+            frame = obj.ViewerPanelMultiView.Capture(obj, image_size, orientation);
         end
 
         function SetControl(obj, tag_value)

@@ -93,8 +93,12 @@ classdef PTKViewerPanelToolbar < PTKPanel
             obj.LevelText = uicontrol('Style', 'text', 'Parent', obj.WindowLevelPanel, 'Units', 'pixels', 'FontSize', font_size, 'String', 'Level:', 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'HorizontalAlignment', 'right');
             obj.WindowEditbox = uicontrol('Style', 'edit', 'Parent', obj.WindowLevelPanel, 'Units', 'pixels', 'FontSize', font_size, 'Callback', @obj.WindowTextCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Change window (contrast)', 'String', num2str(obj.ViewerPanel.Window));
             obj.LevelEditbox = uicontrol('Style', 'edit', 'Parent', obj.WindowLevelPanel, 'Units', 'pixels', 'FontSize', font_size, 'Callback', @obj.LevelTextCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white', 'TooltipString', 'Change level (brightness)', 'String', num2str(obj.ViewerPanel.Level));
-            obj.WindowSlider = uicontrol('Style', 'slider', 'Units', 'pixels', 'Min', 0, 'Max', 1, 'Value', 1, 'Parent', obj.WindowLevelPanel, 'Callback', @obj.WindowSliderCallback, 'TooltipString', 'Change window (contrast)', 'KeyPressFcn', keypress_function, 'Value', obj.ViewerPanel.Window);
-            obj.LevelSlider = uicontrol('Style', 'slider', 'Units', 'pixels', 'Min', 0, 'Max', 1, 'Value', 0, 'Parent', obj.WindowLevelPanel, 'Callback', @obj.LevelSliderCallback, 'TooltipString', 'Change level (brightness)', 'KeyPressFcn', keypress_function, 'Value', obj.ViewerPanel.Level);
+            window_slider_min = min(obj.ViewerPanel.Window, 0);
+            window_slider_max = max(obj.ViewerPanel.Window, 1);
+            obj.WindowSlider = uicontrol('Style', 'slider', 'Units', 'pixels', 'Min', window_slider_min, 'Max', window_slider_max, 'Value', 1, 'Parent', obj.WindowLevelPanel, 'Callback', @obj.WindowSliderCallback, 'TooltipString', 'Change window (contrast)', 'KeyPressFcn', keypress_function, 'Value', obj.ViewerPanel.Window);
+            level_slider_min = min(obj.ViewerPanel.Level, 0);
+            level_slider_max = max(obj.ViewerPanel.Level, 1);
+            obj.LevelSlider = uicontrol('Style', 'slider', 'Units', 'pixels', 'Min', level_slider_min, 'Max', level_slider_max, 'Value', 0, 'Parent', obj.WindowLevelPanel, 'Callback', @obj.LevelSliderCallback, 'TooltipString', 'Change level (brightness)', 'KeyPressFcn', keypress_function, 'Value', obj.ViewerPanel.Level);
             
             % Add context menu
             obj.Tools.UpdateTools;

@@ -91,7 +91,10 @@ classdef PTKFigure < PTKUserInterfaceObject
             % keyboard shortcuts will be sent to the command line
             
             hManager = uigetmodemanager(obj.GraphicalComponentHandle);
-            set(hManager.WindowListenerHandles, 'Enable', 'off');
+            
+            
+            %%%% Todo: Disabled due to incompatibality with hg2 in Matlab 8.4
+%             set(hManager.WindowListenerHandles, 'Enable', 'off');
         end
         
         function CustomKeyPressedFunction(obj, src, eventdata)

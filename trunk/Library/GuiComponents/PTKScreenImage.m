@@ -56,7 +56,7 @@ classdef PTKScreenImage < PTKPositionlessUserInterfaceObject
         function SetImageData(obj, rgb_slice, alpha_slice)
             obj.CData = rgb_slice;
             obj.AlphaData = alpha_slice;
-            
+
             if isempty(alpha_slice)
                 alpha_slice = 1;
             end
@@ -77,52 +77,9 @@ classdef PTKScreenImage < PTKPositionlessUserInterfaceObject
             end
         end
         
-        function DrawImageSlice(obj, image_object, background_image, opacity, black_is_transparent, window, level, opaque_colour, slice_number, orientation)
-            if ~isempty(image_object)
-                if image_object.ImageExists
-                    image_slice = obj.GetImageSlice(background_image, image_object, slice_number, orientation);
-                    image_type = image_object.ImageType;
-                    
-                    if (image_type == PTKImageType.Scaled)
-                        limits = image_object.Limits;
-                    elseif (image_type == PTKImageType.Colormap)
-                        
-                        % For unsigned types, we don't need the limits (see GetImage() below)
-                        if isa(image_slice, 'uint8') || isa(image_slice, 'uint16')
-                            limits = [];
-                        else
-                            limits = image_object.Limits;
-                        end
-                    else
-                        limits = [];
-                    end
-                    
-                    level_grayscale = image_object.RescaledToGrayscale(level);
-                    window_grayscale = window;
-                    if isa(image_object, 'PTKDicomImage')
-                        if image_object.IsCT && ~isempty(image_object.RescaleSlope)
-                            window_grayscale = window_grayscale/image_object.RescaleSlope;
-                        end
-                    end
-                    
-                    [rgb_slice, alpha_slice] = PTKScreenImage.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, black_is_transparent, image_object.ColorLabelMap);
-                    alpha_slice = double(alpha_slice)*opacity/100;
-                    
-                    % Special code to highlight one colour
-                    if ~isempty(opaque_colour)
-                        alpha_slice(image_slice == opaque_colour) = 1;
-                    end
-                    
-                    obj.SetImageData(rgb_slice, alpha_slice);
-                else
-                    obj.ClearImageData;
-                end
-            end
-            
-        end
     end
     
-    methods (Access = private, Static)
+    methods (Access = protected, Static)
         
         function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level, black_is_transparent, map)
             switch image_type
@@ -144,6 +101,11 @@ classdef PTKScreenImage < PTKPositionlessUserInterfaceObject
             
         end
         
+    end
+    
+    methods (Access = private, Static)
+        
+    
         function [rgb_image, alpha] = GetBWImage(image)
             rgb_image = (cat(3, image, image, image));
             alpha = ones(size(image));
@@ -191,21 +153,6 @@ classdef PTKScreenImage < PTKPositionlessUserInterfaceObject
             scale_factor = 255/max(1, (max_value - min_value));
             rescaled_image = uint8(min(((image - min_value)*scale_factor), 255));
         end
-        
-        function image_slice = GetImageSlice(background_image, image_object, slice_number, orientation)
-            offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(background_image, image_object);
-            
-            slice_number = slice_number - round(offset_voxels(orientation));
-            if (slice_number < 1) || (slice_number > image_object.ImageSize(orientation))
-                image_slice = image_object.GetBlankSlice(orientation);
-            else
-                image_slice = image_object.GetSlice(slice_number, orientation);
-            end
-            if (orientation ~= PTKImageOrientation.Axial)
-                image_slice = image_slice';
-            end
-        end
-        
     end
     
 end
