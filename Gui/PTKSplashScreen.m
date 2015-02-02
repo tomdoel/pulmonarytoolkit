@@ -64,7 +64,7 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
             % Calculate the figure windows size
             set(0, 'Units', 'pixels');
             screen_size = get(0, 'ScreenSize');
-            position = [1, 1, 926, 474];
+            position = [1, 1, 700, 300];
             position(1) = max(1, round((screen_size(3) - position(3))/2));
             position(2) = max(1, round((screen_size(4) - position(4))/2));
             
@@ -95,27 +95,28 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
             % Override the colour and resize behaviour
             set(obj.GraphicalComponentHandle, 'Color', [1 1 1], 'Resize', 'off');
             
-            obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', [30, 100, 333, 314]);
+            obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', [30, 70, 223, 200]);
             logo = imread(PTKSoftwareInfo.SplashScreenImageFile);
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
-            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 350, 460, 75], 'String', PTKSoftwareInfo.Name, 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
-            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [420, 240, 460, 110], 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
-            set(obj.BodyText, 'String', sprintf(['Version ' PTKSoftwareInfo.Version ' \n\n' PTKSoftwareInfo.WebsiteUrl]));
+            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', PTKSoftwareInfo.Name, 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
+            
+            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1], 'HorizontalAlignment', 'Center');
+            set(obj.BodyText, 'String', sprintf(['Version ' PTKSoftwareInfo.Version]));
             
             % Create the progress reporting
             panel_background_colour = [1 1 1];
             text_color = [0.0 0.129 0.278];
             
-            title_position = [450, 150, 400, 30];
-            text_position = [450, 100, 400, 40];
-            cancel_position = [580, 20, 140, 30];
-            quit_position = [750, 20, 70, 30];
-            progress_bar_position = [450, 80, 400, 18];
+            title_position = [250, 150, 450, 30];
+            text_position = [250, 90, 450, 60];
+            cancel_position = [400, 20, 140, 30];
+            quit_position = [580, 20, 70, 30];
+            progress_bar_position = [300, 70, 350, 18];
             
             
             obj.ProgressTitle = uicontrol('parent', obj.GraphicalComponentHandle, 'style', 'text', 'units', 'pixel', 'Position', title_position, ...
-                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 24, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 22, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
             obj.Text = uicontrol('parent', obj.GraphicalComponentHandle, 'style', 'text', 'units', 'pixel', 'Position', text_position, ...
                 'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 16, 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
             obj.Cancel = uicontrol('parent', obj.GraphicalComponentHandle, 'string', 'Cancel', ...
