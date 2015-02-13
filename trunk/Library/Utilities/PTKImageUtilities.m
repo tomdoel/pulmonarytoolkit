@@ -33,18 +33,19 @@ classdef PTKImageUtilities
 
         % Returns an RGB image from a colormap matrix
         function [rgb_image, alpha] = GetLabeledImage(image, map)
+            ptk_colormap = PTKSoftwareInfo.Colormap;
             if isempty(map)
                 if isa(image, 'double') || isa(image, 'single')
-                    rgb_image = label2rgb(round(image), 'lines');
+                    rgb_image = label2rgb(round(image), ptk_colormap);
                 else
-                    rgb_image = label2rgb(image, 'lines');
+                    rgb_image = label2rgb(image, ptk_colormap);
                 end
                 alpha = int8(image ~= 0);
             else
                 if isa(image, 'double') || isa(image, 'single')
-                    rgb_image = label2rgb(map(round(image + 1)), 'lines');
+                    rgb_image = label2rgb(map(round(image + 1)), ptk_colormap);
                 else
-                    rgb_image = label2rgb(map(image + 1), 'lines');
+                    rgb_image = label2rgb(map(image + 1), ptk_colormap);
                 end
                 alpha = int8(image ~= 0);
             end

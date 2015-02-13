@@ -93,7 +93,7 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     daspect([1 1 1]);
     
     rotate3d;
-    cm = colormap('Lines');
+    cm = colormap(PTKSoftwareInfo.Colormap);
     view(-37.5, 30);
     
     % Change camera angle

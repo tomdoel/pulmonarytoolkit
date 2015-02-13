@@ -82,6 +82,12 @@ classdef PTKSystemUtilities
             end
         end
         
+        function colormap = BackwardsCompatibilityColormap
+            old_colormap = [0 0 1; 0 0.5 0; 1 0 0; 0 0.75 0.75; 0.75 0 0.75; 0.75 0.75 0; 0.25 0.25 0.25];
+            colormap = repmat(old_colormap, [9, 1]);
+            colormap = [colormap; [0 0 1]];
+        end
+        
     end
 end
 
