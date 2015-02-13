@@ -48,6 +48,7 @@ classdef PTKSoftwareInfo < handle
         GuiFont = 'Helvetica'
         DefaultCategoryName = 'Uncategorised'
         DefaultMode = 'Home'
+        Colormap = PTKSystemUtilities.BackwardsCompatibilityColormap;
         
         % If this parameter to true, then the patient browser will group together
         % datasets with the same patient name, even if the patient ID is different

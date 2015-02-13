@@ -34,7 +34,7 @@ function figure_handle = PTKVisualiseTreeModelCentreline(parent_branch, voxel_si
     set(gcf, 'Color', 'white');
     daspect(aspect_ratio);
     rotate3d;
-    cm = colormap('Lines');
+    cm = colormap(PTKSoftwareInfo.Colormap);
     view(-37.5, 30);
     cl = camlight('headlight');
     
