@@ -51,41 +51,46 @@ classdef PTKImageAxes < PTKAxes
         end
         
         function [x_range, y_range] = UpdateAxes(obj)
-            orientation = obj.ImageSource.GetOrientation;
-            if ~isempty(obj.PreviousOrientation)
-                [x_lim, y_lim] = obj.GetLimits;
+            if obj.ImageSource.ImageExists
+                orientation = obj.ImageSource.GetOrientation;
+                if ~isempty(obj.PreviousOrientation)
+                    [x_lim, y_lim] = obj.GetLimits;
 
-                obj.AxisLimits{obj.PreviousOrientation}.XLim = x_lim;
-                obj.AxisLimits{obj.PreviousOrientation}.YLim = y_lim;
-                obj.AxisLimits{obj.PreviousOrientation}.ResetAxisData = getappdata(obj.GraphicalComponentHandle, 'matlab_graphics_resetplotview');
-            end
-            
-            axes_width_screenpixels = obj.Position(3);
-            axes_height_screenpixels = obj.Position(4);
-            
-            % If a resize has changed the aspect ratio of the axes then we need to reset the
-            % cached limits to force new limits to be set
-            axes_ratio = axes_width_screenpixels/axes_height_screenpixels;
-            if ~isempty(obj.AxisLimits{orientation}.AxesAspectRatio)
-                if abs(obj.AxisLimits{orientation}.AxesAspectRatio - axes_ratio) > 0.001
-                    obj.ClearAxesCache;
+                    obj.AxisLimits{obj.PreviousOrientation}.XLim = x_lim;
+                    obj.AxisLimits{obj.PreviousOrientation}.YLim = y_lim;
+                    obj.AxisLimits{obj.PreviousOrientation}.ResetAxisData = getappdata(obj.GraphicalComponentHandle, 'matlab_graphics_resetplotview');
                 end
-            end
 
-            % Use the cached axes limit value if available
-            if isempty(obj.PreviousOrientation) || isempty(obj.AxisLimits{orientation}.XLim)
-                [x_lim, y_lim, x_range, y_range, data_aspect_ratio] = obj.ComputeNewAxisLimits(orientation);
-                obj.SetLimitsAndRatio(x_lim, y_lim, data_aspect_ratio, []);
-                obj.AxisLimits{orientation}.AxesAspectRatio = axes_ratio;
-                obj.AxisLimits{orientation}.XRange = x_range;
-                obj.AxisLimits{orientation}.YRange = y_range;
-                obj.AxisLimits{orientation}.DataAspectRatio = data_aspect_ratio;
+                axes_width_screenpixels = obj.Position(3);
+                axes_height_screenpixels = obj.Position(4);
+
+                % If a resize has changed the aspect ratio of the axes then we need to reset the
+                % cached limits to force new limits to be set
+                axes_ratio = axes_width_screenpixels/axes_height_screenpixels;
+                if ~isempty(obj.AxisLimits{orientation}.AxesAspectRatio)
+                    if abs(obj.AxisLimits{orientation}.AxesAspectRatio - axes_ratio) > 0.001
+                        obj.ClearAxesCache;
+                    end
+                end
+
+                % Use the cached axes limit value if available
+                if isempty(obj.PreviousOrientation) || isempty(obj.AxisLimits{orientation}.XLim)
+                    [x_lim, y_lim, x_range, y_range, data_aspect_ratio] = obj.ComputeNewAxisLimits(orientation);
+                    obj.SetLimitsAndRatio(x_lim, y_lim, data_aspect_ratio, []);
+                    obj.AxisLimits{orientation}.AxesAspectRatio = axes_ratio;
+                    obj.AxisLimits{orientation}.XRange = x_range;
+                    obj.AxisLimits{orientation}.YRange = y_range;
+                    obj.AxisLimits{orientation}.DataAspectRatio = data_aspect_ratio;
+                else
+                    [x_lim, y_lim, x_range, y_range, data_aspect_ratio, axes_reset_object] = obj.GetPreviousAxisLimits(orientation);
+                    obj.SetLimitsAndRatio(x_lim, y_lim, data_aspect_ratio, axes_reset_object);
+                end
+
+                obj.PreviousOrientation = orientation;
             else
-                [x_lim, y_lim, x_range, y_range, data_aspect_ratio, axes_reset_object] = obj.GetPreviousAxisLimits(orientation);
-                obj.SetLimitsAndRatio(x_lim, y_lim, data_aspect_ratio, axes_reset_object);
+                x_range = [0 1];
+                y_range = [0 1];
             end
-                        
-            obj.PreviousOrientation = orientation;
         end
         
         function ZoomTo(obj, i_limits, j_limits, k_limits)
