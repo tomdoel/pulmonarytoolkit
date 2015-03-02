@@ -97,7 +97,7 @@ classdef PTKDatasetResults < handle
             [result, cache_info, output_image, plugin_has_been_run] = obj.RunPluginWithOptionalImageGeneration(plugin_name, plugin_info, plugin_class, generate_results, dataset_stack, context, allow_results_to_be_cached, reporting);
             
             % Open any output folders which have been written to by the plugin
-            obj.OutputFolder.OpenChangedFolders;
+            obj.OutputFolder.OpenChangedFolders(reporting);
             
             reporting.CompleteProgress;
             
