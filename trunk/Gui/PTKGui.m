@@ -340,7 +340,7 @@ classdef PTKGui < PTKFigure
             if (filename ~= 0)
                 % Hide the progress bar before capture
                 obj.Reporting.ProgressDialog.Hide;
-                frame = obj.ImagePanel.Capture(obj.BackgroundImage.ImageSize, obj.Orientation);
+                frame = obj.ImagePanel.Capture;
                 PTKDiskUtilities.SaveImageCapture(frame, PTKFilename(path_name, filename), save_type, obj.Reporting)
             end
         end

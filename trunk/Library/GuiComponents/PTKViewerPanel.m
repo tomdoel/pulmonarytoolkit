@@ -188,10 +188,10 @@ classdef PTKViewerPanel < PTKPanel
             obj.ViewerPanelMultiView.ZoomTo(i_limits, j_limits, k_limits);
         end
         
-        function frame = Capture(obj, image_size, orientation)
+        function frame = Capture(obj)
             % Captures a 2D image from the currently displayed slice
             
-            frame = obj.ViewerPanelMultiView.Capture(obj, image_size, orientation);
+            frame = obj.ViewerPanelMultiView.Capture(obj.BackgroundImage.ImageSize, obj.Orientation);
         end
 
         function SetControl(obj, tag_value)
