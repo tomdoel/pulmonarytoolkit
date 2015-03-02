@@ -46,6 +46,9 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
+        
+        EnableModes = PTKModes.EditMode
+        SubMode = PTKSubModes.ColourRemapEditing        
     end
     
     methods (Static)
