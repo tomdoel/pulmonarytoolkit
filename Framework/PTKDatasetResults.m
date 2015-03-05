@@ -270,6 +270,10 @@ classdef PTKDatasetResults < handle
         function SaveSurfaceMesh(obj, plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, dataset_stack, reporting)
             obj.OutputFolder.SaveSurfaceMesh(plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, dataset_stack, reporting)
         end
+
+        function RecordNewFileAdded(obj, plugin_name, file_path, file_name, description, reporting)
+            obj.OutputFolder.RecordNewFileAdded(plugin_name, file_path, file_name, description, reporting)
+        end
     end
 
     methods (Access = private)

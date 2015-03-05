@@ -74,6 +74,14 @@ classdef PTKOutputFolder < PTKBaseClass
             obj.ChangedFolders{end + 1} = file_path;
         end
 
+        function RecordNewFileAdded(obj, plugin_name, file_path, file_name, description, reporting)
+            date_text = date;
+            ptk_file_name = PTKFilename(file_path, file_name);
+            new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
+            obj.AddRecord(new_record, reporting);
+            obj.ChangedFolders{end + 1} = file_path;
+        end
+
         function OpenChangedFolders(obj, reporting)
             obj.ChangedFolders = unique(obj.ChangedFolders);
             for folder = obj.ChangedFolders'
