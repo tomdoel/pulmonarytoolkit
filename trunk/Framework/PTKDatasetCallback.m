@@ -132,5 +132,9 @@ classdef PTKDatasetCallback < handle
         function SaveSurfaceMesh(obj, plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, varargin)
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveSurfaceMesh(plugin_name, subfolder_name, file_name, description, segmentation, smoothing_size, small_structures, coordinate_system, template_image, obj.DatasetStack, obj.Reporting);
         end
+
+        function RecordNewFileAdded(obj, plugin_name, file_path, file_name, description, varargin)
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).RecordNewFileAdded(plugin_name, file_path, file_name, description, obj.Reporting)
+        end        
     end
 end
