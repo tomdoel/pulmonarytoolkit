@@ -181,8 +181,12 @@ classdef PTKGuiDataset < PTKBaseClass
             obj.ModeSwitcher.SaveEditedResult;
         end
         
-        function DeleteImageInfo(obj)
+        function DeleteThisImageInfo(obj)
             obj.DeleteDatasets(obj.GetUidOfCurrentDataset);
+        end
+        
+        function DeleteImageInfo(obj, uid)
+            obj.DeleteDatasets(uid);
         end
         
         function DeleteDatasets(obj, series_uids)
@@ -195,6 +199,10 @@ classdef PTKGuiDataset < PTKBaseClass
         
         
         function InternalLoadImages(obj, image_info_or_uid)
+            
+            % Set this to empty in case an exception is thrown before it is
+            % set
+            series_uid = [];
             
             delete_image_info = false;
             
@@ -285,10 +293,6 @@ classdef PTKGuiDataset < PTKBaseClass
 
                 
             catch exc
-                % For the patient browser
-                patient_id = [];
-                series_uid = [];
-                
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowProgress('Cancelling load');
                     obj.ClearDataset;
@@ -309,12 +313,23 @@ classdef PTKGuiDataset < PTKBaseClass
                 % We do this outside the catch block, in case it throws another exception
                 if delete_image_info
                     try
-                        obj.DeleteImageInfo;
+                        % The series_uid may have been set before the
+                        % exception was thrown, in which case we use this
+                        % to specify which dataset to delete
+                        if isempty(series_uid)
+                            obj.DeleteThisImageInfo;
+                        else
+                            obj.DeleteImageInfo(series_uid);
+                        end
                     catch exc
                         obj.Reporting.ShowMessage('PTKGuiDataset:DeleteImageInfoFailed', ['Failed to delete dataset due to error: ' exc.message]);
                     end
                 end
                 
+                % For the patient browser
+                patient_id = [];
+                series_uid = [];
+                                
                 obj.GuiDatasetState.ClearPatientAndSeries;
                 
             end

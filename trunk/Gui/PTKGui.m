@@ -397,8 +397,12 @@ classdef PTKGui < PTKFigure
             obj.LoadFromUid(uid, obj.WaitDialogHandle);
         end
 
-        function DeleteImageInfo(obj)
-            obj.GuiDataset.DeleteImageInfo;
+        function DeleteThisImageInfo(obj)
+            obj.GuiDataset.DeleteThisImageInfo;
+        end
+        
+        function DeleteImageInfo(obj, uid)
+            obj.GuiDataset.DeleteImageInfo(uid);
         end
 
         function DeleteFromPatientBrowser(obj, series_uids)
