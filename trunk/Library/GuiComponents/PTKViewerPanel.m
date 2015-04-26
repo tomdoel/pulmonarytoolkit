@@ -220,7 +220,9 @@ classdef PTKViewerPanel < PTKPanel
             obj.ResizeControlPanel;
             
             if strcmp(mode, PTKModes.EditMode)
-                if strcmp(submode, PTKSubModes.ColourRemapEditing)
+                if strcmp(submode, PTKSubModes.PaintEditing)
+                    obj.SetControl('Paint');
+                elseif strcmp(submode, PTKSubModes.ColourRemapEditing)
                     obj.SetControl('Map');
                 elseif strcmp(submode, PTKSubModes.EditBoundariesEditing)
                     obj.SetControl('Edit');

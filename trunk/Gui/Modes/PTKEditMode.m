@@ -71,6 +71,9 @@ classdef PTKEditMode < handle
                 elseif strcmp(plugin_info.SubMode, PTKSubModes.ColourRemapEditing)
                     obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.ColourRemapEditing);
                     
+                elseif strcmp(plugin_info.SubMode, PTKSubModes.PaintEditing)
+                    obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.PaintEditing);
+                    
                 else
                     obj.ViewerPanel.SetModes(PTKModes.EditMode, []);
                 end

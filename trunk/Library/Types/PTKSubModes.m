@@ -13,6 +13,7 @@ classdef PTKSubModes
         EditBoundariesEditing = 'EditBoundariesEditing'
         FixedBoundariesEditing = 'FixedBoundariesEditing'
         ColourRemapEditing = 'ColourRemapEditing'
+        PaintEditing = 'PaintEditing'
     end
     
 end
