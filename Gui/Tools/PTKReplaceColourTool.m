@@ -53,7 +53,7 @@ classdef PTKReplaceColourTool < PTKTool
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)
             is_enabled = ~isempty(mode) && ~isempty(sub_mode) && strcmp(mode, PTKModes.EditMode) && ...
-                (strcmp(sub_mode, PTKSubModes.EditBoundariesEditing) || strcmp(sub_mode, PTKSubModes.FixedBoundariesEditing));
+                (strcmp(sub_mode, PTKSubModes.EditBoundariesEditing) || strcmp(sub_mode, PTKSubModes.FixedBoundariesEditing) || strcmp(sub_mode, PTKSubModes.PaintEditing));
         end
         
         function Enable(obj, enable)
@@ -148,9 +148,9 @@ classdef PTKReplaceColourTool < PTKTool
             local_image_coords = obj.ViewerPanel.OverlayImage.GlobalToLocalCoordinates(global_image_coords);
             segmentation_colour = obj.ViewerPanel.OverlayImage.RawImage(local_image_coords(1), local_image_coords(2), local_image_coords(3));
                         
-            if segmentation_colour == 0
-                return;
-            end
+%             if segmentation_colour == 0
+%                 return;
+%             end
             
             obj.FromColour = segmentation_colour;
             
