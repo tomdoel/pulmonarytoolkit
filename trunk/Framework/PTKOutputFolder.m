@@ -143,14 +143,39 @@ classdef PTKOutputFolder < PTKBaseClass
             else
                 subfolder = '';
             end
-
+            
             if isempty(subfolder)
                 subfolder = obj.ImageUid;
+                subsubfolder = '';
+            else
+                subsubfolder = '';                
+                if isfield(metadata, 'StudyDescription')
+                    study_description = metadata.StudyDescription;
+                else
+                    study_description = '';
+                end
+                if isfield(metadata, 'SeriesDescription')
+                    series_description = metadata.SeriesDescription;
+                else
+                    series_description = '';
+                end
+                if ~isempty(study_description) && ~isempty(series_description)
+                    subsubfolder = [study_description '_' series_description];
+                elseif ~isempty(study_description)
+                    subsubfolder = study_description;
+                elseif ~isempty(series_description)
+                    subsubfolder = series_description;
+                end
+            end
+
+            subfolder = PTKTextUtilities.MakeFilenameValid(subfolder);
+            if isempty(subsubfolder)
+                obj.OutputFolder = fullfile(root_output_path, subfolder);
+            else
+                subsubfolder = PTKTextUtilities.MakeFilenameValid(subsubfolder);
+                obj.OutputFolder = fullfile(root_output_path, subfolder, subsubfolder);
             end
             
-            subfolder = PTKTextUtilities.MakeFilenameValid(subfolder);
-            
-            obj.OutputFolder = fullfile(root_output_path, subfolder);
         end
     end
 end
