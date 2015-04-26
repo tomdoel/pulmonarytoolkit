@@ -162,7 +162,7 @@ classdef PTKImageDatabase < handle
         end
         
         function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj)
-            % Returns list of patient names, ids and fmaily names, sorted by the
+            % Returns list of patient names, ids and family names, sorted by the
             % short visible name
             ids = obj.PatientMap.keys;
             values = obj.PatientMap.values;
