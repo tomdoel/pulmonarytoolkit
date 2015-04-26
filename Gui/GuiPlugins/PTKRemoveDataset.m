@@ -37,7 +37,7 @@ classdef PTKRemoveDataset < PTKGuiPlugin
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
             % Delete files from the disk cache
-            ptk_gui_app.DeleteImageInfo;
+            ptk_gui_app.DeleteThisImageInfo;
         end
         
         function enabled = IsEnabled(ptk_gui_app)
