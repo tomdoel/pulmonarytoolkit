@@ -159,6 +159,10 @@ classdef PTKMain < PTKBaseClass
         end
         
         function DeleteDatasets(obj, series_uids)
+            if isempty(series_uids)
+                return;
+            end
+            
             if ~iscell(series_uids)
                 series_uids = {series_uids};
             end
