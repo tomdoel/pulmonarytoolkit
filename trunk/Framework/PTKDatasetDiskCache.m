@@ -72,6 +72,13 @@ classdef PTKDatasetDiskCache < handle
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
+        function UpdateEditedResults(obj, plugin_name, cache_info, context, reporting)
+            % Updates the results cache if the existance of an edited
+            % result has changed
+            
+            obj.PluginResultsInfo.UpdateEditedResults(plugin_name, cache_info, context, reporting);
+        end
+        
         function SaveData(obj, data_filename, value, reporting)
             % Saves additional data associated with this dataset to the cache
             

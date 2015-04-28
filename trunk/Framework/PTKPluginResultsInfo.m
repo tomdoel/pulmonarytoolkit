@@ -28,8 +28,8 @@ classdef PTKPluginResultsInfo < handle
             obj.ResultsInfo = containers.Map;
         end
         
-        % Adds dependency record for a particular plugin result
         function AddCachedPluginInfo(obj, plugin_name, cache_info, context, is_edited, reporting)
+            % Adds dependency record for a particular plugin result
             plugin_key = obj.GetKey(plugin_name, context, is_edited);
             if obj.ResultsInfo.isKey(plugin_key)
                 reporting.Error('PTKPluginResultsInfo:CachedInfoAlreadyPresent', 'Cached plugin info already present');
@@ -37,12 +37,34 @@ classdef PTKPluginResultsInfo < handle
             obj.ResultsInfo(plugin_key) = cache_info;
         end
         
-        % Removes the dependency record for a particular plugin result
         function DeleteCachedPluginInfo(obj, plugin_name, context, is_edited, ~)
+            % Removes the dependency record for a particular plugin result
             plugin_key = obj.GetKey(plugin_name, context, is_edited);
             if obj.ResultsInfo.isKey(plugin_key)
                 obj.ResultsInfo.remove(plugin_key);
             end
+        end
+        
+        function updated = UpdateEditedResults(obj, plugin_name, cache_info, context, reporting)
+            % Updates the cache info if the existance of an edited result
+            % has changed
+            plugin_key = obj.GetKey(plugin_name, context, true);
+            edit_result_exists = ~isempty(cache_info);
+            edit_cache_exists = obj.ResultsInfo.isKey(plugin_key);
+            
+            if (edit_result_exists && ~edit_cache_exists)
+                obj.AddCachedPluginInfo(plugin_name, cache_info, context, true, reporting);
+                updated = true;
+                return;
+            end
+            
+            if (~edit_result_exists && edit_cache_exists)
+                obj.DeleteCachedPluginInfo(plugin_name, cache_info, context, true, reporting);
+                updated = true;
+                return;
+            end
+            
+            updated = false;            
         end
         
         function [valid, edited_key_exists] = CheckDependencyValid(obj, next_dependency, reporting)
