@@ -62,13 +62,13 @@ classdef PTKDiskCache < handle
         function exists = Exists(obj, name, context, ~)
             % Determine if a results file exists in the cahce
             filename = [fullfile(obj.CachePath, char(context), name) '.mat'];
-            exists = exist(filename, 'file');
+            exists = (2 == exist(filename, 'file'));
         end
         
         function exists = RawFileExists(obj, name, context, ~)
             % Determine if the raw image file associated with a PTKImage results file exists in the cahce
             filename = [fullfile(obj.CachePath, char(context), name) '.raw'];
-            exists = exist(filename, 'file');
+            exists = (2 == exist(filename, 'file'));
         end
 
         function [result, info] = Load(obj, name, context, reporting)
