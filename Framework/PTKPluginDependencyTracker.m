@@ -140,6 +140,10 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
             if obj.DatasetDiskCache.EditedResultExists(plugin_name, context, reporting)
                 [edited_result, edited_cache_info] = obj.DatasetDiskCache.LoadEditedPluginResult(plugin_name, context, reporting);
 
+                % In case the cache is out of sync with the existance of
+                % the edited result, this will update the cache
+                obj.DatasetDiskCache.UpdateEditedResults(plugin_name, edited_cache_info, context, reporting);
+
                 % Call the plugin to create an edited output
                 result = plugin_class.GetEditedResult(result, edited_result, reporting);
                 
@@ -149,6 +153,11 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
                 dependency_list_for_edit.AddDependency(edited_dependency, reporting);
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_edit, reporting);
                 cache_info.MarkEdited;
+            else
+                % In case the cache is out of sync with the existance of
+                % the edited result, this will delete the edited result entry from the cache
+                obj.DatasetDiskCache.UpdateEditedResults(plugin_name, [], context, reporting);
+
             end
         end
 
