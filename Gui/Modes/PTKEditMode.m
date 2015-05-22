@@ -130,6 +130,22 @@ classdef PTKEditMode < handle
             end
         end
         
+        function ImportPatch(obj, patch)
+            if ~isempty(obj.PluginName)
+                obj.LockImageChangedCallback;
+                
+                choice = questdlg('You are about to import an edited result. This will delete and replace any existing edits you have made for this plugin. Do you wish to continue?', ...
+                    'Import edited results', 'Import', 'Cancel', 'Import');
+                switch choice
+                    case 'Import'
+                        obj.ReplaceEditWithPatch(patch);
+                    case 'Cancel'
+                end
+                obj.UnLockImageChangedCallback;
+            end
+        end
+        
+        
         function ImportEdit(obj)
             if ~isempty(obj.PluginName)
                 obj.LockImageChangedCallback;
@@ -159,7 +175,24 @@ classdef PTKEditMode < handle
             end
         end
 
-
+        function ExportPatch(obj)
+            obj.SaveEdit;
+            edited_result = obj.ViewerPanel.OverlayImage.Copy;
+            template = obj.GuiDataset.GetTemplateImage;
+            edited_result.ResizeToMatch(template);
+            path_name = obj.Settings.SaveImagePath;
+            
+            patch = PTKEditedResultPatch;
+            image_info = obj.GuiDataset.GetImageInfo;
+            patch.SeriesUid = image_info.ImageUid;
+            patch.PluginName = obj.PluginName;
+            patch.EditedResult = edited_result;
+            
+            path_name = PTKSavePatchAs(patch, path_name, obj.Reporting);
+            if ~isempty(path_name)
+                obj.Settings.SetLastSaveImagePath(path_name, obj.Reporting);
+            end
+        end
         function OverlayImageChanged(obj, ~, ~)
             if obj.ImageOverlayLock < 1
                 obj.UnsavedChanges = true;
@@ -199,6 +232,38 @@ classdef PTKEditMode < handle
             obj.Reporting.CompleteProgress;            
         end
 
+        function ReplaceEditWithPatch(obj, patch)
+            if ~isempty(obj.PluginName)
+                obj.LockImageChangedCallback;
+                obj.Reporting.ShowProgress(['Replacing edited image for ', obj.VisiblePluginName]);
+                
+                current_overlay = obj.ViewerPanel.OverlayImage;
+                edited_result = patch.EditedResult;
+                edited_result.ImageType = current_overlay.ImageType;
+                
+                template = obj.GuiDataset.GetTemplateImage;
+                if ~isequal(template.ImageSize, edited_result.ImageSize)
+                    uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
+                    uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                else
+                    obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
+                    obj.UnsavedChanges = false;
+                    obj.GuiDataset.UpdateEditedStatus(true);
+                    
+                    % Update the loaded results
+                    obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
+                    obj.GuiDataset.UpdateEditedStatus(false);
+                    
+                    % Ensure we are back in edit mode, as RunPlugin will have left this
+                    obj.GuiDataset.ChangeMode(PTKModes.EditMode);
+                end
+                
+                obj.Reporting.CompleteProgress;
+                obj.UnLockImageChangedCallback;
+            end
+        end
+                    
         function ChooseAndReplaceEdit(obj)
             if ~isempty(obj.PluginName)
                 obj.LockImageChangedCallback;

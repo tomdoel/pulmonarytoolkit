@@ -244,6 +244,37 @@ classdef PTKGui < PTKFigure
             
             obj.WaitDialogHandle.Hide;
         end
+        
+        function uids = ImportPatch(obj)
+            % Prompts the user to import a patch
+            
+            obj.WaitDialogHandle.ShowAndHold('Import patch');
+            
+            [folder_path, filename, filter_index] = PTKDiskUtilities.ChooseFiles('Select the patch to import', obj.GuiSingleton.GetSettings.SaveImagePath, false, {'*.ptk', 'PTK Patch'});
+            
+            
+            % An empty folder_path means the user has cancelled
+            if ~isempty(folder_path)
+                
+                % Save the path in the settings so that future load dialogs 
+                % will start from there
+                obj.GuiSingleton.GetSettings.SetLastSaveImagePath(folder_path, obj.Reporting);
+                
+                patch = PTKDiskUtilities.LoadPatch(fullfile(folder_path, filename{1}), obj.Reporting);
+                if (strcmp(patch.PatchType, 'EditedResult'))
+                    uid = patch.SeriesUid;
+                    plugin = patch.PluginName;
+                    obj.LoadFromUid(uid, obj.WaitDialogHandle);
+                    obj.GuiDataset.RunPlugin(plugin, obj.WaitDialogHandle);
+                    obj.ChangeMode(PTKModes.EditMode);
+                    obj.GetMode.ImportPatch(patch);
+                end
+            end
+            
+            obj.WaitDialogHandle.Hide;
+        end
+               
+        
                
         function SaveBackgroundImage(obj)
             patient_name = obj.ImagePanel.BackgroundImage.Title;
