@@ -33,6 +33,9 @@ classdef PTKThresholdLung < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
+        
+        EnableModes = PTKModes.EditMode
+        SubMode = PTKSubModes.PaintEditing
     end
     
     methods (Static)
