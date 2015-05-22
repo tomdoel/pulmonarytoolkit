@@ -29,7 +29,7 @@ function results = PTKGetCentrelineFromAirways(airway_results, template_image, r
     
     % While each branch of the tree has been closed, there may still be
     % holes where branches meet. Hence we perform a hole filling to
-    % ensure this does not cause topoligcal problems with the
+    % ensure this does not cause topological problems with the
     % skeletonisation
     reporting.ShowProgress('Filling holes in airway tree');
     airway_segmented_image = PTKFillHolesInImage(airway_segmented_image);
