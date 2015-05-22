@@ -399,7 +399,7 @@ classdef PTKDiskUtilities
         end
         
         function value = Load(filename) %#ok<INUSD>
-            value = load(filename);
+            value = load(filename, '-mat');
         end
         
         function result = SaveStructure(file_path, filename_base, result, reporting)
@@ -543,6 +543,32 @@ classdef PTKDiskUtilities
             end
             
         end
+        
+        function SavePatchFile(patch_object, filename, reporting)
+            try
+                value = [];
+                value.patch = patch_object;
+                PTKDiskUtilities.Save(filename, value);
+            catch ex
+                reporting.ErrorFromException('PTKDiskUtilities:FailedtoSavePatchFile', ['Unable to save PTK patch file ' filename], ex);
+            end
+        end
+        
+        function patch = LoadPatch(filename, reporting)
+            try
+                if exist(filename, 'file')
+                    patch_struct = PTKDiskUtilities.Load(filename);
+                    patch = patch_struct.value.patch;
+                else
+                    reporting.Error('PTKDiskUtilities:PatchFileNotFound', 'No patch file found.');
+                    patch = [];
+                end
+                
+            catch ex
+                reporting.ErrorFromException('PTKDiskUtilities:FailedtoLoadPatchFile', ['Error when loading patch file ' filename '.'], ex);
+            end
+        end
+        
     end
 end
 
