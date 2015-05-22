@@ -110,7 +110,7 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
                     parent_neighbour_indices = parent_of_current_point + neighbour_offsets;
                     
                     for candidate_points = points_with_possible_loop
-                        if ~find(segment.NextPoint == parent_neighbour_indices, 1)
+                        if isempty(find(segment.NextPoint == parent_neighbour_indices, 1))
                             loop_detected = true;
                         end
                     end
@@ -120,6 +120,7 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
                     removed_points = [removed_points, segment.GetTree]; %#ok<AGROW>
                     removed_points = [removed_points, segment.NextPoint]; %#ok<AGROW>
                     segment.DeleteThisSegment;
+                    break;
                 end
             end
             
