@@ -558,7 +558,7 @@ classdef PTKDiskUtilities
             try
                 if exist(filename, 'file')
                     patch_struct = PTKDiskUtilities.Load(filename);
-                    patch = patch_struct.value.patch;
+                    patch = patch_struct.patch;
                 else
                     reporting.Error('PTKDiskUtilities:PatchFileNotFound', 'No patch file found.');
                     patch = [];
