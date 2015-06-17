@@ -73,7 +73,9 @@ classdef PTKAxes < PTKUserInterfaceObject
         end
         
         function ResetZoom(obj)
-            zoom(obj.GraphicalComponentHandle, 'reset');
+            if ~isempty(obj.GraphicalComponentHandle)
+                zoom(obj.GraphicalComponentHandle, 'reset');
+            end
         end
 
         function Resize(obj, position)
