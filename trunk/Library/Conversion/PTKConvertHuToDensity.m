@@ -18,8 +18,8 @@ function density_values_g_ml = PTKConvertHuToDensity(hu_values)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    density_water_mgmL = 1000;
-    density_air_stp_mgmL = 1.2922;
+    density_water_mgmL = 999.8395; % at STP
+    density_air_stp_mgmL = 1.2922; % at STP
     HU_air = -1000;
     
     % Convert to density mg/mL
