@@ -40,7 +40,7 @@ classdef PTKLobes < PTKPlugin
             if dataset.IsGasMRI
                 results = dataset.GetResult('PTKLobeMapForGasMRI');
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
-                results = dataset.GetResult('PTKLobeMapForMRI');
+                results = dataset.GetResult('PTKLobeMapForMRI'); % ToDo: not yet implemented for MRI
             else
                 results = dataset.GetResult('PTKLobesFromFissurePlane');
             end
