@@ -38,6 +38,7 @@ classdef PTKSaveAirwayCentreline < PTKPlugin
         function results = RunPlugin(dataset, reporting)
             
             [~, template_image] = dataset.GetResult('PTKAirways');
+            results = template_image;
             
             starting_segment = dataset.GetResult('PTKAirwayCentreline');
             starting_segment = starting_segment.AirwayCentrelineTree;
@@ -76,7 +77,6 @@ classdef PTKSaveAirwayCentreline < PTKPlugin
                 airway_tree_filename_prefix = 'AirwayTree_PrunedSmoothedCentreline';
                 PTKSaveSmoothedCentrelineTreeAsNodes(starting_segment_pruned, file_path, airway_tree_filename_prefix, coordinate_system, template_image, reporting);
                 dataset.RecordNewFileAdded('PTKSaveAirwayCentreline', file_path, airway_tree_filename_prefix, 'Smoothed centreline model of the airway tree down to the segmental bronchi, constructed from the segmented airway tree.');
-                throw Exception('blah');
             catch exception
                 reporting.ShowMessage('PTKSaveAirwayCentreline:CouldNotComputePrunedAirways', ['Warning: The pruned airway centrelines will not be saved for this dataset as the pulmonary segments could not be found due to the following error:.' exception.message]);
             end
