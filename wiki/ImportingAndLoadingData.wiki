@@ -11,7 +11,7 @@ The way Dicom images are stored on disk can be a mess - image stacks can be spli
 The easiest way to import data is to startup PTK
 {{{
 ptk
-{}}
+}}}
 and then click the `+` (Import) button at the bottom left. Choose a root folder. PTK will recursively search for and import the data it finds. This could take some time if you have a lot of images. Once all the images have been found you will see the left sidebar populated with patient and series data.
 
 You can also show the Patient Browser to see all the image series grouped by patient in a separate window.
