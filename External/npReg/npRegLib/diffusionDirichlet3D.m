@@ -9,7 +9,7 @@ function UNew = diffusionDirichlet3D(varargin);
 % licence: GNU GPL v3
 %
 % This code is copyright Nathan D. Cahill and has been distributed as part of the
-% Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+% Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
 %
 %
 

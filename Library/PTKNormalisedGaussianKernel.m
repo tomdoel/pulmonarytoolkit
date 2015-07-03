@@ -7,7 +7,7 @@ function kernel = PTKNormalisedGaussianKernel(voxel_size_mm, filter_size_mm, min
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %

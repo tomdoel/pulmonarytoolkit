@@ -10,7 +10,7 @@ classdef PTKSoftwareInfo < handle
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
@@ -33,7 +33,7 @@ classdef PTKSoftwareInfo < handle
         DicomName = 'TD Pulmonary Toolkit'
         DicomManufacturer = 'www tomdoel com'
         DicomStudyDescription = 'TD Pulmonary Toolkit exported images'
-        WebsiteUrl = 'http://code.google.com/p/pulmonarytoolkit'
+        WebsiteUrl = 'https://github.com/tomdoel/pulmonarytoolkit'
 
         % Appearance
         BackgroundColour = [0, 0.129, 0.278]
