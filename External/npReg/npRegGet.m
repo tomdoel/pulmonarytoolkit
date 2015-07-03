@@ -23,7 +23,7 @@ function o = npRegGet(options,name,default,flag)
 % licence: GNU GPL v3 licence.
 %
 % This code is copyright Nathan D. Cahill and has been distributed as part of the
-% Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+% Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
 
 % undocumented usage for fast access with no error checking
 if (nargin == 4) && isequal(flag,'fast')

@@ -10,7 +10,7 @@ function filtered_image = PTKGaussianFilter(original_image, filter_size_mm)
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %

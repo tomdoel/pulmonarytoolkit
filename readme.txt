@@ -2,7 +2,7 @@ Pulmonary Toolkit
 Lung medical image analysis and visualisation software for Matlab.
 
 This code is open source and available free to download from the project website:
-    http://code.google.com/p/pulmonarytoolkit
+    https://github.com/tomdoel/pulmonarytoolkit
 
 Author: Tom Doel, 2012  www.tomdoel.com
 Distributed under the GNU GPL v3 licence. Please see website for details.
@@ -21,7 +21,7 @@ It comprises:
 
 This software requires Matlab and the Matlab Image Processing Toolbox.
 Some functionality also requires a C++ compiler to be installed. Please see the website for details.
-    http://code.google.com/p/pulmonarytoolkit
+    https://github.com/tomdoel/pulmonarytoolkit
 
 This software is intended for research purposes only. It is not intended for clinical use.
 
@@ -51,7 +51,7 @@ To run the gui, run
 at the Matlab command line.
 
 For more details please read the wiki at
-    http://code.google.com/p/pulmonarytoolkit
+    https://github.com/tomdoel/pulmonarytoolkit
 
 
 Scripting
@@ -60,7 +60,7 @@ Scripting
 To use the toolkit in your own programs, create an instance of TDPTK and use 
 this to create TDDataset objects for each dataset you want to work with.
 
-For more information see the code wiki http://code.google.com/p/pulmonarytoolkit
+For more information see the code wiki https://github.com/tomdoel/pulmonarytoolkit
 
 
 
@@ -80,7 +80,7 @@ Your plugins should be in the User/Plugins/ and User/GuiPlugins/ folders unless
 they are being comitted to the TDPTK codebase, in which case they should be in 
 the Plugins/ and GuiPlugins/ folders.
 
-For more information see the code wiki http://code.google.com/p/pulmonarytoolkit
+For more information see the code wiki https://github.com/tomdoel/pulmonarytoolkit
 
 
 

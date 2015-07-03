@@ -9,7 +9,7 @@ function [BNEW,U,EXITFLAG,OUTPUT] = genNpReg2(A,B,options,defaultopt,regDim,vara
 % licence: GNU GPL v3
 %
 % This code is copyright Nathan D. Cahill and has been distributed as part of the
-% Pulmonary Toolkit. http://code.google.com/p/pulmonarytoolkit
+% Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
 %
 %
 
