@@ -2,10 +2,6 @@ The Pulmonary Toolkit is a software suite for the analysis of 3D medical lung im
 
 This is experimental research software and is primarily intended to support our own work. However, we are happy for you to make use of the software, and we have therefore made the source code available for free under the open-source licence (GNU-GPL3).
 
-While we are happy for you to make use of this software, please be aware that it is not designed or intended for general use and we can provide only limited support.
-
-_Currently available as an experimental (alpha) version - see Releases below._
-
 It comprises:
   * a library of lung analysis algorithms which can be called from your own code;
   * a GUI application for visualising and analysing clinical lung images (CT & MRI);
@@ -58,16 +54,16 @@ To run the current alpha version you will need the following:
   * Matlab version R2010b or later
   * The Matlab Image Processing Toolbox
   * A C++ compiler
-  * a Subversion client
+  * (recommended) a Git client
 
 
 ### Releases ###
 
-You can download and run the software but please be aware **the Toolkit is currently in alpha**. There is currently no stable release. We recommend you check out the latest version using Subversion and update regularly to obtain new features and bug fixes.
+You can download and run the software but please be aware **the Toolkit is currently in alpha**. There is currently no stable release. We recommend you check out the latest version using Git and pull regularly from the master branch to obtain new features and bug fixes.
 
-You can obtain the latest version of the code using Subversion - see the **Source** tab for more information. Subversion is a widely used version control system and free Subversion clients are available for all operating systems.
+See the GitHub website for more information on how to obtain the source code. While you can download a zip file, I recommend you use Git as it is easier to obtain updates. Git clients are available for all operating systems
 
-Please update your subversion checkout regularly to receive new features and fixes.
+Please pull changes regularly from the GitHub repository to receive new features and fixes.
 
 
 ### Support ###
@@ -79,8 +75,6 @@ If you are experiencing problems, please make sure you have the required version
 Please update your Subversion checkout to obtain the latest bug fixes.
 
 The toolkit works primarily with medical Dicom images, but there is also limited support for mhd/mha files
-
-Please note the email address associated with this project is not monitored.
 
 
 ### License ###
