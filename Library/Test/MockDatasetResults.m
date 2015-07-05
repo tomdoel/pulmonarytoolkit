@@ -44,8 +44,7 @@ classdef MockDatasetResults < handle
             output_image = result_from_cache.OutputImage;
             has_been_run = result_from_cache.HasBeenRun;
             
-            obj.ImageTemplates.UpdateTemplates(plugin_name, context, result, has_been_run);
-            
+            obj.ImageTemplates.UpdateTemplates(plugin_name, context, result, has_been_run, cache_info, reporting);
         end
 
         % Returns a PTKImageInfo structure with image information, including the
