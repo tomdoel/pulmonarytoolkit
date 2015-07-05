@@ -41,7 +41,7 @@ classdef MockImageTemplates < handle
         % Check to see if a plugin which has been run is associated with any of
         % the contexts. If it is, create a new template image for that context
         % if one does not already exist
-        function UpdateTemplates(obj, plugin_name, context, result_image, result_may_have_changed)
+        function UpdateTemplates(obj, plugin_name, output_context, result, plugin_has_been_run, cache_info, reporting)
         end
 
 
@@ -53,7 +53,10 @@ classdef MockImageTemplates < handle
         
 
         % Stores the fact that a plugin has been run
-        function NoteAttemptToRunPlugin(obj, plugin_name, context)
+        function NoteAttemptToRunPlugin(obj, plugin_name, context, reporting)
         end
+        
+        function InvalidateIfInDependencyList(obj, plugin_name, reporting)
+        end        
     end
 end
