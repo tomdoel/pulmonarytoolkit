@@ -41,7 +41,7 @@ classdef TestImageTemplates < PTKTest
             mock_dataset_results.AddMockResult('PTKOriginalImage', PTKContext.OriginalImage, [], [], [], true);
             mock_reporting.AddExpectation('MockReporting.Error', 'PTKImageTemplates:NoContext');
             try
-                template_image = image_templates.GetTemplateImage(PTKContext.OriginalImage, null_dataset_stack);
+                template_image = image_templates.GetTemplateImage(PTKContext.OriginalImage, null_dataset_stack, mock_reporting);
             catch ex
                 if ~isa(ex, 'PTKTestException')
                     PTKErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
@@ -68,7 +68,7 @@ classdef TestImageTemplates < PTKTest
             mock_dataset_results.AddMockResult('PTKLungROI', PTKContext.LungROI, [], [], [], true);
             mock_reporting.AddExpectation('MockReporting.Error', 'PTKImageTemplates:NoContext');
             try
-                template_image = image_templates.GetTemplateImage(PTKContext.LungROI, null_dataset_stack);
+                template_image = image_templates.GetTemplateImage(PTKContext.LungROI, null_dataset_stack, mock_reporting);
             catch ex
                 if ~isa(ex, 'PTKTestException')
                     PTKErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
@@ -78,7 +78,7 @@ classdef TestImageTemplates < PTKTest
             mock_dataset_results.AddMockResult('PTKGetContextForSingleLung', PTKContext.LeftLung, [], [], [], true);
             mock_reporting.AddExpectation('MockReporting.Error', 'PTKImageTemplates:NoContext');
             try
-                template_image = image_templates.GetTemplateImage(PTKContext.LeftLung, null_dataset_stack);
+                template_image = image_templates.GetTemplateImage(PTKContext.LeftLung, null_dataset_stack, mock_reporting);
             catch ex
                 if ~isa(ex, 'PTKTestException')
                     PTKErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
@@ -133,31 +133,31 @@ classdef TestImageTemplates < PTKTest
             mock_dataset_results.AddMockResult('PTKGetContextForLobe', PTKContext.LeftUpperLobe, mock_lu_image, [], [], true);
             mock_dataset_results.AddMockResult('PTKGetContextForLobe', PTKContext.LeftLowerLobe, mock_ll_image, [], [], true);
 
-            roi_template_image = image_templates.GetTemplateImage(PTKContext.LungROI, null_dataset_stack);
+            roi_template_image = image_templates.GetTemplateImage(PTKContext.LungROI, null_dataset_stack, mock_reporting);
             obj.Assert(strcmp(roi_template_image.Title, 'roi'), 'Correct template image returned');
 
-            original_template_image = image_templates.GetTemplateImage(PTKContext.OriginalImage, null_dataset_stack);
+            original_template_image = image_templates.GetTemplateImage(PTKContext.OriginalImage, null_dataset_stack, mock_reporting);
             obj.Assert(strcmp(original_template_image.Title, 'full'), 'Correct template image returned');
            
-            left_template_image = image_templates.GetTemplateImage(PTKContext.LeftLung, null_dataset_stack);
+            left_template_image = image_templates.GetTemplateImage(PTKContext.LeftLung, null_dataset_stack, mock_reporting);
             obj.Assert(strcmp(left_template_image.Title, 'left'), 'Correct template image returned');
 
-            right_template_image = image_templates.GetTemplateImage(PTKContext.RightLung, null_dataset_stack);
+            right_template_image = image_templates.GetTemplateImage(PTKContext.RightLung, null_dataset_stack, mock_reporting);
             obj.Assert(strcmp(right_template_image.Title, 'right'), 'Correct template image returned');
 
-            ru_template_image = image_templates.GetTemplateImage(PTKContext.RightUpperLobe, null_dataset_stack);
+            ru_template_image = image_templates.GetTemplateImage(PTKContext.RightUpperLobe, null_dataset_stack, mock_reporting);
             obj.Assert(strcmp(ru_template_image.Title, 'ru'), 'Correct template image returned');
 
-            rm_template_image = image_templates.GetTemplateImage(PTKContext.RightMiddleLobe, null_dataset_stack);
+            rm_template_image = image_templates.GetTemplateImage(PTKContext.RightMiddleLobe, null_dataset_stack, mock_reporting);
             obj.Assert(strcmp(rm_template_image.Title, 'rm'), 'Correct template image returned');
             
-            rl_template_image = image_templates.GetTemplateImage(PTKContext.RightLowerLobe, null_dataset_stack);
+            rl_template_image = image_templates.GetTemplateImage(PTKContext.RightLowerLobe, null_dataset_stack, mock_reporting);
             obj.Assert(strcmp(rl_template_image.Title, 'rl'), 'Correct template image returned');
             
-            lu_template_image = image_templates.GetTemplateImage(PTKContext.LeftUpperLobe, null_dataset_stack);
+            lu_template_image = image_templates.GetTemplateImage(PTKContext.LeftUpperLobe, null_dataset_stack, mock_reporting);
             obj.Assert(strcmp(lu_template_image.Title, 'lu'), 'Correct template image returned');
 
-            ll_template_image = image_templates.GetTemplateImage(PTKContext.LeftLowerLobe, null_dataset_stack);
+            ll_template_image = image_templates.GetTemplateImage(PTKContext.LeftLowerLobe, null_dataset_stack, mock_reporting);
             obj.Assert(strcmp(ll_template_image.Title, 'll'), 'Correct template image returned');
             
             % Contexts should now all be enabled again

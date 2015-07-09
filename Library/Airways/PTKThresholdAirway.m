@@ -33,7 +33,10 @@ function threshold_image = PTKThresholdAirway(lung_image, use_wide_threshold)
     end
 
     if lung_image.IsCT
-        limit_1 = lung_image.RescaledToGreyscale(-1024);
+        % CT voxels shouldn't have a value below -1024 but they sometimes
+        % do...
+        limit_1 = lung_image.RescaledToGreyscale(-1500);
+        
         limit_2 = lung_image.RescaledToGreyscale(-775);
         
         % The wide threshold permits identification of other tissues within the
