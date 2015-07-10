@@ -18,6 +18,7 @@ function o = npRegGet(options,name,default,flag)
 %   See also NPREGSET.
 %
 % author: Nathan D. Cahill
+% email: nathan.cahill@rit.edu
 % affiliation: Rochester Institute of Technology
 % date: January 2014
 % licence: GNU GPL v3 licence.

@@ -16,6 +16,7 @@ function [F,S] = bodyForceSSD(A,B,BGrad,U,X,NumRows,NumCols,NumPages,VoxSize,Reg
 %
 %
 % author: Nathan D. Cahill
+% email: nathan.cahill@rit.edu
 % affiliation: Rochester Institute of Technology
 % date: January 2014
 % licence: GNU GPL v3 licence.

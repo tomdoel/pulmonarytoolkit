@@ -34,6 +34,7 @@ function [BNEW,U,EXITFLAG,OUTPUT] = npReg(A,B,options,varargin)
 %   OUTPUT.fixedPointIterations, and the exit message in OUTPUT.message.
 %
 % author: Nathan D. Cahill
+% email: nathan.cahill@rit.edu
 % affiliation: Rochester Institute of Technology
 % date: January 2014
 % licence: GNU GPL v3 licence.

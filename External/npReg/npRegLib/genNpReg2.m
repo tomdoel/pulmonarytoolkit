@@ -4,6 +4,7 @@ function [BNEW,U,EXITFLAG,OUTPUT] = genNpReg2(A,B,options,defaultopt,regDim,vara
 %
 %
 % author: Nathan D. Cahill
+% email: nathan.cahill@rit.edu
 % affiliation: Rochester Institute of Technology
 % date: January 2014
 % licence: GNU GPL v3
