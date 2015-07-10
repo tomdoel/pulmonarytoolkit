@@ -14,6 +14,10 @@ classdef PTKProgressPanel < PTKProgressInterface
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
+    properties
+        ShowDebuggingControls = false
+    end
+    
     properties (Access = private)
         
         % Handles to the GUI components
@@ -239,7 +243,7 @@ classdef PTKProgressPanel < PTKProgressInterface
                 set(obj.PanelHandle, 'Visible', 'on');
                 set(obj.UiControlText, 'Visible', 'on');
                 set(obj.UiControlTitle, 'Visible', 'on');
-                if PTKSoftwareInfo.DebugMode
+                if obj.ShowDebuggingControls
                     set(obj.UiControlQuit, 'Visible', 'on');
                     set(obj.UiControlHide, 'Visible', 'on');
                 end
