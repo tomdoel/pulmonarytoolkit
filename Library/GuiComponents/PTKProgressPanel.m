@@ -70,7 +70,7 @@ classdef PTKProgressPanel < PTKProgressInterface
             set(parent, 'Units', 'Pixels');
             
             % Create the panel
-            panel_background_colour = PTKSoftwareInfo.BackgroundColour;
+            panel_background_colour = PTKDefaultStyleSheet.BackgroundColour;
             progress_position = obj.GetPanelPosition;
             obj.PanelHandle = uipanel('Parent', parent, 'Title', '', 'BorderType', 'etchedin', 'ForegroundColor', 'white', ...
                 'BackgroundColor', panel_background_colour, 'Units', 'pixels', 'Position', progress_position, 'Visible', 'off' ...

@@ -41,10 +41,10 @@ classdef PTKLabelButton < PTKVirtualPanel
             obj.Button.AddAndResizeImageWithHighlightMask(icon, [0, 0, 0]);
             obj.Button.AutoUpdateStatus = true;
             
-            obj.Button.UnSelectedColour = uint8(255*(PTKSoftwareInfo.BackgroundColour));
-            obj.Button.SelectedColour = uint8(255*(PTKSoftwareInfo.IconSelectedColour));
-            obj.Button.HighlightColour = uint8(255*(PTKSoftwareInfo.IconHighlightColour));
-            obj.Button.HighlightSelectedColour = uint8(255*(PTKSoftwareInfo.IconHighlightSelectedColour));            
+            obj.Button.UnSelectedColour = uint8(255*(obj.StyleSheet.BackgroundColour));
+            obj.Button.SelectedColour = uint8(255*(obj.StyleSheet.IconSelectedColour));
+            obj.Button.HighlightColour = uint8(255*(obj.StyleSheet.IconHighlightColour));
+            obj.Button.HighlightSelectedColour = uint8(255*(obj.StyleSheet.IconHighlightSelectedColour));            
 
             obj.AddChild(obj.Button, reporting);
             obj.Text = PTKText(parent, text, tooltip, tag);

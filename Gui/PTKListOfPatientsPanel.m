@@ -47,10 +47,10 @@ classdef PTKListOfPatientsPanel < PTKPanel
             obj.GuiCallback = gui_callback;
             obj.AddButton = PTKButton(obj, '+', 'Import images', 'Add', @obj.AddButtonClicked);
             obj.AddButton.FontSize = obj.PatientTextFontSize;
-            obj.AddButton.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
+            obj.AddButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
             obj.AddChild(obj.AddButton, obj.Reporting);
             obj.DeleteButton = PTKButton(obj, '-', 'Delete this patient', 'Delete', @obj.DeleteButtonClicked);
-            obj.DeleteButton.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
+            obj.DeleteButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
             obj.DeleteButton.FontSize = obj.PatientTextFontSize;
             obj.AddChild(obj.DeleteButton, obj.Reporting);
         end
@@ -67,12 +67,12 @@ classdef PTKListOfPatientsPanel < PTKPanel
         function CreateGuiComponent(obj, position, reporting)
             list_box_height = max(1, position(4) - obj.ControlPanelHeight);
             patient_text_position = [1 list_box_height, position(3), obj.ControlPanelHeight];
-            obj.PatientTextControl = uicontrol('Style', 'text', 'Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'FontSize', obj.PatientTextFontSize, 'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'ForegroundColor', 'white', 'HorizontalAlignment', 'left', 'String', obj.PatientText, 'Position', patient_text_position);            
+            obj.PatientTextControl = uicontrol('Style', 'text', 'Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'FontSize', obj.PatientTextFontSize, 'BackgroundColor', obj.StyleSheet.BackgroundColour, 'ForegroundColor', 'white', 'HorizontalAlignment', 'left', 'String', obj.PatientText, 'Position', patient_text_position);            
             list_box_position = [1 1, position(3), list_box_height];
             obj.PatientListBox = uicontrol('Parent', obj.Parent.GetContainerHandle(reporting), 'Style', 'listbox', ...
                 'Units', 'pixels', 'Position', list_box_position, 'Callback', @obj.ListBoxCallBack, ...
                 'String', 'No Patients', 'FontSize', obj.FontSize, 'Min', 0, 'Max', 2, ...
-                'BackgroundColor', PTKSoftwareInfo.BackgroundColour, 'ForegroundColor', 'white');
+                'BackgroundColor', obj.StyleSheet.BackgroundColour, 'ForegroundColor', 'white');
             obj.AddPatientsToListBox;
 
             if isempty(obj.LastSelectedPatientId);

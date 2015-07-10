@@ -39,11 +39,11 @@ classdef PTKListBoxControlPanel < PTKPanel
             
             obj.AddButton = PTKButton(obj, '+', add_button_tooltip, 'Add', @obj.AddButtonClicked);
             obj.AddButton.FontSize = obj.ButtonFontSize;
-            obj.AddButton.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
+            obj.AddButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
             obj.AddChild(obj.AddButton, obj.Reporting);
             
             obj.DeleteButton = PTKButton(obj, '-', delete_button_tooltip, 'Delete', @obj.DeleteButtonClicked);
-            obj.DeleteButton.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
+            obj.DeleteButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
             obj.DeleteButton.FontSize = obj.ButtonFontSize;
             obj.AddChild(obj.DeleteButton, obj.Reporting);            
         end

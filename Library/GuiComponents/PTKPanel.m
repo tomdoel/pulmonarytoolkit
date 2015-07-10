@@ -35,7 +35,7 @@ classdef PTKPanel < PTKUserInterfaceObject
     methods
         function obj = PTKPanel(parent_handle, reporting)
             obj = obj@PTKUserInterfaceObject(parent_handle);
-            obj.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
+            obj.BackgroundColour = obj.StyleSheet.BackgroundColour;
             if nargin > 1
                 obj.Reporting = reporting;
             end

@@ -59,7 +59,7 @@ classdef PTKTabPanel < PTKPanel
         
         function AddTab(obj, name, tag, tooltip)
             tab_text_control = PTKText(obj, name, tooltip, tag);
-            tab_text_control.FontColour = PTKSoftwareInfo.TextSecondaryColour;
+            tab_text_control.FontColour = obj.StyleSheet.TextSecondaryColour;
             tab_text_control.FontSize = obj.FontSize;
             tab_text_control.HorizontalAlignment = 'center';
             obj.AddChild(tab_text_control, obj.Reporting);

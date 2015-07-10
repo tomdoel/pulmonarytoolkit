@@ -10,6 +10,10 @@ classdef PTKUserInterfaceObject < PTKBaseClass
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
+    properties
+        StyleSheet
+    end
+    
     properties (SetAccess = protected)
         Parent
         Children
@@ -40,9 +44,11 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             if isempty(parent)
                 obj.ParentWindowVisible = false;
                 obj.ParentWindowEnabled = true;
+                obj.StyleSheet = PTKStyleSheet;
             else
                 obj.ParentWindowVisible = parent.ParentWindowVisible;
                 obj.ParentWindowEnabled = parent.ParentWindowEnabled;
+                obj.StyleSheet = parent.StyleSheet;
             end
             obj.Enabled = true;
             obj.ComponentHasBeenCreated = false;

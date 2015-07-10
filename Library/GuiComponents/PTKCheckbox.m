@@ -41,8 +41,8 @@ classdef PTKCheckbox < PTKUserInterfaceObject
             obj.FontSize = 11;
             obj.HorizontalAlignment = 'left';
             obj.Checked = false;
-            obj.FontColour = PTKSoftwareInfo.TextPrimaryColour;
-            obj.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
+            obj.FontColour = obj.StyleSheet.TextPrimaryColour;
+            obj.BackgroundColour = obj.StyleSheet.BackgroundColour;
         end
         
         function CreateGuiComponent(obj, position, reporting)

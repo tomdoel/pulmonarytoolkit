@@ -50,10 +50,10 @@ classdef PTKText < PTKUserInterfaceObject
             obj.HorizontalAlignment = 'left';
             obj.Selected = false;
             obj.Highlighted = false;
-            obj.FontColour = PTKSoftwareInfo.TextPrimaryColour;
-            obj.SelectedColour = PTKSoftwareInfo.SelectedBackgroundColour;
-            obj.SelectedFontColour = PTKSoftwareInfo.TextContrastColour;
-            obj.BackgroundColour = PTKSoftwareInfo.BackgroundColour;
+            obj.FontColour = obj.StyleSheet.TextPrimaryColour;
+            obj.SelectedColour = obj.StyleSheet.SelectedBackgroundColour;
+            obj.SelectedFontColour = obj.StyleSheet.TextContrastColour;
+            obj.BackgroundColour = obj.StyleSheet.BackgroundColour;
             
             obj.Clickable = true;
         end

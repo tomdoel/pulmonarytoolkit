@@ -46,10 +46,10 @@ classdef PTKEditBox < PTKUserInterfaceObject
             obj.Highlighted = false;
             obj.ToolTip = tooltip;
             obj.HorizontalAlignment = 'left';
-            obj.FontColour = PTKSoftwareInfo.TextPrimaryColour;
-            obj.SelectedColour = PTKSoftwareInfo.SelectedBackgroundColour;
-            obj.SelectedFontColour = PTKSoftwareInfo.TextContrastColour;
-            obj.BackgroundColour = PTKSoftwareInfo.BackgroundColour; 
+            obj.FontColour = obj.StyleSheet.TextPrimaryColour;
+            obj.SelectedColour = obj.StyleSheet.SelectedBackgroundColour;
+            obj.SelectedFontColour = obj.StyleSheet.TextContrastColour;
+            obj.BackgroundColour = obj.StyleSheet.BackgroundColour; 
         end
 
         function CreateGuiComponent(obj, position, reporting)

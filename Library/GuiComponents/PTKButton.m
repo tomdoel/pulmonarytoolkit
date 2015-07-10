@@ -60,7 +60,7 @@ classdef PTKButton < PTKUserInterfaceObject
             obj.Tag = tag;
             obj.Callback = callback;
             obj.ShowTextOnButton = true;
-            obj.SelectedColour = uint8(255*(PTKSoftwareInfo.SelectedBackgroundColour));
+            obj.SelectedColour = uint8(255*(obj.StyleSheet.SelectedBackgroundColour));
             obj.UnSelectedColour = uint8([150, 150, 150]);
             obj.HighlightColour = min(255, obj.UnSelectedColour + 100);
             obj.HighlightSelectedColour = min(255, obj.SelectedColour + 100);
@@ -82,7 +82,7 @@ classdef PTKButton < PTKUserInterfaceObject
                 
                 for index = 1 : 3
                     rgb_slice = rgb_image(:, :, index);
-                    rgb_slice(background) = round(255*PTKSoftwareInfo.BackgroundColour(index));
+                    rgb_slice(background) = round(255*obj.StyleSheet.BackgroundColour(index));
                     rgb_image(:, :, index) = rgb_slice;
                 end
                 obj.OriginalImage = rgb_image;
