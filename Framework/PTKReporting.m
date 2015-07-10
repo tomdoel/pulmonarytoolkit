@@ -67,7 +67,7 @@ classdef PTKReporting < PTKReportingInterface
     end
     
     methods
-        function obj = PTKReporting(progress_dialog, viewing_panel, verbose_mode)
+        function obj = PTKReporting(progress_dialog, viewing_panel, verbose_mode, log_file_name)
             if nargin > 0
                 obj.ProgressDialog = progress_dialog;
             end
@@ -79,7 +79,11 @@ classdef PTKReporting < PTKReportingInterface
             else
                 obj.VerboseMode = false;
             end
-            obj.LogFileName = PTKDirectories.GetLogFilePath;
+            if nargin > 3
+                obj.LogFileName = log_file_name;
+            else
+                obj.LogFileName = 'ptkreporting.log';
+            end
             
             obj.ClearProgressStack;
         end

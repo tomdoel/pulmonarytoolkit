@@ -68,7 +68,7 @@ classdef PTKGui < PTKFigure
             
             % Create the reporting object. Later we will update it with the viewer panel and
             % the new progress panel when these have been created.
-            obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile);
+            obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile, PTKDirectories.GetLogFilePath);
             obj.Reporting.Log('New session of PTKGui');
                         
             % Set up the viewer panel
