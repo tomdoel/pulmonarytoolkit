@@ -52,7 +52,7 @@ function uids = ImportDirectoryRecursive(database, import_folder, tags_to_get, r
         reporting.UpdateProgressMessage(['Importing data from: ' current_dir]);
         
         if reporting.HasBeenCancelled
-            reporting.Error(PTKSoftwareInfo.CancelErrorId, 'User cancelled');
+            reporting.Error(PTKReporting.CancelErrorId, 'User cancelled');
         end
         
         uids = [uids, ImportFilesInDirectory(database, current_dir, tags_to_get, reporting)];

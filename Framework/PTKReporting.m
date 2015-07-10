@@ -51,6 +51,10 @@ classdef PTKReporting < PTKReportingInterface
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
 
+    properties (Constant)
+        CancelErrorId = 'PTKReporting:UserCancel'
+    end
+    
     properties
         ProgressDialog  % Handle to a PTKProgressDialog or PTKProgressPanel
     end
@@ -228,7 +232,7 @@ classdef PTKReporting < PTKReportingInterface
         
         function CheckForCancel(obj)
             if obj.HasBeenCancelled
-                obj.Error(PTKSoftwareInfo.CancelErrorId, 'User cancelled');
+                obj.Error(PTKReporting.CancelErrorId, 'User cancelled');
             end
         end
         

@@ -101,7 +101,6 @@ classdef PTKSoftwareInfo < handle
         MonitorClassInstances = true % Used for testing to ensure objects are destroyed
         
         % Do not change this
-        CancelErrorId = 'PTKMain:UserCancel'
         FileMissingErrorId = 'PTKMain:FileMissing'
         FileFormatUnknownErrorId = 'PTKMain:FileFormatUnknown'
         UidNotFoundErrorId = 'PTKMain:UidNotFound'
@@ -134,7 +133,7 @@ classdef PTKSoftwareInfo < handle
         end
         
         function is_cancel_id = IsErrorCancel(error_id)
-            is_cancel_id = strcmp(error_id, PTKSoftwareInfo.CancelErrorId);
+            is_cancel_id = strcmp(error_id, PTKReporting.CancelErrorId);
         end
         
         function is_error_missing_id = IsErrorFileMissing(error_id)
