@@ -14,9 +14,15 @@ classdef PTKBaseClass < handle
         EventListeners
     end
     
+    properties (Constant, Access = private)
+        % Set this to true to use PTKClassMonitor to test for correct
+        % deletion of objects
+        MonitorClassInstances = false;
+    end
+    
     methods
         function obj = PTKBaseClass
-            if PTKSoftwareInfo.MonitorClassInstances
+            if obj.MonitorClassInstances
                 PTKClassMonitor.GetClassMonitor.ObjectCreated(class(obj));
             end
         end
@@ -27,7 +33,7 @@ classdef PTKBaseClass < handle
             end
             obj.EventListeners = [];
             
-            if PTKSoftwareInfo.MonitorClassInstances
+            if obj.MonitorClassInstances
                 PTKClassMonitor.GetClassMonitor.ObjectDeleted(class(obj));
             end
         end

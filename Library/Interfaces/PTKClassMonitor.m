@@ -1,8 +1,10 @@
 classdef (Sealed) PTKClassMonitor < handle
-    % PTKClassMonitor. For testing purposes, monitors creation and destruction of classes
+    % PTKClassMonitor. Monitors creation and destruction of classes
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the Pulmonary Toolkit.
+    %     This class repesents a singleton which reference counts objects 
+    %     (of base type PTKBaseClass). It is used in testing to ensure that
+    %     objects have been destroyed properly (i.e. that references to the
+    %     objects have been correctly removed).
     %
     %
     %     Licence
