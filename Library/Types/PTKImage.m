@@ -190,7 +190,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
         end
 
-        function header_file = SaveRawImage(obj, file_path, file_name, reporting)
+        function header_file = SaveRawImage(obj, file_path, file_name, compression, reporting)
             % Saves the raw image data. Optionally returns a header object which
             % contains the image object without the image data, and with the
             % filename stored so that it can be reloaded using a call to
@@ -202,9 +202,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 % Compression currently only supports 3D images
                 compression = [];
             else
-                if PTKDiskUtilities.CompressionSupported(PTKSoftwareInfo.Compression, image_class, reporting)
-                    compression = PTKSoftwareInfo.Compression;
-                else
+                if ~PTKDiskUtilities.CompressionSupported(compression, image_class, reporting)                    
                     compression = [];
                 end
             end

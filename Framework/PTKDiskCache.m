@@ -217,7 +217,7 @@ classdef PTKDiskCache < handle
                 result.info = info;
             end
             result.value = value;
-            PTKDiskUtilities.SaveStructure(file_path_with_context, name, result, reporting);
+            PTKDiskUtilities.SaveStructure(file_path_with_context, name, result, PTKSoftwareInfo.Compression, reporting);
         end
     end
 end

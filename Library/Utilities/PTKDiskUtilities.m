@@ -402,8 +402,8 @@ classdef PTKDiskUtilities
             value = load(filename, '-mat');
         end
         
-        function result = SaveStructure(file_path, filename_base, result, reporting)
-            result = PTKDiskUtilities.ConvertStructAndSaveRawImageData(result, file_path, filename_base, 0, reporting);
+        function result = SaveStructure(file_path, filename_base, result, compression, reporting)
+            result = PTKDiskUtilities.ConvertStructAndSaveRawImageData(result, file_path, filename_base, 0, compression, reporting);
 
             filename = [fullfile(file_path, filename_base) '.mat'];
             PTKDiskUtilities.Save(filename, result);
@@ -415,12 +415,12 @@ classdef PTKDiskUtilities
             results = PTKDiskUtilities.ConvertStructAndLoadRawImageData(results_struct, file_path, filename_base, reporting);
         end
         
-        function [new_structure, next_index] = ConvertStructAndSaveRawImageData(old_structure, file_path, filename_base, next_index, reporting)
+        function [new_structure, next_index] = ConvertStructAndSaveRawImageData(old_structure, file_path, filename_base, next_index, compression, reporting)
             if isstruct(old_structure)
                 field_names = fieldnames(old_structure);
                 for field = field_names'
                     field_name = field{1};
-                    [new_structure.(field_name), next_index] = PTKDiskUtilities.ConvertStructAndSaveRawImageData(old_structure.(field_name), file_path, filename_base, next_index, reporting);
+                    [new_structure.(field_name), next_index] = PTKDiskUtilities.ConvertStructAndSaveRawImageData(old_structure.(field_name), file_path, filename_base, next_index, compression, reporting);
                 end
             else
                 if isa(old_structure, 'PTKImage')
@@ -431,7 +431,7 @@ classdef PTKDiskUtilities
                         file_suffix = ['_' int2str(next_index)];
                     end
                     raw_image_file_name = [filename_base file_suffix];
-                    header = old_structure.SaveRawImage(file_path, raw_image_file_name, reporting);
+                    header = old_structure.SaveRawImage(file_path, raw_image_file_name, compression, reporting);
                     next_index = next_index + 1;
                     new_structure = header;
                 else
