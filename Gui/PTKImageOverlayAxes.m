@@ -24,16 +24,16 @@ classdef PTKImageOverlayAxes < PTKImageAxes
     end
     
     methods
-        function obj = PTKImageOverlayAxes(parent, image_source, viewer_panel, reporting)
+        function obj = PTKImageOverlayAxes(parent, image_source, viewer_panel)
             obj = obj@PTKImageAxes(parent, image_source);
             
             % Add the screen images to the axes
             obj.BackgroundScreenImage = PTKBackgroundScreenImageFromVolume(obj, image_source, viewer_panel);
-            obj.AddChild(obj.BackgroundScreenImage, reporting);
+            obj.AddChild(obj.BackgroundScreenImage);
             obj.OverlayScreenImage = PTKOverlayScreenImageFromVolume(obj, image_source, viewer_panel);
-            obj.AddChild(obj.OverlayScreenImage, reporting);
+            obj.AddChild(obj.OverlayScreenImage);
             obj.QuiverScreenImage = PTKQuiverScreenImageFromVolume(obj, image_source, viewer_panel);
-            obj.AddChild(obj.QuiverScreenImage, reporting);
+            obj.AddChild(obj.QuiverScreenImage);
         end
         
         function Resize(obj, position)

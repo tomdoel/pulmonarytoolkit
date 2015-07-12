@@ -52,7 +52,7 @@ classdef PTKEditBox < PTKUserInterfaceObject
             obj.BackgroundColour = obj.StyleSheet.BackgroundColour; 
         end
 
-        function CreateGuiComponent(obj, position, reporting)
+        function CreateGuiComponent(obj, position)
             
             if obj.Bold
                 weight = 'bold';

@@ -41,8 +41,8 @@ classdef PTKNamePanel < PTKPanel
     end
     
     methods
-        function obj = PTKNamePanel(parent, gui, gui_state, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKNamePanel(parent, gui, gui_state)
+            obj = obj@PTKPanel(parent);
             
             obj.Gui = gui;
             obj.GuiState = gui_state;
@@ -53,12 +53,12 @@ classdef PTKNamePanel < PTKPanel
             obj.PatientNameText.FontSize = obj.PatientNameFontSize;
             obj.PatientNameText.Bold = true;
             obj.PatientNameText.HorizontalAlignment = 'center';
-            obj.AddChild(obj.PatientNameText, obj.Reporting);
+            obj.AddChild(obj.PatientNameText);
             
             obj.PatientDetailsText = PTKText(obj, 'No details', '', 'PatientDetails');
             obj.PatientDetailsText.FontSize = obj.PatientDetailsFontSize;
             obj.PatientDetailsText.HorizontalAlignment = 'center';
-            obj.AddChild(obj.PatientDetailsText, obj.Reporting);
+            obj.AddChild(obj.PatientDetailsText);
 
             % Add listener for changes to the loaded series
             obj.AddEventListener(obj.GuiState, 'SeriesUidChangedEvent', @obj.SeriesChanged);
@@ -86,8 +86,8 @@ classdef PTKNamePanel < PTKPanel
         end
         
         
-        function CreateGuiComponent(obj, panel_position, reporting)
-            CreateGuiComponent@PTKPanel(obj, panel_position, reporting);
+        function CreateGuiComponent(obj, panel_position)
+            CreateGuiComponent@PTKPanel(obj, panel_position);
         end
         
         function Resize(obj, panel_position)

@@ -22,16 +22,16 @@ classdef PTKCinePanel < PTKVirtualPanel
     end
     
     methods
-        function obj = PTKCinePanel(parent, image_source, image_overlay_axes, reporting)
-            obj = obj@PTKVirtualPanel(parent, reporting);
+        function obj = PTKCinePanel(parent, image_source, image_overlay_axes)
+            obj = obj@PTKVirtualPanel(parent);
 
             obj.ImageSource = image_source;
             
             obj.Slider = PTKSlider(obj);
-            obj.AddChild(obj.Slider, obj.Reporting);
+            obj.AddChild(obj.Slider);
             
             obj.Axes = image_overlay_axes;
-            obj.AddChild(obj.Axes, obj.Reporting);
+            obj.AddChild(obj.Axes);
             
             obj.AddEventListener(obj.Slider, 'SliderValueChanged', @obj.SliderValueChanged);            
         end
@@ -67,7 +67,7 @@ classdef PTKCinePanel < PTKVirtualPanel
   
         function EnableSlider(obj, enabled)
             if enabled
-                obj.Slider.Enable(obj.Reporting);
+                obj.Slider.Enable;
             else
                 obj.Slider.Disable;
             end

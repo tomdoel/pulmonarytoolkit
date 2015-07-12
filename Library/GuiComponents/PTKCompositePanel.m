@@ -30,8 +30,8 @@ classdef PTKCompositePanel < PTKVirtualPanel
     end
     
     methods
-        function obj = PTKCompositePanel(parent, reporting)
-            obj = obj@PTKVirtualPanel(parent, reporting);
+        function obj = PTKCompositePanel(parent)
+            obj = obj@PTKVirtualPanel(parent);
             obj.Panels = [];
         end
         
@@ -66,7 +66,7 @@ classdef PTKCompositePanel < PTKVirtualPanel
                 panel_is_visible = (panel_min_y_from_base < visible_y_max_from_base) && (panel_max_y_from_base > visible_y_min_from_base);
 
                 if panel_is_visible
-                    panel.Enable(obj.Reporting);
+                    panel.Enable;
                 else
                     panel.Disable;
                 end
@@ -95,7 +95,7 @@ classdef PTKCompositePanel < PTKVirtualPanel
         
         function AddPanel(obj, panel)
             obj.Panels = [obj.Panels, panel];
-            obj.AddChild(panel, obj.Reporting);
+            obj.AddChild(panel);
             obj.CachedPanelWidth = [];
             obj.CachedPanelHeight = [];
         end

@@ -47,9 +47,9 @@ classdef PTKSlider < PTKUserInterfaceObject
             obj.IsHorizontal = false;
         end
 
-        function CreateGuiComponent(obj, position, reporting)
+        function CreateGuiComponent(obj, position)
             % Create the sider
-            obj.GraphicalComponentHandle = uicontrol('Style', 'slider', 'Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'Position', position, 'Min', obj.SliderMin, 'Max', obj.SliderMax, 'SliderStep', obj.SliderSteps, 'Value', obj.SliderValue);
+            obj.GraphicalComponentHandle = uicontrol('Style', 'slider', 'Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'Position', position, 'Min', obj.SliderMin, 'Max', obj.SliderMax, 'SliderStep', obj.SliderSteps, 'Value', obj.SliderValue);
             obj.AddEventListener(obj.GraphicalComponentHandle, 'ContinuousValueChange', @obj.SliderCallback);
         end
         

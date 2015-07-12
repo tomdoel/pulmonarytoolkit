@@ -29,13 +29,13 @@ classdef PTKListBox < PTKPanel
     end
     
     methods
-        function obj = PTKListBox(parent, reporting)            
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKListBox(parent)
+            obj = obj@PTKPanel(parent);
             obj.Enabled = true;
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKPanel(obj, position);
             
             % A series may already have been selected
             if ~isempty(obj.SelectedTag)
@@ -57,7 +57,7 @@ classdef PTKListBox < PTKPanel
                 % Determine if current panel is visible
                 item_is_visible = (item_location(2) < new_position(4) && ((item_location(2) + item_location(4)) >= -new_position(2)));
                 if item_is_visible
-                    obj.Items(item_index).Enable(obj.Reporting);
+                    obj.Items(item_index).Enable;
                 else
                     obj.Items(item_index).Disable;
                 end
@@ -138,7 +138,7 @@ classdef PTKListBox < PTKPanel
                 item.Resize(item_location);
             end
             
-            obj.AddChild(item, obj.Reporting);
+            obj.AddChild(item);
         end
         
         function Deselect(obj)

@@ -21,10 +21,10 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
     end
     
     methods
-        function obj = PTKViewerPanelMultiView(viewer_panel, reporting)
-            obj = obj@PTKMultiPanel(viewer_panel, reporting);
+        function obj = PTKViewerPanelMultiView(viewer_panel)
+            obj = obj@PTKMultiPanel(viewer_panel);
             
-            obj.CinePanel2D = PTKCinePanelWithTools(obj, viewer_panel, obj.Reporting);
+            obj.CinePanel2D = PTKCinePanelWithTools(obj, viewer_panel);
             
             obj.AddPanel(obj.CinePanel2D, 'View2D');
             
@@ -32,8 +32,8 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
             obj.AddEventListener(obj.CinePanel2D, 'MousePositionChanged', @obj.MousePositionChangedCallback);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKMultiPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKMultiPanel(obj, position);
 
 %             obj.UpdateGui;
             obj.Resize(position);

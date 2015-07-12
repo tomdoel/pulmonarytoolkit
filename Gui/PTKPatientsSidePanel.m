@@ -26,8 +26,8 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
     end
     
     methods
-        function obj = PTKPatientsSidePanel(parent, patient_database, gui_callback, reporting)
-            obj = obj@PTKListBoxWithTitle(parent, 'PATIENT', 'Import images', 'Delete patient', reporting);
+        function obj = PTKPatientsSidePanel(parent, patient_database, gui_callback)
+            obj = obj@PTKListBoxWithTitle(parent, 'PATIENT', 'Import images', 'Delete patient');
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
         end
@@ -84,7 +84,7 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
                 patient_id = ids{index};
                 short_name = short_visible_names{index};
                 full_name = names{index};
-                patient_item = PTKPatientNameListItem(obj.ListBox.GetListBox, full_name, short_name, patient_id, obj.GuiCallback, obj.Reporting);
+                patient_item = PTKPatientNameListItem(obj.ListBox.GetListBox, full_name, short_name, patient_id, obj.GuiCallback);
                 obj.ListBox.AddItem(patient_item);
             end
             

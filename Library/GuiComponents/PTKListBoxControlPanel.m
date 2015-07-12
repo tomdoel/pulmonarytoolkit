@@ -28,24 +28,24 @@ classdef PTKListBoxControlPanel < PTKPanel
     end
     
     methods
-        function obj = PTKListBoxControlPanel(parent, title_text, add_button_tooltip, delete_button_tooltip, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKListBoxControlPanel(parent, title_text, add_button_tooltip, delete_button_tooltip)
+            obj = obj@PTKPanel(parent);
             
             % Construct the title panel
             obj.TitleText = PTKText(obj, title_text, '', 'ListTitle');
             obj.TitleText.FontSize = obj.TitleFontSize;
             obj.TitleText.Bold = obj.Bold;
-            obj.AddChild(obj.TitleText, obj.Reporting);
+            obj.AddChild(obj.TitleText);
             
             obj.AddButton = PTKButton(obj, '+', add_button_tooltip, 'Add', @obj.AddButtonClicked);
             obj.AddButton.FontSize = obj.ButtonFontSize;
             obj.AddButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
-            obj.AddChild(obj.AddButton, obj.Reporting);
+            obj.AddChild(obj.AddButton);
             
             obj.DeleteButton = PTKButton(obj, '-', delete_button_tooltip, 'Delete', @obj.DeleteButtonClicked);
             obj.DeleteButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
             obj.DeleteButton.FontSize = obj.ButtonFontSize;
-            obj.AddChild(obj.DeleteButton, obj.Reporting);            
+            obj.AddChild(obj.DeleteButton);            
         end
         
         function Resize(obj, panel_position)

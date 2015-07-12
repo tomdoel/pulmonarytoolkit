@@ -26,10 +26,10 @@ classdef PTKSlidingPanel < PTKPanel
     end
     
     methods
-        function obj = PTKSlidingPanel(parent_handle, reporting)
-            obj = obj@PTKPanel(parent_handle, reporting);
+        function obj = PTKSlidingPanel(parent_handle)
+            obj = obj@PTKPanel(parent_handle);
             obj.Slider = PTKSlider(obj);
-            obj.AddChild(obj.Slider, obj.Reporting);
+            obj.AddChild(obj.Slider);
             obj.FloatingPanelYPosition = 0;
             obj.AddEventListener(obj.Slider, 'SliderValueChanged', @obj.SliderValueChanged);
         end
@@ -190,7 +190,7 @@ classdef PTKSlidingPanel < PTKPanel
             obj.SetSliderFromFloatingPanelYPosition;
             
             if overlap_height > 0
-                obj.Slider.Enable(obj.Reporting);
+                obj.Slider.Enable;
             else
                 obj.Slider.Disable;
             end

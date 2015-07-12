@@ -27,19 +27,19 @@ classdef PTKLabelButtonGroupWithTitle < PTKVirtualPanel
     end
     
     methods
-        function obj = PTKLabelButtonGroupWithTitle(parent, title, tooltip, tag, reporting)
-            obj = obj@PTKVirtualPanel(parent, reporting);
+        function obj = PTKLabelButtonGroupWithTitle(parent, title, tooltip, tag)
+            obj = obj@PTKVirtualPanel(parent);
             obj.Title = PTKText(parent, title, tooltip, tag);
             obj.Title.HorizontalAlignment = 'center';
             obj.Title.FontSize = obj.LabelFontSize;
             obj.Title.Bold = true;
-            obj.AddChild(obj.Title, reporting);
+            obj.AddChild(obj.Title);
         end
         
-        function new_control = AddControl(obj, new_control, reporting)
+        function new_control = AddControl(obj, new_control)
             
             obj.Controls{end + 1} = new_control;
-            obj.AddChild(new_control, reporting);
+            obj.AddChild(new_control);
             
             if isa(new_control, 'PTKButton')
                 obj.AddEventListener(new_control, 'ButtonClicked', @obj.ButtonClickedCallback);
@@ -97,7 +97,7 @@ classdef PTKLabelButtonGroupWithTitle < PTKVirtualPanel
                         if isempty(control{1}.Position)
                             control{1}.Resize([0 0 1 1]);
                         end
-                        control{1}.Enable(obj.Reporting);
+                        control{1}.Enable;
                     else
                         control{1}.Disable;
                     end

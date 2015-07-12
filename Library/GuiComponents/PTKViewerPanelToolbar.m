@@ -42,8 +42,8 @@ classdef PTKViewerPanelToolbar < PTKPanel
     end
     
     methods
-        function obj = PTKViewerPanelToolbar(viewer_panel, tools, reporting)
-            obj = obj@PTKPanel(viewer_panel, reporting);
+        function obj = PTKViewerPanelToolbar(viewer_panel, tools)
+            obj = obj@PTKPanel(viewer_panel);
             obj.ViewerPanel = viewer_panel;
             obj.BackgroundColour = 'black';
             obj.Tools = tools;
@@ -53,8 +53,8 @@ classdef PTKViewerPanelToolbar < PTKPanel
             obj.MouseCursorStatusListener = addlistener(obj.ViewerPanel, 'MouseCursorStatusChanged', @obj.MouseCursorStatusChangedCallback);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKPanel(obj, position);
             
             parent = obj.GetParentFigure;
             keypress_function = @parent.CustomKeyPressedFunction;
@@ -62,7 +62,7 @@ classdef PTKViewerPanelToolbar < PTKPanel
             font_size = 9;
             
             % Buttons for coronal/sagittal/axial views
-            obj.OrientationPanel = uibuttongroup('Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'BorderType', 'none', 'SelectionChangeFcn', @obj.OrientationCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.OrientationPanel = uibuttongroup('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'BorderType', 'none', 'SelectionChangeFcn', @obj.OrientationCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             orientation_buttons = [0 0 0];
             orientation_buttons(1) = uicontrol('Style', 'togglebutton', 'Units', 'pixels', 'Parent', obj.OrientationPanel, 'String', 'Cor', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Coronal', 'TooltipString', 'View coronal slices (Y-Z)', 'KeyPressFcn', keypress_function);
             orientation_buttons(2) = uicontrol('Style', 'togglebutton', 'Units', 'pixels', 'Parent', obj.OrientationPanel, 'String', 'Sag', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Sagittal', 'TooltipString', 'View sagittal slices (X-Z)', 'KeyPressFcn', keypress_function);
@@ -71,7 +71,7 @@ classdef PTKViewerPanelToolbar < PTKPanel
             set(obj.OrientationButtons(obj.ViewerPanel.Orientation), 'Value', 1);
             
             % Buttons for each mouse tool
-            obj.MouseControlPanel = uibuttongroup('Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'BorderType', 'none', 'SelectionChangeFcn', @obj.ControlsCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.MouseControlPanel = uibuttongroup('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'BorderType', 'none', 'SelectionChangeFcn', @obj.ControlsCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             obj.MouseControlButtons = containers.Map;
             for tool_set = obj.Tools.Tools.values
                 tool = tool_set{1};
@@ -80,8 +80,8 @@ classdef PTKViewerPanelToolbar < PTKPanel
             end
             set(obj.MouseControlButtons(obj.ViewerPanel.SelectedControl), 'Value', 1);
             
-            obj.WindowLevelPanel = uipanel('Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
-            obj.ImageOverlayPanel = uipanel('Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.WindowLevelPanel = uipanel('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.ImageOverlayPanel = uipanel('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             
             obj.StatusText = uicontrol('Style', 'text', 'Parent', obj.ImageOverlayPanel, 'Units', 'pixels', 'FontSize', font_size, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             

@@ -40,17 +40,17 @@ classdef PTKLabelSlider < PTKVirtualPanel
     end
     
     methods
-        function obj = PTKLabelSlider(parent, text, tooltip, tag, icon, reporting)
-            obj = obj@PTKVirtualPanel(parent, reporting);
+        function obj = PTKLabelSlider(parent, text, tooltip, tag, icon)
+            obj = obj@PTKVirtualPanel(parent);
             obj.Slider = PTKSlider(parent);
             obj.Slider.IsHorizontal = true;
-            obj.AddChild(obj.Slider, reporting);
+            obj.AddChild(obj.Slider);
             
             label_horizontal_alignment = 'center';
             
             if obj.ShowEditBox
                 obj.EditBox = PTKEditBox(parent, tooltip);
-                obj.AddChild(obj.EditBox, reporting);
+                obj.AddChild(obj.EditBox);
                 obj.AddEventListener(obj.EditBox, 'TextChanged', @obj.EditBoxCallback);
                 label_horizontal_alignment = 'right';
                 obj.EditBox.HorizontalAlignment = 'left';
@@ -61,7 +61,7 @@ classdef PTKLabelSlider < PTKVirtualPanel
             obj.Text = PTKText(parent, text, tooltip, tag);
             obj.Text.HorizontalAlignment = label_horizontal_alignment;
             obj.Text.FontSize = obj.LabelFontSize;
-            obj.AddChild(obj.Text, reporting);
+            obj.AddChild(obj.Text);
             
             obj.AddEventListener(obj.Slider, 'SliderValueChanged', @obj.SliderCallback);            
         end
@@ -107,12 +107,12 @@ classdef PTKLabelSlider < PTKVirtualPanel
             height = obj.Slider.SliderWidth + obj.TextHeight + obj.VerticalSpacing;
         end
 
-        function Enable(obj, reporting)
-            Enable@PTKVirtualPanel(obj, reporting);
-            obj.Slider.Enable(reporting);
-            obj.Text.Enable(reporting);
+        function Enable(obj)
+            Enable@PTKVirtualPanel(obj);
+            obj.Slider.Enable;
+            obj.Text.Enable;
             if ~isempty(obj.EditBox)
-                obj.EditBox.Enable(reporting);
+                obj.EditBox.Enable;
             end
         end
         

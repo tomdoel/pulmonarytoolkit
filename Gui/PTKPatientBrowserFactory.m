@@ -36,21 +36,21 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
         end
         
         
-        function Show(obj, ~)
+        function Show(obj)
             % Make Patient Browser visible or bring to the front
             
             if isempty(obj.PatientBrowser)
                 obj.PatientBrowser = PTKPatientBrowser(obj.GuiDataset.GetImageDatabase, obj.Gui, obj.InitialPosition, obj.Reporting);
                 obj.PatientBrowser.SelectSeries(obj.PatientBrowserSelectedPatientId, obj.PatientBrowserSelectedUid);
                 
-                obj.PatientBrowser.Show(obj.Reporting);
+                obj.PatientBrowser.Show;
             else
                 obj.PatientBrowser.SelectSeries(obj.PatientBrowserSelectedPatientId, obj.PatientBrowserSelectedUid);
                 
                 if obj.PatientBrowser.IsVisible
                     obj.PatientBrowser.BringToFront;
                 else
-                    obj.PatientBrowser.Show(obj.Reporting);
+                    obj.PatientBrowser.Show;
                 end
             end
         end
@@ -86,7 +86,7 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
         function matches = HandleMatchesPatientBrowser(obj, ui_handle)
             % Check if this handle is the Patient Browser's
             
-            matches = (~isempty(obj.PatientBrowser)) && (ui_handle == obj.PatientBrowser.GetContainerHandle);
+            matches = (~isempty(obj.PatientBrowser)) && (ui_handle == obj.PatientBrowser.GetContainerHandle(obj.Reporting));
         end
 
         function Hide(obj)

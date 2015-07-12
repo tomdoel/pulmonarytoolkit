@@ -36,8 +36,8 @@ classdef PTKTabPanel < PTKPanel
     end
 
     methods
-        function obj = PTKTabPanel(tab_control, reporting)
-            obj = obj@PTKPanel(tab_control, reporting);
+        function obj = PTKTabPanel(tab_control)
+            obj = obj@PTKPanel(tab_control);
             obj.TabControl = tab_control;
             obj.FontSize = 16;
             obj.TabHeight = 26;
@@ -49,7 +49,7 @@ classdef PTKTabPanel < PTKPanel
             obj.BlankText = PTKText(obj, '', '', 'blank');
             
             obj.BlankText.Clickable = false;
-            obj.AddChild(obj.BlankText, reporting);
+            obj.AddChild(obj.BlankText);
             
             obj.OrderedTabs = {};
             
@@ -62,7 +62,7 @@ classdef PTKTabPanel < PTKPanel
             tab_text_control.FontColour = obj.StyleSheet.TextSecondaryColour;
             tab_text_control.FontSize = obj.FontSize;
             tab_text_control.HorizontalAlignment = 'center';
-            obj.AddChild(tab_text_control, obj.Reporting);
+            obj.AddChild(tab_text_control);
             obj.Tabs(tag) = tab_text_control;
             obj.OrderedTabs{end + 1} = tag;
             
@@ -94,7 +94,7 @@ classdef PTKTabPanel < PTKPanel
             if ~tab.Enabled
                 obj.Resize(obj.Position);
                 obj.ResizePreTabEnable(obj.InnerPosition, tag);
-                tab.Enable(obj.Reporting);
+                tab.Enable;
                 obj.TabControl.Reorder;
             end
             obj.Resize(obj.Position);

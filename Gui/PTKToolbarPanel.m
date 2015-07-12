@@ -32,8 +32,8 @@ classdef PTKToolbarPanel < PTKPanel
     end
     
     methods
-        function obj = PTKToolbarPanel(parent, organised_plugins, mode_name, plugin_mode_name, gui_app, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKToolbarPanel(parent, organised_plugins, mode_name, plugin_mode_name, gui_app)
+            obj = obj@PTKPanel(parent);
             
             obj.ModeName = mode_name;
             obj.PluginModeName = plugin_mode_name;
@@ -129,10 +129,10 @@ classdef PTKToolbarPanel < PTKPanel
             tool_name = class(tool);
             category_key = tool.Category;
             if ~obj.ControlGroups.isKey(category_key)
-                new_group = PTKLabelButtonGroup(obj, category_key, '', category_key, obj.Reporting);
+                new_group = PTKLabelButtonGroup(obj, category_key, '', category_key);
                 obj.ControlGroups(category_key) = new_group;
                 obj.OrderedControlGroupList{end + 1} = new_group;
-                obj.AddChild(new_group, obj.Reporting);
+                obj.AddChild(new_group);
             end
             if isprop(tool, 'Icon')
                 icon = imread(fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.IconFolder, tool.Icon));
@@ -141,11 +141,11 @@ classdef PTKToolbarPanel < PTKPanel
             end
             tool_group = obj.ControlGroups(category_key);
             if isa(tool, 'PTKGuiPluginSlider')
-                new_control = PTKPluginLabelSlider(obj, tool, icon, obj.GuiApp, obj.Reporting);
+                new_control = PTKPluginLabelSlider(obj, tool, icon, obj.GuiApp);
             else
-                new_control = PTKPluginLabelButton(obj, tool, icon, obj.GuiApp, obj.Reporting);
+                new_control = PTKPluginLabelButton(obj, tool, icon, obj.GuiApp);
             end
-            tool_group.AddControl(new_control, obj.Reporting);
+            tool_group.AddControl(new_control);
             tool_struct = [];
             tool_struct.Control = new_control;
             tool_struct.ToolObject = tool;

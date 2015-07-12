@@ -17,7 +17,6 @@ classdef PTKPanel < PTKUserInterfaceObject
     properties (Access = protected)
         BorderAxes
         InnerPosition
-        Reporting
     end
     
     properties
@@ -33,12 +32,9 @@ classdef PTKPanel < PTKUserInterfaceObject
     end
     
     methods
-        function obj = PTKPanel(parent_handle, reporting)
+        function obj = PTKPanel(parent_handle)
             obj = obj@PTKUserInterfaceObject(parent_handle);
             obj.BackgroundColour = obj.StyleSheet.BackgroundColour;
-            if nargin > 1
-                obj.Reporting = reporting;
-            end
 
             % We listen to changes in the border properties so we know when
             % to create axes for the lines which comprise the borders
@@ -48,7 +44,7 @@ classdef PTKPanel < PTKUserInterfaceObject
             obj.AddPostSetListener(obj, 'BottomBorder', @obj.BorderChangedCallback);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
+        function CreateGuiComponent(obj, position)
             if ~isempty(obj.BorderAxes)
                 obj.BorderAxes.TopLine = obj.TopBorder;
                 obj.BorderAxes.BottomLine = obj.BottomBorder;
@@ -59,7 +55,7 @@ classdef PTKPanel < PTKUserInterfaceObject
                 end
             end
             
-            obj.GraphicalComponentHandle = uipanel('Parent', obj.Parent.GetContainerHandle(reporting), 'BorderType', 'none', 'Units', 'pixels', ...
+            obj.GraphicalComponentHandle = uipanel('Parent', obj.Parent.GetContainerHandle, 'BorderType', 'none', 'Units', 'pixels', ...
                 'BackgroundColor', obj.BackgroundColour, 'ForegroundColor', 'white', 'ResizeFcn', '', 'Position', position);
         end
         
@@ -115,7 +111,7 @@ classdef PTKPanel < PTKUserInterfaceObject
         function BorderChangedCallback(obj, ~, ~, ~)
             if isempty(obj.BorderAxes) && (obj.LeftBorder || obj.RightBorder || obj.TopBorder || obj.BottomBorder)
                 obj.BorderAxes = PTKLineAxes(obj);
-                obj.AddChild(obj.BorderAxes, obj.Reporting);
+                obj.AddChild(obj.BorderAxes);
             end
         end
     end

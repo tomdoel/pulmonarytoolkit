@@ -106,8 +106,8 @@ classdef PTKPatientPanel < PTKPanel
             obj.AddChild(obj.SeriesDescriptionsList, obj.Reporting);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKPanel(obj, position);
             obj.AddStudies(position);
         end
         

@@ -30,8 +30,8 @@ classdef PTKAxes < PTKUserInterfaceObject
             obj.VisibleParameter = 'off';
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            obj.GraphicalComponentHandle = axes('Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'Position', position, 'Visible', 'off');
+        function CreateGuiComponent(obj, position)
+            obj.GraphicalComponentHandle = axes('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'Position', position, 'Visible', 'off');
             
             if ~isempty(obj.XLim)
                 set(obj.GraphicalComponentHandle, 'XLim', obj.XLim, 'YLim', obj.YLim)
@@ -174,7 +174,7 @@ classdef PTKAxes < PTKUserInterfaceObject
             rect_screenpixels = round(rect_screenpixels);
 
             % Capture the image as a bitmap
-            frame = PTKImageUtilities.CaptureFigure(obj.GetParentFigure.GetContainerHandle, rect_screenpixels);
+            frame = PTKImageUtilities.CaptureFigure(obj.GetParentFigure.GetContainerHandle, rect_screenpixels); %TODO
             
             % Return the figure to its original position 
             set(obj.GraphicalComponentHandle, 'Position', old_position);            

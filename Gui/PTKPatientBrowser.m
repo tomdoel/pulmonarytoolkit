@@ -22,7 +22,7 @@ classdef PTKPatientBrowser < PTKFigure
 
     methods
         function obj = PTKPatientBrowser(image_database, gui_callback, position, reporting)
-            obj = obj@PTKFigure('Patient Browser : Pulmonary Toolkit', []);
+            obj = obj@PTKFigure('Patient Browser : Pulmonary Toolkit', [], reporting);
             obj.Reporting = reporting;
             obj.ArrowPointer = 'hand';
             obj.GuiCallback = gui_callback;
@@ -82,9 +82,9 @@ classdef PTKPatientBrowser < PTKFigure
             obj.GuiCallback.DeleteDatasets(series_uids);
         end
         
-        function Show(obj, reporting)
+        function Show(obj)
             obj.LockLoad = false;
-            Show@PTKFigure(obj, reporting);
+            Show@PTKFigure(obj);
         end
         
         function position = GetLastPosition(obj)

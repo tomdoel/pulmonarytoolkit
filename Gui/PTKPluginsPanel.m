@@ -36,8 +36,8 @@ classdef PTKPluginsPanel < PTKCompositePanel
     end
     
     methods
-        function obj = PTKPluginsPanel(parent, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback, reporting)
-            obj = obj@PTKCompositePanel(parent, reporting);
+        function obj = PTKPluginsPanel(parent, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback)
+            obj = obj@PTKCompositePanel(parent);
             
             obj.OrganisedPlugins = organised_plugins;
             obj.ModeName = mode_name;
@@ -107,7 +107,7 @@ classdef PTKPluginsPanel < PTKCompositePanel
             
             for category = plugins_by_category.keys
                 current_category_map = plugins_by_category(char(category));
-                new_panel_handle = PTKPluginGroupPanel(obj, category, current_category_map, obj.Reporting);
+                new_panel_handle = PTKPluginGroupPanel(obj, category, current_category_map);
                 obj.PluginPanels(char(category)) = new_panel_handle;
                 obj.AddPanel(new_panel_handle);
             end

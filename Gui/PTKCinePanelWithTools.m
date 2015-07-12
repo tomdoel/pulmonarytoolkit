@@ -28,12 +28,12 @@ classdef PTKCinePanelWithTools < PTKCinePanel
     end
 
     methods
-        function obj = PTKCinePanelWithTools(parent, viewer_panel, reporting)
+        function obj = PTKCinePanelWithTools(parent, viewer_panel)
             image_source = PTKImageVolumeSource(viewer_panel);
             
-            image_overlay_axes = PTKImageOverlayAxes(parent, image_source, viewer_panel, reporting);
+            image_overlay_axes = PTKImageOverlayAxes(parent, image_source, viewer_panel);
             
-            obj = obj@PTKCinePanel(parent, image_source, image_overlay_axes, reporting);
+            obj = obj@PTKCinePanel(parent, image_source, image_overlay_axes);
             obj.ViewerPanel = viewer_panel;
         end
 

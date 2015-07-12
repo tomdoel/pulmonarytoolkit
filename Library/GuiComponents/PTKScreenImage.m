@@ -30,8 +30,8 @@ classdef PTKScreenImage < PTKPositionlessUserInterfaceObject
             obj = obj@PTKPositionlessUserInterfaceObject(parent);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            obj.GraphicalComponentHandle = image([], 'Parent', obj.Parent.GetContainerHandle(reporting));
+        function CreateGuiComponent(obj, position)
+            obj.GraphicalComponentHandle = image([], 'Parent', obj.Parent.GetContainerHandle);
             
             if ~isempty(obj.XData)
                 set(obj.GraphicalComponentHandle, 'XData', obj.XData, 'YData', obj.YData);

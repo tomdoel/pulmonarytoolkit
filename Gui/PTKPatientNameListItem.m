@@ -26,18 +26,17 @@ classdef PTKPatientNameListItem < PTKListItem
     end
     
     methods
-        function obj = PTKPatientNameListItem(parent, name, visible_name, patient_id, gui_callback, reporting)
-            obj = obj@PTKListItem(parent, patient_id, reporting);
+        function obj = PTKPatientNameListItem(parent, name, visible_name, patient_id, gui_callback)
+            obj = obj@PTKListItem(parent, patient_id);
             obj.TextHeight = obj.PatientTextHeight;
             
             if nargin > 0
                 obj.PatientId = patient_id;
-                obj.Reporting = reporting;
                 obj.GuiCallback = gui_callback;
 
                 obj.PatientNameText = PTKText(obj, visible_name, name, 'Patient');
                 obj.PatientNameText.FontSize = obj.FontSize;
-                obj.AddTextItem(obj.PatientNameText, reporting);
+                obj.AddTextItem(obj.PatientNameText);
             end
         end
         

@@ -64,12 +64,12 @@ classdef PTKListOfPatientsPanel < PTKPanel
             end
         end
         
-        function CreateGuiComponent(obj, position, reporting)
+        function CreateGuiComponent(obj, position)
             list_box_height = max(1, position(4) - obj.ControlPanelHeight);
             patient_text_position = [1 list_box_height, position(3), obj.ControlPanelHeight];
-            obj.PatientTextControl = uicontrol('Style', 'text', 'Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'FontSize', obj.PatientTextFontSize, 'BackgroundColor', obj.StyleSheet.BackgroundColour, 'ForegroundColor', 'white', 'HorizontalAlignment', 'left', 'String', obj.PatientText, 'Position', patient_text_position);            
+            obj.PatientTextControl = uicontrol('Style', 'text', 'Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'FontSize', obj.PatientTextFontSize, 'BackgroundColor', obj.StyleSheet.BackgroundColour, 'ForegroundColor', 'white', 'HorizontalAlignment', 'left', 'String', obj.PatientText, 'Position', patient_text_position);            
             list_box_position = [1 1, position(3), list_box_height];
-            obj.PatientListBox = uicontrol('Parent', obj.Parent.GetContainerHandle(reporting), 'Style', 'listbox', ...
+            obj.PatientListBox = uicontrol('Parent', obj.Parent.GetContainerHandle, 'Style', 'listbox', ...
                 'Units', 'pixels', 'Position', list_box_position, 'Callback', @obj.ListBoxCallBack, ...
                 'String', 'No Patients', 'FontSize', obj.FontSize, 'Min', 0, 'Max', 2, ...
                 'BackgroundColor', obj.StyleSheet.BackgroundColour, 'ForegroundColor', 'white');

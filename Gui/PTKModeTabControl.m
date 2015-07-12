@@ -25,8 +25,8 @@ classdef PTKModeTabControl < PTKTabControl
     end
 
     methods
-        function obj = PTKModeTabControl(parent, organised_plugins, reporting)
-            obj = obj@PTKTabControl(parent, reporting);
+        function obj = PTKModeTabControl(parent, organised_plugins)
+            obj = obj@PTKTabControl(parent);
 
             obj.OrganisedPlugins = organised_plugins;
             obj.TabEnabled = containers.Map;
@@ -35,18 +35,18 @@ classdef PTKModeTabControl < PTKTabControl
             
             obj.LeftBorder = true;
 
-            obj.ViewPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'View', 'all', obj.Gui, obj.Reporting);
+            obj.ViewPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'View', 'all', obj.Gui);
             obj.AddTabbedPanel(obj.ViewPanel, 'View', 'viewbar', 'Visualisation');
             
-            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Home', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
+            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Home', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback);
             obj.AddTabbedPanel(obj.PluginsPanel, 'Segment', 'segment', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
 
-            obj.EditPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
+            obj.EditPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, @obj.RunPluginCallback, @obj.RunGuiPluginCallback);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'edit', 'Manual correction of results');
             obj.EditPanel.AddPlugins([]);
             
-            obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
+            obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback);
             obj.AddTabbedPanel(obj.AnalysisPanel, 'Analyse', 'analysis', 'Perform analysis and save as tables and graphs');
             obj.AnalysisPanel.AddPlugins([]);
         end

@@ -29,8 +29,8 @@ classdef PTKPluginGroupPanel < PTKPanel
     end
     
     methods
-        function obj = PTKPluginGroupPanel(parent, category, current_category_map, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKPluginGroupPanel(parent, category, current_category_map)
+            obj = obj@PTKPanel(parent);
             obj.Enabled = false;
             
             obj.Category = category;
@@ -39,8 +39,8 @@ classdef PTKPluginGroupPanel < PTKPanel
             obj.AddPlugins(current_category_map);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKPanel(obj, position);
             set(obj.GraphicalComponentHandle, 'Title', obj.Category, 'BorderType', 'etchedin');
         end
         
@@ -70,7 +70,7 @@ classdef PTKPluginGroupPanel < PTKPanel
                 
                 callback_function_handle = @current_plugin.RunPlugin;
                 button_handle = PTKPluginButton(obj, callback_function_handle, current_plugin);
-                obj.AddChild(button_handle, obj.Reporting);
+                obj.AddChild(button_handle);
                 
                 obj.PluginButtonHandlesMap(char(current_plugin_key)) = button_handle;
             end

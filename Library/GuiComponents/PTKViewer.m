@@ -103,10 +103,10 @@ classdef PTKViewer < PTKFigure
             end
             
             % Call the base class to initialise the hidden window
-            obj = obj@PTKFigure(title, []);
+            obj = obj@PTKFigure(title, [], reporting);
 
-            obj.ViewerPanelHandle = PTKViewerPanel(obj, true, reporting);
-            obj.AddChild(obj.ViewerPanelHandle, reporting);
+            obj.ViewerPanelHandle = PTKViewerPanel(obj, true);
+            obj.AddChild(obj.ViewerPanelHandle);
             
             obj.Image = image_handle;
             obj.Overlay = overlay_handle;
@@ -114,12 +114,12 @@ classdef PTKViewer < PTKFigure
             obj.Resize([100 50 700 600]);
             
             % Create the figure
-            obj.Show(reporting);
+            obj.Show;
             
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKFigure(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKFigure(obj, position);
             
             obj.ViewerPanelHandle.BackgroundImage = obj.Image;               
             obj.ViewerPanelHandle.OverlayImage = obj.Overlay;

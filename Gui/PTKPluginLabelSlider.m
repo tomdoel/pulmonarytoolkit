@@ -22,8 +22,8 @@ classdef PTKPluginLabelSlider < PTKLabelSlider
     end
     
     methods
-        function obj = PTKPluginLabelSlider(parent, tool, icon, gui_app, reporting)
-            obj = obj@PTKLabelSlider(parent, tool.ButtonText, tool.ToolTip, class(tool), icon, reporting);
+        function obj = PTKPluginLabelSlider(parent, tool, icon, gui_app)
+            obj = obj@PTKLabelSlider(parent, tool.ButtonText, tool.ToolTip, class(tool), icon);
             obj.GuiApp = gui_app;
             obj.Tool = tool;
             

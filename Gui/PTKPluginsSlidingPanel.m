@@ -18,10 +18,10 @@ classdef PTKPluginsSlidingPanel < PTKSlidingPanel
     %    
     
     methods
-        function obj = PTKPluginsSlidingPanel(parent, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback, reporting)
-            obj = obj@PTKSlidingPanel(parent, reporting);
-            obj.FloatingPanel = PTKPluginsPanel(obj, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback, reporting);
-            obj.AddChild(obj.FloatingPanel, obj.Reporting);
+        function obj = PTKPluginsSlidingPanel(parent, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback)
+            obj = obj@PTKSlidingPanel(parent);
+            obj.FloatingPanel = PTKPluginsPanel(obj, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback);
+            obj.AddChild(obj.FloatingPanel);
         end
         
         function AddPlugins(obj, current_dataset)

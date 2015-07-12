@@ -32,29 +32,39 @@ classdef PTKUserInterfaceObject < PTKBaseClass
         VisibleParameter = 'on' % Defines the argument for component visibility
     end
     
+    properties (Access = protected)
+        Reporting
+    end
+    
     methods (Abstract)
-        CreateGuiComponent(obj, position, reporting)
+        CreateGuiComponent(obj, position)
     end
     
     methods
-        function obj = PTKUserInterfaceObject(parent)
-            if nargin > 0
-                obj.Parent = parent;
-            end
-            if isempty(parent)
-                obj.ParentWindowVisible = false;
-                obj.ParentWindowEnabled = true;
+        function obj = PTKUserInterfaceObject(parent, reporting)
+
+            % Set the parent visibility to the default values for a
+            % parentless window. These will be changed when the object is
+            % added to its parent via the AddChild() method
+            obj.ParentWindowVisible = false;
+            obj.ParentWindowEnabled = true;
+            
+            if nargin < 1 || isempty(parent)
                 obj.StyleSheet = PTKStyleSheet;
+                if nargin < 2 || isempty(reporting)
+                    obj.Reporting = PTKReportingDefault;
+                else
+                    obj.Reporting = reporting;
+                end
             else
-                obj.ParentWindowVisible = parent.ParentWindowVisible;
-                obj.ParentWindowEnabled = parent.ParentWindowEnabled;
                 obj.StyleSheet = parent.StyleSheet;
+                obj.Reporting = parent.Reporting;
             end
             obj.Enabled = true;
             obj.ComponentHasBeenCreated = false;
             obj.Children = [];
             obj.ResizeRequired = false;
-            obj.LockResize = false;
+            obj.LockResize = false;            
         end
         
         function delete(obj)
@@ -62,18 +72,22 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             obj.DeleteIfGraphicsHandle(obj.GraphicalComponentHandle);
         end
         
-        function AddChild(obj, child, reporting)
+        function AddChild(obj, child)
             % Add a child object to this object. After creating a PTKUserInterfaceObject,
             % you must call this method on the parent object in order to add the new object.
             
             if ~isa(child, 'PTKUserInterfaceObject')
-                reporting.Error('PTKUserInterfaceObject:ChildNotAPTKUserInterfaceObject', 'This child obect passed to AddChild is not of type PTKUserInterfaceObject');
+                obj.Reporting.Error('PTKUserInterfaceObject:ChildNotAPTKUserInterfaceObject', 'This child obect passed to AddChild is not of type PTKUserInterfaceObject');
             end
+            
+            % Set the parent object in the child
+            child.SetParent(obj);
+            
             obj.Children{end + 1} = child;
             obj.ResizeRequired = true;
             
             if obj.ComponentHasBeenCreated && obj.IsVisible
-                child.Show(reporting);
+                child.Show;
             end
         end
         
@@ -137,7 +151,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
         end
         
         
-        function Enable(obj, reporting)
+        function Enable(obj)
             % Enables this component
             
             if ~obj.Enabled
@@ -152,7 +166,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
                 end
                 
                 % Ensure any controls are created
-                obj.CreateVisibleComponents(reporting);                
+                obj.CreateVisibleComponents;
             end
                 
             % Make the graphical object visible
@@ -171,7 +185,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             obj.UpdateComponentVisibility;
         end
         
-        function Show(obj, reporting)
+        function Show(obj)
             % Makes this component visible and all of its children (unless they
             % have been disabled)
             
@@ -179,7 +193,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             obj.SetAllVisibility;
             
             % Ensure any controls are created
-            obj.CreateVisibleComponents(reporting);
+            obj.CreateVisibleComponents;
             
             % Make the graphical object visible
             obj.UpdateAllComponentVisibility;
@@ -204,13 +218,13 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             is_visible = obj.Enabled && obj.ParentWindowVisible && obj.ParentWindowEnabled;
         end
         
-        function handle = GetContainerHandle(obj, reporting)
+        function handle = GetContainerHandle(obj)
             handle = obj.GraphicalComponentHandle;
             if isempty(obj.GraphicalComponentHandle)
                 if obj.ComponentHasBeenCreated
-                    handle = obj.Parent.GetContainerHandle(reporting);
+                    handle = obj.Parent.GetContainerHandle;
                 else
-                    reporting.Error('PTKUserInterfaceObject:HandleRequestedBeforeCreation', 'GetContainerHandle() was called before the component was created');
+                    obj.Reporting.Error('PTKUserInterfaceObject:HandleRequestedBeforeCreation', 'GetContainerHandle() was called before the component was created');
                 end
             end
         end
@@ -266,7 +280,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
 
     methods (Access = protected)
         
-        function PostCreation(obj, position, reporting)
+        function PostCreation(obj, position)
             % Called after the compent and all its children have been created
         end
         
@@ -286,16 +300,16 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             end
         end
         
-        function CreateVisibleComponents(obj, reporting)
+        function CreateVisibleComponents(obj)
             % Creates graphical controls for all visible objects
             if obj.IsVisible
                 
                 % Create this component if necessary
                 if ~obj.ComponentHasBeenCreated
                     if isempty(obj.Position)
-                        reporting.Error('PTKUserInterfaceObject:NoSizeSet', 'The control does not have a valid position because the Resize() function has not been called. This error may be caused if you forget to add a PTKUserInterfaceObject to its parent using AddChild().');
+                        obj.Reporting.Error('PTKUserInterfaceObject:NoSizeSet', 'The control does not have a valid position because the Resize() function has not been called. This error may be caused if you forget to add a PTKUserInterfaceObject to its parent using AddChild().');
                     end
-                    obj.CreateGuiComponent(obj.Position, reporting);
+                    obj.CreateGuiComponent(obj.Position);
 
                     % Ensure the parent PTKFigure receives keyboard input from this control
                     obj.CaptureKeyboardInput;
@@ -315,10 +329,10 @@ classdef PTKUserInterfaceObject < PTKBaseClass
                 
                 % Iterate through children and call this method recursively
                 for child = obj.Children
-                    child{1}.CreateVisibleComponents(reporting);
+                    child{1}.CreateVisibleComponents;
                 end
                 
-                obj.PostCreation(obj.Position, reporting);
+                obj.PostCreation(obj.Position);
             end
         end
 
@@ -484,6 +498,12 @@ classdef PTKUserInterfaceObject < PTKBaseClass
     end
     
     methods (Access = private)
+        
+        function SetParent(obj, parent)
+            obj.Parent = parent;
+            obj.ParentWindowVisible = parent.ParentWindowVisible;
+            obj.ParentWindowEnabled = parent.ParentWindowEnabled;            
+        end
         
         function point_within_control = IsPointInControl(obj, point_coords)
             component_position = obj.Position;

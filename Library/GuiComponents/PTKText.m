@@ -72,7 +72,7 @@ classdef PTKText < PTKUserInterfaceObject
             end
         end
         
-        function CreateGuiComponent(obj, position, reporting)
+        function CreateGuiComponent(obj, position)
             text_size = [position(1), position(2), position(3), position(4)];
             if obj.Selected
                 background_colour =  obj.SelectedColour;
@@ -88,7 +88,7 @@ classdef PTKText < PTKUserInterfaceObject
                 weight = 'normal';
             end
             
-            obj.GraphicalComponentHandle = uicontrol('Style', 'text', 'Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'String', obj.Text, ...
+            obj.GraphicalComponentHandle = uicontrol('Style', 'text', 'Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'String', obj.Text, ...
                 'Tag', obj.Tag, 'ToolTipString', obj.ToolTip, ...
                 'BackgroundColor', background_colour, ...
                 'FontAngle', 'normal', 'ForegroundColor', text_colour, 'FontUnits', 'pixels', 'FontSize', obj.FontSize, ...

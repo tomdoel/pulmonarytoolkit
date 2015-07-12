@@ -21,14 +21,14 @@ classdef PTKListItem < PTKVirtualPanel
     end
     
     methods
-        function obj = PTKListItem(parent, tag, reporting)
-            obj = obj@PTKVirtualPanel(parent, reporting);
+        function obj = PTKListItem(parent, tag)
+            obj = obj@PTKVirtualPanel(parent);
             obj.Tag = tag;
             obj.TextItems = PTKText.empty;
         end
         
-        function AddTextItem(obj, text_item, reporting)
-            obj.AddChild(text_item, reporting);
+        function AddTextItem(obj, text_item)
+            obj.AddChild(text_item);
             obj.TextItems(end + 1) = text_item;
             
             obj.AddEventListener(text_item, 'TextClicked', @obj.ItemLeftClicked);

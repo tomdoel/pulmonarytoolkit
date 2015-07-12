@@ -31,8 +31,8 @@ classdef PTKLabelButton < PTKVirtualPanel
     end
     
     methods
-        function obj = PTKLabelButton(parent, text, tooltip, tag, icon, reporting)
-            obj = obj@PTKVirtualPanel(parent, reporting);
+        function obj = PTKLabelButton(parent, text, tooltip, tag, icon)
+            obj = obj@PTKVirtualPanel(parent);
             obj.Button = PTKButton(parent, text, tooltip, tag, @obj.ButtonClickedCallback);
             obj.Button.ButtonWidth = obj.ButtonWidth;
             obj.Button.ButtonHeight = obj.ButtonHeight;
@@ -46,11 +46,11 @@ classdef PTKLabelButton < PTKVirtualPanel
             obj.Button.HighlightColour = uint8(255*(obj.StyleSheet.IconHighlightColour));
             obj.Button.HighlightSelectedColour = uint8(255*(obj.StyleSheet.IconHighlightSelectedColour));            
 
-            obj.AddChild(obj.Button, reporting);
+            obj.AddChild(obj.Button);
             obj.Text = PTKText(parent, text, tooltip, tag);
             obj.Text.HorizontalAlignment = 'center';
             obj.Text.FontSize = obj.LabelFontSize;
-            obj.AddChild(obj.Text, reporting);
+            obj.AddChild(obj.Text);
         end
        
         function Resize(obj, new_position)
@@ -73,10 +73,10 @@ classdef PTKLabelButton < PTKVirtualPanel
             height = obj.Button.ButtonHeight + obj.TextHeight + obj.VerticalSpacing;
         end
 
-        function Enable(obj, reporting)
-            Enable@PTKVirtualPanel(obj, reporting);
-            obj.Button.Enable(reporting);
-            obj.Text.Enable(reporting);
+        function Enable(obj)
+            Enable@PTKVirtualPanel(obj);
+            obj.Button.Enable;
+            obj.Text.Enable;
         end
         
         function Disable(obj)

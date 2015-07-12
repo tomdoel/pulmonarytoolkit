@@ -33,27 +33,27 @@ classdef PTKListBoxWithTitle < PTKPanel
     end
     
     methods
-        function obj = PTKListBoxWithTitle(parent, title_text, add_button_tooltip, delete_button_tooltip, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKListBoxWithTitle(parent, title_text, add_button_tooltip, delete_button_tooltip)
+            obj = obj@PTKPanel(parent);
 
-            obj.ListBox = PTKSlidingListBox(obj, reporting);
+            obj.ListBox = PTKSlidingListBox(obj);
             obj.ListBox.SetBorders(obj.InnerLeftMargin, obj.InnerRightMargin, obj.InnerTopMargin, obj.InnerBottomMargin, obj.SpacingBetweenItems);
-            obj.AddChild(obj.ListBox, obj.Reporting);
+            obj.AddChild(obj.ListBox);
             
-            obj.TitlePanel = PTKListBoxControlPanel(obj, title_text, add_button_tooltip, delete_button_tooltip, reporting);
-            obj.AddChild(obj.TitlePanel, obj.Reporting);
+            obj.TitlePanel = PTKListBoxControlPanel(obj, title_text, add_button_tooltip, delete_button_tooltip);
+            obj.AddChild(obj.TitlePanel);
             obj.AddEventListener(obj.TitlePanel, 'AddButtonEvent', @obj.AddButtonClicked);
             obj.AddEventListener(obj.TitlePanel, 'DeleteButtonEvent', @obj.DeleteButtonClicked);
             
-            obj.LowerPanel = PTKText(obj, '', '', ''); %PTKPanel(obj, reporting);
-            obj.AddChild(obj.LowerPanel, obj.Reporting);
+            obj.LowerPanel = PTKText(obj, '', '', ''); %PTKPanel(obj);
+            obj.AddChild(obj.LowerPanel);
             
             % Ensure tab panel will be created last
             obj.Reorder;            
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKPanel(obj, position);
         end
         
         function Resize(obj, panel_position)

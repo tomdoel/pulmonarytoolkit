@@ -20,15 +20,15 @@ classdef PTKMultiPanel < PTKPanel
     end
     
     methods
-        function obj = PTKMultiPanel(parent, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKMultiPanel(parent)
+            obj = obj@PTKPanel(parent);
             
             obj.PanelMap = containers.Map;
         end
         
         function AddPanel(obj, panel, tag)
             obj.PanelMap(tag) = panel;
-            obj.AddChild(panel, obj.Reporting);
+            obj.AddChild(panel);
             
             % If no current tab exists, then select this one
             if isempty(obj.CurrentPanelTag)
@@ -55,7 +55,7 @@ classdef PTKMultiPanel < PTKPanel
                 for panel_key = obj.PanelMap.keys
                     panel = obj.PanelMap(panel_key{1});
                     if strcmp(tag, panel_key{1})
-                        panel.Enable(obj.Reporting);
+                        panel.Enable;
                     else
                         panel.Disable;
                     end

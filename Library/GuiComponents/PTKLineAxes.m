@@ -35,8 +35,8 @@ classdef PTKLineAxes < PTKAxes
             obj.LineColour = [0.5, 0.5, 0.5];
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKAxes(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKAxes(obj, position);
             
             if obj.LeftLine
                 x_position = [position(1), position(2)];

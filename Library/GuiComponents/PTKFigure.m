@@ -29,8 +29,8 @@ classdef PTKFigure < PTKUserInterfaceObject
     end
 
     methods
-        function obj = PTKFigure(title, position)
-            obj = obj@PTKUserInterfaceObject([]);
+        function obj = PTKFigure(title, position, reporting)
+            obj = obj@PTKUserInterfaceObject([], reporting);
             obj.Title = title;
             obj.ArrowPointer = 'arrow';
             
@@ -62,7 +62,7 @@ classdef PTKFigure < PTKUserInterfaceObject
             end
         end
         
-        function CreateGuiComponent(obj, position, reporting)
+        function CreateGuiComponent(obj, position)
             
             % The busy action can be set to 'cancel' (ignore callbacks which come in while
             % this one is being processed) or 'queue' (queue up all callbacks)

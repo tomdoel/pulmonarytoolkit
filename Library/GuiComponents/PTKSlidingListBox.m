@@ -11,11 +11,11 @@ classdef PTKSlidingListBox < PTKSlidingPanel
     %
     
     methods
-        function obj = PTKSlidingListBox(parent, reporting)
-            obj = obj@PTKSlidingPanel(parent, reporting);
+        function obj = PTKSlidingListBox(parent)
+            obj = obj@PTKSlidingPanel(parent);
             
-            obj.FloatingPanel = PTKListBox(obj, reporting);
-            obj.AddChild(obj.FloatingPanel, obj.Reporting);
+            obj.FloatingPanel = PTKListBox(obj);
+            obj.AddChild(obj.FloatingPanel);
         end
         
         function SetBorders(obj, left, right, top, bottom, spacing_between_items)

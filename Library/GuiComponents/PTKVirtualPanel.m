@@ -20,17 +20,12 @@ classdef PTKVirtualPanel < PTKUserInterfaceObject
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
 
-    properties (Access = protected)
-        Reporting
-    end
-    
     methods
-        function obj = PTKVirtualPanel(parent, reporting)
+        function obj = PTKVirtualPanel(parent)
             obj = obj@PTKUserInterfaceObject(parent);
-            obj.Reporting = reporting;
         end
         
-        function CreateGuiComponent(obj, position, reporting)
+        function CreateGuiComponent(obj, position)
             % There is no underlying graphical object to create
         end
 

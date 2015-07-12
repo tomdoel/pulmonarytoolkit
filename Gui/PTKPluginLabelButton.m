@@ -20,8 +20,8 @@ classdef PTKPluginLabelButton < PTKLabelButton
     end
     
     methods
-        function obj = PTKPluginLabelButton(parent, tool, icon, gui_app, reporting)
-            obj = obj@PTKLabelButton(parent, tool.ButtonText, tool.ToolTip, class(tool), icon, reporting);
+        function obj = PTKPluginLabelButton(parent, tool, icon, gui_app)
+            obj = obj@PTKLabelButton(parent, tool.ButtonText, tool.ToolTip, class(tool), icon);
             obj.GuiApp = gui_app;
             obj.Tool = tool;
         end

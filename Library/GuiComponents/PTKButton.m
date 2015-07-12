@@ -91,7 +91,7 @@ classdef PTKButton < PTKUserInterfaceObject
             obj.UpdateImageHighlight;
         end
         
-        function CreateGuiComponent(obj, position, reporting)
+        function CreateGuiComponent(obj, position)
             
             % If no image has been specified then create a blank image
             if isempty(obj.OriginalImage)
@@ -108,7 +108,7 @@ classdef PTKButton < PTKUserInterfaceObject
                 button_text = '';
             end
             
-            obj.GraphicalComponentHandle = uicontrol('Style', 'pushbutton', 'Parent', obj.Parent.GetContainerHandle(reporting), ...
+            obj.GraphicalComponentHandle = uicontrol('Style', 'pushbutton', 'Parent', obj.Parent.GetContainerHandle, ...
                 'String', button_text, 'Tag', obj.Tag, 'ToolTipString', obj.ToolTip, ...
                 'FontAngle', obj.FontAngle, 'ForegroundColor', 'white', 'FontUnits', 'pixels', 'FontSize', obj.FontSize, ...
                 'Callback', @obj.ButtonClickedCallback, 'Position', position, 'CData', obj.RGBImage);

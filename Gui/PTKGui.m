@@ -17,7 +17,6 @@ classdef PTKGui < PTKFigure
     properties (SetAccess = private)
         ImagePanel
         GuiSingleton
-        Reporting
     end
     
     properties (SetObservable)
@@ -58,22 +57,22 @@ classdef PTKGui < PTKFigure
                 splash_screen = PTKSplashScreen.GetSplashScreen;
             end
             
+            % Create the reporting object. Later we will update it with the viewer panel and
+            % the new progress panel when these have been created.
+            reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile, PTKDirectories.GetLogFilePath);
+            reporting.Log('New session of PTKGui');
+                        
             % Call the base class to initialise the figure class
-            obj = obj@PTKFigure(PTKSoftwareInfo.Name, []);
+            obj = obj@PTKFigure(PTKSoftwareInfo.Name, [], reporting);
 
             % Set the figure title to the sotware name and version
             obj.Title = [PTKSoftwareInfo.Name, ' ', PTKSoftwareInfo.Version];
             
             show_control_panel_in_viewer = PTKSoftwareInfo.ViewerPanelToolbarEnabled;
             
-            % Create the reporting object. Later we will update it with the viewer panel and
-            % the new progress panel when these have been created.
-            obj.Reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile, PTKDirectories.GetLogFilePath);
-            obj.Reporting.Log('New session of PTKGui');
-                        
             % Set up the viewer panel
-            obj.ImagePanel = PTKViewerPanel(obj, show_control_panel_in_viewer, obj.Reporting);
-            obj.AddChild(obj.ImagePanel, obj.Reporting);
+            obj.ImagePanel = PTKViewerPanel(obj, show_control_panel_in_viewer);
+            obj.AddChild(obj.ImagePanel);
             
             % Any unhandled keyboard input goes to the viewer panel
             obj.DefaultKeyHandlingObject = obj.ImagePanel;
@@ -88,13 +87,13 @@ classdef PTKGui < PTKFigure
             obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             % Create the side panel showing available datasets
-            obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder, obj, obj.Reporting);
-            obj.AddChild(obj.SidePanel, obj.Reporting);
+            obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder, obj);
+            obj.AddChild(obj.SidePanel);
             
             % Create the status panel showing image coordinates and
             % values of the voxel under the cursor
-            obj.StatusPanel = PTKStatusPanel(obj, obj.ImagePanel, obj.Reporting);
-            obj.AddChild(obj.StatusPanel, obj.Reporting);
+            obj.StatusPanel = PTKStatusPanel(obj, obj.ImagePanel);
+            obj.AddChild(obj.StatusPanel);
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
@@ -105,15 +104,15 @@ classdef PTKGui < PTKFigure
 
             % Create the panel of tools across the bottom of the interface
             if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', 'all', obj, obj.Reporting);
-                obj.AddChild(obj.ToolbarPanel, obj.Reporting);
+                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', 'all', obj);
+                obj.AddChild(obj.ToolbarPanel);
             end
             
-            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins, obj.Reporting);
-            obj.AddChild(obj.ModeTabControl, obj.Reporting);
+            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins);
+            obj.AddChild(obj.ModeTabControl);
 
-            obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState, obj.Reporting);
-            obj.AddChild(obj.PatientNamePanel, obj.Reporting);
+            obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);
+            obj.AddChild(obj.PatientNamePanel);
             
             % Load the most recent dataset
             image_info = obj.GuiSingleton.GetSettings.ImageInfo;
@@ -144,7 +143,7 @@ classdef PTKGui < PTKFigure
             obj.ModeTabControl.ForceEnableAllTabs;
             
             % Create the figure and graphical components
-            obj.Show(obj.Reporting);
+            obj.Show;
             
             % After creating all the tabs, we now re-disable the ones that should be hidden
             obj.GuiDataset.UpdateModeTabControl;
@@ -190,8 +189,8 @@ classdef PTKGui < PTKFigure
             obj.GuiDataset.ChangeMode(mode);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKFigure(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKFigure(obj, position);
 
             obj.Reporting.SetViewerPanel(obj.ImagePanel);            
             obj.AddEventListener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);

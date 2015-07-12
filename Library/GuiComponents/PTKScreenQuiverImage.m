@@ -25,8 +25,8 @@ classdef PTKScreenQuiverImage < PTKScreenImage
             obj = obj@PTKScreenImage(parent);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            obj.GraphicalComponentHandle = quiver([], [], [], [], 'Parent', obj.Parent.GetContainerHandle(reporting), 'Color', 'red');
+        function CreateGuiComponent(obj, position)
+            obj.GraphicalComponentHandle = quiver([], [], [], [], 'Parent', obj.Parent.GetContainerHandle, 'Color', 'red');
             if ~isempty(obj.XData)
                 set(obj.GraphicalComponentHandle, 'XData', obj.XData, 'YData', obj.YData);
             end

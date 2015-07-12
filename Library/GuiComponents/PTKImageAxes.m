@@ -31,8 +31,8 @@ classdef PTKImageAxes < PTKAxes
             obj.ClearAxesCache;
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKAxes(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKAxes(obj, position);
             set(obj.GraphicalComponentHandle, 'YDir', 'reverse');
         end
 

@@ -35,21 +35,21 @@ classdef PTKSidePanel < PTKPanel
     end
     
     methods
-        function obj = PTKSidePanel(parent, patient_database, state, linked_recorder, gui_callback, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKSidePanel(parent, patient_database, state, linked_recorder, gui_callback)
+            obj = obj@PTKPanel(parent);
             
             obj.RightBorder = true;
             
             obj.GuiState = state;
             
-            obj.PatientsSidePanel = PTKPatientsSidePanel(obj, patient_database, gui_callback, reporting);
-            obj.AddChild(obj.PatientsSidePanel, obj.Reporting);
+            obj.PatientsSidePanel = PTKPatientsSidePanel(obj, patient_database, gui_callback);
+            obj.AddChild(obj.PatientsSidePanel);
             
-            obj.LinkedSeriesSidePanel = PTKLinkedSeriesSidePanel(obj, patient_database, linked_recorder, gui_callback, reporting);
-            obj.AddChild(obj.LinkedSeriesSidePanel, obj.Reporting);
+            obj.LinkedSeriesSidePanel = PTKLinkedSeriesSidePanel(obj, patient_database, linked_recorder, gui_callback);
+            obj.AddChild(obj.LinkedSeriesSidePanel);
             
-            obj.SeriesSidePanel = PTKSeriesSidePanel(obj, patient_database, gui_callback, reporting);
-            obj.AddChild(obj.SeriesSidePanel, obj.Reporting);
+            obj.SeriesSidePanel = PTKSeriesSidePanel(obj, patient_database, gui_callback);
+            obj.AddChild(obj.SeriesSidePanel);
             
             obj.Repopulate;
 
@@ -58,8 +58,8 @@ classdef PTKSidePanel < PTKPanel
             obj.AddEventListener(linked_recorder, 'LinkingChanged', @obj.LinkingChanged);            
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKPanel(obj, position);
         end
         
         function Resize(obj, new_position)

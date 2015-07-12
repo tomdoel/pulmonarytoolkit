@@ -21,8 +21,8 @@ classdef PTKSeriesSidePanel < PTKListBoxWithTitle
     end
     
     methods
-        function obj = PTKSeriesSidePanel(parent, patient_database, gui_callback, reporting)
-            obj = obj@PTKListBoxWithTitle(parent, 'SERIES', 'Import images', 'Delete images', reporting);
+        function obj = PTKSeriesSidePanel(parent, patient_database, gui_callback)
+            obj = obj@PTKListBoxWithTitle(parent, 'SERIES', 'Import images', 'Delete images');
             
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
@@ -73,7 +73,7 @@ classdef PTKSeriesSidePanel < PTKListBoxWithTitle
             
             for series_index = 1 : length(datasets)
                 series = datasets{series_index};
-                series_item = PTKSidePanelSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, obj.GuiCallback, obj.Reporting);
+                series_item = PTKSidePanelSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, obj.GuiCallback);
                 
                 obj.ListBox.AddItem(series_item);
             end

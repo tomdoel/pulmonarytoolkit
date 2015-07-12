@@ -69,7 +69,8 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
             position(2) = max(1, round((screen_size(4) - position(4))/2));
             
             % Call the base class to initialise the hidden window
-            obj = obj@PTKFigure('', position);            
+            reporting = PTKReportingDefault;
+            obj = obj@PTKFigure('', position, reporting);            
             
             obj.TimerRef = tic;
             
@@ -77,7 +78,7 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
             obj.Hide;
             
             % Create the figure
-            obj.Show(PTKReportingDefault);
+            obj.Show;
             set(obj.ProgressBarHandle, 'visible', 0);
             
             drawnow;
@@ -89,8 +90,8 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
             delete(obj.GraphicalComponentHandle);
         end        
 
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKFigure(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@PTKFigure(obj, position);
 
             % Override the colour and resize behaviour
             set(obj.GraphicalComponentHandle, 'Color', [1 1 1], 'Resize', 'off');
