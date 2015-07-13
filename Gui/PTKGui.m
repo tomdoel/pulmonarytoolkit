@@ -16,7 +16,7 @@ classdef PTKGui < PTKGuiCore
     
     methods
         function obj = PTKGui(splash_screen)
-            obj = obj@PTKGuiCore(splash_screen);
+            obj = obj@PTKGuiCore(PTKAppDef, splash_screen);
         end
     end
 end

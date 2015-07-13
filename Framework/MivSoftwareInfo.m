@@ -74,7 +74,7 @@ classdef MivSoftwareInfo < handle
         SchemaCacheName = 'Schema'
         ImageTemplatesCacheName = 'ImageTemplates'
         OutputFolderCacheName = 'OutputFolder'
-        SplashScreenImageFile = 'PTKLogo.jpg'
+        SplashScreenImageFile = 'MivLogo.jpg'
 
         % Compression to use when saving cache images
         Compression = 'deflate'

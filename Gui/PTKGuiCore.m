@@ -24,6 +24,7 @@ classdef PTKGuiCore < PTKFigure
     end
     
     properties (Access = private)
+        AppDef
         GuiDataset
         WaitDialogHandle
         MarkersHaveBeenLoaded = false
@@ -50,10 +51,10 @@ classdef PTKGuiCore < PTKFigure
     end
     
     methods
-        function obj = PTKGuiCore(splash_screen)
+        function obj = PTKGuiCore(app_def, splash_screen)
 
             % Create the splash screen if it doesn't already exist
-            if nargin < 1 || isempty(splash_screen) || ~isa(splash_screen, 'PTKProgressInterface')
+            if nargin < 2 || isempty(splash_screen) || ~isa(splash_screen, 'PTKProgressInterface')
                 splash_screen = PTKSplashScreen.GetSplashScreen;
             end
             
@@ -63,10 +64,12 @@ classdef PTKGuiCore < PTKFigure
             reporting.Log('New session of PTKGui');
                         
             % Call the base class to initialise the figure class
-            obj = obj@PTKFigure(PTKSoftwareInfo.Name, [], reporting);
+            obj = obj@PTKFigure(app_def.GetName, [], reporting);
+
+            obj.AppDef = app_def;
 
             % Set the figure title to the sotware name and version
-            obj.Title = [PTKSoftwareInfo.Name, ' ', PTKSoftwareInfo.Version];
+            obj.Title = [app_def.GetName, ' ', app_def.GetVersion];
             
             show_control_panel_in_viewer = PTKSoftwareInfo.ViewerPanelToolbarEnabled;
             
@@ -84,7 +87,7 @@ classdef PTKGuiCore < PTKFigure
             obj.GuiSingleton.GetSettings.ApplySettingsToGui(obj, obj.ImagePanel);
             
             % Create the object which manages the current dataset
-            obj.GuiDataset = PTKGuiDataset(obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
+            obj.GuiDataset = PTKGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             % Create the side panel showing available datasets
             obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder, obj);

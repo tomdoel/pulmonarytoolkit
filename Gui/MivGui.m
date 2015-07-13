@@ -17,7 +17,7 @@ classdef MivGui < PTKGuiCore
     
     methods
         function obj = MivGui(splash_screen)
-            obj = obj@PTKGuiCore(splash_screen);
+            obj = obj@PTKGuiCore(MivAppDef, splash_screen);
         end
     end
 end

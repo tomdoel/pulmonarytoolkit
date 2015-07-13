@@ -26,10 +26,12 @@ classdef PTKGuiDataset < PTKBaseClass
         Ptk
         Reporting
         Settings
+        AppDef
     end
     
     methods
-        function obj = PTKGuiDataset(gui, viewer_panel, settings, reporting)
+        function obj = PTKGuiDataset(app_def, gui, viewer_panel, settings, reporting)
+            obj.AppDef = app_def;
             obj.GuiDatasetState = PTKGuiDatasetState;
             obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, settings, reporting);
 
@@ -224,14 +226,16 @@ classdef PTKGuiDataset < PTKBaseClass
                 image_info = obj.Dataset.GetImageInfo;
                 modality = image_info.Modality;
                 
+                [preferred_context, plugin_to_use] = obj.AppDef.GetPreferredContext(modality);
+                
                 % If the modality is not CT then we load the full dataset
-                load_full_data = ~(isempty(modality) || strcmp(modality, 'CT'));
+                load_full_data = isempty(preferred_context);
                     
                 % Attempt to obtain the region of interest
                 if ~load_full_data
-                    if obj.Dataset.IsContextEnabled(PTKContext.LungROI)
+                    if obj.Dataset.IsContextEnabled(preferred_context)
                         try
-                            new_image = obj.Dataset.GetResult('PTKLungROI');
+                            new_image = obj.Dataset.GetResult(plugin_to_use);
                         catch exc
                             if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                                 obj.Reporting.Log('LoadImages cancelled by user');
