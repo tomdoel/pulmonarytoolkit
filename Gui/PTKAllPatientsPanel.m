@@ -23,8 +23,8 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
     end
     
     methods
-        function obj = PTKAllPatientsPanel(parent, patient_database, gui_callback, reporting)
-            obj = obj@PTKCompositePanel(parent, reporting);
+        function obj = PTKAllPatientsPanel(parent, patient_database, gui_callback)
+            obj = obj@PTKCompositePanel(parent);
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
             
@@ -84,7 +84,7 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
             patient_info_list = obj.PatientDatabase.GetPatients;
             
             for patient_detail = patient_info_list
-                obj.AddPatientPanel(PTKPatientPanel(obj, patient_detail{1}, obj.GuiCallback, obj.Reporting));
+                obj.AddPatientPanel(PTKPatientPanel(obj, patient_detail{1}, obj.GuiCallback));
             end
         end
         

@@ -51,12 +51,11 @@ classdef PTKSeriesDescription < PTKListItem
     end
     
     methods
-        function obj = PTKSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, gui_callback, reporting)
-            obj = obj@PTKListItem(parent, uid, reporting);
+        function obj = PTKSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, gui_callback)
+            obj = obj@PTKListItem(parent, uid);
             obj.TextHeight = obj.SeriesTextHeight;
             obj.SeriesUid = uid;
             obj.PatientId = patient_id;
-            obj.Reporting = reporting;
             
             if nargin > 0
                 obj.GuiCallback = gui_callback;
@@ -100,27 +99,27 @@ classdef PTKSeriesDescription < PTKListItem
                 obj.ModalityControl = PTKText(obj, obj.ModalityText, 'Select this series', 'Modality');
                 obj.ModalityControl.FontSize = obj.SeriesFontSize;
                 obj.ModalityControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.ModalityControl, reporting);
+                obj.AddTextItem(obj.ModalityControl);
                 
                 obj.DescriptionControl = PTKText(obj, obj.DescriptionText, 'Select this series', 'Description');
                 obj.DescriptionControl.FontSize = obj.SeriesFontSize;
                 obj.DescriptionControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.DescriptionControl, reporting);
+                obj.AddTextItem(obj.DescriptionControl);
                 
                 obj.DateControl = PTKText(obj, obj.DateText, 'Select this series', 'Date');
                 obj.DateControl.FontSize = obj.SeriesFontSize;
                 obj.DateControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.DateControl, reporting);
+                obj.AddTextItem(obj.DateControl);
                 
                 obj.NumImagesControl = PTKText(obj, obj.NumImagesText, 'Select this series', 'NumImages');
                 obj.NumImagesControl.FontSize = obj.SeriesFontSize;
                 obj.NumImagesControl.HorizontalAlignment = 'right';
-                obj.AddTextItem(obj.NumImagesControl, reporting);
+                obj.AddTextItem(obj.NumImagesControl);
                 
                 obj.NumImagesSuffixControl = PTKText(obj, obj.NumImagesSuffixText, 'Select this series', 'NumImagesSuffix');
                 obj.NumImagesSuffixControl.FontSize = obj.SeriesFontSize;
                 obj.NumImagesSuffixControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.NumImagesSuffixControl, reporting);
+                obj.AddTextItem(obj.NumImagesSuffixControl);
             end
         end
         

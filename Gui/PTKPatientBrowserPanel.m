@@ -22,12 +22,12 @@ classdef PTKPatientBrowserPanel < PTKPanel
     end
     
     methods
-        function obj = PTKPatientBrowserPanel(parent, patient_database, gui_callback, reporting)
-            obj = obj@PTKPanel(parent, reporting);
-            obj.AllPatientsSlidingPanel = PTKAllPatientsSlidingPanel(obj, patient_database, gui_callback, reporting);
-            obj.ListOfPatientsPanel = PTKListOfPatientsPanel(obj, obj.AllPatientsSlidingPanel, patient_database, gui_callback, reporting);
-            obj.AddChild(obj.AllPatientsSlidingPanel, obj.Reporting);
-            obj.AddChild(obj.ListOfPatientsPanel, obj.Reporting);
+        function obj = PTKPatientBrowserPanel(parent, patient_database, gui_callback)
+            obj = obj@PTKPanel(parent);
+            obj.AllPatientsSlidingPanel = PTKAllPatientsSlidingPanel(obj, patient_database, gui_callback);
+            obj.ListOfPatientsPanel = PTKListOfPatientsPanel(obj, obj.AllPatientsSlidingPanel, patient_database, gui_callback);
+            obj.AddChild(obj.AllPatientsSlidingPanel);
+            obj.AddChild(obj.ListOfPatientsPanel);
         end
 
         function SelectSeries(obj, patient_id, series_uid, selected)

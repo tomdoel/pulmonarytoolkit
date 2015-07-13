@@ -39,8 +39,8 @@ classdef PTKListOfPatientsPanel < PTKPanel
     end
     
     methods
-        function obj = PTKListOfPatientsPanel(parent, all_patients_panel, patient_database, gui_callback, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKListOfPatientsPanel(parent, all_patients_panel, patient_database, gui_callback)
+            obj = obj@PTKPanel(parent);
             obj.LockSetPatient = false;
             obj.PatientDatabase = patient_database;
             obj.AllPatientsPanel = all_patients_panel;
@@ -48,11 +48,11 @@ classdef PTKListOfPatientsPanel < PTKPanel
             obj.AddButton = PTKButton(obj, '+', 'Import images', 'Add', @obj.AddButtonClicked);
             obj.AddButton.FontSize = obj.PatientTextFontSize;
             obj.AddButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
-            obj.AddChild(obj.AddButton, obj.Reporting);
+            obj.AddChild(obj.AddButton);
             obj.DeleteButton = PTKButton(obj, '-', 'Delete this patient', 'Delete', @obj.DeleteButtonClicked);
             obj.DeleteButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
             obj.DeleteButton.FontSize = obj.PatientTextFontSize;
-            obj.AddChild(obj.DeleteButton, obj.Reporting);
+            obj.AddChild(obj.DeleteButton);
         end
         
         function delete(obj)

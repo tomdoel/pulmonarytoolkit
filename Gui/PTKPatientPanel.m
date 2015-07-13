@@ -54,13 +54,13 @@ classdef PTKPatientPanel < PTKPanel
     end
     
     methods
-        function obj = PTKPatientPanel(parent, patient_details, gui_callback, reporting)
+        function obj = PTKPatientPanel(parent, patient_details, gui_callback)
             % Create a new panel showing the series information for one or more patients,
             % each defined by the patient_details vector. This vector may have more than one
             % patient details object if there is more than one patient id corresponding to
             % the same patient, which could occur due to anonymisation
             
-            obj = obj@PTKPanel(parent, reporting);
+            obj = obj@PTKPanel(parent);
             obj.Enabled = false;
             obj.PatientDetails = patient_details;
             obj.GuiCallback = gui_callback;
@@ -96,14 +96,14 @@ classdef PTKPatientPanel < PTKPanel
                         
             obj.PatientNameTextControl = PTKText(obj, obj.Name, ['Patient name: ', obj.Name], 'PatientName');
             obj.PatientNameTextControl.FontSize = obj.PatientNameFontSize;
-            obj.AddChild(obj.PatientNameTextControl, obj.Reporting);
+            obj.AddChild(obj.PatientNameTextControl);
             obj.AddEventListener(obj.PatientNameTextControl, 'TextRightClicked', @obj.PatientRightClicked);
             
-            obj.SeriesDescriptionsList = PTKListBox(obj, reporting);
+            obj.SeriesDescriptionsList = PTKListBox(obj);
             obj.SeriesDescriptionsList.TopMargin = obj.ListTopMargin;
             obj.SeriesDescriptionsList.BottomMargin = obj.ListBottomMargin;
             obj.SeriesDescriptionsList.SpacingBetweenItems = obj.SpacingBetweenSeries;
-            obj.AddChild(obj.SeriesDescriptionsList, obj.Reporting);
+            obj.AddChild(obj.SeriesDescriptionsList);
         end
         
         function CreateGuiComponent(obj, position)
@@ -167,7 +167,7 @@ classdef PTKPatientPanel < PTKPanel
             
             for series_index = 1 : length(datasets)
                 series = datasets{series_index};
-                obj.SeriesDescriptionsList.AddItem(PTKSeriesDescription(obj.SeriesDescriptionsList, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, obj.Id, series.SeriesUid, obj.GuiCallback, obj.Reporting));
+                obj.SeriesDescriptionsList.AddItem(PTKSeriesDescription(obj.SeriesDescriptionsList, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, obj.Id, series.SeriesUid, obj.GuiCallback));
             end
         end
 
