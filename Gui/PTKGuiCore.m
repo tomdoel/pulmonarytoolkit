@@ -1,4 +1,4 @@
-classdef PTKGui < PTKFigure
+classdef PTKGuiCore < PTKFigure
     % PTKGui. The user interface for the TD Pulmonary Toolkit.
     %
     %     To start the user interface, run ptk.m.
@@ -50,7 +50,7 @@ classdef PTKGui < PTKFigure
     end
     
     methods
-        function obj = PTKGui(splash_screen)
+        function obj = PTKGuiCore(splash_screen)
 
             % Create the splash screen if it doesn't already exist
             if nargin < 1 || isempty(splash_screen) || ~isa(splash_screen, 'PTKProgressInterface')
