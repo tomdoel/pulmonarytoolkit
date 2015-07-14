@@ -40,7 +40,7 @@ classdef PTKWindowLevelSoftTissue < PTKGuiPlugin
         end
         
         function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded;
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.IsCT;
         end
         
         function is_selected = IsSelected(ptk_gui_app)

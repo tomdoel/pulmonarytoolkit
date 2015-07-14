@@ -278,7 +278,7 @@ classdef PTKGuiDataset < PTKBaseClass
                     series_name = series_info.Name;
                 end
                 
-                obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid, patient_visible_name, series_name);
+                obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid, patient_visible_name, series_name, modality);
                 obj.GuiDatasetState.ClearPlugin;
                 obj.UpdateModes;
                 

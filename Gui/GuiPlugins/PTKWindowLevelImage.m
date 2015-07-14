@@ -36,8 +36,25 @@ classdef PTKWindowLevelImage < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ImagePanel.Window = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1);
-            ptk_gui_app.ImagePanel.Level = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
+            background_image = ptk_gui_app.ImagePanel.BackgroundImage;
+            if isa(background_image, 'PTKDicomImage')
+                ptk_gui_app.ImagePanel.Window = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1);
+                ptk_gui_app.ImagePanel.Level = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
+            end
         end
+
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.IsCT;
+        end
+        
+        function is_selected = IsSelected(ptk_gui_app)
+            background_image = ptk_gui_app.ImagePanel.BackgroundImage;
+            if isa(background_image, 'PTKDicomImage')
+                is_selected = ptk_gui_app.ImagePanel.Window == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1) && ptk_gui_app.ImagePanel.Level == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
+            else
+                is_selected = false;
+            end
+        end
+        
     end
 end

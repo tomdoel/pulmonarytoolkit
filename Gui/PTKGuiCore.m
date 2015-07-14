@@ -529,6 +529,10 @@ classdef PTKGuiCore < PTKFigure
             dataset_is_loaded = obj.GuiDataset.DatasetIsLoaded;
         end
         
+        function is_ct = IsCT(obj)
+            is_ct = strcmp(obj.GuiDataset.GuiDatasetState.CurrentModality, 'CT');
+        end
+        
         function ToolClicked(obj)
             obj.UpdateToolbar;
         end

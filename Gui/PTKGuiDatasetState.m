@@ -12,11 +12,12 @@ classdef PTKGuiDatasetState < PTKBaseClass
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-   properties (SetAccess = private)
+   properties (SetAccess = private)       
        CurrentSeriesUid
        CurrentPatientId
        CurrentPatientVisibleName
        CurrentSeriesName
+       CurrentModality
        
        CurrentPluginInfo
        CurrentPluginName
@@ -30,13 +31,14 @@ classdef PTKGuiDatasetState < PTKBaseClass
    end
    
    methods
-       function SetPatientAndSeries(obj, patient_id, series_uid, patient_visible_name, series_name)
+       function SetPatientAndSeries(obj, patient_id, series_uid, patient_visible_name, series_name, modality)
            
            if ~strcmp(patient_id, obj.CurrentPatientId) || ~strcmp(series_uid, obj.CurrentSeriesUid)
                obj.CurrentPatientId = patient_id;
                obj.CurrentSeriesUid = series_uid;
                obj.CurrentPatientVisibleName = patient_visible_name;
                obj.CurrentSeriesName = series_name;
+               obj.CurrentModality = modality;
                notify(obj, 'SeriesUidChangedEvent');
            end
        end
@@ -47,6 +49,7 @@ classdef PTKGuiDatasetState < PTKBaseClass
                obj.CurrentSeriesUid = [];
                obj.CurrentPatientVisibleName = [];
                obj.CurrentSeriesName = [];
+               obj.CurrentModality = [];
                notify(obj, 'SeriesUidChangedEvent');
            end
        end
