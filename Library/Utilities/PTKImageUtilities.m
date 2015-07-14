@@ -474,26 +474,49 @@ classdef PTKImageUtilities
             rgb_image = uint8(255*rgb_image);
         end
         
-        function orientation = GetPreferredOrientation(image_template)
-            voxel_size = image_template.VoxelSize;
-            [max_voxel_size, dir_with_largest_voxel_size] = max(voxel_size);
-            [min_voxel_size, ~] = min(voxel_size);
+        function orientation = GetPreferredOrientation(image_template, default_orientation)
             
-            if max_voxel_size/min_voxel_size > 7
-                orientation = PTKImageOrientation(dir_with_largest_voxel_size);
-            else
-                image_size = image_template.OriginalImageSize;
-                if numel(image_size) < 3
-                    image_size = [image_size, 1];
-                end
-                [max_image_size, ~] = max(image_size);
-                [min_image_size, dir_with_smallest_image_size] = min(image_size);
-                if max_image_size/min_image_size > 10
-                    orientation = PTKImageOrientation(dir_with_smallest_image_size);
-                else
-                    orientation = PTKImageOrientation.Coronal;
-                end
+            % Get the image dimensions
+            image_size = image_template.OriginalImageSize;
+            if numel(image_size) < 3
+                image_size = [image_size, 1];
             end
+            
+            % For a 2D image we always choose the plane of the image
+            if sum(image_size == 1)
+                [~, orientation_dir] = find(image_size == 1, 1);
+                orientation = PTKImageOrientation(orientation_dir);
+                return;
+            end
+           
+            % If one of the voxel dimensions is smaller or larger than the
+            % others, then we set this to be the orientation
+            voxel_size = image_template.VoxelSize;
+            [ordered_voxel_size, ordered_voxel_size_indices] = sort(voxel_size);
+            if ordered_voxel_size(3)/ordered_voxel_size(1) > 2
+                if ordered_voxel_size(3)/ordered_voxel_size(2) > 2
+                    orientation = PTKImageOrientation(ordered_voxel_size_indices(3));
+                else
+                    orientation = PTKImageOrientation(ordered_voxel_size_indices(1));
+                end
+                return
+            end
+
+            % If the voxel dimensions are roughly similar then we look at
+            % the image dimensions. If one dimension is much smaller or
+            % larger than the others then we set this to be the orientation
+            [ordered_image_size, ordered_image_size_indices] = sort(image_size);
+            if ordered_image_size(3)/ordered_image_size(1) > 5
+                if ordered_image_size(3)/ordered_image_size(2) > 5
+                    orientation = PTKImageOrientation(ordered_image_size_indices(3));
+                else
+                    orientation = PTKImageOrientation(ordered_image_size_indices(1));
+                end
+                return
+            end
+            
+            % Otherwise we choose the default
+            orientation = default_orientation;
         end
         
         function is_signed = IsSigned(image_object)

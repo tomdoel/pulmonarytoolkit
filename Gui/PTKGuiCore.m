@@ -75,6 +75,7 @@ classdef PTKGuiCore < PTKFigure
             
             % Set up the viewer panel
             obj.ImagePanel = PTKViewerPanel(obj, show_control_panel_in_viewer);
+            obj.ImagePanel.DefaultOrientation = app_def.GetDefaultOrientation;
             obj.AddChild(obj.ImagePanel);
             
             % Any unhandled keyboard input goes to the viewer panel
@@ -961,7 +962,7 @@ classdef PTKGuiCore < PTKFigure
             % Note we could change this to the current orientation
             % (obj.ImagePanel.Orientation), but if we did this we would need to force a
             % GUI resize whenever the orientation was changed
-            optimal_direction_orientation = PTKImageUtilities.GetPreferredOrientation(obj.ImagePanel.BackgroundImage);
+            optimal_direction_orientation = PTKImageUtilities.GetPreferredOrientation(obj.ImagePanel.BackgroundImage, obj.AppDef.GetDefaultOrientation);
             
             [dim_x_index, dim_y_index, dim_z_index] = PTKImageCoordinateUtilities.GetXYDimensionIndex(optimal_direction_orientation);
             

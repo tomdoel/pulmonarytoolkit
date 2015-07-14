@@ -24,6 +24,10 @@ classdef MivAppDef < handle
         
         function name = GetVersion(obj)
             name = MivSoftwareInfo.Version;
-        end        
+        end
+        
+        function direction = GetDefaultOrientation(obj)
+            direction = PTKImageOrientation.Axial;
+        end
     end
 end

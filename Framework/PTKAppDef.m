@@ -30,5 +30,9 @@ classdef PTKAppDef < handle
         function name = GetVersion(obj)
             name = PTKSoftwareInfo.Version;
         end
+        
+        function direction = GetDefaultOrientation(obj)
+            direction = PTKImageOrientation.Coronal;
+        end
     end
 end

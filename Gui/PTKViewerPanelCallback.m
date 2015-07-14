@@ -12,6 +12,9 @@ classdef PTKViewerPanelCallback < PTKBaseClass
     
     properties (Access = private)
         
+        % Preferred defalt image orientation
+        DefaultOrientation
+        
         % Handles for callbacks to udate the GUI
         Tools
         Toolbar
@@ -32,7 +35,8 @@ classdef PTKViewerPanelCallback < PTKBaseClass
     
     methods
         
-        function obj = PTKViewerPanelCallback(viewing_panel, viewing_panel_multi_view, tools, toolbar, reporting)
+        function obj = PTKViewerPanelCallback(viewing_panel, viewing_panel_multi_view, tools, toolbar, default_orientation, reporting)
+            obj.DefaultOrientation = default_orientation;
             obj.Tools = tools;
             obj.Toolbar = toolbar;
             obj.ViewerPanel = viewing_panel;
@@ -323,7 +327,7 @@ classdef PTKViewerPanelCallback < PTKBaseClass
         end
         
         function AutoOrientationAndWL(obj, new_image)
-            obj.ViewerPanel.Orientation = PTKImageUtilities.GetPreferredOrientation(new_image);
+            obj.ViewerPanel.Orientation = PTKImageUtilities.GetPreferredOrientation(new_image, obj.DefaultOrientation);
             
             if isa(new_image, 'PTKDicomImage') && new_image.IsCT
                 obj.ViewerPanel.Window = 1600;
