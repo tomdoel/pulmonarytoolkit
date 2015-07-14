@@ -333,8 +333,8 @@ classdef PTKViewerPanelCallback < PTKBaseClass
                 obj.ViewerPanel.Window = 1600;
                 obj.ViewerPanel.Level = -600;
             else
-                start_quarter = round(new_image.ImageSize/4);
-                end_quarter = round(3*new_image.ImageSize/4);
+                start_quarter = max(1, round(new_image.ImageSize/4));
+                end_quarter = max(1, round(3*new_image.ImageSize/4));
                 image_central = new_image.RawImage(start_quarter(1):end_quarter(1),start_quarter(2):end_quarter(2),start_quarter(3):end_quarter(3));
                 mean_value = round(mean(image_central(:)));
                 obj.ViewerPanel.Window = mean_value*4;
