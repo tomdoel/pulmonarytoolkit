@@ -258,38 +258,30 @@ classdef PTKImageCoordinateUtilities
         function dimension_number = GetDimensionIndexFromOrientation(orientation_vector, reporting)
             % The orientation vector is formed of cosines. Typically these will
             % be 1s and 0s but we allow for small variations in the angles.
-            orientation_vector = round(abs(orientation_vector));
-            
-            if isequal(orientation_vector, [1, 0, 0]) || isequal(orientation_vector, [1; 0; 0])
-                dimension_number = 1;
-            elseif isequal(orientation_vector, [0, 1, 0]) || isequal(orientation_vector, [0; 1; 0])
-                dimension_number = 2;
-            elseif isequal(orientation_vector, [0, 0, 1]) || isequal(orientation_vector, [0; 0; 1])
-                dimension_number = 3;
-            else
-                reporting.Error('PTKImageCoordinateUtilities:UnknownOrientationVector', 'GetDimensionIndexFromOrientation() was called with an unknown orientation vector.');
-            end
+
+            [~, dimension_number] = max(abs(orientation_vector(:)));
         end
         
         function flip = GetFlip(orientation, reporting)
             % The orientation vector is formed of cosines. Typically these will
             % be 1s and 0s but we allow for small variations in the angles.
-            orientation_vector = round(abs(orientation(1:6)));
-            
-            if isequal(orientation_vector, [1, 0, 0, 0, 1, 0]) || isequal(orientation_vector, [1; 0; 0; 0; 1; 0])
+            [~, dimension_number_1] = max(abs(orientation(1:3)));
+            [~, dimension_number_2] = max(abs(orientation(4:6)));
+
+            if (dimension_number_1 == 1 && dimension_number_2 == 2)
                 flip = [false, false, true];
-            elseif isequal(orientation_vector, [0, 1, 0, 1, 0, 0]) || isequal(orientation_vector, [0; 1; 0; 1; 0; 0])
+            elseif (dimension_number_1 == 2 && dimension_number_2 == 1)
                 flip = [false, false, true];
-            elseif isequal(orientation_vector, [1, 0, 0, 0, 0, 1]) || isequal(orientation_vector, [1; 0; 0; 0; 0; 1])
+            elseif (dimension_number_1 == 1 && dimension_number_2 == 3)
                 flip = [false, false, true];
-            elseif isequal(orientation_vector, [0, 1, 0, 0, 0, 1]) || isequal(orientation_vector, [0; 1; 0; 0; 0; 1])
+            elseif (dimension_number_1 == 2 && dimension_number_2 == 3)
                 flip = [false, false, false];
             else
-                reporting.Error('PTKImageCoordinateUtilities:UnknownOrientationVector', 'GetDimensionIndexFromOrientation() was called with an unknown orientation vector.');
+                reporting.Error('PTKImageCoordinateUtilities:UnknownOrientationVector', 'GetFlip() was called with an unknown orientation vector.');
             end
             
             if numel(orientation) == 9
-                orientation_sum = orientation(1:3) + orientation(4:6)+ orientation(7:9);;
+                orientation_sum = orientation(1:3) + orientation(4:6)+ orientation(7:9);
             else
                 orientation_sum = orientation(1:3) + orientation(4:6);
             end
