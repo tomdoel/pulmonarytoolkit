@@ -18,9 +18,16 @@ classdef PTKDicomDictionary < handle
     
     methods
         function obj = PTKDicomDictionary(tags)
+            
+            % The item delimiter is a special case. It must always be the
+            % last tag in the list, so that the tag reading algorithm can
+            % choose to ignore it
+            tags(end + 1) = PTKDicomDictionary.ItemDelimiterTag;
+
             obj.Dictionary = tags;
             obj.MakeTagList;
             obj.MakeTagMap;
+            
         end
     end
     
@@ -66,6 +73,10 @@ classdef PTKDicomDictionary < handle
         
         function tag = PixelDataTag
             tag = PTKDicomDictionaryItem('7FE0,0010', 'OB', 'PixelData');
+        end
+        
+        function tag = ItemDelimiterTag
+            tag = PTKDicomDictionaryItem('FFFE,E00D', 'UN', 'ItemDelimitationItem');
         end
         
         function tags = GroupingTags
@@ -2713,9 +2724,9 @@ classdef PTKDicomDictionary < handle
             tags(end + 1) = PTKDicomDictionaryItem('7FE0,0040', 'OW', 'CoefficientsSDDN');
             tags(end + 1) = PTKDicomDictionaryItem('FFFA,FFFA', 'SQ', 'DigitalSignaturesSequence');
             tags(end + 1) = PTKDicomDictionaryItem('FFFC,FFFC', 'OB', 'DataSetTrailingPadding');
-            tags(end + 1) = PTKDicomDictionaryItem('FFFE,E000', 'UN', 'Item');
-            tags(end + 1) = PTKDicomDictionaryItem('FFFE,E00D', 'UN', 'ItemDelimitationItem');
-            tags(end + 1) = PTKDicomDictionaryItem('FFFE,E0DD', 'UN', 'SequenceDelimitationItem');            
+%             tags(end + 1) = PTKDicomDictionaryItem('FFFE,E000', 'UN', 'Item');
+%             tags(end + 1) = PTKDicomDictionaryItem('FFFE,E00D', 'UN', 'ItemDelimitationItem');
+%             tags(end + 1) = PTKDicomDictionaryItem('FFFE,E0DD', 'UN', 'SequenceDelimitationItem');            
 
             tags = PTKDicomDictionary(tags);
         end
