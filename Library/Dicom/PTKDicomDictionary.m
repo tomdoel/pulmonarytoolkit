@@ -16,6 +16,9 @@ classdef PTKDicomDictionary < handle
         TagMap
     end
     
+    properties (Constant, Access = private)
+    end
+    
     methods
         function obj = PTKDicomDictionary(tags)
             
@@ -29,6 +32,41 @@ classdef PTKDicomDictionary < handle
             obj.MakeTagMap;
             
         end
+    end
+    
+    methods (Static)
+        function dictionary = GroupingDictionary
+            persistent GroupingDictionaryWithoutPixelDataSingleton
+            if isempty(GroupingDictionaryWithoutPixelDataSingleton) || ~isvalid(GroupingDictionaryWithoutPixelDataSingleton)
+                GroupingDictionaryWithoutPixelDataSingleton = PTKDicomDictionary.CreateGroupingTagsDictionary(false);
+            end
+            dictionary = GroupingDictionaryWithoutPixelDataSingleton;
+        end
+        
+        function dictionary = EssentialDictionary
+            persistent EssentialDictionarySingleton
+            if isempty(EssentialDictionarySingleton) || ~isvalid(EssentialDictionarySingleton)
+                EssentialDictionarySingleton = PTKDicomDictionary.CreateEssentialTagsDictionary(true);
+            end
+            dictionary = EssentialDictionarySingleton;
+        end
+        
+        function dictionary = EssentialDictionaryWithoutPixelData
+            persistent EssentialTagsDictionaryWithoutPixelDataSingleton
+            if isempty(EssentialTagsDictionaryWithoutPixelDataSingleton) || ~isvalid(EssentialTagsDictionaryWithoutPixelDataSingleton)
+                EssentialTagsDictionaryWithoutPixelDataSingleton = PTKDicomDictionary.CreateEssentialTagsDictionary(false);
+            end
+            dictionary = EssentialTagsDictionaryWithoutPixelDataSingleton;
+        end
+        
+        function dictionary = CompleteDictionary
+            persistent CompleteDictionarySingleton
+            if isempty(CompleteDictionarySingleton) || ~isvalid(CompleteDictionarySingleton)
+                CompleteDictionarySingleton = PTKDicomDictionary.CreateAllTagsDictionary(true);
+            end
+            dictionary = CompleteDictionarySingleton;
+        end
+       
     end
     
     methods (Access = private)
@@ -45,9 +83,9 @@ classdef PTKDicomDictionary < handle
         end
     end
     
-    methods (Static)
+    methods (Static, Access = private)
 
-        function dictionary = GroupingTagsDictionary(add_pixel_data)
+        function dictionary = CreateGroupingTagsDictionary(add_pixel_data)
             tags = PTKDicomDictionary.GroupingTags;
             if add_pixel_data
                 tags(end + 1) = PTKDicomDictionary.PixelDataTag;
@@ -55,7 +93,7 @@ classdef PTKDicomDictionary < handle
             dictionary = PTKDicomDictionary(tags);
         end
         
-        function dictionary = EssentialTagsDictionary(add_pixel_data)
+        function dictionary = CreateEssentialTagsDictionary(add_pixel_data)
             tags = PTKDicomDictionary.EssentialTags;
             if add_pixel_data
                 tags(end + 1) = PTKDicomDictionary.PixelDataTag;
@@ -63,7 +101,7 @@ classdef PTKDicomDictionary < handle
             dictionary = PTKDicomDictionary(tags);
         end
         
-        function dictionary = AllTagsDictionary(add_pixel_data)
+        function dictionary = CreateAllTagsDictionary(add_pixel_data)
             tags = PTKDicomDictionary.AllTags;
             if add_pixel_data
                 tags(end + 1) = PTKDicomDictionary.PixelDataTag;

@@ -45,7 +45,7 @@ classdef PTKDicomUtilities
         function metadata = ReadGroupingMetadata(file_path, file_name, reporting)
             try
                 try
-                    metadata = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.GroupingTagsDictionary(false), reporting);
+                    metadata = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.GroupingDictionary, reporting);
                 catch exception
                     metadata = dicominfo(fullfile(file_path, file_name));
                 end
@@ -58,7 +58,7 @@ classdef PTKDicomUtilities
         function metadata = ReadEssentialMetadata(file_path, file_name, reporting)
             try
                 try
-                    metadata = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialTagsDictionary(false), reporting);
+                    metadata = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialDictionaryWithoutPixelData, reporting);
                     metadata.Filename = fullfile(file_path, file_name);
                     
                 catch exception
@@ -74,7 +74,7 @@ classdef PTKDicomUtilities
             try
                 try
                     [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
-                    header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialTagsDictionary(true), reporting);
+                    header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialDictionary, reporting);
                     image_data = header.PixelData;
                     
                 catch exception
@@ -92,7 +92,7 @@ classdef PTKDicomUtilities
             try
                 try
                     [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
-                    header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialTagsDictionary(true), reporting);
+                    header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialDictionary, reporting);
                     image_wrapper.RawImage(:, :, slice_index, :) = header.PixelData;
                     
                 catch exception

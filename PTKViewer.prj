@@ -1,0 +1,176 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration build-checksum="2945161298" file="/Users/tom/Code/pulmonarytoolkit/PTKViewer.prj" location="/Users/tom/Code/pulmonarytoolkit" name="PTKViewer" target="target.mlapps" target-name="Package App">
+    <param.appname>PTKViewer</param.appname>
+    <param.authnamewatermark>Tom Doel</param.authnamewatermark>
+    <param.email />
+    <param.company />
+    <param.icon />
+    <param.icons />
+    <param.summary />
+    <param.description />
+    <param.screenshot />
+    <param.version>1.0</param.version>
+    <param.products.name>
+      <item>Image Processing Toolbox</item>
+      <item>MATLAB</item>
+    </param.products.name>
+    <param.products.id>
+      <item>'17'</item>
+      <item>'1'</item>
+    </param.products.id>
+    <param.products.version>
+      <item>9.2</item>
+      <item>8.5</item>
+    </param.products.version>
+    <param.platforms />
+    <param.output>${PROJECT_ROOT}/PTKViewer.mlappinstall</param.output>
+    <param.guid>198d6d13-1c0c-4c39-ad52-65bcb4f54d00</param.guid>
+    <unset>
+      <param.email />
+      <param.company />
+      <param.icon />
+      <param.icons />
+      <param.summary />
+      <param.description />
+      <param.screenshot />
+      <param.version />
+      <param.platforms />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKViewer.m</file>
+    </fileset.main>
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}/Framework/PTKProgressStackItem.m</file>
+      <file>${PROJECT_ROOT}/Framework/PTKReporting.m</file>
+      <file>${PROJECT_ROOT}/Framework/PTKReportingDefault.m</file>
+      <file>${PROJECT_ROOT}/Framework/PTKSoftwareInfo.m</file>
+      <file>${PROJECT_ROOT}/Gui/PTKBackgroundScreenImageFromVolume.m</file>
+      <file>${PROJECT_ROOT}/Gui/PTKCinePanelWithTools.m</file>
+      <file>${PROJECT_ROOT}/Gui/PTKImageOverlayAxes.m</file>
+      <file>${PROJECT_ROOT}/Gui/PTKOverlayScreenImageFromVolume.m</file>
+      <file>${PROJECT_ROOT}/Gui/PTKQuiverScreenImageFromVolume.m</file>
+      <file>${PROJECT_ROOT}/Gui/PTKSplashScreen.m</file>
+      <file>${PROJECT_ROOT}/Gui/PTKViewerPanelCallback.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKCineTool.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKEditManager.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKMapColourTool.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKMarkerPoint.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKMarkerPointImage.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKMarkerPointManager.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKPanMatlabTool.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKPanTool.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKReplaceColourTool.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKToolCallback.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKToolList.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKWindowLevelTool.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKZoomMatlabTool.m</file>
+      <file>${PROJECT_ROOT}/Gui/Tools/PTKZoomTool.m</file>
+      <file>${PROJECT_ROOT}/Library/Dicom/PTKDicomDictionary.m</file>
+      <file>${PROJECT_ROOT}/Library/Dicom/PTKDicomDictionaryItem.m</file>
+      <file>${PROJECT_ROOT}/Library/Dicom/PTKIsDicomFile.m</file>
+      <file>${PROJECT_ROOT}/Library/Dicom/PTKReadDicomTags.m</file>
+      <file>${PROJECT_ROOT}/Library/Dicom/PTKReconstructDicomImageFromHeader.m</file>
+      <file>${PROJECT_ROOT}/Library/File/PTKLoadPtkRawImage.m</file>
+      <file>${PROJECT_ROOT}/Library/File/PTKSavePtkRawImage.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKAxes.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKCinePanel.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKDefaultStyleSheet.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKFigure.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKImageAxes.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKImageVolumeSource.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKLineAxes.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKMultiPanel.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKPanel.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKPositionlessUserInterfaceObject.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKProgressDialog.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKScreenImage.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKScreenImageFromVolume.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKScreenQuiverImage.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKSlider.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKStyleSheet.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKUserInterfaceObject.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKViewerPanel.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKViewerPanelMultiView.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKViewerPanelToolbar.m</file>
+      <file>${PROJECT_ROOT}/Library/GuiComponents/PTKVirtualPanel.m</file>
+      <file>${PROJECT_ROOT}/Library/Interfaces/PTKBaseClass.m</file>
+      <file>${PROJECT_ROOT}/Library/Interfaces/PTKClassMonitor.m</file>
+      <file>${PROJECT_ROOT}/Library/Interfaces/PTKProgressInterface.m</file>
+      <file>${PROJECT_ROOT}/Library/Interfaces/PTKReportingInterface.m</file>
+      <file>${PROJECT_ROOT}/Library/Interfaces/PTKTool.m</file>
+      <file>${PROJECT_ROOT}/Library/PTKGaussianFilter.m</file>
+      <file>${PROJECT_ROOT}/Library/PTKNormalisedGaussianKernel.m</file>
+      <file>${PROJECT_ROOT}/Library/Segmentation/PTKFillHolesForMultiColourImage.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKAxisCache.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKCoordinateSystem.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKCoordsInImage.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKEndian.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKEventData.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKImage.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKImageFileFormat.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKImageInfo.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKImageOrientation.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKImageType.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKModes.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKMouseCursorStatus.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKPair.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKStack.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKSubModes.m</file>
+      <file>${PROJECT_ROOT}/Library/Types/PTKUndoStack.m</file>
+      <file>${PROJECT_ROOT}/Library/Utilities/PTKContainerUtilities.m</file>
+      <file>${PROJECT_ROOT}/Library/Utilities/PTKDicomUtilities.m</file>
+      <file>${PROJECT_ROOT}/Library/Utilities/PTKDiskUtilities.m</file>
+      <file>${PROJECT_ROOT}/Library/Utilities/PTKErrorUtilities.m</file>
+      <file>${PROJECT_ROOT}/Library/Utilities/PTKImageCoordinateUtilities.m</file>
+      <file>${PROJECT_ROOT}/Library/Utilities/PTKImageUtilities.m</file>
+      <file>${PROJECT_ROOT}/Library/Utilities/PTKMathUtilities.m</file>
+      <file>${PROJECT_ROOT}/Library/Utilities/PTKSystemUtilities.m</file>
+      <file>${PROJECT_ROOT}/Library/Utilities/PTKTextUtilities.m</file>
+      <file>${PROJECT_ROOT}/Library/Visualisation/PTKLabel2Rgb.m</file>
+    </fileset.depfun>
+    <fileset.resources />
+    <fileset.package />
+    <build-deliverables>
+      <file location="/Users/tom/Code/pulmonarytoolkit" name="PTKViewer.mlappinstall" optional="false">/Users/tom/Code/pulmonarytoolkit/PTKViewer.mlappinstall</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>/Applications/MATLAB_R2015a.app</root>
+      <toolboxes>
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabcoder" />
+      </toolboxes>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>true</unix>
+      <mac>true</mac>
+      <windows>false</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.10.3</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>maci64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

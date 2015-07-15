@@ -44,7 +44,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     % The file grouper performs the sorting of image metadata
     file_grouper = PTKFileGrouper;
     
-    dictionary = PTKDicomDictionary.EssentialTagsDictionary(false);
+    dictionary = PTKDicomDictionary.EssentialDictionaryWithoutPixelData;
     
     for file_index = 1 : num_slices
         next_file = sorted_filenames{file_index};

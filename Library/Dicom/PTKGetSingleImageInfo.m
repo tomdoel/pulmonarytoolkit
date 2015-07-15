@@ -16,7 +16,7 @@ function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to
     end
 
     if isempty(tags_to_get)
-        tags_to_get = PTKDicomDictionary.GroupingTagsDictionary(false);
+        tags_to_get = PTKDicomDictionary.GroupingDictionary;
     end
 
     try

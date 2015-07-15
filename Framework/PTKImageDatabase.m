@@ -308,7 +308,7 @@ classdef PTKImageDatabase < handle
                                 
                                 if PTKDiskUtilities.FileExists(next_filepath, next_filename)
                                     if isempty(tags_to_get)
-                                        tags_to_get = PTKDicomDictionary.GroupingTagsDictionary(false);
+                                        tags_to_get = PTKDicomDictionary.GroupingDictionary;
                                     end
                                     single_image_metainfo = PTKGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
                                     obj.AddImage(single_image_metainfo);
