@@ -239,15 +239,22 @@ classdef PTKImageCoordinateUtilities
             orientation_2(3) = - orientation_2(3);
             
             % Determine the PTK dimensions to which each of these vectors correspond
-            dimension_1 = PTKImageCoordinateUtilities.GetDimensionIndexFromOrientation(orientation_1, reporting);
-            dimension_2 = PTKImageCoordinateUtilities.GetDimensionIndexFromOrientation(orientation_2, reporting);
-
+            [dimension_1, dimension_2, dimension_3] = PTKImageCoordinateUtilities.GetDimensionIndicesFromOrientations(orientation_1, orientation_2, reporting);
+            
             permutation_vector = [3, 3, 3];
             permutation_vector(dimension_1) = 1;
             permutation_vector(dimension_2) = 2;
-            
-            flip = PTKImageCoordinateUtilities.GetFlip(orientation, reporting);
 
+            % Calculate flip for each dimension, based on whether the
+            % dimension axis lies in the same or opposite direction to the
+            % image axis
+            orientation_3 = cross(orientation_1, orientation_2);
+            orientations = {orientation_1, orientation_2, orientation_3};
+            flip_1 = orientations{dimension_1}(dimension_number_1) < 0; 
+            flip_2 = orientations{dimension_2}(dimension_number_2) < 0;
+            flip_3 = orientations{dimension_3}(dimension_number_3) < 0;
+            flip = [flip_1, flip_2, flip_3];
+            
             % Check the resulting vector is valid
             if (sum(permutation_vector == 1) ~= 1) || (sum(permutation_vector == 2) ~= 1) || (sum(permutation_vector == 3) ~= 1) || ...
                     ~isempty(setdiff(permutation_vector, [1,2,3]))
@@ -255,46 +262,16 @@ classdef PTKImageCoordinateUtilities
             end
         end
         
-        function dimension_number = GetDimensionIndexFromOrientation(orientation_vector, reporting)
+        function [dimension_number_1, dimension_number_2, dimension_number_3] = GetDimensionIndicesFromOrientations(orientation_vector_1, orientation_vector_2, reporting)
             % The orientation vector is formed of cosines. Typically these will
             % be 1s and 0s but we allow for small variations in the angles.
 
-            [~, dimension_number] = max(abs(orientation_vector(:)));
-        end
-        
-        function flip = GetFlip(orientation, reporting)
-            % The orientation vector is formed of cosines. Typically these will
-            % be 1s and 0s but we allow for small variations in the angles.
-            [~, dimension_number_1] = max(abs(orientation(1:3)));
-            [~, dimension_number_2] = max(abs(orientation(4:6)));
-
-            if (dimension_number_1 == 1 && dimension_number_2 == 2)
-                flip = [false, false, true];
-            elseif (dimension_number_1 == 2 && dimension_number_2 == 1)
-                flip = [false, false, true];
-            elseif (dimension_number_1 == 1 && dimension_number_2 == 3)
-                flip = [false, false, true];
-            elseif (dimension_number_1 == 2 && dimension_number_2 == 3)
-                flip = [false, false, false];
-            else
-                reporting.Error('PTKImageCoordinateUtilities:UnknownOrientationVector', 'GetFlip() was called with an unknown orientation vector.');
-            end
-            
-            if numel(orientation) == 9
-                orientation_sum = orientation(1:3) + orientation(4:6)+ orientation(7:9);
-            else
-                orientation_sum = orientation(1:3) + orientation(4:6);
-            end
-            
-            if round(orientation_sum(1)) == -1
-                flip(2) = ~flip(2);
-            end
-            if round(orientation_sum(2)) == -1
-                flip(1) = ~flip(1);
-            end
-            if round(orientation_sum(3)) == -1
-                flip(3) = ~flip(3);
-            end            
+            [~, dimension_number_1] = max(abs(orientation_vector_1(:)));
+            remaining_dimensions = setdiff([1,2,3], dimension_number_1);
+            reduced_orientation_vector_2 = orientation_vector_2(remaining_dimensions);
+            [~, dimension_number_2_from_reduced_set] = max(abs(reduced_orientation_vector_2(:)));
+            dimension_number_2 = remaining_dimensions(dimension_number_2_from_reduced_set);
+            dimension_number_3 = setdiff([1, 2, 3], [dimension_number_1, dimension_number_2]);
         end
         
         function spline_points = CreateSplineCurve(points, num_points)
