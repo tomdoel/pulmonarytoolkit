@@ -268,7 +268,7 @@ classdef PTKGuiCore < PTKFigure
                 if (strcmp(patch.PatchType, 'EditedResult'))
                     uid = patch.SeriesUid;
                     plugin = patch.PluginName;
-                    obj.LoadFromUid(uid, obj.WaitDialogHandle);
+                    obj.LoadFromUid(uid);
                     obj.GuiDataset.RunPlugin(plugin, obj.WaitDialogHandle);
                     obj.ChangeMode(PTKModes.EditMode);
                     obj.GetMode.ImportPatch(patch);
@@ -391,13 +391,13 @@ classdef PTKGuiCore < PTKFigure
         
         function LoadFromPatientBrowser(obj, series_uid)
             obj.BringToFront;
-            obj.LoadFromUid(series_uid, obj.WaitDialogHandle);
+            obj.LoadFromUid(series_uid);
         end
         
         function LoadPatient(obj, patient_id)
             datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(patient_id);
             series_uid = datasets{1}.SeriesUid;
-            obj.LoadFromUid(series_uid, obj.WaitDialogHandle);
+            obj.LoadFromUid(series_uid);
         end
         
         function CloseAllFiguresExceptPtk(obj)
@@ -428,10 +428,6 @@ classdef PTKGuiCore < PTKFigure
             obj.PatientBrowserFactory.UpdatePatientBrowser(patient_id, series_uid);
         end
         
-        function LoadFromPopupMenu(obj, uid)
-            obj.LoadFromUid(uid, obj.WaitDialogHandle);
-        end
-
         function DeleteThisImageInfo(obj)
             obj.GuiDataset.DeleteThisImageInfo;
         end
@@ -608,7 +604,7 @@ classdef PTKGuiCore < PTKFigure
             end
         end
         
-        function LoadFromUid(obj, series_uid, wait_dialog_handle)
+        function LoadFromUid(obj, series_uid)
             
             % Get the UID of the currently loaded dataset
             currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
