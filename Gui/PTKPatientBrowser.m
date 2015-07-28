@@ -76,10 +76,6 @@ classdef PTKPatientBrowser < PTKFigure
             obj.GuiCallback.DeletePatient(patient_id);
         end
         
-        function DeleteFromPatientBrowser(obj, series_uids)
-            obj.GuiCallback.DeleteDatasets(series_uids);
-        end
-        
         function Show(obj)
             obj.LockLoad = false;
             Show@PTKFigure(obj);

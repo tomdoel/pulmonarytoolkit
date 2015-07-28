@@ -123,12 +123,7 @@ classdef PTKGuiCore < PTKFigure
             if ~isempty(image_info)
                 obj.Reporting.ShowProgress('Loading images');
                 obj.GuiDataset.InternalLoadImages(image_info);
-            
-                % There is no need to call UpdatePatientBrowser here provided the
-                % PB is always updated during the InternalLoadImages.
-                
             else
-                obj.PatientBrowserFactory.UpdatePatientBrowser([], []);
                 obj.GuiDataset.SetNoDataset;
 
             end            
@@ -360,9 +355,6 @@ classdef PTKGuiCore < PTKFigure
             plugin_name = obj.GuiDataset.GuiDatasetState.CurrentPluginName;
         end
         
-        function patient_id = GetCurrentPatientId(obj)
-        end
-
         function Capture(obj)
             % Captures an image from the viewer, including the background and transparent
             % overlay. Prompts the user for a filename
@@ -423,11 +415,7 @@ classdef PTKGuiCore < PTKFigure
                 obj.Reporting.Log('Closing PTKGui');
             end
         end        
-        
-        function UpdatePatientBrowser(obj, patient_id, series_uid)
-            obj.PatientBrowserFactory.UpdatePatientBrowser(patient_id, series_uid);
-        end
-        
+
         function DeleteThisImageInfo(obj)
             obj.GuiDataset.DeleteThisImageInfo;
         end
@@ -436,9 +424,9 @@ classdef PTKGuiCore < PTKFigure
             obj.GuiDataset.DeleteImageInfo(uid);
         end
 
-        function DeleteFromPatientBrowser(obj, series_uids)
+        function DeleteDatasets(obj, series_uids)
             obj.WaitDialogHandle.ShowAndHold('Deleting data');
-            obj.DeleteDatasets(series_uids);
+            obj.GuiDataset.DeleteDatasets(series_uids);
             obj.WaitDialogHandle.Hide;
         end
         
@@ -461,7 +449,7 @@ classdef PTKGuiCore < PTKFigure
                 'Delete dataset', 'Delete', 'Don''t delete', 'Don''t delete');
             switch choice
                 case 'Delete'
-                    obj.DeleteFromPatientBrowser(series_uid);
+                    obj.DeleteDatasets(series_uid);
                 case 'Don''t delete'
             end
         end
@@ -481,17 +469,10 @@ classdef PTKGuiCore < PTKFigure
                         series_uids{series_index} = series_descriptions{series_index}.SeriesUid;
                     end
                     
-                    % Note that obj may be deleted during this loop as the patient panels are
-                    % rebuilt, so we can't reference obj at all from here on
-                    % for line
-                    obj.DeleteFromPatientBrowser(series_uids);
+                    obj.DeleteDatasets(series_uids);
                     
                 case 'Don''t delete'
             end
-        end
-        
-        function DeleteDatasets(obj, series_uids)
-            obj.GuiDataset.DeleteDatasets(series_uids);
         end
         
         function mode = GetMode(obj)

@@ -15,6 +15,7 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
     properties (Access = private)
         Gui
         GuiDataset
+        GuiDatasetState
         InitialPosition
         PatientBrowser
         PatientBrowserSelectedUid
@@ -26,6 +27,7 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
         function obj = PTKPatientBrowserFactory(gui, gui_dataset, settings, reporting)
             obj.Gui = gui;
             obj.GuiDataset = gui_dataset;
+            obj.GuiDatasetState = obj.GuiDataset.GuiDatasetState;
             obj.Reporting = reporting;
            
             if isempty(settings.PatientBrowserScreenPosition)
@@ -33,6 +35,8 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
             else
                 obj.InitialPosition = settings.PatientBrowserScreenPosition;
             end
+            
+            obj.AddEventListener(obj.GuiDatasetState, 'SeriesUidChangedEvent', @obj.SeriesChanged);
         end
         
         
@@ -63,14 +67,10 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
             end
         end
         
-        function UpdatePatientBrowser(obj, patient_id, series_uid)
-            % Indicates the currently visualised series has changed
-            
-            obj.PatientBrowserSelectedUid = series_uid;
-            obj.PatientBrowserSelectedPatientId = patient_id;
-            if ~isempty(obj.PatientBrowser)
-                obj.PatientBrowser.SelectSeries(patient_id, series_uid);
-            end
+        function SeriesChanged(obj, ~, ~)
+            patient_id = obj.GuiDatasetState.CurrentPatientId;
+            series_uid = obj.GuiDatasetState.CurrentSeriesUid;
+            obj.UpdatePatientBrowser(patient_id, series_uid);
         end
         
         function last_position = GetScreenPosition(obj)
@@ -104,5 +104,17 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
             end
         end
         
-    end    
+    end 
+    
+    methods (Access = private)
+        function UpdatePatientBrowser(obj, patient_id, series_uid)
+            % Indicates the currently visualised series has changed
+            
+            obj.PatientBrowserSelectedUid = series_uid;
+            obj.PatientBrowserSelectedPatientId = patient_id;
+            if ~isempty(obj.PatientBrowser)
+                obj.PatientBrowser.SelectSeries(patient_id, series_uid);
+            end
+        end
+    end
 end

@@ -175,7 +175,6 @@ classdef PTKGuiDataset < PTKBaseClass
             end
 
             obj.Gui.AddAllPreviewImagesToButtons([]);
-            obj.Gui.UpdatePatientBrowser([], []);
         end
         
         
@@ -193,7 +192,7 @@ classdef PTKGuiDataset < PTKBaseClass
         
         function DeleteDatasets(obj, series_uids)
             % Removes a dataset from the database and deletes its disk cache. If the dataset
-            % is currently loaded then the callback from the image database will case the
+            % is currently loaded then the callback from the image database will cause the
             % current dataset to be cleared.
             
             obj.Ptk.DeleteDatasets(series_uids)
@@ -329,16 +328,9 @@ classdef PTKGuiDataset < PTKBaseClass
                         obj.Reporting.ShowMessage('PTKGuiDataset:DeleteImageInfoFailed', ['Failed to delete dataset due to error: ' exc.message]);
                     end
                 end
-                
-                % For the patient browser
-                patient_id = [];
-                series_uid = [];
                                 
                 obj.GuiDatasetState.ClearPatientAndSeries;
-                
             end
-            
-            obj.Gui.UpdatePatientBrowser(patient_id, series_uid);
         end
         
         % Causes the GUI to run the named plugin and display the result
