@@ -190,7 +190,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             % have been disabled)
             
             % Set the visibility flag for this window and all children
-            obj.SetAllVisibility;
+            obj.SetAllParentVisibility(true);
             
             % Ensure any controls are created
             obj.CreateVisibleComponents;
@@ -284,11 +284,11 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             % Called after the compent and all its children have been created
         end
         
-        function SetAllVisibility(obj)
+        function SetAllParentVisibility(obj, visible)
             % Recursively sets visibility of all components to true
-            obj.ParentWindowVisible = true;
+            obj.ParentWindowVisible = visible;
             for child = obj.Children
-                child{1}.SetAllVisibility;
+                child{1}.SetAllParentVisibility(visible);
             end
         end
 
@@ -501,8 +501,8 @@ classdef PTKUserInterfaceObject < PTKBaseClass
         
         function SetParent(obj, parent)
             obj.Parent = parent;
-            obj.ParentWindowVisible = parent.ParentWindowVisible;
-            obj.ParentWindowEnabled = parent.ParentWindowEnabled;            
+            obj.SetAllParentEnabled(parent.ParentWindowEnabled);
+            obj.SetAllParentVisibility(parent.ParentWindowVisible);
         end
         
         function point_within_control = IsPointInControl(obj, point_coords)
