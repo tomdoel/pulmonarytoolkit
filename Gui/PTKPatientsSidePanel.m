@@ -75,7 +75,7 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
             end
         end
             
-        function AddPatientsToListBox(obj, patient_id)
+        function AddPatientsToListBox(obj, selected_patient_id)
             [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames;
             obj.PatientIdMap = patient_id_map;
             obj.ListBox.ClearItems;
@@ -88,7 +88,7 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
                 obj.ListBox.AddItem(patient_item);
             end
             
-            obj.ListBox.SelectItem(patient_id, true);
+            obj.ListBox.SelectItem(selected_patient_id, true);
         end
     end
 end
