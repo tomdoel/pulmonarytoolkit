@@ -50,7 +50,7 @@ classdef PTKWindowLevelImage < PTKGuiPlugin
         function is_selected = IsSelected(ptk_gui_app)
             background_image = ptk_gui_app.ImagePanel.BackgroundImage;
             if isa(background_image, 'PTKDicomImage')
-                is_selected = ptk_gui_app.ImagePanel.Window == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1) && ptk_gui_app.ImagePanel.Level == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
+                is_selected = isfield(ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader, 'WindowWidth') && ptk_gui_app.ImagePanel.Window == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1) && ptk_gui_app.ImagePanel.Level == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
             else
                 is_selected = false;
             end
