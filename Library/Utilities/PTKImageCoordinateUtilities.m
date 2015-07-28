@@ -222,7 +222,7 @@ classdef PTKImageCoordinateUtilities
             deformation_field2 = deformation_field.BlankCopy;
             deformation_field2.ChangeRawImage(deformation_field_raw);
             deformation_field = deformation_field2;
-        end
+        end 
         
         % Returns a vector which defines the order in which the dimensions of an
         % DICOM image volume should be permuted in order to align it with the
@@ -250,9 +250,9 @@ classdef PTKImageCoordinateUtilities
             % image axis
             orientation_3 = cross(orientation_1, orientation_2);
             orientations = {orientation_1, orientation_2, orientation_3};
-            flip_1 = orientations{dimension_1}(dimension_number_1) < 0; 
-            flip_2 = orientations{dimension_2}(dimension_number_2) < 0;
-            flip_3 = orientations{dimension_3}(dimension_number_3) < 0;
+            flip_1 = orientations{dimension_1}(dimension_1) < 0; 
+            flip_2 = orientations{dimension_2}(dimension_2) < 0;
+            flip_3 = orientations{dimension_3}(dimension_3) < 0;
             flip = [flip_1, flip_2, flip_3];
             
             % Check the resulting vector is valid
