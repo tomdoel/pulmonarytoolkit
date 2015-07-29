@@ -90,8 +90,11 @@ classdef PTKGuiCore < PTKFigure
             % Create the object which manages the current dataset
             obj.GuiDataset = PTKGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
+            % Create a callback handler for the Patient Browser and sidebar
+            combined_controller = PTKCombinedImageDatabaseController(obj);
+            
             % Create the side panel showing available datasets
-            obj.SidePanel = PTKSidePanel(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder, obj);
+            obj.SidePanel = PTKSidePanel(obj, combined_controller, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder);
             obj.AddChild(obj.SidePanel);
             
             % Create the status panel showing image coordinates and
@@ -101,7 +104,7 @@ classdef PTKGuiCore < PTKFigure
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
-            obj.PatientBrowserFactory = PTKPatientBrowserFactory(obj, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, obj.Reporting);
+            obj.PatientBrowserFactory = PTKPatientBrowserFactory(combined_controller, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             % Map of all plugins visible in the GUI
             obj.OrganisedPlugins = PTKOrganisedPlugins(obj, obj.Reporting);

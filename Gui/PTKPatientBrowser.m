@@ -11,8 +11,8 @@ classdef PTKPatientBrowser < PTKFigure
     %    
     
     properties (Access = private)
+        Controller
         BrowserPanel
-        GuiCallback
         LockLoad
         
         LastSeriesSelected
@@ -20,10 +20,10 @@ classdef PTKPatientBrowser < PTKFigure
     end
 
     methods
-        function obj = PTKPatientBrowser(image_database, gui_callback, position, reporting)
+        function obj = PTKPatientBrowser(controller, image_database, position, reporting)
             obj = obj@PTKFigure('Patient Browser : Pulmonary Toolkit', [], reporting);
+            obj.Controller = controller;
             obj.ArrowPointer = 'hand';
-            obj.GuiCallback = gui_callback;
             obj.LockLoad = false;
 
             obj.BrowserPanel = PTKPatientBrowserPanel(obj, image_database, obj);
@@ -32,6 +32,20 @@ classdef PTKPatientBrowser < PTKFigure
             obj.Resize(position);
         end
 
+        function AddPatient(obj)
+            obj.Controller.BringToFront;
+            obj.Controller.AddPatient;
+            obj.BringToFront;
+        end
+        
+        function DeletePatient(obj, patient_id)
+            obj.Controller.DeletePatient(patient_id);
+        end
+        
+        function DeleteSeries(obj, series_uid)
+            obj.Controller.DeleteSeries(series_uid);
+        end
+        
         function SelectSeries(obj, patient_id, series_uid)
             if ~isempty(obj.LastSeriesSelected)
                 obj.BrowserPanel.SelectSeries(obj.LastPatientSelected, obj.LastSeriesSelected, false);
@@ -57,25 +71,17 @@ classdef PTKPatientBrowser < PTKFigure
             obj.Resize(obj.GetLastPosition);
         end
         
-        function LoadFromPatientBrowser(obj, patient_id, series_uid)
+        function SeriesClicked(obj, patient_id, series_uid)
             if obj.LockLoad
                 obj.Reporting.ShowMessage('PTKPatientBrowser:LoadLock', 'The dataset cannot be loaded because a previous load did not complete. Close and re-open the Patient Browser to allow loading to resume.');
             else
                 obj.LockLoad = true;
                 obj.SelectSeries(patient_id, series_uid);
-                obj.GuiCallback.LoadFromPatientBrowser(series_uid);
+                obj.Controller.SeriesClicked(series_uid);
                 obj.LockLoad = false;
             end
         end
-        
-        function DeleteDataset(obj, series_uid)
-            obj.GuiCallback.DeleteDataset(series_uid);
-        end
 
-        function DeletePatient(obj, patient_id)
-            obj.GuiCallback.DeletePatient(patient_id);
-        end
-        
         function Show(obj)
             obj.LockLoad = false;
             Show@PTKFigure(obj);
@@ -85,11 +91,6 @@ classdef PTKPatientBrowser < PTKFigure
             position = get(obj.GraphicalComponentHandle, 'Position');
         end
         
-        function AddData(obj, tag)
-            obj.GuiCallback.BringToFront;
-            obj.GuiCallback.ImportMultipleFiles;
-            obj.BringToFront;
-        end
     end
 
     methods (Access = protected)

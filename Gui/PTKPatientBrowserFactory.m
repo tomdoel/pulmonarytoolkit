@@ -13,7 +13,7 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
     %    
     
     properties (Access = private)
-        Gui
+        Controller
         GuiDatasetState
         ImageDatabase
         InitialPosition
@@ -24,8 +24,8 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
     end
     
     methods
-        function obj = PTKPatientBrowserFactory(gui, image_database, state, settings, reporting)
-            obj.Gui = gui;
+        function obj = PTKPatientBrowserFactory(controller, image_database, state, settings, reporting)
+            obj.Controller = controller;
             obj.ImageDatabase = image_database;
             obj.GuiDatasetState = state;
             obj.Reporting = reporting;
@@ -45,7 +45,7 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
             % Make Patient Browser visible or bring to the front
             
             if isempty(obj.PatientBrowser)
-                obj.PatientBrowser = PTKPatientBrowser(obj.ImageDatabase, obj.Gui, obj.InitialPosition, obj.Reporting);
+                obj.PatientBrowser = PTKPatientBrowser(obj.Controller, obj.ImageDatabase, obj.InitialPosition, obj.Reporting);
                 obj.PatientBrowser.SelectSeries(obj.PatientBrowserSelectedPatientId, obj.PatientBrowserSelectedUid);
                 
                 obj.PatientBrowser.Show;

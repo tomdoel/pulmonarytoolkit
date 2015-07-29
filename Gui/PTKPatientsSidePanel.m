@@ -55,7 +55,7 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
     methods (Access = protected)
         
         function AddButtonClicked(obj, ~, event_data)
-            obj.GuiCallback.ImportMultipleFiles;
+            obj.GuiCallback.AddPatient;
         end
         
         function DeleteButtonClicked(obj, ~, event_data)

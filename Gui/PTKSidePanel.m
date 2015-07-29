@@ -35,20 +35,20 @@ classdef PTKSidePanel < PTKPanel
     end
     
     methods
-        function obj = PTKSidePanel(parent, patient_database, state, linked_recorder, gui_callback)
+        function obj = PTKSidePanel(parent, controller, patient_database, state, linked_recorder)
             obj = obj@PTKPanel(parent);
             
             obj.RightBorder = true;
             
             obj.GuiState = state;
             
-            obj.PatientsSidePanel = PTKPatientsSidePanel(obj, patient_database, gui_callback);
+            obj.PatientsSidePanel = PTKPatientsSidePanel(obj, patient_database, controller);
             obj.AddChild(obj.PatientsSidePanel);
             
-            obj.LinkedSeriesSidePanel = PTKLinkedSeriesSidePanel(obj, patient_database, linked_recorder, gui_callback);
+            obj.LinkedSeriesSidePanel = PTKLinkedSeriesSidePanel(obj, patient_database, linked_recorder, controller);
             obj.AddChild(obj.LinkedSeriesSidePanel);
             
-            obj.SeriesSidePanel = PTKSeriesSidePanel(obj, patient_database, gui_callback);
+            obj.SeriesSidePanel = PTKSeriesSidePanel(obj, patient_database, controller);
             obj.AddChild(obj.SeriesSidePanel);
             
             obj.Repopulate;

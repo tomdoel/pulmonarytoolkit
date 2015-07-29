@@ -47,7 +47,7 @@ classdef PTKSeriesSidePanel < PTKListBoxWithTitle
     
     methods (Access = protected)
         function AddButtonClicked(obj, ~, event_data)
-            obj.GuiCallback.ImportMultipleFiles;
+            obj.GuiCallback.AddSeries;
         end
         
         function DeleteButtonClicked(obj, ~, event_data)
@@ -56,7 +56,7 @@ classdef PTKSeriesSidePanel < PTKListBoxWithTitle
                 
                 parent_figure = obj.GetParentFigure;
                 parent_figure.ShowWaitCursor;
-                obj.GuiCallback.DeleteDataset(series_uid);
+                obj.GuiCallback.DeleteSeries(series_uid);
                 
                 % Note that at this point it is possible obj may have been deleted, so we can no longer use it
                 parent_figure.HideWaitCursor;

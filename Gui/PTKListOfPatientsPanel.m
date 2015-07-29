@@ -126,7 +126,7 @@ classdef PTKListOfPatientsPanel < PTKPanel
         end
         
         function AddButtonClicked(obj, tag)
-            obj.GuiCallback.AddData;
+            obj.GuiCallback.AddPatient;
         end
         
         function DeleteButtonClicked(obj, tag)

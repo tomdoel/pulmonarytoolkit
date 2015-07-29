@@ -59,7 +59,7 @@ classdef PTKPatientNameListItem < PTKListItem
         
         function ItemLeftClicked(obj, src, eventdata)
             ItemLeftClicked@PTKListItem(obj, src, eventdata);
-            obj.GuiCallback.LoadPatient(obj.PatientId);
+            obj.GuiCallback.PatientClicked(obj.PatientId);
         end
         
         function ItemRightClicked(obj, src, eventdata)

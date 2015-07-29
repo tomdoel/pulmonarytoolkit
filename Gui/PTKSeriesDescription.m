@@ -164,7 +164,7 @@ classdef PTKSeriesDescription < PTKListItem
         
         function ItemLeftClicked(obj, src, eventdata)
             ItemLeftClicked@PTKListItem(obj, src, eventdata);
-            obj.GuiCallback.LoadFromPatientBrowser(obj.PatientId, obj.SeriesUid);
+            obj.GuiCallback.SeriesClicked(obj.PatientId, obj.SeriesUid);
         end
         
         function ItemRightClicked(obj, src, eventdata)
@@ -172,7 +172,7 @@ classdef PTKSeriesDescription < PTKListItem
             
             if isempty(get(obj.DescriptionControl.GraphicalComponentHandle, 'uicontextmenu'))
                 context_menu = uicontextmenu;
-                context_menu_delete = uimenu(context_menu, 'Label', 'Delete this series', 'Callback', @obj.DeleteDataset);
+                context_menu_delete = uimenu(context_menu, 'Label', 'Delete this series', 'Callback', @obj.DeleteSeries);
                 context_menu_patient = uimenu(context_menu, 'Label', 'Delete this patient', 'Callback', @obj.DeletePatient);
                 obj.SetContextMenu(context_menu);
             end
@@ -187,10 +187,10 @@ classdef PTKSeriesDescription < PTKListItem
             obj.Parent.DeletePatient;
         end
         
-        function DeleteDataset(obj, ~, ~)
+        function DeleteSeries(obj, ~, ~)
             parent_figure = obj.GetParentFigure;
             parent_figure.ShowWaitCursor;
-            obj.GuiCallback.DeleteDataset(obj.SeriesUid);
+            obj.GuiCallback.DeleteSeries(obj.SeriesUid);
             
             % Note that at this point obj may have been deleted, so we can no longer use it
             parent_figure.HideWaitCursor;
