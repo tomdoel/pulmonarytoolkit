@@ -14,7 +14,6 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
     
     properties (Access = private)
         Gui
-        GuiDataset
         GuiDatasetState
         ImageDatabase
         InitialPosition
@@ -25,11 +24,10 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
     end
     
     methods
-        function obj = PTKPatientBrowserFactory(gui, image_database, gui_dataset, settings, reporting)
+        function obj = PTKPatientBrowserFactory(gui, image_database, state, settings, reporting)
             obj.Gui = gui;
             obj.ImageDatabase = image_database;
-            obj.GuiDataset = gui_dataset;
-            obj.GuiDatasetState = obj.GuiDataset.GuiDatasetState;
+            obj.GuiDatasetState = state;
             obj.Reporting = reporting;
            
             if isempty(settings.PatientBrowserScreenPosition)
