@@ -208,8 +208,7 @@ function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_v
     
     increments = [50 10 1];
     
-    start_point_matrix = cell2mat(start_point');
-    start_points_global = lung_image.LocalToGlobalCoordinates(start_point_matrix);
+    start_points_global = lung_image.LocalToGlobalCoordinates(start_point);
     start_points_global = num2cell(start_points_global, 2)';
     
     next_image_open = lung_image.BlankCopy;
