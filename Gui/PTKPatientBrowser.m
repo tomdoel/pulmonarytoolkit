@@ -54,7 +54,7 @@ classdef PTKPatientBrowser < PTKFigure
 
         function DatabaseHasChanged(obj)
             obj.BrowserPanel.DatabaseHasChanged;
-            obj.Resize(obj.Position);
+            obj.Resize(obj.GetLastPosition);
         end
         
         function LoadFromPatientBrowser(obj, patient_id, series_uid)

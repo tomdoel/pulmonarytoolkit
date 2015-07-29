@@ -54,8 +54,9 @@ classdef PTKSidePanel < PTKPanel
             obj.Repopulate;
 
             % Add listeners for changes to the loaded series
-            obj.AddEventListener(obj.GuiState, 'SeriesUidChangedEvent', @obj.SeriesChanged);            
+            obj.AddEventListener(state, 'SeriesUidChangedEvent', @obj.SeriesChanged);            
             obj.AddEventListener(linked_recorder, 'LinkingChanged', @obj.LinkingChanged);            
+            obj.AddEventListener(patient_database, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
         end
         
         function CreateGuiComponent(obj, position)
@@ -97,10 +98,6 @@ classdef PTKSidePanel < PTKPanel
             height = obj.PanelHeight;
         end
         
-        function DatabaseHasChanged(obj)
-            obj.Repopulate;
-        end
-        
         function Repopulate(obj)
             obj.PatientsSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId);
             obj.LinkedSeriesSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
@@ -113,6 +110,10 @@ classdef PTKSidePanel < PTKPanel
     end
     
     methods (Access = private)
+        function DatabaseHasChanged(obj, ~, ~)
+            obj.Repopulate;
+        end
+        
         function SeriesChanged(obj, ~, ~)
             % This event fires when the loaded series has been changed.
             
@@ -137,9 +138,6 @@ classdef PTKSidePanel < PTKPanel
                 obj.Resize(obj.Position);
             end
         end
-        
-        
-        
     end
     
     methods (Static, Access = private)

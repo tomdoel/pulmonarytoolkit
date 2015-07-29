@@ -39,7 +39,6 @@ classdef PTKGuiDataset < PTKBaseClass
             obj.Reporting = reporting;
             obj.Settings = settings;
             obj.Ptk = PTKMain(reporting);
-            obj.AddEventListener(obj.GetImageDatabase, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
             obj.AddEventListener(obj.GetImageDatabase, 'SeriesHasBeenDeleted', @obj.SeriesHasBeenDeleted);
         end
 
@@ -386,10 +385,6 @@ classdef PTKGuiDataset < PTKBaseClass
     end
     
     methods (Access = private)
-        
-        function DatabaseHasChanged(obj, ~, ~)
-            obj.Gui.DatabaseHasChanged;
-        end
 
         function SeriesHasBeenDeleted(obj, series_uid, ~)
             % If the currently loaded dataset has been removed from the database, then clear

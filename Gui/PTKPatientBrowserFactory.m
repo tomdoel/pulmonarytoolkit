@@ -16,6 +16,7 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
         Gui
         GuiDataset
         GuiDatasetState
+        ImageDatabase
         InitialPosition
         PatientBrowser
         PatientBrowserSelectedUid
@@ -24,8 +25,9 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
     end
     
     methods
-        function obj = PTKPatientBrowserFactory(gui, gui_dataset, settings, reporting)
+        function obj = PTKPatientBrowserFactory(gui, image_database, gui_dataset, settings, reporting)
             obj.Gui = gui;
+            obj.ImageDatabase = image_database;
             obj.GuiDataset = gui_dataset;
             obj.GuiDatasetState = obj.GuiDataset.GuiDatasetState;
             obj.Reporting = reporting;
@@ -37,6 +39,7 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
             end
             
             obj.AddEventListener(obj.GuiDatasetState, 'SeriesUidChangedEvent', @obj.SeriesChanged);
+            obj.AddEventListener(image_database, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
         end
         
         
@@ -44,7 +47,7 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
             % Make Patient Browser visible or bring to the front
             
             if isempty(obj.PatientBrowser)
-                obj.PatientBrowser = PTKPatientBrowser(obj.GuiDataset.GetImageDatabase, obj.Gui, obj.InitialPosition, obj.Reporting);
+                obj.PatientBrowser = PTKPatientBrowser(obj.ImageDatabase, obj.Gui, obj.InitialPosition, obj.Reporting);
                 obj.PatientBrowser.SelectSeries(obj.PatientBrowserSelectedPatientId, obj.PatientBrowserSelectedUid);
                 
                 obj.PatientBrowser.Show;
@@ -59,15 +62,9 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
             end
         end
         
-        function DatabaseHasChanged(obj)
-            % Indicates the underlying image database has changed
-            
-            if ~isempty(obj.PatientBrowser)
-                obj.PatientBrowser.DatabaseHasChanged;
-            end
-        end
-        
         function SeriesChanged(obj, ~, ~)
+            % Change the currently selected patient and series
+            
             patient_id = obj.GuiDatasetState.CurrentPatientId;
             series_uid = obj.GuiDatasetState.CurrentSeriesUid;
             obj.UpdatePatientBrowser(patient_id, series_uid);
@@ -107,6 +104,14 @@ classdef PTKPatientBrowserFactory < PTKBaseClass
     end 
     
     methods (Access = private)
+        function DatabaseHasChanged(obj, ~, ~)
+            % Indicates the underlying image database has changed
+            
+            if ~isempty(obj.PatientBrowser)
+                obj.PatientBrowser.DatabaseHasChanged;
+            end
+        end
+        
         function UpdatePatientBrowser(obj, patient_id, series_uid)
             % Indicates the currently visualised series has changed
             
