@@ -30,7 +30,7 @@ classdef PTKPatientPanel < PTKPanel
         
         SeriesDescriptionsList
         
-        PatientDetails
+        ImageDatabase
         GuiCallback
         
         PanelHeight
@@ -54,7 +54,7 @@ classdef PTKPatientPanel < PTKPanel
     end
     
     methods
-        function obj = PTKPatientPanel(parent, patient_details, gui_callback)
+        function obj = PTKPatientPanel(parent, image_database, patient_id, visible_name, all_patient_ids, total_number_of_series, gui_callback)
             % Create a new panel showing the series information for one or more patients,
             % each defined by the patient_details vector. This vector may have more than one
             % patient details object if there is more than one patient id corresponding to
@@ -62,34 +62,34 @@ classdef PTKPatientPanel < PTKPanel
             
             obj = obj@PTKPanel(parent);
             obj.Enabled = false;
-            obj.PatientDetails = patient_details;
+            obj.ImageDatabase = image_database;
             obj.GuiCallback = gui_callback;
             
-            obj.Id = patient_details(1).PatientId;
-            obj.AllIds = {patient_details.('PatientId')};
+            obj.Id = patient_id;
+            obj.AllIds = all_patient_ids;
 
-            if isempty(patient_details(1).VisibleName)
+            if isempty(visible_name)
                 % If there is no patient name, show the patient id
-                name = patient_details(1).PatientId;
+                name = patient_id;
                 
-            elseif isempty(patient_details(1).PatientId)
+            elseif isempty(patient_id)
                 % If there is no patient id, show the patient name
-                name = patient_details(1).VisibleName;
+                name = visible_name;
                 
             else
-                if numel(patient_details) > 1 || strcmp(patient_details(1).VisibleName, patient_details(1).PatientId)
+                if numel(all_patient_ids) > 1 || strcmp(visible_name, patient_id)
                     % If there is more than one patient ID, or the ID is the same as the name, we
                     % only show the patient name
-                    name = patient_details(1).VisibleName;
+                    name = visible_name;
                     
                 else
                     % Otherwise show the name and the ID
-                    name = [patient_details(1).VisibleName, ' - ', patient_details(1).PatientId];
+                    name = [visible_name, ' - ', patient_id];
                 end
             end
             obj.Name = name;
 
-            total_number_of_series = sum(arrayfun(@(x) x.GetNumberOfSeries, patient_details));
+            
             obj.PanelHeight = obj.PatientNameHeight + total_number_of_series*PTKSeriesDescription.SeriesTextHeight + ...
                 max(0, total_number_of_series-1)*obj.SpacingBetweenSeries + obj.ListTopMargin + obj.ListBottomMargin + obj.TopMargin + obj.BottomMargin;
             obj.PatientNamePosition_Y = 1 + obj.PanelHeight - obj.PatientNameHeight - obj.TopMargin;
@@ -108,7 +108,7 @@ classdef PTKPatientPanel < PTKPanel
         
         function CreateGuiComponent(obj, position)
             CreateGuiComponent@PTKPanel(obj, position);
-            obj.AddStudies(position);
+            obj.AddStudies;
         end
         
         function Resize(obj, new_position)
@@ -157,11 +157,8 @@ classdef PTKPatientPanel < PTKPanel
             end
         end
         
-        function AddStudies(obj, new_position)
-            datasets = [];
-            for patient_details = obj.PatientDetails
-                datasets = [datasets, patient_details.GetListOfSeries];
-            end
+        function AddStudies(obj)
+            datasets = obj.ImageDatabase.GetAllSeriesForThisPatient(obj.Id);
             
             obj.SeriesDescriptionsList.ClearItems;
             

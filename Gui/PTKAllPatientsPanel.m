@@ -83,8 +83,11 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
             % The Patient Database will merge together patients with same name if this is specified by the settings
             patient_info_list = obj.PatientDatabase.GetPatients;
             
-            for patient_detail = patient_info_list
-                obj.AddPatientPanel(PTKPatientPanel(obj, patient_detail{1}, obj.GuiCallback));
+            for patient_detail_cell = patient_info_list
+                patient_details = patient_detail_cell{1};
+                all_patient_ids = {patient_details.('PatientId')};
+                total_number_of_series = sum(arrayfun(@(x) x.GetNumberOfSeries, patient_details));
+                obj.AddPatientPanel(PTKPatientPanel(obj, obj.PatientDatabase, patient_details(1).PatientId, patient_details(1).VisibleName, all_patient_ids, total_number_of_series, obj.GuiCallback));
             end
         end
         
