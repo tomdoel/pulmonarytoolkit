@@ -141,7 +141,7 @@ classdef PTKListOfPatientsPanel < PTKPanel
     methods (Access = private)
         
         function AddPatientsToListBox(obj)
-            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames;
+            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames;
             current_index_selected = get(obj.PatientListBox, 'Value');
             if isempty(obj.PatientIds) || isempty(current_index_selected)
                 new_index = [];

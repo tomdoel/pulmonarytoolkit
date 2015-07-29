@@ -22,7 +22,6 @@ classdef PTKPatientPanel < PTKPanel
     properties (SetAccess = private)
         Name
         Id
-        AllIds
     end
 
     properties (Access = private)
@@ -54,7 +53,7 @@ classdef PTKPatientPanel < PTKPanel
     end
     
     methods
-        function obj = PTKPatientPanel(parent, image_database, patient_id, visible_name, all_patient_ids, total_number_of_series, gui_callback)
+        function obj = PTKPatientPanel(parent, image_database, patient_id, visible_name, total_number_of_series, num_patients, gui_callback)
             % Create a new panel showing the series information for one or more patients,
             % each defined by the patient_details vector. This vector may have more than one
             % patient details object if there is more than one patient id corresponding to
@@ -66,7 +65,6 @@ classdef PTKPatientPanel < PTKPanel
             obj.GuiCallback = gui_callback;
             
             obj.Id = patient_id;
-            obj.AllIds = all_patient_ids;
 
             if isempty(visible_name)
                 % If there is no patient name, show the patient id
@@ -77,7 +75,7 @@ classdef PTKPatientPanel < PTKPanel
                 name = visible_name;
                 
             else
-                if numel(all_patient_ids) > 1 || strcmp(visible_name, patient_id)
+                if num_patients > 1 || strcmp(visible_name, patient_id)
                     % If there is more than one patient ID, or the ID is the same as the name, we
                     % only show the patient name
                     name = visible_name;
