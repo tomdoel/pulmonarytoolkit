@@ -104,7 +104,7 @@ classdef PTKGuiCore < PTKFigure
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
-            obj.PatientBrowserFactory = PTKPatientBrowserFactory(combined_controller, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, obj.Reporting);
+            obj.PatientBrowserFactory = PTKPatientBrowserFactory(combined_controller, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'Patient Browser : Pulmonary Toolkit', obj.Reporting);
 
             % Map of all plugins visible in the GUI
             obj.OrganisedPlugins = PTKOrganisedPlugins(obj, obj.Reporting);

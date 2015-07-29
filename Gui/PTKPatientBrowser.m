@@ -20,8 +20,8 @@ classdef PTKPatientBrowser < PTKFigure
     end
 
     methods
-        function obj = PTKPatientBrowser(controller, image_database, position, reporting)
-            obj = obj@PTKFigure('Patient Browser : Pulmonary Toolkit', [], reporting);
+        function obj = PTKPatientBrowser(controller, image_database, position, title, reporting)
+            obj = obj@PTKFigure(title, [], reporting);
             obj.Controller = controller;
             obj.ArrowPointer = 'hand';
             obj.LockLoad = false;
