@@ -76,7 +76,7 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
         end
             
         function AddPatientsToListBox(obj, selected_patient_id)
-            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames;
+            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject);
             obj.PatientIdMap = patient_id_map;
             obj.ListBox.ClearItems;
             

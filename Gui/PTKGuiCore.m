@@ -390,8 +390,12 @@ classdef PTKGuiCore < PTKFigure
         end
         
         function LoadPatient(obj, patient_id)
-            datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(patient_id);
-            series_uid = datasets{1}.SeriesUid;
+            datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(PTKImageDatabase.LocalDatabaseId, patient_id);
+            if isempty(datasets)
+                series_uid = [];
+            else
+                series_uid = datasets{1}.SeriesUid;
+            end
             obj.LoadFromUid(series_uid);
         end
         
@@ -468,7 +472,7 @@ classdef PTKGuiCore < PTKFigure
                 case 'Delete'
                     obj.BringToFront;
                     
-                    series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(patient_id);
+                    series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(PTKImageDatabase.LocalDatabaseId, patient_id);
                     
                     series_uids = {};
                     

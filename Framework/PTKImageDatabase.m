@@ -53,12 +53,14 @@ classdef PTKImageDatabase < handle
             obj.InvalidateCachedPaths;
         end
         
-        function datasets = GetAllSeriesForThisPatient(obj, patient_id)
+        function datasets = GetAllSeriesForThisPatient(obj, project_id, patient_id)
             datasets = [];
-            all_details = obj.GetAllPatientInfosForThisPatient(patient_id);
-            for patient_details_cell = all_details
-                for patient_details = all_details{1}
-                    datasets = [datasets, patient_details.GetListOfSeries];
+            if strcmp(project_id, PTKImageDatabase.LocalDatabaseId)
+                all_details = obj.GetAllPatientInfosForThisPatient(patient_id);
+                for patient_details_cell = all_details
+                    for patient_details = all_details{1}
+                        datasets = [datasets, patient_details.GetListOfSeries];
+                    end
                 end
             end
         end
@@ -105,17 +107,28 @@ classdef PTKImageDatabase < handle
 
         end
         
-        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj)
-            [names, ids, short_visible_names, ~, ~, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(false);
+        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj, project_id)
+            [names, ids, short_visible_names, ~, ~, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(project_id, false);
         end
         
-        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesAndSeriesCount(obj)
-            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(true);
+        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesAndSeriesCount(obj, project_id)
+            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(project_id, true);
         end
         
-        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesWithOptionalSeriesCount(obj, count_series)
+        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesWithOptionalSeriesCount(obj, project_id, count_series)
             % Returns list of patient names, ids and family names, sorted by the
             % short visible name
+            
+             if ~strcmp(project_id, PTKImageDatabase.LocalDatabaseId)
+                names = {};
+                ids = {};
+                short_visible_names = {};
+                num_series = [];
+                num_patients_combined = [];
+                patient_id_map = [];
+                return;
+            end
+
             ids = obj.PatientMap.keys;
             values = obj.PatientMap.values;
             names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');

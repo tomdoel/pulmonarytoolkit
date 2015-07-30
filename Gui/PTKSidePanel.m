@@ -146,6 +146,7 @@ classdef PTKSidePanel < PTKPanel
                 obj.PatientsSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId);
                 obj.LinkedSeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
                 obj.SeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
+                obj.Resize(obj.Position);
             end
         end
         
