@@ -73,6 +73,9 @@ classdef PTKListBoxWithTitle < PTKPanel
             height = obj.ListBox.GetRequestedHeight(width) + obj.ControlPanelHeight + obj.LowerPanelHeight + obj.TopMargin + obj.BottomMargin;
         end
         
+        function num_items = GetNumItems(obj)
+            num_items = obj.ListBox.NumItems;
+        end        
     end
 
     methods (Access = protected)        

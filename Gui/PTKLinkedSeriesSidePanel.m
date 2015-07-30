@@ -43,11 +43,7 @@ classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
         
         function SelectSeries(obj, series_uid, selected)
             obj.ListBox.SelectItem(series_uid, selected);
-        end
-        
-        function is_empty = IsEmpty(obj)
-            is_empty = obj.ListBox.NumItems < 1;
-        end
+        end        
     end
     
     methods (Access = protected)

@@ -13,6 +13,8 @@ classdef PTKImageDatabase < handle
     
     properties (Constant)
         CurrentVersionNumber = 3
+        LocalDatabaseId = '&#LOCAL_IMAGE_DATABASE#&'
+        LocalDatabaseName = 'My data'
     end
     
     events
@@ -179,6 +181,11 @@ classdef PTKImageDatabase < handle
             else
                 patient_id_map = containers.Map(ids, ids);
             end
+        end
+        
+        function [project_names, project_ids] = GetListOfProjects(obj)
+            project_names = {obj.LocalDatabaseName};
+            project_ids = {obj.LocalDatabaseId};
         end
         
         function DeleteSeries(obj, series_uids, reporting)

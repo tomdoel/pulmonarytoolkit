@@ -1,4 +1,4 @@
-classdef PTKCombinedImageDatabaseController < handle
+classdef PTKCombinedImageDatabaseController < PTKBaseClass
     % PTKCombinedImageDatabaseController. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -11,13 +11,23 @@ classdef PTKCombinedImageDatabaseController < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
+    events
+        ProjectChangedEvent
+    end
+   
     properties (Access = private)
         GuiCallback
+        CurrentProject = PTKImageDatabase.LocalDatabaseId;
     end
-    
+
     methods
         function obj = PTKCombinedImageDatabaseController(gui_callback)
             obj.GuiCallback = gui_callback;
+        end
+        
+        function ProjectClicked(obj, project_id)
+            obj.CurrentProject = project_id;
+            notify(obj, 'ProjectChangedEvent', PTKEventData(project_id));
         end
         
         function PatientClicked(obj, patient_id)
@@ -43,6 +53,9 @@ classdef PTKCombinedImageDatabaseController < handle
         function DeleteSeries(obj, series_uid)
             obj.GuiCallback.DeleteDataset(series_uid);
         end
+        
+        function RefreshProjects(obj)
+        end
 
         function BringToFront(obj)
             obj.GuiCallback.BringToFront;
@@ -50,6 +63,10 @@ classdef PTKCombinedImageDatabaseController < handle
         
         function UnlinkDataset(obj, series_uid)
             obj.GuiCallback.UnlinkDataset(series_uid);
+        end
+        
+        function project_id = GetCurrentProject(obj)
+            project_id = obj.CurrentProject;
         end
     end    
 end

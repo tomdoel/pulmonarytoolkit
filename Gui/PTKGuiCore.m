@@ -395,6 +395,10 @@ classdef PTKGuiCore < PTKFigure
             obj.LoadFromUid(series_uid);
         end
         
+        function ForceRefresh(obj)
+            obj.SidePanel.Refresh;
+        end
+        
         function CloseAllFiguresExceptPtk(obj)
             all_figure_handles = get(0, 'Children');
             for figure_handle = all_figure_handles'
