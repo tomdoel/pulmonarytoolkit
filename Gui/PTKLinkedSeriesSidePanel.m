@@ -52,7 +52,7 @@ classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
     
     methods (Access = protected)
         function AddButtonClicked(obj, ~, event_data)
-            obj.GuiCallback.AddSeries;
+            obj.GuiCallback.ImportMultipleFiles;
         end
         
         function DeleteButtonClicked(obj, ~, event_data)
