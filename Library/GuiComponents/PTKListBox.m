@@ -154,6 +154,9 @@ classdef PTKListBox < PTKPanel
             obj.SelectedTag = [];
         end
         
+        function num_items = NumItems(obj)
+            num_items = numel(obj.Items);
+        end
     end
     
 end

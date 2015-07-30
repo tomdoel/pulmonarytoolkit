@@ -69,28 +69,30 @@ classdef PTKSidePanel < PTKPanel
             % After calling Resize@PTKPanel, the position will have been adjusted due to the border
             new_position = obj.InnerPosition;
             
-            available_height = new_position(4) - 2*obj.SpacingBetweenLists;
             
-            panels = {obj.PatientsSidePanel, obj.LinkedSeriesSidePanel, obj.SeriesSidePanel};
+            if obj.LinkedSeriesSidePanel.IsEmpty
+                obj.LinkedSeriesSidePanel.Disable;
+                panels = {obj.PatientsSidePanel, obj.SeriesSidePanel};
+            else
+                obj.LinkedSeriesSidePanel.Enable;
+                panels = {obj.PatientsSidePanel, obj.LinkedSeriesSidePanel, obj.SeriesSidePanel};
+            end
+            
+            available_height = new_position(4) - (numel(panels) - 1)*obj.SpacingBetweenLists;
+            
             panel_heights = obj.GetPanelHeights(panels, new_position(3), available_height);
 
             y_offset = max(0, available_height - sum(panel_heights));
+            y_position = new_position(2) + y_offset;
             
-            series_position = new_position;
-            series_position(2) = series_position(2) + y_offset;
-            series_position(4) = panel_heights(3);
-            
-            linked_series_position = new_position;
-            linked_series_position(2) = series_position(2) + obj.SpacingBetweenLists + panel_heights(3);
-            linked_series_position(4) = panel_heights(2);
-            
-            patients_position = new_position;
-            patients_position(2) = linked_series_position(2) + obj.SpacingBetweenLists + panel_heights(2);
-            patients_position(4) = panel_heights(1);
-            
-            obj.PatientsSidePanel.Resize(patients_position);
-            obj.LinkedSeriesSidePanel.Resize(linked_series_position);
-            obj.SeriesSidePanel.Resize(series_position);
+            for panel_index = numel(panels) : -1 : 1
+                panel = panels{panel_index};
+                panel_position = new_position;
+                panel_position(2) = y_position;
+                panel_position(4) = panel_heights(panel_index);
+                panel.Resize(panel_position);
+                y_position = y_position + obj.SpacingBetweenLists + panel_heights(panel_index);
+            end
         end
         
         

@@ -57,5 +57,10 @@ classdef PTKSlidingListBox < PTKSlidingPanel
         function list_box_handle = GetListBox(obj)
             list_box_handle = obj.FloatingPanel;
         end
+                
+        function num_items = NumItems(obj)
+            num_items = obj.FloatingPanel.NumItems;
+        end
+        
     end
 end
