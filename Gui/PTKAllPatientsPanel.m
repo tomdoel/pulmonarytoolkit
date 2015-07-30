@@ -83,7 +83,7 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
         function AddPatientPanels(obj)
             % The Patient Database will merge together patients with same name if this is specified by the settings
             
-            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames;
+            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.PatientDatabase.GetListOfPatientNamesAndSeriesCount;
             obj.PatientIdMap = patient_id_map;
             
             for index = 1 : numel(ids)

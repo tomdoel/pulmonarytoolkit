@@ -103,7 +103,15 @@ classdef PTKImageDatabase < handle
 
         end
         
-        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNames(obj)
+        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj)
+            [names, ids, short_visible_names, ~, ~, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(false);
+        end
+        
+        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesAndSeriesCount(obj)
+            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(true);
+        end
+        
+        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesWithOptionalSeriesCount(obj, count_series)
             % Returns list of patient names, ids and family names, sorted by the
             % short visible name
             ids = obj.PatientMap.keys;
@@ -150,13 +158,18 @@ classdef PTKImageDatabase < handle
                 ids_subset = ids(ia);
                 names = names(ia);
                 
-                total_num_series = zeros(size(ids_subset));
-                num_patients_combined = zeros(size(ids_subset));
-                for series_index = 1 : length(num_series)
-                    total_num_series(ic(series_index)) = total_num_series(ic(series_index)) + num_series(series_index);
-                    num_patients_combined(ic(series_index)) = num_patients_combined(ic(series_index)) + 1;
+                if count_series
+                    total_num_series = zeros(size(ids_subset));
+                    num_patients_combined = zeros(size(ids_subset));
+                    for series_index = 1 : length(num_series)
+                        total_num_series(ic(series_index)) = total_num_series(ic(series_index)) + num_series(series_index);
+                        num_patients_combined(ic(series_index)) = num_patients_combined(ic(series_index)) + 1;
+                    end
+                    num_series = total_num_series;
+                else
+                    num_series = [];
+                    num_patients_combined = [];
                 end
-                num_series = total_num_series;
 
                 % A map of all patient IDs to the main patient ID for each patient group
                 patient_id_map = containers.Map(ids, ids_subset(ic));
