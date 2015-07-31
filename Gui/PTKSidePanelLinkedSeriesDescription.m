@@ -142,7 +142,7 @@ classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
         
         function ItemLeftClicked(obj, src, eventdata)
             ItemLeftClicked@PTKListItem(obj, src, eventdata);
-            obj.GuiCallback.SeriesClicked(obj.SeriesUid);
+            obj.GuiCallback.SeriesClicked(obj.PatientId, obj.SeriesUid);
         end
         
         function ItemRightClicked(obj, src, eventdata)

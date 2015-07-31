@@ -77,7 +77,7 @@ classdef PTKPatientBrowser < PTKFigure
             else
                 obj.LockLoad = true;
                 obj.SelectSeries(patient_id, series_uid);
-                obj.Controller.SeriesClicked(series_uid);
+                obj.Controller.SeriesClicked(patient_id, series_uid);
                 obj.LockLoad = false;
             end
         end
@@ -91,6 +91,9 @@ classdef PTKPatientBrowser < PTKFigure
             position = get(obj.GraphicalComponentHandle, 'Position');
         end
         
+        function project_id = GetCurrentProject(obj)
+            project_id = obj.Controller.GetCurrentProject;
+        end        
     end
 
     methods (Access = protected)

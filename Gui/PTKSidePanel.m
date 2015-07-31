@@ -61,6 +61,7 @@ classdef PTKSidePanel < PTKPanel
 
             % Add listeners for changes to the loaded series
             obj.AddEventListener(controller, 'ProjectChangedEvent', @obj.ProjectChanged);            
+            obj.AddEventListener(controller, 'PatientChangedEvent', @obj.PatientChanged);            
             obj.AddEventListener(state, 'SeriesUidChangedEvent', @obj.SeriesChanged);            
             obj.AddEventListener(linked_recorder, 'LinkingChanged', @obj.LinkingChanged);            
             obj.AddEventListener(patient_database, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
@@ -146,6 +147,17 @@ classdef PTKSidePanel < PTKPanel
                 obj.PatientsSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId);
                 obj.LinkedSeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
                 obj.SeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
+                obj.Resize(obj.Position);
+            end
+        end
+        
+        function PatientChanged(obj, ~, event_data)
+            patient_id = event_data.Data;
+            patient_has_changed = obj.PatientsSidePanel.UpdateSidePanel(patient_id);
+            
+            if patient_has_changed
+                obj.LinkedSeriesSidePanel.RepopulateSidePanel(patient_id, obj.GuiState.CurrentSeriesUid);
+                obj.SeriesSidePanel.RepopulateSidePanel(patient_id, obj.GuiState.CurrentSeriesUid);
                 obj.Resize(obj.Position);
             end
         end

@@ -125,7 +125,7 @@ classdef PTKImageDatabase < handle
                 short_visible_names = {};
                 num_series = [];
                 num_patients_combined = [];
-                patient_id_map = [];
+                patient_id_map = containers.Map;
                 return;
             end
 

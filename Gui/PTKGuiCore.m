@@ -37,6 +37,7 @@ classdef PTKGuiCore < PTKFigure
         OrganisedPlugins
         ModeTabControl
 
+        MatNatBrowserFactory
         PatientBrowserFactory
         
         LastWindowSize % Keep track of window size to prevent unnecessary resize
@@ -91,10 +92,17 @@ classdef PTKGuiCore < PTKFigure
             obj.GuiDataset = PTKGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             % Create a callback handler for the Patient Browser and sidebar
-            combined_controller = PTKCombinedImageDatabaseController(obj);
+            if PTKSoftwareInfo.MatNatEnabled
+                matnat_database = PTKMatNatDatabase;
+                combined_database = PTKCombinedImageDatabase(obj.GuiDataset.GetImageDatabase, matnat_database);
+            else
+                matnat_database = [];
+                combined_database = obj.GuiDataset.GetImageDatabase;
+            end
+            combined_controller = PTKCombinedImageDatabaseController(obj, matnat_database);
             
             % Create the side panel showing available datasets
-            obj.SidePanel = PTKSidePanel(obj, combined_controller, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder);
+            obj.SidePanel = PTKSidePanel(obj, combined_controller, combined_database, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder);
             obj.AddChild(obj.SidePanel);
             
             % Create the status panel showing image coordinates and
@@ -106,6 +114,14 @@ classdef PTKGuiCore < PTKFigure
             % PB may take time to load if there are many datasets
             obj.PatientBrowserFactory = PTKPatientBrowserFactory(combined_controller, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'Patient Browser : Pulmonary Toolkit', obj.Reporting);
 
+            if PTKSoftwareInfo.MatNatEnabled
+                % The MatNat Browser factory manages lazy creation of the
+                % MatNat Browser. This may take some time to load as it has to
+                % get the information from the server
+                matnat_database = PTKMatNatDatabase;
+                obj.MatNatBrowserFactory = PTKPatientBrowserFactory(combined_controller, matnat_database, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'MatNat', obj.Reporting);
+            end
+            
             % Map of all plugins visible in the GUI
             obj.OrganisedPlugins = PTKOrganisedPlugins(obj, obj.Reporting);
 
@@ -187,6 +203,12 @@ classdef PTKGuiCore < PTKFigure
             obj.PatientBrowserFactory.Show;
         end
         
+        function ShowMatNatBrowser(obj)
+            if ~isempty(obj.MatNatBrowserFactory)
+                obj.MatNatBrowserFactory.Show;
+            end
+        end
+        
         function ChangeMode(obj, mode)
             obj.GuiDataset.ChangeMode(mode);
         end
@@ -222,7 +244,18 @@ classdef PTKGuiCore < PTKFigure
                 end
             end
         end
-               
+
+        function uids = ImportFromPath(obj, file_path)
+            % Imports from a given location
+            
+            obj.WaitDialogHandle.ShowAndHold('Import data');
+            
+            % Import all datasets from this path
+            uids = obj.GuiDataset.ImportDataRecursive(file_path);
+            
+            obj.WaitDialogHandle.Hide;
+        end
+        
         function uids = ImportMultipleFiles(obj)
             % Prompts the user for file(s) to import
             
@@ -406,9 +439,18 @@ classdef PTKGuiCore < PTKFigure
         function CloseAllFiguresExceptPtk(obj)
             all_figure_handles = get(0, 'Children');
             for figure_handle = all_figure_handles'
-                if (figure_handle ~= obj.GraphicalComponentHandle) && (~obj.PatientBrowserFactory.HandleMatchesPatientBrowser(figure_handle))
-                    if ishandle(figure_handle)
-                        delete(figure_handle);
+
+                if ~isempty(obj.MatNatBrowserFactory)
+                    if (figure_handle ~= obj.GraphicalComponentHandle) && (~obj.PatientBrowserFactory.HandleMatchesPatientBrowser(figure_handle)) && (~obj.MatNatBrowserFactory.HandleMatchesPatientBrowser(figure_handle))
+                        if ishandle(figure_handle)
+                            delete(figure_handle);
+                        end
+                    end
+                else
+                    if (figure_handle ~= obj.GraphicalComponentHandle) && (~obj.PatientBrowserFactory.HandleMatchesPatientBrowser(figure_handle))
+                        if ishandle(figure_handle)
+                            delete(figure_handle);
+                        end
                     end
                 end
             end
@@ -553,12 +595,19 @@ classdef PTKGuiCore < PTKFigure
             % Executes when application closes
             obj.Reporting.ShowProgress('Saving settings');
             
-            % Hide the Patient Browser, as it can take a short time to close
+            % Hide the Patient Browser and MatNatBrowser, as they can take a short time to close
             obj.PatientBrowserFactory.Hide;
+            
+            if ~isempty(obj.MatNatBrowserFactory)
+                obj.MatNatBrowserFactory.Hide;
+            end
 
             obj.ApplicationClosing();
             
             delete(obj.PatientBrowserFactory);
+            if ~isempty(obj.MatNatBrowserFactory)
+                delete(obj.MatNatBrowserFactory);
+            end
             
             % The progress dialog will porbably be destroyed before we get here
 %             obj.Reporting.CompleteProgress;

@@ -13,15 +13,18 @@ classdef PTKCombinedImageDatabaseController < PTKBaseClass
     
     events
         ProjectChangedEvent
+        PatientChangedEvent
     end
    
     properties (Access = private)
         GuiCallback
         CurrentProject = PTKImageDatabase.LocalDatabaseId;
+        MatNatDatabase
     end
 
     methods
-        function obj = PTKCombinedImageDatabaseController(gui_callback)
+        function obj = PTKCombinedImageDatabaseController(gui_callback, matnat_database)
+            obj.MatNatDatabase = matnat_database;
             obj.GuiCallback = gui_callback;
         end
         
@@ -31,11 +34,22 @@ classdef PTKCombinedImageDatabaseController < PTKBaseClass
         end
         
         function PatientClicked(obj, patient_id)
-            obj.GuiCallback.LoadPatient(patient_id);
+            if strcmp(obj.CurrentProject, PTKImageDatabase.LocalDatabaseId)
+                obj.GuiCallback.LoadPatient(patient_id);
+            else
+                notify(obj, 'PatientChangedEvent', PTKEventData(patient_id));
+            end
         end
         
-        function SeriesClicked(obj, series_uid)
-            obj.GuiCallback.LoadFromPatientBrowser(series_uid);
+        function SeriesClicked(obj, patient_id, series_uid)
+            if strcmp(obj.CurrentProject, PTKImageDatabase.LocalDatabaseId)
+                obj.GuiCallback.LoadFromPatientBrowser(series_uid);
+            else
+                if ~isempty(obj.MatNatDatabase)
+                    import_path = obj.MatNatDatabase.downloadScan(obj.CurrentProject, patient_id, series_uid);
+                    obj.GuiCallback.ImportFromPath(import_path);
+                end
+            end
         end
         
         function AddPatient(obj)
