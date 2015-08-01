@@ -108,8 +108,8 @@ function options = npRegSet(varargin)
 % date: January 2014
 % licence: GNU GPL v3 licence.
 %
-% This code is copyright Nathan D. Cahill and has been distributed as part of the
-% Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+% Copyright Nathan D. Cahill
+% Code available from https://github.com/tomdoel/npReg
 
 
 
