@@ -20,7 +20,8 @@ classdef PTKDicomUtilities
             end
             
             try
-                is_dicom = PTKIsDicomFile(file_path, file_name);
+                full_file_name = [file_path, filesep, file_name];
+                is_dicom = DMisdicom(full_file_name);
             catch exception
                 is_dicom = isdicom(fullfile(file_path, file_name));
             end
