@@ -195,6 +195,22 @@ classdef PTKDicomUtilities
         function uid = GetIdentifierFromFilename(file_name)
             [~, uid, ~] = fileparts(file_name);
         end
+        
+        function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
+            dicom_filenames = [];
+            for index = 1 : length(filenames)
+                if (PTKDicomUtilities.IsDicom(image_path, filenames{index}))
+                    dicom_filenames{end + 1} = filenames{index};
+                end
+            end
+        end
+        
+        function image_info = GetListOfDicomFiles(image_path)
+            filenames = PTKTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
+            filenames = PTKDicomUtilities.RemoveNonDicomFiles(image_path, filenames);
+            image_type = PTKImageFileFormat.Dicom;            
+            image_info = PTKImageInfo(image_path, filenames, image_type, [], [], []);
+        end        
     end
 end
 
