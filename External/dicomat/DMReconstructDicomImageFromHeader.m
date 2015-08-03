@@ -1,30 +1,25 @@
-function image_data = PTKReconstructDicomImageFromHeader(header, is_little_endian, reporting)
-    % PTKReconstructDicomImageFromHeader. Converts Dicom pixel data into an image
+function image_data = DMReconstructDicomImageFromHeader(header, is_little_endian)
+    % DMReconstructDicomImageFromHeader. Converts Dicom pixel data into an image
     %
     % Usage:
-    %     image_data = PTKReconstructDicomImageFromHeader(header, is_little_endian, reporting)
+    %     image_data = DMReconstructDicomImageFromHeader(header, is_little_endian)
     %
     %     header - A structure holding the Dicom tags needed for image
     %         reconstruction
     %
     %     is_little_endian - true if the pixel data is little endian
     %
-    %     reporting - a PTKReporting object for error reporting
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
-    
-    if nargin < 2
-        reporting = PTKReportingDefault;
-    end
-    
+
     photometric_interpretation = header.PhotometricInterpretation;
     if ~(strcmp(photometric_interpretation, 'RGB') || strcmp(photometric_interpretation, 'MONOCHROME1') || strcmp(photometric_interpretation, 'MONOCHROME2'))
-        reporting.Error('PTKReconstructDicomImageFromHeader:UnsupportedPhotometricInterpretation', 'Jpeg Dicom images are not supported');
+        error('DMReconstructDicomImageFromHeader:UnsupportedPhotometricInterpretation', 'Jpeg Dicom images are not supported');
     end
     
     rows = header.Rows;
@@ -77,14 +72,14 @@ function image_data = PTKReconstructDicomImageFromHeader(header, is_little_endia
     % Note the file endian may have changed during parsing, because that's
     % the way Dicom works
     if is_little_endian
-        file_endian = PTKEndian.LittleEndian;
+        file_endian = CoreEndian.LittleEndian;
     else
-        file_endian = PTKEndian.BigEndian;
+        file_endian = CoreEndian.BigEndian;
     end
     
     % When typecasting, we need to check the computer's endian-ness so we know
     % whether to flip the bytes round or not
-    computer_endian = PTKSystemUtilities.GetComputerEndian;
+    computer_endian = CoreSystemUtilities.GetComputerEndian;
     file_endian_matches_computer_endian = (computer_endian == file_endian);
     
     % Flip endian if necessary
@@ -107,7 +102,7 @@ function image_data = PTKReconstructDicomImageFromHeader(header, is_little_endia
     if ((planar_configuration == 0) && (samples_per_pixel == 3))
         % Interlaced RGB data
         if number_of_frames > 1
-            reporting.Error('PTKReconstructDicomImageFromHeader:UnsupportedNumberOfFrames', 'This function cannot read multiframe interlaced RGB images');
+            error('DMReconstructDicomImageFromHeader:UnsupportedNumberOfFrames', 'This function cannot read multiframe interlaced RGB images');
         end
         words_in_channel = int32(rows)*int32(cols);
         pixel_data_zeros(1 : words_in_channel) = pixel_data(1 : 3 : words_in_channel*3 - 2);

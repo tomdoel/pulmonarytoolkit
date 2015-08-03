@@ -1,40 +1,32 @@
-function header = PTKReadDicomTags(file_path, file_name, dictionary, reporting)
-    % PTKReadDicomTags. Reads in metainformation from a Dicom file.
+function header = DMReadDicomTags(fileName, dictionary)
+    % DMReadDicomTags Reads in metainformation from a Dicom file.
     %
     % Usage:
-    %     header = PTKReadDicomTags(file_path, file_name, tag_list, tag_map, reporting)
+    %     header = DMReadDicomTags(fileName, dictionary)
     %
-    %     file_path, file_name: path and filename of the Dicom file to read
+    %     fileName: path and filename of the Dicom file to read
     %
-    %     dictionary - an object of class PTKDicomDictionary containing the tags
+    %     dictionary - an object of class DMDicomDictionary containing the tags
     %         to fetch.
     %
-    %     reporting - a PTKReporting object for error reporting
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
-    if nargin < 3
-        reporting = PTKReportingDefault;
-    end
-    
     tag_map = dictionary.TagMap;
     tag_list = dictionary.TagList;
     
-    % ToDo: we need to deal with tags of unknown length
-   
-    [is_dicom, header] = ReadDicomFile(file_path, file_name, tag_list, tag_map, reporting);    
+    [is_dicom, header] = ReadDicomFile(fileName, tag_list, tag_map);
 end
 
-function [is_dicom, header] = ReadDicomFile(file_path, file_name, tag_list, tag_map, reporting)
+function [is_dicom, header] = ReadDicomFile(fileName, tag_list, tag_map)
     
     % Read the data into a local byte array
-    full_file_name = fullfile(file_path, file_name);
-    file_id = fopen(full_file_name, 'r');
+    file_id = fopen(fileName, 'r');
     file_data = fread(file_id, 'uint8=>uint8');
     file_data = file_data';
     fclose(file_id);
@@ -54,17 +46,17 @@ function [is_dicom, header] = ReadDicomFile(file_path, file_name, tag_list, tag_
     end
     
     data_pointer = uint32(133);
-    computer_endian = PTKSystemUtilities.GetComputerEndian;
+    computer_endian = CoreSystemUtilities.GetComputerEndian;
     
     % All tags up to group (0002) are in explicit VR little endian.
     % After that we change to implicit VR and big endian if necessary
     is_explicit_vr = true;
     is_little_endian = true;
-    file_endian_matches_computer_endian = (computer_endian == PTKEndian.LittleEndian);
+    file_endian_matches_computer_endian = (computer_endian == CoreEndian.LittleEndian);
     
     [header, is_little_endian, ~] = ParseFileData(file_data, data_pointer, tag_list, tag_map, is_explicit_vr, is_little_endian, file_endian_matches_computer_endian, false);
     if isfield(header, 'PixelData')
-        header.PixelData = PTKReconstructDicomImageFromHeader(header, is_little_endian, reporting);
+        header.PixelData = DMReconstructDicomImageFromHeader(header, is_little_endian);
     end
 end
 
