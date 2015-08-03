@@ -39,6 +39,8 @@ classdef CoreSystemUtilities
         end
         
         function bytes_in_type = GetBytesInType(type_string)
+            % Returns the number of bytes in the given Matlab type
+            
             switch type_string
                 case {'int8', 'uint8'}
                     bytes_in_type = 1;
@@ -54,13 +56,15 @@ classdef CoreSystemUtilities
         end
         
         function computer_endian = GetComputerEndian
+            % Returns an enumeration for the endian of this computer
+            
             [~, ~, computer_endian_str] = computer;
             
             switch computer_endian_str
                 case 'B'
-                    computer_endian = PTKEndian.BigEndian;
+                    computer_endian = CoreEndian.BigEndian;
                 case 'L'
-                    computer_endian = PTKEndian.LittleEndian;
+                    computer_endian = CoreEndian.LittleEndian;
                 otherwise
                     error('CoreSystemUtilities:GetComputerEndian', 'Unknown endian');
             end
@@ -85,6 +89,9 @@ classdef CoreSystemUtilities
         end
         
         function colormap = BackwardsCompatibilityColormap
+            % Returns a colormap which replicates the default colormap from
+            % Matlab versions pre-hg2
+            
             old_colormap = [0 0 1; 0 0.5 0; 1 0 0; 0 0.75 0.75; 0.75 0 0.75; 0.75 0.75 0; 0.25 0.25 0.25];
             colormap = repmat(old_colormap, [9, 1]);
             colormap = [colormap; [0 0 1]];

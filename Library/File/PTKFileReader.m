@@ -23,9 +23,9 @@ classdef PTKFileReader < PTKBaseClass
                 file_id = fopen(full_file_name, 'r');
             else
                 switch transfer_syntax.Endian
-                    case PTKEndian.BigEndian
+                    case CoreEndian.BigEndian
                         file_encoding = 'b';
-                    case PTKEndian.LittleEndian
+                    case CoreEndian.LittleEndian
                         file_encoding = 'l';
                     otherwise
                         error('Unknown file encoding');
