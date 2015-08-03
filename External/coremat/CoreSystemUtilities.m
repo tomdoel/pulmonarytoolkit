@@ -1,18 +1,19 @@
-classdef PTKSystemUtilities
-    % PTKSystemUtilities. Utility functions relating to the hardware or operating system.
+classdef CoreSystemUtilities
+    % CoreSystemUtilities. Utility functions relating to the hardware or operating system.
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
     methods (Static)
 
-        % Creates a random unique identifier
         function uid = GenerateUid
+            % Creates a random unique identifier
+            
             % On unix systems, if java is not running we can use the system
             % command
             if isunix && ~usejava('jvm')
@@ -25,8 +26,9 @@ classdef PTKSystemUtilities
             end
         end
         
-        % Gets the resolution of the screen
         function dimensions = GetMonitorDimensions
+            % Gets the resolution of the screen
+            
             if usejava('jvm')
                 d = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
                 dimensions = [d.width, d.height];
@@ -36,7 +38,7 @@ classdef PTKSystemUtilities
             end
         end
         
-        function bytes_in_type = GetBytesInType(type_string, reporting)
+        function bytes_in_type = GetBytesInType(type_string)
             switch type_string
                 case {'int8', 'uint8'}
                     bytes_in_type = 1;
@@ -47,11 +49,11 @@ classdef PTKSystemUtilities
                 case {'uint64', 'int64'}
                     bytes_in_type = 8;
                 otherwise
-                    reporting.Error('PTKSystemUtilities:GetBytesInType', 'Unknown number type');
+                    error('CoreSystemUtilities:GetBytesInType', 'Unknown number type');
             end
         end
         
-        function computer_endian = GetComputerEndian(reporting)
+        function computer_endian = GetComputerEndian
             [~, ~, computer_endian_str] = computer;
             
             switch computer_endian_str
@@ -60,7 +62,7 @@ classdef PTKSystemUtilities
                 case 'L'
                     computer_endian = PTKEndian.LittleEndian;
                 otherwise
-                    reporting.Error('PTKSystemUtilities:GetComputerEndian', 'Unknown endian');
+                    error('CoreSystemUtilities:GetComputerEndian', 'Unknown endian');
             end
         end
 

@@ -167,7 +167,7 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
             attributes = [];
             attributes.IgnoreDependencyChecks = false;
             attributes.IsEditedResult = true;
-            instance_identifier = PTKDependency(plugin_name, context, PTKSystemUtilities.GenerateUid, dataset_uid, attributes);
+            instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
             new_cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
             new_cache_info.MarkEdited;
 

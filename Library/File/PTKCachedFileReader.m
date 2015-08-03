@@ -33,7 +33,7 @@ classdef PTKCachedFileReader < handle
             
             full_file_name = fullfile(file_path, file_name);
             
-            computer_endian = PTKSystemUtilities.GetComputerEndian;
+            computer_endian = CoreSystemUtilities.GetComputerEndian;
             obj.FlipEndian = (computer_endian ~= transfer_syntax.Endian);
             
             switch transfer_syntax.Endian

@@ -151,7 +151,7 @@ classdef PTKGuiCore < PTKFigure
             % correctly laid out when it is shown
             position = obj.GuiSingleton.GetSettings.ScreenPosition;
             if isempty(position)
-                position = [0, 0, PTKSystemUtilities.GetMonitorDimensions];
+                position = [0, 0, CoreSystemUtilities.GetMonitorDimensions];
             end
             obj.Resize(position);
             

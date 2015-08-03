@@ -95,7 +95,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
             % Remove and delete all child graphic objects
 
             for child = obj.Children
-                PTKSystemUtilities.DeleteIfValidObject(child{1});
+                CoreSystemUtilities.DeleteIfValidObject(child{1});
             end
             obj.Children = [];
         end
@@ -525,13 +525,13 @@ classdef PTKUserInterfaceObject < PTKBaseClass
         function DeleteIfValidObject(handle)
             % Removes an object
             
-            PTKSystemUtilities.DeleteIfValidObject(handle);
+            CoreSystemUtilities.DeleteIfValidObject(handle);
         end
         
         function DeleteIfGraphicsHandle(handle)
             % Removes a graphics handle
             
-            PTKSystemUtilities.DeleteIfGraphicsHandle(handle);
+            CoreSystemUtilities.DeleteIfGraphicsHandle(handle);
         end
     end
     

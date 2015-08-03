@@ -161,7 +161,7 @@ classdef PTKImageDatabase < handle
                 
                 % Get unique names, but don't group together 'Unknown' patients
                 unique_names = short_visible_names;
-                random_name = PTKSystemUtilities.GenerateUid;
+                random_name = CoreSystemUtilities.GenerateUid;
                 for empty_index = 1 : find(empty_values)
                     unique_names{empty_index} = [random_name, int2str(empty_index)];
                 end
@@ -368,7 +368,7 @@ classdef PTKImageDatabase < handle
                 
                 % We don't want 'Unknown' patient names to be grouped together, so temporarily
                 % assign them each a unique random name
-                random_name = PTKSystemUtilities.GenerateUid;
+                random_name = CoreSystemUtilities.GenerateUid;
                 for empty_index = 1 : find(empty_values)
                     unique_names{empty_index} = [random_name, int2str(empty_index)];
                 end

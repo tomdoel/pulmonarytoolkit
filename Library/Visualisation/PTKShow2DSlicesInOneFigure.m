@@ -73,7 +73,7 @@ function figure_handle = PTKShow2DSlicesInOneFigure(viewer_panel_handle, orienta
     
     % Choose a figure size that fils the vertical screen size, but with the
     % correct ratio
-    display_dimensions = PTKSystemUtilities.GetMonitorDimensions;
+    display_dimensions = CoreSystemUtilities.GetMonitorDimensions;
     
     % Adjust to take into account toolbars etc.
     display_height = display_dimensions(2) - 300;
