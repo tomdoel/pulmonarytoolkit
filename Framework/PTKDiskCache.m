@@ -162,7 +162,7 @@ classdef PTKDiskCache < handle
             obj.RemoveFilesInDirectory(obj.CachePath, '*', remove_framework_files, reporting);
             
             % Remove cache files in the context directories for this dataset
-            dir_list = PTKDiskUtilities.GetListOfDirectories(obj.CachePath);
+            dir_list = CoreDiskUtilities.GetListOfDirectories(obj.CachePath);
             for next_dir = dir_list
                 obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), '*', remove_framework_files, reporting);
             end
@@ -178,7 +178,7 @@ classdef PTKDiskCache < handle
             obj.RemoveFilesInDirectory(obj.CachePath, name, false, reporting);
             
             % Remove cache files in the context directories for this dataset
-            dir_list = PTKDiskUtilities.GetListOfDirectories(obj.CachePath);
+            dir_list = CoreDiskUtilities.GetListOfDirectories(obj.CachePath);
             for next_dir = dir_list
                 obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), name, false, reporting);
             end
@@ -190,8 +190,8 @@ classdef PTKDiskCache < handle
     
         function RemoveFilesInDirectory(file_path, name, remove_framework_files, reporting)
             
-            file_list = PTKDiskUtilities.GetDirectoryFileList(file_path, [name, '.raw']);
-            file_list_2 = PTKDiskUtilities.GetDirectoryFileList(file_path, [name, '.mat']);
+            file_list = CoreDiskUtilities.GetDirectoryFileList(file_path, [name, '.raw']);
+            file_list_2 = CoreDiskUtilities.GetDirectoryFileList(file_path, [name, '.mat']);
             file_list = cat(2, file_list, file_list_2);
             for index = 1 : length(file_list)
                 file_name = file_list{index};
@@ -211,7 +211,7 @@ classdef PTKDiskCache < handle
 
         function PrivateSave(obj, name, value, info, context, reporting)
             file_path_with_context = fullfile(obj.CachePath, char(context));
-            PTKDiskUtilities.CreateDirectoryIfNecessary(file_path_with_context);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(file_path_with_context);
             result = [];
             if ~isempty(info)
                 result.info = info;

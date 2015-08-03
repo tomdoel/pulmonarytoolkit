@@ -34,7 +34,7 @@ function PTKSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_li
         reporting.Error('PTKSaveListOfPointsAndValues:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
     end
 
-    PTKDiskUtilities.CreateDirectoryIfNecessary(file_path);
+    CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
     results_file_name = fullfile(file_path, file_name);
     file_handle = fopen(results_file_name, 'w');
     

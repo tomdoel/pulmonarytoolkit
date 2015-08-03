@@ -17,7 +17,7 @@ function image = PTKLoadImages(image_info, reporting)
     study_uid = image_info.StudyUid;
     
     if isempty(filenames)
-        filenames = PTKDiskUtilities.GetDirectoryFileList(image_path, '*');
+        filenames = CoreDiskUtilities.GetDirectoryFileList(image_path, '*');
         if isempty(filenames)
             reporting.Error(PTKSoftwareInfo.FileMissingErrorId, ['Cannot find any files in the folder ' image_path]);
         end
@@ -30,7 +30,7 @@ function image = PTKLoadImages(image_info, reporting)
             first_file_path = image_path;
             first_file_name = first_file;
         end
-        if ~PTKDiskUtilities.FileExists(first_file_path, first_file_name)
+        if ~CoreDiskUtilites.FileExists(first_file_path, first_file_name)
             reporting.Error(PTKSoftwareInfo.FileMissingErrorId, ['Cannot find the file ' fullfile(image_path, first_file_name)]);
         end
     end

@@ -58,12 +58,12 @@ function PTKAddPaths(varargin)
         % library functions, so the library paths have to be set first)
         path_folders = {};
         
-        plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'Gui', 'GuiPlugins'));
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'Gui', 'GuiPlugins'));
         for folder = plugin_folders
             path_folders{end + 1} = folder{1}.First;
         end
         
-        plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'Plugins'));
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'Plugins'));
         for folder = plugin_folders
             path_folders{end + 1} = folder{1}.First;
         end

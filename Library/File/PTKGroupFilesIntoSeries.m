@@ -13,7 +13,7 @@ function grouper = PTKGroupFilesIntoSeries(filename, reporting)
     reporting.ShowProgress('Imorting data');
     tags_to_get = DMDicomDictionary.GroupingDictionary;
     
-    [import_folder, filename_only] = PTKDiskUtilities.GetFullFileParts(filename);
+    [import_folder, filename_only] = CoreDiskUtilities.GetFullFileParts(filename);
     grouper = PTKFileSeriesGrouper;
     
     % Find out file type. 0=does not exist; 2=file; 7-directory
@@ -69,7 +69,7 @@ function GroupDirectoryRecursive(grouper, import_folder, tags_to_get, reporting)
         end
         
         GroupFilesInDirectory(grouper, current_dir, tags_to_get, reporting);
-        next_dirs = PTKDiskUtilities.GetListOfDirectories(current_dir);
+        next_dirs = CoreDiskUtilities.GetListOfDirectories(current_dir);
         for dir_to_add = next_dirs
             new_dir = fullfile(current_dir, dir_to_add{1});
             directories_to_do.Push(new_dir);
@@ -79,7 +79,7 @@ end
 
 function GroupFilesInDirectory(grouper, directory, tags_to_get, reporting)
     
-    all_filenames = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(directory, '*'));
+    all_filenames = PTKTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(directory, '*'));
     for filename = all_filenames
         GroupFile(grouper, directory, filename{1}, tags_to_get, reporting);
     end

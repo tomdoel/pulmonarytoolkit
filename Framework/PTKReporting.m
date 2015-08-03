@@ -307,7 +307,7 @@ classdef PTKReporting < PTKReportingInterface
             if isempty(obj.ViewingPanel)
                 disp([message, ': ', file_path]);
             else
-                PTKDiskUtilities.OpenDirectoryWindow(file_path);
+                CoreDiskUtilities.OpenDirectoryWindow(file_path);
             end
         end
     end

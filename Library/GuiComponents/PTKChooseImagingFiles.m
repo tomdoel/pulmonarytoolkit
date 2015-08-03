@@ -20,7 +20,7 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
         '*.mhd;*.mha', 'Metaheader and raw data (*.mhd,*.mha)'
         };
     
-    [image_path, filenames, filter_index] = PTKDiskUtilities.ChooseFiles('Select the file to import', image_path, true, filespec);
+    [image_path, filenames, filter_index] = CoreDiskUtilities.ChooseFiles('Select the file to import', image_path, true, filespec);
     
     if isempty(image_path)
         image_info = [];
@@ -29,7 +29,7 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
     
     % If in DICOM format, then we will load the entire directory
     if (filter_index ==  2)
-        filenames_dicom = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(image_path, '*'));
+        filenames_dicom = PTKTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
         filenames_dicom = PTKDiskUtilities.RemoveNonDicomFiles(image_path, filenames_dicom);
         image_type = PTKImageFileFormat.Dicom;
         
@@ -54,7 +54,7 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
     
     % If in DICOM format, then we will load the entire directory
     if (image_type == PTKImageFileFormat.Dicom)
-        filenames = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(image_path, '*'));
+        filenames = PTKTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
         filenames = PTKDiskUtilities.RemoveNonDicomFiles(image_path, filenames);
         
         % If there are no valid DICOM files then we return an ImageInfo with

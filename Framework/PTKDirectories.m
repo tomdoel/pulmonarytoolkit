@@ -20,7 +20,7 @@ classdef PTKDirectories < PTKBaseClass
             if ~isempty(PTKConfig.CacheFolder)
                 home_directory = PTKConfig.CacheFolder;
             else
-                home_directory = PTKDiskUtilities.GetUserDirectory;
+                home_directory = CoreDiskUtilities.GetUserDirectory;
             end
             application_directory = PTKSoftwareInfo.ApplicationSettingsFolderName;
             application_directory = fullfile(home_directory, application_directory);  
@@ -72,7 +72,7 @@ classdef PTKDirectories < PTKBaseClass
             
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             results_directory = fullfile(application_directory, PTKSoftwareInfo.OutputDirectoryName);
-            PTKDiskUtilities.CreateDirectoryIfNecessary(results_directory);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(results_directory);
         end
         
         function edited_results_directory = GetEditedResultsDirectoryAndCreateIfNecessary
@@ -80,7 +80,7 @@ classdef PTKDirectories < PTKBaseClass
             
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             edited_results_directory = fullfile(application_directory, PTKSoftwareInfo.EditedResultsDirectoryName);
-            PTKDiskUtilities.CreateDirectoryIfNecessary(edited_results_directory);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(edited_results_directory);
         end
 
         function framework_file_path = GetFrameworkCacheFilePath
@@ -112,7 +112,7 @@ classdef PTKDirectories < PTKBaseClass
         end
         
         function plugin_folders = GetListOfPluginFolders
-            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetPluginsPath);
+            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetPluginsPath);
         end
         
         function plugin_name_list = GetListOfUserPlugins
@@ -120,7 +120,7 @@ classdef PTKDirectories < PTKBaseClass
         end
         
         function plugin_folders = GetListOfUserPluginFolders
-            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetUserPluginsPath);
+            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetUserPluginsPath);
         end
         
         function plugin_name_list = GetListOfGuiPlugins
@@ -128,7 +128,7 @@ classdef PTKDirectories < PTKBaseClass
         end
         
         function plugin_folders = GetListOfGuiPluginFolders
-            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiPluginsPath);
+            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiPluginsPath);
         end
         
         function plugin_name_list = GetListOfUserGuiPlugins
@@ -136,7 +136,7 @@ classdef PTKDirectories < PTKBaseClass
         end
         
         function plugin_folders = GetListOfUserGuiPluginFolders
-            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiUserPluginsPath);
+            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiUserPluginsPath);
         end
         
         function matlab_name_list = GetAllMatlabFilesInFolders(folders_to_scan)
@@ -144,7 +144,7 @@ classdef PTKDirectories < PTKBaseClass
             plugins_found = PTKStack;
             while ~folders_to_scan.IsEmpty
                 next_folder = folders_to_scan.Pop;
-                next_plugin_list = PTKDiskUtilities.GetDirectoryFileList(next_folder.First, '*.m');
+                next_plugin_list = CoreDiskUtilities.GetDirectoryFileList(next_folder.First, '*.m');
                 for next_plugin = next_plugin_list
                     plugins_found.Push(PTKPair(PTKTextUtilities.StripFileparts(next_plugin{1}), next_folder.Second));
                 end
@@ -197,7 +197,7 @@ classdef PTKDirectories < PTKBaseClass
         
         function uids = GetUidsOfAllDatasetsInCache
             cache_directory = PTKDirectories.GetCacheDirectory;
-            subdirectories = PTKDiskUtilities.GetListOfDirectories(cache_directory);
+            subdirectories = CoreDiskUtilities.GetListOfDirectories(cache_directory);
             uids = {};
             for subdir = subdirectories
                 candidate_uid = subdir{1};

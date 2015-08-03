@@ -29,7 +29,7 @@ classdef TestSavePtkRawImage < PTKTest
             for index = 1 : 20
                 image_size = round(2 + 100*rand([1, 3]));
                 ptk_temp_dir = fullfile(tempdir, 'ptk_test');
-                PTKDiskUtilities.CreateDirectoryIfNecessary(ptk_temp_dir);
+                CoreDiskUtilities.CreateDirectoryIfNecessary(ptk_temp_dir);
                 raw_image = rand(image_size);
                 
                 switch data_type

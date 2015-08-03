@@ -77,7 +77,7 @@ classdef PTKDicomUtilities
             % Reads in Dicom image data from the specified metadata
             try
                 try
-                    [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
+                    [file_path, file_name] = CoreDiskUtilities.GetFullFileParts(metadata.Filename);
                     full_file_name = fullfile(file_path, file_name);
                     header = DMReadDicomTags(full_file_name, DMDicomDictionary.EssentialDictionary);
                     image_data = header.PixelData;
@@ -96,7 +96,7 @@ classdef PTKDicomUtilities
             % is stored directly into the RawImage matrix of a PTKWrapper object
             try
                 try
-                    [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
+                    [file_path, file_name] = CoreDiskUtilities.GetFullFileParts(metadata.Filename);
                     full_file_name = fullfile(file_path, file_name);
                     header = DMReadDicomTags(full_file_name, DMDicomDictionary.EssentialDictionary);
                     image_wrapper.RawImage(:, :, slice_index, :) = header.PixelData;

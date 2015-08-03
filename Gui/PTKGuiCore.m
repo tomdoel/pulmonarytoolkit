@@ -261,7 +261,7 @@ classdef PTKGuiCore < PTKFigure
             
             obj.WaitDialogHandle.ShowAndHold('Import data');
             
-            folder_path = PTKDiskUtilities.ChooseDirectory('Select a directory from which files will be imported', obj.GuiSingleton.GetSettings.SaveImagePath);
+            folder_path = CoreDiskUtilities.ChooseDirectory('Select a directory from which files will be imported', obj.GuiSingleton.GetSettings.SaveImagePath);
             
             % An empty folder_path means the user has cancelled
             if ~isempty(folder_path)
@@ -285,7 +285,7 @@ classdef PTKGuiCore < PTKFigure
             
             obj.WaitDialogHandle.ShowAndHold('Import patch');
             
-            [folder_path, filename, filter_index] = PTKDiskUtilities.ChooseFiles('Select the patch to import', obj.GuiSingleton.GetSettings.SaveImagePath, false, {'*.ptk', 'PTK Patch'});
+            [folder_path, filename, filter_index] = CoreDiskUtilities.ChooseFiles('Select the patch to import', obj.GuiSingleton.GetSettings.SaveImagePath, false, {'*.ptk', 'PTK Patch'});
             
             
             % An empty folder_path means the user has cancelled

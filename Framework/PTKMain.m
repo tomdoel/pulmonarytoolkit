@@ -149,7 +149,7 @@ classdef PTKMain < PTKBaseClass
             % This method is called to run a user-defined function for linking
             % datasets
             user_path = PTKDirectories.GetUserPath;
-            if PTKDiskUtilities.FileExists(user_path, 'PTKLinkDatasets.m');
+            if CoreDiskUtilites.FileExists(user_path, 'PTKLinkDatasets.m');
                 PTKLinkDatasets(obj, dataset_uid, dataset, obj.Reporting);
             end
         end
@@ -226,8 +226,8 @@ classdef PTKMain < PTKBaseClass
                 
                 % Remove duplicate filenames (which can happen when loading
                 % metadata files which have raw and metaheader files)
-                non_dicom_filenames = PTKDiskUtilities.FilenameSetDiff(non_dicom_filenames, principal_filename, next_filename.Path);
-                non_dicom_filenames = PTKDiskUtilities.FilenameSetDiff(non_dicom_filenames, secondary_filenames, next_filename.Path);
+                non_dicom_filenames = CoreDiskUtilities.FilenameSetDiff(non_dicom_filenames, principal_filename, next_filename.Path);
+                non_dicom_filenames = CoreDiskUtilities.FilenameSetDiff(non_dicom_filenames, secondary_filenames, next_filename.Path);
                 
                 if isempty(image_type)
                     reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(next_filename.Path, next_filename.FullFile)], []);
@@ -293,7 +293,7 @@ classdef PTKMain < PTKBaseClass
                         first_filename = image_info.ImageFilenames{1}.Name;
                         full_first_filename = image_info.ImageFilenames{1}.FullFile;
                     else
-                        filenames = PTKDiskUtilities.GetDirectoryFileList(image_info.ImagePath, '*');
+                        filenames = CoreDiskUtilities.GetDirectoryFileList(image_info.ImagePath, '*');
                         first_filename = filenames{1};
                         first_path = image_info.ImagePath;
                         full_first_filename = fullfile(image_info.ImagePath, filenames{1});
