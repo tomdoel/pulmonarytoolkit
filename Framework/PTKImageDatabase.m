@@ -292,7 +292,7 @@ classdef PTKImageDatabase < handle
                                     next_filepath = file_path;
                                 end
                                 
-                                if CoreDiskUtilites.FileExists(next_filepath, next_filename)
+                                if CoreDiskUtilities.FileExists(next_filepath, next_filename)
                                     if isempty(tags_to_get)
                                         tags_to_get = DMDicomDictionary.GroupingDictionary;
                                     end

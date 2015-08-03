@@ -30,7 +30,7 @@ function image = PTKLoadImages(image_info, reporting)
             first_file_path = image_path;
             first_file_name = first_file;
         end
-        if ~CoreDiskUtilites.FileExists(first_file_path, first_file_name)
+        if ~CoreDiskUtilities.FileExists(first_file_path, first_file_name)
             reporting.Error(PTKSoftwareInfo.FileMissingErrorId, ['Cannot find the file ' fullfile(image_path, first_file_name)]);
         end
     end

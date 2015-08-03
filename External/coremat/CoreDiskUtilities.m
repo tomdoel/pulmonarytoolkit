@@ -47,7 +47,7 @@ classdef CoreDiskUtilities
             if CoreDiskUtilities.FileExists(path_name, filename)
                 new_filename = [filename '_Backup'];
                 backup_number = 0;
-                while CoreDiskUtilites.FileExists(path_name, new_filename)
+                while CoreDiskUtilities.FileExists(path_name, new_filename)
                     backup_number = backup_number + 1;
                     new_filename = [filename '_Backup' int2str(backup_number)];                    
                 end
@@ -58,7 +58,7 @@ classdef CoreDiskUtilities
         function renamed = RenameFile(path_name, old_filename, new_filename, reporting)
             % Renames a file
             
-            if CoreDiskUtilites.FileExists(path_name, old_filename)
+            if CoreDiskUtilities.FileExists(path_name, old_filename)
                 source = fullfile(path_name, old_filename);
                 dest = fullfile(path_name, new_filename);
                 movefile(source, dest);
@@ -128,8 +128,8 @@ classdef CoreDiskUtilities
             % specified in the input parameter), and the Second property is the
             % just the name of the deepest subdirectory
             
-            dirs_to_do = PTKStack(PTKPair(root_path, ''));
-            dirs_found = PTKStack;
+            dirs_to_do = CoreStack(PTKPair(root_path, ''));
+            dirs_found = CoreStack;
             while ~dirs_to_do.IsEmpty
                 next_dir = dirs_to_do.Pop;
                 dirs_found.Push(next_dir);

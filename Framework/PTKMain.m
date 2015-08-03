@@ -149,7 +149,7 @@ classdef PTKMain < PTKBaseClass
             % This method is called to run a user-defined function for linking
             % datasets
             user_path = PTKDirectories.GetUserPath;
-            if CoreDiskUtilites.FileExists(user_path, 'PTKLinkDatasets.m');
+            if CoreDiskUtilities.FileExists(user_path, 'PTKLinkDatasets.m');
                 PTKLinkDatasets(obj, dataset_uid, dataset, obj.Reporting);
             end
         end
