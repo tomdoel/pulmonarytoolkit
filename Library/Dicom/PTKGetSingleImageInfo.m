@@ -1,5 +1,5 @@
 function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to_get, reporting)
-    % PTKGetSingleImageInfo. Populates a PTKSingleImageMetaInfo object with meta
+    % PTKGetSingleImageInfo. Populates a DMSingleImageMetaInfo object with meta
     %     information derived from an image file
     %
     %
@@ -73,7 +73,7 @@ function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to
         
     end
         
-    single_image_info = PTKSingleImageMetaInfo(file_path, file_name, image_type, modality, date, time, ...
+    single_image_info = DMSingleImageMetaInfo(file_path, file_name, image_type, modality, date, time, ...
         patient_id, study_uid, series_uid, image_uid, ...
         patient_name, study_description, series_description);
 end

@@ -1,13 +1,14 @@
-classdef PTKSingleImageMetaInfo
-    % PTKSingleImageMetaInfo. A structure for holding information related to a
+classdef DMSingleImageMetaInfo
+    % DMSingleImageMetaInfo. A structure for holding information related to a
     %     single image file
+    %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %        
+    %
     
     properties
         ImagePath
@@ -30,7 +31,7 @@ classdef PTKSingleImageMetaInfo
     end
     
     methods
-        function obj = PTKSingleImageMetaInfo(path, filename, image_type, modality, date, time, ...
+        function obj = DMSingleImageMetaInfo(path, filename, image_type, modality, date, time, ...
                 patient_id, study_uid, series_uid, image_uid, ...
                 patient_name, study_description, series_description)
             
