@@ -6,7 +6,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     %
     %         file_grouper = PTKLoadMetadataFromDicomFiles(path, filenames, reporting)
     %
-    %             file_grouper    a PTKFileGrouper object containing the 
+    %             file_grouper    a DMFileGrouper object containing the 
     %                             metadata grouped into coherent sequences of images
     %
     %             image_path, filenames specify the location of the DICOM
@@ -42,7 +42,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     num_slices = length(filenames);
     
     % The file grouper performs the sorting of image metadata
-    file_grouper = PTKFileGrouper;
+    file_grouper = DMFileGrouper;
     
     dictionary = DMDicomDictionary.EssentialDictionaryWithoutPixelData;
     

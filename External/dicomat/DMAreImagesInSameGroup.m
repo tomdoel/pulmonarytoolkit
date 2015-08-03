@@ -1,14 +1,14 @@
-function match = PTKAreImagesInSameGroup(this_metadata, other_metadata, this_metadata_2)
-    % PTKAreImagesInSameGroup. Determines whether two Dicom images form a coherent sequence
+function match = DMAreImagesInSameGroup(this_metadata, other_metadata, this_metadata_2)
+    % DMAreImagesInSameGroup. Determines whether two Dicom images form a coherent sequence
     %
-    % PTKAreImagesInSameGroup compares the metadata from two Dicom images. If
+    % DMAreImagesInSameGroup compares the metadata from two Dicom images. If
     % the images are from the same patient, study and series, and have similar
     % orientations, data types and image types, then they are considered to be
     % part of a coherent sequence.
     %
     %
     %     Syntax:
-    %         match = PTKAreImagesInSameGroup(this_metadata, other_metadata)
+    %         match = DMAreImagesInSameGroup(this_metadata, other_metadata)
     %
     %     Inputs:
     %         this_metadata, other_metadata - metadata structures representing
@@ -22,7 +22,7 @@ function match = PTKAreImagesInSameGroup(this_metadata, other_metadata, this_met
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
@@ -37,7 +37,7 @@ function match = PTKAreImagesInSameGroup(this_metadata, other_metadata, this_met
     % Check that image coordinates lie in a straight line
     if ~isempty(this_metadata_2)
         match = match && CompareMainTags(this_metadata_2, other_metadata);
-        match = match && PTKDicomUtilities.AreImageLocationsConsistent(this_metadata, other_metadata, this_metadata_2);
+        match = match && DMAreImageLocationsConsistent(this_metadata, other_metadata, this_metadata_2);
     end
 end
     

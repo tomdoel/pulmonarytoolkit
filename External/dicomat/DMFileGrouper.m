@@ -1,7 +1,7 @@
-classdef PTKFileGrouper < PTKBaseClass
-    % PTKFileGrouper. Used to separate a series of Dicom images into groups of coherent images
+classdef DMFileGrouper < PTKBaseClass
+    % DMFileGrouper. Used to separate a series of Dicom images into groups of coherent images
     %
-    %     PTKFileGrouper splits a series of Dicom images into 'bins' or 'groups'
+    %     DMFileGrouper splits a series of Dicom images into 'bins' or 'groups'
     %     of images with similar orientations and image properties. For example,
     %     a series containing a scout image will typically be separated into a
     %     group containing the scan images and another group containing the
@@ -22,8 +22,8 @@ classdef PTKFileGrouper < PTKBaseClass
     end
     
     methods
-        function obj = PTKFileGrouper
-            obj.FileGroupings = PTKFileGrouping.empty;
+        function obj = DMFileGrouper
+            obj.FileGroupings = DMFileGrouping.empty;
         end
         
         % Adds a new image. If the metadata is coherent with an existing group,
@@ -42,7 +42,7 @@ classdef PTKFileGrouper < PTKBaseClass
             number_of_groups = numel(obj.FileGroupings);
         end
 
-        % Return the PTKFileGrouping with the gretest number of images
+        % Return the DMFileGrouping with the gretest number of images
         function largest_group = GetLargestGroup(obj)
             
             % Get the length of each group of metadata
@@ -69,7 +69,7 @@ classdef PTKFileGrouper < PTKBaseClass
         end
         
         function NewGrouping(obj, metadata)
-            obj.FileGroupings(end + 1) = PTKFileGrouping(metadata);
+            obj.FileGroupings(end + 1) = DMFileGrouping(metadata);
         end
         
     end

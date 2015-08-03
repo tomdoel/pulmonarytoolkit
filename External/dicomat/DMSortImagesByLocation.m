@@ -1,12 +1,12 @@
-function [sorted_indices, slice_thickness, global_origin_mm] = PTKSortImagesByLocation(metadata_grouping, reporting)
-    % PTKSortImagesByLocation. Sorts a series of Dicom images by their slice
+function [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLocation(metadata_grouping, reporting)
+    % DMSortImagesByLocation. Sorts a series of Dicom images by their slice
     %     locations and calculates additional image parameters
     %
     %     Syntax:
-    %         [sorted_indices, slice_thickness, global_origin_mm] = PTKSortImagesByLocation(metadata_grouping, reporting)
+    %         [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLocation(metadata_grouping, reporting)
     %
     %     Inputs:
-    %         metadata_grouping - A PTKFileGrouping object containing the
+    %         metadata_grouping - A DMFileGrouping object containing the
     %             metadata from the group of Dicom images to be sorted
     %
     %         reporting - A PTKReporting or implementor of the same interface,
@@ -100,7 +100,7 @@ function [sorted_indices, slice_thickness, global_origin_mm] = PTKSortImagesByLo
     % Remove any zero thicknesses, which may indicate multiple slices at the
     % same position
     if any(slice_thicknesses < 0.01)
-        reporting.ShowWarning('PTKSortImagesByLocation:ZeroSliceThickness', 'This image contains more than one image at the same slice position', []);
+        reporting.ShowWarning('DMSortImagesByLocation:ZeroSliceThickness', 'This image contains more than one image at the same slice position', []);
         slice_thicknesses = slice_thicknesses(slice_thicknesses > 0.01);
     end
     
@@ -116,7 +116,7 @@ function [sorted_indices, slice_thickness, global_origin_mm] = PTKSortImagesByLo
     else
         slice_thickness = mode(slice_thicknesses);
         if any((slice_thicknesses - slice_thickness) > 0.01)
-            reporting.ShowWarning('PTKSortImagesByLocation:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
+            reporting.ShowWarning('DMSortImagesByLocation:InconsistentSliceThickness', 'Not all slices have the same thickness', []);
         end
     end
     

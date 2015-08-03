@@ -1,5 +1,5 @@
-classdef PTKFileGrouping < PTKBaseClass
-    % PTKFileGrouping. Stores a set of Dicom metadata structures, corresponding
+classdef DMFileGrouping < PTKBaseClass
+    % DMFileGrouping. Stores a set of Dicom metadata structures, corresponding
     %     to a coherent sequence of images
     %
     %     PTKFileGrouping objects are created by the PTKFileGrouper class,
@@ -19,7 +19,7 @@ classdef PTKFileGrouping < PTKBaseClass
     end
     
     methods
-        function obj = PTKFileGrouping(metadata)
+        function obj = DMFileGrouping(metadata)
             if ~isempty(metadata)
                 obj.Metadata{1} = metadata;
             end
@@ -46,7 +46,7 @@ classdef PTKFileGrouping < PTKBaseClass
         % Sorts the images according to slice location, and computes values for
         % slice thickness and global origin
         function [slice_thickness, global_origin_mm] = SortAndGetParameters(obj, reporting)
-            [sorted_indices, slice_thickness, global_origin_mm] = PTKSortImagesByLocation(obj, reporting);
+            [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLocation(obj, reporting);
             if numel(obj.Metadata) > 1
                 if isempty(sorted_indices)
                     reporting.ShowWarning('PTKFileGrouping:UnableToSortFiles', 'The images in this series may appear in the wrong order because I was unable to determine the correct ordering');
