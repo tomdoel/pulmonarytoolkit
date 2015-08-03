@@ -39,7 +39,7 @@ classdef DMFileGrouping < PTKBaseClass
                 additional_image = [];
             end
             
-            match = PTKAreImagesInSameGroup(obj.Metadata{1}, other_metadata, additional_image);
+            match = DMAreImagesInSameGroup(obj.Metadata{1}, other_metadata, additional_image);
         end
         
 
