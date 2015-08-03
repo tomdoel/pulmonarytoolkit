@@ -19,55 +19,55 @@ classdef PTKDicomUtilities
                 return
             end
             
-            try
-                full_file_name = [file_path, filesep, file_name];
-                is_dicom = DMisdicom(full_file_name);
-            catch exception
-                is_dicom = isdicom(fullfile(file_path, file_name));
+            full_file_name = [file_path, filesep, file_name];
+            
+            is_dicom = PTKDicomFallbackLibrary.getLibrary.isdicom(full_file_name);
+        end
+        
+        function dicom_series_uid = DMGetDicomSeriesUid(fileName, dictionary)
+            % Gets the series UID for a Dicom file
+            
+            if isempty(dictionary)
+                dictionary = DMDicomDictionary.GroupingDictionary;
+            end
+            
+            header = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, dictionary);
+            
+            if isempty(header)
+                dicom_series_uid = [];
+            else
+                % If no SeriesInstanceUID tag then this is not a valid Dicom image (it
+                % might be a DICOMDIR)
+                if isfield(header, 'SeriesInstanceUID')
+                    dicom_series_uid = header.SeriesInstanceUID;
+                else
+                    dicom_series_uid = [];
+                end
             end
         end
         
-        function metadata = ReadMetadata(file_path, file_name, dictionary, reporting)
+        function metadata = ReadMetadata(fileName, dictionary, reporting)
             % Reads in Dicom metadata from the specified file
             try
-                try
-                    full_file_name = fullfile(file_path, file_name);
-                    metadata = DMReadDicomTags(full_file_name, dictionary);
-                    metadata.Filename = [file_path, filesep, file_name];
-                    
-                catch exception
-                    metadata = dicominfo(fullfile(file_path, file_name));
-                end
-            catch exception
-                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
-            end
-        end
-        
-        function metadata = ReadGroupingMetadata(file_path, file_name, reporting)
-            % Reads in Dicom metadata from the specified file
-            try
-                try
-                    full_file_name = fullfile(file_path, file_name);
-                    metadata = DMReadDicomTags(full_file_name, DMDicomDictionary.GroupingDictionary);
-                catch exception
-                    metadata = dicominfo(fullfile(file_path, file_name));
-                end
+                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, dictionary);
             catch exception
                 reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
             end
         end
         
-        function metadata = ReadEssentialMetadata(file_path, file_name, reporting)
+        function metadata = ReadGroupingMetadata(fileName, reporting)
             % Reads in Dicom metadata from the specified file
             try
-                try
-                    full_file_name = fullfile(file_path, file_name);
-                    metadata = DMReadDicomTags(full_file_name, DMDicomDictionary.EssentialDictionaryWithoutPixelData);
-                    metadata.Filename = fullfile(file_path, file_name);
-                    
-                catch exception
-                    metadata = dicominfo(fullfile(file_path, file_name));
-                end
+                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, DMDicomDictionary.GroupingDictionary);
+            catch exception
+                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
+            end
+        end
+        
+        function metadata = ReadEssentialMetadata(fileName, reporting)
+            % Reads in Dicom metadata from the specified file
+            try
+                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName);
             catch exception
                 reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
             end
@@ -75,19 +75,11 @@ classdef PTKDicomUtilities
         
         function image_data = ReadDicomImageFromMetadata(metadata, reporting)
             % Reads in Dicom image data from the specified metadata
+
             try
-                try
-                    [file_path, file_name] = CoreDiskUtilities.GetFullFileParts(metadata.Filename);
-                    full_file_name = fullfile(file_path, file_name);
-                    header = DMReadDicomTags(full_file_name, DMDicomDictionary.EssentialDictionary);
-                    image_data = header.PixelData;
-                    
-                catch exception
-                    image_data = dicomread(metadata);
-                end
-                
+                image_data = PTKDicomFallbackLibrary.getLibrary.dicomread(metadata);
             catch exception
-                reporting.Error('PTKDicomUtilities:DicomReadError', ['Rrror while reading the Dicom file ' file_name '. Error:' exception.message]);
+                reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
             end
         end
         
@@ -95,18 +87,10 @@ classdef PTKDicomUtilities
             % Reads in Dicom image data from the specified metadata. The image data
             % is stored directly into the RawImage matrix of a PTKWrapper object
             try
-                try
-                    [file_path, file_name] = CoreDiskUtilities.GetFullFileParts(metadata.Filename);
-                    full_file_name = fullfile(file_path, file_name);
-                    header = DMReadDicomTags(full_file_name, DMDicomDictionary.EssentialDictionary);
-                    image_wrapper.RawImage(:, :, slice_index, :) = header.PixelData;
-                    
-                catch exception
-                    image_wrapper.RawImage(:, :, slice_index, :) = dicomread(metadata);
-                end
+                image_wrapper.RawImage(:, :, slice_index, :) = PTKDicomFallbackLibrary.getLibrary.dicomread(metadata);
                 
             catch exception
-                reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file ' file_name '. Error:' exception.message]);
+                reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
             end
         end
         

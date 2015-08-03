@@ -41,19 +41,19 @@ function [sorted_indices, slice_thickness, global_origin_mm] = PTKSortImagesByLo
     % images.
     representative_metadata = metadata_grouping.Metadata{1};
     if isfield(representative_metadata, 'ImagePositionPatient')
-        image_positions_patient = PTKContainerUtilities.GetMatrixOfFieldValuesFromSet(metadata_grouping.Metadata, 'ImagePositionPatient')';        
+        image_positions_patient = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(metadata_grouping.Metadata, 'ImagePositionPatient')';        
     else
         image_positions_patient = [];
     end
 
     if isfield(representative_metadata, 'SliceLocation')
-        slice_locations = PTKContainerUtilities.GetMatrixOfFieldValuesFromSet(metadata_grouping.Metadata, 'SliceLocation')';
+        slice_locations = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(metadata_grouping.Metadata, 'SliceLocation')';
     else
         slice_locations = [];
     end
     
     if isfield(representative_metadata, 'InstanceNumber')
-        instance_numbers = PTKContainerUtilities.GetMatrixOfFieldValuesFromSet(metadata_grouping.Metadata, 'InstanceNumber')';
+        instance_numbers = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(metadata_grouping.Metadata, 'InstanceNumber')';
     else
         instance_numbers = [];
     end

@@ -302,7 +302,7 @@ classdef PTKMain < PTKBaseClass
                        throw(MException('PTKMain:FileNotFound', ['The file ' first_filename ' does not exist']));
                     end
                     
-                    metadata = PTKDicomUtilities.ReadGroupingMetadata(first_path, first_filename, reporting);
+                    metadata = PTKDicomUtilities.ReadGroupingMetadata(fullfile(first_path, first_filename), reporting);
                     image_uid = metadata.SeriesInstanceUID;
                     study_uid = metadata.StudyInstanceUID;
                     modality = metadata.Modality;
