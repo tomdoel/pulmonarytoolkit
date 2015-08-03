@@ -20,7 +20,7 @@ classdef TestContainerUtilities < PTKTest
             input_3 = {'orange', 'kiwi', 'grape'};
             input_4 = [1, 2, 3, 4, 5];
             input_5 = [11, 12; 13, 14];
-            input_6 = [PTKPair('wx', 88), PTKPair('yz', 99)];
+            input_6 = [CorePair('wx', 88), CorePair('yz', 99)];
             
             obj.Assert(isequal(PTKContainerUtilities.ConvertToSet(input_1), {'banana'}), 'Expected conversion');
             obj.Assert(~isequal(PTKContainerUtilities.ConvertToSet(input_1), 'banana'), 'Expected conversion');

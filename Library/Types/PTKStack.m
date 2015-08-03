@@ -1,8 +1,8 @@
 classdef PTKStack < handle
     % PTKStack. A class for storing values on a stack
     %
-    % PTKStack is the same as CoreStack, but is maintained to provide
-    % backward compatibility for saved tree structures
+    %     PTKStack is the same as CoreStack, but is maintained to provide
+    %     backward compatibility for saved tree structures
     % 
     %     Licence
     %     -------

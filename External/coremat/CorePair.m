@@ -1,12 +1,10 @@
-classdef PTKPair < handle
-    % PTKPair. A class for storing two values
+classdef CorePair < handle
+    % CorePair. A class for storing two values
     %
-    %     PTKPair is the same as CorePair, but is maintained to provide
-    %     backward compatibility for saved tree structures
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
@@ -17,7 +15,7 @@ classdef PTKPair < handle
     end
     
     methods 
-        function obj = PTKPair(first, second)
+        function obj = CorePair(first, second)
             obj.First = first;
             obj.Second = second;
         end
@@ -30,9 +28,10 @@ classdef PTKPair < handle
             first = {obj.First};
         end
         
-        % Equality operator
         function is_equal = eq(obj, other)
-            if ~isa(other, 'PTKPair')
+            % Equality operator
+            
+            if ~isa(other, 'CorePair')
                 is_equal = false;
             else
                 is_equal = isequal(obj.First, other.First) && isequal(obj.Second, other.Second);

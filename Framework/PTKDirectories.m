@@ -146,7 +146,7 @@ classdef PTKDirectories < PTKBaseClass
                 next_folder = folders_to_scan.Pop;
                 next_plugin_list = CoreDiskUtilities.GetDirectoryFileList(next_folder.First, '*.m');
                 for next_plugin = next_plugin_list
-                    plugins_found.Push(PTKPair(PTKTextUtilities.StripFileparts(next_plugin{1}), next_folder.Second));
+                    plugins_found.Push(CorePair(PTKTextUtilities.StripFileparts(next_plugin{1}), next_folder.Second));
                 end
             end
             matlab_name_list = plugins_found.GetAndClear;
