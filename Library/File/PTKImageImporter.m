@@ -12,7 +12,7 @@ function uids = PTKImageImporter(filename_or_root_directory, database, reporting
     %
     
     reporting.ShowProgress('Importing data');
-    tags_to_get = PTKDicomDictionary.GroupingDictionary;
+    tags_to_get = DMDicomDictionary.GroupingDictionary;
     
     [import_folder, filename_only] = PTKDiskUtilities.GetFullFileParts(filename_or_root_directory);
     

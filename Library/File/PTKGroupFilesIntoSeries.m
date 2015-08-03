@@ -11,7 +11,7 @@ function grouper = PTKGroupFilesIntoSeries(filename, reporting)
     %
     
     reporting.ShowProgress('Imorting data');
-    tags_to_get = PTKDicomDictionary.GroupingDictionary;
+    tags_to_get = DMDicomDictionary.GroupingDictionary;
     
     [import_folder, filename_only] = PTKDiskUtilities.GetFullFileParts(filename);
     grouper = PTKFileSeriesGrouper;
@@ -26,7 +26,7 @@ function grouper = PTKGroupFilesIntoSeries(filename, reporting)
         % For a single file, we check if it is Dicom. If so, we import the whole
         % folder. Otherwise we only import the file
     elseif exist_result == 2
-        uid = GetUid(import_folder, filename_only, tags_to_get, reporting);
+        uid = GetUid(import_folder, filename_only, tags_to_get);
         if isempty(uid)
             GroupFileWithUid(grouper, import_folder, filename_only, uid);
         else
@@ -39,12 +39,13 @@ function grouper = PTKGroupFilesIntoSeries(filename, reporting)
     reporting.CompleteProgress;
 end
 
-function uid = GetUid(folder, filename, tags_to_get, reporting)
-    uid = PTKGetDicomSeries(folder, filename, tags_to_get, reporting);
+function uid = GetUid(folder, filename, tags_to_get)
+    full_file_name = fullfile(folder, filename);
+    uid = DMGetDicomSeriesUid(full_file_name, tags_to_get);
 end
 
 function GroupFile(grouper, folder, filename, tags_to_get, reporting)
-    uid = GetUid(folder, filename, tags_to_get, reporting);
+    uid = GetUid(folder, filename, tags_to_get);
     full_filename = PTKFilename(folder, filename);
     grouper.AddFile(uid, full_filename);
 end

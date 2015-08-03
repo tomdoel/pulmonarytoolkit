@@ -1,11 +1,9 @@
-classdef PTKDicomDictionaryItem
-    % PTKDicomDictionaryItem
-    %
-    %
+classdef DMDicomDictionaryItem
+    % DMDicomDictionaryItem Used in cretating a DMDicomDictionary
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
@@ -19,7 +17,7 @@ classdef PTKDicomDictionaryItem
     end
     
     methods
-        function obj = PTKDicomDictionaryItem(tag_string, vr_type, name)
+        function obj = DMDicomDictionaryItem(tag_string, vr_type, name)
             obj.TagString = tag_string;
             obj.Tag = [hex2dec(tag_string(1:4)), hex2dec(tag_string(6:9))];
             obj.TagIndex = uint32(hex2dec([tag_string(1:4) tag_string(6:9)]));

@@ -11,8 +11,8 @@ classdef PTKDicomUtilities
     
     methods (Static)
 
-        % Returns true if this is a Dicom file
         function is_dicom = IsDicom(file_path, file_name)
+            % Returns true if this is a Dicom file
     
             if strcmp(file_name, 'DICOMDIR')
                 is_dicom = false;
@@ -27,11 +27,12 @@ classdef PTKDicomUtilities
             end
         end
         
-        % Reads in Dicom metadata from the specified file
         function metadata = ReadMetadata(file_path, file_name, dictionary, reporting)
+            % Reads in Dicom metadata from the specified file
             try
                 try
-                    metadata = PTKReadDicomTags(file_path, file_name, dictionary, reporting);
+                    full_file_name = fullfile(file_path, file_name);
+                    metadata = DMReadDicomTags(full_file_name, dictionary);
                     metadata.Filename = [file_path, filesep, file_name];
                     
                 catch exception
@@ -42,11 +43,12 @@ classdef PTKDicomUtilities
             end
         end
         
-        % Reads in Dicom metadata from the specified file
         function metadata = ReadGroupingMetadata(file_path, file_name, reporting)
+            % Reads in Dicom metadata from the specified file
             try
                 try
-                    metadata = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.GroupingDictionary, reporting);
+                    full_file_name = fullfile(file_path, file_name);
+                    metadata = DMReadDicomTags(full_file_name, DMDicomDictionary.GroupingDictionary);
                 catch exception
                     metadata = dicominfo(fullfile(file_path, file_name));
                 end
@@ -55,11 +57,12 @@ classdef PTKDicomUtilities
             end
         end
         
-        % Reads in Dicom metadata from the specified file
         function metadata = ReadEssentialMetadata(file_path, file_name, reporting)
+            % Reads in Dicom metadata from the specified file
             try
                 try
-                    metadata = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialDictionaryWithoutPixelData, reporting);
+                    full_file_name = fullfile(file_path, file_name);
+                    metadata = DMReadDicomTags(full_file_name, DMDicomDictionary.EssentialDictionaryWithoutPixelData);
                     metadata.Filename = fullfile(file_path, file_name);
                     
                 catch exception
@@ -70,12 +73,13 @@ classdef PTKDicomUtilities
             end
         end
         
-        % Reads in Dicom image data from the specified metadata
         function image_data = ReadDicomImageFromMetadata(metadata, reporting)
+            % Reads in Dicom image data from the specified metadata
             try
                 try
                     [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
-                    header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialDictionary, reporting);
+                    full_file_name = fullfile(file_path, file_name);
+                    header = DMReadDicomTags(full_file_name, DMDicomDictionary.EssentialDictionary);
                     image_data = header.PixelData;
                     
                 catch exception
@@ -87,13 +91,14 @@ classdef PTKDicomUtilities
             end
         end
         
-        % Reads in Dicom image data from the specified metadata. The image data
-        % is stored directly into the RawImage matrix of a PTKWrapper object
         function ReadDicomImageIntoWrapperFromMetadata(metadata, image_wrapper, slice_index, reporting)
+            % Reads in Dicom image data from the specified metadata. The image data
+            % is stored directly into the RawImage matrix of a PTKWrapper object
             try
                 try
                     [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
-                    header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialDictionary, reporting);
+                    full_file_name = fullfile(file_path, file_name);
+                    header = DMReadDicomTags(full_file_name, DMDicomDictionary.EssentialDictionary);
                     image_wrapper.RawImage(:, :, slice_index, :) = header.PixelData;
                     
                 catch exception
@@ -105,9 +110,9 @@ classdef PTKDicomUtilities
             end
         end
         
-        % Returns true if three images lie approximately on a straight line (determined
-        % by the coordinates in the ImagePositionPatient Dicom tags)
         function match = AreImageLocationsConsistent(first_metadata, second_metadata, third_metadata)
+            % Returns true if three images lie approximately on a straight line (determined
+            % by the coordinates in the ImagePositionPatient Dicom tags)
             
             % If the ImagePositionPatient tag is not present, assume it is
             % consistent

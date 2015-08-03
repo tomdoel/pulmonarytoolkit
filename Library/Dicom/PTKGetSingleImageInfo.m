@@ -1,5 +1,5 @@
 function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to_get, reporting)
-    % PTKGetDicomSeries. Populates a PTKSingleImageMetaInfo object with meta
+    % PTKGetSingleImageInfo. Populates a PTKSingleImageMetaInfo object with meta
     %     information derived from an image file
     %
     %
@@ -16,11 +16,12 @@ function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to
     end
 
     if isempty(tags_to_get)
-        tags_to_get = PTKDicomDictionary.GroupingDictionary;
+        tags_to_get = DMDicomDictionary.GroupingDictionary;
     end
 
     try
-        header = PTKReadDicomTags(file_path, file_name, tags_to_get, reporting);
+        full_file_name = fullfile(file_path, file_name);
+        header = DMReadDicomTags(full_file_name, tags_to_get);
     catch ex
         header = dicominfo(fullfile(file_path, file_name));
     end

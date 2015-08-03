@@ -1,6 +1,14 @@
 function isDicom = DMisdicom(fileName)
     % DMisdicom. Tests whether a file is in DICOM format
     %
+    % Usage:
+    %     isDicom = DMisdicom(fileName)
+    %
+    %     fileName: path and filename of the file to test
+    %
+    %  Returns:
+    %     true if the file appears to be a Dicom file
+    %
     %
     %
     %     Licence
