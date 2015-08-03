@@ -16,7 +16,7 @@ classdef CoreStack < handle
     methods 
         function obj = CoreStack(stack_items)
             if nargin > 0
-                obj.Stack = PTKContainerUtilities.ConvertToSet(stack_items);
+                obj.Stack = CoreContainerUtilities.ConvertToSet(stack_items);
             else
                 obj.Stack = cell.empty;
             end
@@ -25,7 +25,7 @@ classdef CoreStack < handle
         function Push(obj, stack_items)
             % Places one or more items on the stack. stack_items can be a single
             % object, a set or an array of objects
-            obj.Stack = [obj.Stack PTKContainerUtilities.ConvertToSet(stack_items)];
+            obj.Stack = [obj.Stack CoreContainerUtilities.ConvertToSet(stack_items)];
         end
         
         function item = Pop(obj)
@@ -48,7 +48,7 @@ classdef CoreStack < handle
         function field_values = GetField(obj, field_name)
             % Returns the values of the field field_name from every item in the
             % stack
-            field_values = PTKContainerUtilities.GetFieldValuesFromSet(obj.Stack, field_name);
+            field_values = CoreContainerUtilities.GetFieldValuesFromSet(obj.Stack, field_name);
         end
     end
 end

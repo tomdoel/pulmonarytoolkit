@@ -95,7 +95,7 @@ classdef PTKImageDatabase < handle
             else
                 uids = obj.SeriesMap.keys;
                 values = obj.SeriesMap.values;
-                paths = PTKContainerUtilities.GetFieldValuesFromSet(values, 'GetVisiblePath');
+                paths = CoreContainerUtilities.GetFieldValuesFromSet(values, 'GetVisiblePath');
                 
                 % Sort the uids and paths by the pathname
                 [~, sorted_indices] = PTKTextUtilities.SortFilenames(paths);
@@ -131,9 +131,9 @@ classdef PTKImageDatabase < handle
 
             ids = obj.PatientMap.keys;
             values = obj.PatientMap.values;
-            names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');
-            short_visible_names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
-            num_series = PTKContainerUtilities.GetMatrixOfFieldValuesFromSet(values, 'GetNumberOfSeries');
+            names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');
+            short_visible_names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
+            num_series = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(values, 'GetNumberOfSeries');
 
             if isempty(short_visible_names)
                 names = [];
@@ -345,9 +345,9 @@ classdef PTKImageDatabase < handle
     methods (Access = private)
         function patient_info = GetPatients(obj)
             patient_info = obj.PatientMap.values;
-            family_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
-            family_names = PTKContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
-            short_visible_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'ShortVisibleName');
+            family_names = CoreContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
+            family_names = CoreContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
+            short_visible_names = CoreContainerUtilities.GetFieldValuesFromSet(patient_info, 'ShortVisibleName');
 
             if isempty(family_names)
                 patient_info = [];

@@ -18,7 +18,7 @@ classdef PTKUndoStack < handle
     methods 
         function obj = PTKUndoStack(stack_items, max_num_items)
             if nargin > 0
-                obj.Stack = PTKContainerUtilities.ConvertToSet(stack_items);
+                obj.Stack = CoreContainerUtilities.ConvertToSet(stack_items);
                 obj.MaxNumberOfItems = max_num_items;
             else
                 obj.Stack = cell.empty;
@@ -28,7 +28,7 @@ classdef PTKUndoStack < handle
         function Push(obj, stack_items)
             % Places one or more items on the stack. stack_items can be a single
             % object, a set or an array of objects
-            obj.Stack = [obj.Stack PTKContainerUtilities.ConvertToSet(stack_items)];
+            obj.Stack = [obj.Stack CoreContainerUtilities.ConvertToSet(stack_items)];
             if numel(obj.Stack) > obj.MaxNumberOfItems
                 obj.Stack = obj.Stack(end - obj.MaxNumberOfItems + 1 : end);
             end
@@ -63,7 +63,7 @@ classdef PTKUndoStack < handle
         function field_values = GetField(obj, field_name)
             % Returns the values of the field field_name from every item in the
             % stack
-            field_values = PTKContainerUtilities.GetFieldValuesFromSet(obj.Stack, field_name);
+            field_values = CoreContainerUtilities.GetFieldValuesFromSet(obj.Stack, field_name);
         end
     end
 end

@@ -49,8 +49,8 @@ classdef PTKImageDatabasePatient < handle
         
         function series = GetListOfSeries(obj)
             series = obj.SeriesMap.values;
-            dates = PTKContainerUtilities.GetFieldValuesFromSet(series, 'Date');
-            times = PTKContainerUtilities.GetFieldValuesFromSet(series, 'Time');
+            dates = CoreContainerUtilities.GetFieldValuesFromSet(series, 'Date');
+            times = CoreContainerUtilities.GetFieldValuesFromSet(series, 'Time');
             date_time = strcat(dates, times);
             
             % Remove any empty values to ensure sort works

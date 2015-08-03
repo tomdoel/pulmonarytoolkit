@@ -240,8 +240,8 @@ classdef CoreDiskUtilities
             if ~iscell(filenames_to_match)
                 filenames_to_match = {filenames_to_match};
             end
-            file_set = PTKContainerUtilities.GetFieldValuesFromSet(filename_set, 'Name');
-            path_set = PTKContainerUtilities.GetFieldValuesFromSet(filename_set, 'Path');
+            file_set = CoreContainerUtilities.GetFieldValuesFromSet(filename_set, 'Name');
+            path_set = CoreContainerUtilities.GetFieldValuesFromSet(filename_set, 'Path');
 
             matching_files = false(1, numel(file_set));
             

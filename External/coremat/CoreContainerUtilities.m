@@ -1,5 +1,5 @@
-classdef PTKContainerUtilities
-    % PTKContainerUtilities. Utility functions related to data storage classes
+classdef CoreContainerUtilities
+    % CoreContainerUtilities. Utility functions related to data storage classes
     %
     %
     %     Licence
@@ -28,7 +28,7 @@ classdef PTKContainerUtilities
                 field_values = [];
                 return;
             end
-            field_values = cell2mat(PTKContainerUtilities.GetFieldValuesFromSet(set, field_name));
+            field_values = cell2mat(CoreContainerUtilities.GetFieldValuesFromSet(set, field_name));
         end
         
         function values_set = ConvertToSet(values)

@@ -44,7 +44,7 @@ classdef PTKOrganisedPlugins < PTKBaseClass
             for tool_map = tool_maps
                 tool_list = horzcat(tool_list, tool_map{1}.values);
             end
-            locations = PTKContainerUtilities.GetMatrixOfFieldValuesFromSet(tool_list, 'Location');
+            locations = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(tool_list, 'Location');
             [~, index] = sort(locations, 'ascend');
             tool_list = tool_list(index);
         end        

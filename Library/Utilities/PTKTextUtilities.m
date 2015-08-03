@@ -36,7 +36,7 @@ classdef PTKTextUtilities < handle
             end
             
             if isa(original_filenames{1}, 'PTKFilename')
-                filenames = PTKContainerUtilities.GetFieldValuesFromSet(original_filenames, 'Name');
+                filenames = CoreContainerUtilities.GetFieldValuesFromSet(original_filenames, 'Name');
             else
                 filenames = original_filenames;
             end

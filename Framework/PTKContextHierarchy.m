@@ -151,14 +151,14 @@ classdef PTKContextHierarchy < PTKBaseClass
             end
             
             context_list = [];
-            for next_output_context_set = PTKContainerUtilities.ConvertToSet(output_context);
+            for next_output_context_set = CoreContainerUtilities.ConvertToSet(output_context);
                 next_output_context = next_output_context_set{1};
                 if isa(next_output_context, 'PTKContext')
                     context_list{end + 1} = next_output_context;
                 elseif isa(next_output_context, 'PTKContextSet')
                     context_set_mapping = obj.ContextSets(char(next_output_context));
                     context_mapping_list = context_set_mapping.ContextList;
-                    context_list = [context_list, PTKContainerUtilities.GetFieldValuesFromSet(context_mapping_list, 'Context')];
+                    context_list = [context_list, CoreContainerUtilities.GetFieldValuesFromSet(context_mapping_list, 'Context')];
                 else
                     reporting.Error('PTKContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
                 end

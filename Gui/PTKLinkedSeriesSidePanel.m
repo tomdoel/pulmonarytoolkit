@@ -69,7 +69,7 @@ classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
             
             % Get uids for every series associated with this patient
             datasets = obj.PatientDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, patient_id);
-            all_uids = PTKContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid');
+            all_uids = CoreContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid');
             obj.ListBox.ClearItems;
             
             link_map = obj.LinkedRecorder.LinkMap;
