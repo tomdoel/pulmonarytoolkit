@@ -57,7 +57,7 @@ end
 
 function GroupDirectoryRecursive(grouper, import_folder, tags_to_get, reporting)
     
-    directories_to_do = PTKStack(import_folder);
+    directories_to_do = CoreStack(import_folder);
     
     while ~directories_to_do.IsEmpty
         current_dir = directories_to_do.Pop;

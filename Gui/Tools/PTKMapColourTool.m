@@ -167,7 +167,7 @@ classdef PTKMapColourTool < PTKTool
             
             % Label all child components with the same colour
             if ~isempty(child_label_map)
-                children_to_do = PTKStack(child_label_map{segmentation_colour});
+                children_to_do = CoreStack(child_label_map{segmentation_colour});
                 while ~children_to_do.IsEmpty
                     next_child_colour = children_to_do.Pop;
                     colourmap(next_child_colour + 1) = obj.Colour;
@@ -183,7 +183,7 @@ classdef PTKMapColourTool < PTKTool
                     parent_colour = parent_label_map{parent_colour};
                 end
                 
-                children_to_do = PTKStack(child_label_map{segmentation_colour});
+                children_to_do = CoreStack(child_label_map{segmentation_colour});
                 while ~children_to_do.IsEmpty
                     next_child_colour = children_to_do.Pop;
                     colourmap(next_child_colour + 1) = obj.Colour;

@@ -140,8 +140,8 @@ classdef PTKDirectories < PTKBaseClass
         end
         
         function matlab_name_list = GetAllMatlabFilesInFolders(folders_to_scan)
-            folders_to_scan = PTKStack(folders_to_scan);
-            plugins_found = PTKStack;
+            folders_to_scan = CoreStack(folders_to_scan);
+            plugins_found = CoreStack;
             while ~folders_to_scan.IsEmpty
                 next_folder = folders_to_scan.Pop;
                 next_plugin_list = CoreDiskUtilities.GetDirectoryFileList(next_folder.First, '*.m');

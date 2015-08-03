@@ -475,7 +475,7 @@ classdef PTKUserInterfaceObject < PTKBaseClass
                 
         
         function object_hierarchy = GetObjectHierarchy(obj, processing_object)
-            object_hierarchy = PTKStack;
+            object_hierarchy = CoreStack;
             while (obj ~= processing_object && isvalid(processing_object))
                 object_hierarchy.Push(processing_object);
                 processing_object = processing_object.Parent;

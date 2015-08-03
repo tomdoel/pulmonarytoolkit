@@ -1,12 +1,10 @@
-classdef PTKStack < handle
-    % PTKStack. A class for storing values on a stack
+classdef CoreStack < handle
+    % CoreStack. A class for storing values on a stack
     %
-    % PTKStack is the same as CoreStack, but is maintained to provide
-    % backward compatibility for saved tree structures
-    % 
+    %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
@@ -16,7 +14,7 @@ classdef PTKStack < handle
     end
     
     methods 
-        function obj = PTKStack(stack_items)
+        function obj = CoreStack(stack_items)
             if nargin > 0
                 obj.Stack = PTKContainerUtilities.ConvertToSet(stack_items);
             else
