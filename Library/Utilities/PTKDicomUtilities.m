@@ -85,7 +85,7 @@ classdef PTKDicomUtilities
         
         function ReadDicomImageIntoWrapperFromMetadata(metadata, image_wrapper, slice_index, reporting)
             % Reads in Dicom image data from the specified metadata. The image data
-            % is stored directly into the RawImage matrix of a PTKWrapper object
+            % is stored directly into the RawImage matrix of a CoreWrapper object
             try
                 image_wrapper.RawImage(:, :, slice_index, :) = PTKDicomFallbackLibrary.getLibrary.dicomread(metadata);
                 

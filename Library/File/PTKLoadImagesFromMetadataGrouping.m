@@ -33,7 +33,7 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
     reporting.ShowProgress('Reading pixel data');
     reporting.UpdateProgressValue(0);
 
-    image_wrapper = PTKWrapper;
+    image_wrapper = CoreWrapper;
     
     num_slices = length(metadata_grouping.Metadata);
 

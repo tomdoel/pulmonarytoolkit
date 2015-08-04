@@ -59,7 +59,7 @@ classdef PTKDicomImage < PTKImage
             
             if isfield(metadata, 'ImageOrientationPatient')
                 [new_dimension_order, flip] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation(metadata.ImageOrientationPatient, reporting);
-                if isa(original_image, 'PTKWrapper')
+                if isa(original_image, 'CoreWrapper')
                     original_image.RawImage = permute(original_image.RawImage, new_dimension_order);
                     for dimension_index = 1 : 3
                         if flip(dimension_index)
@@ -92,7 +92,7 @@ classdef PTKDicomImage < PTKImage
                 rescale_intercept = [];
             end
 
-            if isa(original_image, 'PTKWrapper')
+            if isa(original_image, 'CoreWrapper')
                 new_dicom_image = PTKDicomImage( ...
                     original_image.RawImage, rescale_slope, rescale_intercept, voxel_size, metadata.Modality, metadata.StudyInstanceUID, metadata ...
                     );

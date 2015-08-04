@@ -79,7 +79,7 @@ classdef PTKCachedFileReader < handle
         end
         
         function wrapper = ReadDataIntoWrapper(obj, data_type, number_of_bytes)
-            wrapper = PTKWrapper;
+            wrapper = CoreWrapper;
             wrapper.RawImage = ReadBytesFromCache(obj, number_of_bytes);
             
             if strcmp(data_type, 'char')
