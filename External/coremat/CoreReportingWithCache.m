@@ -1,36 +1,36 @@
-classdef PTKReportingWithCache < PTKReportingInterface
-    % PTKReportingWithCache. Provides error, message and progress reporting, with
+classdef CoreReportingWithCache < CoreReportingInterface
+    % CoreReportingWithCache. Provides error, message and progress reporting, with
     %     warnings and messages cached to prevent display of duplicates
     %
-    %     PTKReportingWithCache is a wrapper around a PTKReporting object.
-    %     Messages and warnings are cached using a PTKReportingWarningsCache and displayed
+    %     CoreReportingWithCache is a wrapper around a CoreReporting object.
+    %     Messages and warnings are cached using a CoreReportingWarningsCache and displayed
     %     at the end of the algorith. Duplicate messages and warnings are
     %     grouped together to prevent multiple messages appearing.
     %
-    %     See PTKReportingIntertface.m for details of the methods this class
+    %     See CoreReportingIntertface.m for details of the methods this class
     %     implements.
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
 
     properties (Access = private)
-        Reporting  % Handle to a PTKReporting object
+        Reporting  % Handle to a CoreReporting object
         WarningsCache
     end
     
     methods
-        function obj = PTKReportingWithCache(reporting)
+        function obj = CoreReportingWithCache(reporting)
             if nargin > 0
                 obj.Reporting = reporting;
             else
-                obj.Reporting = PTKReportingDefault;
+                obj.Reporting = CoreReportingDefault;
             end
-            obj.WarningsCache = PTKReportingWarningsCache(obj);
+            obj.WarningsCache = CoreReportingWarningsCache(obj);
         end
         
         function delete(obj)

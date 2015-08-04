@@ -1,21 +1,21 @@
-classdef PTKProgressInterface < CoreBaseClass
-    % PTKProgressInterface. Interface for classes which implement a progress bar.
+classdef CoreProgressInterface < CoreBaseClass
+    % CoreProgressInterface. Interface for classes which implement a progress bar.
     %
-    %     The PTKReporting class uses this interface to display and update a
-    %     progress bar and associated text. The PTKProgressDialog class
+    %     The CoreReporting class uses this interface to display and update a
+    %     progress bar and associated text. The CoreProgressDialog class
     %     implements the progress bar as a standard Matlab progress dialog,
-    %     whereas the PTKReportingPanel implements a custom progress panel for an
+    %     whereas other implementations may implement a custom progress panel for an
     %     existing figure.
     %
     %     You can implement custom progress reporting by creating a class which
     %     implements this interface, and then passing an instance of your
-    %     progress class into PTKReporting.
+    %     progress class into CoreReporting.
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     

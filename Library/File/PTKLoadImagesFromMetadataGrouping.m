@@ -27,7 +27,7 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
     %        
 
     if nargin < 2
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     reporting.ShowProgress('Reading pixel data');

@@ -9,7 +9,7 @@ function [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLoc
     %         metadata_grouping - A DMFileGrouping object containing the
     %             metadata from the group of Dicom images to be sorted
     %
-    %         reporting - A PTKReporting or implementor of the same interface,
+    %         reporting - A CoreReporting or implementor of the same interface,
     %             for error and progress reporting. 
     %
     %     Outputs:

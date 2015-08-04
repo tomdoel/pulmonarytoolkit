@@ -1,13 +1,13 @@
-classdef PTKTextUtilities < handle
-    % PTKTextUtilities. Utility functions related to strings
+classdef CoreTextUtilities < handle
+    % CoreTextUtilities. Utility functions related to strings
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %        
+    %      
 
 
     methods (Static)

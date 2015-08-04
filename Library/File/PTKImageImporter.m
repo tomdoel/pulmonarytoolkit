@@ -67,7 +67,7 @@ end
 
 function uids = ImportFilesInDirectory(database, directory, tags_to_get, reporting)
     uids = [];
-    all_filenames = PTKTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(directory, '*'));
+    all_filenames = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(directory, '*'));
     for filename = all_filenames
         if ~strcmp(filename{1}, 'DICOMDIR')
             try

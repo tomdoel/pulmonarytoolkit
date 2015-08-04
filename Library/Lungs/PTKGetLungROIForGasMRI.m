@@ -30,7 +30,7 @@ function lung_image = PTKGetLungROIForGasMRI(lung_image, reporting)
     end
     
     if nargin < 2
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
 
     reporting.ShowProgress('Finding region of interest');

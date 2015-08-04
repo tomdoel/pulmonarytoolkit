@@ -4,7 +4,7 @@ function PTKAddPaths(varargin)
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    PTKAddPaths_Version_Number = 1;
+    PTKAddPaths_Version_Number = 2;
     
     persistent PTK_PathsHaveBeenSet
     

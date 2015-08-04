@@ -28,7 +28,7 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
 
     % Create a reporting object if none was provided
     if nargin < 3
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     % Load the metadata from the DICOM images, and group into coherent sequences

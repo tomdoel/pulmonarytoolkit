@@ -42,7 +42,7 @@ classdef TestVoronoiDivision < PTKTest
                 label_matrix = PTKVoronoiDivision(zeros(5,5,5), labels, reporting);
             catch ex
                 if ~isa(ex, 'PTKTestException')
-                    PTKErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
+                    CoreErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
                     
                 end
             end
@@ -53,7 +53,7 @@ classdef TestVoronoiDivision < PTKTest
                 label_matrix = PTKVoronoiDivision(region_mask, zeros(5,5,5), reporting);
             catch ex
                 if ~isa(ex, 'PTKTestException')
-                    PTKErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
+                    CoreErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
                     
                 end
             end

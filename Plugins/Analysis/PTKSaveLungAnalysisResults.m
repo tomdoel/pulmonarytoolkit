@@ -44,7 +44,7 @@ classdef PTKSaveLungAnalysisResults < PTKPlugin
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung};
             results = dataset.GetResult('PTKDensityAnalysis', contexts);
             
-            table = PTKConvertMetricsToTable(results, patient_name, uid, PTKReportingDefault);
+            table = PTKConvertMetricsToTable(results, patient_name, uid, CoreReportingDefault);
             
             dataset.SaveTableAsCSV('PTKSaveLungAnalysisResults', 'Lung analysis', 'LungResults', 'Analysis for both lungs and individual lungs', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
         end

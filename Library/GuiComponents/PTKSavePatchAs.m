@@ -26,7 +26,7 @@ function path_name = PTKSavePatchAs(patch_object, path_name, reporting)
     end
     
     if nargin < 3
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     [filename, path_name, filter_index] = SavePatchDialogBox(path_name);

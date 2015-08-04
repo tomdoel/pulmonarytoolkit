@@ -11,7 +11,7 @@ classdef TestSavePtkRawImage < PTKTest
 
     methods
         function obj = TestSavePtkRawImage
-            reporting = PTKReportingDefault;
+            reporting = CoreReportingDefault;
             obj.TestSaveLoad('uint8', reporting);
             obj.TestSaveLoad('int8', reporting);
             obj.TestSaveLoad('uint16', reporting);

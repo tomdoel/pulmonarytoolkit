@@ -9,7 +9,7 @@ function data = PTKLoadXml(file_name, reporting)
     %         data = PTKLoadXml(file_name, reporting);
     %
     %             file_name - a PTKFilename or character array containing the path and filename
-    %             reporting - object of type PTKReportingInterface for error reporting
+    %             reporting - object of type CoreReportingInterface for error reporting
     %
     %             data - a structure containing all the data which has been loaded
     %

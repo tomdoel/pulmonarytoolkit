@@ -30,14 +30,14 @@ classdef PTKTestExpectationChecker < handle
             current_expectation = obj.ExpectationList(1);
             obj.ExpectationList(1) = [];
             
-            [calling_function, stack] = PTKErrorUtilities.GetCallingFunction(2);
+            [calling_function, stack] = CoreErrorUtilities.GetCallingFunction(2);
             if ~strcmp(current_expectation.MethodName, calling_function)
-                PTKErrorUtilities.ThrowException('PTKTestExpectationChecker:WrongCallingFunction', ...
+                CoreErrorUtilities.ThrowException('PTKTestExpectationChecker:WrongCallingFunction', ...
                     ['Test failure: expected call to ' current_expectation.MethodName ' but actual call was to ' calling_function]);
             end
             
             if parameters ~= current_expectation.Parameters
-                PTKErrorUtilities.ThrowException('PTKTestExpectationChecker:WrongParameter', ...
+                CoreErrorUtilities.ThrowException('PTKTestExpectationChecker:WrongParameter', ...
                     ['Test failure: parameters not as expected. Expected: ' char(current_expectation.Parameters) ' but actually ' char(parametrs)]);
             end
             

@@ -57,7 +57,7 @@ classdef PTKImageDatabasePatient < handle
             empty_values = cellfun(@isempty, date_time);
             date_time(empty_values) = {''};
 
-            [~, sorted_indices] = PTKTextUtilities.SortFilenames(date_time);
+            [~, sorted_indices] = CoreTextUtilities.SortFilenames(date_time);
             series = series(sorted_indices);
         end
         

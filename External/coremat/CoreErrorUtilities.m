@@ -1,11 +1,11 @@
-classdef PTKErrorUtilities < handle
-    % PTKErrorUtilities. Error-related utility functions.
+classdef CoreErrorUtilities < handle
+    % CoreErrorUtilities. Error-related utility functions.
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
 
@@ -27,7 +27,7 @@ classdef PTKErrorUtilities < handle
                 else
                     stack_top = stack(1);
                     calling_function = stack_top.name;
-                    if length(calling_function) < 11 || ~strcmp(calling_function(1:11), 'PTKReporting')
+                    if length(calling_function) < 11 || ~strcmp(calling_function(1:11), 'CoreReporting')
                         caller_found = true;
                     end
                     levels_to_ignore = levels_to_ignore + 1;

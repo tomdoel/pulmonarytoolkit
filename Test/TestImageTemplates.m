@@ -44,7 +44,7 @@ classdef TestImageTemplates < PTKTest
                 template_image = image_templates.GetTemplateImage(PTKContext.OriginalImage, null_dataset_stack, mock_reporting);
             catch ex
                 if ~isa(ex, 'PTKTestException')
-                    PTKErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
+                    CoreErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
                     
                 end
             end
@@ -71,7 +71,7 @@ classdef TestImageTemplates < PTKTest
                 template_image = image_templates.GetTemplateImage(PTKContext.LungROI, null_dataset_stack, mock_reporting);
             catch ex
                 if ~isa(ex, 'PTKTestException')
-                    PTKErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
+                    CoreErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
                     
                 end
             end
@@ -81,7 +81,7 @@ classdef TestImageTemplates < PTKTest
                 template_image = image_templates.GetTemplateImage(PTKContext.LeftLung, null_dataset_stack, mock_reporting);
             catch ex
                 if ~isa(ex, 'PTKTestException')
-                    PTKErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
+                    CoreErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
                     
                 end
             end

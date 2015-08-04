@@ -16,9 +16,9 @@ classdef TestTextUtilities < PTKTest
             filename_1 = ['Banana' fs 'Orange' fs 'MyName.ext'];
             filename_2 = ['Scott' fs 'Kubrick' fs 'NoName.bla'];
             both_filenames = {filename_1, filename_2};
-            obj.Assert(strcmp('MyName', PTKTextUtilities.StripFileparts(filename_1)), 'Expected filename');
-            obj.Assert(strcmp('NoName', PTKTextUtilities.StripFileparts(filename_2)), 'Expected filename');
-            obj.Assert(strcmp({'MyName', 'NoName'}, PTKTextUtilities.StripFileparts(both_filenames)), 'Expected filename');
+            obj.Assert(strcmp('MyName', CoreTextUtilities.StripFileparts(filename_1)), 'Expected filename');
+            obj.Assert(strcmp('NoName', CoreTextUtilities.StripFileparts(filename_2)), 'Expected filename');
+            obj.Assert(strcmp({'MyName', 'NoName'}, CoreTextUtilities.StripFileparts(both_filenames)), 'Expected filename');
         end
     end
 end

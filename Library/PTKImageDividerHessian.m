@@ -73,7 +73,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     %         that quadrant.
     %
     %         function ComputeFilter
-    %             reporting = PTKReportingDefault;
+    %             reporting = CoreReportingDefault;
     %             gaussian_size_mm = 1.5;
     %             filtered_image = PTKImageDividerHessian(image_data, @FilterFunction, [], gaussian_size_mm, [], [], [], [], reporting)
     %         end

@@ -1,10 +1,13 @@
-classdef PTKReportingInterface < CoreBaseClass
-    % PTKReportingInterface. Provides an interface for error and progress reporting.
+classdef CoreReportingInterface < CoreBaseClass
+    % CoreReportingInterface. Provides an interface for error and progress reporting.
     %
-    %     PTKReportingInterface is the interface the Pulmonary Toolkit uses to
-    %     process errors, warnings, messages, logging information and progress
-    %     reports. It is also used as a callback to the GUI (if it exists) for
-    %     plugins to get the current orientation and marker image.
+    %     CoreReportingInterface is the interface used by CoreMat and other
+    %     libraries to process errors, warnings, messages, logging
+    %     information and progress reports. This means that warnings,
+    %     errors and progress are handled via a callback instead of
+    %     directly bringing up message and progress boxes or writing to the
+    %     command window. This allows applications to choose how they
+    %     process error, warning and progress information.
     %
     %     You can create your own implementation of this interface to get
     %     customised message behaviour; for example, if you are running a batch
@@ -12,15 +15,15 @@ classdef PTKReportingInterface < CoreBaseClass
     %     displaying them on the command line.
     %
     %     This is an abstract class; you should not directly create an instance
-    %     of PTKReportingInterface. Instead, you should either use one of the
-    %     existing implementation classes (PTKReporting, PTKReportingDefault) or
+    %     of CoreReportingInterface. Instead, you should either use one of the
+    %     existing implementation classes (CoreReporting, CoreReportingDefault) or
     %     you can create your own to achieve customised behaviour.
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
 
@@ -80,22 +83,6 @@ classdef PTKReportingInterface < CoreBaseClass
         % dialog
         CheckForCancel(obj)
 
-        % Instructs the GUI (if it exists) to change the current view
-        % coordinates
-        ChangeViewingPosition(obj, coordinates)
-        
-        % Obtains the current orientation of the GUI (if it exists)
-        orientation = GetOrientation(obj)
-        
-        % Instructs the GUI (if it exists) to change the current view
-        % orientation, where Orientation is of type PTKImageOrientation
-        ChangeViewingOrientation(obj, orientation)
-        
-        % Obtains the current marker image from the GUI (if it exists). Only
-        % used by plugins which need to interact with the marker image used wit
-        % the GUI.
-        marker_image = GetMarkerImage(obj)
-
         % Nests progress reporting. After calling this function, subsequent
         % progress updates will modify the progress bar between the current
         % value ane the current value plus the last value_change.
@@ -109,17 +96,7 @@ classdef PTKReportingInterface < CoreBaseClass
         ClearProgressStack(obj)
         
         % Show any error or warning messages and clear the message stack
-        ShowAndClearPendingMessages(obj)
-        
-        % Used to update any viewing panels attached to this reporting object
-        UpdateOverlayImage(obj, new_image)
-        
-        % Used to update any viewing panels attached to this reporting object
-        UpdateOverlaySubImage(obj, new_image)
-        
-        % Signals that a path should be opened or otherwise alerted to the user
-        OpenPath(obj, file_path, message)
-
+        ShowAndClearPendingMessages(obj)        
     end
 end
 

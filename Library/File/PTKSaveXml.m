@@ -10,7 +10,7 @@ function PTKSaveXml(data, name, file_name, reporting)
     %             data - the root object of the data to store. Can be a value, a class, a structure, map or cell array
     %             name - the name of the root object 
     %             file_name - a PTKFilename or character array containing the path and filename
-    %             reporting - object of type PTKReportingInterface for error reporting
+    %             reporting - object of type CoreReportingInterface for error reporting
     %
     %
     %     Licence

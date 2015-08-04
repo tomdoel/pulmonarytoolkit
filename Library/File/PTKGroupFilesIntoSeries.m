@@ -79,7 +79,7 @@ end
 
 function GroupFilesInDirectory(grouper, directory, tags_to_get, reporting)
     
-    all_filenames = PTKTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(directory, '*'));
+    all_filenames = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(directory, '*'));
     for filename = all_filenames
         GroupFile(grouper, directory, filename{1}, tags_to_get, reporting);
     end

@@ -1,4 +1,4 @@
-classdef (Sealed) MivSplashScreen < PTKProgressInterface & PTKFigure
+classdef (Sealed) MivSplashScreen < CoreProgressInterface & PTKFigure
     % MivSplashScreen. A splash screen dialog which also reports progress informaton
     %
     %     MivSplashScreen creates a dialog with the application logo and version
@@ -69,7 +69,7 @@ classdef (Sealed) MivSplashScreen < PTKProgressInterface & PTKFigure
             position(2) = max(1, round((screen_size(4) - position(4))/2));
             
             % Call the base class to initialise the hidden window
-            reporting = PTKReportingDefault;
+            reporting = CoreReportingDefault;
             obj = obj@PTKFigure('', position, reporting);            
             
             obj.TimerRef = tic;
@@ -135,7 +135,7 @@ classdef (Sealed) MivSplashScreen < PTKProgressInterface & PTKFigure
                 text = 'Please wait';
             end
             obj.Hide;
-            obj.DialogTitle = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogTitle = CoreTextUtilities.RemoveHtml(text);
             obj.DialogText = '';
             obj.ProgressValue = 0;
             obj.Hold = true;
@@ -169,7 +169,7 @@ classdef (Sealed) MivSplashScreen < PTKProgressInterface & PTKFigure
             if nargin < 2
                text = 'Please wait'; 
             end            
-            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.Update;
             obj.ShowPanel;            
         end
@@ -183,7 +183,7 @@ classdef (Sealed) MivSplashScreen < PTKProgressInterface & PTKFigure
         
         function SetProgressAndMessage(obj, progress_value, text)
             obj.ShowProgressBar = true;
-            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
             obj.Update;
             obj.ShowPanel;            

@@ -98,7 +98,7 @@ classdef PTKImageDatabase < handle
                 paths = CoreContainerUtilities.GetFieldValuesFromSet(values, 'GetVisiblePath');
                 
                 % Sort the uids and paths by the pathname
-                [~, sorted_indices] = PTKTextUtilities.SortFilenames(paths);
+                [~, sorted_indices] = CoreTextUtilities.SortFilenames(paths);
                 paths = paths(sorted_indices);
                 uids = uids(sorted_indices);
             end
@@ -148,7 +148,7 @@ classdef PTKImageDatabase < handle
             % Remove any empty values to ensure sort works
             empty_values = cellfun(@isempty, short_visible_names);
             short_visible_names(empty_values) = {'Unknown'};
-            [~, sorted_indices] = PTKTextUtilities.SortFilenames(short_visible_names);
+            [~, sorted_indices] = CoreTextUtilities.SortFilenames(short_visible_names);
             
             names = names(sorted_indices);
             ids = ids(sorted_indices);
@@ -358,7 +358,7 @@ classdef PTKImageDatabase < handle
             % Remove any empty values to ensure sort works
             empty_values = cellfun(@isempty, short_visible_names);
             short_visible_names(empty_values) = {'Unknown'};
-            [sorted_visible_names, sorted_indices] = PTKTextUtilities.SortFilenames(short_visible_names);
+            [sorted_visible_names, sorted_indices] = CoreTextUtilities.SortFilenames(short_visible_names);
             
             patient_info = patient_info(sorted_indices);
             

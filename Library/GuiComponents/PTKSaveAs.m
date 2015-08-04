@@ -32,7 +32,7 @@ function path_name = PTKSaveAs(image_data, patient_name, path_name, reporting)
     end
     
     if nargin < 4
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     if islogical(image_data.RawImage)

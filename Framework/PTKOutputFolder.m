@@ -168,11 +168,11 @@ classdef PTKOutputFolder < CoreBaseClass
                 end
             end
 
-            subfolder = PTKTextUtilities.MakeFilenameValid(subfolder);
+            subfolder = CoreTextUtilities.MakeFilenameValid(subfolder);
             if isempty(subsubfolder)
                 obj.OutputFolder = fullfile(root_output_path, subfolder);
             else
-                subsubfolder = PTKTextUtilities.MakeFilenameValid(subsubfolder);
+                subsubfolder = CoreTextUtilities.MakeFilenameValid(subsubfolder);
                 obj.OutputFolder = fullfile(root_output_path, subfolder, subsubfolder);
             end
             

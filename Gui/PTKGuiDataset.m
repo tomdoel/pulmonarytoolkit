@@ -396,7 +396,7 @@ classdef PTKGuiDataset < CoreBaseClass
         
         function RunPluginTryCatchBlock(obj, plugin_name, wait_dialog)
             new_plugin = PTKPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
-            visible_name = PTKTextUtilities.RemoveHtml(new_plugin.ButtonText);
+            visible_name = CoreTextUtilities.RemoveHtml(new_plugin.ButtonText);
             wait_dialog.ShowAndHold(['Computing ' visible_name]);
             
             if strcmp(new_plugin.PluginType, 'DoNothing')

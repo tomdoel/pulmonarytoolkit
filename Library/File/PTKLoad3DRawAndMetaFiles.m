@@ -25,7 +25,7 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     %        
 
     if nargin < 4
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     if nargin < 2

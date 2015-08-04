@@ -28,7 +28,7 @@ function threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, repo
     end
     
     if nargin < 2
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
 
     reporting.ShowProgress('Finding lung region');

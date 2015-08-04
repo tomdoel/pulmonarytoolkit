@@ -55,13 +55,13 @@ classdef PTKGuiCore < PTKFigure
         function obj = PTKGuiCore(app_def, splash_screen)
 
             % Create the splash screen if it doesn't already exist
-            if nargin < 2 || isempty(splash_screen) || ~isa(splash_screen, 'PTKProgressInterface')
+            if nargin < 2 || isempty(splash_screen) || ~isa(splash_screen, 'CoreProgressInterface')
                 splash_screen = PTKSplashScreen.GetSplashScreen;
             end
             
             % Create the reporting object. Later we will update it with the viewer panel and
             % the new progress panel when these have been created.
-            reporting = PTKReporting(splash_screen, [], PTKSoftwareInfo.WriteVerboseEntriesToLogFile, PTKDirectories.GetLogFilePath);
+            reporting = PTKReporting(splash_screen, PTKSoftwareInfo.WriteVerboseEntriesToLogFile, PTKDirectories.GetLogFilePath);
             reporting.Log('New session of PTKGui');
                         
             % Call the base class to initialise the figure class

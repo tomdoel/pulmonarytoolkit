@@ -17,7 +17,7 @@ classdef PTKTest < handle
     methods
         function Assert(obj, condition, message)
             if ~condition
-                PTKErrorUtilities.ThrowException('PTKTest:AssertonFailure', ...
+                CoreErrorUtilities.ThrowException('PTKTest:AssertonFailure', ...
                     ['Assertion failure: ' message]);
                 
             end

@@ -71,7 +71,7 @@ classdef PTKViewer < PTKFigure
             end
             
             if nargin < 3
-                reporting = PTKReportingDefault;
+                reporting = CoreReportingDefault;
             end
             
             title = 'PTK Viewer';

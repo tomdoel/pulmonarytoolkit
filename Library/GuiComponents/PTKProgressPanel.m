@@ -1,7 +1,7 @@
-classdef PTKProgressPanel < PTKProgressInterface
+classdef PTKProgressPanel < CoreProgressInterface
     % PTKProgressPanel. A panel used to report progress informaton
     %
-    %     PTKProgressPanel implements the PTKProgressInterface, which is an
+    %     PTKProgressPanel implements the CoreProgressInterface, which is an
     %     interface used by the Pulmonary Toolkit to report the progress of
     %     operations. This panel is displayed over the centre of the panel
     %     object whose handle is supplied in the constructor.
@@ -113,7 +113,7 @@ classdef PTKProgressPanel < PTKProgressInterface
             if nargin < 2
                 text = 'Please wait';
             end
-            obj.DialogTitle = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogTitle = CoreTextUtilities.RemoveHtml(text);
             obj.DialogText = '';
             obj.ProgressValue = 0;
             obj.Hold = true;
@@ -148,7 +148,7 @@ classdef PTKProgressPanel < PTKProgressInterface
             if nargin < 2
                text = 'Please wait'; 
             end            
-            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.PanelVisibility = true;
             obj.Update;
         end
@@ -162,7 +162,7 @@ classdef PTKProgressPanel < PTKProgressInterface
         
         function SetProgressAndMessage(obj, progress_value, text)
             obj.ShowProgressBar = true;
-            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
             obj.PanelVisibility = true;
             obj.Update;

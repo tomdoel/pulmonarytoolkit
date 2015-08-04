@@ -52,7 +52,7 @@ classdef PTKUserInterfaceObject < CoreBaseClass
             if nargin < 1 || isempty(parent)
                 obj.StyleSheet = PTKStyleSheet;
                 if nargin < 2 || isempty(reporting)
-                    obj.Reporting = PTKReportingDefault;
+                    obj.Reporting = CoreReportingDefault;
                 else
                     obj.Reporting = reporting;
                 end

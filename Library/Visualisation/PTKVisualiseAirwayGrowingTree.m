@@ -9,7 +9,7 @@ function PTKVisualiseAirwayGrowingTree(airway_tree, reporting)
     %
     %             parent_branch     is the root branch in a PTKTreeModel structure 
     %             reporting         is an object which implements
-    %                               PTKReportingInterface, for error and progress
+    %                               CoreReportingInterface, for error and progress
     %
     %     Licence
     %     -------

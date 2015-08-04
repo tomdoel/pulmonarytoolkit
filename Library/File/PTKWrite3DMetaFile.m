@@ -22,7 +22,7 @@ function PTKWrite3DMetaFile(header_filename, image, resolution, data_type, offse
     %
     
     if nargin < 7
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     if nargin < 6 || isempty(orientation)

@@ -12,7 +12,7 @@ function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to
     %
 
     if nargin < 4
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
 
     if isempty(tags_to_get)

@@ -56,10 +56,10 @@ classdef PTKMain < CoreBaseClass
             % Constructor. If no error/progress reporting object is specified then a
             % default object is created.
             if nargin == 0
-                reporting = PTKReportingDefault;
+                reporting = CoreReportingDefault;
             end
             obj.Reporting = reporting;
-            obj.ReportingWithCache = PTKReportingWithCache(obj.Reporting);
+            obj.ReportingWithCache = CoreReportingWithCache(obj.Reporting);
             obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(obj.Reporting);
         end
         

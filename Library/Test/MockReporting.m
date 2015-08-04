@@ -1,8 +1,8 @@
-classdef MockReporting < PTKReportingInterface
+classdef MockReporting < CoreReportingInterface
     % MockReporting. Part of the PTK test framework
     %
     % This class is used in tests in place of an object implementing the
-    % PTKReportingInterface. It allows expected calls to be verified, while
+    % CoreReportingInterface. It allows expected calls to be verified, while
     % maintaining some of the expected behaviour of a Reporting object.
     %
     %

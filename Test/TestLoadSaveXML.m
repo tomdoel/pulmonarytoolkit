@@ -11,7 +11,7 @@ classdef TestLoadSaveXML < PTKTest
 
     methods
         function obj = TestLoadSaveXML
-            reporting = PTKReportingDefault;
+            reporting = CoreReportingDefault;
             test_class = obj.getTestClass;
             obj.TestLoadAndSave(test_class, reporting);
         end

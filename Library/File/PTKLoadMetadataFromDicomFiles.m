@@ -28,7 +28,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     %        
 
     if nargin < 3
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     % Show a progress dialog
@@ -38,7 +38,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     % Sort the filenames into numerical order. Normally, this ordering will be
     % overruled by the ImagePositionPatient or SliceLocation tags, but in the
     % absence of other information, the numerical slice ordering will be used.
-    sorted_filenames = PTKTextUtilities.SortFilenames(filenames);
+    sorted_filenames = CoreTextUtilities.SortFilenames(filenames);
     num_slices = length(filenames);
     
     % The file grouper performs the sorting of image metadata

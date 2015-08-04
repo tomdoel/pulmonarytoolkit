@@ -1,17 +1,18 @@
-classdef PTKProgressDialog < PTKProgressInterface
-    % PTKProgressDialog. A dialog used to report progress informaton
+classdef CoreProgressDialog < CoreProgressInterface
+    % CoreProgressDialog. A dialog used to report progress informaton
     %
-    %     PTKProgressDialog implements the PTKProgressInterface, which is an
-    %     interface used by the Pulmonary Toolkit to report the progress of
+    %     CoreProgressDialog implements the CoreProgressInterface, which is an
+    %     interface used by CoreMat and related libraries to report the progress of
     %     operations.
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
+
     
     properties (Access = private)
         IncrementThreshold = 5
@@ -30,7 +31,7 @@ classdef PTKProgressDialog < PTKProgressInterface
                text = 'Please wait'; 
             end
             obj.Hide;
-            obj.DialogTitle = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogTitle = CoreTextUtilities.RemoveHtml(text);
             obj.DialogText = '';
             obj.ProgressValue = 0;
             obj.Hold = true;
@@ -63,7 +64,7 @@ classdef PTKProgressDialog < PTKProgressInterface
             if nargin < 2
                text = 'Please wait'; 
             end            
-            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.Update;
         end
         
@@ -80,7 +81,7 @@ classdef PTKProgressDialog < PTKProgressInterface
         
         function SetProgressAndMessage(obj, progress_value, text)
             obj.ShowProgressBar = true;
-            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
             obj.Update;
         end
