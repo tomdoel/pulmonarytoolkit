@@ -2,14 +2,14 @@ classdef DMFileGrouping < CoreBaseClass
     % DMFileGrouping. Stores a set of Dicom metadata structures, corresponding
     %     to a coherent sequence of images
     %
-    %     PTKFileGrouping objects are created by the PTKFileGrouper class,
+    %     DMFileGrouping objects are created by the DMFileGrouper class,
     %     which separates and groups images into coherent sequences according to
     %     their metadata.
     %        
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
@@ -49,7 +49,7 @@ classdef DMFileGrouping < CoreBaseClass
             [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLocation(obj, reporting);
             if numel(obj.Metadata) > 1
                 if isempty(sorted_indices)
-                    reporting.ShowWarning('PTKFileGrouping:UnableToSortFiles', 'The images in this series may appear in the wrong order because I was unable to determine the correct ordering');
+                    reporting.ShowWarning('DMFileGrouping:UnableToSortFiles', 'The images in this series may appear in the wrong order because I was unable to determine the correct ordering');
                 else
                     obj.Metadata = obj.Metadata(sorted_indices);
                 end

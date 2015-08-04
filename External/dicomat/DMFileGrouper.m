@@ -11,7 +11,7 @@ classdef DMFileGrouper < CoreBaseClass
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
@@ -26,9 +26,10 @@ classdef DMFileGrouper < CoreBaseClass
             obj.FileGroupings = DMFileGrouping.empty;
         end
         
-        % Adds a new image. If the metadata is coherent with an existing group,
-        % we add the image to that group. Otherwise we create a new group.
         function AddFile(obj, metadata)
+            % Adds a new image. If the metadata is coherent with an existing group,
+            % we add the image to that group. Otherwise we create a new group.
+
             grouping = obj.FindGrouping(metadata);
             if ~isempty(grouping)
                 grouping.AddFile(metadata);
@@ -37,13 +38,14 @@ classdef DMFileGrouper < CoreBaseClass
             end
         end
 
-        % Returns the number of groups in this data
         function number_of_groups = NumberOfGroups(obj)
+            % Returns the number of groups in this data
+
             number_of_groups = numel(obj.FileGroupings);
         end
 
-        % Return the DMFileGrouping with the gretest number of images
         function largest_group = GetLargestGroup(obj)
+            % Return the DMFileGrouping with the gretest number of images
             
             % Get the length of each group of metadata
             grouping_lengths = cellfun(@numel, {obj.FileGroupings.Metadata});
