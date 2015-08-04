@@ -288,7 +288,7 @@ classdef PTKMain < CoreBaseClass
             study_uid = [];
             switch(image_info.ImageFileFormat)
                 case PTKImageFileFormat.Dicom
-                    if ~isempty(image_info.ImageFilenames) && isa(image_info.ImageFilenames{1}, 'PTKFilename')
+                    if ~isempty(image_info.ImageFilenames) && isa(image_info.ImageFilenames{1}, 'CoreFilename')
                         first_path = image_info.ImageFilenames{1}.Path;
                         first_filename = image_info.ImageFilenames{1}.Name;
                         full_first_filename = image_info.ImageFilenames{1}.FullFile;

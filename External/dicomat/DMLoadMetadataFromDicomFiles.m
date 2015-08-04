@@ -1,10 +1,10 @@
-function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, reporting)
-    % PTKLoadMetadataFromDicomFiles. Loads metadata from a series of DICOM files
+function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, reporting)
+    % DMLoadMetadataFromDicomFiles. Loads metadata from a series of DICOM files
     %
     %     Syntax
     %     ------
     %
-    %         file_grouper = PTKLoadMetadataFromDicomFiles(path, filenames, reporting)
+    %         file_grouper = DMLoadMetadataFromDicomFiles(path, filenames, reporting)
     %
     %             file_grouper    a DMFileGrouper object containing the 
     %                             metadata grouped into coherent sequences of images
@@ -12,8 +12,8 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     %             image_path, filenames specify the location of the DICOM
     %                             files.
     %
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
+    %             reporting       A CoreReporting or implementor of the same interface,
+    %                             for error and progress reporting. Create a CoreReporting
     %                             with no arguments to hide all reporting. If no
     %                             reporting object is specified then a default
     %                             reporting object with progress dialog is
@@ -22,7 +22,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
@@ -48,7 +48,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
     
     for file_index = 1 : num_slices
         next_file = sorted_filenames{file_index};
-        if isa(next_file, 'PTKFilename')
+        if isa(next_file, 'CoreFilename')
             file_path = next_file.Path;
             file_name = next_file.Name;
         else
@@ -61,7 +61,7 @@ function file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, rep
         else
             % If this is not a Dicom image we exclude it from the set and warn the
             % user
-            reporting.ShowWarning('PTKLoadMetadataFromDicomFiles:NotADicomFile', ['PTKLoadMetadataFromDicomFiles: The file ' fullfile(file_path, file_name) ' is not a DICOM file and will be removed from this series.']);
+            reporting.ShowWarning('DMLoadMetadataFromDicomFiles:NotADicomFile', ['DMLoadMetadataFromDicomFiles: The file ' fullfile(file_path, file_name) ' is not a DICOM file and will be removed from this series.']);
         end
         
         reporting.UpdateProgressValue(round(100*file_index/num_slices));

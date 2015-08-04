@@ -32,10 +32,10 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
         reporting.Error('PTKLoad3DRawAndMetaFiles:NotEnoughArguments', 'PTKLoad3DRawAndMetaFiles requires a minimum of two arguments: the current path and  list of filenames');
     end
 
-    if isa(filenames, 'PTKFilename')
+    if isa(filenames, 'CoreFilename')
         path = filenames.Path;
         filenames = filenames.Name;
-    elseif isa(filenames{1}, 'PTKFilename')
+    elseif isa(filenames{1}, 'CoreFilename')
         path = filenames{1}.Path;
         filenames = filenames{1}.Name;
     end

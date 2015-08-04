@@ -285,7 +285,7 @@ classdef PTKImageDatabase < handle
                         for filename = file_names
                             try
                                 next_filename = filename{1};
-                                if isa(next_filename, 'PTKFilename')
+                                if isa(next_filename, 'CoreFilename')
                                     next_filepath = next_filename.Path;
                                     next_filename = next_filename.Name;
                                 else

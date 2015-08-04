@@ -20,7 +20,7 @@ function data = PTKLoadXml(file_name, reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    if isa(file_name, 'PTKFilename')
+    if isa(file_name, 'CoreFilename')
         file_name = file_name.FullFile;
     end
     

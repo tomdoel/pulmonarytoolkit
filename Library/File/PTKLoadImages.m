@@ -23,7 +23,7 @@ function image = PTKLoadImages(image_info, reporting)
         end
     else
         first_file = filenames{1};
-        if isa(first_file, 'PTKFilename')
+        if isa(first_file, 'CoreFilename')
             first_file_path = first_file.Path;
             first_file_name = first_file.Name;
         else

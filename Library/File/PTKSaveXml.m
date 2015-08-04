@@ -30,7 +30,7 @@ function PTKSaveXml(data, name, file_name, reporting)
     xml_root_element.appendChild(serialised_node);
     xml_doc_node.appendChild(xml_doc_node.createComment('TD Pulmonary Toolkit. Automatically generated XML file. Code by Tom Doel 2014'));
     
-    if isa(file_name, 'PTKFilename')
+    if isa(file_name, 'CoreFilename')
         file_name = file_name.FullFile;
     end
     

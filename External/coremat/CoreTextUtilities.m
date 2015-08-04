@@ -35,7 +35,7 @@ classdef CoreTextUtilities < handle
                 return;
             end
             
-            if isa(original_filenames{1}, 'PTKFilename')
+            if isa(original_filenames{1}, 'CoreFilename')
                 filenames = CoreContainerUtilities.GetFieldValuesFromSet(original_filenames, 'Name');
             else
                 filenames = original_filenames;

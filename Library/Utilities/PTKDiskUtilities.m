@@ -247,7 +247,7 @@ classdef PTKDiskUtilities
         
         function SaveImageCapture(capture, file_name, save_type, reporting)
             reporting.ShowProgress('Exporting image');
-            if isa(file_name, 'PTKFilename');
+            if isa(file_name, 'CoreFilename');
                 file_name = file_name.FullFile;
             end
             switch save_type
