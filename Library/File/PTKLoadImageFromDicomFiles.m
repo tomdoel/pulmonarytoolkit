@@ -55,7 +55,7 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
     representative_metadata = main_group.Metadata{1};
 
     % Load the pixel data
-    image_volume_wrapper = PTKLoadImagesFromMetadataGrouping(main_group, reporting);
+    image_volume_wrapper = DMLoadImagesFromMetadataGrouping(main_group, reporting);
     
     % Detect and remove padding values
     PTKRemovePaddingValues(image_volume_wrapper, representative_metadata, reporting);

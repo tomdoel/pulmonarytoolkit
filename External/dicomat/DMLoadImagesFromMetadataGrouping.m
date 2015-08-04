@@ -1,18 +1,18 @@
-function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, reporting)
-    % PTKLoadImagesFromMetadataGrouping. Loads metadata from a series of DICOM files
+function image_wrapper = DMLoadImagesFromMetadataGrouping(metadata_grouping, reporting)
+    % DMLoadImagesFromMetadataGrouping. Loads metadata from a series of DICOM files
     %
     %     Syntax
     %     ------
     %
-    %         image_volume = PTKLoadImagesFromMetadataGrouping(metadata_list, reporting)
+    %         image_volume = DMLoadImagesFromMetadataGrouping(metadata_list, reporting)
     %
     %             image_volume        
     %
     %             metadata_list  a set of metadata structures
     %
     %
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
+    %             reporting       A CoreReporting or other implementor of CoreReportingInterface,
+    %                             for error and progress reporting. Create a CoreReporting
     %                             with no arguments to hide all reporting. If no
     %                             reporting object is specified then a default
     %                             reporting object with progress dialog is
@@ -21,10 +21,10 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %        
+    %
 
     if nargin < 2
         reporting = CoreReportingDefault;
@@ -50,7 +50,7 @@ function image_wrapper = PTKLoadImagesFromMetadataGrouping(metadata_grouping, re
     data_type = whos('first_image_slice');
     data_type_class = data_type.class;
     if (strcmp(data_type_class, 'char'))
-        reporting.ShowMessage('PTKLoadImagesFromMetadataList:SettingDatatypeToInt8', 'Char datatype detected. Setting to int8');
+        reporting.ShowMessage('DMLoadImagesFromMetadataGrouping:SettingDatatypeToInt8', 'Char datatype detected. Setting to int8');
         data_type_class = 'int8';
     end
     image_wrapper.RawImage = zeros([size_i, size_j, size_k, samples_per_pixel], data_type_class);
