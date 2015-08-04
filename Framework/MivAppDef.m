@@ -29,5 +29,9 @@ classdef MivAppDef < handle
         function direction = GetDefaultOrientation(obj)
             direction = PTKImageOrientation.Axial;
         end
+        
+        function style_sheet = GetDefaultStyleSheet(obj)
+            style_sheet = MivDefaultStyleSheet;
+        end
     end
 end

@@ -66,6 +66,7 @@ classdef PTKGuiCore < PTKFigure
                         
             % Call the base class to initialise the figure class
             obj = obj@PTKFigure(app_def.GetName, [], reporting);
+            obj.StyleSheet = app_def.GetDefaultStyleSheet;
 
             obj.AppDef = app_def;
 

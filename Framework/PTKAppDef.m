@@ -34,5 +34,10 @@ classdef PTKAppDef < handle
         function direction = GetDefaultOrientation(obj)
             direction = PTKImageOrientation.Coronal;
         end
+        
+        function style_sheet = GetDefaultStyleSheet(obj)
+            style_sheet = PTKDefaultStyleSheet;
+        end
+        
     end
 end
