@@ -1,4 +1,4 @@
-classdef PTKGuiDatasetState < PTKBaseClass
+classdef PTKGuiDatasetState < CoreBaseClass
     % PTKGuiDatasetState. Stores information about the currently loaded series
     %
     %     You do not need to modify this file. To add new functionality, create

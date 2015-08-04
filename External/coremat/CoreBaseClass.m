@@ -1,5 +1,5 @@
-classdef PTKBaseClass < handle
-    % PTKBaseClass. Class with event listeners which are auto-deleted
+classdef CoreBaseClass < handle
+    % CoreBaseClass. Class with event listeners which are auto-deleted
     %
     %
     %
@@ -15,15 +15,15 @@ classdef PTKBaseClass < handle
     end
     
     properties (Constant, Access = private)
-        % Set this to true to use PTKClassMonitor to test for correct
+        % Set this to true to use CoreClassMonitor to test for correct
         % deletion of objects
         MonitorClassInstances = false;
     end
     
     methods
-        function obj = PTKBaseClass
+        function obj = CoreBaseClass
             if obj.MonitorClassInstances
-                PTKClassMonitor.GetClassMonitor.ObjectCreated(class(obj));
+                CoreClassMonitor.GetClassMonitor.ObjectCreated(class(obj));
             end
         end
         
@@ -34,7 +34,7 @@ classdef PTKBaseClass < handle
             obj.EventListeners = [];
             
             if obj.MonitorClassInstances
-                PTKClassMonitor.GetClassMonitor.ObjectDeleted(class(obj));
+                CoreClassMonitor.GetClassMonitor.ObjectDeleted(class(obj));
             end
         end
     end

@@ -1,4 +1,4 @@
-classdef DMFileGrouping < PTKBaseClass
+classdef DMFileGrouping < CoreBaseClass
     % DMFileGrouping. Stores a set of Dicom metadata structures, corresponding
     %     to a coherent sequence of images
     %

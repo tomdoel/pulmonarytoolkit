@@ -1,4 +1,4 @@
-classdef PTKLinkedDatasetRecorder < PTKBaseClass
+classdef PTKLinkedDatasetRecorder < CoreBaseClass
     % PTKLinkedDatasetRecorder. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     PTKLinkedDatasetRecorder is used to cache links between datasets for

@@ -1,4 +1,4 @@
-classdef PTKFileSeriesGrouping < PTKBaseClass
+classdef PTKFileSeriesGrouping < CoreBaseClass
     % PTKFileSeriesGrouping.
     %
     %        

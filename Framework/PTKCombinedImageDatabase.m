@@ -1,4 +1,4 @@
-classdef PTKCombinedImageDatabase < PTKBaseClass
+classdef PTKCombinedImageDatabase < CoreBaseClass
     % PTKCombinedImageDatabase. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to

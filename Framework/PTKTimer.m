@@ -1,4 +1,4 @@
-classdef PTKTimer < PTKBaseClass
+classdef PTKTimer < CoreBaseClass
     % PTKTimer. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to

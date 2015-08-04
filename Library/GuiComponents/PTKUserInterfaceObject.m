@@ -1,4 +1,4 @@
-classdef PTKUserInterfaceObject < PTKBaseClass
+classdef PTKUserInterfaceObject < CoreBaseClass
     % PTKUserInterfaceObject. Base class for PTK user interface components
     %
     %

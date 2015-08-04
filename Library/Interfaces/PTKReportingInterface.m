@@ -1,4 +1,4 @@
-classdef PTKReportingInterface < PTKBaseClass
+classdef PTKReportingInterface < CoreBaseClass
     % PTKReportingInterface. Provides an interface for error and progress reporting.
     %
     %     PTKReportingInterface is the interface the Pulmonary Toolkit uses to

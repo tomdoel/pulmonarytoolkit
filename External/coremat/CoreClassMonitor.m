@@ -1,8 +1,8 @@
-classdef (Sealed) PTKClassMonitor < handle
-    % PTKClassMonitor. Monitors creation and destruction of classes
+classdef (Sealed) CoreClassMonitor < handle
+    % CoreClassMonitor. Monitors creation and destruction of classes
     %
     %     This class repesents a singleton which reference counts objects 
-    %     (of base type PTKBaseClass). It is used in testing to ensure that
+    %     (of base type CoreBaseClass). It is used in testing to ensure that
     %     objects have been destroyed properly (i.e. that references to the
     %     objects have been correctly removed).
     %
@@ -22,7 +22,7 @@ classdef (Sealed) PTKClassMonitor < handle
         function class_monitor = GetClassMonitor
             persistent ClassMonitor
             if isempty(ClassMonitor) || ~isvalid(ClassMonitor)
-                ClassMonitor = PTKClassMonitor;
+                ClassMonitor = CoreClassMonitor;
             end
             class_monitor = ClassMonitor;
         end
@@ -66,7 +66,7 @@ classdef (Sealed) PTKClassMonitor < handle
     end
     
     methods (Access = private)
-        function obj = PTKClassMonitor
+        function obj = CoreClassMonitor
             obj.CountMap = containers.Map;
         end
     end

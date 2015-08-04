@@ -1,4 +1,4 @@
-classdef PTKDataset < PTKBaseClass
+classdef PTKDataset < CoreBaseClass
     % PTKDataset. Use this class to obtain results and associated data for a particualar dataset.
     %
     %     This class is used by scripts and GUI applications to run

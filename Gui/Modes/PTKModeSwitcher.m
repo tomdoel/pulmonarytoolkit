@@ -1,4 +1,4 @@
-classdef PTKModeSwitcher < PTKBaseClass
+classdef PTKModeSwitcher < CoreBaseClass
     % PTKModeSwitcher. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to

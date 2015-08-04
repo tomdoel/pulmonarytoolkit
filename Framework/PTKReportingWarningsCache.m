@@ -1,4 +1,4 @@
-classdef PTKReportingWarningsCache < PTKBaseClass
+classdef PTKReportingWarningsCache < CoreBaseClass
     %PTKReportingWarningsCache Summary of this class goes here
     %   Detailed explanation goes here
     

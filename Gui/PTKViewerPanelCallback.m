@@ -1,4 +1,4 @@
-classdef PTKViewerPanelCallback < PTKBaseClass
+classdef PTKViewerPanelCallback < CoreBaseClass
     % PTKViewerPanelCallback. Class to handle PTKViewerPanel callback events
     %
     %

@@ -1,4 +1,4 @@
-classdef PTKGuiDataset < PTKBaseClass
+classdef PTKGuiDataset < CoreBaseClass
     % PTKGuiDataset. Handles the interaction between the GUI and the PTK interfaces
     %
     %

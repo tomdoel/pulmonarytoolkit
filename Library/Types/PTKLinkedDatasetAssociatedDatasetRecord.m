@@ -1,4 +1,4 @@
-classdef PTKLinkedDatasetAssociatedDatasetRecord < PTKBaseClass
+classdef PTKLinkedDatasetAssociatedDatasetRecord < CoreBaseClass
     % PTKLinkedDatasetAssociatedDatasetRecord. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     PTKLinkedDatasetAssociatedDatasetRecord is used by PTKLinkedDatasetRecorder to store

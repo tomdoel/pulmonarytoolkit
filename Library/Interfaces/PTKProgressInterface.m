@@ -1,4 +1,4 @@
-classdef PTKProgressInterface < PTKBaseClass
+classdef PTKProgressInterface < CoreBaseClass
     % PTKProgressInterface. Interface for classes which implement a progress bar.
     %
     %     The PTKReporting class uses this interface to display and update a

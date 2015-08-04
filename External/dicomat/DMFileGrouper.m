@@ -1,4 +1,4 @@
-classdef DMFileGrouper < PTKBaseClass
+classdef DMFileGrouper < CoreBaseClass
     % DMFileGrouper. Used to separate a series of Dicom images into groups of coherent images
     %
     %     DMFileGrouper splits a series of Dicom images into 'bins' or 'groups'
