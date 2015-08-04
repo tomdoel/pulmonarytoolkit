@@ -1,4 +1,4 @@
-function image_wrapper = DMLoadImagesFromMetadataGrouping(metadata_grouping, reporting)
+function imageWrapper = DMLoadImagesFromMetadataGrouping(metadataGrouping, dicomLibrary, reporting)
     % DMLoadImagesFromMetadataGrouping. Loads metadata from a series of DICOM files
     %
     %     Syntax
@@ -6,12 +6,13 @@ function image_wrapper = DMLoadImagesFromMetadataGrouping(metadata_grouping, rep
     %
     %         image_volume = DMLoadImagesFromMetadataGrouping(metadata_list, reporting)
     %
-    %             image_volume        
+    %             imageWrapper     a CoreWrapper object containing the image volume     
     %
-    %             metadata_list  a set of metadata structures
+    %             metadataGrouping a DMFileGrouping containing metadata
     %
+    %             dicomLibrary     (Optional) An object implementing DMDicomLibraryInterface
     %
-    %             reporting       A CoreReporting or other implementor of CoreReportingInterface,
+    %             reporting       (Optional) A CoreReporting or other implementor of CoreReportingInterface,
     %                             for error and progress reporting. Create a CoreReporting
     %                             with no arguments to hide all reporting. If no
     %                             reporting object is specified then a default
@@ -26,25 +27,29 @@ function image_wrapper = DMLoadImagesFromMetadataGrouping(metadata_grouping, rep
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    if nargin < 2
+    if nargin < 3
         reporting = CoreReportingDefault;
+    end
+    
+    if nargin < 2
+        dicomLibrary = DMDicomLibrary.getLibrary;
     end
     
     reporting.ShowProgress('Reading pixel data');
     reporting.UpdateProgressValue(0);
 
-    image_wrapper = CoreWrapper;
+    imageWrapper = CoreWrapper;
     
-    num_slices = length(metadata_grouping.Metadata);
+    num_slices = length(metadataGrouping.Metadata);
 
     % Load image slice
-    first_image_slice = PTKDicomUtilities.ReadDicomImageFromMetadata(metadata_grouping.Metadata{1}, reporting);
+    first_image_slice = dicomLibrary.dicomread(metadataGrouping.Metadata{1});
 
     % Pre-allocate image matrix
-    size_i = metadata_grouping.Metadata{1}.Rows;
-    size_j = metadata_grouping.Metadata{1}.Columns;
+    size_i = metadataGrouping.Metadata{1}.Rows;
+    size_j = metadataGrouping.Metadata{1}.Columns;
     size_k = num_slices;
-    samples_per_pixel = metadata_grouping.Metadata{1}.SamplesPerPixel;
+    samples_per_pixel = metadataGrouping.Metadata{1}.SamplesPerPixel;
     
     % Pre-allocate image matrix
     data_type = whos('first_image_slice');
@@ -53,11 +58,11 @@ function image_wrapper = DMLoadImagesFromMetadataGrouping(metadata_grouping, rep
         reporting.ShowMessage('DMLoadImagesFromMetadataGrouping:SettingDatatypeToInt8', 'Char datatype detected. Setting to int8');
         data_type_class = 'int8';
     end
-    image_wrapper.RawImage = zeros([size_i, size_j, size_k, samples_per_pixel], data_type_class);
-    image_wrapper.RawImage(:, :, 1, :) = first_image_slice;
+    imageWrapper.RawImage = zeros([size_i, size_j, size_k, samples_per_pixel], data_type_class);
+    imageWrapper.RawImage(:, :, 1, :) = first_image_slice;
     
-    for file_index = 2 : num_slices        
-        PTKDicomUtilities.ReadDicomImageIntoWrapperFromMetadata(metadata_grouping.Metadata{file_index}, image_wrapper, file_index, reporting);
+    for file_index = 2 : num_slices
+        imageWrapper.RawImage(:, :, file_index, :) = dicomLibrary.dicomread(metadataGrouping.Metadata{file_index});
         reporting.UpdateProgressValue(round(100*(file_index)/num_slices));
     end
     

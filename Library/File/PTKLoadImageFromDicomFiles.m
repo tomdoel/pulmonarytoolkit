@@ -1,4 +1,4 @@
-function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
+function [loaded_image, ] = PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
     % PTKLoadImageFromDicomFiles. Loads a series of DICOM files into a 3D volume
     %
     %     Syntax
@@ -31,31 +31,9 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
         reporting = CoreReportingDefault;
     end
     
-    % Load the metadata from the DICOM images, and group into coherent sequences
-    file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, reporting);
+    dicomLibrary = PTKDicomFallbackLibrary.getLibrary;
     
-    % Warn the user if we found more than one group, since the others will not
-    % be loaded into the image volume
-    if file_grouper.NumberOfGroups > 1
-        reporting.ShowWarning('PTKLoadImageFromDicomFiles:MultipleGroupings', 'I have removed some images from this dataset because the images did not form a coherent set. This may be due to the presence of scout images or dose reports, or localiser images in multiple orientations. I have formed a volume form the largest coherent set of images in the same orientation.');
-    end
-    
-    % Choose the group with the most images
-    main_group = file_grouper.GetLargestGroup;
-    
-    % Sort the images into the correct order
-    [slice_thickness, global_origin_mm] = main_group.SortAndGetParameters(reporting);
-    if isempty(slice_thickness)
-        reporting.ShowWarning('PTKLoadImageFromDicomFiles:NoSliceThickness', 'No information found about the slice thickness. Setting to 1.');
-        slice_thickness = 1;
-    end
-
-    % Obtain a representative set of metadata tags from the first image in the
-    % sequence
-    representative_metadata = main_group.Metadata{1};
-
-    % Load the pixel data
-    image_volume_wrapper = DMLoadImagesFromMetadataGrouping(main_group, reporting);
+    [image_volume_wrapper, representative_metadata] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting);
     
     % Detect and remove padding values
     PTKRemovePaddingValues(image_volume_wrapper, representative_metadata, reporting);

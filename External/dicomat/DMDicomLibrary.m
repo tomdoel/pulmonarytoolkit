@@ -1,7 +1,14 @@
-classdef (Sealed) DMDicomLibrary < handle
-    % DMDICOMLIBRARY Provides an abstraction for reading Dicom data. This
-    % abstraction allows you to redirect the image reading calls to
-    % different sources or different Dicom libraries.
+classdef (Sealed) DMDicomLibrary < DMDicomLibraryInterface
+    % DMDICOMLIBRARY DicoMat implementation of DMDicomLibraryInterface for
+    % reading Dicom data. 
+    %
+    %
+    %     Licence
+    %     -------
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
+    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
     
     methods
         function isDicom = isdicom(obj, fileName)
@@ -23,7 +30,6 @@ classdef (Sealed) DMDicomLibrary < handle
         end
         
     end
-    
     
     methods (Access = private)
         function obj = DMDicomLibrary

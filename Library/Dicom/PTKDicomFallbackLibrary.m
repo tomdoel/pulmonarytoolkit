@@ -1,4 +1,4 @@
-classdef (Sealed) PTKDicomFallbackLibrary < handle
+classdef (Sealed) PTKDicomFallbackLibrary < DMDicomLibraryInterface
     % PTKDicomFallbackLibrary uses Dicomat to parse Dicom files, but falls
     % back to the Matlab image processing toobox if it fails
     %
