@@ -24,7 +24,7 @@ classdef PTKDicomUtilities
             is_dicom = PTKDicomFallbackLibrary.getLibrary.isdicom(full_file_name);
         end
         
-        function dicom_series_uid = DMGetDicomSeriesUid(fileName, dictionary)
+        function dicom_series_uid = GetDicomSeriesUid(fileName, dictionary)
             % Gets the series UID for a Dicom file
             
             if isempty(dictionary)

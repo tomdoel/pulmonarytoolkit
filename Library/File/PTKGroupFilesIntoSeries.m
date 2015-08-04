@@ -41,7 +41,7 @@ end
 
 function uid = GetUid(folder, filename, tags_to_get)
     full_file_name = fullfile(folder, filename);
-    uid = DMGetDicomSeriesUid(full_file_name, tags_to_get);
+    uid = PTKDicomUtilities.GetDicomSeriesUid(full_file_name, tags_to_get);
 end
 
 function GroupFile(grouper, folder, filename, tags_to_get, reporting)
