@@ -2786,8 +2786,6 @@ classdef DMDicomDictionary < handle
 %             tags(end + 1) = DMDicomDictionaryItem('FFFE,E000', 'UN', 'Item');
 %             tags(end + 1) = DMDicomDictionaryItem('FFFE,E00D', 'UN', 'ItemDelimitationItem');
 %             tags(end + 1) = DMDicomDictionaryItem('FFFE,E0DD', 'UN', 'SequenceDelimitationItem');            
-
-            tags = DMDicomDictionary(tags);
         end
         
     end

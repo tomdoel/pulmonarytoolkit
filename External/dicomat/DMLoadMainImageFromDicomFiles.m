@@ -1,4 +1,4 @@
-function [imageWrapper, representativeMetadata] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting)
+function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting)
     % DMLoadImageFromDicomFiles Loads a series of DICOM files into a coherent 3D volume.
     %
     % DMLoadImageFromDicomFiles parses the Dicom files and groups them into
@@ -12,8 +12,12 @@ function [imageWrapper, representativeMetadata] = DMLoadMainImageFromDicomFiles(
     %
     %             imageWrapper    a CoreWrapper containing the 3D volume
     %
-    %             representative_metadata  metadata from one slice of the
-    %                             main group
+    %             representativeMetadata  metadata from one slice of the main group
+    %
+    %             sliceThickness the computed distance between
+    %                             centrepoints of each slice
+    %
+    %             globalOriginMm  The mm coordinates of the image origin
     %
     %             path, filename  specify the location of the DICOM files to
     %                             load
@@ -50,22 +54,19 @@ function [imageWrapper, representativeMetadata] = DMLoadMainImageFromDicomFiles(
     end
     
     % Load the metadata from the DICOM images, and group into coherent sequences
-    fileGrouper = DMLoadMetadataFromDicomFiles(imagePath, filenames, reporting);
+    fileGrouper = DMLoadMetadataFromDicomFiles(imagePath, filenames, dicomLibrary, reporting);
     
     % Warn the user if we found more than one group, since the others will not
     % be loaded into the image volume
     if fileGrouper.NumberOfGroups > 1
-        reporting.ShowWarning('PTKLoadImageFromDicomFiles:MultipleGroupings', 'I have removed some images from this dataset because the images did not form a coherent set. This may be due to the presence of scout images or dose reports, or localiser images in multiple orientations. I have formed a volume form the largest coherent set of images in the same orientation.');
+        reporting.ShowWarning('DMLoadMainImageFromDicomFiles:MultipleGroupings', 'I have removed some images from this dataset because the images did not form a coherent set. This may be due to the presence of scout images or dose reports, or localiser images in multiple orientations. I have formed a volume form the largest coherent set of images in the same orientation.');
     end
     
     % Choose the group with the most images
     main_group = fileGrouper.GetLargestGroup;
     
     % Sort the images into the correct order
-    [slice_thickness, ~] = main_group.SortAndGetParameters(reporting);
-    if isempty(slice_thickness)
-        reporting.ShowWarning('PTKLoadImageFromDicomFiles:NoSliceThickness', 'No information found about the slice thickness.');
-    end
+    [sliceThickness, globalOriginMm] = main_group.SortAndGetParameters(reporting);
 
     % Obtain a representative set of metadata tags from the first image in the
     % sequence

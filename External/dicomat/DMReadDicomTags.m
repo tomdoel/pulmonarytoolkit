@@ -178,7 +178,11 @@ function [header, is_little_endian, data_pointer] = ParseFileData(file_data, dat
             
             % For implicit VR we need to look up the VR from the tag map
             if ~is_explicit_vr
-                vr_str = tag_map(tag_32).VRType;
+                if undefined_length && ~tag_map.isKey(tag_32)
+                    vr_str = 'SQ'; % Undefined length only occurs for SQ and pixel data tags
+                else
+                    vr_str = tag_map(tag_32).VRType;
+                end
             end
             
             % Fetch and parse the tag value data

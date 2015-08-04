@@ -1,4 +1,4 @@
-function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, reporting)
+function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, dicomLibrary, reporting)
     % DMLoadMetadataFromDicomFiles. Loads metadata from a series of DICOM files
     %
     %     Syntax
@@ -11,6 +11,11 @@ function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, repo
     %
     %             image_path, filenames specify the location of the DICOM
     %                             files.
+    %
+    %             dicomLibrary    (Optional) An object implementing
+    %                             DMDicomLibraryInterface, used to parse
+    %                             the Dicom files. If no object is provided
+    %                             then the default DMDicomLibrary is used
     %
     %             reporting       A CoreReporting or implementor of the same interface,
     %                             for error and progress reporting. Create a CoreReporting
@@ -27,8 +32,14 @@ function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, repo
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
-    if nargin < 3
+    % Create a reporting object if none was provided
+    if nargin < 4 || isempty(reporting)
         reporting = CoreReportingDefault;
+    end
+    
+    % Create a library object if none was provided
+    if nargin < 3 || isempty(dicomLibrary)
+        dicomLibrary = DMDicomLibrary.getLibrary;
     end
     
     % Show a progress dialog
@@ -56,11 +67,10 @@ function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, repo
             file_name = next_file;
         end
         
-        if PTKDicomUtilities.IsDicom(file_path, file_name)
-            file_grouper.AddFile(PTKDicomUtilities.ReadMetadata(fullfile(file_path, file_name), dictionary, reporting));
+        if dicomLibrary.isdicom(fullfile(file_path, file_name))
+            file_grouper.AddFile(dicomLibrary.dicominfo(fullfile(file_path, file_name), dictionary));
         else
-            % If this is not a Dicom image we exclude it from the set and warn the
-            % user
+            % If this is not a Dicom image we exclude it from the set and warn the user
             reporting.ShowWarning('DMLoadMetadataFromDicomFiles:NotADicomFile', ['DMLoadMetadataFromDicomFiles: The file ' fullfile(file_path, file_name) ' is not a DICOM file and will be removed from this series.']);
         end
         

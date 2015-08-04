@@ -1,10 +1,10 @@
-function [loaded_image, ] = PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
+function loaded_image= PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
     % PTKLoadImageFromDicomFiles. Loads a series of DICOM files into a 3D volume
     %
     %     Syntax
     %     ------
     %
-    %         loaded_image = PTKLoadImageFromDicomFiles(path, filenames, reporting)
+    %         loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
     %
     %             loaded_image    a PTKImage containing the 3D volume
     %
@@ -33,7 +33,11 @@ function [loaded_image, ] = PTKLoadImageFromDicomFiles(image_path, filenames, re
     
     dicomLibrary = PTKDicomFallbackLibrary.getLibrary;
     
-    [image_volume_wrapper, representative_metadata] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting);
+    [image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm] = DMLoadMainImageFromDicomFiles(image_path, filenames, dicomLibrary, reporting);
+    if isempty(slice_thickness)
+        reporting.ShowWarning('PTKLoadImageFromDicomFiles:NoSliceThickness', 'No information found about the slice thickness. Arbitrarily setting slice thickness to 1');
+        slice_thickness = 1;
+    end
     
     % Detect and remove padding values
     PTKRemovePaddingValues(image_volume_wrapper, representative_metadata, reporting);
