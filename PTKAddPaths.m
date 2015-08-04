@@ -50,7 +50,9 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('External', 'npReg');
         path_folders{end + 1} = fullfile('External', 'npReg', 'npRegLib');
         
-        AddToPath(path_root, path_folders)
+        AddToPath(path_root, path_folders);
+        
+        CoreAddPaths(varargin{:});
         
         
         
