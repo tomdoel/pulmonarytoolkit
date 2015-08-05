@@ -106,7 +106,7 @@ classdef CoreReporting < CoreReportingInterface
             
             obj.AppendToLogFile([calling_function ': WARNING: ' identifier ':' message]);
             disp(['WARNING: ' message]);
-            if ~isempty(supplementary_info)
+            if nargin > 3 && ~isempty(supplementary_info)
                 disp('Additional information on this warning:');
                 disp(supplementary_info);
             end

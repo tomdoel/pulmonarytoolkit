@@ -25,7 +25,7 @@ classdef CoreReportingDefault < CoreReporting
     
     methods
         function obj = CoreReportingDefault
-            obj = obj@CoreReporting(CoreProgressDialog, [], false);
+            obj = obj@CoreReporting(CoreProgressDialog);
         end        
     end
 end

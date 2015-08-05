@@ -1,7 +1,7 @@
 function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting)
-    % DMLoadImageFromDicomFiles Loads a series of DICOM files into a coherent 3D volume.
+    % DMLoadMainImageFromDicomFiles Loads a series of DICOM files into a coherent 3D volume.
     %
-    % DMLoadImageFromDicomFiles parses the Dicom files and groups them into
+    % DMLoadMainImageFromDicomFiles parses the Dicom files and groups them into
     % coherent image volumes. The largest image volume is returned as a 3D
     % image volume in a CoreWrapper object.
     %
