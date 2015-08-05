@@ -106,8 +106,8 @@ classdef PTKViewerPanel < PTKPanel
             
             % Create the coontrol panel
             if obj.ShowControlPanel
-                obj.ControlPanel = PTKViewerPanelToolbar(obj, obj.Tools, obj.Reporting);
-                obj.AddChild(obj.ControlPanel, obj.Reporting);
+                obj.ControlPanel = PTKViewerPanelToolbar(obj, obj.Tools);
+                obj.AddChild(obj.ControlPanel);
             end
 
             % Create the renderer object, which handles the image processing in the viewer
