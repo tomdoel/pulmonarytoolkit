@@ -109,22 +109,35 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                     obj.ImageType = PTKImageType.Grayscale;
                     obj.OriginalImageSize = [0 0 0];
                 case 1
-                    obj.RawImage = new_image;
+                    if isa(new_image, 'CoreWrapper')
+                        obj.RawImage = new_image.RawImage;
+                    else
+                        obj.RawImage = new_image;
+                    end
                     obj.VoxelSize = [1, 1, 1];
                     obj.ImageType = obj.GuessImageType;
                     obj.OriginalImageSize = size(new_image);
                 case 2
-                    obj.RawImage = new_image;
+                    if isa(new_image, 'CoreWrapper')
+                        obj.RawImage = new_image.RawImage;
+                    else
+                        obj.RawImage = new_image;
+                    end
                     obj.VoxelSize = [1, 1, 1];
                     obj.ImageType = image_type;
                     obj.OriginalImageSize = size(new_image);
                 case 3
-                    obj.RawImage = new_image;
+                    if isa(new_image, 'CoreWrapper')
+                        obj.RawImage = new_image.RawImage;
+                    else
+                        obj.RawImage = new_image;
+                    end
                     obj.VoxelSize = voxel_size;
                     obj.ImageType = image_type;
                     obj.OriginalImageSize = size(new_image);
             end
             
+          
             obj.LastImageSize = obj.OriginalImageSize;
             obj.LastDataType = class(obj.RawImage);
 
