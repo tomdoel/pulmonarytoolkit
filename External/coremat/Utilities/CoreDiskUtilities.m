@@ -85,10 +85,15 @@ classdef CoreDiskUtilities
                 [relative_pathname, name, ext] = fileparts(path_or_filename);
                 filename = [name ext];
             end
-            current_path = pwd;
-            cd(relative_pathname);
-            absolute_file_path = pwd;
-            cd(current_path)
+            
+            if exist(relative_pathname, 'dir')
+                current_path = pwd;
+                cd(relative_pathname);
+                absolute_file_path = pwd;
+                cd(current_path)
+            else
+                absolute_file_path = fullfile(pwd, relative_pathname);
+            end
         end
         
         function file_list = GetDirectoryFileList(path, filename)
