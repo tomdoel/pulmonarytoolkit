@@ -249,11 +249,14 @@ classdef PTKGuiCore < PTKFigure
         function uids = ImportFromPath(obj, file_path)
             % Imports from a given location
             
-            obj.WaitDialogHandle.ShowAndHold('Import data');
+            obj.WaitDialogHandle.ShowAndHold('Loading data');
             
             % Import all datasets from this path
             uids = obj.GuiDataset.ImportDataRecursive(file_path);
             
+            if ~isempty(uids)
+                obj.GuiDataset.InternalLoadImages(uids{1});
+            end
             obj.WaitDialogHandle.Hide;
         end
         
