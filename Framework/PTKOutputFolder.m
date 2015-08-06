@@ -133,7 +133,7 @@ classdef PTKOutputFolder < CoreBaseClass
         function CreateNewOutputFolder(obj, dataset_stack, reporting)
             root_output_path = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
             
-            template = obj.ImageTemplates.GetTemplateImage(PTKContext.LungROI, dataset_stack, reporting);
+            template = obj.ImageTemplates.GetTemplateImage(PTKContext.OriginalImage, dataset_stack, reporting);
             metadata = template.MetaHeader;
             
             if isfield(metadata, 'PatientName')
