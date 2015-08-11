@@ -65,7 +65,7 @@ function GroupDirectoryRecursive(grouper, import_folder, tags_to_get, reporting)
         reporting.UpdateProgressMessage(['Importing data from: ' current_dir]);
         
         if reporting.HasBeenCancelled
-            reporting.Error(PTKReporting.CancelErrorId, 'User cancelled');
+            reporting.Error(CoreReporting.CancelErrorId, 'User cancelled');
         end
         
         GroupFilesInDirectory(grouper, current_dir, tags_to_get, reporting);

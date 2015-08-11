@@ -97,6 +97,30 @@ classdef CoreSystemUtilities
             colormap = [colormap; [0 0 1]];
         end
         
+        function [major_version, minor_version] = GetMatlabVersion
+            % Returns the major and minor version numbers of Matlab
+            
+            [matlab_version, ~] = version;
+            version_matrix = sscanf(matlab_version, '%d.%d.%d.%d');
+            major_version = version_matrix(1);
+            minor_version = version_matrix(2);
+        end
+        
+        function toolbox_installed = IsImageProcessingToolboxInstalled
+            % Returns true if the Matlab image processing toolbox is
+            % installed
+            
+            matlab_version = ver;
+            toolbox_installed = any(strcmp('Image Processing Toolbox', {matlab_version.Name}));
+        end
+
+        function toolbox_licensed = IsImageProcessingToolboxLicensed
+            % Returns true if the Matlab image processing toolbox has a valid licence
+            
+            [error_code, error_message] = license('checkout', 'image_toolbox');
+            toolbox_licensed = error_code == 1;
+        end
+        
     end
 end
 

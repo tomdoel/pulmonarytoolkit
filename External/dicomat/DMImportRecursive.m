@@ -86,7 +86,7 @@ function ImportDirectoryRecursive(fileGrouper, dicomLibrary, directory, dictiona
         reporting.UpdateProgressMessage(['Importing data from: ' current_dir]);
         
         if reporting.HasBeenCancelled
-            reporting.Error(PTKReporting.CancelErrorId, 'User cancelled');
+            reporting.Error(CoreReporting.CancelErrorId, 'User cancelled');
         end
         
         ImportFilesInDirectory(fileGrouper, dicomLibrary, current_dir, dictionary, reporting);

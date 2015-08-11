@@ -103,25 +103,8 @@ classdef MivSoftwareInfo < handle
     end
 
     methods (Static)
-        function [major_version, minor_version] = GetMatlabVersion
-            [matlab_version, ~] = version;
-            version_matrix = sscanf(matlab_version, '%d.%d.%d.%d');
-            major_version = version_matrix(1);
-            minor_version = version_matrix(2);
-        end
-        
-        function toolbox_installed = IsImageProcessingToolboxInstalled
-            matlab_version = ver;
-            toolbox_installed = any(strcmp('Image Processing Toolbox', {matlab_version.Name}));
-        end
-
-        function toolbox_licensed = IsImageProcessingToolboxLicensed
-            [error_code, error_message] = license('checkout', 'image_toolbox');
-            toolbox_licensed = error_code == 1;
-        end
-        
         function is_cancel_id = IsErrorCancel(error_id)
-            is_cancel_id = strcmp(error_id, PTKReporting.CancelErrorId);
+            is_cancel_id = strcmp(error_id, CoreReporting.CancelErrorId);
         end
         
         function is_error_missing_id = IsErrorFileMissing(error_id)
