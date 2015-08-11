@@ -24,7 +24,7 @@ classdef PTKAppDef < handle
         end
 
         function name = GetName(obj)
-            name = PTKSoftwareInfo.Name;
+            name = 'Pulmonary Toolkit';
         end
         
         function name = GetVersion(obj)
@@ -38,6 +38,9 @@ classdef PTKAppDef < handle
         function style_sheet = GetDefaultStyleSheet(obj)
             style_sheet = PTKDefaultStyleSheet;
         end
-        
+
+        function logo = GetLogoFilename(obj)
+            logo = 'PTKLogo.jpg';
+        end
     end
 end

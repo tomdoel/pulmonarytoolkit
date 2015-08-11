@@ -19,7 +19,7 @@ classdef MivAppDef < handle
         end
         
         function name = GetName(obj)
-            name = MivSoftwareInfo.Name;
+            name = 'MIV';
         end
         
         function name = GetVersion(obj)
@@ -32,6 +32,11 @@ classdef MivAppDef < handle
         
         function style_sheet = GetDefaultStyleSheet(obj)
             style_sheet = MivDefaultStyleSheet;
+        end
+        
+        function logo = GetLogoFilename(obj)
+            logo = 'MivLogo.jpg';
+
         end
     end
 end
