@@ -33,7 +33,7 @@ classdef PTKGuiDataset < CoreBaseClass
         function obj = PTKGuiDataset(app_def, gui, viewer_panel, settings, reporting)
             obj.AppDef = app_def;
             obj.GuiDatasetState = PTKGuiDatasetState;
-            obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, settings, reporting);
+            obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, app_def, settings, reporting);
 
             obj.Gui = gui;
             obj.Reporting = reporting;
@@ -300,15 +300,15 @@ classdef PTKGuiDataset < CoreBaseClass
                     obj.ClearDataset;
                     obj.Reporting.ShowMessage('PTKGuiDataset:LoadingCancelled', 'User cancelled loading');
                 elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
-                    uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [PTKSoftwareInfo.Name ': Cannot find dataset'], 'modal'));
+                    uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
                     delete_image_info = true;
                 elseif PTKSoftwareInfo.IsErrorUnknownFormat(exc.identifier)
-                    uiwait(errordlg('This is not an image file or the format is not supported by PTK. It will be removed from the Patient Browser.', [PTKSoftwareInfo.Name ': Cannot load this image'], 'modal'));
+                    uiwait(errordlg('This is not an image file or the format is not supported by PTK. It will be removed from the Patient Browser.', [obj.AppDef.GetName ': Cannot load this image'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:FormatNotSupported', 'The original data is missing. I am removing this dataset.');
                     delete_image_info = true;
                 else
-                    uiwait(errordlg(exc.message, [PTKSoftwareInfo.Name ': Cannot load dataset'], 'modal'));
+                    uiwait(errordlg(exc.message, [obj.AppDef.GetName ': Cannot load dataset'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
                 end
 
@@ -347,7 +347,7 @@ classdef PTKGuiDataset < CoreBaseClass
                     if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                         obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                     else
-                        uiwait(errordlg(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [PTKSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'modal'));
+                        uiwait(errordlg(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [obj.AppDef.GetName ': Failure in plugin ' plugin_name], 'modal'));
                         obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     end
                 end

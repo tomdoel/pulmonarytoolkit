@@ -237,7 +237,7 @@ classdef PTKGuiCore < PTKFigure
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
                 
                 if (image_info.ImageFileFormat == PTKImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
-                    uiwait(msgbox('No valid DICOM files were found in this folder', [PTKSoftwareInfo.Name ': No image files found.']));
+                    uiwait(msgbox('No valid DICOM files were found in this folder', [obj.AppDef.GetName ': No image files found.']));
                     obj.Reporting.ShowMessage('PTKGuiApp:NoFilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
                     obj.LoadImages(image_info);
