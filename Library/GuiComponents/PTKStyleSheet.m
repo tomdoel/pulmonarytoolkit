@@ -19,5 +19,6 @@ classdef PTKStyleSheet
         IconHighlightColour = PTKDefaultStyleSheet.IconHighlightColour
         IconSelectedColour = PTKDefaultStyleSheet.IconSelectedColour
         IconHighlightSelectedColour = PTKDefaultStyleSheet.IconHighlightSelectedColour
+        Font = PTKDefaultStyleSheet.Font
     end
 end

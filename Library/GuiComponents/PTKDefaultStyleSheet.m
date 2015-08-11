@@ -19,5 +19,6 @@ classdef PTKDefaultStyleSheet
         IconHighlightColour = [0.7 0.7 0.7]
         IconSelectedColour = [0.6 0.6 0]
         IconHighlightSelectedColour = [1 1 0]
+        Font = 'Helvetica'
     end
 end
