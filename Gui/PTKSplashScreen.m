@@ -18,6 +18,7 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
     %    
     
     properties (Access = private)
+        AppDef
         Image
         TitleText
         BodyText
@@ -49,17 +50,17 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
     end
         
     methods (Static)
-        function splash_screen = GetSplashScreen
+        function splash_screen = GetSplashScreen(app_def)
             persistent SplashScreen
             if isempty(SplashScreen) || ~isvalid(SplashScreen)
-                SplashScreen = PTKSplashScreen;
+                SplashScreen = PTKSplashScreen(app_def);
             end
             splash_screen = SplashScreen;
         end
     end
     
     methods (Access = private)
-        function obj = PTKSplashScreen
+        function obj = PTKSplashScreen(app_def)
             
             % Calculate the figure windows size
             set(0, 'Units', 'pixels');
@@ -73,6 +74,7 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
             obj = obj@PTKFigure('', position, reporting);            
             
             obj.TimerRef = tic;
+            obj.AppDef = app_def;
             
             % Hide the progress bar
             obj.Hide;
@@ -96,14 +98,17 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
             % Override the colour and resize behaviour
             set(obj.GraphicalComponentHandle, 'Color', [1 1 1], 'Resize', 'off');
             
-            obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', [30, 70, 223, 200]);
-            logo = imread(PTKSoftwareInfo.SplashScreenImageFile);
+            logo = imread(obj.AppDef.GetLogoFilename);
+            image_size = size(logo);            
+            screen_image_size = PTKSplashScreen.GetOptimalLogoSize(image_size(2:-1:1), [30, 70, 223, 200]);
+            
+            obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', screen_image_size);
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
-            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', PTKSoftwareInfo.Name, 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
+            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', obj.AppDef.GetName, 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
             
-            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1], 'HorizontalAlignment', 'Center');
-            set(obj.BodyText, 'String', sprintf(['Version ' PTKSoftwareInfo.Version]));
+            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1], 'HorizontalAlignment', 'Center');
+            set(obj.BodyText, 'String', sprintf(['Version ' obj.AppDef.GetVersion]));
             
             % Create the progress reporting
             panel_background_colour = [1 1 1];
@@ -254,6 +259,20 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
         function QuitButton(obj, ~, ~)
             obj.Hide;
             throw(MException('PTKCustomProgressDialog:UserForceQuit', 'User forced plugin to terminate'));
+        end
+    end
+    
+    methods (Static, Access = private)
+        function logo_position = GetOptimalLogoSize(image_size, frame_position)
+            frame_size = frame_position(3:4);
+            if (image_size(1) > frame_size(1) || image_size(2) > frame_size(2))
+                scale = max(ceil(image_size(1)/frame_size(1)), ceil(image_size(2)/frame_size(2)));
+                scale = 1/scale;
+            else
+                scale = min(floor(frame_size(1)/image_size(1)), floor(frame_size(2)/image_size(2)));
+            end
+            scaled_image_size = scale*image_size;
+            logo_position = [frame_position(1:2) + round((frame_size - scaled_image_size)/2), scaled_image_size];
         end
     end
     

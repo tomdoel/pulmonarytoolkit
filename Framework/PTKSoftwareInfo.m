@@ -29,7 +29,6 @@ classdef PTKSoftwareInfo < handle
         MatlabAdvisedMinorVersion = 14
 
         % Name of application
-        Name = 'Pulmonary Toolkit'
         DicomName = 'TD Pulmonary Toolkit'
         DicomManufacturer = 'www tomdoel com'
         DicomStudyDescription = 'TD Pulmonary Toolkit exported images'
@@ -74,7 +73,6 @@ classdef PTKSoftwareInfo < handle
         SchemaCacheName = 'Schema'
         ImageTemplatesCacheName = 'ImageTemplates'
         OutputFolderCacheName = 'OutputFolder'
-        SplashScreenImageFile = 'PTKLogo.jpg'
 
         % Compression to use when saving cache images
         Compression = 'deflate'

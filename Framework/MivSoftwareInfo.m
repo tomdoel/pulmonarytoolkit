@@ -29,7 +29,6 @@ classdef MivSoftwareInfo < handle
         MatlabAdvisedMinorVersion = 14
 
         % Name of application
-        Name = 'MIV viewer'
         DicomName = 'TD MIV'
         DicomManufacturer = 'www tomdoel com'
         DicomStudyDescription = 'TD MIV exported images'
@@ -74,7 +73,6 @@ classdef MivSoftwareInfo < handle
         SchemaCacheName = 'Schema'
         ImageTemplatesCacheName = 'ImageTemplates'
         OutputFolderCacheName = 'OutputFolder'
-        SplashScreenImageFile = 'MivLogo.jpg'
 
         % Compression to use when saving cache images
         Compression = 'deflate'
