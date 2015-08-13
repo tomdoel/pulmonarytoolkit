@@ -45,7 +45,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     methods
         function Recompile(obj, reporting)
             % Forces recompilation of mex files
-            PTKCompileMexFiles(obj.FrameworkCache, true, reporting);
+            PTKCompileMexFiles(obj.FrameworkCache, PTKGetMexFilesToCompile(reporting), true, reporting);
         end
         
         function RebuildDatabase(obj, reporting)
@@ -102,7 +102,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
             obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(obj.LinkedDatasetRecorder);
             obj.ImageDatabase = PTKImageDatabase.LoadDatabase(reporting);
             obj.ImageDatabase.Rebuild([], false, reporting)
-            PTKCompileMexFiles(obj.FrameworkCache, false, reporting);
+            PTKCompileMexFiles(obj.FrameworkCache, PTKGetMexFilesToCompile(reporting), false, reporting);
         end
     end
     

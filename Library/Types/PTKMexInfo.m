@@ -1,7 +1,7 @@
 classdef PTKMexInfo < handle
     % PTKMexInfo. Structure for caching information about compiled mex files.
     %
-    %     PTKCompileMexFiles is an internal part of the Pulmonary Toolkit
+    %     PTKMexInfo is an internal part of the Pulmonary Toolkit
     %     Framework and should not be called by your own code.
     %
     %     Licence

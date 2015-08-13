@@ -1,4 +1,4 @@
-function PTKCompileMexFiles(framework_cache, force_recompile, reporting)
+function PTKCompileMexFiles(framework_cache, mex_files_to_compile, force_recompile, reporting)
     % PTKCompileMexFiles. Checks if mex files are up to date and re-compiles if
     % necessary
     %
@@ -29,7 +29,6 @@ function PTKCompileMexFiles(framework_cache, force_recompile, reporting)
     root_directory = PTKDirectories.GetSourceDirectory;
     output_directory = fullfile(root_directory, 'bin');
     cached_mex_file_info = framework_cache.MexInfoMap;
-    mex_files_to_compile = GetMexFilesToCompile(root_directory, reporting);
     framework_cache_was_missing = framework_cache.IsNewlyCreated;
     
     compiler = GetNameOfCppCompiler;
@@ -150,43 +149,6 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
         end
     end
 end
-
-function mex_files_to_compile_map = GetMexFilesToCompile(root_dir, reporting)
-    mex_dir = PTKDirectories.GetMexSourceDirectory;
-
-    % Populate list with known mex files
-    mex_files_to_compile = PTKMexInfo.empty(0);
-    mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKFastEigenvalues', 'cpp', mex_dir, [], []);
-    mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKFastIsSimplePoint', 'cpp', mex_dir, [], []);
-    mex_files_to_compile(end + 1) = PTKMexInfo(2, 'PTKWatershedFromStartingPoints', 'cpp', mex_dir, [], []);
-    mex_files_to_compile(end + 1) = PTKMexInfo(3, 'PTKWatershedMeyerFromStartingPoints', 'cpp', mex_dir, [], []);
-    mex_files_to_compile(end + 1) = PTKMexInfo(2, 'PTKSmoothedRegionGrowingFromBorderedImage', 'cpp', mex_dir, [], []);
-    
-    mex_files_to_compile(end + 1) = PTKMexInfo(3, 'mba_surface_interpolation', 'cpp', fullfile(root_dir, 'External', 'gerardus', 'matlab', 'PointsToolbox'), ...
-        {['-I' fullfile(root_dir, 'External')], ['-I' fullfile(root_dir, 'External', 'mba', 'include')]}, ...
-        {fullfile(root_dir, 'External', 'mba', 'src', 'MBA.cpp'), fullfile(root_dir, 'External', 'mba', 'src', 'UCBsplines.cpp'), ...
-        fullfile(root_dir, 'External', 'mba', 'src', 'UCBsplineSurface.cpp'), fullfile(root_dir, 'External', 'mba', 'src', 'MBAdata.cpp')});
-    
-    % Transfer to a map
-    mex_files_to_compile_map = containers.Map;
-    for mex_file = mex_files_to_compile
-        mex_files_to_compile_map(mex_file.Name) = mex_file;
-    end
-    
-    % Now add unknown .cpp files
-    file_list = dir(fullfile(mex_dir, '*.cpp'));
-    for index = 1 : numel(file_list)
-        filename = file_list(index).name;
-        [~, name_part, ~] = fileparts(filename);
-        if ~mex_files_to_compile_map.isKey(name_part)
-            mex_files_to_compile_map(name_part) = PTKMexInfo(0, name_part, 'cpp', mex_dir, [], []);
-            reporting.ShowWarning('PTKCompileMexFiles:MexFileNotInList', ['The file ' filename ' was found in the mex folder but has not been added to PTKCompileMexFiles.m. Mex files should be added to PTKCompileMexFiles.m so they are correctly versioned.'], []);
-        else
-        end
-    end
-    
-end
-
 
 function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_directory, framework_cache_was_missing, reporting)
     mex_extension = mexext;
