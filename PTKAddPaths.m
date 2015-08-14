@@ -44,6 +44,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = 'Framework';
         
         path_folders{end + 1} = fullfile('External', 'coremat');
+        path_folders{end + 1} = fullfile('External', 'matnat');
         path_folders{end + 1} = fullfile('External', 'dicomat');
         path_folders{end + 1} = fullfile('External', 'gerardus', 'matlab', 'PointsToolbox');
         path_folders{end + 1} = fullfile('External', 'stlwrite');
@@ -53,8 +54,7 @@ function PTKAddPaths(varargin)
         AddToPath(path_root, path_folders);
         
         CoreAddPaths(varargin{:});
-        
-        
+        MatNatAddPaths(varargin{:});
         
         % Now add the plugins (have to do this afterwards, because we rely on
         % library functions, so the library paths have to be set first)
