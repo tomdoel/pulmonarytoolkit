@@ -128,11 +128,11 @@ classdef PTKGuiCore < PTKFigure
 
             % Create the panel of tools across the bottom of the interface
             if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', 'all', obj);
+                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', 'all', obj, obj.AppDef);
                 obj.AddChild(obj.ToolbarPanel);
             end
             
-            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins);
+            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins, obj.AppDef);
             obj.AddChild(obj.ModeTabControl);
 
             obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);

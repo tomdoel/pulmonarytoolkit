@@ -50,5 +50,9 @@ classdef MivAppDef < handle
         function plugins_path = GetUserPluginsPath(~)
             plugins_path = [];
         end
+        
+        function force_greyscale = ForceGreyscale(~)
+            force_greyscale = true;
+        end
     end
 end

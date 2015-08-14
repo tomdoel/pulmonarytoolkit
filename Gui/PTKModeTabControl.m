@@ -25,7 +25,7 @@ classdef PTKModeTabControl < PTKTabControl
     end
 
     methods
-        function obj = PTKModeTabControl(parent, organised_plugins)
+        function obj = PTKModeTabControl(parent, organised_plugins, app_def)
             obj = obj@PTKTabControl(parent);
 
             obj.OrganisedPlugins = organised_plugins;
@@ -35,7 +35,7 @@ classdef PTKModeTabControl < PTKTabControl
             
             obj.LeftBorder = true;
 
-            obj.ViewPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'View', 'all', obj.Gui);
+            obj.ViewPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'View', 'all', obj.Gui, app_def);
             obj.AddTabbedPanel(obj.ViewPanel, 'View', 'viewbar', 'Visualisation');
             
             obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Home', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback);

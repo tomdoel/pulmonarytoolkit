@@ -21,6 +21,7 @@ classdef PTKToolbarPanel < PTKPanel
         PluginModeName
         OrganisedPlugins
         ToolMap
+        AppDef
     end
     
     properties (Constant)
@@ -32,13 +33,14 @@ classdef PTKToolbarPanel < PTKPanel
     end
     
     methods
-        function obj = PTKToolbarPanel(parent, organised_plugins, mode_name, plugin_mode_name, gui_app)
+        function obj = PTKToolbarPanel(parent, organised_plugins, mode_name, plugin_mode_name, gui_app, app_def)
             obj = obj@PTKPanel(parent);
             
             obj.ModeName = mode_name;
             obj.PluginModeName = plugin_mode_name;
             obj.TopBorder = true;
             
+            obj.AppDef = app_def;
             obj.GuiApp = gui_app;
             obj.ControlGroups = containers.Map;
             obj.OrderedControlGroupList = {};
@@ -139,6 +141,11 @@ classdef PTKToolbarPanel < PTKPanel
             else
                 icon = imread(fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.IconFolder, PTKSoftwareInfo.DefaultPluginIcon));
             end
+            
+            if obj.AppDef.ForceGreyscale
+                icon = repmat(0.21*icon(:,:,1) + 0.72*icon(:,:,2) + 0.07*icon(:,:,3), [1,1,3]);
+            end
+            
             tool_group = obj.ControlGroups(category_key);
             if isa(tool, 'PTKGuiPluginSlider')
                 new_control = PTKPluginLabelSlider(obj, tool, icon, obj.GuiApp);

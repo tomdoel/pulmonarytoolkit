@@ -54,5 +54,9 @@ classdef PTKAppDef < handle
             [path_root, ~, ~] = fileparts(full_path);
             plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.PluginDirectoryName);
         end
+        
+        function force_greyscale = ForceGreyscale(~)
+            force_greyscale = false;
+        end
     end
 end
