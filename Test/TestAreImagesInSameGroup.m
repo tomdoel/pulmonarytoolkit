@@ -1,5 +1,5 @@
 classdef TestAreImagesInSameGroup < PTKTest
-    % TestAreImagesInSameGroup. Tests for the PTKAreImagesInSameGroup function.
+    % TestAreImagesInSameGroup. Tests for the DMAreImagesInSameGroup function.
     %
     %
     %     Licence
@@ -55,9 +55,9 @@ classdef TestAreImagesInSameGroup < PTKTest
             % Slice location tags: existence must match but values do not have
             % to match
             this_metadata.SliceLocation = 1;
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should fail');
+            obj.Assert(~DMAreImagesInSameGroup(this_metadata, other_metadata), 'Should fail');
             other_metadata.SliceLocation = 2;
-            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
+            obj.Assert(DMAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
             
             % ImagePositionPatient tag: check consistency of image locations
             % Image positions should lie approximately on a line; there is a
@@ -66,24 +66,24 @@ classdef TestAreImagesInSameGroup < PTKTest
             this_metadata.ImagePositionPatient = [10;20;30];
             extra_metadata.ImagePositionPatient = [20;40;60];
             other_metadata.ImagePositionPatient = [30;60;110];
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
+            obj.Assert(~DMAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
             other_metadata.ImagePositionPatient = [30;60;90];
-            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should pass');
+            obj.Assert(DMAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should pass');
             extra_metadata.ImagePositionPatient = [20;-40;60];
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
+            obj.Assert(~DMAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
 
             this_metadata.ImagePositionPatient = [0;30;40];
             extra_metadata.ImagePositionPatient = [0;90;120];
             other_metadata.ImagePositionPatient = [0;60;80];
-            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should pass');
+            obj.Assert(DMAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should pass');
             other_metadata.ImagePositionPatient = [0;55;80];
-            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should pass');
+            obj.Assert(DMAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should pass');
             this_metadata.ImagePositionPatient = [0;30;-40];
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
+            obj.Assert(~DMAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
             this_metadata.ImagePositionPatient = [0;15;40];
             extra_metadata.ImagePositionPatient = [0;90;120];
             other_metadata.ImagePositionPatient = [0;60;80];
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
+            obj.Assert(~DMAreImagesInSameGroup(this_metadata, other_metadata, extra_metadata), 'Should fail');
         end
     end
     
@@ -97,19 +97,19 @@ classdef TestAreImagesInSameGroup < PTKTest
             end
             
             % Images should match if the tag is not present in either
-            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
+            obj.Assert(DMAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
             
             % Images should not match if one contains a tag
             this_metadata.(tag_name) = value_1;
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should fail');
+            obj.Assert(~DMAreImagesInSameGroup(this_metadata, other_metadata), 'Should fail');
             
             % Images should not match if the tags don't match
             other_metadata.(tag_name) = value_2;
-            obj.Assert(~PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should fail');
+            obj.Assert(~DMAreImagesInSameGroup(this_metadata, other_metadata), 'Should fail');
             
             % Images should match if the tags match
             other_metadata.(tag_name) = value_1;
-            obj.Assert(PTKAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
+            obj.Assert(DMAreImagesInSameGroup(this_metadata, other_metadata), 'Should pass');
         end
     end
 end
