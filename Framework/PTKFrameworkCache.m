@@ -43,7 +43,6 @@ classdef PTKFrameworkCache < handle
     end
     
     methods
-        
         function obj = PTKFrameworkCache
             obj.MexInfoMap = containers.Map;
         end
@@ -62,6 +61,12 @@ classdef PTKFrameworkCache < handle
         
         function cacheFileName = GetCacheFilename(~)
             cacheFileName = PTKDirectories.GetFrameworkCacheFilePath;
+        end
+
+        function UpdateCache(obj, processed_mex_file_list, reporting)
+            obj.MexInfoMap = processed_mex_file_list;
+            obj.IsNewlyCreated = false;
+            obj.SaveCache(reporting);
         end
     end
 end

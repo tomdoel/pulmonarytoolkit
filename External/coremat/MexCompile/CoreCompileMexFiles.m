@@ -34,9 +34,8 @@ function CoreCompileMexFiles(mex_cache, output_directory, mex_files_to_compile, 
         CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_directory, framework_cache_was_missing, reporting);
         Compile(mex_files_to_compile, mex_cache, cached_mex_file_info, output_directory, compiler, force_recompile, reporting);
     end
-    mex_cache.MexInfoMap = mex_files_to_compile;
-    mex_cache.IsNewlyCreated = false;
-    mex_cache.SaveCache(reporting);
+    
+    mex_cache.UpdateCache(mex_files_to_compile, reporting);
     reporting.CompleteProgress;
 end
 
