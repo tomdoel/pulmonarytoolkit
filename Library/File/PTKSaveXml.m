@@ -54,6 +54,8 @@ function node = AddNodesForClass(node, data, xml_doc_node, reporting)
     end
     
     class_properties = CoreContainerUtilities.GetFieldValuesFromSet(mc.Properties, 'Name');
+    transient_properties = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(mc.Properties, 'Transient');
+    class_properties = class_properties(~transient_properties);
     public_properties = properties(data);
     property_list = union(class_properties, public_properties);
     for i = 1 : length(property_list)
