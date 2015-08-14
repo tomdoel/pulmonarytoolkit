@@ -21,7 +21,6 @@ classdef PTKSoftwareInfo < handle
         Version = '0.5'
         DicomVersion = '0.1'
         DiskCacheSchema = '0.1'
-        XMLVersion = '0.1'
         PTKVersion = '2'
         MatlabMinimumMajorVersion = 7
         MatlabMinimumMinorVersion = 12

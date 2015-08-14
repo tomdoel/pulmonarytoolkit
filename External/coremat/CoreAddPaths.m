@@ -21,6 +21,7 @@ function CoreAddPaths(varargin)
         path_folders{end + 1} = 'Reporting';
         path_folders{end + 1} = 'Types';
         path_folders{end + 1} = 'Utilities';
+        path_folders{end + 1} = 'Xml';
         
         AddToPath(path_root, path_folders)
         

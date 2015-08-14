@@ -31,7 +31,7 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
             try
                 linked_recorder_filename = PTKDirectories.GetLinkingCacheFilePath;
                 if exist(linked_recorder_filename, 'file')                    
-                    linked_recorder = PTKLoadXml(linked_recorder_filename, reporting);
+                    linked_recorder = CoreLoadXml(linked_recorder_filename, reporting);
                     linked_recorder = linked_recorder.LinkingCache;
                 else
                     reporting.ShowWarning('PTKLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No linking cache file found. Will create new one on exit', []);
@@ -116,7 +116,7 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
             try
                 value = [];
                 value.cache = obj;
-                PTKSaveXml(obj, 'LinkingCache', cache_filename, reporting);
+                CoreSaveXml(obj, 'LinkingCache', cache_filename, reporting);
             catch ex
                 reporting.ErrorFromException('PTKLinkedDatasetRecorder:FailedtoSaveCacheFile', ['Unable to save linking cache file ' cache_filename], ex);
             end

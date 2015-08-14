@@ -1,56 +1,59 @@
-function data = PTKLoadXml(file_name, reporting)
-    % PTKLoadXml. Loads data structure from an XML file
+function data = CoreLoadXml(file_name, reporting)
+    % CoreLoadXml. Loads data structure from an XML file
     %
-    %     PTKLoadXml loads data which has been serialised to an XML file using
-    %     PTKSaveXml. The data may include arrays, cell arrays, structures, maps and
-    %     classes which support serialisation.
+    %     CoreLoadXml loads data which has been serialised to an XML file using
+    %     CoreSaveXml. The data may include arrays, cell arrays, structures, maps and
+    %     classes which support serialisation. Transient class properties
+    %     are note saved.
     %
     %     Syntax:
-    %         data = PTKLoadXml(file_name, reporting);
+    %         data = CoreLoadXml(file_name, reporting);
     %
-    %             file_name - a PTKFilename or character array containing the path and filename
+    %             file_name - a CoreFilename or character array containing the path and filename
     %             reporting - object of type CoreReportingInterface for error reporting
     %
     %             data - a structure containing all the data which has been loaded
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %
+    %    
     
+    XMLVersion = '0.1';
+
     if isa(file_name, 'CoreFilename')
         file_name = file_name.FullFile;
     end
     
     xml_doc_node = xmlread(file_name);
-    data = ParseXmlFile(xml_doc_node, reporting);
+    data = ParseXmlFile(xml_doc_node, XMLVersion, reporting);
 end
 
-function data = ParseXmlFile(xml_doc_node, reporting)
+function data = ParseXmlFile(xml_doc_node, XMLVersion, reporting)
     children = GetChildNodes(xml_doc_node);
     for child = children
         next_child = child{1};
         node_name = GetNodeName(next_child);
-        if strcmp(node_name, 'PTK')
+        if strcmp(node_name, 'PTK') || strcmp(node_name, 'CoreMat')
             attributes = GetAttributes(next_child);
             xml_version = attributes.XMLVersion;
-            if ~strcmp(xml_version, PTKSoftwareInfo.XMLVersion)
-                reporting.Error('PTKLoadXml:XMLVersionMismatch', 'This XML file was created with a newer version of the Pulmonary Toolkit.');
+            if ~strcmp(xml_version, XMLVersion)
+                reporting.Error('CoreLoadXml:XMLVersionMismatch', 'This XML file was created with a newer version of CoreMat.');
             end
-            data = ParsePTK(next_child);
+            data = ParseCoreMatXml(next_child);
         end
     end
 end
 
-function data = ParsePTK(xml_node)
+function data = ParseCoreMatXml(xml_node)
     data = [];
     children = GetChildNodes(xml_node);
     for child = children
         next_child = child{1};
         node_name = GetNodeName(next_child);
-        if strcmp(node_name, 'PTKSerialised')
+        if strcmp(node_name, 'PTKSerialised') || strcmp(node_name, 'CoreSerialised')
             [child_name, child_data] = ParseProperty(next_child);
             data.(child_name) = child_data;
         end

@@ -1,34 +1,35 @@
-function PTKSaveXml(data, name, file_name, reporting)
-    % PTKSaveXml. Saves a data structure as an XML file
+function CoreSaveXml(data, name, file_name, reporting)
+    % CoreSaveXml. Saves a data structure as an XML file
     %
-    %     PTKSaveXml saves data into an XML file. The data may include arrays,
+    %     CoreSaveXml saves data into an XML file. The data may include arrays,
     %     cell arrays, structures, maps and classes which support serialisation.
     %
     %     Syntax:
-    %         PTKSaveXml(data, name, file_name, reporting)
+    %         CoreSaveXml(data, name, file_name, reporting)
     %
     %             data - the root object of the data to store. Can be a value, a class, a structure, map or cell array
     %             name - the name of the root object 
-    %             file_name - a PTKFilename or character array containing the path and filename
+    %             file_name - a CoreFilename or character array containing the path and filename
     %             reporting - object of type CoreReportingInterface for error reporting
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %            
+    %    
     
-    xml_doc_node = com.mathworks.xml.XMLUtils.createDocument('PTK');
+    XMLVersion = '0.1';
+
+    xml_doc_node = com.mathworks.xml.XMLUtils.createDocument('CoreMat');
     xml_root_element = xml_doc_node.getDocumentElement;
-    xml_root_element.setAttribute('PTKVersion', PTKSoftwareInfo.Version);
-    xml_root_element.setAttribute('XMLVersion', PTKSoftwareInfo.XMLVersion);
+    xml_root_element.setAttribute('XMLVersion', XMLVersion);
     
-    serialised_node = CreateNodeForPropertyMatrix('PTKSerialised', name, data, xml_doc_node, reporting);
+    serialised_node = CreateNodeForPropertyMatrix('CoreSerialised', name, data, xml_doc_node, reporting);
     
     xml_root_element.appendChild(serialised_node);
-    xml_doc_node.appendChild(xml_doc_node.createComment('TD Pulmonary Toolkit. Automatically generated XML file. Code by Tom Doel 2014'));
+    xml_doc_node.appendChild(xml_doc_node.createComment('CoreMat software by Tom Doel 2014-2015. Automatically generated XML file.'));
     
     if isa(file_name, 'CoreFilename')
         file_name = file_name.FullFile;
@@ -147,10 +148,10 @@ function node = AddValuesToNode(node, value, xml_doc_node, reporting)
         end
         
     elseif ishghandle(value)
-        reporting.Error('PTKSaveXml:UnsupportedClass', 'Cannot export handle graphics objects to XML');
+        reporting.Error('CoreSaveXml:UnsupportedClass', 'Cannot export handle graphics objects to XML');
             
     elseif isjava(value)
-        reporting.Error('PTKSaveXml:UnsupportedClass', 'Cannot export java objects to XML');
+        reporting.Error('CoreSaveXml:UnsupportedClass', 'Cannot export java objects to XML');
 
     else
         % Other class
