@@ -27,14 +27,14 @@ classdef CoreMexCache < CoreBaseClass
             try
                 if exist(cacheFilename, 'file')                    
                     cache = CoreLoadXml(cacheFilename, reporting);
-                    cache = cache.MexCache;
+                    cache = cache.Cache;
                     cache.IsNewlyCreated = false;
                     cache.CacheFilename = cacheFilename;
                 else
                     reporting.ShowWarning('CoreMexCache:MexCacheFileNotFound', 'No mex cache file found. Will create new one on exit', []);
                     cache = CoreMexCache(cacheFilename);
                     cache.IsNewlyCreated = true;
-                    cache.Save(reporting);
+                    cache.SaveCache(reporting);
                 end
                 
             catch ex
