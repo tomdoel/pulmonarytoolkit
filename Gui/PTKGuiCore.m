@@ -94,7 +94,8 @@ classdef PTKGuiCore < PTKFigure
 
             % Create a callback handler for the Patient Browser and sidebar
             if obj.AppDef.MatNatEnabled
-                matnat_database = PTKMatNatDatabase;
+                mnConfig = matnattestconfig; % ToDo: the config file has to be defined
+                matnat_database = PTKMatNatDatabase(mnConfig);
                 combined_database = PTKCombinedImageDatabase(obj.GuiDataset.GetImageDatabase, matnat_database);
             else
                 matnat_database = [];
@@ -119,7 +120,6 @@ classdef PTKGuiCore < PTKFigure
                 % The MatNat Browser factory manages lazy creation of the
                 % MatNat Browser. This may take some time to load as it has to
                 % get the information from the server
-                matnat_database = PTKMatNatDatabase;
                 obj.MatNatBrowserFactory = PTKPatientBrowserFactory(combined_controller, matnat_database, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'MatNat', obj.Reporting);
             end
             
