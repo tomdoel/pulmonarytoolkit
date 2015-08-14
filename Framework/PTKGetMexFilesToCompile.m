@@ -38,7 +38,7 @@ function mex_files_to_compile_map = PTKGetMexFilesToCompile(reporting)
         [~, name_part, ~] = fileparts(filename);
         if ~mex_files_to_compile_map.isKey(name_part)
             mex_files_to_compile_map(name_part) = PTKMexInfo(0, name_part, 'cpp', mex_dir, [], []);
-            reporting.ShowWarning('PTKCompileMexFiles:MexFileNotInList', ['The file ' filename ' was found in the mex folder but has not been added to PTKCompileMexFiles.m. Mex files should be added to PTKCompileMexFiles.m so they are correctly versioned.'], []);
+            reporting.ShowWarning('PTKGetMexFilesToCompile:MexFileNotInList', ['The file ' filename ' was found in the mex folder but has not been added to PTKGetMexFilesToCompile.m. Mex files should be added to PTKGetMexFilesToCompile.m so they are correctly versioned.'], []);
         else
         end
     end

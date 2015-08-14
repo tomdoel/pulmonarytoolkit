@@ -59,6 +59,10 @@ classdef PTKFrameworkCache < handle
                 reporting.ErrorFromException('PTKFrameworkCache:FailedtoSaveCacheFile', ['Unable to save framework cache file ' cache_filename], ex);
             end
         end
+        
+        function cacheFileName = GetCacheFilename(~)
+            cacheFileName = PTKDirectories.GetFrameworkCacheFilePath;
+        end
     end
 end
 

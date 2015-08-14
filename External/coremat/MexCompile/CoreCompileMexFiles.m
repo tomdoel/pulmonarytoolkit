@@ -1,58 +1,53 @@
-function PTKCompileMexFiles(framework_cache, mex_files_to_compile, force_recompile, reporting)
-    % PTKCompileMexFiles. Checks if mex files are up to date and re-compiles if
+function CoreCompileMexFiles(mex_cache, output_directory, mex_files_to_compile, force_recompile, retry_instructions, reporting)
+    % CoreCompileMexFiles. Checks if mex files are up to date and re-compiles if
     % necessary
     %
-    %     PTKCompileMexFiles is an internal part of the Pulmonary Toolkit
-    %     Framework and is called by PTKMain. In general should not be 
-    %     called by your own code.
-    %
-    %     PTKCompileMexFiles contains a list of mex files to be compiled by the
-    %     Pulmonary Toolkit, with version numbers. The last compiled versions
-    %     are cached in the Framework Cache. If the versions have changed, files
+    %     CoreCompileMexFiles takes in a list of mex files to be compiled,
+    %     with version numbers. The last compiled versions
+    %     are cached using the supplied mex_cache. If the versions have changed, files
     %     are automatically recompiled. Recompilation also occurs if the output
-    %     files are missing or the Framework Cache has been deleted.
+    %     files are missing or the mex_cache file has been deleted.
     %
-    %     PTKCompileMexFiles checks for the presence of compilers and warns the
-    %     user if no compiler has been detected. PTKCompileMexFiles does not
+    %     CoreCompileMexFiles checks for the presence of compilers and warns the
+    %     user if no compiler has been detected. CoreCompileMexFiles does not
     %     attempt to recompile a particular mex file again after a failed
     %     compile attempt. Recompilation can be achieved using the
-    %     force_recompile flag or my deleting the Framework Cache.
+    %     force_recompile flag or by deleting the mex_cache file.
+    %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %
+    %    
     
     reporting.ShowProgress('Checking mex files');
-    root_directory = PTKDirectories.GetSourceDirectory;
-    output_directory = fullfile(root_directory, 'bin');
-    cached_mex_file_info = framework_cache.MexInfoMap;
-    framework_cache_was_missing = framework_cache.IsNewlyCreated;
+    cached_mex_file_info = mex_cache.MexInfoMap;
+    framework_cache_was_missing = mex_cache.IsNewlyCreated;
     
     compiler = GetNameOfCppCompiler;
     if isempty(compiler)
-        compiler = MexSetup;
+        compiler = MexSetup(retry_instructions, reporting);
     end
     if ~isempty(compiler)
         CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_directory, framework_cache_was_missing, reporting);
-        Compile(mex_files_to_compile, cached_mex_file_info, output_directory, compiler, force_recompile, reporting);
+        Compile(mex_files_to_compile, mex_cache, cached_mex_file_info, output_directory, compiler, force_recompile, reporting);
     end
-    framework_cache.MexInfoMap = mex_files_to_compile;
-    framework_cache.IsNewlyCreated = false;
-    framework_cache.SaveCache(reporting);
+    mex_cache.MexInfoMap = mex_files_to_compile;
+    mex_cache.IsNewlyCreated = false;
+    mex_cache.SaveCache(reporting);
     reporting.CompleteProgress;
 end
 
-function compiler = MexSetup(reporting)
+function compiler = MexSetup(retry_instructions, reporting)
     cpp_compilers = mex.getCompilerConfigurations('C++', 'Installed');
     if isempty(cpp_compilers)
         compiler = [];
-        reporting.ShowWarning('PTKCompileMexFiles:NoCompiler', 'I cannot compile mex files because no C++ compiler has been found on this system. Some parts of the Toolkit will not function. Install a C++ compiler and run PTKMain.Recompile().', []);
+        reporting.ShowWarning('CoreCompileMexFiles:NoCompiler', ['I cannot compile mex files because no C++ compiler has been found on this system. Some parts of the Toolkit will not function. Install a C++ compiler.' retry_instructions], []);
     else
         disp('***********************************************************************');
-        disp(' Pulmonary Toolkit - running MEX steup ');
+        disp(' CoreMat - running MEX steup ');
         disp(' ');
         disp(' Follow the instructions below to select a C++ compiler. Normally the default options are good');
         disp(' ');        
@@ -60,44 +55,44 @@ function compiler = MexSetup(reporting)
         mex -setup;
         compiler = GetNameOfCppCompiler;
         if isempty(compiler)
-            reporting.ShowWarning('PTKCompileMexFiles:NoCompiler', 'I cannot compile mex files because no C++ compiler has been selected. Run mex -setup to choose your C++ compiler. Then run PTKMain.Recompile().', []);
+            reporting.ShowWarning('CoreCompileMexFiles:NoCompiler', ['I cannot compile mex files because no C++ compiler has been selected. Run mex -setup to choose your C++ compiler.' retry_instructions], []);
         end
     end
 end
 
-function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, compiler, force_recompile, reporting)
+function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, output_directory, compiler, force_recompile, reporting)
     progress_message_showing_compile = false;
     for mex_file_s = mex_files_to_compile.values
         mex_file = mex_file_s{1};
         
         if (~mex_file.NeedsRecompile) && (~force_recompile)
             reporting.Log([mex_file.Name ' is up to date']);
-            if ~strcmp(mex_file.StatusID, 'PTKCompileMexFiles:NoRecompileNeeded')
-                reporting.Error('PTKCompileMexFiles:WrongStatus', 'Program error: mex status should be OK if a recompile is not required'); 
+            if ~strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoRecompileNeeded')
+                reporting.Error('CoreCompileMexFiles:WrongStatus', 'Program error: mex status should be OK if a recompile is not required'); 
             end
         else
-            if strcmp(mex_file.StatusID, 'PTKCompileMexFiles:VersionChanged')
-                reporting.ShowMessage('PTKCompileMexFiles:VersionChanged', [mex_file.Name ' is out of date']);
-            elseif strcmp(mex_file.StatusID, 'PTKCompileMexFiles:CompiledFileRemoved')
-                reporting.ShowMessage('PTKCompileMexFiles:CompiledFileRemoved', [mex_file.Name ': The compiled mex file was removed and must be recompiled.']);
-            elseif strcmp(mex_file.StatusID, 'PTKCompileMexFiles:FileAdded')
-                reporting.ShowMessage('PTKCompileMexFiles:FileAdded', ['A new mex file ' mex_file.Name ' has been found and requires compilation.']);
-            elseif strcmp(mex_file.StatusID, 'PTKCompileMexFiles:NoCachedInfoForMex')
-                reporting.ShowMessage('PTKCompileMexFiles:NoCachedInfoForMex', [mex_file.Name ' requires compilation.']);
-            elseif strcmp(mex_file.StatusID, 'PTKCompileMexFiles:CacheFileDeleted')
-                reporting.ShowMessage('PTKCompileMexFiles:CacheFileDeleted', [mex_file.Name ' requires recompilation because it appears the cache file ' PTKSoftwareInfo.FrameworkCacheFileName ' was deleted.']);
-            elseif strcmp(mex_file.StatusID, 'PTKCompileMexFiles:CompiledFileNotFound')
-                reporting.ShowMessage('PTKCompileMexFiles:CompiledFileNotFound', [mex_file.Name ' requires compilation.']);
+            if strcmp(mex_file.StatusID, 'CoreCompileMexFiles:VersionChanged')
+                reporting.ShowMessage('CoreCompileMexFiles:VersionChanged', [mex_file.Name ' is out of date']);
+            elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:CompiledFileRemoved')
+                reporting.ShowMessage('CoreCompileMexFiles:CompiledFileRemoved', [mex_file.Name ': The compiled mex file was removed and must be recompiled.']);
+            elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:FileAdded')
+                reporting.ShowMessage('CoreCompileMexFiles:FileAdded', ['A new mex file ' mex_file.Name ' has been found and requires compilation.']);
+            elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoCachedInfoForMex')
+                reporting.ShowMessage('CoreCompileMexFiles:NoCachedInfoForMex', [mex_file.Name ' requires compilation.']);
+            elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:CacheFileDeleted')
+                reporting.ShowMessage('CoreCompileMexFiles:CacheFileDeleted', [mex_file.Name ' requires recompilation because it appears the cache file ' framework_cache.GetCacheFilename ' was deleted.']);
+            elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:CompiledFileNotFound')
+                reporting.ShowMessage('CoreCompileMexFiles:CompiledFileNotFound', [mex_file.Name ' requires compilation.']);
 
 
-            elseif strcmp(mex_file.StatusID, 'PTKCompileMexFiles:NoRecompileNeeded')
+            elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoRecompileNeeded')
                 if force_recompile
-                    reporting.ShowMessage('PTKCompileMexFiles:ForcingRecompile', ['Forcing recompile of ' mex_file.Name '.']);
+                    reporting.ShowMessage('CoreCompileMexFiles:ForcingRecompile', ['Forcing recompile of ' mex_file.Name '.']);
                 else
-                    reporting.Error('PTKCompileMexFiles:UnexpectedStatus', 'Program error: An unexpected status condiiton was found');
+                    reporting.Error('CoreCompileMexFiles:UnexpectedStatus', 'Program error: An unexpected status condiiton was found');
                 end
             else
-                reporting.Error('PTKCompileMexFiles:UnexpectedStatus', 'Program error: An unexpected status condiiton was found'); 
+                reporting.Error('CoreCompileMexFiles:UnexpectedStatus', 'Program error: An unexpected status condiiton was found'); 
             end
                 
             if cached_mex_file_info.isKey(mex_file.Name)
@@ -121,10 +116,10 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
             src_filename = [mex_file.Name '.' mex_file.Extension];
             src_fullfile = fullfile(mex_file.Path, src_filename);
             if ~(try_compilation_again || force_recompile)
-                reporting.ShowWarning('PTKCompileMexFiles:NotRecompiling', ['The mex source file ' src_fullfile ' needs recompilation, but the previous attempt to compile failed so I am not going to try again. You need to force a recompilation using PTKMain.Recompile().'], []);
+                reporting.ShowWarning('CoreCompileMexFiles:NotRecompiling', ['The mex source file ' src_fullfile ' needs recompilation, but the previous attempt to compile failed so I am not going to try again. You need to force a recompilation.' retry_instructions], []);
             else
                 if ~exist(src_fullfile, 'file')
-                    reporting.ShowWarning('PTKCompileMexFiles:SourceFileNotFound', ['The mex source file ' src_fullfile ' was not found. If this file has been removed it should also be removed from the list in PTKCompileMexFiles.m'], []);
+                    reporting.ShowWarning('CoreCompileMexFiles:SourceFileNotFound', ['The mex source file ' src_fullfile ' was not found. If this file has been removed it should also be removed from the list of mex files'], []);
                 else
                     if ~progress_message_showing_compile
                         progress_message_showing_compile = true;
@@ -139,10 +134,10 @@ function Compile(mex_files_to_compile, cached_mex_file_info, output_directory, c
                         mex_file.LastCompileFailed = false;
                         mex_file.LastSuccessfulCompiledVersion = mex_file.CurrentVersion;
                         mex_file.LastSuccessfulCompiler = compiler;
-                        reporting.ShowMessage('PTKCompileMexFiles:MexCompilationSucceeded', [' - ' src_filename ' compiled successfully.']);
+                        reporting.ShowMessage('CoreCompileMexFiles:MexCompilationSucceeded', [' - ' src_filename ' compiled successfully.']);
                     else
                         mex_file.LastCompileFailed = true;
-                        reporting.ShowWarning('PTKCompileMexFiles:MexCompilationFailed', [' - ' src_fullfile ' failed to compile.'], []);
+                        reporting.ShowWarning('CoreCompileMexFiles:MexCompilationFailed', [' - ' src_fullfile ' failed to compile.'], []);
                     end
                 end
             end
@@ -174,10 +169,10 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
             mex_file.LastCompileFailed = cached_mex_file.LastCompileFailed;
             
             if ~isequal(cached_mex_file.LastSuccessfulCompiledVersion, mex_file.CurrentVersion)
-                mex_file.StatusID = 'PTKCompileMexFiles:VersionChanged';
+                mex_file.StatusID = 'CoreCompileMexFiles:VersionChanged';
                 mex_file.NeedsRecompile = true;
             else
-                mex_file.StatusID = 'PTKCompileMexFiles:NoRecompileNeeded';
+                mex_file.StatusID = 'CoreCompileMexFiles:NoRecompileNeeded';
             end
 
             % Check whether compiled file exists. We only need to do this if the
@@ -189,24 +184,24 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
                 % Only display a warning message here if there is a record of a
                 % previous compilation
                 if (~isempty(mex_file.LastSuccessfulCompiledVersion)) && (~mex_file.LastCompileFailed)
-                    mex_file.StatusID = 'PTKCompileMexFiles:CompiledFileRemoved';
+                    mex_file.StatusID = 'CoreCompileMexFiles:CompiledFileRemoved';
                 else
-                    mex_file.StatusID = 'PTKCompileMexFiles:CompiledFileNotFound';
+                    mex_file.StatusID = 'CoreCompileMexFiles:CompiledFileNotFound';
                 end
             end
             
         else
             % No cached file was found. No need to check for existance of
-            % outuput file as we will try to recompile anyway
+            % output file as we will try to recompile anyway
             if framework_cache_was_missing
                 dst_fullfile = fullfile(output_directory, [mex_file.Name, mex_extension]);
                 if exist(dst_fullfile, 'file')
-                    mex_file.StatusID = 'PTKCompileMexFiles:CacheFileDeleted';
+                    mex_file.StatusID = 'CoreCompileMexFiles:CacheFileDeleted';
                 else
-                    mex_file.StatusID = 'PTKCompileMexFiles:NoCachedInfoForMex';
+                    mex_file.StatusID = 'CoreCompileMexFiles:NoCachedInfoForMex';
                 end
             else
-                mex_file.StatusID = 'PTKCompileMexFiles:FileAdded';
+                mex_file.StatusID = 'CoreCompileMexFiles:FileAdded';
             end
             mex_file.NeedsRecompile = true;
         end
