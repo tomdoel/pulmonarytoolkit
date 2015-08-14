@@ -9,6 +9,11 @@ classdef MivAppDef < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
+    properties (Constant, Access = private)
+        Name = 'MIV'
+        Version = '0.1'
+    end
+    
     methods
         function [preferred_context, plugin_to_use] = GetPreferredContext(obj, modality)
             % Returns the context that should be automatically used for
@@ -19,11 +24,11 @@ classdef MivAppDef < handle
         end
         
         function name = GetName(obj)
-            name = 'MIV';
+            name = MivAppDef.Name;
         end
         
         function name = GetVersion(obj)
-            name = MivSoftwareInfo.Version;
+            name = MivAppDef.Version;
         end
         
         function direction = GetDefaultOrientation(obj)
