@@ -93,7 +93,7 @@ classdef PTKGuiCore < PTKFigure
             obj.GuiDataset = PTKGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             % Create a callback handler for the Patient Browser and sidebar
-            if PTKSoftwareInfo.MatNatEnabled
+            if obj.AppDef.MatNatEnabled
                 matnat_database = PTKMatNatDatabase;
                 combined_database = PTKCombinedImageDatabase(obj.GuiDataset.GetImageDatabase, matnat_database);
             else
@@ -115,7 +115,7 @@ classdef PTKGuiCore < PTKFigure
             % PB may take time to load if there are many datasets
             obj.PatientBrowserFactory = PTKPatientBrowserFactory(combined_controller, obj.GuiDataset.GetImageDatabase, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'Patient Browser : Pulmonary Toolkit', obj.Reporting);
 
-            if PTKSoftwareInfo.MatNatEnabled
+            if obj.AppDef.MatNatEnabled
                 % The MatNat Browser factory manages lazy creation of the
                 % MatNat Browser. This may take some time to load as it has to
                 % get the information from the server

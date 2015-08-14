@@ -54,5 +54,9 @@ classdef MivAppDef < handle
         function force_greyscale = ForceGreyscale(~)
             force_greyscale = true;
         end
+        
+        function enabled = MatNatEnabled(~)
+            enabled = false;
+        end
     end
 end

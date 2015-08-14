@@ -87,7 +87,6 @@ classdef PTKSoftwareInfo < handle
         RecycleWhenDeletingCacheFiles = false
         ToolbarEnabled = true
         ViewerPanelToolbarEnabled = false
-        MatNatEnabled = false
         
         % Do not change this
         FileMissingErrorId = 'PTKMain:FileMissing'

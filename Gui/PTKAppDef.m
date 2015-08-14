@@ -58,5 +58,9 @@ classdef PTKAppDef < handle
         function force_greyscale = ForceGreyscale(~)
             force_greyscale = false;
         end
+        
+        function enabled = MatNatEnabled(~)
+            enabled = false;
+        end
     end
 end
