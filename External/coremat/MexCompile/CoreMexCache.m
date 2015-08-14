@@ -25,7 +25,6 @@ classdef CoreMexCache < CoreBaseClass
     methods (Static)
         function cache = LoadCache(cacheFilename, reporting)
             try
-                cacheFilename = PTKDirectories.GetFrameworkCacheFilePath;
                 if exist(cacheFilename, 'file')                    
                     cache = CoreLoadXml(cacheFilename, reporting);
                     cache = cache.MexCache;
@@ -58,14 +57,13 @@ classdef CoreMexCache < CoreBaseClass
                 value = [];
                 value.cache = obj;
                 CoreSaveXml(obj, 'Cache', cache_filename, reporting);
-                PTKDiskUtilities.Save(cache_filename, value);
            catch ex
-                reporting.ErrorFromException('PTKFrameworkCache:FailedtoSaveCacheFile', ['Unable to save mex cache file ' cache_filename], ex);
+                reporting.ErrorFromException('CoreMexCache:FailedtoSaveCacheFile', ['Unable to save mex cache file ' cache_filename], ex);
             end
         end
         
-        function cacheFileName = GetCacheFilename(~)
-            cacheFileName = PTKDirectories.GetFrameworkCacheFilePath;
+        function cacheFileName = GetCacheFilename(obj)
+            cacheFileName = obj.CacheFilename;
         end
         
         function UpdateCache(obj, processed_mex_file_list, reporting)
