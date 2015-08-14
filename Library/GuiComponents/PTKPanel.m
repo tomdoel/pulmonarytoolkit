@@ -56,7 +56,7 @@ classdef PTKPanel < PTKUserInterfaceObject
             end
             
             obj.GraphicalComponentHandle = uipanel('Parent', obj.Parent.GetContainerHandle, 'BorderType', 'none', 'Units', 'pixels', ...
-                'BackgroundColor', obj.BackgroundColour, 'ForegroundColor', 'white', 'ResizeFcn', '', 'Position', position);
+                'BackgroundColor', obj.BackgroundColour, 'ForegroundColor', obj.StyleSheet.TextPrimaryColour, 'ResizeFcn', '', 'Position', position);
         end
         
         function Resize(obj, position)

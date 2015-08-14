@@ -69,14 +69,16 @@ classdef PTKProgressPanel < CoreProgressInterface
             obj.CurrentlyDisplayedDialogText = '';
             obj.CurrentlyDisplayedProgressValue = [];
             
-            obj.Parent = parent;
+            obj.Parent = parent.GraphicalComponentHandle;
             
-            set(parent, 'Units', 'Pixels');
+            set(obj.Parent, 'Units', 'Pixels');
             
             % Create the panel
-            panel_background_colour = PTKDefaultStyleSheet.BackgroundColour;
+            panel_background_colour = parent.StyleSheet.BackgroundColour;
+            text_color = parent.StyleSheet.TextPrimaryColour;
+            
             progress_position = obj.GetPanelPosition;
-            obj.PanelHandle = uipanel('Parent', parent, 'Title', '', 'BorderType', 'etchedin', 'ForegroundColor', 'white', ...
+            obj.PanelHandle = uipanel('Parent', obj.Parent, 'Title', '', 'BorderType', 'etchedin', 'ForegroundColor', text_color, ...
                 'BackgroundColor', panel_background_colour, 'Units', 'pixels', 'Position', progress_position, 'Visible', 'off' ...
             );
             
@@ -89,9 +91,9 @@ classdef PTKProgressPanel < CoreProgressInterface
             
             
             obj.UiControlTitle = uicontrol('parent', obj.PanelHandle, 'style', 'text', 'units', 'pixel', 'Position', title_position, ...
-                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 26, 'FontWeight', 'bold', 'Fore', 'white', 'Back', [0, 0.129, 0.278], 'Visible', 'off');
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 26, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
             obj.UiControlText = uicontrol('parent', obj.PanelHandle, 'style', 'text', 'units', 'pixel', 'Position', text_position, ...
-                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 16, 'Fore', 'white', 'Back', [0, 0.129, 0.278], 'Visible', 'off');
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 16, 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
             obj.UiControlCancel = uicontrol('parent', obj.PanelHandle, 'string', 'Cancel', ...
                 'Position', cancel_position, 'FontUnits', 'pixels', 'Callback', @obj.CancelButton, 'Visible', 'off');
             obj.UiControlQuit = uicontrol('parent', obj.PanelHandle, 'string', 'Force Quit', ...

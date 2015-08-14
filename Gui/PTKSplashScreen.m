@@ -71,7 +71,8 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
             
             % Call the base class to initialise the hidden window
             reporting = CoreReportingDefault;
-            obj = obj@PTKFigure('', position, reporting);            
+            obj = obj@PTKFigure('', position, reporting);
+            obj.StyleSheet = app_def.GetDefaultStyleSheet;
             
             obj.TimerRef = tic;
             obj.AppDef = app_def;
@@ -94,9 +95,12 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
 
         function CreateGuiComponent(obj, position)
             CreateGuiComponent@PTKFigure(obj, position);
+            
+            background_colour = obj.StyleSheet.TextPrimaryColour;
+            text_colour = obj.StyleSheet.BackgroundColour;
 
             % Override the colour and resize behaviour
-            set(obj.GraphicalComponentHandle, 'Color', [1 1 1], 'Resize', 'off');
+            set(obj.GraphicalComponentHandle, 'Color', background_colour, 'Resize', 'off');
             
             logo = imread(obj.AppDef.GetLogoFilename);
             image_size = size(logo);            
@@ -105,14 +109,14 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
             obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', screen_image_size);
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
-            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', obj.AppDef.GetName, 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
+            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', obj.AppDef.GetName, 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour);
             
-            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1], 'HorizontalAlignment', 'Center');
+            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour, 'HorizontalAlignment', 'Center');
             set(obj.BodyText, 'String', sprintf(['Version ' obj.AppDef.GetVersion]));
             
             % Create the progress reporting
-            panel_background_colour = [1 1 1];
-            text_color = [0.0 0.129 0.278];
+            panel_background_colour = background_colour;
+            text_color = text_colour;
             
             title_position = [250, 150, 450, 30];
             text_position = [250, 90, 450, 60];

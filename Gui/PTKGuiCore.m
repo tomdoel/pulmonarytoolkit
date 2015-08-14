@@ -171,7 +171,7 @@ classdef PTKGuiCore < PTKFigure
             obj.AddEventListener(obj.ModeTabControl, 'PanelChangedEvent', @obj.ModeTabChanged);
             
             % Create a progress panel which will replace the progress dialog
-            obj.WaitDialogHandle = PTKProgressPanel(obj.ImagePanel.GraphicalComponentHandle);
+            obj.WaitDialogHandle = PTKProgressPanel(obj.ImagePanel);
             obj.WaitDialogHandle.ShowDebuggingControls = PTKSoftwareInfo.DebugMode;
             
             % Now we switch the reporting progress bar to a progress panel displayed over the gui
