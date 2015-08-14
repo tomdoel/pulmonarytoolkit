@@ -42,5 +42,17 @@ classdef PTKAppDef < handle
         function logo = GetLogoFilename(obj)
             logo = 'PTKLogo.jpg';
         end
+
+        function plugins_path = GetPluginsPath(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.PluginDirectoryName);
+        end
+        
+        function plugins_path = GetUserPluginsPath(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.PluginDirectoryName);
+        end
     end
 end

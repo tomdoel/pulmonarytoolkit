@@ -133,6 +133,11 @@ classdef CoreDiskUtilities
             % specified in the input parameter), and the Second property is the
             % just the name of the deepest subdirectory
             
+            if isempty(root_path)
+                dir_list = [];
+                return;
+            end
+            
             dirs_to_do = CoreStack(CorePair(root_path, ''));
             dirs_found = CoreStack;
             while ~dirs_to_do.IsEmpty
@@ -267,6 +272,19 @@ classdef CoreDiskUtilities
             print(figure_handle, '-depsc2', resolution_str, figure_filename);   % Export to .eps
             print(figure_handle, '-dpng', resolution_str, figure_filename);     % Export .png
         end
+        
+        function matlab_name_list = GetAllMatlabFilesInFolders(folders_to_scan)
+            folders_to_scan = CoreStack(folders_to_scan);
+            plugins_found = CoreStack;
+            while ~folders_to_scan.IsEmpty
+                next_folder = folders_to_scan.Pop;
+                next_plugin_list = CoreDiskUtilities.GetDirectoryFileList(next_folder.First, '*.m');
+                for next_plugin = next_plugin_list
+                    plugins_found.Push(CorePair(CoreTextUtilities.StripFileparts(next_plugin{1}), next_folder.Second));
+                end
+            end
+            matlab_name_list = plugins_found.GetAndClear;
+        end        
     end
 end
 

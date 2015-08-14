@@ -107,24 +107,8 @@ classdef PTKDirectories < CoreBaseClass
             settings_file_path = fullfile(settings_dir, cache_filename);
         end
         
-        function plugin_name_list = GetListOfPlugins
-            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfPluginFolders);
-        end
-        
-        function plugin_folders = GetListOfPluginFolders
-            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetPluginsPath);
-        end
-        
-        function plugin_name_list = GetListOfUserPlugins
-            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfUserPluginFolders);
-        end
-        
-        function plugin_folders = GetListOfUserPluginFolders
-            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetUserPluginsPath);
-        end
-        
         function plugin_name_list = GetListOfGuiPlugins
-            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfGuiPluginFolders);
+            plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfGuiPluginFolders);
         end
         
         function plugin_folders = GetListOfGuiPluginFolders
@@ -132,36 +116,11 @@ classdef PTKDirectories < CoreBaseClass
         end
         
         function plugin_name_list = GetListOfUserGuiPlugins
-            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfUserGuiPluginFolders);
+            plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfUserGuiPluginFolders);
         end
         
         function plugin_folders = GetListOfUserGuiPluginFolders
             plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiUserPluginsPath);
-        end
-        
-        function matlab_name_list = GetAllMatlabFilesInFolders(folders_to_scan)
-            folders_to_scan = CoreStack(folders_to_scan);
-            plugins_found = CoreStack;
-            while ~folders_to_scan.IsEmpty
-                next_folder = folders_to_scan.Pop;
-                next_plugin_list = CoreDiskUtilities.GetDirectoryFileList(next_folder.First, '*.m');
-                for next_plugin = next_plugin_list
-                    plugins_found.Push(CorePair(CoreTextUtilities.StripFileparts(next_plugin{1}), next_folder.Second));
-                end
-            end
-            matlab_name_list = plugins_found.GetAndClear;
-        end
-        
-        function plugins_path = GetPluginsPath
-            full_path = mfilename('fullpath');
-            [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.PluginDirectoryName);
-        end
-        
-        function plugins_path = GetUserPluginsPath
-            full_path = mfilename('fullpath');
-            [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.PluginDirectoryName);
         end
         
         function plugins_path = GetUserPath

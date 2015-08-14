@@ -70,6 +70,11 @@ function PTKAddPaths(varargin)
             path_folders{end + 1} = folder{1}.First;
         end
         
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'SharedPlugins'));
+        for folder = plugin_folders
+            path_folders{end + 1} = folder{1}.First;
+        end
+        
         AddToPath('', path_folders);
         
         PTK_PathsHaveBeenSet = PTKAddPaths_Version_Number;

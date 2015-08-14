@@ -41,7 +41,14 @@ classdef MivAppDef < handle
         
         function logo = GetLogoFilename(obj)
             logo = 'MivLogo.jpg';
-
+        end
+        
+        function plugins_path = GetPluginsPath(~)
+            plugins_path = [];
+        end
+        
+        function plugins_path = GetUserPluginsPath(~)
+            plugins_path = [];
         end
     end
 end

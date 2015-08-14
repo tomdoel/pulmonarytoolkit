@@ -13,13 +13,15 @@ classdef PTKOrganisedPlugins < CoreBaseClass
     %
     
     properties (Access = private)
+        AppDef
         PluginGroups
         GuiApp
         OrganisedPluginsModeList
     end
     
     methods
-        function obj = PTKOrganisedPlugins(gui_app, reporting)
+        function obj = PTKOrganisedPlugins(gui_app, app_def, reporting)
+            obj.AppDef = app_def;
             obj.GuiApp = gui_app;
             obj.OrganisedPluginsModeList = PTKOrganisedPluginsModeList;
             obj.Repopulate(reporting);
@@ -50,20 +52,20 @@ classdef PTKOrganisedPlugins < CoreBaseClass
         end        
     end    
     
-    methods (Static, Access = private)
+    methods (Access = private)
         
-        function combined_plugin_list = GetListOfPossiblePluginNames
+        function combined_plugin_list = GetListOfPossiblePluginNames(obj)
             % Obtains a list of plugins found in the Plugins folder
-            plugin_list = PTKDirectories.GetListOfPlugins;
+            plugin_list = obj.GetListOfPlugins;
             if PTKSoftwareInfo.DemoMode
                 combined_plugin_list = plugin_list;
             else
-                user_plugin_list = PTKDirectories.GetListOfUserPlugins;
+                user_plugin_list = obj.GetListOfUserPlugins;
                 combined_plugin_list = horzcat(plugin_list, user_plugin_list);
             end
         end
         
-        function combined_plugin_list = GetListOfPossibleGuiPluginNames
+        function combined_plugin_list = GetListOfPossibleGuiPluginNames(obj)
             % Obtains a list of Gui plugins found in the GuiPlugins folder
             plugin_list = PTKDirectories.GetListOfGuiPlugins;
             if PTKSoftwareInfo.DemoMode
@@ -74,5 +76,40 @@ classdef PTKOrganisedPlugins < CoreBaseClass
             end
         end
         
+        function plugin_name_list = GetListOfPlugins(obj)
+            shared_plugins = obj.GetListOfSharedPlugins;
+            app_plugins = obj.GetListOfAppPlugins;
+            plugin_name_list = horzcat(shared_plugins, app_plugins);
+        end
+        
+        function plugin_name_list = GetListOfSharedPlugins(obj)
+            plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(obj.GetListOfSharedPluginFolders);
+        end
+        
+        function plugin_folders = GetListOfSharedPluginFolders(obj)
+            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(obj.GetSharedPluginsPath);
+        end
+        
+        function plugin_name_list = GetListOfAppPlugins(obj)
+            plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(obj.GetListOfAppPluginFolders);
+        end
+        
+        function plugin_folders = GetListOfAppPluginFolders(obj)
+            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(obj.AppDef.GetPluginsPath);
+        end
+        
+        function plugin_name_list = GetListOfUserPlugins(obj)
+            plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(obj.GetListOfUserPluginFolders);
+        end
+        
+        function plugin_folders = GetListOfUserPluginFolders(obj)
+            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(obj.AppDef.GetUserPluginsPath);
+        end
+        
+        function plugins_path = GetSharedPluginsPath(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.SharedPluginDirectoryName);
+        end        
     end
 end
