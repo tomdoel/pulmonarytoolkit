@@ -26,7 +26,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     
     properties (Access = private)
         ImageDatabase      % Database of image files
-        FrameworkCache     % Information about mex files which is cached on disk
+        MexCache     % Information about mex files which is cached on disk
         LinkedDatasetRecorder
         DatasetMemoryCache % Stores PTKDatasetDiskCache objects in memory
         LinkedDatasetChooserMemoryCache
@@ -43,11 +43,16 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     end
     
     methods
-        function Recompile(obj, reporting)
+        function CompileMexFileIfRequired(obj, files_to_compile, output_directory, reporting)
+            % Recompiles mex files if they have changed
+            
+            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, false, ' Run PTKMain.Recompile() to force recompilation.', reporting);
+        end
+        
+        function Recompile(obj, files_to_compile, output_directory, reporting)
             % Forces recompilation of mex files
-            root_directory = PTKDirectories.GetSourceDirectory;
-            output_directory = fullfile(root_directory, 'bin');
-            CoreCompileMexFiles(obj.FrameworkCache, output_directory, PTKGetMexFilesToCompile(reporting), true, ' Run PTKMain.Recompile() to force recompilation.', reporting);
+            
+            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, true, ' Run PTKMain.Recompile() to force recompilation.', reporting);
         end
         
         function RebuildDatabase(obj, reporting)
@@ -98,15 +103,12 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     
     methods (Access = private)
         function obj = PTKFrameworkSingleton(reporting)
-            obj.FrameworkCache = PTKFrameworkCache.LoadCache(reporting);
+            obj.MexCache = PTKFrameworkCache.LoadCache(reporting);
             obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
             obj.DatasetMemoryCache = PTKDatasetMemoryCache;
             obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(obj.LinkedDatasetRecorder);
             obj.ImageDatabase = PTKImageDatabase.LoadDatabase(reporting);
             obj.ImageDatabase.Rebuild([], false, reporting)
-            root_directory = PTKDirectories.GetSourceDirectory;
-            output_directory = fullfile(root_directory, 'bin');
-            CoreCompileMexFiles(obj.FrameworkCache, output_directory, PTKGetMexFilesToCompile(reporting), false, ' Run PTKMain.Recompile() to force recompilation.', reporting);
         end
     end
     

@@ -61,12 +61,18 @@ classdef PTKMain < CoreBaseClass
             obj.Reporting = reporting;
             obj.ReportingWithCache = CoreReportingWithCache(obj.Reporting);
             obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(obj.Reporting);
+            
+            output_directory = fullfile(PTKDirectories.GetSourceDirectory, 'bin');
+            files_to_compile = PTKGetMexFilesToCompile(reporting);
+            obj.FrameworkSingleton.CompileMexFileIfRequired(files_to_compile, output_directory, obj.Reporting);
         end
         
         function Recompile(obj)
             % Forces recompilation of mex files
             
-            obj.FrameworkSingleton.Recompile(obj.Reporting);
+            output_directory = fullfile(PTKDirectories.GetSourceDirectory, 'bin');
+            files_to_compile = PTKGetMexFilesToCompile(reporting);
+            obj.FrameworkSingleton.Recompile(files_to_compile, output_directory, obj.Reporting);
         end
         
         function RebuildDatabase(obj)
