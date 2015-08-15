@@ -153,6 +153,11 @@ classdef PTKImageTemplates < CoreBaseClass
             
             % The cache info may be returned as a heirarchy, so extract out the first
             % stack item. This should be sufficient for parsing the dependency list
+            
+            if isempty(result_image) || isempty(cache_info)
+                return;
+            end
+            
             while isa(cache_info, 'PTKCompositeResult')
                 fields = fieldnames(cache_info);
                 cache_info = cache_info.(fields{1});
