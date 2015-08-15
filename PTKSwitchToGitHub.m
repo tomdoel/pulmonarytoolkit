@@ -45,9 +45,7 @@ function success = SwitchToGitHub
     % Matlab's curl configuration doesn't include https so git will not work.
     % We need to add the system curl configuration directory earlier in the
     % path so that it picks up this one instead of Matlab's
-    if (7 == exist('usr/local/bin', 'dir'))
-        setenv('DYLD_LIBRARY_PATH', ['/usr/local/bin;' getenv('DYLD_LIBRARY_PATH')]);
-    end
+    fixCurlPath;
 
     [repo_path, ~, ~] = fileparts(mfilename('fullpath'));
 
@@ -98,4 +96,15 @@ end
 function success = execute(command)
     return_value = system(command);
     success = return_value == 0;
+end
+
+function fixCurlPath
+    % Matlab's curl configuration doesn't include https so git will not work.
+    % We need to add the system curl configuration directory earlier in the
+    % path so that it picks up this one instead of Matlab's
+    currentLibPath = getenv('DYLD_LIBRARY_PATH');
+    binDir = '/usr/lib';
+    if (7 == exist(binDir, 'dir')) && ~strcmp(currentLibPath(1:length(binDir) + 1), [binDir ':'])
+        setenv('DYLD_LIBRARY_PATH', [binDir ':' currentLibPath]);
+    end
 end
