@@ -294,7 +294,7 @@ classdef CoreDiskUtilities
             for directory = directories
                 fileList = CoreDiskUtilities.GetDirectoryFileList(directory{1}.First, filenameFilter);
                 for file = fileList
-                    filesFound.push(fullfile(directory{1}.First, file{1}));
+                    filesFound.Push(fullfile(directory{1}.First, file{1}));
                 end
             end
             fileNames = filesFound.GetAndClear;
