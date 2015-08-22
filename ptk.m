@@ -12,8 +12,15 @@
 % Clear command window
 clc
 
+% Update the repository
+updated = PTKUpdate;
+
 % Add all necessary paths
-PTKAddPaths;
+if updated
+    PTKAddPaths force;
+else
+    PTKAddPaths;
+end
 
 % Create the splash screen - do this early so the user knows something is
 % hapenning
