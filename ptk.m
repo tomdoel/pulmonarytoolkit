@@ -12,7 +12,7 @@
 % Clear command window
 clc
 
-% Ask the user if they want to update to thr new codebase on GitHub
+% Ask the user if they want to update to the new codebase on GitHub
 PTKSwitchToGitHub;
 
 % Add all necessary paths
