@@ -10,6 +10,7 @@ function updated = PTKUpdate(varargin)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
+    updated = false;
     if checkDoNotUpdate && ~(nargin > 0 && strcmp(varargin{1}, 'force'))
         disp('Ignoring updates as requested by user.');
     else
@@ -39,7 +40,9 @@ function updated = PTKUpdate(varargin)
                     if strcmp(answer, 'Do not ask me again')
                         setDoNotUpdateFlag
                     elseif strcmp(answer, 'Update')
-                        depMat.updateAll;
+                        if depMat.updateAll;
+                            updated = true;
+                        end
                     end
                 case DepMatStatus.Conflict
                     disp('! An update is available but this would cause a conflict. Please update and merge manually.');

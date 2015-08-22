@@ -12,14 +12,15 @@
 % Clear command window
 clc
 
+% Add all necessary paths
+PTKAddPaths;
+
 % Update the repository
 updated = PTKUpdate;
 
-% Add all necessary paths
+% We may need to add new paths as a result of an update
 if updated
     PTKAddPaths force;
-else
-    PTKAddPaths;
 end
 
 % Create the splash screen - do this early so the user knows something is
