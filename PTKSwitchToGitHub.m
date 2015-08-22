@@ -23,7 +23,7 @@ function PTKSwitchToGitHub(varargin)
                     answer2 = questdlg('Please ensure you have any important changes backed up. If successful, the migration should preserve any local changes you have made to PTK, but I cannot guarantee this!','Pulmonary Toolkit','Cancel migration','Migrate','Migrate');
                     if strcmp(answer2, 'Migrate')
                         if SwitchToGitHub
-                            msgbox('Successfully migrated to GitHub. Please now use Git to pull updates to PTK', 'Migrated to GitHub');
+                            msgbox('Successfully migrated to GitHub.', 'Migrated to GitHub');
                         else
                             msgbox('Sorry, there was a problem migrating your codebase. Please clone the new codebae yourself from https://github.com/tomdoel/pulmonarytoolkit', 'Failed to migrate to GitHub');
                         end
@@ -87,11 +87,6 @@ function success = SwitchToGitHub
     
     if ~execute('git reset origin/googlecode-head')
         disp('Could not reset the head');
-        return;
-    end
-    
-    if ~execute('git checkout -b master')
-        disp('Could not checkout the master branch');
         return;
     end
     
