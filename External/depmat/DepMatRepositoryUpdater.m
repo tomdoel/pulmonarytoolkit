@@ -162,6 +162,12 @@ classdef DepMatRepositoryUpdater < handle
                 return;
             end
             
+            [success, local_id] = DepMat.execute('git remote update');
+            if ~success
+                status = DepMatStatus.GitFailure;
+                return;
+            end
+            
             [success, local_id] = DepMat.execute('git rev-parse @{0}');
             if ~success
                 status = DepMatStatus.GitFailure;
