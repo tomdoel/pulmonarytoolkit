@@ -15,12 +15,14 @@ function PTKSwitchToGitHub(varargin)
     if ~checkIfGitRepoExists
         if ~checkDoNotUpdate || (nargin > 0 && strcmp(varargin{1}, 'force'))
             clearDoNotUpdate;
-            if isGitInstalled
-                answer = questdlg('PTK has moved to GitHub. Should I migrate your PTK codebase now?','PTK has moved to GitHub','Later','Do not ask me again', 'Migrate','Migrate');
-                if strcmp(answer, 'Do not ask me again')
-                    setDoNotUpdateFlag
-                elseif strcmp(answer, 'Migrate')
-                    answer2 = questdlg('Please ensure you have any important changes backed up. If successful, the migration should preserve any local changes you have made to PTK, but I cannot guarantee this!','Pulmonary Toolkit','Cancel migration','Migrate','Migrate');
+            answer = questdlg('PTK has moved to GitHub. Should I migrate your PTK codebase now?','PTK has moved to GitHub','Later','Do not ask me again', 'Migrate','Migrate');
+            if strcmp(answer, 'Do not ask me again')
+                setDoNotUpdateFlag
+            elseif strcmp(answer, 'Migrate')
+                if ~isGitInstalled
+                    msgbox('I cannot update because I could not find Git installed on your path. Please install Git and re-run, or clone the new version yourself from https://github.com/tomdoel/pulmonarytoolkit', 'Pulmonary Toolkit');
+                else
+                    answer2 = questdlg('Please ensure you have any important changes backed up. If successful, the migration should preserve any local changes you have made to PTK, but I cannot guarantee this!','Pulmonary Toolkit','Migrate later','Migrate','Migrate');
                     if strcmp(answer2, 'Migrate')
                         if SwitchToGitHub
                             msgbox('Successfully migrated to GitHub.', 'Migrated to GitHub');
@@ -28,12 +30,12 @@ function PTKSwitchToGitHub(varargin)
                             msgbox('Sorry, there was a problem migrating your codebase. Please clone the new codebae yourself from https://github.com/tomdoel/pulmonarytoolkit', 'Failed to migrate to GitHub');
                         end
                     else
-                        msgbox('Please re-run ptk to migrate your codebase, or clone the new codebae yourself from https://github.com/tomdoel/pulmonarytoolkit', 'Pulmonary Toolkit');
+                        msgbox('Please re-run ptk to migrate your codebase, or clone the new codebase yourself from https://github.com/tomdoel/pulmonarytoolkit', 'Pulmonary Toolkit');
                     end
                 end
-            else
-                msgbox('PTK has moved to GitHub. I could not find Git on your path. Please install Git and re-run and I will try to update your codebase. Alternatively, clone PTK yourself from https://github.com/tomdoel/pulmonarytoolkit', 'Pulmonary Toolkit');
             end
+        else
+            disp('PTK has moved to GitHub. To migrate your codebase, run ''PTKSwitchToGitHub force'' or clone the new codebase yourself from https://github.com/tomdoel/pulmonarytoolkit');
         end
     end
 end
