@@ -87,8 +87,18 @@ function success = SwitchToGitHub
         return;
     end
     
+    if ~execute('git symbolic-ref HEAD refs/heads/googlecode-head')
+        disp('Could not checkout the googlecode-head branch');
+        return;
+    end
+    
     if ~execute('git reset origin/googlecode-head')
         disp('Could not reset the head');
+        return;
+    end
+    
+    if ~execute('git checkout master')
+        disp('Could not checkout the master branch');
         return;
     end
     
