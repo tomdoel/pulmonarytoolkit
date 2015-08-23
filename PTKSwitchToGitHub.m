@@ -96,7 +96,11 @@ function success = SwitchToGitHub
 end
 
 function installed = isGitInstalled
-    installed = execute('which git');
+    if ispc
+        installed = execute('where git');
+    else
+        installed = execute('which git');
+    end
 end
 
 function success = execute(command)
