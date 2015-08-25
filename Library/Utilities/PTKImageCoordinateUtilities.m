@@ -233,7 +233,7 @@ classdef PTKImageCoordinateUtilities
             orientation_1 = orientation([5, 4, 6])'; % Direction of first image axis in ijk (=yxz) coordinates
             orientation_2 = orientation([2, 1, 3])'; % Direction of second image axis in ijk (=yxz) coordinates
             
-            % By swtching the i and j axes we have inverted the coordinate
+            % By switching the i and j axes we have inverted the coordinate
             % system, so we need to flip the k dimension
             orientation_1(3) = - orientation_1(3);
             orientation_2(3) = - orientation_2(3);
@@ -248,12 +248,12 @@ classdef PTKImageCoordinateUtilities
             % Calculate flip for each dimension, based on whether the
             % dimension axis lies in the same or opposite direction to the
             % image axis
-            orientation_3 = cross(orientation_1, orientation_2);
+            orientation_3 = cross(orientation_2, orientation_1);
             orientations = {orientation_1, orientation_2, orientation_3};
-            flip_1 = orientations{dimension_1}(dimension_1) < 0; 
-            flip_2 = orientations{dimension_2}(dimension_2) < 0;
-            flip_3 = orientations{dimension_3}(dimension_3) < 0;
-            flip = [flip_1, flip_2, flip_3];
+            flip = [false, false, false];
+            flip(dimension_1) = orientation_1(dimension_1) < 0; 
+            flip(dimension_2) = orientation_2(dimension_2) < 0;
+            flip(dimension_3) = orientation_3(dimension_3) < 0;
             
             % Check the resulting vector is valid
             if (sum(permutation_vector == 1) ~= 1) || (sum(permutation_vector == 2) ~= 1) || (sum(permutation_vector == 3) ~= 1) || ...
