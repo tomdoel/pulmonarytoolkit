@@ -242,7 +242,10 @@ classdef PTKImageTemplates < CoreBaseClass
                     dependency_name = dependency.PluginName;
                     if strcmp(dependency_name, plugin_name)
                         reporting.Log(['PTKImageTemplates: Context ' template_name{1} ' is now invalid']);
-                        obj.TemplateImages.remove(template_name{1});
+                        disp(['removing ' template_name{1}]);
+                        if obj.TemplateImages.isKey(template_name{1})
+                            obj.TemplateImages.remove(template_name{1});
+                        end
                         obj.TemplateDependencies.remove(template_name{1});
                     end
                 end
