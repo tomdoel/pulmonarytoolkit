@@ -61,10 +61,6 @@ function [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLoc
     % We try to calculate the slice locations from the ImagePositionPatient tags
     if ~isempty(image_positions_patient) && isfield(representative_metadata, 'ImageOrientationPatient')
 
-        orientation_1 = representative_metadata.ImageOrientationPatient(1:3);
-        orientation_2 = representative_metadata.ImageOrientationPatient(4:6);
-        normal_vector = cross(orientation_1, orientation_2);
-        
         % The first slice in the sequence may not be the actual first slice
         % in the image, but this does not matter
         first_slice_position = image_positions_patient(1, :);
@@ -72,8 +68,10 @@ function [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLoc
         
         % Work out the relative direction of each slice relative to the
         % 'first' slice
-        normal_vector = cross(orientation_1, orientation_2);
-        directions = sign(dot(normal_vector, offset_positions));
+        orientation_1 = representative_metadata.ImageOrientationPatient(1:3);
+        orientation_2 = representative_metadata.ImageOrientationPatient(4:6);
+        normal_vector = cross(orientation_1, orientation_2)';
+        directions = sign(dot(repmat(normal_vector, [size(offset_positions, 1), 1]), offset_positions, 2));
         
         % We compute the displacements of the image positon, which assumes
         % the images form a cuboid stack. Really to compute the slice
