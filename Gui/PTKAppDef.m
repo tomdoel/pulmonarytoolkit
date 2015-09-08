@@ -23,6 +23,10 @@ classdef PTKAppDef < handle
             end
         end
 
+        function context_def = GetContextDef(obj)
+            context_def = PTKContextDef;
+        end
+        
         function name = GetName(obj)
             name = 'Pulmonary Toolkit';
         end

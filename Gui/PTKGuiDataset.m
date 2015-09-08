@@ -27,11 +27,13 @@ classdef PTKGuiDataset < CoreBaseClass
         Reporting
         Settings
         AppDef
+        ContextDef
     end
     
     methods
         function obj = PTKGuiDataset(app_def, gui, viewer_panel, settings, reporting)
             obj.AppDef = app_def;
+            obj.ContextDef = app_def.GetContextDef;
             obj.GuiDatasetState = PTKGuiDatasetState;
             obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, app_def, settings, reporting);
 
@@ -408,13 +410,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 % selected, we switch to the new context
                 context_to_request = obj.CurrentContext;
                 if strcmp(new_plugin.PluginType, 'ReplaceImage')
-                    if isa(new_plugin.Context, 'PTKContext')
-                        context_to_request = new_plugin.Context;
-                    elseif new_plugin.Context == PTKContextSet.OriginalImage
-                        context_to_request = PTKContext.OriginalImage;
-                    elseif new_plugin.Context == PTKContextSet.LungROI
-                        context_to_request = PTKContext.LungROI;
-                    end
+                    context_to_request = obj.ContextDef.ChooseOutputContext(new_plugin.Context);
                 end
                 
                 [~, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);

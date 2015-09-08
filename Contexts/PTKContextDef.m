@@ -80,7 +80,13 @@ classdef PTKContextDef < handle
             elseif context == PTKContextSet.OriginalImage
                 output_context = PTKContext.OriginalImage;
                 
-                % In all other cases we choose a default context of the lung ROI
+                % If the plugin specifies a PTKContextSet of type
+                % PTKContextSet.LungROI, then we choose to return a context
+                % of PTKContext.LungROI
+            elseif context == PTKContextSet.LungROI
+                output_context = PTKContext.LungROI;
+                
+            % In all other cases we choose a default context of the lung ROI
             else
                 output_context = PTKContext.LungROI;
             end
