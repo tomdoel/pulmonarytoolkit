@@ -40,122 +40,35 @@ classdef PTKContextHierarchy < CoreBaseClass
     properties
         ContextSets
         Contexts
+        ContextDef
         
         DependencyTracker
         ImageTemplates
     end
     
     methods
-        function obj = PTKContextHierarchy(dependency_tracker, image_templates)
+        function obj = PTKContextHierarchy(context_def, dependency_tracker, image_templates)
             obj.DependencyTracker = dependency_tracker;
             obj.ImageTemplates = image_templates;
             
-            % Create the hierarchy of context types
-            obj.ContextSets = containers.Map;
-            full_set =  PTKContextSetMapping(PTKContextSet.OriginalImage, []);
-            roi_set = PTKContextSetMapping(PTKContextSet.LungROI, full_set);
-            lungs_set = PTKContextSetMapping(PTKContextSet.Lungs, roi_set);
-            single_lung_set = PTKContextSetMapping(PTKContextSet.SingleLung, lungs_set);
-            lobe_set = PTKContextSetMapping(PTKContextSet.Lobe, single_lung_set);
-            segment_set = PTKContextSetMapping(PTKContextSet.Segment, lobe_set);
-            any_set = PTKContextSetMapping(PTKContextSet.Any, []);
-            obj.ContextSets(char(PTKContextSet.OriginalImage)) = full_set;
-            obj.ContextSets(char(PTKContextSet.LungROI)) = roi_set;
-            obj.ContextSets(char(PTKContextSet.Lungs)) = lungs_set;
-            obj.ContextSets(char(PTKContextSet.SingleLung)) = single_lung_set;
-            obj.ContextSets(char(PTKContextSet.Lobe)) = lobe_set;
-            obj.ContextSets(char(PTKContextSet.Segment)) = segment_set;
-            obj.ContextSets(char(PTKContextSet.Any)) = any_set;
-            
-            % Create the hierarchy of contexts
-            obj.Contexts = containers.Map;
-            full_context =  PTKContextMapping(PTKContext.OriginalImage, full_set, @PTKCreateTemplateForOriginalImage, []);
-            roi_context = PTKContextMapping(PTKContext.LungROI, roi_set, @PTKCreateTemplateForLungROI, full_context);
-            lungs_context = PTKContextMapping(PTKContext.Lungs, lungs_set, @PTKCreateTemplateForLungs, roi_context);
-
-            for context = [PTKContext.LeftLung, PTKContext.RightLung]
-                context_mapping = PTKContextMapping(context, single_lung_set, @PTKCreateTemplateForSingleLung, lungs_context);
-                obj.Contexts(char(context)) = context_mapping;
-            end
-
-            % Add right lobes
-            for context = [PTKContext.RightUpperLobe, PTKContext.RightMiddleLobe, PTKContext.RightLowerLobe]
-                context_mapping = PTKContextMapping(context, lobe_set, @PTKCreateTemplateForLobe, obj.Contexts(char(PTKContext.RightLung)));
-                obj.Contexts(char(context)) = context_mapping;
-            end
-
-            % Add left lobes
-            for context = [PTKContext.LeftUpperLobe, PTKContext.LeftLowerLobe]
-                context_mapping = PTKContextMapping(context, lobe_set, @PTKCreateTemplateForLobe, obj.Contexts(char(PTKContext.LeftLung)));
-                obj.Contexts(char(context)) = context_mapping;
-            end
-            
-            % Segments for upper right lobe
-            for context = [PTKContext.R_AP, PTKContext.R_P, PTKContext.R_AN]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.RightUpperLobe)));
-                obj.Contexts(char(context)) = context_mapping;
-            end
-            
-            % Segments for middle right lobe
-            for context = [PTKContext.R_L, PTKContext.R_M]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.RightMiddleLobe)));
-                obj.Contexts(char(context)) = context_mapping;
-            end
-            
-            % Segments for lower right lobe
-            for context = [PTKContext.R_S, PTKContext.R_MB, PTKContext.R_AB, PTKContext.R_LB, PTKContext.R_PB]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.RightLowerLobe)));
-                obj.Contexts(char(context)) = context_mapping;
-            end
-            
-            % Segments for upper left lobe
-            for context = [PTKContext.L_APP, PTKContext.L_APP2, PTKContext.L_AN, PTKContext.L_SL, PTKContext.L_IL]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.LeftUpperLobe)));
-                obj.Contexts(char(context)) = context_mapping;
-            end
-            
-            % Segments for lower left lobe
-            for context = [PTKContext.L_S, PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, obj.Contexts(char(PTKContext.LeftLowerLobe)));
-                obj.Contexts(char(context)) = context_mapping;
-            end
-        
-            obj.Contexts(char(PTKContext.OriginalImage)) = full_context;
-            obj.Contexts(char(PTKContext.LungROI)) = roi_context;
-            obj.Contexts(char(PTKContext.Lungs)) = lungs_context;
+            obj.ContextDef = context_def;
+            obj.Contexts = context_def.GetContexts;
+            obj.ContextSets = context_def.GetContextSets;
         end
         
         function [result, output_image, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
 
             % Determines the context and context type requested by the calling function
             if isempty(output_context)
-             
-                
-                % If a specific context has been specified in the plugin, we use
-                % this (note this is not normally the case, as plugins usually
-                % specify a PTKContextSet rather than a PTKContext)
-                if isa(plugin_info.Context, 'PTKContext')
-                    output_context = plugin_info.Context;
-
-                % If the plugin specifies a PTKContextSet of type
-                % PTKContextSet.OriginalImage, then we choose to return a context
-                % of PTKContext.OriginalImage
-                elseif plugin_info.Context == PTKContextSet.OriginalImage
-                    output_context = PTKContext.OriginalImage;
-                    
-                % In all other cases we choose a default context of the lung ROI
-                else
-                    output_context = PTKContext.LungROI;
-                end
-                
+                output_context = obj.ContextDef.ChooseOutputContext(plugin_info.Context);
             end
             
             context_list = [];
             for next_output_context_set = CoreContainerUtilities.ConvertToSet(output_context);
                 next_output_context = next_output_context_set{1};
-                if isa(next_output_context, 'PTKContext')
+                if obj.Contexts.isKey(char(next_output_context))
                     context_list{end + 1} = next_output_context;
-                elseif isa(next_output_context, 'PTKContextSet')
+                elseif obj.ContextSets.isKey(char(next_output_context))
                     context_set_mapping = obj.ContextSets(char(next_output_context));
                     context_mapping_list = context_set_mapping.ContextList;
                     context_list = [context_list, CoreContainerUtilities.GetFieldValuesFromSet(context_mapping_list, 'Context')];
@@ -185,7 +98,7 @@ classdef PTKContextHierarchy < CoreBaseClass
             % Determines the context and context type requested by the calling function
             if isempty(input_context)
                 reporting.Error('PTKContextHierarchy:NoContextSpecified', 'When calling SaveEditedResult(), the contex of the input image must be specified.');
-                input_context = PTKContext.LungROI;
+                input_context = obj.ContextDef.GetDefaultContext;
             end
             
             obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
@@ -211,13 +124,13 @@ classdef PTKContextHierarchy < CoreBaseClass
             % Determines the type of context supported by the plugin
             plugin_context_set = plugin_info.Context;
             if isempty(plugin_context_set)
-                plugin_context_set = PTKContextSet.LungROI;
+                plugin_context_set = obj.ContextDef.GetDefaultContextSet;
             end
             plugin_context_set_mapping = obj.ContextSets(char(plugin_context_set));
             
             % Determines the context and context type requested by the calling function
             if isempty(output_context)
-                output_context = PTKContext.LungROI;
+                output_context = obj.ContextDef.GetDefaultContext;
             end
             output_context_mapping = obj.Contexts(char(output_context));
             output_context_set_mapping = output_context_mapping.ContextSet;
@@ -225,10 +138,7 @@ classdef PTKContextHierarchy < CoreBaseClass
             
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to call the plugin
-            % OR (special case): for a context plugin ('ReplaceImage'), we do
-            % not resize the image at all but just return it as it is
-%             if (plugin_context_set == output_context_set) || (strcmp(plugin_info.PluginType, 'ReplaceImage')) || (plugin_context_set == PTKContextSet.Any)
-            if (plugin_context_set == output_context_set) || (plugin_context_set == PTKContextSet.Any)
+            if obj.ContextDef.ContextSetMatches(plugin_context_set, output_context_set)
                 [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting);
 
                 % If the plugin has been re-run, then we will generate an output
@@ -326,13 +236,13 @@ classdef PTKContextHierarchy < CoreBaseClass
             % Determines the type of context supported by the plugin
             plugin_context_set = plugin_info.Context;
             if isempty(plugin_context_set)
-                plugin_context_set = PTKContextSet.LungROI;
+                plugin_context_set = obj.ContextDef.GetDefaultContextSet;
             end
             plugin_context_set_mapping = obj.ContextSets(char(plugin_context_set));
             
             % Determines the context and context type requested by the calling function
             if isempty(input_context)
-                input_context = PTKContext.LungROI;
+                input_context = obj.ContextDef.GetDefaultContext;
             end
             input_context_mapping = obj.Contexts(char(input_context));
             input_context_set_mapping = input_context_mapping.ContextSet;
@@ -341,7 +251,7 @@ classdef PTKContextHierarchy < CoreBaseClass
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to save the results
             % for this context.
-            if (plugin_context_set == input_context_set) || (plugin_context_set == PTKContextSet.Any)
+            if obj.ContextDef.ContextSetMatches(plugin_context_set, input_context_set)
                 obj.DependencyTracker.SaveEditedResult(plugin_name, input_context, edited_result_image, dataset_uid, reporting);
 
             % Otherwise, if the input's context set is lower in the hierarchy
@@ -352,11 +262,11 @@ classdef PTKContextHierarchy < CoreBaseClass
                 if isempty(higher_context_mapping)
                     reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
                 end
-                parent_contet = higher_context_mapping.Context;
-                parent_image_template = obj.ImageTemplates.GetTemplateImage(parent_contet, dataset_stack, reporting);
+                parent_context = higher_context_mapping.Context;
+                parent_image_template = obj.ImageTemplates.GetTemplateImage(parent_context, dataset_stack, reporting);
                 new_edited_image_for_context_image = edited_result_image.Copy;
                 new_edited_image_for_context_image.ResizeToMatch(parent_image_template);
-                obj.SaveEditedResultForAllContexts(plugin_name, parent_contet, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);
+                obj.SaveEditedResultForAllContexts(plugin_name, parent_context, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);
 
 
             % If the plugin's context set is lower in the hierarchy, then get

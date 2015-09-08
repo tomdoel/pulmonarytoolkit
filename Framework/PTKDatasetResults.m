@@ -60,7 +60,7 @@ classdef PTKDatasetResults < handle
             obj.OutputFolder = PTKOutputFolder(dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
             obj.PreviewImages = PTKPreviewImages(dataset_disk_cache, reporting);
             obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache);
-            obj.ContextHierarchy = PTKContextHierarchy(obj.DependencyTracker, obj.ImageTemplates);
+            obj.ContextHierarchy = PTKContextHierarchy(PTKContextDef, obj.DependencyTracker, obj.ImageTemplates);
         end
 
         function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context, reporting, allow_results_to_be_cached_override)
