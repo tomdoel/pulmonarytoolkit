@@ -33,10 +33,10 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     end
         
     methods (Static)
-        function framework_singleton = GetFrameworkSingleton(reporting)
+        function framework_singleton = GetFrameworkSingleton(context_def, reporting)
             persistent FrameworkSingleton
             if isempty(FrameworkSingleton) || ~isvalid(FrameworkSingleton)
-                FrameworkSingleton = PTKFrameworkSingleton(reporting);
+                FrameworkSingleton = PTKFrameworkSingleton(context_def, reporting);
             end
             framework_singleton = FrameworkSingleton;
         end
@@ -102,11 +102,11 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     end
     
     methods (Access = private)
-        function obj = PTKFrameworkSingleton(reporting)
+        function obj = PTKFrameworkSingleton(context_def, reporting)
             obj.MexCache = PTKFrameworkCache.LoadCache(reporting);
             obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
             obj.DatasetMemoryCache = PTKDatasetMemoryCache;
-            obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(obj.LinkedDatasetRecorder);
+            obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(context_def, obj.LinkedDatasetRecorder);
             obj.ImageDatabase = PTKImageDatabase.LoadDatabase(reporting);
             obj.ImageDatabase.Rebuild([], false, reporting)
         end
