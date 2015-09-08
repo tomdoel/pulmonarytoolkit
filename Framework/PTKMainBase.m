@@ -1,12 +1,12 @@
-classdef PTKMain < CoreBaseClass
-    % PTKMain. Imports and provides access to data from the Pulmonary Toolkit
+classdef PTKMainBase < CoreBaseClass
+    % PTKMainBase. Imports and provides access to data from the Pulmonary Toolkit
     %
-    %     PTKMain provides access to data from the Pulmonary Toolkit, and allows 
+    %     PTKMainBase provides access to data from the Pulmonary Toolkit, and allows 
     %     you to import new data. Data is accessed through one or more PTKDataset
     %     objects. Your code should create a single PTKMain object, and then ask
     %     it to create a PTKDataset object for each dataset you wish to access. 
     %
-    %     PTKMain is essentially a class factory for PTKDatasets, but shares the 
+    %     PTKMainBase is essentially a class factory for PTKDatasets, but shares the 
     %     PTKReporting (error/progress reporting) objects between all 
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the Pulmonary Toolkit.
@@ -45,6 +45,7 @@ classdef PTKMain < CoreBaseClass
     %
     
     properties (SetAccess = private)
+        FrameworkAppDef
         FrameworkSingleton
         Reporting          % Object for error and progress reporting
         ReportingWithCache % For the dataset, uses the same object, but warnings and messages are cached so multiple warnings can be displayed together
@@ -52,26 +53,22 @@ classdef PTKMain < CoreBaseClass
 
     methods
         
-        function obj = PTKMain(reporting)
-            % Constructor. If no error/progress reporting object is specified then a
-            % default object is created.
-            if nargin == 0
-                reporting = CoreReportingDefault;
-            end
+        function obj = PTKMainBase(framework_app_def, reporting)
+            obj.FrameworkAppDef = framework_app_def;
             obj.Reporting = reporting;
             obj.ReportingWithCache = CoreReportingWithCache(obj.Reporting);
             obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(obj.Reporting);
             
-            output_directory = fullfile(PTKDirectories.GetSourceDirectory, 'bin');
-            files_to_compile = PTKGetMexFilesToCompile(reporting);
+            output_directory = framework_app_def.GetOutputDirectory;
+            files_to_compile = framework_app_def.GetFilesToCompile(reporting);
             obj.FrameworkSingleton.CompileMexFileIfRequired(files_to_compile, output_directory, obj.Reporting);
         end
         
         function Recompile(obj)
             % Forces recompilation of mex files
             
-            output_directory = fullfile(PTKDirectories.GetSourceDirectory, 'bin');
-            files_to_compile = PTKGetMexFilesToCompile(reporting);
+            output_directory = framework_app_def.GetOutputDirectory;
+            files_to_compile = framework_app_def.GetFilesToCompile(reporting);
             obj.FrameworkSingleton.Recompile(files_to_compile, output_directory, obj.Reporting);
         end
         
