@@ -28,6 +28,7 @@ function PTKCompileMexFiles(framework_cache, force_recompile, reporting)
     reporting.ShowProgress('Checking mex files');
     root_directory = PTKDirectories.GetSourceDirectory;
     output_directory = fullfile(root_directory, 'bin');
+    PTKDiskUtilities.CreateDirectoryIfNecessary(output_directory);
     cached_mex_file_info = framework_cache.MexInfoMap;
     mex_files_to_compile = GetMexFilesToCompile(root_directory, reporting);
     framework_cache_was_missing = framework_cache.IsNewlyCreated;
