@@ -15,7 +15,8 @@ classdef TestImageTemplates < PTKTest
             mock_reporting = MockReporting;
             mock_datset_disk_cache = MockDatasetDiskCache;
             mock_dataset_results = MockDatasetResults;
-            image_templates = PTKImageTemplates(mock_dataset_results, mock_datset_disk_cache, mock_reporting);
+            context_def = PTKContextDef;
+            image_templates = PTKImageTemplates(mock_dataset_results, context_def, mock_datset_disk_cache, mock_reporting);
             mock_dataset_results.ImageTemplates = image_templates;
             null_dataset_stack = [];
             

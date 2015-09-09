@@ -21,16 +21,18 @@ classdef PTKContextMapping < handle
     properties
         Context % The context (of type PTKContext)
         ContextSet % The context type (of type PTKContextSet)
-        TemplateGenerationFunctions % The name of a plugin from which this context can be found
+        TemplateGenerationFunctions % The name of a function from which this context can be found
+        ContextTriggerPlugin % The name of a plugin which, when called, will trigger saving of a template
         Parent %
         Children
     end
     
     methods
-        function obj = PTKContextMapping(context_id, context_set, template_generation_function, parent_context_mapping)
+        function obj = PTKContextMapping(context_id, context_set, template_generation_function, context_trigger_plugin, parent_context_mapping)
             obj.Context = context_id;
             obj.ContextSet = context_set;
             obj.TemplateGenerationFunctions = template_generation_function;
+            obj.ContextTriggerPlugin = context_trigger_plugin;
             obj.Parent = parent_context_mapping;
             obj.Children = {};
             

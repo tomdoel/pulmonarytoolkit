@@ -56,7 +56,7 @@ classdef PTKDatasetResults < handle
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
-            obj.ImageTemplates = PTKImageTemplates(obj, dataset_disk_cache, reporting);
+            obj.ImageTemplates = PTKImageTemplates(obj, context_def, dataset_disk_cache, reporting);
             obj.OutputFolder = PTKOutputFolder(dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
             obj.PreviewImages = PTKPreviewImages(dataset_disk_cache, reporting);
             obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache);
