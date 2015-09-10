@@ -83,6 +83,24 @@ classdef PTKDirectories < CoreBaseClass
             CoreDiskUtilities.CreateDirectoryIfNecessary(edited_results_directory);
         end
 
+        function manual_segmentations_directory = GetManualSegmentationDirectoryAndCreateIfNecessary
+            % Returns the full path to the directory used for storing
+            % manual segmentations
+            
+            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            manual_segmentations_directory = fullfile(application_directory, PTKSoftwareInfo.ManualSegmentationsDirectoryName);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(manual_segmentations_directory);
+        end
+        
+        function markers_directory = GetMarkersDirectoryAndCreateIfNecessary
+            % Returns the full path to the directory used for storing
+            % marker points
+            
+            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            markers_directory = fullfile(application_directory, PTKSoftwareInfo.MarkersDirectoryName);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(markers_directory);
+        end
+        
         function framework_file_path = GetFrameworkCacheFilePath
             % Returns the full path to the framework cache file
             

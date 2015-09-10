@@ -48,6 +48,8 @@ classdef PTKSoftwareInfo < handle
         DiskCacheFolderName = 'ResultsCache'
         OutputDirectoryName = 'Output'
         EditedResultsDirectoryName = 'EditedResults'
+        ManualSegmentationsDirectoryName = 'ManualSegmentations'
+        MarkersDirectoryName = 'Markers'
         ApplicationSettingsFolderName = 'TDPulmonaryToolkit'
         SharedPluginDirectoryName = 'SharedPlugins'
         PluginDirectoryName = 'Plugins'

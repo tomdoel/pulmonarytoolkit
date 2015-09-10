@@ -162,6 +162,34 @@ classdef PTKDataset < CoreBaseClass
             obj.PostCallTidy;
         end
 
+        function SaveManualSegmentation(obj, name, data, varargin)
+            % Save data as a cache file associated with this dataset
+            obj.PreCallTidy;
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveManualSegmentation(name, data, obj.Reporting);
+            obj.PostCallTidy;
+        end
+
+        function data = LoadManualSegmentation(obj, name, varargin)
+            % Load data from a cache file associated with this dataset
+            obj.PreCallTidy;
+            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadManualSegmentation(name, obj.Reporting);
+            obj.PostCallTidy;
+        end
+        
+        function SaveMarkerPoints(obj, name, data, varargin)
+            % Save data as a cache file associated with this dataset
+            obj.PreCallTidy;
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveMarkerPoints(name, data, obj.Reporting);
+            obj.PostCallTidy;
+        end
+
+        function data = LoadMarkerPoints(obj, name, varargin)
+            % Load data from a cache file associated with this dataset
+            obj.PreCallTidy;
+            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadMarkerPoints(name, obj.Reporting);
+            obj.PostCallTidy;
+        end
+        
         function dataset_cache_path = GetDatasetCachePath(obj, varargin)
             % Gets the path of the folder where the results for this dataset are stored
             obj.PreCallTidy;
@@ -253,6 +281,14 @@ classdef PTKDataset < CoreBaseClass
             obj.PostCallTidy;
         end
 
+        function DeleteManualSegmentation(obj, segmentation_name, varargin)
+            % Delete edit data from a cache file associated with this dataset
+            
+            obj.PreCallTidy;
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).DeleteManualSegmentation(segmentation_name, obj.Reporting);
+            obj.PostCallTidy;
+        end
+        
         function context_is_enabled = IsContextEnabled(obj, context, varargin)
             % Check to see if a context has been disabled for this dataset, due to a
             % failure when running the plugin that generates the template image for

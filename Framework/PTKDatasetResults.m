@@ -113,7 +113,6 @@ classdef PTKDatasetResults < handle
         
         function SaveData(obj, name, data, reporting)
             % Save data as a cache file associated with this dataset
-            % Used for marker points
         
             obj.DatasetDiskCache.SaveData(name, data, reporting);
         end
@@ -124,10 +123,40 @@ classdef PTKDatasetResults < handle
             data = obj.DatasetDiskCache.LoadData(name, reporting);
         end
         
+        function SaveMarkerPoints(obj, name, data, reporting)
+            % Save marker points as a cache file associated with this dataset
+        
+            obj.DatasetDiskCache.SaveMarkerPoints(name, data, reporting);
+        end
+        
+        function data = LoadMarkerPoints(obj, name, reporting)
+            % Load data from a cache file associated with this dataset
+        
+            data = obj.DatasetDiskCache.LoadMarkerPoints(name, reporting);
+        end
+        
+        function SaveManualSegmentaion(obj, name, data, reporting)
+            % Save manual segmentation as a cache file associated with this dataset
+        
+            obj.DatasetDiskCache.SaveManualSegmentaion(name, data, reporting);
+        end
+        
+        function data = LoadManualSegmentation(obj, name, reporting)
+            % Load data from a cache file associated with this dataset
+        
+            data = obj.DatasetDiskCache.LoadManualSegmentation(name, reporting);
+        end
+        
         function DeleteEditedPluginResult(obj, plugin_name, reporting)
             % Delete edit data from a cache file associated with this dataset
             
             obj.DatasetDiskCache.DeleteEditedPluginResult(plugin_name, reporting);
+        end
+        
+        function DeleteManualSegmentation(obj, segmentation_name, reporting)
+            % Delete manual segmentation from a cache file associated with this dataset
+            
+            obj.DatasetDiskCache.DeleteManualSegmentation(segmentation_name, reporting);
         end
         
         function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack, reporting)
