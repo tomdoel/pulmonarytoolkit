@@ -37,11 +37,11 @@ classdef PTKEnterEditMode < PTKGuiPlugin
         
         function enabled = IsEnabled(ptk_gui_app)
             enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
-                ~isequal(ptk_gui_app.GetModeName, 'edit') && ptk_gui_app.IsTabEnabled('edit');
+                ~isequal(ptk_gui_app.GetCurrentModeName, PTKModes.EditMode) && ptk_gui_app.IsTabEnabled('Edit');
         end
         
         function is_selected = IsSelected(ptk_gui_app)
-            is_selected = isequal(ptk_gui_app.ImagePanel.SelectedControl, 'edit');
+            is_selected = isequal(ptk_gui_app.ImagePanel.SelectedControl, 'Edit');
         end
         
     end

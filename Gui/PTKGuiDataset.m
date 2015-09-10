@@ -36,21 +36,15 @@ classdef PTKGuiDataset < CoreBaseClass
             obj.ContextDef = app_def.GetContextDef;
             obj.GuiDatasetState = PTKGuiDatasetState;
             obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, app_def, settings, reporting);
-
+            
             obj.Gui = gui;
             obj.Reporting = reporting;
             obj.Settings = settings;
             obj.Ptk = PTKMain(reporting);
             obj.AddEventListener(obj.GetImageDatabase, 'SeriesHasBeenDeleted', @obj.SeriesHasBeenDeleted);
+            obj.AddEventListener(obj.ModeSwitcher, 'ModeChangedEvent', @obj.ModeHasChanged);
         end
 
-        function ModeTabChanged(obj, mode_name)
-            if strcmp(mode_name, 'all')
-                mode_name = '';
-            end
-            obj.ChangeMode(mode_name)
-        end
-        
         function ChangeMode(obj, mode)
             obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
         end        
@@ -60,6 +54,10 @@ classdef PTKGuiDataset < CoreBaseClass
             if isempty(mode)
                 obj.Reporting.Error('PTKGui::NoMode', 'The operation is not possible in this mode');
             end
+        end
+        
+        function mode = GetCurrentModeName(obj)
+            mode = obj.ModeSwitcher.CurrentModeString;
         end
         
         function is_dataset = DatasetIsLoaded(obj)
@@ -394,6 +392,11 @@ classdef PTKGuiDataset < CoreBaseClass
             if strcmp(series_uid, obj.GetUidOfCurrentDataset)
                 obj.ClearDataset;
             end
+        end
+        
+        function ModeHasChanged(obj, ~, mode)
+            % Called when the mode changes
+            obj.Gui.SetTabMode(mode.Data);
         end
         
         function RunPluginTryCatchBlock(obj, plugin_name, wait_dialog)

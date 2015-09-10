@@ -37,7 +37,7 @@ classdef PTKSoftwareInfo < handle
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica'
         DefaultCategoryName = 'Uncategorised'
-        DefaultMode = 'Home'
+        DefaultMode = 'Segment'
         Colormap = CoreSystemUtilities.BackwardsCompatibilityColormap;
         
         % If this parameter to true, then the patient browser will group together

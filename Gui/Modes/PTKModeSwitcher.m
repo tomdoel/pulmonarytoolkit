@@ -22,6 +22,10 @@ classdef PTKModeSwitcher < CoreBaseClass
         Modes
     end
     
+    events
+        ModeChangedEvent
+    end
+    
     methods
         function obj = PTKModeSwitcher(viewer_panel, gui_dataset, app_def, settings, reporting)
             obj.ViewerPanel = viewer_panel;
@@ -39,16 +43,12 @@ classdef PTKModeSwitcher < CoreBaseClass
             obj.CurrentModeString = mode;
             if isempty(mode)
                 obj.CurrentMode = [];
+                obj.ViewerPanel.SetModes([], []);
             else
                 obj.CurrentMode = obj.Modes(mode);
                 obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context);
             end
-            if isempty(current_plugin_info)
-                sub_mode = [];
-            else
-                sub_mode = current_plugin_info.SubMode;
-            end
-            obj.ViewerPanel.SetModes(mode, sub_mode);
+            notify(obj, 'ModeChangedEvent', PTKEventData(mode));
         end
         
         function PrePluginCall(obj)

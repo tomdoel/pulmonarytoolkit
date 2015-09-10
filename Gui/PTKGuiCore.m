@@ -128,7 +128,7 @@ classdef PTKGuiCore < PTKFigure
 
             % Create the panel of tools across the bottom of the interface
             if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', 'all', obj, obj.AppDef);
+                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef);
                 obj.AddChild(obj.ToolbarPanel);
             end
             
@@ -212,6 +212,10 @@ classdef PTKGuiCore < PTKFigure
         
         function ChangeMode(obj, mode)
             obj.GuiDataset.ChangeMode(mode);
+        end
+        
+        function SetTabMode(obj, mode)
+            obj.ModeTabControl.AutoTabSelection(mode);
         end
         
         function CreateGuiComponent(obj, position)
@@ -536,8 +540,8 @@ classdef PTKGuiCore < PTKFigure
             mode = obj.GuiDataset.GetMode;
         end
         
-        function mode = GetModeName(obj)
-            mode = obj.ModeTabControl.GetModeName;
+        function mode_name = GetCurrentModeName(obj)
+            mode_name = obj.GuiDataset.GetCurrentModeName;
         end
         
         function RunGuiPluginCallback(obj, plugin_name)
@@ -852,8 +856,8 @@ classdef PTKGuiCore < PTKFigure
         end
 
         function ModeTabChanged(obj, ~, event_data)
-            mode = obj.ModeTabControl.GetPluginMode(event_data.Data);
-            obj.GuiDataset.ModeTabChanged(mode);
+            mode = obj.ModeTabControl.GetModeToSwitchTo(event_data.Data);
+            obj.GuiDataset.ChangeMode(mode);
         end
         
     end

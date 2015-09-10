@@ -4,7 +4,8 @@ classdef PTKToolbarPanel < PTKPanel
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKToolbarPanel represents the toolbar panel along the bottom of the GUI
+    %     PTKToolbarPanel represents a panel containing tool control that
+    %     are enabled and disabled dynamically
     %
     %     Licence
     %     -------
@@ -17,11 +18,12 @@ classdef PTKToolbarPanel < PTKPanel
         ControlGroups
         OrderedControlGroupList
         GuiApp
-        ModeName
-        PluginModeName
+        ModeTabName
+        ModeToSwitchTo
         OrganisedPlugins
         ToolMap
         AppDef
+        Visibility
     end
     
     properties (Constant)
@@ -33,11 +35,12 @@ classdef PTKToolbarPanel < PTKPanel
     end
     
     methods
-        function obj = PTKToolbarPanel(parent, organised_plugins, mode_name, plugin_mode_name, gui_app, app_def)
+        function obj = PTKToolbarPanel(parent, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def)
             obj = obj@PTKPanel(parent);
             
-            obj.ModeName = mode_name;
-            obj.PluginModeName = plugin_mode_name;
+            obj.ModeTabName = mode_tab_name;
+            obj.ModeToSwitchTo = mode_to_switch_to;
+            obj.Visibility = visibility;
             obj.TopBorder = true;
             
             obj.AppDef = app_def;
@@ -101,10 +104,18 @@ classdef PTKToolbarPanel < PTKPanel
             height = obj.ToolbarHeight;
         end
         
-        function mode = GetMode(obj)
-            mode = obj.PluginModeName;
+        function mode = GetModeTabName(obj)
+            mode = obj.ModeTabName;
         end
-
+        
+        function visibility = GetVisibility(obj)
+            visibility = obj.Visibility;
+        end
+        
+        function mode = GetModeToSwitchTo(obj)
+            mode = obj.ModeToSwitchTo;
+        end
+        
         function AddPlugins(obj, current_dataset)
         end
         
@@ -121,7 +132,7 @@ classdef PTKToolbarPanel < PTKPanel
     
     methods (Access = private)
         function AddTools(obj)
-            tools = obj.OrganisedPlugins.GetOrderedPlugins(obj.ModeName);
+            tools = obj.OrganisedPlugins.GetOrderedPlugins(obj.ModeTabName);
             for tool = tools
                 obj.AddTool(tool{1}.PluginObject);
             end

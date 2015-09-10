@@ -15,10 +15,6 @@ classdef PTKPluginsPanel < PTKCompositePanel
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties (SetAccess = private)
-        PluginModeName
-    end
-    
     properties (Access = private)
         
         % Plugin information grouped by category
@@ -32,16 +28,19 @@ classdef PTKPluginsPanel < PTKCompositePanel
         RunGuiPluginCallback
         
         OrganisedPlugins
-        ModeName        
+        ModeToSwitchTo
+        ModeTabName
+        Visibility
     end
     
     methods
-        function obj = PTKPluginsPanel(parent, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback)
+        function obj = PTKPluginsPanel(parent, organised_plugins, plugins_mode_group, mode_to_switch_to, visibility, run_plugin_callback, run_gui_plugin_callback)
             obj = obj@PTKCompositePanel(parent);
             
             obj.OrganisedPlugins = organised_plugins;
-            obj.ModeName = mode_name;
-            obj.PluginModeName = plugin_mode_name;
+            obj.ModeTabName = plugins_mode_group;
+            obj.ModeToSwitchTo = mode_to_switch_to;
+            obj.Visibility = visibility;
             
             obj.TopMargin = 5;
             obj.BottomMargin = 5;
@@ -77,7 +76,7 @@ classdef PTKPluginsPanel < PTKCompositePanel
         function AddPlugins(obj, current_dataset)
             % This function adds buttons for all files in the Plugins directory
 
-            plugins_by_category = obj.OrganisedPlugins.GetAllPluginsForMode(obj.ModeName);
+            plugins_by_category = obj.OrganisedPlugins.GetAllPluginsForMode(obj.ModeTabName);
             
             obj.PluginsByCategory = plugins_by_category;
             obj.AddPluginCategoryPanels(plugins_by_category);
@@ -95,6 +94,17 @@ classdef PTKPluginsPanel < PTKCompositePanel
             obj.AddAllPreviewImagesToButtons(current_dataset, window, level);
         end        
 
+        function visibility = GetVisibility(obj)
+            visibility = obj.Visibility;
+        end
+
+        function mode = GetModeTabName(obj)
+            mode = obj.ModeTabName;
+        end
+        
+        function mode = GetModeToSwitchTo(obj)
+            mode = obj.ModeToSwitchTo;
+        end
     end
     
     
