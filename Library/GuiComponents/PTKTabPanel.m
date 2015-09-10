@@ -92,12 +92,16 @@ classdef PTKTabPanel < PTKPanel
         function EnableTab(obj, tag)
             tab = obj.Tabs(tag);
             if ~tab.Enabled
-                obj.Resize(obj.Position);
-                obj.ResizePreTabEnable(obj.InnerPosition, tag);
+                if ~isempty(obj.Position)                
+                    obj.Resize(obj.Position);
+                    obj.ResizePreTabEnable(obj.InnerPosition, tag);
+                end
                 tab.Enable;
                 obj.TabControl.Reorder;
             end
-            obj.Resize(obj.Position);
+            if ~isempty(obj.Position)                
+               obj.Resize(obj.Position);
+            end
         end
         
         function DisableTab(obj, tag)

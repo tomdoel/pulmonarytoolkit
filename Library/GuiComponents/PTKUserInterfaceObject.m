@@ -161,8 +161,10 @@ classdef PTKUserInterfaceObject < CoreBaseClass
                 obj.SetAllParentEnabled(obj.ParentWindowEnabled);
                 
                 % If the component has never been displayed, it may not have a position
-                if isempty(obj.Position) && ~isempty(obj.Parent)
-                    obj.Parent.Resize(obj.Parent.Position);
+                if obj.IsVisible
+                    if isempty(obj.Position) && ~isempty(obj.Parent)
+                        obj.Parent.Resize(obj.Parent.Position);
+                    end
                 end
                 
                 % Ensure any controls are created
