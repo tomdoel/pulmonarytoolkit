@@ -46,7 +46,7 @@ classdef PTKDicomImage < PTKImage
             voxelsize_z = slice_thickness;
              
             if ndims(original_image.RawImage) > 3
-                reporting.ShowWarning('PTKDicomImage:ColourDicomImageNotSupported', 'Colour Dicom images are not supported. Converting to greyscale');
+                reporting.ShowWarning('PTKDicomImage:ColourDicomImageNotSupported', 'Colour Dicom images are not supported. Converting to greyscale', []);
                 original_image.RawImage = mean(original_image.RawImage, 4);
             end
             
