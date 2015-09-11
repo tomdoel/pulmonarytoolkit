@@ -410,7 +410,7 @@ classdef PTKImageUtilities
             button_text_colour = 150*[1, 1, 1];
                         
             if (image_type == 3) && isempty(image_preview_limits)
-                obj.Reporting.ShowWarning('PTKPluginsPanel:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
+                obj.Reporting.ShowWarning('PTKImageUtilities:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
                 image_preview_limits = [1 100];
             end
             
