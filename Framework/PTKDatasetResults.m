@@ -135,10 +135,10 @@ classdef PTKDatasetResults < handle
             data = obj.DatasetDiskCache.LoadMarkerPoints(name, reporting);
         end
         
-        function SaveManualSegmentaion(obj, name, data, context, reporting)
+        function SaveManualSegmentation(obj, name, data, context, reporting)
             % Save manual segmentation as a cache file associated with this dataset
         
-            obj.DatasetDiskCache.SaveManualSegmentaion(name, data, context, reporting);
+            obj.DatasetDiskCache.SaveManualSegmentation(name, data, context, reporting);
         end
         
         function data = LoadManualSegmentation(obj, name, context, reporting)
