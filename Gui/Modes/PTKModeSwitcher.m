@@ -32,11 +32,12 @@ classdef PTKModeSwitcher < CoreBaseClass
             obj.AddEventListener(viewer_panel, 'OverlayImageChangedEvent', @obj.OverlayImageChanged);
             obj.Modes = containers.Map;
             obj.Modes(PTKModes.EditMode) = PTKEditMode(viewer_panel, gui_dataset, app_def, settings, reporting);
+            obj.Modes(PTKModes.ManualSegmentationMode) = PTKManualSegmentationMode(viewer_panel, gui_dataset, app_def, settings, reporting);
             obj.CurrentMode = [];
             obj.CurrentModeString = [];
         end
         
-        function SwitchMode(obj, mode, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
+        function SwitchMode(obj, mode, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name)
             if ~isempty(obj.CurrentMode)
                 obj.CurrentMode.ExitMode;
             end
@@ -46,7 +47,7 @@ classdef PTKModeSwitcher < CoreBaseClass
                 obj.ViewerPanel.SetModes([], []);
             else
                 obj.CurrentMode = obj.Modes(mode);
-                obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context);
+                obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name);
             end
             notify(obj, 'ModeChangedEvent', PTKEventData(mode));
         end

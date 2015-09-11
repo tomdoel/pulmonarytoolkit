@@ -43,6 +43,18 @@ classdef PTKOrganisedPluginsModeList < CoreBaseClass
             end
         end
 
+        function AddSegmentationList(obj, segmentation_list, gui_app, reporting)
+            for segmentation_pair = segmentation_list
+                context = segmentation_pair{1}.First;
+                
+                % We currently only support the original image context for
+                % manual segmentations
+                if strcmp(char(context), char(PTKContext.OriginalImage))
+                    segmentation_name = segmentation_pair{1}.Second;
+                    obj.Add(segmentation_name, 'ManualSegmentation', 'Manual segmentations', []);
+                end
+            end
+        end
         
         function Add(obj, name, mode, category, plugin_wrapper)
             if obj.Modes.isKey(mode)

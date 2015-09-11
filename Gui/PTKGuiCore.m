@@ -35,6 +35,7 @@ classdef PTKGuiCore < PTKFigure
         StatusPanel
 
         OrganisedPlugins
+        OrganisedManualSegmentations
         ModeTabControl
 
         MatNatBrowserFactory
@@ -125,6 +126,7 @@ classdef PTKGuiCore < PTKFigure
             
             % Map of all plugins visible in the GUI
             obj.OrganisedPlugins = PTKOrganisedPlugins(obj, app_def, obj.Reporting);
+            obj.OrganisedManualSegmentations = PTKOrganisedManualSegmentations(obj, app_def, obj.Reporting);
 
             % Create the panel of tools across the bottom of the interface
             if PTKSoftwareInfo.ToolbarEnabled
@@ -132,7 +134,7 @@ classdef PTKGuiCore < PTKFigure
                 obj.AddChild(obj.ToolbarPanel);
             end
             
-            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins, obj.AppDef);
+            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.AppDef);
             obj.AddChild(obj.ModeTabControl);
 
             obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);
@@ -563,6 +565,11 @@ classdef PTKGuiCore < PTKFigure
             obj.GuiDataset.RunPlugin(plugin_name, wait_dialog);
         end
         
+        function LoadSegmentationCallback(obj, segmentation_name)
+            wait_dialog = obj.WaitDialogHandle;
+            obj.GuiDataset.LoadManualSegmentation(segmentation_name, wait_dialog);
+        end
+        
         function dataset_is_loaded = IsDatasetLoaded(obj)
             dataset_is_loaded = obj.GuiDataset.DatasetIsLoaded;
         end
@@ -579,6 +586,10 @@ classdef PTKGuiCore < PTKFigure
             obj.WaitDialogHandle.ShowAndHold('Clearing dataset');
             obj.GuiDataset.ClearDataset;
             obj.WaitDialogHandle.Hide;
+        end
+        
+        function segmentation_list = GetListOfManualSegmentations(obj)
+            segmentation_list = obj.GuiDataset.GetListOfManualSegmentations;
         end
     end
     
@@ -913,8 +924,8 @@ classdef PTKGuiCore < PTKFigure
             end
         end
         
-        function AddAllPreviewImagesToButtons(obj, dataset)
-            obj.ModeTabControl.AddAllPreviewImagesToButtons(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
+        function UpdateGuiForNewDataset(obj, dataset)
+            obj.ModeTabControl.UpdateGuiForNewDataset(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
         end
 
         function ReplaceOverlayImageCallback(obj, new_image, image_title)

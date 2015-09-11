@@ -1,5 +1,5 @@
-classdef PTKEditMode < handle
-    % PTKEditMode. Part of the internal gui for the Pulmonary Toolkit.
+classdef PTKManualSegmentationMode < handle
+    % PTKManualSegmentationMode. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
@@ -29,8 +29,8 @@ classdef PTKEditMode < handle
         Reporting
         
         Dataset
-        PluginName
-        VisiblePluginName
+        SegmentationName
+        VisibleName
         Context
         PluginInfo
         
@@ -42,7 +42,7 @@ classdef PTKEditMode < handle
     end
     
     methods
-        function obj = PTKEditMode(viewer_panel, gui_dataset, app_def, settings, reporting)
+        function obj = PTKManualSegmentationMode(viewer_panel, gui_dataset, app_def, settings, reporting)
             obj.ViewerPanel = viewer_panel;
             obj.GuiDataset = gui_dataset;
             obj.AppDef = app_def;
@@ -57,36 +57,25 @@ classdef PTKEditMode < handle
             obj.Context = current_context;
             obj.Dataset = current_dataset;
             obj.PluginInfo = plugin_info;
-            obj.PluginName = current_plugin_name;
-            obj.VisiblePluginName = current_visible_plugin_name;
+            obj.SegmentationName = current_segmentation_name;
+            obj.VisibleName = current_visible_plugin_name;
             obj.UnsavedChanges = false;
             
-            if ~isempty(plugin_info)
+            if (obj.ViewerPanel.OverlayImage.ImageExists)
                 obj.ImageBeforeEdit = obj.ViewerPanel.OverlayImage.Copy;
-                
-                if strcmp(plugin_info.SubMode, PTKSubModes.EditBoundariesEditing)
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.EditBoundariesEditing);
-                    
-                elseif strcmp(plugin_info.SubMode, PTKSubModes.FixedBoundariesEditing)
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.FixedBoundariesEditing);
-                    
-                elseif strcmp(plugin_info.SubMode, PTKSubModes.ColourRemapEditing)
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.ColourRemapEditing);
-                    
-                elseif strcmp(plugin_info.SubMode, PTKSubModes.PaintEditing)
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.PaintEditing);
-                    
-                else
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, []);
-                end
+            else 
+                obj.ImageBeforeEdit = obj.ViewerPanel.BackgroundImage.BlankCopy;
+                obj.ImageBeforeEdit.ChangeRawImage(zeros(obj.ImageBeforeEdit.ImageSize, 'uint8'));
             end
+            
+            obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.PaintEditing);
             obj.IgnoreOverlayChanges = false;            
         end
         
         function ExitMode(obj)
             
             if obj.UnsavedChanges
-                choice = questdlg(['Do you wish to save your edits for ', obj.VisiblePluginName, '?'], ...
+                choice = questdlg(['Do you wish to save your edits for ', obj.SegmentationName, '?'], ...
                     'Delete edited results', 'Save', 'Delete', 'Save');
                 switch choice
                     case 'Save'
@@ -97,19 +86,23 @@ classdef PTKEditMode < handle
                 
             end
             obj.Dataset = [];
-            obj.PluginName = [];
-            obj.VisiblePluginName = [];
+            obj.SegmentationName = [];
+            obj.VisibleName = [];
             obj.Context = [];
             obj.UnsavedChanges = false;
             obj.IgnoreOverlayChanges = true;            
         end
         
         function SaveEdit(obj)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.SegmentationName)
                 obj.LockImageChangedCallback;
-                obj.Reporting.ShowProgress(['Saving edited image for ', obj.VisiblePluginName]);
-                edited_result = obj.ViewerPanel.OverlayImage;
-                obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
+                obj.Reporting.ShowProgress(['Saving edited image for ', obj.VisibleName]);
+                edited_result = obj.ViewerPanel.OverlayImage.Copy;
+                
+                template = obj.GuiDataset.GetTemplateImage;
+                edited_result.ResizeToMatch(template);
+                
+                obj.Dataset.SaveManualSegmentation(obj.SegmentationName, edited_result, PTKContext.OriginalImage);
                 obj.UnsavedChanges = false;
                 obj.GuiDataset.UpdateEditedStatus(true);
                 obj.Reporting.CompleteProgress;
@@ -118,10 +111,10 @@ classdef PTKEditMode < handle
         end
         
         function DeleteAllEditsWithPrompt(obj)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.SegmentationName)
                 obj.LockImageChangedCallback;
                 
-                choice = questdlg(['Do you wish to delete your edits for ', obj.VisiblePluginName, '? All your edits will be lost and replaced with the automatically computed results.'], ...
+                choice = questdlg(['Do you wish to delete your edits for ', obj.VisibleName, '? All your edits will be lost.'], ...
                     'Delete edited results', 'Delete', 'Don''t delete', 'Don''t delete');
                 switch choice
                     case 'Delete'
@@ -133,10 +126,10 @@ classdef PTKEditMode < handle
         end
         
         function ImportPatch(obj, patch)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.SegmentationName)
                 obj.LockImageChangedCallback;
                 
-                choice = questdlg('You are about to import an edited result. This will delete and replace any existing edits you have made for this plugin. Do you wish to continue?', ...
+                choice = questdlg('You are about to import an edited result. This will delete and replace any existing edits you have made. Do you wish to continue?', ...
                     'Import edited results', 'Import', 'Cancel', 'Import');
                 switch choice
                     case 'Import'
@@ -149,7 +142,7 @@ classdef PTKEditMode < handle
         
         
         function ImportEdit(obj)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.SegmentationName)
                 obj.LockImageChangedCallback;
                 
                 choice = questdlg('You are about to import an edited result. This will delete and replace any existing edits you have made for this plugin. Do you wish to continue?', ...
@@ -187,7 +180,7 @@ classdef PTKEditMode < handle
             patch = PTKEditedResultPatch;
             image_info = obj.GuiDataset.GetImageInfo;
             patch.SeriesUid = image_info.ImageUid;
-            patch.PluginName = obj.PluginName;
+            patch.SegmentationName = obj.SegmentationName;
             patch.EditedResult = edited_result;
             
             path_name = PTKSavePatchAs(patch, path_name, obj.Reporting);
@@ -195,6 +188,7 @@ classdef PTKEditMode < handle
                 obj.Settings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
         end
+        
         function OverlayImageChanged(obj, ~, ~)
             if obj.ImageOverlayLock < 1
                 obj.UnsavedChanges = true;
@@ -212,9 +206,9 @@ classdef PTKEditMode < handle
         end
         
         function SaveEditBackup(obj)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.SegmentationName)
                 obj.LockImageChangedCallback;                
-                obj.Reporting.ShowProgress(['Abandoning edited image for ', obj.VisiblePluginName]);
+                obj.Reporting.ShowProgress(['Abandoning edited image for ', obj.VisibleName]);
                 edited_result = obj.ViewerPanel.OverlayImage;
                 obj.Dataset.SaveData('AbandonedEdits', edited_result);
                 obj.UnsavedChanges = false;
@@ -225,19 +219,15 @@ classdef PTKEditMode < handle
         end
         
         function DeleteAllEdits(obj)
-            obj.Reporting.ShowProgress(['Deleting edited image for ', obj.VisiblePluginName]);
-            obj.Dataset.DeleteEditedResult(obj.PluginName);
+            obj.Reporting.ShowProgress(['Deleting edited image for ', obj.VisibleName]);
             obj.UnsavedChanges = false;
-            obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
-            obj.GuiDataset.UpdateEditedStatus(false);
-            obj.GuiDataset.ChangeMode(PTKModes.EditMode);
             obj.Reporting.CompleteProgress;            
         end
 
         function ReplaceEditWithPatch(obj, patch)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.SegmentationName)
                 obj.LockImageChangedCallback;
-                obj.Reporting.ShowProgress(['Replacing edited image for ', obj.VisiblePluginName]);
+                obj.Reporting.ShowProgress(['Replacing edited image for ', obj.VisibleName]);
                 
                 current_overlay = obj.ViewerPanel.OverlayImage;
                 edited_result = patch.EditedResult;
@@ -245,20 +235,13 @@ classdef PTKEditMode < handle
                 
                 template = obj.GuiDataset.GetTemplateImage;
                 if ~isequal(template.ImageSize, edited_result.ImageSize)
-                    uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                    uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisibleName], 'modal'));
                 elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
-                    uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                    uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisibleName], 'modal'));
                 else
-                    obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
+                    obj.Dataset.SaveManualSegmentation(obj.SegmentationName, edited_result, obj.Context);
                     obj.UnsavedChanges = false;
                     obj.GuiDataset.UpdateEditedStatus(true);
-                    
-                    % Update the loaded results
-                    obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
-                    obj.GuiDataset.UpdateEditedStatus(false);
-                    
-                    % Ensure we are back in edit mode, as RunPlugin will have left this
-                    obj.GuiDataset.ChangeMode(PTKModes.EditMode);
                 end
                 
                 obj.Reporting.CompleteProgress;
@@ -267,9 +250,9 @@ classdef PTKEditMode < handle
         end
                     
         function ChooseAndReplaceEdit(obj)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.SegmentationName)
                 obj.LockImageChangedCallback;
-                obj.Reporting.ShowProgress(['Replacing edited image for ', obj.VisiblePluginName]);
+                obj.Reporting.ShowProgress(['Replacing edited image for ', obj.VisibleName]);
                 
                 image_info = PTKChooseImagingFiles(obj.Settings.SaveImagePath, obj.Reporting);
                 
@@ -282,20 +265,12 @@ classdef PTKEditMode < handle
                     
                     template = obj.GuiDataset.GetTemplateImage;
                     if ~isequal(template.ImageSize, edited_result.ImageSize)
-                        uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                        uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisibleName], 'modal'));
                     elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
-                        uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                        uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisibleName], 'modal'));
                     else
-                        obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
+                        obj.Dataset.SaveManualSegmentation(obj.SegmentationName, edited_result, obj.Context);
                         obj.UnsavedChanges = false;
-                        obj.GuiDataset.UpdateEditedStatus(true);
-                        
-                        % Update the loaded results
-                        obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
-                        obj.GuiDataset.UpdateEditedStatus(false);
-                        
-                        % Ensure we are back in edit mode, as RunPlugin will have left this
-                        obj.GuiDataset.ChangeMode(PTKModes.EditMode);
                     end
                 end
                 

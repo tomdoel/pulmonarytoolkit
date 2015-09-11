@@ -23,6 +23,8 @@ classdef PTKGuiDatasetState < CoreBaseClass
        CurrentPluginName
        CurrentVisiblePluginName
        CurrentPluginResultIsEdited
+       
+       CurrentSegmentationName
    end
    
    events
@@ -50,6 +52,7 @@ classdef PTKGuiDatasetState < CoreBaseClass
                obj.CurrentPatientVisibleName = [];
                obj.CurrentSeriesName = [];
                obj.CurrentModality = [];
+               obj.CurrentSegmentationName = [];
                notify(obj, 'SeriesUidChangedEvent');
            end
        end
@@ -59,6 +62,7 @@ classdef PTKGuiDatasetState < CoreBaseClass
             obj.CurrentPluginName = [];
             obj.CurrentVisiblePluginName = [];
             obj.CurrentPluginResultIsEdited = false;
+            obj.CurrentSegmentationName = [];
             notify(obj, 'PluginChangedEvent');
        end
        
@@ -67,7 +71,13 @@ classdef PTKGuiDatasetState < CoreBaseClass
             obj.CurrentPluginName = plugin_name;
             obj.CurrentVisiblePluginName = plugin_visible_name;
             obj.CurrentPluginResultIsEdited = is_edited;
+            obj.CurrentSegmentationName = [];
             notify(obj, 'PluginChangedEvent');
+       end
+       
+       function SetSegmentation(obj, segmentation_name)
+           obj.ClearPlugin;
+           obj.CurrentSegmentationName = segmentation_name;
        end
        
        function UpdateEditStatus(obj, is_edited)

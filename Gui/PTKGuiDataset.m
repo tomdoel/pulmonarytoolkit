@@ -46,7 +46,7 @@ classdef PTKGuiDataset < CoreBaseClass
         end
 
         function ChangeMode(obj, mode)
-            obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
+            obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext, obj.GuiDatasetState.CurrentSegmentationName);
         end        
 
         function mode = GetMode(obj)
@@ -214,6 +214,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 end
 
                 obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.Gui.SetTab('Segment');
                 
                 obj.Gui.ClearImages;
                 delete(obj.Dataset);
@@ -280,6 +281,8 @@ classdef PTKGuiDataset < CoreBaseClass
                 obj.GuiDatasetState.ClearPlugin;
                 obj.UpdateModes;
                 
+                obj.Gui.UpdateGuiForNewDataset(obj.Dataset);
+                
                 % Set the image after updating the GuiState. This is necessary because setting
                 % the image triggers a GUI resize, and the side panels need to be repopulated
                 % first
@@ -289,7 +292,6 @@ classdef PTKGuiDataset < CoreBaseClass
                     obj.SetImage(new_image, PTKContext.LungROI);
                 end
 
-                obj.Gui.AddAllPreviewImagesToButtons(obj.Dataset);
 
                 obj.Gui.LoadMarkersIfRequired;
 
@@ -332,6 +334,8 @@ classdef PTKGuiDataset < CoreBaseClass
             end
         end
         
+
+        
         % Causes the GUI to run the named plugin and display the result
         function RunPlugin(obj, plugin_name, wait_dialog)
             if ~obj.DatasetIsLoaded
@@ -362,7 +366,33 @@ classdef PTKGuiDataset < CoreBaseClass
             obj.GuiDatasetState.ClearPlugin;
             obj.UpdateModes;
         end
+        
+        function LoadManualSegmentation(obj, segmentation_name, wait_dialog)
+         % Causes the GUI to run the named segmentation and display the result
+         
+            if ~obj.DatasetIsLoaded
+                return;
+            end
+            
+            visible_name = segmentation_name;
+            wait_dialog.ShowAndHold(['Loading segmentation ' visible_name]);
 
+            % At present we only support top-level context
+            context_to_request = PTKContext.OriginalImage;
+            
+            new_image = obj.Dataset.LoadManualSegmentation(segmentation_name, context_to_request, []);
+            
+            image_title = visible_name;
+            image_title = ['MANUAL SEGMENTATION ', image_title];
+            if isempty(new_image)
+                obj.Reporting.Error('PTKGui:EmptyImage', ['The segmentation ' segmentation_name ' did not return an image when expected. ']);
+            end
+            obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);
+            obj.GuiDatasetState.SetSegmentation(segmentation_name);
+            
+            wait_dialog.Hide;
+        end
+    
         function OverlayImageChanged(obj)
             obj.ModeSwitcher.OverlayImageChanged;
         end
@@ -381,7 +411,13 @@ classdef PTKGuiDataset < CoreBaseClass
             obj.GuiDatasetState.UpdateEditStatus(is_edited);
         end
             
-        
+        function segmentation_list = GetListOfManualSegmentations(obj)
+            if isempty(obj.Dataset)
+                segmentation_list = PTKPair.empty;
+            else
+                segmentation_list = obj.Dataset.GetListOfManualSegmentations;
+            end
+        end
     end
     
     methods (Access = private)

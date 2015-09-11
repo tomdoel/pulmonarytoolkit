@@ -25,12 +25,13 @@ classdef PTKPluginGroupPanel < PTKPanel
         Category
         CurrentCategoryMap
         PluginButtonHandlesMap
-        
+        LoadManualSegmentationCallback;
     end
     
     methods
-        function obj = PTKPluginGroupPanel(parent, category, current_category_map)
+        function obj = PTKPluginGroupPanel(parent, category, current_category_map, load_manual_segmentation_callback)
             obj = obj@PTKPanel(parent);
+            obj.LoadManualSegmentationCallback = load_manual_segmentation_callback;
             obj.Enabled = false;
             
             obj.Category = category;
@@ -68,8 +69,12 @@ classdef PTKPluginGroupPanel < PTKPanel
             for current_plugin_key = category_map.keys
                 current_plugin = category_map(char(current_plugin_key));
                 
-                callback_function_handle = @current_plugin.RunPlugin;
-                button_handle = PTKPluginButton(obj, callback_function_handle, current_plugin);
+                if isempty(current_plugin)
+                    button_handle = PTKSegmentationButton(obj, current_plugin_key{1}, obj.LoadManualSegmentationCallback);
+                else
+                    callback_function_handle = @current_plugin.RunPlugin;
+                    button_handle = PTKPluginButton(obj, callback_function_handle, current_plugin);
+                end
                 obj.AddChild(button_handle);
                 
                 obj.PluginButtonHandlesMap(char(current_plugin_key)) = button_handle;

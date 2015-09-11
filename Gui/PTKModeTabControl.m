@@ -14,21 +14,24 @@ classdef PTKModeTabControl < PTKTabControl
 
     properties (Access = private)
         OrganisedPlugins
+        OrganisedManualSegmentations
         Gui
         
         ViewPanel
         PluginsPanel
         EditPanel
+        ManualSegmentationPanel
         AnalysisPanel
         
         TabEnabled
     end
 
     methods
-        function obj = PTKModeTabControl(parent, organised_plugins, app_def)
+        function obj = PTKModeTabControl(parent, organised_plugins, organised_manual_segmentations, app_def)
             obj = obj@PTKTabControl(parent);
 
             obj.OrganisedPlugins = organised_plugins;
+            obj.OrganisedManualSegmentations = organised_manual_segmentations;
             obj.TabEnabled = containers.Map;
 
             obj.Gui = parent;
@@ -38,16 +41,19 @@ classdef PTKModeTabControl < PTKTabControl
             obj.ViewPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'View', [], 'Always', obj.Gui, app_def);
             obj.AddTabbedPanel(obj.ViewPanel, 'View', 'View', 'Visualisation');
             
-            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback);
+            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
             obj.AddTabbedPanel(obj.PluginsPanel, 'Segment', 'Segment', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
 
-            obj.EditPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', @obj.RunPluginCallback, @obj.RunGuiPluginCallback);
+            obj.EditPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'Edit', 'Manual correction of results');
             obj.EditPanel.AddPlugins([]);
             
+            obj.ManualSegmentationPanel = PTKPluginsSlidingPanel(obj, organised_manual_segmentations, 'ManualSegmentation', PTKModes.ManualSegmentationMode, 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.AddTabbedPanel(obj.ManualSegmentationPanel, 'Manual Segmentation', 'ManualSegmentation', 'Manual segmentation');
+            obj.ManualSegmentationPanel.AddPlugins([]);
             
-            obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback);
+            obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
             obj.AddTabbedPanel(obj.AnalysisPanel, 'Analyse', 'Analysis', 'Perform analysis and save as tables and graphs');
             obj.AnalysisPanel.AddPlugins([]);
         end
@@ -64,13 +70,18 @@ classdef PTKModeTabControl < PTKTabControl
         end
         
         function RefreshPlugins(obj, dataset, window, level)
-            obj.OrganisedPlugins.Repopulate(obj.Reporting)
+            obj.OrganisedPlugins.Repopulate(obj.Reporting);
+            obj.OrganisedManualSegmentations.Repopulate(obj.Reporting);
             for panel = obj.PanelMap.values
                 panel{1}.RefreshPlugins(dataset, window, level);
             end
         end
         
-        function AddAllPreviewImagesToButtons(obj, dataset, window, level)
+        function UpdateGuiForNewDataset(obj, dataset, window, level)
+            % Update manual segmentations
+            obj.OrganisedManualSegmentations.Repopulate(obj.Reporting);
+            obj.ManualSegmentationPanel.RefreshPlugins(dataset, window, level);
+            % Add preview images to buttons
             for panel = obj.PanelMap.values
                 panel{1}.AddAllPreviewImagesToButtons(dataset, window, level);
             end
@@ -164,5 +175,8 @@ classdef PTKModeTabControl < PTKTabControl
             obj.Gui.RunGuiPluginCallback(plugin_name);
         end
         
+        function LoadSegmentationCallback(obj, plugin_name)
+            obj.Gui.LoadSegmentationCallback(plugin_name);
+        end
     end
 end
