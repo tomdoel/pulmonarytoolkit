@@ -22,13 +22,13 @@ classdef PTKDatasetDiskCache < handle
         
         ResultsDiskCache % Stores automatically generated plugin results for internal use
         EditedResultsDiskCache % Stores manual corrections to results
-        ManualSegmentationDiskCache % Stores manual segmentations
+        ManualSegmentationsDiskCache % Stores manual segmentations
         MarkersDiskCache % Stores marker points
     end
     
     methods
         function obj = PTKDatasetDiskCache(dataset_uid, reporting)
-            obj.ManualSegmentationDiskCache = PTKDiskCache(PTKDirectories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, reporting);
+            obj.ManualSegmentationsDiskCache = PTKDiskCache(PTKDirectories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, reporting);
             obj.ResultsDiskCache = PTKDiskCache(PTKDirectories.GetCacheDirectory, dataset_uid, reporting);
             obj.EditedResultsDiskCache = PTKDiskCache(PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, reporting);
             obj.MarkersDiskCache = PTKDiskCache(PTKDirectories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, reporting);
@@ -95,16 +95,16 @@ classdef PTKDatasetDiskCache < handle
             value = obj.ResultsDiskCache.Load(data_filename, [], reporting);
         end
         
-        function SaveManualSegmentation(obj, filename, value, reporting)
+        function SaveManualSegmentation(obj, filename, value, context, reporting)
             % Saves a manual segmentation associated with this dataset to the cache
             
-            obj.ManualSegmentationsDiskCache.Save(filename, value, [], reporting);
+            obj.ManualSegmentationsDiskCache.Save(filename, value, context, reporting);
         end
         
-        function value = LoadManualSegmentation(obj, filename, reporting)
+        function value = LoadManualSegmentation(obj, filename, context, reporting)
             % Loads a manual segmentation data associated with this dataset from the cache
             
-            value = obj.ManualSegmentationsDiskCache.Load(filename, [], reporting);
+            value = obj.ManualSegmentationsDiskCache.Load(filename, context, reporting);
         end
         
         function SaveMarkerPoints(obj, data_filename, value, reporting)
@@ -161,6 +161,10 @@ classdef PTKDatasetDiskCache < handle
         
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
             [valid, edited_result_exists] = obj.PluginResultsInfo.CheckDependencyValid(next_dependency, reporting);
+        end
+        
+        function file_list = GetListOfManualSegmentations(obj)
+            file_list = obj.ManualSegmentationsDiskCache.GetAllFilesInCache;
         end
     end
     

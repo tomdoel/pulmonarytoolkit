@@ -162,17 +162,17 @@ classdef PTKDataset < CoreBaseClass
             obj.PostCallTidy;
         end
 
-        function SaveManualSegmentation(obj, name, data, varargin)
+        function SaveManualSegmentation(obj, name, data, context, varargin)
             % Save data as a cache file associated with this dataset
             obj.PreCallTidy;
-            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveManualSegmentation(name, data, obj.Reporting);
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveManualSegmentation(name, data, context, obj.Reporting);
             obj.PostCallTidy;
         end
 
-        function data = LoadManualSegmentation(obj, name, varargin)
+        function data = LoadManualSegmentation(obj, name, context, varargin)
             % Load data from a cache file associated with this dataset
             obj.PreCallTidy;
-            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadManualSegmentation(name, obj.Reporting);
+            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadManualSegmentation(name, context, obj.Reporting);
             obj.PostCallTidy;
         end
         
@@ -286,6 +286,14 @@ classdef PTKDataset < CoreBaseClass
             
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).DeleteManualSegmentation(segmentation_name, obj.Reporting);
+            obj.PostCallTidy;
+        end
+        
+        function file_list = GetListOfManualSegmentations(obj, varargin)
+            % Delete edit data from a cache file associated with this dataset
+            
+            obj.PreCallTidy;
+            file_list = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetListOfManualSegmentations;
             obj.PostCallTidy;
         end
         

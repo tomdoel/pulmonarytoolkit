@@ -135,16 +135,16 @@ classdef PTKDatasetResults < handle
             data = obj.DatasetDiskCache.LoadMarkerPoints(name, reporting);
         end
         
-        function SaveManualSegmentaion(obj, name, data, reporting)
+        function SaveManualSegmentaion(obj, name, data, context, reporting)
             % Save manual segmentation as a cache file associated with this dataset
         
-            obj.DatasetDiskCache.SaveManualSegmentaion(name, data, reporting);
+            obj.DatasetDiskCache.SaveManualSegmentaion(name, data, context, reporting);
         end
         
-        function data = LoadManualSegmentation(obj, name, reporting)
+        function data = LoadManualSegmentation(obj, name, context, reporting)
             % Load data from a cache file associated with this dataset
         
-            data = obj.DatasetDiskCache.LoadManualSegmentation(name, reporting);
+            data = obj.DatasetDiskCache.LoadManualSegmentation(name, context, reporting);
         end
         
         function DeleteEditedPluginResult(obj, plugin_name, reporting)
@@ -157,6 +157,10 @@ classdef PTKDatasetResults < handle
             % Delete manual segmentation from a cache file associated with this dataset
             
             obj.DatasetDiskCache.DeleteManualSegmentation(segmentation_name, reporting);
+        end
+        
+        function file_list = GetListOfManualSegmentations(obj)
+            file_list = obj.DatasetDiskCache.GetListOfManualSegmentations;
         end
         
         function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack, reporting)

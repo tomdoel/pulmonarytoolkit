@@ -183,6 +183,20 @@ classdef PTKDiskCache < handle
                 obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), name, false, reporting);
             end
         end
+        
+        function file_list = GetAllFilesInCache(obj)
+            file_list = CorePair.empty;
+            context_list = CoreDiskUtilities.GetListOfDirectories(obj.CachePath);
+            context_list{end + 1} = '';
+            for context_cell = context_list
+                context = context_cell{1};
+                m_file_list = CoreDiskUtilities.GetDirectoryFileList(fullfile(obj.CachePath, context), '*.mat');
+                for m_file = m_file_list
+                    [~, name, ~] = fileparts(m_file{1});
+                    file_list{end + 1} = CorePair(context, name);
+                end
+            end
+        end
 
     end
         
