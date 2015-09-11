@@ -66,7 +66,7 @@ function PTKWrite3DMetaFile(header_filename, image, resolution, data_type, offse
     fprintf(fid, 'Offset = %1.4f %1.4f %1.4f\n', offset(coordinates_save_order(1)), offset(coordinates_save_order(2)), offset(coordinates_save_order(3)));
     fprintf(fid, 'CenterOfRotation = 0 0 0\n');
     fprintf(fid, ['AnatomicalOrientation = ' anatomical_orientation '\n']);
-    fprintf(fid, 'ElementSpacing = %1.4f %1.4f %1.4f\n', resolution(coordinates_save_order(1)), resolution(coordinates_save_order(2)), resolution(coordinates_save_order(3)));
+    fprintf(fid, 'ElementSpacing = %1.7f %1.7f %1.7f\n', resolution(coordinates_save_order(1)), resolution(coordinates_save_order(2)), resolution(coordinates_save_order(3)));
     fprintf(fid, 'DimSize = %d %d %d\n', size(image, coordinates_save_order(1)), size(image, coordinates_save_order(2)), size(image, coordinates_save_order(3)));
     
     if (strcmp(data_type, 'char') || strcmp(data_type, 'uint8'))
