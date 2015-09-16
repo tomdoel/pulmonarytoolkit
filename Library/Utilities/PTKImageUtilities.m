@@ -555,6 +555,63 @@ classdef PTKImageUtilities
             image_highlight = imdilate(~background, disk_element);
             image_highlight = image_highlight & background;
         end
+        
+        function [preview_image_slice, preview_scale] = GeneratePreviewImage(image)
+            % Creates a thumbnail preview image
+            
+            slice_position = round(image.ImageSize(1)/2);
+
+            if flatten_before_preview
+                image_copy = image.Copy;
+                image_copy.Flatten(PTKImageOrientation.Coronal);
+                slice = image_copy.GetSlice(slice_position, PTKImageOrientation.Coronal);
+            else
+                slice = image.GetSlice(slice_position, PTKImageOrientation.Coronal); 
+            end
+            slice = slice';
+
+            image_slice_size = image.ImageSize([3, 2]);
+            image_slice_voxelsize = image.VoxelSize([3, 2]);
+            
+            image_slice_size_mm = image_slice_size.*image_slice_voxelsize;
+            
+            [~, largest_direction] = max(image_slice_size_mm./preview_size);
+            other_direction = setxor([1 2], largest_direction);
+            
+            preview_scale = preview_size(largest_direction)/image_slice_size_mm(largest_direction);
+            scaled_preview_size = zeros(1, 2);
+            scaled_preview_size(largest_direction) = preview_size(largest_direction);
+            scaled_preview_size(other_direction) = preview_scale*image_slice_size_mm(other_direction);
+            scaled_preview_size = ceil(scaled_preview_size);
+            scaled_preview_size = max(1, scaled_preview_size);
+            scaled_preview_size = min(preview_size, scaled_preview_size);
+
+            gap = preview_size - scaled_preview_size;
+            startpos = 1 + floor(gap/2);
+            endpos = startpos + scaled_preview_size - [1 1];
+                        
+            switch image.ImageType
+                case PTKImageType.Grayscale
+                    method = 'cubic';
+                case PTKImageType.Colormap
+                    method = 'nearest';
+                    nn_grid_size = 1./preview_scale;
+                    floor_scale = max(1, ceil(nn_grid_size/2));
+                    domain = true(floor_scale);
+                    slice = ordfilt2(double(slice), numel(domain), domain);
+                case PTKImageType.Scaled
+                    method = 'nearest';
+                    nn_grid_size = 1./preview_scale;
+                    floor_scale = max(1, ceil(nn_grid_size/2));
+                    domain = true(floor_scale);
+                    slice = ordfilt2(slice, numel(domain), domain);
+                otherwise
+                    method = 'cubic';                    
+            end
+            
+            preview_image_slice = zeros(preview_size);
+            preview_image_slice(startpos(1):endpos(1), startpos(2):endpos(2)) = imresize(double(slice), scaled_preview_size, method);
+        end        
     end
 end
 
