@@ -104,7 +104,7 @@ classdef PTKViewerPanel < PTKPanel
             obj.ToolCallback = PTKToolCallback(obj, obj.Reporting);
             obj.Tools = PTKToolList(obj.ToolCallback, obj);
             
-            % Create the coontrol panel
+            % Create the control panel
             if obj.ShowControlPanel
                 obj.ControlPanel = PTKViewerPanelToolbar(obj, obj.Tools);
                 obj.AddChild(obj.ControlPanel);
