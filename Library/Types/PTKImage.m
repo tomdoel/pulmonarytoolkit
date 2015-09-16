@@ -93,10 +93,9 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         ImageChanged % An event to indicate if the image has changed
     end
     
-    methods
-        
-        % Constructs a new image using raw data from new_image if specified
+    methods    
         function obj = PTKImage(new_image, image_type, voxel_size)            
+            % Constructs a new image using raw data from new_image if specified
             if nargin > 0
                 if isstruct(new_image)
                     error('First argument must be an image');
@@ -136,7 +135,6 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                     obj.ImageType = image_type;
                     obj.OriginalImageSize = size(new_image);
             end
-            
           
             obj.LastImageSize = obj.OriginalImageSize;
             obj.LastDataType = class(obj.RawImage);
@@ -199,15 +197,13 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 obj.CachedRawImageCompression = [];
 
                 obj.NotifyImageChangedCacheStillValid
-
             end
         end
 
         function header_file = SaveRawImage(obj, file_path, file_name, compression, reporting)
-            % Saves the raw image data. Optionally returns a header object which
-            % contains the image object without the image data, and with the
-            % filename stored so that it can be reloaded using a call to
-            % LoadRawImage
+            % Saves the raw image data.
+            % Optionally returns a header object which contains the image object without the image data, and with the
+            % filename stored so that it can be reloaded using a call to LoadRawImage
         
             image_class = class(obj.RawImage);
             
@@ -440,7 +436,6 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         function copy = Copy(obj)
             % Makes a copy of this image, including its metadata and pixeldata
-            
             copy = PTKImage(obj.RawImage, obj.ImageType, obj.VoxelSize);
             metaclass = ?PTKImage;
             property_list = metaclass.Properties;
@@ -454,7 +449,6 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         function copy = BlankCopy(obj)
             % Creates an copy of the image with all the metaheaders but no pixel data
-            
             copy = PTKImage([], obj.ImageType, obj.VoxelSize);
             metaclass = ?PTKImage;
             property_list = metaclass.Properties;
@@ -468,7 +462,6 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         function RescaleToMaxSize(obj, max_size)
             % Downscales the image so that it is below the specified value in all dimensions
-            
             scale = [1 1 1];
             image_size = obj.ImageSize;
             original_image_size = image_size;
@@ -478,14 +471,12 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                     image_size = floor(original_image_size./scale);
                 end
             end
-            
             obj.DownsampleImage(scale);
         end
         
         function DownsampleImage(obj, scale)
             % Downscales the image by an integer amount, without any filtering.
             % Note this does not alter the OriginalImageSize property
-
             if length(scale) == 1
                 scale = repmat(scale, 1, length(obj.Origin));
             end
@@ -498,7 +489,6 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         function slice = GetSlice(obj, slice_number, dimension)
             % Returns a 2D slice from the image in the specified direction
-            
            switch dimension
                case PTKImageOrientation.Coronal
                    slice = squeeze(obj.RawImage(slice_number, :, :));
@@ -527,8 +517,6 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function image_size = get.ImageSize(obj)
-            % Returns the image size in voxels
-            
             if isempty(obj.RawImage)
                image_size = obj.LastImageSize;
             else
@@ -544,14 +532,10 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function exists = get.ImageExists(obj)
-            % Returns true if an image is present
-            
             exists = ~isempty(obj.RawImage);
         end
         
         function limits = get.Limits(obj)
-            % Returns the minimum and maximum of the image voxel values
-
             if obj.CachedDataIsValid
                 limits = obj.CachedLimits;
             else
@@ -560,7 +544,6 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 obj.CachedDataIsValid = true;
             end
         end
-
 
         function [value, units] = GetRescaledValue(~, ~)
             value = [];
@@ -576,6 +559,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
 
         function point_is_in_image = IsPointInImage(obj, global_coords)
+            % Returns true if the point specified in global coordinates lies within the image
             local_coords = obj.GlobalToLocalCoordinates(global_coords);
             image_size = obj.ImageSize;
             i_in_image = (local_coords(1) > 0) && (local_coords(1) <= image_size(1));
@@ -584,14 +568,14 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             point_is_in_image = i_in_image && j_in_image && k_in_image;
         end
 
-        % Gets the value of the voxel specified by global image coordinates
         function value = GetVoxel(obj, global_coords)
+            % Gets the value of the voxel specified by global image coordinates
             local_coords = obj.GlobalToLocalCoordinates(global_coords);
             value = obj.RawImage(local_coords(1), local_coords(2), local_coords(3));
         end
         
-        % Changes the value of the voxel specified by global image coordinates
         function SetVoxelToThis(obj, global_coords, value)
+            % Changes the value of the voxel specified by global image coordinates
             local_coords = obj.GlobalToLocalCoordinates(global_coords);
             for index = 1 : size(local_coords, 1)
                 obj.RawImage(local_coords(index, 1), local_coords(index, 2), local_coords(index, 3)) = value;
@@ -675,8 +659,9 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
         end
         
-        % Removes boundary zeros, ensuring a border of zero voxels remains
         function CropToFitWithBorder(obj, border_size)
+            % Removes boundary zeros, ensuring a border of zero voxels remains
+            
             if obj.ImageExists
                 image_size = obj.ImageSize;
                 bounds = obj.GetBounds;
@@ -776,9 +761,9 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             obj.NotifyImageChanged;
         end
         
-        % Similar to resample, but uses a linear interpolation followed by
-        % thresholding to ensure a smoother binary mask
         function ResampleBinary(obj, new_voxel_size_mm)
+            % Similar to resample, but uses a linear interpolation followed by
+            % thresholding to ensure a smoother binary mask
             is_logical = islogical(obj.RawImage);
             obj.ChangeRawImage(single(obj.RawImage));
             obj.ResampleWithAffineTransformation(new_voxel_size_mm, '*linear', []);
@@ -789,12 +774,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
         end
         
-        % Resamples the image to a new voxel size, using the interpolation
-        % method specified. The resampling is based on the origin of the
-        % original image, so that the position of the new voxels is consistent
-        % between images. The resulting image is cropped to the region
-        % containing all of the previous image
         function Resample(obj, new_voxel_size_mm, interpolation_function)
+            % Resamples the image to a new voxel size, using the specified interpolation method.
+            % The resampling is based on the origin of the original image, so that the position of the new voxels is consistent
+            % between images. The resulting image is cropped to the region
+            % containing all of the previous image
             obj.ResampleWithAffineTransformation(new_voxel_size_mm, interpolation_function, []);
         end
         
@@ -857,30 +841,23 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             obj.NotifyImageChanged;            
         end
         
-        % Performs a Matlab morphological operation using a spherical element of
-        % the specified size in mm, adjusting for the voxel size
         function Morph(obj, morph_function_handle, size_mm)
-            % Create structural element as a ball shape
+            % Performs a Matlab morphological operation using a spherical element of the specified size in mm, adjusting for the voxel size
             ball_element = obj.CreateBallStructuralElement(size_mm);
-            
             obj.RawImage = uint8(morph_function_handle(obj.RawImage, ball_element));
             obj.NotifyImageChanged;
         end
 
-        % Performs a Matlab morphological operation using a spherical element of
-        % the specified size in mm, adjusting for the voxel size
         function BinaryMorph(obj, morph_function_handle, size_mm)
-            % Create structural element as a ball shape
+            % Performs a Matlab binary morphological operation using a spherical element of the specified size in mm, adjusting for the voxel size
             ball_element = obj.CreateBallStructuralElement(size_mm);
-            
             obj.RawImage = obj.RawImage > 0;
             obj.RawImage = logical(morph_function_handle(obj.RawImage, ball_element));
             obj.NotifyImageChanged;
         end
         
-        % Performs a Matlab morphological operation as above, but first adds an additional boder to the image
         function MorphWithBorder(obj, morph_function_handle, size_mm)
-            % Create structural element as a ball shape
+            % Performs a Matlab morphological operation as with Morph(), but first adds an additional boder to the image
             ball_element = obj.CreateBallStructuralElement(size_mm);
             borders = size(ball_element);
             image_size_with_borders = obj.ImageSize + 2*borders;
@@ -888,7 +865,6 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             start_pos = borders + 1;
             end_pos = image_size_with_borders - borders;
             morphed_image(start_pos(1):end_pos(1), start_pos(2):end_pos(2), start_pos(3):end_pos(3)) = obj.RawImage > 0;
-            
             morphed_image = uint8(morph_function_handle(morphed_image, ball_element));
             obj.RawImage = uint8(morphed_image(start_pos(1):end_pos(1), start_pos(2):end_pos(2), start_pos(3):end_pos(3)));
             obj.NotifyImageChanged;
