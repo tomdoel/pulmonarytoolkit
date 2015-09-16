@@ -583,18 +583,6 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             obj.NotifyImageChanged;
         end
 
-        function global_coords = BoundCoordsInImage(obj, global_coords)
-            local_coords = obj.GlobalToLocalCoordinates(global_coords);
-
-            local_coords = max(1, local_coords);
-            image_size = obj.ImageSize;
-            local_coords(1) = min(local_coords(1), image_size(1));
-            local_coords(2) = min(local_coords(2), image_size(2));
-            local_coords(3) = min(local_coords(3), image_size(3));
-
-            global_coords = obj.LocalToGlobalCoordinates(local_coords);
-        end
-
         function SetIndexedVoxelsToThis(obj, global_indices, value)
             % Changes the value of the voxel specified by an index value
             local_indices = obj.GlobalToLocalIndices(global_indices);
@@ -910,21 +898,21 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             local_indices = PTKImageCoordinateUtilities.OffsetIndices(global_indices, [1, 1, 1] - obj.Origin, obj.OriginalImageSize, obj.ImageSize);
         end
         
-        % Given a set of global indices, compute the coordinates of each in mm
         function [ic, jc, kc] = GlobalIndicesToCoordinatesMm(obj, global_indices)
+            % Given a set of global indices, compute the coordinates of each in mm
             [ic, jc, kc] = obj.GlobalIndicesToGlobalCoordinates(global_indices);
             [ic, jc, kc] = obj.GlobalCoordinatesToCoordinatesMm([ic, jc, kc]);
         end
         
-        % Given a set of global indices, compute the coordinates of each in mm
         function ptk_coordinates = GlobalIndicesToPTKCoordinates(obj, global_indices)
+            % Given a set of global indices, compute the coordinates of each in mm
             [ic, jc, kc] = obj.GlobalIndicesToCoordinatesMm(global_indices);
             [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
             ptk_coordinates = [ic, jc, kc];
         end
         
-        % Given a set of global indices, compute the coordinates of each in mm
         function [ic, jc, kc] = GlobalCoordinatesToCoordinatesMm(obj, global_coordinates)
+            % Given a set of global indices, compute the coordinates of each in mm
             ic = (global_coordinates(:, 1) - 0.5)*obj.VoxelSize(1);
             jc = (global_coordinates(:, 2) - 0.5)*obj.VoxelSize(2);
             kc = (global_coordinates(:, 3) - 0.5)*obj.VoxelSize(3);
@@ -934,8 +922,8 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             [ic, jc, kc] = ind2sub(obj.OriginalImageSize, global_indices);
         end
         
-        % Given a set of coordinates in mm, compute the global coordinates of each
         function global_coordinates = CoordinatesMmToGlobalCoordinates(obj, global_coordinates_mm)
+            % Given a set of coordinates in mm, compute the global coordinates of each
             if isempty(global_coordinates_mm)
                 global_coordinates = [];
             else
@@ -957,8 +945,8 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             global_indices = PTKImageCoordinateUtilities.FastSub2ind(obj.OriginalImageSize, coords(:, 1), coords(:, 2), coords(:, 3));
         end
         
-        % Compute the coordinates of all points in the image, in global coordinates in mm
         function [ic, jc, kc] = GetGlobalCoordinatesMm(obj)
+            % Compute the coordinates of all points in the image, in global coordinates in mm
             ic = 1 : obj.ImageSize(1);
             ic = (ic' + obj.Origin(1) - 1.5)*obj.VoxelSize(1);
             jc = 1 : obj.ImageSize(2);
@@ -967,23 +955,20 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             kc = (kc' + obj.Origin(3) - 1.5)*obj.VoxelSize(3);
         end
 
-        % Returns the coordinates of all points in the image in global
-        % coordinates in mm, with the origin at the centre of the original image
         function [ic, jc, kc] = GetCentredGlobalCoordinatesMm(obj)
+            % Returns the coordinates of all points in the image in global coordinates in mm, with the origin at the centre of the original image
             [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
             [ic, jc, kc] = obj.GlobalCoordinatesMmToCentredGlobalCoordinatesMm(ic, jc, kc);
         end
         
-        % Returns the coordinates of all points in the image in global
-        % coordinates in mm, with the origin at the centre of the original image
         function [ic, jc, kc] = GetCornerGlobalCoordinatesMm(obj)
+            % Returns the coordinates of all points in the image in global coordinates in mm, with the origin at the centre of the original image
             [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
             [ic, jc, kc] = obj.GlobalCoordinatesMmToCornerCoordinates(ic, jc, kc);
         end
         
-        % Returns the coordinates of all points in the image in global
-        % coordinates in mm, using PTK coordinates
         function [ic, jc, kc] = GetPTKCoordinates(obj)
+            % Returns the coordinates of all points in the image in global coordinates in mm, using PTK coordinates
             [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
             [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
         end
@@ -1021,9 +1006,8 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             kc = kc - offset(3);
         end
         
-        % Computes the isotropic grid spacing required to resample this mask so
-        % as to achieve approximately the number of specified points in the mask
         function grid_spacing_mm = ComputeResamplingGridSpacing(obj, approx_number_points)
+            % Computes the isotropic grid spacing required to resample this mask so as to achieve approximately the number of specified points in the mask
             number_of_voxels = sum(obj.RawImage(:) > 0);
             parallelepiped_volume = prod(obj.VoxelSize);
             grid_spacing_mm = nthroot(parallelepiped_volume*(number_of_voxels/approx_number_points), 3);

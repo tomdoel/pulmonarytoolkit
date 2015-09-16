@@ -46,7 +46,7 @@ classdef PTKMarkerPointImage < handle
         
         function image_has_changed = ChangeMarkerPoint(obj, local_coords, colour)
             global_coords = obj.MarkerImage.LocalToGlobalCoordinates(local_coords);
-            global_coords = obj.MarkerImage.BoundCoordsInImage(global_coords);
+            global_coords = obj.BoundCoordsInImage(obj.MarkerImage, global_coords);
 
             current_value = obj.MarkerImage.GetVoxel(global_coords);
             if (current_value ~= colour)
@@ -188,6 +188,17 @@ classdef PTKMarkerPointImage < handle
             obj.MarkerImage.ReplaceImageSlice(slice, slice_number, dimension);
         end
         
+        function global_coords = BoundCoordsInImage(~, marker_image, global_coords)
+            local_coords = marker_image.GlobalToLocalCoordinates(global_coords);
+
+            local_coords = max(1, local_coords);
+            image_size = marker_image.ImageSize;
+            local_coords(1) = min(local_coords(1), image_size(1));
+            local_coords(2) = min(local_coords(2), image_size(2));
+            local_coords(3) = min(local_coords(3), image_size(3));
+
+            global_coords = marker_image.LocalToGlobalCoordinates(local_coords);
+        end
     end
     
 end
