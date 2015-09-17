@@ -283,7 +283,7 @@ classdef PTKUserInterfaceObject < CoreBaseClass
     methods (Access = protected)
         
         function PostCreation(obj, position)
-            % Called after the compent and all its children have been created
+            % Called after the component and all its children have been created
         end
         
         function SetAllParentVisibility(obj, visible)

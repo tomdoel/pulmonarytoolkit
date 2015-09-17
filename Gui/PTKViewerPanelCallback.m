@@ -43,6 +43,12 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.ViewerPanelMultiView = viewing_panel_multi_view;
             obj.Reporting = reporting;
             
+            % Add these callbacks before creating the images: the window and level limits will be set as part of the image
+            % creation and we need to ensure the callbacks are handled to
+            % correctly initiaise the toolbar
+            obj.AddPostSetListener(obj.ViewerPanel, 'WindowLimits', @obj.WindowLimitsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'LevelLimits', @obj.LevelLimitsChangedCallback);
+            
             obj.NewBackgroundImage;
             obj.NewOverlayImage;
             obj.NewQuiverImage;
@@ -56,8 +62,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             % Tool change requires the toolbar to be updated
             obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
             
-            obj.AddPostSetListener(obj.ViewerPanel, 'WindowLimits', @obj.WindowLimitsChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'LevelLimits', @obj.LevelLimitsChangedCallback);
             
             % Other changes require redraw of gui
             obj.AddPostSetListener(obj.ViewerPanel, 'SliceNumber', @obj.SliceNumberChangedCallback);
@@ -229,7 +233,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             
             % If the window or level values have been externally set outside the
             % slider range, then we modify the slider range to accommodate this
-            obj.ViewerPanel.ModifyWindowLevelLimits;
+            obj.ModifyWindowLevelLimits;
             
             obj.UpdateGui;
             obj.ViewerPanelMultiView.DrawImages(true, true, true);
@@ -433,5 +437,54 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             notify(obj.ViewerPanel, 'MouseCursorStatusChanged');
         end
         
+        function ModifyWindowLevelLimits(obj)
+            % This function is used to change the max window and min/max level
+            % values after the window or level has been changed to a value outside
+            % of the limits
+            
+            level_limits = obj.ViewerPanel.LevelLimits;
+            level_min = level_limits(1);
+            level_max = level_limits(2);
+            window_limits = obj.ViewerPanel.WindowLimits;
+            window_min = window_limits(1);
+            window_max = window_limits(2);
+            
+            window_limits_changed = false;
+            level_limits_changed = false;
+            
+            if obj.ViewerPanel.Level > level_max
+                level_max = obj.ViewerPanel.Level;
+                level_limits_changed = true;
+            end
+            if obj.ViewerPanel.Level < level_min
+                level_min = obj.ViewerPanel.Level;
+                level_limits_changed = true;
+            end
+            if obj.ViewerPanel.Window > window_max
+                window_max = obj.ViewerPanel.Window;
+                window_limits_changed = true;
+            end
+            
+            if obj.ViewerPanel.Window < 0
+                obj.ViewerPanel.Window = 0;
+                if window_min > 0
+                    window_min = 0;
+                    window_limits_changed = true;
+                end
+            else
+                if obj.ViewerPanel.Window < window_min
+                    window_min = obj.ViewerPanel.Window;
+                    window_limits_changed = true;
+                end
+            end
+
+            if level_limits_changed
+                obj.ViewerPanel.SetLevelLimits(level_min, level_max);
+            end
+            
+            if window_limits_changed
+                obj.ViewerPanel.SetWindowLimits(window_min, window_max);
+            end
+        end        
     end
 end

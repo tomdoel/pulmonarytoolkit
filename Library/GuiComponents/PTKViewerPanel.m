@@ -279,55 +279,6 @@ classdef PTKViewerPanel < PTKPanel
             obj.LevelLimits = [level_min, level_max];
         end
         
-        function ModifyWindowLevelLimits(obj)
-            % This function is used to change the max window and min/max level
-            % values after the window or level has been changed to a value outside
-            % of the limits
-            
-            level_limits = obj.LevelLimits;
-            level_min = level_limits(1);
-            level_max = level_limits(2);
-            window_limits = obj.WindowLimits;
-            window_min = window_limits(1);
-            window_max = window_limits(2);
-            
-            window_limits_changed = false;
-            level_limits_changed = false;
-            
-            if obj.Level > level_max
-                level_max = obj.Level;
-                level_limits_changed = true;
-            end
-            if obj.Level < level_min
-                level_min = obj.Level;
-                level_limits_changed = true;
-            end
-            if obj.Window > window_max
-                window_max = obj.Window;
-                window_limits_changed = true;
-            end
-            
-            if obj.Window < 0
-                obj.Window = 0;
-                if window_min > 0
-                    window_min = 0;
-                    window_limits_changed = true;
-                end
-            else
-                if obj.Window < window_min
-                    window_min = obj.Window;
-                    window_limits_changed = true;
-                end
-            end
-
-            if level_limits_changed
-                obj.SetLevelLimits(level_min, level_max);
-            end
-            
-            if window_limits_changed
-                obj.SetWindowLimits(window_min, window_max);
-            end
-        end        
         
         function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier)
             tool = obj.Tools.GetCurrentTool(mouse_is_down, keyboard_modifier, obj.SelectedControl);
@@ -338,7 +289,7 @@ classdef PTKViewerPanel < PTKPanel
     methods (Access = protected)
         
         function PostCreation(obj, position, reporting)
-            % Called after the compent and all its children have been created
+            % Called after the component and all its children have been created
             
             obj.ViewerPanelCallback = PTKViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.ControlPanel, obj.DefaultOrientation, obj.Reporting);
         end            
