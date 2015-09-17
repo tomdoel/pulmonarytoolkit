@@ -70,7 +70,6 @@ classdef PTKViewerPanel < PTKPanel
         WindowMin
         WindowMax
         
-        FigureHandle
         ToolCallback
         Tools
         ControlPanel
@@ -114,12 +113,6 @@ classdef PTKViewerPanel < PTKPanel
             obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj);
             obj.ToolCallback.SetRenderer(obj.ViewerPanelMultiView);
             obj.AddChild(obj.ViewerPanelMultiView);
-        end
-        
-        function CreateGuiComponent(obj, position)
-            CreateGuiComponent@PTKPanel(obj, position);
-        
-            obj.FigureHandle = obj.Parent.GetContainerHandle;
         end
         
         function Resize(obj, position)
