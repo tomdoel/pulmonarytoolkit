@@ -92,7 +92,7 @@ classdef PTKToolCallback < handle
         end
         
         function axes_handle = GetAxesHandle(obj)
-            axes_handle = obj.GetAxes.GetContainerHandle(obj.Reporting);
+            axes_handle = obj.GetAxes.GetContainerHandle;
         end
         
     end
