@@ -53,9 +53,8 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             % Change in orientation requires a redraw of axes
             obj.AddPostSetListener(obj.ViewerPanel, 'Orientation', @obj.OrientationChangedCallback);
             
-            % Tool change requires the toolbar to be updated
+            % Tool change updates
             obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
-            
             
             % Other changes require redraw of gui
             obj.AddPostSetListener(obj.ViewerPanel, 'SliceNumber', @obj.SliceNumberChangedCallback);
