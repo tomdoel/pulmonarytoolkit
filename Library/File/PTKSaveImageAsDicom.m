@@ -141,7 +141,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
                 slice_data = squeeze(image_data.RawImage(:, slice_index, :));
             
             otherwise
-                reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is now known or unsupported.']);
+                reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is not known or unsupported.']);
         end
         
         if image_data.ImageType == PTKImageType.Colormap
