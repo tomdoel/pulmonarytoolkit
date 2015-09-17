@@ -56,6 +56,9 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             % Tool change requires the toolbar to be updated
             obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
             
+            obj.AddPostSetListener(obj.ViewerPanel, 'WindowLimits', @obj.WindowLimitsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'LevelLimits', @obj.LevelLimitsChangedCallback);
+            
             % Other changes require redraw of gui
             obj.AddPostSetListener(obj.ViewerPanel, 'SliceNumber', @obj.SliceNumberChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.SettingsChangedCallback);
@@ -173,6 +176,22 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.ViewerPanelMultiView.DrawImages(true, true, true);
             obj.UpdateStatus;
             obj.Tools.NewOrientation;
+        end
+        
+        function WindowLimitsChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the window limits have changed
+            
+            if obj.ViewerPanel.ShowControlPanel
+                obj.Toolbar.UpdateWindowLimits;
+            end
+        end
+        
+        function LevelLimitsChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the window limits have changed
+            
+            if obj.ViewerPanel.ShowControlPanel
+                obj.Toolbar.UpdateLevelLimits;
+            end
         end
         
         function SliceNumberChangedCallback(obj, ~, ~, ~)
