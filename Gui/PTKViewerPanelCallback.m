@@ -43,12 +43,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.ViewerPanelMultiView = viewing_panel_multi_view;
             obj.Reporting = reporting;
             
-            % Add these callbacks before creating the images: the window and level limits will be set as part of the image
-            % creation and we need to ensure the callbacks are handled to
-            % correctly initiaise the toolbar
-            obj.AddPostSetListener(obj.ViewerPanel, 'WindowLimits', @obj.WindowLimitsChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'LevelLimits', @obj.LevelLimitsChangedCallback);
-            
             obj.NewBackgroundImage;
             obj.NewOverlayImage;
             obj.NewQuiverImage;
@@ -182,22 +176,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.Tools.NewOrientation;
         end
         
-        function WindowLimitsChangedCallback(obj, ~, ~, ~)
-            % This methods is called when the window limits have changed
-            
-            if obj.ViewerPanel.ShowControlPanel
-                obj.Toolbar.UpdateWindowLimits;
-            end
-        end
-        
-        function LevelLimitsChangedCallback(obj, ~, ~, ~)
-            % This methods is called when the window limits have changed
-            
-            if obj.ViewerPanel.ShowControlPanel
-                obj.Toolbar.UpdateLevelLimits;
-            end
-        end
-        
         function SliceNumberChangedCallback(obj, ~, ~, ~)
             % This methods is called when the slice number has changed
             
@@ -211,14 +189,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             % Change the cursor
             obj.ViewerPanelMultiView.UpdateCursor(obj.ViewerPanel.GetParentFigure.GetContainerHandle, [], []);
             
-            obj.Tools.SetControl(obj.ViewerPanel.SelectedControl);
-            
-            if obj.ViewerPanel.ShowControlPanel
-                obj.Toolbar.SetControl(obj.ViewerPanel.SelectedControl);
-                
-                % Need to resize the control panel as the number of tools may have changed
-                obj.ResizeControlPanel;
-            end
+            obj.Tools.SetControl(obj.ViewerPanel.SelectedControl);            
         end
         
         function OverlayTransparencyChangedCallback(obj, ~, ~, ~)
@@ -270,6 +241,9 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.UpdateGuiForNewImage;
             obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
+            if ~isempty(obj.Toolbar)
+                obj.Toolbar.UpdateGui;
+            end
             obj.ViewerPanelMultiView.DrawImages(true, false, false);
             obj.UpdateStatus;
             
@@ -295,10 +269,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
         
         function UpdateGui(obj)
             main_image = obj.ViewerPanel.BackgroundImage;
-            
-            if ~isempty(obj.Toolbar)
-                obj.Toolbar.UpdateGui(main_image);
-            end
             
             if ~isempty(main_image) && main_image.ImageExists
                 image_size = main_image.ImageSize;
@@ -488,15 +458,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             if window_limits_changed
                 obj.ViewerPanel.SetWindowLimits(window_min, window_max);
             end
-        end        
-        
-        function ResizeControlPanel(obj)
-            control_panel_position = obj.Toolbar.Position;
-            control_panel_position(4) = obj.ViewerPanel.ControlPanelHeight;
-            if obj.ViewerPanel.ShowControlPanel
-                obj.Toolbar.Resize(control_panel_position);
-            end
         end
-
     end
 end

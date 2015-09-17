@@ -51,6 +51,20 @@ classdef PTKViewerPanelToolbar < PTKPanel
             tools.SetToolbar(obj);
             
             obj.MouseCursorStatusListener = addlistener(obj.ViewerPanel, 'MouseCursorStatusChanged', @obj.MouseCursorStatusChangedCallback);
+            
+            % Add listeners to respond to changes in the viewer panel
+            obj.AddPostSetListener(obj.ViewerPanel, 'WindowLimits', @obj.WindowLimitsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'LevelLimits', @obj.LevelLimitsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'Orientation', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'SliceNumber', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'OverlayOpacity', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'ShowImage', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'ShowOverlay', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'BlackIsTransparent', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.GuiChangeCallback);
         end
         
         function CreateGuiComponent(obj, position)
@@ -148,7 +162,8 @@ classdef PTKViewerPanelToolbar < PTKPanel
             set(obj.MouseControlButtons(tag_value), 'Value', 1);
         end
         
-        function UpdateGui(obj, main_image)
+        function UpdateGui(obj)
+            main_image = obj.ViewerPanel.BackgroundImage;
             if obj.ComponentHasBeenCreated
                 set(obj.OverlayCheckbox, 'Value', obj.ViewerPanel.ShowOverlay);
                 set(obj.ImageCheckbox, 'Value', obj.ViewerPanel.ShowImage);
@@ -344,5 +359,40 @@ classdef PTKViewerPanelToolbar < PTKPanel
             obj.ViewerPanel.OverlayOpacity = get(hObject,'Value');
         end
         
+        function WindowLimitsChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the window limits have changed
+            
+            if obj.ViewerPanel.ShowControlPanel
+                obj.UpdateWindowLimits;
+            end
+        end
+        
+        function LevelLimitsChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the window limits have changed
+            
+            if obj.ViewerPanel.ShowControlPanel
+                obj.UpdateLevelLimits;
+            end
+        end
+        
+        function SelectedControlChangedCallback(obj, ~, ~, ~)
+            % Need to resize the control panel as the number of tools may have changed
+            if obj.ViewerPanel.ShowControlPanel
+                obj.SetControl(obj.ViewerPanel.SelectedControl);
+                obj.ResizeControlPanel;
+            end
+        end
+        
+        function GuiChangeCallback(obj, ~, ~)
+            obj.UpdateGui;
+        end
+
+        function ResizeControlPanel(obj)
+            control_panel_position = obj.Position;
+            control_panel_position(4) = obj.ViewerPanel.ControlPanelHeight;
+            if obj.ViewerPanel.ShowControlPanel
+                obj.Resize(control_panel_position);
+            end
+        end
     end
 end
