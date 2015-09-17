@@ -53,6 +53,9 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             % Change in orientation requires a redraw of axes
             obj.AddPostSetListener(obj.ViewerPanel, 'Orientation', @obj.OrientationChangedCallback);
             
+            % Tool change requires the toolbar to be updated
+            obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
+            
             % Other changes require redraw of gui
             obj.AddPostSetListener(obj.ViewerPanel, 'SliceNumber', @obj.SliceNumberChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.SettingsChangedCallback);
@@ -179,6 +182,17 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.Tools.NewSlice;
             obj.ViewerPanelMultiView.DrawImages(true, true, true);
             obj.UpdateStatus;
+        end
+        
+        function SelectedControlChangedCallback(obj, ~, ~, ~)
+            % Change the cursor
+            obj.ViewerPanelMultiView.UpdateCursor(obj.ViewerPanel.GetParentFigure.GetContainerHandle, [], []);
+            
+            obj.Tools.SetControl(obj.ViewerPanel.SelectedControl);
+            
+            if obj.ViewerPanel.ShowControlPanel
+                obj.Toolbar.SetControl(obj.ViewerPanel.SelectedControl);
+            end
         end
         
         function OverlayTransparencyChangedCallback(obj, ~, ~, ~)

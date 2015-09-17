@@ -199,16 +199,6 @@ classdef PTKViewerPanel < PTKPanel
             % Changes the active tool, specified by tag string, e.g. 'Cine'
             
             obj.SelectedControl = tag_value;
-            
-            % Change the cursor
-            obj.ViewerPanelMultiView.UpdateCursor(obj.FigureHandle, [], []);
-            
-            obj.Tools.SetControl(tag_value);
-            
-            if obj.ShowControlPanel
-                obj.ControlPanel.SetControl(tag_value);
-            end
-
         end
         
         function SetModes(obj, mode, submode)
