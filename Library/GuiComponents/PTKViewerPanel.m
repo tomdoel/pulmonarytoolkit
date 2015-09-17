@@ -207,9 +207,6 @@ classdef PTKViewerPanel < PTKPanel
             obj.Mode = mode;
             obj.SubMode = submode;
             
-            % Need to resize the control panel as the number of tools may have changed
-            obj.ResizeControlPanel;
-            
             if strcmp(mode, PTKModes.EditMode)
                 if strcmp(submode, PTKSubModes.PaintEditing)
                     obj.SetControl('Paint');
@@ -307,18 +304,5 @@ classdef PTKViewerPanel < PTKPanel
             input_has_been_processed = true;
         end
         
-    end
-    
-    
-    methods (Access = private)
-        
-        function ResizeControlPanel(obj)
-            control_panel_position = obj.Position;
-            control_panel_position(4) = obj.ControlPanelHeight;
-            if obj.ShowControlPanel
-                obj.ControlPanel.Resize(control_panel_position);
-            end
-        end
-
     end
 end

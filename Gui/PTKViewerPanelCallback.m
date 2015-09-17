@@ -215,6 +215,9 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             
             if obj.ViewerPanel.ShowControlPanel
                 obj.Toolbar.SetControl(obj.ViewerPanel.SelectedControl);
+                
+                % Need to resize the control panel as the number of tools may have changed
+                obj.ResizeControlPanel;
             end
         end
         
@@ -486,5 +489,14 @@ classdef PTKViewerPanelCallback < CoreBaseClass
                 obj.ViewerPanel.SetWindowLimits(window_min, window_max);
             end
         end        
+        
+        function ResizeControlPanel(obj)
+            control_panel_position = obj.Toolbar.Position;
+            control_panel_position(4) = obj.ViewerPanel.ControlPanelHeight;
+            if obj.ViewerPanel.ShowControlPanel
+                obj.Toolbar.Resize(control_panel_position);
+            end
+        end
+
     end
 end
