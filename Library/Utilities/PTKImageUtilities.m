@@ -556,7 +556,8 @@ classdef PTKImageUtilities
             image_highlight = image_highlight & background;
         end
         
-        function [preview_image_slice, preview_scale] = GeneratePreviewImage(image)
+        function [preview_image_slice, preview_scale] = GeneratePreviewImage(image, preview_size, flatten_before_preview)
+            
             % Creates a thumbnail preview image
             
             slice_position = round(image.ImageSize(1)/2);

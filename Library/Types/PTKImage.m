@@ -200,39 +200,19 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
         end
 
-        function header_file = SaveRawImage(obj, file_path, file_name, compression, reporting)
-            % Saves the raw image data.
-            % Optionally returns a header object which contains the image object without the image data, and with the
-            % filename stored so that it can be reloaded using a call to LoadRawImage
-        
-            image_class = class(obj.RawImage);
+        function header_file = CreateHeader(obj, raw_filename, compression)
+            % Creates a cache header file template suitable for saving separately from pixel data
             
-            if length(size(obj.RawImage)) ~= 3
-                % Compression currently only supports 3D images
-                compression = [];
-            else
-                if ~PTKDiskUtilities.CompressionSupported(compression, image_class, reporting)                    
-                    compression = [];
-                end
-            end
+            header_file = obj.BlankCopy;
             
-            raw_filename = [file_name '.raw'];
-
-            % Create a header file if requested. The header is the image object 
-            % minus the raw image data, and contains the raw image filename
-            if (nargout > 0)
-                header_file = obj.BlankCopy;
-                
-                % We cache these values in the image class so they can be retrieved
-                % when loading the raw data
-                header_file.CachedDataType = class(obj.RawImage);
-                header_file.CachedImageSize = obj.ImageSize;
-                header_file.CachedRawImageFilename = raw_filename;
-                header_file.CachedRawImageCompression = compression;
-            end
-            
-            PTKSavePtkRawImage(obj.RawImage, file_path, raw_filename, compression, reporting);
+            % We cache these values in the image class so they can be retrieved
+            % when loading the raw data
+            header_file.CachedDataType = class(obj.RawImage);
+            header_file.CachedImageSize = obj.ImageSize;
+            header_file.CachedRawImageFilename = raw_filename;
+            header_file.CachedRawImageCompression = compression;
         end
+      
         
         function ChangeRawImage(obj, new_image, image_type)
             % Replaces the underlying raw image data. This function is used for
@@ -750,8 +730,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function ResampleBinary(obj, new_voxel_size_mm)
-            % Similar to resample, but uses a linear interpolation followed by
-            % thresholding to ensure a smoother binary mask
+            % Similar to resample, but uses a linear interpolation followed by thresholding to ensure a smoother binary mask
             is_logical = islogical(obj.RawImage);
             obj.ChangeRawImage(single(obj.RawImage));
             obj.ResampleWithAffineTransformation(new_voxel_size_mm, '*linear', []);
@@ -858,9 +837,9 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             obj.NotifyImageChanged;
         end
         
-        function GeneratePreview(obj)
+        function GeneratePreview(obj, preview_size, flatten_before_preview)
             % Creates a 2D thumbnail preview image and stores it in the Preview property
-            [preview_image_slice, preview_scale] = PTKImageUtilities.GeneratePreviewImage(image);
+            [preview_image_slice, preview_scale] = PTKImageUtilities.GeneratePreviewImage(obj, preview_size, flatten_before_preview);
             obj.Preview = obj.BlankCopy;
             obj.Preview.RawImage = preview_image_slice;
             obj.Preview.Scale = [preview_scale, preview_scale];

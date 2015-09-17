@@ -221,7 +221,7 @@ classdef PTKDiskUtilities
                         file_suffix = ['_' int2str(next_index)];
                     end
                     raw_image_file_name = [filename_base file_suffix];
-                    header = old_structure.SaveRawImage(file_path, raw_image_file_name, compression, reporting);
+                    header = PTKSavePtkImage(old_structure, file_path, raw_image_file_name, compression, reporting);
                     next_index = next_index + 1;
                     new_structure = header;
                 else
