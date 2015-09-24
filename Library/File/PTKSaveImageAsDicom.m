@@ -48,8 +48,6 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     full_filename = fullfile(path, filename);
     [filename_pathstr, filename_name, filename_ext] = fileparts(full_filename);
 
-    slice_spacing = image_data.VoxelSize(3);
-    pixel_spacing = image_data.VoxelSize(1:2);
 
     % Retrieve oiginal DICOM metadata from the image - note this may be empty if
     % the image was created from a non-DICOM image
@@ -68,31 +66,55 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         metadata = [];
         metadata.Modality = 'OT';
         metadata.SeriesDescription = [PTKSoftwareInfo.DicomName ' : ' image_data.Title];
+        metadata.SOPClassUID = '1.2.840.10008.5.1.4.1.1.7'; % Secondary Capture Image Storage
+        metadata.ConversionType = 'WSD'; % Workstation
     else
         metadata = original_metadata;
         metadata = CopyField('Modality', metadata, original_metadata, image_data.Modality);
         metadata = CopyField('SeriesDescription', metadata, original_metadata, 'Original Image');
+        metadata = CopyField('SOPClassUID', metadata, original_metadata, []);
     end
     
-    % There are certain tags we must change to ensure our series is grouped with
-    % the original data
     metadata.SeriesInstanceUID = dicomuid; % MUST be unique for our series
     metadata.SecondaryCaptureDeviceManufacturer = PTKSoftwareInfo.DicomManufacturer;
+    metadata.SecondaryCaptureDeviceID = PTKSoftwareInfo.DicomName;
     metadata.SecondaryCaptureDeviceManufacturerModelName = PTKSoftwareInfo.DicomName;
     metadata.SecondaryCaptureDeviceSoftwareVersion = PTKSoftwareInfo.DicomVersion;
     metadata.SeriesNumber = []; % SeriesNumber (unlike SeriesInstanceUID) is purely descriptive. Since there is no way of guaranteeing uniqueness, it is better not to set it then to set it to a value like 1 which may already be used
+    
+    switch orientation
+        case PTKImageOrientation.Axial
+            metadata.ImageOrientationPatient = [1 0 0 0 1 0]';
+            slice_spacing = image_data.VoxelSize(3);
+            pixel_spacing = image_data.VoxelSize(1:2);
+            
+        case PTKImageOrientation.Coronal
+            metadata.ImageOrientationPatient = [1 0 0 0 0 -1]';
+            slice_spacing = image_data.VoxelSize(1);
+            pixel_spacing = image_data.VoxelSize(2:3);
+            
+        case PTKImageOrientation.Sagittal
+            metadata.ImageOrientationPatient = [0 1 0 0 0 -1]';
+            slice_spacing = image_data.VoxelSize(2);
+            pixel_spacing = image_data.VoxelSize([1,3]);
+            
+        otherwise
+            reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is now known or unsupported.']);
+    end
     
     metadata.PatientPosition = 'FFS';
     metadata.ImageType = 'ORIGINAL\PRIMARY\AXIAL';    
     metadata.SliceThickness = slice_spacing;
     metadata.SpacingBetweenSlices = slice_spacing;
-    metadata.ImageOrientationPatient = [1 0 0 0 1 0]';
     metadata.PixelSpacing = pixel_spacing';
-
+    
+    % There are certain tags we must change to ensure our series is grouped with
+    % the original data
     metadata = CopyField('StudyInstanceUID', metadata, original_metadata, study_uid);
     metadata = CopyField('StudyID', metadata, original_metadata, []);
     metadata = CopyField('StudyDate', metadata, original_metadata, []);
     metadata = CopyField('StudyTime', metadata, original_metadata, []);
+    metadata = CopyField('SpecificCharacterSet', metadata, original_metadata, []);
     
     default_study_description = PTKSoftwareInfo.DicomStudyDescription;
     metadata = CopyField('StudyDescription', metadata, original_metadata, default_study_description);
@@ -103,11 +125,14 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     metadata = CopyField('PatientSex', metadata, original_metadata, []);
     metadata = CopyField('PatientAge', metadata, original_metadata, []);
     metadata = CopyField('PatientBirthDate', metadata, original_metadata, []);
-    
+    metadata = CopyField('AccessionNumber', metadata, original_metadata, []);
 
     metadata = CopyField('AcquisitionDate', metadata, original_metadata, []);
     metadata = CopyField('AcquisitionTime', metadata, original_metadata, []);
 
+    metadata = CopyField('ContentDate', metadata, original_metadata, []);
+    metadata = CopyField('ContentTime', metadata, original_metadata, []);
+    
     metadata = CopyField('Manufacturer', metadata, original_metadata, []);
     metadata = CopyField('InstitutionName', metadata, original_metadata, []);
     metadata = CopyField('ReferringPhysicianName', metadata, original_metadata, []);
@@ -115,7 +140,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     metadata = CopyField('ManufacturerModelName', metadata, original_metadata, []);
     metadata = CopyField('ReferencedImageSequence', metadata, original_metadata, []);
     
-    if strcmp(metadata, 'CT')
+    if strcmp(metadata.Modality, 'CT')
         metadata = CopyField('RescaleIntercept', metadata, original_metadata, -1024);
         metadata = CopyField('RescaleSlope', metadata, original_metadata, 1);
     end
@@ -171,13 +196,14 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         metadata.SliceLocation = slice_location(3);
 
         metadata.SOPInstanceUID = dicomuid; % MUST be unique for each image
+        
+        % MediaStorageSOPInstanceUID must be the same as the SOPInstanceUID
         metadata.MediaStorageSOPInstanceUID = metadata.SOPInstanceUID;
         
-
         slice_filename = [filename_name, int2str(slice_index - 1)];
         full_filename = fullfile(filename_pathstr, [slice_filename, filename_ext]);
         
-        status = dicomwrite(slice_data, full_filename, metadata);
+        status = dicomwrite(slice_data, full_filename, metadata, 'CreateMode', 'Copy');
         
         if ~IsStatusEmpty(status)
             reporting.ShowWarning('PTKSaveImageAsDicom:DicomWriteWarning', 'Dicomwrite returned a warning when saving the image', status);
