@@ -80,7 +80,13 @@ classdef DepMat
         end
 
         function installed = isGitInstalled
-            installed = ~isempty(DepMat.execute('which git'));
+            if ispc
+                command = 'where git';
+            else
+                command = 'which git';
+            end
+            
+            installed = DepMat.execute(command);
         end
         
         function fixCurlPath
