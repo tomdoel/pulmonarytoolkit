@@ -284,6 +284,7 @@ classdef PTKEditMode < handle
                     elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
                         uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
                     else
+                        edited_result.ResizeToMatch(current_overlay);
                         obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
                         obj.UnsavedChanges = false;
                         obj.GuiDataset.UpdateEditedStatus(true);
