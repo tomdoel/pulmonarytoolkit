@@ -31,6 +31,12 @@ classdef PTKViewerPanel < PTKPanel
         MarkerPanelSelected      % An event to indicate if the marker control has been selected
         OverlayImageChangedEvent % An event to indicate if the overlay image has changed
         MouseCursorStatusChanged % An event to indicate if the MouseCursorStatus property has changed
+        NewBackgroundImage       % An event to indicate the background image has been replaced
+        NewOverlayImage          % An event to indicate the overlay image has been replaced
+        NewQuiverImage           % An event to indicate the quiver image has been replaced
+        BackgroundImageChanged   % An event to indicate the background image has been modified
+        OverlayImageChanged      % An event to indicate the overlay image has been modified
+        QuiverImageChanged       % An event to indicate the quiver image has been modified
     end
     
     properties (SetObservable)
@@ -75,6 +81,16 @@ classdef PTKViewerPanel < PTKPanel
         ControlPanel
         ViewerPanelMultiView
         ViewerPanelCallback
+    
+        % Handles to listeners for changes within image objects
+        BackgroundImageChangedListener
+        OverlayImageChangedListener
+        QuiverImageChangedListener
+        
+        % Handles to listeners for new image instances replacing existing ones
+        BackgroundImagePointerChangedListener
+        OverlayImagePointerChangedListener
+        QuiverImagePointerChangedListener
     end
     
     properties
@@ -92,9 +108,16 @@ classdef PTKViewerPanel < PTKPanel
             obj.ShowControlPanel = show_control_panel;
             
             obj.MouseCursorStatus = PTKMouseCursorStatus;
+
+            % Listen for changes to the image pointers
+            obj.BackgroundImagePointerChangedListener = addlistener(obj, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
+            obj.OverlayImagePointerChangedListener = addlistener(obj, 'OverlayImage', 'PostSet', @obj.OverlayImagePointerChangedCallback);
+            obj.QuiverImagePointerChangedListener = addlistener(obj, 'QuiverImage', 'PostSet', @obj.QuiverImagePointerChangedCallback);
             
             % These image objects must be created here, not in the properties section, to
             % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
+            % Also note that these will trigger the above pointer change callbacks, which
+            % will set up the pixel data change callbacks
             obj.BackgroundImage = PTKImage;
             obj.OverlayImage = PTKImage;
             obj.QuiverImage = PTKImage;
@@ -250,13 +273,6 @@ classdef PTKViewerPanel < PTKPanel
             end
         end
      
-        function [window_min, window_max] = GetWindowLimits(obj)
-            % Returns the minimum and maximum values from the window slider
-            
-            window_min = obj.WindowMin;
-            window_max = obj.WindowMax;
-        end
-        
         function SetWindowLimits(obj, window_min, window_max)
             % Sets the minimum and maximum values for the level slider
             
@@ -297,5 +313,82 @@ classdef PTKViewerPanel < PTKPanel
             input_has_been_processed = true;
         end
         
+    end
+    
+    methods (Access = private)
+        function ImagePointerChangedCallback(obj, ~, ~)
+            obj.BackgroundImageHasBeenReplaced;
+        end
+        
+        function OverlayImagePointerChangedCallback(obj, ~, ~)
+            obj.OverlayImageHasBeenReplaced;
+        end
+        
+        function QuiverImagePointerChangedCallback(obj, ~, ~)
+            obj.QuiverImageHasBeenReplaced;
+        end
+        
+        function ImageChangedCallback(obj, ~, ~)
+            notify(obj, 'BackgroundImageChanged');
+        end
+
+        function OverlayImageChangedCallback(obj, ~, ~)
+            notify(obj, 'OverlayImageChanged');
+        end
+        
+        function QuiverImageChangedCallback(obj, ~, ~)
+            notify(obj, 'QuiverImageChanged');
+        end
+                
+        function BackgroundImageHasBeenReplaced(obj)
+            
+            % Check that this image is the correct class type
+            if ~isa(obj.BackgroundImage, 'PTKImage')
+                error('The image must be of class PTKImage');
+            end
+            
+            % Remove existing listener
+            CoreSystemUtilities.DeleteIfValidObject(obj.BackgroundImageChangedListener);
+            
+            % Listen for image change events
+            obj.BackgroundImageChangedListener = addlistener(obj.BackgroundImage, 'ImageChanged', @obj.ImageChangedCallback);
+
+            % Fire a new image event
+            notify(obj, 'NewBackgroundImage');
+        end 
+        
+        function OverlayImageHasBeenReplaced(obj)
+            
+            % Check that this image is the correct class type
+            if ~isa(obj.OverlayImage, 'PTKImage')
+                error('The image must be of class PTKImage');
+            end
+            
+            % Remove existing listener
+            CoreSystemUtilities.DeleteIfValidObject(obj.OverlayImageChangedListener);
+            
+            % Listen for image change events
+            obj.OverlayImageChangedListener = addlistener(obj.OverlayImage, 'ImageChanged', @obj.OverlayImageChangedCallback);
+ 
+            % Fire a new overlay image event
+            notify(obj, 'NewOverlayImage');        
+        end
+        
+        function QuiverImageHasBeenReplaced(obj)
+            
+            % Check that this image is the correct class type
+            if ~isa(obj.QuiverImage, 'PTKImage')
+                error('The image must be of class PTKImage');
+            end
+            
+            % Remove existing listener
+            CoreSystemUtilities.DeleteIfValidObject(obj.QuiverImageChangedListener);
+            
+            % Listen for image change events
+            obj.QuiverImageChangedListener = addlistener(obj.QuiverImage, 'ImageChanged', @obj.QuiverImageChangedCallback);
+
+            % Fire a new quiver image event
+            notify(obj, 'NewQuiverImage');        
+         end
     end
 end

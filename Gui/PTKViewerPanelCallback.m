@@ -47,6 +47,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.NewOverlayImage;
             obj.NewQuiverImage;
             
+            
             % Change in mouse position
             obj.AddEventListener(obj.ViewerPanelMultiView, 'MousePositionChanged', @obj.MousePositionChangedCallback);
             
@@ -66,11 +67,16 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.AddPostSetListener(obj.ViewerPanel, 'BlackIsTransparent', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.SettingsChangedCallback);
             
-            % Listen for image change events
-            obj.BackgroundImagePointerChangedListener = addlistener(obj.ViewerPanel, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
-            obj.OverlayImagePointerChangedListener = addlistener(obj.ViewerPanel, 'OverlayImage', 'PostSet', @obj.OverlayImagePointerChangedCallback);
-            obj.QuiverImagePointerChangedListener = addlistener(obj.ViewerPanel, 'QuiverImage', 'PostSet', @obj.QuiverImagePointerChangedCallback);
+            % Listen for new image events
+            obj.AddEventListener(obj.ViewerPanel, 'NewBackgroundImage', @obj.NewBackgroundImageCallback);
+            obj.AddEventListener(obj.ViewerPanel, 'NewOverlayImage', @obj.NewOverlayImageCallback);
+            obj.AddEventListener(obj.ViewerPanel, 'NewQuiverImage', @obj.NewQuiverImageCallback);
             
+            % Listen for image change events
+            obj.AddEventListener(obj.ViewerPanel, 'BackgroundImageChanged', @obj.BackgroundImageChangedCallback);
+            obj.AddEventListener(obj.ViewerPanel, 'OverlayImageChanged', @obj.OverlayImageChangedCallback);
+            obj.AddEventListener(obj.ViewerPanel, 'QuiverImageChanged', @obj.QuiverImageChangedCallback);
+
             % Status update should be done post-creation
             obj.UpdateStatus;
         end
@@ -88,31 +94,23 @@ classdef PTKViewerPanelCallback < CoreBaseClass
     
     methods (Access = private)
         
-        function NewBackgroundImage(obj)
-            
-            % Check that this image is the correct class type
-            if ~isa(obj.ViewerPanel.BackgroundImage, 'PTKImage')
-                error('The image must be of class PTKImage');
-            end
-            
-            % Update the panel
-            obj.ImageChanged;
-            
-            % Remove existing listener
-            CoreSystemUtilities.DeleteIfValidObject(obj.BackgroundImageChangedListener);
-            
-            % Listen for image change events
-            obj.BackgroundImageChangedListener = addlistener(obj.ViewerPanel.BackgroundImage, 'ImageChanged', @obj.ImageChangedCallback);
+        function NewBackgroundImageCallback(obj, ~, ~)
+            obj.NewBackgroundImage;
         end
         
+        function NewOverlayImageCallback(obj, ~, ~)
+            obj.NewOverlayImage;
+        end
+        
+        function NewQuiverImageCallback(obj, ~, ~)
+            obj.NewQuiverImage;
+        end
+        
+        function NewBackgroundImage(obj)
+            obj.ImageChanged;
+        end
         
         function NewOverlayImage(obj)
-            
-            % Check that this image is the correct class type
-            if ~isa(obj.ViewerPanel.OverlayImage, 'PTKImage')
-                error('The image must be of class PTKImage');
-            end
-            
             no_current_image = ~obj.ViewerPanel.BackgroundImage.ImageExists;
             
             % Update the panel
@@ -121,21 +119,9 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             else
                 obj.OverlayImageChanged;
             end
-            
-            % Remove existing listener
-            CoreSystemUtilities.DeleteIfValidObject(obj.OverlayImageChangedListener);
-            
-            % Listen for image change events
-            obj.OverlayImageChangedListener = addlistener(obj.ViewerPanel.OverlayImage, 'ImageChanged', @obj.OverlayImageChangedCallback);
         end
         
         function NewQuiverImage(obj)
-            
-            % Check that this image is the correct class type
-            if ~isa(obj.ViewerPanel.QuiverImage, 'PTKImage')
-                error('The image must be of class PTKImage');
-            end
-            
             no_current_image = ~obj.ViewerPanel.BackgroundImage.ImageExists;
             
             % Update the panel
@@ -144,15 +130,9 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             else
                 obj.OverlayImageChanged;
             end
-            
-            % Remove existing listener
-            CoreSystemUtilities.DeleteIfValidObject(obj.QuiverImageChangedListener);
-            
-            % Listen for image change events
-            obj.QuiverImageChangedListener = addlistener(obj.ViewerPanel.QuiverImage, 'ImageChanged', @obj.OverlayImageChangedCallback);
         end
         
-        function ImageChangedCallback(obj, ~, ~)
+        function BackgroundImageChangedCallback(obj, ~, ~)
             % This methods is called when the background image has changed
             
             obj.ImageChanged;
@@ -160,6 +140,12 @@ classdef PTKViewerPanelCallback < CoreBaseClass
 
         function OverlayImageChangedCallback(obj, ~, ~)
             % This methods is called when the overlay image has changed
+            
+            obj.OverlayImageChanged;
+        end
+
+        function QuiverImageChangedCallback(obj, ~, ~)
+            % This methods is called when the quiver image has changed
             
             obj.OverlayImageChanged;
         end
@@ -211,24 +197,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.UpdateGui;
             obj.ViewerPanelMultiView.DrawImages(true, true, true);
             obj.UpdateStatus;
-        end
-        
-        function ImagePointerChangedCallback(obj, ~, ~)
-            % Image pointer has changed
-            
-            obj.NewBackgroundImage;
-        end
-        
-        function OverlayImagePointerChangedCallback(obj, ~, ~)
-            % Overlay image pointer has changed
-            
-            obj.NewOverlayImage;
-        end
-        
-        function QuiverImagePointerChangedCallback(obj, ~, ~)
-            % Quiver image pointer has changed
-            
-            obj.NewQuiverImage;
         end
         
         function ImageChanged(obj)
@@ -412,8 +380,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
         function ModifyWindowLevelLimits(obj)
             % This function is used to change the max window and min/max level
             % values after the window or level has been changed to a value outside
-            % of the limits
-            
+            % of the limits            
             level_limits = obj.ViewerPanel.LevelLimits;
             level_min = level_limits(1);
             level_max = level_limits(2);
