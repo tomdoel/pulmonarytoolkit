@@ -6,7 +6,7 @@ classdef CoreStack < handle
     %     -------
     %     Part of CoreMat. https://github.com/tomdoel/coremat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

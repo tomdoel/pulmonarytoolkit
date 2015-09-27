@@ -7,7 +7,7 @@ classdef CoreMex < CoreBaseClass
     %     -------
     %     Part of CoreMat. https://github.com/tomdoel/coremat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (SetAccess = private)
@@ -27,11 +27,12 @@ classdef CoreMex < CoreBaseClass
                 reporting = CoreReportingDefault;
             end
             
-            mexCacheFilename = fullfile(CoreDiskUtilities.GetUserDirectory, 'depmat', 'MexCache.xml');
+            coreMexDirectory = fullfile(CoreDiskUtilities.GetUserDirectory, 'coremex');
+            mexCacheFilename = fullfile(coreMexDirectory, 'MexCache.xml');
             
             obj.Reporting = reporting;
             obj.MexSingleton = CoreMexSingleton.GetMexSingleton(mexCacheFilename, obj.Reporting);
-            obj.CompileBinDirectory = fullfile(CoreDiskUtilities.GetUserDirectory, 'depmat', 'mex_bin');
+            obj.CompileBinDirectory = fullfile(coreMexDirectory, 'mex_bin');
             CoreDiskUtilities.CreateDirectoryIfNecessary(obj.CompileBinDirectory);
             addpath(obj.CompileBinDirectory);
             obj.FileList = mexFileList;
@@ -41,7 +42,7 @@ classdef CoreMex < CoreBaseClass
         function Recompile(obj)
             % Forces recompilation of all mex files
             
-            obj.MexSingleton.Recompile(obj.FileList, obj.CompileBinDirectory, obj.Reporting);
+            obj.MexSingleton.RecompileMexFiles(obj.FileList, obj.CompileBinDirectory, obj.Reporting);
         end
     end
     

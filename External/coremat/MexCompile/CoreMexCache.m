@@ -10,7 +10,7 @@ classdef CoreMexCache < CoreBaseClass
     %     -------
     %     Part of CoreMat. https://github.com/tomdoel/coremat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     properties
@@ -69,9 +69,14 @@ classdef CoreMexCache < CoreBaseClass
         end
         
         function UpdateCache(obj, processed_mex_file_list, reporting)
-            obj.MexInfoMap = processed_mex_file_list;
-            obj.IsNewlyCreated = false;
-            obj.SaveCache(reporting);
+            % Update the saved map without removing entries not on our
+            % current list
+            for mex_file_key = processed_mex_file_list.keys
+                mex_file_value = processed_mex_file_list(mex_file_key{1});
+                obj.MexInfoMap(mex_file_key{1}) = mex_file_value;
+                obj.IsNewlyCreated = false;
+                obj.SaveCache(reporting);
+            end
         end
     end
 end

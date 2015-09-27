@@ -19,7 +19,7 @@ function CoreCompileMexFiles(mex_cache, output_directory, mex_files_to_compile, 
     %     -------
     %     Part of CoreMat. https://github.com/tomdoel/coremat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     reporting.ShowProgress('Checking mex files');
@@ -30,9 +30,11 @@ function CoreCompileMexFiles(mex_cache, output_directory, mex_files_to_compile, 
     if isempty(compiler)
         compiler = MexSetup(retry_instructions, reporting);
     end
+    cuda_compiler = GetCudaCompiler;
+    
     if ~isempty(compiler)
         CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_directory, framework_cache_was_missing, reporting);
-        Compile(mex_files_to_compile, mex_cache, cached_mex_file_info, output_directory, compiler, force_recompile, reporting);
+        Compile(mex_files_to_compile, mex_cache, cached_mex_file_info, output_directory, compiler, cuda_compiler, force_recompile, retry_instructions, reporting);
     end
     
     mex_cache.UpdateCache(mex_files_to_compile, reporting);
@@ -59,7 +61,7 @@ function compiler = MexSetup(retry_instructions, reporting)
     end
 end
 
-function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, output_directory, compiler, force_recompile, reporting)
+function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, output_directory, compiler, cuda_compiler, force_recompile, retry_instructions, reporting)
     progress_message_showing_compile = false;
     for mex_file_s = mex_files_to_compile.values
         mex_file = mex_file_s{1};
@@ -67,7 +69,7 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
         if (~mex_file.NeedsRecompile) && (~force_recompile)
             reporting.Log([mex_file.Name ' is up to date']);
             if ~strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoRecompileNeeded')
-                reporting.Error('CoreCompileMexFiles:WrongStatus', 'Program error: mex status should be OK if a recompile is not required'); 
+                reporting.Error('CoreCompileMexFiles:WrongStatus', 'Program error: mex status should be OK if a recompile is not required');
             end
         else
             if strcmp(mex_file.StatusID, 'CoreCompileMexFiles:VersionChanged')
@@ -124,9 +126,11 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
                         progress_message_showing_compile = true;
                         reporting.UpdateProgressMessage('Compiling mex files');
                     end
-                    mex_arguments = {'-outdir', output_directory};
-                    mex_arguments = [mex_arguments, mex_file.CompilerOptions, src_fullfile, mex_file.OtherCompilerFiles];
-                    mex_result = mex(mex_arguments{:});
+                    if isa(mex_file, 'CoreCudaInfo')
+                        mex_result = CoreCudaCompile.Compile(cuda_compiler, mex_file, src_fullfile, output_directory);
+                    else
+                        mex_result = CoreMexCompile.Compile(compiler, mex_file, src_fullfile, output_directory);
+                    end
                     mex_file.LastAttemptedCompiledVersion = mex_file.CurrentVersion;
                     mex_file.LastAttemptedCompiler = compiler;
                     if (mex_result == 0)
@@ -176,7 +180,12 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
 
             % Check whether compiled file exists. We only need to do this if the
             % cache was found, because otherwise we will be recompiling anyway
-            dst_fullfile = fullfile(output_directory, [mex_file.Name, mex_extension]);
+            if isa(mex_file, 'CoreCudaInfo')
+                compiled_file_extension = '.ptx';
+            else
+                compiled_file_extension = mex_extension;
+            end
+            dst_fullfile = fullfile(output_directory, [mex_file.Name, compiled_file_extension]);
             if ~exist(dst_fullfile, 'file')
                 mex_file.NeedsRecompile = true;
                 
@@ -216,3 +225,47 @@ function name = GetNameOfCppCompiler
         name = cc(1).Name;
     end
 end
+
+function cuda_compiler = GetCudaCompiler
+    if ispc
+        [status, cuda_compiler] = system('where nvcc');
+
+        if status ~= 0
+            cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramFiles'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
+            if isempty(cuda_compiler)
+                cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramW6432'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
+            end
+            if isempty(cuda_compiler)
+                cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramFiles(x86)'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
+            end
+            if isempty(cuda_compiler)
+                disp('Cannot find nvcc');
+            end
+        end
+    else
+        [status, cuda_compiler] = system('which nvcc');
+
+        if status ~= 0
+            if 2 == exist('/usr/local/cuda/bin/nvcc', 'file')
+                cuda_compiler = '/usr/local/cuda/bin/nvcc';
+            else
+                disp('Cannot find nvcc');
+                cuda_compiler = [];
+            end
+        end
+    end
+end
+
+function compiler = TryToFindCudaCompilerPc(base_dir)
+    compiler = [];
+    directories = CoreDiskUtilities.GetListOfDirectories(base_dir);
+    
+    for dir_name = directories
+        bin_dir = fullfile(base_dir, dir_name{1}, 'bin');
+        if isdir(bin_dir)
+            compiler = bin_dir;
+            return;
+        end
+    end
+end
+

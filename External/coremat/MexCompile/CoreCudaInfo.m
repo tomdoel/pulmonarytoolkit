@@ -1,7 +1,7 @@
-classdef CoreMexInfo < CoreCompiledFileInfo
-    % CoreMexInfo. Structure for caching information about compiled mex files.
+classdef CoreCudaInfo < CoreCompiledFileInfo
+    % CoreCudaInfo. Structure for caching information about compiled cuda files.
     %
-    %     CoreMexInfo is used by CoreMex and its related files to manage
+    %     CoreCudaInfo is used by CoreMex and its related files to manage
     %     dependencies on mex files. You typically create a map of
     %     CoreMexInfo objects, each of which defines a mex file to be
     %     compiled, and pass it into CoreMex.
@@ -18,9 +18,17 @@ classdef CoreMexInfo < CoreCompiledFileInfo
     %     Distributed under the MIT licence. Please see website for details.
     %    
     
+    
+    properties
+        CudaType
+    end
+    
     methods
-        function obj = CoreMexInfo(varargin)
+        function obj = CoreCudaInfo(cuda_type, varargin)
             obj = obj@CoreCompiledFileInfo(varargin{:});
+            if nargin > 0
+                obj.CudaType = cuda_type;
+            end
         end
     end
     
