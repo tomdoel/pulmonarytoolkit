@@ -42,11 +42,11 @@ classdef PTKViewerPanelToolbar < PTKPanel
     end
     
     methods
-        function obj = PTKViewerPanelToolbar(viewer_panel, tools)
+        function obj = PTKViewerPanelToolbar(viewer_panel)
             obj = obj@PTKPanel(viewer_panel);
             obj.ViewerPanel = viewer_panel;
             obj.BackgroundColour = 'black';
-            obj.Tools = tools;
+            obj.Tools = viewer_panel.GetToolList;
             
             obj.MouseCursorStatusListener = addlistener(obj.ViewerPanel, 'MouseCursorStatusChanged', @obj.MouseCursorStatusChangedCallback);
             

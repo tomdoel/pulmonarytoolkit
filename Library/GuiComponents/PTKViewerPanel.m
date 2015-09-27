@@ -125,7 +125,7 @@ classdef PTKViewerPanel < PTKPanel
             
             % Create the control panel
             if obj.ShowControlPanel
-                obj.ControlPanel = PTKViewerPanelToolbar(obj, obj.Tools);
+                obj.ControlPanel = PTKViewerPanelToolbar(obj);
                 obj.AddChild(obj.ControlPanel);
             end
 
@@ -290,9 +290,16 @@ classdef PTKViewerPanel < PTKPanel
         
         
         function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier)
+            % Returns the currently enabled mouse tool
+            
             tool = obj.Tools.GetCurrentTool(mouse_is_down, keyboard_modifier, obj.SelectedControl);
         end
         
+        function tools = GetToolList(obj)
+            % Returns a PTKToolList describing the mouse tools supported by the viewer
+            
+            tools = obj.Tools;
+        end
     end
     
     methods (Access = protected)
