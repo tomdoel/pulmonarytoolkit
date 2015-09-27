@@ -48,8 +48,6 @@ classdef PTKViewerPanelToolbar < PTKPanel
             obj.BackgroundColour = 'black';
             obj.Tools = tools;
             
-            tools.SetToolbar(obj);
-            
             obj.MouseCursorStatusListener = addlistener(obj.ViewerPanel, 'MouseCursorStatusChanged', @obj.MouseCursorStatusChangedCallback);
             
             % Add listeners to respond to changes in the viewer panel

@@ -12,7 +12,6 @@ classdef PTKToolCallback < handle
     
     properties (Access = private)
         Reporting
-        Toolbar
         ViewerPanel
         ViewerPanelRenderer
     end
@@ -24,14 +23,6 @@ classdef PTKToolCallback < handle
             obj.Reporting = reporting;
         end
 
-        function SetToolbar(obj, toolbar)
-            if isempty(toolbar)
-                obj.Reporting.Error('PTKToolCallback:ToolbarDoNotExist', 'SetToolbar() was called with an empty toolbar');
-            end
-            
-            obj.Toolbar = toolbar;
-        end
-        
         function SetRenderer(obj, viewer_panel_renderer)
             if isempty(viewer_panel_renderer)
                 obj.Reporting.Error('PTKToolCallback:RendererDoesNotExist', 'SetRendererAndAxes() was called with empty viewer_panel_renderer');

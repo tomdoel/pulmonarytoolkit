@@ -56,10 +56,6 @@ classdef PTKToolList < handle
             end            
         end
         
-        function SetToolbar(obj, toolbar)
-            obj.ToolCallback.SetToolbar(toolbar);
-        end
-        
         function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier, selected_control)
             if ~isempty(keyboard_modifier) && ~isempty(mouse_is_down) && mouse_is_down
                 if strcmp(keyboard_modifier, 'extend')
