@@ -106,6 +106,7 @@ classdef PTKFigure < PTKUserInterfaceObject
         end
         
         function ShowWaitCursor(obj)
+            % Changes the mouse cursor to a wait cursor
             if isempty(obj.LastCursor)
                 obj.LastCursor = get(obj.GraphicalComponentHandle, 'Pointer');
             end
@@ -116,6 +117,7 @@ classdef PTKFigure < PTKUserInterfaceObject
         end
         
         function HideWaitCursor(obj)
+            % Restores the mouse cursor to the previous cursor
             set(obj.GraphicalComponentHandle, 'Pointer', obj.LastCursor);
             obj.LastCursor = [];
             drawnow;
