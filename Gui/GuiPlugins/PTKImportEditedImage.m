@@ -21,6 +21,9 @@ classdef PTKImportEditedImage < PTKGuiPlugin
         Category = 'Import / Export'
         Visibility = 'Overlay'
         Mode = 'Edit'
+        
+        Icon = 'add_patch.png'
+        Location = 13
 
         HidePluginInDisplay = false
         PTKVersion = '1'

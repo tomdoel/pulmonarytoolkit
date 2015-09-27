@@ -83,6 +83,10 @@ classdef PTKEditMode < handle
             obj.IgnoreOverlayChanges = false;            
         end
         
+        function sub_mode = GetSubModeName(obj)
+            sub_mode = obj.ViewerPanel.SubMode;
+        end
+        
         function ExitMode(obj)
             
             if obj.UnsavedChanges

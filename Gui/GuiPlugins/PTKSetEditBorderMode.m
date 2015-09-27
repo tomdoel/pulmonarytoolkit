@@ -19,14 +19,14 @@ classdef PTKSetEditBorderMode < PTKGuiPlugin
         ToolTip = 'Modify the boundary of a segmented object by clicking on new boundary points'
         Category = 'Tools'
         Visibility = 'Dataset'
-        Mode = 'Toolbar'
+        Mode = 'Edit'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'edit_boundary.png'
-        Location = 17
+        Location = 1
     end
     
     methods (Static)
@@ -36,7 +36,8 @@ classdef PTKSetEditBorderMode < PTKGuiPlugin
         
         function enabled = IsEnabled(ptk_gui_app)
             enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
-                (isequal(ptk_gui_app.GetCurrentModeName, 'Edit') || isequal(ptk_gui_app.GetCurrentModeName, 'ManualSegmentation'));
+                (isequal(ptk_gui_app.GetCurrentModeName, 'Edit') || isequal(ptk_gui_app.GetCurrentModeName, 'ManualSegmentation')) && ...
+                (isequal(ptk_gui_app.GetCurrentSubModeName, PTKSubModes.EditBoundariesEditing) || isequal(ptk_gui_app.GetCurrentSubModeName, PTKSubModes.FixedBoundariesEditing) || isequal(ptk_gui_app.GetCurrentSubModeName, PTKSubModes.PaintEditing));
         end
         
         function is_selected = IsSelected(ptk_gui_app)

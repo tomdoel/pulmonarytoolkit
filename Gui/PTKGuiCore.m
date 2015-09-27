@@ -546,6 +546,10 @@ classdef PTKGuiCore < PTKFigure
             mode_name = obj.GuiDataset.GetCurrentModeName;
         end
         
+        function mode_name = GetCurrentSubModeName(obj)
+            mode_name = obj.GuiDataset.GetCurrentSubModeName;
+        end
+        
         function RunGuiPluginCallback(obj, plugin_name)
             
             wait_dialog = obj.WaitDialogHandle;

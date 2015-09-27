@@ -1,8 +1,11 @@
-classdef PTKBrushSizeSlider < PTKGuiPluginSlider
-    % PTKBrushSizeSlider. Gui Plugin for changing the size of the edit brush
+classdef PTKSetRemapMode < PTKGuiPlugin
+    % PTKSetRemapMode. Gui Plugin for using a preset bone window/level
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
+    %
+    %     PTKSetRemapMode is a Gui Plugin for the TD Pulmonary Toolkit. It
+    %     enabled an edit mode where colour labels can be remapped
     %
     %
     %     Licence
@@ -13,47 +16,34 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
     %    
     
     properties
-        ButtonText = 'Brush size'
-        SelectedText = 'Brush size'
-        
-        ToolTip = 'Change the size of the editing paint brush'
-        Category = 'Paintbrush'
+        ButtonText = 'Remap'
+        SelectedText = 'Remap'
+        ToolTip = 'Enter colour remapping editing mode'
+        Category = 'Tools'
         Visibility = 'Dataset'
         Mode = 'Edit'
 
         HidePluginInDisplay = false
-        PTKVersion = '2'
+        PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Location = 20
-
-        MinValue = 0
-        MaxValue = 100
-        SmallStep = 0.01
-        LargeStep = 0.1
-        DefaultValue = 50
-        
-        EditBoxPosition = 110
-        EditBoxWidth = 40
+        Icon = 'edit_boundary.png'
+        Location = 3
     end
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
+            ptk_gui_app.ImagePanel.SetControl('Map');
         end
         
         function enabled = IsEnabled(ptk_gui_app)
             enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
-                isequal(ptk_gui_app.ImagePanel.SelectedControl, 'Paint');
+                (isequal(ptk_gui_app.GetCurrentModeName, 'Edit') || isequal(ptk_gui_app.GetCurrentModeName, 'ManualSegmentation')) && ...
+                (isequal(ptk_gui_app.GetCurrentSubModeName, PTKSubModes.ColourRemapEditing));
         end
         
         function is_selected = IsSelected(ptk_gui_app)
-            is_selected = true;
-        end
-        
-        function [instance_handle, value_property_name, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
-            instance_handle = ptk_gui_app.ImagePanel;
-            value_property_name = 'PaintBrushSize';
-            limits_property_name = [];
+            is_selected = isequal(ptk_gui_app.ImagePanel.SelectedControl, 'Map');
         end
         
     end

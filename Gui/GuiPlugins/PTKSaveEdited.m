@@ -14,12 +14,15 @@ classdef PTKSaveEdited < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Save'
-        SelectedText = 'Save'
+        ButtonText = 'Save corrections'
+        SelectedText = 'Save corrections'
         ToolTip = ''
         Category = 'Edit'
         Visibility = 'Overlay'
         Mode = 'Edit'
+
+        Icon = 'save.png'
+        Location = 10
 
         HidePluginInDisplay = false
         PTKVersion = '1'

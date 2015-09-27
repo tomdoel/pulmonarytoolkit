@@ -22,6 +22,9 @@ classdef PTKExportPatch < PTKGuiPlugin
         Visibility = 'Overlay'
         Mode = 'Edit'
 
+        Icon = 'export_overlay.png'
+        Location = 11
+        
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6

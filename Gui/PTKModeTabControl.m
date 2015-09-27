@@ -45,10 +45,9 @@ classdef PTKModeTabControl < PTKTabControl
             obj.AddTabbedPanel(obj.PluginsPanel, 'Segment', 'Segment', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
 
-            obj.EditPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.EditPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', obj.Gui, app_def);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'Edit', 'Manual correction of results');
-            obj.EditPanel.AddPlugins([]);
-            
+
             obj.ManualSegmentationPanel = PTKPluginsSlidingPanel(obj, organised_manual_segmentations, 'ManualSegmentation', PTKModes.ManualSegmentationMode, 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
             obj.AddTabbedPanel(obj.ManualSegmentationPanel, 'Manual Segmentation', 'ManualSegmentation', 'Manual segmentation');
             obj.ManualSegmentationPanel.AddPlugins([]);
@@ -95,6 +94,7 @@ classdef PTKModeTabControl < PTKTabControl
         
         function UpdateDynamicPanels(obj)
             obj.ViewPanel.Update(obj.Gui);
+            obj.EditPanel.Update(obj.Gui);
         end
         
         function UpdateMode(obj, plugin_info)

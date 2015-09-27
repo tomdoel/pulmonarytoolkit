@@ -60,6 +60,10 @@ classdef PTKGuiDataset < CoreBaseClass
             mode = obj.ModeSwitcher.CurrentModeString;
         end
         
+        function mode = GetCurrentSubModeName(obj)
+            mode = obj.ModeSwitcher.GetSubModeName;
+        end
+        
         function is_dataset = DatasetIsLoaded(obj)
             is_dataset = ~isempty(obj.Dataset);
         end

@@ -37,6 +37,14 @@ classdef PTKModeSwitcher < CoreBaseClass
             obj.CurrentModeString = [];
         end
         
+        function mode = GetSubModeName(obj)
+            if isempty(obj.CurrentMode)
+                mode = [];
+            else
+                mode = obj.CurrentMode.GetSubModeName;
+            end
+        end
+        
         function SwitchMode(obj, mode, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name)
             if ~isempty(obj.CurrentMode)
                 obj.CurrentMode.ExitMode;

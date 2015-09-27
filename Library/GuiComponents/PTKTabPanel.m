@@ -115,8 +115,12 @@ classdef PTKTabPanel < PTKPanel
         end
         
         function enabled = IsTabEnabled(obj, tag)
-            tab = obj.Tabs(tag);
-            enabled = tab.Enabled;
+            if obj.Tabs.isKey(tag)
+                tab = obj.Tabs(tag);
+                enabled = tab.Enabled;
+            else
+                enabled = false;
+            end
         end
     end
     

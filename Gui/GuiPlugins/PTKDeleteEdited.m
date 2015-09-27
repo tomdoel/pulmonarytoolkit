@@ -17,10 +17,13 @@ classdef PTKDeleteEdited < PTKGuiPlugin
         ButtonText = 'Delete all editing'
         SelectedText = 'Delete all editing'
         ToolTip = ''
-        Category = 'Edit'
+        Category = 'Delete'
         Visibility = 'Overlay'
         Mode = 'Edit'
 
+        Icon = 'bin.png'
+        Location = 14
+        
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6
