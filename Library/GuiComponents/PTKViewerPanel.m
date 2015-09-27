@@ -83,14 +83,11 @@ classdef PTKViewerPanel < PTKPanel
         ViewerPanelCallback
     
         % Handles to listeners for changes within image objects
+        % We explicitly manage creation and deletion of these, because we
+        % need to update them whenever the image pointers change
         BackgroundImageChangedListener
         OverlayImageChangedListener
         QuiverImageChangedListener
-        
-        % Handles to listeners for new image instances replacing existing ones
-        BackgroundImagePointerChangedListener
-        OverlayImagePointerChangedListener
-        QuiverImagePointerChangedListener
     end
     
     properties
@@ -110,9 +107,9 @@ classdef PTKViewerPanel < PTKPanel
             obj.MouseCursorStatus = PTKMouseCursorStatus;
 
             % Listen for changes to the image pointers
-            obj.BackgroundImagePointerChangedListener = addlistener(obj, 'BackgroundImage', 'PostSet', @obj.ImagePointerChangedCallback);
-            obj.OverlayImagePointerChangedListener = addlistener(obj, 'OverlayImage', 'PostSet', @obj.OverlayImagePointerChangedCallback);
-            obj.QuiverImagePointerChangedListener = addlistener(obj, 'QuiverImage', 'PostSet', @obj.QuiverImagePointerChangedCallback);
+            obj.AddPostSetListener(obj, 'BackgroundImage', @obj.ImagePointerChangedCallback);
+            obj.AddPostSetListener(obj, 'OverlayImage', @obj.OverlayImagePointerChangedCallback);
+            obj.AddPostSetListener(obj, 'QuiverImage', @obj.QuiverImagePointerChangedCallback);
             
             % These image objects must be created here, not in the properties section, to
             % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
@@ -136,6 +133,12 @@ classdef PTKViewerPanel < PTKPanel
             obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj);
             obj.ToolCallback.SetRenderer(obj.ViewerPanelMultiView);
             obj.AddChild(obj.ViewerPanelMultiView);
+        end
+        
+        function delete(obj)
+            CoreSystemUtilities.DeleteIfValidObject(obj.BackgroundImageChangedListener);
+            CoreSystemUtilities.DeleteIfValidObject(obj.OverlayImageChangedListener);
+            CoreSystemUtilities.DeleteIfValidObject(obj.QuiverImageChangedListener);
         end
         
         function Resize(obj, position)

@@ -29,7 +29,7 @@ classdef CoreBaseClass < handle
         
         function delete(obj)
             for listener = obj.EventListeners
-                delete(listener{1});
+                CoreSystemUtilities.DeleteIfValidObject(listener{1});
             end
             obj.EventListeners = [];
             

@@ -21,16 +21,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
         ViewerPanel
         ViewerPanelMultiView
         Reporting
-        
-        % Handles to listeners for changes within image objects
-        BackgroundImageChangedListener
-        OverlayImageChangedListener
-        QuiverImageChangedListener
-        
-        % Handles to listeners for new image instances replacing existing ones
-        BackgroundImagePointerChangedListener
-        OverlayImagePointerChangedListener
-        QuiverImagePointerChangedListener
     end
     
     methods
@@ -46,7 +36,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.NewBackgroundImage;
             obj.NewOverlayImage;
             obj.NewQuiverImage;
-            
             
             % Change in mouse position
             obj.AddEventListener(obj.ViewerPanelMultiView, 'MousePositionChanged', @obj.MousePositionChangedCallback);
@@ -79,15 +68,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
 
             % Status update should be done post-creation
             obj.UpdateStatus;
-        end
-        
-        function delete(obj)
-            CoreSystemUtilities.DeleteIfValidObject(obj.BackgroundImageChangedListener);
-            CoreSystemUtilities.DeleteIfValidObject(obj.OverlayImageChangedListener);
-            CoreSystemUtilities.DeleteIfValidObject(obj.QuiverImageChangedListener);
-            CoreSystemUtilities.DeleteIfValidObject(obj.BackgroundImagePointerChangedListener);
-            CoreSystemUtilities.DeleteIfValidObject(obj.OverlayImagePointerChangedListener);
-            CoreSystemUtilities.DeleteIfValidObject(obj.QuiverImagePointerChangedListener);
         end
         
     end
