@@ -300,7 +300,7 @@ classdef PTKViewerPanel < PTKPanel
         function PostCreation(obj, position, reporting)
             % Called after the component and all its children have been created
             
-            obj.ViewerPanelCallback = PTKViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.ControlPanel, obj.DefaultOrientation, obj.Reporting);
+            obj.ViewerPanelCallback = PTKViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
         end            
 
         function input_has_been_processed = Keypressed(obj, click_point, key)

@@ -65,6 +65,11 @@ classdef PTKViewerPanelToolbar < PTKPanel
             obj.AddPostSetListener(obj.ViewerPanel, 'ShowOverlay', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'BlackIsTransparent', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.GuiChangeCallback);
+
+            % Listen for new image events
+            obj.AddEventListener(obj.ViewerPanel, 'NewBackgroundImage', @obj.NewBackgroundImageCallback);
+            obj.AddEventListener(obj.ViewerPanel, 'NewOverlayImage', @obj.NewOverlayImageCallback);
+            obj.AddEventListener(obj.ViewerPanel, 'NewQuiverImage', @obj.NewQuiverImageCallback);
         end
         
         function CreateGuiComponent(obj, position)
@@ -394,5 +399,17 @@ classdef PTKViewerPanelToolbar < PTKPanel
                 obj.Resize(control_panel_position);
             end
         end
+        
+        function NewBackgroundImageCallback(obj, ~, ~)
+            obj.UpdateGui;
+        end
+        
+        function NewOverlayImageCallback(obj, ~, ~)
+            obj.UpdateGui;
+        end
+        
+        function NewQuiverImageCallback(obj, ~, ~)
+            obj.UpdateGui;
+        end        
     end
 end

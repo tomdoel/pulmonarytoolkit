@@ -17,7 +17,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
         
         % Handles for callbacks to udate the GUI
         Tools
-        Toolbar
         ViewerPanel
         ViewerPanelMultiView
         Reporting
@@ -25,10 +24,9 @@ classdef PTKViewerPanelCallback < CoreBaseClass
     
     methods
         
-        function obj = PTKViewerPanelCallback(viewing_panel, viewing_panel_multi_view, tools, toolbar, default_orientation, reporting)
+        function obj = PTKViewerPanelCallback(viewing_panel, viewing_panel_multi_view, tools, default_orientation, reporting)
             obj.DefaultOrientation = default_orientation;
             obj.Tools = tools;
-            obj.Toolbar = toolbar;
             obj.ViewerPanel = viewing_panel;
             obj.ViewerPanelMultiView = viewing_panel_multi_view;
             obj.Reporting = reporting;
@@ -188,9 +186,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.UpdateGuiForNewImage;
             obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
-            if ~isempty(obj.Toolbar)
-                obj.Toolbar.UpdateGui;
-            end
             obj.ViewerPanelMultiView.DrawImages(true, false, false);
             obj.UpdateStatus;
             
