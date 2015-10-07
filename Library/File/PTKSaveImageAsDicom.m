@@ -59,7 +59,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         study_uid = dicomuid;
     end
             
-    % If we are saving a greayscale image, we preserve the metadata.
+    % If we are saving a greyscale image, we preserve the metadata.
     % If we saving a secondary capture (i.e. a derived image such as a
     % segmentation) then we only preserve selected tags from the metadata.
     if is_secondary_capture
@@ -68,11 +68,15 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         metadata.SeriesDescription = [PTKSoftwareInfo.DicomName ' : ' image_data.Title];
         metadata.SOPClassUID = '1.2.840.10008.5.1.4.1.1.7'; % Secondary Capture Image Storage
         metadata.ConversionType = 'WSD'; % Workstation
+        image_type_base = 'DERIVED';
+        metadata.ImageType = 'DERIVED\PRIMARY\AXIAL';
     else
         metadata = original_metadata;
         metadata = CopyField('Modality', metadata, original_metadata, image_data.Modality);
         metadata = CopyField('SeriesDescription', metadata, original_metadata, 'Original Image');
         metadata = CopyField('SOPClassUID', metadata, original_metadata, []);
+        metadata.ImageType = 'ORIGINAL\PRIMARY\AXIAL';
+        image_type_base = 'ORIGINAL';
     end
     
     metadata.SeriesInstanceUID = dicomuid; % MUST be unique for our series
@@ -87,23 +91,26 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
             metadata.ImageOrientationPatient = [1 0 0 0 1 0]';
             slice_spacing = image_data.VoxelSize(3);
             pixel_spacing = image_data.VoxelSize(1:2);
+            image_type_orientation = 'AXIAL';
             
         case PTKImageOrientation.Coronal
             metadata.ImageOrientationPatient = [1 0 0 0 0 -1]';
             slice_spacing = image_data.VoxelSize(1);
             pixel_spacing = image_data.VoxelSize(2:3);
+            image_type_orientation = 'OTHER';
             
         case PTKImageOrientation.Sagittal
             metadata.ImageOrientationPatient = [0 1 0 0 0 -1]';
             slice_spacing = image_data.VoxelSize(2);
             pixel_spacing = image_data.VoxelSize([1,3]);
+            image_type_orientation = 'OTHER';
             
         otherwise
             reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is now known or unsupported.']);
     end
     
     metadata.PatientPosition = 'FFS';
-    metadata.ImageType = 'ORIGINAL\PRIMARY\AXIAL';    
+    metadata.ImageType = [image_type_base '\PRIMARY\' image_type_orientation];
     metadata.SliceThickness = slice_spacing;
     metadata.SpacingBetweenSlices = slice_spacing;
     metadata.PixelSpacing = pixel_spacing';
@@ -145,6 +152,26 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         metadata = CopyField('RescaleSlope', metadata, original_metadata, 1);
     end
     
+    if image_data.ImageType == PTKImageType.Colormap
+        % Tags for RGB
+        metadata.SamplesPerPixel = 3;
+        metadata.PhotometricInterpretation = 'RGB';
+        metadata.PlanarConfiguration = 0;
+        metadata.NumberOfFrames = 1;
+        metadata.BitsAllocated = 8;
+        metadata.BitsStored = 8;
+        metadata.HighBit = 7;
+        
+    else
+        % Tags for CT greyscale image
+        metadata.SamplesPerPixel = 1;
+        metadata.PhotometricInterpretation = 'MONOCHROME2';
+        metadata.BitsAllocated = 16;
+        metadata.BitsStored = 16;
+        metadata.HighBit = 15;
+    end
+    
+    
     num_slices = image_data.ImageSize(orientation);
     for slice_index = 1 : num_slices
         if exist('reporting', 'var')
@@ -170,23 +197,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         end
         
         if image_data.ImageType == PTKImageType.Colormap
-            % Tags for RGB
-            metadata.SamplesPerPixel = 3;
-            metadata.PhotometricInterpretation = 'RGB';
-            metadata.PlanarConfiguration = 0;
-            metadata.NumberOfFrames = 1;
-            metadata.BitsAllocated = 8;
-            metadata.BitsStored = 8;
-            metadata.HighBit = 7;
             [slice_data, ~] = PTKImageUtilities.GetImage(slice_data, [], PTKImageType.Colormap, [], [], []);
-            
-        else
-            % Tags for CT greyscale image
-            metadata.SamplesPerPixel = 1;
-            metadata.PhotometricInterpretation = 'MONOCHROME2';
-            metadata.BitsAllocated = 16;
-            metadata.BitsStored = 16;
-            metadata.HighBit = 15;
         end
                 
         slice_location = double(dicom_coordinates);
