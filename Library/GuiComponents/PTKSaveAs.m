@@ -1,4 +1,4 @@
-function path_name = PTKSaveAs(image_data, patient_name, path_name, reporting)
+function path_name = PTKSaveAs(image_data, patient_name, path_name, is_secondary_capture, reporting)
     % PTKSaveAs. Prompts the user for a filename and file type, and saves the image
     %
     %     Syntax
@@ -15,6 +15,8 @@ function path_name = PTKSaveAs(image_data, patient_name, path_name, reporting)
     %                             Each file is numbered, starting from 0.
     %                             So if filename is 'MyImage.DCM' then the files will be
     %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
+    %             is_secondary_capture   true if the image is derived, false if the pixel data 
+    %                             directly corresponds to the original image pixel data
     %             reporting       A PTKReporting or implementor of the same interface,
     %                             for error and progress reporting. Create a PTKReporting
     %                             with no arguments to hide all reporting
@@ -42,7 +44,7 @@ function path_name = PTKSaveAs(image_data, patient_name, path_name, reporting)
 
     [filename, path_name, filter_index] = SaveImageDialogBox(path_name);
     if filter_index ~= 0
-        SaveImage(image_data, filename, path_name, filter_index, patient_name, reporting);
+        SaveImage(image_data, filename, path_name, filter_index, patient_name, is_secondary_capture, reporting);
     end
 end
 
@@ -60,7 +62,7 @@ function [filename, path_name, filter_index] = SaveImageDialogBox(path_name)
     end
 end
     
-function SaveImage(image_data, filename, pathname, filter_index, patient_name, reporting)
+function SaveImage(image_data, filename, pathname, filter_index, patient_name, is_secondary_capture, reporting)
     reporting.Log(['Saving image ' filename]);
 
     if filter_index ~= 0 && ~isequal(filename,0) && ~isequal(pathname,0)
@@ -68,7 +70,7 @@ function SaveImage(image_data, filename, pathname, filter_index, patient_name, r
         
         switch filter_index
             case 1
-                PTKSaveImageAsDicom(image_data, pathname, filename, patient_name, true, reporting)
+                PTKSaveImageAsDicom(image_data, pathname, filename, patient_name, is_secondary_capture, reporting)
             case 2
                 PTKSaveAsMatlab(image_data, pathname, filename, reporting);
             case 3

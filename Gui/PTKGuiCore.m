@@ -326,7 +326,7 @@ classdef PTKGuiCore < PTKFigure
             image_data = obj.ImagePanel.BackgroundImage;
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             
-            path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
+            path_name = PTKSaveAs(image_data, patient_name, path_name, false, obj.Reporting);
             if ~isempty(path_name)
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
@@ -340,7 +340,7 @@ classdef PTKGuiCore < PTKFigure
             image_data = background_image;
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             
-            path_name = PTKSaveAs(image_data, patient_name, path_name, obj.Reporting);
+            path_name = PTKSaveAs(image_data, patient_name, path_name, true, obj.Reporting);
             if ~isempty(path_name)
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end

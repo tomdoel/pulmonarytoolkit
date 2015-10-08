@@ -168,7 +168,7 @@ classdef PTKManualSegmentationMode < handle
             edited_result.ResizeToMatch(template);
             path_name = obj.Settings.SaveImagePath;
             
-            path_name = PTKSaveAs(edited_result, patient_name, path_name, obj.Reporting);
+            path_name = PTKSaveAs(edited_result, patient_name, path_name, true, obj.Reporting);
             if ~isempty(path_name)
                 obj.Settings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
