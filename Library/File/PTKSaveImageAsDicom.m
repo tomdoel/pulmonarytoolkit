@@ -44,7 +44,6 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     
     orientation = PTKImageCoordinateUtilities.ChooseOrientation(image_data.VoxelSize);
     
-    
     full_filename = fullfile(path, filename);
     [filename_pathstr, filename_name, filename_ext] = fileparts(full_filename);
 
@@ -96,13 +95,13 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         case PTKImageOrientation.Coronal
             metadata.ImageOrientationPatient = [1 0 0 0 0 -1]';
             slice_spacing = image_data.VoxelSize(1);
-            pixel_spacing = image_data.VoxelSize(2:3);
+            pixel_spacing = image_data.VoxelSize([3,2]);
             image_type_orientation = 'OTHER';
             
         case PTKImageOrientation.Sagittal
             metadata.ImageOrientationPatient = [0 1 0 0 0 -1]';
             slice_spacing = image_data.VoxelSize(2);
-            pixel_spacing = image_data.VoxelSize([1,3]);
+            pixel_spacing = image_data.VoxelSize([3,1]);
             image_type_orientation = 'OTHER';
             
         otherwise
@@ -171,6 +170,18 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         metadata.HighBit = 15;
     end
     
+    switch orientation
+        case PTKImageOrientation.Axial
+            saved_dimension_order = [1, 2, 3];
+        case PTKImageOrientation.Coronal
+            saved_dimension_order = [3, 2, 1];
+        case PTKImageOrientation.Sagittal
+            saved_dimension_order = [3, 1, 2];            
+        otherwise
+            reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is not known or unsupported.']);
+    end
+    
+    reordered_image = permute(image_data.RawImage, saved_dimension_order);
     
     num_slices = image_data.ImageSize(orientation);
     for slice_index = 1 : num_slices
@@ -184,17 +195,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         [ptk_x, ptk_y, ptk_z] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
         dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([ptk_x, ptk_y, ptk_z], PTKCoordinateSystem.Dicom, image_data);
         
-        switch orientation
-            case PTKImageOrientation.Axial
-                slice_data = squeeze(image_data.RawImage(:, :, slice_index));
-            case PTKImageOrientation.Coronal
-                slice_data = squeeze(image_data.RawImage(slice_index, :, :))';
-            case PTKImageOrientation.Sagittal
-                slice_data = squeeze(image_data.RawImage(:, slice_index, :));
-            
-            otherwise
-                reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is not known or unsupported.']);
-        end
+        slice_data = reordered_image(:, :, slice_index);        
         
         if image_data.ImageType == PTKImageType.Colormap
             [slice_data, ~] = PTKImageUtilities.GetImage(slice_data, [], PTKImageType.Colormap, [], [], []);
