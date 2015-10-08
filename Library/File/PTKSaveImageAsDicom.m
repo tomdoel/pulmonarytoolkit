@@ -45,7 +45,6 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     orientation = PTKImageCoordinateUtilities.ChooseOrientation(image_data.VoxelSize);
     
     full_filename = fullfile(path, filename);
-    [filename_pathstr, filename_name, filename_ext] = fileparts(full_filename);
 
 
     % Retrieve oiginal DICOM metadata from the image - note this may be empty if
@@ -63,56 +62,40 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     % segmentation) then we only preserve selected tags from the metadata.
     if is_secondary_capture
         metadata = [];
-        metadata.Modality = 'OT';
         metadata.SeriesDescription = [PTKSoftwareInfo.DicomName ' : ' image_data.Title];
-        metadata.SOPClassUID = '1.2.840.10008.5.1.4.1.1.7'; % Secondary Capture Image Storage
-        metadata.ConversionType = 'WSD'; % Workstation
-        image_type_base = 'DERIVED';
-        metadata.ImageType = 'DERIVED\PRIMARY\AXIAL';
     else
         metadata = original_metadata;
         metadata = CopyField('Modality', metadata, original_metadata, image_data.Modality);
         metadata = CopyField('SeriesDescription', metadata, original_metadata, 'Original Image');
         metadata = CopyField('SOPClassUID', metadata, original_metadata, []);
-        metadata.ImageType = 'ORIGINAL\PRIMARY\AXIAL';
-        image_type_base = 'ORIGINAL';
     end
     
-    metadata.SeriesInstanceUID = dicomuid; % MUST be unique for our series
-    metadata.SecondaryCaptureDeviceManufacturer = PTKSoftwareInfo.DicomManufacturer;
-    metadata.SecondaryCaptureDeviceID = PTKSoftwareInfo.DicomName;
-    metadata.SecondaryCaptureDeviceManufacturerModelName = PTKSoftwareInfo.DicomName;
-    metadata.SecondaryCaptureDeviceSoftwareVersion = PTKSoftwareInfo.DicomVersion;
-    metadata.SeriesNumber = []; % SeriesNumber (unlike SeriesInstanceUID) is purely descriptive. Since there is no way of guaranteeing uniqueness, it is better not to set it then to set it to a value like 1 which may already be used
     
     switch orientation
         case PTKImageOrientation.Axial
             metadata.ImageOrientationPatient = [1 0 0 0 1 0]';
             slice_spacing = image_data.VoxelSize(3);
             pixel_spacing = image_data.VoxelSize(1:2);
-            image_type_orientation = 'AXIAL';
             
         case PTKImageOrientation.Coronal
             metadata.ImageOrientationPatient = [1 0 0 0 0 -1]';
             slice_spacing = image_data.VoxelSize(1);
             pixel_spacing = image_data.VoxelSize([3,2]);
-            image_type_orientation = 'OTHER';
             
         case PTKImageOrientation.Sagittal
             metadata.ImageOrientationPatient = [0 1 0 0 0 -1]';
             slice_spacing = image_data.VoxelSize(2);
             pixel_spacing = image_data.VoxelSize([3,1]);
-            image_type_orientation = 'OTHER';
             
         otherwise
             reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is now known or unsupported.']);
     end
     
-    metadata.PatientPosition = 'FFS';
-    metadata.ImageType = [image_type_base '\PRIMARY\' image_type_orientation];
     metadata.SliceThickness = slice_spacing;
     metadata.SpacingBetweenSlices = slice_spacing;
     metadata.PixelSpacing = pixel_spacing';
+    metadata = CopyField('PatientPosition', metadata, original_metadata, []);
+
     
     % There are certain tags we must change to ensure our series is grouped with
     % the original data
@@ -146,30 +129,24 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     metadata = CopyField('ManufacturerModelName', metadata, original_metadata, []);
     metadata = CopyField('ReferencedImageSequence', metadata, original_metadata, []);
     
-    if strcmp(metadata.Modality, 'CT')
+    if isfield(metadata, 'Modality') && strcmp(metadata.Modality, 'CT')
         metadata = CopyField('RescaleIntercept', metadata, original_metadata, -1024);
         metadata = CopyField('RescaleSlope', metadata, original_metadata, 1);
     end
     
     if image_data.ImageType == PTKImageType.Colormap
-        % Tags for RGB
-        metadata.SamplesPerPixel = 3;
-        metadata.PhotometricInterpretation = 'RGB';
-        metadata.PlanarConfiguration = 0;
-        metadata.NumberOfFrames = 1;
-        metadata.BitsAllocated = 8;
-        metadata.BitsStored = 8;
-        metadata.HighBit = 7;
-        
+        image_type = DMImageType.RGBLabel;
     else
-        % Tags for CT greyscale image
-        metadata.SamplesPerPixel = 1;
-        metadata.PhotometricInterpretation = 'MONOCHROME2';
-        metadata.BitsAllocated = 16;
-        metadata.BitsStored = 16;
-        metadata.HighBit = 15;
+        image_type = DMImageType.MonoOriginal;
     end
     
+    reordered_image = ReorderImage(image_data, orientation, reporting);
+    dicom_coordinates_list = ComputeDicomSliceCoordinates(image_data, orientation);
+    
+    SaveDicomFile(full_filename, reordered_image, dicom_coordinates_list, metadata, image_type, PTKSoftwareInfo, reporting);
+end
+
+function reordered_image = ReorderImage(image_data, orientation, reporting)
     switch orientation
         case PTKImageOrientation.Axial
             saved_dimension_order = [1, 2, 3];
@@ -182,47 +159,106 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     end
     
     reordered_image = permute(image_data.RawImage, saved_dimension_order);
-    
+end
+
+function dicom_coordinates_list = ComputeDicomSliceCoordinates(image_data, orientation)
     num_slices = image_data.ImageSize(orientation);
+    local_coordinates_list = ones(num_slices, 3);
+    local_coordinates_list(:, orientation) = (1 : num_slices)';
+    global_image_coords = image_data.LocalToGlobalCoordinates(local_coordinates_list);
+    [x_mm, y_mm, z_mm] = image_data.GlobalCoordinatesToCoordinatesMm(global_image_coords);
+    [ptk_x, ptk_y, ptk_z] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(x_mm, y_mm, z_mm);
+    dicom_coordinates_list = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([ptk_x, ptk_y, ptk_z], PTKCoordinateSystem.Dicom, image_data);
+end
+
+function SaveDicomFile(base_filename, ordered_image, dicom_coordinates_list, metadata, image_type, software_info, reporting)
+
+    metadata.SeriesInstanceUID = dicomuid; % MUST be unique for our series
+    metadata.SecondaryCaptureDeviceManufacturer = software_info.DicomManufacturer;
+    metadata.SecondaryCaptureDeviceID = software_info.DicomName;
+    metadata.SecondaryCaptureDeviceManufacturerModelName = software_info.DicomName;
+    metadata.SecondaryCaptureDeviceSoftwareVersion = software_info.DicomVersion;
+    metadata.SeriesNumber = []; % SeriesNumber (unlike SeriesInstanceUID) is purely descriptive. Since there is no way of guaranteeing uniqueness, it is better not to set it then to set it to a value like 1 which may already be used
+
+    if isequal(image_type, DMImageType.RGBLabel)
+        % Tags for derived image
+        metadata.ImageType = 'DERIVED\SECONDARY';
+        metadata.Modality = 'OT';
+        metadata.SOPClassUID = '1.2.840.10008.5.1.4.1.1.7'; % Secondary Capture Image Storage
+        metadata.ConversionType = 'WSD'; % Workstation
+        
+        % Tags for RGB image
+        metadata.SamplesPerPixel = 3;
+        metadata.PhotometricInterpretation = 'RGB';
+        metadata.PlanarConfiguration = 0;
+        metadata.NumberOfFrames = 1;
+        metadata.BitsAllocated = 8;
+        metadata.BitsStored = 8;
+        metadata.HighBit = 7;
+        
+    elseif isequal(image_type, DMImageType.MonoOriginal)
+        % Tags for original image
+        metadata.ImageType = 'ORIGINAL\PRIMARY';
+
+        % Tags for greyscale image
+        metadata.SamplesPerPixel = 1;
+        metadata.PhotometricInterpretation = 'MONOCHROME2';
+        metadata.BitsAllocated = 16;
+        metadata.BitsStored = 16;
+        metadata.HighBit = 15;
+        
+    else
+        reporting.ShowWarning('PTKSaveImageAsDicom:UnknownImageTyoe', 'The specified image type was not recognised', []);
+    end
+
+
+    num_slices = size(ordered_image, 3);
+    [filename_pathstr, filename_name, filename_ext] = fileparts(base_filename);
+    
+    % Save each slice as a separate image
     for slice_index = 1 : num_slices
+        
+        % Update progress
         if exist('reporting', 'var')
             reporting.UpdateProgressValue(round(100*(slice_index-1)/num_slices));
         end
-
-        global_coords_slice = [1, 1, 1];
-        global_coords_slice(orientation) = slice_index;
-        [ic, jc, kc] = image_data.GlobalCoordinatesToCoordinatesMm(global_coords_slice);
-        [ptk_x, ptk_y, ptk_z] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
-        dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([ptk_x, ptk_y, ptk_z], PTKCoordinateSystem.Dicom, image_data);
         
-        slice_data = reordered_image(:, :, slice_index);        
-        
-        if image_data.ImageType == PTKImageType.Colormap
-            [slice_data, ~] = PTKImageUtilities.GetImage(slice_data, [], PTKImageType.Colormap, [], [], []);
-        end
-                
-        slice_location = double(dicom_coordinates);
-        
-        metadata.InstanceNumber = double(slice_index);
-        metadata.ImagePositionPatient = slice_location;
-        metadata.SliceLocation = slice_location(3);
-
-        metadata.SOPInstanceUID = dicomuid; % MUST be unique for each image
-        
-        % MediaStorageSOPInstanceUID must be the same as the SOPInstanceUID
-        metadata.MediaStorageSOPInstanceUID = metadata.SOPInstanceUID;
-        
+        % Determine the slice filename
         slice_filename = [filename_name, int2str(slice_index - 1)];
         full_filename = fullfile(filename_pathstr, [slice_filename, filename_ext]);
         
+        % Get the next image slice
+        slice_data = ordered_image(:, :, slice_index);
+        
+        % For label images, convert to RGB
+        if isequal(image_type, DMImageType.RGBLabel)
+            [slice_data, ~] = PTKImageUtilities.GetImage(slice_data, [], PTKImageType.Colormap, [], [], []);
+        end
+        
+        % The current image number. Although the Dicom standard does not guarantee
+        % any interpretation of this, it is commonly taken to indicate image order
+        metadata.InstanceNumber = double(slice_index);
+        
+        % The coordinates of the first voxel in the slice
+        slice_location = double(dicom_coordinates_list(slice_index, :));
+        metadata.ImagePositionPatient = slice_location;
+        metadata.SliceLocation = slice_location(3);
+        
+        % Unique identifiers
+        metadata.SOPInstanceUID = dicomuid; % MUST be unique for each image
+        metadata.MediaStorageSOPInstanceUID = metadata.SOPInstanceUID; % MediaStorageSOPInstanceUID must be the same as the SOPInstanceUID
+        
+        % Write the slice
         status = dicomwrite(slice_data, full_filename, metadata, 'CreateMode', 'Copy');
         
+        % Check the result of the writing operation
         if ~IsStatusEmpty(status)
             reporting.ShowWarning('PTKSaveImageAsDicom:DicomWriteWarning', 'Dicomwrite returned a warning when saving the image', status);
         end
+        
     end
     
-    % Show a progress dialog
+    % Signal progress completion
     if exist('reporting', 'var')
         reporting.CompleteProgress;
     end
