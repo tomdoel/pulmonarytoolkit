@@ -114,15 +114,15 @@ classdef PTKScreenImage < PTKPositionlessUserInterfaceObject
         function [rgb_image, alpha] = GetLabeledImage(image, map)
             if isempty(map)
                 if isa(image, 'double') || isa(image, 'single')
-                    rgb_image = PTKLabel2Rgb(round(image));
+                    rgb_image = CoreLabel2Rgb(round(image));
                 else
-                    rgb_image = PTKLabel2Rgb(image);
+                    rgb_image = CoreLabel2Rgb(image);
                 end
             else
                 if isa(image, 'double') || isa(image, 'single')
-                    rgb_image = PTKLabel2Rgb(map(round(image + 1)));
+                    rgb_image = CoreLabel2Rgb(map(round(image + 1)));
                 else
-                    rgb_image = PTKLabel2Rgb(map(image + 1));
+                    rgb_image = CoreLabel2Rgb(map(image + 1));
                 end
             end
             alpha = int8(image ~= 0);

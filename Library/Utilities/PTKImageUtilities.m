@@ -18,7 +18,7 @@ classdef PTKImageUtilities
                     rescaled_image_slice = PTKImageUtilities.RescaleImage(image_slice, window, level);
                     [rgb_slice, alpha_slice] = PTKImageUtilities.GetBWImage(rescaled_image_slice);
                 case PTKImageType.Colormap
-                    [rgb_slice, alpha_slice] = PTKImageUtilities.GetLabeledImage(image_slice, map);
+                    [rgb_slice, alpha_slice] = CoreImageUtilities.GetLabeledImage(image_slice, map);
                 case PTKImageType.Scaled
                     [rgb_slice, alpha_slice] = PTKImageUtilities.GetColourMap(image_slice, limits);
             end
@@ -29,25 +29,6 @@ classdef PTKImageUtilities
         function [rgb_image, alpha] = GetBWImage(image)
             rgb_image = (cat(3, image, image, image));
             alpha = ones(size(image));
-        end
-
-        % Returns an RGB image from a colormap matrix
-        function [rgb_image, alpha] = GetLabeledImage(image, map)
-            if isempty(map)
-                if isa(image, 'double') || isa(image, 'single')
-                    rgb_image = PTKLabel2Rgb(round(image));
-                else
-                    rgb_image = PTKLabel2Rgb(image);
-                end
-                alpha = int8(image ~= 0);
-            else
-                if isa(image, 'double') || isa(image, 'single')
-                    rgb_image = PTKLabel2Rgb(map(round(image + 1)));
-                else
-                    rgb_image = PTKLabel2Rgb(map(image + 1));
-                end
-                alpha = int8(image ~= 0);
-            end
         end
 
         % Returns an RGB image from a scaled floating point scalar image
