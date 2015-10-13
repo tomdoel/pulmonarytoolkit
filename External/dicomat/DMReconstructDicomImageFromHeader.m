@@ -14,7 +14,7 @@ function image_data = DMReconstructDicomImageFromHeader(header, is_little_endian
     %     -------
     %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
 
     photometric_interpretation = header.PhotometricInterpretation;

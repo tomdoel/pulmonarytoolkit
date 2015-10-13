@@ -27,7 +27,7 @@ function [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLoc
     %     -------
     %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %        
     
     
