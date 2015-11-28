@@ -1,4 +1,4 @@
-classdef TestContainerUtilities < PTKTest
+classdef TestContainerUtilities < CoreTest
     % TestContainerUtilities. Tests for the PTKContainerUtilities class.
     %
     %

@@ -1,4 +1,4 @@
-classdef TestSavePtkRawImage < PTKTest
+classdef TestSavePtkRawImage < CoreTest
     % TestSavePtkRawImage. Tests for the TestSavePtkRawImage and TestLoadPtkRawImage class.
     %
     %

@@ -1,4 +1,4 @@
-classdef TestAreImagesInSameGroup < PTKTest
+classdef TestAreImagesInSameGroup < CoreTest
     % TestAreImagesInSameGroup. Tests for the DMAreImagesInSameGroup function.
     %
     %

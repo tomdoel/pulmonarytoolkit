@@ -1,4 +1,4 @@
-classdef TestLoadSaveXML < PTKTest
+classdef TestLoadSaveXML < CoreTest
     % TestLoadSaveXML. Tests for loading and saving XML files
     %
     %

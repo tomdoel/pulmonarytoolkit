@@ -1,4 +1,4 @@
-classdef TestTextUtilities < PTKTest
+classdef TestTextUtilities < CoreTest
     % TestImageTextUtilities. Tests for the PTKTextUtilities class.
     %
     %

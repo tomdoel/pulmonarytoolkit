@@ -18,6 +18,7 @@ function CoreAddPaths(varargin)
         % List of folders to add to the path
         path_folders{end + 1} = '';
         path_folders{end + 1} = 'MexCompile';
+        path_folders{end + 1} = 'MTest';
         path_folders{end + 1} = 'Reporting';
         path_folders{end + 1} = 'Types';
         path_folders{end + 1} = 'Utilities';

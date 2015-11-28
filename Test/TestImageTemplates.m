@@ -1,4 +1,4 @@
-classdef TestImageTemplates < PTKTest
+classdef TestImageTemplates < CoreTest
     % TestImageTemplates. Tests for the PTKImageTemplates class.
     %
     %
@@ -12,7 +12,7 @@ classdef TestImageTemplates < PTKTest
     methods
         function obj = TestImageTemplates
             
-            mock_reporting = MockReporting;
+            mock_reporting = CoreMockReporting;
             mock_datset_disk_cache = MockDatasetDiskCache;
             mock_dataset_results = MockDatasetResults;
             context_def = PTKContextDef;
@@ -40,11 +40,11 @@ classdef TestImageTemplates < PTKTest
             % When asking for a template, the code should fail if the template
             % could not be generated
             mock_dataset_results.AddMockResult('PTKOriginalImage', PTKContext.OriginalImage, [], [], [], true);
-            mock_reporting.AddExpectation('MockReporting.Error', 'PTKImageTemplates:NoContext');
+            mock_reporting.AddExpectation('CoreMockReporting.Error', 'PTKImageTemplates:NoContext');
             try
                 template_image = image_templates.GetTemplateImage(PTKContext.OriginalImage, null_dataset_stack, mock_reporting);
             catch ex
-                if ~isa(ex, 'PTKTestException')
+                if ~isa(ex, 'CoreTestException')
                     CoreErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
                     
                 end
@@ -67,21 +67,21 @@ classdef TestImageTemplates < PTKTest
             % leaving RightLung enabled)
             
             mock_dataset_results.AddMockResult('PTKLungROI', PTKContext.LungROI, [], [], [], true);
-            mock_reporting.AddExpectation('MockReporting.Error', 'PTKImageTemplates:NoContext');
+            mock_reporting.AddExpectation('CoreMockReporting.Error', 'PTKImageTemplates:NoContext');
             try
                 template_image = image_templates.GetTemplateImage(PTKContext.LungROI, null_dataset_stack, mock_reporting);
             catch ex
-                if ~isa(ex, 'PTKTestException')
+                if ~isa(ex, 'CoreTestException')
                     CoreErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
                     
                 end
             end
             mock_dataset_results.AddMockResult('PTKGetContextForSingleLung', PTKContext.LeftLung, [], [], [], true);
-            mock_reporting.AddExpectation('MockReporting.Error', 'PTKImageTemplates:NoContext');
+            mock_reporting.AddExpectation('CoreMockReporting.Error', 'PTKImageTemplates:NoContext');
             try
                 template_image = image_templates.GetTemplateImage(PTKContext.LeftLung, null_dataset_stack, mock_reporting);
             catch ex
-                if ~isa(ex, 'PTKTestException')
+                if ~isa(ex, 'CoreTestException')
                     CoreErrorUtilities.ThrowException('TestImageTemplates:WrongException', 'Test failure: test exception expected');
                     
                 end

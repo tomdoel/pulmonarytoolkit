@@ -1,4 +1,4 @@
-classdef TestStack < PTKTest
+classdef TestStack < CoreTest
     % TestStack. Tests for the PTKStack class.
     %
     %

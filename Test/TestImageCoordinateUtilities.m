@@ -1,4 +1,4 @@
-classdef TestImageCoordinateUtilities < PTKTest
+classdef TestImageCoordinateUtilities < CoreTest
     % TestImageCoordinateUtilities. Tests for the PTKImageCoordinateUtilities class.
     %
     %
@@ -11,7 +11,7 @@ classdef TestImageCoordinateUtilities < PTKTest
 
     methods
         function obj = TestImageCoordinateUtilities
-            mock_reporting = MockReporting;
+            mock_reporting = CoreMockReporting;
             
             obj.TestGetDimensionPermutationVectorFromDicomOrientation(mock_reporting);
             obj.TestGetDimensionIndicesAsArray(mock_reporting);
