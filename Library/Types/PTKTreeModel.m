@@ -2,7 +2,7 @@ classdef PTKTreeModel < PTKTree
     % PTKTreeModel. A branch of a tree model (used to store airways, vessels
     % etc.)
     %
-    % A PTKTreeModel is s tree structure which represents an airway centreline
+    % A PTKTreeModel is a tree structure which represents an airway centreline
     % with radius information. As such, it is a "model" of an airway, rather
     % than a "segmentation"
     %
