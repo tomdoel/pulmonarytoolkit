@@ -1,4 +1,4 @@
-classdef PTKViewerPanel < PTKPanel
+classdef PTKViewerPanel < GemPanel
     % PTKViewerPanel. Creates a data viewer window for imaging 3D data slice-by-slice.
     %
     %     PTKViewerPanel creates a visualisation window on the supplied
@@ -100,7 +100,7 @@ classdef PTKViewerPanel < PTKPanel
         function obj = PTKViewerPanel(parent, show_control_panel)
             % Creates a PTKViewerPanel
             
-            obj = obj@PTKPanel(parent);
+            obj = obj@GemPanel(parent);
             
             obj.ShowControlPanel = show_control_panel;
             
@@ -144,7 +144,7 @@ classdef PTKViewerPanel < PTKPanel
         function Resize(obj, position)
             % Resize the viewer panel and its subcomponents
             
-            Resize@PTKPanel(obj, position);
+            Resize@GemPanel(obj, position);
             
             % Position axes and slice slider
             parent_width_pixels = position(3);

@@ -84,7 +84,7 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
             
             obj.Save(reporting);
             
-            notify(obj, 'LinkingChanged', PTKEventData(secondary_uid));
+            notify(obj, 'LinkingChanged', CoreEventData(secondary_uid));
         end
         
         function AddLink(obj, primary_uid, secondary_uid, name, reporting)
@@ -106,7 +106,7 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
             
             obj.Save(reporting);
             
-            notify(obj, 'LinkingChanged', PTKEventData(secondary_uid));
+            notify(obj, 'LinkingChanged', CoreEventData(secondary_uid));
         end
         
 

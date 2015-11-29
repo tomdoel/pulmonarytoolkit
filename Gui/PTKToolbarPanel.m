@@ -1,4 +1,4 @@
-classdef PTKToolbarPanel < PTKPanel
+classdef PTKToolbarPanel < GemPanel
     % PTKToolbarPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -36,7 +36,7 @@ classdef PTKToolbarPanel < PTKPanel
     
     methods
         function obj = PTKToolbarPanel(parent, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def)
-            obj = obj@PTKPanel(parent);
+            obj = obj@GemPanel(parent);
             
             obj.ModeTabName = mode_tab_name;
             obj.ModeToSwitchTo = mode_to_switch_to;
@@ -54,7 +54,7 @@ classdef PTKToolbarPanel < PTKPanel
         end
         
         function Resize(obj, new_position)
-            Resize@PTKPanel(obj, new_position);
+            Resize@GemPanel(obj, new_position);
 
             panel_height = max(1, new_position(4));
             row_height = obj.RowHeight;
@@ -142,7 +142,7 @@ classdef PTKToolbarPanel < PTKPanel
             tool_name = class(tool);
             category_key = tool.Category;
             if ~obj.ControlGroups.isKey(category_key)
-                new_group = PTKLabelButtonGroup(obj, category_key, '', category_key);
+                new_group = GemLabelButtonGroup(obj, category_key, '', category_key);
                 obj.ControlGroups(category_key) = new_group;
                 obj.OrderedControlGroupList{end + 1} = new_group;
                 obj.AddChild(new_group);

@@ -29,7 +29,7 @@ classdef PTKOverlayScreenImageFromVolume < PTKScreenImageFromVolume
         end
 
         function SetRangeWithPositionAdjustment(obj, x_range, y_range)
-            [dim_x_index, dim_y_index, dim_z_index] = PTKImageCoordinateUtilities.GetXYDimensionIndex(obj.ViewerPanel.Orientation);
+            [dim_x_index, dim_y_index, dim_z_index] = GemUtilities.GetXYDimensionIndex(obj.ViewerPanel.Orientation);
             
             overlay_offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ViewerPanel.BackgroundImage, obj.ViewerPanel.OverlayImage);
             overlay_offset_x_voxels = overlay_offset_voxels(dim_x_index);

@@ -1,4 +1,4 @@
-classdef PTKPatientsSidePanel < PTKListBoxWithTitle
+classdef PTKPatientsSidePanel < GemListBoxWithTitle
     % PTKPatientsSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -27,7 +27,7 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
     
     methods
         function obj = PTKPatientsSidePanel(parent, patient_database, gui_callback)
-            obj = obj@PTKListBoxWithTitle(parent, 'PATIENT', 'Import images', 'Delete patient');
+            obj = obj@GemListBoxWithTitle(parent, 'PATIENT', 'Import images', 'Delete patient');
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
         end

@@ -1,4 +1,4 @@
-classdef PTKPluginsPanel < PTKCompositePanel
+classdef PTKPluginsPanel < GemCompositePanel
     % PTKPluginsPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -36,7 +36,7 @@ classdef PTKPluginsPanel < PTKCompositePanel
     
     methods
         function obj = PTKPluginsPanel(parent, organised_plugins, plugins_mode_group, mode_to_switch_to, visibility, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback)
-            obj = obj@PTKCompositePanel(parent);
+            obj = obj@GemCompositePanel(parent);
             
             obj.OrganisedPlugins = organised_plugins;
             obj.ModeTabName = plugins_mode_group;

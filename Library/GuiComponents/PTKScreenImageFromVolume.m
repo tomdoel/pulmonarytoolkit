@@ -1,4 +1,4 @@
-classdef PTKScreenImageFromVolume < PTKScreenImage
+classdef PTKScreenImageFromVolume < GemScreenImage
     % PTKScreenImageFromVolume. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -21,7 +21,7 @@ classdef PTKScreenImageFromVolume < PTKScreenImage
     
     methods
         function obj = PTKScreenImageFromVolume(parent, image_source)
-            obj = obj@PTKScreenImage(parent);
+            obj = obj@GemScreenImage(parent);
             obj.ImageSource = image_source;
         end
 
@@ -54,7 +54,7 @@ classdef PTKScreenImageFromVolume < PTKScreenImage
                         end
                     end
                     
-                    [rgb_slice, alpha_slice] = PTKScreenImage.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, black_is_transparent, image_object.ColorLabelMap);
+                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, black_is_transparent, image_object.ColorLabelMap);
                     alpha_slice = double(alpha_slice)*opacity/100;
                     
                     % Special code to highlight one colour
@@ -73,6 +73,26 @@ classdef PTKScreenImageFromVolume < PTKScreenImage
     
     methods (Access = private, Static)
         
+        function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level, black_is_transparent, map)
+            switch image_type
+                case PTKImageType.Grayscale
+                    rescaled_image_slice = PTKScreenImageFromVolume.RescaleImage(image_slice, window, level);
+                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetBWImage(rescaled_image_slice);
+                case PTKImageType.Colormap
+                    
+                    % An empty limits indicates the value should never be below zero. This saves
+                    % having to fetch the actual limits in the calling function, which is slow if
+                    % done interactively
+                    if ~isempty(limits) && limits(1) < 0
+                        image_slice = image_slice - limits(1);
+                    end
+                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetLabeledImage(image_slice, map);
+                case PTKImageType.Scaled
+                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetColourMap(image_slice, limits, black_is_transparent);
+            end
+            
+        end
+        
         function image_slice = GetImageSlice(background_image, image_object, slice_number, orientation)
             offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(background_image, image_object);
             
@@ -84,6 +104,55 @@ classdef PTKScreenImageFromVolume < PTKScreenImage
             end
             if (orientation ~= PTKImageOrientation.Axial)
                 image_slice = image_slice';
+            end
+        end
+        
+        
+        function rescaled_image = RescaleImage(image, window, level)
+            min_value = double(level) - double(window)/2;
+            max_value = double(level) + double(window)/2;
+            scale_factor = 255/max(1, (max_value - min_value));
+            rescaled_image = uint8(min(((image - min_value)*scale_factor), 255));
+        end
+        
+        function [rgb_image, alpha] = GetBWImage(image)
+            rgb_image = (cat(3, image, image, image));
+            alpha = ones(size(image));
+        end
+        
+        function [rgb_image, alpha] = GetLabeledImage(image, map)
+            if isempty(map)
+                if isa(image, 'double') || isa(image, 'single')
+                    rgb_image = CoreLabel2Rgb(round(image));
+                else
+                    rgb_image = CoreLabel2Rgb(image);
+                end
+            else
+                if isa(image, 'double') || isa(image, 'single')
+                    rgb_image = CoreLabel2Rgb(map(round(image + 1)));
+                else
+                    rgb_image = CoreLabel2Rgb(map(image + 1));
+                end
+            end
+            alpha = int8(image ~= 0);
+        end
+        
+        function [rgb_image, alpha] = GetColourMap(image, image_limits, black_is_transparent)
+            image_limits(1) = min(-1, image_limits(1));
+            image_limits(2) = max(1, image_limits(2));
+            positive_mask = image >= 0;
+            rgb_image = zeros([size(image), 3], 'uint8');
+            positive_image = abs(double(image))/abs(double(image_limits(2)));
+            negative_image = abs(double(image))/abs(double(image_limits(1)));
+            rgb_image(:, :, 1) = uint8(positive_mask).*(uint8(255*positive_image));
+            rgb_image(:, :, 3) = uint8(~positive_mask).*(uint8(255*negative_image));
+            
+            if black_is_transparent
+                alpha = double(positive_mask).*positive_image + single(~positive_mask).*negative_image;
+                rgb_image(:, :, 1) = 255*uint8(positive_mask);
+                rgb_image(:, :, 3) = 255*uint8(~positive_mask);
+            else
+                alpha = ones(size(image));
             end
         end
         

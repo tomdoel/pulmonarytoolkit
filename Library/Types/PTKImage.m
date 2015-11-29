@@ -1074,7 +1074,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function ball_element = CreateBallStructuralElement(obj, size_mm)
-            ball_element = PTKImageUtilities.CreateBallStructuralElement(obj.VoxelSize, size_mm);
+            ball_element = CoreImageUtilities.CreateBallStructuralElement(obj.VoxelSize, size_mm);
         end
         
         % Guesses which type of image rendering would be best. 

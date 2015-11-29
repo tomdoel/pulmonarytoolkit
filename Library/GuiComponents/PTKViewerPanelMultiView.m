@@ -1,4 +1,4 @@
-classdef PTKViewerPanelMultiView < PTKMultiPanel
+classdef PTKViewerPanelMultiView < GemMultiPanel
     % PTKViewerPanelMultiView. Contains panels for 2D and 3D views, and allows
     %     switching between them
     %
@@ -22,7 +22,7 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
     
     methods
         function obj = PTKViewerPanelMultiView(viewer_panel)
-            obj = obj@PTKMultiPanel(viewer_panel);
+            obj = obj@GemMultiPanel(viewer_panel);
             
             obj.CinePanel2D = PTKCinePanelWithTools(obj, viewer_panel);
             
@@ -33,14 +33,14 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
         end
         
         function CreateGuiComponent(obj, position)
-            CreateGuiComponent@PTKMultiPanel(obj, position);
+            CreateGuiComponent@GemMultiPanel(obj, position);
 
 %             obj.UpdateGui;
             obj.Resize(position);
         end
         
         function Resize(obj, position)
-            Resize@PTKMultiPanel(obj, position);
+            Resize@GemMultiPanel(obj, position);
             
             % Position axes and slice slider
             obj.CinePanel2D.Resize(obj.InnerPosition);

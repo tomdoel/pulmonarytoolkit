@@ -11,40 +11,6 @@ classdef PTKImageUtilities
         
     methods (Static)
         
-        % Returns a 2D image slice and alpha information
-        function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level, map)
-            switch image_type
-                case PTKImageType.Grayscale
-                    rescaled_image_slice = PTKImageUtilities.RescaleImage(image_slice, window, level);
-                    [rgb_slice, alpha_slice] = PTKImageUtilities.GetBWImage(rescaled_image_slice);
-                case PTKImageType.Colormap
-                    [rgb_slice, alpha_slice] = CoreImageUtilities.GetLabeledImage(image_slice, map);
-                case PTKImageType.Scaled
-                    [rgb_slice, alpha_slice] = PTKImageUtilities.GetColourMap(image_slice, limits);
-            end
-            
-        end
-        
-        % Returns an RGB image from a greyscale matrix
-        function [rgb_image, alpha] = GetBWImage(image)
-            rgb_image = (cat(3, image, image, image));
-            alpha = ones(size(image));
-        end
-
-        % Returns an RGB image from a scaled floating point scalar image
-        function [rgb_image, alpha] = GetColourMap(image, image_limits)
-            image_limits(1) = min(0, image_limits(1));
-            image_limits(2) = max(0, image_limits(2));
-            positive_mask = image >= 0;
-            rgb_image = zeros([size(image), 3], 'uint8');
-            positive_image = abs(double(image))/abs(double(image_limits(2)));
-            negative_image = abs(double(image))/abs(double(image_limits(1)));
-            rgb_image(:, :, 1) = uint8(positive_mask).*(uint8(255*positive_image));
-            rgb_image(:, :, 3) = uint8(~positive_mask).*(uint8(255*negative_image));
-            
-            alpha = int8(min(1, abs(max(positive_image, negative_image))));
-        end
-        
         % Rescale image to a single-byte in the range 0-255.
         function rescaled_image = RescaleImage(image, window, level)
             min_value = double(level) - double(window)/2;
@@ -89,35 +55,9 @@ classdef PTKImageUtilities
             end
         end
         
-        function disk_element = CreateDiskStructuralElement(pixel_size, size_mm)
-            strel_size_voxels = ceil(size_mm./(2*pixel_size));
-            ispan = -strel_size_voxels(1) : strel_size_voxels(1);
-            jspan = -strel_size_voxels(2) : strel_size_voxels(2);
-            [i, j] = ndgrid(ispan, jspan);
-            i = i.*pixel_size(1);
-            j = j.*pixel_size(2);
-            disk_element = zeros(size(i));
-            disk_element(:) = sqrt(i(:).^2 + j(:).^2);
-            disk_element = disk_element <= (size_mm/2);
-        end
-        
-        
-        function ball_element = CreateBallStructuralElement(voxel_size, size_mm)
-            strel_size_voxels = ceil(size_mm./(2*voxel_size));
-            ispan = -strel_size_voxels(1) : strel_size_voxels(1);
-            jspan = -strel_size_voxels(2) : strel_size_voxels(2);
-            kspan = -strel_size_voxels(3) : strel_size_voxels(3);
-            [i, j, k] = ndgrid(ispan, jspan, kspan);
-            i = i.*voxel_size(1);
-            j = j.*voxel_size(2);
-            k = k.*voxel_size(3);
-            ball_element = zeros(size(i));
-            ball_element(:) = sqrt(i(:).^2 + j(:).^2 + k(:).^2);
-            ball_element = ball_element <= (size_mm/2);
-        end
         
         function [offset_indices, ball] = GetBallOffsetIndices(voxel_size, size_mm, image_size)
-            ball = PTKImageUtilities.CreateBallStructuralElement(voxel_size, size_mm);
+            ball = CoreImageUtilities.CreateBallStructuralElement(voxel_size, size_mm);
             ball_indices = find(ball);
             central_coord = 1 + round(size(ball) - 1)/2;
             indices_big = PTKImageCoordinateUtilities.OffsetIndices(ball_indices, [0 0 0], size(ball), image_size); %#ok<FNDSB>
@@ -320,39 +260,6 @@ classdef PTKImageUtilities
             results.MaxDistanceCombined = max_c;
         end
         
-        function frame = CaptureFigure(figure_handle, rect_screenpixels)
-            % Use Matlab's undocumented hardcopy() function to capture an image from a figure, avoiding the limitations of getframe()
-            % Store current figure settings
-            old_renderer     = get(figure_handle, 'Renderer');
-            old_resize_fcn = get(figure_handle, 'ResizeFcn');
-            old_paper_position_mode = get(figure_handle, 'PaperPositionMode');
-            old_paper_orientation  = get(figure_handle, 'PaperOrientation');
-            old_invert_hardcopy = get(figure_handle, 'InvertHardcopy');
-            
-            % Choose renderer
-            if strcmpi(old_renderer, 'painters')
-                image_renderer = '-dzbuffer';
-            else
-                image_renderer = ['-d', old_renderer];
-            end
-            
-            % Change figure settings
-            set(figure_handle, 'PaperPositionMode', 'auto', 'PaperOrientation', 'portrait', ...
-                'InvertHardcopy', 'off', 'ResizeFcn', '');
-            
-            % Get image
-            cdata = hardcopy(figure_handle, image_renderer);
-            frame = im2frame(cdata);
-            
-            % Restore figure settings
-            set(figure_handle, 'PaperPositionMode', old_paper_position_mode, 'PaperOrientation', old_paper_orientation, ...
-                'InvertHardcopy', old_invert_hardcopy, 'ResizeFcn', old_resize_fcn);
-            
-            frame_height = size(frame.cdata, 1);
-            cdata = frame.cdata(1 + frame_height - (rect_screenpixels(2)+rect_screenpixels(4)) : frame_height - rect_screenpixels(2), rect_screenpixels(1):rect_screenpixels(1)+rect_screenpixels(3)-1, :);
-            frame.cdata = cdata;
-        end
-        
         function rgb_image = GetButtonImage(image_preview, button_width, button_height, window_hu, level_hu, border, background_colour, border_colour)
             if ~isempty(image_preview)
                 if islogical(image_preview.RawImage)
@@ -386,73 +293,28 @@ classdef PTKImageUtilities
                 window_grayscale = window_hu;
             end
             
-            
-            button_background_colour = uint8(255*background_colour);
-            button_text_colour = 150*[1, 1, 1];
-                        
             if (image_type == 3) && isempty(image_preview_limits)
                 obj.Reporting.ShowWarning('PTKImageUtilities:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
                 image_preview_limits = [1 100];
             end
             
             [rgb_image, ~] = PTKImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale, []);
-            
-            final_fade_factor = 0.3;
-            rgb_image_factor = final_fade_factor*ones(size(rgb_image));
-            x_range = 1 : -1/(button_height - 1) : 0;
-            x_range = (1-final_fade_factor)*x_range + final_fade_factor;
-            rgb_image_factor(:, 1:button_height, :) = repmat(x_range, [button_height, 1, 3]);
-            rgb_image = uint8(round(rgb_image_factor.*double(rgb_image)));
-            
-            rgb_image = PTKImageUtilities.AddBorderToRGBImage(rgb_image, button_image, border, button_background_colour, button_text_colour, border_colour, []);
+            rgb_image = GemUtilities.ConvertImageToButtonImage(border, background_colour, border_colour, button_image, rgb_image);
         end
-        
-        function rgb_image = AddBorderToRGBImage(rgb_image, mask_image, border_size, button_background_colour, button_foreground_colour, border_colour, contrast_colour)
-            for c = 1 : 3
-                color_slice = rgb_image(:, :, c);
-                color_slice(mask_image(:) == 0) = button_background_colour(c);
-                color_slice(mask_image(:) == 255) = button_foreground_colour(c);
-                rgb_image(:, :, c) = color_slice;
-                
-                if border_size > 0
-                    if ~isempty(contrast_colour)
-                        rgb_image(1+border_size+1, :, c) = contrast_colour(c);
-                        rgb_image(end-border_size-1, :, c) = contrast_colour(c);
-                        rgb_image(:, border_size+1, c) = contrast_colour(c);
-                        rgb_image(:, end-border_size:end, c) = contrast_colour(c);
-                    end
-                    rgb_image(1:1+border_size, :, c) = border_colour(c);
-                    rgb_image(end-border_size+1:end, :, c) = border_colour(c);
-                    rgb_image(:, 1:border_size, c) = border_colour(c);
-                    rgb_image(:, end-border_size+1:end, c) = border_colour(c);
-                    
-                end
-            end
-        end
-        
-        function border_image = GetBorderImage(image_size, border_size)
-            border_image = false(image_size);
-            border_image(1:1+border_size, :) = true;
-            border_image(end-border_size+1:end, :) = true;
-            border_image(:, 1:border_size) = true;
-            border_image(:, end-border_size+1:end) = true;
-        end
-        
 
-        function rgb_image = AddHighlightToRGBImage(rgb_image, highlight_mask_image, highlight_colour)
-            for index = 1 : 3
-                image_layer = rgb_image(:, :, index);
-                image_layer(highlight_mask_image) = highlight_colour(index);
-                rgb_image(:, :, index) = image_layer;
-            end
-        end
-        
-        function rgb_image = GetBlankRGBImage(button_height, button_width)
-            button_background_colour = [0.0, 0.129, 0.278];
-            button_background_colour_shift = shiftdim(button_background_colour, -1);
-            blank_image = ones([button_height, button_width]);
-            rgb_image = repmat(button_background_colour_shift, [button_height, button_width, 1]).*repmat(blank_image, [1, 1, 3]);
-            rgb_image = uint8(255*rgb_image);
+
+        function [rgbSlice, alphaSlice] = GetImage(imageSlice, limits, imageType, window, level, map)
+            % Returns a 2D image slice and alpha information
+            
+            switch imageType
+                case PTKImageType.Grayscale
+                    rescaled_image_slice = CoreImageUtilities.RescaleImage(imageSlice, window, level);
+                    [rgbSlice, alphaSlice] = PTKImageUtilities.GetBWImage(rescaled_image_slice);
+                case PTKImageType.Colormap
+                    [rgbSlice, alphaSlice] = CoreImageUtilities.GetLabeledImage(imageSlice, map);
+                case PTKImageType.Scaled
+                    [rgbSlice, alphaSlice] = CoreImageUtilities.GetColourMap(imageSlice, limits);
+            end            
         end
         
         function orientation = GetPreferredOrientation(image_template, default_orientation)
@@ -527,14 +389,6 @@ classdef PTKImageUtilities
                 image_layer(image_dilated) = highlight_colour(index);
                 original_image(:, :, index) = image_layer;
             end
-        end
-        
-        function image_highlight = GetRGBImageHighlight(original_image, background_colour)
-            background = (original_image(:, :, 1) == background_colour(1)) & (original_image(:, :, 2) == background_colour(2)) & (original_image(:, :, 3) == background_colour(3));
-            
-            disk_element = PTKImageUtilities.CreateDiskStructuralElement([1, 1], 4);
-            image_highlight = imdilate(~background, disk_element);
-            image_highlight = image_highlight & background;
         end
         
         function [preview_image_slice, preview_scale] = GeneratePreviewImage(image, preview_size, flatten_before_preview)

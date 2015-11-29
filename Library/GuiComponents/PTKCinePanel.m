@@ -1,4 +1,4 @@
-classdef PTKCinePanel < PTKVirtualPanel
+classdef PTKCinePanel < GemVirtualPanel
     % PTKCinePanel.  Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -23,11 +23,11 @@ classdef PTKCinePanel < PTKVirtualPanel
     
     methods
         function obj = PTKCinePanel(parent, image_source, image_overlay_axes)
-            obj = obj@PTKVirtualPanel(parent);
+            obj = obj@GemVirtualPanel(parent);
 
             obj.ImageSource = image_source;
             
-            obj.Slider = PTKSlider(obj);
+            obj.Slider = GemSlider(obj);
             obj.AddChild(obj.Slider);
             
             obj.Axes = image_overlay_axes;
@@ -37,7 +37,7 @@ classdef PTKCinePanel < PTKVirtualPanel
         end
 
         function Resize(obj, position)
-            Resize@PTKUserInterfaceObject(obj, position);
+            Resize@GemUserInterfaceObject(obj, position);
             
             % Resize axes
             axis_width = max(1, position(3) - obj.Slider.SliderWidth);

@@ -1,4 +1,4 @@
-classdef PTKModeTabControl < PTKTabControl
+classdef PTKModeTabControl < GemTabControl
     % PTKModeTabControl. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -28,7 +28,7 @@ classdef PTKModeTabControl < PTKTabControl
 
     methods
         function obj = PTKModeTabControl(parent, organised_plugins, organised_manual_segmentations, app_def)
-            obj = obj@PTKTabControl(parent);
+            obj = obj@GemTabControl(parent);
 
             obj.OrganisedPlugins = organised_plugins;
             obj.OrganisedManualSegmentations = organised_manual_segmentations;

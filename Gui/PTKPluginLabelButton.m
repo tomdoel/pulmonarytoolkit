@@ -1,4 +1,4 @@
-classdef PTKPluginLabelButton < PTKLabelButton
+classdef PTKPluginLabelButton < GemLabelButton
     % PTKPluginLabelButton. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -21,7 +21,7 @@ classdef PTKPluginLabelButton < PTKLabelButton
     
     methods
         function obj = PTKPluginLabelButton(parent, tool, icon, gui_app)
-            obj = obj@PTKLabelButton(parent, tool.ButtonText, tool.ToolTip, class(tool), icon);
+            obj = obj@GemLabelButton(parent, tool.ButtonText, tool.ToolTip, class(tool), icon);
             obj.GuiApp = gui_app;
             obj.Tool = tool;
         end
@@ -43,7 +43,7 @@ classdef PTKPluginLabelButton < PTKLabelButton
     
     methods (Access = protected)
         function ButtonClickedCallback(obj, plugin_name)
-            ButtonClickedCallback@PTKLabelButton(obj, plugin_name);
+            ButtonClickedCallback@GemLabelButton(obj, plugin_name);
             obj.Tool.RunGuiPlugin(obj.GuiApp);
             obj.GuiApp.ToolClicked;
         end

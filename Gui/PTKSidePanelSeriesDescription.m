@@ -1,4 +1,4 @@
-classdef PTKSidePanelSeriesDescription < PTKListItem
+classdef PTKSidePanelSeriesDescription < GemListItem
     % PTKSidePanelSeriesDescription. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -47,7 +47,7 @@ classdef PTKSidePanelSeriesDescription < PTKListItem
     
     methods
         function obj = PTKSidePanelSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, gui_callback)
-            obj = obj@PTKListItem(parent, uid);
+            obj = obj@GemListItem(parent, uid);
             obj.TextHeight = obj.SeriesTextHeight;
             obj.SeriesUid = uid;
             obj.PatientId = patient_id;
@@ -73,17 +73,17 @@ classdef PTKSidePanelSeriesDescription < PTKListItem
                 obj.DescriptionText = description_text;
                 obj.NumImagesText = num_images_text;
                 
-                obj.ModalityControl = PTKText(obj, obj.ModalityText, 'Select this series', 'Modality');
+                obj.ModalityControl = GemText(obj, obj.ModalityText, 'Select this series', 'Modality');
                 obj.ModalityControl.FontSize = obj.SeriesFontSize;
                 obj.ModalityControl.HorizontalAlignment = 'left';
                 obj.AddTextItem(obj.ModalityControl);
                 
-                obj.DescriptionControl = PTKText(obj, obj.DescriptionText, 'Select this series', 'Description');
+                obj.DescriptionControl = GemText(obj, obj.DescriptionText, 'Select this series', 'Description');
                 obj.DescriptionControl.FontSize = obj.SeriesFontSize;
                 obj.DescriptionControl.HorizontalAlignment = 'left';
                 obj.AddTextItem(obj.DescriptionControl);
 
-                obj.NumImagesControl = PTKText(obj, obj.NumImagesText, 'Select this series', 'NumImages');
+                obj.NumImagesControl = GemText(obj, obj.NumImagesText, 'Select this series', 'NumImages');
                 obj.NumImagesControl.FontSize = obj.NumImagesFontSize;
                 obj.NumImagesControl.HorizontalAlignment = 'right';
                 obj.AddTextItem(obj.NumImagesControl);
@@ -94,7 +94,7 @@ classdef PTKSidePanelSeriesDescription < PTKListItem
             size_changed = ~isequal(location, obj.Position);
             
             % Don't call the parent class
-            Resize@PTKVirtualPanel(obj, location);
+            Resize@GemVirtualPanel(obj, location);
             
             [modality_position, description_position, num_images_position] = GetLocations(obj, location);
             obj.ModalityControl.Resize(modality_position);
@@ -124,12 +124,12 @@ classdef PTKSidePanelSeriesDescription < PTKListItem
     methods (Access = protected)
         
         function ItemLeftClicked(obj, src, eventdata)
-            ItemLeftClicked@PTKListItem(obj, src, eventdata);
+            ItemLeftClicked@GemListItem(obj, src, eventdata);
             obj.GuiCallback.SeriesClicked(obj.PatientId, obj.SeriesUid);
         end
         
         function ItemRightClicked(obj, src, eventdata)
-            ItemRightClicked@PTKListItem(obj, src, eventdata);
+            ItemRightClicked@GemListItem(obj, src, eventdata);
             
             if isempty(get(obj.DescriptionControl.GraphicalComponentHandle, 'uicontextmenu'))
                 context_menu = uicontextmenu;

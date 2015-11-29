@@ -1,4 +1,4 @@
-classdef PTKAllPatientsSlidingPanel < PTKSlidingPanel
+classdef PTKAllPatientsSlidingPanel < GemSlidingPanel
     % PTKAllPatientsSlidingPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -19,7 +19,7 @@ classdef PTKAllPatientsSlidingPanel < PTKSlidingPanel
     
     methods
         function obj = PTKAllPatientsSlidingPanel(parent, patient_database, gui_callback)
-            obj = obj@PTKSlidingPanel(parent);
+            obj = obj@GemSlidingPanel(parent);
             obj.FloatingPanel = PTKAllPatientsPanel(obj, patient_database, gui_callback);
             obj.AddChild(obj.FloatingPanel);
         end

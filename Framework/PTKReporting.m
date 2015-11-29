@@ -19,12 +19,12 @@ classdef PTKReporting < CoreReporting
     %
     %         reporting = PTKReporting(progress_dialog);
     %
-    %             progress_dialog - a CoreProgressDialog or PTKProgressPanel object
+    %             progress_dialog - a CoreProgressDialog or GemProgressPanel object
     %                 for displaying a progress bar. You can omit this argument
     %                 or replace it with [] if you are writing scripts to run 
     %                 in the background and do not want progress dialogs popping
     %                 up. Otherwise, you should create a PTKProgressDialog or
-    %                 PTKProgressPanel, or else implement your own progress class
+    %                 GemProgressPanel, or else implement your own progress class
     %                 with the same interface as PTKProgressDialog and pass this
     %                 in.
     %

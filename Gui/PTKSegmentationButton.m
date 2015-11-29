@@ -1,4 +1,4 @@
-classdef PTKSegmentationButton < PTKButton
+classdef PTKSegmentationButton < GemButton
     % PTKSegmentationButton. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -30,7 +30,7 @@ classdef PTKSegmentationButton < PTKButton
             
             button_text = ['<HTML><P ALIGN = RIGHT>', name];
             tag = name;
-            obj = obj@PTKButton(parent, button_text, tooltip_string, tag, []);
+            obj = obj@GemButton(parent, button_text, tooltip_string, tag, []);
             obj.LoadManualSegmentationCallback = load_manual_segmentation_callback;
             obj.Callback = @obj.ButtonPressed;
             
@@ -45,7 +45,13 @@ classdef PTKSegmentationButton < PTKButton
             else
                 preview_image = [];
             end
-            obj.ChangeImage(preview_image, window, level);
+            if isempty(obj.Position)
+                button_size = [obj.ButtonWidth, obj.ButtonHeight];
+            else
+                button_size = obj.Position(3:4);
+            end
+            preview_image_raw = PTKImageUtilities.GetButtonImage(preview_image, button_size(1), button_size(2), window, level, 1, obj.BackgroundColour, obj.UnSelectedColour);
+            obj.ChangeImage(preview_image_raw);
         end
         
         function height = GetRequestedHeight(obj, width)

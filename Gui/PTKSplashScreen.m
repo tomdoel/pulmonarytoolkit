@@ -1,4 +1,4 @@
-classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
+classdef (Sealed) PTKSplashScreen < CoreProgressInterface & GemFigure
     % PTKSplashScreen. A splash screen dialog which also reports progress informaton
     %
     %     PTKSplashScreen creates a dialog with the application logo and version
@@ -71,7 +71,7 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
             
             % Call the base class to initialise the hidden window
             reporting = CoreReportingDefault;
-            obj = obj@PTKFigure('', position, reporting);
+            obj = obj@GemFigure('', position, reporting);
             obj.StyleSheet = app_def.GetDefaultStyleSheet;
             
             obj.TimerRef = tic;
@@ -94,7 +94,7 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & PTKFigure
         end        
 
         function CreateGuiComponent(obj, position)
-            CreateGuiComponent@PTKFigure(obj, position);
+            CreateGuiComponent@GemFigure(obj, position);
             
             background_colour = obj.StyleSheet.TextPrimaryColour;
             text_colour = obj.StyleSheet.BackgroundColour;

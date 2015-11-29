@@ -118,7 +118,7 @@ classdef PTKReplaceColourTool < PTKTool
             obj.Colour = 1;
             if ~isempty(obj.ViewerPanel.OverlayImage)
                 if obj.ViewerPanel.OverlayImage.ImageExists
-                    obj.Brush = PTKImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.ViewerPanel.PaintBrushSize);
+                    obj.Brush = CoreImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.ViewerPanel.PaintBrushSize);
                     
                     % For binary images, switch to paint over mode. For other
                     % images, switch to replace colour mode
@@ -289,7 +289,7 @@ classdef PTKReplaceColourTool < PTKTool
     methods (Access = private)
         
         function BrushSizeChangedCallback(obj, ~, ~, ~)
-            obj.Brush = PTKImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.ViewerPanel.PaintBrushSize);
+            obj.Brush = CoreImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.ViewerPanel.PaintBrushSize);
         end
         
     end

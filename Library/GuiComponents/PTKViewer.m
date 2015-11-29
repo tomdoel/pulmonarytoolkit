@@ -1,4 +1,4 @@
-classdef PTKViewer < PTKFigure
+classdef PTKViewer < GemFigure
     % PTKViewer. A standalone image viewer for showing 3D images slice-by-slice
     %
     %     PTKViewer uses PTKViewerPanel to create a visualisation window for the
@@ -103,7 +103,7 @@ classdef PTKViewer < PTKFigure
             end
             
             % Call the base class to initialise the hidden window
-            obj = obj@PTKFigure(title, [], reporting);
+            obj = obj@GemFigure(title, [], reporting);
 
             obj.ViewerPanelHandle = PTKViewerPanel(obj, true);
             obj.AddChild(obj.ViewerPanelHandle);
@@ -119,7 +119,7 @@ classdef PTKViewer < PTKFigure
         end
         
         function CreateGuiComponent(obj, position)
-            CreateGuiComponent@PTKFigure(obj, position);
+            CreateGuiComponent@GemFigure(obj, position);
             
             obj.ViewerPanelHandle.BackgroundImage = obj.Image;               
             obj.ViewerPanelHandle.OverlayImage = obj.Overlay;
@@ -127,7 +127,7 @@ classdef PTKViewer < PTKFigure
         end
         
         function Resize(obj, position)
-            Resize@PTKFigure(obj, position);
+            Resize@GemFigure(obj, position);
             
             parent_width_pixels = max(1, position(3));
             parent_height_pixels = max(1, position(4));

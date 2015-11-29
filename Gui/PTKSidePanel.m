@@ -1,4 +1,4 @@
-classdef PTKSidePanel < PTKPanel
+classdef PTKSidePanel < GemPanel
     % PTKSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -38,7 +38,7 @@ classdef PTKSidePanel < PTKPanel
     
     methods
         function obj = PTKSidePanel(parent, controller, patient_database, state, linked_recorder)
-            obj = obj@PTKPanel(parent);
+            obj = obj@GemPanel(parent);
             
             obj.RightBorder = true;
             
@@ -68,13 +68,13 @@ classdef PTKSidePanel < PTKPanel
         end
         
         function CreateGuiComponent(obj, position)
-            CreateGuiComponent@PTKPanel(obj, position);
+            CreateGuiComponent@GemPanel(obj, position);
         end
         
         function Resize(obj, new_position)
-            Resize@PTKPanel(obj, new_position);
+            Resize@GemPanel(obj, new_position);
             
-            % After calling Resize@PTKPanel, the position will have been adjusted due to the border
+            % After calling Resize@GemPanel, the position will have been adjusted due to the border
             new_position = obj.InnerPosition;
             
             % Only show the projects panel if there is more than one

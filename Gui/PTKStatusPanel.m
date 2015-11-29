@@ -1,4 +1,4 @@
-classdef PTKStatusPanel < PTKPanel
+classdef PTKStatusPanel < GemPanel
     % PTKStatusPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -23,19 +23,19 @@ classdef PTKStatusPanel < PTKPanel
     
     methods
         function obj = PTKStatusPanel(parent, viewer_panel)
-            obj = obj@PTKPanel(parent);
+            obj = obj@GemPanel(parent);
             
             obj.LeftBorder = true;
             obj.TopBorder = true;
             
             obj.ViewerPanel = viewer_panel;
-            obj.StatusText = PTKText(obj, 'No Image', 'Coordinates of the voxel, relative to the image, the value of the voxel under the cursor, and the value of the overlay under the cursor', 'StatusText');
+            obj.StatusText = GemText(obj, 'No Image', 'Coordinates of the voxel, relative to the image, the value of the voxel under the cursor, and the value of the overlay under the cursor', 'StatusText');
             obj.AddChild(obj.StatusText);
             obj.AddEventListener(viewer_panel, 'MouseCursorStatusChanged', @obj.MouseCursorStatusChangedCallback);                        
         end
         
         function Resize(obj, new_position)
-            Resize@PTKPanel(obj, new_position);
+            Resize@GemPanel(obj, new_position);
             
             new_position = obj.InnerPosition;
             new_position(4) = new_position(4) - 1;

@@ -1,4 +1,4 @@
-classdef PTKPatientPanel < PTKPanel
+classdef PTKPatientPanel < GemPanel
     % PTKPatientPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -59,7 +59,7 @@ classdef PTKPatientPanel < PTKPanel
             % patient details object if there is more than one patient id corresponding to
             % the same patient, which could occur due to anonymisation
             
-            obj = obj@PTKPanel(parent);
+            obj = obj@GemPanel(parent);
             obj.Enabled = false;
             obj.ImageDatabase = image_database;
             obj.GuiCallback = gui_callback;
@@ -92,12 +92,12 @@ classdef PTKPatientPanel < PTKPanel
                 max(0, total_number_of_series-1)*obj.SpacingBetweenSeries + obj.ListTopMargin + obj.ListBottomMargin + obj.TopMargin + obj.BottomMargin;
             obj.PatientNamePosition_Y = 1 + obj.PanelHeight - obj.PatientNameHeight - obj.TopMargin;
                         
-            obj.PatientNameTextControl = PTKText(obj, obj.Name, ['Patient name: ', obj.Name], 'PatientName');
+            obj.PatientNameTextControl = GemText(obj, obj.Name, ['Patient name: ', obj.Name], 'PatientName');
             obj.PatientNameTextControl.FontSize = obj.PatientNameFontSize;
             obj.AddChild(obj.PatientNameTextControl);
             obj.AddEventListener(obj.PatientNameTextControl, 'TextRightClicked', @obj.PatientRightClicked);
             
-            obj.SeriesDescriptionsList = PTKListBox(obj);
+            obj.SeriesDescriptionsList = GemListBox(obj);
             obj.SeriesDescriptionsList.TopMargin = obj.ListTopMargin;
             obj.SeriesDescriptionsList.BottomMargin = obj.ListBottomMargin;
             obj.SeriesDescriptionsList.SpacingBetweenItems = obj.SpacingBetweenSeries;
@@ -105,12 +105,12 @@ classdef PTKPatientPanel < PTKPanel
         end
         
         function CreateGuiComponent(obj, position)
-            CreateGuiComponent@PTKPanel(obj, position);
+            CreateGuiComponent@GemPanel(obj, position);
             obj.AddStudies;
         end
         
         function Resize(obj, new_position)
-            Resize@PTKPanel(obj, new_position);
+            Resize@GemPanel(obj, new_position);
             patient_text_position = [obj.PatientNameLeftPadding 1+new_position(4)-obj.PatientNameHeight-obj.TopMargin new_position(3)-obj.PatientNameLeftPadding obj.PatientNameHeight];
             obj.PatientNameTextControl.Resize(patient_text_position);
             

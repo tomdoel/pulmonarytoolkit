@@ -119,7 +119,7 @@ classdef PTKMapColourTool < PTKTool
             obj.Colour = 1;
             if ~isempty(obj.ViewerPanel.OverlayImage)
                 if obj.ViewerPanel.OverlayImage.ImageExists
-                    obj.Brush = PTKImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.BrushSize);
+                    obj.Brush = CoreImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.BrushSize);
                     
                     if isempty(obj.ViewerPanel.OverlayImage.ColorLabelMap)
                         new_colourmap = 0 : 255;

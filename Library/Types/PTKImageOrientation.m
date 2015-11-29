@@ -14,9 +14,9 @@ classdef PTKImageOrientation < uint8
     %    
 
     enumeration
-        Coronal (1)
-        Sagittal (2)
-        Axial (3)
+        Coronal (GemImageOrientation.XZ)
+        Sagittal (GemImageOrientation.YZ)
+        Axial (GemImageOrientation.XY)
     end
     
 end

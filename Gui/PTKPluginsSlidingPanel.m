@@ -1,4 +1,4 @@
-classdef PTKPluginsSlidingPanel < PTKSlidingPanel
+classdef PTKPluginsSlidingPanel < GemSlidingPanel
     % PTKPluginsSlidingPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -19,7 +19,7 @@ classdef PTKPluginsSlidingPanel < PTKSlidingPanel
     
     methods
         function obj = PTKPluginsSlidingPanel(parent, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback)
-            obj = obj@PTKSlidingPanel(parent);
+            obj = obj@GemSlidingPanel(parent);
             obj.FloatingPanel = PTKPluginsPanel(obj, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback);
             obj.AddChild(obj.FloatingPanel);
         end

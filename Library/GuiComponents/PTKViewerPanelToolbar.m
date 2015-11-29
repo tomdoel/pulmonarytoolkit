@@ -1,4 +1,4 @@
-classdef PTKViewerPanelToolbar < PTKPanel
+classdef PTKViewerPanelToolbar < GemPanel
     % PTKViewerPanelToolbar. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -43,7 +43,7 @@ classdef PTKViewerPanelToolbar < PTKPanel
     
     methods
         function obj = PTKViewerPanelToolbar(viewer_panel)
-            obj = obj@PTKPanel(viewer_panel);
+            obj = obj@GemPanel(viewer_panel);
             obj.ViewerPanel = viewer_panel;
             obj.BackgroundColour = 'black';
             obj.Tools = viewer_panel.GetToolList;
@@ -71,7 +71,7 @@ classdef PTKViewerPanelToolbar < PTKPanel
         end
         
         function CreateGuiComponent(obj, position)
-            CreateGuiComponent@PTKPanel(obj, position);
+            CreateGuiComponent@GemPanel(obj, position);
             
             parent = obj.GetParentFigure;
             keypress_function = @parent.CustomKeyPressedFunction;
@@ -134,7 +134,7 @@ classdef PTKViewerPanelToolbar < PTKPanel
         end
         
         function Resize(obj, position)
-            Resize@PTKPanel(obj, position);
+            Resize@GemPanel(obj, position);
             
             if obj.ComponentHasBeenCreated
                 obj.ResizePanel(position);

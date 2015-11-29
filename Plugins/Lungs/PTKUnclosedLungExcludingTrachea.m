@@ -68,7 +68,7 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
             end
             
             % Dilate the airways in order to remove airway walls. But we don't use too large a value, otherwise regions of the lungs will be removed
-            ball_element = PTKImageUtilities.CreateBallStructuralElement(threshold_image.VoxelSize, size_dilation_mm);
+            ball_element = CoreImageUtilities.CreateBallStructuralElement(threshold_image.VoxelSize, size_dilation_mm);
             main_airways = imdilate(main_airways, ball_element);
             
             main_airways = ~main_airways;

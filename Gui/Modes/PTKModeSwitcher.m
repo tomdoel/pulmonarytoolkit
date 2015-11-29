@@ -57,7 +57,7 @@ classdef PTKModeSwitcher < CoreBaseClass
                 obj.CurrentMode = obj.Modes(mode);
                 obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name);
             end
-            notify(obj, 'ModeChangedEvent', PTKEventData(mode));
+            notify(obj, 'ModeChangedEvent', CoreEventData(mode));
         end
         
         function PrePluginCall(obj)

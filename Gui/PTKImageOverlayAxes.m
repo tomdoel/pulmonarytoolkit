@@ -1,4 +1,4 @@
-classdef PTKImageOverlayAxes < PTKImageAxes
+classdef PTKImageOverlayAxes < GemImageAxes
     % PTKImageOverlayAxes. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -25,7 +25,7 @@ classdef PTKImageOverlayAxes < PTKImageAxes
     
     methods
         function obj = PTKImageOverlayAxes(parent, image_source, viewer_panel)
-            obj = obj@PTKImageAxes(parent, image_source);
+            obj = obj@GemImageAxes(parent, image_source);
             
             % Add the screen images to the axes
             obj.BackgroundScreenImage = PTKBackgroundScreenImageFromVolume(obj, image_source, viewer_panel);
@@ -37,7 +37,7 @@ classdef PTKImageOverlayAxes < PTKImageAxes
         end
         
         function Resize(obj, position)
-            Resize@PTKImageAxes(obj, position);
+            Resize@GemImageAxes(obj, position);
             
             obj.BackgroundScreenImage.Resize(position);
             obj.OverlayScreenImage.Resize(position);
@@ -45,7 +45,7 @@ classdef PTKImageOverlayAxes < PTKImageAxes
         end
         
         function [x_range, y_range] = UpdateAxes(obj)
-            [x_range, y_range] = UpdateAxes@PTKImageAxes(obj);
+            [x_range, y_range] = UpdateAxes@GemImageAxes(obj);
             
             if (obj.ImageSource.ImageExists)
                 % Background image

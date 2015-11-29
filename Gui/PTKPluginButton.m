@@ -1,4 +1,4 @@
-classdef PTKPluginButton < PTKButton
+classdef PTKPluginButton < GemButton
     % PTKPluginButton. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -35,7 +35,7 @@ classdef PTKPluginButton < PTKButton
             button_text = ['<HTML><P ALIGN = RIGHT>', plugin_info.ButtonText];
             tag = plugin_info.PluginName;
             
-            obj = obj@PTKButton(parent, button_text, tooltip_string, tag, callback);
+            obj = obj@GemButton(parent, button_text, tooltip_string, tag, callback);
             obj.FontAngle = font_angle;
             
             % Calculate the button size, based on plugin properties
@@ -49,7 +49,14 @@ classdef PTKPluginButton < PTKButton
             else
                 preview_image = [];
             end
-            obj.ChangeImage(preview_image, window, level);
+            
+            if isempty(obj.Position)
+                button_size = [obj.ButtonWidth, obj.ButtonHeight];
+            else
+                button_size = obj.Position(3:4);
+            end
+            preview_image_raw = PTKImageUtilities.GetButtonImage(preview_image, button_size(1), button_size(2), window, level, 1, obj.BackgroundColour, obj.UnSelectedColour);
+            obj.ChangeImage(preview_image_raw);
         end
         
         function height = GetRequestedHeight(obj, width)

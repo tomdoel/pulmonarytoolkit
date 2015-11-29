@@ -1,4 +1,4 @@
-classdef PTKPluginGroupPanel < PTKPanel
+classdef PTKPluginGroupPanel < GemPanel
     % PTKPluginGroupPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -30,7 +30,7 @@ classdef PTKPluginGroupPanel < PTKPanel
     
     methods
         function obj = PTKPluginGroupPanel(parent, category, current_category_map, load_manual_segmentation_callback)
-            obj = obj@PTKPanel(parent);
+            obj = obj@GemPanel(parent);
             obj.LoadManualSegmentationCallback = load_manual_segmentation_callback;
             obj.Enabled = false;
             
@@ -41,12 +41,12 @@ classdef PTKPluginGroupPanel < PTKPanel
         end
         
         function CreateGuiComponent(obj, position)
-            CreateGuiComponent@PTKPanel(obj, position);
+            CreateGuiComponent@GemPanel(obj, position);
             set(obj.GraphicalComponentHandle, 'Title', obj.Category, 'BorderType', 'etchedin');
         end
         
         function Resize(obj, new_position)
-            Resize@PTKPanel(obj, new_position);
+            Resize@GemPanel(obj, new_position);
             width = new_position(3);
             if isempty(obj.CachedPanelHeight) || (width ~= obj.CachedPanelWidth)
                 obj.ResizePanel(width);

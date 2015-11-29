@@ -1,4 +1,4 @@
-classdef PTKPluginLabelSlider < PTKLabelSlider
+classdef PTKPluginLabelSlider < GemLabelSlider
     % PTKPluginLabelSlider. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -23,7 +23,7 @@ classdef PTKPluginLabelSlider < PTKLabelSlider
     
     methods
         function obj = PTKPluginLabelSlider(parent, tool, icon, gui_app)
-            obj = obj@PTKLabelSlider(parent, tool.ButtonText, tool.ToolTip, class(tool), icon);
+            obj = obj@GemLabelSlider(parent, tool.ButtonText, tool.ToolTip, class(tool), icon);
             obj.GuiApp = gui_app;
             obj.Tool = tool;
             
@@ -69,7 +69,7 @@ classdef PTKPluginLabelSlider < PTKLabelSlider
     
     methods (Access = protected)
         function SliderCallback(obj, hObject, arg2)
-            SliderCallback@PTKLabelSlider(obj, hObject, arg2);
+            SliderCallback@GemLabelSlider(obj, hObject, arg2);
             
             [instance_handle, value_property_name, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
             
@@ -82,7 +82,7 @@ classdef PTKPluginLabelSlider < PTKLabelSlider
         end
         
         function EditBoxCallback(obj, hObject, arg2)
-            EditBoxCallback@PTKLabelSlider(obj, hObject, arg2);
+            EditBoxCallback@GemLabelSlider(obj, hObject, arg2);
             
             [instance_handle, value_property_name, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
             

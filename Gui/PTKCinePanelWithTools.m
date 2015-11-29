@@ -192,7 +192,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         
         function UpdateStatus(obj, in_image)
             image_coordinates = obj.GetImageCoordinates;
-            notify(obj, 'MousePositionChanged', PTKEventData(PTKCoordsInImage(image_coordinates, in_image)));
+            notify(obj, 'MousePositionChanged', CoreEventData(PTKCoordsInImage(image_coordinates, in_image)));
         end
         
         function SliderValueChanged(obj, ~, ~)

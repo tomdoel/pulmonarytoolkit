@@ -1,4 +1,4 @@
-classdef PTKGuiCore < PTKFigure
+classdef PTKGuiCore < GemFigure
     % PTKGui. The user interface for the TD Pulmonary Toolkit.
     %
     %     To start the user interface, run ptk.m.
@@ -66,7 +66,7 @@ classdef PTKGuiCore < PTKFigure
             reporting.Log('New session of PTKGui');
                         
             % Call the base class to initialise the figure class
-            obj = obj@PTKFigure(app_def.GetName, [], reporting);
+            obj = obj@GemFigure(app_def.GetName, [], reporting);
             obj.StyleSheet = app_def.GetDefaultStyleSheet;
 
             obj.AppDef = app_def;
@@ -173,7 +173,7 @@ classdef PTKGuiCore < PTKFigure
             obj.AddEventListener(obj.ModeTabControl, 'PanelChangedEvent', @obj.ModeTabChanged);
             
             % Create a progress panel which will replace the progress dialog
-            obj.WaitDialogHandle = PTKProgressPanel(obj.ImagePanel);
+            obj.WaitDialogHandle = GemProgressPanel(obj.ImagePanel);
             obj.WaitDialogHandle.ShowDebuggingControls = PTKSoftwareInfo.DebugMode;
             
             % Now we switch the reporting progress bar to a progress panel displayed over the gui
@@ -221,7 +221,7 @@ classdef PTKGuiCore < PTKFigure
         end
         
         function CreateGuiComponent(obj, position)
-            CreateGuiComponent@PTKFigure(obj, position);
+            CreateGuiComponent@GemFigure(obj, position);
 
             obj.Reporting.SetViewerPanel(obj.ImagePanel);            
             obj.AddEventListener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);
@@ -467,7 +467,7 @@ classdef PTKGuiCore < PTKFigure
         end
         
         function Resize(obj, new_position)
-            Resize@PTKFigure(obj, new_position);
+            Resize@GemFigure(obj, new_position);
             obj.ResizeGui(new_position, false);
         end
         
@@ -635,7 +635,7 @@ classdef PTKGuiCore < PTKFigure
             % The progress dialog will porbably be destroyed before we get here
 %             obj.Reporting.CompleteProgress;
 
-            CustomCloseFunction@PTKFigure(obj, src);
+            CustomCloseFunction@GemFigure(obj, src);
         end
     
     end
@@ -828,7 +828,7 @@ classdef PTKGuiCore < PTKFigure
             end
             
             image_width_pixels = max(obj.ImageMinimumWidth, obj.GetSuggestedWidth(image_height_pixels));
-            viewer_panel_width = image_width_pixels + PTKSlider.SliderWidth;
+            viewer_panel_width = image_width_pixels + GemSlider.SliderWidth;
             
             
             mode_panel_width = max(1, parent_width_pixels - viewer_panel_width - side_panel_width);
@@ -1023,7 +1023,7 @@ classdef PTKGuiCore < PTKFigure
             % GUI resize whenever the orientation was changed
             optimal_direction_orientation = PTKImageUtilities.GetPreferredOrientation(obj.ImagePanel.BackgroundImage, obj.AppDef.GetDefaultOrientation);
             
-            [dim_x_index, dim_y_index, dim_z_index] = PTKImageCoordinateUtilities.GetXYDimensionIndex(optimal_direction_orientation);
+            [dim_x_index, dim_y_index, dim_z_index] = GemUtilities.GetXYDimensionIndex(optimal_direction_orientation);
             
             image_height_mm = image_size_mm(dim_y_index);
             image_width_mm = image_size_mm(dim_x_index);

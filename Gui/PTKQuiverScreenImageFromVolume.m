@@ -1,4 +1,4 @@
-classdef PTKQuiverScreenImageFromVolume < PTKScreenQuiverImage
+classdef PTKQuiverScreenImageFromVolume < GemScreenQuiverImage
     % PTKQuiverScreenImageFromVolume. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -20,7 +20,7 @@ classdef PTKQuiverScreenImageFromVolume < PTKScreenQuiverImage
     
     methods
         function obj = PTKQuiverScreenImageFromVolume(parent, image_source, viewer_panel)
-            obj = obj@PTKScreenQuiverImage(parent, image_source);
+            obj = obj@GemScreenQuiverImage(parent, image_source);
             obj.ViewerPanel = viewer_panel;
         end
         
@@ -29,7 +29,7 @@ classdef PTKQuiverScreenImageFromVolume < PTKScreenQuiverImage
         end
             
         function SetRangeWithPositionAdjustment(obj, x_range, y_range)
-            [dim_x_index, dim_y_index, dim_z_index] = PTKImageCoordinateUtilities.GetXYDimensionIndex(obj.ViewerPanel.Orientation);
+            [dim_x_index, dim_y_index, dim_z_index] = GemUtilities.GetXYDimensionIndex(obj.ViewerPanel.Orientation);
             
             quiver_offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ViewerPanel.BackgroundImage, obj.ViewerPanel.QuiverImage);
             quiver_offset_x_voxels = quiver_offset_voxels(dim_x_index);

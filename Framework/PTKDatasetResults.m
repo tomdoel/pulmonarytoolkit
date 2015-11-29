@@ -337,7 +337,7 @@ classdef PTKDatasetResults < handle
                 % Fire an event indictaing the preview image has changed. This
                 % will allow any listening gui to update its preview images if
                 % necessary
-                obj.ExternalWrapperNotifyFunction('PreviewImageChanged', PTKEventData(plugin_name));
+                obj.ExternalWrapperNotifyFunction('PreviewImageChanged', CoreEventData(plugin_name));
             end
         end
         

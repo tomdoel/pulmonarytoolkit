@@ -47,7 +47,7 @@ function output_image = PTKSmoothedRegionGrowing(threshold_image, start_points_g
     threshold_image_resized.CropToFit;
     
     % Create a spherical structural element
-    ball = int8(PTKImageUtilities.CreateBallStructuralElement(threshold_image_resized.VoxelSize, smoothing_size_mm));
+    ball = int8(CoreImageUtilities.CreateBallStructuralElement(threshold_image_resized.VoxelSize, smoothing_size_mm));
     ball_im = PTKImage(ball, PTKImageType.Colormap, threshold_image_resized.VoxelSize);
     ball_im.CropToFit;
     ball_raw = ball_im.RawImage;

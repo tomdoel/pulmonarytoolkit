@@ -1,4 +1,4 @@
-classdef PTKAllPatientsPanel < PTKCompositePanel
+classdef PTKAllPatientsPanel < GemCompositePanel
     % PTKAllPatientsPanel.  Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -24,7 +24,7 @@ classdef PTKAllPatientsPanel < PTKCompositePanel
     
     methods
         function obj = PTKAllPatientsPanel(parent, patient_database, gui_callback)
-            obj = obj@PTKCompositePanel(parent);
+            obj = obj@GemCompositePanel(parent);
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
             

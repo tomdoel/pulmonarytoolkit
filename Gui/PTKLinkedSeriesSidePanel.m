@@ -1,4 +1,4 @@
-classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
+classdef PTKLinkedSeriesSidePanel < GemListBoxWithTitle
     % PTKLinkedSeriesSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -23,7 +23,7 @@ classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
     
     methods
         function obj = PTKLinkedSeriesSidePanel(parent, patient_database, linked_recorder, gui_callback)
-            obj = obj@PTKListBoxWithTitle(parent, 'LINKED SERIES', 'Import images', 'Delete images');
+            obj = obj@GemListBoxWithTitle(parent, 'LINKED SERIES', 'Import images', 'Delete images');
             
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;

@@ -1,4 +1,4 @@
-classdef PTKPatientBrowser < PTKFigure
+classdef PTKPatientBrowser < GemFigure
     % PTKPatientBrowser. Gui for choosing a dataset to view
     %
     %
@@ -21,7 +21,7 @@ classdef PTKPatientBrowser < PTKFigure
 
     methods
         function obj = PTKPatientBrowser(controller, image_database, position, title, reporting)
-            obj = obj@PTKFigure(title, [], reporting);
+            obj = obj@GemFigure(title, [], reporting);
             obj.Controller = controller;
             obj.ArrowPointer = 'hand';
             obj.LockLoad = false;
@@ -62,7 +62,7 @@ classdef PTKPatientBrowser < PTKFigure
             height_pixels = max(100, position(4));
             new_position = [position(1) position(2) width_pixels height_pixels];
             
-            Resize@PTKUserInterfaceObject(obj, new_position);
+            Resize@GemUserInterfaceObject(obj, new_position);
             obj.BrowserPanel.Resize(new_position);
         end
 
@@ -84,7 +84,7 @@ classdef PTKPatientBrowser < PTKFigure
 
         function Show(obj)
             obj.LockLoad = false;
-            Show@PTKFigure(obj);
+            Show@GemFigure(obj);
         end
         
         function position = GetLastPosition(obj)

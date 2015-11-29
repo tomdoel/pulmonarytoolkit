@@ -30,14 +30,14 @@ classdef PTKCombinedImageDatabaseController < CoreBaseClass
         
         function ProjectClicked(obj, project_id)
             obj.CurrentProject = project_id;
-            notify(obj, 'ProjectChangedEvent', PTKEventData(project_id));
+            notify(obj, 'ProjectChangedEvent', CoreEventData(project_id));
         end
         
         function PatientClicked(obj, patient_id)
             if strcmp(obj.CurrentProject, PTKImageDatabase.LocalDatabaseId)
                 obj.GuiCallback.LoadPatient(patient_id);
             else
-                notify(obj, 'PatientChangedEvent', PTKEventData(patient_id));
+                notify(obj, 'PatientChangedEvent', CoreEventData(patient_id));
             end
         end
         

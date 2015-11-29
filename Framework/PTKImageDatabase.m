@@ -220,7 +220,7 @@ classdef PTKImageDatabase < handle
                         obj.PatientMap.remove(patient_id);
                     end
                     obj.SeriesMap.remove(series_uid);
-                    notify(obj, 'SeriesHasBeenDeleted', PTKEventData(series_uid));
+                    notify(obj, 'SeriesHasBeenDeleted', CoreEventData(series_uid));
                 end
             end
             if anything_changed

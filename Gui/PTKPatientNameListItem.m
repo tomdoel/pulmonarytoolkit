@@ -1,11 +1,11 @@
-classdef PTKPatientNameListItem < PTKListItem
+classdef PTKPatientNameListItem < GemListItem
     % PTKPatientNameListItem. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
     %     PTKPatientNameListItem represents the control showing a patient name in a
-    %     PTKListBox
+    %     GemListBox
     %
     %     Licence
     %     -------
@@ -27,14 +27,14 @@ classdef PTKPatientNameListItem < PTKListItem
     
     methods
         function obj = PTKPatientNameListItem(parent, name, visible_name, patient_id, gui_callback)
-            obj = obj@PTKListItem(parent, patient_id);
+            obj = obj@GemListItem(parent, patient_id);
             obj.TextHeight = obj.PatientTextHeight;
             
             if nargin > 0
                 obj.PatientId = patient_id;
                 obj.GuiCallback = gui_callback;
 
-                obj.PatientNameText = PTKText(obj, visible_name, name, 'Patient');
+                obj.PatientNameText = GemText(obj, visible_name, name, 'Patient');
                 obj.PatientNameText.FontSize = obj.FontSize;
                 obj.AddTextItem(obj.PatientNameText);
             end
@@ -43,7 +43,7 @@ classdef PTKPatientNameListItem < PTKListItem
         function Resize(obj, location)
             size_changed = ~isequal(location, obj.Position);
             % Don't call the parent class
-            Resize@PTKVirtualPanel(obj, location);
+            Resize@GemVirtualPanel(obj, location);
                         
             obj.PatientNameText.Resize(location);
             
@@ -58,12 +58,12 @@ classdef PTKPatientNameListItem < PTKListItem
     methods (Access = protected)
         
         function ItemLeftClicked(obj, src, eventdata)
-            ItemLeftClicked@PTKListItem(obj, src, eventdata);
+            ItemLeftClicked@GemListItem(obj, src, eventdata);
             obj.GuiCallback.PatientClicked(obj.PatientId);
         end
         
         function ItemRightClicked(obj, src, eventdata)
-            ItemRightClicked@PTKListItem(obj, src, eventdata);
+            ItemRightClicked@GemListItem(obj, src, eventdata);
             
             if isempty(get(obj.PatientNameText.GraphicalComponentHandle, 'uicontextmenu'))
                 context_menu = uicontextmenu;

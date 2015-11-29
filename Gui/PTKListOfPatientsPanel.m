@@ -1,4 +1,4 @@
-classdef PTKListOfPatientsPanel < PTKPanel
+classdef PTKListOfPatientsPanel < GemPanel
     % PTKListOfPatientsPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -40,16 +40,16 @@ classdef PTKListOfPatientsPanel < PTKPanel
     
     methods
         function obj = PTKListOfPatientsPanel(parent, all_patients_panel, patient_database, gui_callback)
-            obj = obj@PTKPanel(parent);
+            obj = obj@GemPanel(parent);
             obj.LockSetPatient = false;
             obj.PatientDatabase = patient_database;
             obj.AllPatientsPanel = all_patients_panel;
             obj.GuiCallback = gui_callback;
-            obj.AddButton = PTKButton(obj, '+', 'Import images', 'Add', @obj.AddButtonClicked);
+            obj.AddButton = GemButton(obj, '+', 'Import images', 'Add', @obj.AddButtonClicked);
             obj.AddButton.FontSize = obj.PatientTextFontSize;
             obj.AddButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
             obj.AddChild(obj.AddButton);
-            obj.DeleteButton = PTKButton(obj, '-', 'Delete this patient', 'Delete', @obj.DeleteButtonClicked);
+            obj.DeleteButton = GemButton(obj, '-', 'Delete this patient', 'Delete', @obj.DeleteButtonClicked);
             obj.DeleteButton.BackgroundColour = obj.StyleSheet.BackgroundColour;
             obj.DeleteButton.FontSize = obj.PatientTextFontSize;
             obj.AddChild(obj.DeleteButton);
@@ -86,7 +86,7 @@ classdef PTKListOfPatientsPanel < PTKPanel
         end
         
         function Resize(obj, panel_position)
-            Resize@PTKPanel(obj, panel_position);
+            Resize@GemPanel(obj, panel_position);
             panel_width = panel_position(3);
             panel_height = panel_position(4);
             list_box_height = max(1, panel_height - obj.ControlPanelHeight);
