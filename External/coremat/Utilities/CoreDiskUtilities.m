@@ -133,16 +133,19 @@ classdef CoreDiskUtilities
             % specified in the input parameter), and the Second property is the
             % just the name of the deepest subdirectory
             
-            dirs_to_do = CoreStack(CorePair(root_path, ''));
             dirs_found = CoreStack;
-            while ~dirs_to_do.IsEmpty
-                next_dir = dirs_to_do.Pop;
-                dirs_found.Push(next_dir);
-                this_dir_list = CoreDiskUtilities.GetListOfDirectories(next_dir.First);
-                for index = 1 : numel(this_dir_list)
-                    this_dir_list{index} = CorePair(fullfile(next_dir.First, this_dir_list{index}), this_dir_list{index});
+            
+            if ~isempty(root_path)
+                dirs_to_do = CoreStack(CorePair(root_path, ''));
+                while ~dirs_to_do.IsEmpty
+                    next_dir = dirs_to_do.Pop;
+                    dirs_found.Push(next_dir);
+                    this_dir_list = CoreDiskUtilities.GetListOfDirectories(next_dir.First);
+                    for index = 1 : numel(this_dir_list)
+                        this_dir_list{index} = CorePair(fullfile(next_dir.First, this_dir_list{index}), this_dir_list{index});
+                    end
+                    dirs_to_do.Push(this_dir_list);
                 end
-                dirs_to_do.Push(this_dir_list);
             end
             dir_list = dirs_found.GetAndClear;
         end
