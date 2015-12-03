@@ -67,8 +67,8 @@ classdef PTKMainBase < CoreBaseClass
         function Recompile(obj)
             % Forces recompilation of mex files
             
-            output_directory = framework_app_def.GetOutputDirectory;
-            files_to_compile = framework_app_def.GetFilesToCompile(reporting);
+            output_directory = obj.FrameworkAppDef.GetOutputDirectory;
+            files_to_compile = obj.FrameworkAppDef.GetFilesToCompile(obj.Reporting);
             obj.FrameworkSingleton.Recompile(files_to_compile, output_directory, obj.Reporting);
         end
         
