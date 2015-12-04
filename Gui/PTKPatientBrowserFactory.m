@@ -14,6 +14,7 @@ classdef PTKPatientBrowserFactory < CoreBaseClass
     
     properties (Access = private)
         Controller
+        AppDef
         GuiDatasetState
         ImageDatabase
         InitialPosition
@@ -25,9 +26,10 @@ classdef PTKPatientBrowserFactory < CoreBaseClass
     end
     
     methods
-        function obj = PTKPatientBrowserFactory(controller, image_database, state, settings, title, reporting)
+        function obj = PTKPatientBrowserFactory(controller, image_database, app_def, state, settings, title, reporting)
             obj.Controller = controller;
             obj.ImageDatabase = image_database;
+            obj.AppDef = app_def;
             obj.GuiDatasetState = state;
             obj.Reporting = reporting;
             obj.Title = title;
@@ -47,7 +49,7 @@ classdef PTKPatientBrowserFactory < CoreBaseClass
             % Make Patient Browser visible or bring to the front
             
             if isempty(obj.PatientBrowser)
-                obj.PatientBrowser = PTKPatientBrowser(obj.Controller, obj.ImageDatabase, obj.InitialPosition, obj.Title, obj.Reporting);
+                obj.PatientBrowser = PTKPatientBrowser(obj.Controller, obj.ImageDatabase, obj.AppDef, obj.InitialPosition, obj.Title, obj.Reporting);
                 obj.PatientBrowser.SelectSeries(obj.PatientBrowserSelectedPatientId, obj.PatientBrowserSelectedUid);
                 
                 obj.PatientBrowser.Show;

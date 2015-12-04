@@ -20,8 +20,9 @@ classdef PTKPatientBrowser < GemFigure
     end
 
     methods
-        function obj = PTKPatientBrowser(controller, image_database, position, title, reporting)
+        function obj = PTKPatientBrowser(controller, image_database, app_def, position, title, reporting)
             obj = obj@GemFigure(title, [], reporting);
+            obj.StyleSheet = app_def.GetDefaultStyleSheet;
             obj.Controller = controller;
             obj.ArrowPointer = 'hand';
             obj.LockLoad = false;
