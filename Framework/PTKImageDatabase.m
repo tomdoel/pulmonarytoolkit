@@ -140,6 +140,7 @@ classdef PTKImageDatabase < handle
                 ids = [];
                 short_visible_names = [];
                 num_series = [];
+                num_patients_combined = [];
                 patient_id_map = [];
                 return;
             end
