@@ -357,38 +357,41 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             % values after the window or level has been changed to a value outside
             % of the limits            
             level_limits = obj.ViewerPanel.LevelLimits;
-            level_min = level_limits(1);
-            level_max = level_limits(2);
             window_limits = obj.ViewerPanel.WindowLimits;
-            window_min = window_limits(1);
-            window_max = window_limits(2);
-            
             window_limits_changed = false;
             level_limits_changed = false;
             
-            if obj.ViewerPanel.Level > level_max
-                level_max = obj.ViewerPanel.Level;
-                level_limits_changed = true;
-            end
-            if obj.ViewerPanel.Level < level_min
-                level_min = obj.ViewerPanel.Level;
-                level_limits_changed = true;
-            end
-            if obj.ViewerPanel.Window > window_max
-                window_max = obj.ViewerPanel.Window;
-                window_limits_changed = true;
-            end
-            
-            if obj.ViewerPanel.Window < 0
-                obj.ViewerPanel.Window = 0;
-                if window_min > 0
-                    window_min = 0;
-                    window_limits_changed = true;
+            if ~isempty(level_limits) && ~isempty(window_limits)
+                level_min = level_limits(1);
+                level_max = level_limits(2);
+                window_min = window_limits(1);
+                window_max = window_limits(2);
+                
+                
+                if obj.ViewerPanel.Level > level_max
+                    level_max = obj.ViewerPanel.Level;
+                    level_limits_changed = true;
                 end
-            else
-                if obj.ViewerPanel.Window < window_min
-                    window_min = obj.ViewerPanel.Window;
+                if obj.ViewerPanel.Level < level_min
+                    level_min = obj.ViewerPanel.Level;
+                    level_limits_changed = true;
+                end
+                if obj.ViewerPanel.Window > window_max
+                    window_max = obj.ViewerPanel.Window;
                     window_limits_changed = true;
+                end                
+                
+                if obj.ViewerPanel.Window < 0
+                    obj.ViewerPanel.Window = 0;
+                    if window_min > 0
+                        window_min = 0;
+                        window_limits_changed = true;
+                    end
+                else
+                    if obj.ViewerPanel.Window < window_min
+                        window_min = obj.ViewerPanel.Window;
+                        window_limits_changed = true;
+                    end
                 end
             end
 
