@@ -116,7 +116,7 @@ classdef CoreReporting < CoreReportingInterface
         function Error(obj, identifier, message)
             [calling_function, stack] = CoreErrorUtilities.GetCallingFunction(2);
             
-            if ischar(calling_function) && length(calling_function) >= 12 && strcmp(calling_function(1:12), 'CoreReporting')
+            if ischar(calling_function) && length(calling_function) >= 13 && strcmp(calling_function(1:13), 'CoreReporting')
                 [calling_function, stack] = CoreErrorUtilities.GetCallingFunction(3);
             end
 
