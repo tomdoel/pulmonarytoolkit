@@ -27,5 +27,9 @@ function imageData = DMdicomread(fileName_or_metaHeader)
     end
     
     header = DMReadDicomTags(fileName, DMDicomDictionary.EssentialDictionary);
-    imageData = header.PixelData;
+    if isfield(header, 'PixelData')
+        imageData = header.PixelData;
+    else
+        imageData = [];
+    end
 end

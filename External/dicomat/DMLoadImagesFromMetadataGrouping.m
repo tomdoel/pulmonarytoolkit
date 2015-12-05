@@ -44,6 +44,9 @@ function imageWrapper = DMLoadImagesFromMetadataGrouping(metadataGrouping, dicom
 
     % Load image slice
     first_image_slice = dicomLibrary.dicomread(metadataGrouping.Metadata{1});
+    if isempty(first_image_slice)
+        return;
+    end
 
     % Pre-allocate image matrix
     size_i = metadataGrouping.Metadata{1}.Rows;

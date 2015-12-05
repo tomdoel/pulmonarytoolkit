@@ -1,4 +1,4 @@
-function loaded_image= PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
+function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
     % PTKLoadImageFromDicomFiles. Loads a series of DICOM files into a 3D volume
     %
     %     Syntax
@@ -34,6 +34,11 @@ function loaded_image= PTKLoadImageFromDicomFiles(image_path, filenames, reporti
     dicomLibrary = PTKDicomFallbackLibrary.getLibrary;
     
     [image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm] = DMLoadMainImageFromDicomFiles(image_path, filenames, dicomLibrary, reporting);
+    
+    if isempty(image_volume_wrapper.RawImage)
+        reporting.Error('PTKLoadImageFromDicomFiles:NoPixelData', 'The DICOM file contains no pixel data');
+    end
+    
     if isempty(slice_thickness)
         reporting.ShowWarning('PTKLoadImageFromDicomFiles:NoSliceThickness', 'No information found about the slice thickness. Arbitrarily setting slice thickness to 1');
         slice_thickness = 1;
