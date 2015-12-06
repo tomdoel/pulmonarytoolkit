@@ -78,7 +78,7 @@ classdef GemListItem < GemVirtualPanel
         
         function ItemLeftClicked(obj, ~, ~)
             obj.Parent.Deselect;
-            obj.Select(true);
+            obj.Parent.SelectItem(obj.Tag, true);
         end
         
         function ItemRightClicked(obj, ~, ~)
