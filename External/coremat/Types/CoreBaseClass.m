@@ -26,17 +26,6 @@ classdef CoreBaseClass < handle
                 CoreClassMonitor.GetClassMonitor.ObjectCreated(class(obj));
             end
         end
-        
-        function delete(obj)
-            for listener = obj.EventListeners
-                CoreSystemUtilities.DeleteIfValidObject(listener{1});
-            end
-            obj.EventListeners = [];
-            
-            if obj.MonitorClassInstances
-                CoreClassMonitor.GetClassMonitor.ObjectDeleted(class(obj));
-            end
-        end
     end
     
     methods (Access = protected)
@@ -55,6 +44,18 @@ classdef CoreBaseClass < handle
             new_listener = addlistener(control, event_name, 'PostSet', function_handle);
             obj.EventListeners{end + 1} = new_listener;
         end
-        
     end
+    
+    methods (Access = private)        
+        function delete(obj)
+            for listener = obj.EventListeners
+                CoreSystemUtilities.DeleteIfValidObject(listener{1});
+            end
+            obj.EventListeners = [];
+            
+            if obj.MonitorClassInstances
+                CoreClassMonitor.GetClassMonitor.ObjectDeleted(class(obj));
+            end
+        end
+    end    
 end
