@@ -35,6 +35,12 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
     
     [image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm] = DMLoadMainImageFromDicomFiles(image_path, filenames, dicomLibrary, reporting);
     
+    if ~isempty(representative_metadata) && isfield(representative_metadata, 'Modality') && ~isempty(representative_metadata.Modality)
+        if ~PTKModalityIsSupported(representative_metadata.Modality)
+            reporting.Error('PTKLoadImageFromDicomFiles:ModalityNotSupported', ['PTK does not support the ' representative_metadata.Modality ' modality']);
+        end
+    end
+    
     if isempty(image_volume_wrapper.RawImage)
         reporting.Error('PTKLoadImageFromDicomFiles:NoPixelData', 'The DICOM file contains no pixel data');
     end
