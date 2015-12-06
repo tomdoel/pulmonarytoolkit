@@ -55,12 +55,12 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.SettingsChangedCallback);
             
             % Listen for new image events
-            obj.AddEventListener(obj.ViewerPanel, 'NewBackgroundImage', @obj.NewBackgroundImageCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.NewBackgroundImageCallback);
             obj.AddEventListener(obj.ViewerPanel, 'NewOverlayImage', @obj.NewOverlayImageCallback);
             obj.AddEventListener(obj.ViewerPanel, 'NewQuiverImage', @obj.NewQuiverImageCallback);
             
             % Listen for image change events
-            obj.AddEventListener(obj.ViewerPanel, 'BackgroundImageChanged', @obj.BackgroundImageChangedCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'ImageModified', @obj.BackgroundImageChangedCallback);
             obj.AddEventListener(obj.ViewerPanel, 'OverlayImageChanged', @obj.OverlayImageChangedCallback);
             obj.AddEventListener(obj.ViewerPanel, 'QuiverImageChanged', @obj.QuiverImageChangedCallback);
 

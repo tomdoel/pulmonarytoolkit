@@ -31,10 +31,8 @@ classdef PTKViewerPanel < GemPanel
         MarkerPanelSelected      % An event to indicate if the marker control has been selected
         OverlayImageChangedEvent % An event to indicate if the overlay image has changed
         MouseCursorStatusChanged % An event to indicate if the MouseCursorStatus property has changed
-        NewBackgroundImage       % An event to indicate the background image has been replaced
         NewOverlayImage          % An event to indicate the overlay image has been replaced
         NewQuiverImage           % An event to indicate the quiver image has been replaced
-        BackgroundImageChanged   % An event to indicate the background image has been modified
         OverlayImageChanged      % An event to indicate the overlay image has been modified
         QuiverImageChanged       % An event to indicate the quiver image has been modified
     end
@@ -50,11 +48,14 @@ classdef PTKViewerPanel < GemPanel
         Level = -600           % The image level (in HU for CT images)
         SliceNumber = [1 1 1]  % The currently shown slice in 3 dimensions
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
-        BackgroundImage        % The greyscale image
         OverlayImage           % The colour transparent overlay image
         QuiverImage            % A vector quiver plot showing directions
         OpaqueColour           % If set, then this colour will always be shown at full opacity in the overlay
         PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
+    end
+    
+    properties (Dependent)
+        BackgroundImage
     end
     
     properties (SetObservable, SetAccess = private)
@@ -85,9 +86,10 @@ classdef PTKViewerPanel < GemPanel
         % Handles to listeners for changes within image objects
         % We explicitly manage creation and deletion of these, because we
         % need to update them whenever the image pointers change
-        BackgroundImageChangedListener
         OverlayImageChangedListener
         QuiverImageChangedListener
+        
+        BackgroundImageSource
     end
     
     properties
@@ -107,15 +109,16 @@ classdef PTKViewerPanel < GemPanel
             obj.MouseCursorStatus = PTKMouseCursorStatus;
 
             % Listen for changes to the image pointers
-            obj.AddPostSetListener(obj, 'BackgroundImage', @obj.ImagePointerChangedCallback);
             obj.AddPostSetListener(obj, 'OverlayImage', @obj.OverlayImagePointerChangedCallback);
             obj.AddPostSetListener(obj, 'QuiverImage', @obj.QuiverImagePointerChangedCallback);
+
+            % Create the image pointer wrappers
+            obj.BackgroundImageSource = PTKImageSource;
             
             % These image objects must be created here, not in the properties section, to
             % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
             % Also note that these will trigger the above pointer change callbacks, which
             % will set up the pixel data change callbacks
-            obj.BackgroundImage = PTKImage;
             obj.OverlayImage = PTKImage;
             obj.QuiverImage = PTKImage;
             
@@ -135,8 +138,11 @@ classdef PTKViewerPanel < GemPanel
             obj.AddChild(obj.ViewerPanelMultiView);
         end
         
+        function background_image = GetBackgroundImageSource(obj)
+            background_image = obj.BackgroundImageSource;
+        end
+        
         function delete(obj)
-            CoreSystemUtilities.DeleteIfValidObject(obj.BackgroundImageChangedListener);
             CoreSystemUtilities.DeleteIfValidObject(obj.OverlayImageChangedListener);
             CoreSystemUtilities.DeleteIfValidObject(obj.QuiverImageChangedListener);
         end
@@ -300,6 +306,15 @@ classdef PTKViewerPanel < GemPanel
             
             tools = obj.Tools;
         end
+
+        function set.BackgroundImage(obj, new_image)
+            obj.BackgroundImageSource.Image = new_image;
+        end
+        
+        function current_image = get.BackgroundImage(obj)
+            current_image = obj.BackgroundImageSource.Image;
+        end
+        
     end
     
     methods (Access = protected)
@@ -326,10 +341,6 @@ classdef PTKViewerPanel < GemPanel
     end
     
     methods (Access = private)
-        function ImagePointerChangedCallback(obj, ~, ~)
-            obj.BackgroundImageHasBeenReplaced;
-        end
-        
         function OverlayImagePointerChangedCallback(obj, ~, ~)
             obj.OverlayImageHasBeenReplaced;
         end
@@ -338,10 +349,6 @@ classdef PTKViewerPanel < GemPanel
             obj.QuiverImageHasBeenReplaced;
         end
         
-        function ImageChangedCallback(obj, ~, ~)
-            notify(obj, 'BackgroundImageChanged');
-        end
-
         function OverlayImageChangedCallback(obj, ~, ~)
             notify(obj, 'OverlayImageChanged');
         end
@@ -349,23 +356,6 @@ classdef PTKViewerPanel < GemPanel
         function QuiverImageChangedCallback(obj, ~, ~)
             notify(obj, 'QuiverImageChanged');
         end
-                
-        function BackgroundImageHasBeenReplaced(obj)
-            
-            % Check that this image is the correct class type
-            if ~isa(obj.BackgroundImage, 'PTKImage')
-                error('The image must be of class PTKImage');
-            end
-            
-            % Remove existing listener
-            CoreSystemUtilities.DeleteIfValidObject(obj.BackgroundImageChangedListener);
-            
-            % Listen for image change events
-            obj.BackgroundImageChangedListener = addlistener(obj.BackgroundImage, 'ImageChanged', @obj.ImageChangedCallback);
-
-            % Fire a new image event
-            notify(obj, 'NewBackgroundImage');
-        end 
         
         function OverlayImageHasBeenReplaced(obj)
             
