@@ -63,11 +63,11 @@ classdef PTKViewerPanelToolbar < GemPanel
             obj.AddPostSetListener(obj.ViewerPanel, 'ShowOverlay', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'BlackIsTransparent', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.GuiChangeCallback);
-
+            
             % Listen for new image events
             obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.NewBackgroundImageCallback);
             obj.AddEventListener(obj.ViewerPanel.GetOverlayImageSource, 'NewImage', @obj.NewOverlayImageCallback);
-            obj.AddEventListener(obj.ViewerPanel, 'NewQuiverImage', @obj.NewQuiverImageCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetQuiverImageSource, 'NewImage', @obj.NewQuiverImageCallback);
         end
         
         function CreateGuiComponent(obj, position)
@@ -364,38 +364,29 @@ classdef PTKViewerPanelToolbar < GemPanel
         
         function WindowLimitsChangedCallback(obj, ~, ~, ~)
             % This methods is called when the window limits have changed
-            
-            if obj.ViewerPanel.ShowControlPanel
-                obj.UpdateWindowLimits;
-            end
+            obj.UpdateWindowLimits;
         end
         
         function LevelLimitsChangedCallback(obj, ~, ~, ~)
             % This methods is called when the window limits have changed
             
-            if obj.ViewerPanel.ShowControlPanel
-                obj.UpdateLevelLimits;
-            end
+            obj.UpdateLevelLimits;
         end
         
         function SelectedControlChangedCallback(obj, ~, ~, ~)
             % Need to resize the control panel as the number of tools may have changed
-            if obj.ViewerPanel.ShowControlPanel
-                obj.SetControl(obj.ViewerPanel.SelectedControl);
-                obj.ResizeControlPanel;
-            end
+            obj.SetControl(obj.ViewerPanel.SelectedControl);
+            obj.ResizeControlPanel;
         end
         
         function GuiChangeCallback(obj, ~, ~)
             obj.UpdateGui;
         end
-
+        
         function ResizeControlPanel(obj)
             control_panel_position = obj.Position;
             control_panel_position(4) = obj.ViewerPanel.ControlPanelHeight;
-            if obj.ViewerPanel.ShowControlPanel
-                obj.Resize(control_panel_position);
-            end
+            obj.Resize(control_panel_position);
         end
         
         function NewBackgroundImageCallback(obj, ~, ~)
@@ -408,6 +399,6 @@ classdef PTKViewerPanelToolbar < GemPanel
         
         function NewQuiverImageCallback(obj, ~, ~)
             obj.UpdateGui;
-        end        
+        end
     end
 end

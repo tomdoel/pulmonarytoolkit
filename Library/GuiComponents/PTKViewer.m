@@ -105,7 +105,7 @@ classdef PTKViewer < GemFigure
             % Call the base class to initialise the hidden window
             obj = obj@GemFigure(title, [], reporting);
 
-            obj.ViewerPanelHandle = PTKViewerPanel(obj, true);
+            obj.ViewerPanelHandle = PTKViewerPanelWithControlPanel(obj);
             obj.AddChild(obj.ViewerPanelHandle);
             
             obj.Image = image_handle;

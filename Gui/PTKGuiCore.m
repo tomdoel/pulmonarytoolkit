@@ -74,10 +74,13 @@ classdef PTKGuiCore < GemFigure
             % Set the figure title to the sotware name and version
             obj.Title = [app_def.GetName, ' ', app_def.GetVersion];
             
-            show_control_panel_in_viewer = PTKSoftwareInfo.ViewerPanelToolbarEnabled;
-            
             % Set up the viewer panel
-            obj.ImagePanel = PTKViewerPanel(obj, show_control_panel_in_viewer);
+            if PTKSoftwareInfo.ViewerPanelToolbarEnabled
+                obj.ImagePanel = PTKViewerPanelWithControlPanel(obj);
+            else
+                obj.ImagePanel = PTKViewerPanel(obj);
+            end
+            
             obj.ImagePanel.DefaultOrientation = app_def.GetDefaultOrientation;
             obj.AddChild(obj.ImagePanel);
             
@@ -826,7 +829,7 @@ classdef PTKGuiCore < GemFigure
             
             obj.SidePanel.Resize([1, 1 + toolbar_height + status_panel_height, side_panel_width, side_panel_height]);
 
-            if obj.ImagePanel.ShowControlPanel
+            if PTKSoftwareInfo.ViewerPanelToolbarEnabled
                 image_height_pixels = viewer_panel_height - obj.ImagePanel.ControlPanelHeight;
             else
                 image_height_pixels = viewer_panel_height;

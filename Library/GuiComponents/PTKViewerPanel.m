@@ -62,7 +62,6 @@ classdef PTKViewerPanel < GemPanel
         Mode = ''       % Specifies the current editing mode
         SubMode = ''    % Specifies the current editing submode
         EditFixedOuterBoundary   % Specifies whether the current edit can modify the segmentation outer boundary
-        ControlPanelHeight = 33
         MouseCursorStatus      % A class of type PTKMouseCursorStatus showing data representing the voxel under the cursor
     end
     
@@ -73,9 +72,6 @@ classdef PTKViewerPanel < GemPanel
         WindowMax
         
         ToolCallback
-        Tools
-        ControlPanel
-        ViewerPanelMultiView
         ViewerPanelCallback
     
         BackgroundImageSource
@@ -83,19 +79,21 @@ classdef PTKViewerPanel < GemPanel
         QuiverImageSource
     end
     
+    properties (Access = protected)
+        ViewerPanelMultiView
+        Tools
+    end
+    
     properties
-        ShowControlPanel = true
         DefaultOrientation = PTKImageOrientation.Axial
     end
     
     methods
         
-        function obj = PTKViewerPanel(parent, show_control_panel)
+        function obj = PTKViewerPanel(parent)
             % Creates a PTKViewerPanel
             
             obj = obj@GemPanel(parent);
-            
-            obj.ShowControlPanel = show_control_panel;
             
             obj.MouseCursorStatus = PTKMouseCursorStatus;
 
@@ -108,12 +106,6 @@ classdef PTKViewerPanel < GemPanel
             obj.ToolCallback = PTKToolCallback(obj, obj.Reporting);
             obj.Tools = PTKToolList(obj.ToolCallback, obj);
             
-            % Create the control panel
-            if obj.ShowControlPanel
-                obj.ControlPanel = PTKViewerPanelToolbar(obj);
-                obj.AddChild(obj.ControlPanel);
-            end
-
             % Create the renderer object, which handles the image processing in the viewer
             obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj);
             obj.ToolCallback.SetRenderer(obj.ViewerPanelMultiView);
@@ -142,26 +134,11 @@ classdef PTKViewerPanel < GemPanel
             parent_height_pixels = position(4);
             image_width = parent_width_pixels;
             
-            if obj.ShowControlPanel
-                control_panel_height = obj.ControlPanelHeight;
-                control_panel_width = image_width;
-            else
-                control_panel_height = 0;
-                control_panel_width = 0;
-            end
-            
-            image_height = max(1, parent_height_pixels - control_panel_height);
-            
-            control_panel_position = [1, 1, control_panel_width, control_panel_height];
-            image_panel_position = [1, 1 + control_panel_height, image_width, image_height];
+            image_height = max(1, parent_height_pixels);
+            image_panel_position = [1, 1, image_width, image_height];
             
             % Resize the image and slider
             obj.ViewerPanelMultiView.Resize(image_panel_position);
-            
-            % Resize the control panel
-            if obj.ShowControlPanel
-                obj.ControlPanel.Resize(control_panel_position);
-            end
         end
         
         function marker_point_manager = GetMarkerPointManager(obj)
