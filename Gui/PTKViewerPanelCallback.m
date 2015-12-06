@@ -198,8 +198,6 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.ViewerPanelMultiView.UpdateAxes;
             obj.ViewerPanelMultiView.DrawImages(false, true, false);
             obj.Tools.OverlayImageChanged;
-            
-            notify(obj.ViewerPanel, 'OverlayImageChangedEvent');
         end
         
         function AutoChangeOrientation(obj)
