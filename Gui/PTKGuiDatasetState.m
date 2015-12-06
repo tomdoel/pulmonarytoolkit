@@ -45,6 +45,16 @@ classdef PTKGuiDatasetState < CoreBaseClass
            end
        end
        
+       function ClearSeries(obj)
+           if ~isempty(obj.CurrentPatientId) || ~isempty(obj.CurrentSeriesUid)
+               obj.CurrentSeriesUid = [];
+               obj.CurrentSeriesName = [];
+               obj.CurrentModality = [];
+               obj.CurrentSegmentationName = [];
+               notify(obj, 'SeriesUidChangedEvent');
+           end
+       end
+       
        function ClearPatientAndSeries(obj)
            if ~isempty(obj.CurrentPatientId) || ~isempty(obj.CurrentSeriesUid)
                obj.CurrentPatientId = [];

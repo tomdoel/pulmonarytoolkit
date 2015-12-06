@@ -336,7 +336,7 @@ classdef PTKGuiDataset < CoreBaseClass
                     end
                 end
                                 
-                obj.GuiDatasetState.ClearPatientAndSeries;
+                obj.GuiDatasetState.ClearSeries;
             end
         end
         
