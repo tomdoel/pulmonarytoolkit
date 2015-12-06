@@ -29,7 +29,7 @@ classdef PTKModeSwitcher < CoreBaseClass
     methods
         function obj = PTKModeSwitcher(viewer_panel, gui_dataset, app_def, settings, reporting)
             obj.ViewerPanel = viewer_panel;
-            obj.AddEventListener(viewer_panel, 'OverlayImageChangedEvent', @obj.OverlayImageChanged);
+            obj.AddEventListener(viewer_panel.GetOverlayImageSource, 'ImageModified', @obj.OverlayImageChanged);
             obj.Modes = containers.Map;
             obj.Modes(PTKModes.EditMode) = PTKEditMode(viewer_panel, gui_dataset, app_def, settings, reporting);
             obj.Modes(PTKModes.ManualSegmentationMode) = PTKManualSegmentationMode(viewer_panel, gui_dataset, app_def, settings, reporting);

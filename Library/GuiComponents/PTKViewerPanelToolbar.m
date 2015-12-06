@@ -66,7 +66,7 @@ classdef PTKViewerPanelToolbar < GemPanel
 
             % Listen for new image events
             obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.NewBackgroundImageCallback);
-            obj.AddEventListener(obj.ViewerPanel, 'NewOverlayImage', @obj.NewOverlayImageCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetOverlayImageSource, 'NewImage', @obj.NewOverlayImageCallback);
             obj.AddEventListener(obj.ViewerPanel, 'NewQuiverImage', @obj.NewQuiverImageCallback);
         end
         
