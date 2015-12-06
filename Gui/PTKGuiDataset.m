@@ -313,7 +313,7 @@ classdef PTKGuiDataset < CoreBaseClass
                     delete_image_info = true;
                 elseif PTKSoftwareInfo.IsErrorUnknownFormat(exc.identifier)
                     uiwait(errordlg('This is not an image file or the format is not supported by PTK. It will be removed from the Patient Browser.', [obj.AppDef.GetName ': Cannot load this image'], 'modal'));
-                    obj.Reporting.ShowMessage('PTKGuiDataset:FormatNotSupported', 'The original data is missing. I am removing this dataset.');
+                    obj.Reporting.ShowMessage('PTKGuiDataset:FormatNotSupported', 'This file format is not supported by PTK. I am removing this dataset.');
                     delete_image_info = true;
                 else
                     uiwait(errordlg(exc.message, [obj.AppDef.GetName ': Cannot load dataset'], 'modal'));
