@@ -25,6 +25,7 @@ classdef PTKSettings < CoreBaseClass
         ScreenPosition
         PatientBrowserScreenPosition
         DeveloperMode = false
+        LastUidForPatientMap
     end
     
     methods (Static)
@@ -50,6 +51,7 @@ classdef PTKSettings < CoreBaseClass
     
     methods
         function obj = PTKSettings
+            obj.LastUidForPatientMap = containers.Map;
         end
         
         function ApplySettingsToGui(obj, gui, viewer_panel)
@@ -72,6 +74,29 @@ classdef PTKSettings < CoreBaseClass
             if ~isequal(image_info, obj.ImageInfo)
                 obj.ImageInfo = image_info;
                 obj.SaveSettings(reporting);
+            end
+        end
+        
+        function AddLastPatientUid(obj, patient_id, series_uid)
+            if isempty(obj.LastUidForPatientMap)
+                obj.LastUidForPatientMap = containers.Map;
+            end
+            obj.LastUidForPatientMap(patient_id) = series_uid;
+        end
+        
+        function series_uid = GetLastPatientUid(obj, patient_id)
+            if obj.LastUidForPatientMap.isKey(patient_id)
+                series_uid = obj.LastUidForPatientMap(patient_id);
+            else 
+                series_uid = [];
+            end
+        end
+
+        function RemoveLastPatientUid(obj, series_uid)
+            for key = obj.LastUidForPatientMap.keys
+                if strcmp(obj.LastUidForPatientMap(key{1}), series_uid)
+                    obj.LastUidForPatientMap.remove(key{1});
+                end
             end
         end
         

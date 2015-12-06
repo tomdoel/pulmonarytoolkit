@@ -437,7 +437,12 @@ classdef PTKGuiCore < GemFigure
             if isempty(datasets)
                 series_uid = [];
             else
-                series_uid = datasets{1}.SeriesUid;
+                last_uid = obj.GuiSingleton.GetSettings.GetLastPatientUid(patient_id);
+                if ~isempty(last_uid) && ismember(last_uid, CoreContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid'))
+                    series_uid  = last_uid;
+                else
+                    series_uid = datasets{1}.SeriesUid;
+                end
             end
             obj.LoadFromUid(series_uid);
         end

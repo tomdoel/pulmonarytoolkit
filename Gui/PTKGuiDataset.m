@@ -199,6 +199,7 @@ classdef PTKGuiDataset < CoreBaseClass
             % current dataset to be cleared.
             
             obj.Ptk.DeleteDatasets(series_uids)
+            obj.Settings.RemoveLastPatientUid(series_uids);
         end
         
         
@@ -270,6 +271,7 @@ classdef PTKGuiDataset < CoreBaseClass
 
                 % Update and save settings if anything has changed
                 obj.Settings.SetLastImageInfo(image_info, obj.Reporting);
+                obj.Settings.AddLastPatientUid(patient_id, series_uid);
                 
                 if isempty(image_info)
                     patient_visible_name = [];
