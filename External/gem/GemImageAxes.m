@@ -51,7 +51,7 @@ classdef GemImageAxes < GemAxes
         end
         
         function [x_range, y_range] = UpdateAxes(obj)
-            if obj.ImageSource.ImageExists
+            if obj.ImageSource.ImageExists && obj.ComponentHasBeenCreated
                 orientation = obj.ImageSource.GetOrientation;
                 if ~isempty(obj.PreviousOrientation)
                     [x_lim, y_lim] = obj.GetLimits;
