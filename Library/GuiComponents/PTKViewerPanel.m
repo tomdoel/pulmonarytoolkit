@@ -158,8 +158,6 @@ classdef PTKViewerPanel < GemPanel
             % Resize the image and slider
             obj.ViewerPanelMultiView.Resize(image_panel_position);
             
-            obj.ViewerPanelMultiView.UpdateAxes;
-            
             % Resize the control panel
             if obj.ShowControlPanel
                 obj.ControlPanel.Resize(control_panel_position);

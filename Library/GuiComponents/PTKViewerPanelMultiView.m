@@ -44,6 +44,7 @@ classdef PTKViewerPanelMultiView < GemMultiPanel
             
             % Position axes and slice slider
             obj.CinePanel2D.Resize(obj.InnerPosition);
+            obj.UpdateAxes;
         end
         
         function ZoomTo(obj, i_limits, j_limits, k_limits)
