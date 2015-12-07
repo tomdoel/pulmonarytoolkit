@@ -173,7 +173,9 @@ classdef PTKSidePanel < GemPanel
             if patient_has_changed
                 obj.LinkedSeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
                 obj.SeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
-                
+                if ~isempty(obj.Position)
+                    obj.Resize(obj.Position);
+                end
             else
                 % Otherwise, we only need to change the highlighted series
                 obj.LinkedSeriesSidePanel.UpdateSidePanel(obj.GuiState.CurrentSeriesUid);                
