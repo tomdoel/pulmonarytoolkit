@@ -308,8 +308,8 @@ classdef PTKImageUtilities
             
             switch imageType
                 case PTKImageType.Grayscale
-                    rescaled_image_slice = CoreImageUtilities.RescaleImage(imageSlice, window, level);
-                    [rgbSlice, alphaSlice] = PTKImageUtilities.GetBWImage(rescaled_image_slice);
+                    rescaled_image_slice = PTKImageUtilities.RescaleImage(imageSlice, window, level);
+                    [rgbSlice, alphaSlice] = CoreImageUtilities.GetBWImage(rescaled_image_slice);
                 case PTKImageType.Colormap
                     [rgbSlice, alphaSlice] = CoreImageUtilities.GetLabeledImage(imageSlice, map);
                 case PTKImageType.Scaled
