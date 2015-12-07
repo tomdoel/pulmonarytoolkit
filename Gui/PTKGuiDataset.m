@@ -28,6 +28,7 @@ classdef PTKGuiDataset < CoreBaseClass
         Settings
         AppDef
         ContextDef
+        PreviewImageChangedListener
     end
     
     methods
@@ -237,7 +238,8 @@ classdef PTKGuiDataset < CoreBaseClass
                 delete(obj.Dataset);
 
                 obj.Dataset = new_dataset;
-                obj.AddEventListener(new_dataset, 'PreviewImageChanged', @obj.PreviewImageChanged);
+                
+                obj.ReplacePreviewListener(new_dataset);
                 
                 image_info = obj.Dataset.GetImageInfo;
                 modality = image_info.Modality;
@@ -434,10 +436,24 @@ classdef PTKGuiDataset < CoreBaseClass
                 segmentation_list = obj.Dataset.GetListOfManualSegmentations;
             end
         end
+        
+        function delete(obj)
+            obj.DeletePreviewListener;
+        end
     end
     
     methods (Access = private)
 
+        function DeletePreviewListener(obj)
+            CoreSystemUtilities.DeleteIfValidObject(obj.PreviewImageChangedListener);
+            obj.PreviewImageChangedListener = [];
+        end
+        
+        function ReplacePreviewListener(obj, new_dataset)
+            obj.DeletePreviewListener;
+            obj.PreviewImageChangedListener = addlistener(new_dataset, 'PreviewImageChanged', @obj.PreviewImageChanged);
+        end
+        
         function SeriesHasBeenDeleted(obj, series_uid, ~)
             % If the currently loaded dataset has been removed from the database, then clear
             % and delete
