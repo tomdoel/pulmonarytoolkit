@@ -60,6 +60,9 @@ classdef PTKNamePanel < GemPanel
             obj.PatientDetailsText.HorizontalAlignment = 'center';
             obj.AddChild(obj.PatientDetailsText);
 
+            % Add listener for changes to the loaded patient
+            obj.AddEventListener(obj.GuiState, 'PatientIdChangedEvent', @obj.PatientChanged);
+            
             % Add listener for changes to the loaded series
             obj.AddEventListener(obj.GuiState, 'SeriesUidChangedEvent', @obj.SeriesChanged);
             
@@ -109,6 +112,23 @@ classdef PTKNamePanel < GemPanel
     end
     
     methods (Access = private)
+        function PatientChanged(obj, ~, ~)
+            % This event fires when the loaded patient has been changed.
+            
+            if ~strcmp(obj.GuiState.CurrentPatientVisibleName, obj.CurrentPatientVisibleName)
+                obj.CurrentPatientVisibleName = obj.GuiState.CurrentPatientVisibleName;
+                
+                if isempty(obj.CurrentPatientVisibleName)
+                    patient_name = obj.NoPatientText;
+                else
+                    patient_name = obj.CurrentPatientVisibleName;
+                end
+                
+                obj.PatientNameText.ChangeText(patient_name);
+            end
+            obj.UpdateSeriesAndPlugin;
+        end
+        
         function SeriesChanged(obj, ~, ~)
             % This event fires when the loaded series has been changed.
             

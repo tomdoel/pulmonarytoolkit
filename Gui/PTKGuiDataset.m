@@ -202,6 +202,16 @@ classdef PTKGuiDataset < CoreBaseClass
             obj.Settings.RemoveLastPatientUid(series_uids);
         end
         
+        function SwitchPatient(obj, patient_id)
+            if ~strcmp(patient_id, obj.GuiDatasetState.CurrentPatientId)
+                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.Gui.SetTab('Segment');                
+                obj.Gui.ClearImages;
+                obj.DeletePreviewListener;
+                delete(obj.Dataset);
+                obj.GuiDatasetState.SetPatientClearSeries(patient_id, []);                
+            end
+        end
         
         function InternalLoadImages(obj, image_info_or_uid)
             
@@ -210,6 +220,8 @@ classdef PTKGuiDataset < CoreBaseClass
             series_uid = [];
             
             delete_image_info = false;
+            patient_id = obj.GuiDatasetState.CurrentPatientId;
+            patient_visible_name = obj.GuiDatasetState.CurrentPatientVisibleName;
             
             try
                 if isa(image_info_or_uid, 'PTKImageInfo')
@@ -336,11 +348,9 @@ classdef PTKGuiDataset < CoreBaseClass
                     end
                 end
                                 
-                obj.GuiDatasetState.ClearSeries;
+                obj.GuiDatasetState.SetPatientClearSeries(patient_id, patient_visible_name);
             end
         end
-        
-
         
         % Causes the GUI to run the named plugin and display the result
         function RunPlugin(obj, plugin_name, wait_dialog)

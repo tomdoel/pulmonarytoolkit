@@ -63,6 +63,7 @@ classdef PTKSidePanel < GemPanel
             obj.AddEventListener(controller, 'ProjectChangedEvent', @obj.ProjectChanged);            
             obj.AddEventListener(controller, 'PatientChangedEvent', @obj.PatientChanged);            
             obj.AddEventListener(state, 'SeriesUidChangedEvent', @obj.SeriesChanged);            
+            obj.AddEventListener(state, 'PatientIdChangedEvent', @obj.PatientChanged);
             obj.AddEventListener(linked_recorder, 'LinkingChanged', @obj.LinkingChanged);            
             obj.AddEventListener(patient_database, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
         end

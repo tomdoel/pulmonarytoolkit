@@ -430,12 +430,14 @@ classdef PTKGuiCore < GemFigure
             obj.GuiDataset.InvalidateCurrentPluginResult;
         end
         
-        function LoadFromPatientBrowser(obj, series_uid)
+        function LoadFromPatientBrowser(obj, series_uid, fallback_patient_id)
             obj.BringToFront;
+            obj.GuiDataset.SwitchPatient(fallback_patient_id);
             obj.LoadFromUid(series_uid);
         end
         
         function LoadPatient(obj, patient_id)
+            obj.GuiDataset.SwitchPatient(patient_id);
             datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(PTKImageDatabase.LocalDatabaseId, patient_id);
             if isempty(datasets)
                 series_uid = [];

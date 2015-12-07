@@ -43,7 +43,7 @@ classdef PTKCombinedImageDatabaseController < CoreBaseClass
         
         function SeriesClicked(obj, patient_id, series_uid)
             if strcmp(obj.CurrentProject, PTKImageDatabase.LocalDatabaseId)
-                obj.GuiCallback.LoadFromPatientBrowser(series_uid);
+                obj.GuiCallback.LoadFromPatientBrowser(series_uid, patient_id);
             else
                 if ~isempty(obj.MatNatDatabase)
                     import_path = obj.MatNatDatabase.downloadScan(obj.CurrentProject, patient_id, series_uid);

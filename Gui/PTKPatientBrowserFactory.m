@@ -40,6 +40,7 @@ classdef PTKPatientBrowserFactory < CoreBaseClass
                 obj.InitialPosition = settings.PatientBrowserScreenPosition;
             end
             
+            obj.AddEventListener(obj.GuiDatasetState, 'PatientIdChangedEvent', @obj.PatientChanged);
             obj.AddEventListener(obj.GuiDatasetState, 'SeriesUidChangedEvent', @obj.SeriesChanged);
             obj.AddEventListener(image_database, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
         end
@@ -70,6 +71,13 @@ classdef PTKPatientBrowserFactory < CoreBaseClass
             patient_id = obj.GuiDatasetState.CurrentPatientId;
             series_uid = obj.GuiDatasetState.CurrentSeriesUid;
             obj.UpdatePatientBrowser(patient_id, series_uid);
+        end
+        
+        function PatientChanged(obj, ~, ~)
+            % Change the currently selected patient and series
+            
+            patient_id = obj.GuiDatasetState.CurrentPatientId;
+            obj.UpdatePatientBrowser(patient_id, []);
         end
         
         function last_position = GetScreenPosition(obj)

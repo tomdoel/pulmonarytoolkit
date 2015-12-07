@@ -29,6 +29,7 @@ classdef PTKGuiDatasetState < CoreBaseClass
    
    events
        SeriesUidChangedEvent
+       PatientIdChangedEvent
        PluginChangedEvent
    end
    
@@ -41,7 +42,22 @@ classdef PTKGuiDatasetState < CoreBaseClass
                obj.CurrentPatientVisibleName = patient_visible_name;
                obj.CurrentSeriesName = series_name;
                obj.CurrentModality = modality;
-               notify(obj, 'SeriesUidChangedEvent');
+               notify(obj, 'SeriesUidChangedEvent', CoreEventData(series_uid));
+           end
+       end
+       
+       function SetPatientClearSeries(obj, patient_id, patient_visible_name)
+           patient_changed = ~strcmp(patient_id, obj.CurrentPatientId);
+           series_changed = ~isempty(obj.CurrentSeriesUid);
+           obj.CurrentPatientId = patient_id;
+           obj.CurrentSeriesUid = [];
+           obj.CurrentPatientVisibleName = patient_visible_name;
+           obj.CurrentSeriesName = [];
+           obj.CurrentModality = [];
+           if series_changed
+               notify(obj, 'SeriesUidChangedEvent', CoreEventData([]));
+           elseif patient_changed
+               notify(obj, 'PatientIdChangedEvent', CoreEventData(patient_id));
            end
        end
        
@@ -51,7 +67,7 @@ classdef PTKGuiDatasetState < CoreBaseClass
                obj.CurrentSeriesName = [];
                obj.CurrentModality = [];
                obj.CurrentSegmentationName = [];
-               notify(obj, 'SeriesUidChangedEvent');
+               notify(obj, 'SeriesUidChangedEvent', CoreEventData([]));
            end
        end
        
@@ -63,7 +79,7 @@ classdef PTKGuiDatasetState < CoreBaseClass
                obj.CurrentSeriesName = [];
                obj.CurrentModality = [];
                obj.CurrentSegmentationName = [];
-               notify(obj, 'SeriesUidChangedEvent');
+               notify(obj, 'SeriesUidChangedEvent', CoreEventData([]));
            end
        end
 
@@ -73,7 +89,7 @@ classdef PTKGuiDatasetState < CoreBaseClass
             obj.CurrentVisiblePluginName = [];
             obj.CurrentPluginResultIsEdited = false;
             obj.CurrentSegmentationName = [];
-            notify(obj, 'PluginChangedEvent');
+            notify(obj, 'PluginChangedEvent', CoreEventData([]));
        end
        
        function SetPlugin(obj, plugin_info, plugin_name, plugin_visible_name, is_edited)
@@ -82,7 +98,7 @@ classdef PTKGuiDatasetState < CoreBaseClass
             obj.CurrentVisiblePluginName = plugin_visible_name;
             obj.CurrentPluginResultIsEdited = is_edited;
             obj.CurrentSegmentationName = [];
-            notify(obj, 'PluginChangedEvent');
+            notify(obj, 'PluginChangedEvent', CoreEventData(plugin_name));
        end
        
        function SetSegmentation(obj, segmentation_name)
@@ -93,7 +109,7 @@ classdef PTKGuiDatasetState < CoreBaseClass
        function UpdateEditStatus(obj, is_edited)
            if ~isequal(obj.CurrentPluginResultIsEdited, is_edited)
                obj.CurrentPluginResultIsEdited = is_edited;
-               notify(obj, 'PluginChangedEvent');
+               notify(obj, 'PluginChangedEvent', CoreEventData(obj.CurrentPluginName));
            end
        end
    end
