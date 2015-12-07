@@ -447,7 +447,21 @@ classdef PTKImageUtilities
             
             preview_image_slice = zeros(preview_size);
             preview_image_slice(startpos(1):endpos(1), startpos(2):endpos(2)) = imresize(double(slice), scaled_preview_size, method);
-        end        
+        end  
+        
+        function best_series = FindBestSeries(datasets)
+            modalities = CoreContainerUtilities.GetFieldValuesFromSet(datasets, 'Modality');
+            matches_modality = ismember(modalities, 'CT') | ismember(modalities, 'MR');
+            if isempty(matches_modality)
+                selected_datasets = datasets;
+            else
+                selected_datasets = datasets(matches_modality);
+            end
+            num_images = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(selected_datasets, 'NumberOfImages');
+            [~, max_index] = max(num_images);
+            best_series = selected_datasets{max_index}.SeriesUid;
+        end
+        
     end
 end
 

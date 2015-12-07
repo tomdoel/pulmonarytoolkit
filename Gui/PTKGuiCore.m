@@ -446,7 +446,7 @@ classdef PTKGuiCore < GemFigure
                 if ~isempty(last_uid) && ismember(last_uid, CoreContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid'))
                     series_uid  = last_uid;
                 else
-                    series_uid = datasets{1}.SeriesUid;
+                    series_uid = PTKImageUtilities.FindBestSeries(datasets);
                 end
             end
             obj.LoadFromUid(series_uid);
@@ -648,6 +648,7 @@ classdef PTKGuiCore < GemFigure
             CustomCloseFunction@GemFigure(obj, src);
         end
     
+        
     end
     
     methods (Access = private)
