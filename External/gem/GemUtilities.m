@@ -130,9 +130,16 @@ classdef GemUtilities
             % Change figure settings
             set(figureHandle, 'PaperPositionMode', 'auto', 'PaperOrientation', 'portrait', ...
                 'InvertHardcopy', 'off', 'ResizeFcn', '');
+
+            % Compute the DPI
+            set(0, 'units', 'pixels')  
+            screen_size_pixels = get(0, 'screensize');
+            set(0, 'units', 'inches')
+            screen_size_inches = get(0, 'screensize');
+            dpi = round(screen_size_pixels(3)/screen_size_inches(3));
             
             % Get image
-            cdata = hardcopy(figureHandle, imageRenderer);
+            cdata = hardcopy(figureHandle, imageRenderer, ['-r' int2str(dpi)]);
             frame = im2frame(cdata);
             
             % Restore figure settings
@@ -140,7 +147,7 @@ classdef GemUtilities
                 'InvertHardcopy', oldInvertHardcopy, 'ResizeFcn', oldResizeFcn);
             
             frameHeight = size(frame.cdata, 1);
-            cdata = frame.cdata(1 + frameHeight - (rectScreenpixels(2)+rectScreenpixels(4)) : frameHeight - rectScreenpixels(2), rectScreenpixels(1):rectScreenpixels(1)+rectScreenpixels(3)-1, :);
+            cdata = frame.cdata(2 + frameHeight - (rectScreenpixels(2)+rectScreenpixels(4)) : frameHeight - rectScreenpixels(2), rectScreenpixels(1):rectScreenpixels(1)+rectScreenpixels(3)-1, :);
             frame.cdata = cdata;
         end       
     end
