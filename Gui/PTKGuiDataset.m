@@ -177,8 +177,6 @@ classdef PTKGuiDataset < CoreBaseClass
                     obj.Reporting.ShowMessage('PTKGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
                 end
             end
-
-            obj.Gui.AddAllPreviewImagesToButtons([]);
         end
         
         
