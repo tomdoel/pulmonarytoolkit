@@ -20,14 +20,14 @@ classdef PTKEnterEditMode < PTKGuiPlugin
         ToolTip = 'Enter correction mode where you can edit the segmented result'
         Category = 'Tools'
         Visibility = 'Dataset'
-        Mode = 'Toolbar'
+        Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'edit.png'
-        Location = 16
+        Location = 13
     end
     
     methods (Static)

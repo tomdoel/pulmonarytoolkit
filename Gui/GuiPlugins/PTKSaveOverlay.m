@@ -25,7 +25,7 @@ classdef PTKSaveOverlay < PTKGuiPlugin
         ToolTip = 'Save the current overlay view to a file'
         Category = 'Export'
         Visibility = 'Overlay'
-        Mode = 'Toolbar'
+        Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -33,7 +33,7 @@ classdef PTKSaveOverlay < PTKGuiPlugin
         ButtonHeight = 1
         
         Icon = 'export_overlay.png'
-        Location = 21
+        Location = 14
     end
     
     methods (Static)

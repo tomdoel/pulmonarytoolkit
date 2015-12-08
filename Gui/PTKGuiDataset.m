@@ -204,7 +204,7 @@ classdef PTKGuiDataset < CoreBaseClass
         function SwitchPatient(obj, patient_id)
             if ~strcmp(patient_id, obj.GuiDatasetState.CurrentPatientId)
                 obj.ModeSwitcher.UpdateMode([], [], [], [], []);
-                obj.Gui.SetTab('Segment');                
+                obj.Gui.SetTab(PTKSoftwareInfo.DefaultModeOnNewDataset);
                 obj.Gui.ClearImages;
                 obj.DeletePreviewListener;
                 delete(obj.Dataset);
@@ -230,7 +230,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 end
 
                 obj.ModeSwitcher.UpdateMode([], [], [], [], []);
-                obj.Gui.SetTab('Segment');
+                obj.Gui.SetTab(PTKSoftwareInfo.DefaultModeOnNewDataset);
                 
                 obj.Gui.ClearImages;
                 delete(obj.Dataset);

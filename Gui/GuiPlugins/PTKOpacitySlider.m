@@ -21,13 +21,13 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
         ToolTip = 'Change the transparency of the segmentation overlay'
         Category = 'Segmentation overlay'
         Visibility = 'Dataset'
-        Mode = 'View'
+        Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 1
-        Location = 9
+        Location = 12
 
         MinValue = 0
         MaxValue = 100

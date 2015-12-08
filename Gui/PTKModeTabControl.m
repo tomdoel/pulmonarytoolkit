@@ -18,6 +18,7 @@ classdef PTKModeTabControl < GemTabControl
         Gui
         
         ViewPanel
+        SegmentPanel
         PluginsPanel
         EditPanel
         ManualSegmentationPanel
@@ -41,8 +42,11 @@ classdef PTKModeTabControl < GemTabControl
             obj.ViewPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'View', [], 'Always', obj.Gui, app_def);
             obj.AddTabbedPanel(obj.ViewPanel, 'View', 'View', 'Visualisation');
             
-            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
-            obj.AddTabbedPanel(obj.PluginsPanel, 'Segment', 'Segment', 'Algorithms for segmenting lung features');
+            obj.SegmentPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', obj.Gui, app_def);
+            obj.AddTabbedPanel(obj.SegmentPanel, 'Segment', 'Segment', 'Segmentation');
+            
+            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.AddTabbedPanel(obj.PluginsPanel, 'Plugins', 'Plugins', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
 
             obj.EditPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', obj.Gui, app_def);
@@ -94,6 +98,7 @@ classdef PTKModeTabControl < GemTabControl
         
         function UpdateDynamicPanels(obj)
             obj.ViewPanel.Update(obj.Gui);
+            obj.SegmentPanel.Update(obj.Gui);
             obj.EditPanel.Update(obj.Gui);
         end
         

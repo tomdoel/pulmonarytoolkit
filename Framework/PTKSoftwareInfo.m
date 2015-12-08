@@ -37,7 +37,8 @@ classdef PTKSoftwareInfo < handle
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica'
         DefaultCategoryName = 'Uncategorised'
-        DefaultMode = 'Segment'
+        PluginDefaultMode = 'Plugins'
+        DefaultModeOnNewDataset = 'Segment'
         Colormap = CoreSystemUtilities.BackwardsCompatibilityColormap;
         
         % If this parameter to true, then the patient browser will group together

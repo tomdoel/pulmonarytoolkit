@@ -51,7 +51,7 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, suggested_c
     if ismember('Mode', property_list) && ~isempty(plugin_class.Mode);
         new_plugin.Mode = plugin_class.Mode;
     else
-        new_plugin.Mode = PTKSoftwareInfo.DefaultMode;
+        new_plugin.Mode = PTKSoftwareInfo.PluginDefaultMode;
     end
     
     if ismember('EnableModes', property_list);
