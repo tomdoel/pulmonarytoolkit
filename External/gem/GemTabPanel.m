@@ -141,8 +141,8 @@ classdef GemTabPanel < GemPanel
         
         function ResizePreTabEnable(obj, panel_position, tab_to_enable)
             number_of_tabs = double(obj.Tabs.Count);
-            number_of_enabled_tabs = obj.GetNumberOfEnabledTabs;
-            tab_width = (panel_position(3) - obj.LeftMargin - obj.RightMargin - (number_of_tabs - 1)*obj.TabSpacing)/number_of_enabled_tabs;
+            number_of_enabled_tabs = max(1, obj.GetNumberOfEnabledTabs);
+            tab_width = (panel_position(3) - obj.LeftMargin - obj.RightMargin - (number_of_enabled_tabs - 1)*obj.TabSpacing)/number_of_enabled_tabs;
             tab_height = panel_position(4) - obj.TopMargin - obj.BottomMargin;
             tab_width = max(1, tab_width);
             enabled_tab_index = 1;
