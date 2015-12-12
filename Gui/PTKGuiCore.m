@@ -592,6 +592,10 @@ classdef PTKGuiCore < GemFigure
             is_ct = strcmp(obj.GuiDataset.GuiDatasetState.CurrentModality, 'CT');
         end
         
+        function is_mr = IsMR(obj)
+            is_mr = strcmp(obj.GuiDataset.GuiDatasetState.CurrentModality, 'MR');
+        end
+        
         function ToolClicked(obj)
             obj.UpdateToolbar;
         end
