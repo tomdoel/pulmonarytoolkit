@@ -19,7 +19,7 @@ classdef PTKSetRemapMode < PTKGuiPlugin
         ButtonText = 'Remap'
         SelectedText = 'Remap'
         ToolTip = 'Enter colour remapping editing mode'
-        Category = 'Tools'
+        Category = 'Correction Tools'
         Visibility = 'Dataset'
         Mode = 'Edit'
 
@@ -28,7 +28,7 @@ classdef PTKSetRemapMode < PTKGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'edit_boundary.png'
-        Location = 3
+        Location = 23
     end
     
     methods (Static)

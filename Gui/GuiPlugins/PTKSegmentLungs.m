@@ -16,7 +16,7 @@ classdef PTKSegmentLungs < PTKGuiPlugin
         ButtonText = 'Lungs'
         SelectedText = 'Lungs'
         ToolTip = 'Segment the lungs'
-        Category = 'Segment'
+        Category = 'Segment region'
         Visibility = 'Dataset'
         Mode = 'Segment'
 

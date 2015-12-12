@@ -18,7 +18,7 @@ classdef PTKShowHideOverlay < PTKGuiPlugin
         ButtonText = 'Show Overlay'
         SelectedText = 'Hide Overlay'        
         ToolTip = 'Shows or hides the overlay segmentation image'
-        Category = 'Show / Hide'
+        Category = 'Segmentation display'
         Visibility = 'Dataset'
         Mode = 'Segment'
 

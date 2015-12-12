@@ -21,13 +21,13 @@ classdef PTKLevelSlider < PTKGuiPluginSlider
         ToolTip = 'Change the level'
         Category = 'Window / Level'
         Visibility = 'Dataset'
-        Mode = 'View'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '2'
-        ButtonWidth = 6
+        ButtonWidth = 4
         ButtonHeight = 1
-        Location = 6
+        Location = 26
 
         MinValue = 0
         MaxValue = 100
@@ -35,8 +35,8 @@ classdef PTKLevelSlider < PTKGuiPluginSlider
         LargeStep = 0.1
         DefaultValue = 50
         
-        EditBoxPosition = 90
-        EditBoxWidth = 60
+        EditBoxPosition = 50
+        EditBoxWidth = 40
     end
     
     methods (Static)

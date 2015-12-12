@@ -14,15 +14,14 @@ classdef PTKDeleteEdited < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Delete all editing'
-        SelectedText = 'Delete all editing'
+        ButtonText = 'Delete all corrections'
+        SelectedText = 'Delete all corrections'
         ToolTip = ''
-        Category = 'Delete'
+        Category = 'Save / load corrections'
         Visibility = 'Overlay'
         Mode = 'Edit'
-
         Icon = 'bin.png'
-        Location = 14
+        Location = 25
         
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -36,5 +35,11 @@ classdef PTKDeleteEdited < PTKGuiPlugin
             % ToDo
             ptk_gui_app.GetMode.DeleteAllEditsWithPrompt;
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
+                ~isequal(ptk_gui_app.GetCurrentModeName, PTKModes.EditMode) && ptk_gui_app.IsTabEnabled('Edit');
+        end
+        
     end
 end

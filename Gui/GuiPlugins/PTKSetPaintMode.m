@@ -19,7 +19,7 @@ classdef PTKSetPaintMode < PTKGuiPlugin
         ButtonText = 'Paint'
         SelectedText = 'Paint'
         ToolTip = 'Enter paintbrush editing mode'
-        Category = 'Tools'
+        Category = 'Correction Tools'
         Visibility = 'Dataset'
         Mode = 'Edit'
 
@@ -28,7 +28,7 @@ classdef PTKSetPaintMode < PTKGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'paint.png'
-        Location = 2
+        Location = 22
     end
     
     methods (Static)

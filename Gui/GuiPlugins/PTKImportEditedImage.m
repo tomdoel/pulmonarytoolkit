@@ -15,15 +15,15 @@ classdef PTKImportEditedImage < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Import Edit'
-        SelectedText = 'Import Edit'
+        ButtonText = 'Import Corrections'
+        SelectedText = 'Import Corrections'
         ToolTip = 'Exports the current edit to an external file'
-        Category = 'Import / Export'
+        Category = 'Save / load corrections'
         Visibility = 'Overlay'
         Mode = 'Edit'
         
         Icon = 'add_patch.png'
-        Location = 13
+        Location = 26
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -35,5 +35,11 @@ classdef PTKImportEditedImage < PTKGuiPlugin
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.GetMode.ImportEdit;
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
+                ~isequal(ptk_gui_app.GetCurrentModeName, PTKModes.EditMode) && ptk_gui_app.IsTabEnabled('Edit');
+        end
+        
     end
 end

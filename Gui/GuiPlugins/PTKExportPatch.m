@@ -15,15 +15,15 @@ classdef PTKExportPatch < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Export Patch'
-        SelectedText = 'Export Patch'
-        ToolTip = 'Exports the current edit to an external patch file'
-        Category = 'Import / Export'
+        ButtonText = 'Create Patch'
+        SelectedText = 'Create Patch'
+        ToolTip = 'Creates a patch for the current corrections and saves to an external patch file'
+        Category = 'Save / load corrections'
         Visibility = 'Overlay'
         Mode = 'Edit'
 
         Icon = 'export_overlay.png'
-        Location = 11
+        Location = 27
         
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -35,5 +35,11 @@ classdef PTKExportPatch < PTKGuiPlugin
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.GetMode.ExportPatch;
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
+                ~isequal(ptk_gui_app.GetCurrentModeName, PTKModes.EditMode) && ptk_gui_app.IsTabEnabled('Edit');
+        end        
+    
     end
 end

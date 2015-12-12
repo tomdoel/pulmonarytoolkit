@@ -18,15 +18,15 @@ classdef PTKCloseFigures < PTKGuiPlugin
         ButtonText = 'Close Figures'
         SelectedText = 'Close Figures'
         ToolTip = 'Close all open Matlab figures except the PTK gui'
-        Category = 'View'
-        Mode = 'View'
+        Category = 'Developer tools'
+        Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
         Visibility = 'Developer'
-        Location = 10
+        Location = 100
     end
     
     methods (Static)

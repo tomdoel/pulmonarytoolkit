@@ -14,15 +14,15 @@ classdef PTKSaveEdited < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Save corrections'
-        SelectedText = 'Save corrections'
+        ButtonText = 'Save Corrections'
+        SelectedText = 'Save Corrections'
         ToolTip = ''
-        Category = 'Edit'
+        Category = 'Save / load corrections'
         Visibility = 'Overlay'
         Mode = 'Edit'
 
         Icon = 'save.png'
-        Location = 10
+        Location = 24
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -34,5 +34,11 @@ classdef PTKSaveEdited < PTKGuiPlugin
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.GetMode.SaveEdit;
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
+                ~isequal(ptk_gui_app.GetCurrentModeName, PTKModes.EditMode) && ptk_gui_app.IsTabEnabled('Edit');
+        end
+                
     end
 end

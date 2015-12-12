@@ -14,18 +14,18 @@ classdef PTKSetProfiler < PTKGuiPlugin
     
     properties
         ButtonText = 'Profiler'
-        SelectedText = 'Profiler Off'
+        SelectedText = 'FInish profiling'
         ToolTip = 'Starts or stops the Matlab profiler'
-        Category = 'Profile'
+        Category = 'Developer tools'
         Visibility = 'Developer'
-        Mode = 'View'
+        Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
         Icon = 'timer.png'        
-        Location = 12
+        Location = 110
     end
     
     methods (Static)

@@ -16,7 +16,7 @@ classdef PTKSetDeveloperMode < PTKGuiPlugin
         ButtonText = 'Developer tools'
         SelectedText = 'Developer tools off'
         ToolTip = 'Enables or disabled developer mode'
-        Category = 'Developer tools'
+        Category = 'Developer'
         Visibility = 'Always'
         Mode = 'Toolbar'
 

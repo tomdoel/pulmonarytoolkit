@@ -16,7 +16,7 @@ classdef PTKSegmentAirways < PTKGuiPlugin
         ButtonText = 'Airways'
         SelectedText = 'Airways'
         ToolTip = 'Segment the airways'
-        Category = 'Segment'
+        Category = 'Segment region'
         Visibility = 'Dataset'
         Mode = 'Segment'
 

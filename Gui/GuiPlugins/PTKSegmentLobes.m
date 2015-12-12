@@ -16,7 +16,7 @@ classdef PTKSegmentLobes < PTKGuiPlugin
         ButtonText = 'Lobes'
         SelectedText = 'Lobes'
         ToolTip = 'Segment the lobes'
-        Category = 'Segment'
+        Category = 'Segment region'
         Visibility = 'Dataset'
         Mode = 'Segment'
 

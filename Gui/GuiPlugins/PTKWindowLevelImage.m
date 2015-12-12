@@ -24,14 +24,14 @@ classdef PTKWindowLevelImage < PTKGuiPlugin
         ToolTip = 'Changes the window and level settings to values specified in the image'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'
-        Mode = 'View'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'wl_image.png'
-        Location = 4
+        Location = 24
     end
     
     methods (Static)

@@ -17,7 +17,7 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
         SelectedText = 'Brush size'
         
         ToolTip = 'Change the size of the editing paint brush'
-        Category = 'Paintbrush'
+        Category = 'Paint'
         Visibility = 'Dataset'
         Mode = 'Edit'
 
@@ -25,7 +25,7 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
         PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 1
-        Location = 20
+        Location = 25
 
         MinValue = 0
         MaxValue = 100
@@ -33,8 +33,8 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
         LargeStep = 0.1
         DefaultValue = 50
         
-        EditBoxPosition = 110
-        EditBoxWidth = 40
+        EditBoxPosition = 90
+        EditBoxWidth = 30
     end
     
     methods (Static)

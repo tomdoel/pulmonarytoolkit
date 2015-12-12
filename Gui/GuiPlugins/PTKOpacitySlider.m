@@ -16,10 +16,10 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
     %    
     
     properties
-        ButtonText = 'Overlay Transparency'
-        SelectedText = 'Overlay Transparency'
+        ButtonText = 'Transparency'
+        SelectedText = 'Transparency'
         ToolTip = 'Change the transparency of the segmentation overlay'
-        Category = 'Segmentation overlay'
+        Category = 'Segmentation display'
         Visibility = 'Dataset'
         Mode = 'Segment'
 
@@ -35,8 +35,8 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
         LargeStep = 0.1
         DefaultValue = 50
         
-        EditBoxPosition = 130
-        EditBoxWidth = 40
+        EditBoxPosition = 95
+        EditBoxWidth = 30
     end
     
     methods (Static)

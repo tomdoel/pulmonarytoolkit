@@ -22,15 +22,15 @@ classdef PTKRefreshPlugins < PTKGuiPlugin
         ButtonText = 'Check for new plugins'
         SelectedText = 'Check for new plugins'
         ToolTip = 'Check for new plugins'
-        Category = 'File'
+        Category = 'Developer tools'
         Visibility = 'Developer'
-        Mode = 'View'
+        Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Location = 15
+        Location = 107
     end
     
     methods (Static)

@@ -16,7 +16,7 @@ classdef PTKSegmentSegments < PTKGuiPlugin
         ButtonText = 'Segments'
         SelectedText = 'Segments'
         ToolTip = 'Segment the segments'
-        Category = 'Segment'
+        Category = 'Segment region'
         Visibility = 'Dataset'
         Mode = 'Segment'
 
@@ -30,7 +30,7 @@ classdef PTKSegmentSegments < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.RunPluginCallback('PTKSegments');
+            ptk_gui_app.RunPluginCallback('PTKPulmonarySegments');
         end
 
         function enabled = IsEnabled(ptk_gui_app)

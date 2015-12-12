@@ -23,14 +23,14 @@ classdef PTKWindowLevelSoftTissue < PTKGuiPlugin
         ToolTip = 'Changes the window and level settings to standard soft tissue values (Window 350HU Level 40HU)'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'
-        Mode = 'View'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'wl_softtissue.png'
-        Location = 3
+        Location = 23
     end
     
     methods (Static)

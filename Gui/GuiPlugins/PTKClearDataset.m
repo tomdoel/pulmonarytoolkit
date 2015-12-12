@@ -20,16 +20,16 @@ classdef PTKClearDataset < PTKGuiPlugin
         ButtonText = 'No Dataset'
         SelectedText = 'No Dataset'
         ToolTip = ''
-        Category = 'File'
+        Category = 'Developer tools'
         Visibility = 'Developer'
-        Mode = 'View'
+        Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
         
-        Location = 18
+        Location = 101
     end
     
     methods (Static)

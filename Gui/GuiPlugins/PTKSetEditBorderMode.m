@@ -17,7 +17,7 @@ classdef PTKSetEditBorderMode < PTKGuiPlugin
         ButtonText = 'Edit Boundary'
         SelectedText = 'Edit Boundary'
         ToolTip = 'Modify the boundary of a segmented object by clicking on new boundary points'
-        Category = 'Tools'
+        Category = 'Correction Tools'
         Visibility = 'Dataset'
         Mode = 'Edit'
 
@@ -26,7 +26,7 @@ classdef PTKSetEditBorderMode < PTKGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'edit_boundary.png'
-        Location = 1
+        Location = 21
     end
     
     methods (Static)

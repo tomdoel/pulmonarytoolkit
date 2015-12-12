@@ -18,7 +18,7 @@ classdef PTKEnterEditMode < PTKGuiPlugin
         ButtonText = 'Correct'
         SelectedText = 'Correct'
         ToolTip = 'Enter correction mode where you can edit the segmented result'
-        Category = 'Tools'
+        Category = 'Correct'
         Visibility = 'Dataset'
         Mode = 'Segment'
 
@@ -27,7 +27,7 @@ classdef PTKEnterEditMode < PTKGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'edit.png'
-        Location = 13
+        Location = 20
     end
     
     methods (Static)
