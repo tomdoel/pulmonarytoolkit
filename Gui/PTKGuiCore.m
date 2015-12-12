@@ -217,6 +217,7 @@ classdef PTKGuiCore < GemFigure
         
         function ChangeMode(obj, mode)
             obj.GuiDataset.ChangeMode(mode);
+            obj.UpdateToolbar;
         end
         
         function SetTabMode(obj, mode)
@@ -887,7 +888,7 @@ classdef PTKGuiCore < GemFigure
 
         function ModeTabChanged(obj, ~, event_data)
             mode = obj.ModeTabControl.GetModeToSwitchTo(event_data.Data);
-            obj.GuiDataset.ChangeMode(mode);
+            obj.ChangeMode(mode);
         end
         
     end
