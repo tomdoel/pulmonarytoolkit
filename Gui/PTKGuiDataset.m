@@ -372,8 +372,9 @@ classdef PTKGuiDataset < CoreBaseClass
             end
         end
         
-        % Causes the GUI to run the named plugin and display the result
         function RunPlugin(obj, plugin_name, wait_dialog)
+            % Causes the GUI to run the named plugin and display the result
+            
             if ~obj.DatasetIsLoaded
                 return;
             end
