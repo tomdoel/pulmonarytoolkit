@@ -15,7 +15,7 @@ classdef GemLabelSlider < GemVirtualPanel
     end
 
     properties
-        SliderWidth = 150
+        SliderWidth = 100
         SliderHeight = 50
         TextHeight = 15
         VerticalSpacing = 2
