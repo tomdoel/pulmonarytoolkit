@@ -168,7 +168,28 @@ classdef PTKGuiDataset < CoreBaseClass
                 
                 obj.Settings.SetLastImageInfo([], obj.Reporting);
                 
-                obj.SetNoDataset;
+                obj.SetNoDataset(false);
+                
+            catch exc
+                if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                    obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled');
+                else
+                    obj.Reporting.ShowMessage('PTKGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
+                end
+            end
+        end
+        
+        function ClearDatasetKeepPatient(obj)
+            try
+                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.Gui.ClearImages;
+                delete(obj.Dataset);
+
+                obj.Dataset = [];
+                
+                obj.Settings.SetLastImageInfo([], obj.Reporting);
+                
+                obj.SetNoDataset(true);
                 
             catch exc
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
@@ -347,8 +368,7 @@ classdef PTKGuiDataset < CoreBaseClass
                         obj.Reporting.ShowMessage('PTKGuiDataset:DeleteImageInfoFailed', ['Failed to delete dataset due to error: ' exc.message]);
                     end
                 end
-                                
-                obj.GuiDatasetState.SetPatientClearSeries(patient_id, patient_visible_name);
+                obj.ClearDatasetKeepPatient;
             end
         end
         
@@ -417,8 +437,12 @@ classdef PTKGuiDataset < CoreBaseClass
             obj.Gui.UpdateModeTabControl(obj.GuiDatasetState.CurrentPluginInfo);
         end
         
-        function SetNoDataset(obj)
-            obj.GuiDatasetState.ClearPatientAndSeries;
+        function SetNoDataset(obj, keep_patient)
+            if keep_patient
+                obj.GuiDatasetState.ClearSeries;
+            else
+                obj.GuiDatasetState.ClearPatientAndSeries;
+            end
             obj.GuiDatasetState.ClearPlugin;
             obj.UpdateModes;
         end
