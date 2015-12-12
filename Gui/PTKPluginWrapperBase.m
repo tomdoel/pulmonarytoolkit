@@ -51,7 +51,7 @@ classdef PTKPluginWrapperBase < handle
                         is_gui_plugin = false;
                     end
                     if is_plugin
-                        hide_plugin = plugin_class_object.HidePluginInDisplay || (~gui_app.DeveloperMode && isprop(plugin_class_object, 'Visibility') && strcmp(plugin_class_object.Visibility, 'Developer'));
+                        hide_plugin = plugin_class_object.HidePluginInDisplay || (~is_gui_plugin && ~gui_app.DeveloperMode && isprop(plugin_class_object, 'Visibility') && strcmp(plugin_class_object.Visibility, 'Developer'));
                         if ~hide_plugin
                             % Parse the plugin class properties into a data structure
                             if is_gui_plugin
