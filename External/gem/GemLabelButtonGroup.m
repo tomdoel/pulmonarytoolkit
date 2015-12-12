@@ -71,9 +71,10 @@ classdef GemLabelButtonGroup < GemVirtualPanel
         
         function Update(obj, gui_app)
             % Calls each label button and updates its status.
-            
+            any_enabled = false;
             for control = obj.Controls
                 enabled = control{1}.UpdateToolEnabled(gui_app);
+                any_enabled = any_enabled || enabled;
                 if enabled ~= control{1}.Enabled
                     if enabled
                         if isempty(control{1}.Position)
@@ -84,6 +85,11 @@ classdef GemLabelButtonGroup < GemVirtualPanel
                         control{1}.Disable;
                     end
                 end
+            end
+            if any_enabled
+                obj.Enable;
+            else
+                obj.Disable;
             end
         end
         
