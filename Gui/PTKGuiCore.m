@@ -133,7 +133,7 @@ classdef PTKGuiCore < GemFigure
 
             % Create the panel of tools across the bottom of the interface
             if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef);
+                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef, false);
                 obj.AddChild(obj.ToolbarPanel);
             end
             
@@ -149,7 +149,7 @@ classdef PTKGuiCore < GemFigure
                 obj.Reporting.ShowProgress('Loading images');
                 obj.GuiDataset.InternalLoadImages(image_info);
             else
-                obj.GuiDataset.SetNoDataset;
+                obj.GuiDataset.SetNoDataset(false);
 
             end            
             

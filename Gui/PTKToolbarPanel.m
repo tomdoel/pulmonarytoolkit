@@ -16,6 +16,7 @@ classdef PTKToolbarPanel < GemPanel
     
     properties (Access = private)
         ControlGroups
+        ControlGroupSeparators
         OrderedControlGroupList
         GuiApp
         ModeTabName
@@ -24,6 +25,7 @@ classdef PTKToolbarPanel < GemPanel
         ToolMap
         AppDef
         Visibility
+        GroupVertically
     end
     
     properties (Constant)
@@ -35,7 +37,7 @@ classdef PTKToolbarPanel < GemPanel
     end
     
     methods
-        function obj = PTKToolbarPanel(parent, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def)
+        function obj = PTKToolbarPanel(parent, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically)
             obj = obj@GemPanel(parent);
             
             obj.ModeTabName = mode_tab_name;
@@ -46,9 +48,11 @@ classdef PTKToolbarPanel < GemPanel
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
             obj.ControlGroups = containers.Map;
+            obj.ControlGroupSeparators = containers.Map;
             obj.OrderedControlGroupList = {};
             obj.ToolMap = containers.Map;
             obj.OrganisedPlugins = organised_plugins;
+            obj.GroupVertically = group_vertically;
             
             obj.AddTools;
         end
@@ -59,28 +63,48 @@ classdef PTKToolbarPanel < GemPanel
             panel_height = max(1, new_position(4));
             row_height = obj.RowHeight;
             panel_top = new_position(2) + panel_height;
-            y_column_base = panel_top - row_height;
+            y_column_top = panel_top;
+            y_column_base = y_column_top - row_height;
             
             min_x = 1 + obj.LeftMargin;
             max_x = new_position(3) - obj.RightMargin;
             x_position = min_x;
             
-            for tool_group = obj.OrderedControlGroupList
-                tool_group_panel = tool_group{1};
-                group_panel_height = tool_group_panel.GetRequestedHeight;
-                group_panel_width = tool_group_panel.GetWidth;
+            for tool_group_key = obj.OrderedControlGroupList
+                tool_group_panel = obj.ControlGroups(tool_group_key{1});
                 
-                if (x_position > min_x) && (x_position + group_panel_width > max_x)
-                    x_position = min_x;
-                    y_column_base = y_column_base - row_height;
-                end
-                
-                y_offset = round((row_height - group_panel_height)/2);
-                y_position = max(1, y_column_base + y_offset);
                 if tool_group_panel.Enabled
+                    group_panel_height = tool_group_panel.GetRequestedHeight;
+                    group_panel_width = tool_group_panel.GetWidth;
+                    
+                    if (x_position > min_x) && (obj.GroupVertically || (x_position + group_panel_width > max_x))
+                        x_position = min_x;
+                        y_column_top = y_column_top - row_height;
+                        y_column_base = y_column_top - row_height;
+                    end
+                    
+                    if obj.GroupVertically
+                        separator = obj.ControlGroupSeparators(tool_group_key{1});
+                        y_position = max(1, y_column_top - separator.GetRequestedHeight);
+                        separator.Enable;
+                        separator.Resize([1, y_position, new_position(3), separator.GetRequestedHeight]);
+                        y_column_top = y_column_top - separator.GetRequestedHeight;
+                        y_column_base = y_column_top - row_height;
+                    end
+                
+                    
+                    y_offset = round((row_height - group_panel_height)/2);
+                    y_position = max(1, y_column_base + y_offset);
                     tool_group_panel.Resize([x_position, y_position, group_panel_width, group_panel_height]);
                     x_position = x_position + obj.HorizontalSpacing + group_panel_width;
+                    
+                else
+                    if obj.GroupVertically
+                        separator = obj.ControlGroupSeparators(tool_group_key{1});
+                        separator.Disable;
+                    end
                 end
+                
             end
         end
         
@@ -89,8 +113,8 @@ classdef PTKToolbarPanel < GemPanel
             % become enabled that were previously disabled; this requires the position
             % (since this may not have been set if this is the first time the control has been made visible)
             
-            for tool_group = obj.OrderedControlGroupList
-                tool_group_panel = tool_group{1};
+            for tool_group_key = obj.OrderedControlGroupList
+                tool_group_panel = obj.ControlGroups(tool_group_key{1});
                 tool_group_panel.Update(gui_app);
             end
             
@@ -144,8 +168,14 @@ classdef PTKToolbarPanel < GemPanel
             if ~obj.ControlGroups.isKey(category_key)
                 new_group = GemLabelButtonGroup(obj, category_key, '', category_key);
                 obj.ControlGroups(category_key) = new_group;
-                obj.OrderedControlGroupList{end + 1} = new_group;
+                obj.OrderedControlGroupList{end + 1} = category_key;
                 obj.AddChild(new_group);
+                
+                if obj.GroupVertically
+                    separator = GemSeparator(obj, category_key);
+                    obj.ControlGroupSeparators(category_key) = separator;
+                    obj.AddChild(separator);
+                end
             end
             if isprop(tool, 'Icon')
                 icon = imread(fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.IconFolder, tool.Icon));
