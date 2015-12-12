@@ -148,7 +148,9 @@ classdef PTKSidePanel < GemPanel
                 obj.PatientsSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId);
                 obj.LinkedSeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
                 obj.SeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
-                obj.Resize(obj.Position);
+                if ~isempty(obj.Position)
+                    obj.Resize(obj.Position);
+                end
             end
         end
         
@@ -159,7 +161,9 @@ classdef PTKSidePanel < GemPanel
             if patient_has_changed
                 obj.LinkedSeriesSidePanel.RepopulateSidePanel(patient_id, obj.GuiState.CurrentSeriesUid);
                 obj.SeriesSidePanel.RepopulateSidePanel(patient_id, obj.GuiState.CurrentSeriesUid);
-                obj.Resize(obj.Position);
+                if ~isempty(obj.Position)
+                    obj.Resize(obj.Position);
+                end
             end
         end
         
