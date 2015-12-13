@@ -19,8 +19,8 @@ classdef PTKQuiverScreenImageFromVolume < GemScreenQuiverImage
     end
     
     methods
-        function obj = PTKQuiverScreenImageFromVolume(parent, image_source, viewer_panel)
-            obj = obj@GemScreenQuiverImage(parent, image_source);
+        function obj = PTKQuiverScreenImageFromVolume(parent, image_source, viewer_panel, image_parameters)
+            obj = obj@GemScreenQuiverImage(parent, image_source, image_parameters);
             obj.ViewerPanel = viewer_panel;
         end
         

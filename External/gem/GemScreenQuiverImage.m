@@ -12,12 +12,14 @@ classdef GemScreenQuiverImage < GemScreenImage
     properties (Access = private)
         UData
         VData
+        ImageParameters
     end
     
     methods
         
-        function obj = GemScreenQuiverImage(parent, image_source)
+        function obj = GemScreenQuiverImage(parent, image_source, image_parameters)
             obj = obj@GemScreenImage(parent);
+            obj.ImageParameters = image_parameters;
         end
         
         function CreateGuiComponent(obj, position)

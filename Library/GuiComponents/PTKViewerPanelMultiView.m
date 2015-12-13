@@ -21,11 +21,10 @@ classdef PTKViewerPanelMultiView < GemMultiPanel
     end
     
     methods
-        function obj = PTKViewerPanelMultiView(viewer_panel)
+        function obj = PTKViewerPanelMultiView(viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters)
             obj = obj@GemMultiPanel(viewer_panel);
             
-            obj.CinePanel2D = PTKCinePanelWithTools(obj, viewer_panel);
-            
+            obj.CinePanel2D = PTKCinePanelWithTools(obj, viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters);
             obj.AddPanel(obj.CinePanel2D, 'View2D');
             
             % Change in mouse position

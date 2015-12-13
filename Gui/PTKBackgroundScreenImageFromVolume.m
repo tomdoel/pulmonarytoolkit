@@ -19,13 +19,13 @@ classdef PTKBackgroundScreenImageFromVolume < PTKScreenImageFromVolume
     end
     
     methods
-        function obj = PTKBackgroundScreenImageFromVolume(parent, image_source, viewer_panel)
-            obj = obj@PTKScreenImageFromVolume(parent, image_source);
+        function obj = PTKBackgroundScreenImageFromVolume(parent, image_source, viewer_panel, image_parameters)
+            obj = obj@PTKScreenImageFromVolume(parent, image_source, image_parameters);
             obj.ViewerPanel = viewer_panel;
         end
         
         function DrawImage(obj)
-            obj.DrawImageSlice(obj.ViewerPanel.BackgroundImage, obj.ViewerPanel.BackgroundImage, 100*obj.ViewerPanel.ShowImage, false, obj.ViewerPanel.Window, obj.ViewerPanel.Level, obj.ViewerPanel.OpaqueColour, obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation), obj.ViewerPanel.Orientation);
+            obj.DrawImageSlice(obj.ViewerPanel.BackgroundImage, obj.ViewerPanel.BackgroundImage, 100*obj.ViewerPanel.ShowImage, false, obj.ViewerPanel.Window, obj.ViewerPanel.Level, obj.ViewerPanel.OpaqueColour);
         end
 
         function SetRangeWithPositionAdjustment(obj, x_range, y_range)

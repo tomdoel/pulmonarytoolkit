@@ -111,7 +111,7 @@ classdef PTKViewerPanel < GemPanel
             obj.Tools = PTKToolList(obj.ToolCallback, obj);
             
             % Create the renderer object, which handles the image processing in the viewer
-            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj);
+            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters);
             obj.ToolCallback.SetRenderer(obj.ViewerPanelMultiView);
             obj.AddChild(obj.ViewerPanelMultiView);
         end

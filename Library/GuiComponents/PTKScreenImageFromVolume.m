@@ -16,19 +16,22 @@ classdef PTKScreenImageFromVolume < GemScreenImage
     %
     
     properties (Access = private)
+        ImageParameters
         ImageSource
     end
     
     methods
-        function obj = PTKScreenImageFromVolume(parent, image_source)
+        function obj = PTKScreenImageFromVolume(parent, image_source, image_parameters)
             obj = obj@GemScreenImage(parent);
             obj.ImageSource = image_source;
+            obj.ImageParameters = image_parameters;
         end
 
-        function DrawImageSlice(obj, image_object, background_image, opacity, black_is_transparent, window, level, opaque_colour, slice_number, orientation)
+        function DrawImageSlice(obj, image_object, background_image, opacity, black_is_transparent, window, level, opaque_colour)
+            orientation = obj.ImageParameters.Orientation;
+            slice_number = obj.ImageParameters.SliceNumber(orientation);
             if ~isempty(image_object)
                 if image_object.ImageExists
-                    orientation = obj.ImageSource.GetOrientation;
                     image_slice = PTKScreenImageFromVolume.GetImageSlice(background_image, image_object, slice_number, orientation);
                     image_type = image_object.ImageType;
                     
