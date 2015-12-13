@@ -190,7 +190,7 @@ classdef PTKGuiCore < GemFigure
             % Listen for changes in the viewer panel controls
             obj.AddPostSetListener(obj.ImagePanel, 'SelectedControl', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'Orientation', @obj.ViewerPanelControlsChangedCallback);
-            obj.AddPostSetListener(obj.ImagePanel, 'SliceNumber', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddEventListener(obj.ImagePanel.GetImageSliceParameters, 'SliceNumberChanged', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'Level', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'Window', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'OverlayOpacity', @obj.ViewerPanelControlsChangedCallback);

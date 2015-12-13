@@ -41,7 +41,6 @@ classdef PTKViewerPanel < GemPanel
         BlackIsTransparent = true  % Sets whether black in the transparent overlay image is transparent or shown as black
         Window = 1600          % The image window (in HU for CT images)
         Level = -600           % The image level (in HU for CT images)
-        SliceNumber = [1 1 1]  % The currently shown slice in 3 dimensions
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
         OpaqueColour           % If set, then this colour will always be shown at full opacity in the overlay
         PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
@@ -51,6 +50,7 @@ classdef PTKViewerPanel < GemPanel
         BackgroundImage        % The greyscale image
         OverlayImage           % The colour transparent overlay image
         QuiverImage            % A vector quiver plot showing directions
+        SliceNumber = [1 1 1]  % The currently shown slice in 3 dimensions
     end
     
     properties (SetObservable, SetAccess = private)
@@ -77,6 +77,8 @@ classdef PTKViewerPanel < GemPanel
         BackgroundImageSource
         OverlayImageSource
         QuiverImageSource
+        
+        ImageSliceParameters
     end
     
     properties (Access = protected)
@@ -102,6 +104,8 @@ classdef PTKViewerPanel < GemPanel
             obj.OverlayImageSource = PTKImageSource;
             obj.QuiverImageSource = PTKImageSource;
             
+            obj.ImageSliceParameters = PTKImageSliceParameters;
+            
             % Create the mouse tools
             obj.ToolCallback = PTKToolCallback(obj, obj.Reporting);
             obj.Tools = PTKToolList(obj.ToolCallback, obj);
@@ -122,6 +126,10 @@ classdef PTKViewerPanel < GemPanel
         
         function quiver_image = GetQuiverImageSource(obj)
             quiver_image = obj.QuiverImageSource;
+        end
+        
+        function image_slice_parameters = GetImageSliceParameters(obj)
+            image_slice_parameters = obj.ImageSliceParameters;
         end
         
         function Resize(obj, position)
@@ -289,6 +297,14 @@ classdef PTKViewerPanel < GemPanel
         function current_image = get.QuiverImage(obj)
             current_image = obj.QuiverImageSource.Image;
         end
+        
+        function set.SliceNumber(obj, slice_number)
+            obj.ImageSliceParameters.SliceNumber = slice_number;
+        end
+        
+        function slice_number = get.SliceNumber(obj)
+            slice_number = obj.ImageSliceParameters.SliceNumber;
+        end        
     end
     
     methods (Access = protected)
