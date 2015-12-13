@@ -27,7 +27,8 @@ classdef PTKScreenImageFromVolume < GemScreenImage
             obj.ImageParameters = image_parameters;
         end
 
-        function DrawImageSlice(obj, image_object, background_image, opacity, black_is_transparent, window, level, opaque_colour)
+        function DrawImageSlice(obj, background_image, opacity, black_is_transparent, window, level, opaque_colour)
+            image_object = obj.ImageSource.Image;
             orientation = obj.ImageParameters.Orientation;
             slice_number = obj.ImageParameters.SliceNumber(orientation);
             if ~isempty(image_object)

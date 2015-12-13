@@ -25,7 +25,7 @@ classdef PTKQuiverScreenImageFromVolume < GemScreenQuiverImage
         end
         
         function DrawImage(obj)
-            obj.DrawQuiverSlice(obj.ViewerPanel.ShowOverlay, obj.ViewerPanel.QuiverImage, obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation), obj.ViewerPanel.Orientation);
+            obj.DrawQuiverSlice(obj.ViewerPanel.ShowOverlay);
         end
             
         function SetRangeWithPositionAdjustment(obj, x_range, y_range)

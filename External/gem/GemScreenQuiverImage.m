@@ -13,6 +13,7 @@ classdef GemScreenQuiverImage < GemScreenImage
         UData
         VData
         ImageParameters
+        ImageSource
     end
     
     methods
@@ -20,6 +21,7 @@ classdef GemScreenQuiverImage < GemScreenImage
         function obj = GemScreenQuiverImage(parent, image_source, image_parameters)
             obj = obj@GemScreenImage(parent);
             obj.ImageParameters = image_parameters;
+            obj.ImageSource = image_source;
         end
         
         function CreateGuiComponent(obj, position)
@@ -48,7 +50,10 @@ classdef GemScreenQuiverImage < GemScreenImage
             end
         end
         
-        function DrawQuiverSlice(obj, quiver_on, quiver_image_object, slice_number, orientation)
+        function DrawQuiverSlice(obj, quiver_on)
+            quiver_image_object = obj.ImageSource.Image;
+            orientation = obj.ImageParameters.Orientation;
+            slice_number = obj.ImageParameters.SliceNumber(orientation);
             if ~isempty(quiver_image_object) && quiver_image_object.ImageExists
                 quiver_screen_image = obj;
                 if quiver_image_object.ImageExists

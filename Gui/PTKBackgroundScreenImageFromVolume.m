@@ -25,7 +25,7 @@ classdef PTKBackgroundScreenImageFromVolume < PTKScreenImageFromVolume
         end
         
         function DrawImage(obj)
-            obj.DrawImageSlice(obj.ViewerPanel.BackgroundImage, obj.ViewerPanel.BackgroundImage, 100*obj.ViewerPanel.ShowImage, false, obj.ViewerPanel.Window, obj.ViewerPanel.Level, obj.ViewerPanel.OpaqueColour);
+            obj.DrawImageSlice(obj.ViewerPanel.BackgroundImage, 100*obj.ViewerPanel.ShowImage, false, obj.ViewerPanel.Window, obj.ViewerPanel.Level, obj.ViewerPanel.OpaqueColour);
         end
 
         function SetRangeWithPositionAdjustment(obj, x_range, y_range)
