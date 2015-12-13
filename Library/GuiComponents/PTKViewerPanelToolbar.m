@@ -54,8 +54,8 @@ classdef PTKViewerPanelToolbar < GemPanel
             obj.AddPostSetListener(obj.ViewerPanel, 'WindowLimits', @obj.WindowLimitsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'LevelLimits', @obj.LevelLimitsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'Orientation', @obj.GuiChangeCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'SliceNumber', @obj.GuiChangeCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetImageSliceParameters, 'OrientationChanged', @obj.GuiChangeCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumberChanged', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'OverlayOpacity', @obj.GuiChangeCallback);

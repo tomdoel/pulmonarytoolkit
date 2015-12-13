@@ -39,7 +39,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.AddEventListener(obj.ViewerPanelMultiView, 'MousePositionChanged', @obj.MousePositionChangedCallback);
             
             % Change in orientation requires a redraw of axes
-            obj.AddPostSetListener(obj.ViewerPanel, 'Orientation', @obj.OrientationChangedCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetImageSliceParameters, 'OrientationChanged', @obj.OrientationChangedCallback);
             
             % Tool change updates
             obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);

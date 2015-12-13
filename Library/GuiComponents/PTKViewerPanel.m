@@ -34,7 +34,6 @@ classdef PTKViewerPanel < GemPanel
     
     properties (SetObservable)
         SelectedControl = 'W/L'  % The currently selected tool
-        Orientation = PTKImageOrientation.Coronal  % The currently selected image orientation
         OverlayOpacity = 50    % Sets the opacity percentage of the transparent overlay image
         ShowImage = true       % Sets whether the greyscale image is visible or invisible
         ShowOverlay = true     % Sets whether the transparent overlay image is visible or invisible
@@ -50,7 +49,8 @@ classdef PTKViewerPanel < GemPanel
         BackgroundImage        % The greyscale image
         OverlayImage           % The colour transparent overlay image
         QuiverImage            % A vector quiver plot showing directions
-        SliceNumber = [1 1 1]  % The currently shown slice in 3 dimensions
+        SliceNumber            % The currently shown slice in 3 dimensions
+        Orientation            % The currently selected image orientation
     end
     
     properties (SetObservable, SetAccess = private)
@@ -304,6 +304,14 @@ classdef PTKViewerPanel < GemPanel
         
         function slice_number = get.SliceNumber(obj)
             slice_number = obj.ImageSliceParameters.SliceNumber;
+        end        
+        
+        function set.Orientation(obj, orientation)
+            obj.ImageSliceParameters.Orientation = orientation;
+        end
+        
+        function orientation = get.Orientation(obj)
+            orientation = obj.ImageSliceParameters.Orientation;
         end        
     end
     
