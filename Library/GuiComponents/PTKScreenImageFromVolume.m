@@ -15,21 +15,28 @@ classdef PTKScreenImageFromVolume < GemScreenImage
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties (Access = private)
+    properties (Access = protected)
         DisplayParameters
         ImageParameters
         ImageSource
+        ReferenceImageSource % Used for fusing two images to adjust the positioning of an image
     end
     
     methods
-        function obj = PTKScreenImageFromVolume(parent, image_source, image_parameters, display_parameters)
+        function obj = PTKScreenImageFromVolume(parent, image_source, image_parameters, display_parameters, reference_image_source)
             obj = obj@GemScreenImage(parent);
             obj.ImageSource = image_source;
             obj.ImageParameters = image_parameters;
             obj.DisplayParameters = display_parameters;
+            obj.ReferenceImageSource = reference_image_source;
         end
 
-        function DrawImageSlice(obj, background_image)
+        function DrawImage(obj)
+            obj.DrawImageSlice;
+        end
+
+        function DrawImageSlice(obj)
+            reference_image = obj.ReferenceImageSource.Image;
             window = obj.DisplayParameters.Window;
             level = obj.DisplayParameters.Level;
             opacity = obj.DisplayParameters.Opacity*obj.DisplayParameters.ShowImage;
@@ -40,7 +47,7 @@ classdef PTKScreenImageFromVolume < GemScreenImage
             slice_number = obj.ImageParameters.SliceNumber(orientation);
             if ~isempty(image_object)
                 if image_object.ImageExists
-                    image_slice = PTKScreenImageFromVolume.GetImageSlice(background_image, image_object, slice_number, orientation);
+                    image_slice = PTKScreenImageFromVolume.GetImageSlice(reference_image, image_object, slice_number, orientation);
                     image_type = image_object.ImageType;
                     
                     if (image_type == PTKImageType.Scaled)
@@ -78,7 +85,15 @@ classdef PTKScreenImageFromVolume < GemScreenImage
                     obj.ClearImageData;
                 end
             end
+        end
+        
+        function SetRangeWithPositionAdjustment(obj, x_range, y_range)
+            [dim_x_index, dim_y_index, ~] = GemUtilities.GetXYDimensionIndex(obj.ImageParameters.Orientation);
             
+            overlay_offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ReferenceImageSource.Image, obj.ImageSource.Image);
+            overlay_offset_x_voxels = overlay_offset_voxels(dim_x_index);
+            overlay_offset_y_voxels = overlay_offset_voxels(dim_y_index);
+            obj.SetRange(x_range - overlay_offset_x_voxels, y_range - overlay_offset_y_voxels);
         end
     end
     

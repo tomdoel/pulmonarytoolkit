@@ -28,9 +28,9 @@ classdef PTKImageOverlayAxes < GemImageAxes
             obj = obj@GemImageAxes(parent, image_source_old);
             
             % Add the screen images to the axes
-            obj.BackgroundScreenImage = PTKBackgroundScreenImageFromVolume(obj, background_image_source, viewer_panel, image_parameters, background_view_parameters);
+            obj.BackgroundScreenImage = PTKScreenImageFromVolume(obj, background_image_source, image_parameters, background_view_parameters, background_image_source);
             obj.AddChild(obj.BackgroundScreenImage);
-            obj.OverlayScreenImage = PTKOverlayScreenImageFromVolume(obj, overlay_image_source, viewer_panel, image_parameters, overlay_view_parameters);
+            obj.OverlayScreenImage = PTKScreenImageFromVolume(obj, overlay_image_source, image_parameters, overlay_view_parameters, background_image_source);
             obj.AddChild(obj.OverlayScreenImage);
             obj.QuiverScreenImage = PTKQuiverScreenImageFromVolume(obj, quiver_image_source, viewer_panel, image_parameters);
             obj.AddChild(obj.QuiverScreenImage);
