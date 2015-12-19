@@ -33,10 +33,7 @@ classdef PTKViewerPanel < GemPanel
     end
     
     properties (SetObservable)
-        SelectedControl = 'W/L'  % The currently selected tool
-        OverlayOpacity = 50    % Sets the opacity percentage of the transparent overlay image
-        ShowImage = true       % Sets whether the greyscale image is visible or invisible
-        ShowOverlay = true     % Sets whether the transparent overlay image is visible or invisible
+        SelectedControl = 'W/L'    % The currently selected tool
         BlackIsTransparent = true  % Sets whether black in the transparent overlay image is transparent or shown as black
         Window = 1600          % The image window (in HU for CT images)
         Level = -600           % The image level (in HU for CT images)
@@ -51,6 +48,9 @@ classdef PTKViewerPanel < GemPanel
         QuiverImage            % A vector quiver plot showing directions
         SliceNumber            % The currently shown slice in 3 dimensions
         Orientation            % The currently selected image orientation
+        OverlayOpacity         % Sets the opacity percentage of the transparent overlay image
+        ShowImage              % Sets whether the greyscale image is visible or invisible
+        ShowOverlay            % Sets whether the transparent overlay image is visible or invisible
     end
     
     properties (SetObservable, SetAccess = private)
@@ -59,9 +59,9 @@ classdef PTKViewerPanel < GemPanel
     end
     
     properties (SetAccess = private)
-        Mode = ''       % Specifies the current editing mode
-        SubMode = ''    % Specifies the current editing submode
-        EditFixedOuterBoundary   % Specifies whether the current edit can modify the segmentation outer boundary
+        Mode = ''              % Specifies the current editing mode
+        SubMode = ''           % Specifies the current editing submode
+        EditFixedOuterBoundary % Specifies whether the current edit can modify the segmentation outer boundary
         MouseCursorStatus      % A class of type PTKMouseCursorStatus showing data representing the voxel under the cursor
     end
     
@@ -74,11 +74,17 @@ classdef PTKViewerPanel < GemPanel
         ToolCallback
         ViewerPanelCallback
     
+        % Image volume models
         BackgroundImageSource
         OverlayImageSource
         QuiverImageSource
         
+        % Slice number and orientation model
         ImageSliceParameters
+        
+        % Visualisation property models
+        BackgroundImageDisplayParameters
+        OverlayImageDisplayParameters
     end
     
     properties (Access = protected)
@@ -104,14 +110,22 @@ classdef PTKViewerPanel < GemPanel
             obj.OverlayImageSource = PTKImageSource;
             obj.QuiverImageSource = PTKImageSource;
             
+            % Create the model object that holds the slice number and
+            % orientation
             obj.ImageSliceParameters = PTKImageSliceParameters;
+            
+            % Create the model objects that hold visualisation parameters
+            % for each of the images
+            obj.BackgroundImageDisplayParameters = PTKImageDisplayParameters;
+            obj.OverlayImageDisplayParameters = PTKImageDisplayParameters;
+            obj.OverlayImageDisplayParameters.Opacity = 50;
             
             % Create the mouse tools
             obj.ToolCallback = PTKToolCallback(obj, obj.Reporting);
             obj.Tools = PTKToolList(obj.ToolCallback, obj);
             
             % Create the renderer object, which handles the image processing in the viewer
-            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters);
+            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
             obj.ToolCallback.SetRenderer(obj.ViewerPanelMultiView);
             obj.AddChild(obj.ViewerPanelMultiView);
         end
@@ -130,6 +144,14 @@ classdef PTKViewerPanel < GemPanel
         
         function image_slice_parameters = GetImageSliceParameters(obj)
             image_slice_parameters = obj.ImageSliceParameters;
+        end
+        
+        function image_slice_parameters = GetBackgroundImageDisplayParameters(obj)
+            image_slice_parameters = obj.BackgroundImageDisplayParameters;
+        end
+        
+        function image_slice_parameters = GetOverlayImageDisplayParameters(obj)
+            image_slice_parameters = obj.OverlayImageDisplayParameters;
         end
         
         function Resize(obj, position)
@@ -312,8 +334,32 @@ classdef PTKViewerPanel < GemPanel
         
         function orientation = get.Orientation(obj)
             orientation = obj.ImageSliceParameters.Orientation;
+        end
+        
+        function set.OverlayOpacity(obj, opacity)
+            obj.OverlayImageDisplayParameters.Opacity = opacity;
+        end
+        
+        function opacity = get.OverlayOpacity(obj)
+            opacity = obj.OverlayImageDisplayParameters.Opacity;
         end        
-    end
+        
+        function set.ShowImage(obj, show_image)
+            obj.BackgroundImageDisplayParameters.ShowImage = show_image;
+        end
+        
+        function show_image = get.ShowImage(obj)
+            show_image = obj.BackgroundImageDisplayParameters.ShowImage;
+        end
+        
+        function set.ShowOverlay(obj, show_image)
+            obj.OverlayImageDisplayParameters.ShowImage = show_image;
+        end
+        
+        function show_image = get.ShowOverlay(obj)
+            show_image = obj.OverlayImageDisplayParameters.ShowImage;
+        end        
+end
     
     methods (Access = protected)
         

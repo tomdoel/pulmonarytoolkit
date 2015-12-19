@@ -48,9 +48,9 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.AddEventListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumberChanged', @obj.SliceNumberChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.SettingsChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'OverlayOpacity', @obj.OverlayTransparencyChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'ShowImage', @obj.SettingsChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'ShowOverlay', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'ShowImage', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'ShowImage', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.OverlayTransparencyChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'BlackIsTransparent', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.SettingsChangedCallback);
             

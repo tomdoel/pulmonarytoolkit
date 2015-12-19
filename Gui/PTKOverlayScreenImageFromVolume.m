@@ -19,8 +19,8 @@ classdef PTKOverlayScreenImageFromVolume < PTKScreenImageFromVolume
     end
     
     methods
-        function obj = PTKOverlayScreenImageFromVolume(parent, image_source, viewer_panel, image_parameters)
-            obj = obj@PTKScreenImageFromVolume(parent, image_source, image_parameters);
+        function obj = PTKOverlayScreenImageFromVolume(parent, image_source, viewer_panel, image_parameters, display_parameters)
+            obj = obj@PTKScreenImageFromVolume(parent, image_source, image_parameters, display_parameters);
             obj.ViewerPanel = viewer_panel;
         end
         

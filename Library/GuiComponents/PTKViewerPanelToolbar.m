@@ -58,9 +58,9 @@ classdef PTKViewerPanelToolbar < GemPanel
             obj.AddEventListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumberChanged', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.GuiChangeCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'OverlayOpacity', @obj.GuiChangeCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'ShowImage', @obj.GuiChangeCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'ShowOverlay', @obj.GuiChangeCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'OpacityChanged', @obj.GuiChangeCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'ShowImageChanged', @obj.GuiChangeCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'ShowImageChanged', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'BlackIsTransparent', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.GuiChangeCallback);
             

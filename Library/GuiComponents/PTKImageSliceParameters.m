@@ -10,8 +10,8 @@ classdef PTKImageSliceParameters < CoreBaseClass
     %    
 
     events
-         OrientationChanged
-         SliceNumberChanged
+        OrientationChanged
+        SliceNumberChanged
     end
     
     properties (SetObservable)
