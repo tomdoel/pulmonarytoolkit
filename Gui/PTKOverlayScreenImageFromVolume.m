@@ -25,7 +25,7 @@ classdef PTKOverlayScreenImageFromVolume < PTKScreenImageFromVolume
         end
         
         function DrawImage(obj)
-            obj.DrawImageSlice(obj.ViewerPanel.BackgroundImage, obj.ViewerPanel.OverlayOpacity*obj.ViewerPanel.ShowOverlay, obj.ViewerPanel.BlackIsTransparent, obj.ViewerPanel.Window, obj.ViewerPanel.Level, obj.ViewerPanel.OpaqueColour);
+            obj.DrawImageSlice(obj.ViewerPanel.BackgroundImage);
         end
 
         function SetRangeWithPositionAdjustment(obj, x_range, y_range)
