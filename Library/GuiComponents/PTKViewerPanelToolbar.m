@@ -54,15 +54,15 @@ classdef PTKViewerPanelToolbar < GemPanel
             obj.AddPostSetListener(obj.ViewerPanel, 'WindowLimits', @obj.WindowLimitsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'LevelLimits', @obj.LevelLimitsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
-            obj.AddEventListener(obj.ViewerPanel.GetImageSliceParameters, 'OrientationChanged', @obj.GuiChangeCallback);
-            obj.AddEventListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumberChanged', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'Orientation', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumber', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.GuiChangeCallback);
-            obj.AddEventListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'OpacityChanged', @obj.GuiChangeCallback);
-            obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'ShowImageChanged', @obj.GuiChangeCallback);
-            obj.AddEventListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'ShowImageChanged', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'ShowImage', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'ShowImage', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'BlackIsTransparent', @obj.GuiChangeCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'OpaqueColour', @obj.GuiChangeCallback);
             
             % Listen for new image events
             obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.NewBackgroundImageCallback);

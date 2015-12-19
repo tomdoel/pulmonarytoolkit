@@ -18,22 +18,4 @@ classdef PTKImageSliceParameters < CoreBaseClass
         Orientation = PTKImageOrientation.Coronal
         SliceNumber = [1, 1, 1] % The currently shown slice in 3 dimensions
     end
-    
-    methods
-        function obj = PTKImageSliceParameters
-            % Listen for changes to the parameters
-            obj.AddPostSetListener(obj, 'Orientation', @obj.OrientationChangedCallback);
-            obj.AddPostSetListener(obj, 'SliceNumber', @obj.SliceNumberChangedCallback);
-        end
-    end
-    
-    methods (Access = private)
-        function OrientationChangedCallback(obj, ~, ~)
-            notify(obj, 'OrientationChanged');
-        end
-        
-        function SliceNumberChangedCallback(obj, ~, ~)
-            notify(obj, 'SliceNumberChanged');
-        end
-    end
 end

@@ -37,7 +37,6 @@ classdef PTKViewerPanel < GemPanel
         Window = 1600          % The image window (in HU for CT images)
         Level = -600           % The image level (in HU for CT images)
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
-        OpaqueColour           % If set, then this colour will always be shown at full opacity in the overlay
         PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
     end
     
@@ -51,6 +50,7 @@ classdef PTKViewerPanel < GemPanel
         ShowImage              % Sets whether the greyscale image is visible or invisible
         ShowOverlay            % Sets whether the transparent overlay image is visible or invisible
         BlackIsTransparent     % Sets whether black in the transparent overlay image is transparent or shown as black
+        OpaqueColour           % If set, then this colour will always be shown at full opacity in the overlay
     end
     
     properties (SetObservable, SetAccess = private)
@@ -367,6 +367,14 @@ classdef PTKViewerPanel < GemPanel
         
         function black_is_transparent = get.BlackIsTransparent(obj)
             black_is_transparent = obj.OverlayImageDisplayParameters.BlackIsTransparent;
+        end
+        
+        function set.OpaqueColour(obj, opaque_colour)
+            obj.OverlayImageDisplayParameters.OpaqueColour = opaque_colour;
+        end
+        
+        function opaque_colour = get.OpaqueColour(obj)
+            opaque_colour = obj.OverlayImageDisplayParameters.OpaqueColour;
         end
         
     end

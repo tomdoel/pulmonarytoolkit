@@ -189,15 +189,15 @@ classdef PTKGuiCore < GemFigure
             
             % Listen for changes in the viewer panel controls
             obj.AddPostSetListener(obj.ImagePanel, 'SelectedControl', @obj.ViewerPanelControlsChangedCallback);
-            obj.AddEventListener(obj.ImagePanel.GetImageSliceParameters, 'OrientationChanged', @obj.ViewerPanelControlsChangedCallback);
-            obj.AddEventListener(obj.ImagePanel.GetImageSliceParameters, 'SliceNumberChanged', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'Orientation', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'SliceNumber', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'Level', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'Window', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetBackgroundImageDisplayParameters, 'ShowImage', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'ShowImage', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'BlackIsTransparent', @obj.ViewerPanelControlsChangedCallback);
-            obj.AddPostSetListener(obj.ImagePanel, 'OpaqueColour', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'OpaqueColour', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'SliceSkip', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'PaintBrushSize', @obj.ViewerPanelControlsChangedCallback);
             

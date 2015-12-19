@@ -39,20 +39,20 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.AddEventListener(obj.ViewerPanelMultiView, 'MousePositionChanged', @obj.MousePositionChangedCallback);
             
             % Change in orientation requires a redraw of axes
-            obj.AddEventListener(obj.ViewerPanel.GetImageSliceParameters, 'OrientationChanged', @obj.OrientationChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'Orientation', @obj.OrientationChangedCallback);
             
             % Tool change updates
             obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
             
             % Other changes require redraw of gui
-            obj.AddEventListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumberChanged', @obj.SliceNumberChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumber', @obj.SliceNumberChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'ShowImage', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'ShowImage', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.OverlayTransparencyChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'BlackIsTransparent', @obj.SettingsChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'OpaqueColour', @obj.SettingsChangedCallback);
             
             % Listen for new image events
             obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.NewBackgroundImageCallback);
