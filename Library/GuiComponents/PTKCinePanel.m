@@ -17,16 +17,14 @@ classdef PTKCinePanel < GemVirtualPanel
 
     properties (Access = protected)
         Axes
-        ImageSource
         ImageParameters
         Slider
     end
     
     methods
-        function obj = PTKCinePanel(parent, image_source, image_parameters, image_overlay_axes)
+        function obj = PTKCinePanel(parent, image_parameters, image_overlay_axes)
             obj = obj@GemVirtualPanel(parent);
 
-            obj.ImageSource = image_source;
             obj.ImageParameters = image_parameters;
             
             obj.Slider = GemSlider(obj);

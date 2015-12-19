@@ -30,17 +30,16 @@ classdef PTKCinePanelWithTools < PTKCinePanel
 
     methods
         function obj = PTKCinePanelWithTools(parent, viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
-            image_source_old = PTKImageVolumeSource(viewer_panel);
             
             image_overlay_axes = PTKImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
-            obj = obj@PTKCinePanel(parent, image_source_old, image_parameters, image_overlay_axes);
+            obj = obj@PTKCinePanel(parent, image_parameters, image_overlay_axes);
             obj.ViewerPanel = viewer_panel;
             obj.BackgroundImageSource = background_image_source;
         end
 
         function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)
             global_coords = obj.GetImageCoordinates;
-            point_is_in_image = obj.ImageSource.IsPointInImage(global_coords);
+            point_is_in_image = obj.BackgroundImageSource.Image.IsPointInImage(global_coords);
             if (~point_is_in_image)
                 obj.MouseIsDown = false;
             end
@@ -62,10 +61,10 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         function global_coords = GetImageCoordinates(obj)
             coords = round(obj.GetCurrentPoint);
             if (~isempty(coords))
-                orientation = obj.ImageSource.GetOrientation;
+                orientation = obj.ImageParameters.Orientation;
                 i_screen = coords(2,1);
                 j_screen = coords(2,2);
-                k_screen = obj.ImageSource.GetSliceNumberForOrientation(orientation);
+                k_screen = obj.ImageParameters.SliceNumber(orientation);
                 
                 switch orientation
                     case PTKImageOrientation.Coronal
@@ -120,7 +119,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
             obj.MouseIsDown = true;
             tool = obj.GetCurrentTool(true, selection_type);
             global_coords = obj.GetImageCoordinates;
-            if (obj.ImageSource.IsPointInImage(global_coords))
+            if (obj.BackgroundImageSource.Image.IsPointInImage(global_coords))
                 tool.MouseDown(screen_coords);
                 obj.ToolOnMouseDown = tool;
                 input_has_been_processed = true;
@@ -146,7 +145,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
             tool = obj.ToolOnMouseDown;
             if ~isempty(tool)
                 global_coords = obj.GetImageCoordinates;
-                if (obj.ImageSource.IsPointInImage(global_coords))
+                if (obj.BackgroundImageSource.Image.IsPointInImage(global_coords))
                     tool.MouseUp(screen_coords);
                     obj.ToolOnMouseDown = [];
                 end
@@ -197,7 +196,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         end
         
         function SliderValueChanged(obj, ~, ~)
-            obj.ImageSource.SetSliceNumberForOrientation(obj.ImageSource.GetOrientation, round(obj.Slider.SliderValue));
+            obj.BackgroundImageSource.SliceNumber(obj.ImageParameters.Orientation) = round(obj.Slider.SliderValue);
         end
         
     end
