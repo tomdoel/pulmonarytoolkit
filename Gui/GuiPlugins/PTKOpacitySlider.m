@@ -16,8 +16,8 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
     %    
     
     properties
-        ButtonText = 'Transparency'
-        SelectedText = 'Transparency'
+        ButtonText = 'Opacity'
+        SelectedText = 'Opacity'
         ToolTip = 'Change the transparency of the segmentation overlay'
         Category = 'Segmentation display'
         Visibility = 'Dataset'
