@@ -9,11 +9,6 @@ classdef PTKImageSliceParameters < CoreBaseClass
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
 
-    events
-        OrientationChanged
-        SliceNumberChanged
-    end
-    
     properties (SetObservable)
         Orientation = PTKImageOrientation.Coronal
         SliceNumber = [1, 1, 1] % The currently shown slice in 3 dimensions
