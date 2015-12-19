@@ -14,6 +14,8 @@ classdef PTKImageDisplayParameters < CoreBaseClass
     end
     
     properties (SetObservable)
+        Window = 1600          % The image window (in HU for CT images)
+        Level = -600           % The image level (in HU for CT images)
         Opacity = 100
         ShowImage = true
         BlackIsTransparent = false

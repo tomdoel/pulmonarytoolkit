@@ -56,11 +56,11 @@ classdef PTKViewerPanelToolbar < GemPanel
             obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'Orientation', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumber', @obj.GuiChangeCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.GuiChangeCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.GuiChangeCallback);
-            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'Level', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'Window', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'ShowImage', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'ShowImage', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'BlackIsTransparent', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'OpaqueColour', @obj.GuiChangeCallback);
             

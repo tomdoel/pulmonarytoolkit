@@ -51,9 +51,10 @@ classdef PTKLevelSlider < PTKGuiPluginSlider
             is_selected = true;
         end
         
-        function [instance_handle, value_property_name, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
-            instance_handle = ptk_gui_app.ImagePanel;
+        function [value_instance_handle, value_property_name, limits_instance_handle, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
+            value_instance_handle = ptk_gui_app.ImagePanel.GetBackgroundImageDisplayParameters;
             value_property_name = 'Level';
+            limits_instance_handle = ptk_gui_app.ImagePanel;
             limits_property_name = 'LevelLimits';
         end
         

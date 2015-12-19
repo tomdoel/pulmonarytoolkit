@@ -27,11 +27,11 @@ classdef PTKPluginLabelSlider < GemLabelSlider
             obj.GuiApp = gui_app;
             obj.Tool = tool;
             
-            [instance_handle, value_property_name, limits_property_name] = tool.GetHandleAndProperty(gui_app);
-            value = instance_handle.(value_property_name);
+            [value_instance_handle, value_property_name, limits_instance_handle, limits_property_name] = tool.GetHandleAndProperty(gui_app);
+            value = value_instance_handle.(value_property_name);
             
             if ~isempty(limits_property_name)
-                limits = instance_handle.(limits_property_name);
+                limits = limits_instance_handle.(limits_property_name);
                 if ~isempty(limits)
                     min_slider = limits(1);
                     max_slider = limits(2);
@@ -55,10 +55,10 @@ classdef PTKPluginLabelSlider < GemLabelSlider
                 obj.EditBox.SetText(num2str(value, '%.6g'));
             end
             
-            obj.AddPostSetListener(instance_handle, value_property_name, @obj.PropertyChangedCallback);
+            obj.AddPostSetListener(value_instance_handle, value_property_name, @obj.PropertyChangedCallback);
             
             if ~isempty(limits_property_name)
-                obj.AddPostSetListener(instance_handle, limits_property_name, @obj.PropertyLimitsChangedCallback);
+                obj.AddPostSetListener(limits_instance_handle, limits_property_name, @obj.PropertyLimitsChangedCallback);
             end
         end
 
@@ -71,7 +71,7 @@ classdef PTKPluginLabelSlider < GemLabelSlider
         function SliderCallback(obj, hObject, arg2)
             SliderCallback@GemLabelSlider(obj, hObject, arg2);
             
-            [instance_handle, value_property_name, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
+            [instance_handle, value_property_name, ~, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
             
             value = obj.Slider.SliderValue;
             if obj.FixToInteger
@@ -84,7 +84,7 @@ classdef PTKPluginLabelSlider < GemLabelSlider
         function EditBoxCallback(obj, hObject, arg2)
             EditBoxCallback@GemLabelSlider(obj, hObject, arg2);
             
-            [instance_handle, value_property_name, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
+            [instance_handle, value_property_name, ~, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
             
             value = round(str2double(obj.EditBox.Text));
             instance_handle.(value_property_name) = value;
@@ -92,15 +92,15 @@ classdef PTKPluginLabelSlider < GemLabelSlider
         end
         
         function PropertyChangedCallback(obj, ~, ~, ~)
-            [instance_handle, value_property_name, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
+            [instance_handle, value_property_name, ~, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
             value = instance_handle.(value_property_name);            
             obj.Slider.SetSliderValue(value);
             obj.EditBox.SetText(num2str(value, '%.6g'));
         end
         
         function PropertyLimitsChangedCallback(obj, ~, ~, ~)
-            [instance_handle, ~, limits_property_name] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
-            limits = instance_handle.(limits_property_name);            
+            [~, ~, limits_instance_handle, limits_property_name] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
+            limits = limits_instance_handle.(limits_property_name);            
             obj.Slider.SetSliderLimits(limits(1), limits(2));
             range = limits(2) - limits(1);
             if abs(range) >= 100

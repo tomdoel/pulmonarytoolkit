@@ -51,9 +51,10 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
             is_selected = true;
         end
         
-        function [instance_handle, value_property_name, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
-            instance_handle = ptk_gui_app.ImagePanel.GetOverlayImageDisplayParameters;
+        function [value_instance_handle, value_property_name, limits_istance_handle, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
+            value_instance_handle = ptk_gui_app.ImagePanel.GetOverlayImageDisplayParameters;
             value_property_name = 'Opacity';
+            limits_istance_handle = [];
             limits_property_name = [];
         end
         

@@ -34,8 +34,6 @@ classdef PTKViewerPanel < GemPanel
     
     properties (SetObservable)
         SelectedControl = 'W/L'    % The currently selected tool
-        Window = 1600          % The image window (in HU for CT images)
-        Level = -600           % The image level (in HU for CT images)
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
         PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
     end
@@ -46,6 +44,8 @@ classdef PTKViewerPanel < GemPanel
         QuiverImage            % A vector quiver plot showing directions
         SliceNumber            % The currently shown slice in 3 dimensions
         Orientation            % The currently selected image orientation
+        Window                 % The image window (in HU for CT images)
+        Level                  % The image level (in HU for CT images)
         OverlayOpacity         % Sets the opacity percentage of the transparent overlay image
         ShowImage              % Sets whether the greyscale image is visible or invisible
         ShowOverlay            % Sets whether the transparent overlay image is visible or invisible
@@ -351,6 +351,24 @@ classdef PTKViewerPanel < GemPanel
         
         function show_image = get.ShowImage(obj)
             show_image = obj.BackgroundImageDisplayParameters.ShowImage;
+        end
+        
+        function set.Window(obj, window)
+            obj.BackgroundImageDisplayParameters.Window = window;
+            obj.OverlayImageDisplayParameters.Window = window;
+        end
+        
+        function level = get.Level(obj)
+            level = obj.BackgroundImageDisplayParameters.Level;
+        end
+        
+        function set.Level(obj, level)
+            obj.BackgroundImageDisplayParameters.Level = level;
+            obj.OverlayImageDisplayParameters.Level = level;
+        end
+        
+        function window = get.Window(obj)
+            window = obj.BackgroundImageDisplayParameters.Window;
         end
         
         function set.ShowOverlay(obj, show_image)

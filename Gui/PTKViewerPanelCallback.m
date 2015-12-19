@@ -46,8 +46,8 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             
             % Other changes require redraw of gui
             obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumber', @obj.SliceNumberChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'Level', @obj.SettingsChangedCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'Window', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'Level', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'Window', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'ShowImage', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'ShowImage', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.OverlayTransparencyChangedCallback);

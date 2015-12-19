@@ -191,8 +191,8 @@ classdef PTKGuiCore < GemFigure
             obj.AddPostSetListener(obj.ImagePanel, 'SelectedControl', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'Orientation', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'SliceNumber', @obj.ViewerPanelControlsChangedCallback);
-            obj.AddPostSetListener(obj.ImagePanel, 'Level', @obj.ViewerPanelControlsChangedCallback);
-            obj.AddPostSetListener(obj.ImagePanel, 'Window', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel.GetBackgroundImageDisplayParameters, 'Level', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel.GetBackgroundImageDisplayParameters, 'Window', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetBackgroundImageDisplayParameters, 'ShowImage', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'ShowImage', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.ViewerPanelControlsChangedCallback);

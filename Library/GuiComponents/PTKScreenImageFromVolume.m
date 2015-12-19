@@ -30,6 +30,8 @@ classdef PTKScreenImageFromVolume < GemScreenImage
         end
 
         function DrawImageSlice(obj, background_image, opacity, black_is_transparent, window, level, opaque_colour)
+            window = obj.DisplayParameters.Window;
+            level = obj.DisplayParameters.Level;
             opacity = obj.DisplayParameters.Opacity*obj.DisplayParameters.ShowImage;
             black_is_transparent = obj.DisplayParameters.BlackIsTransparent;
             opaque_colour = obj.DisplayParameters.OpaqueColour;
