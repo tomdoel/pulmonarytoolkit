@@ -14,16 +14,17 @@ classdef GemImageAxes < GemAxes
     
     properties (Access = protected)
         ImageSource
-        
+        ImageParameters
         AxisLimits
         PreviousOrientation
     end
     
     methods
-        function obj = GemImageAxes(parent, image_source)
+        function obj = GemImageAxes(parent, image_source, image_parameters)
             obj = obj@GemAxes(parent);
             
             obj.ImageSource = image_source;
+            obj.ImageParameters = image_parameters;
             
             % Always hide the axes
             obj.VisibleParameter = 'off';
@@ -51,8 +52,8 @@ classdef GemImageAxes < GemAxes
         end
         
         function [x_range, y_range] = UpdateAxes(obj)
-            if obj.ImageSource.ImageExists && obj.ComponentHasBeenCreated
-                orientation = obj.ImageSource.GetOrientation;
+            if obj.ImageSource.Image.ImageExists && obj.ComponentHasBeenCreated
+                orientation = obj.ImageParameters.Orientation;
                 if ~isempty(obj.PreviousOrientation)
                     [x_lim, y_lim] = obj.GetLimits;
 
@@ -95,10 +96,10 @@ classdef GemImageAxes < GemAxes
         
         function ZoomTo(obj, i_limits, j_limits, k_limits)
 
-            orientation = obj.ImageSource.GetOrientation;
+            orientation = obj.ImageParameters.Orientation;
             
             % Convert global coordinates to local coordinates
-            origin = obj.ImageSource.GetOrigin;
+            origin = obj.ImageSource.Image.Origin;
             i_limits_local = i_limits - origin(1) + 1;
             j_limits_local = j_limits - origin(2) + 1;
             k_limits_local = k_limits - origin(3) + 1;
@@ -123,7 +124,7 @@ classdef GemImageAxes < GemAxes
             
             % Update the currently displayed slice to be the centre of the
             % requested box
-            obj.ImageSource.SetSliceNumber(round((i_limits_local(2)+i_limits_local(1))/2), round((j_limits_local(2)+j_limits_local(1))/2), round((k_limits_local(2)+k_limits_local(1))/2));
+            obj.ImageParameters.SliceNumber = [round((i_limits_local(2)+i_limits_local(1))/2), round((j_limits_local(2)+j_limits_local(1))/2), round((k_limits_local(2)+k_limits_local(1))/2)];
         end
         
     end
@@ -140,8 +141,8 @@ classdef GemImageAxes < GemAxes
         end
         
         function [x_lim, y_lim, x_range, y_range, data_aspect_ratio] = ComputeNewAxisLimits(obj, orientation)
-            image_size = obj.ImageSource.GetImageSize;
-            voxel_size = obj.ImageSource.GetVoxelSize;
+            image_size = obj.ImageSource.Image.ImageSize;
+            voxel_size = obj.ImageSource.Image.VoxelSize;
             axes_width_screenpixels = obj.Position(3);
             axes_height_screenpixels = obj.Position(4);
             

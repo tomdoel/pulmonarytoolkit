@@ -24,8 +24,8 @@ classdef PTKImageOverlayAxes < GemImageAxes
     end
     
     methods
-        function obj = PTKImageOverlayAxes(parent, image_source_old, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
-            obj = obj@GemImageAxes(parent, image_source_old);
+        function obj = PTKImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
+            obj = obj@GemImageAxes(parent, background_image_source, image_parameters);
             
             % Add the screen images to the axes
             obj.BackgroundScreenImage = PTKScreenImageFromVolume(obj, background_image_source, image_parameters, background_view_parameters, background_image_source);
@@ -47,7 +47,7 @@ classdef PTKImageOverlayAxes < GemImageAxes
         function [x_range, y_range] = UpdateAxes(obj)
             [x_range, y_range] = UpdateAxes@GemImageAxes(obj);
             
-            if (obj.ImageSource.ImageExists)
+            if (obj.ImageSource.Image.ImageExists)
                 % Background image
                 obj.BackgroundScreenImage.SetRangeWithPositionAdjustment(x_range, y_range);
                 

@@ -13,6 +13,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
     %    
     
     properties (Access = protected)
+        BackgroundImageSource
         ViewerPanel
         
         % Used for programmatic pan, zoom, etc.
@@ -31,10 +32,10 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         function obj = PTKCinePanelWithTools(parent, viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
             image_source_old = PTKImageVolumeSource(viewer_panel);
             
-            image_overlay_axes = PTKImageOverlayAxes(parent, image_source_old, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
-            
+            image_overlay_axes = PTKImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
             obj = obj@PTKCinePanel(parent, image_source_old, image_parameters, image_overlay_axes);
             obj.ViewerPanel = viewer_panel;
+            obj.BackgroundImageSource = background_image_source;
         end
 
         function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)
@@ -85,7 +86,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
                 j = 1;
                 k = 1;
             end
-            global_coords = obj.ViewerPanel.BackgroundImage.LocalToGlobalCoordinates([i, j, k]);
+            global_coords = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates([i, j, k]);
         end
         
         function DrawImages(obj, update_background, update_overlay, update_quiver)
