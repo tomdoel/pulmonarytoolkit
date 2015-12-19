@@ -196,7 +196,7 @@ classdef PTKGuiCore < GemFigure
             obj.AddPostSetListener(obj.ImagePanel.GetBackgroundImageDisplayParameters, 'ShowImage', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'ShowImage', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.ViewerPanelControlsChangedCallback);
-            obj.AddPostSetListener(obj.ImagePanel, 'BlackIsTransparent', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'BlackIsTransparent', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'OpaqueColour', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'SliceSkip', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'PaintBrushSize', @obj.ViewerPanelControlsChangedCallback);

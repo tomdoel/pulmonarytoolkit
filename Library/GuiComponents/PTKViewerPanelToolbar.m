@@ -61,7 +61,7 @@ classdef PTKViewerPanelToolbar < GemPanel
             obj.AddEventListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'OpacityChanged', @obj.GuiChangeCallback);
             obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'ShowImageChanged', @obj.GuiChangeCallback);
             obj.AddEventListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'ShowImageChanged', @obj.GuiChangeCallback);
-            obj.AddPostSetListener(obj.ViewerPanel, 'BlackIsTransparent', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'BlackIsTransparent', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel, 'OpaqueColour', @obj.GuiChangeCallback);
             
             % Listen for new image events

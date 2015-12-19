@@ -34,7 +34,6 @@ classdef PTKViewerPanel < GemPanel
     
     properties (SetObservable)
         SelectedControl = 'W/L'    % The currently selected tool
-        BlackIsTransparent = true  % Sets whether black in the transparent overlay image is transparent or shown as black
         Window = 1600          % The image window (in HU for CT images)
         Level = -600           % The image level (in HU for CT images)
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
@@ -51,6 +50,7 @@ classdef PTKViewerPanel < GemPanel
         OverlayOpacity         % Sets the opacity percentage of the transparent overlay image
         ShowImage              % Sets whether the greyscale image is visible or invisible
         ShowOverlay            % Sets whether the transparent overlay image is visible or invisible
+        BlackIsTransparent     % Sets whether black in the transparent overlay image is transparent or shown as black
     end
     
     properties (SetObservable, SetAccess = private)
@@ -119,6 +119,7 @@ classdef PTKViewerPanel < GemPanel
             obj.BackgroundImageDisplayParameters = PTKImageDisplayParameters;
             obj.OverlayImageDisplayParameters = PTKImageDisplayParameters;
             obj.OverlayImageDisplayParameters.Opacity = 50;
+            obj.OverlayImageDisplayParameters.BlackIsTransparent = true;
             
             % Create the mouse tools
             obj.ToolCallback = PTKToolCallback(obj, obj.Reporting);
@@ -358,8 +359,17 @@ classdef PTKViewerPanel < GemPanel
         
         function show_image = get.ShowOverlay(obj)
             show_image = obj.OverlayImageDisplayParameters.ShowImage;
-        end        
-end
+        end
+        
+        function set.BlackIsTransparent(obj, black_is_transparent)
+            obj.OverlayImageDisplayParameters.BlackIsTransparent = black_is_transparent;
+        end
+        
+        function black_is_transparent = get.BlackIsTransparent(obj)
+            black_is_transparent = obj.OverlayImageDisplayParameters.BlackIsTransparent;
+        end
+        
+    end
     
     methods (Access = protected)
         

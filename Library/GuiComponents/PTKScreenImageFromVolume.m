@@ -31,6 +31,7 @@ classdef PTKScreenImageFromVolume < GemScreenImage
 
         function DrawImageSlice(obj, background_image, opacity, black_is_transparent, window, level, opaque_colour)
             opacity = obj.DisplayParameters.Opacity*obj.DisplayParameters.ShowImage;
+            black_is_transparent = obj.DisplayParameters.BlackIsTransparent;
             image_object = obj.ImageSource.Image;
             orientation = obj.ImageParameters.Orientation;
             slice_number = obj.ImageParameters.SliceNumber(orientation);
@@ -93,7 +94,7 @@ classdef PTKScreenImageFromVolume < GemScreenImage
                     if ~isempty(limits) && limits(1) < 0
                         image_slice = image_slice - limits(1);
                     end
-                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetLabeledImage(image_slice, map);
+                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetLabeledImage(image_slice, map, black_is_transparent);
                 case PTKImageType.Scaled
                     [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetColourMap(image_slice, limits, black_is_transparent);
             end
@@ -127,7 +128,7 @@ classdef PTKScreenImageFromVolume < GemScreenImage
             alpha = ones(size(image));
         end
         
-        function [rgb_image, alpha] = GetLabeledImage(image, map)
+        function [rgb_image, alpha] = GetLabeledImage(image, map, black_is_transparent)
             if isempty(map)
                 if isa(image, 'double') || isa(image, 'single')
                     rgb_image = CoreLabel2Rgb(round(image));
@@ -141,7 +142,11 @@ classdef PTKScreenImageFromVolume < GemScreenImage
                     rgb_image = CoreLabel2Rgb(map(image + 1));
                 end
             end
-            alpha = int8(image ~= 0);
+            if black_is_transparent
+                alpha = int8(image ~= 0);
+            else
+                alpha = ones(size(image));
+            end            
         end
         
         function [rgb_image, alpha] = GetColourMap(image, image_limits, black_is_transparent)

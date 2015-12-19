@@ -16,6 +16,7 @@ classdef PTKImageDisplayParameters < CoreBaseClass
     properties (SetObservable)
         Opacity = 100
         ShowImage = true
+        BlackIsTransparent = false
     end
     
     methods
