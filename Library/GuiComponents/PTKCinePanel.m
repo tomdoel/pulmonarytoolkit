@@ -17,14 +17,20 @@ classdef PTKCinePanel < GemVirtualPanel
 
     properties (Access = protected)
         Axes
+        ImageSource
         ImageParameters
         Slider
     end
     
+    events
+        MousePositionChanged
+    end
+
     methods
-        function obj = PTKCinePanel(parent, image_parameters, image_overlay_axes)
+        function obj = PTKCinePanel(parent, image_source, image_parameters, image_overlay_axes)
             obj = obj@GemVirtualPanel(parent);
 
+            obj.ImageSource = image_source;
             obj.ImageParameters = image_parameters;
             
             obj.Slider = GemSlider(obj);
@@ -131,10 +137,81 @@ classdef PTKCinePanel < GemVirtualPanel
             axes_object = obj.Axes;
         end
        
+        function global_coords = GetImageCoordinates(obj)
+            coords = round(obj.GetCurrentPoint);
+            if (~isempty(coords))
+                orientation = obj.ImageParameters.Orientation;
+                i_screen = coords(2,1);
+                j_screen = coords(2,2);
+                k_screen = obj.ImageParameters.SliceNumber(orientation);
+                
+                switch orientation
+                    case PTKImageOrientation.Coronal
+                        i = k_screen;
+                        j = i_screen;
+                        k = j_screen;
+                    case PTKImageOrientation.Sagittal
+                        i = i_screen;
+                        j = k_screen;
+                        k = j_screen;
+                    case PTKImageOrientation.Axial
+                        i = j_screen;
+                        j = i_screen;
+                        k = k_screen;
+                end
+            else
+                i = 1;
+                j = 1;
+                k = 1;
+            end
+            global_coords = obj.ImageSource.Image.LocalToGlobalCoordinates([i, j, k]);
+        end        
     end
     
     methods (Access = protected)
+        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
+            % This method is called when the mouse is clicked inside the control
+                        
+            obj.UpdateStatus(true);
+            input_has_been_processed = true;            
+        end
+
+        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src)
+            % This method is called when the mouse is released inside the control
+            
+            obj.UpdateStatus(true);
+            input_has_been_processed = true;            
+        end
+        
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+            % Mouse has moved over the figure
+
+            obj.UpdateStatus(true);
+            input_has_been_processed = true;
+        end
+        
+        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src)
+            % Mouse dragged over the figure
+
+            obj.UpdateStatus(true);
+            input_has_been_processed = true;
+        end
+ 
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+            % This method is called when the mouse exits a control which previously
+            % processed a MouseHasMoved event
+
+            obj.UpdateStatus(false);
+            input_has_been_processed = true;
+        end        
+        
+        function UpdateStatus(obj, in_image)
+            image_coordinates = obj.GetImageCoordinates;
+            notify(obj, 'MousePositionChanged', CoreEventData(PTKCoordsInImage(image_coordinates, in_image)));
+        end
+        
         function SliderValueChanged(obj, ~, ~)
+            obj.ImageParameters.SliceNumber(obj.ImageParameters.Orientation) = round(obj.Slider.SliderValue);
         end
     end
 end

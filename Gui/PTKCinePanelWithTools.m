@@ -13,7 +13,6 @@ classdef PTKCinePanelWithTools < PTKCinePanel
     %    
     
     properties (Access = protected)
-        BackgroundImageSource
         ViewerPanel
         
         % Used for programmatic pan, zoom, etc.
@@ -24,22 +23,18 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         CurrentCursor = ''
     end
     
-    events
-        MousePositionChanged
-    end
-
     methods
         function obj = PTKCinePanelWithTools(parent, viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
             
             image_overlay_axes = PTKImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
-            obj = obj@PTKCinePanel(parent, image_parameters, image_overlay_axes);
+            obj = obj@PTKCinePanel(parent, background_image_source, image_parameters, image_overlay_axes);
             obj.ViewerPanel = viewer_panel;
-            obj.BackgroundImageSource = background_image_source;
+            obj.ImageSource = background_image_source;
         end
 
         function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)
             global_coords = obj.GetImageCoordinates;
-            point_is_in_image = obj.BackgroundImageSource.Image.IsPointInImage(global_coords);
+            point_is_in_image = obj.ImageSource.Image.IsPointInImage(global_coords);
             if (~point_is_in_image)
                 obj.MouseIsDown = false;
             end
@@ -56,36 +51,6 @@ classdef PTKCinePanelWithTools < PTKCinePanel
                 obj.CurrentCursor = new_cursor;
             end
             
-        end
-        
-        function global_coords = GetImageCoordinates(obj)
-            coords = round(obj.GetCurrentPoint);
-            if (~isempty(coords))
-                orientation = obj.ImageParameters.Orientation;
-                i_screen = coords(2,1);
-                j_screen = coords(2,2);
-                k_screen = obj.ImageParameters.SliceNumber(orientation);
-                
-                switch orientation
-                    case PTKImageOrientation.Coronal
-                        i = k_screen;
-                        j = i_screen;
-                        k = j_screen;
-                    case PTKImageOrientation.Sagittal
-                        i = i_screen;
-                        j = k_screen;
-                        k = j_screen;
-                    case PTKImageOrientation.Axial
-                        i = j_screen;
-                        j = i_screen;
-                        k = k_screen;
-                end
-            else
-                i = 1;
-                j = 1;
-                k = 1;
-            end
-            global_coords = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates([i, j, k]);
         end
         
         function DrawImages(obj, update_background, update_overlay, update_quiver)
@@ -114,12 +79,13 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
             % This method is called when the mouse is clicked inside the control
             
+            MouseDown@PTKCinePanel(obj, click_point, selection_type, src);
             screen_coords = obj.GetScreenCoordinates;
             obj.LastCoordinates = screen_coords;
             obj.MouseIsDown = true;
             tool = obj.GetCurrentTool(true, selection_type);
             global_coords = obj.GetImageCoordinates;
-            if (obj.BackgroundImageSource.Image.IsPointInImage(global_coords))
+            if (obj.ImageSource.Image.IsPointInImage(global_coords))
                 tool.MouseDown(screen_coords);
                 obj.ToolOnMouseDown = tool;
                 input_has_been_processed = true;
@@ -135,17 +101,17 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         function input_has_been_processed = MouseUp(obj, click_point, selection_type, src)
             % This method is called when the mouse is released inside the control
             
+            MouseUp@PTKCinePanel(obj, click_point, selection_type, src);
             input_has_been_processed = true;
             obj.MouseIsDown = false;
 
             screen_coords = obj.GetScreenCoordinates;
             obj.LastCoordinates = screen_coords;
 
-
             tool = obj.ToolOnMouseDown;
             if ~isempty(tool)
                 global_coords = obj.GetImageCoordinates;
-                if (obj.BackgroundImageSource.Image.IsPointInImage(global_coords))
+                if (obj.ImageSource.Image.IsPointInImage(global_coords))
                     tool.MouseUp(screen_coords);
                     obj.ToolOnMouseDown = [];
                 end
@@ -157,6 +123,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
             % Mouse has moved over the figure
 
+            MouseHasMoved@PTKCinePanel(obj, click_point, selection_type, src);
             screen_coords = obj.GetScreenCoordinates;
             last_coords = obj.LastCoordinates;
             
@@ -164,13 +131,13 @@ classdef PTKCinePanelWithTools < PTKCinePanel
             tool.MouseHasMoved(screen_coords, last_coords);
             
             obj.UpdateCursor(src, false, selection_type);
-            obj.UpdateStatus(true);
             input_has_been_processed = true;
         end
         
         function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src)
             % Mouse dragged over the figure
 
+            MouseDragged@PTKCinePanel(obj, click_point, selection_type, src);
             screen_coords = obj.GetScreenCoordinates;
             last_coords = obj.LastCoordinates;
             
@@ -178,26 +145,15 @@ classdef PTKCinePanelWithTools < PTKCinePanel
             tool.MouseDragged(screen_coords, last_coords);
             
             obj.UpdateCursor(src, true, selection_type);
-            obj.UpdateStatus(true);
             input_has_been_processed = true;
         end
  
         function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
             % This method is called when the mouse exits a control which previously
             % processed a MouseHasMoved event
-            
-            obj.UpdateStatus(false);
+
+            MouseExit@PTKCinePanel(obj, click_point, selection_type, src);
             input_has_been_processed = false;
         end
-        
-        function UpdateStatus(obj, in_image)
-            image_coordinates = obj.GetImageCoordinates;
-            notify(obj, 'MousePositionChanged', CoreEventData(PTKCoordsInImage(image_coordinates, in_image)));
-        end
-        
-        function SliderValueChanged(obj, ~, ~)
-            obj.BackgroundImageSource.SliceNumber(obj.ImageParameters.Orientation) = round(obj.Slider.SliderValue);
-        end
-        
     end
 end
