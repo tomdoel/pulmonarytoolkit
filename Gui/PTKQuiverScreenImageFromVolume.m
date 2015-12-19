@@ -15,23 +15,29 @@ classdef PTKQuiverScreenImageFromVolume < GemScreenQuiverImage
     
     
     properties (Access = private)
-        ViewerPanel
+        DisplayParameters
+        ImageParameters
+        ImageSource
+        ReferenceImageSource % Used for fusing two images to adjust the positioning of an image
     end
     
     methods
-        function obj = PTKQuiverScreenImageFromVolume(parent, image_source, viewer_panel, image_parameters)
+        function obj = PTKQuiverScreenImageFromVolume(parent, image_source, image_parameters, display_parameters, reference_image_source)
             obj = obj@GemScreenQuiverImage(parent, image_source, image_parameters);
-            obj.ViewerPanel = viewer_panel;
+            obj.ImageSource = image_source;
+            obj.ImageParameters = image_parameters;
+            obj.DisplayParameters = display_parameters;
+            obj.ReferenceImageSource = reference_image_source;
         end
         
         function DrawImage(obj)
-            obj.DrawQuiverSlice(obj.ViewerPanel.ShowOverlay);
+            obj.DrawQuiverSlice(obj.DisplayParameters.ShowImage);
         end
             
         function SetRangeWithPositionAdjustment(obj, x_range, y_range)
-            [dim_x_index, dim_y_index, dim_z_index] = GemUtilities.GetXYDimensionIndex(obj.ViewerPanel.Orientation);
+            [dim_x_index, dim_y_index, dim_z_index] = GemUtilities.GetXYDimensionIndex(obj.ImageParameters.Orientation);
             
-            quiver_offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ViewerPanel.BackgroundImage, obj.ViewerPanel.QuiverImage);
+            quiver_offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ReferenceImageSource.Image, obj.ImageSource.Image);
             quiver_offset_x_voxels = quiver_offset_voxels(dim_x_index);
             quiver_offset_y_voxels = quiver_offset_voxels(dim_y_index);
             obj.SetRange(x_range - quiver_offset_x_voxels, y_range - quiver_offset_y_voxels);
