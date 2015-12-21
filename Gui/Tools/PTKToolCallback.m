@@ -11,23 +11,25 @@ classdef PTKToolCallback < handle
     %
     
     properties (Access = private)
+        Axes
+        ImageDisplayParameters
         Reporting
         ViewerPanel
-        ViewerPanelRenderer
     end
     
     methods
         
-        function obj = PTKToolCallback(viewing_panel, reporting)
+        function obj = PTKToolCallback(viewing_panel, image_display_parameters, reporting)
+            obj.ImageDisplayParameters = image_display_parameters;
             obj.ViewerPanel = viewing_panel;
             obj.Reporting = reporting;
         end
 
-        function SetRenderer(obj, viewer_panel_renderer)
-            if isempty(viewer_panel_renderer)
-                obj.Reporting.Error('PTKToolCallback:RendererDoesNotExist', 'SetRendererAndAxes() was called with empty viewer_panel_renderer');
+        function SetAxes(obj, axes)
+            if isempty(axes)
+                obj.Reporting.Error('PTKToolCallback:AxesDoNotExist', 'SetAxes() was called with empty axes');
             end
-            obj.ViewerPanelRenderer = viewer_panel_renderer;
+            obj.Axes = axes;
         end
 
         function EnablePan(obj, enabled)
@@ -60,7 +62,7 @@ classdef PTKToolCallback < handle
             if ~isempty(window_limits)
                 window = max(window, window_limits(1));
                 window = min(window, window_limits(2));
-                obj.ViewerPanel.Window = window;
+                obj.ImageDisplayParameters.Window = window;
             end
         end
 
@@ -71,12 +73,12 @@ classdef PTKToolCallback < handle
             if ~isempty(level_limits)
                 level = max(level, level_limits(1));
                 level = min(level, level_limits(2));
-                obj.ViewerPanel.Level = level;
+                obj.ImageDisplayParameters.Level = level;
             end
         end
 
         function axes_handle = GetAxes(obj)
-            axes_handle = obj.ViewerPanelRenderer.GetAxes;
+            axes_handle = obj.Axes;
             if isempty(axes_handle)
                 obj.Reporting.Error('PTKToolCallback:AxesDoNotExist', 'Axes have not been created');
             end
