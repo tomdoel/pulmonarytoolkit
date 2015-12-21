@@ -123,7 +123,7 @@ classdef PTKViewerPanel < GemPanel
             
             % Create the mouse tools
             obj.ToolCallback = PTKToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.Reporting);
-            obj.Tools = PTKToolList(obj.ToolCallback, obj, obj.ImageSliceParameters);
+            obj.Tools = PTKToolList(obj.ToolCallback, obj, obj.ImageSliceParameters, obj.BackgroundImageDisplayParameters);
             
             % Create the renderer object, which handles the image processing in the viewer
             obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);

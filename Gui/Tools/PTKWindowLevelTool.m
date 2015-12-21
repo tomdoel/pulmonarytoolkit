@@ -1,7 +1,7 @@
 classdef PTKWindowLevelTool < PTKTool
-    % PTKWindowLevelTool. A tool for interactively changing window and level with PTKViewerPanel
+    % PTKWindowLevelTool. A tool for interactively changing window and level
     %
-    %     PTKWindowLevelTool is a tool class used with PTKViewerPanel to allow the user
+    %     PTKWindowLevelTool is a tool class to allow the user
     %     to change the window and level of an image using the mouse.
     %
     %
@@ -22,7 +22,7 @@ classdef PTKWindowLevelTool < PTKTool
     end
     
     properties (Access = private)
-        ViewerPanel
+        ImageDisplayParameters
         Callback
         StartCoords
         StartWindow
@@ -30,9 +30,9 @@ classdef PTKWindowLevelTool < PTKTool
     end
     
     methods
-        function obj = PTKWindowLevelTool(viewer_panel, callback)
-            obj.ViewerPanel = viewer_panel;
+        function obj = PTKWindowLevelTool(image_display_parameters, callback)
             obj.Callback = callback;
+            obj.ImageDisplayParameters = image_display_parameters;
         end
         
         function MouseHasMoved(obj, screen_coords, last_coords)
@@ -63,8 +63,8 @@ classdef PTKWindowLevelTool < PTKTool
         
         function MouseDown(obj, screen_coords)
             obj.StartCoords = screen_coords;
-            obj.StartWindow = obj.ViewerPanel.Window;
-            obj.StartLevel = obj.ViewerPanel.Level;
+            obj.StartWindow = obj.ImageDisplayParameters.Window;
+            obj.StartLevel = obj.ImageDisplayParameters.Level;
         end
         
         function MouseUp(obj, screen_coords)

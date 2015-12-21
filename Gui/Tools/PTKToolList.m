@@ -31,12 +31,12 @@ classdef PTKToolList < handle
     end
     
     methods
-        function obj = PTKToolList(tool_callback, viewer_panel, image_parameters)
+        function obj = PTKToolList(tool_callback, viewer_panel, image_parameters, image_display_parameters)
             obj.ToolCallback = tool_callback;
             obj.ViewerPanel = viewer_panel;
             
             obj.CineTool = PTKCineTool(image_parameters, tool_callback);
-            obj.WindowLevelTool = PTKWindowLevelTool(obj.ViewerPanel, tool_callback);
+            obj.WindowLevelTool = PTKWindowLevelTool(image_display_parameters, tool_callback);
             obj.ZoomTool = PTKZoomTool(tool_callback);
             obj.PanTool = PTKPanTool(tool_callback);
             obj.PanMatlabTool = PTKPanMatlabTool(tool_callback);
