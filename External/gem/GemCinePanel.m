@@ -1,10 +1,7 @@
-classdef PTKCinePanel < GemVirtualPanel
-    % PTKCinePanel.  Part of the gui for the Pulmonary Toolkit.
+classdef GemCinePanel < GemVirtualPanel
+    % GemCinePanel  Image axes with scrollbar for displaing a slice of a 3D volume
     %
-    %     This class is used internally within the Pulmonary Toolkit to help
-    %     build the user interface.
-    %
-    %     PTKCinePanel contains a 2D image and a slider, which allows the user to
+    %     GemCinePanel contains a 2D image and a slider, which allows the user to
     %     cine through slices of a 3D images
     %
     %
@@ -27,7 +24,7 @@ classdef PTKCinePanel < GemVirtualPanel
     end
 
     methods
-        function obj = PTKCinePanel(parent, image_source, image_parameters, image_overlay_axes)
+        function obj = GemCinePanel(parent, image_source, image_parameters, image_overlay_axes)
             obj = obj@GemVirtualPanel(parent);
 
             obj.ImageSource = image_source;
@@ -132,7 +129,7 @@ classdef PTKCinePanel < GemVirtualPanel
        
         function axes_object = GetAxes(obj)
             if isempty(obj.Axes)
-                obj.Reporting.Error('PTKCinePanel:AxesDoNotExist', 'Axes have not been created');
+                obj.Reporting.Error('GemCinePanel:AxesDoNotExist', 'Axes have not been created');
             end
             axes_object = obj.Axes;
         end

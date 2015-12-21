@@ -1,5 +1,5 @@
-classdef PTKImageDisplayParameters < CoreBaseClass
-    % PTKImageDisplayParameters. Parameters for visualising an image
+classdef GemImageDisplayParameters < CoreBaseClass
+    % GemImageDisplayParameters. Parameters for visualising an image
     %
     %     Licence
     %     -------

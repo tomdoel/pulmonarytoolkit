@@ -106,18 +106,18 @@ classdef PTKViewerPanel < GemPanel
             obj.MouseCursorStatus = PTKMouseCursorStatus;
 
             % Create the image pointer wrappers
-            obj.BackgroundImageSource = PTKImageSource;
-            obj.OverlayImageSource = PTKImageSource;
-            obj.QuiverImageSource = PTKImageSource;
+            obj.BackgroundImageSource = GemImageSource;
+            obj.OverlayImageSource = GemImageSource;
+            obj.QuiverImageSource = GemImageSource;
             
             % Create the model object that holds the slice number and
             % orientation
-            obj.ImageSliceParameters = PTKImageSliceParameters;
+            obj.ImageSliceParameters = GemImageSliceParameters;
             
             % Create the model objects that hold visualisation parameters
             % for each of the images
-            obj.BackgroundImageDisplayParameters = PTKImageDisplayParameters;
-            obj.OverlayImageDisplayParameters = PTKImageDisplayParameters;
+            obj.BackgroundImageDisplayParameters = GemImageDisplayParameters;
+            obj.OverlayImageDisplayParameters = GemImageDisplayParameters;
             obj.OverlayImageDisplayParameters.Opacity = 50;
             obj.OverlayImageDisplayParameters.BlackIsTransparent = true;
             

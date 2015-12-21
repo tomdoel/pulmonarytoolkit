@@ -1,4 +1,4 @@
-classdef PTKCinePanelWithTools < PTKCinePanel
+classdef PTKCinePanelWithTools < GemCinePanel
     % PTKCinePanelWithTools.  Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -26,8 +26,8 @@ classdef PTKCinePanelWithTools < PTKCinePanel
     methods
         function obj = PTKCinePanelWithTools(parent, viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
             
-            image_overlay_axes = PTKImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
-            obj = obj@PTKCinePanel(parent, background_image_source, image_parameters, image_overlay_axes);
+            image_overlay_axes = GemImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
+            obj = obj@GemCinePanel(parent, background_image_source, image_parameters, image_overlay_axes);
             obj.ViewerPanel = viewer_panel;
             obj.ImageSource = background_image_source;
         end
@@ -79,7 +79,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
             % This method is called when the mouse is clicked inside the control
             
-            MouseDown@PTKCinePanel(obj, click_point, selection_type, src);
+            MouseDown@GemCinePanel(obj, click_point, selection_type, src);
             screen_coords = obj.GetScreenCoordinates;
             obj.LastCoordinates = screen_coords;
             obj.MouseIsDown = true;
@@ -101,7 +101,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         function input_has_been_processed = MouseUp(obj, click_point, selection_type, src)
             % This method is called when the mouse is released inside the control
             
-            MouseUp@PTKCinePanel(obj, click_point, selection_type, src);
+            MouseUp@GemCinePanel(obj, click_point, selection_type, src);
             input_has_been_processed = true;
             obj.MouseIsDown = false;
 
@@ -123,7 +123,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
             % Mouse has moved over the figure
 
-            MouseHasMoved@PTKCinePanel(obj, click_point, selection_type, src);
+            MouseHasMoved@GemCinePanel(obj, click_point, selection_type, src);
             screen_coords = obj.GetScreenCoordinates;
             last_coords = obj.LastCoordinates;
             
@@ -137,7 +137,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
         function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src)
             % Mouse dragged over the figure
 
-            MouseDragged@PTKCinePanel(obj, click_point, selection_type, src);
+            MouseDragged@GemCinePanel(obj, click_point, selection_type, src);
             screen_coords = obj.GetScreenCoordinates;
             last_coords = obj.LastCoordinates;
             
@@ -152,7 +152,7 @@ classdef PTKCinePanelWithTools < PTKCinePanel
             % This method is called when the mouse exits a control which previously
             % processed a MouseHasMoved event
 
-            MouseExit@PTKCinePanel(obj, click_point, selection_type, src);
+            MouseExit@GemCinePanel(obj, click_point, selection_type, src);
             input_has_been_processed = false;
         end
     end

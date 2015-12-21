@@ -1,5 +1,5 @@
-classdef PTKImageSliceParameters < CoreBaseClass
-    % PTKImageSliceParameters. Parameters for extracting a 2D slice from a
+classdef GemImageSliceParameters < CoreBaseClass
+    % GemImageSliceParameters. Parameters for extracting a 2D slice from a
     % 3D volume
     %
     %     Licence

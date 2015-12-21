@@ -1,5 +1,5 @@
-classdef PTKQuiverImageFromVolume < GemQuiverImage
-    % PTKQuiverImageFromVolume. Part of the gui for the Pulmonary Toolkit.
+classdef GemQuiverImageFromVolume < GemQuiverImage
+    % GemQuiverImageFromVolume. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
@@ -22,7 +22,7 @@ classdef PTKQuiverImageFromVolume < GemQuiverImage
     end
     
     methods
-        function obj = PTKQuiverImageFromVolume(parent, image_source, image_parameters, display_parameters, reference_image_source)
+        function obj = GemQuiverImageFromVolume(parent, image_source, image_parameters, display_parameters, reference_image_source)
             obj = obj@GemQuiverImage(parent, image_source, image_parameters);
             obj.ImageSource = image_source;
             obj.ImageParameters = image_parameters;
