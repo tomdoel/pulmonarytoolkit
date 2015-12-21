@@ -128,7 +128,7 @@ classdef GemImageFromVolume < GemImage
             else
                 image_slice = image_object.GetSlice(slice_number, orientation);
             end
-            if (orientation ~= PTKImageOrientation.Axial)
+            if (orientation ~= GemImageOrientation.XY)
                 image_slice = image_slice';
             end
         end

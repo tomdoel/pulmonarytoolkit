@@ -10,7 +10,7 @@ classdef GemImageSliceParameters < CoreBaseClass
     %    
 
     properties (SetObservable)
-        Orientation = PTKImageOrientation.Coronal
+        Orientation = GemImageOrientation.XZ
         SliceNumber = [1, 1, 1] % The currently shown slice in 3 dimensions
     end
 end

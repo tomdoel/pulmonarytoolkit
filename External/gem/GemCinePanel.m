@@ -82,13 +82,13 @@ classdef GemCinePanel < GemVirtualPanel
             origin = [0.5, 0.5, 0.5];
             image_limit = origin + image_size;
             switch orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     xlim_image = [origin(2), image_limit(2)];
                     ylim_image = [origin(3), image_limit(3)];
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     xlim_image = [origin(1), image_limit(1)];
                     ylim_image = [origin(3), image_limit(3)];
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     xlim_image = [origin(2), image_limit(2)];
                     ylim_image = [origin(1), image_limit(1)];
             end
@@ -143,15 +143,15 @@ classdef GemCinePanel < GemVirtualPanel
                 k_screen = obj.ImageParameters.SliceNumber(orientation);
                 
                 switch orientation
-                    case PTKImageOrientation.Coronal
+                    case GemImageOrientation.XZ
                         i = k_screen;
                         j = i_screen;
                         k = j_screen;
-                    case PTKImageOrientation.Sagittal
+                    case GemImageOrientation.YZ
                         i = i_screen;
                         j = k_screen;
                         k = j_screen;
-                    case PTKImageOrientation.Axial
+                    case GemImageOrientation.XY
                         i = j_screen;
                         j = i_screen;
                         k = k_screen;
@@ -204,7 +204,7 @@ classdef GemCinePanel < GemVirtualPanel
         
         function UpdateStatus(obj, in_image)
             image_coordinates = obj.GetImageCoordinates;
-            notify(obj, 'MousePositionChanged', CoreEventData(PTKCoordsInImage(image_coordinates, in_image)));
+            notify(obj, 'MousePositionChanged', CoreEventData(GemCoordsInImage(image_coordinates, in_image)));
         end
         
         function SliderValueChanged(obj, ~, ~)

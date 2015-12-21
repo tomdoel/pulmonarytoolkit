@@ -1,5 +1,5 @@
-classdef PTKCoordsInImage < handle
-    % PTKCoordsInImage. Class for storing a set of coordinates and whether
+classdef GemCoordsInImage < handle
+    % GemCoordsInImage. Class for storing a set of coordinates and whether
     % they are inside an image
     %
     %     Licence
@@ -15,7 +15,7 @@ classdef PTKCoordsInImage < handle
     end
     
     methods
-        function obj = PTKCoordsInImage(coords, in_image)
+        function obj = GemCoordsInImage(coords, in_image)
             if nargin > 0
                 obj.Coords = coords;
                 obj.InImage = in_image;
