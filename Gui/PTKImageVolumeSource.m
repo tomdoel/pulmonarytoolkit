@@ -1,10 +1,10 @@
-classdef PTKScreenImageVolumeSource < CoreBaseClass
-    % PTKScreenImageVolumeSource. Part of the gui for the Pulmonary Toolkit.
+classdef PTKImageVolumeSource < CoreBaseClass
+    % PTKImageVolumeSource. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKScreenImageVolumeSource .
+    %     PTKImageVolumeSource .
     %
     %
     %     Licence
@@ -20,7 +20,7 @@ classdef PTKScreenImageVolumeSource < CoreBaseClass
     
     methods
         
-        function obj = PTKScreenImageVolumeSource(viewer_panel)
+        function obj = PTKImageVolumeSource(viewer_panel)
             obj = obj@CoreBaseClass;
             obj.ViewerPanel = viewer_panel;
         end

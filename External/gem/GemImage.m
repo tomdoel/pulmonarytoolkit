@@ -1,5 +1,5 @@
-classdef GemScreenImage < GemPositionlessUserInterfaceObject
-    % GemScreenImage. GEM class for displaying an image object
+classdef GemImage < GemPositionlessUserInterfaceObject
+    % GemImage. GEM class for displaying an image object
     %
     %
     %     Licence
@@ -21,7 +21,7 @@ classdef GemScreenImage < GemPositionlessUserInterfaceObject
     
     methods
         
-        function obj = GemScreenImage(parent)
+        function obj = GemImage(parent)
             obj = obj@GemPositionlessUserInterfaceObject(parent);
         end
         

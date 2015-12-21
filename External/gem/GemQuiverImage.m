@@ -1,5 +1,5 @@
-classdef GemScreenQuiverImage < GemScreenImage
-    % GemScreenQuiverImage. GEM class for displaying a quiver image object
+classdef GemQuiverImage < GemImage
+    % GemQuiverImage. GEM class for displaying a quiver image object
     %
     %
     %     Licence
@@ -18,8 +18,8 @@ classdef GemScreenQuiverImage < GemScreenImage
     
     methods
         
-        function obj = GemScreenQuiverImage(parent, image_source, image_parameters)
-            obj = obj@GemScreenImage(parent);
+        function obj = GemQuiverImage(parent, image_source, image_parameters)
+            obj = obj@GemImage(parent);
             obj.ImageParameters = image_parameters;
             obj.ImageSource = image_source;
         end

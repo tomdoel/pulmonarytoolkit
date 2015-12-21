@@ -1,10 +1,10 @@
-classdef PTKScreenImageFromVolume < GemScreenImage
-    % PTKScreenImageFromVolume. Part of the gui for the Pulmonary Toolkit.
+classdef PTKImageFromVolume < GemImage
+    % PTKImageFromVolume. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKScreenImageFromVolume holds a volume, and a 2D image object
+    %     PTKImageFromVolume holds a volume, and a 2D image object
     %     which shows one slice from the image volume
     %
     %
@@ -23,8 +23,8 @@ classdef PTKScreenImageFromVolume < GemScreenImage
     end
     
     methods
-        function obj = PTKScreenImageFromVolume(parent, image_source, image_parameters, display_parameters, reference_image_source)
-            obj = obj@GemScreenImage(parent);
+        function obj = PTKImageFromVolume(parent, image_source, image_parameters, display_parameters, reference_image_source)
+            obj = obj@GemImage(parent);
             obj.ImageSource = image_source;
             obj.ImageParameters = image_parameters;
             obj.DisplayParameters = display_parameters;
@@ -47,7 +47,7 @@ classdef PTKScreenImageFromVolume < GemScreenImage
             slice_number = obj.ImageParameters.SliceNumber(orientation);
             if ~isempty(image_object)
                 if image_object.ImageExists
-                    image_slice = PTKScreenImageFromVolume.GetImageSlice(reference_image, image_object, slice_number, orientation);
+                    image_slice = PTKImageFromVolume.GetImageSlice(reference_image, image_object, slice_number, orientation);
                     image_type = image_object.ImageType;
                     
                     if (image_type == PTKImageType.Scaled)
@@ -72,7 +72,7 @@ classdef PTKScreenImageFromVolume < GemScreenImage
                         end
                     end
                     
-                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, black_is_transparent, image_object.ColorLabelMap);
+                    [rgb_slice, alpha_slice] = PTKImageFromVolume.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, black_is_transparent, image_object.ColorLabelMap);
                     alpha_slice = double(alpha_slice)*opacity/100;
                     
                     % Special code to highlight one colour
@@ -102,8 +102,8 @@ classdef PTKScreenImageFromVolume < GemScreenImage
         function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level, black_is_transparent, map)
             switch image_type
                 case PTKImageType.Grayscale
-                    rescaled_image_slice = PTKScreenImageFromVolume.RescaleImage(image_slice, window, level);
-                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetBWImage(rescaled_image_slice);
+                    rescaled_image_slice = PTKImageFromVolume.RescaleImage(image_slice, window, level);
+                    [rgb_slice, alpha_slice] = PTKImageFromVolume.GetBWImage(rescaled_image_slice);
                 case PTKImageType.Colormap
                     
                     % An empty limits indicates the value should never be below zero. This saves
@@ -112,9 +112,9 @@ classdef PTKScreenImageFromVolume < GemScreenImage
                     if ~isempty(limits) && limits(1) < 0
                         image_slice = image_slice - limits(1);
                     end
-                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetLabeledImage(image_slice, map, black_is_transparent);
+                    [rgb_slice, alpha_slice] = PTKImageFromVolume.GetLabeledImage(image_slice, map, black_is_transparent);
                 case PTKImageType.Scaled
-                    [rgb_slice, alpha_slice] = PTKScreenImageFromVolume.GetColourMap(image_slice, limits, black_is_transparent);
+                    [rgb_slice, alpha_slice] = PTKImageFromVolume.GetColourMap(image_slice, limits, black_is_transparent);
             end
             
         end
