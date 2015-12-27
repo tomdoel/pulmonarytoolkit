@@ -1,4 +1,4 @@
-classdef PTKMarkerPointImage < handle
+classdef PTKMarkerPointImage < GemImageSource
     % PTKMarkerPointImage. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -16,15 +16,7 @@ classdef PTKMarkerPointImage < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties (Access = private)
-        MarkerImage
-    end
-    
     methods
-        function obj = PTKMarkerPointImage
-            obj.MarkerImage = PTKImage;
-        end
-        
         function [slice_markers, slice_size] = GetMarkersFromImage(obj, slice_number, dimension)
             slice = obj.GetSlice(slice_number, dimension);
             slice_size = size(slice);
@@ -41,16 +33,16 @@ classdef PTKMarkerPointImage < handle
         end
         
         function global_coords = LocalToGlobalCoordinates(obj, local_coords)
-            global_coords = obj.MarkerImage.LocalToGlobalCoordinates(local_coords);
+            global_coords = obj.Image.LocalToGlobalCoordinates(local_coords);
         end
         
         function image_has_changed = ChangeMarkerPoint(obj, local_coords, colour)
-            global_coords = obj.MarkerImage.LocalToGlobalCoordinates(local_coords);
-            global_coords = obj.BoundCoordsInImage(obj.MarkerImage, global_coords);
+            global_coords = obj.Image.LocalToGlobalCoordinates(local_coords);
+            global_coords = obj.BoundCoordsInImage(obj.Image, global_coords);
 
-            current_value = obj.MarkerImage.GetVoxel(global_coords);
+            current_value = obj.Image.GetVoxel(global_coords);
             if (current_value ~= colour)
-                obj.MarkerImage.SetVoxelToThis(global_coords, colour);
+                obj.Image.SetVoxelToThis(global_coords, colour);
                 image_has_changed = true;
             else
                 image_has_changed = false;
@@ -58,13 +50,23 @@ classdef PTKMarkerPointImage < handle
         end
         
         function ChangeMarkerSubImage(obj, new_image)
-            obj.MarkerImage.ChangeSubImage(new_image);
+            obj.Image.ChangeSubImage(new_image);
         end
         
         function BackgroundImageChanged(obj, template)
-            obj.MarkerImage = template;
-            obj.MarkerImage.ChangeRawImage(zeros(template.ImageSize, 'uint8'));            
-            obj.MarkerImage.ImageType = PTKImageType.Colormap;
+%             obj.SetBlankMarkerImage(template); % ToDo: resize marker image
+        end
+        
+        function SetBlankMarkerImage(obj, template)
+            obj.Image = template.BlankCopy;
+            obj.Image.ChangeRawImage(zeros(template.ImageSize, 'uint8'));
+            obj.Image.ImageType = PTKImageType.Colormap;
+        end
+        
+        function ForceMarkerImageCreation(obj, template)
+            if ~obj.Image.ImageExists
+                obj.SetBlankMarkerImage(template);
+            end
         end
         
         function index_of_nearest_marker = GetIndexOfPreviousMarker(obj, current_coordinate, maximum_skip, orientation)
@@ -75,11 +77,11 @@ classdef PTKMarkerPointImage < handle
             
             switch orientation
                 case PTKImageOrientation.Coronal
-                    consider_image = obj.MarkerImage.RawImage(coordinate_range, :, :);
+                    consider_image = obj.Image.RawImage(coordinate_range, :, :);
                 case PTKImageOrientation.Sagittal
-                    consider_image = obj.MarkerImage.RawImage(:, coordinate_range, :);
+                    consider_image = obj.Image.RawImage(:, coordinate_range, :);
                 case PTKImageOrientation.Axial
-                    consider_image = obj.MarkerImage.RawImage(:, :, coordinate_range);
+                    consider_image = obj.Image.RawImage(:, :, coordinate_range);
             end
             other_dimension = setxor([1 2 3], orientation);
             any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
@@ -94,17 +96,17 @@ classdef PTKMarkerPointImage < handle
         end
         
         function index_of_nearest_marker = GetIndexOfNextMarker(obj, current_coordinate, maximum_skip, orientation)
-            max_coordinate = obj.MarkerImage.ImageSize(orientation);
+            max_coordinate = obj.Image.ImageSize(orientation);
             coordinate_range = [current_coordinate + 1, current_coordinate + maximum_skip, current_coordinate];
             coordinate_range = min(max_coordinate, coordinate_range);
             coordinate_range = coordinate_range(1) : coordinate_range(2);
             switch orientation
                 case PTKImageOrientation.Coronal
-                    consider_image = obj.MarkerImage.RawImage(coordinate_range, :, :);
+                    consider_image = obj.Image.RawImage(coordinate_range, :, :);
                 case PTKImageOrientation.Sagittal
-                    consider_image = obj.MarkerImage.RawImage(:, coordinate_range, :);
+                    consider_image = obj.Image.RawImage(:, coordinate_range, :);
                 case PTKImageOrientation.Axial
-                    consider_image = obj.MarkerImage.RawImage(:, :, coordinate_range);
+                    consider_image = obj.Image.RawImage(:, :, coordinate_range);
             end
             other_dimension = setxor([1 2 3], orientation);
             any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
@@ -118,7 +120,7 @@ classdef PTKMarkerPointImage < handle
         end
         
         function index_of_nearest_marker = GetIndexOfNearestMarker(obj, current_coordinate, orientation)
-            consider_image = obj.MarkerImage.RawImage;
+            consider_image = obj.Image.RawImage;
             other_dimension = setxor([1 2 3], orientation);
             any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
             any_markers = squeeze(any_markers);
@@ -133,7 +135,7 @@ classdef PTKMarkerPointImage < handle
         end
 
         function index_of_nearest_marker = GetIndexOfFirstMarker(obj, orientation)
-            consider_image = obj.MarkerImage.RawImage;
+            consider_image = obj.Image.RawImage;
             other_dimension = setxor([1 2 3], orientation);
             any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
             any_markers = squeeze(any_markers);
@@ -147,8 +149,8 @@ classdef PTKMarkerPointImage < handle
         end
         
         function index_of_nearest_marker = GetIndexOfLastMarker(obj, orientation)
-            consider_image = obj.MarkerImage.RawImage;
-            max_coordinate = obj.MarkerImage.ImageSize(orientation);
+            consider_image = obj.Image.RawImage;
+            max_coordinate = obj.Image.ImageSize(orientation);
             other_dimension = setxor([1 2 3], orientation);
             any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
             any_markers = squeeze(any_markers);
@@ -163,11 +165,11 @@ classdef PTKMarkerPointImage < handle
         
         
         function image_exists = MarkerImageExists(obj)
-            image_exists = obj.MarkerImage.ImageExists;
+            image_exists = obj.Image.ImageExists;
         end
         
         function marker_image = GetMarkerImage(obj)
-            marker_image = obj.MarkerImage;
+            marker_image = obj.Image;
         end        
         
     end
@@ -175,7 +177,7 @@ classdef PTKMarkerPointImage < handle
     methods (Access = private)
         
         function slice = GetSlice(obj, slice_number, dimension)
-            slice = obj.MarkerImage.GetSlice(slice_number, dimension);
+            slice = obj.Image.GetSlice(slice_number, dimension);
             if (dimension == 1) || (dimension == 2)
                 slice = slice'; 
             end
@@ -185,7 +187,7 @@ classdef PTKMarkerPointImage < handle
             if (dimension == 1) || (dimension == 2)
                 slice = slice';
             end
-            obj.MarkerImage.ReplaceImageSlice(slice, slice_number, dimension);
+            obj.Image.ReplaceImageSlice(slice, slice_number, dimension);
         end
         
         function global_coords = BoundCoordsInImage(~, marker_image, global_coords)
