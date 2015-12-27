@@ -26,6 +26,7 @@ classdef GemFigure < GemUserInterfaceObject
         MouseCapturingObject % This is the GemUserInterfaceObject which has captured the mouse input after a mouse down
         MouseOverObject % This is the GemUserInterfaceObject which last processed a MouseHasMoved event
         LastCursor
+        IsDraggingMarkerPoint = false
     end
 
     methods
@@ -123,7 +124,13 @@ classdef GemFigure < GemUserInterfaceObject
             drawnow;
         end
         
+        function id = RegisterMarkerPoint(obj, point_handle)
+            id = point_handle.addNewPositionCallback(@obj.MarkerPositionChangedCallback);
+        end
         
+        function UnRegisterMarkerPoint(obj, point_handle, id)
+            point_handle.removeNewPositionCallback(id);
+        end
     end
 
     methods (Access = protected)
@@ -143,6 +150,8 @@ classdef GemFigure < GemUserInterfaceObject
         end
 
         function CustomWindowButtonDownFunction(obj, src, eventdata)
+            obj.IsDraggingMarkerPoint = false;
+            
             % Called when mouse button is pressed
             selection_type = get(src, 'SelectionType');
             
@@ -154,14 +163,16 @@ classdef GemFigure < GemUserInterfaceObject
         function CustomWindowButtonUpFunction(obj, src, eventdata)
             % Called when mouse button is released
             
-            % MouseUp events are always sent to the object which originally received the
-            % MouseDown, regardless of where the cursor is now
-            selection_type = get(src, 'SelectionType');
-            if ~isempty(obj.MouseCapturingObject) && isvalid(obj.MouseCapturingObject)
-                obj.ProcessActivityToSpecificObject(obj.MouseCapturingObject, 'MouseUp', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
+            if ~obj.IsDraggingMarkerPoint
+                % MouseUp events are always sent to the object which originally received the
+                % MouseDown, regardless of where the cursor is now
+                selection_type = get(src, 'SelectionType');
+                if ~isempty(obj.MouseCapturingObject) && isvalid(obj.MouseCapturingObject)
+                    obj.ProcessActivityToSpecificObject(obj.MouseCapturingObject, 'MouseUp', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, selection_type, src);
+                end
+                
+                obj.MouseCapturingObject = [];
             end
-            
-            obj.MouseCapturingObject = [];
         end
         
         function CustomWindowButtonMotionFunction(obj, src, eventdata)
@@ -189,5 +200,9 @@ classdef GemFigure < GemUserInterfaceObject
             scroll_count = eventdata.VerticalScrollCount; % positive = scroll down
             obj.ProcessActivity('Scroll', get(src, 'CurrentPoint') + obj.Position(1:2) - 1, scroll_count);
         end
+        
+        function MarkerPositionChangedCallback(obj, new_position)
+            obj.IsDraggingMarkerPoint = true;
+        end        
     end
 end
