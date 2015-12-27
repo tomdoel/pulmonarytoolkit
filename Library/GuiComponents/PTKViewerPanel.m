@@ -14,8 +14,6 @@ classdef PTKViewerPanel < GemPanel
     %     images (within a PTKViewer class) to the BackgroundImage, OverlayImage
     %     and QuiverImage properties.
     %
-    %     To set the marker image, use MarkerPointManager.ChangeMarkerImage
-    %
     %     See PTKViewer.m for a simple example of how to use this class.
     %
     %
@@ -28,7 +26,6 @@ classdef PTKViewerPanel < GemPanel
     
 
     events
-        MarkerPanelSelected      % An event to indicate if the marker control has been selected
         MouseCursorStatusChanged % An event to indicate if the MouseCursorStatus property has changed
     end
     
@@ -36,6 +33,7 @@ classdef PTKViewerPanel < GemPanel
         SelectedControl = 'W/L'    % The currently selected tool
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
         PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
+        NewMarkerColour        % The current colour of new marker points
     end
     
     properties (Dependent)
@@ -49,6 +47,7 @@ classdef PTKViewerPanel < GemPanel
         OverlayOpacity         % Sets the opacity percentage of the transparent overlay image
         ShowImage              % Sets whether the greyscale image is visible or invisible
         ShowOverlay            % Sets whether the transparent overlay image is visible or invisible
+        ShowMarkers            % Sets whether marker points are visible or invisible
         BlackIsTransparent     % Sets whether black in the transparent overlay image is transparent or shown as black
         OpaqueColour           % If set, then this colour will always be shown at full opacity in the overlay
     end
@@ -59,10 +58,25 @@ classdef PTKViewerPanel < GemPanel
     end
     
     properties (SetAccess = private)
+        % Image volume models
+        BackgroundImageSource
+        OverlayImageSource
+        QuiverImageSource
+        MarkerImageSource
+        
+        % Slice number and orientation model
+        ImageSliceParameters
+        
+        % Visualisation property models
+        BackgroundImageDisplayParameters
+        OverlayImageDisplayParameters
+        MarkerImageDisplayParameters
+
         Mode = ''              % Specifies the current editing mode
         SubMode = ''           % Specifies the current editing submode
         EditFixedOuterBoundary % Specifies whether the current edit can modify the segmentation outer boundary
         MouseCursorStatus      % A class of type PTKMouseCursorStatus showing data representing the voxel under the cursor
+        MarkerLayer
     end
     
     properties (Access = private)
@@ -72,19 +86,7 @@ classdef PTKViewerPanel < GemPanel
         WindowMax
         
         ToolCallback
-        ViewerPanelCallback
-    
-        % Image volume models
-        BackgroundImageSource
-        OverlayImageSource
-        QuiverImageSource
-        
-        % Slice number and orientation model
-        ImageSliceParameters
-        
-        % Visualisation property models
-        BackgroundImageDisplayParameters
-        OverlayImageDisplayParameters
+        ViewerPanelCallback 
     end
     
     properties (Access = protected)
@@ -109,6 +111,7 @@ classdef PTKViewerPanel < GemPanel
             obj.BackgroundImageSource = GemImageSource;
             obj.OverlayImageSource = GemImageSource;
             obj.QuiverImageSource = GemImageSource;
+            obj.MarkerImageSource = PTKMarkerPointImage;
             
             % Create the model object that holds the slice number and
             % orientation
@@ -120,13 +123,16 @@ classdef PTKViewerPanel < GemPanel
             obj.OverlayImageDisplayParameters = GemImageDisplayParameters;
             obj.OverlayImageDisplayParameters.Opacity = 50;
             obj.OverlayImageDisplayParameters.BlackIsTransparent = true;
+            obj.MarkerImageDisplayParameters = GemMarkerDisplayParameters;
             
+            % Create the object which handles the image processing in the viewer
+            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
+            obj.MarkerLayer = PTKMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ViewerPanelMultiView.GetAxes);
+
             % Create the mouse tools
             obj.ToolCallback = PTKToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.Reporting);
-            obj.Tools = PTKToolList(obj.ToolCallback, obj, obj.ImageSliceParameters, obj.BackgroundImageDisplayParameters);
-            
-            % Create the renderer object, which handles the image processing in the viewer
-            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
+            obj.Tools = PTKToolList(obj.MarkerLayer, obj.ToolCallback, obj, obj.ImageSliceParameters, obj.BackgroundImageDisplayParameters);
+                        
             obj.ToolCallback.SetAxes(obj.ViewerPanelMultiView.GetAxes);
             obj.AddChild(obj.ViewerPanelMultiView);
         end
@@ -172,10 +178,10 @@ classdef PTKViewerPanel < GemPanel
             obj.ViewerPanelMultiView.Resize(image_panel_position);
         end
         
-        function marker_point_manager = GetMarkerPointManager(obj)
+        function marker_layer = GetMarkerLayer(obj)
             % Returns a pointer to the MarkerPointManager object
             
-            marker_point_manager = obj.Tools.GetMarkerPointManager;
+            marker_layer = obj.MarkerLayer;
         end
         
         function ClearOverlays(obj)
@@ -268,6 +274,8 @@ classdef PTKViewerPanel < GemPanel
             elseif strcmpi(key, 'o')
                 obj.ShowOverlay = ~obj.ShowOverlay;
                 input_has_been_processed = true;
+            elseif strcmpi(key_name, 'l') % L
+                obj.MarkerImageDisplayParameters.ShowLabels = ~obj.MarkerImageDisplayParameters.ShowLabels;
             else
                 input_has_been_processed = obj.Tools.ShortcutKeys(key, obj.SelectedControl);
             end
@@ -379,6 +387,14 @@ classdef PTKViewerPanel < GemPanel
             show_image = obj.OverlayImageDisplayParameters.ShowImage;
         end
         
+        function set.ShowMarkers(obj, show_markers)
+            obj.MarkerImageDisplayParameters.ShowMarkers = show_markers;
+        end
+        
+        function show_markers = get.ShowMarkers(obj)
+            show_markers = obj.MarkerImageDisplayParameters.ShowMarkers;
+        end
+        
         function set.BlackIsTransparent(obj, black_is_transparent)
             obj.OverlayImageDisplayParameters.BlackIsTransparent = black_is_transparent;
         end
@@ -393,8 +409,7 @@ classdef PTKViewerPanel < GemPanel
         
         function opaque_colour = get.OpaqueColour(obj)
             opaque_colour = obj.OverlayImageDisplayParameters.OpaqueColour;
-        end
-        
+        end        
     end
     
     methods (Access = protected)
