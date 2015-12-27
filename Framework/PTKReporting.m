@@ -79,7 +79,7 @@ classdef PTKReporting < CoreReporting
             if isempty(obj.ViewingPanel)
                 marker_image = [];
             else
-                marker_image = obj.ViewingPanel.GetMarkerPointManager.GetMarkerImage;
+                marker_image = obj.ViewingPanel.GetMarkerLayer.GetMarkerImage;
             end
         end
 

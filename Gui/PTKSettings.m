@@ -58,16 +58,16 @@ classdef PTKSettings < CoreBaseClass
             gui.DeveloperMode = obj.DeveloperMode;
             viewer_panel.OverlayOpacity = obj.OverlayOpacity;
             viewer_panel.SliceNumber = obj.SliceNumber;
-            viewer_panel.GetMarkerPointManager.ChangeShowTextLabels(obj.ShowTextLabels);
-            viewer_panel.GetMarkerPointManager.ChangeCurrentColour(obj.CurrentMarkerColour);
+            viewer_panel.MarkerImageDisplayParameters.ShowLabels = obj.ShowTextLabels;
+            viewer_panel.NewMarkerColour = obj.CurrentMarkerColour;
         end
         
         function UpdateSettingsFromGui(obj, gui, viewer_panel)
             obj.DeveloperMode = gui.DeveloperMode;
             obj.OverlayOpacity = viewer_panel.OverlayOpacity;
             obj.SliceNumber = viewer_panel.SliceNumber;
-            obj.ShowTextLabels = viewer_panel.GetMarkerPointManager.ShowTextLabels;
-            obj.CurrentMarkerColour = viewer_panel.GetMarkerPointManager.CurrentColour;
+            obj.ShowTextLabels = viewer_panel.MarkerImageDisplayParameters.ShowLabels;
+            obj.CurrentMarkerColour = viewer_panel.NewMarkerColour;
         end
         
         function SetLastImageInfo(obj, image_info, reporting)
