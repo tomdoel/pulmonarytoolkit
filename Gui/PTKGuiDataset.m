@@ -162,6 +162,7 @@ classdef PTKGuiDataset < CoreBaseClass
             try
                 obj.ModeSwitcher.UpdateMode([], [], [], [], []);
                 obj.Gui.ClearImages;
+                obj.Gui.ClearMarkers;
                 delete(obj.Dataset);
 
                 obj.Dataset = [];

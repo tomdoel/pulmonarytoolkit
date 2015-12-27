@@ -42,6 +42,8 @@ classdef PTKGuiCore < GemFigure
         PatientBrowserFactory
         
         LastWindowSize % Keep track of window size to prevent unnecessary resize
+        
+        MarkerManager  % For loading and saving marker points
     end
     
     properties (Constant, Access = private)
@@ -80,6 +82,8 @@ classdef PTKGuiCore < GemFigure
             else
                 obj.ImagePanel = PTKViewerPanel(obj);
             end
+            
+            obj.MarkerManager = PTKMarkerPointManager(obj.ImagePanel.MarkerLayer, obj.ImagePanel.MarkerImageSource, obj.ImagePanel.MarkerImageDisplayParameters, obj.ImagePanel, obj);
             
             obj.ImagePanel.DefaultOrientation = app_def.GetDefaultOrientation;
             obj.AddChild(obj.ImagePanel);
@@ -200,6 +204,7 @@ classdef PTKGuiCore < GemFigure
             obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'OpaqueColour', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'SliceSkip', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'PaintBrushSize', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel.MarkerImageDisplayParameters, 'ShowMarkers', @obj.ShowMarkersChanged);
             
             % Wait until the GUI is visible before removing the splash screen
             splash_screen.delete;
@@ -227,8 +232,7 @@ classdef PTKGuiCore < GemFigure
         function CreateGuiComponent(obj, position)
             CreateGuiComponent@GemFigure(obj, position);
 
-            obj.Reporting.SetViewerPanel(obj.ImagePanel);            
-            obj.AddEventListener(obj.ImagePanel, 'MarkerPanelSelected', @obj.MarkerPanelSelected);
+            obj.Reporting.SetViewerPanel(obj.ImagePanel);
         end
         
         function SaveEditedResult(obj)
@@ -353,9 +357,9 @@ classdef PTKGuiCore < GemFigure
         function SaveMarkers(obj)
             if obj.GuiDataset.DatasetIsLoaded
                 obj.Reporting.ShowProgress('Saving Markers');
-                markers = obj.ImagePanel.GetMarkerPointManager.GetMarkerImage;
+                markers = obj.ImagePanel.GetMarkerLayer.GetMarkerImage.Image;
                 obj.GuiDataset.SaveMarkers(markers);
-                obj.ImagePanel.GetMarkerPointManager.MarkerPointsHaveBeenSaved;
+                obj.ImagePanel.GetMarkerLayer.MarkerPointsHaveBeenSaved;
                 obj.Reporting.CompleteProgress;
             end
         end
@@ -363,7 +367,7 @@ classdef PTKGuiCore < GemFigure
         function SaveMarkersBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded
                 obj.Reporting.ShowProgress('Abandoning Markers');                
-                markers = obj.ImagePanel.GetMarkerPointManager.GetMarkerImage;
+                markers = obj.ImagePanel.GetMarkerLayer.GetMarkerImage;
                 obj.GuiDataset.SaveAbandonedMarkers(markers);
                 obj.Reporting.CompleteProgress;
             end
@@ -371,7 +375,7 @@ classdef PTKGuiCore < GemFigure
         
         function SaveMarkersManualBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded
-                markers = obj.ImagePanel.GetMarkerPointManager.GetMarkerImage;
+                markers = obj.ImagePanel.GetMarkerLayer.GetMarkerImage;
                 obj.GuiDataset.SaveMarkersManualBackup(markers);
             end
         end
@@ -617,6 +621,10 @@ classdef PTKGuiCore < GemFigure
         function ViewerPanelControlsChangedCallback(obj, ~, ~, ~)
             % This methods is called when controls in the viewer panel have changed
             
+            if obj.ImagePanel.IsInMarkerMode
+                obj.LazyLoadMarkerImage;
+            end
+            
             obj.UpdateToolbar;
         end
         
@@ -675,8 +683,12 @@ classdef PTKGuiCore < GemFigure
         end
         
         
-        function MarkerPanelSelected(obj, ~, ~)
-            if ~obj.MarkersHaveBeenLoaded
+        function ShowMarkersChanged(obj, ~, ~)
+            obj.LazyLoadMarkerImage;
+        end
+        
+        function LazyLoadMarkerImage(obj)
+            if (obj.ImagePanel.MarkerImageDisplayParameters.ShowMarkers || obj.ImagePanel.IsInMarkerMode) && ~obj.MarkersHaveBeenLoaded
                 wait_dialog = obj.WaitDialogHandle;
                 wait_dialog.ShowAndHold('Loading Markers');
                 obj.LoadMarkers;
@@ -725,7 +737,8 @@ classdef PTKGuiCore < GemFigure
             if isempty(new_image)
                 disp('No previous markers found for this image');
             else
-                obj.ImagePanel.GetMarkerPointManager.ChangeMarkerImage(new_image);
+                obj.ImagePanel.GetMarkerLayer.GetMarkerImage.SetBlankMarkerImage(obj.ImagePanel.GetBackgroundImageSource.Image);
+                obj.ImagePanel.GetMarkerLayer.ChangeMarkerSubImage(new_image);
             end
             obj.MarkersHaveBeenLoaded = true;
         end
@@ -773,9 +786,9 @@ classdef PTKGuiCore < GemFigure
 
         function AutoSaveMarkers(obj)
             if ~isempty(obj.ImagePanel)
-                if ~isempty(obj.ImagePanel.GetMarkerPointManager) && obj.ImagePanel.GetMarkerPointManager.MarkerImageHasChanged && obj.MarkersHaveBeenLoaded
+                if ~isempty(obj.ImagePanel.GetMarkerLayer) && obj.ImagePanel.GetMarkerLayer.MarkerImageHasChanged && obj.MarkersHaveBeenLoaded
                     saved_marker_points = obj.GuiDataset.LoadMarkers;
-                    current_marker_points = obj.ImagePanel.GetMarkerPointManager.GetMarkerImage;
+                    current_marker_points = obj.ImagePanel.GetMarkerLayer.GetMarkerImage.Image;
                     markers_changed = false;
                     if isempty(saved_marker_points)
                         if any(current_marker_points.RawImage(:))
@@ -914,6 +927,11 @@ classdef PTKGuiCore < GemFigure
             obj.DeleteOverlays;
         end
         
+        function ClearMarkers(obj)
+            obj.MarkersHaveBeenLoaded = false;
+            obj.ImagePanel.MarkerImageSource.Image = PTKImage;
+        end
+        
         function RefreshPluginsForDataset(obj, dataset)
             obj.ModeTabControl.RefreshPlugins(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level)
         end
@@ -968,7 +986,7 @@ classdef PTKGuiCore < GemFigure
         end
 
         function LoadMarkersIfRequired(obj)
-            if obj.ImagePanel.IsInMarkerMode
+            if ~obj.MarkersHaveBeenLoaded && (obj.ImagePanel.ShowMarkers || obj.ImagePanel.IsInMarkerMode)
                 obj.LoadMarkers;
             end
         end
