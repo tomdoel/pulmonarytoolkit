@@ -274,7 +274,7 @@ classdef PTKViewerPanel < GemPanel
             elseif strcmpi(key, 'o')
                 obj.ShowOverlay = ~obj.ShowOverlay;
                 input_has_been_processed = true;
-            elseif strcmpi(key_name, 'l') % L
+            elseif strcmpi(key, 'l') % L
                 obj.MarkerImageDisplayParameters.ShowLabels = ~obj.MarkerImageDisplayParameters.ShowLabels;
             else
                 input_has_been_processed = obj.Tools.ShortcutKeys(key, obj.SelectedControl);
