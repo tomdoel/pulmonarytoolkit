@@ -52,7 +52,7 @@ classdef PTKDiskCache < handle
             if obj.Exists(PTKSoftwareInfo.SchemaCacheName, [], reporting)
                 schema = obj.Load(PTKSoftwareInfo.SchemaCacheName, [], reporting);
                 if (schema ~= obj.SchemaNumber)
-                    reporting.Error('PTKDiskCache:BadSchema', 'Wrong schema found This is caused by having a disk cache from a redundant version of code. Delete your Temp directory to fix.');
+                    reporting.Error('PTKDiskCache:BadSchema', 'Wrong schema found. This is caused by having a disk cache from a redundant version of code. Delete your cache directory to fix.');
                 end
             else
                obj.Save(PTKSoftwareInfo.SchemaCacheName, obj.SchemaNumber, [], reporting);
