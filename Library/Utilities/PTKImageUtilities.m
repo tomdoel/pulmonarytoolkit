@@ -451,10 +451,11 @@ classdef PTKImageUtilities
         
         function best_series = FindBestSeries(datasets)
             modalities = CoreContainerUtilities.GetFieldValuesFromSet(datasets, 'Modality');
-            matches_modality = ismember(modalities, 'CT') | ismember(modalities, 'MR');
-            if isempty(matches_modality)
+
+            if isempty(modalities) || ~iscellstr(modalities)
                 selected_datasets = datasets;
             else
+                matches_modality = ismember(modalities, 'CT') | ismember(modalities, 'MR');
                 selected_datasets = datasets(matches_modality);
             end
             num_images = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(selected_datasets, 'NumberOfImages');
