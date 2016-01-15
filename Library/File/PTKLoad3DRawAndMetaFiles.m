@@ -62,19 +62,9 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     
     if isfield(header_data, 'TransformMatrix')
         transform_matrix = str2num(header_data.TransformMatrix); %#ok<ST2NM>
-        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation(transform_matrix, reporting);
-    else
-        
-        % Use the Anatomical Orientation tag
-        if strcmp(header_data.AnatomicalOrientation, 'RSA')
-            new_dimension_order = [3 1 2];
-            flip_orientation = [0 0 0];
-        elseif strcmp(header_data.AnatomicalOrientation, 'RAI')
-            new_dimension_order = [2 1 3];
-            flip_orientation = [0 0 1];
-        else
-            reporting.Error('PTKLoad3DRawAndMetaFiles:NoTransformMatrix', ['PTKLoad3DRawAndMetaFiles: WARNING: no implementation yet for anatomical orientation ' header_data.AnatomicalOrientation '.']);
-        end
+        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(transform_matrix(1:3), transform_matrix(4:6), transform_matrix(7:9), reporting);
+    else        
+        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromAnatomicalOrientation(header_data.AnatomicalOrientation, reporting);
     end
 
     image_dims = sscanf(header_data.DimSize, '%d %d %d');
@@ -119,7 +109,6 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     % We need to swap the X and Y dimensions in the loaded image
     image_dimensions = [2 1 3];
     new_dimension_order = image_dimensions(new_dimension_order);
-    
     
     if ~isequal(new_dimension_order, [1, 2, 3])
         original_image = permute(original_image, new_dimension_order);
