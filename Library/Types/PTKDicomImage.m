@@ -130,6 +130,7 @@ classdef PTKDicomImage < PTKImage
             obj = obj@PTKImage(original_image, PTKImageType.Grayscale, voxel_size);
             
             obj.StudyUid = study_uid;
+            obj.Modality = modality;
             
             if exist('meta_data', 'var')
                 obj.MetaHeader = meta_data;
