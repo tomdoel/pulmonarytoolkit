@@ -20,7 +20,6 @@ classdef PTKModeTabControl < GemTabControl
         SegmentPanel
         PluginsPanel
         EditPanel
-        ManualSegmentationPanel
         AnalysisPanel
         
         TabEnabled
@@ -44,10 +43,6 @@ classdef PTKModeTabControl < GemTabControl
             obj.EditPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', obj.Gui, app_def, true);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'Edit', 'Manual correction of results');
 
-            obj.ManualSegmentationPanel = PTKPluginsSlidingPanel(obj, organised_manual_segmentations, 'ManualSegmentation', PTKModes.ManualSegmentationMode, 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
-            obj.AddTabbedPanel(obj.ManualSegmentationPanel, 'Manual Segmentation', 'ManualSegmentation', 'Manual segmentation');
-            obj.ManualSegmentationPanel.AddPlugins([]);
-            
             obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
             obj.AddTabbedPanel(obj.AnalysisPanel, 'Analyse', 'Analysis', 'Perform analysis and save as tables and graphs');
             obj.AnalysisPanel.AddPlugins([]);
@@ -79,7 +74,6 @@ classdef PTKModeTabControl < GemTabControl
         function UpdateGuiForNewDataset(obj, dataset, window, level)
             % Update manual segmentations
             obj.OrganisedManualSegmentations.Repopulate(obj.Reporting);
-            obj.ManualSegmentationPanel.RefreshPlugins(dataset, window, level);
             % Add preview images to buttons
             for panel = obj.PanelMap.values
                 panel{1}.AddAllPreviewImagesToButtons(dataset, window, level);
