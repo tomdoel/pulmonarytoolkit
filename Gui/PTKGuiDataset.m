@@ -145,7 +145,7 @@ classdef PTKGuiDataset < CoreBaseClass
         function ClearCacheForThisDataset(obj)
             if obj.DatasetIsLoaded
                 obj.Dataset.ClearCacheForThisDataset(false);
-                obj.Gui.AddAllPreviewImagesToButtons([]);
+                obj.Gui.UpdateGuiForNewDataset([]);
             end
         end
 
@@ -169,6 +169,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 obj.Settings.SetLastImageInfo([], obj.Reporting);
                 
                 obj.SetNoDataset(false);
+                obj.Gui.UpdateGuiForNewDataset([]);
                 
             catch exc
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
@@ -190,6 +191,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 obj.Settings.SetLastImageInfo([], obj.Reporting);
                 
                 obj.SetNoDataset(true);
+                obj.Gui.UpdateGuiForNewDataset([]);
                 
             catch exc
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
@@ -293,6 +295,14 @@ classdef PTKGuiDataset < CoreBaseClass
                     % Force the image to be saved so that it doesn't have to be
                     % reloaded each time
                     new_image = obj.Dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage, [], true);
+                end
+                
+                % The modality may not have been set if it is not contained
+                % in the file metadata, but may have been set after
+                % loading, in which case we update it here
+                if isempty(modality) && ~isempty(new_image.Modality)
+                    modality = new_image.Modality;
+                    image_info.Modality = new_image.Modality;
                 end
                 
                 series_uid = image_info.ImageUid;
@@ -446,6 +456,7 @@ classdef PTKGuiDataset < CoreBaseClass
             end
             obj.GuiDatasetState.ClearPlugin;
             obj.UpdateModes;
+            obj.Gui.UpdateGuiForNewDataset([]);
         end
         
         function UpdateEditedStatus(obj, is_edited)
