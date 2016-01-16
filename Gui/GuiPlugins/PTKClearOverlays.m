@@ -18,18 +18,19 @@ classdef PTKClearOverlays < PTKGuiPlugin
     %    
     
     properties
-        ButtonText = 'Clear Overlay'
-        SelectedText = 'Clear Overlay'
+        ButtonText = 'Clear'
+        SelectedText = 'Clear'
         ToolTip = 'Clear the overlay'
-        Category = 'Developer tools'
+        Category = 'Segment region'
+        Visibility = 'Overlay'
         Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
-        ButtonWidth = 4
+        ButtonWidth = 6
         ButtonHeight = 1
-        Visibility = 'Developer'
-        Location = 101
+        Icon = 'clear_overlay.png'
+        Location = 0
     end
     
     methods (Static)
@@ -38,7 +39,7 @@ classdef PTKClearOverlays < PTKGuiPlugin
         end
         
         function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.DeveloperMode && ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists;
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists;
         end
     end
 end
