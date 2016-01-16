@@ -160,6 +160,8 @@ classdef PTKDatasetResults < handle
         end
         
         function file_list = GetListOfManualSegmentations(obj)
+            % Gets list of manual segmentation files associated with this dataset
+
             file_list = obj.DatasetDiskCache.GetListOfManualSegmentations;
         end
         

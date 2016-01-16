@@ -53,7 +53,7 @@ classdef PTKOrganisedManualSegmentations < CoreBaseClass
     methods (Access = private)
         
         function segmentation_name_list = GetListOfPossibleSegmentationNames(obj)
-            % Obtains a list of plugins found in the Manual Segmentations folder
+            % Obtains a list of segmentations found in the Manual Segmentations folder
             segmentation_name_list = obj.GuiApp.GetListOfManualSegmentations;
         end
     end

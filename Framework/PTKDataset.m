@@ -290,7 +290,7 @@ classdef PTKDataset < CoreBaseClass
         end
         
         function file_list = GetListOfManualSegmentations(obj, varargin)
-            % Delete edit data from a cache file associated with this dataset
+            % Gets list of manual segmentation files associated with this dataset
             
             obj.PreCallTidy;
             file_list = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetListOfManualSegmentations;
