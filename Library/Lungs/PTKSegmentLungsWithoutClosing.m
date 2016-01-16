@@ -63,7 +63,41 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
     if ~isempty(reporting)
         reporting.ShowProgress('Searching for largest connected region');
     end
+
+    
+    min_volume_warning_limit = 2000;
+
+    % In the event that the central component was not found, we will
+    % perform additional opening
+    open_params = [2, 4, 6];
+    open_index = 1;
     
     % Find the main component, excluding any components touching the border
     lung_image = PTKGetMainRegionExcludingBorder(filtered_lung_image, reporting);
+    lung_volume = lung_image.Volume;
+    still_searching = lung_volume < min_volume_warning_limit;
+    
+    while still_searching
+        open_value = open_params(open_index);
+        filtered_lung_image_copy = filtered_lung_image.Copy;
+        filtered_lung_image_copy.BinaryMorph(@imerode, open_value);
+        adjusted_lung_image = PTKGetMainRegionExcludingBorder(filtered_lung_image_copy, reporting);
+        
+        lung_volume = adjusted_lung_image.Volume;
+        
+        if lung_volume < min_volume_warning_limit
+            open_index = open_index + 1;
+            if open_index > length(open_params)
+                still_searching = false;
+            end
+        else
+            lung_image = adjusted_lung_image;
+            still_searching = false;
+        end
+    end
+    
+    if lung_volume < min_volume_warning_limit
+        reporting.ShowWarning('PTKSegmentLungsWithoutClosing:LungVolumeSmall', ['The calculated lung volume ' num2str(lung_volume) 'mm^3 is small. This may indicate pathology or a segmentation error. Please manually verify the lung segmentation.'], [])
+    end
+    
 end
