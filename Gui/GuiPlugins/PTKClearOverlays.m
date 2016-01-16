@@ -38,7 +38,7 @@ classdef PTKClearOverlays < PTKGuiPlugin
         end
         
         function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists;
+            enabled = ptk_gui_app.DeveloperMode && ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists;
         end
     end
 end
