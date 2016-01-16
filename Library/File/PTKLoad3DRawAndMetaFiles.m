@@ -76,8 +76,20 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     
     if strcmp(header_data.ElementType,'MET_UCHAR')
         data_type = 'uint8';
+    elseif strcmp(header_data.ElementType,'MET_CHAR')
+        data_type = 'int8';
     elseif strcmp(header_data.ElementType,'MET_SHORT')
         data_type = 'int16';
+    elseif strcmp(header_data.ElementType,'MET_USHORT')
+        data_type = 'uint16';
+    elseif strcmp(header_data.ElementType,'MET_INT')
+        data_type = 'int32';
+    elseif strcmp(header_data.ElementType,'MET_UINT')
+        data_type = 'uint32';
+    elseif strcmp(header_data.ElementType,'MET_FLOAT')
+        data_type = 'single';
+    elseif strcmp(header_data.ElementType,'MET_DOUBLE')
+        data_type = 'double';
     else
         data_type = 'uint16';
     end
