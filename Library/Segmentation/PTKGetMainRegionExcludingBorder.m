@@ -1,10 +1,10 @@
-function threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, reporting)
+function main_image = PTKGetMainRegionExcludingBorder(threshold_image, reporting)
     % PTKGetMainRegionExcludingBorder. Finds the largest connected region in a
     % binary 3D volume, excluding any regions which touch the borders in the
     % first and second dimensions.
     %
     % Syntax:
-    %     threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, reporting)
+    %     main_image = PTKGetMainRegionExcludingBorder(threshold_image, reporting)
     %
     % Inputs:
     %     threshold_image - a binary 3D volume as a PTKImage.
@@ -13,7 +13,7 @@ function threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, repo
     %         interface for reporting progress and warnings
     %
     % Outputs:
-    %     threshold_image - a PTKImage binary volume of the found region
+    %     main_image - a PTKImage binary volume of the found region
     %
     %
     %     Licence
@@ -110,5 +110,6 @@ function threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, repo
         bordered_image(CC.PixelIdxList{results(2)}) = true;        
     end
      
-    threshold_image.ChangeRawImage(bordered_image(2:end-1, 2:end-1, 2:end-1));
+    main_image = threshold_image.BlankCopy;
+    main_image.ChangeRawImage(bordered_image(2:end-1, 2:end-1, 2:end-1));
 end
