@@ -546,7 +546,7 @@ classdef PTKGuiCore < GemFigure
             plugin_info = eval(plugin_name);
             wait_dialog.ShowAndHold([plugin_info.ButtonText]);
 
-            plugin_info.RunGuiPlugin(obj);
+            plugin_info.RunGuiPlugin(obj, obj.Reporting);
             
             obj.UpdateToolbar;
             
@@ -943,6 +943,10 @@ classdef PTKGuiCore < GemFigure
         
         function enabled = IsTabEnabled(obj, panel_mode_name)
             enabled = obj.ModeTabControl.IsTabEnabled(panel_mode_name);
+        end
+        
+        function reporting = GetReporting(obj)
+            reporting = obj.Reporting;
         end
     end
     
