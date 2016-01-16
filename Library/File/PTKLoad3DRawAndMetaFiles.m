@@ -124,7 +124,16 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     rescale_intercept = int16(0);
 
     reporting.ShowWarning('PTKLoad3DRawAndMetaFiles:AssumedCT', 'No modality information - I am assuming these images are CT with slope 1 and intercept 0.', []);
-    modality = 'CT';
+    
+    % Guess that images with some strongly negative values are from CT images while
+    % others are MR
+    min_value = min(original_image(:));
+    if (min_value < -500)
+        modality = 'CT';
+    elseif (min_value >= 0)
+        modality = 'MR';
+    end
+    
     dicom_image = PTKDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid, header_data);
     dicom_image.Title = filenames{1};
 end
