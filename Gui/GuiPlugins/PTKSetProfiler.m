@@ -14,7 +14,7 @@ classdef PTKSetProfiler < PTKGuiPlugin
     
     properties
         ButtonText = 'Profiler'
-        SelectedText = 'FInish profiling'
+        SelectedText = 'Finish profiling'
         ToolTip = 'Starts or stops the Matlab profiler'
         Category = 'Developer tools'
         Visibility = 'Developer'
