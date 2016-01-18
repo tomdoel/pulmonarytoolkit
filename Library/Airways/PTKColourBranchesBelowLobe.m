@@ -16,19 +16,25 @@ function results_image = PTKColourBranchesBelowLobe(start_branches, airway_tree,
     right_lower_startindices = start_branches.RightLower;
     uncertain_segments = start_branches.LeftUncertain;
 
-    left_upper_startindices = [left_upper_startindices.Children];
-    left_lower_startindices = [left_lower_startindices.Children];
-    right_upper_startindices = [right_upper_startindices.Children];
-    right_mid_startindices = [right_mid_startindices.Children];
-    right_lower_startindices = [right_lower_startindices.Children];
-    if ~isempty(uncertain_segments)
-        uncertain_segments = [uncertain_segments.Children];
-    end
+    left_upper_startindices = GetOptionalFieldArray(left_upper_startindices, 'Children');
+    left_lower_startindices = GetOptionalFieldArray(left_lower_startindices, 'Children');
+    right_upper_startindices = GetOptionalFieldArray(right_upper_startindices, 'Children');
+    right_mid_startindices = GetOptionalFieldArray(right_mid_startindices, 'Children');
+    right_lower_startindices = GetOptionalFieldArray(right_lower_startindices, 'Children');
+    uncertain_segments = GetOptionalFieldArray(uncertain_segments, 'Children');
     
     start_segments = [left_upper_startindices, left_lower_startindices, right_upper_startindices, ...
         right_mid_startindices, right_lower_startindices, uncertain_segments];
 
     results_image = PTKDivideAirwayTreeByCentrelineBranches(start_segments, airway_tree, template);
+end
+
+function field_array = GetOptionalFieldArray(structure, field_name)
+    if isfield(structure, field_name)
+        field_array = [structure.(field_name)];
+    else
+        field_array = [];
+    end
 end
 
 function results_image = PTKDivideAirwayTreeByCentrelineBranches(start_segments, airway_tree, template)
