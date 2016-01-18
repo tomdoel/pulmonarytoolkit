@@ -336,8 +336,8 @@ classdef PTKImageUtilities
             % others, then we set this to be the orientation
             voxel_size = image_template.VoxelSize;
             [ordered_voxel_size, ordered_voxel_size_indices] = sort(voxel_size);
-            if ordered_voxel_size(3)/ordered_voxel_size(1) > 2
-                if ordered_voxel_size(3)/ordered_voxel_size(2) > 2
+            if ordered_voxel_size(3)/ordered_voxel_size(1) > 3
+                if ordered_voxel_size(3)/ordered_voxel_size(2) > 3
                     orientation = PTKImageOrientation(ordered_voxel_size_indices(3));
                 else
                     orientation = PTKImageOrientation(ordered_voxel_size_indices(1));
