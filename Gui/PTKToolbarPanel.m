@@ -26,6 +26,7 @@ classdef PTKToolbarPanel < GemPanel
         AppDef
         Visibility
         GroupVertically
+        AllowWrapping
     end
     
     properties (Constant)
@@ -37,7 +38,7 @@ classdef PTKToolbarPanel < GemPanel
     end
     
     methods
-        function obj = PTKToolbarPanel(parent, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically)
+        function obj = PTKToolbarPanel(parent, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically, allow_wrapping)
             obj = obj@GemPanel(parent);
             
             obj.ModeTabName = mode_tab_name;
@@ -53,6 +54,7 @@ classdef PTKToolbarPanel < GemPanel
             obj.ToolMap = containers.Map;
             obj.OrganisedPlugins = organised_plugins;
             obj.GroupVertically = group_vertically;
+            obj.AllowWrapping = allow_wrapping;
             
             obj.AddTools;
         end
@@ -77,7 +79,7 @@ classdef PTKToolbarPanel < GemPanel
                     group_panel_height = tool_group_panel.GetRequestedHeight;
                     group_panel_width = tool_group_panel.GetWidth;
                     
-                    if (x_position > min_x) && (obj.GroupVertically || (x_position + group_panel_width > max_x))
+                    if (obj.AllowWrapping) && (x_position > min_x) && (obj.GroupVertically || (x_position + group_panel_width > max_x))
                         x_position = min_x;
                         y_column_top = y_column_top - row_height;
                         y_column_base = y_column_top - row_height;

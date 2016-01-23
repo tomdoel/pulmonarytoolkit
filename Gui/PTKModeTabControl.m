@@ -37,10 +37,10 @@ classdef PTKModeTabControl < GemTabControl
             
             obj.LeftBorder = true;
 
-            obj.SegmentPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', obj.Gui, app_def, true);
+            obj.SegmentPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.SegmentPanel, 'Segment', 'Segment', 'Segmentation');
             
-            obj.EditPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', obj.Gui, app_def, true);
+            obj.EditPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'Edit', 'Manual correction of results');
 
             obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
