@@ -474,6 +474,10 @@ classdef PTKGuiDataset < CoreBaseClass
         function delete(obj)
             obj.DeletePreviewListener;
         end
+        
+        function plugin_cache = GetPluginCache(obj)
+            plugin_cache = obj.Ptk.FrameworkSingleton.GetPluginInfoMemoryCache;
+        end
     end
     
     methods (Access = private)
@@ -502,7 +506,7 @@ classdef PTKGuiDataset < CoreBaseClass
         end
         
         function RunPluginTryCatchBlock(obj, plugin_name, wait_dialog)
-            new_plugin = PTKGuiDataset.LoadPluginInfoStructure(plugin_name, obj.Reporting);
+            new_plugin = obj.LoadPluginInfoStructure(plugin_name, obj.Reporting);
             visible_name = CoreTextUtilities.RemoveHtml(new_plugin.ButtonText);
             wait_dialog.ShowAndHold(['Computing ' visible_name]);
             
@@ -564,16 +568,9 @@ classdef PTKGuiDataset < CoreBaseClass
             obj.Gui.UpdateToolbar;
         end
         
-    end
-    
-    methods (Static)
-        % Obtains a handle to the plugin which can be used to parse its properties
-        function new_plugin = LoadPluginInfoStructure(plugin_name, reporting)
-            plugin_handle = str2func(plugin_name);
-            plugin_info_structure = feval(plugin_handle);
-            
-            % Parse the class properties into a data structure
-            new_plugin = PTKParsePluginClass(plugin_name, plugin_info_structure, reporting); 
+        function new_plugin = LoadPluginInfoStructure(obj, plugin_name, reporting)
+            % Obtains a handle to the plugin which can be used to parse its properties
+            new_plugin = obj.GetPluginCache.GetPluginInfo(plugin_name, [], reporting);
         end        
     end
 end

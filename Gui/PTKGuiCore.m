@@ -132,7 +132,7 @@ classdef PTKGuiCore < GemFigure
             end
             
             % Map of all plugins visible in the GUI
-            obj.OrganisedPlugins = PTKOrganisedPlugins(obj, app_def, obj.Reporting);
+            obj.OrganisedPlugins = PTKOrganisedPlugins(obj, obj.GuiDataset.GetPluginCache, app_def, obj.Reporting);
             obj.OrganisedManualSegmentations = PTKOrganisedManualSegmentations(obj, app_def, obj.Reporting);
 
             % Create the panel of tools across the bottom of the interface

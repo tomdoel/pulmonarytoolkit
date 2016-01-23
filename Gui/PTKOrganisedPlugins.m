@@ -20,10 +20,10 @@ classdef PTKOrganisedPlugins < CoreBaseClass
     end
     
     methods
-        function obj = PTKOrganisedPlugins(gui_app, app_def, reporting)
+        function obj = PTKOrganisedPlugins(gui_app, plugin_cache, app_def, reporting)
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
-            obj.OrganisedPluginsModeList = PTKOrganisedPluginsModeList;
+            obj.OrganisedPluginsModeList = PTKOrganisedPluginsModeList(plugin_cache);
             obj.Repopulate(reporting);
         end
         

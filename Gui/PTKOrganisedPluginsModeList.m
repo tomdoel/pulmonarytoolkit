@@ -14,11 +14,13 @@ classdef PTKOrganisedPluginsModeList < CoreBaseClass
     
     properties (Access = private)
         Modes
+        PluginCache
     end
     
     methods
-        function obj = PTKOrganisedPluginsModeList()
+        function obj = PTKOrganisedPluginsModeList(plugin_cache)
             obj.Clear;
+            obj.PluginCache = plugin_cache;
         end
         
         function Clear(obj)
@@ -36,7 +38,7 @@ classdef PTKOrganisedPluginsModeList < CoreBaseClass
         function AddList(obj, plugin_list, gui_app, reporting)
             for plugin_filename = plugin_list
                 plugin_name = plugin_filename{1}.First;
-                plugin_wrapper = PTKPluginWrapperBase.AddPluginFromName(plugin_name, plugin_filename, gui_app, reporting);
+                plugin_wrapper = PTKPluginWrapperBase.AddPluginFromName(obj.PluginCache, plugin_name, plugin_filename, gui_app, reporting);
                 if ~isempty(plugin_wrapper)
                     obj.Add(plugin_name, plugin_wrapper.ParsedPluginInfo.Mode, plugin_wrapper.ParsedPluginInfo.Category, plugin_wrapper);
                 end

@@ -23,7 +23,7 @@ classdef PTKOrganisedManualSegmentations < CoreBaseClass
         function obj = PTKOrganisedManualSegmentations(gui_app, app_def, reporting)
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
-            obj.OrganisedPluginsModeList = PTKOrganisedPluginsModeList;
+            obj.OrganisedPluginsModeList = PTKOrganisedPluginsModeList([]);
             obj.Repopulate(reporting);
         end
         

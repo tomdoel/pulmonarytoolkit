@@ -30,6 +30,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
         LinkedDatasetRecorder
         DatasetMemoryCache % Stores PTKDatasetDiskCache objects in memory
         LinkedDatasetChooserMemoryCache
+        PluginInfoMemoryCache % Stores parsed plugin classes in memory
     end
         
     methods (Static)
@@ -99,6 +100,10 @@ classdef (Sealed) PTKFrameworkSingleton < handle
         function linked_recorder_memory_cache = GetLinkedDatasetChooserMemoryCache(obj)
             linked_recorder_memory_cache = obj.LinkedDatasetChooserMemoryCache;
         end
+        
+        function plugin_info_memory_cache = GetPluginInfoMemoryCache(obj)
+            plugin_info_memory_cache = obj.PluginInfoMemoryCache;
+        end        
     end
     
     methods (Access = private)
@@ -108,7 +113,8 @@ classdef (Sealed) PTKFrameworkSingleton < handle
             obj.DatasetMemoryCache = PTKDatasetMemoryCache;
             obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(context_def, obj.LinkedDatasetRecorder);
             obj.ImageDatabase = PTKImageDatabase.LoadDatabase(reporting);
-            obj.ImageDatabase.Rebuild([], false, reporting)
+            obj.ImageDatabase.Rebuild([], false, reporting);
+            obj.PluginInfoMemoryCache = PTKPluginInfoMemoryCache;
         end
     end
     

@@ -34,13 +34,13 @@ classdef PTKPluginWrapperBase < handle
     end
     
     methods (Static)
-        function plugin = AddPluginFromName(plugin_name, plugin_filename, gui_app, reporting)
+        function plugin = AddPluginFromName(plugin_cache, plugin_name, plugin_filename, gui_app, reporting)
             plugin = [];
             try
-                if (exist(plugin_name, 'class') == 8)
-                    plugin_handle = str2func(plugin_name);
-                    plugin_class_object = feval(plugin_handle);
-                    if isa(plugin_class_object, 'PTKPlugin')
+                [is_ptk_plugin, plugin_class_object] = plugin_cache.IsPlugin(plugin_name, plugin_filename{1}.Second, reporting);
+                
+                if ~isempty(plugin_class_object)
+                    if is_ptk_plugin
                         is_plugin = true;
                         is_gui_plugin = false;
                     elseif isa(plugin_class_object, 'PTKGuiPlugin')
@@ -58,7 +58,7 @@ classdef PTKPluginWrapperBase < handle
                                 parsed_plugin_info = PTKParseGuiPluginClass(plugin_name, plugin_class_object, plugin_filename{1}.Second, reporting);
                                 plugin = PTKGuiPluginWrapper(plugin_name, plugin_class_object, parsed_plugin_info, gui_app);
                             else
-                                parsed_plugin_info = PTKParsePluginClass(plugin_name, plugin_class_object, plugin_filename{1}.Second, reporting);
+                                parsed_plugin_info = plugin_cache.GetPluginInfo(plugin_name, plugin_filename{1}.Second, reporting);
                                 plugin = PTKPluginWrapper(plugin_name, plugin_class_object, parsed_plugin_info, gui_app);
                             end
                         end
