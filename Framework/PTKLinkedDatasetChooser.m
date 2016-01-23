@@ -34,9 +34,9 @@ classdef PTKLinkedDatasetChooser < CoreBaseClass
     end
     
     methods
-        function obj = PTKLinkedDatasetChooser(context_def, image_info, dataset_disk_cache, linked_recorder_singleton, reporting)
+        function obj = PTKLinkedDatasetChooser(context_def, image_info, dataset_disk_cache, linked_recorder_singleton, plugin_cache, reporting)
             obj.LinkedRecorderSingleton = linked_recorder_singleton;
-            primary_dataset_results = PTKDatasetResults(context_def, image_info, obj, @obj.notify, dataset_disk_cache, reporting);
+            primary_dataset_results = PTKDatasetResults(context_def, image_info, obj, @obj.notify, dataset_disk_cache, plugin_cache, reporting);
             obj.PrimaryDatasetUid = primary_dataset_results.GetImageInfo.ImageUid;
             obj.PrimaryDatasetResults = primary_dataset_results;
             obj.LinkedDatasetChooserList = containers.Map;

@@ -111,10 +111,10 @@ classdef (Sealed) PTKFrameworkSingleton < handle
             obj.MexCache = PTKFrameworkCache.LoadCache(reporting);
             obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
             obj.DatasetMemoryCache = PTKDatasetMemoryCache;
-            obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(context_def, obj.LinkedDatasetRecorder);
+            obj.PluginInfoMemoryCache = PTKPluginInfoMemoryCache;
+            obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(context_def, obj.LinkedDatasetRecorder, obj.PluginInfoMemoryCache);
             obj.ImageDatabase = PTKImageDatabase.LoadDatabase(reporting);
             obj.ImageDatabase.Rebuild([], false, reporting);
-            obj.PluginInfoMemoryCache = PTKPluginInfoMemoryCache;
         end
     end
     
