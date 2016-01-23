@@ -92,7 +92,8 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
                 % being called (plugin_name) and the UID of the dataset the
                 % result is being requested from; however, the stack belongs to
                 % the primary dataset
-                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions, reporting);
+                plugin_version = plugin_info.PluginVersion;
+                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions, plugin_version, reporting);
                 
                 dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
 

@@ -40,7 +40,7 @@ classdef PTKDatasetStack < handle
             obj.DatasetStack = PTKDatasetStackItem.empty;
         end
     
-        function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer, reporting)
+        function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer, plugin_version, reporting)
             % Create a new PTKDatasetStackItem object with an empty dependency list and a
             % new unique identifier. The push it to the end of the stack
         
@@ -50,6 +50,7 @@ classdef PTKDatasetStack < handle
             attributes = [];
             attributes.IgnoreDependencyChecks = ignore_dependency_checks;
             attributes.IsEditedResult = is_edited_result;
+            attributes.PluginVersion = plugin_version;
             instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
             cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, ignore_dependency_checks, start_timer, reporting);
             obj.DatasetStack(end + 1) = cache_info;
