@@ -56,7 +56,7 @@ classdef PTKMainBase < CoreBaseClass
         function obj = PTKMainBase(framework_app_def, reporting)
             obj.FrameworkAppDef = framework_app_def;
             obj.Reporting = reporting;
-            obj.ReportingWithCache = CoreReportingWithCache(obj.Reporting);
+            obj.ReportingWithCache = PTKReportingWithCache(obj.Reporting);
             obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(framework_app_def.GetContextDef, obj.Reporting);
             
             output_directory = framework_app_def.GetOutputDirectory;

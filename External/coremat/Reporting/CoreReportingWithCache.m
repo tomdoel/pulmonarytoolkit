@@ -18,8 +18,11 @@ classdef CoreReportingWithCache < CoreReportingInterface
     %     Distributed under the MIT licence. Please see website for details.
     %    
 
-    properties (Access = private)
+    properties (Access = protected)
         Reporting  % Handle to a CoreReporting object
+    end
+    
+    properties (Access = private)
         WarningsCache
     end
     
@@ -106,30 +109,6 @@ classdef CoreReportingWithCache < CoreReportingInterface
         
         function CheckForCancel(obj)
             obj.Reporting.CheckForCancel;
-        end
-        
-        function ChangeViewingPosition(obj, coordinates)
-            obj.Reporting.ChangeViewingPosition(coordinates);
-        end
-        
-        function orientation = GetOrientation(obj)
-            orientation = obj.Reporting.GetOrientation;
-        end
-        
-        function ChangeViewingOrientation(obj, orientation)
-            obj.Reporting.ChangeViewingOrientation(orientation);
-        end
-        
-        function marker_image = GetMarkerImage(obj)
-            marker_image = obj.Reporting.GetMarkerImage;
-        end
-
-        function UpdateOverlayImage(obj, new_image)
-            obj.Reporting.UpdateOverlayImage(new_image);
-        end
-        
-        function UpdateOverlaySubImage(obj, new_image)
-            obj.Reporting.UpdateOverlaySubImage(new_image);
         end
         
         function ShowAndClearPendingMessages(obj)

@@ -67,22 +67,6 @@ classdef PTKReporting < CoreReporting
             end
         end
         
-        function orientation = GetOrientation(obj)
-            if ~isempty(obj.ViewingPanel)
-                orientation = obj.ViewingPanel.Orientation;
-            else
-                orientation = 1;
-            end
-        end
-        
-        function marker_image = GetMarkerImage(obj)
-            if isempty(obj.ViewingPanel)
-                marker_image = [];
-            else
-                marker_image = obj.ViewingPanel.GetMarkerLayer.GetMarkerImage;
-            end
-        end
-
         function UpdateOverlayImage(obj, new_image)
             if ~isempty(obj.ViewingPanel)
                 obj.ViewingPanel.OverlayImage.ChangeSubImage(new_image);
