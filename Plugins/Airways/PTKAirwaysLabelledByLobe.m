@@ -46,6 +46,7 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
+        Version = 2
         
         EnableModes = PTKModes.EditMode
         SubMode = PTKSubModes.ColourRemapEditing        
@@ -139,6 +140,7 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
             airway_mapping = PTKAirwaysLabelledByLobe.MapTheseBranchesToLabel(airway_mapping, start_branches.RightLower, PTKColormapLabels.RightLowerLobe);
             airway_mapping = PTKAirwaysLabelledByLobe.MapTheseBranchesToLabel(airway_mapping, start_branches.RightMid, PTKColormapLabels.RightMiddleLobe);
             airway_mapping = PTKAirwaysLabelledByLobe.MapTheseBranchesToLabel(airway_mapping, start_branches.LeftUncertain, 3);
+            airway_mapping = PTKAirwaysLabelledByLobe.MapTheseBranchesToLabel(airway_mapping, start_branches.RightUncertain, 3);
             airway_mapping(airway_mapping == 0) = 7;
             airway_mapping(1) = 0;
         end

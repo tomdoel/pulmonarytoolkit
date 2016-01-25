@@ -39,15 +39,15 @@ function start_branches = PTKGetAirwaysLabelledByLobe(template, airway_centrelin
     
     start_segment.GenerateBranchParameters;
 
-    % Separate into lteft and right lungs
+    % Separate into left and right lungs
     [left_lung_start, right_lung_start] = SeparateIntoLeftAndRightLungs(start_segment, template, reporting);
     
     % Separate left lung into upper and lower lobes
 %     [left_upper_startindices, left_lower_startindices, uncertain_segments] = SeparateLeftLungIntoLobes(left_lung_start, template, reporting);
-    [left_upper_startindices, left_lower_startindices, uncertain_segments] = SeparateLeftLungIntoLobesNew(left_lung_start, template, reporting);
+    [left_upper_startindices, left_lower_startindices, left_uncertain_segments] = SeparateLeftLungIntoLobesNew(left_lung_start, template, reporting);
 
     % Separate right lung into upper and mid/lower lobes
-    [right_upper_startindices, right_midlower_startindices] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting);
+    [right_upper_startindices, right_midlower_startindices, right_uppermid_uncertain] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting);
     
     % Separate right mid/lower lobe into mid and lower lobes
 %     [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobes(right_midlower_startindices, template, reporting);
@@ -63,7 +63,8 @@ function start_branches = PTKGetAirwaysLabelledByLobe(template, airway_centrelin
     start_branches.RightMidLower = right_midlower_startindices;
     start_branches.RightMid = right_mid_startindices;
     start_branches.RightLower = right_lower_startindices;
-    start_branches.LeftUncertain = uncertain_segments;
+    start_branches.LeftUncertain = left_uncertain_segments;
+    start_branches.RightUncertain = right_uppermid_uncertain;
 end
 
 
@@ -98,14 +99,24 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         reporting.ShowWarning('PTKGetAirwaysLabelledByLobe:TooManyBronchi', 'More than 2 bronchial branches were found separating the left upper and lower lobes.', []);
         left_lower_startsegment = [];
         left_upper_startsegment = [];
+        uncertain = left_lung_start.Children;
+        return;
     elseif length(left_lung_start.Children) < 1
         reporting.ShowWarning('PTKGetAirwaysLabelledByLobe:NoBronchi', 'ERROR: No bronchial branches were found separating the left upper and lower lobes.', []);
         left_lower_startsegment = [];
         left_upper_startsegment = [];
+        uncertain = left_lung_start.Children;
+        return;
     else
         
         % Order branches by their computed radii and choose the largest 4
         top_branches = ForceLingulaAndGetLargestBranches(left_lung_start, 3, 4, template, 2, reporting);
+        if isempty(top_branches)
+            left_lower_startsegment = [];
+            left_upper_startsegment = [];
+            uncertain = left_lung_start.Children;
+            return;
+        end
         ordered_top_branches = PTKTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(top_branches, template);
 
         left_lower_startsegment = [ordered_top_branches(1), ordered_top_branches(2)];
@@ -114,8 +125,6 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
         left_lower_startsegment = unique(left_lower_startsegment);
         left_upper_startsegment = unique(left_upper_startsegment);
         uncertain = [];
-        
-        return
     end
 end
 
@@ -135,7 +144,9 @@ function largest_branches = ForceLingulaAndGetLargestBranches(start_branches, nu
     
     permutations = PTKTreeUtilities.GetBranchPermutationsForBranchNumber(start_branches, number_of_generations_to_search, number_of_branches_to_find);
     if isempty(permutations)
-        reporting.Error('PTKGetAirwaysLabelledByLobe:PermutationsDoNotMatchSegmentNumber', 'Could not subdivide the tree into exactly the desired number of branches');
+        largest_branches = [];
+        reporting.ShowWarning('PTKGetAirwaysLabelledByLobe:PermutationsDoNotMatchSegmentNumber', 'Could not subdivide the tree into exactly the desired number of branches', []);
+        return;
     end
     
     % Remove permutations where the third branch does not have a
@@ -152,7 +163,9 @@ function largest_branches = ForceLingulaAndGetLargestBranches(start_branches, nu
     end
     
     if isempty(new_permutations)
-        reporting.Error('PTKTreeUtilities:NoValidPermutations', 'Branches did not match the expected criteria');
+        largest_branches = [];
+        reporting.ShowWarning('PTKTreeUtilities:NoValidPermutations', 'Branches did not match the expected criteria', []);
+        return;
     end
     
     permutations = new_permutations;
@@ -240,15 +253,21 @@ function [left_upper_startsegment, left_lower_startsegment, uncertain] = Separat
     end
 end
 
-function [right_upper_start_branches, right_midlower_start_branches] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting)
+function [right_upper_start_branches, right_midlower_start_branches, uncertain] = SeparateRightLungIntoUpperAndMidlowerLobes(right_lung_start, template, reporting)
     if numel(right_lung_start) > 1
-        reporting.Error('PTKGetAirwaysLabelledByLobe:TooManyStartingIndices', 'Too many start indices for the right upper lobe');
+        right_upper_start_branches = [];
+        right_midlower_start_branches = [];
+        uncertain = right_lung_start;
+        reporting.ShowWarning('PTKGetAirwaysLabelledByLobe:TooManyStartingIndices', 'Too many start indices for the right upper lobe', []);
+        return;
     end
     
     if length(right_lung_start.Children) < 1
-        reporting.Error('PTKGetAirwaysLabelledByLobe:NotEnoughChildBranches', 'No bronchial branches were found separating the right upper and right mid lobes.');
         right_upper_start_branches = [];
         right_midlower_start_branches = [];
+        uncertain = right_lung_start;
+        reporting.ShowWarning('PTKGetAirwaysLabelledByLobe:NotEnoughChildBranches', 'No bronchial branches were found separating the right upper and right mid lobes.', []);
+        return;
     else
         % Order branches by their computed radii and choose the largest 3
         top_branches = GetLargestBranches(right_lung_start, 2, 3, reporting);
@@ -267,6 +286,7 @@ function [right_upper_start_branches, right_midlower_start_branches] = SeparateR
             ordered_branches = PTKTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(branches_to_order, template);
             right_upper_start_branches = ordered_branches(end);
             right_midlower_start_branches = ordered_branches(1:end-1);
+            uncertain = [];
         else
             
             % In this case, there is an additional branch for the upper lobe
@@ -276,6 +296,7 @@ function [right_upper_start_branches, right_midlower_start_branches] = SeparateR
             ordered_branches = PTKTreeUtilities.OrderSegmentsByCentroidDistanceFromDiagonalPlane(branches_to_order, template);
             right_upper_start_branches = [ordered_branches(2:end), earlier_branches];
             right_midlower_start_branches = ordered_branches(1);
+            uncertain = [];
         end
     end
 end
@@ -316,7 +337,10 @@ end
 
 function [right_mid_startindices, right_lower_startindices] = SeparateRightLungIntoMidAndLowerLobesNew(right_midlower_startindex, template, reporting)
     if isempty(right_midlower_startindex)
-        reporting.Error('PTKGetAirwaysLabelledByLobe:NoStartBranch', 'No start branch was specified.');
+        right_mid_startindices = [];
+        right_lower_startindices = [];
+        reporting.ShowWarning('PTKGetAirwaysLabelledByLobe:NoStartBranch', 'No start branch was specified.', []);
+        return;
     end
     
     % Order branches by their computed radii and choose the largest 3
