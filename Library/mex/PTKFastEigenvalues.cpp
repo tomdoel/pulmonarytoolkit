@@ -58,7 +58,7 @@
 
 #ifdef SINGLEPRECISION
 #define PRECISION float
-#define CALCPRECISION float
+#define CALCPRECISION double
 #define MATLABTYPE mxSINGLE_CLASS
 #else
 #define PRECISION double

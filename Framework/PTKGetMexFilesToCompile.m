@@ -14,7 +14,7 @@ function mex_files_to_compile_map = PTKGetMexFilesToCompile(reporting)
 
     % Populate list with known mex files
     mex_files_to_compile = PTKMexInfo.empty(0);
-    mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKFastEigenvalues', 'cpp', mex_dir, [], []);
+    mex_files_to_compile(end + 1) = PTKMexInfo(2, 'PTKFastEigenvalues', 'cpp', mex_dir, [], []);
     mex_files_to_compile(end + 1) = PTKMexInfo(1, 'PTKFastIsSimplePoint', 'cpp', mex_dir, [], []);
     mex_files_to_compile(end + 1) = PTKMexInfo(2, 'PTKWatershedFromStartingPoints', 'cpp', mex_dir, [], []);
     mex_files_to_compile(end + 1) = PTKMexInfo(3, 'PTKWatershedMeyerFromStartingPoints', 'cpp', mex_dir, [], []);
