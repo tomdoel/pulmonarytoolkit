@@ -37,6 +37,7 @@ classdef PTKOriginalImage < PTKPlugin
         GeneratePreview = true
         Context = PTKContextSet.OriginalImage
         Visibility = 'Developer'
+        Version = 2
     end
     
     methods (Static)
