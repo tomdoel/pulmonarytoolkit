@@ -31,6 +31,7 @@ classdef PTKUnclosedLungIncludingTrachea < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
+        Version = 2
     end
     
     methods (Static)
@@ -38,7 +39,7 @@ classdef PTKUnclosedLungIncludingTrachea < PTKPlugin
             if dataset.IsGasMRI
                 results = dataset.GetResult('PTKSegmentGasMRI');
                 results.AddBorder(1);
-                results = PTKGetMainRegionExcludingBorder(results, reporting);
+                results = PTKGetMainRegionExcludingBorder(results, 1000000, reporting);
                 results.RemoveBorder(1);
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
                 lung_threshold = dataset.GetResult('PTKMRILungThreshold');
@@ -51,7 +52,7 @@ classdef PTKUnclosedLungIncludingTrachea < PTKPlugin
                 reporting.ShowProgress('Searching for largest connected region');
                 
                 % Find the main component, excluding any components touching the border
-                threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, reporting);
+                threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, 1000000, reporting);
                 
                 results = threshold_image;
                 results.ImageType = PTKImageType.Colormap;

@@ -43,7 +43,7 @@ function lung_image = PTKGetLungROIForGasMRI(lung_image, reporting)
     
     % Extract out the main region
     lung_threshold.AddBorder(1);
-    lung_threshold = PTKGetMainRegionExcludingBorder(lung_threshold, reporting);
+    lung_threshold = PTKGetMainRegionExcludingBorder(lung_threshold, 1000000, reporting);
     lung_threshold.RemoveBorder(1);
     
     % Crop the original image to the main region of the threshold image

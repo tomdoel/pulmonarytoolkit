@@ -66,11 +66,11 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     
     if coronal_mode
         new_image.AddBorder(1);
-        new_image = PTKGetMainRegionExcludingBorder(new_image, reporting);
+        new_image = PTKGetMainRegionExcludingBorder(new_image, 1000000, reporting);
         new_image.RemoveBorder(1);
         
     else
-        new_image = PTKGetMainRegionExcludingBorder(new_image, reporting);
+        new_image = PTKGetMainRegionExcludingBorder(new_image, 1000000, reporting);
     end
 
     bounds = [0, 0];
