@@ -67,7 +67,7 @@ function [eigvec, eigval] = PTKVectorisedEigenvalues(M, eigenvalues_only)
     
     p = max(0.01, p);
     
-    phi = 1/3*acos(q./p.^(3/2));
+    phi = 1/3*acos(min(1, q./p.^(3/2)));
     phi(phi<0) = phi(phi<0)+pi/3;
     
     eigval(1,:) = m + 2*sqrt(p).*cos(phi);
