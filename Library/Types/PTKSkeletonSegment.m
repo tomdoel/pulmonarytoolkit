@@ -58,13 +58,13 @@ classdef PTKSkeletonSegment < PTKTree
         function DeleteThisSegment(obj)
             if ~isempty(obj.Parent)
                 obj.Parent.RemoveChild(obj);
-                obj.Parent = [];
+                obj.Parent = PTKSkeletonSegment.empty();
             end
         end
         
         function siblings = GetSiblings(obj)
             if isempty(obj.Parent)
-                siblings = [];
+                siblings = PTKSkeletonSegment.empty();
             else
                 siblings = obj.Parent.Children;
             end
@@ -72,7 +72,7 @@ classdef PTKSkeletonSegment < PTKTree
         
         function incomplete_segments = GetIncompleteSegments(obj)
             if isempty(obj.NextPoint)
-                incomplete_segments = [];
+                incomplete_segments = PTKSkeletonSegment.empty();
             else
                 incomplete_segments = obj;
             end
