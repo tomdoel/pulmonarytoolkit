@@ -36,7 +36,7 @@ classdef GemLabelSlider < GemVirtualPanel
     end
     
     methods
-        function obj = GemLabelSlider(parent, text, tooltip, tag, icon)
+        function obj = GemLabelSlider(parent, text, tooltip, tag)
             obj = obj@GemVirtualPanel(parent);
             obj.Slider = GemSlider(parent);
             obj.Slider.IsHorizontal = true;

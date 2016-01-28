@@ -23,7 +23,7 @@ classdef PTKPluginLabelSlider < GemLabelSlider
     
     methods
         function obj = PTKPluginLabelSlider(parent, tool, icon, gui_app)
-            obj = obj@GemLabelSlider(parent, tool.ButtonText, tool.ToolTip, class(tool), icon);
+            obj = obj@GemLabelSlider(parent, tool.ButtonText, tool.ToolTip, class(tool));
             obj.GuiApp = gui_app;
             obj.Tool = tool;
             
