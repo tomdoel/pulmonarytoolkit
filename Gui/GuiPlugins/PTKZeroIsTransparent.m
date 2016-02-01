@@ -15,7 +15,7 @@ classdef PTKZeroIsTransparent < PTKGuiPlugin
     %    
     
     properties
-        ButtonText = 'Show zero as transparent'
+        ButtonText = 'Show zero transparent'
         SelectedText = 'Show zero as black'
         ToolTip = 'Changes whether zero values in the overlay are shown as black or transparent'
         Category = 'Segmentation display'
