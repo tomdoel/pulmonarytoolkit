@@ -26,7 +26,7 @@ classdef PTKCinePanelWithTools < GemCinePanel
     methods
         function obj = PTKCinePanelWithTools(parent, viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
             
-            image_overlay_axes = GemImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
+            image_overlay_axes = PTKImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
             obj = obj@GemCinePanel(parent, background_image_source, image_parameters, image_overlay_axes);
             obj.ViewerPanel = viewer_panel;
             obj.ImageSource = background_image_source;

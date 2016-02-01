@@ -108,9 +108,9 @@ classdef PTKViewerPanel < GemPanel
             obj.MouseCursorStatus = PTKMouseCursorStatus;
 
             % Create the image pointer wrappers
-            obj.BackgroundImageSource = GemImageSource;
-            obj.OverlayImageSource = GemImageSource;
-            obj.QuiverImageSource = GemImageSource;
+            obj.BackgroundImageSource = PTKImageSource;
+            obj.OverlayImageSource = PTKImageSource;
+            obj.QuiverImageSource = PTKImageSource;
             obj.MarkerImageSource = PTKMarkerPointImage;
             
             % Create the model object that holds the slice number and

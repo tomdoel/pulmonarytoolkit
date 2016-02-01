@@ -1,10 +1,10 @@
-classdef GemImageOverlayAxes < GemImageAxes
-    % GemImageOverlayAxes. Part of the gui for the Pulmonary Toolkit.
+classdef PTKImageOverlayAxes < GemImageAxes
+    % PTKImageOverlayAxes. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     GemImageOverlayAxes is used to build axes containing image, overlay and
+    %     PTKImageOverlayAxes is used to build axes containing image, overlay and
     %     quiver overlay image objects
     %
     %
@@ -24,15 +24,15 @@ classdef GemImageOverlayAxes < GemImageAxes
     end
     
     methods
-        function obj = GemImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
+        function obj = PTKImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
             obj = obj@GemImageAxes(parent, background_image_source, image_parameters);
             
             % Add the screen images to the axes
-            obj.BackgroundScreenImage = GemImageFromVolume(obj, background_image_source, image_parameters, background_view_parameters, background_image_source);
+            obj.BackgroundScreenImage = PTKImageFromVolume(obj, background_image_source, image_parameters, background_view_parameters, background_image_source);
             obj.AddChild(obj.BackgroundScreenImage);
-            obj.OverlayScreenImage = GemImageFromVolume(obj, overlay_image_source, image_parameters, overlay_view_parameters, background_image_source);
+            obj.OverlayScreenImage = PTKImageFromVolume(obj, overlay_image_source, image_parameters, overlay_view_parameters, background_image_source);
             obj.AddChild(obj.OverlayScreenImage);
-            obj.QuiverScreenImage = GemQuiverImageFromVolume(obj, quiver_image_source, image_parameters, overlay_view_parameters, background_image_source);
+            obj.QuiverScreenImage = PTKQuiverImageFromVolume(obj, quiver_image_source, image_parameters, overlay_view_parameters, background_image_source);
             obj.AddChild(obj.QuiverScreenImage);
         end
         

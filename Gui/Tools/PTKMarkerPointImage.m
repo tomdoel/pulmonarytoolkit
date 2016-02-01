@@ -1,4 +1,4 @@
-classdef PTKMarkerPointImage < GemImageSource
+classdef PTKMarkerPointImage < PTKImageSource
     % PTKMarkerPointImage. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to

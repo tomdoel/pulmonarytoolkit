@@ -1,5 +1,5 @@
-classdef GemImageSource < CoreBaseClass
-    % GemImageSource. Wraps a PTKImage class for GUI visualisation
+classdef PTKImageSource < CoreBaseClass
+    % PTKImageSource. Wraps a PTKImage class for GUI visualisation
     %
     %     Licence
     %     -------
@@ -24,7 +24,7 @@ classdef GemImageSource < CoreBaseClass
     
     methods
         
-        function obj = GemImageSource
+        function obj = PTKImageSource
             % Listen for changes to the image pointers
             obj.AddPostSetListener(obj, 'Image', @obj.ImagePointerChangedCallback);
             
