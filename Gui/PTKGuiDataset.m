@@ -93,18 +93,10 @@ classdef PTKGuiDataset < CoreBaseClass
             template_image = obj.Dataset.GetTemplateImage(PTKContext.OriginalImage);
         end
         
-        function SaveMarkers(obj, markers)
-            obj.Dataset.SaveMarkerPoints(PTKSoftwareInfo.MakerPointsCacheName, markers);
+        function SaveMarkers(obj, name, markers)
+            obj.Dataset.SaveMarkerPoints(name, markers);
         end
         
-        function SaveAbandonedMarkers(obj, markers)
-            obj.Dataset.SaveMarkerPoints('AbandonedMarkerPoints', markers);
-        end
-        
-        function SaveMarkersManualBackup(obj, markers)
-            obj.Dataset.SaveMarkerPoints('MarkerPointsLastManualSave', markers);
-        end
-
         function markers = LoadMarkers(obj)
             markers = obj.Dataset.LoadMarkerPoints(PTKSoftwareInfo.MakerPointsCacheName);
         end

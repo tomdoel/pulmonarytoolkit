@@ -81,7 +81,7 @@ classdef PTKMarkerPointManager < CoreBaseClass
         function SaveMarkersManualBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded
                 markers = obj.MarkerLayer.GetMarkerImage;
-                obj.GuiDataset.SaveMarkersManualBackup(markers);
+                obj.GuiDataset.SaveMarkers('MarkerPointsLastManualSave', markers);
             end
         end
         
@@ -114,7 +114,7 @@ classdef PTKMarkerPointManager < CoreBaseClass
             if obj.GuiDataset.DatasetIsLoaded
                 obj.Reporting.ShowProgress('Saving Markers');
                 markers = obj.MarkerLayer.GetMarkerImage.Image;
-                obj.GuiDataset.SaveMarkers(markers);
+                obj.GuiDataset.SaveMarkers(PTKSoftwareInfo.MakerPointsCacheName, markers);
                 obj.MarkerLayer.MarkerPointsHaveBeenSaved;
                 obj.Reporting.CompleteProgress;
             end
@@ -124,7 +124,7 @@ classdef PTKMarkerPointManager < CoreBaseClass
             if obj.GuiDataset.DatasetIsLoaded
                 obj.Reporting.ShowProgress('Abandoning Markers');                
                 markers = obj.MarkerLayer.GetMarkerImage;
-                obj.GuiDataset.SaveAbandonedMarkers(markers);
+                obj.GuiDataset.SaveMarkers('AbandonedMarkerPoints', markers);
                 obj.Reporting.CompleteProgress;
             end
         end        
