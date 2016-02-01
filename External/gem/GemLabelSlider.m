@@ -29,6 +29,7 @@ classdef GemLabelSlider < GemVirtualPanel
         
         ShowEditBox = true
         EditBoxWidth
+        StackVertically = false % When multiple GemSliders are grouped, should they be stacked vertically or horizontally?
     end
     
     events

@@ -40,10 +40,13 @@ classdef GemLabelButtonGroupWithTitle < GemVirtualPanel
             obj.Controls{end + 1} = new_control;
             obj.AddChild(new_control);
             
-            if isa(new_control, 'GemButton')
+            if isa(new_control, 'GemButton') || isa(new_control, 'GemLabelButton')
                 obj.AddEventListener(new_control, 'ButtonClicked', @obj.ButtonClickedCallback);
-            elseif isa(new_control, 'GemSlider')
+            elseif isa(new_control, 'GemSlider') || isa(new_control, 'GemLabelSlider')
                 obj.AddEventListener(new_control, 'SliderValueChanged', @obj.SliderCallback);
+                if new_control.StackVertically
+                    obj.VerticalMode = true;
+                end
             end
         end
         

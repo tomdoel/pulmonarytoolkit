@@ -21,6 +21,7 @@ classdef GemSlider < GemUserInterfaceObject
     
     properties
         IsHorizontal
+        StackVertically % When multiple GemSliders are grouped, should they be stacked vertically or horizontally?
     end
     
     properties (Constant)
@@ -40,6 +41,7 @@ classdef GemSlider < GemUserInterfaceObject
             obj.SliderSteps = [1, 10];
             obj.SliderValueSetInProgress = false;
             obj.IsHorizontal = false;
+            obj.StackVertically = false;
         end
 
         function CreateGuiComponent(obj, position)

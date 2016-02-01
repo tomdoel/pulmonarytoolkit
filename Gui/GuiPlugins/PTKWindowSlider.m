@@ -37,6 +37,8 @@ classdef PTKWindowSlider < PTKGuiPluginSlider
         
         EditBoxPosition = 60
         EditBoxWidth = 40
+        
+        StackVertically = true        
     end
     
     methods (Static)

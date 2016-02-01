@@ -35,6 +35,8 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
         
         EditBoxPosition = 90
         EditBoxWidth = 30
+
+        StackVertically = false
     end
     
     methods (Static)

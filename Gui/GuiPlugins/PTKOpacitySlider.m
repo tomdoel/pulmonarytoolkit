@@ -37,6 +37,7 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
         
         EditBoxPosition = 75
         EditBoxWidth = 30
+        StackVertically = false
     end
     
     methods (Static)
