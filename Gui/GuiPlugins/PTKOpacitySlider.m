@@ -35,7 +35,7 @@ classdef PTKOpacitySlider < PTKGuiPluginSlider
         LargeStep = 0.1
         DefaultValue = 50
         
-        EditBoxPosition = 95
+        EditBoxPosition = 75
         EditBoxWidth = 30
     end
     
