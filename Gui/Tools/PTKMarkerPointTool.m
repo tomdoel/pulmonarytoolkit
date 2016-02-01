@@ -58,6 +58,10 @@ classdef PTKMarkerPointTool < PTKTool
                 obj.ViewerPanel.ShowMarkers = true;
             end
             
+            if ~enable && obj.ViewerPanel.ShowMarkers
+                obj.ViewerPanel.ShowMarkers = false;
+            end            
+            
             obj.Enabled = enable;
         end
         
