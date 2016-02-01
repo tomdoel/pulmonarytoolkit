@@ -52,6 +52,9 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & GemFigure
     methods (Static)
         function splash_screen = GetSplashScreen(app_def)
             persistent SplashScreen
+            if nargin < 1
+                app_def = PTKAppDef;
+            end
             if isempty(SplashScreen) || ~isvalid(SplashScreen)
                 SplashScreen = PTKSplashScreen(app_def);
             end
