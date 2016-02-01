@@ -47,7 +47,7 @@ classdef PTKModeTabControl < GemTabControl
             obj.AddTabbedPanel(obj.AnalysisPanel, 'Analyse', 'Analysis', 'Perform analysis and save as tables and graphs');
             obj.AnalysisPanel.AddPlugins([]);
 
-            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Developer', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
             obj.AddTabbedPanel(obj.PluginsPanel, 'Plugins', 'Plugins', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
         end
@@ -103,6 +103,18 @@ classdef PTKModeTabControl < GemTabControl
                     end
                 elseif strcmp(visibility, 'Dataset')
                     if obj.Gui.IsDatasetLoaded
+                        obj.TabPanel.EnableTab(panel_key{1});
+                        if isempty(first_enabled_tab)
+                            first_enabled_tab = panel_key{1};
+                        end
+                    else
+                        obj.TabPanel.DisableTab(panel_key{1});
+                        if strcmp(panel_key{1}, obj.CurrentPanelTag)
+                            force_change = true;
+                        end
+                    end
+                elseif strcmp(visibility, 'Developer')
+                    if obj.Gui.DeveloperMode
                         obj.TabPanel.EnableTab(panel_key{1});
                         if isempty(first_enabled_tab)
                             first_enabled_tab = panel_key{1};

@@ -658,6 +658,7 @@ classdef PTKGuiCore < GemFigure
         function DeveloperModeChangedCallback(obj, ~, ~, ~)
             % This methods is called when the DeveloperMode property is changed
             
+            obj.GuiDataset.UpdateModeTabControl;
             obj.RefreshPlugins;
         end
         
