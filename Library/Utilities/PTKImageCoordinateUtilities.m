@@ -205,10 +205,10 @@ classdef PTKImageCoordinateUtilities
             affine_matrix = PTKImageCoordinateUtilities.CreateAffineTranslationMatrix(translation);
         end
     
-        % To combine a rigid transformation with a nonrigid deformation field, 
-        % compute the change in image coordinates after applying the
-        % deformation field and then the rigid affine transformation.
         function deformation_field = AdjustDeformationFieldForInitialAffineTransformation(deformation_field, affine_initial_matrix)
+            % To combine a rigid transformation with a nonrigid deformation field, 
+            % compute the change in image coordinates after applying the
+            % deformation field and then the rigid affine transformation.
             
             [df_i, df_j, df_k] = deformation_field.GetCentredGlobalCoordinatesMm;
             [df_i, df_j, df_k] = ndgrid(df_i, df_j, df_k);
@@ -224,30 +224,30 @@ classdef PTKImageCoordinateUtilities
             deformation_field = deformation_field2;
         end
         
-        % Returns a vector which defines the order in which the dimensions of an
-        % DICOM image volume should be permuted in order to align it with the
-        % PTK coordinate system
         function [permutation_vector, flip] = GetDimensionPermutationVectorFromDicomOrientation(orientation, reporting)
+            % Returns a vector which defines the order in which the dimensions of an
+            % DICOM image volume should be permuted in order to align it with the
+            % PTK coordinate system
+
             % DICOM coordinates are XYZ but Matlab's coordinates are YXZ. We
             % convert the orientation to Matlab coordinates, which we refer to as IJK.
             orientation_1 = orientation([5, 4, 6])'; % Direction of first image axis in ijk (=yxz) coordinates
             orientation_2 = orientation([2, 1, 3])'; % Direction of second image axis in ijk (=yxz) coordinates
             
-            % By swtching the i and j axes we have inverted the coordinate
+            % By switching the i and j axes we have inverted the coordinate
             % system, so we need to flip the k dimension
             orientation_1(3) = - orientation_1(3);
             orientation_2(3) = - orientation_2(3);
             
             % Determine the PTK dimensions to which each of these vectors correspond
-            dimension_1 = PTKImageCoordinateUtilities.GetDimensionIndexFromOrientation(orientation_1, reporting);
-            dimension_2 = PTKImageCoordinateUtilities.GetDimensionIndexFromOrientation(orientation_2, reporting);
+            [permutation_vector, dimension_1, dimension_2, dimension_3] = PTKImageCoordinateUtilities.GetPermutationFromOrientations(orientation_1, orientation_2, reporting);
 
-            permutation_vector = [3, 3, 3];
-            permutation_vector(dimension_1) = 1;
-            permutation_vector(dimension_2) = 2;
+            % Calculate flip for each dimension, based on whether the
+            % dimension axis lies in the same or opposite direction to the
+            % image axis
+            orientation_3 = cross(orientation_2, orientation_1);
+            flip = PTKImageCoordinateUtilities.GetFlipFromOrientations(orientation_1, orientation_2, orientation_3, dimension_1, dimension_2, dimension_3);
             
-            flip = PTKImageCoordinateUtilities.GetFlip(orientation, reporting);
-
             % Check the resulting vector is valid
             if (sum(permutation_vector == 1) ~= 1) || (sum(permutation_vector == 2) ~= 1) || (sum(permutation_vector == 3) ~= 1) || ...
                     ~isempty(setdiff(permutation_vector, [1,2,3]))
@@ -255,54 +255,89 @@ classdef PTKImageCoordinateUtilities
             end
         end
         
-        function dimension_number = GetDimensionIndexFromOrientation(orientation_vector, reporting)
-            % The orientation vector is formed of cosines. Typically these will
-            % be 1s and 0s but we allow for small variations in the angles.
-            orientation_vector = round(abs(orientation_vector));
+        function [permutation_vector, dimension_1, dimension_2, dimension_3] = GetPermutationFromOrientations(orientation_1, orientation_2, reporting)
+            [dimension_1, dimension_2, dimension_3] = PTKImageCoordinateUtilities.GetDimensionIndicesFromOrientations(orientation_1, orientation_2, reporting);
             
-            if isequal(orientation_vector, [1, 0, 0]) || isequal(orientation_vector, [1; 0; 0])
-                dimension_number = 1;
-            elseif isequal(orientation_vector, [0, 1, 0]) || isequal(orientation_vector, [0; 1; 0])
-                dimension_number = 2;
-            elseif isequal(orientation_vector, [0, 0, 1]) || isequal(orientation_vector, [0; 0; 1])
-                dimension_number = 3;
-            else
-                reporting.Error('PTKImageCoordinateUtilities:UnknownOrientationVector', 'GetDimensionIndexFromOrientation() was called with an unknown orientation vector.');
+            permutation_vector = [3, 3, 3];
+            permutation_vector(dimension_1) = 1;
+            permutation_vector(dimension_2) = 2;
+        end
+        
+        function flip = GetFlipFromOrientations(orientation_1, orientation_2, orientation_3, dimension_1, dimension_2, dimension_3)
+            flip = [false, false, false];
+            flip(dimension_1) = orientation_1(dimension_1) < 0; 
+            flip(dimension_2) = orientation_2(dimension_2) < 0;
+            flip(dimension_3) = orientation_3(dimension_3) < 0;
+        end
+        
+        function dicom_cosine = AnatomicalOrientationToDicomCosine(anatomical_orientation_char, reporting)
+            switch anatomical_orientation_char
+                case 'R'
+                    dicom_cosine = [1, 0, 0];
+                case 'L'
+                    dicom_cosine = [-1, 0, 0];
+                case 'A'
+                    dicom_cosine = [0, 1, 0];
+                case 'P'
+                    dicom_cosine = [0, -1, 0];
+                case 'I'
+                    dicom_cosine = [0, 0, 1];
+                case 'S'
+                    dicom_cosine = [0, 0, -1];
+                otherwise
+                    reporting.Error('PTKImageCoordinateUtilities:UnknownAnatomicalOrientation', ['PTKImageCoordinateUtilities: WARNING: no implementation yet for anatomical orientation ' anatomical_orientation_char '.']);
             end
         end
         
-        function flip = GetFlip(orientation, reporting)
+        function [permutation_vector, flip_orientation] = GetDimensionPermutationVectorFromAnatomicalOrientation(anatomical_orientation_string, reporting)
+            direction_cosine_1 = PTKImageCoordinateUtilities.AnatomicalOrientationToDicomCosine(anatomical_orientation_string(1), reporting);
+            direction_cosine_2 = PTKImageCoordinateUtilities.AnatomicalOrientationToDicomCosine(anatomical_orientation_string(2), reporting);
+            direction_cosine_3 = PTKImageCoordinateUtilities.AnatomicalOrientationToDicomCosine(anatomical_orientation_string(3), reporting);
+            
+            [permutation_vector, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(direction_cosine_1, direction_cosine_2, direction_cosine_3, reporting);
+        end
+            
+        function [permutation_vector, flip_orientation] = GetDimensionPermutationVectorFromMhdCosines(direction_cosine_1, direction_cosine_2, direction_cosine_3, reporting)
+            % Determines the permutation and flip transformations required
+            % to convert MetaIO data to PTK data
+            
+            % DICOM coordinates are XYZ but Matlab's coordinates are YXZ. We
+            % convert the orientation to Matlab coordinates, which we refer to as IJK.
+            orientation_1 = direction_cosine_2([2, 1, 3])'; % Direction of first image axis in ijk (=yxz) coordinates
+            orientation_2 = direction_cosine_1([2, 1, 3])'; % Direction of second image axis in ijk (=yxz) coordinates
+            orientation_3 = direction_cosine_3([2, 1, 3])'; % Direction of third image axis in ijk (=yxz) coordinates
+            
+            % By switching the i and j axes we have inverted the coordinate
+            % system, so we need to flip the k dimension
+            orientation_1(3) = - orientation_1(3);
+            orientation_2(3) = - orientation_2(3);
+            orientation_3(3) = - orientation_3(3);
+            
+            % Determine the PTK dimensions to which each of these vectors correspond
+            [permutation_vector, dimension_1, dimension_2, dimension_3] = PTKImageCoordinateUtilities.GetPermutationFromOrientations(orientation_1, orientation_2, reporting);
+
+            % Calculate flip for each dimension, based on whether the
+            % dimension axis lies in the same or opposite direction to the
+            % image axis
+            flip_orientation = PTKImageCoordinateUtilities.GetFlipFromOrientations(orientation_1, orientation_2, orientation_3, dimension_1, dimension_2, dimension_3);
+            
+            % Check the resulting vector is valid
+            if (sum(permutation_vector == 1) ~= 1) || (sum(permutation_vector == 2) ~= 1) || (sum(permutation_vector == 3) ~= 1) || ...
+                    ~isempty(setdiff(permutation_vector, [1,2,3]))
+                reporting.Error('PTKImageCoordinateUtilities:InvalidPermutationVector', 'GetDimensionPermutationVectorFromAnatomicalOrientation() resulted in an invalid permutation vector');
+            end            
+        end
+        
+        function [dimension_number_1, dimension_number_2, dimension_number_3] = GetDimensionIndicesFromOrientations(orientation_vector_1, orientation_vector_2, reporting)
             % The orientation vector is formed of cosines. Typically these will
             % be 1s and 0s but we allow for small variations in the angles.
-            orientation_vector = round(abs(orientation(1:6)));
-            
-            if isequal(orientation_vector, [1, 0, 0, 0, 1, 0]) || isequal(orientation_vector, [1; 0; 0; 0; 1; 0])
-                flip = [false, false, true];
-            elseif isequal(orientation_vector, [0, 1, 0, 1, 0, 0]) || isequal(orientation_vector, [0; 1; 0; 1; 0; 0])
-                flip = [false, false, true];
-            elseif isequal(orientation_vector, [1, 0, 0, 0, 0, 1]) || isequal(orientation_vector, [1; 0; 0; 0; 0; 1])
-                flip = [false, false, true];
-            elseif isequal(orientation_vector, [0, 1, 0, 0, 0, 1]) || isequal(orientation_vector, [0; 1; 0; 0; 0; 1])
-                flip = [false, false, false];
-            else
-                reporting.Error('PTKImageCoordinateUtilities:UnknownOrientationVector', 'GetDimensionIndexFromOrientation() was called with an unknown orientation vector.');
-            end
-            
-            if numel(orientation) == 9
-                orientation_sum = orientation(1:3) + orientation(4:6)+ orientation(7:9);;
-            else
-                orientation_sum = orientation(1:3) + orientation(4:6);
-            end
-            
-            if round(orientation_sum(1)) == -1
-                flip(2) = ~flip(2);
-            end
-            if round(orientation_sum(2)) == -1
-                flip(1) = ~flip(1);
-            end
-            if round(orientation_sum(3)) == -1
-                flip(3) = ~flip(3);
-            end            
+
+            [~, dimension_number_1] = max(abs(orientation_vector_1(:)));
+            remaining_dimensions = setdiff([1,2,3], dimension_number_1);
+            reduced_orientation_vector_2 = orientation_vector_2(remaining_dimensions);
+            [~, dimension_number_2_from_reduced_set] = max(abs(reduced_orientation_vector_2(:)));
+            dimension_number_2 = remaining_dimensions(dimension_number_2_from_reduced_set);
+            dimension_number_3 = setdiff([1, 2, 3], [dimension_number_1, dimension_number_2]);
         end
         
         function spline_points = CreateSplineCurve(points, num_points)
@@ -487,23 +522,6 @@ classdef PTKImageCoordinateUtilities
                 if sorted_voxel_size_index(1) == 1
                     orientation = PTKImageOrientation.Coronal;
                 end
-            end
-        end
-        
-        function [dim_x_index, dim_y_index, dim_z_index] = GetXYDimensionIndex(orientation)
-            switch orientation
-                case PTKImageOrientation.Coronal
-                    dim_x_index = 2;
-                    dim_y_index = 3;
-                    dim_z_index = 1;
-                case PTKImageOrientation.Sagittal
-                    dim_x_index = 1;
-                    dim_y_index = 3;
-                    dim_z_index = 2;
-                case PTKImageOrientation.Axial
-                    dim_x_index = 2;
-                    dim_y_index = 1;
-                    dim_z_index = 3;
             end
         end
         

@@ -26,26 +26,34 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     
     properties (Access = private)
         ImageDatabase      % Database of image files
-        FrameworkCache     % Information about mex files which is cached on disk
+        MexCache     % Information about mex files which is cached on disk
         LinkedDatasetRecorder
         DatasetMemoryCache % Stores PTKDatasetDiskCache objects in memory
         LinkedDatasetChooserMemoryCache
+        PluginInfoMemoryCache % Stores parsed plugin classes in memory
     end
         
     methods (Static)
-        function framework_singleton = GetFrameworkSingleton(reporting)
+        function framework_singleton = GetFrameworkSingleton(context_def, reporting)
             persistent FrameworkSingleton
             if isempty(FrameworkSingleton) || ~isvalid(FrameworkSingleton)
-                FrameworkSingleton = PTKFrameworkSingleton(reporting);
+                FrameworkSingleton = PTKFrameworkSingleton(context_def, reporting);
             end
             framework_singleton = FrameworkSingleton;
         end
     end
     
     methods
-        function Recompile(obj, reporting)
+        function CompileMexFileIfRequired(obj, files_to_compile, output_directory, reporting)
+            % Recompiles mex files if they have changed
+            
+            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, false, ' Run PTKMain.Recompile() to force recompilation.', reporting);
+        end
+        
+        function Recompile(obj, files_to_compile, output_directory, reporting)
             % Forces recompilation of mex files
-            PTKCompileMexFiles(obj.FrameworkCache, true, reporting);
+            
+            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, true, ' Run PTKMain.Recompile() to force recompilation.', reporting);
         end
         
         function RebuildDatabase(obj, reporting)
@@ -92,17 +100,21 @@ classdef (Sealed) PTKFrameworkSingleton < handle
         function linked_recorder_memory_cache = GetLinkedDatasetChooserMemoryCache(obj)
             linked_recorder_memory_cache = obj.LinkedDatasetChooserMemoryCache;
         end
+        
+        function plugin_info_memory_cache = GetPluginInfoMemoryCache(obj)
+            plugin_info_memory_cache = obj.PluginInfoMemoryCache;
+        end        
     end
     
     methods (Access = private)
-        function obj = PTKFrameworkSingleton(reporting)
-            obj.FrameworkCache = PTKFrameworkCache.LoadCache(reporting);
+        function obj = PTKFrameworkSingleton(context_def, reporting)
+            obj.MexCache = PTKFrameworkCache.LoadCache(reporting);
             obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
             obj.DatasetMemoryCache = PTKDatasetMemoryCache;
-            obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(obj.LinkedDatasetRecorder);
+            obj.PluginInfoMemoryCache = PTKPluginInfoMemoryCache;
+            obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(context_def, obj.LinkedDatasetRecorder, obj.PluginInfoMemoryCache);
             obj.ImageDatabase = PTKImageDatabase.LoadDatabase(reporting);
-            obj.ImageDatabase.Rebuild([], false, reporting)
-            PTKCompileMexFiles(obj.FrameworkCache, false, reporting);
+            obj.ImageDatabase.Rebuild([], false, reporting);
         end
     end
     

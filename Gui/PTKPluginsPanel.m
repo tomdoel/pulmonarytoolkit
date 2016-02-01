@@ -1,4 +1,4 @@
-classdef PTKPluginsPanel < PTKCompositePanel
+classdef PTKPluginsPanel < GemCompositePanel
     % PTKPluginsPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -15,10 +15,6 @@ classdef PTKPluginsPanel < PTKCompositePanel
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties (SetAccess = private)
-        PluginModeName
-    end
-    
     properties (Access = private)
         
         % Plugin information grouped by category
@@ -30,18 +26,22 @@ classdef PTKPluginsPanel < PTKCompositePanel
         % Callbacks for when plugin buttons are clicked
         RunPluginCallback
         RunGuiPluginCallback
+        LoadManualSegmentationCallback
         
         OrganisedPlugins
-        ModeName        
+        ModeToSwitchTo
+        ModeTabName
+        Visibility
     end
     
     methods
-        function obj = PTKPluginsPanel(parent, organised_plugins, mode_name, plugin_mode_name, run_plugin_callback, run_gui_plugin_callback, reporting)
-            obj = obj@PTKCompositePanel(parent, reporting);
+        function obj = PTKPluginsPanel(parent, organised_plugins, plugins_mode_group, mode_to_switch_to, visibility, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback)
+            obj = obj@GemCompositePanel(parent);
             
             obj.OrganisedPlugins = organised_plugins;
-            obj.ModeName = mode_name;
-            obj.PluginModeName = plugin_mode_name;
+            obj.ModeTabName = plugins_mode_group;
+            obj.ModeToSwitchTo = mode_to_switch_to;
+            obj.Visibility = visibility;
             
             obj.TopMargin = 5;
             obj.BottomMargin = 5;
@@ -53,6 +53,7 @@ classdef PTKPluginsPanel < PTKCompositePanel
             
             obj.RunPluginCallback = run_plugin_callback;
             obj.RunGuiPluginCallback = run_gui_plugin_callback;
+            obj.LoadManualSegmentationCallback = load_segmentation_callback;
         end        
 
         function AddAllPreviewImagesToButtons(obj, current_dataset, window, level)
@@ -77,7 +78,7 @@ classdef PTKPluginsPanel < PTKCompositePanel
         function AddPlugins(obj, current_dataset)
             % This function adds buttons for all files in the Plugins directory
 
-            plugins_by_category = obj.OrganisedPlugins.GetAllPluginsForMode(obj.ModeName);
+            plugins_by_category = obj.OrganisedPlugins.GetAllPluginsForMode(obj.ModeTabName);
             
             obj.PluginsByCategory = plugins_by_category;
             obj.AddPluginCategoryPanels(plugins_by_category);
@@ -91,10 +92,23 @@ classdef PTKPluginsPanel < PTKCompositePanel
             obj.AddPlugins(current_dataset)
             
             % We need to resize here because the position of the new panels is not valid
-            obj.Resize(obj.Position);
+            if ~isempty(obj.Position)
+                obj.Resize(obj.Position);
+            end
             obj.AddAllPreviewImagesToButtons(current_dataset, window, level);
         end        
 
+        function visibility = GetVisibility(obj)
+            visibility = obj.Visibility;
+        end
+
+        function mode = GetModeTabName(obj)
+            mode = obj.ModeTabName;
+        end
+        
+        function mode = GetModeToSwitchTo(obj)
+            mode = obj.ModeToSwitchTo;
+        end
     end
     
     
@@ -107,7 +121,7 @@ classdef PTKPluginsPanel < PTKCompositePanel
             
             for category = plugins_by_category.keys
                 current_category_map = plugins_by_category(char(category));
-                new_panel_handle = PTKPluginGroupPanel(obj, category, current_category_map, obj.Reporting);
+                new_panel_handle = PTKPluginGroupPanel(obj, category, current_category_map, obj.LoadManualSegmentationCallback);
                 obj.PluginPanels(char(category)) = new_panel_handle;
                 obj.AddPanel(new_panel_handle);
             end

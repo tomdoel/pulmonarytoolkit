@@ -1,4 +1,4 @@
-classdef PTKLinkedDatasetRecorder < PTKBaseClass
+classdef PTKLinkedDatasetRecorder < CoreBaseClass
     % PTKLinkedDatasetRecorder. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     PTKLinkedDatasetRecorder is used to cache links between datasets for
@@ -31,7 +31,7 @@ classdef PTKLinkedDatasetRecorder < PTKBaseClass
             try
                 linked_recorder_filename = PTKDirectories.GetLinkingCacheFilePath;
                 if exist(linked_recorder_filename, 'file')                    
-                    linked_recorder = PTKLoadXml(linked_recorder_filename, reporting);
+                    linked_recorder = CoreLoadXml(linked_recorder_filename, reporting);
                     linked_recorder = linked_recorder.LinkingCache;
                 else
                     reporting.ShowWarning('PTKLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No linking cache file found. Will create new one on exit', []);
@@ -84,7 +84,7 @@ classdef PTKLinkedDatasetRecorder < PTKBaseClass
             
             obj.Save(reporting);
             
-            notify(obj, 'LinkingChanged', PTKEventData(secondary_uid));
+            notify(obj, 'LinkingChanged', CoreEventData(secondary_uid));
         end
         
         function AddLink(obj, primary_uid, secondary_uid, name, reporting)
@@ -106,7 +106,7 @@ classdef PTKLinkedDatasetRecorder < PTKBaseClass
             
             obj.Save(reporting);
             
-            notify(obj, 'LinkingChanged', PTKEventData(secondary_uid));
+            notify(obj, 'LinkingChanged', CoreEventData(secondary_uid));
         end
         
 
@@ -116,7 +116,7 @@ classdef PTKLinkedDatasetRecorder < PTKBaseClass
             try
                 value = [];
                 value.cache = obj;
-                PTKSaveXml(obj, 'LinkingCache', cache_filename, reporting);
+                CoreSaveXml(obj, 'LinkingCache', cache_filename, reporting);
             catch ex
                 reporting.ErrorFromException('PTKLinkedDatasetRecorder:FailedtoSaveCacheFile', ['Unable to save linking cache file ' cache_filename], ex);
             end

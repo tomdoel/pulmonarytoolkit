@@ -100,8 +100,8 @@ end
 
 function results = GetResultsFromTable(table, patient_name, x_metric, y_metric, context_list)
     results = [];
-    results.x_values = cell2mat(PTKContainerUtilities.CellEmptyToNan(GetValueListFromTable(table, patient_name, x_metric, context_list)));
-    results.y_values = cell2mat(PTKContainerUtilities.CellEmptyToNan(GetValueListFromTable(table, patient_name, y_metric, context_list)));
+    results.x_values = cell2mat(CoreContainerUtilities.CellEmptyToNan(GetValueListFromTable(table, patient_name, x_metric, context_list)));
+    results.y_values = cell2mat(CoreContainerUtilities.CellEmptyToNan(GetValueListFromTable(table, patient_name, y_metric, context_list)));
     invalid = isnan(results.x_values) | isnan(results.y_values);
     results.x_values = results.x_values(~invalid);
     results.y_values = results.y_values(~invalid);

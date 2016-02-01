@@ -13,6 +13,8 @@ classdef PTKImageDatabase < handle
     
     properties (Constant)
         CurrentVersionNumber = 3
+        LocalDatabaseId = '&#LOCAL_IMAGE_DATABASE#&'
+        LocalDatabaseName = 'My data'
     end
     
     events
@@ -51,72 +53,16 @@ classdef PTKImageDatabase < handle
             obj.InvalidateCachedPaths;
         end
         
-        function patient_info = GetPatients(obj)
-            patient_info = obj.PatientMap.values;
-            family_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
-            family_names = PTKContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
-            short_visible_names = PTKContainerUtilities.GetFieldValuesFromSet(patient_info, 'ShortVisibleName');
-
-            if isempty(family_names)
-                patient_info = [];
-                return
-            end
-
-            % Sort by the short visible name
-            % Remove any empty values to ensure sort works
-            empty_values = cellfun(@isempty, short_visible_names);
-            short_visible_names(empty_values) = {'Unknown'};
-            [sorted_visible_names, sorted_indices] = PTKTextUtilities.SortFilenames(short_visible_names);
-            
-            patient_info = patient_info(sorted_indices);
-            
-            % Merge together patients with same name if this is specified by the settings
-            if PTKSoftwareInfo.GroupPatientsWithSameName
-                unique_names = sorted_visible_names;
-                
-                % We don't want 'Unknown' patient names to be grouped together, so temporarily
-                % assign them each a unique random name
-                random_name = PTKSystemUtilities.GenerateUid;
-                for empty_index = 1 : find(empty_values)
-                    unique_names{empty_index} = [random_name, int2str(empty_index)];
-                end
-                
-                [un, idx_last, idx] = unique(unique_names);
-                unique_idx = accumarray(idx(:), (1:length(idx))', [], @(x) {x});
-                patient_info_grouped = cellfun(@(x) [patient_info{x}], unique_idx, 'UniformOutput', false);
-                patient_info_grouped = patient_info_grouped';
-                
-                patient_info = patient_info_grouped;
-            end
-        end
-        
-        function patient_info = GetAllPatientInfosForThisPatient(obj, patient_id)
-            if PTKSoftwareInfo.GroupPatientsWithSameName
-                patient_info_grouped = obj.GetPatients;
-                for group = patient_info_grouped
-                    for group_member = group{1}
-                        if strcmp(group_member.PatientId, patient_id)
-                            patient_info = group;
-                            return;
-                        end
+        function datasets = GetAllSeriesForThisPatient(obj, project_id, patient_id)
+            datasets = [];
+            if strcmp(project_id, PTKImageDatabase.LocalDatabaseId)
+                all_details = obj.GetAllPatientInfosForThisPatient(patient_id);
+                for patient_details_cell = all_details
+                    for patient_details = all_details{1}
+                        datasets = [datasets, patient_details.GetListOfSeries];
                     end
                 end
-                patient_info = [];
-                return;
-            else
-                patient_info = obj.GetPatient(patient_id);
             end
-        end
-        
-        function datasets = GetAllSeriesForThisPatient(obj, patient_id)
-            datasets = [];
-            all_details = obj.GetAllPatientInfosForThisPatient(patient_id);
-            for patient_details_cell = all_details
-                for patient_details = all_details{1}
-                    datasets = [datasets, patient_details.GetListOfSeries];
-                end
-            end
-            
         end
         
         
@@ -149,10 +95,10 @@ classdef PTKImageDatabase < handle
             else
                 uids = obj.SeriesMap.keys;
                 values = obj.SeriesMap.values;
-                paths = PTKContainerUtilities.GetFieldValuesFromSet(values, 'GetVisiblePath');
+                paths = CoreContainerUtilities.GetFieldValuesFromSet(values, 'GetVisiblePath');
                 
                 % Sort the uids and paths by the pathname
-                [~, sorted_indices] = PTKTextUtilities.SortFilenames(paths);
+                [~, sorted_indices] = CoreTextUtilities.SortFilenames(paths);
                 paths = paths(sorted_indices);
                 uids = uids(sorted_indices);
             end
@@ -161,18 +107,40 @@ classdef PTKImageDatabase < handle
 
         end
         
-        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj)
+        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj, project_id)
+            [names, ids, short_visible_names, ~, ~, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(project_id, false);
+        end
+        
+        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesAndSeriesCount(obj, project_id)
+            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(project_id, true);
+        end
+        
+        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesWithOptionalSeriesCount(obj, project_id, count_series)
             % Returns list of patient names, ids and family names, sorted by the
             % short visible name
+            
+             if ~strcmp(project_id, PTKImageDatabase.LocalDatabaseId)
+                names = {};
+                ids = {};
+                short_visible_names = {};
+                num_series = [];
+                num_patients_combined = [];
+                patient_id_map = containers.Map;
+                return;
+            end
+
             ids = obj.PatientMap.keys;
             values = obj.PatientMap.values;
-            names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');
-            short_visible_names = PTKContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
+            names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');
+            short_visible_names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
+            num_series = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(values, 'GetNumberOfSeries');
 
             if isempty(short_visible_names)
                 names = [];
                 ids = [];
                 short_visible_names = [];
+                num_series = [];
+                num_patients_combined = [];
                 patient_id_map = [];
                 return;
             end
@@ -181,19 +149,20 @@ classdef PTKImageDatabase < handle
             % Remove any empty values to ensure sort works
             empty_values = cellfun(@isempty, short_visible_names);
             short_visible_names(empty_values) = {'Unknown'};
-            [~, sorted_indices] = PTKTextUtilities.SortFilenames(short_visible_names);
+            [~, sorted_indices] = CoreTextUtilities.SortFilenames(short_visible_names);
             
             names = names(sorted_indices);
             ids = ids(sorted_indices);
             short_visible_names = short_visible_names(sorted_indices);
-            
+            num_series = num_series(sorted_indices);
+            num_patients_combined = ones(size(num_series));
             
             % Merge together patients with same name if this is specified by the settings
             if PTKSoftwareInfo.GroupPatientsWithSameName
                 
                 % Get unique names, but don't group together 'Unknown' patients
                 unique_names = short_visible_names;
-                random_name = PTKSystemUtilities.GenerateUid;
+                random_name = CoreSystemUtilities.GenerateUid;
                 for empty_index = 1 : find(empty_values)
                     unique_names{empty_index} = [random_name, int2str(empty_index)];
                 end
@@ -204,6 +173,19 @@ classdef PTKImageDatabase < handle
                 short_visible_names = unique_names;
                 ids_subset = ids(ia);
                 names = names(ia);
+                
+                if count_series
+                    total_num_series = zeros(size(ids_subset));
+                    num_patients_combined = zeros(size(ids_subset));
+                    for series_index = 1 : length(num_series)
+                        total_num_series(ic(series_index)) = total_num_series(ic(series_index)) + num_series(series_index);
+                        num_patients_combined(ic(series_index)) = num_patients_combined(ic(series_index)) + 1;
+                    end
+                    num_series = total_num_series;
+                else
+                    num_series = [];
+                    num_patients_combined = [];
+                end
 
                 % A map of all patient IDs to the main patient ID for each patient group
                 patient_id_map = containers.Map(ids, ids_subset(ic));
@@ -213,6 +195,11 @@ classdef PTKImageDatabase < handle
             else
                 patient_id_map = containers.Map(ids, ids);
             end
+        end
+        
+        function [project_names, project_ids] = GetListOfProjects(obj)
+            project_names = {obj.LocalDatabaseName};
+            project_ids = {obj.LocalDatabaseId};
         end
         
         function DeleteSeries(obj, series_uids, reporting)
@@ -234,7 +221,7 @@ classdef PTKImageDatabase < handle
                         obj.PatientMap.remove(patient_id);
                     end
                     obj.SeriesMap.remove(series_uid);
-                    notify(obj, 'SeriesHasBeenDeleted', PTKEventData(series_uid));
+                    notify(obj, 'SeriesHasBeenDeleted', CoreEventData(series_uid));
                 end
             end
             if anything_changed
@@ -299,16 +286,16 @@ classdef PTKImageDatabase < handle
                         for filename = file_names
                             try
                                 next_filename = filename{1};
-                                if isa(next_filename, 'PTKFilename')
+                                if isa(next_filename, 'CoreFilename')
                                     next_filepath = next_filename.Path;
                                     next_filename = next_filename.Name;
                                 else
                                     next_filepath = file_path;
                                 end
                                 
-                                if PTKDiskUtilities.FileExists(next_filepath, next_filename)
+                                if CoreDiskUtilities.FileExists(next_filepath, next_filename)
                                     if isempty(tags_to_get)
-                                        tags_to_get = PTKDicomDictionary.GroupingTagsDictionary(false);
+                                        tags_to_get = DMDicomDictionary.GroupingDictionary;
                                     end
                                     single_image_metainfo = PTKGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
                                     obj.AddImage(single_image_metainfo);
@@ -357,6 +344,63 @@ classdef PTKImageDatabase < handle
     end
     
     methods (Access = private)
+        function patient_info = GetPatients(obj)
+            patient_info = obj.PatientMap.values;
+            family_names = CoreContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
+            family_names = CoreContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
+            short_visible_names = CoreContainerUtilities.GetFieldValuesFromSet(patient_info, 'ShortVisibleName');
+
+            if isempty(family_names)
+                patient_info = [];
+                return
+            end
+
+            % Sort by the short visible name
+            % Remove any empty values to ensure sort works
+            empty_values = cellfun(@isempty, short_visible_names);
+            short_visible_names(empty_values) = {'Unknown'};
+            [sorted_visible_names, sorted_indices] = CoreTextUtilities.SortFilenames(short_visible_names);
+            
+            patient_info = patient_info(sorted_indices);
+            
+            % Merge together patients with same name if this is specified by the settings
+            if PTKSoftwareInfo.GroupPatientsWithSameName
+                unique_names = sorted_visible_names;
+                
+                % We don't want 'Unknown' patient names to be grouped together, so temporarily
+                % assign them each a unique random name
+                random_name = CoreSystemUtilities.GenerateUid;
+                for empty_index = 1 : find(empty_values)
+                    unique_names{empty_index} = [random_name, int2str(empty_index)];
+                end
+                
+                [un, idx_last, idx] = unique(unique_names);
+                unique_idx = accumarray(idx(:), (1:length(idx))', [], @(x) {x});
+                patient_info_grouped = cellfun(@(x) [patient_info{x}], unique_idx, 'UniformOutput', false);
+                patient_info_grouped = patient_info_grouped';
+                
+                patient_info = patient_info_grouped;
+            end
+        end
+        
+        function patient_info = GetAllPatientInfosForThisPatient(obj, patient_id)
+            if PTKSoftwareInfo.GroupPatientsWithSameName
+                patient_info_grouped = obj.GetPatients;
+                for group = patient_info_grouped
+                    for group_member = group{1}
+                        if strcmp(group_member.PatientId, patient_id)
+                            patient_info = group;
+                            return;
+                        end
+                    end
+                end
+                patient_info = [];
+                return;
+            else
+                patient_info = obj.GetPatient(patient_id);
+            end
+        end
+        
         function has_changed = GetAndResetVersionChanged(obj)
             has_changed = obj.VersionHasChanged;
             obj.VersionHasChanged = false;

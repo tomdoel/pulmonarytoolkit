@@ -1,4 +1,4 @@
-classdef TestContextHierarchy < PTKTest
+classdef TestContextHierarchy < CoreTest
     % TestContextHierarchy. Tests for the PTKContextHierarchy class.
     %
     %
@@ -20,10 +20,10 @@ classdef TestContextHierarchy < PTKTest
         function TestFetchResultForSameContext(obj)
             % Test 1 : check fetching image for same context
             
-            mock_reporting = MockReporting;
+            mock_reporting = CoreMockReporting;
             mock_dependency_tracker = MockPluginDependencyTracker;
             mock_image_templates = MockImageTemplates;            
-            context_hierarchy = PTKContextHierarchy(mock_dependency_tracker, mock_image_templates);
+            context_hierarchy = PTKContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
 
             force_generate_image = true;
             mock_plugin_info = [];
@@ -97,10 +97,10 @@ classdef TestContextHierarchy < PTKTest
         function TestExtractROIFromOriginalImage(obj)
             % Test 2: test extracting an ROI region from the full lung
             
-            mock_reporting = MockReporting;
+            mock_reporting = CoreMockReporting;
             mock_dependency_tracker = MockPluginDependencyTracker;
             mock_image_templates = MockImageTemplates;            
-            context_hierarchy = PTKContextHierarchy(mock_dependency_tracker, mock_image_templates);
+            context_hierarchy = PTKContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
             
             cache_info_2 = 'Cache Info 2';
             plugin_2 = 'Plugin2';
@@ -154,10 +154,10 @@ classdef TestContextHierarchy < PTKTest
         % Test 3: test extracting left and right lung images, and concatenating
         % images to a higher context
         function TestExtractLeftAndRightLungs(obj)
-            mock_reporting = MockReporting;
+            mock_reporting = CoreMockReporting;
             mock_dependency_tracker = MockPluginDependencyTracker;
             mock_image_templates = MockImageTemplates;            
-            context_hierarchy = PTKContextHierarchy(mock_dependency_tracker, mock_image_templates);
+            context_hierarchy = PTKContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
             
             % Create images and image templates
             mock_original_image = PTKImage(ones(15,15,15));
@@ -388,10 +388,10 @@ classdef TestContextHierarchy < PTKTest
             % Test 4: test extracting lobes, and concatenating
             % images to a higher context
             
-            mock_reporting = MockReporting;
+            mock_reporting = CoreMockReporting;
             mock_dependency_tracker = MockPluginDependencyTracker;
             mock_image_templates = MockImageTemplates;
-            context_hierarchy = PTKContextHierarchy(mock_dependency_tracker, mock_image_templates);
+            context_hierarchy = PTKContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
             
             % Create images and image templates
             mock_original_image = PTKImage(ones(15,15,15));

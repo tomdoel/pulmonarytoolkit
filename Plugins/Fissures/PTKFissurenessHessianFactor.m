@@ -65,8 +65,12 @@ classdef PTKFissurenessHessianFactor < PTKPlugin
         
         function lung = DuplicateImageInMask(lung, mask_raw)
             mask_raw = mask_raw > 0;
-            [~, labelmatrix] = bwdist(mask_raw);
-            lung(~mask_raw(:)) = lung(labelmatrix(~mask_raw(:)));
+            if any(mask_raw(:) > 0)
+                [~, labelmatrix] = bwdist(mask_raw);
+                lung(~mask_raw(:)) = lung(labelmatrix(~mask_raw(:)));
+            else
+                lung(:) = 0;
+            end
         end
         
         function fissureness = ComputeFissureness(image_data, left_and_right_lungs, reporting, is_left_lung)

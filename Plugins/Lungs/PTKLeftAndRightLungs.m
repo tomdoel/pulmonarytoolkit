@@ -7,12 +7,8 @@ classdef PTKLeftAndRightLungs < PTKPlugin
     %
     %     Plugins should not be run directly from your code.
     %
-    %     PTKLeftAndRightLungs runs the library function
-    %     PTKGetMainRegionExcludingBorder on the lung image thresholded using the
-    %     plugin PTKThresholdLungFiltered, in order to generate a segmented lung
-    %     image which includes the airways. The main airways are then obtained
-    %     using the plugin PTKAirways and dilated before being removed. The
-    %     resulting image contains just the lungs.
+    %     PTKLeftAndRightLungs generates a segmentation of the separated
+    %     left and right lungs
     %
     %
     %     Licence

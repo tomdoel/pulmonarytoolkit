@@ -1,4 +1,4 @@
-classdef PTKViewerPanel < PTKPanel
+classdef PTKViewerPanel < GemPanel
     % PTKViewerPanel. Creates a data viewer window for imaging 3D data slice-by-slice.
     %
     %     PTKViewerPanel creates a visualisation window on the supplied
@@ -14,8 +14,6 @@ classdef PTKViewerPanel < PTKPanel
     %     images (within a PTKViewer class) to the BackgroundImage, OverlayImage
     %     and QuiverImage properties.
     %
-    %     To set the marker image, use MarkerPointManager.ChangeMarkerImage
-    %
     %     See PTKViewer.m for a simple example of how to use this class.
     %
     %
@@ -28,27 +26,30 @@ classdef PTKViewerPanel < PTKPanel
     
 
     events
-        MarkerPanelSelected      % An event to indicate if the marker control has been selected
-        OverlayImageChangedEvent % An event to indicate if the overlay image has changed
         MouseCursorStatusChanged % An event to indicate if the MouseCursorStatus property has changed
     end
     
     properties (SetObservable)
-        SelectedControl = 'W/L'  % The currently selected tool
-        Orientation = PTKImageOrientation.Coronal  % The currently selected image orientation
-        OverlayOpacity = 50    % Sets the opacity percentage of the transparent overlay image
-        ShowImage = true       % Sets whether the greyscale image is visible or invisible
-        ShowOverlay = true     % Sets whether the transparent overlay image is visible or invisible
-        BlackIsTransparent = true  % Sets whether black in the transparent overlay image is transparent or shown as black
-        Window = 1600          % The image window (in HU for CT images)
-        Level = -600           % The image level (in HU for CT images)
-        SliceNumber = [1 1 1]  % The currently shown slice in 3 dimensions
+        SelectedControl = 'W/L'    % The currently selected tool
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
+        PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
+        NewMarkerColour        % The current colour of new marker points
+    end
+    
+    properties (Dependent)
         BackgroundImage        % The greyscale image
         OverlayImage           % The colour transparent overlay image
         QuiverImage            % A vector quiver plot showing directions
+        SliceNumber            % The currently shown slice in 3 dimensions
+        Orientation            % The currently selected image orientation
+        Window                 % The image window (in HU for CT images)
+        Level                  % The image level (in HU for CT images)
+        OverlayOpacity         % Sets the opacity percentage of the transparent overlay image
+        ShowImage              % Sets whether the greyscale image is visible or invisible
+        ShowOverlay            % Sets whether the transparent overlay image is visible or invisible
+        ShowMarkers            % Sets whether marker points are visible or invisible
+        BlackIsTransparent     % Sets whether black in the transparent overlay image is transparent or shown as black
         OpaqueColour           % If set, then this colour will always be shown at full opacity in the overlay
-        PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
     end
     
     properties (SetObservable, SetAccess = private)
@@ -57,11 +58,25 @@ classdef PTKViewerPanel < PTKPanel
     end
     
     properties (SetAccess = private)
-        Mode = ''       % Specifies the current editing mode
-        SubMode = ''    % Specifies the current editing submode
-        EditFixedOuterBoundary   % Specifies whether the current edit can modify the segmentation outer boundary
-        ControlPanelHeight = 33
+        % Image volume models
+        BackgroundImageSource
+        OverlayImageSource
+        QuiverImageSource
+        MarkerImageSource
+        
+        % Slice number and orientation model
+        ImageSliceParameters
+        
+        % Visualisation property models
+        BackgroundImageDisplayParameters
+        OverlayImageDisplayParameters
+        MarkerImageDisplayParameters
+
+        Mode = ''              % Specifies the current editing mode
+        SubMode = ''           % Specifies the current editing submode
+        EditFixedOuterBoundary % Specifies whether the current edit can modify the segmentation outer boundary
         MouseCursorStatus      % A class of type PTKMouseCursorStatus showing data representing the voxel under the cursor
+        MarkerLayer
     end
     
     properties (Access = private)
@@ -70,95 +85,103 @@ classdef PTKViewerPanel < PTKPanel
         WindowMin
         WindowMax
         
-        FigureHandle
         ToolCallback
-        Tools
-        ControlPanel
+        ViewerPanelCallback 
+    end
+    
+    properties (Access = protected)
         ViewerPanelMultiView
-        ViewerPanelCallback
+        Tools
     end
     
     properties
-        ShowControlPanel = true
+        DefaultOrientation = PTKImageOrientation.Axial
     end
     
     methods
         
-        function obj = PTKViewerPanel(parent, show_control_panel, reporting)
+        function obj = PTKViewerPanel(parent)
             % Creates a PTKViewerPanel
             
-            obj = obj@PTKPanel(parent, reporting);
-            
-            obj.ShowControlPanel = show_control_panel;
+            obj = obj@GemPanel(parent);
             
             obj.MouseCursorStatus = PTKMouseCursorStatus;
-            
-            % These image objects must be created here, not in the properties section, to
-            % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
-            obj.BackgroundImage = PTKImage;
-            obj.OverlayImage = PTKImage;
-            obj.QuiverImage = PTKImage;
-            
-            % Create the mouse tools
-            obj.ToolCallback = PTKToolCallback(obj, obj.Reporting);
-            obj.Tools = PTKToolList(obj.ToolCallback, obj);
-            
-            % Create the coontrol panel
-            if obj.ShowControlPanel
-                obj.ControlPanel = PTKViewerPanelToolbar(obj, obj.Tools, obj.Reporting);
-                obj.AddChild(obj.ControlPanel, obj.Reporting);
-            end
 
-            % Create the renderer object, which handles the image processing in the viewer
-            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.Reporting);
-            obj.ToolCallback.SetRenderer(obj.ViewerPanelMultiView);
-            obj.AddChild(obj.ViewerPanelMultiView, obj.Reporting);
+            % Create the image pointer wrappers
+            obj.BackgroundImageSource = PTKImageSource;
+            obj.OverlayImageSource = PTKImageSource;
+            obj.QuiverImageSource = PTKImageSource;
+            obj.MarkerImageSource = PTKMarkerPointImage;
+            
+            % Create the model object that holds the slice number and
+            % orientation
+            obj.ImageSliceParameters = GemImageSliceParameters;
+            
+            % Create the model objects that hold visualisation parameters
+            % for each of the images
+            obj.BackgroundImageDisplayParameters = GemImageDisplayParameters;
+            obj.OverlayImageDisplayParameters = GemImageDisplayParameters;
+            obj.OverlayImageDisplayParameters.Opacity = 50;
+            obj.OverlayImageDisplayParameters.BlackIsTransparent = true;
+            obj.MarkerImageDisplayParameters = GemMarkerDisplayParameters;
+            
+            % Create the object which handles the image processing in the viewer
+            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
+            obj.MarkerLayer = PTKMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ViewerPanelMultiView.GetAxes);
+
+            % Create the mouse tools
+            obj.ToolCallback = PTKToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.Reporting);
+            obj.Tools = PTKToolList(obj.MarkerLayer, obj.ToolCallback, obj, obj.ImageSliceParameters, obj.BackgroundImageDisplayParameters);
+                        
+            obj.ToolCallback.SetAxes(obj.ViewerPanelMultiView.GetAxes);
+            obj.AddChild(obj.ViewerPanelMultiView);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function background_image = GetBackgroundImageSource(obj)
+            background_image = obj.BackgroundImageSource;
+        end
         
-            obj.FigureHandle = obj.Parent.GetContainerHandle;
+        function background_image = GetOverlayImageSource(obj)
+            background_image = obj.OverlayImageSource;
+        end
+        
+        function quiver_image = GetQuiverImageSource(obj)
+            quiver_image = obj.QuiverImageSource;
+        end
+        
+        function image_slice_parameters = GetImageSliceParameters(obj)
+            image_slice_parameters = obj.ImageSliceParameters;
+        end
+        
+        function image_slice_parameters = GetBackgroundImageDisplayParameters(obj)
+            image_slice_parameters = obj.BackgroundImageDisplayParameters;
+        end
+        
+        function image_slice_parameters = GetOverlayImageDisplayParameters(obj)
+            image_slice_parameters = obj.OverlayImageDisplayParameters;
         end
         
         function Resize(obj, position)
             % Resize the viewer panel and its subcomponents
             
-            Resize@PTKPanel(obj, position);
+            Resize@GemPanel(obj, position);
             
             % Position axes and slice slider
             parent_width_pixels = position(3);
             parent_height_pixels = position(4);
             image_width = parent_width_pixels;
             
-            if obj.ShowControlPanel
-                control_panel_height = obj.ControlPanelHeight;
-                control_panel_width = image_width;
-            else
-                control_panel_height = 0;
-                control_panel_width = 0;
-            end
-            
-            image_height = max(1, parent_height_pixels - control_panel_height);
-            
-            control_panel_position = [1, 1, control_panel_width, control_panel_height];
-            image_panel_position = [1, 1 + control_panel_height, image_width, image_height];
+            image_height = max(1, parent_height_pixels);
+            image_panel_position = [1, 1, image_width, image_height];
             
             % Resize the image and slider
             obj.ViewerPanelMultiView.Resize(image_panel_position);
-            
-            obj.ViewerPanelMultiView.UpdateAxes;
-            
-            % Resize the control panel
-            if obj.ShowControlPanel
-                obj.ControlPanel.Resize(control_panel_position);
-            end
         end
         
-        function marker_point_manager = GetMarkerPointManager(obj)
+        function marker_layer = GetMarkerLayer(obj)
             % Returns a pointer to the MarkerPointManager object
             
-            marker_point_manager = obj.Tools.GetMarkerPointManager;
+            marker_layer = obj.MarkerLayer;
         end
         
         function ClearOverlays(obj)
@@ -198,16 +221,6 @@ classdef PTKViewerPanel < PTKPanel
             % Changes the active tool, specified by tag string, e.g. 'Cine'
             
             obj.SelectedControl = tag_value;
-            
-            % Change the cursor
-            obj.ViewerPanelMultiView.UpdateCursor(obj.FigureHandle, [], []);
-            
-            obj.Tools.SetControl(tag_value);
-            
-            if obj.ShowControlPanel
-                obj.ControlPanel.SetControl(tag_value);
-            end
-
         end
         
         function SetModes(obj, mode, submode)
@@ -215,9 +228,6 @@ classdef PTKViewerPanel < PTKPanel
             
             obj.Mode = mode;
             obj.SubMode = submode;
-            
-            % Need to resize the control panel as the number of tools may have changed
-            obj.ResizeControlPanel;
             
             if strcmp(mode, PTKModes.EditMode)
                 if strcmp(submode, PTKSubModes.PaintEditing)
@@ -264,80 +274,151 @@ classdef PTKViewerPanel < PTKPanel
             elseif strcmpi(key, 'o')
                 obj.ShowOverlay = ~obj.ShowOverlay;
                 input_has_been_processed = true;
+            elseif strcmpi(key, 'l') % L
+                obj.MarkerImageDisplayParameters.ShowLabels = ~obj.MarkerImageDisplayParameters.ShowLabels;
+                input_has_been_processed = true;
             else
                 input_has_been_processed = obj.Tools.ShortcutKeys(key, obj.SelectedControl);
             end
         end
      
-        function [window_min, window_max] = GetWindowLimits(obj)
-            % Returns the minimum and maximum values from the window slider
-            
-            window_min = obj.WindowMin;
-            window_max = obj.WindowMax;
-        end
-        
         function SetWindowLimits(obj, window_min, window_max)
             % Sets the minimum and maximum values for the level slider
             
             obj.WindowLimits = [window_min, window_max];
-            
-            if obj.ShowControlPanel
-                obj.ControlPanel.UpdateWindowLimits;
-            end
         end
         
         function SetLevelLimits(obj, level_min, level_max)
             % Sets the minimum and maximum values for the level slider
             
             obj.LevelLimits = [level_min, level_max];
-
-            if obj.ShowControlPanel
-                obj.ControlPanel.UpdateLevelLimits;
-            end
         end
         
-        function ModifyWindowLevelLimits(obj)
-            % This function is used to change the max window and min/max level
-            % values after the window or level has been changed to a value outside
-            % of the limits
-            
-            changed = false;
-            
-            if obj.Level > obj.LevelMax
-                obj.LevelMax = obj.Level;
-                changed = true;
-            end
-            if obj.Level < obj.LevelMin
-                obj.LevelMin = obj.Level;
-                changed = true;
-            end
-            if obj.Window > obj.WindowMax
-                obj.WindowMax = obj.Window;
-                changed = true;
-            end
-
-            if obj.Window < 0
-                obj.Window = 0;
-                changed = true;
-            end
-
-            if obj.ShowControlPanel && changed
-                obj.ControlPanel.UpdateLevelLimits;
-            end
-        end        
-        
         function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier)
+            % Returns the currently enabled mouse tool
+            
             tool = obj.Tools.GetCurrentTool(mouse_is_down, keyboard_modifier, obj.SelectedControl);
         end
         
+        function tools = GetToolList(obj)
+            % Returns a PTKToolList describing the mouse tools supported by the viewer
+            
+            tools = obj.Tools;
+        end
+
+        function set.BackgroundImage(obj, new_image)
+            obj.BackgroundImageSource.Image = new_image;
+        end
+        
+        function current_image = get.BackgroundImage(obj)
+            current_image = obj.BackgroundImageSource.Image;
+        end
+        
+        function set.OverlayImage(obj, new_image)
+            obj.OverlayImageSource.Image = new_image;
+        end
+        
+        function current_image = get.OverlayImage(obj)
+            current_image = obj.OverlayImageSource.Image;
+        end
+        
+        function set.QuiverImage(obj, new_image)
+            obj.QuiverImageSource.Image = new_image;
+        end
+        
+        function current_image = get.QuiverImage(obj)
+            current_image = obj.QuiverImageSource.Image;
+        end
+        
+        function set.SliceNumber(obj, slice_number)
+            obj.ImageSliceParameters.SliceNumber = slice_number;
+        end
+        
+        function slice_number = get.SliceNumber(obj)
+            slice_number = obj.ImageSliceParameters.SliceNumber;
+        end        
+        
+        function set.Orientation(obj, orientation)
+            obj.ImageSliceParameters.Orientation = orientation;
+        end
+        
+        function orientation = get.Orientation(obj)
+            orientation = obj.ImageSliceParameters.Orientation;
+        end
+        
+        function set.OverlayOpacity(obj, opacity)
+            obj.OverlayImageDisplayParameters.Opacity = opacity;
+        end
+        
+        function opacity = get.OverlayOpacity(obj)
+            opacity = obj.OverlayImageDisplayParameters.Opacity;
+        end        
+        
+        function set.ShowImage(obj, show_image)
+            obj.BackgroundImageDisplayParameters.ShowImage = show_image;
+        end
+        
+        function show_image = get.ShowImage(obj)
+            show_image = obj.BackgroundImageDisplayParameters.ShowImage;
+        end
+        
+        function set.Window(obj, window)
+            obj.BackgroundImageDisplayParameters.Window = window;
+            obj.OverlayImageDisplayParameters.Window = window;
+        end
+        
+        function level = get.Level(obj)
+            level = obj.BackgroundImageDisplayParameters.Level;
+        end
+        
+        function set.Level(obj, level)
+            obj.BackgroundImageDisplayParameters.Level = level;
+            obj.OverlayImageDisplayParameters.Level = level;
+        end
+        
+        function window = get.Window(obj)
+            window = obj.BackgroundImageDisplayParameters.Window;
+        end
+        
+        function set.ShowOverlay(obj, show_image)
+            obj.OverlayImageDisplayParameters.ShowImage = show_image;
+        end
+        
+        function show_image = get.ShowOverlay(obj)
+            show_image = obj.OverlayImageDisplayParameters.ShowImage;
+        end
+        
+        function set.ShowMarkers(obj, show_markers)
+            obj.MarkerImageDisplayParameters.ShowMarkers = show_markers;
+        end
+        
+        function show_markers = get.ShowMarkers(obj)
+            show_markers = obj.MarkerImageDisplayParameters.ShowMarkers;
+        end
+        
+        function set.BlackIsTransparent(obj, black_is_transparent)
+            obj.OverlayImageDisplayParameters.BlackIsTransparent = black_is_transparent;
+        end
+        
+        function black_is_transparent = get.BlackIsTransparent(obj)
+            black_is_transparent = obj.OverlayImageDisplayParameters.BlackIsTransparent;
+        end
+        
+        function set.OpaqueColour(obj, opaque_colour)
+            obj.OverlayImageDisplayParameters.OpaqueColour = opaque_colour;
+        end
+        
+        function opaque_colour = get.OpaqueColour(obj)
+            opaque_colour = obj.OverlayImageDisplayParameters.OpaqueColour;
+        end        
     end
     
     methods (Access = protected)
         
         function PostCreation(obj, position, reporting)
-            % Called after the compent and all its children have been created
+            % Called after the component and all its children have been created
             
-            obj.ViewerPanelCallback = PTKViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.ControlPanel, obj.Reporting);
+            obj.ViewerPanelCallback = PTKViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
         end            
 
         function input_has_been_processed = Keypressed(obj, click_point, key)
@@ -353,18 +434,5 @@ classdef PTKViewerPanel < PTKPanel
             input_has_been_processed = true;
         end
         
-    end
-    
-    
-    methods (Access = private)
-        
-        function ResizeControlPanel(obj)
-            control_panel_position = obj.Position;
-            control_panel_position(4) = obj.ControlPanelHeight;
-            if obj.ShowControlPanel
-                obj.ControlPanel.Resize(control_panel_position);
-            end
-        end
-
     end
 end

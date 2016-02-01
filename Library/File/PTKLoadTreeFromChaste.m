@@ -32,11 +32,11 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
         reporting.Error('PTKLoadTreeFromChaste:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
     end
     
-    if ~PTKDiskUtilities.FileExists(file_path, node_filename)
+    if ~CoreDiskUtilities.FileExists(file_path, node_filename)
         reporting.Error('PTKLoadTreeFromChaste:FileDoesNotExist', ['The node file ', node_filename ,' does not exist']);
     end
     
-    if ~PTKDiskUtilities.FileExists(file_path, edge_filename)
+    if ~CoreDiskUtilities.FileExists(file_path, edge_filename)
         reporting.Error('PTKLoadTreeFromChaste:FileDoesNotExist', ['The edge file ', edge_filename ,' does not exist']);
     end
     

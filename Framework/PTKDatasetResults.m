@@ -51,16 +51,16 @@ classdef PTKDatasetResults < handle
     end
     
     methods
-        function obj = PTKDatasetResults(image_info, linked_dataset_chooser, external_notify_function, dataset_disk_cache, reporting)
+        function obj = PTKDatasetResults(context_def, image_info, linked_dataset_chooser, external_notify_function, dataset_disk_cache, plugin_cache, reporting)
             obj.ImageInfo = image_info;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
-            obj.ImageTemplates = PTKImageTemplates(obj, dataset_disk_cache, reporting);
+            obj.ImageTemplates = PTKImageTemplates(obj, context_def, dataset_disk_cache, reporting);
             obj.OutputFolder = PTKOutputFolder(dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
             obj.PreviewImages = PTKPreviewImages(dataset_disk_cache, reporting);
-            obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache);
-            obj.ContextHierarchy = PTKContextHierarchy(obj.DependencyTracker, obj.ImageTemplates);
+            obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache, plugin_cache);
+            obj.ContextHierarchy = PTKContextHierarchy(context_def, obj.DependencyTracker, obj.ImageTemplates);
         end
 
         function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context, reporting, allow_results_to_be_cached_override)
@@ -113,7 +113,6 @@ classdef PTKDatasetResults < handle
         
         function SaveData(obj, name, data, reporting)
             % Save data as a cache file associated with this dataset
-            % Used for marker points
         
             obj.DatasetDiskCache.SaveData(name, data, reporting);
         end
@@ -124,10 +123,46 @@ classdef PTKDatasetResults < handle
             data = obj.DatasetDiskCache.LoadData(name, reporting);
         end
         
+        function SaveMarkerPoints(obj, name, data, reporting)
+            % Save marker points as a cache file associated with this dataset
+        
+            obj.DatasetDiskCache.SaveMarkerPoints(name, data, reporting);
+        end
+        
+        function data = LoadMarkerPoints(obj, name, reporting)
+            % Load data from a cache file associated with this dataset
+        
+            data = obj.DatasetDiskCache.LoadMarkerPoints(name, reporting);
+        end
+        
+        function SaveManualSegmentation(obj, name, data, context, reporting)
+            % Save manual segmentation as a cache file associated with this dataset
+        
+            obj.DatasetDiskCache.SaveManualSegmentation(name, data, context, reporting);
+        end
+        
+        function data = LoadManualSegmentation(obj, name, context, reporting)
+            % Load data from a cache file associated with this dataset
+        
+            data = obj.DatasetDiskCache.LoadManualSegmentation(name, context, reporting);
+        end
+        
         function DeleteEditedPluginResult(obj, plugin_name, reporting)
             % Delete edit data from a cache file associated with this dataset
             
             obj.DatasetDiskCache.DeleteEditedPluginResult(plugin_name, reporting);
+        end
+        
+        function DeleteManualSegmentation(obj, segmentation_name, reporting)
+            % Delete manual segmentation from a cache file associated with this dataset
+            
+            obj.DatasetDiskCache.DeleteManualSegmentation(segmentation_name, reporting);
+        end
+        
+        function file_list = GetListOfManualSegmentations(obj)
+            % Gets list of manual segmentation files associated with this dataset
+
+            file_list = obj.DatasetDiskCache.GetListOfManualSegmentations;
         end
         
         function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack, reporting)
@@ -304,7 +339,7 @@ classdef PTKDatasetResults < handle
                 % Fire an event indictaing the preview image has changed. This
                 % will allow any listening gui to update its preview images if
                 % necessary
-                obj.ExternalWrapperNotifyFunction('PreviewImageChanged', PTKEventData(plugin_name));
+                obj.ExternalWrapperNotifyFunction('PreviewImageChanged', CoreEventData(plugin_name));
             end
         end
         

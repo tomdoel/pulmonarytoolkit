@@ -1,4 +1,4 @@
-classdef PTKGuiDataset < PTKBaseClass
+classdef PTKGuiDataset < CoreBaseClass
     % PTKGuiDataset. Handles the interaction between the GUI and the PTK interfaces
     %
     %
@@ -26,30 +26,28 @@ classdef PTKGuiDataset < PTKBaseClass
         Ptk
         Reporting
         Settings
+        AppDef
+        ContextDef
+        PreviewImageChangedListener
     end
     
     methods
-        function obj = PTKGuiDataset(gui, viewer_panel, settings, reporting)
+        function obj = PTKGuiDataset(app_def, gui, viewer_panel, settings, reporting)
+            obj.AppDef = app_def;
+            obj.ContextDef = app_def.GetContextDef;
             obj.GuiDatasetState = PTKGuiDatasetState;
-            obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, settings, reporting);
-
+            obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, app_def, settings, reporting);
+            
             obj.Gui = gui;
             obj.Reporting = reporting;
             obj.Settings = settings;
             obj.Ptk = PTKMain(reporting);
-            obj.AddEventListener(obj.GetImageDatabase, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
             obj.AddEventListener(obj.GetImageDatabase, 'SeriesHasBeenDeleted', @obj.SeriesHasBeenDeleted);
+            obj.AddEventListener(obj.ModeSwitcher, 'ModeChangedEvent', @obj.ModeHasChanged);
         end
 
-        function ModeTabChanged(obj, mode_name)
-            if strcmp(mode_name, 'all')
-                mode_name = '';
-            end
-            obj.ChangeMode(mode_name)
-        end
-        
         function ChangeMode(obj, mode)
-            obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
+            obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext, obj.GuiDatasetState.CurrentSegmentationName);
         end        
 
         function mode = GetMode(obj)
@@ -57,6 +55,14 @@ classdef PTKGuiDataset < PTKBaseClass
             if isempty(mode)
                 obj.Reporting.Error('PTKGui::NoMode', 'The operation is not possible in this mode');
             end
+        end
+        
+        function mode = GetCurrentModeName(obj)
+            mode = obj.ModeSwitcher.CurrentModeString;
+        end
+        
+        function mode = GetCurrentSubModeName(obj)
+            mode = obj.ModeSwitcher.GetSubModeName;
         end
         
         function is_dataset = DatasetIsLoaded(obj)
@@ -87,20 +93,12 @@ classdef PTKGuiDataset < PTKBaseClass
             template_image = obj.Dataset.GetTemplateImage(PTKContext.OriginalImage);
         end
         
-        function SaveMarkers(obj, markers)
-            obj.Dataset.SaveData(PTKSoftwareInfo.MakerPointsCacheName, markers);
+        function SaveMarkers(obj, name, markers)
+            obj.Dataset.SaveMarkerPoints(name, markers);
         end
         
-        function SaveAbandonedMarkers(obj, markers)
-            obj.Dataset.SaveData('AbandonedMarkerPoints', markers);
-        end
-        
-        function SaveMarkersManualBackup(obj, markers)
-            obj.Dataset.SaveData('MarkerPointsLastManualSave', markers);
-        end
-
         function markers = LoadMarkers(obj)
-            markers = obj.Dataset.LoadData(PTKSoftwareInfo.MakerPointsCacheName);
+            markers = obj.Dataset.LoadMarkerPoints(PTKSoftwareInfo.MakerPointsCacheName);
         end
         
         
@@ -139,7 +137,7 @@ classdef PTKGuiDataset < PTKBaseClass
         function ClearCacheForThisDataset(obj)
             if obj.DatasetIsLoaded
                 obj.Dataset.ClearCacheForThisDataset(false);
-                obj.Gui.AddAllPreviewImagesToButtons([]);
+                obj.Gui.UpdateGuiForNewDataset([]);
             end
         end
 
@@ -162,7 +160,8 @@ classdef PTKGuiDataset < PTKBaseClass
                 
                 obj.Settings.SetLastImageInfo([], obj.Reporting);
                 
-                obj.SetNoDataset;
+                obj.SetNoDataset(false);
+                obj.Gui.UpdateGuiForNewDataset([]);
                 
             catch exc
                 if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
@@ -171,9 +170,28 @@ classdef PTKGuiDataset < PTKBaseClass
                     obj.Reporting.ShowMessage('PTKGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
                 end
             end
+        end
+        
+        function ClearDatasetKeepPatient(obj)
+            try
+                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.Gui.ClearImages;
+                delete(obj.Dataset);
 
-            obj.Gui.AddAllPreviewImagesToButtons([]);
-            obj.Gui.UpdatePatientBrowser([], []);
+                obj.Dataset = [];
+                
+                obj.Settings.SetLastImageInfo([], obj.Reporting);
+                
+                obj.SetNoDataset(true);
+                obj.Gui.UpdateGuiForNewDataset([]);
+                
+            catch exc
+                if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                    obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled');
+                else
+                    obj.Reporting.ShowMessage('PTKGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
+                end
+            end
         end
         
         
@@ -191,12 +209,23 @@ classdef PTKGuiDataset < PTKBaseClass
         
         function DeleteDatasets(obj, series_uids)
             % Removes a dataset from the database and deletes its disk cache. If the dataset
-            % is currently loaded then the callback from the image database will case the
+            % is currently loaded then the callback from the image database will cause the
             % current dataset to be cleared.
             
             obj.Ptk.DeleteDatasets(series_uids)
+            obj.Settings.RemoveLastPatientUid(series_uids);
         end
         
+        function SwitchPatient(obj, patient_id)
+            if ~strcmp(patient_id, obj.GuiDatasetState.CurrentPatientId)
+                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.Gui.SetTab(PTKSoftwareInfo.DefaultModeOnNewDataset);
+                obj.Gui.ClearImages;
+                obj.DeletePreviewListener;
+                delete(obj.Dataset);
+                obj.GuiDatasetState.SetPatientClearSeries(patient_id, []);                
+            end
+        end
         
         function InternalLoadImages(obj, image_info_or_uid)
             
@@ -205,6 +234,8 @@ classdef PTKGuiDataset < PTKBaseClass
             series_uid = [];
             
             delete_image_info = false;
+            patient_id = obj.GuiDatasetState.CurrentPatientId;
+            patient_visible_name = obj.GuiDatasetState.CurrentPatientVisibleName;
             
             try
                 if isa(image_info_or_uid, 'PTKImageInfo')
@@ -214,24 +245,28 @@ classdef PTKGuiDataset < PTKBaseClass
                 end
 
                 obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.Gui.SetTab(PTKSoftwareInfo.DefaultModeOnNewDataset);
                 
                 obj.Gui.ClearImages;
                 delete(obj.Dataset);
 
                 obj.Dataset = new_dataset;
-                obj.AddEventListener(new_dataset, 'PreviewImageChanged', @obj.PreviewImageChanged);
+                
+                obj.ReplacePreviewListener(new_dataset);
                 
                 image_info = obj.Dataset.GetImageInfo;
                 modality = image_info.Modality;
                 
+                [preferred_context, plugin_to_use] = obj.AppDef.GetPreferredContext(modality);
+                
                 % If the modality is not CT then we load the full dataset
-                load_full_data = ~(isempty(modality) || strcmp(modality, 'CT'));
+                load_full_data = isempty(preferred_context);
                     
                 % Attempt to obtain the region of interest
                 if ~load_full_data
-                    if obj.Dataset.IsContextEnabled(PTKContext.LungROI)
+                    if obj.Dataset.IsContextEnabled(preferred_context)
                         try
-                            new_image = obj.Dataset.GetResult('PTKLungROI');
+                            new_image = obj.Dataset.GetResult(plugin_to_use);
                         catch exc
                             if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                                 obj.Reporting.Log('LoadImages cancelled by user');
@@ -254,6 +289,14 @@ classdef PTKGuiDataset < PTKBaseClass
                     new_image = obj.Dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage, [], true);
                 end
                 
+                % The modality may not have been set if it is not contained
+                % in the file metadata, but may have been set after
+                % loading, in which case we update it here
+                if isempty(modality) && ~isempty(new_image.Modality)
+                    modality = new_image.Modality;
+                    image_info.Modality = new_image.Modality;
+                end
+                
                 series_uid = image_info.ImageUid;
                 if isfield(new_image.MetaHeader, 'PatientID')
                     patient_id = new_image.MetaHeader.PatientID;
@@ -263,6 +306,7 @@ classdef PTKGuiDataset < PTKBaseClass
 
                 % Update and save settings if anything has changed
                 obj.Settings.SetLastImageInfo(image_info, obj.Reporting);
+                obj.Settings.AddLastPatientUid(patient_id, series_uid);
                 
                 if isempty(image_info)
                     patient_visible_name = [];
@@ -274,9 +318,11 @@ classdef PTKGuiDataset < PTKBaseClass
                     series_name = series_info.Name;
                 end
                 
-                obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid, patient_visible_name, series_name);
+                obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid, patient_visible_name, series_name, modality);
                 obj.GuiDatasetState.ClearPlugin;
                 obj.UpdateModes;
+                
+                obj.Gui.UpdateGuiForNewDataset(obj.Dataset);
                 
                 % Set the image after updating the GuiState. This is necessary because setting
                 % the image triggers a GUI resize, and the side panels need to be repopulated
@@ -287,7 +333,6 @@ classdef PTKGuiDataset < PTKBaseClass
                     obj.SetImage(new_image, PTKContext.LungROI);
                 end
 
-                obj.Gui.AddAllPreviewImagesToButtons(obj.Dataset);
 
                 obj.Gui.LoadMarkersIfRequired;
 
@@ -298,15 +343,15 @@ classdef PTKGuiDataset < PTKBaseClass
                     obj.ClearDataset;
                     obj.Reporting.ShowMessage('PTKGuiDataset:LoadingCancelled', 'User cancelled loading');
                 elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
-                    uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [PTKSoftwareInfo.Name ': Cannot find dataset'], 'modal'));
+                    uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
                     delete_image_info = true;
                 elseif PTKSoftwareInfo.IsErrorUnknownFormat(exc.identifier)
-                    uiwait(errordlg('This is not an image file or the format is not supported by PTK. It will be removed from the Patient Browser.', [PTKSoftwareInfo.Name ': Cannot load this image'], 'modal'));
-                    obj.Reporting.ShowMessage('PTKGuiDataset:FormatNotSupported', 'The original data is missing. I am removing this dataset.');
+                    uiwait(errordlg('This is not an image file or the format is not supported by PTK. It will be removed from the Patient Browser.', [obj.AppDef.GetName ': Cannot load this image'], 'modal'));
+                    obj.Reporting.ShowMessage('PTKGuiDataset:FormatNotSupported', 'This file format is not supported by PTK. I am removing this dataset.');
                     delete_image_info = true;
                 else
-                    uiwait(errordlg(exc.message, [PTKSoftwareInfo.Name ': Cannot load dataset'], 'modal'));
+                    uiwait(errordlg(exc.message, [obj.AppDef.GetName ': Cannot load dataset'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
                 end
 
@@ -325,20 +370,13 @@ classdef PTKGuiDataset < PTKBaseClass
                         obj.Reporting.ShowMessage('PTKGuiDataset:DeleteImageInfoFailed', ['Failed to delete dataset due to error: ' exc.message]);
                     end
                 end
-                
-                % For the patient browser
-                patient_id = [];
-                series_uid = [];
-                                
-                obj.GuiDatasetState.ClearPatientAndSeries;
-                
+                obj.ClearDatasetKeepPatient;
             end
-            
-            obj.Gui.UpdatePatientBrowser(patient_id, series_uid);
         end
         
-        % Causes the GUI to run the named plugin and display the result
         function RunPlugin(obj, plugin_name, wait_dialog)
+            % Causes the GUI to run the named plugin and display the result
+            
             if ~obj.DatasetIsLoaded
                 return;
             end
@@ -352,7 +390,7 @@ classdef PTKGuiDataset < PTKBaseClass
                     if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
                         obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                     else
-                        uiwait(errordlg(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [PTKSoftwareInfo.Name ': Failure in plugin ' plugin_name], 'modal'));
+                        uiwait(errordlg(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [obj.AppDef.GetName ': Failure in plugin ' plugin_name], 'modal'));
                         obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     end
                 end
@@ -367,7 +405,33 @@ classdef PTKGuiDataset < PTKBaseClass
             obj.GuiDatasetState.ClearPlugin;
             obj.UpdateModes;
         end
+        
+        function LoadManualSegmentation(obj, segmentation_name, wait_dialog)
+         % Causes the GUI to run the named segmentation and display the result
+         
+            if ~obj.DatasetIsLoaded
+                return;
+            end
+            
+            visible_name = segmentation_name;
+            wait_dialog.ShowAndHold(['Loading segmentation ' visible_name]);
 
+            % At present we only support top-level context
+            context_to_request = PTKContext.OriginalImage;
+            
+            new_image = obj.Dataset.LoadManualSegmentation(segmentation_name, context_to_request, []);
+            
+            image_title = visible_name;
+            image_title = ['MANUAL SEGMENTATION ', image_title];
+            if isempty(new_image)
+                obj.Reporting.Error('PTKGui:EmptyImage', ['The segmentation ' segmentation_name ' did not return an image when expected. ']);
+            end
+            obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);
+            obj.GuiDatasetState.SetSegmentation(segmentation_name);
+            
+            wait_dialog.Hide;
+        end
+    
         function OverlayImageChanged(obj)
             obj.ModeSwitcher.OverlayImageChanged;
         end
@@ -376,25 +440,50 @@ classdef PTKGuiDataset < PTKBaseClass
             obj.Gui.UpdateModeTabControl(obj.GuiDatasetState.CurrentPluginInfo);
         end
         
-        function SetNoDataset(obj)
-            obj.GuiDatasetState.ClearPatientAndSeries;
+        function SetNoDataset(obj, keep_patient)
+            if keep_patient
+                obj.GuiDatasetState.ClearSeries;
+            else
+                obj.GuiDatasetState.ClearPatientAndSeries;
+            end
             obj.GuiDatasetState.ClearPlugin;
             obj.UpdateModes;
+            obj.Gui.UpdateGuiForNewDataset([]);
         end
         
         function UpdateEditedStatus(obj, is_edited)
             obj.GuiDatasetState.UpdateEditStatus(is_edited);
         end
             
+        function segmentation_list = GetListOfManualSegmentations(obj)
+            if isempty(obj.Dataset)
+                segmentation_list = PTKPair.empty;
+            else
+                segmentation_list = obj.Dataset.GetListOfManualSegmentations;
+            end
+        end
         
+        function delete(obj)
+            obj.DeletePreviewListener;
+        end
+        
+        function plugin_cache = GetPluginCache(obj)
+            plugin_cache = obj.Ptk.FrameworkSingleton.GetPluginInfoMemoryCache;
+        end
     end
     
     methods (Access = private)
-        
-        function DatabaseHasChanged(obj, ~, ~)
-            obj.Gui.DatabaseHasChanged;
-        end
 
+        function DeletePreviewListener(obj)
+            CoreSystemUtilities.DeleteIfValidObject(obj.PreviewImageChangedListener);
+            obj.PreviewImageChangedListener = [];
+        end
+        
+        function ReplacePreviewListener(obj, new_dataset)
+            obj.DeletePreviewListener;
+            obj.PreviewImageChangedListener = addlistener(new_dataset, 'PreviewImageChanged', @obj.PreviewImageChanged);
+        end
+        
         function SeriesHasBeenDeleted(obj, series_uid, ~)
             % If the currently loaded dataset has been removed from the database, then clear
             % and delete
@@ -403,9 +492,14 @@ classdef PTKGuiDataset < PTKBaseClass
             end
         end
         
+        function ModeHasChanged(obj, ~, mode)
+            % Called when the mode changes
+            obj.Gui.SetTabMode(mode.Data);
+        end
+        
         function RunPluginTryCatchBlock(obj, plugin_name, wait_dialog)
-            new_plugin = PTKPluginInformation.LoadPluginInfoStructure(plugin_name, obj.Reporting);
-            visible_name = PTKTextUtilities.RemoveHtml(new_plugin.ButtonText);
+            new_plugin = obj.LoadPluginInfoStructure(plugin_name, obj.Reporting);
+            visible_name = CoreTextUtilities.RemoveHtml(new_plugin.ButtonText);
             wait_dialog.ShowAndHold(['Computing ' visible_name]);
             
             if strcmp(new_plugin.PluginType, 'DoNothing')
@@ -417,13 +511,7 @@ classdef PTKGuiDataset < PTKBaseClass
                 % selected, we switch to the new context
                 context_to_request = obj.CurrentContext;
                 if strcmp(new_plugin.PluginType, 'ReplaceImage')
-                    if isa(new_plugin.Context, 'PTKContext')
-                        context_to_request = new_plugin.Context;
-                    elseif new_plugin.Context == PTKContextSet.OriginalImage
-                        context_to_request = PTKContext.OriginalImage;
-                    elseif new_plugin.Context == PTKContextSet.LungROI
-                        context_to_request = PTKContext.LungROI;
-                    end
+                    context_to_request = obj.ContextDef.ChooseOutputContext(new_plugin.Context);
                 end
                 
                 [~, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
@@ -472,5 +560,9 @@ classdef PTKGuiDataset < PTKBaseClass
             obj.Gui.UpdateToolbar;
         end
         
+        function new_plugin = LoadPluginInfoStructure(obj, plugin_name, reporting)
+            % Obtains a handle to the plugin which can be used to parse its properties
+            new_plugin = obj.GetPluginCache.GetPluginInfo(plugin_name, [], reporting);
+        end        
     end
 end

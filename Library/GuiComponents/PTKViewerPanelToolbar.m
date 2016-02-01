@@ -1,4 +1,4 @@
-classdef PTKViewerPanelToolbar < PTKPanel
+classdef PTKViewerPanelToolbar < GemPanel
     % PTKViewerPanelToolbar. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -42,19 +42,36 @@ classdef PTKViewerPanelToolbar < PTKPanel
     end
     
     methods
-        function obj = PTKViewerPanelToolbar(viewer_panel, tools, reporting)
-            obj = obj@PTKPanel(viewer_panel, reporting);
+        function obj = PTKViewerPanelToolbar(viewer_panel)
+            obj = obj@GemPanel(viewer_panel);
             obj.ViewerPanel = viewer_panel;
             obj.BackgroundColour = 'black';
-            obj.Tools = tools;
-            
-            tools.SetToolbar(obj);
+            obj.Tools = viewer_panel.GetToolList;
             
             obj.MouseCursorStatusListener = addlistener(obj.ViewerPanel, 'MouseCursorStatusChanged', @obj.MouseCursorStatusChangedCallback);
+            
+            % Add listeners to respond to changes in the viewer panel
+            obj.AddPostSetListener(obj.ViewerPanel, 'WindowLimits', @obj.WindowLimitsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'LevelLimits', @obj.LevelLimitsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'SelectedControl', @obj.SelectedControlChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'Orientation', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumber', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'Level', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'Window', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetBackgroundImageDisplayParameters, 'ShowImage', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'ShowImage', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'BlackIsTransparent', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'OpaqueColour', @obj.GuiChangeCallback);
+            
+            % Listen for new image events
+            obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.NewBackgroundImageCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetOverlayImageSource, 'NewImage', @obj.NewOverlayImageCallback);
+            obj.AddEventListener(obj.ViewerPanel.GetQuiverImageSource, 'NewImage', @obj.NewQuiverImageCallback);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@GemPanel(obj, position);
             
             parent = obj.GetParentFigure;
             keypress_function = @parent.CustomKeyPressedFunction;
@@ -62,7 +79,7 @@ classdef PTKViewerPanelToolbar < PTKPanel
             font_size = 9;
             
             % Buttons for coronal/sagittal/axial views
-            obj.OrientationPanel = uibuttongroup('Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'BorderType', 'none', 'SelectionChangeFcn', @obj.OrientationCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.OrientationPanel = uibuttongroup('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'BorderType', 'none', 'SelectionChangeFcn', @obj.OrientationCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             orientation_buttons = [0 0 0];
             orientation_buttons(1) = uicontrol('Style', 'togglebutton', 'Units', 'pixels', 'Parent', obj.OrientationPanel, 'String', 'Cor', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Coronal', 'TooltipString', 'View coronal slices (Y-Z)', 'KeyPressFcn', keypress_function);
             orientation_buttons(2) = uicontrol('Style', 'togglebutton', 'Units', 'pixels', 'Parent', obj.OrientationPanel, 'String', 'Sag', 'Units', 'pixels', 'FontSize', font_size, 'Tag', 'Sagittal', 'TooltipString', 'View sagittal slices (X-Z)', 'KeyPressFcn', keypress_function);
@@ -71,7 +88,7 @@ classdef PTKViewerPanelToolbar < PTKPanel
             set(obj.OrientationButtons(obj.ViewerPanel.Orientation), 'Value', 1);
             
             % Buttons for each mouse tool
-            obj.MouseControlPanel = uibuttongroup('Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'BorderType', 'none', 'SelectionChangeFcn', @obj.ControlsCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.MouseControlPanel = uibuttongroup('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'BorderType', 'none', 'SelectionChangeFcn', @obj.ControlsCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             obj.MouseControlButtons = containers.Map;
             for tool_set = obj.Tools.Tools.values
                 tool = tool_set{1};
@@ -80,8 +97,8 @@ classdef PTKViewerPanelToolbar < PTKPanel
             end
             set(obj.MouseControlButtons(obj.ViewerPanel.SelectedControl), 'Value', 1);
             
-            obj.WindowLevelPanel = uipanel('Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
-            obj.ImageOverlayPanel = uipanel('Parent', obj.Parent.GetContainerHandle(reporting), 'Units', 'pixels', 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.WindowLevelPanel = uipanel('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
+            obj.ImageOverlayPanel = uipanel('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'BorderType', 'none', 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             
             obj.StatusText = uicontrol('Style', 'text', 'Parent', obj.ImageOverlayPanel, 'Units', 'pixels', 'FontSize', font_size, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
             
@@ -117,7 +134,7 @@ classdef PTKViewerPanelToolbar < PTKPanel
         end
         
         function Resize(obj, position)
-            Resize@PTKPanel(obj, position);
+            Resize@GemPanel(obj, position);
             
             if obj.ComponentHasBeenCreated
                 obj.ResizePanel(position);
@@ -148,7 +165,8 @@ classdef PTKViewerPanelToolbar < PTKPanel
             set(obj.MouseControlButtons(tag_value), 'Value', 1);
         end
         
-        function UpdateGui(obj, main_image)
+        function UpdateGui(obj)
+            main_image = obj.ViewerPanel.BackgroundImage;
             if obj.ComponentHasBeenCreated
                 set(obj.OverlayCheckbox, 'Value', obj.ViewerPanel.ShowOverlay);
                 set(obj.ImageCheckbox, 'Value', obj.ViewerPanel.ShowImage);
@@ -344,5 +362,43 @@ classdef PTKViewerPanelToolbar < PTKPanel
             obj.ViewerPanel.OverlayOpacity = get(hObject,'Value');
         end
         
+        function WindowLimitsChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the window limits have changed
+            obj.UpdateWindowLimits;
+        end
+        
+        function LevelLimitsChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the window limits have changed
+            
+            obj.UpdateLevelLimits;
+        end
+        
+        function SelectedControlChangedCallback(obj, ~, ~, ~)
+            % Need to resize the control panel as the number of tools may have changed
+            obj.SetControl(obj.ViewerPanel.SelectedControl);
+            obj.ResizeControlPanel;
+        end
+        
+        function GuiChangeCallback(obj, ~, ~)
+            obj.UpdateGui;
+        end
+        
+        function ResizeControlPanel(obj)
+            control_panel_position = obj.Position;
+            control_panel_position(4) = obj.ViewerPanel.ControlPanelHeight;
+            obj.Resize(control_panel_position);
+        end
+        
+        function NewBackgroundImageCallback(obj, ~, ~)
+            obj.UpdateGui;
+        end
+        
+        function NewOverlayImageCallback(obj, ~, ~)
+            obj.UpdateGui;
+        end
+        
+        function NewQuiverImageCallback(obj, ~, ~)
+            obj.UpdateGui;
+        end
     end
 end

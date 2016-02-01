@@ -22,6 +22,7 @@ classdef PTKEditMode < handle
     end
     
     properties (Access = private)
+        AppDef
         ViewerPanel
         GuiDataset
         Settings
@@ -41,9 +42,10 @@ classdef PTKEditMode < handle
     end
     
     methods
-        function obj = PTKEditMode(viewer_panel, gui_dataset, settings, reporting)
+        function obj = PTKEditMode(viewer_panel, gui_dataset, app_def, settings, reporting)
             obj.ViewerPanel = viewer_panel;
             obj.GuiDataset = gui_dataset;
+            obj.AppDef = app_def;
             obj.Settings = settings;
             obj.Reporting = reporting;
             obj.UnsavedChanges = false;
@@ -51,7 +53,7 @@ classdef PTKEditMode < handle
             obj.ImageOverlayLock = 0;
         end
         
-        function EnterMode(obj, current_dataset, plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
+        function EnterMode(obj, current_dataset, plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name)
             obj.Context = current_context;
             obj.Dataset = current_dataset;
             obj.PluginInfo = plugin_info;
@@ -79,6 +81,10 @@ classdef PTKEditMode < handle
                 end
             end
             obj.IgnoreOverlayChanges = false;            
+        end
+        
+        function sub_mode = GetSubModeName(obj)
+            sub_mode = obj.ViewerPanel.SubMode;
         end
         
         function ExitMode(obj)
@@ -169,7 +175,7 @@ classdef PTKEditMode < handle
             edited_result.ResizeToMatch(template);
             path_name = obj.Settings.SaveImagePath;
             
-            path_name = PTKSaveAs(edited_result, patient_name, path_name, obj.Reporting);
+            path_name = PTKSaveAs(edited_result, patient_name, path_name, true, obj.Reporting);
             if ~isempty(path_name)
                 obj.Settings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
@@ -243,9 +249,9 @@ classdef PTKEditMode < handle
                 
                 template = obj.GuiDataset.GetTemplateImage;
                 if ~isequal(template.ImageSize, edited_result.ImageSize)
-                    uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                    uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
                 elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
-                    uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                    uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
                 else
                     obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
                     obj.UnsavedChanges = false;
@@ -280,9 +286,9 @@ classdef PTKEditMode < handle
                     
                     template = obj.GuiDataset.GetTemplateImage;
                     if ~isequal(template.ImageSize, edited_result.ImageSize)
-                        uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                        uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
                     elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
-                        uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [PTKSoftwareInfo.Name ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                        uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
                     else
                         edited_result.ResizeToMatch(current_overlay);
                         obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);

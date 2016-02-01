@@ -1,4 +1,4 @@
-classdef PTKDirectories < PTKBaseClass
+classdef PTKDirectories < CoreBaseClass
     % PTKDirectories. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -20,7 +20,7 @@ classdef PTKDirectories < PTKBaseClass
             if ~isempty(PTKConfig.CacheFolder)
                 home_directory = PTKConfig.CacheFolder;
             else
-                home_directory = PTKDiskUtilities.GetUserDirectory;
+                home_directory = CoreDiskUtilities.GetUserDirectory;
             end
             application_directory = PTKSoftwareInfo.ApplicationSettingsFolderName;
             application_directory = fullfile(home_directory, application_directory);  
@@ -72,7 +72,7 @@ classdef PTKDirectories < PTKBaseClass
             
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             results_directory = fullfile(application_directory, PTKSoftwareInfo.OutputDirectoryName);
-            PTKDiskUtilities.CreateDirectoryIfNecessary(results_directory);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(results_directory);
         end
         
         function edited_results_directory = GetEditedResultsDirectoryAndCreateIfNecessary
@@ -80,9 +80,27 @@ classdef PTKDirectories < PTKBaseClass
             
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             edited_results_directory = fullfile(application_directory, PTKSoftwareInfo.EditedResultsDirectoryName);
-            PTKDiskUtilities.CreateDirectoryIfNecessary(edited_results_directory);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(edited_results_directory);
         end
 
+        function manual_segmentations_directory = GetManualSegmentationDirectoryAndCreateIfNecessary
+            % Returns the full path to the directory used for storing
+            % manual segmentations
+            
+            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            manual_segmentations_directory = fullfile(application_directory, PTKSoftwareInfo.ManualSegmentationsDirectoryName);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(manual_segmentations_directory);
+        end
+        
+        function markers_directory = GetMarkersDirectoryAndCreateIfNecessary
+            % Returns the full path to the directory used for storing
+            % marker points
+            
+            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            markers_directory = fullfile(application_directory, PTKSoftwareInfo.MarkersDirectoryName);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(markers_directory);
+        end
+        
         function framework_file_path = GetFrameworkCacheFilePath
             % Returns the full path to the framework cache file
             
@@ -107,61 +125,20 @@ classdef PTKDirectories < PTKBaseClass
             settings_file_path = fullfile(settings_dir, cache_filename);
         end
         
-        function plugin_name_list = GetListOfPlugins
-            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfPluginFolders);
-        end
-        
-        function plugin_folders = GetListOfPluginFolders
-            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetPluginsPath);
-        end
-        
-        function plugin_name_list = GetListOfUserPlugins
-            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfUserPluginFolders);
-        end
-        
-        function plugin_folders = GetListOfUserPluginFolders
-            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetUserPluginsPath);
-        end
-        
         function plugin_name_list = GetListOfGuiPlugins
-            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfGuiPluginFolders);
+            plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfGuiPluginFolders);
         end
         
         function plugin_folders = GetListOfGuiPluginFolders
-            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiPluginsPath);
+            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiPluginsPath);
         end
         
         function plugin_name_list = GetListOfUserGuiPlugins
-            plugin_name_list = PTKDirectories.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfUserGuiPluginFolders);
+            plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfUserGuiPluginFolders);
         end
         
         function plugin_folders = GetListOfUserGuiPluginFolders
-            plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiUserPluginsPath);
-        end
-        
-        function matlab_name_list = GetAllMatlabFilesInFolders(folders_to_scan)
-            folders_to_scan = PTKStack(folders_to_scan);
-            plugins_found = PTKStack;
-            while ~folders_to_scan.IsEmpty
-                next_folder = folders_to_scan.Pop;
-                next_plugin_list = PTKDiskUtilities.GetDirectoryFileList(next_folder.First, '*.m');
-                for next_plugin = next_plugin_list
-                    plugins_found.Push(PTKPair(PTKTextUtilities.StripFileparts(next_plugin{1}), next_folder.Second));
-                end
-            end
-            matlab_name_list = plugins_found.GetAndClear;
-        end
-        
-        function plugins_path = GetPluginsPath
-            full_path = mfilename('fullpath');
-            [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.PluginDirectoryName);
-        end
-        
-        function plugins_path = GetUserPluginsPath
-            full_path = mfilename('fullpath');
-            [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.PluginDirectoryName);
+            plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(PTKDirectories.GetGuiUserPluginsPath);
         end
         
         function plugins_path = GetUserPath
@@ -197,7 +174,7 @@ classdef PTKDirectories < PTKBaseClass
         
         function uids = GetUidsOfAllDatasetsInCache
             cache_directory = PTKDirectories.GetCacheDirectory;
-            subdirectories = PTKDiskUtilities.GetListOfDirectories(cache_directory);
+            subdirectories = CoreDiskUtilities.GetListOfDirectories(cache_directory);
             uids = {};
             for subdir = subdirectories
                 candidate_uid = subdir{1};

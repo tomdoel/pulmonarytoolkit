@@ -1,4 +1,4 @@
-classdef PTKNamePanel < PTKPanel
+classdef PTKNamePanel < GemPanel
     % PTKNamePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -41,25 +41,28 @@ classdef PTKNamePanel < PTKPanel
     end
     
     methods
-        function obj = PTKNamePanel(parent, gui, gui_state, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKNamePanel(parent, gui, gui_state)
+            obj = obj@GemPanel(parent);
             
             obj.Gui = gui;
             obj.GuiState = gui_state;
             
             obj.BottomBorder = true;
             
-            obj.PatientNameText = PTKText(obj, obj.NoPatientText, '', 'PatientName');
+            obj.PatientNameText = GemText(obj, obj.NoPatientText, '', 'PatientName');
             obj.PatientNameText.FontSize = obj.PatientNameFontSize;
             obj.PatientNameText.Bold = true;
             obj.PatientNameText.HorizontalAlignment = 'center';
-            obj.AddChild(obj.PatientNameText, obj.Reporting);
+            obj.AddChild(obj.PatientNameText);
             
-            obj.PatientDetailsText = PTKText(obj, 'No details', '', 'PatientDetails');
+            obj.PatientDetailsText = GemText(obj, 'No details', '', 'PatientDetails');
             obj.PatientDetailsText.FontSize = obj.PatientDetailsFontSize;
             obj.PatientDetailsText.HorizontalAlignment = 'center';
-            obj.AddChild(obj.PatientDetailsText, obj.Reporting);
+            obj.AddChild(obj.PatientDetailsText);
 
+            % Add listener for changes to the loaded patient
+            obj.AddEventListener(obj.GuiState, 'PatientIdChangedEvent', @obj.PatientChanged);
+            
             % Add listener for changes to the loaded series
             obj.AddEventListener(obj.GuiState, 'SeriesUidChangedEvent', @obj.SeriesChanged);
             
@@ -86,12 +89,12 @@ classdef PTKNamePanel < PTKPanel
         end
         
         
-        function CreateGuiComponent(obj, panel_position, reporting)
-            CreateGuiComponent@PTKPanel(obj, panel_position, reporting);
+        function CreateGuiComponent(obj, panel_position)
+            CreateGuiComponent@GemPanel(obj, panel_position);
         end
         
         function Resize(obj, panel_position)
-            Resize@PTKPanel(obj, panel_position);
+            Resize@GemPanel(obj, panel_position);
             
             componenent_width = panel_position(3) - obj.LeftMargin - obj.RightMargin;
 
@@ -109,6 +112,23 @@ classdef PTKNamePanel < PTKPanel
     end
     
     methods (Access = private)
+        function PatientChanged(obj, ~, ~)
+            % This event fires when the loaded patient has been changed.
+            
+            if ~strcmp(obj.GuiState.CurrentPatientVisibleName, obj.CurrentPatientVisibleName)
+                obj.CurrentPatientVisibleName = obj.GuiState.CurrentPatientVisibleName;
+                
+                if isempty(obj.CurrentPatientVisibleName)
+                    patient_name = obj.NoPatientText;
+                else
+                    patient_name = obj.CurrentPatientVisibleName;
+                end
+                
+                obj.PatientNameText.ChangeText(patient_name);
+            end
+            obj.UpdateSeriesAndPlugin;
+        end
+        
         function SeriesChanged(obj, ~, ~)
             % This event fires when the loaded series has been changed.
             

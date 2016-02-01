@@ -1,4 +1,4 @@
-classdef PTKPatientsSidePanel < PTKListBoxWithTitle
+classdef PTKPatientsSidePanel < GemListBoxWithTitle
     % PTKPatientsSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -26,8 +26,8 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
     end
     
     methods
-        function obj = PTKPatientsSidePanel(parent, patient_database, gui_callback, reporting)
-            obj = obj@PTKListBoxWithTitle(parent, 'PATIENT', 'Import images', 'Delete patient', reporting);
+        function obj = PTKPatientsSidePanel(parent, patient_database, gui_callback)
+            obj = obj@GemListBoxWithTitle(parent, 'PATIENT', 'Import images', 'Delete patient');
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
         end
@@ -55,7 +55,7 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
     methods (Access = protected)
         
         function AddButtonClicked(obj, ~, event_data)
-            obj.GuiCallback.ImportMultipleFiles;
+            obj.GuiCallback.AddPatient;
         end
         
         function DeleteButtonClicked(obj, ~, event_data)
@@ -75,8 +75,8 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
             end
         end
             
-        function AddPatientsToListBox(obj, patient_id)
-            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames;
+        function AddPatientsToListBox(obj, selected_patient_id)
+            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject);
             obj.PatientIdMap = patient_id_map;
             obj.ListBox.ClearItems;
             
@@ -84,11 +84,11 @@ classdef PTKPatientsSidePanel < PTKListBoxWithTitle
                 patient_id = ids{index};
                 short_name = short_visible_names{index};
                 full_name = names{index};
-                patient_item = PTKPatientNameListItem(obj.ListBox.GetListBox, full_name, short_name, patient_id, obj.GuiCallback, obj.Reporting);
+                patient_item = PTKPatientNameListItem(obj.ListBox.GetListBox, full_name, short_name, patient_id, obj.GuiCallback);
                 obj.ListBox.AddItem(patient_item);
             end
             
-            obj.ListBox.SelectItem(patient_id, true);
+            obj.ListBox.SelectItem(selected_patient_id, true);
         end
     end
 end

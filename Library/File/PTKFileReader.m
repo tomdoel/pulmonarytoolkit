@@ -1,4 +1,4 @@
-classdef PTKFileReader < PTKBaseClass
+classdef PTKFileReader < CoreBaseClass
     % PTKFileReader. A helper class to assist with parsing a text file
     %
     %
@@ -23,9 +23,9 @@ classdef PTKFileReader < PTKBaseClass
                 file_id = fopen(full_file_name, 'r');
             else
                 switch transfer_syntax.Endian
-                    case PTKEndian.BigEndian
+                    case CoreEndian.BigEndian
                         file_encoding = 'b';
-                    case PTKEndian.LittleEndian
+                    case CoreEndian.LittleEndian
                         file_encoding = 'l';
                     otherwise
                         error('Unknown file encoding');
@@ -56,7 +56,7 @@ classdef PTKFileReader < PTKBaseClass
         function data = ReadWords(obj, data_type, number_of_words)
             [data, count] = fread(obj.FileId, [1, number_of_words], data_type);
             if count ~= number_of_words
-                reporting.Error('PTKFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
+                obj.Reporting.Error('PTKFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
             end
             if strcmp(data_type, 'char')
                 data = char(data);
@@ -68,13 +68,13 @@ classdef PTKFileReader < PTKBaseClass
             if strcmp(data_type, 'char')
                 number_of_words = number_of_bytes;
             else
-                bytes_in_type = PTKSystemUtilities.GetBytesInType(data_type, obj.Reporting);
+                bytes_in_type = CoreSystemUtilities.GetBytesInType(data_type);
                 number_of_words = ceil(number_of_bytes/bytes_in_type);
             end
             
             [data, count] = fread(obj.FileId, [1, number_of_words], data_type);
             if count ~= number_of_words
-                reporting.Error('PTKFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
+                obj.Reporting.Error('PTKFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
             end
             if strcmp(data_type, 'char')
                 data = char(data);

@@ -42,7 +42,7 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     end
     
     if nargin < 2
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     reporting.UpdateProgressMessage('Finding top of trachea');
@@ -101,7 +101,8 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     % that are too wide or which touch the edges. The first pass helps to
     % disconnect the trachea from the rest of the lung, so that less of the
     % trachea is removed in the second pass.
-    partial_image2 = ReduceImageToCentralComponents(partial_image.RawImage, ceil(1.3/lung_image.VoxelSize(3)), lung_image.VoxelSize, 1, reporting);
+    partial_image2 = ReduceImageToCentralComponents(partial_image.RawImage, ceil(5/lung_image.VoxelSize(3)), lung_image.VoxelSize, 1, reporting);
+    partial_image2 = ReduceImageToCentralComponents(partial_image2, ceil(1.3/lung_image.VoxelSize(3)), lung_image.VoxelSize, 1, reporting);
 
     if debug_mode
         debug_image.ChangeRawImage(partial_image2);

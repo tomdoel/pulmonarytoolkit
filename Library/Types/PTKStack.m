@@ -1,7 +1,9 @@
 classdef PTKStack < handle
     % PTKStack. A class for storing values on a stack
     %
-    %
+    %     PTKStack is the same as CoreStack, but is maintained to provide
+    %     backward compatibility for saved tree structures
+    % 
     %     Licence
     %     -------
     %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
@@ -16,7 +18,7 @@ classdef PTKStack < handle
     methods 
         function obj = PTKStack(stack_items)
             if nargin > 0
-                obj.Stack = PTKContainerUtilities.ConvertToSet(stack_items);
+                obj.Stack = CoreContainerUtilities.ConvertToSet(stack_items);
             else
                 obj.Stack = cell.empty;
             end
@@ -25,7 +27,7 @@ classdef PTKStack < handle
         function Push(obj, stack_items)
             % Places one or more items on the stack. stack_items can be a single
             % object, a set or an array of objects
-            obj.Stack = [obj.Stack PTKContainerUtilities.ConvertToSet(stack_items)];
+            obj.Stack = [obj.Stack CoreContainerUtilities.ConvertToSet(stack_items)];
         end
         
         function item = Pop(obj)
@@ -48,7 +50,7 @@ classdef PTKStack < handle
         function field_values = GetField(obj, field_name)
             % Returns the values of the field field_name from every item in the
             % stack
-            field_values = PTKContainerUtilities.GetFieldValuesFromSet(obj.Stack, field_name);
+            field_values = CoreContainerUtilities.GetFieldValuesFromSet(obj.Stack, field_name);
         end
     end
 end

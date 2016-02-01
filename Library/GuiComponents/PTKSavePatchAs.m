@@ -1,11 +1,10 @@
 function path_name = PTKSavePatchAs(patch_object, path_name, reporting)
-    % PTKSaveAs. Prompts the user for a filename, and saves the patch
-    % object
+    % PTKSaveAs. Prompts the user for a filename, and saves the patch object
     %
     %     Syntax
     %     ------
     %
-    %         PTKSaveAs(image_data, patient_name, path_name, reporting)
+    %         PTKSavePatchAs(patch_object, path_name, reporting)
     %
     %             patch_object    is a PTKPatch object to be saved
     %             path, filename  specify the location to save the patch pbject.
@@ -26,7 +25,7 @@ function path_name = PTKSavePatchAs(patch_object, path_name, reporting)
     end
     
     if nargin < 3
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     [filename, path_name, filter_index] = SavePatchDialogBox(path_name);

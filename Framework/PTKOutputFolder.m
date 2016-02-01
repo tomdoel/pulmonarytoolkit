@@ -1,4 +1,4 @@
-classdef PTKOutputFolder < PTKBaseClass
+classdef PTKOutputFolder < CoreBaseClass
     % PTKOutputFolder. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -44,7 +44,7 @@ classdef PTKOutputFolder < PTKBaseClass
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
             new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
-            PTKDiskUtilities.CreateDirectoryIfNecessary(file_path);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
             PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting);
             obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
@@ -56,8 +56,8 @@ classdef PTKOutputFolder < PTKBaseClass
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
             new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
-            PTKDiskUtilities.CreateDirectoryIfNecessary(file_path);
-            PTKDiskUtilities.SaveFigure(figure_handle, fullfile(file_path, file_name));
+            CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
+            CoreDiskUtilities.SaveFigure(figure_handle, fullfile(file_path, file_name));
             obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
         end
@@ -68,7 +68,7 @@ classdef PTKOutputFolder < PTKBaseClass
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
             new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
-            PTKDiskUtilities.CreateDirectoryIfNecessary(file_path);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
             PTKCreateSurfaceMesh(file_path, file_name, segmentation, smoothing_size, small_structures, coordinate_system, template_image, reporting);
             obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
@@ -133,7 +133,7 @@ classdef PTKOutputFolder < PTKBaseClass
         function CreateNewOutputFolder(obj, dataset_stack, reporting)
             root_output_path = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
             
-            template = obj.ImageTemplates.GetTemplateImage(PTKContext.LungROI, dataset_stack, reporting);
+            template = obj.ImageTemplates.GetTemplateImage(PTKContext.OriginalImage, dataset_stack, reporting);
             metadata = template.MetaHeader;
             
             if isfield(metadata, 'PatientName')
@@ -168,11 +168,11 @@ classdef PTKOutputFolder < PTKBaseClass
                 end
             end
 
-            subfolder = PTKTextUtilities.MakeFilenameValid(subfolder);
+            subfolder = CoreTextUtilities.MakeFilenameValid(subfolder);
             if isempty(subsubfolder)
                 obj.OutputFolder = fullfile(root_output_path, subfolder);
             else
-                subsubfolder = PTKTextUtilities.MakeFilenameValid(subsubfolder);
+                subsubfolder = CoreTextUtilities.MakeFilenameValid(subsubfolder);
                 obj.OutputFolder = fullfile(root_output_path, subfolder, subsubfolder);
             end
             

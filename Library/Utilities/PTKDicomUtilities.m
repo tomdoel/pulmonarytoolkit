@@ -11,141 +11,87 @@ classdef PTKDicomUtilities
     
     methods (Static)
 
-        % Returns true if this is a Dicom file
         function is_dicom = IsDicom(file_path, file_name)
+            % Returns true if this is a Dicom file
     
             if strcmp(file_name, 'DICOMDIR')
                 is_dicom = false;
                 return
             end
             
-            try
-                is_dicom = PTKIsDicomFile(file_path, file_name);
-            catch exception
-                is_dicom = isdicom(fullfile(file_path, file_name));
-            end
-        end
-        
-        % Reads in Dicom metadata from the specified file
-        function metadata = ReadMetadata(file_path, file_name, dictionary, reporting)
-            try
-                try
-                    metadata = PTKReadDicomTags(file_path, file_name, dictionary, reporting);
-                    metadata.Filename = [file_path, filesep, file_name];
-                    
-                catch exception
-                    metadata = dicominfo(fullfile(file_path, file_name));
-                end
-            catch exception
-                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
-            end
-        end
-        
-        % Reads in Dicom metadata from the specified file
-        function metadata = ReadGroupingMetadata(file_path, file_name, reporting)
-            try
-                try
-                    metadata = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.GroupingTagsDictionary(false), reporting);
-                catch exception
-                    metadata = dicominfo(fullfile(file_path, file_name));
-                end
-            catch exception
-                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
-            end
-        end
-        
-        % Reads in Dicom metadata from the specified file
-        function metadata = ReadEssentialMetadata(file_path, file_name, reporting)
-            try
-                try
-                    metadata = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialTagsDictionary(false), reporting);
-                    metadata.Filename = fullfile(file_path, file_name);
-                    
-                catch exception
-                    metadata = dicominfo(fullfile(file_path, file_name));
-                end
-            catch exception
-                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
-            end
-        end
-        
-        % Reads in Dicom image data from the specified metadata
-        function image_data = ReadDicomImageFromMetadata(metadata, reporting)
-            try
-                try
-                    [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
-                    header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialTagsDictionary(true), reporting);
-                    image_data = header.PixelData;
-                    
-                catch exception
-                    image_data = dicomread(metadata);
-                end
-                
-            catch exception
-                reporting.Error('PTKDicomUtilities:DicomReadError', ['Rrror while reading the Dicom file ' file_name '. Error:' exception.message]);
-            end
-        end
-        
-        % Reads in Dicom image data from the specified metadata. The image data
-        % is stored directly into the RawImage matrix of a PTKWrapper object
-        function ReadDicomImageIntoWrapperFromMetadata(metadata, image_wrapper, slice_index, reporting)
-            try
-                try
-                    [file_path, file_name] = PTKDiskUtilities.GetFullFileParts(metadata.Filename);
-                    header = PTKReadDicomTags(file_path, file_name, PTKDicomDictionary.EssentialTagsDictionary(true), reporting);
-                    image_wrapper.RawImage(:, :, slice_index, :) = header.PixelData;
-                    
-                catch exception
-                    image_wrapper.RawImage(:, :, slice_index, :) = dicomread(metadata);
-                end
-                
-            catch exception
-                reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file ' file_name '. Error:' exception.message]);
-            end
-        end
-        
-        % Returns true if three images lie approximately on a straight line (determined
-        % by the coordinates in the ImagePositionPatient Dicom tags)
-        function match = AreImageLocationsConsistent(first_metadata, second_metadata, third_metadata)
+            full_file_name = [file_path, filesep, file_name];
             
-            % If the ImagePositionPatient tag is not present, assume it is
-            % consistent
-            if (~isfield(first_metadata, 'ImagePositionPatient')) && (~isfield(second_metadata, 'ImagePositionPatient'))  && (~isfield(third_metadata, 'ImagePositionPatient'))
-                match = true;
-                return;
+            is_dicom = PTKDicomFallbackLibrary.getLibrary.isdicom(full_file_name);
+        end
+        
+        function dicom_series_uid = GetDicomSeriesUid(fileName, dictionary)
+            % Gets the series UID for a Dicom file
+            
+            if isempty(dictionary)
+                dictionary = DMDicomDictionary.GroupingDictionary;
             end
             
-            % First get the image position
-            first_position = first_metadata.ImagePositionPatient;
-            second_position = second_metadata.ImagePositionPatient;
-            third_position = third_metadata.ImagePositionPatient;
+            header = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, dictionary);
             
-            % Next, compute direction vectors between the points
-            direction_vector_1 = second_position - first_position;
-            direction_vector_2 = third_position - first_position;
-            
-            % Find a scaling between the direction vectors
-            [max_1, scale_index_1] = max(abs(direction_vector_1));
-            [max_2, scale_index_2] = max(abs(direction_vector_2));
-            
-            if max_1 > max_2
-                scale_1 = 1;
-                scale_2 = direction_vector_1(scale_index_2)/direction_vector_2(scale_index_2);
+            if isempty(header)
+                dicom_series_uid = [];
             else
-                scale_1 = direction_vector_2(scale_index_1)/direction_vector_1(scale_index_1);
-                scale_2 = 1;
+                % If no SeriesInstanceUID tag then this is not a valid Dicom image (it
+                % might be a DICOMDIR)
+                if isfield(header, 'SeriesInstanceUID')
+                    dicom_series_uid = header.SeriesInstanceUID;
+                else
+                    dicom_series_uid = [];
+                end
             end
-            
-            % Scale
-            scaled_direction_vector_1 = direction_vector_1*scale_1;
-            scaled_direction_vector_2 = direction_vector_2*scale_2;
-            
-            % Find the maximum absolute difference between the normalised vectors
-            difference = abs(scaled_direction_vector_2 - scaled_direction_vector_1);
-            max_difference = max(difference);
-            
-            tolerance_mm = 10;
-            match = max_difference <= tolerance_mm;
+        end
+        
+        function metadata = ReadMetadata(fileName, dictionary, reporting)
+            % Reads in Dicom metadata from the specified file
+            try
+                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, dictionary);
+            catch exception
+                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
+            end
+        end
+        
+        function metadata = ReadGroupingMetadata(fileName, reporting)
+            % Reads in Dicom metadata from the specified file
+            try
+                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, DMDicomDictionary.GroupingDictionary);
+            catch exception
+                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
+            end
+        end
+        
+        function metadata = ReadEssentialMetadata(fileName, reporting)
+            % Reads in Dicom metadata from the specified file
+            try
+                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName);
+            catch exception
+                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
+            end
+        end
+        
+        function image_data = ReadDicomImageFromMetadata(metadata, reporting)
+            % Reads in Dicom image data from the specified metadata
+
+            try
+                image_data = PTKDicomFallbackLibrary.getLibrary.dicomread(metadata);
+            catch exception
+                reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
+            end
+        end
+        
+        function ReadDicomImageIntoWrapperFromMetadata(metadata, image_wrapper, slice_index, reporting)
+            % Reads in Dicom image data from the specified metadata. The image data
+            % is stored directly into the RawImage matrix of a CoreWrapper object
+            try
+                image_wrapper.RawImage(:, :, slice_index, :) = PTKDicomFallbackLibrary.getLibrary.dicomread(metadata);
+                
+            catch exception
+                reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
+            end
         end
         
         function [name, short_name] = PatientNameToString(patient_name)
@@ -189,6 +135,22 @@ classdef PTKDicomUtilities
         function uid = GetIdentifierFromFilename(file_name)
             [~, uid, ~] = fileparts(file_name);
         end
+        
+        function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
+            dicom_filenames = [];
+            for index = 1 : length(filenames)
+                if (PTKDicomUtilities.IsDicom(image_path, filenames{index}))
+                    dicom_filenames{end + 1} = filenames{index};
+                end
+            end
+        end
+        
+        function image_info = GetListOfDicomFiles(image_path)
+            filenames = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
+            filenames = PTKDicomUtilities.RemoveNonDicomFiles(image_path, filenames);
+            image_type = PTKImageFileFormat.Dicom;            
+            image_info = PTKImageInfo(image_path, filenames, image_type, [], [], []);
+        end        
     end
 end
 

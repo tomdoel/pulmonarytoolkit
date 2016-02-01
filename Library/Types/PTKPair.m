@@ -1,6 +1,8 @@
 classdef PTKPair < handle
     % PTKPair. A class for storing two values
     %
+    %     PTKPair is the same as CorePair, but is maintained to provide
+    %     backward compatibility for saved tree structures
     %
     %     Licence
     %     -------

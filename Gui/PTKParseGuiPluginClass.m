@@ -42,7 +42,7 @@ function new_plugin = PTKParseGuiPluginClass(plugin_name, plugin_class, suggeste
     if ismember('Mode', property_list) && ~isempty(plugin_class.Mode)
         new_plugin.Mode = plugin_class.Mode;
     else
-        new_plugin.Mode = PTKSoftwareInfo.DefaultMode;
+        new_plugin.Mode = PTKSoftwareInfo.PluginDefaultMode;
     end
     
     if ismember('SubMode', property_list)

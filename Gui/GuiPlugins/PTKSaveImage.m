@@ -20,9 +20,9 @@ classdef PTKSaveImage < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Export Volume'
-        SelectedText = 'Export Volume'
-        ToolTip = 'Save the current image view to files'
+        ButtonText = 'Export Image'
+        SelectedText = 'Export Image'
+        ToolTip = 'Save the current image to files'
         Category = 'Export'
         Visibility = 'Dataset'
         Mode = 'Toolbar'

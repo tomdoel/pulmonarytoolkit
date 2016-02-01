@@ -1,4 +1,4 @@
-classdef PTKPluginGroupPanel < PTKPanel
+classdef PTKPluginGroupPanel < GemPanel
     % PTKPluginGroupPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -25,12 +25,13 @@ classdef PTKPluginGroupPanel < PTKPanel
         Category
         CurrentCategoryMap
         PluginButtonHandlesMap
-        
+        LoadManualSegmentationCallback;
     end
     
     methods
-        function obj = PTKPluginGroupPanel(parent, category, current_category_map, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKPluginGroupPanel(parent, category, current_category_map, load_manual_segmentation_callback)
+            obj = obj@GemPanel(parent);
+            obj.LoadManualSegmentationCallback = load_manual_segmentation_callback;
             obj.Enabled = false;
             
             obj.Category = category;
@@ -39,13 +40,13 @@ classdef PTKPluginGroupPanel < PTKPanel
             obj.AddPlugins(current_category_map);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@GemPanel(obj, position);
             set(obj.GraphicalComponentHandle, 'Title', obj.Category, 'BorderType', 'etchedin');
         end
         
         function Resize(obj, new_position)
-            Resize@PTKPanel(obj, new_position);
+            Resize@GemPanel(obj, new_position);
             width = new_position(3);
             if isempty(obj.CachedPanelHeight) || (width ~= obj.CachedPanelWidth)
                 obj.ResizePanel(width);
@@ -68,9 +69,13 @@ classdef PTKPluginGroupPanel < PTKPanel
             for current_plugin_key = category_map.keys
                 current_plugin = category_map(char(current_plugin_key));
                 
-                callback_function_handle = @current_plugin.RunPlugin;
-                button_handle = PTKPluginButton(obj, callback_function_handle, current_plugin);
-                obj.AddChild(button_handle, obj.Reporting);
+                if isempty(current_plugin)
+                    button_handle = PTKSegmentationButton(obj, current_plugin_key{1}, obj.LoadManualSegmentationCallback);
+                else
+                    callback_function_handle = @current_plugin.RunPlugin;
+                    button_handle = PTKPluginButton(obj, callback_function_handle, current_plugin);
+                end
+                obj.AddChild(button_handle);
                 
                 obj.PluginButtonHandlesMap(char(current_plugin_key)) = button_handle;
             end

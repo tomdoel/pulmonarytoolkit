@@ -18,10 +18,9 @@ classdef PTKSoftwareInfo < handle
     properties (Constant)
         
         % Version numbers
-        Version = '0.5'
+        Version = '0.6'
         DicomVersion = '0.1'
         DiskCacheSchema = '0.1'
-        XMLVersion = '0.1'
         PTKVersion = '2'
         MatlabMinimumMajorVersion = 7
         MatlabMinimumMinorVersion = 12
@@ -29,26 +28,18 @@ classdef PTKSoftwareInfo < handle
         MatlabAdvisedMinorVersion = 14
 
         % Name of application
-        Name = 'Pulmonary Toolkit'
         DicomName = 'TD Pulmonary Toolkit'
         DicomManufacturer = 'www tomdoel com'
         DicomStudyDescription = 'TD Pulmonary Toolkit exported images'
         WebsiteUrl = 'https://github.com/tomdoel/pulmonarytoolkit'
 
         % Appearance
-        BackgroundColour = [0, 0.129, 0.278]
-        SelectedBackgroundColour = [1.0 0.694 0.392]
-        TextPrimaryColour = [1.0 1.0 1.0]
-        TextSecondaryColour = [1.0 0.694 0.392]
-        TextContrastColour = [0, 0.129, 0.278]
-        IconHighlightColour = [0.7 0.7 0.7]
-        IconSelectedColour = [0.6 0.6 0]
-        IconHighlightSelectedColour = [1 1 0]
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica'
         DefaultCategoryName = 'Uncategorised'
-        DefaultMode = 'Home'
-        Colormap = PTKSystemUtilities.BackwardsCompatibilityColormap;
+        PluginDefaultMode = 'Plugins'
+        DefaultModeOnNewDataset = 'Segment'
+        Colormap = CoreSystemUtilities.BackwardsCompatibilityColormap;
         
         % If this parameter to true, then the patient browser will group together
         % datasets with the same patient name, even if the patient ID is different
@@ -58,7 +49,10 @@ classdef PTKSoftwareInfo < handle
         DiskCacheFolderName = 'ResultsCache'
         OutputDirectoryName = 'Output'
         EditedResultsDirectoryName = 'EditedResults'
+        ManualSegmentationsDirectoryName = 'ManualSegmentations'
+        MarkersDirectoryName = 'Markers'
         ApplicationSettingsFolderName = 'TDPulmonaryToolkit'
+        SharedPluginDirectoryName = 'SharedPlugins'
         PluginDirectoryName = 'Plugins'
         GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')
         GuiToolDirectoryName = fullfile('Gui', 'Toolbar')
@@ -82,7 +76,6 @@ classdef PTKSoftwareInfo < handle
         SchemaCacheName = 'Schema'
         ImageTemplatesCacheName = 'ImageTemplates'
         OutputFolderCacheName = 'OutputFolder'
-        SplashScreenImageFile = 'PTKLogo.jpg'
 
         % Compression to use when saving cache images
         Compression = 'deflate'
@@ -98,10 +91,7 @@ classdef PTKSoftwareInfo < handle
         ToolbarEnabled = true
         ViewerPanelToolbarEnabled = false
         
-        MonitorClassInstances = true % Used for testing to ensure objects are destroyed
-        
         % Do not change this
-        CancelErrorId = 'PTKMain:UserCancel'
         FileMissingErrorId = 'PTKMain:FileMissing'
         FileFormatUnknownErrorId = 'PTKMain:FileFormatUnknown'
         UidNotFoundErrorId = 'PTKMain:UidNotFound'
@@ -116,25 +106,8 @@ classdef PTKSoftwareInfo < handle
     end
 
     methods (Static)
-        function [major_version, minor_version] = GetMatlabVersion
-            [matlab_version, ~] = version;
-            version_matrix = sscanf(matlab_version, '%d.%d.%d.%d');
-            major_version = version_matrix(1);
-            minor_version = version_matrix(2);
-        end
-        
-        function toolbox_installed = IsImageProcessingToolboxInstalled
-            matlab_version = ver;
-            toolbox_installed = any(strcmp('Image Processing Toolbox', {matlab_version.Name}));
-        end
-
-        function toolbox_licensed = IsImageProcessingToolboxLicensed
-            [error_code, error_message] = license('checkout', 'image_toolbox');
-            toolbox_licensed = error_code == 1;
-        end
-        
         function is_cancel_id = IsErrorCancel(error_id)
-            is_cancel_id = strcmp(error_id, PTKSoftwareInfo.CancelErrorId);
+            is_cancel_id = strcmp(error_id, CoreReporting.CancelErrorId);
         end
         
         function is_error_missing_id = IsErrorFileMissing(error_id)

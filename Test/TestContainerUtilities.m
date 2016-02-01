@@ -1,4 +1,4 @@
-classdef TestContainerUtilities < PTKTest
+classdef TestContainerUtilities < CoreTest
     % TestContainerUtilities. Tests for the PTKContainerUtilities class.
     %
     %
@@ -20,16 +20,16 @@ classdef TestContainerUtilities < PTKTest
             input_3 = {'orange', 'kiwi', 'grape'};
             input_4 = [1, 2, 3, 4, 5];
             input_5 = [11, 12; 13, 14];
-            input_6 = [PTKPair('wx', 88), PTKPair('yz', 99)];
+            input_6 = [CorePair('wx', 88), CorePair('yz', 99)];
             
-            obj.Assert(isequal(PTKContainerUtilities.ConvertToSet(input_1), {'banana'}), 'Expected conversion');
-            obj.Assert(~isequal(PTKContainerUtilities.ConvertToSet(input_1), 'banana'), 'Expected conversion');
-            obj.Assert(isequal(PTKContainerUtilities.ConvertToSet(input_2), {'apple'}), 'Expected conversion');
-            obj.Assert(isequal(PTKContainerUtilities.ConvertToSet(input_3), input_3), 'Expected conversion');
-            obj.Assert(isequal(PTKContainerUtilities.ConvertToSet(input_4), {1, 2, 3, 4, 5}), 'Expected conversion');
-            obj.Assert(isequal(PTKContainerUtilities.ConvertToSet(input_5), {11, 12; 13, 14}), 'Expected conversion');
+            obj.Assert(isequal(CoreContainerUtilities.ConvertToSet(input_1), {'banana'}), 'Expected conversion');
+            obj.Assert(~isequal(CoreContainerUtilities.ConvertToSet(input_1), 'banana'), 'Expected conversion');
+            obj.Assert(isequal(CoreContainerUtilities.ConvertToSet(input_2), {'apple'}), 'Expected conversion');
+            obj.Assert(isequal(CoreContainerUtilities.ConvertToSet(input_3), input_3), 'Expected conversion');
+            obj.Assert(isequal(CoreContainerUtilities.ConvertToSet(input_4), {1, 2, 3, 4, 5}), 'Expected conversion');
+            obj.Assert(isequal(CoreContainerUtilities.ConvertToSet(input_5), {11, 12; 13, 14}), 'Expected conversion');
             
-            output_6 = PTKContainerUtilities.ConvertToSet(input_6);
+            output_6 = CoreContainerUtilities.ConvertToSet(input_6);
             obj.Assert(iscell(output_6), 'Expected conversion');
             obj.Assert(strcmp(output_6{1}.First, 'wx'), 'Expected conversion');
             obj.Assert(output_6{1}.Second == 88, 'Expected conversion');

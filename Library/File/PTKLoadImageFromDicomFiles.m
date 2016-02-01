@@ -4,7 +4,7 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
     %     Syntax
     %     ------
     %
-    %         loaded_image = PTKLoadImageFromDicomFiles(path, filenames, reporting)
+    %         loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
     %
     %             loaded_image    a PTKImage containing the 3D volume
     %
@@ -28,34 +28,27 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
 
     % Create a reporting object if none was provided
     if nargin < 3
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
-    % Load the metadata from the DICOM images, and group into coherent sequences
-    file_grouper = PTKLoadMetadataFromDicomFiles(image_path, filenames, reporting);
+    dicomLibrary = PTKDicomFallbackLibrary.getLibrary;
     
-    % Warn the user if we found more than one group, since the others will not
-    % be loaded into the image volume
-    if file_grouper.NumberOfGroups > 1
-        reporting.ShowWarning('PTKLoadImageFromDicomFiles:MultipleGroupings', 'I have removed some images from this dataset because the images did not form a coherent set. This may be due to the presence of scout images or dose reports, or localiser images in multiple orientations. I have formed a volume form the largest coherent set of images in the same orientation.');
+    [image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm] = DMLoadMainImageFromDicomFiles(image_path, filenames, dicomLibrary, reporting);
+    
+    if ~isempty(representative_metadata) && isfield(representative_metadata, 'Modality') && ~isempty(representative_metadata.Modality)
+        if ~PTKModalityIsSupported(representative_metadata.Modality)
+            reporting.Error('PTKLoadImageFromDicomFiles:ModalityNotSupported', ['PTK does not support the ' representative_metadata.Modality ' modality']);
+        end
     end
     
-    % Choose the group with the most images
-    main_group = file_grouper.GetLargestGroup;
+    if isempty(image_volume_wrapper.RawImage)
+        reporting.Error('PTKLoadImageFromDicomFiles:NoPixelData', 'The DICOM file contains no pixel data');
+    end
     
-    % Sort the images into the correct order
-    [slice_thickness, global_origin_mm] = main_group.SortAndGetParameters(reporting);
     if isempty(slice_thickness)
-        reporting.ShowWarning('PTKLoadImageFromDicomFiles:NoSliceThickness', 'No information found about the slice thickness. Setting to 1.');
+        reporting.ShowWarning('PTKLoadImageFromDicomFiles:NoSliceThickness', 'No information found about the slice thickness. Arbitrarily setting slice thickness to 1');
         slice_thickness = 1;
     end
-
-    % Obtain a representative set of metadata tags from the first image in the
-    % sequence
-    representative_metadata = main_group.Metadata{1};
-
-    % Load the pixel data
-    image_volume_wrapper = PTKLoadImagesFromMetadataGrouping(main_group, reporting);
     
     % Detect and remove padding values
     PTKRemovePaddingValues(image_volume_wrapper, representative_metadata, reporting);

@@ -1,4 +1,4 @@
-classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
+classdef PTKSidePanelLinkedSeriesDescription < GemListItem
     % PTKSidePanelLinkedSeriesDescription. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -53,12 +53,11 @@ classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
     end
     
     methods
-        function obj = PTKSidePanelLinkedSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, link_name_text, gui_callback, reporting)
-            obj = obj@PTKListItem(parent, uid, reporting);
+        function obj = PTKSidePanelLinkedSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, link_name_text, gui_callback)
+            obj = obj@GemListItem(parent, uid);
             obj.TextHeight = obj.SeriesTextHeight;
             obj.SeriesUid = uid;
             obj.PatientId = patient_id;
-            obj.Reporting = reporting;
             
             if nargin > 0
                 obj.GuiCallback = gui_callback;
@@ -82,27 +81,27 @@ classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
                 obj.DescriptionText = description_text;
                 obj.NumImagesText = num_images_text;
                 
-                obj.LinkedNameControl = PTKText(obj, obj.LinkedNameText, 'Name of linking tag', 'Link');
+                obj.LinkedNameControl = GemText(obj, obj.LinkedNameText, 'Name of linking tag', 'Link');
                 obj.LinkedNameControl.FontSize = obj.LinkedFontSize;
                 obj.LinkedNameControl.Bold = true;
                 obj.LinkedNameControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.LinkedNameControl, reporting);
+                obj.AddTextItem(obj.LinkedNameControl);
                 obj.LinkedNameControl.BackgroundColour = [0.3, 0.3, 1];
                 
-                obj.ModalityControl = PTKText(obj, obj.ModalityText, 'Select this series', 'Modality');
+                obj.ModalityControl = GemText(obj, obj.ModalityText, 'Select this series', 'Modality');
                 obj.ModalityControl.FontSize = obj.SeriesFontSize;
                 obj.ModalityControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.ModalityControl, reporting);
+                obj.AddTextItem(obj.ModalityControl);
                 
-                obj.DescriptionControl = PTKText(obj, obj.DescriptionText, 'Select this series', 'Description');
+                obj.DescriptionControl = GemText(obj, obj.DescriptionText, 'Select this series', 'Description');
                 obj.DescriptionControl.FontSize = obj.SeriesFontSize;
                 obj.DescriptionControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.DescriptionControl, reporting);
+                obj.AddTextItem(obj.DescriptionControl);
 
-                obj.NumImagesControl = PTKText(obj, obj.NumImagesText, 'Select this series', 'NumImages');
+                obj.NumImagesControl = GemText(obj, obj.NumImagesText, 'Select this series', 'NumImages');
                 obj.NumImagesControl.FontSize = obj.NumImagesFontSize;
                 obj.NumImagesControl.HorizontalAlignment = 'right';
-                obj.AddTextItem(obj.NumImagesControl, reporting);
+                obj.AddTextItem(obj.NumImagesControl);
             end
         end
         
@@ -110,7 +109,7 @@ classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
             size_changed = ~isequal(location, obj.Position);
             
             % Don't call the parent class
-            Resize@PTKVirtualPanel(obj, location);
+            Resize@GemVirtualPanel(obj, location);
             
             [linked_position, modality_position, description_position, num_images_position] = GetLocations(obj, location);
             obj.LinkedNameControl.Resize(linked_position);
@@ -142,17 +141,17 @@ classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
     methods (Access = protected)
         
         function ItemLeftClicked(obj, src, eventdata)
-            ItemLeftClicked@PTKListItem(obj, src, eventdata);
-            obj.GuiCallback.LoadFromPatientBrowser(obj.SeriesUid);
+            ItemLeftClicked@GemListItem(obj, src, eventdata);
+            obj.GuiCallback.SeriesClicked(obj.PatientId, obj.SeriesUid);
         end
         
         function ItemRightClicked(obj, src, eventdata)
-            ItemRightClicked@PTKListItem(obj, src, eventdata);
+            ItemRightClicked@GemListItem(obj, src, eventdata);
             
             if isempty(get(obj.DescriptionControl.GraphicalComponentHandle, 'uicontextmenu'))
                 context_menu = uicontextmenu;
                 context_menu_unlink = uimenu(context_menu, 'Label', 'Unlink this series', 'Callback', @obj.UnlinkDataset);
-                context_menu_delete = uimenu(context_menu, 'Label', 'Delete this series', 'Callback', @obj.DeleteDataset);
+                context_menu_delete = uimenu(context_menu, 'Label', 'Delete this series', 'Callback', @obj.DeleteSeries);
                 context_menu_patient = uimenu(context_menu, 'Label', 'Delete this patient', 'Callback', @obj.DeletePatient);
                 obj.SetContextMenu(context_menu);
             end            
@@ -170,10 +169,10 @@ classdef PTKSidePanelLinkedSeriesDescription < PTKListItem
             obj.GuiCallback.DeletePatient(obj.PatientId);
         end
         
-        function DeleteDataset(obj, ~, ~)
+        function DeleteSeries(obj, ~, ~)
             parent_figure = obj.GetParentFigure;
             parent_figure.ShowWaitCursor;
-            obj.GuiCallback.DeleteDataset(obj.SeriesUid);
+            obj.GuiCallback.DeleteSeries(obj.SeriesUid);
             
             % Note that at this point obj may have been deleted, so we can no longer use it
             parent_figure.HideWaitCursor;

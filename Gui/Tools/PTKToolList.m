@@ -27,16 +27,16 @@ classdef PTKToolList < handle
         EditTool
         ReplaceColourTool
         MapColourTool
-        MarkerPointManager
+        MarkerPointTool
     end
     
     methods
-        function obj = PTKToolList(tool_callback, viewer_panel)
+        function obj = PTKToolList(marker_manager, tool_callback, viewer_panel, image_parameters, image_display_parameters)
             obj.ToolCallback = tool_callback;
             obj.ViewerPanel = viewer_panel;
             
-            obj.CineTool = PTKCineTool(obj.ViewerPanel, tool_callback);
-            obj.WindowLevelTool = PTKWindowLevelTool(obj.ViewerPanel, tool_callback);
+            obj.CineTool = PTKCineTool(image_parameters, tool_callback);
+            obj.WindowLevelTool = PTKWindowLevelTool(image_display_parameters, tool_callback);
             obj.ZoomTool = PTKZoomTool(tool_callback);
             obj.PanTool = PTKPanTool(tool_callback);
             obj.PanMatlabTool = PTKPanMatlabTool(tool_callback);
@@ -44,9 +44,9 @@ classdef PTKToolList < handle
             obj.EditTool = PTKEditManager(obj.ViewerPanel);
             obj.ReplaceColourTool = PTKReplaceColourTool(obj.ViewerPanel);
             obj.MapColourTool = PTKMapColourTool(obj.ViewerPanel);
-            obj.MarkerPointManager = PTKMarkerPointManager(obj.ViewerPanel, tool_callback);
+            obj.MarkerPointTool = PTKMarkerPointTool(marker_manager, obj.ViewerPanel);
            
-            tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointManager, obj.WindowLevelTool, obj.CineTool, obj.EditTool, obj.ReplaceColourTool, obj.MapColourTool};
+            tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointTool, obj.WindowLevelTool, obj.CineTool, obj.EditTool, obj.ReplaceColourTool, obj.MapColourTool};
 
             obj.Tools = containers.Map;
             for tool_set = tool_list
@@ -54,10 +54,6 @@ classdef PTKToolList < handle
                 tag = tool.Tag;
                 obj.Tools(tag) = tool;
             end            
-        end
-        
-        function SetToolbar(obj, toolbar)
-            obj.ToolCallback.SetToolbar(toolbar);
         end
         
         function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier, selected_control)
@@ -77,10 +73,6 @@ classdef PTKToolList < handle
             tool = obj.Tools(tag);
         end
         
-        function marker_point_manager = GetMarkerPointManager(obj)
-            marker_point_manager = obj.MarkerPointManager;
-        end        
-
         function UpdateTools(obj)
             tool_list = obj.Tools.values;
             for tool_set = tool_list

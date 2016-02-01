@@ -53,7 +53,7 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     end
     
     if nargin < 3
-        reporting = PTKReportingDefault;    
+        reporting = CoreReportingDefault;    
     end
     
     if isempty(figure_handle)

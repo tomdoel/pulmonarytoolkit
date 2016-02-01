@@ -11,6 +11,7 @@ classdef PTKModes
     
     properties (Constant)
         EditMode = 'Edit'
+        ManualSegmentationMode = 'ManualSegmentation'
     end
     
 end

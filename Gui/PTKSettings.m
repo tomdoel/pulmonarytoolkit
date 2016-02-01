@@ -1,4 +1,4 @@
-classdef PTKSettings < PTKBaseClass
+classdef PTKSettings < CoreBaseClass
     % PTKSettings. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -25,6 +25,7 @@ classdef PTKSettings < PTKBaseClass
         ScreenPosition
         PatientBrowserScreenPosition
         DeveloperMode = false
+        LastUidForPatientMap
     end
     
     methods (Static)
@@ -50,28 +51,52 @@ classdef PTKSettings < PTKBaseClass
     
     methods
         function obj = PTKSettings
+            obj.LastUidForPatientMap = containers.Map;
         end
         
         function ApplySettingsToGui(obj, gui, viewer_panel)
             gui.DeveloperMode = obj.DeveloperMode;
             viewer_panel.OverlayOpacity = obj.OverlayOpacity;
             viewer_panel.SliceNumber = obj.SliceNumber;
-            viewer_panel.GetMarkerPointManager.ChangeShowTextLabels(obj.ShowTextLabels);
-            viewer_panel.GetMarkerPointManager.ChangeCurrentColour(obj.CurrentMarkerColour);
+            viewer_panel.MarkerImageDisplayParameters.ShowLabels = obj.ShowTextLabels;
+            viewer_panel.NewMarkerColour = obj.CurrentMarkerColour;
         end
         
         function UpdateSettingsFromGui(obj, gui, viewer_panel)
             obj.DeveloperMode = gui.DeveloperMode;
             obj.OverlayOpacity = viewer_panel.OverlayOpacity;
             obj.SliceNumber = viewer_panel.SliceNumber;
-            obj.ShowTextLabels = viewer_panel.GetMarkerPointManager.ShowTextLabels;
-            obj.CurrentMarkerColour = viewer_panel.GetMarkerPointManager.CurrentColour;
+            obj.ShowTextLabels = viewer_panel.MarkerImageDisplayParameters.ShowLabels;
+            obj.CurrentMarkerColour = viewer_panel.NewMarkerColour;
         end
         
         function SetLastImageInfo(obj, image_info, reporting)
             if ~isequal(image_info, obj.ImageInfo)
                 obj.ImageInfo = image_info;
                 obj.SaveSettings(reporting);
+            end
+        end
+        
+        function AddLastPatientUid(obj, patient_id, series_uid)
+            if isempty(obj.LastUidForPatientMap)
+                obj.LastUidForPatientMap = containers.Map;
+            end
+            obj.LastUidForPatientMap(patient_id) = series_uid;
+        end
+        
+        function series_uid = GetLastPatientUid(obj, patient_id)
+            if obj.LastUidForPatientMap.isKey(patient_id)
+                series_uid = obj.LastUidForPatientMap(patient_id);
+            else 
+                series_uid = [];
+            end
+        end
+
+        function RemoveLastPatientUid(obj, series_uid)
+            for key = obj.LastUidForPatientMap.keys
+                if strcmp(obj.LastUidForPatientMap(key{1}), series_uid)
+                    obj.LastUidForPatientMap.remove(key{1});
+                end
             end
         end
         

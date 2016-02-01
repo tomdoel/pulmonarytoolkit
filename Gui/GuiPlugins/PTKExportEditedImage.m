@@ -15,12 +15,15 @@ classdef PTKExportEditedImage < PTKGuiPlugin
     %    
 
     properties
-        ButtonText = 'Export Edit'
-        SelectedText = 'Export Edit'
+        ButtonText = 'Export Corrections'
+        SelectedText = 'Export Corrections'
         ToolTip = 'Exports the current edit to an external file'
-        Category = 'Import / Export'
+        Category = 'Save / load corrections'
         Visibility = 'Overlay'
         Mode = 'Edit'
+
+        Icon = 'export_overlay.png'
+        Location = 28
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -32,5 +35,10 @@ classdef PTKExportEditedImage < PTKGuiPlugin
         function RunGuiPlugin(ptk_gui_app)
             ptk_gui_app.GetMode.ExportEdit;
         end
+        
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
+                ~isequal(ptk_gui_app.GetCurrentModeName, PTKModes.EditMode) && ptk_gui_app.IsTabEnabled('Edit');
+        end                
     end
 end

@@ -1,4 +1,4 @@
-classdef PTKOrganisedPluginsModeList < PTKBaseClass
+classdef PTKOrganisedPluginsModeList < CoreBaseClass
     % PTKOrganisedPluginsModeList. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -14,11 +14,13 @@ classdef PTKOrganisedPluginsModeList < PTKBaseClass
     
     properties (Access = private)
         Modes
+        PluginCache
     end
     
     methods
-        function obj = PTKOrganisedPluginsModeList()
+        function obj = PTKOrganisedPluginsModeList(plugin_cache)
             obj.Clear;
+            obj.PluginCache = plugin_cache;
         end
         
         function Clear(obj)
@@ -36,13 +38,25 @@ classdef PTKOrganisedPluginsModeList < PTKBaseClass
         function AddList(obj, plugin_list, gui_app, reporting)
             for plugin_filename = plugin_list
                 plugin_name = plugin_filename{1}.First;
-                plugin_wrapper = PTKPluginWrapperBase.AddPluginFromName(plugin_name, plugin_filename, gui_app, reporting);
+                plugin_wrapper = PTKPluginWrapperBase.AddPluginFromName(obj.PluginCache, plugin_name, plugin_filename, gui_app, reporting);
                 if ~isempty(plugin_wrapper)
                     obj.Add(plugin_name, plugin_wrapper.ParsedPluginInfo.Mode, plugin_wrapper.ParsedPluginInfo.Category, plugin_wrapper);
                 end
             end
         end
 
+        function AddSegmentationList(obj, segmentation_list, gui_app, reporting)
+            for segmentation_pair = segmentation_list
+                context = segmentation_pair{1}.First;
+                
+                % We currently only support the original image context for
+                % manual segmentations
+                if strcmp(char(context), char(PTKContext.OriginalImage))
+                    segmentation_name = segmentation_pair{1}.Second;
+                    obj.Add(segmentation_name, 'ManualSegmentation', 'Manual segmentations', []);
+                end
+            end
+        end
         
         function Add(obj, name, mode, category, plugin_wrapper)
             if obj.Modes.isKey(mode)

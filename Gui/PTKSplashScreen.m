@@ -1,4 +1,4 @@
-classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
+classdef (Sealed) PTKSplashScreen < CoreProgressInterface & GemFigure
     % PTKSplashScreen. A splash screen dialog which also reports progress informaton
     %
     %     PTKSplashScreen creates a dialog with the application logo and version
@@ -18,6 +18,7 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
     %    
     
     properties (Access = private)
+        AppDef
         Image
         TitleText
         BodyText
@@ -49,17 +50,17 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
     end
         
     methods (Static)
-        function splash_screen = GetSplashScreen
+        function splash_screen = GetSplashScreen(app_def)
             persistent SplashScreen
             if isempty(SplashScreen) || ~isvalid(SplashScreen)
-                SplashScreen = PTKSplashScreen;
+                SplashScreen = PTKSplashScreen(app_def);
             end
             splash_screen = SplashScreen;
         end
     end
     
     methods (Access = private)
-        function obj = PTKSplashScreen
+        function obj = PTKSplashScreen(app_def)
             
             % Calculate the figure windows size
             set(0, 'Units', 'pixels');
@@ -69,15 +70,18 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
             position(2) = max(1, round((screen_size(4) - position(4))/2));
             
             % Call the base class to initialise the hidden window
-            obj = obj@PTKFigure('', position);            
+            reporting = CoreReportingDefault;
+            obj = obj@GemFigure('', position, reporting);
+            obj.StyleSheet = app_def.GetDefaultStyleSheet;
             
             obj.TimerRef = tic;
+            obj.AppDef = app_def;
             
             % Hide the progress bar
             obj.Hide;
             
             % Create the figure
-            obj.Show(PTKReportingDefault);
+            obj.Show;
             set(obj.ProgressBarHandle, 'visible', 0);
             
             drawnow;
@@ -89,24 +93,30 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
             delete(obj.GraphicalComponentHandle);
         end        
 
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKFigure(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@GemFigure(obj, position);
+            
+            background_colour = obj.StyleSheet.TextPrimaryColour;
+            text_colour = obj.StyleSheet.BackgroundColour;
 
             % Override the colour and resize behaviour
-            set(obj.GraphicalComponentHandle, 'Color', [1 1 1], 'Resize', 'off');
+            set(obj.GraphicalComponentHandle, 'Color', background_colour, 'Resize', 'off');
             
-            obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', [30, 70, 223, 200]);
-            logo = imread(PTKSoftwareInfo.SplashScreenImageFile);
+            logo = imread(obj.AppDef.GetLogoFilename);
+            image_size = size(logo);            
+            screen_image_size = PTKSplashScreen.GetOptimalLogoSize(image_size(2:-1:1), [30, 70, 223, 200]);
+            
+            obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', screen_image_size);
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
-            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', PTKSoftwareInfo.Name, 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1]);
+            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', obj.AppDef.GetName, 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 40, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour);
             
-            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', PTKSoftwareInfo.GuiFont, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', [0, 0.129, 0.278], 'BackgroundColor', [1 1 1], 'HorizontalAlignment', 'Center');
-            set(obj.BodyText, 'String', sprintf(['Version ' PTKSoftwareInfo.Version]));
+            obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour, 'HorizontalAlignment', 'Center');
+            set(obj.BodyText, 'String', sprintf(['Version ' obj.AppDef.GetVersion]));
             
             % Create the progress reporting
-            panel_background_colour = [1 1 1];
-            text_color = [0.0 0.129 0.278];
+            panel_background_colour = background_colour;
+            text_color = text_colour;
             
             title_position = [250, 150, 450, 30];
             text_position = [250, 90, 450, 60];
@@ -134,7 +144,7 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
                 text = 'Please wait';
             end
             obj.Hide;
-            obj.DialogTitle = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogTitle = CoreTextUtilities.RemoveHtml(text);
             obj.DialogText = '';
             obj.ProgressValue = 0;
             obj.Hold = true;
@@ -168,7 +178,7 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
             if nargin < 2
                text = 'Please wait'; 
             end            
-            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.Update;
             obj.ShowPanel;            
         end
@@ -182,7 +192,7 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
         
         function SetProgressAndMessage(obj, progress_value, text)
             obj.ShowProgressBar = true;
-            obj.DialogText = PTKTextUtilities.RemoveHtml(text);
+            obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
             obj.Update;
             obj.ShowPanel;            
@@ -253,6 +263,20 @@ classdef (Sealed) PTKSplashScreen < PTKProgressInterface & PTKFigure
         function QuitButton(obj, ~, ~)
             obj.Hide;
             throw(MException('PTKCustomProgressDialog:UserForceQuit', 'User forced plugin to terminate'));
+        end
+    end
+    
+    methods (Static, Access = private)
+        function logo_position = GetOptimalLogoSize(image_size, frame_position)
+            frame_size = frame_position(3:4);
+            if (image_size(1) > frame_size(1) || image_size(2) > frame_size(2))
+                scale = max(ceil(image_size(1)/frame_size(1)), ceil(image_size(2)/frame_size(2)));
+                scale = 1/scale;
+            else
+                scale = min(floor(frame_size(1)/image_size(1)), floor(frame_size(2)/image_size(2)));
+            end
+            scaled_image_size = scale*image_size;
+            logo_position = [frame_position(1:2) + round((frame_size - scaled_image_size)/2), scaled_image_size];
         end
     end
     

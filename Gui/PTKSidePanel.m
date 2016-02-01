@@ -1,4 +1,4 @@
-classdef PTKSidePanel < PTKPanel
+classdef PTKSidePanel < GemPanel
     % PTKSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -15,6 +15,7 @@ classdef PTKSidePanel < PTKPanel
     %    
     
     properties (Access = private)
+        ProjectsSidePanel
         PatientsSidePanel
         ProtocolSidePanel
         SeriesSidePanel
@@ -22,6 +23,7 @@ classdef PTKSidePanel < PTKPanel
         PatientInfoSidePanel
         PatientNameTextControl
         SeriesDescriptions
+        Controller
         GuiState
     end
     
@@ -35,61 +37,82 @@ classdef PTKSidePanel < PTKPanel
     end
     
     methods
-        function obj = PTKSidePanel(parent, patient_database, state, linked_recorder, gui_callback, reporting)
-            obj = obj@PTKPanel(parent, reporting);
+        function obj = PTKSidePanel(parent, controller, patient_database, state, linked_recorder)
+            obj = obj@GemPanel(parent);
             
             obj.RightBorder = true;
             
+            obj.Controller = controller;
             obj.GuiState = state;
             
-            obj.PatientsSidePanel = PTKPatientsSidePanel(obj, patient_database, gui_callback, reporting);
-            obj.AddChild(obj.PatientsSidePanel, obj.Reporting);
+            obj.ProjectsSidePanel = PTKProjectsSidePanel(obj, patient_database, controller);
+            obj.AddChild(obj.ProjectsSidePanel);
             
-            obj.LinkedSeriesSidePanel = PTKLinkedSeriesSidePanel(obj, patient_database, linked_recorder, gui_callback, reporting);
-            obj.AddChild(obj.LinkedSeriesSidePanel, obj.Reporting);
+            obj.PatientsSidePanel = PTKPatientsSidePanel(obj, patient_database, controller);
+            obj.AddChild(obj.PatientsSidePanel);
             
-            obj.SeriesSidePanel = PTKSeriesSidePanel(obj, patient_database, gui_callback, reporting);
-            obj.AddChild(obj.SeriesSidePanel, obj.Reporting);
+            obj.LinkedSeriesSidePanel = PTKLinkedSeriesSidePanel(obj, patient_database, linked_recorder, controller);
+            obj.AddChild(obj.LinkedSeriesSidePanel);
+            
+            obj.SeriesSidePanel = PTKSeriesSidePanel(obj, patient_database, controller);
+            obj.AddChild(obj.SeriesSidePanel);
             
             obj.Repopulate;
 
             % Add listeners for changes to the loaded series
-            obj.AddEventListener(obj.GuiState, 'SeriesUidChangedEvent', @obj.SeriesChanged);            
+            obj.AddEventListener(controller, 'ProjectChangedEvent', @obj.ProjectChanged);            
+            obj.AddEventListener(controller, 'PatientChangedEvent', @obj.PatientChanged);            
+            obj.AddEventListener(state, 'SeriesUidChangedEvent', @obj.SeriesChanged);            
+            obj.AddEventListener(state, 'PatientIdChangedEvent', @obj.PatientChanged);
             obj.AddEventListener(linked_recorder, 'LinkingChanged', @obj.LinkingChanged);            
+            obj.AddEventListener(patient_database, 'DatabaseHasChanged', @obj.DatabaseHasChanged);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@GemPanel(obj, position);
         end
         
         function Resize(obj, new_position)
-            Resize@PTKPanel(obj, new_position);
+            Resize@GemPanel(obj, new_position);
             
-            % After calling Resize@PTKPanel, the position will have been adjusted due to the border
+            % After calling Resize@GemPanel, the position will have been adjusted due to the border
             new_position = obj.InnerPosition;
             
-            available_height = new_position(4) - 2*obj.SpacingBetweenLists;
+            % Only show the projects panel if there is more than one
+            % project
+            if obj.ProjectsSidePanel.GetNumItems < 2
+                obj.ProjectsSidePanel.Disable;
+                panels = {};
+            else
+                obj.ProjectsSidePanel.Enable;
+                panels = {obj.ProjectsSidePanel};
+            end
+
+            % Only show the linked series panel if there is at least one
+            % linked series
+            if obj.LinkedSeriesSidePanel.GetNumItems < 1
+                obj.LinkedSeriesSidePanel.Disable;
+                panels = [panels, {obj.PatientsSidePanel, obj.SeriesSidePanel}];
+            else
+                obj.LinkedSeriesSidePanel.Enable;
+                panels = [panels, {obj.PatientsSidePanel, obj.LinkedSeriesSidePanel, obj.SeriesSidePanel}];
+            end
             
-            panels = {obj.PatientsSidePanel, obj.LinkedSeriesSidePanel, obj.SeriesSidePanel};
+            available_height = new_position(4) - (numel(panels) - 1)*obj.SpacingBetweenLists;
+            
             panel_heights = obj.GetPanelHeights(panels, new_position(3), available_height);
 
             y_offset = max(0, available_height - sum(panel_heights));
+            y_position = new_position(2) + y_offset;
             
-            series_position = new_position;
-            series_position(2) = series_position(2) + y_offset;
-            series_position(4) = panel_heights(3);
-            
-            linked_series_position = new_position;
-            linked_series_position(2) = series_position(2) + obj.SpacingBetweenLists + panel_heights(3);
-            linked_series_position(4) = panel_heights(2);
-            
-            patients_position = new_position;
-            patients_position(2) = linked_series_position(2) + obj.SpacingBetweenLists + panel_heights(2);
-            patients_position(4) = panel_heights(1);
-            
-            obj.PatientsSidePanel.Resize(patients_position);
-            obj.LinkedSeriesSidePanel.Resize(linked_series_position);
-            obj.SeriesSidePanel.Resize(series_position);
+            for panel_index = numel(panels) : -1 : 1
+                panel = panels{panel_index};
+                panel_position = new_position;
+                panel_position(2) = y_position;
+                panel_position(4) = panel_heights(panel_index);
+                panel.Resize(panel_position);
+                y_position = y_position + obj.SpacingBetweenLists + panel_heights(panel_index);
+            end
         end
         
         
@@ -97,11 +120,8 @@ classdef PTKSidePanel < PTKPanel
             height = obj.PanelHeight;
         end
         
-        function DatabaseHasChanged(obj)
-            obj.Repopulate;
-        end
-        
         function Repopulate(obj)
+            obj.ProjectsSidePanel.RepopulateSidePanel(obj.Controller.GetCurrentProject);
             obj.PatientsSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId);
             obj.LinkedSeriesSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
             obj.SeriesSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
@@ -109,10 +129,44 @@ classdef PTKSidePanel < PTKPanel
                 obj.Resize(obj.Position);
             end
         end
-        
+
+        function Refresh(obj, ~, ~)
+            obj.Repopulate;
+        end
     end
     
     methods (Access = private)
+        function DatabaseHasChanged(obj, ~, ~)
+            obj.Repopulate;
+        end
+        
+        function ProjectChanged(obj, ~, event_data)
+            project_id = event_data.Data;
+            project_has_changed = obj.ProjectsSidePanel.UpdateSidePanel(project_id);
+            
+            if project_has_changed
+                obj.PatientsSidePanel.RepopulateSidePanel(obj.GuiState.CurrentPatientId);
+                obj.LinkedSeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
+                obj.SeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
+                if ~isempty(obj.Position)
+                    obj.Resize(obj.Position);
+                end
+            end
+        end
+        
+        function PatientChanged(obj, ~, event_data)
+            patient_id = event_data.Data;
+            patient_has_changed = obj.PatientsSidePanel.UpdateSidePanel(patient_id);
+            
+            if patient_has_changed
+                obj.LinkedSeriesSidePanel.RepopulateSidePanel(patient_id, obj.GuiState.CurrentSeriesUid);
+                obj.SeriesSidePanel.RepopulateSidePanel(patient_id, obj.GuiState.CurrentSeriesUid);
+                if ~isempty(obj.Position)
+                    obj.Resize(obj.Position);
+                end
+            end
+        end
+        
         function SeriesChanged(obj, ~, ~)
             % This event fires when the loaded series has been changed.
             
@@ -123,7 +177,9 @@ classdef PTKSidePanel < PTKPanel
             if patient_has_changed
                 obj.LinkedSeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
                 obj.SeriesSidePanel.RepopulateSidePanel(obj.PatientsSidePanel.CurrentPatientId, obj.GuiState.CurrentSeriesUid);
-                
+                if ~isempty(obj.Position)
+                    obj.Resize(obj.Position);
+                end
             else
                 % Otherwise, we only need to change the highlighted series
                 obj.LinkedSeriesSidePanel.UpdateSidePanel(obj.GuiState.CurrentSeriesUid);                
@@ -137,9 +193,6 @@ classdef PTKSidePanel < PTKPanel
                 obj.Resize(obj.Position);
             end
         end
-        
-        
-        
     end
     
     methods (Static, Access = private)

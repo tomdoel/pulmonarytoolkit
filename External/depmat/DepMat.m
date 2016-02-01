@@ -80,17 +80,40 @@ classdef DepMat
         end
 
         function installed = isGitInstalled
-            installed = ~isempty(DepMat.execute('which git'));
+            if ispc
+                command = 'where git';
+            else
+                command = 'which git';
+            end
+            
+            installed = DepMat.execute(command);
         end
         
         function fixCurlPath
             % Matlab's curl configuration doesn't include https so git will not work.
             % We need to add the system curl configuration directory earlier in the
             % path so that it picks up this one instead of Matlab's
-            currentLibPath = getenv('DYLD_LIBRARY_PATH');
-            binDir = '/usr/lib';
-            if (7 == exist(binDir, 'dir')) && ~strcmp(currentLibPath(1:length(binDir) + 1), [binDir ':'])
-                setenv('DYLD_LIBRARY_PATH', [binDir ':' currentLibPath]);
+            
+            try
+                if ismac
+                    pathName = 'DYLD_LIBRARY_PATH';
+                    binDir = '/usr/lib';
+                elseif isunix
+                    pathName = 'LD_LIBRARY_PATH';
+                    binDir = '/usr/lib';
+                else
+                    pathName = [];
+                    binDir = [];
+                end
+                
+                if ~isempty(pathName)
+                    currentLibPath = getenv(pathName);
+                    if (7 == exist(binDir, 'dir')) && ~strcmp(currentLibPath(1:length(binDir) + 1), [binDir ':'])
+                        setenv(pathName, [binDir ':' currentLibPath]);
+                    end
+                end
+            catch exception
+                disp(['DepMat:fixCurlPath error: ' exception.message]);
             end
         end
     end

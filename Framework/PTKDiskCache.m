@@ -26,54 +26,60 @@ classdef PTKDiskCache < handle
     properties (Access = private)
         Uuid         % A unique identifier for this dataset
         SchemaNumber % Version number
+        Reporting
     end
     
     methods
         
         function obj = PTKDiskCache(cache_parent_directory, uuid, reporting)
+            obj.SchemaNumber = 1;
+            obj.Uuid = uuid;
+            obj.Reporting = reporting;
+            
             % Create a disk cache object, and associated folder, for the dataset
             % associated with this unique identifier
             if ~exist(cache_parent_directory, 'dir')
                 mkdir(cache_parent_directory);
             end
             
-            cache_directory = fullfile(cache_parent_directory, uuid);
-            if ~exist(cache_directory, 'dir')
-                mkdir(cache_directory);
-                reporting.LogVerbose(['Creating disk cache : ' cache_directory]);
-            else
-                reporting.LogVerbose(['Using disk cache : ' cache_directory]);
-            end
-            
-            obj.Uuid = uuid;
-            obj.CachePath = cache_directory;
-            obj.SchemaNumber = 1;
-
-            if obj.Exists(PTKSoftwareInfo.SchemaCacheName, [], reporting)
-                schema = obj.Load(PTKSoftwareInfo.SchemaCacheName, [], reporting);
-                if (schema ~= obj.SchemaNumber)
-                    reporting.Error('PTKDiskCache:BadSchema', 'Wrong schema found This is caused by having a disk cache from a redundant version of code. Delete your Temp directory to fix.');
+            obj.CachePath = fullfile(cache_parent_directory, uuid);
+            if obj.CacheDirExists
+                reporting.LogVerbose(['Using disk cache : ' obj.CachePath]);
+                if obj.Exists(PTKSoftwareInfo.SchemaCacheName, [], reporting)
+                    schema = obj.Load(PTKSoftwareInfo.SchemaCacheName, [], reporting);
+                    if (schema ~= obj.SchemaNumber)
+                        reporting.Error('PTKDiskCache:BadSchema', 'Wrong schema found. This is caused by having a disk cache from a redundant version of code. Delete your cache directory to fix.');
+                    end
+                else
+                    obj.Save(PTKSoftwareInfo.SchemaCacheName, obj.SchemaNumber, [], reporting);
                 end
-            else
-               obj.Save(PTKSoftwareInfo.SchemaCacheName, obj.SchemaNumber, [], reporting);
+                
             end
         end
         
         function exists = Exists(obj, name, context, ~)
-            % Determine if a results file exists in the cahce
-            filename = [fullfile(obj.CachePath, char(context), name) '.mat'];
-            exists = (2 == exist(filename, 'file'));
+            if ~obj.CacheDirExists
+                exists = false;
+            else
+                % Determine if a results file exists in the cahce
+                filename = [fullfile(obj.CachePath, char(context), name) '.mat'];
+                exists = (2 == exist(filename, 'file'));
+            end
         end
         
         function exists = RawFileExists(obj, name, context, ~)
-            % Determine if the raw image file associated with a PTKImage results file exists in the cahce
-            filename = [fullfile(obj.CachePath, char(context), name) '.raw'];
-            exists = (2 == exist(filename, 'file'));
+            if ~obj.CacheDirExists
+                exists = false;
+            else
+                % Determine if the raw image file associated with a PTKImage results file exists in the cahce
+                filename = [fullfile(obj.CachePath, char(context), name) '.raw'];
+                exists = (2 == exist(filename, 'file'));
+            end
         end
 
         function [result, info] = Load(obj, name, context, reporting)
             % Load a result from the cache
-            if obj.Exists(name, context, reporting)
+            if obj.CacheDirExists && obj.Exists(name, context, reporting)
                 file_path = fullfile(obj.CachePath, char(context));
                 
                 try
@@ -124,22 +130,24 @@ classdef PTKDiskCache < handle
         function Delete(obj, reporting)
             % Deletes the disk cache
             
-            % Store the state of the recycle bin
-            state = recycle;
-
-            % Set recycle to on or off depending on a software switch
-            if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
-                recycle('on');
-            else
-                recycle('off');
+            if obj.CacheDirExists
+                % Store the state of the recycle bin
+                state = recycle;
+                
+                % Set recycle to on or off depending on a software switch
+                if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
+                    recycle('on');
+                else
+                    recycle('off');
+                end
+                
+                reporting.ShowMessage('PTKDiskCache:DeletingDirectory', ['Deleting directory: ' obj.CachePath]);
+                reporting.Log(['Deleting directory' obj.CachePath]);
+                rmdir(obj.CachePath, 's');
+                
+                % Restore previous recycle bin state
+                recycle(state);
             end
-            
-            reporting.ShowMessage('PTKDiskCache:DeletingDirectory', ['Deleting directory: ' obj.CachePath]);
-            reporting.Log(['Deleting directory' obj.CachePath]);
-            rmdir(obj.CachePath, 's');
-            
-            % Restore previous recycle bin state
-            recycle(state);
         end
 
         
@@ -148,39 +156,60 @@ classdef PTKDiskCache < handle
             % files such as dataset info and manually-created marker files, unless
             % the "remove_framework_files" flag is set to true.
             
-            % Store the state of the recycle bin
-            state = recycle;
-
-            % Set recycle to on or off depending on a software switch
-            if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
-                recycle('on');
-            else
-                recycle('off');
+            if obj.CacheDirExists
+                % Store the state of the recycle bin
+                state = recycle;
+                
+                % Set recycle to on or off depending on a software switch
+                if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
+                    recycle('on');
+                else
+                    recycle('off');
+                end
+                
+                % Remove cache files in the root directory for this dataset
+                obj.RemoveFilesInDirectory(obj.CachePath, '*', remove_framework_files, reporting);
+                
+                % Remove cache files in the context directories for this dataset
+                dir_list = CoreDiskUtilities.GetListOfDirectories(obj.CachePath);
+                for next_dir = dir_list
+                    obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), '*', remove_framework_files, reporting);
+                end
+                
+                % Restore previous recycle bin state
+                recycle(state);
             end
-            
-            % Remove cache files in the root directory for this dataset
-            obj.RemoveFilesInDirectory(obj.CachePath, '*', remove_framework_files, reporting);
-            
-            % Remove cache files in the context directories for this dataset
-            dir_list = PTKDiskUtilities.GetListOfDirectories(obj.CachePath);
-            for next_dir = dir_list
-                obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), '*', remove_framework_files, reporting);
-            end
-            
-            % Restore previous recycle bin state
-            recycle(state);
         end
         
         function dir_list = DeleteFileForAllContexts(obj, name, reporting)
             % Delete particular files from all context folders in this dataset
             
-            % Remove cache files in the root directory for this dataset
-            obj.RemoveFilesInDirectory(obj.CachePath, name, false, reporting);
-            
-            % Remove cache files in the context directories for this dataset
-            dir_list = PTKDiskUtilities.GetListOfDirectories(obj.CachePath);
-            for next_dir = dir_list
-                obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), name, false, reporting);
+            if obj.CacheDirExists
+                % Remove cache files in the root directory for this dataset
+                obj.RemoveFilesInDirectory(obj.CachePath, name, false, reporting);
+                
+                % Remove cache files in the context directories for this dataset
+                dir_list = CoreDiskUtilities.GetListOfDirectories(obj.CachePath);
+                for next_dir = dir_list
+                    obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), name, false, reporting);
+                end
+            end
+        end
+        
+        function file_list = GetAllFilesInCache(obj)
+            file_list = CorePair.empty;
+
+            if obj.CacheDirExists
+                context_list = CoreDiskUtilities.GetListOfDirectories(obj.CachePath);
+                context_list{end + 1} = '';
+                for context_cell = context_list
+                    context = context_cell{1};
+                    m_file_list = CoreDiskUtilities.GetDirectoryFileList(fullfile(obj.CachePath, context), '*.mat');
+                    for m_file = m_file_list
+                        [~, name, ~] = fileparts(m_file{1});
+                        file_list{end + 1} = CorePair(context, name);
+                    end
+                end
             end
         end
 
@@ -190,8 +219,8 @@ classdef PTKDiskCache < handle
     
         function RemoveFilesInDirectory(file_path, name, remove_framework_files, reporting)
             
-            file_list = PTKDiskUtilities.GetDirectoryFileList(file_path, [name, '.raw']);
-            file_list_2 = PTKDiskUtilities.GetDirectoryFileList(file_path, [name, '.mat']);
+            file_list = CoreDiskUtilities.GetDirectoryFileList(file_path, [name, '.raw']);
+            file_list_2 = CoreDiskUtilities.GetDirectoryFileList(file_path, [name, '.mat']);
             file_list = cat(2, file_list, file_list_2);
             for index = 1 : length(file_list)
                 file_name = file_list{index};
@@ -209,15 +238,30 @@ classdef PTKDiskCache < handle
     
     methods (Access = private)
 
+        function CreateCacheDirIfNecessary(obj)
+            if ~obj.CacheDirExists
+                mkdir(obj.CachePath);
+                obj.Reporting.LogVerbose(['Creating disk cache : ' obj.CachePath]);
+                
+                % Create schema
+                obj.Save(PTKSoftwareInfo.SchemaCacheName, obj.SchemaNumber, [], obj.Reporting);
+            end
+        end
+        
+        function exists = CacheDirExists(obj)
+            exists = exist(obj.CachePath, 'dir') == 7;
+        end
+        
         function PrivateSave(obj, name, value, info, context, reporting)
+            obj.CreateCacheDirIfNecessary;
             file_path_with_context = fullfile(obj.CachePath, char(context));
-            PTKDiskUtilities.CreateDirectoryIfNecessary(file_path_with_context);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(file_path_with_context);
             result = [];
             if ~isempty(info)
                 result.info = info;
             end
             result.value = value;
-            PTKDiskUtilities.SaveStructure(file_path_with_context, name, result, reporting);
+            PTKDiskUtilities.SaveStructure(file_path_with_context, name, result, PTKSoftwareInfo.Compression, reporting);
         end
     end
 end

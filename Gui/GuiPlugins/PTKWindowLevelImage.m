@@ -24,20 +24,37 @@ classdef PTKWindowLevelImage < PTKGuiPlugin
         ToolTip = 'Changes the window and level settings to values specified in the image'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'
-        Mode = 'View'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'wl_image.png'
-        Location = 4
+        Location = 24
     end
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ImagePanel.Window = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1);
-            ptk_gui_app.ImagePanel.Level = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
+            background_image = ptk_gui_app.ImagePanel.BackgroundImage;
+            if isa(background_image, 'PTKDicomImage')
+                ptk_gui_app.ImagePanel.Window = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1);
+                ptk_gui_app.ImagePanel.Level = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
+            end
         end
+
+        function enabled = IsEnabled(ptk_gui_app)
+            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.IsCT;
+        end
+        
+        function is_selected = IsSelected(ptk_gui_app)
+            background_image = ptk_gui_app.ImagePanel.BackgroundImage;
+            if isa(background_image, 'PTKDicomImage')
+                is_selected = isfield(ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader, 'WindowWidth') && ptk_gui_app.ImagePanel.Window == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1) && ptk_gui_app.ImagePanel.Level == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
+            else
+                is_selected = false;
+            end
+        end
+        
     end
 end

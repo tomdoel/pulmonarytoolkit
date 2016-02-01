@@ -1,4 +1,4 @@
-classdef PTKSeriesDescription < PTKListItem
+classdef PTKSeriesDescription < GemListItem
     % PTKSeriesDescription. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -51,12 +51,11 @@ classdef PTKSeriesDescription < PTKListItem
     end
     
     methods
-        function obj = PTKSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, gui_callback, reporting)
-            obj = obj@PTKListItem(parent, uid, reporting);
+        function obj = PTKSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, gui_callback)
+            obj = obj@GemListItem(parent, uid);
             obj.TextHeight = obj.SeriesTextHeight;
             obj.SeriesUid = uid;
             obj.PatientId = patient_id;
-            obj.Reporting = reporting;
             
             if nargin > 0
                 obj.GuiCallback = gui_callback;
@@ -97,30 +96,30 @@ classdef PTKSeriesDescription < PTKListItem
                 obj.NumImagesText = num_images_text;
                 obj.NumImagesSuffixText = num_images_suffix_text;
                 
-                obj.ModalityControl = PTKText(obj, obj.ModalityText, 'Select this series', 'Modality');
+                obj.ModalityControl = GemText(obj, obj.ModalityText, 'Select this series', 'Modality');
                 obj.ModalityControl.FontSize = obj.SeriesFontSize;
                 obj.ModalityControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.ModalityControl, reporting);
+                obj.AddTextItem(obj.ModalityControl);
                 
-                obj.DescriptionControl = PTKText(obj, obj.DescriptionText, 'Select this series', 'Description');
+                obj.DescriptionControl = GemText(obj, obj.DescriptionText, 'Select this series', 'Description');
                 obj.DescriptionControl.FontSize = obj.SeriesFontSize;
                 obj.DescriptionControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.DescriptionControl, reporting);
+                obj.AddTextItem(obj.DescriptionControl);
                 
-                obj.DateControl = PTKText(obj, obj.DateText, 'Select this series', 'Date');
+                obj.DateControl = GemText(obj, obj.DateText, 'Select this series', 'Date');
                 obj.DateControl.FontSize = obj.SeriesFontSize;
                 obj.DateControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.DateControl, reporting);
+                obj.AddTextItem(obj.DateControl);
                 
-                obj.NumImagesControl = PTKText(obj, obj.NumImagesText, 'Select this series', 'NumImages');
+                obj.NumImagesControl = GemText(obj, obj.NumImagesText, 'Select this series', 'NumImages');
                 obj.NumImagesControl.FontSize = obj.SeriesFontSize;
                 obj.NumImagesControl.HorizontalAlignment = 'right';
-                obj.AddTextItem(obj.NumImagesControl, reporting);
+                obj.AddTextItem(obj.NumImagesControl);
                 
-                obj.NumImagesSuffixControl = PTKText(obj, obj.NumImagesSuffixText, 'Select this series', 'NumImagesSuffix');
+                obj.NumImagesSuffixControl = GemText(obj, obj.NumImagesSuffixText, 'Select this series', 'NumImagesSuffix');
                 obj.NumImagesSuffixControl.FontSize = obj.SeriesFontSize;
                 obj.NumImagesSuffixControl.HorizontalAlignment = 'left';
-                obj.AddTextItem(obj.NumImagesSuffixControl, reporting);
+                obj.AddTextItem(obj.NumImagesSuffixControl);
             end
         end
         
@@ -128,7 +127,7 @@ classdef PTKSeriesDescription < PTKListItem
             size_changed = ~isequal(location, obj.Position);
             
             % Don't call the parent class
-            Resize@PTKVirtualPanel(obj, location);
+            Resize@GemVirtualPanel(obj, location);
             
             [modality_position, description_position, date_position, num_images_position, num_images_suffix_position] = GetLocations(obj, location);
             obj.ModalityControl.Resize(modality_position);
@@ -164,16 +163,16 @@ classdef PTKSeriesDescription < PTKListItem
     methods (Access = protected)
         
         function ItemLeftClicked(obj, src, eventdata)
-            ItemLeftClicked@PTKListItem(obj, src, eventdata);
-            obj.GuiCallback.LoadFromPatientBrowser(obj.PatientId, obj.SeriesUid);
+            ItemLeftClicked@GemListItem(obj, src, eventdata);
+            obj.GuiCallback.SeriesClicked(obj.PatientId, obj.SeriesUid);
         end
         
         function ItemRightClicked(obj, src, eventdata)
-            ItemRightClicked@PTKListItem(obj, src, eventdata);
+            ItemRightClicked@GemListItem(obj, src, eventdata);
             
             if isempty(get(obj.DescriptionControl.GraphicalComponentHandle, 'uicontextmenu'))
                 context_menu = uicontextmenu;
-                context_menu_delete = uimenu(context_menu, 'Label', 'Delete this series', 'Callback', @obj.DeleteDataset);
+                context_menu_delete = uimenu(context_menu, 'Label', 'Delete this series', 'Callback', @obj.DeleteSeries);
                 context_menu_patient = uimenu(context_menu, 'Label', 'Delete this patient', 'Callback', @obj.DeletePatient);
                 obj.SetContextMenu(context_menu);
             end
@@ -188,10 +187,10 @@ classdef PTKSeriesDescription < PTKListItem
             obj.Parent.DeletePatient;
         end
         
-        function DeleteDataset(obj, ~, ~)
+        function DeleteSeries(obj, ~, ~)
             parent_figure = obj.GetParentFigure;
             parent_figure.ShowWaitCursor;
-            obj.GuiCallback.DeleteDataset(obj.SeriesUid);
+            obj.GuiCallback.DeleteSeries(obj.SeriesUid);
             
             % Note that at this point obj may have been deleted, so we can no longer use it
             parent_figure.HideWaitCursor;

@@ -1,4 +1,4 @@
-classdef PTKModeTabControl < PTKTabControl
+classdef PTKModeTabControl < GemTabControl
     % PTKModeTabControl. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -14,9 +14,10 @@ classdef PTKModeTabControl < PTKTabControl
 
     properties (Access = private)
         OrganisedPlugins
+        OrganisedManualSegmentations
         Gui
         
-        ViewPanel
+        SegmentPanel
         PluginsPanel
         EditPanel
         AnalysisPanel
@@ -25,35 +26,35 @@ classdef PTKModeTabControl < PTKTabControl
     end
 
     methods
-        function obj = PTKModeTabControl(parent, organised_plugins, reporting)
-            obj = obj@PTKTabControl(parent, reporting);
+        function obj = PTKModeTabControl(parent, organised_plugins, organised_manual_segmentations, app_def)
+            obj = obj@GemTabControl(parent);
 
             obj.OrganisedPlugins = organised_plugins;
+            obj.OrganisedManualSegmentations = organised_manual_segmentations;
             obj.TabEnabled = containers.Map;
 
             obj.Gui = parent;
             
             obj.LeftBorder = true;
 
-            obj.ViewPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'View', 'all', obj.Gui, obj.Reporting);
-            obj.AddTabbedPanel(obj.ViewPanel, 'View', 'viewbar', 'Visualisation');
+            obj.SegmentPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', obj.Gui, app_def, true, true);
+            obj.AddTabbedPanel(obj.SegmentPanel, 'Segment', 'Segment', 'Segmentation');
             
-            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Home', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
-            obj.AddTabbedPanel(obj.PluginsPanel, 'Segment', 'segment', 'Algorithms for segmenting lung features');
-            obj.PluginsPanel.AddPlugins([]);
+            obj.EditPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', obj.Gui, app_def, true, true);
+            obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'Edit', 'Manual correction of results');
 
-            obj.EditPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
-            obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'edit', 'Manual correction of results');
-            obj.EditPanel.AddPlugins([]);
-            
-            obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', 'all', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, obj.Reporting);
-            obj.AddTabbedPanel(obj.AnalysisPanel, 'Analyse', 'analysis', 'Perform analysis and save as tables and graphs');
+            obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.AddTabbedPanel(obj.AnalysisPanel, 'Analyse', 'Analysis', 'Perform analysis and save as tables and graphs');
             obj.AnalysisPanel.AddPlugins([]);
+
+            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Developer', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.AddTabbedPanel(obj.PluginsPanel, 'Plugins', 'Plugins', 'Algorithms for segmenting lung features');
+            obj.PluginsPanel.AddPlugins([]);
         end
         
-        function mode = GetPluginMode(obj, mode_tag)
+        function mode = GetModeToSwitchTo(obj, mode_tag)
             panel = obj.PanelMap(mode_tag);
-            mode = panel.GetMode;
+            mode = panel.GetModeToSwitchTo;
         end
         
         function AddPreviewImage(obj, plugin_name, dataset, window, level)
@@ -63,13 +64,17 @@ classdef PTKModeTabControl < PTKTabControl
         end
         
         function RefreshPlugins(obj, dataset, window, level)
-            obj.OrganisedPlugins.Repopulate(obj.Reporting)
+            obj.OrganisedPlugins.Repopulate(obj.Reporting);
+            obj.OrganisedManualSegmentations.Repopulate(obj.Reporting);
             for panel = obj.PanelMap.values
                 panel{1}.RefreshPlugins(dataset, window, level);
             end
         end
         
-        function AddAllPreviewImagesToButtons(obj, dataset, window, level)
+        function UpdateGuiForNewDataset(obj, dataset, window, level)
+            % Update manual segmentations
+            obj.OrganisedManualSegmentations.Repopulate(obj.Reporting);
+            % Add preview images to buttons
             for panel = obj.PanelMap.values
                 panel{1}.AddAllPreviewImagesToButtons(dataset, window, level);
             end
@@ -82,7 +87,8 @@ classdef PTKModeTabControl < PTKTabControl
         end
         
         function UpdateDynamicPanels(obj)
-            obj.ViewPanel.Update(obj.Gui);
+            obj.SegmentPanel.Update(obj.Gui);
+            obj.EditPanel.Update(obj.Gui);
         end
         
         function UpdateMode(obj, plugin_info)
@@ -90,12 +96,37 @@ classdef PTKModeTabControl < PTKTabControl
             first_enabled_tab = [];
             for panel_key = obj.PanelMap.keys
                 panel = obj.PanelMap(panel_key{1});
-                panel_mode_name = panel.GetMode;
-                if strcmp(panel_mode_name, 'all')
+                visibility = panel.GetVisibility;
+                if isempty(visibility) || strcmp(visibility, 'Always')
                     if isempty(first_enabled_tab)
                         first_enabled_tab = panel_key{1};
                     end
-                else
+                elseif strcmp(visibility, 'Dataset')
+                    if obj.Gui.IsDatasetLoaded
+                        obj.TabPanel.EnableTab(panel_key{1});
+                        if isempty(first_enabled_tab)
+                            first_enabled_tab = panel_key{1};
+                        end
+                    else
+                        obj.TabPanel.DisableTab(panel_key{1});
+                        if strcmp(panel_key{1}, obj.CurrentPanelTag)
+                            force_change = true;
+                        end
+                    end
+                elseif strcmp(visibility, 'Developer')
+                    if obj.Gui.DeveloperMode
+                        obj.TabPanel.EnableTab(panel_key{1});
+                        if isempty(first_enabled_tab)
+                            first_enabled_tab = panel_key{1};
+                        end
+                    else
+                        obj.TabPanel.DisableTab(panel_key{1});
+                        if strcmp(panel_key{1}, obj.CurrentPanelTag)
+                            force_change = true;
+                        end
+                    end
+                elseif strcmp(visibility, 'Plugin')
+                    panel_mode_name = panel.GetModeTabName;
                     if isempty(plugin_info) || ~any(strcmp(panel_mode_name, plugin_info.EnableModes))
                         obj.TabPanel.DisableTab(panel_key{1});
                         if strcmp(panel_key{1}, obj.CurrentPanelTag)
@@ -107,6 +138,8 @@ classdef PTKModeTabControl < PTKTabControl
                             first_enabled_tab = panel_key{1};
                         end
                     end
+                else
+                    obj.Reporting.Error('PTKModeTabControl:UnknownModeVisibility', 'The Visibility property of the mode panel is set to an unknown value');
                 end
             end
             if force_change && ~isempty(first_enabled_tab)
@@ -114,13 +147,28 @@ classdef PTKModeTabControl < PTKTabControl
             end
         end
         
-        function enabled = IsTabEnabled(obj, panel_mode_name)
-            enabled = obj.TabPanel.IsTabEnabled(panel_mode_name);
+        function AutoTabSelection(obj, mode)
+            if ~isempty(mode)
+            tab_to_select = [];
+            for panel_key = obj.PanelMap.keys
+                panel = obj.PanelMap(panel_key{1});
+                if isempty(tab_to_select) && obj.TabPanel.IsTabEnabled(panel_key{1})
+                    tab_to_select = panel_key{1};
+                end                
+                mode_to_switch_to = panel.GetModeToSwitchTo;
+                if ~isempty(mode) && strcmp(mode, mode_to_switch_to)
+                    tab_to_select = mode;
+                end
+            end
+            if ~isempty(tab_to_select)
+                obj.ChangeSelectedTab(tab_to_select);
+            end
+            end
         end
         
-        function mode = GetModeName(obj)
-            mode = obj.CurrentPanelTag;
-        end
+        function enabled = IsTabEnabled(obj, panel_mode_name)
+            enabled = obj.TabPanel.IsTabEnabled(panel_mode_name);
+        end        
     end
     
     methods (Access = private)
@@ -133,5 +181,8 @@ classdef PTKModeTabControl < PTKTabControl
             obj.Gui.RunGuiPluginCallback(plugin_name);
         end
         
+        function LoadSegmentationCallback(obj, plugin_name)
+            obj.Gui.LoadSegmentationCallback(plugin_name);
+        end
     end
 end

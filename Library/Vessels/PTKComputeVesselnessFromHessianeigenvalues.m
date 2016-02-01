@@ -26,7 +26,7 @@ function vesselness_wrapper = PTKComputeVesselnessFromHessianeigenvalues(hessian
     
     % lam1 = smallest eigenvalue, lam3 = largest eigenvalue
     
-    vesselness_wrapper = PTKWrapper;
+    vesselness_wrapper = CoreWrapper;
     
     % The input matrix could be a linear set of points, or an image matrix
     if ndims(hessian_eigs_wrapper.RawImage) == 2

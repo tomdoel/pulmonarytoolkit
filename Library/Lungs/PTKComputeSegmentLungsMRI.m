@@ -66,11 +66,11 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     
     if coronal_mode
         new_image.AddBorder(1);
-        new_image = PTKGetMainRegionExcludingBorder(new_image, reporting);
+        new_image = PTKGetMainRegionExcludingBorder(new_image, 1000000, reporting);
         new_image.RemoveBorder(1);
         
     else
-        new_image = PTKGetMainRegionExcludingBorder(new_image, reporting);
+        new_image = PTKGetMainRegionExcludingBorder(new_image, 1000000, reporting);
     end
 
     bounds = [0, 0];
@@ -202,14 +202,13 @@ function next_points = GetNextSetOfStartPoints(new_image_slice)
     end
 end
 
-function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_value, start_point, coronal_mode, reporting)
+function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_value, start_points, coronal_mode, reporting)
     new_image = zeros(lung_image.ImageSize, 'int16');
     next_image = new_image;
     
     increments = [50 10 1];
     
-    start_point_matrix = cell2mat(start_point');
-    start_points_global = lung_image.LocalToGlobalCoordinates(start_point_matrix);
+    start_points_global = lung_image.LocalToGlobalCoordinates(cell2mat(start_points'));
     start_points_global = num2cell(start_points_global, 2)';
     
     next_image_open = lung_image.BlankCopy;

@@ -1,4 +1,4 @@
-classdef PTKTool < PTKBaseClass
+classdef PTKTool < CoreBaseClass
     % PTKTool. Interface for tools which are used with the PTKViewerPanel
     %
     %

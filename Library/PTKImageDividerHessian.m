@@ -47,19 +47,19 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     %             
     %         This function will be called once for each octant of the image.
     %      
-    %         hessian_eigenvalues_wrapper is a PTKWrapper object, whose RawImage
+    %         hessian_eigenvalues_wrapper is a CoreWrapper object, whose RawImage
     %         property contains an lxmxnx3 matrix containing the 3 eigenvalues
     %         of the Hessian matrix at each point of the image of dimensions
     %         lxmxn. The eigenvalues are ordered by absolute valye with smallest
     %         first.
     % 
     %         In the case that dont_calculate_evals was set to true, the
-    %         PTKWrapper object instead contains the Hessian components in the
+    %         CoreWrapper object instead contains the Hessian components in the
     %         form of a matrix 6xn, where n is the number of eleents in the
     %         matrix. This is the same form as returned by
     %         PTKGetHessianComponents.
     %
-    %         output_wrapper is a PTKWrapper object whose RawImage is the lxmxn
+    %         output_wrapper is a CoreWrapper object whose RawImage is the lxmxn
     %         image resulting from the filter.
     %   
     %     Example
@@ -73,13 +73,13 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     %         that quadrant.
     %
     %         function ComputeFilter
-    %             reporting = PTKReportingDefault;
+    %             reporting = CoreReportingDefault;
     %             gaussian_size_mm = 1.5;
     %             filtered_image = PTKImageDividerHessian(image_data, @FilterFunction, [], gaussian_size_mm, [], [], [], [], reporting)
     %         end
     %
     %         function output_wrapper = FilterFunction(hessian_eigenvalues_wrapper)
-    %             output_wrapper = PTKWrapper;
+    %             output_wrapper = CoreWrapper;
     %             output_wrapper.RawImage = FilterFromHessanEigenvalues(hessian_eigenvalues_wrapper.RawImage);
     %         end
     %
@@ -296,11 +296,11 @@ function [octant_limits_in, octant_limits_out, octant_limits_result] = ComputeOc
 
 end
 
-% Compute eigenvalues of the Hessian matrix and store in a PTKWrapper object
+% Compute eigenvalues of the Hessian matrix and store in a CoreWrapper object
 function hessian_eigvals = HessianVectorised(hessian_components, reduced_image_size, mask)
     [~, evals_v] = PTKFastEigenvalues(hessian_components.RawImage, true);
     
-    hessian_eigvals = PTKWrapper;
+    hessian_eigvals = CoreWrapper;
     if isempty(mask)
         hessian_eigvals.RawImage = zeros([reduced_image_size, 3], 'single');
         hessian_eigvals.RawImage(:,:,:,1) = reshape(evals_v(1, :), reduced_image_size);

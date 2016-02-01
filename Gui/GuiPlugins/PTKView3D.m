@@ -21,9 +21,9 @@ classdef PTKView3D < PTKGuiPlugin
         ButtonText = '3D'
         SelectedText = '3D'        
         ToolTip = 'Visualise the current overlay in 3D'
-        Category = 'View'
+        Category = 'Segmentation display'
         Visibility = 'Overlay'
-        Mode = 'Toolbar'
+        Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -72,7 +72,7 @@ classdef PTKView3D < PTKGuiPlugin
                 limit_to_one_component_per_index = false;
                 minimum_component_volume_mm3 = 0;
                 
-                PTKVisualiseIn3D([], segmentation, smoothing_size, airways, limit_to_one_component_per_index, minimum_component_volume_mm3, ptk_gui_app.Reporting);
+                PTKVisualiseIn3D([], segmentation, smoothing_size, airways, limit_to_one_component_per_index, minimum_component_volume_mm3, ptk_gui_app.GetReporting);
             end
         end
         

@@ -1,4 +1,4 @@
-classdef TestLoadSaveXML < PTKTest
+classdef TestLoadSaveXML < CoreTest
     % TestLoadSaveXML. Tests for loading and saving XML files
     %
     %
@@ -11,7 +11,7 @@ classdef TestLoadSaveXML < PTKTest
 
     methods
         function obj = TestLoadSaveXML
-            reporting = PTKReportingDefault;
+            reporting = CoreReportingDefault;
             test_class = obj.getTestClass;
             obj.TestLoadAndSave(test_class, reporting);
         end
@@ -72,8 +72,8 @@ classdef TestLoadSaveXML < PTKTest
         function TestLoadAndSave(obj, base_class, reporting)
             temp_folder = tempdir;
             file_name = 'TestXML.xml';
-            PTKSaveXml(base_class, 'Test', PTKFilename(temp_folder, file_name), reporting);
-            loaded_base_class = PTKLoadXml(PTKFilename(temp_folder, file_name), reporting);
+            CoreSaveXml(base_class, 'Test', PTKFilename(temp_folder, file_name), reporting);
+            loaded_base_class = CoreLoadXml(PTKFilename(temp_folder, file_name), reporting);
             loaded_base_class = loaded_base_class.Test;
             
             obj.TestEquality(base_class, loaded_base_class);

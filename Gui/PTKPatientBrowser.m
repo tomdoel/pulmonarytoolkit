@@ -1,4 +1,4 @@
-classdef PTKPatientBrowser < PTKFigure
+classdef PTKPatientBrowser < GemFigure
     % PTKPatientBrowser. Gui for choosing a dataset to view
     %
     %
@@ -11,29 +11,42 @@ classdef PTKPatientBrowser < PTKFigure
     %    
     
     properties (Access = private)
+        Controller
         BrowserPanel
-        GuiCallback
         LockLoad
         
         LastSeriesSelected
         LastPatientSelected
-        Reporting
     end
 
     methods
-        function obj = PTKPatientBrowser(image_database, gui_callback, position, reporting)
-            obj = obj@PTKFigure('Patient Browser : Pulmonary Toolkit', []);
-            obj.Reporting = reporting;
+        function obj = PTKPatientBrowser(controller, image_database, app_def, position, title, reporting)
+            obj = obj@GemFigure(title, [], reporting);
+            obj.StyleSheet = app_def.GetDefaultStyleSheet;
+            obj.Controller = controller;
             obj.ArrowPointer = 'hand';
-            obj.GuiCallback = gui_callback;
             obj.LockLoad = false;
 
-            obj.BrowserPanel = PTKPatientBrowserPanel(obj, image_database, obj, reporting);
-            obj.AddChild(obj.BrowserPanel, obj.Reporting);
+            obj.BrowserPanel = PTKPatientBrowserPanel(obj, image_database, obj);
+            obj.AddChild(obj.BrowserPanel);
             
             obj.Resize(position);
         end
 
+        function AddPatient(obj)
+            obj.Controller.BringToFront;
+            obj.Controller.AddPatient;
+            obj.BringToFront;
+        end
+        
+        function DeletePatient(obj, patient_id)
+            obj.Controller.DeletePatient(patient_id);
+        end
+        
+        function DeleteSeries(obj, series_uid)
+            obj.Controller.DeleteSeries(series_uid);
+        end
+        
         function SelectSeries(obj, patient_id, series_uid)
             if ~isempty(obj.LastSeriesSelected)
                 obj.BrowserPanel.SelectSeries(obj.LastPatientSelected, obj.LastSeriesSelected, false);
@@ -50,52 +63,38 @@ classdef PTKPatientBrowser < PTKFigure
             height_pixels = max(100, position(4));
             new_position = [position(1) position(2) width_pixels height_pixels];
             
-            Resize@PTKUserInterfaceObject(obj, new_position);
+            Resize@GemUserInterfaceObject(obj, new_position);
             obj.BrowserPanel.Resize(new_position);
         end
 
         function DatabaseHasChanged(obj)
             obj.BrowserPanel.DatabaseHasChanged;
-            obj.Resize(obj.Position);
+            obj.Resize(obj.GetLastPosition);
         end
         
-        function LoadFromPatientBrowser(obj, patient_id, series_uid)
+        function SeriesClicked(obj, patient_id, series_uid)
             if obj.LockLoad
                 obj.Reporting.ShowMessage('PTKPatientBrowser:LoadLock', 'The dataset cannot be loaded because a previous load did not complete. Close and re-open the Patient Browser to allow loading to resume.');
             else
                 obj.LockLoad = true;
                 obj.SelectSeries(patient_id, series_uid);
-                obj.GuiCallback.LoadFromPatientBrowser(series_uid);
+                obj.Controller.SeriesClicked(patient_id, series_uid);
                 obj.LockLoad = false;
             end
         end
-        
-        function DeleteDataset(obj, series_uid)
-            obj.GuiCallback.DeleteDataset(series_uid);
-        end
 
-        function DeletePatient(obj, patient_id)
-            obj.GuiCallback.DeletePatient(patient_id);
-        end
-        
-        function DeleteFromPatientBrowser(obj, series_uids)
-            obj.GuiCallback.DeleteDatasets(series_uids);
-        end
-        
-        function Show(obj, reporting)
+        function Show(obj)
             obj.LockLoad = false;
-            Show@PTKFigure(obj, reporting);
+            Show@GemFigure(obj);
         end
         
         function position = GetLastPosition(obj)
             position = get(obj.GraphicalComponentHandle, 'Position');
         end
         
-        function AddData(obj, tag)
-            obj.GuiCallback.BringToFront;
-            obj.GuiCallback.ImportMultipleFiles;
-            obj.BringToFront;
-        end
+        function project_id = GetCurrentProject(obj)
+            project_id = obj.Controller.GetCurrentProject;
+        end        
     end
 
     methods (Access = protected)

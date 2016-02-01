@@ -1,4 +1,4 @@
-classdef PTKPluginDependencyTracker < PTKBaseClass
+classdef PTKPluginDependencyTracker < CoreBaseClass
     % PTKPluginDependencyTracker. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -27,14 +27,15 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
     properties
-        % Loads and saves data associated with this dataset and ensures dependencies are valid
-        DatasetDiskCache
+        DatasetDiskCache % Loads and saves data associated with this dataset
+        PluginCache % Used to check plugin version numbers
     end
     
     methods
         
-        function obj = PTKPluginDependencyTracker(dataset_disk_cache)
+        function obj = PTKPluginDependencyTracker(dataset_disk_cache, plugin_cache)
             obj.DatasetDiskCache = dataset_disk_cache;
+            obj.PluginCache = plugin_cache;
         end
         
         
@@ -59,7 +60,12 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
                 % result to null to force a re-run of the plugin
                 if ~isempty(cache_info)
                     dependencies = cache_info.DependencyList;
-                    if ~PTKPluginDependencyTracker.CheckDependenciesValid(linked_dataset_chooser, dependencies, reporting)
+                    if ~obj.CheckPluginVersion(cache_info.InstanceIdentifier, reporting)
+                        reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The plugin ' plugin_name ' has changed since the cache was generated. I am forcing this plugin to re-run to generate new results.'], []);
+                        result = [];
+                    end
+                    
+                    if ~obj.CheckDependenciesValid(linked_dataset_chooser, dependencies, reporting)
                         reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
                         result = [];
                     end
@@ -92,7 +98,8 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
                 % being called (plugin_name) and the UID of the dataset the
                 % result is being requested from; however, the stack belongs to
                 % the primary dataset
-                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions, reporting);
+                plugin_version = plugin_info.PluginVersion;
+                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions, plugin_version, reporting);
                 
                 dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
 
@@ -167,7 +174,7 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
             attributes = [];
             attributes.IgnoreDependencyChecks = false;
             attributes.IsEditedResult = true;
-            instance_identifier = PTKDependency(plugin_name, context, PTKSystemUtilities.GenerateUid, dataset_uid, attributes);
+            instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
             new_cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
             new_cache_info.MarkEdited;
 
@@ -201,13 +208,10 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
             end
             obj.DependencyList(plugin_name) = current_dependency_list;
         end
-    end
-    
-    methods (Static, Access = private)
         
         % Checks the dependencies in this result with the current dependency
         % list, and determine if the dependencies are still valid
-        function valid = CheckDependenciesValid(linked_dataset_chooser, dependencies, reporting)
+        function valid = CheckDependenciesValid(obj, linked_dataset_chooser, dependencies, reporting)
             
             dependency_list = dependencies.DependencyList;
 
@@ -215,6 +219,12 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
             known_edited_values = {};
             for index = 1 : length(dependency_list)
                 next_dependency = dependency_list(index);
+                if ~obj.CheckPluginVersion(next_dependency, reporting)
+                    valid = false;
+                    reporting.Log(['A newer version of plugin ' next_dependency.PluginName ' has been found. This result must be regenerated.']);
+                    return;
+                end
+
                 if isfield(next_dependency.Attributes, 'IsEditedResult') && (next_dependency.Attributes.IsEditedResult)
                     known_edited_values{end + 1} = next_dependency.PluginName;
                 end
@@ -242,6 +252,16 @@ classdef PTKPluginDependencyTracker < PTKBaseClass
             valid = true;
         end
         
+        function valid = CheckPluginVersion(obj, next_dependency, reporting)
+            if isfield(next_dependency.Attributes, 'PluginVersion')
+                dependency_version = next_dependency.Attributes.PluginVersion;
+            else
+                dependency_version = 1;
+            end
+            
+            plugin_info = obj.PluginCache.GetPluginInfo(next_dependency.PluginName, [], reporting);
+            valid = plugin_info.PluginVersion == dependency_version;
+        end
     end    
 end
 

@@ -1,4 +1,4 @@
-classdef PTKMarkerPoint < handle
+classdef PTKMarkerPoint < CoreBaseClass
     % PTKMarkerPoint. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -30,6 +30,8 @@ classdef PTKMarkerPoint < handle
         Position
         LabelOn = false
         String = ''
+        CallbackId
+        FigureHandle
     end
     
     methods
@@ -39,14 +41,21 @@ classdef PTKMarkerPoint < handle
             limits_x = [1, coord_limits(2)];
             limits_y = [1, coord_limits(1)];
             constraint_function = makeConstrainToRectFcn('impoint', limits_x, limits_y);
-            obj.Handle = impoint(axes_handle, coords(1), coords(2));
+            obj.Handle = impoint(axes_handle.GetContainerHandle, coords(1), coords(2));
             obj.Handle.setPositionConstraintFcn(constraint_function);
             obj.Handle.addNewPositionCallback(@obj.PositionChangedCallback);
             obj.Handle.setColor(obj.Colours{colour});
-            figure_handle = ancestor(axes_handle, 'figure');
-            obj.AddContextMenu(figure_handle);
+            obj.FigureHandle = axes_handle.GetParentFigure;
+            obj.CallbackId = obj.FigureHandle.RegisterMarkerPoint(obj.Handle);
+            obj.AddContextMenu(obj.FigureHandle.GetContainerHandle);
             obj.Position = round(obj.Handle.getPosition);
             obj.Manager.AddPointToMarkerImage(obj.Position, colour);
+        end
+        
+        function delete(obj)
+            if ~isempty(obj.FigureHandle) && isvalid(obj.FigureHandle)
+                obj.FigureHandle.UnRegisterMarkerPoint(obj.Handle, obj.CallbackId);
+            end
         end
         
         function AddTextLabel(obj)
@@ -141,7 +150,6 @@ classdef PTKMarkerPoint < handle
         end
         
         function PositionChangedCallback(obj, new_position)
-            obj.Manager.AlertDragging;
             obj.Manager.AddPointToMarkerImage(obj.Position, 0);
             obj.Position = round(new_position);
             obj.Manager.AddPointToMarkerImage(obj.Position, obj.Colour);

@@ -1,4 +1,4 @@
-classdef PTKModeSwitcher < PTKBaseClass
+classdef PTKModeSwitcher < CoreBaseClass
     % PTKModeSwitcher. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -22,33 +22,41 @@ classdef PTKModeSwitcher < PTKBaseClass
         Modes
     end
     
+    events
+        ModeChangedEvent
+    end
+    
     methods
-        function obj = PTKModeSwitcher(viewer_panel, gui_dataset, settings, reporting)
+        function obj = PTKModeSwitcher(viewer_panel, gui_dataset, app_def, settings, reporting)
             obj.ViewerPanel = viewer_panel;
-            obj.AddEventListener(viewer_panel, 'OverlayImageChangedEvent', @obj.OverlayImageChanged);
+            obj.AddEventListener(viewer_panel.GetOverlayImageSource, 'ImageModified', @obj.OverlayImageChanged);
             obj.Modes = containers.Map;
-            obj.Modes(PTKModes.EditMode) = PTKEditMode(viewer_panel, gui_dataset, settings, reporting);
+            obj.Modes(PTKModes.EditMode) = PTKEditMode(viewer_panel, gui_dataset, app_def, settings, reporting);
             obj.CurrentMode = [];
             obj.CurrentModeString = [];
         end
         
-        function SwitchMode(obj, mode, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
+        function mode = GetSubModeName(obj)
+            if isempty(obj.CurrentMode)
+                mode = [];
+            else
+                mode = obj.CurrentMode.GetSubModeName;
+            end
+        end
+        
+        function SwitchMode(obj, mode, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name)
             if ~isempty(obj.CurrentMode)
                 obj.CurrentMode.ExitMode;
             end
             obj.CurrentModeString = mode;
             if isempty(mode)
                 obj.CurrentMode = [];
+                obj.ViewerPanel.SetModes([], []);
             else
                 obj.CurrentMode = obj.Modes(mode);
-                obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context);
+                obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name);
             end
-            if isempty(current_plugin_info)
-                sub_mode = [];
-            else
-                sub_mode = current_plugin_info.SubMode;
-            end
-            obj.ViewerPanel.SetModes(mode, sub_mode);
+            notify(obj, 'ModeChangedEvent', CoreEventData(mode));
         end
         
         function PrePluginCall(obj)

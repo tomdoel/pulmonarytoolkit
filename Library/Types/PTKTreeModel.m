@@ -2,7 +2,7 @@ classdef PTKTreeModel < PTKTree
     % PTKTreeModel. A branch of a tree model (used to store airways, vessels
     % etc.)
     %
-    % A PTKTreeModel is s tree structure which represents an airway centreline
+    % A PTKTreeModel is a tree structure which represents an airway centreline
     % with radius information. As such, it is a "model" of an airway, rather
     % than a "segmentation"
     %
@@ -67,7 +67,7 @@ classdef PTKTreeModel < PTKTree
             while numel(obj.Children) > 2
                 children = obj.Children;
                 
-                child_lobe_numbers = PTKContainerUtilities.GetMatrixOfPropertyValues(children, 'LobeIndex', -1);
+                child_lobe_numbers = CoreContainerUtilities.GetMatrixOfPropertyValues(children, 'LobeIndex', -1);
                 
                 largest_child = [];
                 
@@ -115,14 +115,14 @@ classdef PTKTreeModel < PTKTree
                 new_branch.SmoothedCentreline = obj.Centreline(end);
                 new_branch.Density = second_largest_child.Density;
                 
-                other_child_segment_indices = PTKContainerUtilities.GetMatrixOfPropertyValues(other_children, 'SegmentIndex', -1);
+                other_child_segment_indices = CoreContainerUtilities.GetMatrixOfPropertyValues(other_children, 'SegmentIndex', -1);
                 
                 
                 if all(other_child_segment_indices == other_child_segment_indices(1))
                     new_branch.SegmentIndex = second_largest_child.SegmentIndex;
                 end
                 
-                other_child_lobe_indices = PTKContainerUtilities.GetMatrixOfPropertyValues(other_children, 'LobeIndex', -1);
+                other_child_lobe_indices = CoreContainerUtilities.GetMatrixOfPropertyValues(other_children, 'LobeIndex', -1);
                 if all(other_child_lobe_indices == other_child_lobe_indices(1))
                     new_branch.LobeIndex = second_largest_child.LobeIndex;
                 end

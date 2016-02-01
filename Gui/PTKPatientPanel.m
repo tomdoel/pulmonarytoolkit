@@ -1,4 +1,4 @@
-classdef PTKPatientPanel < PTKPanel
+classdef PTKPatientPanel < GemPanel
     % PTKPatientPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -22,7 +22,6 @@ classdef PTKPatientPanel < PTKPanel
     properties (SetAccess = private)
         Name
         Id
-        AllIds
     end
 
     properties (Access = private)
@@ -30,7 +29,7 @@ classdef PTKPatientPanel < PTKPanel
         
         SeriesDescriptionsList
         
-        PatientDetails
+        ImageDatabase
         GuiCallback
         
         PanelHeight
@@ -54,65 +53,64 @@ classdef PTKPatientPanel < PTKPanel
     end
     
     methods
-        function obj = PTKPatientPanel(parent, patient_details, gui_callback, reporting)
+        function obj = PTKPatientPanel(parent, image_database, patient_id, visible_name, total_number_of_series, num_patients, gui_callback)
             % Create a new panel showing the series information for one or more patients,
             % each defined by the patient_details vector. This vector may have more than one
             % patient details object if there is more than one patient id corresponding to
             % the same patient, which could occur due to anonymisation
             
-            obj = obj@PTKPanel(parent, reporting);
+            obj = obj@GemPanel(parent);
             obj.Enabled = false;
-            obj.PatientDetails = patient_details;
+            obj.ImageDatabase = image_database;
             obj.GuiCallback = gui_callback;
             
-            obj.Id = patient_details(1).PatientId;
-            obj.AllIds = {patient_details.('PatientId')};
+            obj.Id = patient_id;
 
-            if isempty(patient_details(1).VisibleName)
+            if isempty(visible_name)
                 % If there is no patient name, show the patient id
-                name = patient_details(1).PatientId;
+                name = patient_id;
                 
-            elseif isempty(patient_details(1).PatientId)
+            elseif isempty(patient_id)
                 % If there is no patient id, show the patient name
-                name = patient_details(1).VisibleName;
+                name = visible_name;
                 
             else
-                if numel(patient_details) > 1 || strcmp(patient_details(1).VisibleName, patient_details(1).PatientId)
+                if num_patients > 1 || strcmp(visible_name, patient_id)
                     % If there is more than one patient ID, or the ID is the same as the name, we
                     % only show the patient name
-                    name = patient_details(1).VisibleName;
+                    name = visible_name;
                     
                 else
                     % Otherwise show the name and the ID
-                    name = [patient_details(1).VisibleName, ' - ', patient_details(1).PatientId];
+                    name = [visible_name, ' - ', patient_id];
                 end
             end
             obj.Name = name;
 
-            total_number_of_series = sum(arrayfun(@(x) x.GetNumberOfSeries, patient_details));
+            
             obj.PanelHeight = obj.PatientNameHeight + total_number_of_series*PTKSeriesDescription.SeriesTextHeight + ...
                 max(0, total_number_of_series-1)*obj.SpacingBetweenSeries + obj.ListTopMargin + obj.ListBottomMargin + obj.TopMargin + obj.BottomMargin;
             obj.PatientNamePosition_Y = 1 + obj.PanelHeight - obj.PatientNameHeight - obj.TopMargin;
                         
-            obj.PatientNameTextControl = PTKText(obj, obj.Name, ['Patient name: ', obj.Name], 'PatientName');
+            obj.PatientNameTextControl = GemText(obj, obj.Name, ['Patient name: ', obj.Name], 'PatientName');
             obj.PatientNameTextControl.FontSize = obj.PatientNameFontSize;
-            obj.AddChild(obj.PatientNameTextControl, obj.Reporting);
+            obj.AddChild(obj.PatientNameTextControl);
             obj.AddEventListener(obj.PatientNameTextControl, 'TextRightClicked', @obj.PatientRightClicked);
             
-            obj.SeriesDescriptionsList = PTKListBox(obj, reporting);
+            obj.SeriesDescriptionsList = GemListBox(obj);
             obj.SeriesDescriptionsList.TopMargin = obj.ListTopMargin;
             obj.SeriesDescriptionsList.BottomMargin = obj.ListBottomMargin;
             obj.SeriesDescriptionsList.SpacingBetweenItems = obj.SpacingBetweenSeries;
-            obj.AddChild(obj.SeriesDescriptionsList, obj.Reporting);
+            obj.AddChild(obj.SeriesDescriptionsList);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKPanel(obj, position, reporting);
-            obj.AddStudies(position);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@GemPanel(obj, position);
+            obj.AddStudies;
         end
         
         function Resize(obj, new_position)
-            Resize@PTKPanel(obj, new_position);
+            Resize@GemPanel(obj, new_position);
             patient_text_position = [obj.PatientNameLeftPadding 1+new_position(4)-obj.PatientNameHeight-obj.TopMargin new_position(3)-obj.PatientNameLeftPadding obj.PatientNameHeight];
             obj.PatientNameTextControl.Resize(patient_text_position);
             
@@ -157,17 +155,14 @@ classdef PTKPatientPanel < PTKPanel
             end
         end
         
-        function AddStudies(obj, new_position)
-            datasets = [];
-            for patient_details = obj.PatientDetails
-                datasets = [datasets, patient_details.GetListOfSeries];
-            end
+        function AddStudies(obj)
+            datasets = obj.ImageDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, obj.Id);
             
             obj.SeriesDescriptionsList.ClearItems;
             
             for series_index = 1 : length(datasets)
                 series = datasets{series_index};
-                obj.SeriesDescriptionsList.AddItem(PTKSeriesDescription(obj.SeriesDescriptionsList, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, obj.Id, series.SeriesUid, obj.GuiCallback, obj.Reporting));
+                obj.SeriesDescriptionsList.AddItem(PTKSeriesDescription(obj.SeriesDescriptionsList, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, obj.Id, series.SeriesUid, obj.GuiCallback));
             end
         end
 

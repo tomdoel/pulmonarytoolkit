@@ -32,7 +32,7 @@ classdef PTKShowOutputFolder < PTKGuiPlugin
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
             dataset_cache_path = ptk_gui_app.GetOutputPath;
-            PTKDiskUtilities.OpenDirectoryWindow(dataset_cache_path);
+            CoreDiskUtilities.OpenDirectoryWindow(dataset_cache_path);
         end
     end
 end

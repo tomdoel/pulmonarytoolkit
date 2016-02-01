@@ -1,4 +1,4 @@
-classdef PTKViewerPanelMultiView < PTKMultiPanel
+classdef PTKViewerPanelMultiView < GemMultiPanel
     % PTKViewerPanelMultiView. Contains panels for 2D and 3D views, and allows
     %     switching between them
     %
@@ -21,29 +21,29 @@ classdef PTKViewerPanelMultiView < PTKMultiPanel
     end
     
     methods
-        function obj = PTKViewerPanelMultiView(viewer_panel, reporting)
-            obj = obj@PTKMultiPanel(viewer_panel, reporting);
+        function obj = PTKViewerPanelMultiView(viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
+            obj = obj@GemMultiPanel(viewer_panel);
             
-            obj.CinePanel2D = PTKCinePanelWithTools(obj, viewer_panel, obj.Reporting);
-            
+            obj.CinePanel2D = PTKCinePanelWithTools(obj, viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
             obj.AddPanel(obj.CinePanel2D, 'View2D');
             
             % Change in mouse position
             obj.AddEventListener(obj.CinePanel2D, 'MousePositionChanged', @obj.MousePositionChangedCallback);
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKMultiPanel(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@GemMultiPanel(obj, position);
 
 %             obj.UpdateGui;
             obj.Resize(position);
         end
         
         function Resize(obj, position)
-            Resize@PTKMultiPanel(obj, position);
+            Resize@GemMultiPanel(obj, position);
             
             % Position axes and slice slider
-            obj.CinePanel2D.Resize(position);
+            obj.CinePanel2D.Resize(obj.InnerPosition);
+            obj.UpdateAxes;
         end
         
         function ZoomTo(obj, i_limits, j_limits, k_limits)

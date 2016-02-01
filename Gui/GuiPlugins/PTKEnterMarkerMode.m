@@ -1,5 +1,5 @@
 classdef PTKEnterMarkerMode < PTKGuiPlugin
-    % PTKEnterMarkerMode. Gui Plugin for using a preset bone window/level
+    % PTKEnterMarkerMode. Gui Plugin for entering marker edit mode
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
@@ -15,9 +15,9 @@ classdef PTKEnterMarkerMode < PTKGuiPlugin
     %    
     
     properties
-        ButtonText = 'Show Markers'
+        ButtonText = 'Edit Markers'
         SelectedText = 'Hide Markers'
-        ToolTip = 'Enables or disables markers'
+        ToolTip = 'Enters marker edit mode'
         Category = 'Show / hide'
         Visibility = 'Dataset'
         Mode = 'Toolbar'

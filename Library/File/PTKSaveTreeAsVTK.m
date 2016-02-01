@@ -33,7 +33,7 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     %        
 
     if nargin < 6
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     if nargin < 4

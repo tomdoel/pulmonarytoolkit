@@ -25,17 +25,17 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     %        
 
     if nargin < 4
-        reporting = PTKReportingDefault;
+        reporting = CoreReportingDefault;
     end
     
     if nargin < 2
         reporting.Error('PTKLoad3DRawAndMetaFiles:NotEnoughArguments', 'PTKLoad3DRawAndMetaFiles requires a minimum of two arguments: the current path and  list of filenames');
     end
 
-    if isa(filenames, 'PTKFilename')
+    if isa(filenames, 'CoreFilename')
         path = filenames.Path;
         filenames = filenames.Name;
-    elseif isa(filenames{1}, 'PTKFilename')
+    elseif isa(filenames{1}, 'CoreFilename')
         path = filenames{1}.Path;
         filenames = filenames{1}.Name;
     end
@@ -62,19 +62,9 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     
     if isfield(header_data, 'TransformMatrix')
         transform_matrix = str2num(header_data.TransformMatrix); %#ok<ST2NM>
-        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation(transform_matrix, reporting);
-    else
-        
-        % Use the Anatomical Orientation tag
-        if strcmp(header_data.AnatomicalOrientation, 'RSA')
-            new_dimension_order = [3 1 2];
-            flip_orientation = [0 0 0];
-        elseif strcmp(header_data.AnatomicalOrientation, 'RAI')
-            new_dimension_order = [2 1 3];
-            flip_orientation = [0 0 1];
-        else
-            reporting.Error('PTKLoad3DRawAndMetaFiles:NoTransformMatrix', ['PTKLoad3DRawAndMetaFiles: WARNING: no implementation yet for anatomical orientation ' header_data.AnatomicalOrientation '.']);
-        end
+        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(transform_matrix(1:3), transform_matrix(4:6), transform_matrix(7:9), reporting);
+    else        
+        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromAnatomicalOrientation(header_data.AnatomicalOrientation, reporting);
     end
 
     image_dims = sscanf(header_data.DimSize, '%d %d %d');
@@ -86,8 +76,20 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     
     if strcmp(header_data.ElementType,'MET_UCHAR')
         data_type = 'uint8';
+    elseif strcmp(header_data.ElementType,'MET_CHAR')
+        data_type = 'int8';
     elseif strcmp(header_data.ElementType,'MET_SHORT')
         data_type = 'int16';
+    elseif strcmp(header_data.ElementType,'MET_USHORT')
+        data_type = 'uint16';
+    elseif strcmp(header_data.ElementType,'MET_INT')
+        data_type = 'int32';
+    elseif strcmp(header_data.ElementType,'MET_UINT')
+        data_type = 'uint32';
+    elseif strcmp(header_data.ElementType,'MET_FLOAT')
+        data_type = 'single';
+    elseif strcmp(header_data.ElementType,'MET_DOUBLE')
+        data_type = 'double';
     else
         data_type = 'uint16';
     end
@@ -120,7 +122,6 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     image_dimensions = [2 1 3];
     new_dimension_order = image_dimensions(new_dimension_order);
     
-    
     if ~isequal(new_dimension_order, [1, 2, 3])
         original_image = permute(original_image, new_dimension_order);
         voxel_size = voxel_size(new_dimension_order);        
@@ -135,7 +136,16 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     rescale_intercept = int16(0);
 
     reporting.ShowWarning('PTKLoad3DRawAndMetaFiles:AssumedCT', 'No modality information - I am assuming these images are CT with slope 1 and intercept 0.', []);
-    modality = 'CT';
+    
+    % Guess that images with some strongly negative values are from CT images while
+    % others are MR
+    min_value = min(original_image(:));
+    if (min_value < -500)
+        modality = 'CT';
+    elseif (min_value >= 0)
+        modality = 'MR';
+    end
+    
     dicom_image = PTKDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid, header_data);
     dicom_image.Title = filenames{1};
 end

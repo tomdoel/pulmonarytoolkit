@@ -11,9 +11,9 @@ function grouper = PTKGroupFilesIntoSeries(filename, reporting)
     %
     
     reporting.ShowProgress('Imorting data');
-    tags_to_get = PTKDicomDictionary.GroupingTagsDictionary(false);
+    tags_to_get = DMDicomDictionary.GroupingDictionary;
     
-    [import_folder, filename_only] = PTKDiskUtilities.GetFullFileParts(filename);
+    [import_folder, filename_only] = CoreDiskUtilities.GetFullFileParts(filename);
     grouper = PTKFileSeriesGrouper;
     
     % Find out file type. 0=does not exist; 2=file; 7-directory
@@ -26,7 +26,7 @@ function grouper = PTKGroupFilesIntoSeries(filename, reporting)
         % For a single file, we check if it is Dicom. If so, we import the whole
         % folder. Otherwise we only import the file
     elseif exist_result == 2
-        uid = GetUid(import_folder, filename_only, tags_to_get, reporting);
+        uid = GetUid(import_folder, filename_only, tags_to_get);
         if isempty(uid)
             GroupFileWithUid(grouper, import_folder, filename_only, uid);
         else
@@ -39,12 +39,13 @@ function grouper = PTKGroupFilesIntoSeries(filename, reporting)
     reporting.CompleteProgress;
 end
 
-function uid = GetUid(folder, filename, tags_to_get, reporting)
-    uid = PTKGetDicomSeries(folder, filename, tags_to_get, reporting);
+function uid = GetUid(folder, filename, tags_to_get)
+    full_file_name = fullfile(folder, filename);
+    uid = PTKDicomUtilities.GetDicomSeriesUid(full_file_name, tags_to_get);
 end
 
 function GroupFile(grouper, folder, filename, tags_to_get, reporting)
-    uid = GetUid(folder, filename, tags_to_get, reporting);
+    uid = GetUid(folder, filename, tags_to_get);
     full_filename = PTKFilename(folder, filename);
     grouper.AddFile(uid, full_filename);
 end
@@ -56,7 +57,7 @@ end
 
 function GroupDirectoryRecursive(grouper, import_folder, tags_to_get, reporting)
     
-    directories_to_do = PTKStack(import_folder);
+    directories_to_do = CoreStack(import_folder);
     
     while ~directories_to_do.IsEmpty
         current_dir = directories_to_do.Pop;
@@ -64,11 +65,11 @@ function GroupDirectoryRecursive(grouper, import_folder, tags_to_get, reporting)
         reporting.UpdateProgressMessage(['Importing data from: ' current_dir]);
         
         if reporting.HasBeenCancelled
-            reporting.Error(PTKSoftwareInfo.CancelErrorId, 'User cancelled');
+            reporting.Error(CoreReporting.CancelErrorId, 'User cancelled');
         end
         
         GroupFilesInDirectory(grouper, current_dir, tags_to_get, reporting);
-        next_dirs = PTKDiskUtilities.GetListOfDirectories(current_dir);
+        next_dirs = CoreDiskUtilities.GetListOfDirectories(current_dir);
         for dir_to_add = next_dirs
             new_dir = fullfile(current_dir, dir_to_add{1});
             directories_to_do.Push(new_dir);
@@ -78,7 +79,7 @@ end
 
 function GroupFilesInDirectory(grouper, directory, tags_to_get, reporting)
     
-    all_filenames = PTKTextUtilities.SortFilenames(PTKDiskUtilities.GetDirectoryFileList(directory, '*'));
+    all_filenames = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(directory, '*'));
     for filename = all_filenames
         GroupFile(grouper, directory, filename{1}, tags_to_get, reporting);
     end

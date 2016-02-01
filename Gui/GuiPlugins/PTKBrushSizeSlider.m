@@ -17,15 +17,15 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
         SelectedText = 'Brush size'
         
         ToolTip = 'Change the size of the editing paint brush'
-        Category = 'Paintbrush'
+        Category = 'Paint'
         Visibility = 'Dataset'
-        Mode = 'Toolbar'
+        Mode = 'Edit'
 
         HidePluginInDisplay = false
         PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 1
-        Location = 3
+        Location = 25
 
         MinValue = 0
         MaxValue = 100
@@ -33,8 +33,10 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
         LargeStep = 0.1
         DefaultValue = 50
         
-        EditBoxPosition = 110
-        EditBoxWidth = 40
+        EditBoxPosition = 90
+        EditBoxWidth = 30
+
+        StackVertically = false
     end
     
     methods (Static)
@@ -50,9 +52,10 @@ classdef PTKBrushSizeSlider < PTKGuiPluginSlider
             is_selected = true;
         end
         
-        function [instance_handle, value_property_name, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
-            instance_handle = ptk_gui_app.ImagePanel;
+        function [value_instance_handle, value_property_name, limits_instance_handle, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
+            value_instance_handle = ptk_gui_app.ImagePanel;
             value_property_name = 'PaintBrushSize';
+            limits_instance_handle = [];
             limits_property_name = [];
         end
         

@@ -49,15 +49,15 @@ classdef PTKImageDatabasePatient < handle
         
         function series = GetListOfSeries(obj)
             series = obj.SeriesMap.values;
-            dates = PTKContainerUtilities.GetFieldValuesFromSet(series, 'Date');
-            times = PTKContainerUtilities.GetFieldValuesFromSet(series, 'Time');
+            dates = CoreContainerUtilities.GetFieldValuesFromSet(series, 'Date');
+            times = CoreContainerUtilities.GetFieldValuesFromSet(series, 'Time');
             date_time = strcat(dates, times);
             
             % Remove any empty values to ensure sort works
             empty_values = cellfun(@isempty, date_time);
             date_time(empty_values) = {''};
 
-            [~, sorted_indices] = PTKTextUtilities.SortFilenames(date_time);
+            [~, sorted_indices] = CoreTextUtilities.SortFilenames(date_time);
             series = series(sorted_indices);
         end
         

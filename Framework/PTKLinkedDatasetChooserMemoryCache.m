@@ -18,14 +18,18 @@ classdef PTKLinkedDatasetChooserMemoryCache < handle
     %
     
     properties (Access = private)
+        ContextDef
         LinkedDatasetChooserCacheMap
         LinkedRecorderSingleton
+        PluginCache
     end
     
     methods
-        function obj = PTKLinkedDatasetChooserMemoryCache(linked_recorder_singleton)
+        function obj = PTKLinkedDatasetChooserMemoryCache(context_def, linked_recorder_singleton, plugin_cache)
+            obj.ContextDef = context_def;
             obj.LinkedDatasetChooserCacheMap = containers.Map;
             obj.LinkedRecorderSingleton = linked_recorder_singleton;
+            obj.PluginCache = plugin_cache;
         end
         
         function linked_dataset_chooser = GetLinkedDatasetChooser(obj, image_info, dataset_disk_cache, reporting)
@@ -33,7 +37,7 @@ classdef PTKLinkedDatasetChooserMemoryCache < handle
             if obj.LinkedDatasetChooserCacheMap.isKey(uid)
                 linked_dataset_chooser = obj.LinkedDatasetChooserCacheMap(uid);
             else
-                linked_dataset_chooser = PTKLinkedDatasetChooser(image_info, dataset_disk_cache, obj.LinkedRecorderSingleton, reporting);
+                linked_dataset_chooser = PTKLinkedDatasetChooser(obj.ContextDef, image_info, dataset_disk_cache, obj.LinkedRecorderSingleton, obj.PluginCache, reporting);
                 obj.LinkedDatasetChooserCacheMap(uid) = linked_dataset_chooser;
             end
         end

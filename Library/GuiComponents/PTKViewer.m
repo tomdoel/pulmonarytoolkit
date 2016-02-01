@@ -1,4 +1,4 @@
-classdef PTKViewer < PTKFigure
+classdef PTKViewer < GemFigure
     % PTKViewer. A standalone image viewer for showing 3D images slice-by-slice
     %
     %     PTKViewer uses PTKViewerPanel to create a visualisation window for the
@@ -71,7 +71,7 @@ classdef PTKViewer < PTKFigure
             end
             
             if nargin < 3
-                reporting = PTKReportingDefault;
+                reporting = CoreReportingDefault;
             end
             
             title = 'PTK Viewer';
@@ -103,10 +103,10 @@ classdef PTKViewer < PTKFigure
             end
             
             % Call the base class to initialise the hidden window
-            obj = obj@PTKFigure(title, []);
+            obj = obj@GemFigure(title, [], reporting);
 
-            obj.ViewerPanelHandle = PTKViewerPanel(obj, true, reporting);
-            obj.AddChild(obj.ViewerPanelHandle, reporting);
+            obj.ViewerPanelHandle = PTKViewerPanelWithControlPanel(obj);
+            obj.AddChild(obj.ViewerPanelHandle);
             
             obj.Image = image_handle;
             obj.Overlay = overlay_handle;
@@ -114,12 +114,12 @@ classdef PTKViewer < PTKFigure
             obj.Resize([100 50 700 600]);
             
             % Create the figure
-            obj.Show(reporting);
+            obj.Show;
             
         end
         
-        function CreateGuiComponent(obj, position, reporting)
-            CreateGuiComponent@PTKFigure(obj, position, reporting);
+        function CreateGuiComponent(obj, position)
+            CreateGuiComponent@GemFigure(obj, position);
             
             obj.ViewerPanelHandle.BackgroundImage = obj.Image;               
             obj.ViewerPanelHandle.OverlayImage = obj.Overlay;
@@ -127,7 +127,7 @@ classdef PTKViewer < PTKFigure
         end
         
         function Resize(obj, position)
-            Resize@PTKFigure(obj, position);
+            Resize@GemFigure(obj, position);
             
             parent_width_pixels = max(1, position(3));
             parent_height_pixels = max(1, position(4));

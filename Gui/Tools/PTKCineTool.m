@@ -1,7 +1,7 @@
 classdef PTKCineTool < PTKTool
-    % PTKCineTool. A tool for interactively moving through slices an image with PTKViewerPanel
+    % PTKCineTool. A tool for interactively moving through slices
     %
-    %     PTKCineTool is a tool class used with PTKViewerPanel to allow the user
+    %     PTKCineTool is a tool class used with GemCinePanel to allow the user
     %     to cine through an image using mouse controls.
     %
     %
@@ -23,15 +23,15 @@ classdef PTKCineTool < PTKTool
     
     properties (Access = private)
         Callback
-        ViewerPanel
+        ImageParameters
         StartCoords
         StartKPosition
     end
     
     methods
-        function obj = PTKCineTool(viewer_panel, callback)
+        function obj = PTKCineTool(image_parameters, callback)
             obj.Callback = callback;
-            obj.ViewerPanel = viewer_panel;
+            obj.ImageParameters = image_parameters;
         end
     
         function MouseHasMoved(obj, screen_coords, last_coords, mouse_is_down)
@@ -50,13 +50,13 @@ classdef PTKCineTool < PTKTool
                 y_relative_movement = ceil(y_relative_movement);
                 
                 k_position = obj.StartKPosition - direction*y_relative_movement;
-                obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation) = k_position;
+                obj.ImageParameters.SliceNumber(obj.ImageParameters.Orientation) = k_position;
             end
         end
         
         function MouseDown(obj, screen_coords)
             obj.StartCoords = screen_coords;
-            obj.StartKPosition = obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation);
+            obj.StartKPosition = obj.ImageParameters.SliceNumber(obj.ImageParameters.Orientation);
         end
         
         function MouseUp(obj, screen_coords)

@@ -78,9 +78,9 @@ classdef PTKLobarHistogram < PTKPlugin
             rectangle('Parent', axes_handle, 'Position', [ -500, 0, 400, max_y], 'EdgeColor', 'none', 'FaceColor', [0.7 0.7 1])
             rectangle('Parent', axes_handle, 'Position', [ -100, 0, 300, max_y], 'EdgeColor', 'none', 'FaceColor', [0.6 0.6 1])
                         
-            
             % Whole lung
             graph_data = [];
+            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
             graph_data.Lung = PTKLobarHistogram.Histogram(roi, left_and_right_lungs.RawImage > 0, 'k', axes_handle);
             
             % Left and right lungs

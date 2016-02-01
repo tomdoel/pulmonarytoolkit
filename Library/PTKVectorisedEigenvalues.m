@@ -52,7 +52,7 @@ function [eigvec, eigval] = PTKVectorisedEigenvalues(M, eigenvalues_only)
     end
 
     numvoxels = size(M, 2);
-    eigval = zeros(3, numvoxels, 'single');
+    eigval = zeros(3, numvoxels, 'double');
 
     m = (M(1,:) + M(4,:) + M(6,:))/3;
 
@@ -67,7 +67,7 @@ function [eigvec, eigval] = PTKVectorisedEigenvalues(M, eigenvalues_only)
     
     p = max(0.01, p);
     
-    phi = 1/3*acos(q./p.^(3/2));
+    phi = 1/3*acos(min(1, q./p.^(3/2)));
     phi(phi<0) = phi(phi<0)+pi/3;
     
     eigval(1,:) = m + 2*sqrt(p).*cos(phi);
@@ -81,7 +81,7 @@ function [eigvec, eigval] = PTKVectorisedEigenvalues(M, eigenvalues_only)
     % Only compute the eigenvectors if requested
     if (compute_eigenvectors)
         
-        eigvec = zeros(3,3, numvoxels, 'single');
+        eigvec = zeros(3,3, numvoxels, 'double');
         for l = 1 : 2
             Ai = M(1,:) - eigval(l,:);
             Bi = M(4,:) - eigval(l,:);

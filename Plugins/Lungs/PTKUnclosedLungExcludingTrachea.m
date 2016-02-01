@@ -59,7 +59,7 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
             end
 
             if dataset.IsGasMRI || strcmp(dataset.GetImageInfo.Modality, 'MR')
-                main_airways = PTKUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(results.AirwayTree, threshold_image, max_generation);
+                main_airways = PTKUnclosedLungExcludingTrachea.GetAirwaysBelowGeneration(airway_tree, threshold_image, max_generation);
             else
                 airways_by_lobe = dataset.GetResult('PTKAirwaysLabelledByLobe');
                 start_branches = airways_by_lobe.StartBranches;
@@ -68,7 +68,7 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
             end
             
             % Dilate the airways in order to remove airway walls. But we don't use too large a value, otherwise regions of the lungs will be removed
-            ball_element = PTKImageUtilities.CreateBallStructuralElement(threshold_image.VoxelSize, size_dilation_mm);
+            ball_element = CoreImageUtilities.CreateBallStructuralElement(threshold_image.VoxelSize, size_dilation_mm);
             main_airways = imdilate(main_airways, ball_element);
             
             main_airways = ~main_airways;

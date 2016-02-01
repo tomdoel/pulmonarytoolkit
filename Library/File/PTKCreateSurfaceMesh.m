@@ -47,7 +47,7 @@ function PTKCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, 
     end
     
     if nargin < 3
-        reporting = PTKReportingDefault;    
+        reporting = CoreReportingDefault;    
     end
         
     reporting.ShowProgress('Generating the surface mesh');

@@ -33,13 +33,13 @@ classdef PTKCachedFileReader < handle
             
             full_file_name = fullfile(file_path, file_name);
             
-            computer_endian = PTKSystemUtilities.GetComputerEndian;
+            computer_endian = CoreSystemUtilities.GetComputerEndian;
             obj.FlipEndian = (computer_endian ~= transfer_syntax.Endian);
             
             switch transfer_syntax.Endian
-                case PTKEndian.BigEndian
+                case CoreEndian.BigEndian
                     file_encoding = 'b';
-                case PTKEndian.LittleEndian
+                case CoreEndian.LittleEndian
                     file_encoding = 'l';
                 otherwise
                     error('Unknown file encoding');
@@ -79,7 +79,7 @@ classdef PTKCachedFileReader < handle
         end
         
         function wrapper = ReadDataIntoWrapper(obj, data_type, number_of_bytes)
-            wrapper = PTKWrapper;
+            wrapper = CoreWrapper;
             wrapper.RawImage = ReadBytesFromCache(obj, number_of_bytes);
             
             if strcmp(data_type, 'char')

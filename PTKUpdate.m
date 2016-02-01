@@ -13,6 +13,8 @@ function updated = PTKUpdate(varargin)
     updated = false;
     if checkDoNotUpdate && ~(nargin > 0 && strcmp(varargin{1}, 'force'))
         disp('Ignoring updates as requested by user.');
+    elseif ~isWebsiteFound
+        disp('Ignoring updates as cannot connect to repository.');        
     else
         clearDoNotUpdate;
         full_path = mfilename('fullpath');
@@ -38,7 +40,7 @@ function updated = PTKUpdate(varargin)
                 case {DepMatStatus.UpdateAvailable, DepMatStatus.LocalChanges}
                     answer = questdlg('A new version of PTK is available. Do you wish to update PTK?','Pulmonary Toolkit','Later','Do not ask me again', 'Update','Update');
                     if strcmp(answer, 'Do not ask me again')
-                        setDoNotUpdateFlag
+                        setDoNotUpdateFlag;
                     elseif strcmp(answer, 'Update')
                         if depMat.updateAll;
                             updated = true;
@@ -66,6 +68,21 @@ function doNotUpdate = checkDoNotUpdate
     [path_root, ~, ~] = fileparts(full_path);
     filename = fullfile(path_root, 'do-not-update-git');
     doNotUpdate = (2 == exist(filename, 'file'));
+end
+
+function found = isWebsiteFound
+    % Checks for basic website connectivity
+
+    url = 'https://github.com/tomdoel/pulmonarytoolkit';
+    
+    % read the URL
+    try
+        options = weboptions('Timeout', 1);
+        webread(url, options);
+        found = true;
+    catch
+        found = false;
+    end
 end
 
 function clearDoNotUpdate

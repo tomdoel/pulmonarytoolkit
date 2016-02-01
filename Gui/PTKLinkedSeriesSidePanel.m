@@ -1,4 +1,4 @@
-classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
+classdef PTKLinkedSeriesSidePanel < GemListBoxWithTitle
     % PTKLinkedSeriesSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
@@ -22,8 +22,8 @@ classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
     end
     
     methods
-        function obj = PTKLinkedSeriesSidePanel(parent, patient_database, linked_recorder, gui_callback, reporting)
-            obj = obj@PTKListBoxWithTitle(parent, 'LINKED SERIES', 'Import images', 'Delete images', reporting);
+        function obj = PTKLinkedSeriesSidePanel(parent, patient_database, linked_recorder, gui_callback)
+            obj = obj@GemListBoxWithTitle(parent, 'LINKED SERIES', 'Import images', 'Delete images');
             
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
@@ -43,8 +43,7 @@ classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
         
         function SelectSeries(obj, series_uid, selected)
             obj.ListBox.SelectItem(series_uid, selected);
-        end
-        
+        end        
     end
     
     methods (Access = protected)
@@ -69,8 +68,8 @@ classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
         function AddSeriesToListBox(obj, patient_id, series_uid)
             
             % Get uids for every series associated with this patient
-            datasets = obj.PatientDatabase.GetAllSeriesForThisPatient(patient_id);
-            all_uids = PTKContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid');
+            datasets = obj.PatientDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, patient_id);
+            all_uids = CoreContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid');
             obj.ListBox.ClearItems;
             
             link_map = obj.LinkedRecorder.LinkMap;
@@ -95,7 +94,7 @@ classdef PTKLinkedSeriesSidePanel < PTKListBoxWithTitle
                 for series_index = 1 : length(linked_series)
                     series = linked_series{series_index};
                     link_name_text = linked_name_list{series_index};
-                    series_item = PTKSidePanelLinkedSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, link_name_text, obj.GuiCallback, obj.Reporting);
+                    series_item = PTKSidePanelLinkedSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, link_name_text, obj.GuiCallback);
                     
                     obj.ListBox.AddItem(series_item);
                 end

@@ -22,15 +22,15 @@ classdef PTKClearDiskCache < PTKGuiPlugin
         ButtonText = 'Delete Cache'
         SelectedText = 'Delete Cache'
         ToolTip = 'Clear all cached results for this dataset'
-        Category = 'Delete cache'
+        Category = 'Developer tools'
         Visibility = 'Dataset'
-        Mode = 'View'
+        Mode = 'Segment'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 4
         ButtonHeight = 1
-        Location = 13
+        Location = 105
     end
     
     methods (Static)

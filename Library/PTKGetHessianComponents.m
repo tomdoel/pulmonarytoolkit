@@ -11,11 +11,11 @@ function hessian_components = PTKGetHessianComponents(image_data, mask)
     %         [ H(1,1), H(1,2), H(1,3), H(2,3), H(2,4), H(3,3) ]
     %
     %     The input image is of class PTKImage.
-    %     The output image is of clas PTKWrapper.
+    %     The output image is of clas CoreWrapper.
     %
     %     mask is an optional logical image mask specifying the points for which 
     %     the Hessian should be computed. It should be of type PTKImage or
-    %     PTKWrapper.
+    %     CoreWrapper.
     %
     %
     %     Licence
@@ -30,7 +30,7 @@ function hessian_components = PTKGetHessianComponents(image_data, mask)
         mask = [];
     end
     
-    hessian_components = PTKWrapper;
+    hessian_components = CoreWrapper;
     if isempty(mask)
         num_points = numel(image_data.RawImage);
     else

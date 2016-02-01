@@ -10,7 +10,7 @@ function PTKAddPaths(varargin)
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    PTKAddPaths_Version_Number = 1;
+    PTKAddPaths_Version_Number = 2;
     
     persistent PTK_PathsHaveBeenSet
     
@@ -30,6 +30,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Gui', 'Tools');
         path_folders{end + 1} = fullfile('Gui', 'Modes');
 
+        path_folders{end + 1} = 'Contexts';
         path_folders{end + 1} = 'Library';
         path_folders{end + 1} = 'Test';
         path_folders{end + 1} = fullfile('Library', 'Airways');
@@ -50,26 +51,36 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Visualisation');
         path_folders{end + 1} = 'Framework';
         
+        path_folders{end + 1} = fullfile('External', 'coremat');
+        path_folders{end + 1} = fullfile('External', 'gem');
+        path_folders{end + 1} = fullfile('External', 'matnat');
+        path_folders{end + 1} = fullfile('External', 'dicomat');
         path_folders{end + 1} = fullfile('External', 'gerardus', 'matlab', 'PointsToolbox');
         path_folders{end + 1} = fullfile('External', 'stlwrite');
         path_folders{end + 1} = fullfile('External', 'npReg');
         path_folders{end + 1} = fullfile('External', 'depmat');
         path_folders{end + 1} = fullfile('External', 'npReg', 'npRegLib');
         
-        AddToPath(path_root, path_folders)
+        AddToPath(path_root, path_folders);
         
-        
+        CoreAddPaths(varargin{:});
+        MatNatAddPaths(varargin{:});
         
         % Now add the plugins (have to do this afterwards, because we rely on
         % library functions, so the library paths have to be set first)
         path_folders = {};
         
-        plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'Gui', 'GuiPlugins'));
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'Gui', 'GuiPlugins'));
         for folder = plugin_folders
             path_folders{end + 1} = folder{1}.First;
         end
         
-        plugin_folders = PTKDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'Plugins'));
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'Plugins'));
+        for folder = plugin_folders
+            path_folders{end + 1} = folder{1}.First;
+        end
+        
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'SharedPlugins'));
         for folder = plugin_folders
             path_folders{end + 1} = folder{1}.First;
         end
