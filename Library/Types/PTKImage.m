@@ -253,7 +253,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function raw_image = GetRawImageForPlotting(obj)
-            % Returns a raw image suitable for use with Matlab's plottin functions
+            % Returns a raw image suitable for use with Matlab's plotting functions
             % such as isosurface. The k-direction is inverted since the orientation
             % for PTKImage is is opposite to that for Matlab's 3D axes
             
