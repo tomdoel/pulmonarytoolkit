@@ -212,7 +212,7 @@ classdef PTKGuiDataset < CoreBaseClass
             % is currently loaded then the callback from the image database will cause the
             % current dataset to be cleared.
             
-            obj.Ptk.DeleteDatasets(series_uids)
+            obj.Ptk.DeleteDatasets(series_uids);
             obj.Settings.RemoveLastPatientUid(series_uids);
         end
         
@@ -239,9 +239,13 @@ classdef PTKGuiDataset < CoreBaseClass
             
             try
                 if isa(image_info_or_uid, 'PTKImageInfo')
+                    series_uid = image_info_or_uid.ImageUid;
                     new_dataset = obj.Ptk.CreateDatasetFromInfo(image_info_or_uid);
-                else
+                elseif ischar(image_info_or_uid)
+                    series_uid = image_info_or_uid;
                     new_dataset = obj.Ptk.CreateDatasetFromUid(image_info_or_uid);
+                else
+                   new_dataset = [];
                 end
 
                 obj.ModeSwitcher.UpdateMode([], [], [], [], []);
@@ -255,6 +259,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 obj.ReplacePreviewListener(new_dataset);
                 
                 image_info = obj.Dataset.GetImageInfo;
+                series_uid = image_info.ImageUid;
                 modality = image_info.Modality;
                 
                 [preferred_context, plugin_to_use] = obj.AppDef.GetPreferredContext(modality);
@@ -297,7 +302,6 @@ classdef PTKGuiDataset < CoreBaseClass
                     image_info.Modality = new_image.Modality;
                 end
                 
-                series_uid = image_info.ImageUid;
                 if isfield(new_image.MetaHeader, 'PatientID')
                     patient_id = new_image.MetaHeader.PatientID;
                 else
@@ -342,6 +346,10 @@ classdef PTKGuiDataset < CoreBaseClass
                     obj.Reporting.ShowProgress('Cancelling load');
                     obj.ClearDataset;
                     obj.Reporting.ShowMessage('PTKGuiDataset:LoadingCancelled', 'User cancelled loading');
+                elseif PTKSoftwareInfo.IsErrorUidNotFound(exc.identifier)
+                    uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
+                    obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
+                    delete_image_info = true;
                 elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
                     uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');

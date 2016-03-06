@@ -33,7 +33,7 @@ classdef PTKDatasetDiskCache < handle
             obj.ResultsDiskCache = PTKDiskCache(PTKDirectories.GetCacheDirectory, dataset_uid, reporting);
             obj.EditedResultsDiskCache = PTKDiskCache(PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, reporting);
             obj.MarkersDiskCache = PTKDiskCache(PTKDirectories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, reporting);
-            obj.FrameworkDatasetDiskCache = PTKDiskCache(PTKDirectories.GetFrameworkDatasetCacheDirectoryAndCreateIfNecessary, dataset_uid, reporting);
+            obj.FrameworkDatasetDiskCache = PTKDiskCache(PTKDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid, reporting);
             
             obj.LoadCachedPluginResultsFile(reporting);
         end

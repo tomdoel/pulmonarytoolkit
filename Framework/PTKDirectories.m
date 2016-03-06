@@ -37,7 +37,7 @@ classdef PTKDirectories < CoreBaseClass
             cache_directory = fullfile(application_directory, cache_directory);
         end
         
-        function cache_directory = GetFrameworkDatasetCacheDirectoryAndCreateIfNecessary
+        function cache_directory = GetFrameworkDatasetCacheDirectory
             % Get the parent folder in which framework cache folders for each dataset are stored
             
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
@@ -181,18 +181,22 @@ classdef PTKDirectories < CoreBaseClass
         end
         
         function uids = GetUidsOfAllDatasetsInCache
-            cache_directory = PTKDirectories.GetCacheDirectory;
-            subdirectories = CoreDiskUtilities.GetListOfDirectories(cache_directory);
+            uids_1 = PTKDirectories.GetUidsOfAllDatasetsInFolder(PTKDirectories.GetCacheDirectory);
+            uids_2 = PTKDirectories.GetUidsOfAllDatasetsInFolder(PTKDirectories.GetFrameworkDatasetCacheDirectory);
+            uids = unique([uids_1, uids_2]);
+        end
+        
+        function uids = GetUidsOfAllDatasetsInFolder(folder)
+            subdirectories = CoreDiskUtilities.GetListOfDirectories(folder);
             uids = {};
             for subdir = subdirectories
                 candidate_uid = subdir{1};
-                full_file_name = [cache_directory, filesep, candidate_uid, filesep, PTKSoftwareInfo.ImageInfoCacheName, '.mat'];
+                full_file_name = [folder, filesep, candidate_uid, filesep, PTKSoftwareInfo.ImageInfoCacheName, '.mat'];
                 if 2 == exist(full_file_name, 'file')
                     uids{end+1} = candidate_uid;
                 end
             end
         end
-        
     end
 end
 

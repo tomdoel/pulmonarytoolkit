@@ -277,7 +277,11 @@ classdef PTKImageDatabase < handle
                     try
                         % Only update the progress for datasets we are actually checking
                         reporting.UpdateProgressStage(stage_index, num_stages);
-                        cache_parent_directory = PTKDirectories.GetCacheDirectory;
+                        if 2 == exist(fullfile(PTKDirectories.GetCacheDirectory, [PTKSoftwareInfo.ImageInfoCacheName '.mat']), 'file')
+                            cache_parent_directory = PTKDirectories.GetCacheDirectory;
+                        else
+                            cache_parent_directory = PTKDirectories.GetFrameworkDatasetCacheDirectory;
+                        end
                         temporary_disk_cache = PTKDiskCache(cache_parent_directory, temporary_uid, reporting);
                         temporary_image_info = temporary_disk_cache.Load(PTKSoftwareInfo.ImageInfoCacheName, [], reporting);
 

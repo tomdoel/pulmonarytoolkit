@@ -79,7 +79,7 @@ classdef PTKMainBase < CoreBaseClass
         end
         
         function dataset_exists = DatasetExists(obj, dataset_uid)
-            dataset_exists = 7 == exist(fullfile(PTKDirectories.GetCacheDirectory, dataset_uid), 'dir');
+            dataset_exists = (7 == exist(fullfile(PTKDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid), 'dir')) || (7 == exist(fullfile(PTKDirectories.GetCacheDirectory, dataset_uid), 'dir'));
         end
 
         function dataset = CreateDatasetFromUid(obj, dataset_uid)
