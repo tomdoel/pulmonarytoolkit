@@ -67,6 +67,37 @@ classdef PTKDiskCache < handle
             end
         end
         
+        function DeleteCacheFile(obj, name, context, reporting)
+            % Deletes the header and raw file from this cache
+            if obj.CacheDirExists
+                
+                % Store the state of the recycle bin
+                state = recycle;
+                
+                % Set recycle to on or off depending on a software switch
+                if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
+                    recycle('on');
+                else
+                    recycle('off');
+                end
+                
+                % Determine if a results file exists in the cahce
+                mat_filename = [fullfile(obj.CachePath, char(context), name) '.mat'];
+                if (2 == exist(mat_filename, 'file'))
+                    reporting.Log(['Deleting cache file: ' mat_filename]);
+                    delete(mat_filename);
+                end
+                raw_filename = [fullfile(obj.CachePath, char(context), name) '.raw'];
+                if (2 == exist(raw_filename, 'file'))
+                    reporting.Log(['Deleting cache file: ' raw_filename]);
+                    delete(raw_filename);
+                end
+                
+                % Restore previous recycle bin state
+                recycle(state);
+            end
+        end
+        
         function exists = RawFileExists(obj, name, context, ~)
             if ~obj.CacheDirExists
                 exists = false;

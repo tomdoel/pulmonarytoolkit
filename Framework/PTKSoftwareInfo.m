@@ -47,6 +47,7 @@ classdef PTKSoftwareInfo < handle
         
         % Directories
         DiskCacheFolderName = 'ResultsCache'
+        FrameworkDatasetCacheFolderName = 'FrameworkDatasetCache'
         OutputDirectoryName = 'Output'
         EditedResultsDirectoryName = 'EditedResults'
         ManualSegmentationsDirectoryName = 'ManualSegmentations'

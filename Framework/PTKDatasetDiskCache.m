@@ -24,6 +24,7 @@ classdef PTKDatasetDiskCache < handle
         EditedResultsDiskCache % Stores manual corrections to results
         ManualSegmentationsDiskCache % Stores manual segmentations
         MarkersDiskCache % Stores marker points
+        FrameworkDatasetDiskCache % Stores framework cache files that are stored for each dataset
     end
     
     methods
@@ -32,6 +33,7 @@ classdef PTKDatasetDiskCache < handle
             obj.ResultsDiskCache = PTKDiskCache(PTKDirectories.GetCacheDirectory, dataset_uid, reporting);
             obj.EditedResultsDiskCache = PTKDiskCache(PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, reporting);
             obj.MarkersDiskCache = PTKDiskCache(PTKDirectories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, reporting);
+            obj.FrameworkDatasetDiskCache = PTKDiskCache(PTKDirectories.GetFrameworkDatasetCacheDirectoryAndCreateIfNecessary, dataset_uid, reporting);
             
             obj.LoadCachedPluginResultsFile(reporting);
         end
@@ -86,13 +88,24 @@ classdef PTKDatasetDiskCache < handle
         function SaveData(obj, data_filename, value, reporting)
             % Saves additional data associated with this dataset to the cache
             
-            obj.ResultsDiskCache.Save(data_filename, value, [], reporting);
+            obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], reporting);
         end
         
         function value = LoadData(obj, data_filename, reporting)
             % Loads additional data associated with this dataset from the cache
-            
-            value = obj.ResultsDiskCache.Load(data_filename, [], reporting);
+
+            % PTK versions 0.6 and earlier stored the data cache files in
+            % the same folder as the plugin results cache files. If we find
+            % them here, load them and also move them to the framework
+            % cache folder for this dataset.
+            if ~obj.FrameworkDatasetDiskCache.Exists(data_filename, [], reporting) && obj.ResultsDiskCache.Exists(data_filename, [], reporting)
+                reporting.Log(['Moving framework cache file to framework cache: ' data_filename]);
+                value = obj.ResultsDiskCache.Load(data_filename, [], reporting);
+                obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], reporting);
+                obj.ResultsDiskCache.DeleteCacheFile(data_filename, [], reporting);
+            else        
+                value = obj.FrameworkDatasetDiskCache.Load(data_filename, [], reporting);
+            end
         end
         
         function SaveManualSegmentation(obj, filename, value, context, reporting)
@@ -171,7 +184,7 @@ classdef PTKDatasetDiskCache < handle
     methods (Access = private)
         
         function LoadCachedPluginResultsFile(obj, reporting)
-            cached_plugin_info = obj.ResultsDiskCache.Load(PTKSoftwareInfo.CachedPluginInfoFileName, [], reporting);
+            cached_plugin_info = obj.LoadData(PTKSoftwareInfo.CachedPluginInfoFileName, reporting);
             if isempty(cached_plugin_info)
                 obj.PluginResultsInfo = PTKPluginResultsInfo;
             else
@@ -180,7 +193,7 @@ classdef PTKDatasetDiskCache < handle
         end
         
         function SaveCachedPluginInfoFile(obj, reporting)
-            obj.ResultsDiskCache.Save(PTKSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, [], reporting);
+            obj.SaveData(PTKSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, reporting);
         end
     end
 end

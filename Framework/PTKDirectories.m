@@ -36,6 +36,14 @@ classdef PTKDirectories < CoreBaseClass
             cache_directory = PTKSoftwareInfo.DiskCacheFolderName;
             cache_directory = fullfile(application_directory, cache_directory);
         end
+        
+        function cache_directory = GetFrameworkDatasetCacheDirectoryAndCreateIfNecessary
+            % Get the parent folder in which framework cache folders for each dataset are stored
+            
+            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            cache_directory = PTKSoftwareInfo.FrameworkDatasetCacheFolderName;
+            cache_directory = fullfile(application_directory, cache_directory);
+        end
 
         function settings_file_path = GetSettingsFilePath
             % Returns the full path to the settings file
