@@ -148,7 +148,7 @@ classdef PTKDicomUtilities
         function image_info = GetListOfDicomFiles(image_path)
             filenames = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
             filenames = PTKDicomUtilities.RemoveNonDicomFiles(image_path, filenames);
-            image_type = PTKImageFileFormat.Dicom;            
+            image_type = PTKImageFileFormat.Dicom;
             image_info = PTKImageInfo(image_path, filenames, image_type, [], [], []);
         end        
     end
