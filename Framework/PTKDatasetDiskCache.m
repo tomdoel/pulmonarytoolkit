@@ -141,6 +141,7 @@ classdef PTKDatasetDiskCache < handle
         end
  
         function Delete(obj, reporting)
+            obj.FrameworkDatasetDiskCache.Delete(reporting);
             obj.ResultsDiskCache.Delete(reporting);
         end
         
