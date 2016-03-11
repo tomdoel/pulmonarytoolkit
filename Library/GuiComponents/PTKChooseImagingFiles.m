@@ -17,9 +17,19 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
     filespec = {
         '*;*.*', 'All files (*.*)';
         '*;*.*', 'DICOM files (*.*)';
-        '*.mhd;*.mha', 'Metaheader and raw data (*.mhd,*.mha)'
+        '*.mhd;*.mha', 'Metaheader and raw data (*.mhd,*.mha)';
+        '*.hdr;*.img', 'Analyze';
+        '*.gipl', 'Guys Image Processing Lab';
+        '*.isi', 'ISI';
+        '*.nii', 'NIFTI';
+        '*.v3d', 'Philips V3D';
+        '*.vmp', 'BrainVoyager';
+        '*.xif', 'HDllab/ATL Ultrasound';
+        '*.vtk', 'Visualization Toolkit (VTK)';
+        '*.vff', 'MicroCT';
+        '*.par;*.rec', 'Philips PAR/REC'
         };
-    
+
     [image_path, filenames, filter_index] = CoreDiskUtilities.ChooseFiles('Select the file to import', image_path, true, filespec);
     
     if isempty(image_path)
@@ -42,8 +52,58 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
         image_info = PTKImageInfo(image_path, filenames_dicom, image_type, [], [], []);
         return;
         
-    elseif (filter_index ==  3)
+    elseif (filter_index == 3)
         image_type = PTKImageFileFormat.Metaheader;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 4)
+        image_type = PTKImageFileFormat.Analyze;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 5)
+        image_type = PTKImageFileFormat.Gipl;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 6)
+        image_type = PTKImageFileFormat.Isi;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 7)
+        image_type = PTKImageFileFormat.Nifti;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 8)
+        image_type = PTKImageFileFormat.V3d;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 9)
+        image_type = PTKImageFileFormat.Vmp;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 10)
+        image_type = PTKImageFileFormat.Xif;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 11)
+        image_type = PTKImageFileFormat.Vtk;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 13)
+        image_type = PTKImageFileFormat.MicroCT;
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        return;
+
+    elseif (filter_index == 13)
+        image_type = PTKImageFileFormat.Par;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
     end

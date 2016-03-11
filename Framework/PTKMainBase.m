@@ -309,7 +309,11 @@ classdef PTKMainBase < CoreBaseClass
                     image_uid = metadata.SeriesInstanceUID;
                     study_uid = metadata.StudyInstanceUID;
                     modality = metadata.Modality;
-                case PTKImageFileFormat.Metaheader
+                case {PTKImageFileFormat.Metaheader, PTKImageFileFormat.Analyze, PTKImageFileFormat.Gipl, ...
+                        PTKImageFileFormat.Isi, PTKImageFileFormat.Nifti, PTKImageFileFormat.V3d, ...
+                        PTKImageFileFormat.Vmp, PTKImageFileFormat.Xif, PTKImageFileFormat.Vtk, ...        % Visualization Toolkit (VTK)
+                        PTKImageFileFormat.MicroCT, PTKImageFileFormat.Par}
+                        
                     image_uid = PTKDicomUtilities.GetIdentifierFromFilename(image_info.ImageFilenames{1});
                     study_uid = [];
                     modality = [];

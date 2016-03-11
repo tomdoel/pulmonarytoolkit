@@ -43,6 +43,11 @@ function image = PTKLoadImages(image_info, reporting)
                 image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting);
             case PTKImageFileFormat.Metaheader
                 image = PTKLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
+            case {PTKImageFileFormat.Metaheader, PTKImageFileFormat.Analyze, PTKImageFileFormat.Gipl, ...
+                    PTKImageFileFormat.Isi, PTKImageFileFormat.Nifti, PTKImageFileFormat.V3d, ...
+                    PTKImageFileFormat.Vmp, PTKImageFileFormat.Xif, PTKImageFileFormat.Vtk, ...        % Visualization Toolkit (VTK)
+                    PTKImageFileFormat.MicroCT, PTKImageFileFormat.Par}
+                image = PTKLoadOtherFormat(image_path, filenames, study_uid, image_file_format, reporting);
             otherwise
                 reporting.Error('PTKOriginalImage:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
         end

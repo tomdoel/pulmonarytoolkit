@@ -82,12 +82,110 @@ classdef PTKDiskUtilities
         end
         
         function [image_type, principal_filename, secondary_filenames] = GuessFileType(image_path, image_filename, default_guess, reporting)
-            [~, name, ext] = fileparts(image_filename);
+            [file_path, name, ext] = fileparts(image_filename);
+            image_filename_without_extension = fullfile(file_path, name);
             if strcmp(ext, '.mat')
                 image_type = PTKImageFileFormat.Matlab;
                 principal_filename = {image_filename};
                 secondary_filenames = {};
                 return;
+
+            elseif strcmp(ext, '.gipl')
+                image_type = PTKImageFileFormat.Gipl;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+
+            elseif strcmp(ext, '.hdr')
+                image_type = PTKImageFileFormat.Analyze;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                if CoreDiskUtilities.FileExists(file_path, [name '.img']);
+                    secondary_filenames = [image_filename_without_extension '.img'];
+                end
+                return;
+                
+            elseif strcmp(ext, '.nii')
+                image_type = PTKImageFileFormat.Nifti;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+
+            elseif strcmp(ext, '.img')
+                hdr_filename = [name '.hdr'];
+                nii_filename = [name '.nii'];
+                if CoreDiskUtilities.FileExists(file_path, nii_filename)
+                    image_type = PTKImageFileFormat.Nifti;
+                    principal_filename = {fullfile(file_path, nii_filename)};
+                    secondary_filenames = {image_filename};
+                    return;
+                elseif CoreDiskUtilities.FileExists(file_path, hdr_filename)
+                    image_type = PTKImageFileFormat.Analyze;
+                    principal_filename = {fullfile(file_path, hdr_filename)};
+                    secondary_filenames = {image_filename};
+                    return;
+                end
+                
+            elseif strcmp(ext, '.isi')
+                image_type = PTKImageFileFormat.Isi;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+
+            elseif strcmp(ext, '.v3d')
+                image_type = PTKImageFileFormat.V3d;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+
+            elseif strcmp(ext, '.vmp')
+                image_type = PTKImageFileFormat.Vmp;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+
+            elseif strcmp(ext, '.xif')
+                image_type = PTKImageFileFormat.Xif;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+
+            elseif strcmp(ext, '.vtk')
+                image_type = PTKImageFileFormat.Vtk;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+
+            elseif strcmp(ext, '.vff')
+                image_type = PTKImageFileFormat.MicroCT;
+                principal_filename = {image_filename};
+                secondary_filenames = {};
+                return;
+
+            elseif strcmp(ext, '.par') || strcmp(ext, '.rec')
+                image_type = PTKImageFileFormat.Par;
+                par_filename = {[name '.par']};
+                rec_filename = {[name '.rec']};
+                par_found = CoreDiskUtilities.FileExists(file_path, par_filename);
+                rec_found = CoreDiskUtilities.FileExists(file_path, rec_filename);
+                if par_found
+                    if rec_found
+                        principal_filename = {fullfile(file_path, par_filename)};
+                        secondary_filenames = {fullfile(file_path, rec_filename)};
+                        return;
+                    else
+                        principal_filename = {fullfile(file_path, par_filename)};
+                        secondary_filenames = {};
+                        return;
+                    end
+                else
+                    if rec_found
+                        principal_filename = {rec_filename};
+                        secondary_filenames = {};
+                        return;
+                    end
+                end
+            
 
             % For metaheader files (mhd/mha) we also fetch the filename of the
             % raw image data
@@ -98,7 +196,7 @@ classdef PTKDiskUtilities
                     reporting.Error('PTKDiskUtilities:OpenMHDFileFailed', ['Unable to read metaheader file ' image_filename]);
                 end
                 principal_filename = {image_filename};
-                secondary_filenames = {raw_filename};
+                secondary_filenames = {raw_filename}; % ToDo: what if no secondary file?
                 return;
                 
             % If a .raw file is selected, look for the corresponding .mha or
