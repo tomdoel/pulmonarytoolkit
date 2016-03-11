@@ -10,7 +10,7 @@ function PTKAddPaths(varargin)
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    PTKAddPaths_Version_Number = 2;
+    PTKAddPaths_Version_Number = 3;
     
     persistent PTK_PathsHaveBeenSet
     
@@ -60,6 +60,17 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('External', 'npReg');
         path_folders{end + 1} = fullfile('External', 'depmat');
         path_folders{end + 1} = fullfile('External', 'npReg', 'npRegLib');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'subfunctions');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'gipl');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'hdr');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'isi');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'nii');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'par');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'v3d');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'vff');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'vmp');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'vtk');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'xif');
         
         AddToPath(path_root, path_folders);
         
