@@ -22,7 +22,11 @@ classdef MivAppDef < handle
             preferred_context = [];
             plugin_to_use = [];
         end
-        
+
+        function context_def = GetContextDef(obj)
+            context_def = MivContextDef;
+        end
+                
         function name = GetName(obj)
             name = MivAppDef.Name;
         end
