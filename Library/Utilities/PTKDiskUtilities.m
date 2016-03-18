@@ -35,10 +35,10 @@ classdef PTKDiskUtilities
         end
 
         function [is_meta_header, raw_filename] = IsFileMetaHeader(header_filename, reporting)
-            meta_header = PTKDiskUtilities.ReadMetaHeader(header_filename, reporting);
-            if (~isempty(meta_header)) && isfield(meta_header, 'ElementDataFile')
+            meta_header = mha_read_header(header_filename);
+            if (~isempty(meta_header)) && isfield(meta_header, 'DataFile')
                 is_meta_header = true;
-                raw_filename = meta_header.ElementDataFile;
+                raw_filename = meta_header.DataFile;
             else
                 is_meta_header = false;
                 raw_filename = [];

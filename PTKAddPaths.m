@@ -64,6 +64,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('External', 'ReadData3D', 'gipl');
         path_folders{end + 1} = fullfile('External', 'ReadData3D', 'hdr');
         path_folders{end + 1} = fullfile('External', 'ReadData3D', 'isi');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'mha');
         path_folders{end + 1} = fullfile('External', 'ReadData3D', 'nii');
         path_folders{end + 1} = fullfile('External', 'ReadData3D', 'par');
         path_folders{end + 1} = fullfile('External', 'ReadData3D', 'v3d');
