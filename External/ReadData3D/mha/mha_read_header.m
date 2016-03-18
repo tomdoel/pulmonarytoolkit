@@ -34,6 +34,9 @@ while(~readelementdatafile)
         type=''; data=str;
     end
     
+    % TD: remove trailing spaces from parsed strings
+    data = strtrim(data);
+    
     switch(lower(type))
         case 'ndims'
             info.NumberOfDimensions=sscanf(data, '%d')';
