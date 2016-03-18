@@ -98,7 +98,7 @@ classdef PTKSettings < CoreBaseClass
                     obj.LastUidForPatientMap.remove(key{1});
                 end
             end
-            if strcmp(obj.ImageInfo.ImageUid, series_uid)
+            if ~isempty(obj.ImageInfo) && strcmp(obj.ImageInfo.ImageUid, series_uid)
                 obj.ImageInfo = [];
             end
         end
