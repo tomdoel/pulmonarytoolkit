@@ -111,16 +111,9 @@ classdef PTKContextHierarchy < CoreBaseClass
     
     methods (Access = private)
         function [result, output_image, plugin_has_been_run, cache_info] = GetResultRecursive(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
+            
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name, output_context, reporting);
-            
-            [result, output_image, plugin_has_been_run, cache_info] = obj.GetResultForAllContexts(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
-            
-            % Allow the context manager to construct a template image from this
-            % result if required
-            obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, result, plugin_has_been_run, cache_info, reporting);
-        end
-        
-        function [result, output_image, plugin_has_been_run, cache_info] = GetResultForAllContexts(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
+
             % Determines the type of context supported by the plugin
             plugin_context_set = plugin_info.Context;
             if isempty(plugin_context_set)
@@ -139,97 +132,89 @@ classdef PTKContextHierarchy < CoreBaseClass
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to call the plugin
             if obj.ContextDef.ContextSetMatches(plugin_context_set, output_context_set)
-                [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting);
-
-                % If the plugin has been re-run, then we will generate an output
-                % image, in order to create a new preview image
-                if (plugin_info.GeneratePreview && plugin_has_been_run)
-                   force_generate_image = true;
-                end
-                
-                % We generate an output image if requested, or if the plugin has been re-run (indictaing that we will need to generate a new preview image)
-                if force_generate_image
-                    template_callback = PTKTemplateCallback(linked_dataset_chooser, dataset_stack, reporting);
-                    
-                    if isa(result, 'PTKImage')
-                        output_image = plugin_class.GenerateImageFromResults(result.Copy, template_callback, reporting);
-                    else
-                        output_image = plugin_class.GenerateImageFromResults(result, template_callback, reporting);
-                    end
-                else
-                    output_image = [];
-                end
-                
+                [result, output_image, plugin_has_been_run, cache_info] = obj.GetResultsForSameContext(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
             
             % Otherwise, if the plugin's context set is higher in the hierarchy
             % than the requested output, then get the result for the higher
             % context and then extract out the desired context
             elseif output_context_set_mapping.IsOtherContextSetHigher(plugin_context_set_mapping)
-                higher_context_mapping = output_context_mapping.Parent;
-                if isempty(higher_context_mapping)
-                    reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
-                end
-                [result, output_image, plugin_has_been_run, cache_info] = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
-                
-                result = obj.ReduceResultToContext(result, output_context_mapping, dataset_stack, reporting);
-                if ~isempty(output_image)
-                    output_image = obj.ReduceResultToContext(output_image, output_context_mapping, dataset_stack, reporting);
-                end
+                [result, output_image, plugin_has_been_run, cache_info] = obj.GetResultsForHigherContexts(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
                 
             % If the plugin's context set is lower in the hierarchy, then get
             % the plugin result for all lower contexts and concatenate the results
             elseif plugin_context_set_mapping.IsOtherContextSetHigher(output_context_set_mapping)
-                child_context_mappings = output_context_mapping.Children;
-                output_image_template = obj.ImageTemplates.GetTemplateImage(output_context, dataset_stack, reporting);
-                cache_info = PTKCompositeResult;
-                plugin_has_been_run = false;
-                first_run = true;
-                for child_mapping = child_context_mappings
-                    child_context = child_mapping{1}.Context;
-                    [this_result, this_output_image, this_plugin_has_been_run, this_cache_info] = obj.GetResultRecursive(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
-                    if first_run
-                        if isa(this_result, 'PTKImage')
-                            result = this_result.Copy;
-                            result.ResizeToMatch(output_image_template);
-                            result.Clear;
-                        else
-                            result = PTKCompositeResult;
-                        end
-                        
-                        if isempty(this_output_image)
-                            output_image = [];
-                        else
-                            output_image = this_output_image.Copy;
-                            output_image.ResizeToMatch(output_image_template);
-                            output_image.Clear;
-                        end
-                        first_run = false;
-                    end
-                    
-                    template_image_for_this_result = obj.ImageTemplates.GetTemplateImage(child_context, dataset_stack, reporting);
-                    
-                    if isa(this_result, 'PTKImage')
-                        % If the result is an image, we add the image to the
-                        % appropriate part of the final image using the context
-                        % mask.
-                        result.ChangeSubImageWithMask(this_result, template_image_for_this_result);
-                    else
-                        % Otherwise, we add the result as a new field in the
-                        % composite results
-                        result.AddField(char(child_context), this_result);
-                    end
-                    
-                    if ~isempty(output_image) && ~isempty(this_output_image)
-                        output_image.ChangeSubImageWithMask(this_output_image, template_image_for_this_result);
-                    end
-                    cache_info.AddField(char(child_context), this_cache_info);
-                    plugin_has_been_run = plugin_has_been_run || this_plugin_has_been_run;
-                    
-                end
+                [result, output_image, plugin_has_been_run, cache_info] = obj.GetResultsForLowerContexts(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+            
             else
                 reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
             end
+            
+            % Allow the context manager to construct a template image from this
+            % result if required
+            obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, result, plugin_has_been_run, cache_info, reporting);
         end
+        
+        function [result, output_image, plugin_has_been_run, cache_info] = GetResultsForSameContext(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+            
+            [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting);
+            
+            % If the plugin has been re-run, then we will generate an output
+            % image, in order to create a new preview image
+            if (plugin_info.GeneratePreview && plugin_has_been_run)
+                force_generate_image = true;
+            end
+            
+            % We generate an output image if requested, or if the plugin has been re-run (indictaing that we will need to generate a new preview image)
+            if force_generate_image
+                template_callback = PTKTemplateCallback(linked_dataset_chooser, dataset_stack, reporting);
+                
+                if isa(result, 'PTKImage')
+                    output_image = plugin_class.GenerateImageFromResults(result.Copy, template_callback, reporting);
+                else
+                    output_image = plugin_class.GenerateImageFromResults(result, template_callback, reporting);
+                end
+            else
+                output_image = [];
+            end
+            
+        end
+        
+        function [result, output_image, plugin_has_been_run, cache_info] = GetResultsForHigherContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+            context_results_combiner = PTKContextResultCombiner(obj.ImageTemplates);
+            higher_context_mapping = output_context_mapping.Parent;
+            if isempty(higher_context_mapping)
+                reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
+            end
+            parent_context = higher_context_mapping.Context;
+            [this_result, this_output_image, plugin_has_been_run, this_cache_info] = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+            
+            context_results_combiner.AddParentResult(parent_context, this_result, this_output_image, this_cache_info, output_context, output_context_mapping, dataset_stack, reporting);
+            
+            result = context_results_combiner.GetResult;
+            cache_info = context_results_combiner.GetCacheInfo;
+            output_image = context_results_combiner.GetOutputImage;
+        end
+        
+        function [result, output_image, plugin_has_been_run, cache_info] = GetResultsForLowerContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);    
+            context_results_combiner = PTKContextResultCombiner(obj.ImageTemplates);
+            child_context_mappings = output_context_mapping.Children;
+            
+            plugin_has_been_run = false;
+            for child_mapping = child_context_mappings
+                child_context = child_mapping{1}.Context;
+                [this_result, this_output_image, this_plugin_has_been_run, this_cache_info] = obj.GetResultRecursive(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+                
+                context_results_combiner.AddChildResult(child_context, this_result, this_output_image, this_cache_info, output_context, output_context_mapping, dataset_stack, reporting);
+                
+                plugin_has_been_run = plugin_has_been_run || this_plugin_has_been_run;
+                
+            end
+            
+            result = context_results_combiner.GetResult;
+            cache_info = context_results_combiner.GetCacheInfo;
+            output_image = context_results_combiner.GetOutputImage;
+        end
+        
         
         function SaveEditedResultForAllContexts(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
             
