@@ -45,7 +45,7 @@ classdef PTKDatasetResults < handle
         ImageInfo            % Information about this dataset
         LinkedDatasetChooser % Used to process GetResult() requests during callbacks
         
-        % A pointer to the PTKDataset object which contains the event to be triggered when a preview thumbnail image has changed
+        % A pointer to the object which contains the event to be triggered when a preview thumbnail image has changed
         ExternalWrapperNotifyFunction
         
     end

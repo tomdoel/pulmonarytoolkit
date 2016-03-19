@@ -61,7 +61,7 @@ classdef PTKDiskCache < handle
             if ~obj.CacheDirExists
                 exists = false;
             else
-                % Determine if a results file exists in the cahce
+                % Determine if a results file exists in the cache
                 filename = [fullfile(obj.CachePath, char(context), name) '.mat'];
                 exists = (2 == exist(filename, 'file'));
             end
