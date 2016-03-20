@@ -98,16 +98,6 @@ classdef PTKDiskCache < handle
             end
         end
         
-        function exists = RawFileExists(obj, name, context, ~)
-            if ~obj.CacheDirExists
-                exists = false;
-            else
-                % Determine if the raw image file associated with a PTKImage results file exists in the cahce
-                filename = [fullfile(obj.CachePath, char(context), name) '.raw'];
-                exists = (2 == exist(filename, 'file'));
-            end
-        end
-
         function [result, info] = Load(obj, name, context, reporting)
             % Load a result from the cache
             if obj.CacheDirExists && obj.Exists(name, context, reporting)
