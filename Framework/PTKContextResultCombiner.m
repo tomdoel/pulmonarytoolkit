@@ -20,6 +20,7 @@ classdef PTKContextResultCombiner < CoreBaseClass
         OutputImage
         OutputImageTemplate
         Result
+        PluginHasBeenRun = false
     end
     
     methods
@@ -27,27 +28,33 @@ classdef PTKContextResultCombiner < CoreBaseClass
             obj.ImageTemplates = image_templates;
         end
         
-        function AddParentResult(obj, parent_context, this_result, this_output_image, this_cache_info, output_context, output_context_mapping, dataset_stack, reporting)
-            obj.Result = obj.ReduceResultToContext(this_result, output_context_mapping.Context, dataset_stack, reporting);
-            if ~isempty(this_output_image)
-                obj.OutputImage = obj.ReduceResultToContext(this_output_image, output_context, dataset_stack, reporting);
+        function AddParentResult(obj, parent_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting)
+            obj.Result = PTKReduceResultToContext(this_context_results.GetResult, output_context_mapping.Context, obj.ImageTemplates, dataset_stack, reporting);
+            if ~isempty(this_context_results.GetOutputImage)
+                obj.OutputImage = PTKReduceResultToContext(this_context_results.GetOutputImage, output_context, obj.ImageTemplates, dataset_stack, reporting);
             else
                 obj.OutputImage = [];
             end
-            obj.CacheInfo = this_cache_info;
+            obj.CacheInfo = this_context_results.GetCacheInfo;
+            obj.PluginHasBeenRun = obj.PluginHasBeenRun || this_context_results.GetPluginHasBeenRun;
         end
         
-        function AddChildResult(obj, child_context, this_result, this_output_image, this_cache_info, output_context, output_context_mapping, dataset_stack, reporting)
-            obj.Result = obj.ExpandResultToContext(obj.Result, this_result, child_context, output_context, dataset_stack, reporting);
-            if ~isempty(this_output_image)
-                obj.OutputImage = obj.ExpandResultToContext(obj.OutputImage, this_output_image, child_context, output_context, dataset_stack, reporting);
+        function AddChildResult(obj, child_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting)
+            if isempty(obj.OutputImageTemplate)
+                obj.OutputImageTemplate = obj.ImageTemplates.GetTemplateImage(output_context, dataset_stack, reporting);
+            end
+            
+            obj.Result = PTKExpandResultToContext(obj.Result, this_context_results.GetResult, child_context, obj.OutputImageTemplate, obj.ImageTemplates, dataset_stack, reporting);
+            if ~isempty(this_context_results.GetOutputImage)
+                obj.OutputImage = PTKExpandResultToContext(obj.OutputImage, this_context_results.GetOutputImage, child_context, obj.OutputImageTemplate, obj.ImageTemplates, dataset_stack, reporting);
             else
                 obj.OutputImage = [];
             end
             if isempty(obj.CacheInfo)
                 obj.CacheInfo = PTKCompositeResult;
             end
-            obj.CacheInfo.AddField(char(child_context), this_cache_info);            
+            obj.CacheInfo.AddField(char(child_context), this_context_results.GetCacheInfo);
+            obj.PluginHasBeenRun = obj.PluginHasBeenRun || this_context_results.GetPluginHasBeenRun;            
         end
 
         function result = GetResult(obj)
@@ -61,70 +68,11 @@ classdef PTKContextResultCombiner < CoreBaseClass
         function result = GetOutputImage(obj)
             result = obj.OutputImage;
         end
+        
+        function has_been_run = GetPluginHasBeenRun(obj)
+            has_been_run = obj.PluginHasBeenRun;
+        end
+        
     end
-    
-    methods (Access = private)
-        
-        function result = ExpandResultToContext(obj, result, this_result, child_context, output_context, dataset_stack, reporting)
-            if isempty(obj.OutputImageTemplate)
-                obj.OutputImageTemplate = obj.ImageTemplates.GetTemplateImage(output_context, dataset_stack, reporting);
-            end
-            
-            if isempty(result)
-                if isa(this_result, 'PTKImage')
-                    result = this_result.Copy;
-                    result.ResizeToMatch(obj.OutputImageTemplate);
-                    result.Clear;
-                else
-                    result = PTKCompositeResult;
-                end
-            end
-            
-            if isa(this_result, 'PTKImage')
-                % If the result is an image, we add the image to the
-                % appropriate part of the final image using the context
-                % mask.
-                template_image_for_this_result = obj.ImageTemplates.GetTemplateImage(child_context, dataset_stack, reporting);
-                result.ChangeSubImageWithMask(this_result, template_image_for_this_result);
-            else
-                % Otherwise, we add the result as a new field in the
-                % composite results
-                result.AddField(char(child_context), this_result);
-            end            
-        end
-        
-        function result = ReduceResultToContext(obj, full_result, child_context, dataset_stack, reporting)
-            % Extracts out a result for a particular context
-            
-            % If the result is a composite result, then get the result for this
-            % context            
-            if isa(full_result, 'PTKCompositeResult') && full_result.IsField(char(child_context))
-                result = full_result.(char(child_context));
-                return
-            end
-            
-            % Otherwise, we can only perform the reduction if the result it a
-            % PTKImage
-            if ~isa(full_result, 'PTKImage')
-                result = full_result;
-                return
-            end
-            
-            % Resize an image to match the template for a particular context,
-            % and extract out only the part of the image specified by the
-            % context map
-            
-            template_image = obj.ImageTemplates.GetTemplateImage(child_context, dataset_stack, reporting);
-            
-            % Make a copy before we resize
-            result = full_result.Copy;
-            result.ResizeToMatch(template_image);
-            
-            if template_image.ImageExists
-                result.Clear;
-                result.ChangeSubImageWithMask(full_result, template_image, true);
-            end
-        end
-    end        
 end 
 
