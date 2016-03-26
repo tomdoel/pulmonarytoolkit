@@ -1,5 +1,5 @@
-classdef PTKDiskCache < handle
-    % PTKDiskCache. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimDiskCache < handle
+    % MimDiskCache. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -32,7 +32,7 @@ classdef PTKDiskCache < handle
     
     methods
         
-        function obj = PTKDiskCache(cache_parent_directory, uuid, config, reporting)
+        function obj = MimDiskCache(cache_parent_directory, uuid, config, reporting)
             obj.SchemaNumber = 1;
             obj.Uuid = uuid;
             obj.Config = config;
@@ -50,7 +50,7 @@ classdef PTKDiskCache < handle
                 if obj.Exists(obj.Config.SchemaCacheName, [], reporting)
                     schema = obj.Load(obj.Config.SchemaCacheName, [], reporting);
                     if (schema ~= obj.SchemaNumber)
-                        reporting.Error('PTKDiskCache:BadSchema', 'Wrong schema found. This is caused by having a disk cache from a redundant version of code. Delete your cache directory to fix.');
+                        reporting.Error('MimDiskCache:BadSchema', 'Wrong schema found. This is caused by having a disk cache from a redundant version of code. Delete your cache directory to fix.');
                     end
                 else
                     obj.Save(obj.Config.SchemaCacheName, obj.SchemaNumber, [], reporting);
@@ -164,7 +164,7 @@ classdef PTKDiskCache < handle
                     recycle('off');
                 end
                 
-                reporting.ShowMessage('PTKDiskCache:DeletingDirectory', ['Deleting directory: ' obj.CachePath]);
+                reporting.ShowMessage('MimDiskCache:DeletingDirectory', ['Deleting directory: ' obj.CachePath]);
                 reporting.Log(['Deleting directory' obj.CachePath]);
                 rmdir(obj.CachePath, 's');
                 
@@ -250,7 +250,7 @@ classdef PTKDiskCache < handle
                 is_framework_file = obj.IsFrameworkFile(file_name);
                 if (remove_framework_files || (~is_framework_file))
                     full_filename = fullfile(file_path, file_name);
-                    reporting.ShowMessage('PTKDiskCache:RecyclingCacheDirectory', ['Deleting: ' full_filename]);
+                    reporting.ShowMessage('MimDiskCache:RecyclingCacheDirectory', ['Deleting: ' full_filename]);
                     
                     delete(full_filename);
                     reporting.Log(['Deleting ' full_filename]);

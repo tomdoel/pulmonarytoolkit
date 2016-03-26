@@ -25,6 +25,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     %    
     
     properties (Access = private)
+        Config
         ImageDatabase      % Database of image files
         MexCache     % Information about mex files which is cached on disk
         LinkedDatasetRecorder
@@ -57,7 +58,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
         end
         
         function RebuildDatabase(obj, reporting)
-            obj.ImageDatabase.Rebuild([], true, reporting)
+            obj.ImageDatabase.Rebuild([], true, obj.Config, reporting)
         end
     
         function AddToDatabase(obj, image_uid, reporting)
@@ -65,7 +66,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
             % CreateDatasetFromInfo() can import new data, so we may need to add
             % to the image database
             if ~obj.ImageDatabase.SeriesExists(image_uid)
-                obj.ImageDatabase.Rebuild({image_uid}, false, reporting);
+                obj.ImageDatabase.Rebuild({image_uid}, false, obj.Config, reporting);
             end
         end
         
@@ -108,13 +109,14 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     
     methods (Access = private)
         function obj = PTKFrameworkSingleton(context_def, config, reporting)
+            obj.Config = config;
             obj.MexCache = PTKFrameworkCache.LoadCache(reporting);
             obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
             obj.DatasetMemoryCache = PTKDatasetMemoryCache(config);
             obj.PluginInfoMemoryCache = PTKPluginInfoMemoryCache;
             obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(context_def, obj.LinkedDatasetRecorder, obj.PluginInfoMemoryCache);
-            obj.ImageDatabase = PTKImageDatabase.LoadDatabase(reporting);
-            obj.ImageDatabase.Rebuild([], false, reporting);
+            obj.ImageDatabase = PTKImageDatabase.LoadDatabase(config, reporting);
+            obj.ImageDatabase.Rebuild([], false, config, reporting);
         end
     end
     

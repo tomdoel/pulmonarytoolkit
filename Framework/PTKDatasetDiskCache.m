@@ -29,11 +29,11 @@ classdef PTKDatasetDiskCache < handle
     
     methods
         function obj = PTKDatasetDiskCache(dataset_uid, config, reporting)
-            obj.ManualSegmentationsDiskCache = PTKDiskCache(PTKDirectories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
-            obj.ResultsDiskCache = PTKDiskCache(PTKDirectories.GetCacheDirectory, dataset_uid, config, reporting);
-            obj.EditedResultsDiskCache = PTKDiskCache(PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
-            obj.MarkersDiskCache = PTKDiskCache(PTKDirectories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
-            obj.FrameworkDatasetDiskCache = PTKDiskCache(PTKDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid, config, reporting);
+            obj.ManualSegmentationsDiskCache = MimDiskCache(PTKDirectories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
+            obj.ResultsDiskCache = MimDiskCache(PTKDirectories.GetCacheDirectory, dataset_uid, config, reporting);
+            obj.EditedResultsDiskCache = MimDiskCache(PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
+            obj.MarkersDiskCache = MimDiskCache(PTKDirectories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
+            obj.FrameworkDatasetDiskCache = MimDiskCache(PTKDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid, config, reporting);
             
             obj.LoadCachedPluginResultsFile(reporting);
         end
