@@ -31,5 +31,9 @@ classdef PTKFrameworkAppDef < handle
         function files_to_compile = GetFilesToCompile(obj, reporting)
             files_to_compile = PTKGetMexFilesToCompile(reporting);
         end
+
+        function config = GetFrameworkConfig(~)
+            config = MimConfig;
+        end        
     end
 end

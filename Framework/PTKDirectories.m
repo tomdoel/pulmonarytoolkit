@@ -173,13 +173,6 @@ classdef PTKDirectories < CoreBaseClass
             log_file_path = fullfile(settings_folder, log_file_name);
         end
         
-        function is_framework_file = IsFrameworkFile(file_name)
-            is_framework_file = strcmp(file_name, [PTKSoftwareInfo.SchemaCacheName '.mat']) || ...
-                strcmp(file_name, [PTKSoftwareInfo.ImageInfoCacheName '.mat']) || ...
-                strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.mat']) || ...
-                strcmp(file_name, [PTKSoftwareInfo.MakerPointsCacheName '.raw']);
-        end
-        
         function uids = GetUidsOfAllDatasetsInCache
             uids_1 = PTKDirectories.GetUidsOfAllDatasetsInFolder(PTKDirectories.GetCacheDirectory);
             uids_2 = PTKDirectories.GetUidsOfAllDatasetsInFolder(PTKDirectories.GetFrameworkDatasetCacheDirectory);

@@ -45,6 +45,7 @@ classdef PTKMainBase < CoreBaseClass
     %
     
     properties (SetAccess = private)
+        FrameworkConfig
         FrameworkAppDef
         FrameworkSingleton
         Reporting          % Object for error and progress reporting
@@ -55,9 +56,10 @@ classdef PTKMainBase < CoreBaseClass
         
         function obj = PTKMainBase(framework_app_def, reporting)
             obj.FrameworkAppDef = framework_app_def;
+            obj.FrameworkConfig = framework_app_def.GetFrameworkConfig;
             obj.Reporting = reporting;
             obj.ReportingWithCache = PTKReportingWithCache(obj.Reporting);
-            obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(framework_app_def.GetContextDef, obj.Reporting);
+            obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(framework_app_def.GetContextDef, obj.FrameworkConfig, obj.Reporting);
             
             output_directory = framework_app_def.GetOutputDirectory;
             files_to_compile = framework_app_def.GetFilesToCompile(reporting);

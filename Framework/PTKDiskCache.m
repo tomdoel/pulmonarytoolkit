@@ -26,14 +26,16 @@ classdef PTKDiskCache < handle
     properties (Access = private)
         Uuid         % A unique identifier for this dataset
         SchemaNumber % Version number
+        Config       % Configuration parameters
         Reporting
     end
     
     methods
         
-        function obj = PTKDiskCache(cache_parent_directory, uuid, reporting)
+        function obj = PTKDiskCache(cache_parent_directory, uuid, config, reporting)
             obj.SchemaNumber = 1;
             obj.Uuid = uuid;
+            obj.Config = config;
             obj.Reporting = reporting;
             
             % Create a disk cache object, and associated folder, for the dataset
@@ -45,13 +47,13 @@ classdef PTKDiskCache < handle
             obj.CachePath = fullfile(cache_parent_directory, uuid);
             if obj.CacheDirExists
                 reporting.LogVerbose(['Using disk cache : ' obj.CachePath]);
-                if obj.Exists(PTKSoftwareInfo.SchemaCacheName, [], reporting)
-                    schema = obj.Load(PTKSoftwareInfo.SchemaCacheName, [], reporting);
+                if obj.Exists(obj.Config.SchemaCacheName, [], reporting)
+                    schema = obj.Load(obj.Config.SchemaCacheName, [], reporting);
                     if (schema ~= obj.SchemaNumber)
                         reporting.Error('PTKDiskCache:BadSchema', 'Wrong schema found. This is caused by having a disk cache from a redundant version of code. Delete your cache directory to fix.');
                     end
                 else
-                    obj.Save(PTKSoftwareInfo.SchemaCacheName, obj.SchemaNumber, [], reporting);
+                    obj.Save(obj.Config.SchemaCacheName, obj.SchemaNumber, [], reporting);
                 end
                 
             end
@@ -75,7 +77,7 @@ classdef PTKDiskCache < handle
                 state = recycle;
                 
                 % Set recycle to on or off depending on a software switch
-                if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
+                if obj.Config.RecycleWhenDeletingCacheFiles
                     recycle('on');
                 else
                     recycle('off');
@@ -156,7 +158,7 @@ classdef PTKDiskCache < handle
                 state = recycle;
                 
                 % Set recycle to on or off depending on a software switch
-                if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
+                if obj.Config.RecycleWhenDeletingCacheFiles
                     recycle('on');
                 else
                     recycle('off');
@@ -182,7 +184,7 @@ classdef PTKDiskCache < handle
                 state = recycle;
                 
                 % Set recycle to on or off depending on a software switch
-                if PTKSoftwareInfo.RecycleWhenDeletingCacheFiles
+                if obj.Config.RecycleWhenDeletingCacheFiles
                     recycle('on');
                 else
                     recycle('off');
@@ -236,16 +238,16 @@ classdef PTKDiskCache < handle
 
     end
         
-    methods (Static, Access = private)
+    methods (Access = private)
     
-        function RemoveFilesInDirectory(file_path, name, remove_framework_files, reporting)
+        function RemoveFilesInDirectory(obj, file_path, name, remove_framework_files, reporting)
             
             file_list = CoreDiskUtilities.GetDirectoryFileList(file_path, [name, '.raw']);
             file_list_2 = CoreDiskUtilities.GetDirectoryFileList(file_path, [name, '.mat']);
             file_list = cat(2, file_list, file_list_2);
             for index = 1 : length(file_list)
                 file_name = file_list{index};
-                is_framework_file = PTKDirectories.IsFrameworkFile(file_name);
+                is_framework_file = obj.IsFrameworkFile(file_name);
                 if (remove_framework_files || (~is_framework_file))
                     full_filename = fullfile(file_path, file_name);
                     reporting.ShowMessage('PTKDiskCache:RecyclingCacheDirectory', ['Deleting: ' full_filename]);
@@ -255,9 +257,6 @@ classdef PTKDiskCache < handle
                 end
             end
         end
-    end
-    
-    methods (Access = private)
 
         function CreateCacheDirIfNecessary(obj)
             if ~obj.CacheDirExists
@@ -265,7 +264,7 @@ classdef PTKDiskCache < handle
                 obj.Reporting.LogVerbose(['Creating disk cache : ' obj.CachePath]);
                 
                 % Create schema
-                obj.Save(PTKSoftwareInfo.SchemaCacheName, obj.SchemaNumber, [], obj.Reporting);
+                obj.Save(obj.Config.SchemaCacheName, obj.SchemaNumber, [], obj.Reporting);
             end
         end
         
@@ -282,7 +281,28 @@ classdef PTKDiskCache < handle
                 result.info = info;
             end
             result.value = value;
-            PTKDiskUtilities.SaveStructure(file_path_with_context, name, result, PTKSoftwareInfo.Compression, reporting);
+            PTKDiskUtilities.SaveStructure(file_path_with_context, name, result, obj.Config.Compression, reporting);
         end
+        
+        function is_framework_file = IsFrameworkFile(obj, file_name)
+            % This function determines if the given file is a legacy
+            % framework file. This is only used for compatibility with PTK
+            % 0.6 and previous where framework files could be stored in the
+            % same folder as result cache files
+            
+            % Note these names will never change, since they are
+            % specifically for preserving framework files created in
+            % earlier versions, until the point at which they are
+            % moved to the new framework location
+            legacy_marker_name = 'MarkerPoints';
+            legacy_image_info_name = 'ImageInfo';
+            
+            is_framework_file = strcmp(file_name, [obj.Config.SchemaCacheName '.mat']) || ...
+                strcmp(file_name, [legacy_image_info_name '.mat']) || ...
+                strcmp(file_name, [legacy_marker_name '.mat']) || ...
+                strcmp(file_name, [legacy_marker_name '.raw']);
+        end
+        
+        
     end
 end

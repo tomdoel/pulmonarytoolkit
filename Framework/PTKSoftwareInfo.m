@@ -74,13 +74,9 @@ classdef PTKSoftwareInfo < handle
         LinkingCacheFileName = 'PTKLinkingCache.xml'
         MakerPointsCacheName = 'MarkerPoints'
         ImageInfoCacheName = 'ImageInfo'
-        SchemaCacheName = 'Schema'
         ImageTemplatesCacheName = 'ImageTemplates'
         OutputFolderCacheName = 'OutputFolder'
 
-        % Compression to use when saving cache images
-        Compression = 'deflate'
-        
         % Debugging and optional arguments
         DebugMode = false
         GraphicalDebugMode = false
@@ -88,7 +84,6 @@ classdef PTKSoftwareInfo < handle
         FastMode = false
         DemoMode = false % If true, user plugins will be ignored
         WriteVerboseEntriesToLogFile = false
-        RecycleWhenDeletingCacheFiles = false
         ToolbarEnabled = true
         ViewerPanelToolbarEnabled = false
         
