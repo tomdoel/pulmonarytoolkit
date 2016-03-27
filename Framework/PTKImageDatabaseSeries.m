@@ -87,8 +87,23 @@ classdef PTKImageDatabaseSeries < handle
     
     
     methods (Static)
-        function obj = loadobj(obj)
+        function obj = loadobj(a)
             % This method is called when the object is loaded from disk.
+            
+            if isa(a, 'PTKImageDatabaseSeries')
+                obj = a;
+            else
+                % In the case of a load error, loadobj() gives a struct
+                obj = PTKImageDatabaseSeries;
+                for field = fieldnames(a)'
+                    if isprop(obj, field{1})
+                        mp = findprop(obj, (field{1}));
+                        if (~mp.Constant) && (~mp.Dependent) && (~mp.Abstract) 
+                            obj.(field{1}) = a.(field{1});
+                        end
+                    end
+                end
+            end
             
             % In the first implementation, the ImageMap was a map of image
             % uids to image metainfo. Now we replace it with a simple list of
