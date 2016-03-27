@@ -1,5 +1,5 @@
-classdef PTKDatasetDiskCache < handle
-    % PTKDatasetDiskCache. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimDatasetDiskCache < handle
+    % MimDatasetDiskCache. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -18,6 +18,7 @@ classdef PTKDatasetDiskCache < handle
     %
     
     properties (Access = private)
+        Config
         PluginResultsInfo
         
         ResultsDiskCache % Stores automatically generated plugin results for internal use
@@ -28,7 +29,8 @@ classdef PTKDatasetDiskCache < handle
     end
     
     methods
-        function obj = PTKDatasetDiskCache(dataset_uid, config, reporting)
+        function obj = MimDatasetDiskCache(dataset_uid, config, reporting)
+            obj.Config = config;
             obj.ManualSegmentationsDiskCache = MimDiskCache(PTKDirectories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
             obj.ResultsDiskCache = MimDiskCache(PTKDirectories.GetCacheDirectory, dataset_uid, config, reporting);
             obj.EditedResultsDiskCache = MimDiskCache(PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
@@ -183,9 +185,8 @@ classdef PTKDatasetDiskCache < handle
     end
     
     methods (Access = private)
-        
         function LoadCachedPluginResultsFile(obj, reporting)
-            cached_plugin_info = obj.LoadData(PTKSoftwareInfo.CachedPluginInfoFileName, reporting);
+            cached_plugin_info = obj.LoadData(obj.Config.CachedPluginInfoFileName, reporting);
             if isempty(cached_plugin_info)
                 obj.PluginResultsInfo = PTKPluginResultsInfo;
             else
@@ -194,7 +195,7 @@ classdef PTKDatasetDiskCache < handle
         end
         
         function SaveCachedPluginInfoFile(obj, reporting)
-            obj.SaveData(PTKSoftwareInfo.CachedPluginInfoFileName, obj.PluginResultsInfo, reporting);
+            obj.SaveData(obj.Config.CachedPluginInfoFileName, obj.PluginResultsInfo, reporting);
         end
     end
 end

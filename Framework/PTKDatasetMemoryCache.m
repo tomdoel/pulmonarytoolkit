@@ -32,7 +32,7 @@ classdef PTKDatasetMemoryCache < handle
             if obj.DatasetDiskCacheMap.isKey(uid)
                 dataset_disk_cache = obj.DatasetDiskCacheMap(uid);
             else
-                dataset_disk_cache = PTKDatasetDiskCache(uid, obj.Config, reporting);
+                dataset_disk_cache = MimDatasetDiskCache(uid, obj.Config, reporting);
                 obj.DatasetDiskCacheMap(uid) = dataset_disk_cache;
             end
         end

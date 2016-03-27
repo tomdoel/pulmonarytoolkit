@@ -29,7 +29,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
         ImageDatabase      % Database of image files
         MexCache     % Information about mex files which is cached on disk
         LinkedDatasetRecorder
-        DatasetMemoryCache % Stores PTKDatasetDiskCache objects in memory
+        DatasetMemoryCache % Stores MimDatasetDiskCache objects in memory
         LinkedDatasetChooserMemoryCache
         PluginInfoMemoryCache % Stores parsed plugin classes in memory
     end

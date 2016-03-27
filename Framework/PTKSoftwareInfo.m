@@ -66,7 +66,6 @@ classdef PTKSoftwareInfo < handle
 
         % Filenames
         LogFileName = 'log.txt'
-        CachedPluginInfoFileName = 'CachedPluginInfo'
         PreviewImageFileName = 'PreviewImages'
         SettingsFileName = 'PTKSettings.mat'
         FrameworkCacheFileName = 'PTKFrameworkCache.mat'
