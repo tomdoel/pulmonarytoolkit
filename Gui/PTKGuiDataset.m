@@ -106,7 +106,7 @@ classdef PTKGuiDataset < CoreBaseClass
             if obj.DatasetIsLoaded
                 dataset_cache_path = obj.Dataset.GetDatasetCachePath;
             else
-                dataset_cache_path = PTKDirectories.GetCacheDirectory;
+                dataset_cache_path = obj.Ptk.GetDirectories.GetCacheDirectory;
             end
         end
         
@@ -114,7 +114,7 @@ classdef PTKGuiDataset < CoreBaseClass
             if obj.DatasetIsLoaded
                 dataset_cache_path = obj.Dataset.GetEditedResultsPath;
             else
-                dataset_cache_path = PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary;
+                dataset_cache_path = obj.Ptk.GetDirectories.GetEditedResultsDirectoryAndCreateIfNecessary;
             end
         end
 

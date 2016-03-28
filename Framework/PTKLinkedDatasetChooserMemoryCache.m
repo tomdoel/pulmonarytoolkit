@@ -25,8 +25,8 @@ classdef PTKLinkedDatasetChooserMemoryCache < handle
     end
     
     methods
-        function obj = PTKLinkedDatasetChooserMemoryCache(context_def, linked_recorder_singleton, plugin_cache)
-            obj.ContextDef = context_def;
+        function obj = PTKLinkedDatasetChooserMemoryCache(framework_app_def, linked_recorder_singleton, plugin_cache)
+            obj.ContextDef = framework_app_def.GetContextDef;
             obj.LinkedDatasetChooserCacheMap = containers.Map;
             obj.LinkedRecorderSingleton = linked_recorder_singleton;
             obj.PluginCache = plugin_cache;

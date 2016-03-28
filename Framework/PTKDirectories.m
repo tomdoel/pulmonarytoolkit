@@ -29,22 +29,6 @@ classdef PTKDirectories < CoreBaseClass
             end
         end
 
-        function cache_directory = GetCacheDirectory
-            % Get the parent folder in which dataset cache folders are stored
-            
-            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            cache_directory = PTKSoftwareInfo.DiskCacheFolderName;
-            cache_directory = fullfile(application_directory, cache_directory);
-        end
-        
-        function cache_directory = GetFrameworkDatasetCacheDirectory
-            % Get the parent folder in which framework cache folders for each dataset are stored
-            
-            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            cache_directory = PTKSoftwareInfo.FrameworkDatasetCacheFolderName;
-            cache_directory = fullfile(application_directory, cache_directory);
-        end
-
         function settings_file_path = GetSettingsFilePath
             % Returns the full path to the settings file
             
@@ -81,32 +65,6 @@ classdef PTKDirectories < CoreBaseClass
             application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             results_directory = fullfile(application_directory, PTKSoftwareInfo.OutputDirectoryName);
             CoreDiskUtilities.CreateDirectoryIfNecessary(results_directory);
-        end
-        
-        function edited_results_directory = GetEditedResultsDirectoryAndCreateIfNecessary
-            % Returns the full path to the directory used for storing results
-            
-            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            edited_results_directory = fullfile(application_directory, PTKSoftwareInfo.EditedResultsDirectoryName);
-            CoreDiskUtilities.CreateDirectoryIfNecessary(edited_results_directory);
-        end
-
-        function manual_segmentations_directory = GetManualSegmentationDirectoryAndCreateIfNecessary
-            % Returns the full path to the directory used for storing
-            % manual segmentations
-            
-            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            manual_segmentations_directory = fullfile(application_directory, PTKSoftwareInfo.ManualSegmentationsDirectoryName);
-            CoreDiskUtilities.CreateDirectoryIfNecessary(manual_segmentations_directory);
-        end
-        
-        function markers_directory = GetMarkersDirectoryAndCreateIfNecessary
-            % Returns the full path to the directory used for storing
-            % marker points
-            
-            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            markers_directory = fullfile(application_directory, PTKSoftwareInfo.MarkersDirectoryName);
-            CoreDiskUtilities.CreateDirectoryIfNecessary(markers_directory);
         end
         
         function framework_file_path = GetFrameworkCacheFilePath
@@ -173,23 +131,6 @@ classdef PTKDirectories < CoreBaseClass
             log_file_path = fullfile(settings_folder, log_file_name);
         end
         
-        function uids = GetUidsOfAllDatasetsInCache
-            uids_1 = PTKDirectories.GetUidsOfAllDatasetsInFolder(PTKDirectories.GetCacheDirectory);
-            uids_2 = PTKDirectories.GetUidsOfAllDatasetsInFolder(PTKDirectories.GetFrameworkDatasetCacheDirectory);
-            uids = unique([uids_1, uids_2]);
-        end
-        
-        function uids = GetUidsOfAllDatasetsInFolder(folder)
-            subdirectories = CoreDiskUtilities.GetListOfDirectories(folder);
-            uids = {};
-            for subdir = subdirectories
-                candidate_uid = subdir{1};
-                full_file_name = [folder, filesep, candidate_uid, filesep, PTKSoftwareInfo.ImageInfoCacheName, '.mat'];
-                if 2 == exist(full_file_name, 'file')
-                    uids{end+1} = candidate_uid;
-                end
-            end
-        end
     end
 end
 

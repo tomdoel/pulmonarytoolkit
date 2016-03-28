@@ -25,9 +25,9 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     %    
     
     properties (Access = private)
-        Config
+        FrameworkAppDef
         ImageDatabase      % Database of image files
-        MexCache     % Information about mex files which is cached on disk
+        MexCache           % Information about mex files which is cached on disk
         LinkedDatasetRecorder
         DatasetMemoryCache % Stores MimDatasetDiskCache objects in memory
         LinkedDatasetChooserMemoryCache
@@ -35,10 +35,10 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     end
         
     methods (Static)
-        function framework_singleton = GetFrameworkSingleton(context_def, config, reporting)
+        function framework_singleton = GetFrameworkSingleton(framework_app_def, reporting)
             persistent FrameworkSingleton
             if isempty(FrameworkSingleton) || ~isvalid(FrameworkSingleton)
-                FrameworkSingleton = PTKFrameworkSingleton(context_def, config, reporting);
+                FrameworkSingleton = PTKFrameworkSingleton(framework_app_def, reporting);
             end
             framework_singleton = FrameworkSingleton;
         end
@@ -58,7 +58,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
         end
         
         function RebuildDatabase(obj, reporting)
-            obj.ImageDatabase.Rebuild([], true, obj.Config, reporting)
+            obj.ImageDatabase.Rebuild([], true, obj.FrameworkAppDef, reporting)
         end
     
         function AddToDatabase(obj, image_uid, reporting)
@@ -66,7 +66,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
             % CreateDatasetFromInfo() can import new data, so we may need to add
             % to the image database
             if ~obj.ImageDatabase.SeriesExists(image_uid)
-                obj.ImageDatabase.Rebuild({image_uid}, false, obj.Config, reporting);
+                obj.ImageDatabase.Rebuild({image_uid}, false, obj.FrameworkAppDef, reporting);
             end
         end
         
@@ -108,15 +108,15 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     end
     
     methods (Access = private)
-        function obj = PTKFrameworkSingleton(context_def, config, reporting)
-            obj.Config = config;
+        function obj = PTKFrameworkSingleton(framework_app_def, reporting)
+            obj.FrameworkAppDef = framework_app_def;
             obj.MexCache = PTKFrameworkCache.LoadCache(reporting);
             obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
-            obj.DatasetMemoryCache = PTKDatasetMemoryCache(config);
+            obj.DatasetMemoryCache = PTKDatasetMemoryCache(framework_app_def);
             obj.PluginInfoMemoryCache = PTKPluginInfoMemoryCache;
-            obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(context_def, obj.LinkedDatasetRecorder, obj.PluginInfoMemoryCache);
-            obj.ImageDatabase = PTKImageDatabase.LoadDatabase(config, reporting);
-            obj.ImageDatabase.Rebuild([], false, config, reporting);
+            obj.LinkedDatasetChooserMemoryCache = PTKLinkedDatasetChooserMemoryCache(framework_app_def, obj.LinkedDatasetRecorder, obj.PluginInfoMemoryCache);
+            obj.ImageDatabase = PTKImageDatabase.LoadDatabase(framework_app_def, reporting);
+            obj.ImageDatabase.Rebuild([], false, framework_app_def, reporting);
         end
     end
     

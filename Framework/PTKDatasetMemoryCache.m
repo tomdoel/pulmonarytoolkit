@@ -18,13 +18,13 @@ classdef PTKDatasetMemoryCache < handle
     %
     
     properties (Access = private)
-        Config
+        FrameworkAppDef
         DatasetDiskCacheMap
     end
     
     methods
-        function obj = PTKDatasetMemoryCache(config)
-            obj.Config = config;
+        function obj = PTKDatasetMemoryCache(framework_app_def)
+            obj.FrameworkAppDef = framework_app_def;
             obj.DatasetDiskCacheMap = containers.Map;
         end
         
@@ -32,7 +32,7 @@ classdef PTKDatasetMemoryCache < handle
             if obj.DatasetDiskCacheMap.isKey(uid)
                 dataset_disk_cache = obj.DatasetDiskCacheMap(uid);
             else
-                dataset_disk_cache = MimDatasetDiskCache(uid, obj.Config, reporting);
+                dataset_disk_cache = MimDatasetDiskCache(uid, obj.FrameworkAppDef, reporting);
                 obj.DatasetDiskCacheMap(uid) = dataset_disk_cache;
             end
         end

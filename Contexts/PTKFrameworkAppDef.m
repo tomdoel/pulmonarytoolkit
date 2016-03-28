@@ -12,12 +12,16 @@ classdef PTKFrameworkAppDef < handle
     %    
     
     properties (Access = private)
+        Config
         ContextDef
+        Directories
     end
     
     methods
         function obj = PTKFrameworkAppDef
+            obj.Config = MimConfig;
             obj.ContextDef = PTKContextDef;
+            obj.Directories = MimDirectories(obj.Config);
         end
         
         function context_def = GetContextDef(obj)
@@ -32,8 +36,12 @@ classdef PTKFrameworkAppDef < handle
             files_to_compile = PTKGetMexFilesToCompile(reporting);
         end
 
-        function config = GetFrameworkConfig(~)
-            config = MimConfig;
-        end        
+        function config = GetFrameworkConfig(obj)
+            config = obj.Config;
+        end
+        
+        function directories = GetFrameworkDirectories(obj)
+            directories = obj.Directories;
+        end
     end
 end

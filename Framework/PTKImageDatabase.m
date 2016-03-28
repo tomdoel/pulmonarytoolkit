@@ -231,7 +231,7 @@ classdef PTKImageDatabase < handle
             end
         end
 
-        function Rebuild(obj, uids_to_update, rebuild_all, config, reporting)
+        function Rebuild(obj, uids_to_update, rebuild_all, framework_app_def, reporting)
             reporting.ShowProgress('Updating image database');
             
             % Checks the disk cache and adds any missing datasets to the database.
@@ -241,7 +241,7 @@ classdef PTKImageDatabase < handle
             % Get the complete list of cache folders, unless we are only
             % updating specific uids
             if isempty(uids_to_update) || rebuild_all
-                uids = PTKDirectories.GetUidsOfAllDatasetsInCache;
+                uids = framework_app_def.GetFrameworkDirectories.GetUidsOfAllDatasetsInCache;
             else
                 uids = uids_to_update;
             end
@@ -277,12 +277,13 @@ classdef PTKImageDatabase < handle
                     try
                         % Only update the progress for datasets we are actually checking
                         reporting.UpdateProgressStage(stage_index, num_stages);
-                        if 2 == exist(fullfile(PTKDirectories.GetCacheDirectory, [PTKSoftwareInfo.ImageInfoCacheName '.mat']), 'file')
-                            cache_parent_directory = PTKDirectories.GetCacheDirectory;
+                        cache_directory = framework_app_def.GetFrameworkDirectories.GetCacheDirectory;
+                        if 2 == exist(fullfile(cache_directory, [PTKSoftwareInfo.ImageInfoCacheName '.mat']), 'file')
+                            cache_parent_directory = cache_directory;
                         else
-                            cache_parent_directory = PTKDirectories.GetFrameworkDatasetCacheDirectory;
+                            cache_parent_directory = framework_app_def.GetFrameworkDirectories.GetFrameworkDatasetCacheDirectory;
                         end
-                        temporary_disk_cache = MimDiskCache(cache_parent_directory, temporary_uid, config, reporting);
+                        temporary_disk_cache = MimDiskCache(cache_parent_directory, temporary_uid, framework_app_def.GetFrameworkConfig, reporting);
                         temporary_image_info = temporary_disk_cache.Load(PTKSoftwareInfo.ImageInfoCacheName, [], reporting);
 
                         file_path = temporary_image_info.ImagePath;
@@ -422,7 +423,7 @@ classdef PTKImageDatabase < handle
     end
     
     methods (Static)
-        function database = LoadDatabase(config, reporting)
+        function database = LoadDatabase(framework_app_def, reporting)
             try
                 database_filename = PTKDirectories.GetImageDatabaseFilePath;
                 if exist(database_filename, 'file')
@@ -434,7 +435,7 @@ classdef PTKImageDatabase < handle
                     % Version 3 has changes to the maps used to store filenames; this requires a
                     % rebuild of the image database
                     if database.Version == 2
-                        database.Rebuild([], true, config, reporting);
+                        database.Rebuild([], true, framework_app_def, reporting);
                     end
                     
                     database.Version = PTKImageDatabase.CurrentVersionNumber;
@@ -445,7 +446,7 @@ classdef PTKImageDatabase < handle
                 end
                 
                 if database.IsNewlyCreated
-                    database.Rebuild([], true, config, reporting);
+                    database.Rebuild([], true, framework_app_def, reporting);
                 end
                 
             catch ex

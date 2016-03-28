@@ -29,13 +29,14 @@ classdef MimDatasetDiskCache < handle
     end
     
     methods
-        function obj = MimDatasetDiskCache(dataset_uid, config, reporting)
-            obj.Config = config;
-            obj.ManualSegmentationsDiskCache = MimDiskCache(PTKDirectories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
-            obj.ResultsDiskCache = MimDiskCache(PTKDirectories.GetCacheDirectory, dataset_uid, config, reporting);
-            obj.EditedResultsDiskCache = MimDiskCache(PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
-            obj.MarkersDiskCache = MimDiskCache(PTKDirectories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, config, reporting);
-            obj.FrameworkDatasetDiskCache = MimDiskCache(PTKDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid, config, reporting);
+        function obj = MimDatasetDiskCache(dataset_uid, framework_app_def, reporting)
+            obj.Config = framework_app_def.GetFrameworkConfig;
+            directories = framework_app_def.GetFrameworkDirectories;
+            obj.ManualSegmentationsDiskCache = MimDiskCache(directories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
+            obj.ResultsDiskCache = MimDiskCache(directories.GetCacheDirectory, dataset_uid, obj.Config, reporting);
+            obj.EditedResultsDiskCache = MimDiskCache(directories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
+            obj.MarkersDiskCache = MimDiskCache(directories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
+            obj.FrameworkDatasetDiskCache = MimDiskCache(directories.GetFrameworkDatasetCacheDirectory, dataset_uid, obj.Config, reporting);
             
             obj.LoadCachedPluginResultsFile(reporting);
         end

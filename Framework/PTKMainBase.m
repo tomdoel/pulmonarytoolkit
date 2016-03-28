@@ -45,7 +45,6 @@ classdef PTKMainBase < CoreBaseClass
     %
     
     properties (SetAccess = private)
-        FrameworkConfig
         FrameworkAppDef
         FrameworkSingleton
         Reporting          % Object for error and progress reporting
@@ -55,11 +54,12 @@ classdef PTKMainBase < CoreBaseClass
     methods
         
         function obj = PTKMainBase(framework_app_def, reporting)
+            % Creates a new main PTK object using the configuration
+            % specified by the supplied framework_app_def object
             obj.FrameworkAppDef = framework_app_def;
-            obj.FrameworkConfig = framework_app_def.GetFrameworkConfig;
             obj.Reporting = reporting;
             obj.ReportingWithCache = PTKReportingWithCache(obj.Reporting);
-            obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(framework_app_def.GetContextDef, obj.FrameworkConfig, obj.Reporting);
+            obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(framework_app_def, obj.Reporting);
             
             output_directory = framework_app_def.GetOutputDirectory;
             files_to_compile = framework_app_def.GetFilesToCompile(reporting);
@@ -81,7 +81,12 @@ classdef PTKMainBase < CoreBaseClass
         end
         
         function dataset_exists = DatasetExists(obj, dataset_uid)
-            dataset_exists = (7 == exist(fullfile(PTKDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid), 'dir')) || (7 == exist(fullfile(PTKDirectories.GetCacheDirectory, dataset_uid), 'dir'));
+            % Returns true if the dataset specified by the uid is found in
+            % the disk cache. Note it is possible for datasets to exist in
+            % the cache but not in the database; this can be fixed by
+            % rebuilding the database
+            
+            dataset_exists = (7 == exist(fullfile(obj.FrameworkAppDef.GetFrameworkDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid), 'dir')) || (7 == exist(fullfile(obj.FrameworkAppDef.GetFrameworkDirectories.GetCacheDirectory, dataset_uid), 'dir'));
         end
 
         function dataset = CreateDatasetFromUid(obj, dataset_uid)
@@ -160,10 +165,17 @@ classdef PTKMainBase < CoreBaseClass
         end
         
         function image_database = GetImageDatabase(obj)
+            % Returns the Framework's image database
             image_database = obj.FrameworkSingleton.GetImageDatabase;
         end
         
+        function directories = GetDirectories(obj)
+            % Returns a MimDirectories object which can be used to query and create framework directories
+            directories = obj.FrameworkAppDef.GetFrameworkDirectories;
+        end
+        
         function DeleteDatasets(obj, series_uids)
+            % Deletes the datasets specified by a uid or a cell array of uids
             if isempty(series_uids)
                 return;
             end

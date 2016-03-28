@@ -14,6 +14,12 @@ classdef MimConfig < handle
         RecycleWhenDeletingCacheFiles = false % Whether deleted cache files go to the recycle bin
         Compression = 'deflate' % Compression to use when saving cache images
 
+        DiskCacheFolderName = 'ResultsCache' % Name for folder containing cache of plugin results
+        FrameworkDatasetCacheFolderName = 'FrameworkDatasetCache' % Name for folder containing framework cache files
+        EditedResultsDirectoryName = 'EditedResults' % Name for folder used to store user corrections to plugin results
+        ManualSegmentationsDirectoryName = 'ManualSegmentations' % Name for folder used to store manual segmentations
+        MarkersDirectoryName = 'Markers' % Name for folder used to store user-placed markers
+
         CachedPluginInfoFileName = 'CachedPluginInfo' % Filename for internal cache of plugin infos
     end
     
