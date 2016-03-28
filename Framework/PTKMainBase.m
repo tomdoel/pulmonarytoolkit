@@ -99,7 +99,7 @@ classdef PTKMainBase < CoreBaseClass
             
             dataset_disk_cache = obj.FrameworkSingleton.GetDatasetMemoryCache.GetDatasetDiskCache(dataset_uid, obj.Reporting);
             
-            image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, obj.Reporting);
+            image_info = dataset_disk_cache.LoadData(obj.FrameworkAppDef.GetFrameworkConfig.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
                 obj.Reporting.Error(PTKSoftwareInfo.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
@@ -284,14 +284,14 @@ classdef PTKMainBase < CoreBaseClass
             end
             
             dataset_disk_cache = obj.FrameworkSingleton.GetDatasetMemoryCache.GetDatasetDiskCache(new_image_info.ImageUid, reporting);
-            image_info = dataset_disk_cache.LoadData(PTKSoftwareInfo.ImageInfoCacheName, reporting);
+            image_info = dataset_disk_cache.LoadData(obj.FrameworkAppDef.GetFrameworkConfig.ImageInfoCacheName, reporting);
             if isempty(image_info)
                 image_info = PTKImageInfo;
             end
 
             [image_info, anything_changed] = image_info.CopyNonEmptyFields(image_info, new_image_info);
             if (anything_changed)
-                dataset_disk_cache.SaveData(PTKSoftwareInfo.ImageInfoCacheName, image_info, reporting);
+                dataset_disk_cache.SaveData(obj.FrameworkAppDef.GetFrameworkConfig.ImageInfoCacheName, image_info, reporting);
             end
         end
     end

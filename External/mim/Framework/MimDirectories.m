@@ -74,7 +74,7 @@ classdef MimDirectories < CoreBaseClass
             uids = {};
             for subdir = subdirectories
                 candidate_uid = subdir{1};
-                full_file_name = [folder, filesep, candidate_uid, filesep, PTKSoftwareInfo.ImageInfoCacheName, '.mat'];
+                full_file_name = [folder, filesep, candidate_uid, filesep, obj.Config.ImageInfoCacheName, '.mat'];
                 if 2 == exist(full_file_name, 'file')
                     uids{end+1} = candidate_uid;
                 end

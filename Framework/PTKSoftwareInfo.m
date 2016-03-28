@@ -67,7 +67,6 @@ classdef PTKSoftwareInfo < handle
         ImageDatabaseFileName = 'PTKImageDatabase.mat'
         LinkingCacheFileName = 'PTKLinkingCache.xml'
         MakerPointsCacheName = 'MarkerPoints'
-        ImageInfoCacheName = 'ImageInfo'
         ImageTemplatesCacheName = 'ImageTemplates'
         OutputFolderCacheName = 'OutputFolder'
 

@@ -21,6 +21,7 @@ classdef MimConfig < handle
         MarkersDirectoryName = 'Markers' % Name for folder used to store user-placed markers
 
         CachedPluginInfoFileName = 'CachedPluginInfo' % Filename for internal cache of plugin infos
+        ImageInfoCacheName = 'ImageInfo' % Filename for per-dataset cache of filenames and dataset information
     end
     
 end
