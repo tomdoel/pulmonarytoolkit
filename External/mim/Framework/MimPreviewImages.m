@@ -1,10 +1,10 @@
-classdef PTKPreviewImages < CoreBaseClass
-    % PTKPreviewImages. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimPreviewImages < CoreBaseClass
+    % MimPreviewImages. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     PTKPreviewImages caches a list of 'preview images' which are thumbnails 
+    %     MimPreviewImages caches a list of 'preview images' which are thumbnails 
     %     of previous plugin results for this dataset. These images are used by
     %     the GUI as a 'preview' of the results obtained when running a
     %     plugin.
@@ -18,30 +18,30 @@ classdef PTKPreviewImages < CoreBaseClass
     
     properties (Access = private)
         DatasetDiskCache       % disk cache for this dataset
-        Previews        % preview thumnail images
+        Previews               % preview thumnail images
     end
     
     methods
-        function obj = PTKPreviewImages(dataset_disk_cache, reporting)
+        function obj = MimPreviewImages(dataset_disk_cache, reporting)
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.LoadPreviewFile(reporting);
         end
 
-        % Add a new thumbnail preview
         function AddPreview(obj, plugin_name, preview_image, reporting)
+            % Add a new thumbnail preview
             if ~obj.Previews.isKey(plugin_name) || (preview_image ~= obj.Previews(plugin_name));
                 obj.Previews(plugin_name) = preview_image;
                 obj.SavePreviewFile(reporting);
             end
         end
         
-        % Check if a preview thumbnail has previously been created
         function preview_exists = DoesPreviewExist(obj, plugin_name)
+            % Check if a preview thumbnail has previously been created
             preview_exists = obj.Previews.isKey(plugin_name);
         end
         
-        % Fetch a cached preview image
         function preview_image = GetPreview(obj, plugin_name, reporting)
+            % Fetch a cached preview image
             if obj.Previews.isKey(plugin_name)
                 preview_image = obj.Previews(plugin_name);
             else
@@ -49,19 +49,17 @@ classdef PTKPreviewImages < CoreBaseClass
             end
         end
         
-        % Erase previews. Typically you would do this when erasing the disk
-        % cache, so that previews do not become stale
         function Clear(obj, reporting)
+            % Erase previews. Typically you would do this when erasing the disk
+            % cache, so that previews do not become stale
             obj.Previews = containers.Map;
             obj.SavePreviewFile(reporting);
         end
-        
     end
     
-    methods (Access = private)
-        
-        % Cache previews on disk
+    methods (Access = private)    
         function LoadPreviewFile(obj, reporting)
+            % Cache previews on disk
             cached_previews = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.PreviewImageFileName, reporting);
             if isempty(cached_previews)
                 obj.Previews = containers.Map;
@@ -70,10 +68,9 @@ classdef PTKPreviewImages < CoreBaseClass
             end
         end
         
-        % Load cached previews from disk
         function SavePreviewFile(obj, reporting)
+            % Load cached previews from disk
             obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.PreviewImageFileName, obj.Previews, reporting);
         end
     end
-    
 end

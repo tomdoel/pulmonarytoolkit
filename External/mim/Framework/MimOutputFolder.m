@@ -1,10 +1,10 @@
-classdef PTKOutputFolder < CoreBaseClass
-    % PTKOutputFolder. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimOutputFolder < CoreBaseClass
+    % MimOutputFolder. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     PTKOutputFolder is used to save and keep track of results and graphs saved
+    %     MimOutputFolder is used to save and keep track of results and graphs saved
     %     to the output folder.
     %
     %
@@ -27,7 +27,7 @@ classdef PTKOutputFolder < CoreBaseClass
     end
     
     methods
-        function obj = PTKOutputFolder(dataset_disk_cache, image_info, image_templates, reporting)
+        function obj = MimOutputFolder(dataset_disk_cache, image_info, image_templates, reporting)
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ImageTemplates = image_templates;
             obj.ImageUid = image_info.ImageUid;

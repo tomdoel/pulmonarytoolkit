@@ -228,7 +228,7 @@ classdef PTKDataset < CoreBaseClass
 
         function template_image = GetTemplateImage(obj, context, varargin)
             % Returns an empty template image for the specified context
-            % See PTKImageTemplates.m for valid contexts
+            % Valid contexts are specified via the AppDef file
             
             obj.PreCallTidy;
             template_image = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetTemplateImage(context, obj.DatasetStack, obj.Reporting);
@@ -237,7 +237,7 @@ classdef PTKDataset < CoreBaseClass
 
         function template_image = GetTemplateMask(obj, context, varargin)
             % Returns a template image mask for the specified context
-            % See PTKImageTemplates.m for valid contexts
+            % Valid contexts are specified via the AppDef file
             
             obj.PreCallTidy;
             template_image = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetTemplateMask(context, obj.DatasetStack, obj.Reporting);

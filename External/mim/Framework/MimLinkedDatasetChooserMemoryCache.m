@@ -1,10 +1,10 @@
-classdef PTKLinkedDatasetChooserMemoryCache < handle
-    % PTKLinkedDatasetChooserMemoryCache. Part of the internal framework for the Pulmonary Toolkit.
+classdef MimLinkedDatasetChooserMemoryCache < handle
+    % MimLinkedDatasetChooserMemoryCache. Part of the internal framework for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
     %
-    %     PTKLinkedDatasetChooserMemoryCache stores a map of PTKLinkedDatasetChooser objects, and
+    %     MimLinkedDatasetChooserMemoryCache stores a map of PTKLinkedDatasetChooser objects, and
     %     ensures only one PTKLinkedDatasetChooser exists for a given UID. This improves
     %     thread safety by ensuring multiple PTKLinkedDatasetChooser objects aren't
     %     interacting with the same cache files.
@@ -25,7 +25,7 @@ classdef PTKLinkedDatasetChooserMemoryCache < handle
     end
     
     methods
-        function obj = PTKLinkedDatasetChooserMemoryCache(framework_app_def, linked_recorder_singleton, plugin_cache)
+        function obj = MimLinkedDatasetChooserMemoryCache(framework_app_def, linked_recorder_singleton, plugin_cache)
             obj.ContextDef = framework_app_def.GetContextDef;
             obj.LinkedDatasetChooserCacheMap = containers.Map;
             obj.LinkedRecorderSingleton = linked_recorder_singleton;

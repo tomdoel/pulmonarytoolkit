@@ -1,10 +1,10 @@
-classdef PTKPluginInfoMemoryCache < handle
-    % PTKPluginInfoMemoryCache. Part of the internal framework for the Pulmonary Toolkit.
+classdef MimPluginInfoMemoryCache < handle
+    % MimPluginInfoMemoryCache. Part of the internal framework for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
     %
-    %     PTKPluginInfoMemoryCache stores a map of plugin names to plugin
+    %     MimPluginInfoMemoryCache stores a map of plugin names to plugin
     %     handles and plugin info structures
     %
     %
@@ -21,7 +21,7 @@ classdef PTKPluginInfoMemoryCache < handle
     end
     
     methods
-        function obj = PTKPluginInfoMemoryCache
+        function obj = MimPluginInfoMemoryCache
             obj.PluginHandleMap = containers.Map;
             obj.PluginInfoMap = containers.Map;
         end
@@ -29,10 +29,10 @@ classdef PTKPluginInfoMemoryCache < handle
         function plugin_info = GetPluginInfo(obj, plugin_name, category, reporting)
             [is_ptk_plugin, plugin_class] = obj.PopulateCache(plugin_name, category, reporting);
             if isempty(plugin_class)
-                reporting.Error('PTKPluginInfoMemoryCache:PluginNotFound', ['The plugin ' plugin_name ' was not found. Please ensure this is a PTKPlugin class and it is in the path.']);
+                reporting.Error('MimPluginInfoMemoryCache:PluginNotFound', ['The plugin ' plugin_name ' was not found. Please ensure this is a PTKPlugin class and it is in the path.']);
             end
             if ~is_ptk_plugin
-                reporting.Error('PTKPluginInfoMemoryCache:NotAPlugin', ['A file ' plugin_name ' was found but is not a valid PTKPlugin class. Please ensure this is a PTKPlugin class.']);
+                reporting.Error('MimPluginInfoMemoryCache:NotAPlugin', ['A file ' plugin_name ' was found but is not a valid PTKPlugin class. Please ensure this is a PTKPlugin class.']);
             end
             plugin_info = obj.PluginInfoMap(plugin_name);
         end
@@ -40,10 +40,10 @@ classdef PTKPluginInfoMemoryCache < handle
         function plugin_handle = GetPluginHandle(obj, plugin_name, category, reporting)
             [is_ptk_plugin, plugin_class] = obj.PopulateCache(plugin_name, category, reporting);
             if isempty(plugin_class)
-                reporting.Error('PTKPluginInfoMemoryCache:PluginNotFound', ['The plugin ' plugin_name ' was not found. Please ensure this is a PTKPlugin class and it is in the path.']);
+                reporting.Error('MimPluginInfoMemoryCache:PluginNotFound', ['The plugin ' plugin_name ' was not found. Please ensure this is a PTKPlugin class and it is in the path.']);
             end
             if ~is_ptk_plugin
-                reporting.Error('PTKPluginInfoMemoryCache:NotAPlugin', ['A file ' plugin_name ' was found but is not a valid PTKPlugin class. Please ensure this is a PTKPlugin class.']);
+                reporting.Error('MimPluginInfoMemoryCache:NotAPlugin', ['A file ' plugin_name ' was found but is not a valid PTKPlugin class. Please ensure this is a PTKPlugin class.']);
             end
             plugin_handle = obj.PluginHandleMap(plugin_name);
         end

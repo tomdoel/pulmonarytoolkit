@@ -57,8 +57,8 @@ classdef PTKDatasetResults < handle
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
             obj.ImageTemplates = PTKImageTemplates(obj, context_def, dataset_disk_cache, reporting);
-            obj.OutputFolder = PTKOutputFolder(dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
-            obj.PreviewImages = PTKPreviewImages(dataset_disk_cache, reporting);
+            obj.OutputFolder = MimOutputFolder(dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
+            obj.PreviewImages = MimPreviewImages(dataset_disk_cache, reporting);
             obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache, plugin_cache);
             obj.ContextHierarchy = PTKContextHierarchy(context_def, obj.DependencyTracker, obj.ImageTemplates);
         end
@@ -227,14 +227,14 @@ classdef PTKDatasetResults < handle
         
         function template_image = GetTemplateImage(obj, context, dataset_stack, reporting)
             % Returns an empty template image for the specified context
-            % See PTKImageTemplates.m for valid contexts
+            % Valid contexts are specified via the AppDef file
         
             template_image = obj.ImageTemplates.GetTemplateImage(context, dataset_stack, reporting);
         end
         
         function template_image = GetTemplateMask(obj, context, dataset_stack, reporting)
             % Returns a template image mask for the specified context
-            % See PTKImageTemplates.m for valid contexts
+            % Valid contexts are specified via the AppDef file
         
             template_image = obj.ImageTemplates.GetTemplateMask(context, dataset_stack, reporting);
         end

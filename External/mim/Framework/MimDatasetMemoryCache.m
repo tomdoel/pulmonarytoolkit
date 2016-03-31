@@ -1,10 +1,10 @@
-classdef PTKDatasetMemoryCache < handle
-    % PTKDatasetMemoryCache. Part of the internal framework for the Pulmonary Toolkit.
+classdef MimDatasetMemoryCache < handle
+    % MimDatasetMemoryCache. Part of the internal framework for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
     %
-    %     PTKDatasetMemoryCache stores a map of PTKDataset objects, and
+    %     MimDatasetMemoryCache stores a map of PTKDataset objects, and
     %     ensures only one PTKDataset exists for a given UID. This improves
     %     thread safety by ensuring multiple PTKDataset objects aren't
     %     interacting with the same cache files.
@@ -23,7 +23,7 @@ classdef PTKDatasetMemoryCache < handle
     end
     
     methods
-        function obj = PTKDatasetMemoryCache(framework_app_def)
+        function obj = MimDatasetMemoryCache(framework_app_def)
             obj.FrameworkAppDef = framework_app_def;
             obj.DatasetDiskCacheMap = containers.Map;
         end
