@@ -46,7 +46,7 @@ classdef PTKDatasetStackItem < handle
             obj.IsEdited = false;
             
             if start_timer
-                obj.ExecutionTimer = PTKTimer(reporting);
+                obj.ExecutionTimer = MimTimer(reporting);
                 obj.ExecutionTimer.Start;
             end
         end

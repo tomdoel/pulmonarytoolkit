@@ -1,5 +1,5 @@
-classdef (Sealed) PTKFrameworkSingleton < handle
-    % PTKFrameworkSingleton. The singleton used by all instances of PTKMain
+classdef (Sealed) MimFrameworkSingleton < handle
+    % MimFrameworkSingleton. The singleton used by all instances of PTKMain
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
@@ -13,8 +13,8 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     %     To prevent this, cached information is held in a singleton class which all
     %     instances of PTKMain get access to.
     %
-    %     PTKFrameworkSingleton is a singleton. It cannot be created using the
-    %     constructor; instead call PTKFrameworkSingleton.GetFrameworkSingleton;
+    %     MimFrameworkSingleton is a singleton. It cannot be created using the
+    %     constructor; instead call MimFrameworkSingleton.GetFrameworkSingleton;
     %
     %
     %     Licence
@@ -39,7 +39,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
             % Returns the FrameworkSingleton, creating if necessary
             persistent FrameworkSingleton
             if isempty(FrameworkSingleton) || ~isvalid(FrameworkSingleton)
-                FrameworkSingleton = PTKFrameworkSingleton(framework_app_def, reporting);
+                FrameworkSingleton = MimFrameworkSingleton(framework_app_def, reporting);
             end
             framework_singleton = FrameworkSingleton;
         end
@@ -109,7 +109,7 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     end
     
     methods (Access = private)
-        function obj = PTKFrameworkSingleton(framework_app_def, reporting)
+        function obj = MimFrameworkSingleton(framework_app_def, reporting)
             obj.FrameworkAppDef = framework_app_def;
             obj.MexCache = PTKFrameworkCache.LoadCache(reporting);
             obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);

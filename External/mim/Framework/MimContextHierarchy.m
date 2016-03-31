@@ -184,7 +184,7 @@ classdef MimContextHierarchy < CoreBaseClass
             
             % We generate an output image if requested, or if the plugin has been re-run (indictaing that we will need to generate a new preview image)
             if force_generate_image
-                template_callback = PTKTemplateCallback(linked_dataset_chooser, dataset_stack, reporting);
+                template_callback = MimTemplateCallback(linked_dataset_chooser, dataset_stack, reporting);
                 
                 if isa(result, 'PTKImage')
                     output_image = plugin_class.GenerateImageFromResults(result.Copy, template_callback, reporting);

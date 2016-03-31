@@ -1,5 +1,5 @@
-classdef PTKTemplateCallback < CoreBaseClass
-    % PTKTemplateCallback. Used by plugins to fetch empty template images
+classdef MimTemplateCallback < CoreBaseClass
+    % MimTemplateCallback. Used by plugins to fetch empty template images
     %
     %     Template images are empty images with metadata matching the current
     %     image. They are used to create images that will be compatible with
@@ -21,7 +21,7 @@ classdef PTKTemplateCallback < CoreBaseClass
     end
     
     methods
-        function obj = PTKTemplateCallback(linked_dataset_chooser, dataset_call_stack, reporting)
+        function obj = MimTemplateCallback(linked_dataset_chooser, dataset_call_stack, reporting)
             obj.DatasetStack = dataset_call_stack;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.Reporting = reporting;
