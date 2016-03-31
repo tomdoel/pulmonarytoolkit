@@ -6,8 +6,8 @@ classdef PTKDatasetStackItem < handle
     %
     %     Used to store the dependency information of a plugin as it is being
     %     build up during execution. PTKDatasetStackItem are created 
-    %     temporarily by the class PTKDatasetStack and used to build up the
-    %     dependency list. See PTKDatasetStack for more information.
+    %     temporarily by the class MimDatasetStack and used to build up the
+    %     dependency list. See MimDatasetStack for more information.
     %
     %
     %     Licence

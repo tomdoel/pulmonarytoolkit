@@ -53,7 +53,6 @@ classdef MockDatasetResults < handle
         end
         
         % Returns an empty template image for the specified context
-        % See PTKImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack, reporting)
         end
         

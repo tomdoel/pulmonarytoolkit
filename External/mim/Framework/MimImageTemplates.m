@@ -1,10 +1,10 @@
-classdef PTKImageTemplates < CoreBaseClass
-    % PTKImageTemplates. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimImageTemplates < CoreBaseClass
+    % MimImageTemplates. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     PTKImageTemplates maintains a list of template images for contexts.
+    %     MimImageTemplates maintains a list of template images for contexts.
     %     A context is a region of interest of the lung (e.g. lung roi, left
     %     lung, right lung, original image). For each context there can exist a
     %     template image, which is an empty image containing the correct metadata
@@ -47,7 +47,7 @@ classdef PTKImageTemplates < CoreBaseClass
     end
     
     methods
-        function obj = PTKImageTemplates(dataset_results, context_def, dataset_disk_cache, reporting)
+        function obj = MimImageTemplates(dataset_results, context_def, dataset_disk_cache, reporting)
             
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.DatasetResults = dataset_results;
@@ -85,7 +85,7 @@ classdef PTKImageTemplates < CoreBaseClass
             
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
-                reporting.Error('PTKImageTemplates:UnknownContext', 'Context not recogised');
+                reporting.Error('MimImageTemplates:UnknownContext', 'Context not recogised');
             end
             
             template_exists = obj.TemplateImages.isKey(char(context));
@@ -97,13 +97,13 @@ classdef PTKImageTemplates < CoreBaseClass
             % If the template does not already exist, generate it now by calling
             % the appropriate plugin and creating a template copy
             if ~template_exists || ~dependency_list_exists
-                reporting.ShowWarning('PTKImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
+                reporting.ShowWarning('MimImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
                 obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), dataset_stack, context, reporting);
 
                 % The call to GetResult should have automatically created the
                 % template image - check that this has happened
                 if ~obj.TemplateImages.isKey(char(context))
-                    reporting.Error('PTKImageTemplates:NoContext', 'Code error: a template should have been created by call to plugin, but was not');
+                    reporting.Error('MimImageTemplates:NoContext', 'Code error: a template should have been created by call to plugin, but was not');
                 end
                 
             end
@@ -164,7 +164,7 @@ classdef PTKImageTemplates < CoreBaseClass
                         if (~obj.TemplateImages.isKey(context_char)) || result_may_have_changed
 
                             if ~obj.TemplateGenerationFunctions.isKey(context_char)
-                                reporting.Error('PTKImageTemplates:TemplateGenerationFunctionNotFound', 'Code error: the function handle required to generate this template was not found in the map.');
+                                reporting.Error('MimImageTemplates:TemplateGenerationFunctionNotFound', 'Code error: the function handle required to generate this template was not found in the map.');
                             end
                             
                             template_function = obj.TemplateGenerationFunctions(context_char);
@@ -189,7 +189,7 @@ classdef PTKImageTemplates < CoreBaseClass
         
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
-                reporting.Error('PTKImageTemplates:UnknownContext', 'Context not recogised');
+                reporting.Error('MimImageTemplates:UnknownContext', 'Context not recogised');
             end
             
             % The context is enabled unless a previous attempt to run the plugin
@@ -223,7 +223,7 @@ classdef PTKImageTemplates < CoreBaseClass
                 for dependency = dependency_list.DependencyList
                     dependency_name = dependency.PluginName;
                     if strcmp(dependency_name, plugin_name)
-                        reporting.Log(['PTKImageTemplates: Context ' template_name{1} ' is now invalid']);
+                        reporting.Log(['MimImageTemplates: Context ' template_name{1} ' is now invalid']);
                         if obj.TemplateImages.isKey(template_name{1})
                             obj.TemplateImages.remove(template_name{1});
                         end

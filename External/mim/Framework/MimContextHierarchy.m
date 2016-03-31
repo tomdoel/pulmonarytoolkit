@@ -1,5 +1,5 @@
-classdef PTKContextHierarchy < CoreBaseClass
-    % PTKContextHierarchy. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimContextHierarchy < CoreBaseClass
+    % MimContextHierarchy. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     This class is used to switch beteen different contexts.
     %
@@ -47,7 +47,7 @@ classdef PTKContextHierarchy < CoreBaseClass
     end
     
     methods
-        function obj = PTKContextHierarchy(context_def, dependency_tracker, image_templates)
+        function obj = MimContextHierarchy(context_def, dependency_tracker, image_templates)
             obj.DependencyTracker = dependency_tracker;
             obj.ImageTemplates = image_templates;
             
@@ -73,7 +73,7 @@ classdef PTKContextHierarchy < CoreBaseClass
                     context_mapping_list = context_set_mapping.ContextList;
                     context_list = [context_list, CoreContainerUtilities.GetFieldValuesFromSet(context_mapping_list, 'Context')];
                 else
-                    reporting.Error('PTKContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
+                    reporting.Error('MimContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
                 end
             end
             
@@ -115,7 +115,7 @@ classdef PTKContextHierarchy < CoreBaseClass
             
             % Determines the context and context type requested by the calling function
             if isempty(input_context)
-                reporting.Error('PTKContextHierarchy:NoContextSpecified', 'When calling SaveEditedResult(), the contex of the input image must be specified.');
+                reporting.Error('MimContextHierarchy:NoContextSpecified', 'When calling SaveEditedResult(), the contex of the input image must be specified.');
                 input_context = obj.ContextDef.GetDefaultContext;
             end
             
@@ -164,7 +164,7 @@ classdef PTKContextHierarchy < CoreBaseClass
                 combined_result = obj.GetResultsForLowerContexts(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
             
             else
-                reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
+                reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
             end
             
             % Allow the context manager to construct a template image from this
@@ -202,7 +202,7 @@ classdef PTKContextHierarchy < CoreBaseClass
             context_results_combiner = PTKContextResultCombiner(obj.ImageTemplates);
             higher_context_mapping = output_context_mapping.Parent;
             if isempty(higher_context_mapping)
-                reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
+                reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
             end
             parent_context = higher_context_mapping.Context;
             this_context_results = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
@@ -251,7 +251,7 @@ classdef PTKContextHierarchy < CoreBaseClass
                 
                 higher_context_mapping = input_context_mapping.Parent;
                 if isempty(higher_context_mapping)
-                    reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
+                    reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
                 end
                 parent_context = higher_context_mapping.Context;
                 parent_image_template = obj.ImageTemplates.GetTemplateImage(parent_context, dataset_stack, reporting);
@@ -278,7 +278,7 @@ classdef PTKContextHierarchy < CoreBaseClass
                 end
 
             else
-                reporting.Error('PTKContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
+                reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
             end
         end
     end    

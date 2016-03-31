@@ -69,7 +69,7 @@ classdef PTKDataset < CoreBaseClass
         
         function obj = PTKDataset(image_info, dataset_disk_cache, linked_dataset_chooser_factory, reporting)
             % PTKDataset is created by the PTKMain class
-            obj.DatasetStack = PTKDatasetStack;
+            obj.DatasetStack = MimDatasetStack;
             obj.Reporting = reporting;
             obj.LinkedDatasetChooser = linked_dataset_chooser_factory.GetLinkedDatasetChooser(image_info, dataset_disk_cache, reporting);
             

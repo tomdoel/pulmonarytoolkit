@@ -1,10 +1,10 @@
-classdef PTKPluginDependencyTracker < CoreBaseClass
-    % PTKPluginDependencyTracker. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimPluginDependencyTracker < CoreBaseClass
+    % MimPluginDependencyTracker. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     PTKPluginDependencyTracker is used by PTKDataset to fetch plugin results
+    %     MimPluginDependencyTracker is used by PTKDataset to fetch plugin results
     %     and run plugins, and build a dependency list for the plugin.
     %     A plugin may require the result of another plugin during its
     %     execution. This is a dependency, and the complete list of dependencies
@@ -33,7 +33,7 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
     
     methods
         
-        function obj = PTKPluginDependencyTracker(dataset_disk_cache, plugin_cache)
+        function obj = MimPluginDependencyTracker(dataset_disk_cache, plugin_cache)
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.PluginCache = plugin_cache;
         end
@@ -42,7 +42,7 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
         function cache_info = GetCacheInfo(obj, plugin_name, reporting)
             [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, reporting);
             if isempty(result) || isempty(cache_info)
-                reporting.ShowWarning('PTKPluginDependencyTracker:NoCacheInfo', ['No cached value was found for plugin ' plugin_name '.'], []);
+                reporting.ShowWarning('MimPluginDependencyTracker:NoCacheInfo', ['No cached value was found for plugin ' plugin_name '.'], []);
             end
         end
         
@@ -61,12 +61,12 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
                 if ~isempty(cache_info)
                     dependencies = cache_info.DependencyList;
                     if ~obj.CheckPluginVersion(cache_info.InstanceIdentifier, reporting)
-                        reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The plugin ' plugin_name ' has changed since the cache was generated. I am forcing this plugin to re-run to generate new results.'], []);
+                        reporting.ShowWarning('MimPluginDependencyTracker:InvalidDependency', ['The plugin ' plugin_name ' has changed since the cache was generated. I am forcing this plugin to re-run to generate new results.'], []);
                         result = [];
                     end
                     
                     if ~obj.CheckDependenciesValid(linked_dataset_chooser, dependencies, reporting)
-                        reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
+                        reporting.ShowWarning('MimPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
                         result = [];
                     end
                 end
@@ -117,7 +117,7 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
                 end
                 
                 if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
-                    reporting.Error('PTKPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
+                    reporting.Error('MimPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
                 end
                 
                 % Get the newly calculated list of dependencies for this

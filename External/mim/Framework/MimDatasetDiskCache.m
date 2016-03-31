@@ -4,7 +4,7 @@ classdef MimDatasetDiskCache < handle
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     A class used by PTKPluginDependencyTracker to save and load plugin
+    %     A class used by MimPluginDependencyTracker to save and load plugin
     %     results and data associated with a particular dataset. This class
     %     ensures dependencies are correctly added, saved and validated when
     %     results are accessed or changed.

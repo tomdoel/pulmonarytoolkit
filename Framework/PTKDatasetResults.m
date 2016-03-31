@@ -56,11 +56,11 @@ classdef PTKDatasetResults < handle
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
-            obj.ImageTemplates = PTKImageTemplates(obj, context_def, dataset_disk_cache, reporting);
+            obj.ImageTemplates = MimImageTemplates(obj, context_def, dataset_disk_cache, reporting);
             obj.OutputFolder = MimOutputFolder(dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
             obj.PreviewImages = MimPreviewImages(dataset_disk_cache, reporting);
-            obj.DependencyTracker = PTKPluginDependencyTracker(dataset_disk_cache, plugin_cache);
-            obj.ContextHierarchy = PTKContextHierarchy(context_def, obj.DependencyTracker, obj.ImageTemplates);
+            obj.DependencyTracker = MimPluginDependencyTracker(dataset_disk_cache, plugin_cache);
+            obj.ContextHierarchy = MimContextHierarchy(context_def, obj.DependencyTracker, obj.ImageTemplates);
         end
 
         function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context, reporting, allow_results_to_be_cached_override)

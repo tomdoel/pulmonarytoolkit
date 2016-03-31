@@ -1,5 +1,5 @@
 classdef TestImageTemplates < CoreTest
-    % TestImageTemplates. Tests for the PTKImageTemplates class.
+    % TestImageTemplates. Tests for the MimImageTemplates class.
     %
     %
     %     Licence
@@ -16,7 +16,7 @@ classdef TestImageTemplates < CoreTest
             mock_datset_disk_cache = MockDatasetDiskCache;
             mock_dataset_results = MockDatasetResults;
             context_def = PTKContextDef;
-            image_templates = PTKImageTemplates(mock_dataset_results, context_def, mock_datset_disk_cache, mock_reporting);
+            image_templates = MimImageTemplates(mock_dataset_results, context_def, mock_datset_disk_cache, mock_reporting);
             mock_dataset_results.ImageTemplates = image_templates;
             null_dataset_stack = [];
             
@@ -40,7 +40,7 @@ classdef TestImageTemplates < CoreTest
             % When asking for a template, the code should fail if the template
             % could not be generated
             mock_dataset_results.AddMockResult('PTKOriginalImage', PTKContext.OriginalImage, [], [], [], true);
-            mock_reporting.AddExpectation('CoreMockReporting.Error', 'PTKImageTemplates:NoContext');
+            mock_reporting.AddExpectation('CoreMockReporting.Error', 'MimImageTemplates:NoContext');
             try
                 template_image = image_templates.GetTemplateImage(PTKContext.OriginalImage, null_dataset_stack, mock_reporting);
             catch ex
@@ -67,7 +67,7 @@ classdef TestImageTemplates < CoreTest
             % leaving RightLung enabled)
             
             mock_dataset_results.AddMockResult('PTKLungROI', PTKContext.LungROI, [], [], [], true);
-            mock_reporting.AddExpectation('CoreMockReporting.Error', 'PTKImageTemplates:NoContext');
+            mock_reporting.AddExpectation('CoreMockReporting.Error', 'MimImageTemplates:NoContext');
             try
                 template_image = image_templates.GetTemplateImage(PTKContext.LungROI, null_dataset_stack, mock_reporting);
             catch ex
@@ -77,7 +77,7 @@ classdef TestImageTemplates < CoreTest
                 end
             end
             mock_dataset_results.AddMockResult('PTKGetContextForSingleLung', PTKContext.LeftLung, [], [], [], true);
-            mock_reporting.AddExpectation('CoreMockReporting.Error', 'PTKImageTemplates:NoContext');
+            mock_reporting.AddExpectation('CoreMockReporting.Error', 'MimImageTemplates:NoContext');
             try
                 template_image = image_templates.GetTemplateImage(PTKContext.LeftLung, null_dataset_stack, mock_reporting);
             catch ex

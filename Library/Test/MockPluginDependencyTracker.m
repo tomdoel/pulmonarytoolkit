@@ -1,9 +1,9 @@
 classdef MockPluginDependencyTracker < handle
     % MockPluginDependencyTracker. Part of the PTK test framework
     %
-    % This class is used in tests in place of a PTKPluginDependencyTracker. It
+    % This class is used in tests in place of a MimPluginDependencyTracker. It
     % allows expected calls to be verified, while maintaining some of the 
-    % expected behaviour of a PTKPluginDependencyTracker object.
+    % expected behaviour of a MimPluginDependencyTracker object.
     %
     %
     %     Licence

@@ -1,5 +1,5 @@
-classdef PTKDatasetStack < handle
-    % PTKDatasetStack. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimDatasetStack < handle
+    % MimDatasetStack. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -36,7 +36,7 @@ classdef PTKDatasetStack < handle
     end
     
     methods
-        function obj =  PTKDatasetStack
+        function obj =  MimDatasetStack
             obj.DatasetStack = PTKDatasetStackItem.empty;
         end
     
@@ -45,7 +45,7 @@ classdef PTKDatasetStack < handle
             % new unique identifier. The push it to the end of the stack
         
             if obj.PluginAlreadyExistsInStack(plugin_name, context, dataset_uid)
-                reporting.Error('PTKDatasetStack:RecursivePluginCall', 'Recursive plugin call');
+                reporting.Error('MimDatasetStack:RecursivePluginCall', 'Recursive plugin call');
             end
             attributes = [];
             attributes.IgnoreDependencyChecks = ignore_dependency_checks;
