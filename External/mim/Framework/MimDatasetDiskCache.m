@@ -189,8 +189,16 @@ classdef MimDatasetDiskCache < handle
         function LoadCachedPluginResultsFile(obj, reporting)
             cached_plugin_info = obj.LoadData(obj.Config.CachedPluginInfoFileName, reporting);
             if isempty(cached_plugin_info)
-                obj.PluginResultsInfo = PTKPluginResultsInfo;
+                obj.PluginResultsInfo = MimPluginResultsInfo;
             else
+                if isa(cached_plugin_info, 'PTKPluginResultsInfo')
+                    cached_plugin_info = cached_plugin_info.ConvertToMimInfo;
+                end
+                
+                if ~isa(cached_plugin_info, 'MimPluginResultsInfo')
+                    reporting.Error('MimDatasetDiskCache:UnrecognisedFormat', 'The cached plugin info is not of the recognised class type');
+                end
+                
                 obj.PluginResultsInfo = cached_plugin_info;
             end
         end

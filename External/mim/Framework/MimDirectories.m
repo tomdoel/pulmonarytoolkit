@@ -61,15 +61,15 @@ classdef MimDirectories < CoreBaseClass
         end
         
         function uids = GetUidsOfAllDatasetsInCache(obj)
-            uids_1 = MimDirectories.GetUidsOfAllDatasetsInFolder(obj.GetCacheDirectory);
-            uids_2 = MimDirectories.GetUidsOfAllDatasetsInFolder(obj.GetFrameworkDatasetCacheDirectory);
+            uids_1 = obj.GetUidsOfAllDatasetsInFolder(obj.GetCacheDirectory);
+            uids_2 = obj.GetUidsOfAllDatasetsInFolder(obj.GetFrameworkDatasetCacheDirectory);
             uids = unique([uids_1, uids_2]);
         end
         
     end
     
-    methods (Static, Access = private)
-        function uids = GetUidsOfAllDatasetsInFolder(folder)
+    methods (Access = private)
+        function uids = GetUidsOfAllDatasetsInFolder(obj, folder)
             subdirectories = CoreDiskUtilities.GetListOfDirectories(folder);
             uids = {};
             for subdir = subdirectories

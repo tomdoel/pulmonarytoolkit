@@ -1,5 +1,5 @@
-classdef PTKPluginResultsInfo < handle
-    % PTKPluginResultsInfo. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimPluginResultsInfo < handle
+    % MimPluginResultsInfo. Part of the internal MIM framework
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -24,15 +24,24 @@ classdef PTKPluginResultsInfo < handle
     end
     
     methods
-        function obj = PTKPluginResultsInfo
-            obj.ResultsInfo = containers.Map;
+        function obj = MimPluginResultsInfo(info_map)
+            % Creates a new cache of plugin infos. To support conversion
+            % from legacy classes, an existing map can be passed in;
+            % otherwise this argument should be blank and a new map is
+            % created
+            
+            if nargin > 0
+                obj.ResultsInfo = info_map;
+            else
+                obj.ResultsInfo = containers.Map;
+            end
         end
         
         function AddCachedPluginInfo(obj, plugin_name, cache_info, context, is_edited, reporting)
             % Adds dependency record for a particular plugin result
             plugin_key = obj.GetKey(plugin_name, context, is_edited);
             if obj.ResultsInfo.isKey(plugin_key)
-                reporting.Error('PTKPluginResultsInfo:CachedInfoAlreadyPresent', 'Cached plugin info already present');
+                reporting.Error('MimPluginResultsInfo:CachedInfoAlreadyPresent', 'Cached plugin info already present');
             end
             obj.ResultsInfo(plugin_key) = cache_info;
         end
@@ -68,6 +77,9 @@ classdef PTKPluginResultsInfo < handle
         end
         
         function [valid, edited_key_exists] = CheckDependencyValid(obj, next_dependency, reporting)
+            % Checks a given dependency against the cached values to
+            % determine if it is valid (ie it depends on the most recent
+            % computed results)
             
             if isfield(next_dependency.Attributes, 'IsEditedResult')
                 is_edited_result = next_dependency.Attributes.IsEditedResult;
@@ -103,7 +115,7 @@ classdef PTKPluginResultsInfo < handle
             else
                 % Sanity check - this case should never occur
                 if ~strcmp(next_dependency.DatasetUid, current_dependency.DatasetUid)
-                    reporting.Error('PTKPluginResultsInfo:DatsetUidError', 'Code error - not matching dataset UID during dependency check');
+                    reporting.Error('MimPluginResultsInfo:DatsetUidError', 'Code error - not matching dataset UID during dependency check');
                 end
 
                 if ~strcmp(next_dependency.Uid, current_dependency.Uid)
