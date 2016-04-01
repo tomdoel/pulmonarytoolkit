@@ -1,5 +1,5 @@
-classdef PTKContextResultCombiner < CoreBaseClass
-    % PTKContextResultCombiner. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimContextResultCombiner < CoreBaseClass
+    % MimContextResultCombiner. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     This class is used to build up aggregate results combined from results for different contexts
     %
@@ -24,14 +24,14 @@ classdef PTKContextResultCombiner < CoreBaseClass
     end
     
     methods
-        function obj = PTKContextResultCombiner(image_templates)
+        function obj = MimContextResultCombiner(image_templates)
             obj.ImageTemplates = image_templates;
         end
         
         function AddParentResult(obj, parent_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting)
-            obj.Result = PTKReduceResultToContext(this_context_results.GetResult, output_context_mapping.Context, obj.ImageTemplates, dataset_stack, reporting);
+            obj.Result = MimReduceResultToContext(this_context_results.GetResult, output_context_mapping.Context, obj.ImageTemplates, dataset_stack, reporting);
             if ~isempty(this_context_results.GetOutputImage)
-                obj.OutputImage = PTKReduceResultToContext(this_context_results.GetOutputImage, output_context, obj.ImageTemplates, dataset_stack, reporting);
+                obj.OutputImage = MimReduceResultToContext(this_context_results.GetOutputImage, output_context, obj.ImageTemplates, dataset_stack, reporting);
             else
                 obj.OutputImage = [];
             end
@@ -44,9 +44,9 @@ classdef PTKContextResultCombiner < CoreBaseClass
                 obj.OutputImageTemplate = obj.ImageTemplates.GetTemplateImage(output_context, dataset_stack, reporting);
             end
             
-            obj.Result = PTKExpandResultToContext(obj.Result, this_context_results.GetResult, child_context, obj.OutputImageTemplate, obj.ImageTemplates, dataset_stack, reporting);
+            obj.Result = MimExpandResultToContext(obj.Result, this_context_results.GetResult, child_context, obj.OutputImageTemplate, obj.ImageTemplates, dataset_stack, reporting);
             if ~isempty(this_context_results.GetOutputImage)
-                obj.OutputImage = PTKExpandResultToContext(obj.OutputImage, this_context_results.GetOutputImage, child_context, obj.OutputImageTemplate, obj.ImageTemplates, dataset_stack, reporting);
+                obj.OutputImage = MimExpandResultToContext(obj.OutputImage, this_context_results.GetOutputImage, child_context, obj.OutputImageTemplate, obj.ImageTemplates, dataset_stack, reporting);
             else
                 obj.OutputImage = [];
             end

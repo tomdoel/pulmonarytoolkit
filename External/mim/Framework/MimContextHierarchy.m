@@ -199,7 +199,7 @@ classdef MimContextHierarchy < CoreBaseClass
         end
         
         function context_results_combiner = GetResultsForHigherContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
-            context_results_combiner = PTKContextResultCombiner(obj.ImageTemplates);
+            context_results_combiner = MimContextResultCombiner(obj.ImageTemplates);
             higher_context_mapping = output_context_mapping.Parent;
             if isempty(higher_context_mapping)
                 reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
@@ -210,7 +210,7 @@ classdef MimContextHierarchy < CoreBaseClass
         end
         
         function context_results_combiner = GetResultsForLowerContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);    
-            context_results_combiner = PTKContextResultCombiner(obj.ImageTemplates);
+            context_results_combiner = MimContextResultCombiner(obj.ImageTemplates);
             child_context_mappings = output_context_mapping.Children;
             
             for child_mapping = child_context_mappings
@@ -271,7 +271,7 @@ classdef MimContextHierarchy < CoreBaseClass
                     
                     % Create a new image from the edited result, reduced to this
                     % context
-                    new_edited_image_for_context_image = PTKReduceResultToContext(edited_result_image, child_mapping{1}.Context, obj.ImageTemplates, dataset_stack, reporting);
+                    new_edited_image_for_context_image = MimReduceResultToContext(edited_result_image, child_mapping{1}.Context, obj.ImageTemplates, dataset_stack, reporting);
                     
                     % Save this new image
                     obj.SaveEditedResultForAllContexts(plugin_name, child_context, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);

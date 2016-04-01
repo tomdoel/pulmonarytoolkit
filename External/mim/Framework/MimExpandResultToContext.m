@@ -1,5 +1,5 @@
-function result = PTKExpandResultToContext(result, this_result, child_context, output_template_image, image_templates, dataset_stack, reporting)
-    % PTKExpandResultToContext. Part of the internal framework of the Pulmonary Toolkit.
+function result = MimExpandResultToContext(result, this_result, child_context, output_template_image, image_templates, dataset_stack, reporting)
+    % MimExpandResultToContext. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     This function is used to convert a plugin result from one context
     %     to a higher context

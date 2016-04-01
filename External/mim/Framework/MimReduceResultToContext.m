@@ -1,5 +1,5 @@
-function result = PTKReduceResultToContext(full_result, child_context, image_templates, dataset_stack, reporting)
-    % PTKReduceResultToContext. Part of the internal framework of the Pulmonary Toolkit.
+function result = MimReduceResultToContext(full_result, child_context, image_templates, dataset_stack, reporting)
+    % MimReduceResultToContext. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     This function is used to convert a plugin result from one context
     %     to a lower context
