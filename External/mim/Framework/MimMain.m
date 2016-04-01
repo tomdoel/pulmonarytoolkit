@@ -1,12 +1,12 @@
-classdef PTKMainBase < CoreBaseClass
-    % PTKMainBase. Imports and provides access to data from the Pulmonary Toolkit
+classdef MimMain < CoreBaseClass
+    % MimMain. Imports and provides access to data from the Pulmonary Toolkit
     %
-    %     PTKMainBase provides access to data from the Pulmonary Toolkit, and allows 
+    %     MimMain provides access to data from the Pulmonary Toolkit, and allows 
     %     you to import new data. Data is accessed through one or more PTKDataset
     %     objects. Your code should create a single PTKMain object, and then ask
     %     it to create a PTKDataset object for each dataset you wish to access. 
     %
-    %     PTKMainBase is essentially a class factory for PTKDatasets, but shares the 
+    %     MimMain is essentially a class factory for PTKDatasets, but shares the 
     %     PTKReporting (error/progress reporting) objects between all 
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the Pulmonary Toolkit.
@@ -53,7 +53,7 @@ classdef PTKMainBase < CoreBaseClass
 
     methods
         
-        function obj = PTKMainBase(framework_app_def, reporting)
+        function obj = MimMain(framework_app_def, reporting)
             % Creates a new main PTK object using the configuration
             % specified by the supplied framework_app_def object
             obj.FrameworkAppDef = framework_app_def;

@@ -1,4 +1,4 @@
-classdef PTKMain < PTKMainBase
+classdef PTKMain < MimMain
     % PTKMain. Imports and provides access to data from the Pulmonary Toolkit
     %
     %     PTKMain provides access to data from the Pulmonary Toolkit, and allows 
@@ -55,7 +55,7 @@ classdef PTKMain < PTKMainBase
             
             framework_def = PTKFrameworkAppDef;
             
-            obj = obj@PTKMainBase(framework_def, reporting);
+            obj = obj@MimMain(framework_def, reporting);
         end
     end
 end

@@ -195,7 +195,7 @@ classdef MimContextHierarchy < CoreBaseClass
                 output_image = [];
             end
             
-           combined_result = PTKCombinedPluginResult(result, output_image, plugin_has_been_run, cache_info);
+           combined_result = MimCombinedPluginResult(result, output_image, plugin_has_been_run, cache_info);
         end
         
         function context_results_combiner = GetResultsForHigherContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);

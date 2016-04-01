@@ -1,5 +1,5 @@
-classdef PTKCombinedPluginResult < CoreBaseClass
-    % PTKCombinedPluginResult. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimCombinedPluginResult < CoreBaseClass
+    % MimCombinedPluginResult. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     This class encapsulates the output from fetching a plugin result
     %
@@ -20,7 +20,7 @@ classdef PTKCombinedPluginResult < CoreBaseClass
     end
     
     methods
-        function obj = PTKCombinedPluginResult(result, output_image, plugin_has_been_run, cache_info)
+        function obj = MimCombinedPluginResult(result, output_image, plugin_has_been_run, cache_info)
             obj.Result = result;
             obj.OutputImage = output_image;
             obj.CacheInfo = cache_info;
