@@ -1,5 +1,5 @@
-classdef PTKCombinedImageDatabaseController < CoreBaseClass
-    % PTKCombinedImageDatabaseController. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimCombinedImageDatabaseController < CoreBaseClass
+    % MimCombinedImageDatabaseController. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -23,7 +23,7 @@ classdef PTKCombinedImageDatabaseController < CoreBaseClass
     end
 
     methods
-        function obj = PTKCombinedImageDatabaseController(gui_callback, matnat_database)
+        function obj = MimCombinedImageDatabaseController(gui_callback, matnat_database)
             obj.MatNatDatabase = matnat_database;
             obj.GuiCallback = gui_callback;
         end

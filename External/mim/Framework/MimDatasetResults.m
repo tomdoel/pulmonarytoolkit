@@ -80,7 +80,7 @@ classdef MimDatasetResults < handle
             
             % Get information about the plugin
             plugin_class = feval(plugin_name);
-            plugin_info = PTKParsePluginClass(plugin_name, plugin_class, reporting);
+            plugin_info = MimParsePluginClass(plugin_name, plugin_class, reporting);
             
             % Whether results can be cached is determined by the plugin
             % parameters, but the input can force this to be enabled
@@ -176,7 +176,7 @@ classdef MimDatasetResults < handle
             
             % Get information about the plugin
             plugin_class = feval(plugin_name);
-            plugin_info = PTKParsePluginClass(plugin_name, plugin_class, reporting);
+            plugin_info = MimParsePluginClass(plugin_name, plugin_class, reporting);
             
             % Update the progress dialog with the current plugin being run
             reporting.UpdateProgressMessage(['Saving edit for ' plugin_info.ButtonText]);

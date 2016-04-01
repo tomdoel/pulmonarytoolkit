@@ -1,5 +1,5 @@
-classdef PTKCombinedImageDatabase < CoreBaseClass
-    % PTKCombinedImageDatabase. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimCombinedImageDatabase < CoreBaseClass
+    % MimCombinedImageDatabase. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -21,7 +21,7 @@ classdef PTKCombinedImageDatabase < CoreBaseClass
     end
     
     methods
-        function obj = PTKCombinedImageDatabase(image_database, matnat_database)
+        function obj = MimCombinedImageDatabase(image_database, matnat_database)
             obj.ImageDatabase = image_database;
             obj.MatNatDatabase = matnat_database;
             

@@ -1,5 +1,5 @@
-classdef PTKMatNatDatabaseSeries < handle
-    % PTKMatNatDatabaseSeries.
+classdef MimMatNatDatabaseSeries < handle
+    % MimMatNatDatabaseSeries.
     %
     %
     %     Licence
@@ -21,7 +21,7 @@ classdef PTKMatNatDatabaseSeries < handle
     end
     
     methods
-        function obj = PTKMatNatDatabaseSeries(series_id, single_image_metainfo, number_of_images)
+        function obj = MimMatNatDatabaseSeries(series_id, single_image_metainfo, number_of_images)
             if nargin > 0
                 obj.Name = single_image_metainfo.SeriesDescription;
                 obj.StudyName = single_image_metainfo.StudyDescription;

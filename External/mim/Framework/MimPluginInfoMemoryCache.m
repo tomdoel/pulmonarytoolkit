@@ -79,7 +79,7 @@ classdef MimPluginInfoMemoryCache < handle
             obj.PluginHandleMap(plugin_name) = plugin_class;
 
             % Parse the class properties into a data structure
-            plugin_info = PTKParsePluginClass(plugin_name, plugin_class, category, reporting);
+            plugin_info = MimParsePluginClass(plugin_name, plugin_class, category, reporting);
 
             obj.PluginInfoMap(plugin_name) = plugin_info;
         end

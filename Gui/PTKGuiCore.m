@@ -103,13 +103,13 @@ classdef PTKGuiCore < GemFigure
             % Create a callback handler for the Patient Browser and sidebar
             if obj.AppDef.MatNatEnabled
                 mnConfig = matnattestconfig; % ToDo: the config file has to be defined
-                matnat_database = PTKMatNatDatabase(mnConfig);
-                combined_database = PTKCombinedImageDatabase(obj.GuiDataset.GetImageDatabase, matnat_database);
+                matnat_database = MimMatNatDatabase(mnConfig);
+                combined_database = MimCombinedImageDatabase(obj.GuiDataset.GetImageDatabase, matnat_database);
             else
                 matnat_database = [];
                 combined_database = obj.GuiDataset.GetImageDatabase;
             end
-            combined_controller = PTKCombinedImageDatabaseController(obj, matnat_database);
+            combined_controller = MimCombinedImageDatabaseController(obj, matnat_database);
             
             % Create the side panel showing available datasets
             obj.SidePanel = PTKSidePanel(obj, combined_controller, combined_database, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder);

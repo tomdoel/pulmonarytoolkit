@@ -1,5 +1,5 @@
-classdef PTKMatNatDatabase < handle
-    % PTKMatNatDatabase. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimMatNatDatabase < handle
+    % MimMatNatDatabase. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -21,7 +21,7 @@ classdef PTKMatNatDatabase < handle
     end
     
     methods
-        function obj = PTKMatNatDatabase(mnConfig)
+        function obj = MimMatNatDatabase(mnConfig)
             restClient = MatNatRestClient(mnConfig);
             obj.Database = MatNatDatabase(restClient, mnConfig);
         end
@@ -42,7 +42,7 @@ classdef PTKMatNatDatabase < handle
                             scan_struct.Time = [];
                             scan_struct.SeriesUid = scan{1}.Id;
                             scan_struct.StudyUid = session{1}.Id;
-                            dataset = PTKMatNatDatabaseSeries(scan{1}.Id, scan_struct, scan{1}.CountImages);
+                            dataset = MimMatNatDatabaseSeries(scan{1}.Id, scan_struct, scan{1}.CountImages);
                             datasets{end + 1} = dataset;
                         end
                     end
