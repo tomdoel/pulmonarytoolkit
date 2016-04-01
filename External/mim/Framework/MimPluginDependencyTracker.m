@@ -101,7 +101,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 plugin_version = plugin_info.PluginVersion;
                 dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions, plugin_version, reporting);
                 
-                dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
+                dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
 
                 % This is the actual call which runs the plugin
                 if strcmp(plugin_info.PTKVersion, '1')

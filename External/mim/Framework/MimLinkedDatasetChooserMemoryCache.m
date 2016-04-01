@@ -4,9 +4,9 @@ classdef MimLinkedDatasetChooserMemoryCache < handle
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
     %
-    %     MimLinkedDatasetChooserMemoryCache stores a map of PTKLinkedDatasetChooser objects, and
-    %     ensures only one PTKLinkedDatasetChooser exists for a given UID. This improves
-    %     thread safety by ensuring multiple PTKLinkedDatasetChooser objects aren't
+    %     MimLinkedDatasetChooserMemoryCache stores a map of MimLinkedDatasetChooser objects, and
+    %     ensures only one MimLinkedDatasetChooser exists for a given UID. This improves
+    %     thread safety by ensuring multiple MimLinkedDatasetChooser objects aren't
     %     interacting with the same cache files.
     %
     %
@@ -37,7 +37,7 @@ classdef MimLinkedDatasetChooserMemoryCache < handle
             if obj.LinkedDatasetChooserCacheMap.isKey(uid)
                 linked_dataset_chooser = obj.LinkedDatasetChooserCacheMap(uid);
             else
-                linked_dataset_chooser = PTKLinkedDatasetChooser(obj.ContextDef, image_info, dataset_disk_cache, obj.LinkedRecorderSingleton, obj.PluginCache, reporting);
+                linked_dataset_chooser = MimLinkedDatasetChooser(obj.ContextDef, image_info, dataset_disk_cache, obj.LinkedRecorderSingleton, obj.PluginCache, reporting);
                 obj.LinkedDatasetChooserCacheMap(uid) = linked_dataset_chooser;
             end
         end

@@ -3,10 +3,10 @@ classdef PTKDataset < CoreBaseClass
     %
     %     This class is used by scripts and GUI applications to run
     %     calculations, fetch cached results and access data associated with a
-    %     dataset. The difference between PTKDataset and PTKDatasetResults is that
-    %     PTKDataset is called from outside the toolkit, whereas PTKDatasetResults
+    %     dataset. The difference between PTKDataset and MimDatasetResults is that
+    %     PTKDataset is called from outside the toolkit, whereas MimDatasetResults
     %     is called by plugins during their RunPlugin() call. PTKDataset
-    %     calls PTKDatasetResults, but provides additional progress and error
+    %     calls MimDatasetResults, but provides additional progress and error
     %     reporting and dependency tracking.
     %
     %     Each dataset will have its own instance of PTKDataset.

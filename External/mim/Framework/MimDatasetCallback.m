@@ -1,11 +1,11 @@
-classdef PTKDatasetCallback < handle
-    % PTKDatasetCallback. Used by plugins to obtain results and associated data for a particular dataset.
+classdef MimDatasetCallback < handle
+    % MimDatasetCallback. Used by plugins to obtain results and associated data for a particular dataset.
     %
     %     This class is used by plugins to run calculations and fetch cached
     %     results associated with a dataset. The difference between PTKDataset 
-    %     and PTKDatasetCallback is that PTKDataset is called from outside the 
-    %     toolkit, whereas PTKDatasetCallback is called by plugins during their 
-    %     RunPlugin() call. PTKDataset calls PTKDatasetCallback, but provides 
+    %     and MimDatasetCallback is that PTKDataset is called from outside the 
+    %     toolkit, whereas MimDatasetCallback is called by plugins during their 
+    %     RunPlugin() call. PTKDataset calls MimDatasetCallback, but provides 
     %     additional progress and error reporting and dependency tracking.
     %
     %     You should not create this class directly. An instance of this class
@@ -41,7 +41,7 @@ classdef PTKDatasetCallback < handle
     end
     
     methods
-        function obj = PTKDatasetCallback(linked_dataset_chooser, dataset_call_stack, default_context, reporting)
+        function obj = MimDatasetCallback(linked_dataset_chooser, dataset_call_stack, default_context, reporting)
             obj.DatasetStack = dataset_call_stack;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DefaultContext = default_context;

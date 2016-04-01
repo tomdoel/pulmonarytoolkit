@@ -1,11 +1,11 @@
-classdef PTKDatasetResults < handle
-    % PTKDatasetResults. 
+classdef MimDatasetResults < handle
+    % MimDatasetResults. 
     %
     %     This class is used to run calculations and fetch cached
     %     results associated with a dataset. The difference between PTKDataset 
-    %     and PTKDatasetResults is that PTKDataset is called from outside the 
-    %     toolkit, whereas PTKDatasetResults is called by plugins during their 
-    %     RunPlugin() call. PTKDataset calls PTKDatasetResults, but provides 
+    %     and MimDatasetResults is that PTKDataset is called from outside the 
+    %     toolkit, whereas MimDatasetResults is called by plugins during their 
+    %     RunPlugin() call. PTKDataset calls MimDatasetResults, but provides 
     %     additional progress and error reporting and dependency tracking.
     %
     %     You should not create this class directly. An instance of this class
@@ -51,7 +51,7 @@ classdef PTKDatasetResults < handle
     end
     
     methods
-        function obj = PTKDatasetResults(context_def, image_info, linked_dataset_chooser, external_notify_function, dataset_disk_cache, plugin_cache, reporting)
+        function obj = MimDatasetResults(context_def, image_info, linked_dataset_chooser, external_notify_function, dataset_disk_cache, plugin_cache, reporting)
             obj.ImageInfo = image_info;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DatasetDiskCache = dataset_disk_cache;

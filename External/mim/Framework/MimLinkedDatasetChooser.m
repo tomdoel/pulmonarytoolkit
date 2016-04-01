@@ -1,10 +1,10 @@
-classdef PTKLinkedDatasetChooser < CoreBaseClass
-    % PTKLinkedDatasetChooser. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimLinkedDatasetChooser < CoreBaseClass
+    % MimLinkedDatasetChooser. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     PTKLinkedDatasetChooser is used to select between linked datasets.
+    %     MimLinkedDatasetChooser is used to select between linked datasets.
     %     By default, each dataset acts independently, but you can link datasets
     %     together (for example, if you wanted to register images between two
     %     datasets). When datasets are linked, one is the primary dataset, and
@@ -22,8 +22,8 @@ classdef PTKLinkedDatasetChooser < CoreBaseClass
 
     properties (Access = private)
         LinkedRecorderSingleton
-        PrimaryDatasetResults % Handle to the PTKDatasetResults object for this dataset
-        LinkedDatasetChooserList % Handles to PTKLinkedDatasetChooser objects for all linked datasets, including this one
+        PrimaryDatasetResults % Handle to the MimDatasetResults object for this dataset
+        LinkedDatasetChooserList % Handles to MimLinkedDatasetChooser objects for all linked datasets, including this one
         PrimaryDatasetUid     % The uid of this dataset
     end
     
@@ -34,9 +34,9 @@ classdef PTKLinkedDatasetChooser < CoreBaseClass
     end
     
     methods
-        function obj = PTKLinkedDatasetChooser(context_def, image_info, dataset_disk_cache, linked_recorder_singleton, plugin_cache, reporting)
+        function obj = MimLinkedDatasetChooser(context_def, image_info, dataset_disk_cache, linked_recorder_singleton, plugin_cache, reporting)
             obj.LinkedRecorderSingleton = linked_recorder_singleton;
-            primary_dataset_results = PTKDatasetResults(context_def, image_info, obj, @obj.notify, dataset_disk_cache, plugin_cache, reporting);
+            primary_dataset_results = MimDatasetResults(context_def, image_info, obj, @obj.notify, dataset_disk_cache, plugin_cache, reporting);
             obj.PrimaryDatasetUid = primary_dataset_results.GetImageInfo.ImageUid;
             obj.PrimaryDatasetResults = primary_dataset_results;
             obj.LinkedDatasetChooserList = containers.Map;
@@ -83,7 +83,7 @@ classdef PTKLinkedDatasetChooser < CoreBaseClass
                 dataset_name = obj.PrimaryDatasetUid;
             end
             if ~obj.LinkedDatasetChooserList.isKey(dataset_name)
-                reporting.Error('PTKLinkedDatasetChooser:DatasetNotFound', 'No linked dataset was found with this name. Did you add the dataset with LinkDataset()?'); 
+                reporting.Error('MimLinkedDatasetChooser:DatasetNotFound', 'No linked dataset was found with this name. Did you add the dataset with LinkDataset()?'); 
             end
             linked_dataset_chooser = obj.LinkedDatasetChooserList(dataset_name);
         end

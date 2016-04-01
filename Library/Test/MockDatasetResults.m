@@ -1,9 +1,9 @@
 classdef MockDatasetResults < handle
     % MockDatasetResults. Part of the PTK test framework
     %
-    % This class is used in tests in place of a PTKDatasetResults. It allows
+    % This class is used in tests in place of a MimDatasetResults. It allows
     % expected calls to be verified, while maintaining some of the expected
-    % behaviour of a PTKDatasetResults object.
+    % behaviour of a MimDatasetResults object.
     %
     %
     %     Licence
