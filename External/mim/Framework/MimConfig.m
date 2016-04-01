@@ -22,6 +22,7 @@ classdef MimConfig < handle
 
         CachedPluginInfoFileName = 'CachedPluginInfo' % Filename for internal cache of plugin infos
         ImageInfoCacheName = 'ImageInfo' % Filename for per-dataset cache of filenames and dataset information
+        MexCacheFileName = 'MexCache.xml' % Filename for cache of information about compiled mex files
     end
     
 end

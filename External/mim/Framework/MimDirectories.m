@@ -60,6 +60,22 @@ classdef MimDirectories < CoreBaseClass
             CoreDiskUtilities.CreateDirectoryIfNecessary(markers_directory);
         end
         
+        function framework_file_path = GetMexCacheFilePath(obj)
+            % Returns the full path to the cache file containing info about compiled mex files 
+            
+            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            cache_filename = obj.Config.MexCacheFileName;
+            framework_file_path = fullfile(settings_dir, cache_filename);
+        end
+        
+        function framework_file_path = GetLegacyMexCacheFilePath(obj)
+            % Returns the full path to the legacy framework cache file
+            
+            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            cache_filename = 'PTKFrameworkCache.mat';
+            framework_file_path = fullfile(settings_dir, cache_filename);
+        end
+        
         function uids = GetUidsOfAllDatasetsInCache(obj)
             uids_1 = obj.GetUidsOfAllDatasetsInFolder(obj.GetCacheDirectory);
             uids_2 = obj.GetUidsOfAllDatasetsInFolder(obj.GetFrameworkDatasetCacheDirectory);

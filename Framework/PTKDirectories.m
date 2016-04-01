@@ -67,14 +67,6 @@ classdef PTKDirectories < CoreBaseClass
             CoreDiskUtilities.CreateDirectoryIfNecessary(results_directory);
         end
         
-        function framework_file_path = GetFrameworkCacheFilePath
-            % Returns the full path to the framework cache file
-            
-            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            cache_filename = PTKSoftwareInfo.FrameworkCacheFileName;
-            framework_file_path = fullfile(settings_dir, cache_filename);
-        end
-        
         function linking_file_path = GetLinkingCacheFilePath
             % Returns the full path to the linking cache file
             

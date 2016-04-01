@@ -111,7 +111,23 @@ classdef (Sealed) MimFrameworkSingleton < handle
     methods (Access = private)
         function obj = MimFrameworkSingleton(framework_app_def, reporting)
             obj.FrameworkAppDef = framework_app_def;
-            obj.MexCache = PTKFrameworkCache.LoadCache(reporting);
+            
+            % If we can't find an XML cache file, we search for a legacy
+            % cache file and load that if found
+            mex_cache_filename = framework_app_def.GetFrameworkDirectories.GetMexCacheFilePath;
+            legacy_mex_cache_filename = framework_app_def.GetFrameworkDirectories.GetLegacyMexCacheFilePath;
+            if (2 ~= exist(mex_cache_filename, 'file')) && (2 == exist(legacy_mex_cache_filename, 'file'))
+                obj.MexCache = PTKFrameworkCache.LoadLegacyCache(legacy_mex_cache_filename, mex_cache_filename, reporting);
+                if ~isempty(obj.MexCache)
+                    obj.MexCache.SaveCache(reporting);
+                    delete(legacy_mex_cache_filename);
+                end
+            end
+            
+            if isempty(obj.MexCache)
+                obj.MexCache = CoreMexCache.LoadCache(mex_cache_filename, reporting);
+            end
+            
             obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
             obj.DatasetMemoryCache = MimDatasetMemoryCache(framework_app_def);
             obj.PluginInfoMemoryCache = MimPluginInfoMemoryCache;
