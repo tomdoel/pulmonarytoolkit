@@ -2,11 +2,11 @@ classdef MimMain < CoreBaseClass
     % MimMain. Imports and provides access to data from the Pulmonary Toolkit
     %
     %     MimMain provides access to data from the Pulmonary Toolkit, and allows 
-    %     you to import new data. Data is accessed through one or more PTKDataset
+    %     you to import new data. Data is accessed through one or more MimDataset
     %     objects. Your code should create a single PTKMain object, and then ask
-    %     it to create a PTKDataset object for each dataset you wish to access. 
+    %     it to create a MimDataset object for each dataset you wish to access. 
     %
-    %     MimMain is essentially a class factory for PTKDatasets, but shares the 
+    %     MimMain is essentially a class factory for MimDatasets, but shares the 
     %     PTKReporting (error/progress reporting) objects between all 
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the Pulmonary Toolkit.
@@ -16,7 +16,7 @@ classdef MimMain < CoreBaseClass
     %     necessary to specify the path since all image files in that directory
     %     will be imported. Then call CreateDatasetFromInfo. PTKMain will import
     %     the data (if it has not already been imported) and return a new
-    %     PTKDataset object for that dataset.
+    %     MimDataset object for that dataset.
     %
     %     To access an existing dataset you can use CreateDatasetFromInfo as
     %     above, or you can use CreateDatasetFromUid to retrieve a dataset which
@@ -90,7 +90,7 @@ classdef MimMain < CoreBaseClass
         end
 
         function dataset = CreateDatasetFromUid(obj, dataset_uid)
-            % Creates a PTKDataset object for a dataset specified by the uid. The
+            % Creates a MimDataset object for a dataset specified by the uid. The
             % dataset must already be imported.
             
             if ~obj.DatasetExists(dataset_uid)
@@ -104,20 +104,20 @@ classdef MimMain < CoreBaseClass
                 obj.Reporting.Error(PTKSoftwareInfo.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
-            dataset = PTKDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
+            dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
             
             obj.RunLinkFile(dataset_uid, dataset);
         end
         
         function dataset = CreateDatasetFromInfo(obj, new_image_info)
-            % Creates a PTKDataset object for a dataset specified by the path,
+            % Creates a MimDataset object for a dataset specified by the path,
             % filenames and/or uid specified in a PTKImageInfo object. The dataset is
             % imported from the specified path if it does not already exist.
             [image_info, dataset_disk_cache] = obj.ImportDataFromInfo(new_image_info, obj.Reporting);
             
             obj.FrameworkSingleton.AddToDatabase(image_info.ImageUid, obj.Reporting)
 
-            dataset = PTKDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
+            dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
             
             obj.RunLinkFile(dataset.GetImageInfo.ImageUid, dataset);
         end

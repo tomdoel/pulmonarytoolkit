@@ -2,7 +2,7 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
     % PTKLinkedDatasetRecorder. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     PTKLinkedDatasetRecorder is used to cache links between datasets for
-    %     multimodal analysis. Links can be explicitly made using the PTKDataset API
+    %     multimodal analysis. Links can be explicitly made using the MimDataset API
     %     call LinkDataset(). This class caches such links so that they can be made
     %     automatically.
     %

@@ -2,10 +2,10 @@ classdef MimDatasetResults < handle
     % MimDatasetResults. 
     %
     %     This class is used to run calculations and fetch cached
-    %     results associated with a dataset. The difference between PTKDataset 
-    %     and MimDatasetResults is that PTKDataset is called from outside the 
+    %     results associated with a dataset. The difference between MimDataset 
+    %     and MimDatasetResults is that MimDataset is called from outside the 
     %     toolkit, whereas MimDatasetResults is called by plugins during their 
-    %     RunPlugin() call. PTKDataset calls MimDatasetResults, but provides 
+    %     RunPlugin() call. MimDataset calls MimDatasetResults, but provides 
     %     additional progress and error reporting and dependency tracking.
     %
     %     You should not create this class directly. An instance of this class

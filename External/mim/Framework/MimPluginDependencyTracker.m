@@ -4,7 +4,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     MimPluginDependencyTracker is used by PTKDataset to fetch plugin results
+    %     MimPluginDependencyTracker is used by MimDataset to fetch plugin results
     %     and run plugins, and build a dependency list for the plugin.
     %     A plugin may require the result of another plugin during its
     %     execution. This is a dependency, and the complete list of dependencies

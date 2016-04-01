@@ -4,9 +4,9 @@ classdef MimDatasetMemoryCache < handle
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
     %
-    %     MimDatasetMemoryCache stores a map of PTKDataset objects, and
-    %     ensures only one PTKDataset exists for a given UID. This improves
-    %     thread safety by ensuring multiple PTKDataset objects aren't
+    %     MimDatasetMemoryCache stores a map of MimDataset objects, and
+    %     ensures only one MimDataset exists for a given UID. This improves
+    %     thread safety by ensuring multiple MimDataset objects aren't
     %     interacting with the same cache files.
     %
     %

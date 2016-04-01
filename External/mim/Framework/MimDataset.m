@@ -1,19 +1,19 @@
-classdef PTKDataset < CoreBaseClass
-    % PTKDataset. Use this class to obtain results and associated data for a particualar dataset.
+classdef MimDataset < CoreBaseClass
+    % MimDataset. Use this class to obtain results and associated data for a particualar dataset.
     %
     %     This class is used by scripts and GUI applications to run
     %     calculations, fetch cached results and access data associated with a
-    %     dataset. The difference between PTKDataset and MimDatasetResults is that
-    %     PTKDataset is called from outside the toolkit, whereas MimDatasetResults
-    %     is called by plugins during their RunPlugin() call. PTKDataset
+    %     dataset. The difference between MimDataset and MimDatasetResults is that
+    %     MimDataset is called from outside the toolkit, whereas MimDatasetResults
+    %     is called by plugins during their RunPlugin() call. MimDataset
     %     calls MimDatasetResults, but provides additional progress and error
     %     reporting and dependency tracking.
     %
-    %     Each dataset will have its own instance of PTKDataset.
+    %     Each dataset will have its own instance of MimDataset.
     %
     %     You should not create this class directly. Instead, create an instance of
     %     the class PTKMain and use the methods CreateDatasetFromInfo and
-    %     CreateDatasetFromUid to get a PTKDataset object for each dataset you are
+    %     CreateDatasetFromUid to get a MimDataset object for each dataset you are
     %     working with.
     %
     %     Example: Replace <image path> and <filenames> with the path and filenames
@@ -43,18 +43,18 @@ classdef PTKDataset < CoreBaseClass
         
         % Manages the heirarchy (call stack) of plugins calling other plugins.
         % This is used for dependency checking and to prevent recursion.
-        % Each PTKDataset API has its own call stack which relates to the calls
+        % Each MimDataset API has its own call stack which relates to the calls
         % being made at that interface. Note that when datasets are linked, one
         % dataset may end up calling another to fetch results; however, the same
         % call stack must be used for the dependency checking to work correctly.
         % This means that when a GetResult() call is
         % made on a dataset, the call stack depends not on which dataset is
         % being called, but where the call originated from. For this reason, the
-        % call stacks are owned by the PTKDataset class (where calls originate)
+        % call stacks are owned by the MimDataset class (where calls originate)
         % and passed through.
         DatasetStack
         
-        % Object for error and progress reporting. PTKDataset uses this to clean
+        % Object for error and progress reporting. MimDataset uses this to clean
         % up reporting in the case of error conditions.
         Reporting
     end
@@ -67,14 +67,14 @@ classdef PTKDataset < CoreBaseClass
     
     methods
         
-        function obj = PTKDataset(image_info, dataset_disk_cache, linked_dataset_chooser_factory, reporting)
-            % PTKDataset is created by the PTKMain class
+        function obj = MimDataset(image_info, dataset_disk_cache, linked_dataset_chooser_factory, reporting)
+            % MimDataset is created by the PTKMain class
             obj.DatasetStack = MimDatasetStack;
             obj.Reporting = reporting;
             obj.LinkedDatasetChooser = linked_dataset_chooser_factory.GetLinkedDatasetChooser(image_info, dataset_disk_cache, reporting);
             
             % Listen for PreviewImageChanged events - there could be
-            % multiple PTKDatasets linked to the same LinkedDatasetChooser
+            % multiple MimDatasets linked to the same LinkedDatasetChooser
             obj.AddEventListener(obj.LinkedDatasetChooser, 'PreviewImageChanged', @obj.PreviewImageChangedCallback);
         end
 

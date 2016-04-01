@@ -2,10 +2,10 @@ classdef MimDatasetCallback < handle
     % MimDatasetCallback. Used by plugins to obtain results and associated data for a particular dataset.
     %
     %     This class is used by plugins to run calculations and fetch cached
-    %     results associated with a dataset. The difference between PTKDataset 
-    %     and MimDatasetCallback is that PTKDataset is called from outside the 
+    %     results associated with a dataset. The difference between MimDataset 
+    %     and MimDatasetCallback is that MimDataset is called from outside the 
     %     toolkit, whereas MimDatasetCallback is called by plugins during their 
-    %     RunPlugin() call. PTKDataset calls MimDatasetCallback, but provides 
+    %     RunPlugin() call. MimDataset calls MimDatasetCallback, but provides 
     %     additional progress and error reporting and dependency tracking.
     %
     %     You should not create this class directly. An instance of this class

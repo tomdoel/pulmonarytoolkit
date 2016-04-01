@@ -14,7 +14,7 @@ classdef PTKPlugin < handle
     %     plugins panel on the right.
     %
     %     To run a plugin from your own code, first create a PTKMain object. Then
-    %     call CreateDatasetFromInfo() to create a PTKDataset for the image files
+    %     call CreateDatasetFromInfo() to create a MimDataset for the image files
     %     you wish to run the plugin with. Then call GetResult() on this dataset
     %     interface to run the plugin or fetch a previously cached result.
     %
