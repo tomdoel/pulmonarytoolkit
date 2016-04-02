@@ -1,5 +1,5 @@
-classdef PTKImageDatabasePatient < handle
-    % PTKImageDatabasePatient. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimImageDatabasePatient < handle
+    % MimImageDatabasePatient. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -20,7 +20,7 @@ classdef PTKImageDatabasePatient < handle
     end
     
     methods
-        function obj = PTKImageDatabasePatient(name, id)
+        function obj = MimImageDatabasePatient(name, id)
             if nargin > 0  
                 obj.Name = name;
                 obj.PatientId = id;
@@ -93,11 +93,11 @@ classdef PTKImageDatabasePatient < handle
         function obj = loadobj(a)
             % This method is called when the object is loaded from disk.
             
-            if isa(a, 'PTKImageDatabasePatient')
+            if isa(a, 'MimImageDatabasePatient')
                 obj = a;
             else
                 % In the case of a load error, loadobj() gives a struct
-                obj = PTKImageDatabasePatient;
+                obj = MimImageDatabasePatient;
                 for field = fieldnames(a)'
                     if isprop(obj, field{1})
                         mp = findprop(obj, (field{1}));

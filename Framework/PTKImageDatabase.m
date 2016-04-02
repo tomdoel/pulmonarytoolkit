@@ -418,7 +418,7 @@ classdef PTKImageDatabase < handle
         end
         
         function AddPatient(obj, patient_name, patient_id)
-            obj.PatientMap(patient_id) = PTKImageDatabasePatient(patient_name, patient_id);
+            obj.PatientMap(patient_id) = MimImageDatabasePatient(patient_name, patient_id);
         end
         
     end
