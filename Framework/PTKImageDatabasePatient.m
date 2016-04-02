@@ -39,7 +39,7 @@ classdef PTKImageDatabasePatient < handle
         end
         
         function AddSeries(obj, series_id, single_image_metainfo)
-            obj.SeriesMap(series_id) = PTKImageDatabaseSeries(series_id, single_image_metainfo);
+            obj.SeriesMap(series_id) = MimImageDatabaseSeries(series_id, single_image_metainfo);
         end
         
         function DeleteSeries(obj, series_uid)

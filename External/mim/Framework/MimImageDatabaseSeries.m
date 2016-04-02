@@ -1,5 +1,5 @@
-classdef PTKImageDatabaseSeries < handle
-    % PTKImageDatabaseSeries.
+classdef MimImageDatabaseSeries < handle
+    % MimImageDatabaseSeries.
     %
     %
     %     Licence
@@ -31,7 +31,7 @@ classdef PTKImageDatabaseSeries < handle
     end
     
     methods
-        function obj = PTKImageDatabaseSeries(series_id, single_image_metainfo)
+        function obj = MimImageDatabaseSeries(series_id, single_image_metainfo)
             if nargin > 0
                 obj.Name = single_image_metainfo.SeriesDescription;
                 obj.StudyName = single_image_metainfo.StudyDescription;
@@ -90,11 +90,11 @@ classdef PTKImageDatabaseSeries < handle
         function obj = loadobj(a)
             % This method is called when the object is loaded from disk.
             
-            if isa(a, 'PTKImageDatabaseSeries')
+            if isa(a, 'MimImageDatabaseSeries')
                 obj = a;
             else
                 % In the case of a load error, loadobj() gives a struct
-                obj = PTKImageDatabaseSeries;
+                obj = MimImageDatabaseSeries;
                 for field = fieldnames(a)'
                     if isprop(obj, field{1})
                         mp = findprop(obj, (field{1}));
@@ -105,42 +105,6 @@ classdef PTKImageDatabaseSeries < handle
                 end
             end
             
-            % In the first implementation, the ImageMap was a map of image
-            % uids to image metainfo. Now we replace it with a simple list of
-            % PTKFilename objects
-            if isempty(obj.Version)
-                image_infos = obj.ImageMap.values;
-                
-                % These propeties did not exist in the first version of the
-                % class
-                obj.FirstImagePath = image_infos{1}.ImagePath;
-                obj.ImageFileFormat = image_infos{1}.ImageFileFormat;
-                obj.StudyUid = image_infos{1}.StudyUid;
-        
-                filenames = containsers.Map;
-                for image_index = 1 : numel(image_infos);
-                    single_image_info = image_infos{image_index};
-                    filenames(single_image_info.ImageUid) = PTKFilename(single_image_info.ImagePath, single_image_info.ImageFilename);
-                end
-                
-                % Replace the map with the array of PTKFilename objects
-                obj.ImageMap = filenames;
-                
-                obj.Version = obj.CurrentVersionNumber;
-                
-            elseif (obj.Version == 2)
-                % Version 3 changes the image list to a map to UIDs
-                % The database will be rebuilt, so the following is a temporary change to get the
-                % database in a good state before the rebuild happens
-                image_map = containers.Map;
-                for image_index = 1 : numel(obj.ImageMap);
-                    image_uid = int2str(image_index);
-                    image_map(image_uid) = obj.ImageMap(image_index);
-                end
-                obj.ImageMap = image_map;
-                
-                obj.Version = obj.CurrentVersionNumber;
-            end
         end
     end
     
