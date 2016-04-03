@@ -175,7 +175,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             attributes.IgnoreDependencyChecks = false;
             attributes.IsEditedResult = true;
             instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
-            new_cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
+            new_cache_info = MimDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
             new_cache_info.MarkEdited;
 
             obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, result, new_cache_info, reporting);

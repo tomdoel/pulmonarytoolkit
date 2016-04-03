@@ -1,11 +1,11 @@
-classdef PTKDatasetStackItem < handle
-    % PTKDatasetStackItem. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimDatasetStackItem < handle
+    % MimDatasetStackItem. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
     %     Used to store the dependency information of a plugin as it is being
-    %     build up during execution. PTKDatasetStackItem are created 
+    %     build up during execution. MimDatasetStackItem are created 
     %     temporarily by the class MimDatasetStack and used to build up the
     %     dependency list. See MimDatasetStack for more information.
     %
@@ -30,24 +30,26 @@ classdef PTKDatasetStackItem < handle
     end
     
     methods
-        function obj = PTKDatasetStackItem(instance_id, dependency_list, ignore_dependency_checks, start_timer, reporting)
-            if ~isa(instance_id, 'PTKDependency')
-                reporting.Error('PTKDatasetStackItem:BadInstanceID', 'instance_id must be a PTKDependency object');
-            end
-            
-            if ~isa(dependency_list, 'PTKDependencyList')
-                reporting.Error('PTKDatasetStackItem:BadDependencyList', 'dependency_list must be a PTKDependencyList object');
-            end
-                        
-            obj.InstanceIdentifier = instance_id;
-            obj.DependencyList = dependency_list;
-            obj.IgnoreDependencyChecks = ignore_dependency_checks;
-            obj.Schema = PTKSoftwareInfo.DiskCacheSchema;
-            obj.IsEdited = false;
-            
-            if start_timer
-                obj.ExecutionTimer = MimTimer(reporting);
-                obj.ExecutionTimer.Start;
+        function obj = MimDatasetStackItem(instance_id, dependency_list, ignore_dependency_checks, start_timer, reporting)
+            if nargin > 0
+                if ~isa(instance_id, 'PTKDependency')
+                    reporting.Error('MimDatasetStackItem:BadInstanceID', 'instance_id must be a PTKDependency object');
+                end
+
+                if ~isa(dependency_list, 'PTKDependencyList')
+                    reporting.Error('MimDatasetStackItem:BadDependencyList', 'dependency_list must be a PTKDependencyList object');
+                end
+
+                obj.InstanceIdentifier = instance_id;
+                obj.DependencyList = dependency_list;
+                obj.IgnoreDependencyChecks = ignore_dependency_checks;
+                obj.Schema = PTKSoftwareInfo.DiskCacheSchema;
+                obj.IsEdited = false;
+
+                if start_timer
+                    obj.ExecutionTimer = MimTimer(reporting);
+                    obj.ExecutionTimer.Start;
+                end
             end
         end
         
@@ -71,5 +73,26 @@ classdef PTKDatasetStackItem < handle
         end
     end
     
+    methods (Static)
+        function obj = loadobj(a)
+            % This method is called when the object is loaded from disk.
+            
+            if isa(a, 'MimDatasetStackItem')
+                obj = a;
+            else
+                % In the case of a load error, loadobj() gives a struct
+                obj = MimDatasetStackItem;
+                for field = fieldnames(a)'
+                    if isprop(obj, field{1})
+                        mp = findprop(obj, (field{1}));
+                        if (~mp.Constant) && (~mp.Dependent) && (~mp.Abstract) 
+                            obj.(field{1}) = a.(field{1});
+                        end
+                    end
+                end
+            end
+            
+        end
+    end
 end
 

@@ -30,18 +30,18 @@ classdef MimDatasetStack < handle
     
     properties (Access = private)
         
-        % The stack - an array of PTKDatasetStackItem objects; one for each plugin which is
+        % The stack - an array of MimDatasetStackItem objects; one for each plugin which is
         % currently being executed.
         DatasetStack
     end
     
     methods
         function obj =  MimDatasetStack
-            obj.DatasetStack = PTKDatasetStackItem.empty;
+            obj.DatasetStack = MimDatasetStackItem.empty;
         end
     
         function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer, plugin_version, reporting)
-            % Create a new PTKDatasetStackItem object with an empty dependency list and a
+            % Create a new MimDatasetStackItem object with an empty dependency list and a
             % new unique identifier. The push it to the end of the stack
         
             if obj.PluginAlreadyExistsInStack(plugin_name, context, dataset_uid)
@@ -52,7 +52,7 @@ classdef MimDatasetStack < handle
             attributes.IsEditedResult = is_edited_result;
             attributes.PluginVersion = plugin_version;
             instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
-            cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, ignore_dependency_checks, start_timer, reporting);
+            cache_info = MimDatasetStackItem(instance_identifier, PTKDependencyList, ignore_dependency_checks, start_timer, reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end
         
@@ -79,7 +79,7 @@ classdef MimDatasetStack < handle
             % Clear the stack. This may be necessary if a plugin failed during
             % execution, leaving the call stack in a bad state.
         
-            obj.DatasetStack = PTKDatasetStackItem.empty;
+            obj.DatasetStack = MimDatasetStackItem.empty;
         end
         
         function PauseTiming(obj)
