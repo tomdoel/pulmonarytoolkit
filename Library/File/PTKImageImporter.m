@@ -1,6 +1,5 @@
 function uids = PTKImageImporter(filename_or_root_directory, database, reporting)
-    % PTKImageImporter. Recrusively imports image files into a PTKImageDatabase
-    % object
+    % PTKImageImporter. Recrusively imports image files into a MimImageDatabase object
     %
     %
     %

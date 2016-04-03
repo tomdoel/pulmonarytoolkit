@@ -18,7 +18,7 @@ classdef MimCombinedImageDatabaseController < CoreBaseClass
    
     properties (Access = private)
         GuiCallback
-        CurrentProject = PTKImageDatabase.LocalDatabaseId;
+        CurrentProject = MimImageDatabase.LocalDatabaseId;
         MatNatDatabase
     end
 
@@ -34,7 +34,7 @@ classdef MimCombinedImageDatabaseController < CoreBaseClass
         end
         
         function PatientClicked(obj, patient_id)
-            if strcmp(obj.CurrentProject, PTKImageDatabase.LocalDatabaseId)
+            if strcmp(obj.CurrentProject, MimImageDatabase.LocalDatabaseId)
                 obj.GuiCallback.LoadPatient(patient_id);
             else
                 notify(obj, 'PatientChangedEvent', CoreEventData(patient_id));
@@ -42,7 +42,7 @@ classdef MimCombinedImageDatabaseController < CoreBaseClass
         end
         
         function SeriesClicked(obj, patient_id, series_uid)
-            if strcmp(obj.CurrentProject, PTKImageDatabase.LocalDatabaseId)
+            if strcmp(obj.CurrentProject, MimImageDatabase.LocalDatabaseId)
                 obj.GuiCallback.LoadFromPatientBrowser(series_uid, patient_id);
             else
                 if ~isempty(obj.MatNatDatabase)

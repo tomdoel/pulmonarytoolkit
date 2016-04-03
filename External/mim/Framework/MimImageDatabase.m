@@ -1,5 +1,5 @@
-classdef PTKImageDatabase < handle
-    % PTKImageDatabase. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimImageDatabase < handle
+    % MimImageDatabase. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -12,7 +12,7 @@ classdef PTKImageDatabase < handle
     %
     
     properties (Constant)
-        CurrentVersionNumber = 3
+        CurrentVersionNumber = 4
         LocalDatabaseId = '&#LOCAL_IMAGE_DATABASE#&'
         LocalDatabaseName = 'My data'
     end
@@ -23,6 +23,9 @@ classdef PTKImageDatabase < handle
     end
     
     properties (Access = private)
+        Filename
+        LegacyFilename
+        
         PatientMap
         SeriesMap
         IsNewlyCreated
@@ -35,7 +38,10 @@ classdef PTKImageDatabase < handle
     end
     
     methods
-        function obj = PTKImageDatabase
+        function obj = MimImageDatabase(filename)
+            if nargin > 0
+                obj.Filename = filename;
+            end
             obj.PatientMap = containers.Map;
             obj.SeriesMap = containers.Map;
             obj.Version = obj.CurrentVersionNumber;
@@ -55,7 +61,7 @@ classdef PTKImageDatabase < handle
         
         function datasets = GetAllSeriesForThisPatient(obj, project_id, patient_id)
             datasets = [];
-            if strcmp(project_id, PTKImageDatabase.LocalDatabaseId)
+            if strcmp(project_id, MimImageDatabase.LocalDatabaseId)
                 all_details = obj.GetAllPatientInfosForThisPatient(patient_id);
                 for patient_details_cell = all_details
                     for patient_details = all_details{1}
@@ -119,7 +125,7 @@ classdef PTKImageDatabase < handle
             % Returns list of patient names, ids and family names, sorted by the
             % short visible name
             
-             if ~strcmp(project_id, PTKImageDatabase.LocalDatabaseId)
+             if ~strcmp(project_id, MimImageDatabase.LocalDatabaseId)
                 names = {};
                 ids = {};
                 short_visible_names = {};
@@ -272,7 +278,7 @@ classdef PTKImageDatabase < handle
                 temporary_uid = uid{1};
                 if ~obj.SeriesMap.isKey(temporary_uid) || rebuild_for_each_uid
                     if ~rebuild_for_each_uid
-                        reporting.ShowMessage('PTKImageDatabase:UnimportedDatasetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the image database file. I am adding this dataset to the image database. This may occur if the database file was recently removed.']);
+                        reporting.ShowMessage('MimImageDatabase:UnimportedDatasetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the image database file. I am adding this dataset to the image database. This may occur if the database file was recently removed.']);
                     end
                     try
                         % Only update the progress for datasets we are actually checking
@@ -306,17 +312,17 @@ classdef PTKImageDatabase < handle
                                     single_image_metainfo = PTKGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
                                     obj.AddImage(single_image_metainfo);
                                 else
-                                    reporting.ShowWarning('PTKImageDatabase:FileNotFound', ['The image ' fullfile(next_filepath, next_filename) ' could not be found. '], []);
+                                    reporting.ShowWarning('MimImageDatabase:FileNotFound', ['The image ' fullfile(next_filepath, next_filename) ' could not be found. '], []);
                                 end
                             catch exc
-                                reporting.ShowWarning('PTKImageDatabase:AddImageFailed', ['An error occured when adding image ' fullfile(next_filepath, next_filename) ' to the databse. Error: ' exc.message], exc);
+                                reporting.ShowWarning('MimImageDatabase:AddImageFailed', ['An error occured when adding image ' fullfile(next_filepath, next_filename) ' to the databse. Error: ' exc.message], exc);
                             end
                         end
                         
                         database_changed = true;
                         
                     catch exc
-                        reporting.ShowWarning('PTKImageDatabase:AddDatasetFailed', ['An error occured when adding dataset ' temporary_uid ' to the databse. Error: ' exc.message], exc);
+                        reporting.ShowWarning('MimImageDatabase:AddDatasetFailed', ['An error occured when adding dataset ' temporary_uid ' to the databse. Error: ' exc.message], exc);
                     end
                 end                
             end
@@ -333,14 +339,20 @@ classdef PTKImageDatabase < handle
         end
         
         function SaveDatabase(obj, reporting)
-            database_filename = PTKDirectories.GetImageDatabaseFilePath;
+            if isempty(obj.Filename)
+                reporting.ErrorFromException('MimImageDatabase:FilenameNotSpecified', 'No image database filename has been specified.', ex);
+            end
             
             try
                 value = [];
                 value.database = obj;
-                PTKDiskUtilities.Save(database_filename, value);
+                PTKDiskUtilities.Save(obj.Filename, value);
+                if ~isempty(obj.LegacyFilename) && (2 == exist(obj.LegacyFilename, 'file'))
+                    delete(obj.LegacyFilename);
+                    obj.LegacyFilename = [];
+                end
             catch ex
-                reporting.ErrorFromException('PTKImageDatabase:FailedtoSaveDatabaseFile', ['Unable to save database file ' database_filename], ex);
+                reporting.ErrorFromException('MimImageDatabase:FailedtoSaveDatabaseFile', ['Unable to save database file ' obj.Filename], ex);
             end
         end
         
@@ -426,12 +438,28 @@ classdef PTKImageDatabase < handle
     methods (Static)
         function database = LoadDatabase(framework_app_def, reporting)
             try
-                database_filename = PTKDirectories.GetImageDatabaseFilePath;
+                database_filename = framework_app_def.GetFrameworkDirectories.GetImageDatabaseFilePath;
+                legacy_database_filename = framework_app_def.GetFrameworkDirectories.GetLegacyImageDatabaseFilePath;
+                                
                 if exist(database_filename, 'file')
                     database_struct = PTKDiskUtilities.Load(database_filename);
                     database = database_struct.database;
                     database.IsNewlyCreated = false;
-                    database.VersionHasChanged = isempty(database.Version) || (database.Version ~= PTKImageDatabase.CurrentVersionNumber);
+                    database.VersionHasChanged = isempty(database.Version) || (database.Version ~= MimImageDatabase.CurrentVersionNumber);                    
+                    database.Version = MimImageDatabase.CurrentVersionNumber;
+
+                elseif exist(legacy_database_filename, 'file')
+                    % Support for version 3 and previous, which had a
+                    % different image database filename
+                    
+                    database_struct = PTKDiskUtilities.Load(legacy_database_filename);
+                    database = database_struct.database;
+                    database.Filename = database_filename;
+                    database.IsNewlyCreated = false;
+                    database.VersionHasChanged = isempty(database.Version) || (database.Version ~= MimImageDatabase.CurrentVersionNumber);
+
+                    % Set legacy filename for deletion when the database is next saved
+                    database.LegacyFilename = legacy_database_filename; 
                     
                     % Version 3 has changes to the maps used to store filenames; this requires a
                     % rebuild of the image database
@@ -439,22 +467,43 @@ classdef PTKImageDatabase < handle
                         database.Rebuild([], true, framework_app_def, reporting);
                     end
                     
-                    database.Version = PTKImageDatabase.CurrentVersionNumber;
+                    database.Version = MimImageDatabase.CurrentVersionNumber;
+                    
+                    
                 else
-                    reporting.ShowWarning('PTKImageDatabase:DatabaseFileNotFound', 'No image database file found. Will create new one on exit', []);
-                    database = PTKImageDatabase;
+                    reporting.ShowWarning('MimImageDatabase:DatabaseFileNotFound', 'No image database file found. Will create new one on exit', []);
+                    database = MimImageDatabase(database_filename);
                     database.IsNewlyCreated = true;
                 end
                 
+                database.Filename = database_filename;
                 if database.IsNewlyCreated
                     database.Rebuild([], true, framework_app_def, reporting);
                 end
                 
             catch ex
-                reporting.ErrorFromException('PTKImageDatabase:FailedtoLoadDatabaseFile', ['Error when loading database file ' database_filename '. Try deleting this file.'], ex);
+                reporting.ErrorFromException('MimImageDatabase:FailedtoLoadDatabaseFile', ['Error when loading database file ' database_filename '. Try deleting this file.'], ex);
             end
         end
         
-    end
-    
+        function obj = loadobj(a)
+            % This method is called when the object is loaded from disk.
+            
+            if isa(a, 'MimImageDatabase')
+                obj = a;
+            else
+                % In the case of a load error, loadobj() gives a struct
+                obj = MimImageDatabase;
+                for field = fieldnames(a)'
+                    if isprop(obj, field{1})
+                        mp = findprop(obj, (field{1}));
+                        if (~mp.Constant) && (~mp.Dependent) && (~mp.Abstract) 
+                            obj.(field{1}) = a.(field{1});
+                        end
+                    end
+                end
+            end
+            
+        end
+    end    
 end

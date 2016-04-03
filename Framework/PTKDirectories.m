@@ -75,14 +75,6 @@ classdef PTKDirectories < CoreBaseClass
             linking_file_path = fullfile(settings_dir, cache_filename);
         end
         
-        function settings_file_path = GetImageDatabaseFilePath
-            % Returns the full path to the image database file
-            
-            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            cache_filename = PTKSoftwareInfo.ImageDatabaseFileName;
-            settings_file_path = fullfile(settings_dir, cache_filename);
-        end
-        
         function plugin_name_list = GetListOfGuiPlugins
             plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfGuiPluginFolders);
         end

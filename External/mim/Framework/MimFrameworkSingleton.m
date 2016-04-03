@@ -132,7 +132,7 @@ classdef (Sealed) MimFrameworkSingleton < handle
             obj.DatasetMemoryCache = MimDatasetMemoryCache(framework_app_def);
             obj.PluginInfoMemoryCache = MimPluginInfoMemoryCache;
             obj.LinkedDatasetChooserMemoryCache = MimLinkedDatasetChooserMemoryCache(framework_app_def, obj.LinkedDatasetRecorder, obj.PluginInfoMemoryCache);
-            obj.ImageDatabase = PTKImageDatabase.LoadDatabase(framework_app_def, reporting);
+            obj.ImageDatabase = MimImageDatabase.LoadDatabase(framework_app_def, reporting);
             obj.ImageDatabase.Rebuild([], false, framework_app_def, reporting);
         end
     end

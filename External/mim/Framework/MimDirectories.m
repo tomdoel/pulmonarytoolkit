@@ -76,6 +76,22 @@ classdef MimDirectories < CoreBaseClass
             framework_file_path = fullfile(settings_dir, cache_filename);
         end
         
+        function settings_file_path = GetImageDatabaseFilePath(obj)
+            % Returns the full path to the image database file
+            
+            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            cache_filename = obj.Config.ImageDatabaseFileName;
+            settings_file_path = fullfile(settings_dir, cache_filename);
+        end
+        
+        function settings_file_path = GetLegacyImageDatabaseFilePath(obj)
+            % Returns the full path to the image database file
+            
+            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            cache_filename = 'PTKImageDatabase.mat';
+            settings_file_path = fullfile(settings_dir, cache_filename);
+        end
+        
         function uids = GetUidsOfAllDatasetsInCache(obj)
             uids_1 = obj.GetUidsOfAllDatasetsInFolder(obj.GetCacheDirectory);
             uids_2 = obj.GetUidsOfAllDatasetsInFolder(obj.GetFrameworkDatasetCacheDirectory);
