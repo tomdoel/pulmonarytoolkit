@@ -122,7 +122,7 @@ classdef PTKGuiDataset < CoreBaseClass
             if obj.DatasetIsLoaded
                 dataset_cache_path = obj.Dataset.GetOutputPath;
             else
-                dataset_cache_path = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
+                dataset_cache_path = obj.Ptk.GetDirectories.GetOutputDirectoryAndCreateIfNecessary;
             end
         end
         

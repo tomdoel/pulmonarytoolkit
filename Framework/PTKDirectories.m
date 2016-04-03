@@ -59,14 +59,6 @@ classdef PTKDirectories < CoreBaseClass
             mex_source_directory = fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.MexSourceDirectory);
         end
 
-        function results_directory = GetOutputDirectoryAndCreateIfNecessary
-            % Returns the full path to the directory used for storing results
-            
-            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            results_directory = fullfile(application_directory, PTKSoftwareInfo.OutputDirectoryName);
-            CoreDiskUtilities.CreateDirectoryIfNecessary(results_directory);
-        end
-        
         function linking_file_path = GetLinkingCacheFilePath
             % Returns the full path to the linking cache file
             

@@ -92,6 +92,14 @@ classdef MimDirectories < CoreBaseClass
             settings_file_path = fullfile(settings_dir, cache_filename);
         end
         
+        function results_directory = GetOutputDirectoryAndCreateIfNecessary(obj)
+            % Returns the full path to the directory used for storing results
+            
+            application_directory = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            results_directory = fullfile(application_directory, obj.Config.OutputDirectoryName);
+            CoreDiskUtilities.CreateDirectoryIfNecessary(results_directory);
+        end
+        
         function uids = GetUidsOfAllDatasetsInCache(obj)
             uids_1 = obj.GetUidsOfAllDatasetsInFolder(obj.GetCacheDirectory);
             uids_2 = obj.GetUidsOfAllDatasetsInFolder(obj.GetFrameworkDatasetCacheDirectory);

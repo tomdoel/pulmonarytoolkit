@@ -19,6 +19,7 @@ classdef MimConfig < handle
         EditedResultsDirectoryName = 'EditedResults' % Name for folder used to store user corrections to plugin results
         ManualSegmentationsDirectoryName = 'ManualSegmentations' % Name for folder used to store manual segmentations
         MarkersDirectoryName = 'Markers' % Name for folder used to store user-placed markers
+        OutputDirectoryName = 'Output'
 
         CachedPluginInfoFileName = 'CachedPluginInfo' % Filename for internal cache of plugin infos
         ImageInfoCacheName = 'ImageInfo' % Filename for per-dataset cache of filenames and dataset information

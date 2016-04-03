@@ -51,13 +51,13 @@ classdef MimDatasetResults < handle
     end
     
     methods
-        function obj = MimDatasetResults(context_def, image_info, linked_dataset_chooser, external_notify_function, dataset_disk_cache, plugin_cache, reporting)
+        function obj = MimDatasetResults(framework_app_def, context_def, image_info, linked_dataset_chooser, external_notify_function, dataset_disk_cache, plugin_cache, reporting)
             obj.ImageInfo = image_info;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
             obj.ImageTemplates = MimImageTemplates(obj, context_def, dataset_disk_cache, reporting);
-            obj.OutputFolder = MimOutputFolder(dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
+            obj.OutputFolder = MimOutputFolder(framework_app_def, dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
             obj.PreviewImages = MimPreviewImages(dataset_disk_cache, reporting);
             obj.DependencyTracker = MimPluginDependencyTracker(dataset_disk_cache, plugin_cache);
             obj.ContextHierarchy = MimContextHierarchy(context_def, obj.DependencyTracker, obj.ImageTemplates);
@@ -212,16 +212,13 @@ classdef MimDatasetResults < handle
            cache_path = obj.DatasetDiskCache.GetEditedResultsPath(reporting);
         end
         
-        function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, dataset_stack, reporting)
+        function output_path = GetOutputPathAndCreateIfNecessary(obj, dataset_stack, reporting)
             % Gets the path of the folder where the output files for this dataset are
             % stored
         
-            % Make sure the main output directory exists
-            PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
-            
-            dataset_cache_path = obj.OutputFolder.GetOutputPath(dataset_stack, reporting);
-            if ~exist(dataset_cache_path, 'dir')
-                mkdir(dataset_cache_path);
+            output_path = obj.OutputFolder.GetOutputPath(dataset_stack, reporting);
+            if ~exist(output_path, 'dir')
+                mkdir(output_path);
             end      
         end        
         

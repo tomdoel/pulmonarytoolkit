@@ -19,6 +19,7 @@ classdef MimLinkedDatasetChooserMemoryCache < handle
     
     properties (Access = private)
         ContextDef
+        FrameworkAppDef
         LinkedDatasetChooserCacheMap
         LinkedRecorderSingleton
         PluginCache
@@ -27,6 +28,7 @@ classdef MimLinkedDatasetChooserMemoryCache < handle
     methods
         function obj = MimLinkedDatasetChooserMemoryCache(framework_app_def, linked_recorder_singleton, plugin_cache)
             obj.ContextDef = framework_app_def.GetContextDef;
+            obj.FrameworkAppDef = framework_app_def;
             obj.LinkedDatasetChooserCacheMap = containers.Map;
             obj.LinkedRecorderSingleton = linked_recorder_singleton;
             obj.PluginCache = plugin_cache;
@@ -37,7 +39,7 @@ classdef MimLinkedDatasetChooserMemoryCache < handle
             if obj.LinkedDatasetChooserCacheMap.isKey(uid)
                 linked_dataset_chooser = obj.LinkedDatasetChooserCacheMap(uid);
             else
-                linked_dataset_chooser = MimLinkedDatasetChooser(obj.ContextDef, image_info, dataset_disk_cache, obj.LinkedRecorderSingleton, obj.PluginCache, reporting);
+                linked_dataset_chooser = MimLinkedDatasetChooser(obj.FrameworkAppDef, obj.ContextDef, image_info, dataset_disk_cache, obj.LinkedRecorderSingleton, obj.PluginCache, reporting);
                 obj.LinkedDatasetChooserCacheMap(uid) = linked_dataset_chooser;
             end
         end

@@ -15,7 +15,9 @@ classdef MimOutputFolder < CoreBaseClass
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties (Access = private)        
+    properties (Access = private)
+        Directories % Class for fetching base output directory
+        
         OutputFolder % Caches the output folder for this dataset        
         OutputRecords % Records of files stored in the Output folder
         
@@ -27,7 +29,8 @@ classdef MimOutputFolder < CoreBaseClass
     end
     
     methods
-        function obj = MimOutputFolder(dataset_disk_cache, image_info, image_templates, reporting)
+        function obj = MimOutputFolder(framework_app_def, dataset_disk_cache, image_info, image_templates, reporting)
+            obj.Directories = framework_app_def.GetFrameworkDirectories;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ImageTemplates = image_templates;
             obj.ImageUid = image_info.ImageUid;
@@ -131,7 +134,7 @@ classdef MimOutputFolder < CoreBaseClass
         end
         
         function CreateNewOutputFolder(obj, dataset_stack, reporting)
-            root_output_path = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
+            root_output_path = obj.Directories.GetOutputDirectoryAndCreateIfNecessary;
             
             template = obj.ImageTemplates.GetTemplateImage(PTKContext.OriginalImage, dataset_stack, reporting);
             metadata = template.MetaHeader;
