@@ -59,14 +59,6 @@ classdef PTKDirectories < CoreBaseClass
             mex_source_directory = fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.MexSourceDirectory);
         end
 
-        function linking_file_path = GetLinkingCacheFilePath
-            % Returns the full path to the linking cache file
-            
-            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            cache_filename = PTKSoftwareInfo.LinkingCacheFileName;
-            linking_file_path = fullfile(settings_dir, cache_filename);
-        end
-        
         function plugin_name_list = GetListOfGuiPlugins
             plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(PTKDirectories.GetListOfGuiPluginFolders);
         end

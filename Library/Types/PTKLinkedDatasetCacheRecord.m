@@ -1,7 +1,7 @@
 classdef PTKLinkedDatasetCacheRecord < CoreBaseClass
     % PTKLinkedDatasetCacheRecord. Part of the internal framework of the Pulmonary Toolkit.
     %
-    %     PTKLinkedDatasetCacheRecord is used by PTKLinkedDatasetRecorder to store
+    %     PTKLinkedDatasetCacheRecord is used by MimLinkedDatasetRecorder to store
     %     details of a particular set of links between datasets.
     %     
     %

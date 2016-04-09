@@ -1,7 +1,7 @@
-classdef PTKLinkedDatasetRecorder < CoreBaseClass
-    % PTKLinkedDatasetRecorder. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimLinkedDatasetRecorder < CoreBaseClass
+    % MimLinkedDatasetRecorder. Part of the internal framework of the Pulmonary Toolkit.
     %
-    %     PTKLinkedDatasetRecorder is used to cache links between datasets for
+    %     MimLinkedDatasetRecorder is used to cache links between datasets for
     %     multimodal analysis. Links can be explicitly made using the MimDataset API
     %     call LinkDataset(). This class caches such links so that they can be made
     %     automatically.
@@ -22,32 +22,39 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
         AssociatedDatasetsMap % Maps all the datasets which link to this dataset
     end
     
+    properties (Transient, Access = private)
+        FrameworkAppDef
+    end
+        
     events
         LinkingChanged
     end
     
     methods (Static)
-        function linked_recorder = Load(reporting)
+        function linked_recorder = Load(framework_app_def, reporting)
             try
-                linked_recorder_filename = PTKDirectories.GetLinkingCacheFilePath;
-                if exist(linked_recorder_filename, 'file')                    
-                    linked_recorder = CoreLoadXml(linked_recorder_filename, reporting);
+                linked_recorder_filename = framework_app_def.GetFrameworkDirectories.GetLinkingCacheFilePath;
+                if exist(linked_recorder_filename, 'file')
+                    legacy_conversion = containers.Map;
+                    legacy_conversion('PTKLinkedDatasetRecorder') = 'MimLinkedDatasetRecorder';
+                    linked_recorder = CoreLoadXml(linked_recorder_filename, reporting, legacy_conversion);
                     linked_recorder = linked_recorder.LinkingCache;
                 else
-                    reporting.ShowWarning('PTKLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No linking cache file found. Will create new one on exit', []);
-                    linked_recorder = PTKLinkedDatasetRecorder;
+                    reporting.ShowWarning('MimLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No linking cache file found. Will create new one on exit', []);
+                    linked_recorder = MimLinkedDatasetRecorder;
                     linked_recorder.Save(reporting);
                 end
+                linked_recorder.FrameworkAppDef = framework_app_def;
             catch ex
-                reporting.ShowWarning('PTKLinkedDatasetRecorder:FailedtoLoadCacheFile', ['Error when loading cache file ' linked_recorder_filename '. Any existing links between datasets will be lost'], ex);
-                linked_recorder = PTKLinkedDatasetRecorder;
+                reporting.ShowWarning('MimLinkedDatasetRecorder:FailedtoLoadCacheFile', ['Error when loading cache file ' linked_recorder_filename '. Any existing links between datasets will be lost'], ex);
+                linked_recorder = MimLinkedDatasetRecorder;
             end
         end
         
     end    
     
     methods
-        function obj = PTKLinkedDatasetRecorder
+        function obj = MimLinkedDatasetRecorder
             obj.LinkMap = containers.Map;
             obj.AssociatedDatasetsMap = containers.Map;
         end
@@ -111,14 +118,14 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
         
 
         function Save(obj, reporting)
-            cache_filename = PTKDirectories.GetLinkingCacheFilePath;
+            cache_filename = obj.FrameworkAppDef.GetFrameworkDirectories.GetLinkingCacheFilePath;
             
             try
                 value = [];
                 value.cache = obj;
                 CoreSaveXml(obj, 'LinkingCache', cache_filename, reporting);
             catch ex
-                reporting.ErrorFromException('PTKLinkedDatasetRecorder:FailedtoSaveCacheFile', ['Unable to save linking cache file ' cache_filename], ex);
+                reporting.ErrorFromException('MimLinkedDatasetRecorder:FailedtoSaveCacheFile', ['Unable to save linking cache file ' cache_filename], ex);
             end
         end        
     end

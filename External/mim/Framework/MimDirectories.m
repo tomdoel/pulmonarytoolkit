@@ -106,6 +106,13 @@ classdef MimDirectories < CoreBaseClass
             uids = unique([uids_1, uids_2]);
         end
         
+        function linking_file_path = GetLinkingCacheFilePath(obj)
+            % Returns the full path to the linking cache file
+            
+            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            cache_filename = obj.Config.LinkingCacheFileName;
+            linking_file_path = fullfile(settings_dir, cache_filename);
+        end
     end
     
     methods (Access = private)

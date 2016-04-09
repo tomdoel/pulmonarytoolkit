@@ -128,7 +128,7 @@ classdef (Sealed) MimFrameworkSingleton < handle
                 obj.MexCache = CoreMexCache.LoadCache(mex_cache_filename, reporting);
             end
             
-            obj.LinkedDatasetRecorder = PTKLinkedDatasetRecorder.Load(reporting);
+            obj.LinkedDatasetRecorder = MimLinkedDatasetRecorder.Load(framework_app_def, reporting);
             obj.DatasetMemoryCache = MimDatasetMemoryCache(framework_app_def);
             obj.PluginInfoMemoryCache = MimPluginInfoMemoryCache;
             obj.LinkedDatasetChooserMemoryCache = MimLinkedDatasetChooserMemoryCache(framework_app_def, obj.LinkedDatasetRecorder, obj.PluginInfoMemoryCache);
