@@ -1,7 +1,7 @@
-classdef PTKLinkedDatasetCacheRecord < CoreBaseClass
-    % PTKLinkedDatasetCacheRecord. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimLinkedDatasetCacheRecord < CoreBaseClass
+    % MimLinkedDatasetCacheRecord. Part of the internal framework of the Pulmonary Toolkit.
     %
-    %     PTKLinkedDatasetCacheRecord is used by MimLinkedDatasetRecorder to store
+    %     MimLinkedDatasetCacheRecord is used by MimLinkedDatasetRecorder to store
     %     details of a particular set of links between datasets.
     %     
     %
@@ -20,7 +20,7 @@ classdef PTKLinkedDatasetCacheRecord < CoreBaseClass
     end
     
     methods
-        function obj = PTKLinkedDatasetCacheRecord
+        function obj = MimLinkedDatasetCacheRecord
             obj.LinkMap = containers.Map;
         end
         

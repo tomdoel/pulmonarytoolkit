@@ -37,6 +37,8 @@ classdef MimLinkedDatasetRecorder < CoreBaseClass
                 if exist(linked_recorder_filename, 'file')
                     legacy_conversion = containers.Map;
                     legacy_conversion('PTKLinkedDatasetRecorder') = 'MimLinkedDatasetRecorder';
+                    legacy_conversion('PTKLinkedDatasetCacheRecord') = 'MimLinkedDatasetCacheRecord';
+                    legacy_conversion('PTKLinkedDatasetAssociatedDatasetRecord') = 'MimLinkedDatasetAssociatedDatasetRecord';
                     linked_recorder = CoreLoadXml(linked_recorder_filename, reporting, legacy_conversion);
                     linked_recorder = linked_recorder.LinkingCache;
                 else
@@ -98,14 +100,14 @@ classdef MimLinkedDatasetRecorder < CoreBaseClass
             if obj.LinkMap.isKey(primary_uid)
                 link_record = obj.LinkMap(primary_uid);
             else
-                link_record = PTKLinkedDatasetCacheRecord;
+                link_record = MimLinkedDatasetCacheRecord;
                 obj.LinkMap(primary_uid) = link_record;
             end
             
             link_record.AddLink(name, secondary_uid);
             
             if ~obj.AssociatedDatasetsMap.isKey(secondary_uid)
-                obj.AssociatedDatasetsMap(secondary_uid) = PTKLinkedDatasetAssociatedDatasetRecord;
+                obj.AssociatedDatasetsMap(secondary_uid) = MimLinkedDatasetAssociatedDatasetRecord;
             end
             
             associated_map = obj.AssociatedDatasetsMap(secondary_uid);
