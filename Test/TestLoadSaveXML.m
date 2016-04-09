@@ -12,12 +12,14 @@ classdef TestLoadSaveXML < CoreTest
     methods
         function obj = TestLoadSaveXML
             reporting = CoreReportingDefault;
-            test_class = obj.getTestClass;
+            test_class = obj.getTestClass('PTKStruct');
             obj.TestLoadAndSave(test_class, reporting);
+            test_class_2 = obj.getTestClass('TestClass');
+            obj.TestLoadAndSaveWithClassConversion(test_class_2, reporting, 'PTKStruct');
         end
 
-        function test_class = getTestClass(obj)
-            test_class = PTKStruct;
+        function test_class = getTestClass(obj, class_name)
+            test_class = feval(class_name);
             test_class.AddField('Avalue', 'ValueA');
             test_class.AddField('Bvalue', [42, 1, -53, 9]);
             test_class.AddField('Cvalue', uint8(43));
@@ -77,6 +79,22 @@ classdef TestLoadSaveXML < CoreTest
             loaded_base_class = loaded_base_class.Test;
             
             obj.TestEquality(base_class, loaded_base_class);
+            obj.Assert(isequal(class(base_class), class(loaded_base_class)), 'Same class');
+        end
+
+        function TestLoadAndSaveWithClassConversion(obj, base_class, reporting, new_class_name)
+            temp_folder = tempdir;
+            file_name = 'TestXML.xml';
+            CoreSaveXml(base_class, 'Test', PTKFilename(temp_folder, file_name), reporting);
+            
+            conversion_map = containers.Map;
+            conversion_map(class(base_class)) = new_class_name;
+            loaded_base_class = CoreLoadXml(PTKFilename(temp_folder, file_name), reporting, conversion_map);
+            loaded_base_class = loaded_base_class.Test;
+            
+            obj.TestEquality(base_class, loaded_base_class);
+            obj.Assert(~isequal(class(base_class), class(loaded_base_class)), 'Not same class');
+            obj.Assert(isequal(new_class_name, class(loaded_base_class)), 'Not same class');
         end
         
         function TestEquality(obj, class_1, class_2)

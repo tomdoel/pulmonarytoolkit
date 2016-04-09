@@ -1,0 +1,3 @@
+classdef TestClass < PTKStruct
+end
+
