@@ -78,7 +78,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                     dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
                     
                     dependency = cache_info.InstanceIdentifier;
-                    dependency_list_for_this_plugin = PTKDependencyList;
+                    dependency_list_for_this_plugin = MimDependencyList;
                     dependency_list_for_this_plugin.AddDependency(dependency, reporting);
                     dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
                 end
@@ -134,7 +134,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
                 
                 dependency = new_cache_info.InstanceIdentifier;
-                dependency_list_for_this_plugin = PTKDependencyList;
+                dependency_list_for_this_plugin = MimDependencyList;
                 dependency_list_for_this_plugin.AddDependency(dependency, reporting);
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
                 
@@ -156,7 +156,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 
                 % Get the dependency for this edit and add to calling functions
                 edited_dependency = edited_cache_info.InstanceIdentifier;
-                dependency_list_for_edit = PTKDependencyList;
+                dependency_list_for_edit = MimDependencyList;
                 dependency_list_for_edit.AddDependency(edited_dependency, reporting);
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_edit, reporting);
                 cache_info.MarkEdited;
@@ -174,8 +174,8 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             attributes = [];
             attributes.IgnoreDependencyChecks = false;
             attributes.IsEditedResult = true;
-            instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
-            new_cache_info = MimDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
+            instance_identifier = MimDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
+            new_cache_info = MimDatasetStackItem(instance_identifier, MimDependencyList, false, false, reporting);
             new_cache_info.MarkEdited;
 
             obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, result, new_cache_info, reporting);

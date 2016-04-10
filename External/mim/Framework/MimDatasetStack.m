@@ -51,8 +51,8 @@ classdef MimDatasetStack < handle
             attributes.IgnoreDependencyChecks = ignore_dependency_checks;
             attributes.IsEditedResult = is_edited_result;
             attributes.PluginVersion = plugin_version;
-            instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
-            cache_info = MimDatasetStackItem(instance_identifier, PTKDependencyList, ignore_dependency_checks, start_timer, reporting);
+            instance_identifier = MimDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
+            cache_info = MimDatasetStackItem(instance_identifier, MimDependencyList, ignore_dependency_checks, start_timer, reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end
         

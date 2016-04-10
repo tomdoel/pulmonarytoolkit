@@ -123,15 +123,15 @@ classdef TestImageTemplates < CoreTest
             mock_ll_image = PTKImage;
             mock_ll_image.Title = 'll';
             
-            lung_roi_cache_item = MimDatasetStackItem(PTKDependency('PTKLungROI', PTKContext.LungROI, '1.2.3.4.5', '1', []), PTKDependencyList, false, false, mock_reporting);
-            oi_cache_item = MimDatasetStackItem(PTKDependency('PTKOriginalImage', PTKContext.OriginalImage, '1.2.3.4.6', '1', []), PTKDependencyList, false, false, mock_reporting);
-            ll_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForSingleLung', PTKContext.LeftLung, '1.2.3.4.7', '1', []), PTKDependencyList, false, false, mock_reporting);
-            rl_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForSingleLung', PTKContext.RightLung, '1.2.3.4.8', '1', []), PTKDependencyList, false, false, mock_reporting);
-            rul_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.RightUpperLobe, '1.2.3.4.9', '1', []), PTKDependencyList, false, false, mock_reporting);
-            rml_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.RightMiddleLobe, '1.2.3.4.10', '1', []), PTKDependencyList, false, false, mock_reporting);
-            rll_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.RightLowerLobe, '1.2.3.4.11', '1', []), PTKDependencyList, false, false, mock_reporting);
-            lul_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.LeftUpperLobe, '1.2.3.4.12', '1', []), PTKDependencyList, false, false, mock_reporting);
-            lll_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.LeftLowerLobe, '1.2.3.4.13', '1', []), PTKDependencyList, false, false, mock_reporting);
+            lung_roi_cache_item = MimDatasetStackItem(PTKDependency('PTKLungROI', PTKContext.LungROI, '1.2.3.4.5', '1', []), MimDependencyList, false, false, mock_reporting);
+            oi_cache_item = MimDatasetStackItem(PTKDependency('PTKOriginalImage', PTKContext.OriginalImage, '1.2.3.4.6', '1', []), MimDependencyList, false, false, mock_reporting);
+            ll_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForSingleLung', PTKContext.LeftLung, '1.2.3.4.7', '1', []), MimDependencyList, false, false, mock_reporting);
+            rl_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForSingleLung', PTKContext.RightLung, '1.2.3.4.8', '1', []), MimDependencyList, false, false, mock_reporting);
+            rul_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.RightUpperLobe, '1.2.3.4.9', '1', []), MimDependencyList, false, false, mock_reporting);
+            rml_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.RightMiddleLobe, '1.2.3.4.10', '1', []), MimDependencyList, false, false, mock_reporting);
+            rll_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.RightLowerLobe, '1.2.3.4.11', '1', []), MimDependencyList, false, false, mock_reporting);
+            lul_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.LeftUpperLobe, '1.2.3.4.12', '1', []), MimDependencyList, false, false, mock_reporting);
+            lll_cache_item = MimDatasetStackItem(PTKDependency('PTKGetContextForLobe', PTKContext.LeftLowerLobe, '1.2.3.4.13', '1', []), MimDependencyList, false, false, mock_reporting);
             
             % Check fetching the template images
             mock_dataset_results.AddMockResult('PTKLungROI', PTKContext.LungROI, mock_roi_image, lung_roi_cache_item, [], true);

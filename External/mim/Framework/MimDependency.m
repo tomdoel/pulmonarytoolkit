@@ -1,10 +1,10 @@
-classdef PTKDependency < handle
-    % PTKDependency. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimDependency < handle
+    % MimDependency. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     PTKDependency sores a dependency object, uniquely tagging a particular 
+    %     MimDependency sores a dependency object, uniquely tagging a particular 
     %     result generated from running a plugin. This dependency is stored 
     %     alongside the plugin result and stored in the
     %     dependency list of every plugin which uses this result. This allows us
@@ -26,7 +26,7 @@ classdef PTKDependency < handle
     end
     
     methods
-        function obj = PTKDependency(name, context, uid, dataset_uid, attributes)
+        function obj = MimDependency(name, context, uid, dataset_uid, attributes)
             obj.PluginName = name;
             obj.Context = context;
             obj.Uid = uid;
