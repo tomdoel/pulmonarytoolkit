@@ -1,5 +1,5 @@
-classdef PTKCharacterEncoding
-    % PTKCharacterEncoding
+classdef CoreCharacterEncoding
+    % CoreCharacterEncoding
     %
     %
     %

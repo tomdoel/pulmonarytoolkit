@@ -1,5 +1,5 @@
-classdef PTKFileReader < CoreBaseClass
-    % PTKFileReader. A helper class to assist with parsing a text file
+classdef CoreFileReader < CoreBaseClass
+    % CoreFileReader. A helper class to assist with parsing a text file
     %
     %
     %     Licence
@@ -15,7 +15,7 @@ classdef PTKFileReader < CoreBaseClass
     end
     
     methods
-        function obj = PTKFileReader(file_path, file_name, transfer_syntax, reporting)
+        function obj = CoreFileReader(file_path, file_name, transfer_syntax, reporting)
             obj.Reporting = reporting;
             full_file_name = fullfile(file_path, file_name);
 
@@ -32,7 +32,7 @@ classdef PTKFileReader < CoreBaseClass
                 end
                 
                 switch transfer_syntax.CharacterEncoding
-                    case PTKCharacterEncoding.UTF8
+                    case CoreCharacterEncoding.UTF8
                         character_encoding = 'UTF-8';
                     otherwise
                         error('Unknown character encoding');
@@ -42,7 +42,7 @@ classdef PTKFileReader < CoreBaseClass
             end
 
             if (file_id == -1)
-                reporting.Error('PTKFileReader:CannotOpenFile', ['Unable to open file ' full_file_name]);
+                reporting.Error('CoreFileReader:CannotOpenFile', ['Unable to open file ' full_file_name]);
             else
                 obj.FileId = file_id;
             end
@@ -56,7 +56,7 @@ classdef PTKFileReader < CoreBaseClass
         function data = ReadWords(obj, data_type, number_of_words)
             [data, count] = fread(obj.FileId, [1, number_of_words], data_type);
             if count ~= number_of_words
-                obj.Reporting.Error('PTKFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
+                obj.Reporting.Error('CoreFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
             end
             if strcmp(data_type, 'char')
                 data = char(data);
@@ -74,7 +74,7 @@ classdef PTKFileReader < CoreBaseClass
             
             [data, count] = fread(obj.FileId, [1, number_of_words], data_type);
             if count ~= number_of_words
-                obj.Reporting.Error('PTKFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
+                obj.Reporting.Error('CoreFileReader:ReadBeyondEndOfFile', ['Tried to read beyond the end of file ']);
             end
             if strcmp(data_type, 'char')
                 data = char(data);
@@ -103,7 +103,7 @@ classdef PTKFileReader < CoreBaseClass
         function GoToFilePosition(obj, bytes_from_beginning)
             status = fseek(obj.FileId, bytes_from_beginning, 'bof');
             if status == -1
-                obj.Reporting.Error('PTKFileReader:Requested position is beyond the end of the file.');
+                obj.Reporting.Error('CoreFileReader:Requested position is beyond the end of the file.');
             end
         end
 

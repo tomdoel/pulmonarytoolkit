@@ -1,5 +1,5 @@
-classdef PTKCachedFileReader < handle
-    % PTKCachedFileReader. A helper class to assist with reading a file
+classdef CoreCachedFileReader < handle
+    % CoreCachedFileReader. A helper class to assist with reading a file
     %
     %
     %     Licence
@@ -28,7 +28,7 @@ classdef PTKCachedFileReader < handle
     end
     
     methods
-        function obj = PTKCachedFileReader(file_path, file_name, transfer_syntax, reporting)
+        function obj = CoreCachedFileReader(file_path, file_name, transfer_syntax, reporting)
             
             
             full_file_name = fullfile(file_path, file_name);
@@ -46,7 +46,7 @@ classdef PTKCachedFileReader < handle
             end
                         
             switch transfer_syntax.CharacterEncoding
-                case PTKDicomCharacterEncoding.UTF8
+                case CoreCharacterEncoding.UTF8
                     character_encoding = 'UTF-8';
                 otherwise
                     error('Unknown character encoding');
@@ -55,7 +55,7 @@ classdef PTKCachedFileReader < handle
             file_id = fopen(full_file_name, 'r', file_encoding, character_encoding);
             
             if (file_id == -1)
-                reporting.Error('PTKFileReader:CannotOpenFile', ['Unable to open file ' full_file_name]);
+                reporting.Error('CoreCachedFileReader:CannotOpenFile', ['Unable to open file ' full_file_name]);
                 obj.EofReached = true;
                 obj.FileId = [];
             else
