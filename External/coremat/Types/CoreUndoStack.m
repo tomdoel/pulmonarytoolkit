@@ -1,13 +1,13 @@
-classdef PTKUndoStack < handle
-    % PTKUndoStack. A class for storing values on a stack, with a maximum number of
+classdef CoreUndoStack < handle
+    % CoreUndoStack. A class for storing values on a stack, with a maximum number of
     % items
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)
@@ -16,7 +16,7 @@ classdef PTKUndoStack < handle
     end
     
     methods 
-        function obj = PTKUndoStack(stack_items, max_num_items)
+        function obj = CoreUndoStack(stack_items, max_num_items)
             if nargin > 0
                 obj.Stack = CoreContainerUtilities.ConvertToSet(stack_items);
                 obj.MaxNumberOfItems = max_num_items;

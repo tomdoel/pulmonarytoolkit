@@ -43,5 +43,9 @@ classdef PTKFrameworkAppDef < handle
         function directories = GetFrameworkDirectories(obj)
             directories = obj.Directories;
         end
+        
+        function debug_mode = IsDebugMode(obj)
+            debug_mode = PTKSoftwareInfo.DebugMode;
+        end
     end
 end

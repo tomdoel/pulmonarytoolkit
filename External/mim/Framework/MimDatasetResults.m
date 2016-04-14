@@ -35,6 +35,7 @@ classdef MimDatasetResults < handle
 
     properties (Access = private)
         
+        FrameworkAppDef      % Framework configuration
         ContextHierarchy     % Processes the calls to plugins, performing conversions between contexts where necessary
         DatasetDiskCache     % Reads and writes to the disk cache for this dataset
         DependencyTracker    % Tracks plugin usage to construct dependency lists 
@@ -52,6 +53,7 @@ classdef MimDatasetResults < handle
     
     methods
         function obj = MimDatasetResults(framework_app_def, context_def, image_info, linked_dataset_chooser, external_notify_function, dataset_disk_cache, plugin_cache, reporting)
+            obj.FrameworkAppDef = framework_app_def;
             obj.ImageInfo = image_info;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DatasetDiskCache = dataset_disk_cache;
@@ -184,7 +186,7 @@ classdef MimDatasetResults < handle
             
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
-            if PTKSoftwareInfo.DebugMode
+            if obj.FrameworkAppDef.IsDebugMode
                 obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
             else
                 try
@@ -346,7 +348,7 @@ classdef MimDatasetResults < handle
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
-            if PTKSoftwareInfo.DebugMode
+            if obj.FrameworkAppDef.IsDebugMode
                 [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
             else
                 try
