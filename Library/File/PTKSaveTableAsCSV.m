@@ -72,7 +72,7 @@ function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
         file_appendix = strrep(file_appendix, ' ', '_');
         file_appendix(ismember(file_appendix,' *,.:;!?/<>\^%"')) = [];
         
-        text_file_writer = PTKTextFileWriter(file_path, [file_name '_' file_appendix '.csv'], reporting);
+        text_file_writer = CoreTextFileWriter(file_path, [file_name '_' file_appendix '.csv'], reporting);
         
         text_file_writer.WriteLine(label_line);
         

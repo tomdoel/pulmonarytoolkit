@@ -1,13 +1,13 @@
-classdef PTKTextFileReader < CoreBaseClass
-    % PTKTextFileReader. A helper class to assist with parsing a text file
+classdef CoreTextFileReader < CoreBaseClass
+    % CoreTextFileReader. A helper class to assist with parsing a text file
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
+    %    
 
     properties
         FileText
@@ -15,11 +15,11 @@ classdef PTKTextFileReader < CoreBaseClass
     end
     
     methods
-        function obj = PTKTextFileReader(file_path, file_name, reporting)
+        function obj = CoreTextFileReader(file_path, file_name, reporting)
             full_file_name = fullfile(file_path, file_name);
             file_id = fopen(full_file_name, 'rt');
             if (file_id == -1)
-                reporting.Error('PTKTextFileReader:CannotOpenFile', ['Unable to open file ' full_file_name]);
+                reporting.Error('CoreTextFileReader:CannotOpenFile', ['Unable to open file ' full_file_name]);
             else
                 obj.FileId = file_id;
             end

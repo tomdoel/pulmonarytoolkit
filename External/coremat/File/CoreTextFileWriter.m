@@ -1,13 +1,13 @@
-classdef PTKTextFileWriter < CoreBaseClass
-    % PTKTextFileWriter. A helper class to assist with writing a text file
+classdef CoreTextFileWriter < CoreBaseClass
+    % CoreTextFileWriter. A helper class to assist with writing a text file
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %
+    %     Distributed under the MIT licence. Please see website for details.
+    %    
 
     properties
         FileText
@@ -15,12 +15,12 @@ classdef PTKTextFileWriter < CoreBaseClass
     end
     
     methods
-        function obj = PTKTextFileWriter(file_path, file_name, reporting)
+        function obj = CoreTextFileWriter(file_path, file_name, reporting)
             full_file_name = fullfile(file_path, file_name);
             file_id = fopen(full_file_name, 'w');
             
             if (file_id == -1)
-                reporting.Error('PTKTextFileWriter:CannotOpenFile', ['Unable to open file ' full_file_name]);
+                reporting.Error('CoreTextFileWriter:CannotOpenFile', ['Unable to open file ' full_file_name]);
             else
                 obj.FileId = file_id;
             end
