@@ -1,5 +1,5 @@
-classdef PTKCompositeResult < PTKStruct
-    % PTKCompositeResult. Holds a set of results for multiple contexts
+classdef MimCompositeResult < PTKStruct
+    % MimCompositeResult. Holds a set of results for multiple contexts
     %
     %
     %     Licence

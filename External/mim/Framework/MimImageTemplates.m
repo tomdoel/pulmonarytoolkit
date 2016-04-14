@@ -140,7 +140,7 @@ classdef MimImageTemplates < CoreBaseClass
                 return;
             end
             
-            while isa(cache_info, 'PTKCompositeResult')
+            while isa(cache_info, 'MimCompositeResult')
                 fields = fieldnames(cache_info);
                 cache_info = cache_info.(fields{1});
             end

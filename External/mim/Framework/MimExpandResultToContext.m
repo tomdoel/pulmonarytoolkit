@@ -17,7 +17,7 @@ function result = MimExpandResultToContext(result, this_result, child_context, o
             result.ResizeToMatch(output_template_image);
             result.Clear;
         else
-            result = PTKCompositeResult;
+            result = MimCompositeResult;
         end
     end
     

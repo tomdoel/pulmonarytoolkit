@@ -52,7 +52,7 @@ classdef PTKEditManager < PTKTool
         function obj = PTKEditManager(viewer_panel)
             obj.ViewerPanel = viewer_panel;
             obj.OverlayChangeLock = false;
-            obj.UndoStack = PTKUndoStack([], 5);
+            obj.UndoStack = CoreUndoStack([], 5);
         end
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)

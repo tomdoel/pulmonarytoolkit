@@ -13,7 +13,7 @@ function result = MimReduceResultToContext(full_result, child_context, image_tem
     
     % If the result is a composite result, then get the result for this
     % context
-    if isa(full_result, 'PTKCompositeResult') && full_result.IsField(char(child_context))
+    if isa(full_result, 'MimCompositeResult') && full_result.IsField(char(child_context))
         result = full_result.(char(child_context));
         return
     end

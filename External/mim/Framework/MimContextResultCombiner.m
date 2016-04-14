@@ -51,7 +51,7 @@ classdef MimContextResultCombiner < CoreBaseClass
                 obj.OutputImage = [];
             end
             if isempty(obj.CacheInfo)
-                obj.CacheInfo = PTKCompositeResult;
+                obj.CacheInfo = MimCompositeResult;
             end
             obj.CacheInfo.AddField(char(child_context), this_context_results.GetCacheInfo);
             obj.PluginHasBeenRun = obj.PluginHasBeenRun || this_context_results.GetPluginHasBeenRun;            
