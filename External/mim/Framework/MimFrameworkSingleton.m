@@ -84,7 +84,7 @@ classdef (Sealed) MimFrameworkSingleton < handle
         end
         
         function uids = ImportData(obj, filename, reporting)
-            uids = PTKImageImporter(filename, obj.ImageDatabase, reporting);
+            uids = MimImageImporter(filename, obj.ImageDatabase, reporting);
         end
         
         function image_database = GetImageDatabase(obj)

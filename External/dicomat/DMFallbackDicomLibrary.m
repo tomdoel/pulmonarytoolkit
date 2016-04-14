@@ -1,13 +1,13 @@
-classdef (Sealed) PTKDicomFallbackLibrary < DMDicomLibraryInterface
-    % PTKDicomFallbackLibrary uses Dicomat to parse Dicom files, but falls
-    % back to the Matlab image processing toobox if it fails
+classdef (Sealed) DMFallbackDicomLibrary < DMDicomLibraryInterface
+    % DMFallbackDicomLibrary uses Dicomat to parse Dicom files, but falls
+    %     back to the Matlab image processing toobox if it fails
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %    
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
+    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    %
         
     methods
         function isDicom = isdicom(~, fileName)
@@ -19,7 +19,7 @@ classdef (Sealed) PTKDicomFallbackLibrary < DMDicomLibraryInterface
                 try
                     isDicom = isdicom(fileName);
                 catch ex
-                    error('PTKDicomFallbackLibrary:MetaDataReadFail', ['Could not read metadata from the Dicom file ' fileName '. Error:' ex.message]);
+                    error('DMFallbackDicomLibrary:MetaDataReadFail', ['Could not read metadata from the Dicom file ' fileName '. Error:' ex.message]);
                 end
             end            
         end
@@ -33,7 +33,7 @@ classdef (Sealed) PTKDicomFallbackLibrary < DMDicomLibraryInterface
                 try
                     metaheader = dicominfo(varargin{1});
                 catch ex
-                    error('PTKDicomFallbackLibrary:MetaDataReadFail', ['Could not read metadata from the Dicom file ' varargin{1} '. Error:' ex.message]);
+                    error('DMFallbackDicomLibrary:MetaDataReadFail', ['Could not read metadata from the Dicom file ' varargin{1} '. Error:' ex.message]);
                 end
             end
         end
@@ -53,14 +53,14 @@ classdef (Sealed) PTKDicomFallbackLibrary < DMDicomLibraryInterface
                     elseif ischar(fileName_or_metaHeader)
                         fileName = fileName_or_metaHeader;
                     end
-                    error('PTKDicomFallbackLibrary:DicomReadError', ['Error while reading the Dicom file' fileName '. Error:' ex.message]);
+                    error('DMFallbackDicomLibrary:DicomReadError', ['Error while reading the Dicom file' fileName '. Error:' ex.message]);
                 end
             end
         end        
     end
     
     methods (Access = private)
-        function obj = PTKDicomFallbackLibrary
+        function obj = DMFallbackDicomLibrary
         end
     end
     
@@ -68,7 +68,7 @@ classdef (Sealed) PTKDicomFallbackLibrary < DMDicomLibraryInterface
         function singleObj = getLibrary
             persistent singleton
             if isempty(singleton) || ~isvalid(singleton)
-                singleton = PTKDicomFallbackLibrary;
+                singleton = DMFallbackDicomLibrary;
             end
             singleObj = singleton;
         end

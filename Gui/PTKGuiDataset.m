@@ -524,7 +524,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 
                 [~, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
                 
-                if isa(cache_info, 'PTKCompositeResult')
+                if isa(cache_info, 'MimCompositeResult')
                     cache_info = cache_info.GetFirstResult;
                 end
                 

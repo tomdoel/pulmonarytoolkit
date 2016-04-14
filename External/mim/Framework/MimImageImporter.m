@@ -1,5 +1,5 @@
-function uids = PTKImageImporter(filename_or_root_directory, database, reporting)
-    % PTKImageImporter. Recrusively imports image files into a MimImageDatabase object
+function uids = MimImageImporter(filename_or_root_directory, database, reporting)
+    % MimImageImporter. Recrusively imports image files into a MimImageDatabase object
     %
     %
     %
@@ -35,7 +35,7 @@ function uids = PTKImageImporter(filename_or_root_directory, database, reporting
         end
         
     else
-        reporting.Error('PTKImageImporter:FileDoesNotExist', ['The file or directory ' filename ' does not exist.']);
+        reporting.Error('MimImageImporter:FileDoesNotExist', ['The file or directory ' filename ' does not exist.']);
     end
     
     reporting.CompleteProgress;
@@ -79,7 +79,7 @@ function uids = ImportFilesInDirectory(database, directory, tags_to_get, reporti
                     end
                 end
             catch ex
-                reporting.ShowWarning('PTKImageImporter:ImportFileFailed', ['Failed to import file ' filename{1} ' due to error: ' ex.message]);
+                reporting.ShowWarning('MimImageImporter:ImportFileFailed', ['Failed to import file ' filename{1} ' due to error: ' ex.message]);
             end
         end
     end

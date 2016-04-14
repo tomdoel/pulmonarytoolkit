@@ -140,7 +140,7 @@ classdef MimOutputFolder < CoreBaseClass
             metadata = template.MetaHeader;
             
             if isfield(metadata, 'PatientName')
-                [~, subfolder] = PTKDicomUtilities.PatientNameToString(metadata.PatientName);
+                [~, subfolder] = DMUtilities.PatientNameToString(metadata.PatientName);
             elseif isfield(metadata, 'PatientId')
                 subfolder = metadata.PatientId;
             else

@@ -25,10 +25,10 @@ function [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLoc
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
-    %        
+    %    
     
     
     reporting.ShowProgress('Ordering images');

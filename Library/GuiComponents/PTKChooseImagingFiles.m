@@ -40,7 +40,7 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
     % If in DICOM format, then we will load the entire directory
     if (filter_index ==  2)
         filenames_dicom = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
-        filenames_dicom = PTKDicomUtilities.RemoveNonDicomFiles(image_path, filenames_dicom);
+        filenames_dicom = DMUtilities.RemoveNonDicomFiles(image_path, filenames_dicom);
         image_type = PTKImageFileFormat.Dicom;
         
         % If there are no valid DICOM files then we return an ImageInfo with
@@ -115,7 +115,7 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
     % If in DICOM format, then we will load the entire directory
     if (image_type == PTKImageFileFormat.Dicom)
         filenames = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
-        filenames = PTKDicomUtilities.RemoveNonDicomFiles(image_path, filenames);
+        filenames = DMUtilities.RemoveNonDicomFiles(image_path, filenames);
         
         % If there are no valid DICOM files then we return an ImageInfo with
         % just the path and image type set

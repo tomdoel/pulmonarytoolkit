@@ -69,7 +69,7 @@ classdef MimImageDatabasePatient < handle
     
     methods (Access = private)
         function SetVisibleNames(obj, name, id)
-            [visible_name, short_visible_name] = PTKDicomUtilities.PatientNameToString(name);
+            [visible_name, short_visible_name] = DMUtilities.PatientNameToString(name);
             if isempty(visible_name)
                 if isempty(id)
                     visible_name = 'Unknown';

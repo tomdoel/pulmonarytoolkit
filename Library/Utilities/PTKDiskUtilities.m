@@ -226,7 +226,7 @@ classdef PTKDiskUtilities
             end
             
             % Test for a DICOM image
-            if PTKDicomUtilities.IsDicom(image_path, image_filename)
+            if DMUtilities.IsDicom(image_path, image_filename)
                 image_type = PTKImageFileFormat.Dicom;
                 principal_filename = {image_filename};
                 secondary_filenames = {};

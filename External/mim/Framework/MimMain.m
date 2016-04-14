@@ -319,7 +319,7 @@ classdef MimMain < CoreBaseClass
                        throw(MException('PTKMain:FileNotFound', ['The file ' first_filename ' does not exist']));
                     end
                     
-                    metadata = PTKDicomUtilities.ReadGroupingMetadata(fullfile(first_path, first_filename), reporting);
+                    metadata = DMUtilities.ReadGroupingMetadata(fullfile(first_path, first_filename), reporting);
                     image_uid = metadata.SeriesInstanceUID;
                     study_uid = metadata.StudyInstanceUID;
                     modality = metadata.Modality;
@@ -328,7 +328,7 @@ classdef MimMain < CoreBaseClass
                         PTKImageFileFormat.Vmp, PTKImageFileFormat.Xif, PTKImageFileFormat.Vtk, ...        % Visualization Toolkit (VTK)
                         PTKImageFileFormat.MicroCT, PTKImageFileFormat.Par}
                         
-                    image_uid = PTKDicomUtilities.GetIdentifierFromFilename(image_info.ImageFilenames{1});
+                    image_uid = DMUtilities.GetIdentifierFromFilename(image_info.ImageFilenames{1});
                     study_uid = [];
                     modality = [];
                 otherwise

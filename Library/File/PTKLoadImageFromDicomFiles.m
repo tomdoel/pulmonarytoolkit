@@ -31,7 +31,7 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
         reporting = CoreReportingDefault;
     end
     
-    dicomLibrary = PTKDicomFallbackLibrary.getLibrary;
+    dicomLibrary = DMFallbackDicomLibrary.getLibrary;
     
     [image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm] = DMLoadMainImageFromDicomFiles(image_path, filenames, dicomLibrary, reporting);
     

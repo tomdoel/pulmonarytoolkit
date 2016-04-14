@@ -1,12 +1,12 @@
-classdef PTKDicomUtilities
-    % PTKDicomUtilities. Utility functions related to Dicom files
+classdef DMUtilities
+    % DMUtilities. Utility functions related to Dicom files
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %    
     
     methods (Static)
@@ -21,7 +21,7 @@ classdef PTKDicomUtilities
             
             full_file_name = [file_path, filesep, file_name];
             
-            is_dicom = PTKDicomFallbackLibrary.getLibrary.isdicom(full_file_name);
+            is_dicom = DMFallbackDicomLibrary.getLibrary.isdicom(full_file_name);
         end
         
         function dicom_series_uid = GetDicomSeriesUid(fileName, dictionary)
@@ -31,7 +31,7 @@ classdef PTKDicomUtilities
                 dictionary = DMDicomDictionary.GroupingDictionary;
             end
             
-            header = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, dictionary);
+            header = DMFallbackDicomLibrary.getLibrary.dicominfo(fileName, dictionary);
             
             if isempty(header)
                 dicom_series_uid = [];
@@ -49,27 +49,27 @@ classdef PTKDicomUtilities
         function metadata = ReadMetadata(fileName, dictionary, reporting)
             % Reads in Dicom metadata from the specified file
             try
-                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, dictionary);
+                metadata = DMFallbackDicomLibrary.getLibrary.dicominfo(fileName, dictionary);
             catch exception
-                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
+                reporting.Error('DMUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
             end
         end
         
         function metadata = ReadGroupingMetadata(fileName, reporting)
             % Reads in Dicom metadata from the specified file
             try
-                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, DMDicomDictionary.GroupingDictionary);
+                metadata = DMFallbackDicomLibrary.getLibrary.dicominfo(fileName, DMDicomDictionary.GroupingDictionary);
             catch exception
-                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
+                reporting.Error('DMUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
             end
         end
         
         function metadata = ReadEssentialMetadata(fileName, reporting)
             % Reads in Dicom metadata from the specified file
             try
-                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName);
+                metadata = DMFallbackDicomLibrary.getLibrary.dicominfo(fileName);
             catch exception
-                reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
+                reporting.Error('DMUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
             end
         end
         
@@ -77,9 +77,9 @@ classdef PTKDicomUtilities
             % Reads in Dicom image data from the specified metadata
 
             try
-                image_data = PTKDicomFallbackLibrary.getLibrary.dicomread(metadata);
+                image_data = DMFallbackDicomLibrary.getLibrary.dicomread(metadata);
             catch exception
-                reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
+                reporting.Error('DMUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
             end
         end
         
@@ -87,10 +87,10 @@ classdef PTKDicomUtilities
             % Reads in Dicom image data from the specified metadata. The image data
             % is stored directly into the RawImage matrix of a CoreWrapper object
             try
-                image_wrapper.RawImage(:, :, slice_index, :) = PTKDicomFallbackLibrary.getLibrary.dicomread(metadata);
+                image_wrapper.RawImage(:, :, slice_index, :) = DMFallbackDicomLibrary.getLibrary.dicomread(metadata);
                 
             catch exception
-                reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
+                reporting.Error('DMUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
             end
         end
         
@@ -101,17 +101,17 @@ classdef PTKDicomUtilities
                 name = '';
                 short_name = '';
                 if isstruct(patient_name)
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'FamilyName', false);
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'GivenName', false);
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'MiddleName', false);
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'NamePrefix', false);
-                    name = PTKDicomUtilities.AddOptionalField(name, patient_name, 'NameSuffix', false);
+                    name = DMUtilities.AddOptionalField(name, patient_name, 'FamilyName', false);
+                    name = DMUtilities.AddOptionalField(name, patient_name, 'GivenName', false);
+                    name = DMUtilities.AddOptionalField(name, patient_name, 'MiddleName', false);
+                    name = DMUtilities.AddOptionalField(name, patient_name, 'NamePrefix', false);
+                    name = DMUtilities.AddOptionalField(name, patient_name, 'NameSuffix', false);
                     
-                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'FamilyName', true);
-                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'GivenName', true);
-                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'MiddleName', true);
-                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'NamePrefix', true);
-                    short_name = PTKDicomUtilities.AddOptionalField(short_name, patient_name, 'NameSuffix', true);
+                    short_name = DMUtilities.AddOptionalField(short_name, patient_name, 'FamilyName', true);
+                    short_name = DMUtilities.AddOptionalField(short_name, patient_name, 'GivenName', true);
+                    short_name = DMUtilities.AddOptionalField(short_name, patient_name, 'MiddleName', true);
+                    short_name = DMUtilities.AddOptionalField(short_name, patient_name, 'NamePrefix', true);
+                    short_name = DMUtilities.AddOptionalField(short_name, patient_name, 'NameSuffix', true);
                 end
             end
         end
@@ -139,18 +139,11 @@ classdef PTKDicomUtilities
         function dicom_filenames = RemoveNonDicomFiles(image_path, filenames)
             dicom_filenames = [];
             for index = 1 : length(filenames)
-                if (PTKDicomUtilities.IsDicom(image_path, filenames{index}))
+                if (DMUtilities.IsDicom(image_path, filenames{index}))
                     dicom_filenames{end + 1} = filenames{index};
                 end
             end
         end
-        
-        function image_info = GetListOfDicomFiles(image_path)
-            filenames = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
-            filenames = PTKDicomUtilities.RemoveNonDicomFiles(image_path, filenames);
-            image_type = PTKImageFileFormat.Dicom;
-            image_info = PTKImageInfo(image_path, filenames, image_type, [], [], []);
-        end        
     end
 end
 
