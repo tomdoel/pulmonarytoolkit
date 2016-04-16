@@ -63,7 +63,7 @@ classdef PTKGuiCore < GemFigure
             
             % Create the reporting object. Later we will update it with the viewer panel and
             % the new progress panel when these have been created.
-            reporting = PTKReporting(splash_screen, PTKSoftwareInfo.WriteVerboseEntriesToLogFile, PTKDirectories.GetLogFilePath);
+            reporting = PTKReporting(splash_screen, PTKSoftwareInfo.WriteVerboseEntriesToLogFile, app_def.GetLogFilePath);
             reporting.Log('New session of PTKGui');
                         
             % Call the base class to initialise the figure class
@@ -90,7 +90,7 @@ classdef PTKGuiCore < GemFigure
             obj.DefaultKeyHandlingObject = obj.ImagePanel;
 
             % Get the singleton, which gives access to the settings
-            obj.GuiSingleton = PTKGuiSingleton.GetGuiSingleton(obj.Reporting);
+            obj.GuiSingleton = PTKGuiSingleton.GetGuiSingleton(app_def, obj.Reporting);
             
             % Load the settings file
             obj.GuiSingleton.GetSettings.ApplySettingsToGui(obj, obj.ImagePanel);

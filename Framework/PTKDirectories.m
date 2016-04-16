@@ -16,27 +16,6 @@ classdef PTKDirectories < CoreBaseClass
 
 
     methods (Static)
-        function application_directory = GetApplicationDirectoryAndCreateIfNecessary
-            if ~isempty(PTKConfig.CacheFolder)
-                home_directory = PTKConfig.CacheFolder;
-            else
-                home_directory = CoreDiskUtilities.GetUserDirectory;
-            end
-            application_directory = PTKSoftwareInfo.ApplicationSettingsFolderName;
-            application_directory = fullfile(home_directory, application_directory);  
-            if ~exist(application_directory, 'dir')
-                mkdir(application_directory);
-            end
-        end
-
-        function settings_file_path = GetSettingsFilePath
-            % Returns the full path to the settings file
-            
-            settings_dir = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            settings_filename = PTKSoftwareInfo.SettingsFileName;
-            settings_file_path = fullfile(settings_dir, settings_filename);
-        end
-        
         function source_directory = GetSourceDirectory
             % Returns the full path to root of the PTK source code
         
@@ -91,14 +70,7 @@ classdef PTKDirectories < CoreBaseClass
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
             plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.GuiPluginDirectoryName);
-        end
-        
-        function log_file_path = GetLogFilePath
-            settings_folder = PTKDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            log_file_name = PTKSoftwareInfo.LogFileName;
-            log_file_path = fullfile(settings_folder, log_file_name);
-        end
-        
+        end        
     end
 end
 

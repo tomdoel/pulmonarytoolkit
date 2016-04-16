@@ -46,7 +46,6 @@ classdef PTKSoftwareInfo < handle
         GroupPatientsWithSameName = true
         
         % Directories
-        ApplicationSettingsFolderName = 'TDPulmonaryToolkit'
         SharedPluginDirectoryName = 'SharedPlugins'
         PluginDirectoryName = 'Plugins'
         GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')

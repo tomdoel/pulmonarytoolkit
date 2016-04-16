@@ -23,10 +23,10 @@ classdef (Sealed) PTKGuiSingleton < handle
     end
         
     methods (Static)
-        function gui_singleton = GetGuiSingleton(reporting)
+        function gui_singleton = GetGuiSingleton(app_def, reporting)
             persistent GuiSingleton
             if isempty(GuiSingleton) || ~isvalid(GuiSingleton)
-                GuiSingleton = PTKGuiSingleton(reporting);
+                GuiSingleton = PTKGuiSingleton(app_def, reporting);
             end
             gui_singleton = GuiSingleton;
         end
@@ -39,8 +39,8 @@ classdef (Sealed) PTKGuiSingleton < handle
     end
     
     methods (Access = private)
-        function obj = PTKGuiSingleton(reporting)
-            obj.Settings = PTKSettings.LoadSettings(reporting);            
+        function obj = PTKGuiSingleton(app_def, reporting)
+            obj.Settings = PTKSettings.LoadSettings(app_def, reporting);
         end
     end
     

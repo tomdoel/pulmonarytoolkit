@@ -41,7 +41,7 @@ classdef PTKGuiDataset < CoreBaseClass
             obj.Gui = gui;
             obj.Reporting = reporting;
             obj.Settings = settings;
-            obj.Ptk = PTKMain(reporting);
+            obj.Ptk = MimMain(app_def.GetFrameworkAppDef, reporting);
             obj.AddEventListener(obj.GetImageDatabase, 'SeriesHasBeenDeleted', @obj.SeriesHasBeenDeleted);
             obj.AddEventListener(obj.ModeSwitcher, 'ModeChangedEvent', @obj.ModeHasChanged);
         end

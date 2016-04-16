@@ -28,13 +28,18 @@ classdef PTKSettings < CoreBaseClass
         LastUidForPatientMap
     end
     
+    properties (Transient, Access = private)
+        SettingsFilename
+    end
+    
     methods (Static)
-        function settings = LoadSettings(reporting)
+        function settings = LoadSettings(app_def, reporting)
             try
-                settings_filename = PTKDirectories.GetSettingsFilePath;
+                settings_filename = app_def.GetSettingsFilePath;
                 if exist(settings_filename, 'file')
                     settings_struct = PTKDiskUtilities.Load(settings_filename);
                     settings = settings_struct.settings;
+                    settings.SettingsFilename = settings_filename;
                 else
                     reporting.ShowWarning('PTKSettings:SettingsFileNotFound', 'No settings file found. Will create new one on exit', []);
                     settings = PTKSettings;
@@ -117,7 +122,7 @@ classdef PTKSettings < CoreBaseClass
         
         function SaveSettings(obj, reporting)
             
-            settings_filename = PTKDirectories.GetSettingsFilePath;
+            settings_filename = obj.SettingsFilename;
             
             try
                 value = [];

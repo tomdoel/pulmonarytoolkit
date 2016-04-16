@@ -54,7 +54,7 @@ classdef MimMain < CoreBaseClass
     methods
         
         function obj = MimMain(framework_app_def, reporting)
-            % Creates a new main PTK object using the configuration
+            % Creates a new main MIM object using the configuration
             % specified by the supplied framework_app_def object
             obj.FrameworkAppDef = framework_app_def;
             obj.Reporting = reporting;
