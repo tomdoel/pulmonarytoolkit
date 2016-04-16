@@ -12,7 +12,7 @@ classdef MimDataset < CoreBaseClass
     %     Each dataset will have its own instance of MimDataset.
     %
     %     You should not create this class directly. Instead, create an instance of
-    %     the class PTKMain and use the methods CreateDatasetFromInfo and
+    %     the class MimMain and use the methods CreateDatasetFromInfo and
     %     CreateDatasetFromUid to get a MimDataset object for each dataset you are
     %     working with.
     %
@@ -20,8 +20,8 @@ classdef MimDataset < CoreBaseClass
     %     to your image data.
     %
     %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         ptk = PTKMain;
-    %         dataset = ptk.CreateDatasetFromInfo(image_info);
+    %         mim = MimMain;
+    %         dataset = mim.CreateDatasetFromInfo(image_info);
     %
     %     You can then obtain results from this dataset, e.g.
     %
@@ -68,7 +68,7 @@ classdef MimDataset < CoreBaseClass
     methods
         
         function obj = MimDataset(image_info, dataset_disk_cache, linked_dataset_chooser_factory, reporting)
-            % MimDataset is created by the PTKMain class
+            % MimDataset is created by the MimMain class
             obj.DatasetStack = MimDatasetStack;
             obj.Reporting = reporting;
             obj.LinkedDatasetChooser = linked_dataset_chooser_factory.GetLinkedDatasetChooser(image_info, dataset_disk_cache, reporting);

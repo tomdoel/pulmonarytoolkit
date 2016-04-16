@@ -1,17 +1,17 @@
 classdef (Sealed) MimFrameworkSingleton < handle
-    % MimFrameworkSingleton. The singleton used by all instances of PTKMain
+    % MimFrameworkSingleton. The singleton used by all instances of MimMain
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
     %
-    %     Some parts of the PTK framework (such as the image database) rely on
+    %     Some parts of the MIM framework (such as the image database) rely on
     %     in-memory caches. Typically changes will be written to disk when the
     %     caches change, but they will not be reloaded at each operation for
     %     efficiency reasons. This would cause inconsistencies if multiple instances
     %     of these classes were running simultaneously.
     %
     %     To prevent this, cached information is held in a singleton class which all
-    %     instances of PTKMain get access to.
+    %     instances of MimMain get access to.
     %
     %     MimFrameworkSingleton is a singleton. It cannot be created using the
     %     constructor; instead call MimFrameworkSingleton.GetFrameworkSingleton;
@@ -49,13 +49,13 @@ classdef (Sealed) MimFrameworkSingleton < handle
         function CompileMexFileIfRequired(obj, files_to_compile, output_directory, reporting)
             % Recompiles mex files if they have changed
             
-            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, false, ' Run PTKMain.Recompile() to force recompilation.', reporting);
+            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, false, ' Run MimMain.Recompile() to force recompilation.', reporting);
         end
         
         function Recompile(obj, files_to_compile, output_directory, reporting)
             % Forces recompilation of mex files
             
-            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, true, ' Run PTKMain.Recompile() to force recompilation.', reporting);
+            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, true, ' Run MimMain.Recompile() to force recompilation.', reporting);
         end
         
         function RebuildDatabase(obj, reporting)

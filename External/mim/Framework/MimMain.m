@@ -3,7 +3,7 @@ classdef MimMain < CoreBaseClass
     %
     %     MimMain provides access to data from the Pulmonary Toolkit, and allows 
     %     you to import new data. Data is accessed through one or more MimDataset
-    %     objects. Your code should create a single PTKMain object, and then ask
+    %     objects. Your code should create a single MimMain object, and then ask
     %     it to create a MimDataset object for each dataset you wish to access. 
     %
     %     MimMain is essentially a class factory for MimDatasets, but shares the 
@@ -14,7 +14,7 @@ classdef MimMain < CoreBaseClass
     %     To import a new dataset, construct a PTKImageInfo object with the file
     %     path and file name set to the image file. For DICOM files it is only
     %     necessary to specify the path since all image files in that directory
-    %     will be imported. Then call CreateDatasetFromInfo. PTKMain will import
+    %     will be imported. Then call CreateDatasetFromInfo. MimMain will import
     %     the data (if it has not already been imported) and return a new
     %     MimDataset object for that dataset.
     %
@@ -29,8 +29,8 @@ classdef MimMain < CoreBaseClass
     %     to your image data.
     %
     %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         ptk = PTKMain;
-    %         dataset = ptk.CreateDatasetFromInfo(image_info);
+    %         mim = MimMain;
+    %         dataset = mim.CreateDatasetFromInfo(image_info);
     %
     %     You can then obtain results from this dataset, e.g.
     %
@@ -137,7 +137,7 @@ classdef MimMain < CoreBaseClass
             
             % Only support a string input
             if ~ischar(filename)
-                obj.Reporting.Error('PTKMain:FileNotAsExpected', 'The file or directory passed to PTKMain.ImportData() is not of the expected type.');
+                obj.Reporting.Error('MimMain:FileNotAsExpected', 'The file or directory passed to MimMain.ImportData() is not of the expected type.');
             end
             
             % Adds the files to the image database, which groups them into
@@ -193,7 +193,7 @@ classdef MimMain < CoreBaseClass
                 catch exc
                     %
                     if PTKSoftwareInfo.IsErrorUidNotFound(exc.identifier)
-                        obj.Reporting.ShowMessage('PTKMain:UidNotFound', ['Failed to delete dataset because its UID could not be found']);
+                        obj.Reporting.ShowMessage('MimMain:UidNotFound', ['Failed to delete dataset because its UID could not be found']);
                     else
                         rethrow exc
                     end
@@ -247,7 +247,7 @@ classdef MimMain < CoreBaseClass
                 non_dicom_filenames = CoreDiskUtilities.FilenameSetDiff(non_dicom_filenames, secondary_filenames, next_filename.Path);
                 
                 if isempty(image_type)
-                    reporting.ShowWarning('PTKMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(next_filename.Path, next_filename.FullFile)], []);
+                    reporting.ShowWarning('MimMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(next_filename.Path, next_filename.FullFile)], []);
                 else
                     image_info_nondicom = PTKImageInfo(import_folder, principal_filename, image_type, [], [], []);
                     [image_info_nondicom, ~] = obj.ImportDataFromInfo(image_info_nondicom, reporting);
@@ -265,7 +265,7 @@ classdef MimMain < CoreBaseClass
                 toc
                 uid = image_info_dicom.ImageUid;
             catch ex
-                reporting.ShowWarning('PTKMain:DicomReadFail', ['The file ' dicom_filenames{1}.FullFile ' looks like a Dicom file, but I am unable to read it. I will ignore this file.'], ex.message);
+                reporting.ShowWarning('MimMain:DicomReadFail', ['The file ' dicom_filenames{1}.FullFile ' looks like a Dicom file, but I am unable to read it. I will ignore this file.'], ex.message);
             end
         end
         
@@ -277,7 +277,7 @@ classdef MimMain < CoreBaseClass
             % ImportData() method instead.
             
             if isempty(new_image_info.ImageUid)
-                [series_uid, study_uid, modality] = PTKMain.GetImageUID(new_image_info, reporting);
+                [series_uid, study_uid, modality] = MimMain.GetImageUID(new_image_info, reporting);
                 new_image_info.ImageUid = series_uid;
                 new_image_info.StudyUid = study_uid;
                 new_image_info.Modality = modality;
@@ -316,7 +316,7 @@ classdef MimMain < CoreBaseClass
                         full_first_filename = fullfile(image_info.ImagePath, filenames{1});
                     end
                     if (exist(full_first_filename, 'file') ~= 2)
-                       throw(MException('PTKMain:FileNotFound', ['The file ' first_filename ' does not exist']));
+                       throw(MException('MimMain:FileNotFound', ['The file ' first_filename ' does not exist']));
                     end
                     
                     metadata = DMUtilities.ReadGroupingMetadata(fullfile(first_path, first_filename), reporting);
@@ -332,7 +332,7 @@ classdef MimMain < CoreBaseClass
                     study_uid = [];
                     modality = [];
                 otherwise
-                    obj.Reporting.Error('PTKMain:UnknownImageFileFormat', 'Could not import the image because the file format was not recognised.');
+                    obj.Reporting.Error('MimMain:UnknownImageFileFormat', 'Could not import the image because the file format was not recognised.');
             end
         end
         
