@@ -58,9 +58,9 @@ classdef MimDatasetResults < handle
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
-            obj.ImageTemplates = MimImageTemplates(obj, context_def, dataset_disk_cache, reporting);
+            obj.ImageTemplates = MimImageTemplates(framework_app_def, obj, context_def, dataset_disk_cache, reporting);
             obj.OutputFolder = MimOutputFolder(framework_app_def, dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
-            obj.PreviewImages = MimPreviewImages(dataset_disk_cache, reporting);
+            obj.PreviewImages = MimPreviewImages(framework_app_def, dataset_disk_cache, reporting);
             obj.DependencyTracker = MimPluginDependencyTracker(dataset_disk_cache, plugin_cache);
             obj.ContextHierarchy = MimContextHierarchy(context_def, obj.DependencyTracker, obj.ImageTemplates);
         end

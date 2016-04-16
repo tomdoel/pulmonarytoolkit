@@ -17,12 +17,14 @@ classdef MimPreviewImages < CoreBaseClass
     %    
     
     properties (Access = private)
+        Config                 % configuration which stroes the preview image cache filename
         DatasetDiskCache       % disk cache for this dataset
         Previews               % preview thumnail images
     end
     
     methods
-        function obj = MimPreviewImages(dataset_disk_cache, reporting)
+        function obj = MimPreviewImages(framework_app_def, dataset_disk_cache, reporting)
+            obj.Config = framework_app_def.GetFrameworkConfig;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.LoadPreviewFile(reporting);
         end
@@ -60,7 +62,7 @@ classdef MimPreviewImages < CoreBaseClass
     methods (Access = private)    
         function LoadPreviewFile(obj, reporting)
             % Cache previews on disk
-            cached_previews = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.PreviewImageFileName, reporting);
+            cached_previews = obj.DatasetDiskCache.LoadData(obj.Config.PreviewImageFileName, reporting);
             if isempty(cached_previews)
                 obj.Previews = containers.Map;
             else
@@ -70,7 +72,7 @@ classdef MimPreviewImages < CoreBaseClass
         
         function SavePreviewFile(obj, reporting)
             % Load cached previews from disk
-            obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.PreviewImageFileName, obj.Previews, reporting);
+            obj.DatasetDiskCache.SaveData(obj.Config.PreviewImageFileName, obj.Previews, reporting);
         end
     end
 end

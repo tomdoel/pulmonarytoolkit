@@ -16,6 +16,7 @@ classdef MimOutputFolder < CoreBaseClass
     %
     
     properties (Access = private)
+        Config % Used to fetch the load/save name
         Directories % Class for fetching base output directory
         
         OutputFolder % Caches the output folder for this dataset        
@@ -30,6 +31,7 @@ classdef MimOutputFolder < CoreBaseClass
     
     methods
         function obj = MimOutputFolder(framework_app_def, dataset_disk_cache, image_info, image_templates, reporting)
+            obj.Config = framework_app_def.GetFrameworkConfig;
             obj.Directories = framework_app_def.GetFrameworkDirectories;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ImageTemplates = image_templates;
@@ -112,8 +114,9 @@ classdef MimOutputFolder < CoreBaseClass
         function Load(obj, reporting)
             % Retrieves previous records from the disk cache
         
-            if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.OutputFolderCacheName, [], reporting)
-                info = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.OutputFolderCacheName, reporting);
+            filename = obj.Config.OutputFolderCacheName;
+            if obj.DatasetDiskCache.Exists(filename, [], reporting)
+                info = obj.DatasetDiskCache.LoadData(filename, reporting);
                 obj.OutputRecords = info.OutputRecords;
                 if isfield(info, 'OutputFolder')
                     obj.OutputFolder = info.OutputFolder;
@@ -130,7 +133,7 @@ classdef MimOutputFolder < CoreBaseClass
             
             info = [];
             info.OutputRecords = obj.OutputRecords;
-            obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.OutputFolderCacheName, info, reporting);
+            obj.DatasetDiskCache.SaveData(obj.Config.OutputFolderCacheName, info, reporting);
         end
         
         function CreateNewOutputFolder(obj, dataset_stack, reporting)

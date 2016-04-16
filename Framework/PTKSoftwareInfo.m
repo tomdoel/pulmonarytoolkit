@@ -59,11 +59,8 @@ classdef PTKSoftwareInfo < handle
 
         % Filenames
         LogFileName = 'log.txt'
-        PreviewImageFileName = 'PreviewImages'
         SettingsFileName = 'PTKSettings.mat'
-        MakerPointsCacheName = 'MarkerPoints'
-        ImageTemplatesCacheName = 'ImageTemplates'
-        OutputFolderCacheName = 'OutputFolder'
+        MakerPointsCacheName = 'MarkerPoints' % Default marker points name
 
         % Debugging and optional arguments
         DebugMode = false

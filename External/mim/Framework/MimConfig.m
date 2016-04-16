@@ -27,6 +27,9 @@ classdef MimConfig < handle
         MexCacheFileName = 'MexCache.xml' % Filename for cache of information about compiled mex files
         ImageDatabaseFileName = 'ImageDatabase.mat' % Filename for cache of image database
         LinkingCacheFileName = 'PTKLinkingCache.xml' % Filename for cache of linked datasets
-    end    
+        OutputFolderCacheName = 'OutputFolder' % Filename for cache of output results
+        PreviewImageFileName = 'PreviewImages' % Filename for cache of preview images
+        ImageTemplatesCacheName = 'ImageTemplates' % Filename for cache of image context templates
+    end
 end
 

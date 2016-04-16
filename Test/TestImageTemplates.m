@@ -16,7 +16,7 @@ classdef TestImageTemplates < CoreTest
             mock_datset_disk_cache = MockDatasetDiskCache;
             mock_dataset_results = MockDatasetResults;
             context_def = PTKContextDef;
-            image_templates = MimImageTemplates(mock_dataset_results, context_def, mock_datset_disk_cache, mock_reporting);
+            image_templates = MimImageTemplates(PTKFrameworkAppDef, mock_dataset_results, context_def, mock_datset_disk_cache, mock_reporting);
             mock_dataset_results.ImageTemplates = image_templates;
             null_dataset_stack = [];
             

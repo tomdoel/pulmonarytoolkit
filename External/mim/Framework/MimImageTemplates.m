@@ -21,6 +21,8 @@ classdef MimImageTemplates < CoreBaseClass
     
     properties (Access = private)
         
+        Config                 % configuration which stroes the preview image cache filename
+        
         % Template images for each context
         TemplateImages
         
@@ -47,8 +49,9 @@ classdef MimImageTemplates < CoreBaseClass
     end
     
     methods
-        function obj = MimImageTemplates(dataset_results, context_def, dataset_disk_cache, reporting)
+        function obj = MimImageTemplates(framework_app_def, dataset_results, context_def, dataset_disk_cache, reporting)
             
+            obj.Config = framework_app_def.GetFrameworkConfig;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.DatasetResults = dataset_results;
             
@@ -115,7 +118,7 @@ classdef MimImageTemplates < CoreBaseClass
         
         function template = GetTemplateMask(obj, context, dataset_stack, reporting)
             % Returns a mask image for the context. Unlike a template image, which can be an
-            % empty image, the mask alweays has a binary image representing the lungs or
+            % empty image, the mask always has a binary image representing the lungs or
             % regions of the lungs corresponding to the context
             
             if (context == PTKContext.LungROI) || (context == PTKContext.OriginalImage)
@@ -257,8 +260,9 @@ classdef MimImageTemplates < CoreBaseClass
         function Load(obj, reporting)
             % Retrieves previous templates from the disk cache
         
-            if obj.DatasetDiskCache.Exists(PTKSoftwareInfo.ImageTemplatesCacheName, [], reporting)
-                info = obj.DatasetDiskCache.LoadData(PTKSoftwareInfo.ImageTemplatesCacheName, reporting);
+            filename = obj.Config.ImageTemplatesCacheName;
+            if obj.DatasetDiskCache.Exists(filename, [], reporting)
+                info = obj.DatasetDiskCache.LoadData(filename, reporting);
                 if isfield(info, 'TemplateDependencies')
                     obj.TemplateDependencies = info.TemplateDependencies;
                     obj.TemplateImages = info.TemplateImages;
@@ -278,7 +282,7 @@ classdef MimImageTemplates < CoreBaseClass
             info.TemplateImages = obj.TemplateImages;
             info.TemplatePluginsRun = obj.TemplatePluginsRun;
             info.TemplateDependencies = obj.TemplateDependencies;
-            obj.DatasetDiskCache.SaveData(PTKSoftwareInfo.ImageTemplatesCacheName, info, reporting);
+            obj.DatasetDiskCache.SaveData(obj.Config.ImageTemplatesCacheName, info, reporting);
         end
     end
 end
