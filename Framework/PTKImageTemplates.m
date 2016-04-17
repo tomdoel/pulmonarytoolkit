@@ -224,6 +224,7 @@ classdef PTKImageTemplates < CoreBaseClass
                 dependency_list = obj.TemplateDependencies(template_name{1});
                 for dependency = dependency_list.DependencyList
                     dependency_name = dependency.PluginName;
+                    dependency_context = dependency.Context;
                     if strcmp(dependency_name, plugin_name) && strcmp(dependency_context, context)
                         reporting.Log(['PTKImageTemplates: Context ' template_name{1} ' is now invalid']);
                         if obj.TemplateImages.isKey(template_name{1})
