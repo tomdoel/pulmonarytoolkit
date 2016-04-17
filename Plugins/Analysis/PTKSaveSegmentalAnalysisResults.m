@@ -43,8 +43,7 @@ classdef PTKSaveSegmentalAnalysisResults < PTKPlugin
             image_info = dataset.GetImageInfo;
             results = [];
             uid = image_info.ImageUid;
-            template = dataset.GetTemplateImage(PTKContext.LungROI);
-            patient_name = template.MetaHeader.PatientName.FamilyName;
+            patient_name = dataset.GetPatientName;
 
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe, PTKContextSet.Segment};
             

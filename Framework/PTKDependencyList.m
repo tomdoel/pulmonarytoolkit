@@ -61,7 +61,7 @@ classdef PTKDependencyList < handle
                         return;
                     else
                          if isfield(dependency.Attributes, 'IsEditedResult') && isfield(new_dependency.Attributes, 'IsEditedResult') && (dependency.Attributes.IsEditedResult ~= new_dependency.Attributes.IsEditedResult)
-                            disp(['Accepting duplicate dependency due to edited result for ' dependency.PluginName]);
+%                             disp(['Accepting duplicate dependency due to edited result for ' dependency.PluginName]);
                          else
                              if (dependency.Attributes.IgnoreDependencyChecks && new_dependency.Attributes.IgnoreDependencyChecks)
                                  dependency_exists = true;
