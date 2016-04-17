@@ -48,8 +48,8 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
             % Convert the results into a PTKResultsTable
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
-            template = dataset.GetTemplateImage(PTKContext.LungROI);
-            patient_name = [template.MetaHeader.PatientName.FamilyName '-'  template.MetaHeader.PatientID];
+            patient_name = dataset.GetPatientName;
+
             table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files

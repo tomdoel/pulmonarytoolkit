@@ -86,6 +86,12 @@ classdef PTKDatasetCallback < handle
             image_info = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetImageInfo(obj.Reporting);
         end
         
+        function patient_name = GetPatientName(obj, varargin)
+            % Returns a single string for identifying the patient. The format will depend on what information is available in the file metadata.
+            
+            patient_name = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetPatientName(obj.DatasetStack, obj.Reporting);
+        end
+        
         function template_image = GetTemplateImage(obj, context, varargin)
             % Returns an empty template image for the specified context
             % See PTKImageTemplates.m for valid contexts

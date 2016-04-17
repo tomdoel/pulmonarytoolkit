@@ -111,6 +111,29 @@ classdef PTKDatasetResults < handle
             image_info = obj.ImageInfo;
         end
         
+        function patient_name = GetPatientName(obj, dataset_stack, reporting)
+            % Returns a single string for identifying the patient. The format will depend on what information is available in the file metadata.
+            
+            template = obj.GetTemplateImage(PTKContext.LungROI, dataset_stack, reporting);
+            patient_name = '';
+
+            if isfield(template.MetaHeader, 'PatientName')
+                if isfield(template.MetaHeader.PatientName, 'FamilyName')
+                    patient_name = template.MetaHeader.PatientName.FamilyName;
+                else
+                    patient_name = template.MetaHeader.PatientName;
+                end
+                if isempty(patient_name) && isfield(template.MetaHeader.PatientName, 'PatientID')
+                    patient_name = template.MetaHeader.PatientName.PatientID;
+                end
+            end
+            if isempty(patient_name)
+                image_info = obj.GetImageInfo(reporting);
+                patient_name = image_info.ImageUid;
+            end
+            
+        end
+        
         function SaveData(obj, name, data, reporting)
             % Save data as a cache file associated with this dataset
         

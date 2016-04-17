@@ -37,8 +37,7 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
         function results = RunPlugin(dataset, context, reporting)
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
-            template = dataset.GetTemplateImage(PTKContext.LungROI);
-            patient_name = template.MetaHeader.PatientName.FamilyName;
+            patient_name = dataset.GetPatientName;
 
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
             results = dataset.GetResult('PTKVentilationAnalysis', contexts);
