@@ -98,7 +98,7 @@ classdef PTKReporting < CoreReporting
         
         function ErrorFromException(obj, identifier, message, ex)
             identifier = [ 'PTKMain:' identifier];
-            ErrorFromException@CoreReporting(identifier, message, ex);
+            ErrorFromException@CoreReporting(obj, identifier, message, ex);
         end        
     end
 end
