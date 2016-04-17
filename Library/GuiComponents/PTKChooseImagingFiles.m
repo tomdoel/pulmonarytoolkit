@@ -109,7 +109,7 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
     end
     
     % No format specified, so we try to infer from the file itself
-    [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(image_path, filenames{1}, [], reporting);
+    [image_type, principal_filename, secondary_filenames] = MimGuessFileType(image_path, filenames{1}, [], reporting);
     filenames = principal_filename;
     
     % If in DICOM format, then we will load the entire directory

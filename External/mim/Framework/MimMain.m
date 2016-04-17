@@ -239,7 +239,7 @@ classdef MimMain < CoreBaseClass
             while ~isempty(non_dicom_filenames)
                 next_filename = non_dicom_filenames{1};
                 non_dicom_filenames(1) = [];
-                [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(next_filename.Path, next_filename.Name, [], reporting);
+                [image_type, principal_filename, secondary_filenames] = MimGuessFileType(next_filename.Path, next_filename.Name, [], reporting);
                 
                 % Remove duplicate filenames (which can happen when loading
                 % metadata files which have raw and metaheader files)

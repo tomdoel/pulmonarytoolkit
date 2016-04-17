@@ -1,5 +1,5 @@
-function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to_get, reporting)
-    % PTKGetSingleImageInfo. Populates a DMSingleImageMetaInfo object with meta
+function single_image_info = MimGetSingleImageInfo(file_path, file_name, tags_to_get, reporting)
+    % MimGetSingleImageInfo. Populates a DMSingleImageMetaInfo object with meta
     %     information derived from an image file
     %
     %
@@ -28,7 +28,7 @@ function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to
     
     if isempty(header)
         % This does not appear to be a Dicom file
-        [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(file_path, file_name, [], reporting);
+        [image_type, principal_filename, secondary_filenames] = MimGuessFileType(file_path, file_name, [], reporting);
         
         modality = [];
         file_name = principal_filename{1};
@@ -53,7 +53,7 @@ function single_image_info = PTKGetSingleImageInfo(file_path, file_name, tags_to
         
         if isempty(series_uid)
             % If no series uid then we derive this from the image filename
-            [image_type, principal_filename, secondary_filenames] = PTKDiskUtilities.GuessFileType(file_path, file_name, [], reporting);
+            [image_type, principal_filename, secondary_filenames] = MimGuessFileType(file_path, file_name, [], reporting);
             series_uid = DMUtilities.GetIdentifierFromFilename(principal_filename{1});
         end
         
