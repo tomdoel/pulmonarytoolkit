@@ -28,13 +28,15 @@ classdef MimPluginDependencyTracker < CoreBaseClass
     
     properties
         DatasetDiskCache % Loads and saves data associated with this dataset
+        FrameworkAppDef % Framework configuration
         PluginCache % Used to check plugin version numbers
     end
     
     methods
         
-        function obj = MimPluginDependencyTracker(dataset_disk_cache, plugin_cache)
+        function obj = MimPluginDependencyTracker(framework_app_def, dataset_disk_cache, plugin_cache)
             obj.DatasetDiskCache = dataset_disk_cache;
+            obj.FrameworkAppDef = framework_app_def;
             obj.PluginCache = plugin_cache;
         end
         
@@ -46,10 +48,11 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             end
         end
         
+        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
         % Gets a plugin result, from the disk cache if possible. If there is no
         % cached result, or if the dependencies are invalid, or if the
         % "AlwaysRunPlugin" property is set, then the plugin is executed.
-        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
+        
             % Fetch plugin result from the disk cache
             result = [];
             if ~plugin_info.AlwaysRunPlugin
@@ -99,7 +102,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 % result is being requested from; however, the stack belongs to
                 % the primary dataset
                 plugin_version = plugin_info.PluginVersion;
-                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions, plugin_version, reporting);
+                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, obj.FrameworkAppDef.TimeFunctions.TimeFunctions, plugin_version, reporting);
                 
                 dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
 
@@ -112,7 +115,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 
                 new_cache_info = dataset_stack.Pop;
                 
-                if PTKSoftwareInfo.TimeFunctions
+                if obj.FrameworkAppDef.TimeFunctions
                     dataset_stack.ResumeTiming;
                 end
                 

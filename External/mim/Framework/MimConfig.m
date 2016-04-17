@@ -30,6 +30,8 @@ classdef MimConfig < handle
         OutputFolderCacheName = 'OutputFolder' % Filename for cache of output results
         PreviewImageFileName = 'PreviewImages' % Filename for cache of preview images
         ImageTemplatesCacheName = 'ImageTemplates' % Filename for cache of image context templates
+        
+        TimeFunctions = true        
     end
 end
 

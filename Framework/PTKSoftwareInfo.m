@@ -65,7 +65,6 @@ classdef PTKSoftwareInfo < handle
         % Debugging and optional arguments
         DebugMode = false
         GraphicalDebugMode = false
-        TimeFunctions = true
         FastMode = false
         DemoMode = false % If true, user plugins will be ignored
         WriteVerboseEntriesToLogFile = false

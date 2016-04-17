@@ -55,5 +55,9 @@ classdef PTKFrameworkAppDef < handle
         function debug_mode = IsDebugMode(obj)
             debug_mode = PTKSoftwareInfo.DebugMode;
         end
+        
+        function time_functions = TimeFunctions(obj)
+            time_functions = obj.Config.TimeFunctions;
+        end
     end
 end
