@@ -3,7 +3,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list, pa
     % 
     % PTKGraphContextVsMetric creates a figure and plots a graph showing measurements for particular lung regions, for one or more patients.
     %
-    % The data to plot must be held in a PTKResultsTable. You specify which contexts (regions), which metric (measurement) and which patients to plot.
+    % The data to plot must be held in a MimResultsTable. You specify which contexts (regions), which metric (measurement) and which patients to plot.
     % The contexts (regions) will be shown along the x-axis, and the values of the metric will be shown on the y-axis.
     %
     % Labels and ticks will be automatically generated from the data.
@@ -14,7 +14,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list, pa
     %     figure_handle = PTKGraphContextVsMetric(table, metric, context_list, patient_uids)
     %
     % Inputs:
-    %     table - a PTKResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
+    %     table - a MimResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
     %     metric - a string containing the id of the metric to plot. This must correspond to the metic id in the table.
     %     context_list - Set to [] to plot all contexts, otherwise specify a set of one or more contexts or context sets to plot. Contexts will appear on the x-axis.
     %     patient_uids - Set to [] to plot all patients, otherwise specify a set of one of more patient UIDs to appear on the graph.

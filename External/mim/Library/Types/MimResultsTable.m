@@ -1,5 +1,5 @@
-classdef PTKResultsTable < handle
-    % PTKResultsTable.
+classdef MimResultsTable < handle
+    % MimResultsTable Aggregates multiple results into a single structure suitable for processing, saving or visualising
     %
     %
     %     Licence
@@ -28,7 +28,7 @@ classdef PTKResultsTable < handle
     end
     
     methods
-        function obj = PTKResultsTable
+        function obj = MimResultsTable
             obj.IndexMaps = [];
             obj.NameMaps = [];
             
@@ -69,7 +69,7 @@ classdef PTKResultsTable < handle
             if ~new_value
                 current_value = obj.ResultsTable{patient_index, metric_index, context_index, slice_number_index};
                 if ~isempty(current_value)
-                    reporting.ShowWarning('PTKResultsTable:ValueBeingOverwritten', 'The value you are adding overwrites an existing value', []);
+                    reporting.ShowWarning('MimResultsTable:ValueBeingOverwritten', 'The value you are adding overwrites an existing value', []);
                 end
             end
             

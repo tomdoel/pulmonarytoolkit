@@ -6,7 +6,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     % PTKSaveAxialAnalysisResults, PTKSaveCoronalAnalysisResults,
     % PTKSaveSagittalAnalysisResults for examples of how to compute these
     % measurements along the corresponding axes. Once the measurments have been
-    % computed and stored in a PTKResultsTable object, call PTKGraphMetricVsDistance
+    % computed and stored in a MimResultsTable object, call PTKGraphMetricVsDistance
     % to plot a graph based on these results for one or more subjects.
     %    
     % Labels and ticks will be automatically generated from the data.
@@ -17,7 +17,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     %     figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, figure_title, context_list, patient_list, reporting)
     %
     % Inputs:
-    %     table - a PTKResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
+    %     table - a MimResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
     %     metric - a string containing the id of the metric to plot. This must correspond to the metic id in the table.
     %     metric_std - a string containing the id of the metric to use for the error
     %         bar in the plot. This must correspond to the metic id in the table, or be

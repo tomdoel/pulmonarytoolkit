@@ -45,14 +45,14 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
             results = dataset.GetResult('PTKSagittalAnalysis', contexts);            
             
-            % Convert the results into a PTKResultsTable
+            % Convert the results into a MimResultsTable
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
             patient_name = dataset.GetPatientName;
-            table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
+            table = MimConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
-            dataset.SaveTableAsCSV('PTKSaveSagittalAnalysisResults', 'Sagittal analysis', 'SagittalResults', 'Density analysis in bins along the left-right axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveSagittalAnalysisResults', 'Sagittal analysis', 'SagittalResults', 'Density analysis in bins along the left-right axis', table, MimResultsTable.ContextDim, MimResultsTable.SliceNumberDim, MimResultsTable.MetricDim, []);
             
             % Generate graphs of the results
             y_label = 'Distance along sagittal axis (%)';

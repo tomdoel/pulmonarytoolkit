@@ -1,5 +1,5 @@
-function results_table = PTKConvertMetricsToTable(results, patient_name, patient_id, reporting, results_table)
-    % PTKConvertMetricsToTable.
+function results_table = MimConvertMetricsToTable(results, patient_name, patient_id, reporting, results_table)
+    % MimConvertMetricsToTable.
     %
     %
     %     Licence
@@ -10,7 +10,7 @@ function results_table = PTKConvertMetricsToTable(results, patient_name, patient
     %       
    
     if nargin < 5 || isempty(results_table)
-        results_table = PTKResultsTable;
+        results_table = MimResultsTable;
     end
     AddToTable(results_table, results, patient_id, reporting);
     results_table.AddPatientName(patient_id, patient_name);
@@ -18,10 +18,10 @@ end
 
 function AddToTable(table, results, patient_id, reporting)
     
-    table.Titles{PTKResultsTable.ContextDim} = 'Region';
-    table.Titles{PTKResultsTable.MetricDim} = 'Measurement';
-    table.Titles{PTKResultsTable.SliceNumberDim} = 'Slice Number';
-    table.Titles{PTKResultsTable.PatientDim} = 'Patient';
+    table.Titles{MimResultsTable.ContextDim} = 'Region';
+    table.Titles{MimResultsTable.MetricDim} = 'Measurement';
+    table.Titles{MimResultsTable.SliceNumberDim} = 'Slice Number';
+    table.Titles{MimResultsTable.PatientDim} = 'Patient';
     
     field_map = GetFieldMap(results, table);
     

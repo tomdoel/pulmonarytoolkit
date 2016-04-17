@@ -54,6 +54,8 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('External', 'coremat');
         path_folders{end + 1} = fullfile('External', 'mim', 'Framework');
         path_folders{end + 1} = fullfile('External', 'mim', 'Legacy');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Conversion');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Types');
         path_folders{end + 1} = fullfile('External', 'gem');
         path_folders{end + 1} = fullfile('External', 'matnat');
         path_folders{end + 1} = fullfile('External', 'dicomat');
