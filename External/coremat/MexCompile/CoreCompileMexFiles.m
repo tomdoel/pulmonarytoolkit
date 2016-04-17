@@ -126,11 +126,21 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
                         progress_message_showing_compile = true;
                         reporting.UpdateProgressMessage('Compiling mex files');
                     end
+                    use_cuda = false;
                     if isa(mex_file, 'CoreCudaInfo')
+                        if isempty(cuda_compiler)
+                            reporting.ShowWarning('CoreCompileMexFiles:NoCudaCompilerFound', ['The mex source file ' src_fullfile ' requires the CUDA SDK to be installed.'], []);
+                        else
+                            use_cuda = true;
+                        end
+                    end
+                    
+                    if use_cuda
                         mex_result = CoreCudaCompile.Compile(cuda_compiler, mex_file, src_fullfile, output_directory);
                     else
                         mex_result = CoreMexCompile.Compile(compiler, mex_file, src_fullfile, output_directory);
                     end
+                    
                     mex_file.LastAttemptedCompiledVersion = mex_file.CurrentVersion;
                     mex_file.LastAttemptedCompiler = compiler;
                     if (mex_result == 0)
@@ -238,9 +248,6 @@ function cuda_compiler = GetCudaCompiler
             if isempty(cuda_compiler)
                 cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramFiles(x86)'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
             end
-            if isempty(cuda_compiler)
-                disp('Cannot find nvcc');
-            end
         end
     else
         [status, cuda_compiler] = system('which nvcc');
@@ -249,7 +256,6 @@ function cuda_compiler = GetCudaCompiler
             if 2 == exist('/usr/local/cuda/bin/nvcc', 'file')
                 cuda_compiler = '/usr/local/cuda/bin/nvcc';
             else
-                disp('Cannot find nvcc');
                 cuda_compiler = [];
             end
         end

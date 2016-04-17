@@ -149,7 +149,9 @@ classdef MimImageTemplates < CoreBaseClass
             end
             dependencies = cache_info.DependencyList;
             
-            obj.InvalidateIfInDependencyList(plugin_name, reporting);
+            if result_may_have_changed
+                obj.InvalidateIfInDependencyList(plugin_name, context, reporting);
+            end
             
             % Check whether the plugin that has been run is the template for
             % this context
@@ -218,14 +220,15 @@ classdef MimImageTemplates < CoreBaseClass
             obj.TemplatePluginsRun  = containers.Map;
         end
         
-        function InvalidateIfInDependencyList(obj, plugin_name, reporting)
+        function InvalidateIfInDependencyList(obj, plugin_name, context, reporting)
             % Remove any templates whch depend on the given plugin name
             
             for template_name = obj.TemplateDependencies.keys
                 dependency_list = obj.TemplateDependencies(template_name{1});
                 for dependency = dependency_list.DependencyList
                     dependency_name = dependency.PluginName;
-                    if strcmp(dependency_name, plugin_name)
+                    dependency_context = dependency.Context;
+                    if strcmp(dependency_name, plugin_name) && strcmp(dependency_context, context)
                         reporting.Log(['MimImageTemplates: Context ' template_name{1} ' is now invalid']);
                         if obj.TemplateImages.isKey(template_name{1})
                             obj.TemplateImages.remove(template_name{1});

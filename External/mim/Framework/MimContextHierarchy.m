@@ -122,7 +122,7 @@ classdef MimContextHierarchy < CoreBaseClass
             obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
 
             % Invalidate any image templates which depend on this plugin
-            obj.ImageTemplates.InvalidateIfInDependencyList(plugin_name)
+            obj.ImageTemplates.InvalidateIfInDependencyList(plugin_name, input_context, reporting);
         end
         
     end
