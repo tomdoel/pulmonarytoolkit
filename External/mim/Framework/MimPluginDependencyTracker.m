@@ -102,7 +102,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 % result is being requested from; however, the stack belongs to
                 % the primary dataset
                 plugin_version = plugin_info.PluginVersion;
-                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, obj.FrameworkAppDef.TimeFunctions.TimeFunctions, plugin_version, reporting);
+                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, obj.FrameworkAppDef.TimeFunctions, plugin_version, reporting);
                 
                 dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
 
