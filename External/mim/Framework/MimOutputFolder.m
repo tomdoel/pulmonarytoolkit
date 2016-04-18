@@ -37,7 +37,7 @@ classdef MimOutputFolder < CoreBaseClass
             obj.ImageTemplates = image_templates;
             obj.ImageUid = image_info.ImageUid;
             
-            obj.OutputRecords = PTKOutputInfo.empty;
+            obj.OutputRecords = MimOutputInfo.empty;
             
             % Loads cached template data
             obj.Load(reporting);
@@ -48,7 +48,7 @@ classdef MimOutputFolder < CoreBaseClass
             output_folder = obj.GetOutputPath(dataset_stack, reporting);
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
-            new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
+            new_record = MimOutputInfo(plugin_name, description, ptk_file_name, date_text);
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
             PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting);
             obj.AddRecord(new_record, reporting);
@@ -60,7 +60,7 @@ classdef MimOutputFolder < CoreBaseClass
             output_folder = obj.GetOutputPath(dataset_stack, reporting);
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
-            new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
+            new_record = MimOutputInfo(plugin_name, description, ptk_file_name, date_text);
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
             CoreDiskUtilities.SaveFigure(figure_handle, fullfile(file_path, file_name));
             obj.AddRecord(new_record, reporting);
@@ -72,7 +72,7 @@ classdef MimOutputFolder < CoreBaseClass
             output_folder = obj.GetOutputPath(dataset_stack, reporting);
             file_path = fullfile(output_folder, subfolder_name);
             ptk_file_name = PTKFilename(file_path, file_name);
-            new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
+            new_record = MimOutputInfo(plugin_name, description, ptk_file_name, date_text);
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
             PTKCreateSurfaceMesh(file_path, file_name, segmentation, smoothing_size, small_structures, coordinate_system, template_image, reporting);
             obj.AddRecord(new_record, reporting);
@@ -82,7 +82,7 @@ classdef MimOutputFolder < CoreBaseClass
         function RecordNewFileAdded(obj, plugin_name, file_path, file_name, description, reporting)
             date_text = date;
             ptk_file_name = PTKFilename(file_path, file_name);
-            new_record = PTKOutputInfo(plugin_name, description, ptk_file_name, date_text);
+            new_record = MimOutputInfo(plugin_name, description, ptk_file_name, date_text);
             obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
         end

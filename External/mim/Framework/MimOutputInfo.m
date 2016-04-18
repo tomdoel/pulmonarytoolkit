@@ -1,5 +1,5 @@
-classdef PTKOutputInfo
-    % PTKOutputInfo. A structure for holding information related to output files
+classdef MimOutputInfo
+    % MimOutputInfo. A structure for holding information related to output files
     %
     %
     %     Licence
@@ -17,7 +17,7 @@ classdef PTKOutputInfo
     end
     
     methods
-        function obj = PTKOutputInfo(plugin_name, description, filenames, date)
+        function obj = MimOutputInfo(plugin_name, description, filenames, date)
             if nargin > 0
                 obj.Filenames = filenames;
                 obj.Description = description;
