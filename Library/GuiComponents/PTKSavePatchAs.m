@@ -51,7 +51,7 @@ function SavePatch(patch_data, filename, pathname, filter_index, reporting)
         
         switch filter_index
             case 1
-                PTKDiskUtilities.SavePatchFile(patch_data, fullfile(pathname, filename), reporting);
+                MimDiskUtilities.SavePatchFile(patch_data, fullfile(pathname, filename), reporting);
         end
     end
 end

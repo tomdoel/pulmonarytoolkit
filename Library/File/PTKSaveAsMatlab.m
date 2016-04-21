@@ -30,5 +30,5 @@ function PTKSaveAsMatlab(image_data, path, filename, reporting)
 
     value = image_data.RawImage; %#ok<NASGU>
     full_filename = fullfile(path, filename);
-    PTKDiskUtilities.Save(full_filename, value);
+    MimDiskUtilities.Save(full_filename, value);
 end

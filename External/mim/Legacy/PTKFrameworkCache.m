@@ -21,7 +21,7 @@ classdef PTKFrameworkCache < handle
         function cache = LoadLegacyCache(legacy_cache_filename, new_cache_filename, reporting)
             try
                 if exist(legacy_cache_filename, 'file')
-                    cache_struct = PTKDiskUtilities.Load(legacy_cache_filename);
+                    cache_struct = MimDiskUtilities.Load(legacy_cache_filename);
                     cache = cache_struct.cache;
                     cache = CoreMexCache(new_cache_filename, cache.MexInfoMap);
                     cache.IsNewlyCreated = false;

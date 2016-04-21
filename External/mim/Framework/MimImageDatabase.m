@@ -346,7 +346,7 @@ classdef MimImageDatabase < handle
             try
                 value = [];
                 value.database = obj;
-                PTKDiskUtilities.Save(obj.Filename, value);
+                MimDiskUtilities.Save(obj.Filename, value);
                 if ~isempty(obj.LegacyFilename) && (2 == exist(obj.LegacyFilename, 'file'))
                     delete(obj.LegacyFilename);
                     obj.LegacyFilename = [];
@@ -442,7 +442,7 @@ classdef MimImageDatabase < handle
                 legacy_database_filename = framework_app_def.GetFrameworkDirectories.GetLegacyImageDatabaseFilePath;
                                 
                 if exist(database_filename, 'file')
-                    database_struct = PTKDiskUtilities.Load(database_filename);
+                    database_struct = MimDiskUtilities.Load(database_filename);
                     database = database_struct.database;
                     database.IsNewlyCreated = false;
                     database.VersionHasChanged = isempty(database.Version) || (database.Version ~= MimImageDatabase.CurrentVersionNumber);                    
@@ -452,7 +452,7 @@ classdef MimImageDatabase < handle
                     % Support for version 3 and previous, which had a
                     % different image database filename
                     
-                    database_struct = PTKDiskUtilities.Load(legacy_database_filename);
+                    database_struct = MimDiskUtilities.Load(legacy_database_filename);
                     database = database_struct.database;
                     database.Filename = database_filename;
                     database.IsNewlyCreated = false;

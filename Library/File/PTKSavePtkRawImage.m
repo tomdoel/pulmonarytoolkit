@@ -26,7 +26,7 @@ end
 function SaveCompressed(full_raw_filename, raw_image, format, param1, param2, reporting)
     image_class = class(raw_image);
 
-    if ~PTKDiskUtilities.CompressionSupported(format, image_class, reporting)
+    if ~MimDiskUtilities.CompressionSupported(format, image_class, reporting)
         reporting.LogVerbose([format, ' compression not supported for image data type ', image_class]);
         disp([format, ' compression not supported for image data type ', image_class]);
         SaveUncompressed(full_raw_filename, raw_image);

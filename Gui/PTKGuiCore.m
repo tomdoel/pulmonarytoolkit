@@ -313,7 +313,7 @@ classdef PTKGuiCore < GemFigure
                 % will start from there
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(folder_path, obj.Reporting);
                 
-                patch = PTKDiskUtilities.LoadPatch(fullfile(folder_path, filename{1}), obj.Reporting);
+                patch = MimDiskUtilities.LoadPatch(fullfile(folder_path, filename{1}), obj.Reporting);
                 if (strcmp(patch.PatchType, 'EditedResult'))
                     uid = patch.SeriesUid;
                     plugin = patch.PluginName;
@@ -388,7 +388,7 @@ classdef PTKGuiCore < GemFigure
             % overlay. Prompts the user for a filename
             
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
-            [filename, path_name, save_type] = PTKDiskUtilities.SaveImageDialogBox(path_name);
+            [filename, path_name, save_type] = MimDiskUtilities.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && ischar(path_name)
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
@@ -396,7 +396,7 @@ classdef PTKGuiCore < GemFigure
                 % Hide the progress bar before capture
                 obj.Reporting.ProgressDialog.Hide;
                 frame = obj.ImagePanel.Capture;
-                PTKDiskUtilities.SaveImageCapture(frame, CoreFilename(path_name, filename), save_type, obj.Reporting)
+                MimDiskUtilities.SaveImageCapture(frame, CoreFilename(path_name, filename), save_type, obj.Reporting)
             end
         end
         

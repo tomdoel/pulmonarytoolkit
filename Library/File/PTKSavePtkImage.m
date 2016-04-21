@@ -21,7 +21,7 @@ function header_file = PTKSavePtkImage(image_data, file_path, file_name, compres
         % Compression currently only supports 3D images
         compression = [];
     else
-        if ~PTKDiskUtilities.CompressionSupported(compression, image_class, reporting)
+        if ~MimDiskUtilities.CompressionSupported(compression, image_class, reporting)
             compression = [];
         end
     end

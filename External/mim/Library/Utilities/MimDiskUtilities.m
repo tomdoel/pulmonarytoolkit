@@ -1,5 +1,5 @@
-classdef PTKDiskUtilities
-    % PTKDiskUtilities. Disk-related utility functions.
+classdef MimDiskUtilities
+    % MimDiskUtilities. Disk-related utility functions.
     %
     %
     %     Licence
@@ -48,7 +48,7 @@ classdef PTKDiskUtilities
         function meta_header = ReadMetaHeader(header_filename, reporting)
             file_id = fopen(header_filename);
             if (file_id <= 0)
-                reporting.Error('PTKDiskUtilities:OpenFileFailed', ['Unable to open file ' header_filename]);
+                reporting.Error('MimDiskUtilities:OpenFileFailed', ['Unable to open file ' header_filename]);
             end
             
             try
@@ -69,7 +69,7 @@ classdef PTKDiskUtilities
                 values_array = meta_header_data{2};
                 data_filename = values_array{data_filename_index};
                 if strcmp(data_filename, 'LOCAL')
-                    reporting.ShowWarning('PTKDiskUtilities:LocalDataNotSupported', 'PTK does not currently support image files with data embedded in the same file as the metaheader.');
+                    reporting.ShowWarning('MimDiskUtilities:LocalDataNotSupported', 'PTK does not currently support image files with data embedded in the same file as the metaheader.');
                     meta_header = [];
                     return;
                 end
@@ -92,7 +92,7 @@ classdef PTKDiskUtilities
                 return;
             end
             
-            [is_meta_header, raw_filename] = PTKDiskUtilities.IsFileMetaHeader(fullfile(image_path, header_filename), reporting);
+            [is_meta_header, raw_filename] = MimDiskUtilities.IsFileMetaHeader(fullfile(image_path, header_filename), reporting);
             if ~is_meta_header
                 principal_filename = {};
                 secondary_filenames = {};
@@ -111,16 +111,16 @@ classdef PTKDiskUtilities
         end
         
         function result = SaveStructure(file_path, filename_base, result, compression, reporting)
-            result = PTKDiskUtilities.ConvertStructAndSaveRawImageData(result, file_path, filename_base, 0, compression, reporting);
+            result = MimDiskUtilities.ConvertStructAndSaveRawImageData(result, file_path, filename_base, 0, compression, reporting);
 
             filename = [fullfile(file_path, filename_base) '.mat'];
-            PTKDiskUtilities.Save(filename, result);
+            MimDiskUtilities.Save(filename, result);
         end
 
         function results = LoadStructure(file_path, filename_base, reporting)
             filename = [fullfile(file_path, filename_base) '.mat'];
-            results_struct = PTKDiskUtilities.Load(filename);
-            results = PTKDiskUtilities.ConvertStructAndLoadRawImageData(results_struct, file_path, filename_base, reporting);
+            results_struct = MimDiskUtilities.Load(filename);
+            results = MimDiskUtilities.ConvertStructAndLoadRawImageData(results_struct, file_path, filename_base, reporting);
         end
         
         function [new_structure, next_index] = ConvertStructAndSaveRawImageData(old_structure, file_path, filename_base, next_index, compression, reporting)
@@ -128,7 +128,7 @@ classdef PTKDiskUtilities
                 field_names = fieldnames(old_structure);
                 for field = field_names'
                     field_name = field{1};
-                    [new_structure.(field_name), next_index] = PTKDiskUtilities.ConvertStructAndSaveRawImageData(old_structure.(field_name), file_path, filename_base, next_index, compression, reporting);
+                    [new_structure.(field_name), next_index] = MimDiskUtilities.ConvertStructAndSaveRawImageData(old_structure.(field_name), file_path, filename_base, next_index, compression, reporting);
                 end
             else
                 if isa(old_structure, 'PTKImage')
@@ -153,7 +153,7 @@ classdef PTKDiskUtilities
                 field_names = fieldnames(old_structure);
                 for field = field_names'
                     field_name = field{1};
-                    new_structure.(field_name) = PTKDiskUtilities.ConvertStructAndLoadRawImageData(old_structure.(field_name), file_path, filename_base, reporting);
+                    new_structure.(field_name) = MimDiskUtilities.ConvertStructAndLoadRawImageData(old_structure.(field_name), file_path, filename_base, reporting);
                 end
             else
                 new_structure = old_structure;
@@ -174,7 +174,7 @@ classdef PTKDiskUtilities
                 case 'jpg'
                     imwrite(capture.cdata, file_name, 'jpg', 'Quality', 70);
                 otherwise
-                    reporting.Error('PTKDiskUtilities:SaveImageCapture:UnknownImageType', ['SaveImageCapture() does not support the image type ', save_type]);
+                    reporting.Error('MimDiskUtilities:SaveImageCapture:UnknownImageType', ['SaveImageCapture() does not support the image type ', save_type]);
             end
             reporting.CompleteProgress;
         end
@@ -199,7 +199,7 @@ classdef PTKDiskUtilities
                             return;
                     end
                 otherwise
-                    reporting.Error('PTKDiskUtilities:CompressionSupported:UnknownCompressionType', ['I do not recognise the compression types  ', compression]);
+                    reporting.Error('MimDiskUtilities:CompressionSupported:UnknownCompressionType', ['I do not recognise the compression types  ', compression]);
             end
             
         end
@@ -208,24 +208,24 @@ classdef PTKDiskUtilities
             try
                 value = [];
                 value.patch = patch_object;
-                PTKDiskUtilities.Save(filename, value);
+                MimDiskUtilities.Save(filename, value);
             catch ex
-                reporting.ErrorFromException('PTKDiskUtilities:FailedtoSavePatchFile', ['Unable to save PTK patch file ' filename], ex);
+                reporting.ErrorFromException('MimDiskUtilities:FailedtoSavePatchFile', ['Unable to save PTK patch file ' filename], ex);
             end
         end
         
         function patch = LoadPatch(filename, reporting)
             try
                 if exist(filename, 'file')
-                    patch_struct = PTKDiskUtilities.Load(filename);
+                    patch_struct = MimDiskUtilities.Load(filename);
                     patch = patch_struct.patch;
                 else
-                    reporting.Error('PTKDiskUtilities:PatchFileNotFound', 'No patch file found.');
+                    reporting.Error('MimDiskUtilities:PatchFileNotFound', 'No patch file found.');
                     patch = [];
                 end
                 
             catch ex
-                reporting.ErrorFromException('PTKDiskUtilities:FailedtoLoadPatchFile', ['Error when loading patch file ' filename '.'], ex);
+                reporting.ErrorFromException('MimDiskUtilities:FailedtoLoadPatchFile', ['Error when loading patch file ' filename '.'], ex);
             end
         end
         

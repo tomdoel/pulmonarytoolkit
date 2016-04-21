@@ -118,7 +118,7 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     % raw image data
     elseif strcmp(ext, '.mhd') || strcmp(ext, '.mha')
         image_type = PTKImageFileFormat.Metaheader;
-        [is_meta_header, raw_filename] = PTKDiskUtilities.IsFileMetaHeader(fullfile(image_path, image_filename), reporting);
+        [is_meta_header, raw_filename] = MimDiskUtilities.IsFileMetaHeader(fullfile(image_path, image_filename), reporting);
         if ~is_meta_header
             reporting.Error('MimGuessFileType:OpenMHDFileFailed', ['Unable to read metaheader file ' image_filename]);
         end
@@ -131,7 +131,7 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     % be loaded or the raw filename does not match the raw file we are
     % loading
     elseif strcmp(ext, '.raw')
-        [principal_filename, secondary_filenames] = PTKDiskUtilities.GetHeaderFileFromRawFile(image_path, name, reporting);
+        [principal_filename, secondary_filenames] = MimDiskUtilities.GetHeaderFileFromRawFile(image_path, name, reporting);
         if isempty(principal_filename)
             reporting.ShowWarning('MimGuessFileType:HeaderFileLoadError', ['Unable to find valid header file for ' fullfile(image_path, image_filename)], []);
         else
@@ -144,7 +144,7 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     end
 
     % Unknown file type. Try looking for a header file
-    [principal_filename_mh, secondary_filenames_mh] = PTKDiskUtilities.GetHeaderFileFromRawFile(image_path, name, reporting);
+    [principal_filename_mh, secondary_filenames_mh] = MimDiskUtilities.GetHeaderFileFromRawFile(image_path, name, reporting);
     if (~isempty(principal_filename_mh)) && (strcmp(secondary_filenames_mh{1}, image_filename))
         image_type = PTKImageFileFormat.Metaheader;
         principal_filename = principal_filename_mh;

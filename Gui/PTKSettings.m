@@ -37,7 +37,7 @@ classdef PTKSettings < CoreBaseClass
             try
                 settings_filename = app_def.GetSettingsFilePath;
                 if exist(settings_filename, 'file')
-                    settings_struct = PTKDiskUtilities.Load(settings_filename);
+                    settings_struct = MimDiskUtilities.Load(settings_filename);
                     settings = settings_struct.settings;
                     settings.SettingsFilename = settings_filename;
                 else
@@ -127,7 +127,7 @@ classdef PTKSettings < CoreBaseClass
             try
                 value = [];
                 value.settings = obj;
-                PTKDiskUtilities.Save(settings_filename, value);
+                MimDiskUtilities.Save(settings_filename, value);
             catch ex
                 reporting.ErrorFromException('PTKSettings:FailedtoSaveSettingsFile', ['Unable to save settings file ' settings_filename], ex);
             end
