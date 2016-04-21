@@ -147,7 +147,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     set(figure_handle, 'position', [0,0, graph_size]);
     hold(axes_handle, 'on');
     
-    [y_tick_spacing, min_y, max_y] = PTKGraphUtilities.GetOptimalTickSpacing(min_y, max_y);
+    [y_tick_spacing, min_y, max_y] = MimVisualiseIn3D.GetOptimalTickSpacing(min_y, max_y);
     y_ticks = 0 : y_tick_spacing : max_y;
     
     % Draw lines at 10% distance intervals

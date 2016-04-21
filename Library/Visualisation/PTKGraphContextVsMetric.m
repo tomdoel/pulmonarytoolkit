@@ -203,7 +203,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list, pa
         legend_strings{patient_iterator} = table.NameMaps{1}(patient_uid);
     end
     
-    [y_tick_spacing, min_y, max_y] = PTKGraphUtilities.GetOptimalTickSpacing(min_y, max_y);
+    [y_tick_spacing, min_y, max_y] = MimVisualiseIn3D.GetOptimalTickSpacing(min_y, max_y);
     
     y_ticks = min_y : y_tick_spacing : max_y;
     

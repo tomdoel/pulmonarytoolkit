@@ -1,5 +1,5 @@
-classdef PTKGraphUtilities
-    % PTKGraphUtilities. Utility functions related to graph plotting
+classdef MimVisualiseIn3D
+    % MimVisualiseIn3D. Utility functions related to graph plotting
     %
     %
     %     Licence
