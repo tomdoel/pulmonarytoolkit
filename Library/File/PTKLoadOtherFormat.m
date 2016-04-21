@@ -14,9 +14,8 @@ function ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, image_file_f
     %             filenames       the filename of the header file to load.
     %             image_file_format   enumeration of PTKImageFileFormat
     %                                 describing the file format
-    %             reporting       Optional - an object implementing the PTKReporting 
-    %                             interface for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence

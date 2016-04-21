@@ -10,8 +10,8 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     %         ------
     %             original_image - The MRI image from which to segment the lungs
     %             filter_size_mm - The standard deviation of the filter to apply
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting      - an object implementing CoreReportingInterface
+    %                              for reporting progress and warnings
     %             start_point_right - optionally specify a starting point
     %
     %         Outputs:

@@ -63,7 +63,7 @@ classdef PTKGuiCore < GemFigure
             
             % Create the reporting object. Later we will update it with the viewer panel and
             % the new progress panel when these have been created.
-            reporting = PTKReporting(splash_screen, PTKSoftwareInfo.WriteVerboseEntriesToLogFile, app_def.GetLogFilePath);
+            reporting = MimReporting(splash_screen, PTKSoftwareInfo.WriteVerboseEntriesToLogFile, app_def.GetLogFilePath);
             reporting.Log('New session of PTKGui');
                         
             % Call the base class to initialise the figure class

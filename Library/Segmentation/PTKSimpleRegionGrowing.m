@@ -13,8 +13,8 @@ function output_image = PTKSimpleRegionGrowing(threshold_image, start_points_glo
     %             start_points - an array of points, where each point is a
     %                 coordinate in the form [i, j, k]. The region growing will
     %                 begin from all these points simultaneously
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %         Outputs:
     %         -------

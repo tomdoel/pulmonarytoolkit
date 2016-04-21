@@ -19,8 +19,8 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     %         crop the image, so that the correct VoxelSize,
     %         OriginalImageSize and Origin parameters are set.
     %
-    %     reporting (optional) - an object implementing the PTKReporting
-    %         interface for reporting progress and warnings
+    %     reporting (optional) - an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
     % Outputs:
     %     top_of_trachea - coordinate (i,j,k) of a point inside and near the top
@@ -43,6 +43,10 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     
     if nargin < 2
         reporting = CoreReportingDefault;
+    end
+    
+    if nargin < 3
+        debug_mode = false;
     end
     
     reporting.UpdateProgressMessage('Finding top of trachea');

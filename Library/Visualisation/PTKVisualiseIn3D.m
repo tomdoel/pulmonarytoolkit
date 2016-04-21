@@ -31,8 +31,8 @@ function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing
     %         an appropriate minimum volume value. Any components smaller than this
     %         value will not be rendered.
     %    
-    %     reporting - a PTKReporting object for progress, warning and
-    %         error reporting.
+    %     reporting - an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
     %
     %

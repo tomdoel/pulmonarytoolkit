@@ -17,9 +17,8 @@ function path_name = PTKSaveAs(image_data, patient_name, path_name, is_secondary
     %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
     %             is_secondary_capture   true if the image is derived, false if the pixel data 
     %                             directly corresponds to the original image pixel data
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence

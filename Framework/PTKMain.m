@@ -1,13 +1,15 @@
 classdef PTKMain < MimMain
     % PTKMain. Imports and provides access to data from the Pulmonary Toolkit
     %
+    %     PTKMain is a specialist implementation of the MimMain class.
+    %
     %     PTKMain provides access to data from the Pulmonary Toolkit, and allows 
     %     you to import new data. Data is accessed through one or more MimDataset
     %     objects. Your code should create a single PTKMain object, and then ask
     %     it to create a MimDataset object for each dataset you wish to access. 
     %
     %     PTKMain is essentially a class factory for MimDatasets, but shares the 
-    %     PTKReporting (error/progress reporting) objects between all 
+    %     MimReportingInterface (error/progress reporting) objects between all 
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the Pulmonary Toolkit.
     %

@@ -23,7 +23,7 @@ classdef PTKAirwayGenerator < handle
     %             centreline_tree,          % A PTKModelTree produced from PTKAirwayCentreline
     %             point_limit_voxels,     % Branches will terminate if the size of the region they grow into in voxels is less than this limit
     %             approx_number_points,   %
-    %             reporting               % A PTKReporting object for error, warning and progress reporting
+    %             reporting               % A CoreReportingInterface object for error, warning and progress reporting
     %         )
     %
     %     Licence

@@ -18,9 +18,8 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
     %                             coordinate_system. Provides the required
     %                             parameters for reconstructing the centreline
     %                             tree.
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %     Licence
     %     -------

@@ -19,9 +19,8 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     %                             (e.g. a segmentation), and should be set to false when the 
     %                             pixel data is unaltered from the original
     %                             image (except for cropping or reordering axes)
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence

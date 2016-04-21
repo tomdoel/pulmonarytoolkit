@@ -18,8 +18,8 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
     %                 This is better at segmenting the lungs for noisy/diseased
     %                 images where voxels take on a wider range of values, but
     %                 may segment airway walls.
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %         Outputs:
     %         -------

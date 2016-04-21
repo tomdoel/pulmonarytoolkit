@@ -16,9 +16,8 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
     %                             specifying the coordinate system to use
     %             template_image  A PTKImage providing voxel size and image size
     %                             parameters
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence

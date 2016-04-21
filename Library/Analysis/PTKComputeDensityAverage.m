@@ -11,8 +11,8 @@ function [density_average, density_values_computed_mask, density_valid_values_ma
     %
     %     mask - a PTKImage mask containing the voxels inside the lung
     %
-    %     reporting (optional) - an object implementing the PTKReporting
-    %         interface for reporting progress and warnings
+    %     reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     % Outputs:
     %     density_average - a PTKImage containing average density values in g/mL

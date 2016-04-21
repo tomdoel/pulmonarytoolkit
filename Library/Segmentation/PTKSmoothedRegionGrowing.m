@@ -16,8 +16,8 @@ function output_image = PTKSmoothedRegionGrowing(threshold_image, start_points_g
     %                 begin from all these points simultaneously
     %             smoothing_size_mm - amoung of smoothing. A larger value will
     %                 give better results but will be slower
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %         Outputs:
     %         -------

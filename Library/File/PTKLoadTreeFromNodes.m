@@ -17,9 +17,8 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     %                             coordinate_system. Provides the required
     %                             parameters for reconstructing the centreline
     %                             tree.
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %     Licence
     %     -------
@@ -31,6 +30,10 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     if nargin < 4
         reporting.Error('PTKLoadTreeFromNodes:BadArguments', 'No coordinate_system parameter specified');
     end
+    
+    if nargin < 6
+        reporting = CoreReportingDefault;
+    end    
     
     if ~isa(coordinate_system, 'PTKCoordinateSystem')
         reporting.Error('PTKLoadTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');

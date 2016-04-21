@@ -12,9 +12,8 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     %             path            The path where the files are located. For the
     %                             current directory, use .
     %             filenames       the filename of the header file to load.
-    %             reporting       Optional - an object implementing the PTKReporting 
-    %                             interface for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence

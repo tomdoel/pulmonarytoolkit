@@ -25,8 +25,8 @@ function PTKCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, 
     %        parameters, which may be required depending on the coordinate
     %        system
     %
-    %     reporting - a PTKReporting object for progress, warning and
-    %         error reporting.
+    %     reporting (optional) - an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
     %
     %

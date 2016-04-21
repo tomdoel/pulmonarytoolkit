@@ -7,8 +7,8 @@ function lung_image = PTKGetLungROIForCT(lung_image, reporting)
     %
     %     lung_image - the full original lung volume stored as a PTKImage.
     %
-    %     reporting (optional) - an object implementing the PTKReporting
-    %         interface for reporting progress and warnings
+    %     reporting  - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Outputs

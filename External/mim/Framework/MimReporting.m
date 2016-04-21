@@ -1,42 +1,32 @@
-classdef PTKReporting < CoreReporting
-    % PTKReporting. Provides error, message and progress reporting.
+classdef MimReporting < CoreReporting
+    % MimReporting. Provides error, message and progress reporting.
     %
-    %     PTKReporting. Implementation of CoreReportingInterface, used by
-    %     the Pulmonary Toolkit for progress and error/message reporting.
+    %     MimReporting is an extension of CoreReporting. CoreReporting
+    %     provides error, progress and warning methods for MIM routines.
+    %     MimReporting provides additional methods allowing updates to a
+    %     MIM viewer if it exists.
+    %
+    %     The purpose of MimReporting is to allow algorithms to manipulate
+    %     the viewer for the benefit of the user (e.g. updating the
+    %     segmentatino in real time) while fully supporting non-gui modes.
     %
     %     Usage
     %     -----
     %
-    %     You can create a single PTKReporting object and pass it into all the
-    %     Pulmonary Toolkit routines you use in order to provide error, warning,
-    %     message and progress reporting during execution of routines.
+    %     Normally you would not create MimReporting directly. If you are
+    %     implementing a MimPlugin then a suitable MimReporting object is
+    %     passed in when your plugin is called, and that is the object you
+    %     should pass to any library function that requires a MimReporting.
     %
-    %     If you are not writing a gui application but would like a standard
-    %     pop-up progress dialog to appear while waiting for plugins to execute,
-    %     consider creating a CoreReportingDefault object instead. Use CoreReporting
-    %     if you want to specify your own progress dialog, or specify a gui
-    %     viewing panel, or if you want no progress dialog at all.
+    %     If you are directly calling a library function from outside of
+    %     the Mim Framework, you can create a CoreReportingDefault object
+    %     for default erorr and progress reporting.
     %
-    %         reporting = PTKReporting(progress_dialog);
+    %     See CoreReporting.m and CoreReportingIntertface.m for details of
+    %     the methods this class implements.
     %
-    %             progress_dialog - a CoreProgressDialog or GemProgressPanel object
-    %                 for displaying a progress bar. You can omit this argument
-    %                 or replace it with [] if you are writing scripts to run 
-    %                 in the background and do not want progress dialogs popping
-    %                 up. Otherwise, you should create a PTKProgressDialog or
-    %                 GemProgressPanel, or else implement your own progress class
-    %                 with the same interface as PTKProgressDialog and pass this
-    %                 in.
-    %
-    %         reorting.SetViewingPanel(viewing_panel)
-    %             viewing_panel - if you are implementing a gui using a
-    %                 PTKViewingPanel, then you can provide the class handle here
-    %                 so that plugins can query which orientation the gui is in
-    %                 and obtain the current marker image. Otherwise leave this
-    %                 argment blank.
-    %
-    %     See CoreReportingIntertface.m for details of the methods this class
-    %     implements.
+    %     You only need to create your own MimReporting class if you want
+    %     to customise error and progress reporting.
     %
     %
     %     Licence
@@ -51,7 +41,7 @@ classdef PTKReporting < CoreReporting
     end
     
     methods
-        function obj = PTKReporting(progress_dialog, verbose_mode, log_file_name)
+        function obj = MimReporting(progress_dialog, verbose_mode, log_file_name)
             obj = obj@CoreReporting(progress_dialog, verbose_mode, log_file_name);            
         end
         

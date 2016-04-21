@@ -8,9 +8,8 @@ function path_name = PTKSavePatchAs(patch_object, path_name, reporting)
     %
     %             patch_object    is a PTKPatch object to be saved
     %             path, filename  specify the location to save the patch pbject.
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence

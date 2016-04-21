@@ -15,8 +15,8 @@ function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_g
     %                 in the set is array of points representing one region.
     %                 Each point is a global index. The region growing will 
     %                 begin from all these points simultaneously
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %         Outputs:
     %         -------

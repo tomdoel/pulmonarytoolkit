@@ -7,7 +7,7 @@ classdef MimMain < CoreBaseClass
     %     it to create a MimDataset object for each dataset you wish to access. 
     %
     %     MimMain is essentially a class factory for MimDatasets, but shares the 
-    %     PTKReporting (error/progress reporting) objects between all 
+    %     MimReportingInterface (error/progress reporting) objects between all 
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the Pulmonary Toolkit.
     %

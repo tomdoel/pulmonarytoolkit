@@ -26,7 +26,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     %     patient_list - Set to [] to plot all patients, otherwise specify a set of one of more patient UIDs to appear on the graph.
     %         Each patient will appear with different markers and will appear in the legend.
     %     distance label - The distance label to be used on the x-axis
-    %     reporting - Object of class PTKReporting for errors, warnings and progress
+    %     reporting - an object implementing CoreReportingInterface for reporting progress and warnings
     %
     % Output:
     %     figure_handle - the handle of the generated figure. Use this handle to export the figure to an image file

@@ -31,7 +31,7 @@ function results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, s
     %     coronal_mode - if true, the algorithm performs in a special mode
     %         designed for images with thick coronal slices
     %
-    %     reporting - an object implementing the PTKReporting
+    %     reporting - an object implementing the CoreReportingInterface
     %         interface for reporting progress and warnings
     %
     %     debug_mode (optional) - should normally be set to false. 

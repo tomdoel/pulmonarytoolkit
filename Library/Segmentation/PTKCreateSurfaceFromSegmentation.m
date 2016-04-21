@@ -37,8 +37,8 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
     %         an appropriate minimum volume value. Any components smaller than this
     %         value will not be rendered.
     %
-    %     reporting - a PTKReporting object for progress, warning and
-    %         error reporting.
+    %     reporting - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %

@@ -22,31 +22,31 @@ classdef MimReportingWithCache < CoreReportingWithCache
         end
         
         function ChangeViewingPosition(obj, coordinates)
-            if isa(obj.Reporting, 'PTKReporting');
+            if isa(obj.Reporting, 'MimReporting');
                 obj.Reporting.ChangeViewingPosition(coordinates);
             end
         end
         
         function ChangeViewingOrientation(obj, orientation)
-            if isa(obj.Reporting, 'PTKReporting');
+            if isa(obj.Reporting, 'MimReporting');
                 obj.Reporting.ChangeViewingOrientation(orientation);
             end
         end
         
         function UpdateOverlayImage(obj, new_image)
-            if isa(obj.Reporting, 'PTKReporting');
+            if isa(obj.Reporting, 'MimReporting');
                 obj.Reporting.UpdateOverlayImage(new_image);
             end
         end
         
         function UpdateOverlaySubImage(obj, new_image)
-            if isa(obj.Reporting, 'PTKReporting');
+            if isa(obj.Reporting, 'MimReporting');
                 obj.Reporting.UpdateOverlaySubImage(new_image);
             end
         end
         
         function SetViewerPanel(obj, viewer_panel)
-            if isa(obj.Reporting, 'PTKReporting');
+            if isa(obj.Reporting, 'MimReporting');
                 obj.Reporting.SetViewerPanel(viewer_panel);
             end
         end
