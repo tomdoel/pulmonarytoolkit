@@ -58,7 +58,7 @@ classdef MimMain < CoreBaseClass
             % specified by the supplied framework_app_def object
             obj.FrameworkAppDef = framework_app_def;
             obj.Reporting = reporting;
-            obj.ReportingWithCache = PTKReportingWithCache(obj.Reporting);
+            obj.ReportingWithCache = MimReportingWithCache(obj.Reporting);
             obj.FrameworkSingleton = MimFrameworkSingleton.GetFrameworkSingleton(framework_app_def, obj.Reporting);
             
             output_directory = framework_app_def.GetOutputDirectory;

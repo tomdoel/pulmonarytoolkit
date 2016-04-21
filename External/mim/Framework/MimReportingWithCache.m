@@ -1,7 +1,7 @@
-classdef PTKReportingWithCache < CoreReportingWithCache
-    % PTKReportingWithCache. Provides error, message and progress reporting.
+classdef MimReportingWithCache < CoreReportingWithCache
+    % MimReportingWithCache. Provides error, message and progress reporting.
     %
-    %     PTKReportingWithCache extends CoreReportingWithCache to provide
+    %     MimReportingWithCache extends CoreReportingWithCache to provide
     %     additional, PTK-specific functions
     %
     %
@@ -17,7 +17,7 @@ classdef PTKReportingWithCache < CoreReportingWithCache
     end
     
     methods
-        function obj = PTKReportingWithCache(reporting)
+        function obj = MimReportingWithCache(reporting)
             obj = obj@CoreReportingWithCache(reporting);
         end
         
