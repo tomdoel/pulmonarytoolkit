@@ -2,7 +2,7 @@ classdef MimReportingWithCache < CoreReportingWithCache
     % MimReportingWithCache. Provides error, message and progress reporting.
     %
     %     MimReportingWithCache extends CoreReportingWithCache to provide
-    %     additional, PTK-specific functions
+    %     additional, MIM-specific functions
     %
     %
     %     Licence
