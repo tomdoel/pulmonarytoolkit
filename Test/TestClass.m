@@ -1,3 +1,3 @@
-classdef TestClass < PTKStruct
+classdef TestClass < MimStruct
 end
 

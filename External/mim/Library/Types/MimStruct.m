@@ -1,5 +1,5 @@
-classdef PTKStruct < dynamicprops
-    % PTKStruct. Holds multiple properties
+classdef MimStruct < dynamicprops
+    % MimStruct. Holds multiple properties
     %
     %
     %     Licence
@@ -24,8 +24,8 @@ classdef PTKStruct < dynamicprops
         end
         
         function Merge(obj, other_struct, reporting)
-            if ~isa(other_struct, 'PTKStruct')
-                reporting.Error('PTKStruct:NotPTKStruct', 'The argument passed to Merge() was not of type PTKStruct');
+            if ~isa(other_struct, 'MimStruct')
+                reporting.Error('MimStruct:NotMimStruct', 'The argument passed to Merge() was not of type MimStruct');
             end
 
             field_name_list = other_struct.GetListOfProperties;
@@ -37,7 +37,7 @@ classdef PTKStruct < dynamicprops
         
         function result = GetFirstResult(obj)
             result = obj;
-            while isa(result, 'PTKStruct')
+            while isa(result, 'MimStruct')
                 result_properties = properties(result);
                 result = result.(result_properties{1});
             end

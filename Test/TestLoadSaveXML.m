@@ -12,10 +12,10 @@ classdef TestLoadSaveXML < CoreTest
     methods
         function obj = TestLoadSaveXML
             reporting = CoreReportingDefault;
-            test_class = obj.getTestClass('PTKStruct');
+            test_class = obj.getTestClass('MimStruct');
             obj.TestLoadAndSave(test_class, reporting);
             test_class_2 = obj.getTestClass('TestClass');
-            obj.TestLoadAndSaveWithClassConversion(test_class_2, reporting, 'PTKStruct');
+            obj.TestLoadAndSaveWithClassConversion(test_class_2, reporting, 'MimStruct');
         end
 
         function test_class = getTestClass(obj, class_name)
