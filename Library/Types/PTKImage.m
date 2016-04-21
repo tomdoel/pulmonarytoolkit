@@ -1088,7 +1088,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 image_type = PTKImageType.Colormap;
             else
                 % If the image data is noninteger then assume greyscale
-                if ~PTKMathUtilities.IsMatrixInteger(obj.RawImage)
+                if ~CoreMathUtilities.IsMatrixInteger(obj.RawImage)
                     image_type = PTKImageType.Grayscale;
                 else
                     % Otherwise choose colormap if the range of values is

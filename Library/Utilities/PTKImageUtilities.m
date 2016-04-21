@@ -1,5 +1,5 @@
 classdef PTKImageUtilities
-    % PTKImageCoordinateUtilities. Utility functions related to displaying images
+    % PTKImageUtilities. Utility functions related to displaying images
     %
     %
     %     Licence

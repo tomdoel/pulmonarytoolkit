@@ -1,12 +1,12 @@
-classdef PTKMathUtilities
-    % PTKMathUtilities. Utility functions related to maths
+classdef CoreMathUtilities
+    % CoreMathUtilities. Utility functions related to maths
     %
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %        
     
     methods (Static)
@@ -28,7 +28,7 @@ classdef PTKMathUtilities
             if n == 1
                 all_combinations = v';
             else
-                remaining_values = PTKMathUtilities.GetAllCombinations(v, n - 1);
+                remaining_values = CoreMathUtilities.GetAllCombinations(v, n - 1);
                 numels = size(remaining_values, 1);
                 all_combinations = [v(ceil((1:numels*numel(v))/numels))', repmat(remaining_values, length(v), 1)];
             end
