@@ -1,4 +1,4 @@
-classdef MimCompositeResult < PTKStruct
+classdef MimCompositeResult < MimStruct
     % MimCompositeResult. Holds a set of results for multiple contexts
     %
     %

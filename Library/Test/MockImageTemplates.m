@@ -56,7 +56,7 @@ classdef MockImageTemplates < handle
         function NoteAttemptToRunPlugin(obj, plugin_name, context, reporting)
         end
         
-        function InvalidateIfInDependencyList(obj, plugin_name, reporting)
+        function InvalidateIfInDependencyList(obj, plugin_name, context, reporting)
         end        
     end
 end

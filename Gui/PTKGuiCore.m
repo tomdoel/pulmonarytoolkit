@@ -298,7 +298,7 @@ classdef PTKGuiCore < GemFigure
             obj.WaitDialogHandle.Hide;
         end
         
-        function uids = ImportPatch(obj)
+        function ImportPatch(obj)
             % Prompts the user to import a patch
             
             obj.WaitDialogHandle.ShowAndHold('Import patch');
