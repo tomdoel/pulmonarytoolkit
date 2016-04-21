@@ -19,7 +19,7 @@ classdef PTKImageDatabaseSeries
             
             % In the first implementation, the ImageMap was a map of image
             % uids to image metainfo. Now we replace it with a simple list of
-            % PTKFilename objects
+            % CoreFilename objects
             if isempty(obj.Version)
                 image_infos = obj.ImageMap.values;
                 
@@ -32,10 +32,10 @@ classdef PTKImageDatabaseSeries
                 filenames = containsers.Map;
                 for image_index = 1 : numel(image_infos);
                     single_image_info = image_infos{image_index};
-                    filenames(single_image_info.ImageUid) = PTKFilename(single_image_info.ImagePath, single_image_info.ImageFilename);
+                    filenames(single_image_info.ImageUid) = CoreFilename(single_image_info.ImagePath, single_image_info.ImageFilename);
                 end
                 
-                % Replace the map with the array of PTKFilename objects
+                % Replace the map with the array of CoreFilename objects
                 obj.ImageMap = filenames;
                 
                 obj.Version = obj.CurrentVersionNumber;

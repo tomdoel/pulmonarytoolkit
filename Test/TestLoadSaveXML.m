@@ -74,8 +74,8 @@ classdef TestLoadSaveXML < CoreTest
         function TestLoadAndSave(obj, base_class, reporting)
             temp_folder = tempdir;
             file_name = 'TestXML.xml';
-            CoreSaveXml(base_class, 'Test', PTKFilename(temp_folder, file_name), reporting);
-            loaded_base_class = CoreLoadXml(PTKFilename(temp_folder, file_name), reporting);
+            CoreSaveXml(base_class, 'Test', CoreFilename(temp_folder, file_name), reporting);
+            loaded_base_class = CoreLoadXml(CoreFilename(temp_folder, file_name), reporting);
             loaded_base_class = loaded_base_class.Test;
             
             obj.TestEquality(base_class, loaded_base_class);
@@ -85,11 +85,11 @@ classdef TestLoadSaveXML < CoreTest
         function TestLoadAndSaveWithClassConversion(obj, base_class, reporting, new_class_name)
             temp_folder = tempdir;
             file_name = 'TestXML.xml';
-            CoreSaveXml(base_class, 'Test', PTKFilename(temp_folder, file_name), reporting);
+            CoreSaveXml(base_class, 'Test', CoreFilename(temp_folder, file_name), reporting);
             
             conversion_map = containers.Map;
             conversion_map(class(base_class)) = new_class_name;
-            loaded_base_class = CoreLoadXml(PTKFilename(temp_folder, file_name), reporting, conversion_map);
+            loaded_base_class = CoreLoadXml(CoreFilename(temp_folder, file_name), reporting, conversion_map);
             loaded_base_class = loaded_base_class.Test;
             
             obj.TestEquality(base_class, loaded_base_class);

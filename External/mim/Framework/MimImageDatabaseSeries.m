@@ -62,7 +62,7 @@ classdef MimImageDatabaseSeries < handle
         end
         
         function AddImage(obj, single_image_metainfo)
-            obj.ImageMap(single_image_metainfo.ImageUid) = PTKFilename(single_image_metainfo.ImagePath, single_image_metainfo.ImageFilename);
+            obj.ImageMap(single_image_metainfo.ImageUid) = CoreFilename(single_image_metainfo.ImagePath, single_image_metainfo.ImageFilename);
         end
         
         function num_images = NumberOfImages(obj)

@@ -396,7 +396,7 @@ classdef PTKGuiCore < GemFigure
                 % Hide the progress bar before capture
                 obj.Reporting.ProgressDialog.Hide;
                 frame = obj.ImagePanel.Capture;
-                PTKDiskUtilities.SaveImageCapture(frame, PTKFilename(path_name, filename), save_type, obj.Reporting)
+                PTKDiskUtilities.SaveImageCapture(frame, CoreFilename(path_name, filename), save_type, obj.Reporting)
             end
         end
         
