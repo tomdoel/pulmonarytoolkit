@@ -28,10 +28,10 @@ function [affine_matrix, transformed_matrix] = PTKSolveForRigidRegistration(imag
     reference_image2.AddBorder(20);
     image_to_transform2.AddBorder(20);
     
-    dt_float = PTKImageUtilities.GetNormalisedDT(image_to_transform2);
+    dt_float = MimImageUtilities.GetNormalisedDT(image_to_transform2);
     dt_float.RescaleToMaxSize(128);
 
-    dt_ref = PTKImageUtilities.GetNormalisedDT(reference_image2);
+    dt_ref = MimImageUtilities.GetNormalisedDT(reference_image2);
     dt_ref.RescaleToMaxSize(128);
     
     [affine_matrix, transformed_matrix] = Solve(dt_float, dt_ref, com_affine_vector, reporting);

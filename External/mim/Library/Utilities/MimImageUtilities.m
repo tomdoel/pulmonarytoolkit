@@ -1,5 +1,5 @@
-classdef PTKImageUtilities
-    % PTKImageUtilities. Utility functions related to displaying images
+classdef MimImageUtilities
+    % MimImageUtilities. Utility functions related to displaying images
     %
     %
     %     Licence
@@ -109,7 +109,7 @@ classdef PTKImageUtilities
             % Slice by slice replace the dt image with a 2D distance transform
             for slice_index = 1 : image_mask.ImageSize(direction)
                 slice = image_mask.GetSlice(slice_index, direction);
-                surface_slice = PTKImageUtilities.GetSurfaceFrom2DSegmentation(slice);
+                surface_slice = MimImageUtilities.GetSurfaceFrom2DSegmentation(slice);
                 border_image.ReplaceImageSlice(surface_slice, slice_index, direction);
                 dt_slice = bwdist(surface_slice > 0);
                 dt.ReplaceImageSlice(dt_slice, slice_index, direction);
@@ -154,7 +154,7 @@ classdef PTKImageUtilities
         function dt = GetNonisotropicDistanceTransform(binary_image)
             voxel_size = binary_image.VoxelSize;
             if max(voxel_size) >= 1.5*min(voxel_size)
-                dt = PTKImageUtilities.MakeImageApproximatelyIsotropic(binary_image, '*nearest');
+                dt = MimImageUtilities.MakeImageApproximatelyIsotropic(binary_image, '*nearest');
                 dt.ChangeRawImage(bwdist(logical(dt.RawImage)));
                 dt.Resample(binary_image.VoxelSize, '*nearest');
                 dt.ResizeToMatch(binary_image);
@@ -166,7 +166,7 @@ classdef PTKImageUtilities
         end
 
         function [results, combined_image] = ComputeDice(image_1, image_2)
-            PTKImageUtilities.MatchSizes(image_1, image_2);
+            MimImageUtilities.MatchSizes(image_1, image_2);
             
             combined_image = image_1.BlankCopy;
             
@@ -189,7 +189,7 @@ classdef PTKImageUtilities
         end
         
         function [dice, combined_image] = ComputeDiceWithCoronalAllowance(image_1, image_2)
-            PTKImageUtilities.MatchSizes(image_1, image_2);
+            MimImageUtilities.MatchSizes(image_1, image_2);
             
             combined_image = image_1.BlankCopy;
             
@@ -231,11 +231,11 @@ classdef PTKImageUtilities
             end
             
             % Get the distance transforms
-            [~, border_1] = PTKImageUtilities.GetBorderDistanceTransformBySlice(image_1, PTKImageOrientation.Coronal);
-            [~, border_2] = PTKImageUtilities.GetBorderDistanceTransformBySlice(image_2, PTKImageOrientation.Coronal);
+            [~, border_1] = MimImageUtilities.GetBorderDistanceTransformBySlice(image_1, PTKImageOrientation.Coronal);
+            [~, border_2] = MimImageUtilities.GetBorderDistanceTransformBySlice(image_2, PTKImageOrientation.Coronal);
             
-            dt_1 = PTKImageUtilities.GetNonisotropicDistanceTransform(border_1);
-            dt_2 = PTKImageUtilities.GetNonisotropicDistanceTransform(border_2);
+            dt_1 = MimImageUtilities.GetNonisotropicDistanceTransform(border_1);
+            dt_2 = MimImageUtilities.GetNonisotropicDistanceTransform(border_2);
             
             
             % Adjust the distance transforms to mm
@@ -294,11 +294,11 @@ classdef PTKImageUtilities
             end
             
             if (image_type == 3) && isempty(image_preview_limits)
-                obj.Reporting.ShowWarning('PTKImageUtilities:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
+                obj.Reporting.ShowWarning('MimImageUtilities:ForcingImageLimits', ('Using default values for displaying button previews for scaled images, because I am umable to find the correct limits.'), []);
                 image_preview_limits = [1 100];
             end
             
-            [rgb_image, ~] = PTKImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale, []);
+            [rgb_image, ~] = MimImageUtilities.GetImage(button_image, image_preview_limits, image_type, window_grayscale, level_grayscale, []);
             rgb_image = GemUtilities.ConvertImageToButtonImage(border, background_colour, border_colour, button_image, rgb_image);
         end
 
@@ -308,7 +308,7 @@ classdef PTKImageUtilities
             
             switch imageType
                 case PTKImageType.Grayscale
-                    rescaled_image_slice = PTKImageUtilities.RescaleImage(imageSlice, window, level);
+                    rescaled_image_slice = MimImageUtilities.RescaleImage(imageSlice, window, level);
                     [rgbSlice, alphaSlice] = CoreImageUtilities.GetBWImage(rescaled_image_slice);
                 case PTKImageType.Colormap
                     [rgbSlice, alphaSlice] = CoreImageUtilities.GetLabeledImage(imageSlice, map);
@@ -382,7 +382,7 @@ classdef PTKImageUtilities
         end
         
         function original_image = HighlightRGBImage(original_image, background_colour)
-            image_dilated = PTKImageUtilities.GetRGBImageHighlight(original_image, background_colour);
+            image_dilated = MimImageUtilities.GetRGBImageHighlight(original_image, background_colour);
             highlight_colour = [255, 255, 0];
             for index = 1 : 3
                 image_layer = original_image(:, :, index);

@@ -486,11 +486,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             
             switch dimension
                 case PTKImageOrientation.Coronal
-                    slice = PTKImageUtilities.Zeros([obj.ImageSize(2), obj.ImageSize(3)], obj.LastDataType);
+                    slice = MimImageUtilities.Zeros([obj.ImageSize(2), obj.ImageSize(3)], obj.LastDataType);
                 case PTKImageOrientation.Sagittal
-                    slice = PTKImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(3)], obj.LastDataType);
+                    slice = MimImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(3)], obj.LastDataType);
                 case PTKImageOrientation.Axial
-                    slice = PTKImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(2)], obj.LastDataType);
+                    slice = MimImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(2)], obj.LastDataType);
                 otherwise
                     error('Unsupported dimension');
             end
@@ -839,7 +839,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         function GeneratePreview(obj, preview_size, flatten_before_preview)
             % Creates a 2D thumbnail preview image and stores it in the Preview property
-            [preview_image_slice, preview_scale] = PTKImageUtilities.GeneratePreviewImage(obj, preview_size, flatten_before_preview);
+            [preview_image_slice, preview_scale] = MimImageUtilities.GeneratePreviewImage(obj, preview_size, flatten_before_preview);
             obj.Preview = obj.BlankCopy;
             obj.Preview.RawImage = preview_image_slice;
             obj.Preview.Scale = [preview_scale, preview_scale];

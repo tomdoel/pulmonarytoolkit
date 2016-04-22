@@ -28,8 +28,8 @@ function [affine_matrix, transformed_matrix] = PTKSolveForRigidTranslation(image
     reference_image2.AddBorder(20);
     image_to_transform2.AddBorder(20);
     
-    dt_float = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, image_to_transform2, image_to_transform2, reporting);
-    dt_ref = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, reference_image2, reference_image2, reporting);
+    dt_float = PTKRunForEachComponentAndCombine(@MimImageUtilities.GetNormalisedDT, image_to_transform2, image_to_transform2, reporting);
+    dt_ref = PTKRunForEachComponentAndCombine(@MimImageUtilities.GetNormalisedDT, reference_image2, reference_image2, reporting);
     
     dt_float.RescaleToMaxSize(128);
 

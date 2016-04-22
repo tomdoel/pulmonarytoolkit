@@ -75,7 +75,7 @@ function SaveImage(image_data, filename, pathname, filter_index, patient_name, i
             case 3
                 PTKSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'char', reporting)
             case 4
-                if PTKImageUtilities.IsSigned(image_data)
+                if MimImageUtilities.IsSigned(image_data)
                     PTKSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'short', reporting)
                 else
                     PTKSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'ushort', reporting)

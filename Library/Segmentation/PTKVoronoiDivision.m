@@ -50,7 +50,7 @@ function labeled_subregion_mask = PTKVoronoiDivision(region_mask, start_points, 
     % Now crop to the minimal sizes and then match the sizes
     region_mask.CropToFit;
     start_points.CropToFit;
-    PTKImageUtilities.MatchSizesAndOrigin(start_points, region_mask);
+    MimImageUtilities.MatchSizesAndOrigin(start_points, region_mask);
     
     % Use the DT function to find the nearest neighbours
     [~, nn_indicies] = bwdist(start_points.RawImage > 0);

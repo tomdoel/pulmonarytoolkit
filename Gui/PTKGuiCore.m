@@ -425,7 +425,7 @@ classdef PTKGuiCore < GemFigure
                 if ~isempty(last_uid) && ismember(last_uid, CoreContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid'))
                     series_uid  = last_uid;
                 else
-                    series_uid = PTKImageUtilities.FindBestSeries(datasets);
+                    series_uid = MimImageUtilities.FindBestSeries(datasets);
                 end
             end
             obj.LoadFromUid(series_uid);
@@ -968,7 +968,7 @@ classdef PTKGuiCore < GemFigure
             % Note we could change this to the current orientation
             % (obj.ImagePanel.Orientation), but if we did this we would need to force a
             % GUI resize whenever the orientation was changed
-            optimal_direction_orientation = PTKImageUtilities.GetPreferredOrientation(obj.ImagePanel.BackgroundImage, obj.AppDef.GetDefaultOrientation);
+            optimal_direction_orientation = MimImageUtilities.GetPreferredOrientation(obj.ImagePanel.BackgroundImage, obj.AppDef.GetDefaultOrientation);
             
             [dim_x_index, dim_y_index, dim_z_index] = GemUtilities.GetXYDimensionIndex(optimal_direction_orientation);
             

@@ -270,7 +270,7 @@ classdef PTKEditManager < PTKTool
                 
                 dt_subimage_second = cropped_image.BlankCopy;
                 dt_subimage_second.ChangeRawImage(cropped_image.RawImage == second_closest_colour);
-                dt_subimage_second = PTKImageUtilities.GetNonisotropicDistanceTransform(dt_subimage_second);
+                dt_subimage_second = MimImageUtilities.GetNonisotropicDistanceTransform(dt_subimage_second);
                 
                 filtered_dt = PTKGaussianFilter(dt_subimage_second, 2);
                 dt_subimage_second = filtered_dt.RawImage;

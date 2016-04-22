@@ -20,7 +20,7 @@ function [deformation_field, deformed_image] = PTKSolveForFluidRegistration(imag
 
     % For the fluid registration, the images must be the same size and have the
     % same voxel size
-    isotropic_reference_image = PTKImageUtilities.MakeImageApproximatelyIsotropic(reference_image, 'PTK smoothed binary');
+    isotropic_reference_image = MimImageUtilities.MakeImageApproximatelyIsotropic(reference_image, 'PTK smoothed binary');
     
     % The fluid registration will be performed after the rigid registration has
     % been performed

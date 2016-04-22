@@ -78,7 +78,7 @@ classdef PTKTopOfTrachea < PTKPlugin
             trachea(trachea_voxels_local) = 2;
 
             trachea(top_of_trachea(1), top_of_trachea(2), top_of_trachea(3)) = 3;
-            trachea = PTKImageUtilities.DrawBoxAround(trachea, top_of_trachea, 5, 3);
+            trachea = MimImageUtilities.DrawBoxAround(trachea, top_of_trachea, 5, 3);
             
             
             results = template_image;

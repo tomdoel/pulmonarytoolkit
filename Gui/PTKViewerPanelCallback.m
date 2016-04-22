@@ -277,7 +277,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
         end
         
         function AutoOrientationAndWL(obj, new_image)
-            obj.ViewerPanel.Orientation = PTKImageUtilities.GetPreferredOrientation(new_image, obj.DefaultOrientation);
+            obj.ViewerPanel.Orientation = MimImageUtilities.GetPreferredOrientation(new_image, obj.DefaultOrientation);
             
             if isa(new_image, 'PTKDicomImage') && new_image.IsCT
                 obj.ViewerPanel.Window = 1600;

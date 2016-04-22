@@ -88,7 +88,7 @@ classdef PTKCarina < PTKPlugin
             carina = zeros(image_size, 'uint8');
             
             carina(top_of_carina(1), top_of_carina(2), top_of_carina(3)) = 3;
-            carina = PTKImageUtilities.DrawBoxAround(carina, top_of_carina, 5, 3);
+            carina = MimImageUtilities.DrawBoxAround(carina, top_of_carina, 5, 3);
             
             
             results = template_image;

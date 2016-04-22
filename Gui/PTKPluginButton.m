@@ -55,7 +55,7 @@ classdef PTKPluginButton < GemButton
             else
                 button_size = obj.Position(3:4);
             end
-            preview_image_raw = PTKImageUtilities.GetButtonImage(preview_image, button_size(1), button_size(2), window, level, 1, obj.BackgroundColour, obj.UnSelectedColour);
+            preview_image_raw = MimImageUtilities.GetButtonImage(preview_image, button_size(1), button_size(2), window, level, 1, obj.BackgroundColour, obj.UnSelectedColour);
             obj.ChangeImage(preview_image_raw);
         end
         

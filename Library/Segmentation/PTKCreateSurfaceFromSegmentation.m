@@ -88,7 +88,7 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
         % The smoothing may split the segmentation, so we consider only the main component,
         % and remove any other components by setting their value to zero
         surviving_components = sub_seg.RawImage >= threshold;
-        surviving_components = PTKImageUtilities.GetLargestConnectedComponent(surviving_components);
+        surviving_components = MimImageUtilities.GetLargestConnectedComponent(surviving_components);
     else
 
         cc = bwconncomp(sub_seg.RawImage >= threshold);
