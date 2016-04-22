@@ -50,7 +50,7 @@ classdef MimOutputFolder < CoreBaseClass
             mim_file_name = CoreFilename(file_path, file_name);
             new_record = MimOutputInfo(plugin_name, description, mim_file_name, date_text);
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
-            PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting);
+            MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting);
             obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
         end

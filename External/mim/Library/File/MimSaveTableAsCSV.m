@@ -1,5 +1,5 @@
-function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting)
-    % PTKSaveTableAsCSV.
+function MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting)
+    % MimSaveTableAsCSV.
     %
     %     filters is used to filter each of the four dimensions of patient name,
     %     metric name, context name and slice number
@@ -13,7 +13,7 @@ function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
 
     other_dim = setdiff([1,2,3,4], [file_dim, row_dim, col_dim]);
     if numel(other_dim) ~= 1
-        reporting.Error('PTKSaveTableAsCSV:InvalidArguments', 'You must specify a unique dimension for each of the files, rows and columns');
+        reporting.Error('MimSaveTableAsCSV:InvalidArguments', 'You must specify a unique dimension for each of the files, rows and columns');
     end
     
     ranges = [];
@@ -49,7 +49,7 @@ function PTKSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
     other_range = ranges{other_dim};
     
     if numel(other_range) ~= 1
-       reporting.Error('PTKSaveTableAsCSV:InvalidArguments', 'The unused dimension must have a size of 1 after filtering'); 
+       reporting.Error('MimSaveTableAsCSV:InvalidArguments', 'The unused dimension must have a size of 1 after filtering'); 
     end
     
     % Get column labels
