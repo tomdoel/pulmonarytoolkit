@@ -1,5 +1,5 @@
-function PTKCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, small_structures, coordinate_system, template_image, reporting)
-    % PTKCreateSurfaceMesh. Creates a surface mesh from a segmentation and
+function MimCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, small_structures, coordinate_system, template_image, reporting)
+    % MimCreateSurfaceMesh. Creates a surface mesh from a segmentation and
     %     writes into an STL file
     %
     %

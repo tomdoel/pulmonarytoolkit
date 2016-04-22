@@ -74,7 +74,7 @@ classdef MimOutputFolder < CoreBaseClass
             mim_file_name = CoreFilename(file_path, file_name);
             new_record = MimOutputInfo(plugin_name, description, mim_file_name, date_text);
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
-            PTKCreateSurfaceMesh(file_path, file_name, segmentation, smoothing_size, small_structures, coordinate_system, template_image, reporting);
+            MimCreateSurfaceMesh(file_path, file_name, segmentation, smoothing_size, small_structures, coordinate_system, template_image, reporting);
             obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
         end
