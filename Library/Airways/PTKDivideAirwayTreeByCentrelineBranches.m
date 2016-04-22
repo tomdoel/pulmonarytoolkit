@@ -59,5 +59,5 @@ function voxel_indices = GetCentrelineVoxels(start_indices, template)
     % Add nearest neighbours to the list of voxels, otherwise it is possible for
     % a diagnoally-connected centreline segment to pass through a
     % diagnoally-connected airway segment
-    voxel_indices = PTKImageCoordinateUtilities.AddNearestNeighbours(voxel_indices, template);
+    voxel_indices = MimImageCoordinateUtilities.AddNearestNeighbours(voxel_indices, template);
 end

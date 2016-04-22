@@ -108,7 +108,7 @@ function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothin
     sub_seg.ChangeRawImage(sub_seg_raw);
     
     [xc, yc, zc] = sub_seg.GetPTKCoordinates;
-    [xc, yc, zc] = PTKImageCoordinateUtilities.ConvertFromPTKCoordinatesCoordwise(xc, yc, zc, coordinate_system, template_image);
+    [xc, yc, zc] = MimImageCoordinateUtilities.ConvertFromPTKCoordinatesCoordwise(xc, yc, zc, coordinate_system, template_image);
     
     fv = isosurface(xc, yc, zc, sub_seg.RawImage, threshold);
     

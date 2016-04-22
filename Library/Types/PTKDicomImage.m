@@ -58,7 +58,7 @@ classdef PTKDicomImage < PTKImage
             end
             
             if isfield(metadata, 'ImageOrientationPatient')
-                [new_dimension_order, flip] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation(metadata.ImageOrientationPatient, reporting);
+                [new_dimension_order, flip] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation(metadata.ImageOrientationPatient, reporting);
                 if isa(original_image, 'CoreWrapper')
                     original_image.RawImage = permute(original_image.RawImage, new_dimension_order);
                     for dimension_index = 1 : 3

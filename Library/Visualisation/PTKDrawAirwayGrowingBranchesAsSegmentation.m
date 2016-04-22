@@ -55,11 +55,11 @@ function results = PTKDrawAirwayGrowingBranchesAsSegmentation(airway_tree, templ
         index = index + 1;
     end
 
-    all_starts_coords = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(all_starts);
+    all_starts_coords = MimImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(all_starts);
     all_starts_coords = round(template_image.CoordinatesMmToGlobalCoordinates(all_starts_coords));    
     all_starts_coords = template_image.GlobalToLocalCoordinates(all_starts_coords);
     
-    all_ends_coords = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(all_starts);
+    all_ends_coords = MimImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(all_starts);
     all_ends_coords = template_image.CoordinatesMmToGlobalCoordinates(all_ends_coords);
     all_ends_coords = template_image.GlobalToLocalCoordinates(all_ends_coords);
 
@@ -76,7 +76,7 @@ function results = PTKDrawAirwayGrowingBranchesAsSegmentation(airway_tree, templ
         span_k = linspace(start_point_coordinates(3), end_point_coordinates(3), num_points);
         
         local_coordinates = round([span_i', span_j', span_k']);
-        local_indices = PTKImageCoordinateUtilities.FastSub2ind(template_image.ImageSize, local_coordinates(:, 1), local_coordinates(:, 2), local_coordinates(:, 3));
+        local_indices = MimImageCoordinateUtilities.FastSub2ind(template_image.ImageSize, local_coordinates(:, 1), local_coordinates(:, 2), local_coordinates(:, 3));
         results_raw(local_indices) = 1;
     end
     

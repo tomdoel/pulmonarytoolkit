@@ -89,7 +89,7 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
     y = node_data{3};
     z = node_data{4};
     
-    ptk_coordinates = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([x, y, z], coordinate_system, template_image);
+    ptk_coordinates = MimImageCoordinateUtilities.ConvertToPTKCoordinates([x, y, z], coordinate_system, template_image);
     x = ptk_coordinates(:, 1);
     y = ptk_coordinates(:, 2);
     z = ptk_coordinates(:, 3);

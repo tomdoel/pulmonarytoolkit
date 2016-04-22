@@ -41,7 +41,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
         reporting.ShowProgress('Saving DICOM images');
     end
     
-    orientation = PTKImageCoordinateUtilities.ChooseOrientation(image_data.VoxelSize);
+    orientation = MimImageCoordinateUtilities.ChooseOrientation(image_data.VoxelSize);
     
     full_filename = fullfile(path, filename);
 
@@ -166,8 +166,8 @@ function dicom_coordinates_list = ComputeDicomSliceCoordinates(image_data, orien
     local_coordinates_list(:, orientation) = (1 : num_slices)';
     global_image_coords = image_data.LocalToGlobalCoordinates(local_coordinates_list);
     [x_mm, y_mm, z_mm] = image_data.GlobalCoordinatesToCoordinatesMm(global_image_coords);
-    [ptk_x, ptk_y, ptk_z] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(x_mm, y_mm, z_mm);
-    dicom_coordinates_list = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([ptk_x, ptk_y, ptk_z], PTKCoordinateSystem.Dicom, image_data);
+    [ptk_x, ptk_y, ptk_z] = MimImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(x_mm, y_mm, z_mm);
+    dicom_coordinates_list = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([ptk_x, ptk_y, ptk_z], PTKCoordinateSystem.Dicom, image_data);
 end
 
 

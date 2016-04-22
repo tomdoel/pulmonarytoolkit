@@ -104,7 +104,7 @@ end
 
 function PrintNodeToFile(fid, node_index, point, is_endpoint, coordinate_system, template_image)
     
-    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([point.CoordX, point.CoordY, point.CoordZ], coordinate_system, template_image);
+    dicom_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([point.CoordX, point.CoordY, point.CoordZ], coordinate_system, template_image);
     
     xc = dicom_coordinates(1);
     yc = dicom_coordinates(2);

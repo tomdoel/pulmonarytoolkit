@@ -67,7 +67,7 @@ classdef PTKDownsampledInitialFluidRegistrationImageMR < PTKPlugin
             % When using the refined XE lung segmentation, this already takes
             % into account the rigid MR-XE translation, so we now just apply an
             % identity transformation
-            identity_affine_matrix = PTKImageCoordinateUtilities.CreateAffineTranslationMatrix([0 0 0]);
+            identity_affine_matrix = MimImageCoordinateUtilities.CreateAffineTranslationMatrix([0 0 0]);
             affine_matrix = identity_affine_matrix;
             
             mr_single_lung_mask.ChangeRawImage(single(mr_single_lung_mask.RawImage));

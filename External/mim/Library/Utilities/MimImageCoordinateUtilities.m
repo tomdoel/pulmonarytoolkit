@@ -1,5 +1,5 @@
-classdef PTKImageCoordinateUtilities
-    % PTKImageCoordinateUtilities. Utility functions related to processing 3D
+classdef MimImageCoordinateUtilities
+    % MimImageCoordinateUtilities. Utility functions related to processing 3D
     % image coordinates
     %
     %
@@ -20,14 +20,14 @@ classdef PTKImageCoordinateUtilities
         function [linear_offsets, linear_offsets27] = GetLinearOffsets(image_size)
             % Compute linear index offsets for diretion vectors
             dirs = [5, 23, 11, 17, 13, 15];
-            linear_offsets = PTKImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
+            linear_offsets = MimImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
             
             dirs = 1:27;
-            linear_offsets27 = PTKImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
+            linear_offsets27 = MimImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs, image_size);
         end
         
         function linear_offsets = GetLinearOffsetsForDirections(dirs, image_size)
-            direction_vectors = PTKImageCoordinateUtilities.CalculateDirectionVectors;            
+            direction_vectors = MimImageCoordinateUtilities.CalculateDirectionVectors;            
             linear_offsets = zeros(1, numel(dirs));
             for n = 1 : length(dirs)
                 direction = dirs(n);
@@ -82,7 +82,7 @@ classdef PTKImageCoordinateUtilities
                 error('GetMinimalImageForIndices requires indices to be in a row vector');
             end
             indices = int32(indices);
-            [i, j, k] = PTKImageCoordinateUtilities.FastInd2sub(image_size, indices);
+            [i, j, k] = MimImageCoordinateUtilities.FastInd2sub(image_size, indices);
             
             voxel_coordinates = [i' j' k'];
             mins = min(voxel_coordinates, [], 1);
@@ -90,7 +90,7 @@ classdef PTKImageCoordinateUtilities
             reduced_image_size = maxs - mins + int32([1 1 1]);
             reduced_image = false(reduced_image_size);
             offset = mins - 1;
-            i = PTKImageCoordinateUtilities.FastSub2ind(reduced_image_size, voxel_coordinates(:,1)-offset(1), voxel_coordinates(:,2)-offset(2), voxel_coordinates(:,3)-offset(3));
+            i = MimImageCoordinateUtilities.FastSub2ind(reduced_image_size, voxel_coordinates(:,1)-offset(1), voxel_coordinates(:,2)-offset(2), voxel_coordinates(:,3)-offset(3));
             
             reduced_image(i) = true;
         end
@@ -146,7 +146,7 @@ classdef PTKImageCoordinateUtilities
         function affine_matrix = CreateRigidAffineMatrix(x)
             affine_matrix = zeros(3, 4, 'single');
             
-            euler_rot_matrix = PTKImageCoordinateUtilities.GetEulerRotationMatrix(x(1), x(2), x(3));
+            euler_rot_matrix = MimImageCoordinateUtilities.GetEulerRotationMatrix(x(1), x(2), x(3));
             affine_matrix(1:3, 1:3) = euler_rot_matrix;
             affine_matrix(1:3, 4) = x(4:6);
             
@@ -154,7 +154,7 @@ classdef PTKImageCoordinateUtilities
         end
         
         function [i, j, k] = TransformCoordsAffine(i, j, k, augmented_matrix)
-            [j, i, k] = PTKImageCoordinateUtilities.TranslateAndRotateMeshGrid(j, i, k, augmented_matrix(1:3,1:3), augmented_matrix(1:3,4));
+            [j, i, k] = MimImageCoordinateUtilities.TranslateAndRotateMeshGrid(j, i, k, augmented_matrix(1:3,1:3), augmented_matrix(1:3,4));
         end
         
         function [i, j, k] = TransformCoordsFluid(i, j, k, deformation_field)
@@ -166,7 +166,7 @@ classdef PTKImageCoordinateUtilities
         function [X, Y, Z] = TranslateAndRotateMeshGrid(X, Y, Z, rot_matrix, trans_matrix)
             % Rotates and translates meshgrid generated coordinates in 3D
             % Note coordinates are [XYZ] NOT [IJK]
-            [X, Y, Z] = PTKImageCoordinateUtilities.RotateMeshGrid(X + trans_matrix(1), Y + trans_matrix(2), Z + trans_matrix(3), rot_matrix);
+            [X, Y, Z] = MimImageCoordinateUtilities.RotateMeshGrid(X + trans_matrix(1), Y + trans_matrix(2), Z + trans_matrix(3), rot_matrix);
         end
 
         function [X, Y, Z] = RotateMeshGrid(X, Y, Z, rot_matrix)
@@ -202,7 +202,7 @@ classdef PTKImageCoordinateUtilities
 
             translation = translation([2 1 3]);
             translation(3) = - translation(3);
-            affine_matrix = PTKImageCoordinateUtilities.CreateAffineTranslationMatrix(translation);
+            affine_matrix = MimImageCoordinateUtilities.CreateAffineTranslationMatrix(translation);
         end
     
         function deformation_field = AdjustDeformationFieldForInitialAffineTransformation(deformation_field, affine_initial_matrix)
@@ -212,8 +212,8 @@ classdef PTKImageCoordinateUtilities
             
             [df_i, df_j, df_k] = deformation_field.GetCentredGlobalCoordinatesMm;
             [df_i, df_j, df_k] = ndgrid(df_i, df_j, df_k);
-            [df_i_t, df_j_t, df_k_t] = PTKImageCoordinateUtilities.TransformCoordsFluid(df_i, df_j, df_k, deformation_field);
-            [df_i_t, df_j_t, df_k_t] = PTKImageCoordinateUtilities.TransformCoordsAffine(df_i_t, df_j_t, df_k_t, affine_initial_matrix);
+            [df_i_t, df_j_t, df_k_t] = MimImageCoordinateUtilities.TransformCoordsFluid(df_i, df_j, df_k, deformation_field);
+            [df_i_t, df_j_t, df_k_t] = MimImageCoordinateUtilities.TransformCoordsAffine(df_i_t, df_j_t, df_k_t, affine_initial_matrix);
             
             deformation_field_raw = zeros(deformation_field.ImageSize);
             deformation_field_raw(:,:,:,1) = df_i - df_i_t;
@@ -240,23 +240,23 @@ classdef PTKImageCoordinateUtilities
             orientation_2(3) = - orientation_2(3);
             
             % Determine the PTK dimensions to which each of these vectors correspond
-            [permutation_vector, dimension_1, dimension_2, dimension_3] = PTKImageCoordinateUtilities.GetPermutationFromOrientations(orientation_1, orientation_2, reporting);
+            [permutation_vector, dimension_1, dimension_2, dimension_3] = MimImageCoordinateUtilities.GetPermutationFromOrientations(orientation_1, orientation_2, reporting);
 
             % Calculate flip for each dimension, based on whether the
             % dimension axis lies in the same or opposite direction to the
             % image axis
             orientation_3 = cross(orientation_2, orientation_1);
-            flip = PTKImageCoordinateUtilities.GetFlipFromOrientations(orientation_1, orientation_2, orientation_3, dimension_1, dimension_2, dimension_3);
+            flip = MimImageCoordinateUtilities.GetFlipFromOrientations(orientation_1, orientation_2, orientation_3, dimension_1, dimension_2, dimension_3);
             
             % Check the resulting vector is valid
             if (sum(permutation_vector == 1) ~= 1) || (sum(permutation_vector == 2) ~= 1) || (sum(permutation_vector == 3) ~= 1) || ...
                     ~isempty(setdiff(permutation_vector, [1,2,3]))
-                reporting.Error('PTKImageCoordinateUtilities:InvalidPermutationVector', 'GetDimensionPermutationVectorFromDicomOrientation() resulted in an invalid permutation vector');
+                reporting.Error('MimImageCoordinateUtilities:InvalidPermutationVector', 'GetDimensionPermutationVectorFromDicomOrientation() resulted in an invalid permutation vector');
             end
         end
         
         function [permutation_vector, dimension_1, dimension_2, dimension_3] = GetPermutationFromOrientations(orientation_1, orientation_2, reporting)
-            [dimension_1, dimension_2, dimension_3] = PTKImageCoordinateUtilities.GetDimensionIndicesFromOrientations(orientation_1, orientation_2, reporting);
+            [dimension_1, dimension_2, dimension_3] = MimImageCoordinateUtilities.GetDimensionIndicesFromOrientations(orientation_1, orientation_2, reporting);
             
             permutation_vector = [3, 3, 3];
             permutation_vector(dimension_1) = 1;
@@ -285,16 +285,16 @@ classdef PTKImageCoordinateUtilities
                 case 'S'
                     dicom_cosine = [0, 0, -1];
                 otherwise
-                    reporting.Error('PTKImageCoordinateUtilities:UnknownAnatomicalOrientation', ['PTKImageCoordinateUtilities: WARNING: no implementation yet for anatomical orientation ' anatomical_orientation_char '.']);
+                    reporting.Error('MimImageCoordinateUtilities:UnknownAnatomicalOrientation', ['MimImageCoordinateUtilities: WARNING: no implementation yet for anatomical orientation ' anatomical_orientation_char '.']);
             end
         end
         
         function [permutation_vector, flip_orientation] = GetDimensionPermutationVectorFromAnatomicalOrientation(anatomical_orientation_string, reporting)
-            direction_cosine_1 = PTKImageCoordinateUtilities.AnatomicalOrientationToDicomCosine(anatomical_orientation_string(1), reporting);
-            direction_cosine_2 = PTKImageCoordinateUtilities.AnatomicalOrientationToDicomCosine(anatomical_orientation_string(2), reporting);
-            direction_cosine_3 = PTKImageCoordinateUtilities.AnatomicalOrientationToDicomCosine(anatomical_orientation_string(3), reporting);
+            direction_cosine_1 = MimImageCoordinateUtilities.AnatomicalOrientationToDicomCosine(anatomical_orientation_string(1), reporting);
+            direction_cosine_2 = MimImageCoordinateUtilities.AnatomicalOrientationToDicomCosine(anatomical_orientation_string(2), reporting);
+            direction_cosine_3 = MimImageCoordinateUtilities.AnatomicalOrientationToDicomCosine(anatomical_orientation_string(3), reporting);
             
-            [permutation_vector, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(direction_cosine_1, direction_cosine_2, direction_cosine_3, reporting);
+            [permutation_vector, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(direction_cosine_1, direction_cosine_2, direction_cosine_3, reporting);
         end
             
         function [permutation_vector, flip_orientation] = GetDimensionPermutationVectorFromMhdCosines(direction_cosine_1, direction_cosine_2, direction_cosine_3, reporting)
@@ -314,17 +314,17 @@ classdef PTKImageCoordinateUtilities
             orientation_3(3) = - orientation_3(3);
             
             % Determine the PTK dimensions to which each of these vectors correspond
-            [permutation_vector, dimension_1, dimension_2, dimension_3] = PTKImageCoordinateUtilities.GetPermutationFromOrientations(orientation_1, orientation_2, reporting);
+            [permutation_vector, dimension_1, dimension_2, dimension_3] = MimImageCoordinateUtilities.GetPermutationFromOrientations(orientation_1, orientation_2, reporting);
 
             % Calculate flip for each dimension, based on whether the
             % dimension axis lies in the same or opposite direction to the
             % image axis
-            flip_orientation = PTKImageCoordinateUtilities.GetFlipFromOrientations(orientation_1, orientation_2, orientation_3, dimension_1, dimension_2, dimension_3);
+            flip_orientation = MimImageCoordinateUtilities.GetFlipFromOrientations(orientation_1, orientation_2, orientation_3, dimension_1, dimension_2, dimension_3);
             
             % Check the resulting vector is valid
             if (sum(permutation_vector == 1) ~= 1) || (sum(permutation_vector == 2) ~= 1) || (sum(permutation_vector == 3) ~= 1) || ...
                     ~isempty(setdiff(permutation_vector, [1,2,3]))
-                reporting.Error('PTKImageCoordinateUtilities:InvalidPermutationVector', 'GetDimensionPermutationVectorFromAnatomicalOrientation() resulted in an invalid permutation vector');
+                reporting.Error('MimImageCoordinateUtilities:InvalidPermutationVector', 'GetDimensionPermutationVectorFromAnatomicalOrientation() resulted in an invalid permutation vector');
             end            
         end
         
@@ -450,11 +450,11 @@ classdef PTKImageCoordinateUtilities
                 case PTKCoordinateSystem.PTK
                     ptk_coordinates = coordinates;
                 case PTKCoordinateSystem.Dicom
-                    ptk_coordinates = PTKImageCoordinateUtilities.DicomToPTKCoordinates(coordinates, template_image);
+                    ptk_coordinates = MimImageCoordinateUtilities.DicomToPTKCoordinates(coordinates, template_image);
                 case PTKCoordinateSystem.DicomUntranslated
-                    ptk_coordinates = PTKImageCoordinateUtilities.CornerToPTKCoordinates(coordinates, template_image);
+                    ptk_coordinates = MimImageCoordinateUtilities.CornerToPTKCoordinates(coordinates, template_image);
                 otherwise
-                    reporting.Error('PTKImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
+                    reporting.Error('MimImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
             end
         end
 
@@ -463,11 +463,11 @@ classdef PTKImageCoordinateUtilities
                 case PTKCoordinateSystem.PTK
                     coordinates = ptk_coordinates;
                 case PTKCoordinateSystem.Dicom
-                    coordinates = PTKImageCoordinateUtilities.PTKToDicomCoordinates(ptk_coordinates, template_image);
+                    coordinates = MimImageCoordinateUtilities.PTKToDicomCoordinates(ptk_coordinates, template_image);
                 case PTKCoordinateSystem.DicomUntranslated
-                    coordinates = PTKImageCoordinateUtilities.PTKToCornerCoordinates(ptk_coordinates, template_image);
+                    coordinates = MimImageCoordinateUtilities.PTKToCornerCoordinates(ptk_coordinates, template_image);
                 otherwise
-                    reporting.Error('PTKImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
+                    reporting.Error('MimImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
             end
         end
         
@@ -478,11 +478,11 @@ classdef PTKImageCoordinateUtilities
                     c_y = p_y;
                     c_z = p_z;
                 case PTKCoordinateSystem.Dicom
-                    [c_x, c_y, c_z] = PTKImageCoordinateUtilities.PTKToDicomCoordinatesCoordwise(p_x, p_y, p_z, template_image);
+                    [c_x, c_y, c_z] = MimImageCoordinateUtilities.PTKToDicomCoordinatesCoordwise(p_x, p_y, p_z, template_image);
                 case PTKCoordinateSystem.DicomUntranslated
-                    [c_x, c_y, c_z] = PTKImageCoordinateUtilities.PTKToCornerCoordinatesCoordwise(p_x, p_y, p_z, template_image);
+                    [c_x, c_y, c_z] = MimImageCoordinateUtilities.PTKToCornerCoordinatesCoordwise(p_x, p_y, p_z, template_image);
                 otherwise
-                    reporting.Error('PTKImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
+                    reporting.Error('MimImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
             end
         end
         
@@ -491,7 +491,7 @@ classdef PTKImageCoordinateUtilities
             if isempty(voxel_indices)
                 return;
             end
-            [~, linear_offsets27] = PTKImageCoordinateUtilities.GetLinearOffsets(template_image.ImageSize);
+            [~, linear_offsets27] = MimImageCoordinateUtilities.GetLinearOffsets(template_image.ImageSize);
             voxel_indices = repmat(int32(voxel_indices), 27, 1) + repmat(int32(linear_offsets27'), 1, length(voxel_indices));
             voxel_indices = unique(voxel_indices(:));
         end
@@ -501,12 +501,12 @@ classdef PTKImageCoordinateUtilities
             yc = [point_list.CoordY];
             zc = [point_list.CoordZ];
             ptk_coords = [xc', yc', zc'];
-            coordinates_mm = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(ptk_coords);
+            coordinates_mm = MimImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(ptk_coords);
             global_coordinates = round(template_image.CoordinatesMmToGlobalCoordinates(coordinates_mm));
         end
         
         function global_indices = GetGlobalIndicesForPoints(point_list, template_image)
-            global_coordinates = PTKImageCoordinateUtilities.GetGlobalCoordinatesForPoints(point_list, template_image);
+            global_coordinates = MimImageCoordinateUtilities.GetGlobalCoordinatesForPoints(point_list, template_image);
             global_indices = template_image.GlobalCoordinatesToGlobalIndices(global_coordinates);
         end
         

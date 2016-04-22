@@ -44,7 +44,7 @@ function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_g
     output_image = threshold_image.BlankCopy;
     segmented_image = zeros(threshold_image.ImageSize, 'uint8');
     
-    [linear_offsets, ~] = PTKImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
+    [linear_offsets, ~] = MimImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
 
     threshold_image_raw = logical(threshold_image.RawImage);
     number_points = length(segmented_image(:));

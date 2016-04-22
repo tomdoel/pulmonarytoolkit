@@ -113,9 +113,9 @@ function ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, image_file_f
     
 %     if isfield(header_data, 'TransformMatrix')
 %         transform_matrix = str2num(header_data.TransformMatrix); %#ok<ST2NM>
-%         [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(transform_matrix(1:3), transform_matrix(4:6), transform_matrix(7:9), reporting);
+%         [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(transform_matrix(1:3), transform_matrix(4:6), transform_matrix(7:9), reporting);
 %     else        
-%         [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromAnatomicalOrientation(header_data.AnatomicalOrientation, reporting);
+%         [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromAnatomicalOrientation(header_data.AnatomicalOrientation, reporting);
 %     end
 % 
     image_dims = header_data.Dimensions(1:3);

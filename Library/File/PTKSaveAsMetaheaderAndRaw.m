@@ -29,7 +29,7 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
         reporting.Error('PTKSaveAsMetaheaderAndRaw:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
 
-    orientation = PTKImageCoordinateUtilities.ChooseOrientation(image_data.VoxelSize);
+    orientation = MimImageCoordinateUtilities.ChooseOrientation(image_data.VoxelSize);
     
     original_image = image_data.RawImage;
     

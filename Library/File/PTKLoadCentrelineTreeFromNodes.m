@@ -78,7 +78,7 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
         point_parameters = [];
         point_parameters.Radius = radius;
         
-        new_coords = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([xc, yc, zc], coordinate_system, template_image);
+        new_coords = MimImageCoordinateUtilities.ConvertToPTKCoordinates([xc, yc, zc], coordinate_system, template_image);
         new_point = PTKCentrelinePoint(new_coords(1), new_coords(2), new_coords(3), point_parameters);
         node_points(node_number + 1) = new_point;
     end

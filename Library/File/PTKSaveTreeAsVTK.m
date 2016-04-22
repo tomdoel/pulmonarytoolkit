@@ -66,7 +66,7 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     
     point_coordinates = zeros(num_points, 3);
     
-    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([tree_root.StartPoint.CoordX, tree_root.StartPoint.CoordY, tree_root.StartPoint.CoordZ], coordinate_system, template_image);
+    dicom_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([tree_root.StartPoint.CoordX, tree_root.StartPoint.CoordY, tree_root.StartPoint.CoordZ], coordinate_system, template_image);
     point_coordinates(1, :) = [dicom_coordinates(1), dicom_coordinates(2), dicom_coordinates(3)];
     
     lines = zeros(num_branches, 2);
@@ -118,7 +118,7 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
         point_matlab_index = branch_index + 1;
 
         % Write the next point for this branch end point
-        dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([branch.EndPoint.CoordX, branch.EndPoint.CoordY, branch.EndPoint.CoordZ], coordinate_system, template_image);
+        dicom_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([branch.EndPoint.CoordX, branch.EndPoint.CoordY, branch.EndPoint.CoordZ], coordinate_system, template_image);
         point_coordinates(point_matlab_index, :) = [dicom_coordinates(1), dicom_coordinates(2), dicom_coordinates(3)];
         
         lines(branch_index, :) = [start_point_index, end_point_index];

@@ -96,7 +96,7 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_sy
     % First create the node at the start of the tree
     first_point = tree_root.StartPoint;
     
-    first_point_converted = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([first_point.CoordX, first_point.CoordY, first_point.CoordZ], coordinate_system, template_image);
+    first_point_converted = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([first_point.CoordX, first_point.CoordY, first_point.CoordZ], coordinate_system, template_image);
 
     start_x_mm = first_point_converted(1);
     start_y_mm = first_point_converted(2);
@@ -265,7 +265,7 @@ function previous_values = PrintBranchToFileAsNode(ipnode_file_handle, exnode_fi
     % bifurcation point
     last_point = branch.EndPoint;
     
-    converted_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([last_point.CoordX, last_point.CoordY, last_point.CoordZ], coordinate_system, template_image);
+    converted_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([last_point.CoordX, last_point.CoordY, last_point.CoordZ], coordinate_system, template_image);
     
     x_mm = converted_coordinates(1);
     y_mm = converted_coordinates(2);

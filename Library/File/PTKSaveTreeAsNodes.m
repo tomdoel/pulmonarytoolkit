@@ -65,7 +65,7 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
     % connects this point to itself
     first_point = tree_root.StartPoint;
     
-    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([first_point.CoordX, first_point.CoordY, first_point.CoordZ], coordinate_system, template_image);
+    dicom_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([first_point.CoordX, first_point.CoordY, first_point.CoordZ], coordinate_system, template_image);
     start_x_mm = dicom_coordinates(1);
     start_y_mm = dicom_coordinates(2);
     start_z_mm = dicom_coordinates(3);
@@ -125,7 +125,7 @@ function PrintBranchToFileAsNode(fid, node_index, branch, coordinate_system, tem
     % bifurcation point
     last_point = branch.EndPoint;
     
-    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([last_point.CoordX, last_point.CoordY, last_point.CoordZ], coordinate_system, template_image);
+    dicom_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([last_point.CoordX, last_point.CoordY, last_point.CoordZ], coordinate_system, template_image);
     x_mm = dicom_coordinates(1);
     y_mm = dicom_coordinates(2);
     z_mm = dicom_coordinates(3);

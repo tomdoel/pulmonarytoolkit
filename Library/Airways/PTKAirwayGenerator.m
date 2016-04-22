@@ -148,7 +148,7 @@ classdef PTKAirwayGenerator < handle
                     branch = branches_to_do(end);
                     branches_to_do(end) = [];
                     if isempty(branch.Children)
-                        branch_length = PTKImageCoordinateUtilities.DistanceBetweenPoints(branch.StartPoint, branch.EndPoint);
+                        branch_length = MimImageCoordinateUtilities.DistanceBetweenPoints(branch.StartPoint, branch.EndPoint);
                         if branch_length < length_limit
                             if ~isempty(branch.Parent)
                                 reporting.ShowWarning('PTKAirwayGenerator:SegmentedBranchesBelowLimit', 'Initial branches have been excluded due to their length being below the limit', []);
@@ -165,7 +165,7 @@ classdef PTKAirwayGenerator < handle
         end
         
         function in_volume = IsInsideVolume(point_mm, lung_volume)
-            global_coordinates = PTKImageCoordinateUtilities.GetGlobalCoordinatesForPoints(point_mm, lung_volume);
+            global_coordinates = MimImageCoordinateUtilities.GetGlobalCoordinatesForPoints(point_mm, lung_volume);
             if ~lung_volume.IsPointInImage(global_coordinates)
                 in_volume = false;
             else
@@ -288,7 +288,7 @@ classdef PTKAirwayGenerator < handle
             for apex = apices
                 cloud_points = apex.PointCloud.Coords;
                 if ~isempty(cloud_points)
-                    cloud_points = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(cloud_points);
+                    cloud_points = MimImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(cloud_points);
                     point_coord = template.CoordinatesMmToGlobalCoordinates(cloud_points);
                     point_coord = template.GlobalToLocalCoordinates(point_coord);
                     indices = sub2ind(template.ImageSize, point_coord(:,1), point_coord(:,2), point_coord(:,3));
@@ -299,7 +299,7 @@ classdef PTKAirwayGenerator < handle
         end
         
         function centreline_indices_local = CentrelinePointsToLocalIndices(centreline_points, template_image)
-            centreline_indices_global = PTKImageCoordinateUtilities.GetGlobalIndicesForPoints(centreline_points, template_image);
+            centreline_indices_global = MimImageCoordinateUtilities.GetGlobalIndicesForPoints(centreline_points, template_image);
             centreline_indices_local = template_image.GlobalToLocalIndices(centreline_indices_global);
         end
         
@@ -451,11 +451,11 @@ classdef PTKAirwayGenerator < handle
             new_branch.EndPoint = new_branch_end_point;
             new_branch.IsGenerated = true;
 
-            new_branch_length = PTKImageCoordinateUtilities.DistanceBetweenPoints(new_branch_end_point, new_branch_start_point);
+            new_branch_length = MimImageCoordinateUtilities.DistanceBetweenPoints(new_branch_end_point, new_branch_start_point);
 
             % Find closest point in cloud and delete
             closest_point = PTKAirwayGenerator.FindClosestPointInCloud(new_branch_end_point, cloud);
-            closest_point_global_coords = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(closest_point);
+            closest_point_global_coords = MimImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(closest_point);
             closest_point_global_coords = lung_volume.CoordinatesMmToGlobalCoordinates(closest_point_global_coords);
             lung_volume.SetVoxelToThis(closest_point_global_coords, 0);
             
@@ -484,7 +484,7 @@ classdef PTKAirwayGenerator < handle
             for apex_number = 1 : numel(apices)
                 apex = apices(apex_number);
                 end_point = apex.AirwayGrowingTreeSegment.EndPoint;
-                end_point_global_coordinates = PTKImageCoordinateUtilities.GetGlobalCoordinatesForPoints(end_point, resampled_volume);
+                end_point_global_coordinates = MimImageCoordinateUtilities.GetGlobalCoordinatesForPoints(end_point, resampled_volume);
                 end_point = resampled_volume.GlobalToLocalCoordinates(end_point_global_coordinates);
                 apex_start_points(apex_number, :) = [end_point(1), end_point(2), end_point(3)];
                 current_value = sample_image(end_point(1), end_point(2), end_point(3));
@@ -534,7 +534,7 @@ classdef PTKAirwayGenerator < handle
                     if ~isempty(local_indices)
                         global_indices =  resampled_volume.LocalToGlobalIndices(local_indices);
                         [ic, jc, kc] = resampled_volume.GlobalIndicesToCoordinatesMm(global_indices);
-                        [ptk_x, ptk_y, ptk_z] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
+                        [ptk_x, ptk_y, ptk_z] = MimImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
 
                         apices(apex_number).PointCloud.Coords = [ptk_x, ptk_y, ptk_z];
                     else

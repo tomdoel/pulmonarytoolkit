@@ -40,7 +40,7 @@ function PTKSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_li
     number_points = length(xc);
     
     for index = 1 : number_points
-        dicom_coords = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([xc(index), yc(index), zc(index)], coordinate_system, template_image);
+        dicom_coords = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([xc(index), yc(index), zc(index)], coordinate_system, template_image);
         coord_x = dicom_coords(1);
         coord_y = dicom_coords(2);
         coord_z = dicom_coords(3);

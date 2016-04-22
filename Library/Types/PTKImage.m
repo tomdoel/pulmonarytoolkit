@@ -793,7 +793,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 [new_i_grid, new_j_grid, new_k_grid] = ndgrid(new_i_mm, new_j_mm, new_k_mm);
                 
                 if ~isempty(affine_matrix)
-                    [new_i_grid, new_j_grid, new_k_grid] = PTKImageCoordinateUtilities.TransformCoordsAffine(new_i_grid, new_j_grid, new_k_grid, affine_matrix);
+                    [new_i_grid, new_j_grid, new_k_grid] = MimImageCoordinateUtilities.TransformCoordsAffine(new_i_grid, new_j_grid, new_k_grid, affine_matrix);
                 end
                 
                 % Find the nearest value for each point in the new grid
@@ -870,11 +870,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function global_indices = LocalToGlobalIndices(obj, local_indices)
-            global_indices = PTKImageCoordinateUtilities.OffsetIndices(local_indices, obj.Origin - [1, 1, 1], obj.ImageSize, obj.OriginalImageSize);
+            global_indices = MimImageCoordinateUtilities.OffsetIndices(local_indices, obj.Origin - [1, 1, 1], obj.ImageSize, obj.OriginalImageSize);
         end
         
         function local_indices = GlobalToLocalIndices(obj, global_indices)
-            local_indices = PTKImageCoordinateUtilities.OffsetIndices(global_indices, [1, 1, 1] - obj.Origin, obj.OriginalImageSize, obj.ImageSize);
+            local_indices = MimImageCoordinateUtilities.OffsetIndices(global_indices, [1, 1, 1] - obj.Origin, obj.OriginalImageSize, obj.ImageSize);
         end
         
         function [ic, jc, kc] = GlobalIndicesToCoordinatesMm(obj, global_indices)
@@ -886,7 +886,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function ptk_coordinates = GlobalIndicesToPTKCoordinates(obj, global_indices)
             % Given a set of global indices, compute the coordinates of each in mm
             [ic, jc, kc] = obj.GlobalIndicesToCoordinatesMm(global_indices);
-            [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
+            [ic, jc, kc] = MimImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
             ptk_coordinates = [ic, jc, kc];
         end
         
@@ -921,7 +921,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function global_indices = GlobalCoordinatesToGlobalIndices(obj, coords)
-            global_indices = PTKImageCoordinateUtilities.FastSub2ind(obj.OriginalImageSize, coords(:, 1), coords(:, 2), coords(:, 3));
+            global_indices = MimImageCoordinateUtilities.FastSub2ind(obj.OriginalImageSize, coords(:, 1), coords(:, 2), coords(:, 3));
         end
         
         function [ic, jc, kc] = GetGlobalCoordinatesMm(obj)
@@ -949,13 +949,13 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function [ic, jc, kc] = GetPTKCoordinates(obj)
             % Returns the coordinates of all points in the image in global coordinates in mm, using PTK coordinates
             [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
-            [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
+            [ic, jc, kc] = MimImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
         end
         
         function [xc, yc, zc] = GetDicomCoordinates(obj)
             % Returns the coordinates of all points in the image in Dicom coordinates in mm
             [ic, jc, kc] = GetPTKCoordinates(obj);
-            [xc, yc, zc] = PTKImageCoordinateUtilities.PTKToDicomCoordinatesCoordwise(ic, jc, kc, obj);
+            [xc, yc, zc] = MimImageCoordinateUtilities.PTKToDicomCoordinatesCoordwise(ic, jc, kc, obj);
         end
         
         function [xc, yc, zc] = GlobalCoordinatesMmToCornerCoordinates(obj, ic, jc, kc)

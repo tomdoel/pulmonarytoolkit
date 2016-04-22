@@ -28,7 +28,7 @@ function [deformation_field, deformed_image] = PTKSolveForFluidRegistration(imag
     
     deformation_field = PTKSolveMatchedImagesForFluidRegistration(transformed_image, isotropic_reference_image, reporting);
     
-    deformation_field = PTKImageCoordinateUtilities.AdjustDeformationFieldForInitialAffineTransformation(deformation_field, affine_initial_matrix);
+    deformation_field = MimImageCoordinateUtilities.AdjustDeformationFieldForInitialAffineTransformation(deformation_field, affine_initial_matrix);
     
     deformed_image = PTKRegisterImageFluid(image_to_transform, deformation_field, '*nearest', reporting);
 end

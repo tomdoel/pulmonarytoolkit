@@ -77,7 +77,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     point_parameters = [];
     point_parameters.Radius = radius;
     
-    new_coords_start = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([start_x, start_y, start_z], coordinate_system, template_image);
+    new_coords_start = MimImageCoordinateUtilities.ConvertToPTKCoordinates([start_x, start_y, start_z], coordinate_system, template_image);
     first_point = PTKCentrelinePoint(new_coords_start(1), new_coords_start(2), new_coords_start(3), point_parameters);
 
     % Create a new branch for each node
@@ -91,7 +91,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
         
         point_parameters = [];
         point_parameters.Radius = radius;
-        new_coords_end = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([end_x, end_y, end_z], coordinate_system, template_image);
+        new_coords_end = MimImageCoordinateUtilities.ConvertToPTKCoordinates([end_x, end_y, end_z], coordinate_system, template_image);
         last_point = PTKCentrelinePoint(new_coords_end(1), new_coords_end(2), new_coords_end(3), point_parameters);
 
         new_branch = PTKTreeModel;
@@ -131,7 +131,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
         radius = node_data{5}(branch_index);
         point_parameters = [];
         point_parameters.Radius = radius;
-        new_coords_start = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([start_x, start_y, start_z], coordinate_system, template_image);
+        new_coords_start = MimImageCoordinateUtilities.ConvertToPTKCoordinates([start_x, start_y, start_z], coordinate_system, template_image);
         first_point = PTKCentrelinePoint(new_coords_start(1), new_coords_start(2), new_coords_start(3), point_parameters);
         branch.StartPoint = first_point;
     end

@@ -88,7 +88,7 @@ classdef PTKDensityGridPerLobe < PTKPlugin
                 
                 global_indices_for_this_lobe = lobes_copy.LocalToGlobalIndices(local_indices_for_this_lobe);
                 [ic, jc, kc] = lobes_copy.GlobalIndicesToCoordinatesMm(global_indices_for_this_lobe);
-                [ptk_x, ptk_y, ptk_z] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
+                [ptk_x, ptk_y, ptk_z] = MimImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
                 density_values = density_average_copy.RawImage(local_indices_for_this_lobe);
                 PTKDensityGridPerLobe.SaveToFile(dataset, lobe_names{lobe_index}, ptk_x, ptk_y, ptk_z, density_values)
             end

@@ -90,7 +90,7 @@ classdef PTKImageFromVolume < GemImage
         function SetRangeWithPositionAdjustment(obj, x_range, y_range)
             [dim_x_index, dim_y_index, ~] = GemUtilities.GetXYDimensionIndex(obj.ImageParameters.Orientation);
             
-            overlay_offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ReferenceImageSource.Image, obj.ImageSource.Image);
+            overlay_offset_voxels = MimImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ReferenceImageSource.Image, obj.ImageSource.Image);
             overlay_offset_x_voxels = overlay_offset_voxels(dim_x_index);
             overlay_offset_y_voxels = overlay_offset_voxels(dim_y_index);
             obj.SetRange(x_range - overlay_offset_x_voxels, y_range - overlay_offset_y_voxels);
@@ -120,7 +120,7 @@ classdef PTKImageFromVolume < GemImage
         end
         
         function image_slice = GetImageSlice(background_image, image_object, slice_number, orientation)
-            offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(background_image, image_object);
+            offset_voxels = MimImageCoordinateUtilities.GetOriginOffsetVoxels(background_image, image_object);
             
             slice_number = slice_number - round(offset_voxels(orientation));
             if (slice_number < 1) || (slice_number > image_object.ImageSize(orientation))

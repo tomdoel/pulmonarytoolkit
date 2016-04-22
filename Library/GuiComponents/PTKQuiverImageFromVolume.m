@@ -37,7 +37,7 @@ classdef PTKQuiverImageFromVolume < GemQuiverImage
         function SetRangeWithPositionAdjustment(obj, x_range, y_range)
             [dim_x_index, dim_y_index, dim_z_index] = GemUtilities.GetXYDimensionIndex(obj.ImageParameters.Orientation);
             
-            quiver_offset_voxels = PTKImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ReferenceImageSource.Image, obj.ImageSource.Image);
+            quiver_offset_voxels = MimImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ReferenceImageSource.Image, obj.ImageSource.Image);
             quiver_offset_x_voxels = quiver_offset_voxels(dim_x_index);
             quiver_offset_y_voxels = quiver_offset_voxels(dim_y_index);
             obj.SetRange(x_range - quiver_offset_x_voxels, y_range - quiver_offset_y_voxels);
