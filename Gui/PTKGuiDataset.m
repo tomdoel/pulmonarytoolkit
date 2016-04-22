@@ -238,7 +238,7 @@ classdef PTKGuiDataset < CoreBaseClass
             patient_visible_name = obj.GuiDatasetState.CurrentPatientVisibleName;
             
             try
-                if isa(image_info_or_uid, 'PTKImageInfo')
+                if isa(image_info_or_uid, 'MimImageInfo')
                     series_uid = image_info_or_uid.ImageUid;
                     new_dataset = obj.Ptk.CreateDatasetFromInfo(image_info_or_uid);
                 elseif ischar(image_info_or_uid)

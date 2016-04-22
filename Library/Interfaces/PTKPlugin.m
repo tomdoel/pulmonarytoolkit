@@ -24,7 +24,7 @@ classdef PTKPlugin < handle
     %     to your image data, and MyPluginName with the name of the plugin to
     %     run.
     %
-    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
+    %         image_info = MimImageInfo( <image path>, <filenames>, [], [], [], []);
     %         ptk = PTKMain;
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %         airways = dataset.GetResult('MyPluginName');

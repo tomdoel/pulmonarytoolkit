@@ -11,7 +11,7 @@ classdef MimMain < CoreBaseClass
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the Pulmonary Toolkit.
     %
-    %     To import a new dataset, construct a PTKImageInfo object with the file
+    %     To import a new dataset, construct a MimImageInfo object with the file
     %     path and file name set to the image file. For DICOM files it is only
     %     necessary to specify the path since all image files in that directory
     %     will be imported. Then call CreateDatasetFromInfo. MimMain will import
@@ -28,7 +28,7 @@ classdef MimMain < CoreBaseClass
     %     Replace <image path> and <filenames> with the path and filenames
     %     to your image data.
     %
-    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
+    %         image_info = MimImageInfo( <image path>, <filenames>, [], [], [], []);
     %         mim = MimMain;
     %         dataset = mim.CreateDatasetFromInfo(image_info);
     %
@@ -111,7 +111,7 @@ classdef MimMain < CoreBaseClass
         
         function dataset = CreateDatasetFromInfo(obj, new_image_info)
             % Creates a MimDataset object for a dataset specified by the path,
-            % filenames and/or uid specified in a PTKImageInfo object. The dataset is
+            % filenames and/or uid specified in a MimImageInfo object. The dataset is
             % imported from the specified path if it does not already exist.
             [image_info, dataset_disk_cache] = obj.ImportDataFromInfo(new_image_info, obj.Reporting);
             
@@ -249,7 +249,7 @@ classdef MimMain < CoreBaseClass
                 if isempty(image_type)
                     reporting.ShowWarning('MimMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(next_filename.Path, next_filename.FullFile)], []);
                 else
-                    image_info_nondicom = PTKImageInfo(import_folder, principal_filename, image_type, [], [], []);
+                    image_info_nondicom = MimImageInfo(import_folder, principal_filename, image_type, [], [], []);
                     [image_info_nondicom, ~] = obj.ImportDataFromInfo(image_info_nondicom, reporting);
                     uids{end + 1} = image_info_nondicom.ImageUid;
                 end
@@ -258,7 +258,7 @@ classdef MimMain < CoreBaseClass
         
         function uid = ImportDicomFiles(obj, dicom_filenames, reporting)
             uid = [];
-            image_info_dicom = PTKImageInfo(dicom_filenames{1}.Path, dicom_filenames, MimImageFileFormat.Dicom, [], [], []);
+            image_info_dicom = MimImageInfo(dicom_filenames{1}.Path, dicom_filenames, MimImageFileFormat.Dicom, [], [], []);
             try
                 tic
                 [image_info_dicom, ~] = obj.ImportDataFromInfo(image_info_dicom, reporting);
@@ -272,7 +272,7 @@ classdef MimMain < CoreBaseClass
         function [image_info, dataset_disk_cache] = ImportDataFromInfo(obj, new_image_info, reporting)
             % Imports data into the Pulmonary Toolkit so that it can be accessed
             % from the CreateDatasetFromUid() method. The input argument is a
-            % PTKImageInfo object containing the path, filenames and file type of
+            % MimImageInfo object containing the path, filenames and file type of
             % the data to import. If you do not know the file type, use the
             % ImportData() method instead.
             
@@ -286,7 +286,7 @@ classdef MimMain < CoreBaseClass
             dataset_disk_cache = obj.FrameworkSingleton.GetDatasetMemoryCache.GetDatasetDiskCache(new_image_info.ImageUid, reporting);
             image_info = dataset_disk_cache.LoadData(obj.FrameworkAppDef.GetFrameworkConfig.ImageInfoCacheName, reporting);
             if isempty(image_info)
-                image_info = PTKImageInfo;
+                image_info = MimImageInfo;
             end
 
             [image_info, anything_changed] = image_info.CopyNonEmptyFields(image_info, new_image_info);

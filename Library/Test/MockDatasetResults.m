@@ -47,7 +47,7 @@ classdef MockDatasetResults < handle
             obj.ImageTemplates.UpdateTemplates(plugin_name, context, result, has_been_run, cache_info, reporting);
         end
 
-        % Returns a PTKImageInfo structure with image information, including the
+        % Returns a MimImageInfo structure with image information, including the
         % UID, filenames and file path
         function image_info = GetImageInfo(obj)
         end

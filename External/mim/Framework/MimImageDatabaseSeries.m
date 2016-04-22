@@ -80,7 +80,7 @@ classdef MimImageDatabaseSeries < handle
             uid = obj.SeriesUid;
             study_uid = obj.StudyUid;
             modality = obj.Modality;
-            image_info = PTKImageInfo(path, filenames_cells, image_type, uid, study_uid, modality);
+            image_info = MimImageInfo(path, filenames_cells, image_type, uid, study_uid, modality);
         end
         
     end

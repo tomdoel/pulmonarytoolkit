@@ -19,7 +19,7 @@ classdef MimDataset < CoreBaseClass
     %     Example: Replace <image path> and <filenames> with the path and filenames
     %     to your image data.
     %
-    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
+    %         image_info = MimImageInfo( <image path>, <filenames>, [], [], [], []);
     %         mim = MimMain;
     %         dataset = mim.CreateDatasetFromInfo(image_info);
     %
@@ -219,7 +219,7 @@ classdef MimDataset < CoreBaseClass
         end
 
         function image_info = GetImageInfo(obj, varargin)
-            % Returns a PTKImageInfo structure with image information, including the
+            % Returns a MimImageInfo structure with image information, including the
             % UID, filenames and file path
             obj.PreCallTidy;
             image_info = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetImageInfo(obj.Reporting);

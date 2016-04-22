@@ -1,7 +1,7 @@
-classdef PTKImageInfo
-    % PTKImageInfo. A structure for holding information related to images
+classdef MimImageInfo
+    % MimImageInfo. A structure for holding information related to images
     %
-    %     PTKImageInfo is used to specify data about the files that comprise a
+    %     MimImageInfo is used to specify data about the files that comprise a
     %     dataset. When importing new data, it is only necessary to specify the
     %     path, filenames and image type. When subsequently loading data,
     %     specifying the uids mean these don't have to be reloaded from the
@@ -24,7 +24,7 @@ classdef PTKImageInfo
     end
     
     methods
-        function obj = PTKImageInfo(path, filenames, image_type, uid, study_uid, modality)
+        function obj = MimImageInfo(path, filenames, image_type, uid, study_uid, modality)
             if nargin > 0
                 obj.ImagePath = path;
                 obj.ImageFilenames = filenames;
@@ -45,12 +45,12 @@ classdef PTKImageInfo
     end
     
     methods (Static)
-        % Copies values from another PTKImageInfo object, but only those
+        % Copies values from another MimImageInfo object, but only those
         % properies which are not empty
         function [new_info, anything_changed] = CopyNonEmptyFields(image_info, other_image_info)
             new_info = image_info;
             anything_changed = false;
-            metaclass = ?PTKImageInfo;
+            metaclass = ?MimImageInfo;
             property_list = metaclass.Properties;
             for i = 1 : length(property_list);
                 property = property_list{i};

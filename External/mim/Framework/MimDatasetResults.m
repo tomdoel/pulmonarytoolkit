@@ -107,7 +107,7 @@ classdef MimDatasetResults < handle
         end
 
         function image_info = GetImageInfo(obj, reporting)
-            % Returns a PTKImageInfo structure with image information, including the
+            % Returns a MimImageInfo structure with image information, including the
             % UID, filenames and file path
         
             image_info = obj.ImageInfo;

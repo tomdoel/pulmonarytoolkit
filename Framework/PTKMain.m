@@ -13,7 +13,7 @@ classdef PTKMain < MimMain
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the Pulmonary Toolkit.
     %
-    %     To import a new dataset, construct a PTKImageInfo object with the file
+    %     To import a new dataset, construct a MimImageInfo object with the file
     %     path and file name set to the image file. For DICOM files it is only
     %     necessary to specify the path since all image files in that directory
     %     will be imported. Then call CreateDatasetFromInfo. PTKMain will import
@@ -30,7 +30,7 @@ classdef PTKMain < MimMain
     %     Replace <image path> and <filenames> with the path and filenames
     %     to your image data.
     %
-    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
+    %         image_info = MimImageInfo( <image path>, <filenames>, [], [], [], []);
     %         ptk = PTKMain;
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %
