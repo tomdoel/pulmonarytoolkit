@@ -1,5 +1,5 @@
-function figure_handle = PTKVisualiseIn3D(figure_handle, segmentation, smoothing_size, small_structures, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting)
-    % PTKVisualiseIn3D. Opens a new Matlab figure and visualises the
+function figure_handle = MimVisualiseIn3D(figure_handle, segmentation, smoothing_size, small_structures, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting)
+    % MimVisualiseIn3D. Opens a new Matlab figure and visualises the
     % segmentation image in 3D.
     %
     %
