@@ -258,7 +258,7 @@ classdef MimMain < CoreBaseClass
         
         function uid = ImportDicomFiles(obj, dicom_filenames, reporting)
             uid = [];
-            image_info_dicom = PTKImageInfo(dicom_filenames{1}.Path, dicom_filenames, PTKImageFileFormat.Dicom, [], [], []);
+            image_info_dicom = PTKImageInfo(dicom_filenames{1}.Path, dicom_filenames, MimImageFileFormat.Dicom, [], [], []);
             try
                 tic
                 [image_info_dicom, ~] = obj.ImportDataFromInfo(image_info_dicom, reporting);
@@ -304,7 +304,7 @@ classdef MimMain < CoreBaseClass
             % will fail if two imported images have the same filename
             study_uid = [];
             switch(image_info.ImageFileFormat)
-                case PTKImageFileFormat.Dicom
+                case MimImageFileFormat.Dicom
                     if ~isempty(image_info.ImageFilenames) && isa(image_info.ImageFilenames{1}, 'CoreFilename')
                         first_path = image_info.ImageFilenames{1}.Path;
                         first_filename = image_info.ImageFilenames{1}.Name;
@@ -323,10 +323,10 @@ classdef MimMain < CoreBaseClass
                     image_uid = metadata.SeriesInstanceUID;
                     study_uid = metadata.StudyInstanceUID;
                     modality = metadata.Modality;
-                case {PTKImageFileFormat.Metaheader, PTKImageFileFormat.Analyze, PTKImageFileFormat.Gipl, ...
-                        PTKImageFileFormat.Isi, PTKImageFileFormat.Nifti, PTKImageFileFormat.V3d, ...
-                        PTKImageFileFormat.Vmp, PTKImageFileFormat.Xif, PTKImageFileFormat.Vtk, ...        % Visualization Toolkit (VTK)
-                        PTKImageFileFormat.MicroCT, PTKImageFileFormat.Par}
+                case {MimImageFileFormat.Metaheader, MimImageFileFormat.Analyze, MimImageFileFormat.Gipl, ...
+                        MimImageFileFormat.Isi, MimImageFileFormat.Nifti, MimImageFileFormat.V3d, ...
+                        MimImageFileFormat.Vmp, MimImageFileFormat.Xif, MimImageFileFormat.Vtk, ...        % Visualization Toolkit (VTK)
+                        MimImageFileFormat.MicroCT, MimImageFileFormat.Par}
                         
                     image_uid = DMUtilities.GetIdentifierFromFilename(image_info.ImageFilenames{1});
                     study_uid = [];

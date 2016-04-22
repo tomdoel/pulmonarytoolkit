@@ -45,7 +45,7 @@ function single_image_info = MimGetSingleImageInfo(file_path, file_name, tags_to
         
         
     else
-        image_type = PTKImageFileFormat.Dicom;
+        image_type = MimImageFileFormat.Dicom;
         
         modality = SetFromHeader(header, 'Modality', []);
         study_uid = SetFromHeader(header, 'StudyInstanceUID', []);

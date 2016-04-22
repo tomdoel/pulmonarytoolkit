@@ -34,6 +34,14 @@ classdef PTKImageInfo
                 obj.Modality = modality;
             end
         end
+        
+        function obj = set.ImageFileFormat(obj, value) 
+            if isa(value, 'PTKImageFileFormat')
+                obj.ImageFileFormat = value.MimImageFileFormat;                
+            else
+                obj.ImageFileFormat = value;
+            end
+        end
     end
     
     methods (Static)

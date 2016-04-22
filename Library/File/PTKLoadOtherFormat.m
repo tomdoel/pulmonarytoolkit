@@ -12,7 +12,7 @@ function ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, image_file_f
     %             path            The path where the files are located. For the
     %                             current directory, use .
     %             filenames       the filename of the header file to load.
-    %             image_file_format   enumeration of PTKImageFileFormat
+    %             image_file_format   enumeration of MimImageFileFormat
     %                                 describing the file format
     %             reporting (optional) - an object implementing CoreReportingInterface
     %                             for reporting progress and warnings
@@ -55,51 +55,51 @@ function ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, image_file_f
     header_filename = fullfile(path, filenames{1});
     
     switch image_file_format
-        case PTKImageFileFormat.Analyze
+        case MimImageFileFormat.Analyze
             header_data = hdr_read_header(header_filename);
             data = hdr_read_volume(header_data);
             
-        case PTKImageFileFormat.Gipl
+        case MimImageFileFormat.Gipl
             header_data = gipl_read_header(header_filename);
             data = gipl_read_volume(header_data);
             
-        case PTKImageFileFormat.Isi
+        case MimImageFileFormat.Isi
             header_data = isi_read_header(header_filename);
             data = isi_read_volume(header_data);
 
-        case PTKImageFileFormat.Nifti
+        case MimImageFileFormat.Nifti
             header_data = nii_read_header(header_filename);
             data = nii_read_volume(header_data);
 
-        case PTKImageFileFormat.V3d
+        case MimImageFileFormat.V3d
             header_data = v3d_read_header(header_filename);
             data = v3d_read_volume(header_data);
 
-        case PTKImageFileFormat.Vmp
+        case MimImageFileFormat.Vmp
             header_data = hdr_read_header(header_filename);
             data = hdr_read_volume(header_data);
 
-        case PTKImageFileFormat.V3d
+        case MimImageFileFormat.V3d
             header_data = v3d_read_header(header_filename);
             data = v3d_read_volume(header_data);
 
-        case PTKImageFileFormat.Vmp
+        case MimImageFileFormat.Vmp
             header_data = vmp_read_header(header_filename);
             data = vmp_read_volume(header_data);
 
-        case PTKImageFileFormat.Xif
+        case MimImageFileFormat.Xif
             header_data = xif_read_header(header_filename);
             data = xif_read_volume(header_data);
 
-        case PTKImageFileFormat.Vtk
+        case MimImageFileFormat.Vtk
             header_data = vtk_read_header(header_filename);
             data = vtk_read_volume(header_data);
 
-        case PTKImageFileFormat.MicroCT
+        case MimImageFileFormat.MicroCT
             header_data = vff_read_header(header_filename);
             data = vff_read_volume(header_data);
 
-        case PTKImageFileFormat.Par
+        case MimImageFileFormat.Par
             header_data = par_read_header(header_filename);
             data = par_read_volume(header_data);            
     end

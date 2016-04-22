@@ -25,7 +25,7 @@ function uids = MimImageImporter(filename_or_root_directory, database, reporting
     elseif exist_result == 2
         % For a single file, we check if it is Dicom.
         single_image_metainfo = MimGetSingleImageInfo(import_folder, filename_only, tags_to_get, reporting);
-        if single_image_metainfo.ImageFileFormat == PTKImageFileFormat.Dicom
+        if single_image_metainfo.ImageFileFormat == MimImageFileFormat.Dicom
             % For a Dicom file we import the whole folder
             uids = ImportDirectoryRecursive(database, import_folder, tags_to_get, reporting);
         else

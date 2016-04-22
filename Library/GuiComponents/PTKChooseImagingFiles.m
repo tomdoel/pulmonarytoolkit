@@ -41,7 +41,7 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
     if (filter_index ==  2)
         filenames_dicom = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
         filenames_dicom = DMUtilities.RemoveNonDicomFiles(image_path, filenames_dicom);
-        image_type = PTKImageFileFormat.Dicom;
+        image_type = MimImageFileFormat.Dicom;
         
         % If there are no valid DICOM files then we return an ImageInfo with
         % just the path and image type set
@@ -53,57 +53,57 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
         return;
         
     elseif (filter_index == 3)
-        image_type = PTKImageFileFormat.Metaheader;
+        image_type = MimImageFileFormat.Metaheader;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 4)
-        image_type = PTKImageFileFormat.Analyze;
+        image_type = MimImageFileFormat.Analyze;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 5)
-        image_type = PTKImageFileFormat.Gipl;
+        image_type = MimImageFileFormat.Gipl;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 6)
-        image_type = PTKImageFileFormat.Isi;
+        image_type = MimImageFileFormat.Isi;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 7)
-        image_type = PTKImageFileFormat.Nifti;
+        image_type = MimImageFileFormat.Nifti;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 8)
-        image_type = PTKImageFileFormat.V3d;
+        image_type = MimImageFileFormat.V3d;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 9)
-        image_type = PTKImageFileFormat.Vmp;
+        image_type = MimImageFileFormat.Vmp;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 10)
-        image_type = PTKImageFileFormat.Xif;
+        image_type = MimImageFileFormat.Xif;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 11)
-        image_type = PTKImageFileFormat.Vtk;
+        image_type = MimImageFileFormat.Vtk;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 13)
-        image_type = PTKImageFileFormat.MicroCT;
+        image_type = MimImageFileFormat.MicroCT;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 13)
-        image_type = PTKImageFileFormat.Par;
+        image_type = MimImageFileFormat.Par;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
     end
@@ -113,7 +113,7 @@ function image_info = PTKChooseImagingFiles(image_path, reporting)
     filenames = principal_filename;
     
     % If in DICOM format, then we will load the entire directory
-    if (image_type == PTKImageFileFormat.Dicom)
+    if (image_type == MimImageFileFormat.Dicom)
         filenames = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(image_path, '*'));
         filenames = DMUtilities.RemoveNonDicomFiles(image_path, filenames);
         

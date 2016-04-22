@@ -52,7 +52,7 @@ classdef TestLoadSaveXML < CoreTest
             im_info = PTKImageInfo;
             im_info.ImagePath = 'ABCDE/GHIJK';
             im_info.ImageFilenames = {'0.dcm', '1.dcm', '2.dcm'};
-            im_info.ImageFileFormat = PTKImageFileFormat.Matlab;
+            im_info.ImageFileFormat = MimImageFileFormat.Matlab;
             im_info.Modality = 'CT';
         end
         
