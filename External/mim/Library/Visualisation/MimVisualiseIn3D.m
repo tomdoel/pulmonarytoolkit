@@ -125,7 +125,7 @@ function figure_handle = MimVisualiseIn3D(figure_handle, segmentation, smoothing
         this_colour = (mod(label-1, 60)) + 1;
         cm_color = cm(this_colour, :);
 
-        [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting);
+        [fv, normals] = MimCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting);
         
         p = patch(fv, 'EdgeColor', 'none', 'FaceColor', cm_color, 'AmbientStrength', ambient_strength, 'SpecularStrength', specular_strength, 'DiffuseStrength', diffuse_strength);
         

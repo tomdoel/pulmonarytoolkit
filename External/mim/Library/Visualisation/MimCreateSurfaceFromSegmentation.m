@@ -1,5 +1,5 @@
-function [fv, normals] = PTKCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting)
-    % PTKCreateSurfaceFromSegmentation. Creates a surface mesh from a segmentation volume.
+function [fv, normals] = MimCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting)
+    % MimCreateSurfaceFromSegmentation. Creates a surface mesh from a segmentation volume.
     %
     %     Inputs
     %     ------
