@@ -82,7 +82,7 @@ function figure_handle = PTKDrawMetricVsMetric(table, metric_x, metric_y, contex
         colour = colours{patient_list_index};
         symbol = symbols{patient_list_index};
         
-        PlotForLung(result_list{patient_list_index}, axes_handle, colour, symbol, marker_size, marker_line_width);
+        PlotForDataset(result_list{patient_list_index}, axes_handle, colour, symbol, marker_size, marker_line_width);
         
     end
     
@@ -119,7 +119,7 @@ function results = GetValueListFromTable(table, patient_name, metric_name, conte
     end
 end
 
-function PlotForLung(results, axes_handle, colour, symbol, marker_size, marker_line_width)
+function PlotForDataset(results, axes_handle, colour, symbol, marker_size, marker_line_width)
     
     % Plot markers    
     xv = results.x_values;
