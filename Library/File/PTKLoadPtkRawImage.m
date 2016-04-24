@@ -12,7 +12,7 @@ function raw_image = PTKLoadPtkRawImage(file_path, raw_filename, data_type, imag
     
     full_raw_filename = fullfile(file_path, raw_filename);
     if ~exist(full_raw_filename, 'file');
-        throw(MException('PTKImage:RawFileNotFound', ['The raw file ' raw_filename ' does not exist']));
+        throw(MException(MimErrors.RawFileNotFoundErrorId, ['The raw file ' raw_filename ' does not exist']));
     end
     
     if isempty(compression)

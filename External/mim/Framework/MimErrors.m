@@ -13,6 +13,7 @@ classdef MimErrors < handle
         FileMissingErrorId = 'MimErrors:FileMissing'
         FileFormatUnknownErrorId = 'MimErrors:FileFormatUnknown'
         UidNotFoundErrorId = 'MimErrors:UidNotFound'
+        RawFileNotFoundErrorId = 'MimErrors:RawFileNotFound'
     end
 
     methods (Static)
@@ -21,15 +22,19 @@ classdef MimErrors < handle
         end
         
         function is_error_missing_id = IsErrorFileMissing(error_id)
-            is_error_missing_id = strcmp(error_id, PTKSoftwareInfo.FileMissingErrorId);
+            is_error_missing_id = strcmp(error_id, MimErrors.FileMissingErrorId);
         end
         
         function is_error_missing_id = IsErrorUnknownFormat(error_id)
-            is_error_missing_id = strcmp(error_id, PTKSoftwareInfo.FileFormatUnknownErrorId);
+            is_error_missing_id = strcmp(error_id, MimErrors.FileFormatUnknownErrorId);
         end
         
         function is_error_missing_id = IsErrorUidNotFound(error_id)
-            is_error_missing_id = strcmp(error_id, PTKSoftwareInfo.UidNotFoundErrorId);
+            is_error_missing_id = strcmp(error_id, MimErrors.UidNotFoundErrorId);
+        end
+        
+        function is_error_missing_id = IsErrorRawFileNotFound(error_id)
+            is_error_missing_id = strcmp(error_id, MimErrors.RawFileNotFoundErrorId);
         end
     end
 end

@@ -110,7 +110,7 @@ classdef MimDiskCache < handle
                 catch exception
                     % Check for the particular case of the .raw file being
                     % deleted
-                    if strcmp(exception.identifier, 'PTKImage:RawFileNotFound')
+                    if MimErrors.IsErrorRawFileNotFound(exception.identifier)
                         reporting.Log(['Disk cache found a header file with no corresponding raw file for plugin ' name]);
                         result = [];
                         info = [];
