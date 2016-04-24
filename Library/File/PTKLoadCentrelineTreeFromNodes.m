@@ -12,7 +12,7 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  may be required, depending on the value of
     %                             coordinate_system. Provides the required
@@ -32,8 +32,8 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
         reporting.Error('PTKLoadCentrelineTreeFromNodes:BadArguments', 'No coordinate_system parameter specified');
     end
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKLoadCentrelineTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKLoadCentrelineTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
 
     node_file = [filename_prefix '_node.txt'];

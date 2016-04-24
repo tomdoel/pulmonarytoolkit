@@ -167,7 +167,7 @@ function dicom_coordinates_list = ComputeDicomSliceCoordinates(image_data, orien
     global_image_coords = image_data.LocalToGlobalCoordinates(local_coordinates_list);
     [x_mm, y_mm, z_mm] = image_data.GlobalCoordinatesToCoordinatesMm(global_image_coords);
     [ptk_x, ptk_y, ptk_z] = MimImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(x_mm, y_mm, z_mm);
-    dicom_coordinates_list = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([ptk_x, ptk_y, ptk_z], PTKCoordinateSystem.Dicom, image_data);
+    dicom_coordinates_list = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([ptk_x, ptk_y, ptk_z], MimCoordinateSystem.Dicom, image_data);
 end
 
 

@@ -31,8 +31,8 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
         reporting = CoreReportingDefault;
     end    
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKLoadTreeFromChaste:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKLoadTreeFromChaste:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
     
     if ~CoreDiskUtilities.FileExists(file_path, node_filename)

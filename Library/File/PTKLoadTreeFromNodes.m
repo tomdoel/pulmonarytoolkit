@@ -11,7 +11,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     %                             are to be stored
     %             node_filename   is the name of the node file
     %             edge_filename   is the name of the element file
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  may be required, depending on the value of
     %                             coordinate_system. Provides the required
@@ -35,8 +35,8 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
         reporting = CoreReportingDefault;
     end    
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKLoadTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKLoadTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
 
     node_file = fullfile(file_path, node_filename);

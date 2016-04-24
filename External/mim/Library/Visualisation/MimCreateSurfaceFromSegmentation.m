@@ -18,7 +18,7 @@ function [fv, normals] = MimCreateSurfaceFromSegmentation(segmentation, smoothin
     %
     %     label - Only voxels of this colour are considered
     %
-    %     coordinate_system  a PTKCoordinateSystem enumeration
+    %     coordinate_system  a MimCoordinateSystem enumeration
     %         specifying the coordinate system to use
     %
     %     template_image  A PTKImage providing voxel size and image size

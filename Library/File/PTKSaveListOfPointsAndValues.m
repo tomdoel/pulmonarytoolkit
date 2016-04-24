@@ -10,7 +10,7 @@ function PTKSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_li
     %                             stored
     %             file_name       is the file name
     %             xc, yc, zx      are the coordinates in PTK cordinates
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  A PTKImage providing voxel size and image size
     %                             parameters
@@ -29,8 +29,8 @@ function PTKSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_li
         reporting.Error('PTKSaveListOfPointsAndValues:BadArguments', 'No coordinate_system parameter specified');
     end
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKSaveListOfPointsAndValues:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKSaveListOfPointsAndValues:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
 
     CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);

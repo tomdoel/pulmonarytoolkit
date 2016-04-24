@@ -12,7 +12,7 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  A PTKImage providing voxel size and image size
     %                             parameters
@@ -31,8 +31,8 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
         reporting.Error('PTKSaveTreeAsNodes:BadArguments', 'No coordinate_system parameter specified');
     end
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKSaveTreeAsNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKSaveTreeAsNodes:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
     
     reporting.ShowProgress('Saving tree');

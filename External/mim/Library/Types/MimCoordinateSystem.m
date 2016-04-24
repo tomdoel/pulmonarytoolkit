@@ -1,5 +1,5 @@
-classdef PTKCoordinateSystem
-    % PTKCoordinateSystem. An enumeration used to specify the coordinate system used when 
+classdef MimCoordinateSystem
+    % MimCoordinateSystem. An enumeration used to specify the coordinate system used when 
     %     importing or exporting coordinates
     %
     % Different imaging programs use different coordinate systems. Therefore,

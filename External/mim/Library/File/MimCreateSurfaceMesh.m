@@ -18,7 +18,7 @@ function MimCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, 
     %     small_structures - set to true for improved visualisation of
     %         narrow structures such as airways and vessels
     %
-    %    coordinate_system  a PTKCoordinateSystem enumeration
+    %    coordinate_system  a MimCoordinateSystem enumeration
     %        specifying the coordinate system to use
     %
     %    template_image  A PTKImage providing voxel size and image size

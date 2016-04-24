@@ -447,11 +447,11 @@ classdef MimImageCoordinateUtilities
         
         function ptk_coordinates = ConvertToPTKCoordinates(coordinates, coordinate_system, template_image)
             switch coordinate_system
-                case PTKCoordinateSystem.PTK
+                case MimCoordinateSystem.PTK
                     ptk_coordinates = coordinates;
-                case PTKCoordinateSystem.Dicom
+                case MimCoordinateSystem.Dicom
                     ptk_coordinates = MimImageCoordinateUtilities.DicomToPTKCoordinates(coordinates, template_image);
-                case PTKCoordinateSystem.DicomUntranslated
+                case MimCoordinateSystem.DicomUntranslated
                     ptk_coordinates = MimImageCoordinateUtilities.CornerToPTKCoordinates(coordinates, template_image);
                 otherwise
                     reporting.Error('MimImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
@@ -460,11 +460,11 @@ classdef MimImageCoordinateUtilities
 
         function coordinates = ConvertFromPTKCoordinates(ptk_coordinates, coordinate_system, template_image)
             switch coordinate_system
-                case PTKCoordinateSystem.PTK
+                case MimCoordinateSystem.PTK
                     coordinates = ptk_coordinates;
-                case PTKCoordinateSystem.Dicom
+                case MimCoordinateSystem.Dicom
                     coordinates = MimImageCoordinateUtilities.PTKToDicomCoordinates(ptk_coordinates, template_image);
-                case PTKCoordinateSystem.DicomUntranslated
+                case MimCoordinateSystem.DicomUntranslated
                     coordinates = MimImageCoordinateUtilities.PTKToCornerCoordinates(ptk_coordinates, template_image);
                 otherwise
                     reporting.Error('MimImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');
@@ -473,13 +473,13 @@ classdef MimImageCoordinateUtilities
         
         function [c_x, c_y, c_z] = ConvertFromPTKCoordinatesCoordwise(p_x, p_y, p_z, coordinate_system, template_image)
             switch coordinate_system
-                case PTKCoordinateSystem.PTK
+                case MimCoordinateSystem.PTK
                     c_x = p_x;
                     c_y = p_y;
                     c_z = p_z;
-                case PTKCoordinateSystem.Dicom
+                case MimCoordinateSystem.Dicom
                     [c_x, c_y, c_z] = MimImageCoordinateUtilities.PTKToDicomCoordinatesCoordwise(p_x, p_y, p_z, template_image);
-                case PTKCoordinateSystem.DicomUntranslated
+                case MimCoordinateSystem.DicomUntranslated
                     [c_x, c_y, c_z] = MimImageCoordinateUtilities.PTKToCornerCoordinatesCoordwise(p_x, p_y, p_z, template_image);
                 otherwise
                     reporting.Error('MimImageCoordinateUtilities:UnsupportedCoordinateSystem', 'The coordinate system specified by parameter coordinate_system is not supported');

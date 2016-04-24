@@ -112,7 +112,7 @@ function figure_handle = MimVisualiseIn3D(figure_handle, segmentation, smoothing
     number_of_segmentations = length(segmentation_labels);
     
     % We choose the PTK coordinate system, which requires no image template
-    coordinate_system = PTKCoordinateSystem.PTK;
+    coordinate_system = MimCoordinateSystem.PTK;
     template_image = [];
 
     ambient_strength =0.4;
