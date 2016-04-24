@@ -70,11 +70,6 @@ classdef PTKSoftwareInfo < handle
         ToolbarEnabled = true
         ViewerPanelToolbarEnabled = false
         
-        % Do not change this
-        FileMissingErrorId = 'PTKMain:FileMissing'
-        FileFormatUnknownErrorId = 'PTKMain:FileFormatUnknown'
-        UidNotFoundErrorId = 'PTKMain:UidNotFound'
-        
         % If true, the user will be prompted before marker changes are saved
         ConfirmBeforeSavingMarkers = false
         
@@ -82,25 +77,6 @@ classdef PTKSoftwareInfo < handle
         ShowRegistrationConvergence = false
         RegistrationBodyForceTol = 0.01
         RegistrationBodyForceDiffTol = 0.001
-    end
-
-    methods (Static)
-        function is_cancel_id = IsErrorCancel(error_id)
-            is_cancel_id = strcmp(error_id, CoreReporting.CancelErrorId);
-        end
-        
-        function is_error_missing_id = IsErrorFileMissing(error_id)
-            is_error_missing_id = strcmp(error_id, PTKSoftwareInfo.FileMissingErrorId);
-        end
-        
-        function is_error_missing_id = IsErrorUnknownFormat(error_id)
-            is_error_missing_id = strcmp(error_id, PTKSoftwareInfo.FileFormatUnknownErrorId);
-        end
-        
-        function is_error_missing_id = IsErrorUidNotFound(error_id)
-            is_error_missing_id = strcmp(error_id, PTKSoftwareInfo.UidNotFoundErrorId);
-        end
-        
     end
 end
 

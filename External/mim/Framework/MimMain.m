@@ -190,7 +190,7 @@ classdef MimMain < CoreBaseClass
                     dataset_to_delete = obj.CreateDatasetFromUid(series_uid);
                 catch exc
                     %
-                    if PTKSoftwareInfo.IsErrorUidNotFound(exc.identifier)
+                    if MimErrors.IsErrorUidNotFound(exc.identifier)
                         obj.Reporting.ShowMessage('MimMain:UidNotFound', ['Failed to delete dataset because its UID could not be found']);
                     else
                         rethrow exc
