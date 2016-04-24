@@ -27,11 +27,7 @@ function new_plugin = MimParsePluginClass(plugin_name, plugin_class, suggested_c
     if ~isempty(plugin_class.Category)
         new_plugin.Category = plugin_class.Category;
     else
-        if ~isempty(suggested_category)
-            new_plugin.Category = suggested_category;
-        else
-            new_plugin.Category = PTKSoftwareInfo.DefaultCategoryName;
-        end
+        new_plugin.Category = suggested_category;
     end
     
     new_plugin.HidePluginInDisplay = plugin_class.HidePluginInDisplay;
@@ -48,10 +44,10 @@ function new_plugin = MimParsePluginClass(plugin_name, plugin_class, suggested_c
         new_plugin.Context = [];
     end
     
-    if ismember('Mode', property_list) && ~isempty(plugin_class.Mode);
+    if ismember('Mode', property_list)
         new_plugin.Mode = plugin_class.Mode;
     else
-        new_plugin.Mode = PTKSoftwareInfo.PluginDefaultMode;
+        new_plugin.Mode = [];
     end
     
     if ismember('EnableModes', property_list);
