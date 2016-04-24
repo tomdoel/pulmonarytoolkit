@@ -87,6 +87,10 @@ classdef PTKAppDef < handle
             log_file_path = fullfile(app_folder, log_file_name);
         end
         
+        function cm = GetDefaultColormap(~)
+            cm = colormap(PTKSoftwareInfo.Colormap);
+        end
+        
         function framework_app_def = GetFrameworkAppDef(obj)
             if isempty(obj.FrameworkAppDef)
                 obj.FrameworkAppDef = PTKFrameworkAppDef;

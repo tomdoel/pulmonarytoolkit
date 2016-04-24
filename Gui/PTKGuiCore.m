@@ -946,6 +946,10 @@ classdef PTKGuiCore < GemFigure
             enabled = obj.ModeTabControl.IsTabEnabled(panel_mode_name);
         end
         
+        function app_def = GetAppDef(obj)
+            app_def = obj.AppDef;
+        end
+        
         function reporting = GetReporting(obj)
             reporting = obj.Reporting;
         end

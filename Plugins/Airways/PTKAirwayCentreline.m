@@ -67,7 +67,7 @@ classdef PTKAirwayCentreline < PTKPlugin
                 airway_results_raw(removed_voxels) = 0;
                 airway_segmented_image.ChangeRawImage(airway_results_raw);
                 
-                MimVisualiseIn3D(figure_airways_3d, airway_segmented_image, 0.5, true, false, 0, reporting);
+                MimVisualiseIn3D(figure_airways_3d, airway_segmented_image, 0.5, true, false, 0, PTKSoftwareInfo.Colormap, reporting);
             else
                 figure_airways_3d = [];
             end

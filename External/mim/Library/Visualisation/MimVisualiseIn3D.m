@@ -1,4 +1,4 @@
-function figure_handle = MimVisualiseIn3D(figure_handle, segmentation, smoothing_size, small_structures, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting)
+function figure_handle = MimVisualiseIn3D(figure_handle, segmentation, smoothing_size, small_structures, limit_to_one_component_per_index, minimum_component_volume_mm3, surface_colormap, reporting)
     % MimVisualiseIn3D. Opens a new Matlab figure and visualises the
     % segmentation image in 3D.
     %
@@ -30,7 +30,10 @@ function figure_handle = MimVisualiseIn3D(figure_handle, segmentation, smoothing
     %         image smoothing and surface rendering approximations, then set this to
     %         an appropriate minimum volume value. Any components smaller than this
     %         value will not be rendered.
-    %    
+    %
+    %     surface_colormap - colormap to be used for rendering the surface
+    %         index colours
+    %
     %     reporting - an object implementing CoreReportingInterface
     %         for reporting progress and warnings
     %
@@ -93,7 +96,10 @@ function figure_handle = MimVisualiseIn3D(figure_handle, segmentation, smoothing
     daspect([1 1 1]);
     
     rotate3d;
-    cm = colormap(PTKSoftwareInfo.Colormap);
+    
+    % Set colormap for current surface
+    surface_colormap = colormap(surface_colormap);
+    
     view(-37.5, 30);
     
     % Change camera angle
@@ -123,7 +129,7 @@ function figure_handle = MimVisualiseIn3D(figure_handle, segmentation, smoothing
         
         % Get the colour from the colourmap
         this_colour = (mod(label-1, 60)) + 1;
-        cm_color = cm(this_colour, :);
+        cm_color = surface_colormap(this_colour, :);
 
         [fv, normals] = MimCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting);
         
