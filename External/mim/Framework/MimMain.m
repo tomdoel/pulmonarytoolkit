@@ -106,7 +106,7 @@ classdef MimMain < CoreBaseClass
             
             dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
             
-            obj.RunLinkFile(dataset_uid, dataset);
+            obj.RunCustomPostLoadFunction(dataset_uid, dataset);
         end
         
         function dataset = CreateDatasetFromInfo(obj, new_image_info)
@@ -119,7 +119,7 @@ classdef MimMain < CoreBaseClass
 
             dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
             
-            obj.RunLinkFile(dataset.GetImageInfo.ImageUid, dataset);
+            obj.RunCustomPostLoadFunction(dataset.GetImageInfo.ImageUid, dataset);
         end
         
         function uids = ImportDataRecursive(obj, filename)
@@ -155,13 +155,11 @@ classdef MimMain < CoreBaseClass
             obj.FrameworkSingleton.ReportChangesToDatabase;
         end
                 
-        function RunLinkFile(obj, dataset_uid, dataset)
+        function RunCustomPostLoadFunction(obj, dataset_uid, dataset)
             % This method is called to run a user-defined function for linking
             % datasets
-            user_path = PTKDirectories.GetUserPath;
-            if CoreDiskUtilities.FileExists(user_path, 'PTKLinkDatasets.m');
-                PTKLinkDatasets(obj, dataset_uid, dataset, obj.Reporting);
-            end
+            
+            obj.FrameworkAppDef.NewDatasetLoaded(dataset_uid, dataset, obj.Reporting);
         end
         
         function image_database = GetImageDatabase(obj)

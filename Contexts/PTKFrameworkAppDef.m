@@ -59,5 +59,12 @@ classdef PTKFrameworkAppDef < handle
         function time_functions = TimeFunctions(obj)
             time_functions = obj.Config.TimeFunctions;
         end
+        
+        function NewDatasetLoaded(obj, dataset_uid, dataset, reporting)
+            user_path = PTKDirectories.GetUserPath;
+            if CoreDiskUtilities.FileExists(user_path, 'PTKLinkDatasets.m');
+                PTKLinkDatasets(obj, dataset_uid, dataset, reporting);
+            end
+        end
     end
 end
