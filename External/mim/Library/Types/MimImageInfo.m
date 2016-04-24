@@ -35,7 +35,8 @@ classdef MimImageInfo
             end
         end
         
-        function obj = set.ImageFileFormat(obj, value) 
+        function obj = set.ImageFileFormat(obj, value)
+            % Legacy conversion
             if isa(value, 'PTKImageFileFormat')
                 obj.ImageFileFormat = value.MimImageFileFormat;                
             else

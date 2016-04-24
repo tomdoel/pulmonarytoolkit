@@ -69,7 +69,7 @@ classdef MimDiskUtilities
                 values_array = meta_header_data{2};
                 data_filename = values_array{data_filename_index};
                 if strcmp(data_filename, 'LOCAL')
-                    reporting.ShowWarning('MimDiskUtilities:LocalDataNotSupported', 'PTK does not currently support image files with data embedded in the same file as the metaheader.');
+                    reporting.ShowWarning('MimDiskUtilities:LocalDataNotSupported', 'This application does not currently support image files with data embedded in the same file as the metaheader.');
                     meta_header = [];
                     return;
                 end
@@ -210,7 +210,7 @@ classdef MimDiskUtilities
                 value.patch = patch_object;
                 MimDiskUtilities.Save(filename, value);
             catch ex
-                reporting.ErrorFromException('MimDiskUtilities:FailedtoSavePatchFile', ['Unable to save PTK patch file ' filename], ex);
+                reporting.ErrorFromException('MimDiskUtilities:FailedtoSavePatchFile', ['Unable to save patch file ' filename], ex);
             end
         end
         
