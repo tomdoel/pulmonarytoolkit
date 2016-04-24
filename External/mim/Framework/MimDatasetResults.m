@@ -116,7 +116,7 @@ classdef MimDatasetResults < handle
         function patient_name = GetPatientName(obj, dataset_stack, reporting)
             % Returns a single string for identifying the patient. The format will depend on what information is available in the file metadata.
             
-            template = obj.GetTemplateImage(PTKContext.LungROI, dataset_stack, reporting);
+            template = obj.GetTemplateImage(PTKContext.OriginalImage, dataset_stack, reporting);
             patient_name = '';
 
             if isfield(template.MetaHeader, 'PatientName')
