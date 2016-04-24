@@ -29,6 +29,10 @@ classdef MimDatasetStackItem < handle
         ExecutionTimer         % Times the execution time for this plugin
     end
     
+    properties (Access = private, Transient)
+        DiskCacheSchema = '0.1'
+    end
+    
     methods
         function obj = MimDatasetStackItem(instance_id, dependency_list, ignore_dependency_checks, start_timer, reporting)
             if nargin > 0
@@ -43,7 +47,7 @@ classdef MimDatasetStackItem < handle
                 obj.InstanceIdentifier = instance_id;
                 obj.DependencyList = dependency_list;
                 obj.IgnoreDependencyChecks = ignore_dependency_checks;
-                obj.Schema = PTKSoftwareInfo.DiskCacheSchema;
+                obj.Schema = obj.DiskCacheSchema;
                 obj.IsEdited = false;
 
                 if start_timer
