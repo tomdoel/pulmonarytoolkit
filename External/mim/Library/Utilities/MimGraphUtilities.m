@@ -1,5 +1,5 @@
-classdef MimVisualiseIn3D
-    % MimVisualiseIn3D. Utility functions related to graph plotting
+classdef MimGraphUtilities
+    % MimGraphUtilities. Utility functions related to graph plotting
     %
     %
     %     Licence
