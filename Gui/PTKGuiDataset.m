@@ -465,7 +465,7 @@ classdef PTKGuiDataset < CoreBaseClass
             
         function segmentation_list = GetListOfManualSegmentations(obj)
             if isempty(obj.Dataset)
-                segmentation_list = PTKPair.empty;
+                segmentation_list = CorePair.empty;
             else
                 segmentation_list = obj.Dataset.GetListOfManualSegmentations;
             end
