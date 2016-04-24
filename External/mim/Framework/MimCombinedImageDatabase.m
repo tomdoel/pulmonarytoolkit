@@ -35,15 +35,15 @@ classdef MimCombinedImageDatabase < CoreBaseClass
             project_ids = [project_ids_1, project_ids_2];
         end
         
-        function datasets = GetAllSeriesForThisPatient(obj, project_id, patient_id)
-            datasets_1 = obj.ImageDatabase.GetAllSeriesForThisPatient(project_id, patient_id);
+        function datasets = GetAllSeriesForThisPatient(obj, project_id, patient_id, group_patients)
+            datasets_1 = obj.ImageDatabase.GetAllSeriesForThisPatient(project_id, patient_id, group_patients);
             datasets_2 = obj.MatNatDatabase.GetAllSeriesForThisPatient(project_id, patient_id);
             datasets = horzcat(datasets_1, datasets_2);
         end
         
-        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj, project_id)
+        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj, project_id, group_patients)
             
-            [names1, ids1, short_visible_names1, patient_id_map1] = obj.ImageDatabase.GetListOfPatientNames(project_id);
+            [names1, ids1, short_visible_names1, patient_id_map1] = obj.ImageDatabase.GetListOfPatientNames(project_id, group_patients);
             [names2, ids2, short_visible_names2, patient_id_map2] = obj.MatNatDatabase.GetListOfPatientNames(project_id);
             
             names = horzcat(names1, names2);
@@ -58,9 +58,9 @@ classdef MimCombinedImageDatabase < CoreBaseClass
         end
         
         
-        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesAndSeriesCount(obj, project_id)
+        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesAndSeriesCount(obj, project_id, group_patients)
    
-            [names1, ids1, short_visible_names1, num_series_1, num_patients_combined_1, patient_id_map1] = obj.ImageDatabase.GetListOfPatientNamesAndSeriesCount(project_id);
+            [names1, ids1, short_visible_names1, num_series_1, num_patients_combined_1, patient_id_map1] = obj.ImageDatabase.GetListOfPatientNamesAndSeriesCount(project_id, group_patients);
             [names2, ids2, short_visible_names2, num_series_2, num_patients_combined_2, patient_id_map2] = obj.MatNatDatabase.GetListOfPatientNamesAndSeriesCount(project_id);
             
             names = horzcat(names1, names2);

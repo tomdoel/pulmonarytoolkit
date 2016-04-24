@@ -59,10 +59,10 @@ classdef MimImageDatabase < handle
             obj.InvalidateCachedPaths;
         end
         
-        function datasets = GetAllSeriesForThisPatient(obj, project_id, patient_id)
+        function datasets = GetAllSeriesForThisPatient(obj, project_id, patient_id, group_patients)
             datasets = [];
             if strcmp(project_id, MimImageDatabase.LocalDatabaseId)
-                all_details = obj.GetAllPatientInfosForThisPatient(patient_id);
+                all_details = obj.GetAllPatientInfosForThisPatient(patient_id, group_patients);
                 for patient_details_cell = all_details
                     for patient_details = all_details{1}
                         datasets = [datasets, patient_details.GetListOfSeries];
@@ -113,94 +113,12 @@ classdef MimImageDatabase < handle
 
         end
         
-        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj, project_id)
-            [names, ids, short_visible_names, ~, ~, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(project_id, false);
+        function [names, ids, short_visible_names, patient_id_map] = GetListOfPatientNames(obj, project_id, group_patients)
+            [names, ids, short_visible_names, ~, ~, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(project_id, false, group_patients);
         end
         
-        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesAndSeriesCount(obj, project_id)
-            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(project_id, true);
-        end
-        
-        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesWithOptionalSeriesCount(obj, project_id, count_series)
-            % Returns list of patient names, ids and family names, sorted by the
-            % short visible name
-            
-             if ~strcmp(project_id, MimImageDatabase.LocalDatabaseId)
-                names = {};
-                ids = {};
-                short_visible_names = {};
-                num_series = [];
-                num_patients_combined = [];
-                patient_id_map = containers.Map;
-                return;
-            end
-
-            ids = obj.PatientMap.keys;
-            values = obj.PatientMap.values;
-            names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');
-            short_visible_names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
-            num_series = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(values, 'GetNumberOfSeries');
-
-            if isempty(short_visible_names)
-                names = [];
-                ids = [];
-                short_visible_names = [];
-                num_series = [];
-                num_patients_combined = [];
-                patient_id_map = [];
-                return;
-            end
-            
-            % Sort by the short visible name
-            % Remove any empty values to ensure sort works
-            empty_values = cellfun(@isempty, short_visible_names);
-            short_visible_names(empty_values) = {'Unknown'};
-            [~, sorted_indices] = CoreTextUtilities.SortFilenames(short_visible_names);
-            
-            names = names(sorted_indices);
-            ids = ids(sorted_indices);
-            short_visible_names = short_visible_names(sorted_indices);
-            num_series = num_series(sorted_indices);
-            num_patients_combined = ones(size(num_series));
-            
-            % Merge together patients with same name if this is specified by the settings
-            if PTKSoftwareInfo.GroupPatientsWithSameName
-                
-                % Get unique names, but don't group together 'Unknown' patients
-                unique_names = short_visible_names;
-                random_name = CoreSystemUtilities.GenerateUid;
-                for empty_index = 1 : find(empty_values)
-                    unique_names{empty_index} = [random_name, int2str(empty_index)];
-                end
-                
-                [unique_names, ia, ic] = unique(unique_names);
-
-                
-                short_visible_names = unique_names;
-                ids_subset = ids(ia);
-                names = names(ia);
-                
-                if count_series
-                    total_num_series = zeros(size(ids_subset));
-                    num_patients_combined = zeros(size(ids_subset));
-                    for series_index = 1 : length(num_series)
-                        total_num_series(ic(series_index)) = total_num_series(ic(series_index)) + num_series(series_index);
-                        num_patients_combined(ic(series_index)) = num_patients_combined(ic(series_index)) + 1;
-                    end
-                    num_series = total_num_series;
-                else
-                    num_series = [];
-                    num_patients_combined = [];
-                end
-
-                % A map of all patient IDs to the main patient ID for each patient group
-                patient_id_map = containers.Map(ids, ids_subset(ic));
-                
-                ids = ids_subset;
-                
-            else
-                patient_id_map = containers.Map(ids, ids);
-            end
+        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesAndSeriesCount(obj, project_id, group_patients)
+            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.GetListOfPatientNamesWithOptionalSeriesCount(project_id, true, group_patients);
         end
         
         function [project_names, project_ids] = GetListOfProjects(obj)
@@ -362,7 +280,89 @@ classdef MimImageDatabase < handle
     end
     
     methods (Access = private)
-        function patient_info = GetPatients(obj)
+        function [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = GetListOfPatientNamesWithOptionalSeriesCount(obj, project_id, count_series, group_patients)
+            % Returns list of patient names, ids and family names, sorted by the
+            % short visible name
+            
+             if ~strcmp(project_id, MimImageDatabase.LocalDatabaseId)
+                names = {};
+                ids = {};
+                short_visible_names = {};
+                num_series = [];
+                num_patients_combined = [];
+                patient_id_map = containers.Map;
+                return;
+            end
+
+            ids = obj.PatientMap.keys;
+            values = obj.PatientMap.values;
+            names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');
+            short_visible_names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
+            num_series = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(values, 'GetNumberOfSeries');
+
+            if isempty(short_visible_names)
+                names = [];
+                ids = [];
+                short_visible_names = [];
+                num_series = [];
+                num_patients_combined = [];
+                patient_id_map = [];
+                return;
+            end
+            
+            % Sort by the short visible name
+            % Remove any empty values to ensure sort works
+            empty_values = cellfun(@isempty, short_visible_names);
+            short_visible_names(empty_values) = {'Unknown'};
+            [~, sorted_indices] = CoreTextUtilities.SortFilenames(short_visible_names);
+            
+            names = names(sorted_indices);
+            ids = ids(sorted_indices);
+            short_visible_names = short_visible_names(sorted_indices);
+            num_series = num_series(sorted_indices);
+            num_patients_combined = ones(size(num_series));
+            
+            % Merge together patients with same name if this is specified by the settings
+            if group_patients
+                
+                % Get unique names, but don't group together 'Unknown' patients
+                unique_names = short_visible_names;
+                random_name = CoreSystemUtilities.GenerateUid;
+                for empty_index = 1 : find(empty_values)
+                    unique_names{empty_index} = [random_name, int2str(empty_index)];
+                end
+                
+                [unique_names, ia, ic] = unique(unique_names);
+
+                
+                short_visible_names = unique_names;
+                ids_subset = ids(ia);
+                names = names(ia);
+                
+                if count_series
+                    total_num_series = zeros(size(ids_subset));
+                    num_patients_combined = zeros(size(ids_subset));
+                    for series_index = 1 : length(num_series)
+                        total_num_series(ic(series_index)) = total_num_series(ic(series_index)) + num_series(series_index);
+                        num_patients_combined(ic(series_index)) = num_patients_combined(ic(series_index)) + 1;
+                    end
+                    num_series = total_num_series;
+                else
+                    num_series = [];
+                    num_patients_combined = [];
+                end
+
+                % A map of all patient IDs to the main patient ID for each patient group
+                patient_id_map = containers.Map(ids, ids_subset(ic));
+                
+                ids = ids_subset;
+                
+            else
+                patient_id_map = containers.Map(ids, ids);
+            end
+        end
+        
+        function patient_info = GetPatients(obj, group_patients)
             patient_info = obj.PatientMap.values;
             family_names = CoreContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
             family_names = CoreContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
@@ -382,7 +382,7 @@ classdef MimImageDatabase < handle
             patient_info = patient_info(sorted_indices);
             
             % Merge together patients with same name if this is specified by the settings
-            if PTKSoftwareInfo.GroupPatientsWithSameName
+            if group_patients
                 unique_names = sorted_visible_names;
                 
                 % We don't want 'Unknown' patient names to be grouped together, so temporarily
@@ -401,9 +401,9 @@ classdef MimImageDatabase < handle
             end
         end
         
-        function patient_info = GetAllPatientInfosForThisPatient(obj, patient_id)
-            if PTKSoftwareInfo.GroupPatientsWithSameName
-                patient_info_grouped = obj.GetPatients;
+        function patient_info = GetAllPatientInfosForThisPatient(obj, patient_id, group_patients)
+            if group_patients
+                patient_info_grouped = obj.GetPatients(group_patients);
                 for group = patient_info_grouped
                     for group_member = group{1}
                         if strcmp(group_member.PatientId, patient_id)
@@ -431,8 +431,7 @@ classdef MimImageDatabase < handle
         
         function AddPatient(obj, patient_name, patient_id)
             obj.PatientMap(patient_id) = MimImageDatabasePatient(patient_name, patient_id);
-        end
-        
+        end       
     end
     
     methods (Static)

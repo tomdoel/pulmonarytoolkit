@@ -417,7 +417,7 @@ classdef PTKGuiCore < GemFigure
         
         function LoadPatient(obj, patient_id)
             obj.GuiDataset.SwitchPatient(patient_id);
-            datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id);
+            datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, PTKSoftwareInfo.GroupPatientsWithSameName);
             if isempty(datasets)
                 series_uid = [];
             else
@@ -513,7 +513,7 @@ classdef PTKGuiCore < GemFigure
                 case 'Delete'
                     obj.BringToFront;
                     
-                    series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id);
+                    series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, PTKSoftwareInfo.GroupPatientsWithSameName);
                     
                     series_uids = {};
                     
