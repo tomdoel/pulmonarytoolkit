@@ -85,11 +85,6 @@ classdef MimReporting < CoreReporting
                 CoreDiskUtilities.OpenDirectoryWindow(file_path);
             end
         end
-        
-        function ErrorFromException(obj, identifier, message, ex)
-            identifier = [ 'PTKMain:' identifier];
-            ErrorFromException@CoreReporting(obj, identifier, message, ex);
-        end        
     end
 end
 
