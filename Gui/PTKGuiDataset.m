@@ -350,7 +350,7 @@ classdef PTKGuiDataset < CoreBaseClass
                     uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
                     delete_image_info = true;
-                elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
+                elseif MimErrors.IsErrorFileMissing(exc.identifier)
                     uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
                     delete_image_info = true;
