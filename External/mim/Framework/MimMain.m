@@ -94,14 +94,14 @@ classdef MimMain < CoreBaseClass
             % dataset must already be imported.
             
             if ~obj.DatasetExists(dataset_uid)
-                obj.Reporting.Error(PTKSoftwareInfo.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
+                obj.Reporting.Error(MimErrors.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
             dataset_disk_cache = obj.FrameworkSingleton.GetDatasetMemoryCache.GetDatasetDiskCache(dataset_uid, obj.Reporting);
             
             image_info = dataset_disk_cache.LoadData(obj.FrameworkAppDef.GetFrameworkConfig.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
-                obj.Reporting.Error(PTKSoftwareInfo.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
+                obj.Reporting.Error(MimErrors.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
             dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
