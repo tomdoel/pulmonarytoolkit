@@ -85,7 +85,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
     % Dependent properties are not cached in memory
     properties (Dependent = true)
         Limits       % The maximum and minimum image values
-        ImageSize    % The image size; remembers the last image size if this is s template image with no raw data
+        ImageSize    % The image size; remembers the last image size if this is a template image with no raw data
         ImageExists  % Whether any image data exists
     end
 
