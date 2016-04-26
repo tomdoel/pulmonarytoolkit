@@ -65,8 +65,8 @@ classdef TestSavePtkRawImage < CoreTest
         end
         
         function TestSaveLoadForCompression(obj, raw_image, ptk_temp_dir, raw_file_name, compression, reporting)
-            PTKSavePtkRawImage(raw_image, ptk_temp_dir, raw_file_name, compression, reporting);
-            raw_image_loaded = PTKLoadPtkRawImage(ptk_temp_dir, raw_file_name, class(raw_image), size(raw_image), compression, reporting);
+            CoreSaveRawImage(raw_image, ptk_temp_dir, raw_file_name, compression, reporting);
+            raw_image_loaded = CoreLoadRawImage(ptk_temp_dir, raw_file_name, class(raw_image), size(raw_image), compression, reporting);
             obj.Assert(isequal(raw_image, raw_image_loaded), 'Images are identical');
         end
     end    

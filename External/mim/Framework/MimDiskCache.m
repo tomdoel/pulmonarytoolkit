@@ -106,7 +106,7 @@ classdef MimDiskCache < handle
                 file_path = fullfile(obj.CachePath, char(context));
                 
                 try
-                    results_struct = MimDiskUtilities.LoadStructureAndRawImages(file_path, name, reporting);
+                    results_struct = MimLoad(file_path, name, reporting);
                 catch exception
                     % Check for the particular case of the .raw file being
                     % deleted
@@ -281,7 +281,7 @@ classdef MimDiskCache < handle
                 result.info = info;
             end
             result.value = value;
-            MimDiskUtilities.SaveStructure(file_path_with_context, name, result, obj.Config.Compression, reporting);
+            MimSave(file_path_with_context, name, result, obj.Config.Compression, reporting);
         end
         
         function is_framework_file = IsFrameworkFile(obj, file_name)

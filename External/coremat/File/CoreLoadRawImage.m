@@ -1,5 +1,5 @@
-function raw_image = PTKLoadPtkRawImage(file_path, raw_filename, data_type, image_size, compression, reporting)
-    % PTKLoadPtkRawImage. Loads raw image data from disk
+function raw_image = CoreLoadRawImage(file_path, raw_filename, data_type, image_size, compression, reporting)
+    % CoreLoadRawImage. Loads raw image data from disk
     %
     %
     %
@@ -22,7 +22,7 @@ function raw_image = PTKLoadPtkRawImage(file_path, raw_filename, data_type, imag
     elseif strcmp(compression, 'deflate')
         raw_image = LoadCompressed(full_raw_filename, data_type, image_size, 'tiff', reporting);
     else
-        reporting.Error('PTKLoadPtkRawImage:UnknownCompression', 'Unknown compression format');
+        reporting.Error('CoreLoadRawImage:UnknownCompression', 'Unknown compression format');
     end
 end
 

@@ -175,20 +175,18 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
         end
 
-        function LoadRawImage(obj, file_path, reporting)
+        function raw_image_loaded = IsRawImageLoaded(obj)
+            % Returns false if this image has a raw image that has not yet
+            % beed loaded from disk
+
+            raw_image_loaded = ~isempty(obj.RawImage) || isempty(obj.CachedRawImageFilename);
+        end
+        
+        function LoadCachedRawImage(obj, raw_image)
             % For a disk-cached image header, this loads the raw data
             
-            if (nargin < 3)
-                reporting = [];
-            end
-           
-            if isempty(obj.RawImage) && ~isempty(obj.CachedRawImageFilename)
-                
-                if ~isempty(reporting)
-                    reporting.LogVerbose(['Loading raw image file ' obj.CachedRawImageFilename]);
-                end
-                
-                obj.RawImage = PTKLoadPtkRawImage(file_path, obj.CachedRawImageFilename, obj.CachedDataType, obj.CachedImageSize, obj.CachedRawImageCompression, reporting);
+            if ~obj.IsRawImageLoaded
+                obj.RawImage = raw_image;
                 
                 % Clear cached values
                 obj.CachedImageSize = [];
@@ -199,7 +197,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 obj.NotifyImageChangedCacheStillValid
             end
         end
-
+        
         function header_file = CreateHeader(obj, raw_filename, compression)
             % Creates a cache header file template suitable for saving separately from pixel data
             

@@ -1,5 +1,5 @@
-function PTKSavePtkRawImage(raw_image, file_path, raw_filename, compression, reporting)
-    % PTKSavePtkRawImage. Saves raw image data from disk
+function CoreSaveRawImage(raw_image, file_path, raw_filename, compression, reporting)
+    % CoreSaveRawImage. Saves raw image data from disk
     %
     %
     %
@@ -19,7 +19,7 @@ function PTKSavePtkRawImage(raw_image, file_path, raw_filename, compression, rep
     elseif strcmp(compression, 'deflate')
         SaveCompressed(full_raw_filename, raw_image, 'tiff', 'Compression', 'deflate', reporting);
     else
-        reporting.Error('PTKSavePtkRawImage:UnknownCompression', 'Unknown compression format');
+        reporting.Error('CoreSaveRawImage:UnknownCompression', 'Unknown compression format');
     end
 end
 
