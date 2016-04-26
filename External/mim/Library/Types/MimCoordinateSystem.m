@@ -4,7 +4,7 @@ classdef MimCoordinateSystem
     %
     % Different imaging programs use different coordinate systems. Therefore,
     % if you import or export image coordinates from/to another imaging program,
-    % you need to tell PTK what origin to use, otherwise the coordinates will
+    % you need to tell MIM what origin to use, otherwise the coordinates will
     % not match.
     %
     %

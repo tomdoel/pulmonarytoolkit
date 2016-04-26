@@ -20,7 +20,7 @@ classdef MimContextMapping < handle
     
     properties
         Context % The context (of type PTKContext)
-        ContextSet % The context type (of type PTKContextSet)
+        ContextSet % The context type (of type MimContextSet)
         TemplateGenerationFunctions % The name of a function from which this context can be found
         ContextTriggerPlugin % The name of a plugin which, when called, will trigger saving of a template
         Parent %

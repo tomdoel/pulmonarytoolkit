@@ -2,19 +2,15 @@ classdef MimPlugin < handle
     % MimPlugin. Base class for a Plugin used by MIM.
     %
     %     Plugins are classes you create to run your own routines from the
-    %     Pulmonary Toolkit. When you create a plugin, it will automatically
-    %     appear as a button in the gui, and is available to scripts and other
-    %     plugins which use the Pulmonay Toolkit. The framework automatically
+    %     MIM toolkit. When you create a plugin, it can automatically
+    %     appear as a button in compatible guis, and is available to scripts and other
+    %     plugins which use the MIM toolkit. The framework automatically
     %     handles result caching, dependency tracking and preview thumbnail
     %     generation.
     %
-    %     To run a plugin from the gui, first start up the gui using the script
-    %     ptk.m. Load in the dataset you wish to run the plugin with, and then
-    %     click on the plugin button which is automatically created in the
-    %     plugins panel on the right.
-    %
-    %     To run a plugin from your own code, first create a PTKMain object. Then
-    %     call CreateDatasetFromInfo() to create a MimDataset for the image files
+    %     To run a plugin from your own code, first create a suitable
+    %     MimMain object, usually by using a specific application such as
+    %     PTKMain for PTK. Then call CreateDatasetFromInfo() to create a MimDataset for the image files
     %     you wish to run the plugin with. Then call GetResult() on this dataset
     %     interface to run the plugin or fetch a previously cached result.
     %

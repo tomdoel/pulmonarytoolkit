@@ -18,7 +18,7 @@ classdef MimContextSetMapping < handle
     
     
     properties
-        ContextSet  % The context set enum (of type PTKContextSet)
+        ContextSet  % The context set enum (of type MimContextSet)
         
         ContextList % The set of MimContextMappings corresponding to contexts of this type 
         
