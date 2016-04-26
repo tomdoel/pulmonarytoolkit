@@ -8,11 +8,7 @@ function PTKSaveAsMatlab(image_data, path, filename, reporting)
     %
     %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved
-    %             path, filename  specify the location to save the DICOM data. One 2D file
-    %                             will be created for each image slice in the z direction. 
-    %                             Each file is numbered, starting from 0.
-    %                             So if filename is 'MyImage.DCM' then the files will be
-    %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
+    %             path, filename  specify the location to save the files.
     %             reporting       an object implementing CoreReportingInterface
     %                             for reporting progress and warnings
     %
