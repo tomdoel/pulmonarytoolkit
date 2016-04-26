@@ -98,13 +98,13 @@ classdef PTKContextDef < handle
         function CreateContexts(obj)
             % Create the hierarchy of context types
             obj.ContextSets = containers.Map;
-            full_set =  PTKContextSetMapping(PTKContextSet.OriginalImage, []);
-            roi_set = PTKContextSetMapping(PTKContextSet.LungROI, full_set);
-            lungs_set = PTKContextSetMapping(PTKContextSet.Lungs, roi_set);
-            single_lung_set = PTKContextSetMapping(PTKContextSet.SingleLung, lungs_set);
-            lobe_set = PTKContextSetMapping(PTKContextSet.Lobe, single_lung_set);
-            segment_set = PTKContextSetMapping(PTKContextSet.Segment, lobe_set);
-            any_set = PTKContextSetMapping(PTKContextSet.Any, []);
+            full_set =  MimContextSetMapping(PTKContextSet.OriginalImage, []);
+            roi_set = MimContextSetMapping(PTKContextSet.LungROI, full_set);
+            lungs_set = MimContextSetMapping(PTKContextSet.Lungs, roi_set);
+            single_lung_set = MimContextSetMapping(PTKContextSet.SingleLung, lungs_set);
+            lobe_set = MimContextSetMapping(PTKContextSet.Lobe, single_lung_set);
+            segment_set = MimContextSetMapping(PTKContextSet.Segment, lobe_set);
+            any_set = MimContextSetMapping(PTKContextSet.Any, []);
             obj.ContextSets(char(PTKContextSet.OriginalImage)) = full_set;
             obj.ContextSets(char(PTKContextSet.LungROI)) = roi_set;
             obj.ContextSets(char(PTKContextSet.Lungs)) = lungs_set;
