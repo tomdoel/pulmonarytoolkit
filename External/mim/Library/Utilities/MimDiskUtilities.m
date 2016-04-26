@@ -125,6 +125,7 @@ classdef MimDiskUtilities
         
         function [new_structure, next_index] = ConvertStructAndSaveRawImageData(old_structure, file_path, filename_base, next_index, compression, reporting)
             if isstruct(old_structure)
+                new_structure = struct;
                 field_names = fieldnames(old_structure);
                 for field = field_names'
                     field_name = field{1};
@@ -138,8 +139,20 @@ classdef MimDiskUtilities
                     else
                         file_suffix = ['_' int2str(next_index)];
                     end
-                    raw_image_file_name = [filename_base file_suffix];
-                    header = PTKSavePtkImage(old_structure, file_path, raw_image_file_name, compression, reporting);
+                    raw_image_file_name = [filename_base file_suffix '.raw'];
+                    
+                    if (length(size(image_data.RawImage)) ~= 3) || (~MimDiskUtilities.CompressionSupported(compression, class(image_data.RawImage), reporting))
+                        % Compression currently only supports 3D images
+                        compression = [];
+                    end
+                    
+                    % Create a header file if requested. The header is the image object
+                    % minus the raw image data, and contains the raw image filename
+                    header = image_data.CreateHeader(raw_image_file_name, compression);
+
+                    % Save the pixel data with compression, if supported
+                    PTKSavePtkRawImage(image_data.RawImage, file_path, raw_image_file_name, compression, reporting);
+                    
                     next_index = next_index + 1;
                     new_structure = header;
                 else
