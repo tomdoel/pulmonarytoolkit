@@ -1,7 +1,7 @@
-function filtered_image = PTKGaussianFilter(original_image, filter_size_mm, border_correction)
-    % PTKGaussianFilter. Performs 3D Gaussian filtering on a 3D image.
+function filtered_image = MimGaussianFilter(original_image, filter_size_mm, border_correction)
+    % MimGaussianFilter. Performs 3D Gaussian filtering on a 3D image.
     %
-    %     PTKGaussianFilter takes in an image in a PTKImage class and performs 3D
+    %     MimGaussianFilter takes in an image in a PTKImage class and performs 3D
     %     Gaussian filtering. The sigma size is specified in mm; this function
     %     takes into account the voxel size.
     %
@@ -20,7 +20,7 @@ function filtered_image = PTKGaussianFilter(original_image, filter_size_mm, bord
     end
     
     if ~isa(original_image, 'PTKImage')
-        error('PTKGaussianFilter requires a PTKImage as input');
+        error('MimGaussianFilter requires a PTKImage as input');
     end
     
     voxel_size_mm = original_image.VoxelSize;

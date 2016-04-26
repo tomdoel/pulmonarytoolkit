@@ -38,7 +38,7 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     min_image = original_image.Limits(1);
     filtered_image = original_image.BlankCopy;
     filtered_image.ChangeRawImage(original_image.RawImage - min_image);
-    filtered_image = PTKGaussianFilter(filtered_image, filter_size_mm);
+    filtered_image = MimGaussianFilter(filtered_image, filter_size_mm);
     
     if (nargin < 4)
         reporting.UpdateProgressMessage('Automatically selecting a point in the lung parenchyma');

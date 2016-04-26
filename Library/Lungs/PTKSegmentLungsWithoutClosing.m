@@ -49,7 +49,7 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
     % Filter image to reduce noise
     if filter_image
         filter_size = 0.5;
-        filtered_lung_image = PTKGaussianFilter(original_image, filter_size);
+        filtered_lung_image = MimGaussianFilter(original_image, filter_size);
     else
         filtered_lung_image = original_image.Copy;
     end

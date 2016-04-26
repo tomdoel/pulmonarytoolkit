@@ -78,7 +78,7 @@ function filtered_image = PTKImageDivider(image_data, filter_function, mask, gau
   
     % Gaussian filter
     if ~isempty(gaussian_sigma) && (gaussian_sigma > 0)
-        image_data = PTKGaussianFilter(image_data, gaussian_sigma);
+        image_data = MimGaussianFilter(image_data, gaussian_sigma);
     end
     
     % Progress ia split between left and right lungs

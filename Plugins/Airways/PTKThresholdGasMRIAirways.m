@@ -36,7 +36,7 @@ classdef PTKThresholdGasMRIAirways < PTKPlugin
     methods (Static)
         function results = RunPlugin(dataset, reporting)
             results = dataset.GetResult('PTKOriginalImage');
-            results_filtered = PTKGaussianFilter(results, 2);
+            results_filtered = MimGaussianFilter(results, 2);
             results_filtered.ChangeRawImage(results_filtered.RawImage > 50);
             results.ChangeRawImage(results.RawImage > 100);
             extended = results.Copy;

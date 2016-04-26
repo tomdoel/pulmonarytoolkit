@@ -80,7 +80,7 @@ function [fv, normals] = MimCreateSurfaceFromSegmentation(segmentation, smoothin
     end
     
     if smoothing_size > 0
-        sub_seg = PTKGaussianFilter(sub_seg, smoothing_size);
+        sub_seg = MimGaussianFilter(sub_seg, smoothing_size);
     end
     
     if limit_to_one_component_per_index

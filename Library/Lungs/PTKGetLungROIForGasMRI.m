@@ -36,7 +36,7 @@ function lung_image = PTKGetLungROIForGasMRI(lung_image, reporting)
     reporting.ShowProgress('Finding region of interest');
 
     % Filter image
-    lung_threshold = PTKGaussianFilter(lung_image, 2);
+    lung_threshold = MimGaussianFilter(lung_image, 2);
     
     % Threshold
     lung_threshold.ChangeRawImage(lung_threshold.RawImage > 2);

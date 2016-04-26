@@ -66,7 +66,7 @@ classdef PTKInitialFluidRegistrationImageMR < PTKPlugin
             resampled_mr_mask = PTKRegisterImageAffine(mr_single_lung_mask, gas_single_lung, affine_matrix, '*linear', reporting);
 
             % For thick slices, we need to smooth
-            resampled_mr_mask = PTKGaussianFilter(resampled_mr_mask, 7.5);            
+            resampled_mr_mask = MimGaussianFilter(resampled_mr_mask, 7.5);            
             resampled_mr_mask.ChangeRawImage(uint8(resampled_mr_mask.RawImage > 0.5));
             
             results = [];
