@@ -106,7 +106,7 @@ classdef MimDiskCache < handle
                 file_path = fullfile(obj.CachePath, char(context));
                 
                 try
-                    results_struct = MimDiskUtilities.LoadStructure(file_path, name, reporting);
+                    results_struct = MimDiskUtilities.LoadStructureAndRawImages(file_path, name, reporting);
                 catch exception
                     % Check for the particular case of the .raw file being
                     % deleted

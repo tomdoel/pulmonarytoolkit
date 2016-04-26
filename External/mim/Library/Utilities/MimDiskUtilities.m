@@ -117,7 +117,7 @@ classdef MimDiskUtilities
             MimDiskUtilities.Save(filename, result);
         end
 
-        function results = LoadStructure(file_path, filename_base, reporting)
+        function results = LoadStructureAndRawImages(file_path, filename_base, reporting)
             filename = [fullfile(file_path, filename_base) '.mat'];
             results_struct = MimDiskUtilities.Load(filename);
             results = MimDiskUtilities.ConvertStructAndLoadRawImageData(results_struct, file_path, filename_base, reporting);
