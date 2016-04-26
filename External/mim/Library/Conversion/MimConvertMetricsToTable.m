@@ -1,4 +1,4 @@
-function results_table = MimConvertMetricsToTable(results, patient_name, patient_id, reporting, results_table)
+function results_table = MimConvertMetricsToTable(results, patient_name, patient_id, reporting, context_mapping_function, results_table)
     % MimConvertMetricsToTable.
     %
     %
@@ -9,21 +9,21 @@ function results_table = MimConvertMetricsToTable(results, patient_name, patient
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
    
-    if nargin < 5 || isempty(results_table)
+    if nargin < 6 || isempty(results_table)
         results_table = MimResultsTable;
     end
-    AddToTable(results_table, results, patient_id, reporting);
+    AddToTable(results_table, results, patient_id, context_mapping_function, reporting);
     results_table.AddPatientName(patient_id, patient_name);
 end
 
-function AddToTable(table, results, patient_id, reporting)
+function AddToTable(table, results, patient_id, context_mapping_function, reporting)
     
     table.Titles{MimResultsTable.ContextDim} = 'Region';
     table.Titles{MimResultsTable.MetricDim} = 'Measurement';
     table.Titles{MimResultsTable.SliceNumberDim} = 'Slice Number';
     table.Titles{MimResultsTable.PatientDim} = 'Patient';
     
-    field_map = GetFieldMap(results, table);
+    field_map = GetFieldMap(results, table, context_mapping_function);
     
     for field = field_map.keys
         context_name = field{1};
@@ -44,14 +44,14 @@ function AddToTable(table, results, patient_id, reporting)
     end
 end
 
-function field_map = GetFieldMap(results, table)
+function field_map = GetFieldMap(results, table, context_mapping_function)
     field_map = containers.Map;
     if isstruct(results)
         field_names = fieldnames(results);
         for field_name_set = field_names'
             field_name = field_name_set{1};
             field_map(field_name) = results.(field_name);
-            visible_field_name = PTKGetUserVisibleNameForContext(field_name);
+            visible_field_name = context_mapping_function(field_name);
             table.AddContextName(field_name, visible_field_name);
         end  
     else

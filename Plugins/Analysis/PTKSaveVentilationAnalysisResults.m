@@ -42,7 +42,7 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
             results = dataset.GetResult('PTKVentilationAnalysis', contexts);
             
-            table = MimConvertMetricsToTable(results, patient_name, uid, CoreReportingDefault);
+            table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
             
             dataset.SaveTableAsCSV('PTKSaveVentilationAnalysisResults', 'Ventilation analysis', 'VentilationResults', 'Ventilated volume', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
         end

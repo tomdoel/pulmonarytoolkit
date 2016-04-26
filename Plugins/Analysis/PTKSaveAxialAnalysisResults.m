@@ -50,7 +50,7 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
             uid = image_info.ImageUid;
             patient_name = dataset.GetPatientName;
 
-            table = MimConvertMetricsToTable(results, patient_name, uid, reporting);
+            table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
             dataset.SaveTableAsCSV('PTKSaveAxialAnalysisResults', 'Axial analysis', 'AxialResults', 'Density analysis in bins along the cranial-caudal axis', table, MimResultsTable.ContextDim, MimResultsTable.SliceNumberDim, MimResultsTable.MetricDim, []);

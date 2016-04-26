@@ -1,5 +1,5 @@
-classdef PTKContextSetMapping < handle
-    % PTKContextSetMapping. A class for specifying the relationship between
+classdef MimContextSetMapping < handle
+    % MimContextSetMapping. A class for specifying the relationship between
     % context sets.
     %
     % This class is used by the Framework to store the relationship between
@@ -22,12 +22,12 @@ classdef PTKContextSetMapping < handle
         
         ContextList % The set of MimContextMappings corresponding to contexts of this type 
         
-        Parent      % Parent type (of type PTKContextSetMapping)
-        Children    % Child type (of type PTKContextSetMapping)
+        Parent      % Parent type (of type MimContextSetMapping)
+        Children    % Child type (of type MimContextSetMapping)
     end
     
     methods
-        function obj = PTKContextSetMapping(context_set_id, parent_context_set_mapping)
+        function obj = MimContextSetMapping(context_set_id, parent_context_set_mapping)
             obj.ContextSet = context_set_id;
             obj.Parent = parent_context_set_mapping;
             obj.ContextList = {};

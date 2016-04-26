@@ -49,7 +49,7 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
             patient_name = dataset.GetPatientName;
-            table = MimConvertMetricsToTable(results, patient_name, uid, reporting);
+            table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
             dataset.SaveTableAsCSV('PTKSaveCoronalAnalysisResults', 'Coronal analysis', 'CoronalResults', 'Density analysis in bins along the anterior-posterior axis', table, MimResultsTable.ContextDim, MimResultsTable.SliceNumberDim, MimResultsTable.MetricDim, []);
