@@ -33,11 +33,19 @@ function new_plugin = MimParsePluginClass(plugin_name, plugin_class, suggested_c
     new_plugin.HidePluginInDisplay = plugin_class.HidePluginInDisplay;
     new_plugin.ButtonWidth = plugin_class.ButtonWidth;
     new_plugin.ButtonHeight = plugin_class.ButtonHeight;
-    new_plugin.PTKVersion = plugin_class.PTKVersion;
+    
     new_plugin.GeneratePreview = plugin_class.GeneratePreview;
     new_plugin.FlattenPreviewImage = plugin_class.FlattenPreviewImage;
     
     property_list = properties(plugin_class);
+    if ismember('PluginInterfaceVersion', property_list);
+        new_plugin.PluginInterfaceVersion = plugin_class.PluginInterfaceVersion;
+    elseif ismember('PTKVersion', property_list);
+        new_plugin.PluginInterfaceVersion = plugin_class.PTKVersion;
+    else
+        new_plugin.PluginInterfaceVersion = 1;
+    end
+
     if ismember('Context', property_list);
         new_plugin.Context = plugin_class.Context;
     else

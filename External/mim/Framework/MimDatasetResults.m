@@ -13,7 +13,7 @@ classdef MimDatasetResults < handle
     %
     %     Example: 
     %
-    %     classdef MyPlugin < PTKPlugin
+    %     classdef MyPlugin < MimPlugin
     %
     %     methods (Static)
     %         function results = RunPlugin(dataset_results, reporting)

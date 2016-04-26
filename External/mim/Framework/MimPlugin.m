@@ -1,5 +1,5 @@
-classdef PTKPlugin < handle
-    % PTKPlugin. Base class for a Plugin used by the Pulmonary Toolkit.
+classdef MimPlugin < handle
+    % MimPlugin. Base class for a Plugin used by MIM.
     %
     %     Plugins are classes you create to run your own routines from the
     %     Pulmonary Toolkit. When you create a plugin, it will automatically
@@ -41,12 +41,6 @@ classdef PTKPlugin < handle
     
     % You must set each of these properties in your plugin class
     properties (Abstract = true)
-        
-        % Set this to the value in PTKSoftwareInfo.
-        % This specifies the version of the Pulmonary Toolkit the plugin was
-        % developed with.
-        PTKVersion
-        
         % Should normally be set to true.
         % Specifies if the results of this plugin can be cached on disk. If you
         % set this to false, the results will never be cached and the plugin
@@ -115,6 +109,11 @@ classdef PTKPlugin < handle
         FlattenPreviewImage
     end
     
+    % Optional properties
+    %   PluginInterfaceVersion - specifies the version of the plugin interface
+    %   that your plugin implements
+        
+
     methods (Abstract, Static)
         
         % Generates the results for this plugin.

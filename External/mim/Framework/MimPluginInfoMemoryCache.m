@@ -29,10 +29,10 @@ classdef MimPluginInfoMemoryCache < handle
         function plugin_info = GetPluginInfo(obj, plugin_name, category, reporting)
             [is_mim_plugin, plugin_class] = obj.PopulateCache(plugin_name, category, reporting);
             if isempty(plugin_class)
-                reporting.Error('MimPluginInfoMemoryCache:PluginNotFound', ['The plugin ' plugin_name ' was not found. Please ensure this is a PTKPlugin class and it is in the path.']);
+                reporting.Error('MimPluginInfoMemoryCache:PluginNotFound', ['The plugin ' plugin_name ' was not found. Please ensure this is a MimPlugin class and it is in the path.']);
             end
             if ~is_mim_plugin
-                reporting.Error('MimPluginInfoMemoryCache:NotAPlugin', ['A file ' plugin_name ' was found but is not a valid PTKPlugin class. Please ensure this is a PTKPlugin class.']);
+                reporting.Error('MimPluginInfoMemoryCache:NotAPlugin', ['A file ' plugin_name ' was found but is not a valid MimPlugin class. Please ensure this is a MimPlugin class.']);
             end
             plugin_info = obj.PluginInfoMap(plugin_name);
         end
@@ -40,10 +40,10 @@ classdef MimPluginInfoMemoryCache < handle
         function plugin_handle = GetPluginHandle(obj, plugin_name, category, reporting)
             [is_mim_plugin, plugin_class] = obj.PopulateCache(plugin_name, category, reporting);
             if isempty(plugin_class)
-                reporting.Error('MimPluginInfoMemoryCache:PluginNotFound', ['The plugin ' plugin_name ' was not found. Please ensure this is a PTKPlugin class and it is in the path.']);
+                reporting.Error('MimPluginInfoMemoryCache:PluginNotFound', ['The plugin ' plugin_name ' was not found. Please ensure this is a MimPlugin class and it is in the path.']);
             end
             if ~is_mim_plugin
-                reporting.Error('MimPluginInfoMemoryCache:NotAPlugin', ['A file ' plugin_name ' was found but is not a valid PTKPlugin class. Please ensure this is a PTKPlugin class.']);
+                reporting.Error('MimPluginInfoMemoryCache:NotAPlugin', ['A file ' plugin_name ' was found but is not a valid MimPlugin class. Please ensure this is a MimPlugin class.']);
             end
             plugin_handle = obj.PluginHandleMap(plugin_name);
         end
@@ -70,7 +70,7 @@ classdef MimPluginInfoMemoryCache < handle
             plugin_handle = str2func(plugin_name);
             plugin_class = feval(plugin_handle);
 
-            if ~isa(plugin_class, 'PTKPlugin')
+            if ~isa(plugin_class, 'MimPlugin')
                 is_mim_plugin = false;
                 return;
             end

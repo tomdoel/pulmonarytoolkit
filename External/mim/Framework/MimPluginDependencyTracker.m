@@ -49,9 +49,9 @@ classdef MimPluginDependencyTracker < CoreBaseClass
         end
         
         function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
-        % Gets a plugin result, from the disk cache if possible. If there is no
-        % cached result, or if the dependencies are invalid, or if the
-        % "AlwaysRunPlugin" property is set, then the plugin is executed.
+            % Gets a plugin result, from the disk cache if possible. If there is no
+            % cached result, or if the dependencies are invalid, or if the
+            % "AlwaysRunPlugin" property is set, then the plugin is executed.
         
             % Fetch plugin result from the disk cache
             result = [];
@@ -107,7 +107,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
 
                 % This is the actual call which runs the plugin
-                if strcmp(plugin_info.PTKVersion, '1')
+                if strcmp(plugin_info.PluginInterfaceVersion, '1')
                     result = plugin_class.RunPlugin(dataset_callback, reporting);
                 else
                     result = plugin_class.RunPlugin(dataset_callback, context, reporting);
