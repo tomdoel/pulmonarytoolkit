@@ -151,6 +151,7 @@ classdef MimDiskUtilities
         function new_structure = ConvertStructAndLoadRawImageData(old_structure, file_path, filename_base, reporting)
             if isstruct(old_structure)
                 field_names = fieldnames(old_structure);
+                new_structure = struct;
                 for field = field_names'
                     field_name = field{1};
                     new_structure.(field_name) = MimDiskUtilities.ConvertStructAndLoadRawImageData(old_structure.(field_name), file_path, filename_base, reporting);
