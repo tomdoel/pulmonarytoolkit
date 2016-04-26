@@ -99,7 +99,7 @@ classdef MivContextDef < handle
             
             % Create the hierarchy of contexts
             obj.Contexts = containers.Map;
-            full_context =  PTKContextMapping(PTKContext.OriginalImage, full_set, @PTKCreateTemplateForOriginalImage, 'PTKOriginalImage', []);
+            full_context =  MimContextMapping(PTKContext.OriginalImage, full_set, @PTKCreateTemplateForOriginalImage, 'PTKOriginalImage', []);
 
             obj.Contexts(char(PTKContext.OriginalImage)) = full_context;
         end        

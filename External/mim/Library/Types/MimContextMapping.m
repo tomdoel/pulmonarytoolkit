@@ -1,5 +1,5 @@
-classdef PTKContextMapping < handle
-    % PTKContextMapping. A class for specifying the relationship between
+classdef MimContextMapping < handle
+    % MimContextMapping. A class for specifying the relationship between
     % contexts.
     %
     % This class is used by the Framework to store the relationship between
@@ -28,7 +28,7 @@ classdef PTKContextMapping < handle
     end
     
     methods
-        function obj = PTKContextMapping(context_id, context_set, template_generation_function, context_trigger_plugin, parent_context_mapping)
+        function obj = MimContextMapping(context_id, context_set, template_generation_function, context_trigger_plugin, parent_context_mapping)
             obj.Context = context_id;
             obj.ContextSet = context_set;
             obj.TemplateGenerationFunctions = template_generation_function;

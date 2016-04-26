@@ -20,7 +20,7 @@ classdef PTKContextSetMapping < handle
     properties
         ContextSet  % The context set enum (of type PTKContextSet)
         
-        ContextList % The set of PTKContextMappings corresponding to contexts of this type 
+        ContextList % The set of MimContextMappings corresponding to contexts of this type 
         
         Parent      % Parent type (of type PTKContextSetMapping)
         Children    % Child type (of type PTKContextSetMapping)
