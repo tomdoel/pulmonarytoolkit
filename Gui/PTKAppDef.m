@@ -74,7 +74,7 @@ classdef PTKAppDef < handle
         function settings_file_path = GetSettingsFilePath(obj)
             % Returns the full path to the settings file
             
-            app_dir = obj.FrameworkAppDef.GetFrameworkDirectories.GetApplicationDirectoryAndCreateIfNecessary;
+            app_dir = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetApplicationDirectoryAndCreateIfNecessary;
             settings_filename = PTKSoftwareInfo.SettingsFileName;
             settings_file_path = fullfile(app_dir, settings_filename);
         end
