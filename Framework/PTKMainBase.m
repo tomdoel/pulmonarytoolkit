@@ -263,7 +263,7 @@ classdef PTKMainBase < CoreBaseClass
             % ImportData() method instead.
             
             if isempty(new_image_info.ImageUid)
-                [series_uid, study_uid, modality] = PTKMain.GetImageUID(new_image_info, reporting);
+                [series_uid, study_uid, modality] = PTKMainBase.GetImageUID(new_image_info, reporting);
                 new_image_info.ImageUid = series_uid;
                 new_image_info.StudyUid = study_uid;
                 new_image_info.Modality = modality;
