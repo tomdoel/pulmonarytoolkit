@@ -26,42 +26,17 @@ classdef PTKZoomMatlabTool < PTKTool
     end
     
     methods
-        
         function obj = PTKZoomMatlabTool(callback)
             obj.Callback = callback;
         end
-        
-        function MouseHasMoved(obj, screen_coords, last_coords)
+ 
+        function Enter(obj)
+            obj.Callback.EnableZoom(true);
         end
         
-        function MouseDragged(obj, coords, last_coords)
-        end
-        
-        function MouseDown(obj, screen_coords)
-        end
-        
-        function MouseUp(obj, screen_coords)
-        end
-        
-        function Enable(obj, enabled)
-            obj.Callback.EnableZoom(enabled);
-        end
-        
-        function NewSlice(obj)
-        end
-        
-        function NewOrientation(obj)
-        end
-        
-        function ImageChanged(obj)
-        end
-
-        function OverlayImageChanged(obj)
-        end
-        
-        function processed = Keypressed(obj, key_name)
-            processed = false;
-        end        
+        function Exit(obj)
+            obj.Callback.EnableZoom(false);
+        end  
     end
     
 end

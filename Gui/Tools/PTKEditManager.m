@@ -39,9 +39,7 @@ classdef PTKEditManager < PTKTool
         ClosestColour
         SecondClosestColour
 
-        Enabled = false
-        
-        OverlayChangeLock
+        OverlayChangeLock = false
         
         UndoStack
         
@@ -51,7 +49,6 @@ classdef PTKEditManager < PTKTool
     methods
         function obj = PTKEditManager(viewer_panel)
             obj.ViewerPanel = viewer_panel;
-            obj.OverlayChangeLock = false;
             obj.UndoStack = CoreUndoStack([], 5);
         end
         
@@ -60,13 +57,10 @@ classdef PTKEditManager < PTKTool
                 (strcmp(sub_mode, PTKSubModes.EditBoundariesEditing) || strcmp(sub_mode, PTKSubModes.FixedBoundariesEditing));
         end
         
-        function Enable(obj, enable)
-            if enable && ~obj.EditModeInitialised
-                obj.InitialiseEditMode;
-            end
-            obj.Enabled = enable;
+        function Enter(obj)
+            obj.InitialiseEditMode;
         end
-        
+
         function processed = Keypressed(obj, key_name)
             processed = true;
             if strcmpi(key_name, 'u')
@@ -76,20 +70,12 @@ classdef PTKEditManager < PTKTool
             end
         end
         
-        function NewSlice(obj)
-        end
-        
-        function NewOrientation(obj)
-        end
-        
         function ImageChanged(obj)
-            if obj.Enabled
-                obj.InitialiseEditMode;
-            end
+            obj.InitialiseEditMode;
         end
         
         function OverlayImageChanged(obj)
-            if obj.Enabled && ~obj.OverlayChangeLock
+            if ~obj.OverlayChangeLock
                 obj.InitialiseEditMode;
             end
         end
@@ -203,13 +189,7 @@ classdef PTKEditManager < PTKTool
                     obj.ApplyBrush(coords);
                     
                     obj.ViewerPanel.HideWaitCursor;
-
                 end
-            end
-        end
-        
-        function MouseUp(obj, coords)
-            if obj.Enabled
             end
         end
 
@@ -305,9 +285,6 @@ classdef PTKEditManager < PTKTool
                 raw_image(min_coords(1):max_coords(1), min_coords(2):max_coords(2), min_coords(3):max_coords(3)) = subimage;
                 
                 obj.ApplyEditToImage(raw_image);
-                
-                
-
             end
         end
         
@@ -326,13 +303,7 @@ classdef PTKEditManager < PTKTool
                 obj.ViewerPanel.OverlayImage.ChangeRawImage(old_image);
                 obj.OverlayChangeLock = false;
             end
-        end
-        
-        function MouseDragged(obj, screen_coords, last_coords)
-        end
-        
-        function MouseHasMoved(obj, coords, last_coords)
-        end        
+        end      
         
         function image_coords = GetImageCoordinates(obj, coords)
             image_coords = zeros(1, 3);

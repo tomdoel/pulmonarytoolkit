@@ -41,28 +41,21 @@ classdef PTKMapColourTool < PTKTool
         ViewerPanel
         FromColour
         Colour
-        Enabled = false
-        OverlayChangeLock
+        OverlayChangeLock = false
         ContextMenu
     end
     
     methods
         function obj = PTKMapColourTool(viewer_panel)
             obj.ViewerPanel = viewer_panel;
-            obj.OverlayChangeLock = false;
-            obj.InitialiseEditMode;
         end
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)
             is_enabled = ~isempty(mode) && ~isempty(sub_mode) && strcmp(mode, PTKModes.EditMode) && strcmp(sub_mode, PTKSubModes.ColourRemapEditing);
         end
         
-        function Enable(obj, enable)
-            current_status = obj.Enabled;
-            obj.Enabled = enable;
-            if enable && ~current_status
-                obj.InitialiseEditMode;
-            end
+        function Enter(obj)
+            obj.InitialiseEditMode;
         end
         
         function processed = Keypressed(obj, key_name)
@@ -99,18 +92,12 @@ classdef PTKMapColourTool < PTKTool
             set(obj.GetContextMenu, 'Visible', 'on');
         end
         
-        function NewSlice(obj)
-        end
-        
-        function NewOrientation(obj)
-        end
-        
         function ImageChanged(obj)
             obj.InitialiseEditMode;
         end
         
         function OverlayImageChanged(obj)
-            if obj.Enabled && ~obj.OverlayChangeLock
+            if ~obj.OverlayChangeLock
                 obj.InitialiseEditMode;
             end
         end
@@ -134,11 +121,6 @@ classdef PTKMapColourTool < PTKTool
                 if obj.ViewerPanel.OverlayImage.ImageExists
                     obj.StartBrush(coords);
                 end
-            end
-        end
-        
-        function MouseUp(obj, coords)
-            if obj.Enabled
             end
         end
         
@@ -201,13 +183,6 @@ classdef PTKMapColourTool < PTKTool
         function ChangeColourCallback(obj, ~, ~, colour)
             obj.Colour = colour;
         end
-        
-        function MouseHasMoved(obj, coords, last_coords)
-        end
-        
-        function MouseDragged(obj, screen_coords, last_coords)
-        end
-        
         
         function image_coords = GetImageCoordinates(obj, coords)
             image_coords = zeros(1, 3);

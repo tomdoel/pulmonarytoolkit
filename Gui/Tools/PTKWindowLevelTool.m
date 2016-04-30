@@ -35,9 +35,6 @@ classdef PTKWindowLevelTool < PTKTool
             obj.ImageDisplayParameters = image_display_parameters;
         end
         
-        function MouseHasMoved(obj, screen_coords, last_coords)
-        end
-        
         function MouseDragged(obj, screen_coords, last_coords)
             if ~isempty(obj.StartCoords)            
                 [min_coords, max_coords] = obj.Callback.GetImageLimits;
@@ -57,20 +54,16 @@ classdef PTKWindowLevelTool < PTKTool
             end
         end
         
-        function processed = Keypressed(obj, key_name)
-            processed = false;
-        end
-        
         function MouseDown(obj, screen_coords)
             obj.StartCoords = screen_coords;
             obj.StartWindow = obj.ImageDisplayParameters.Window;
             obj.StartLevel = obj.ImageDisplayParameters.Level;
         end
         
-        function MouseUp(obj, screen_coords)
-        end
-        
-        function Enable(obj, enabled)
+        function Enter(obj)
+            obj.StartCoords = [];
+            obj.StartWindow = [];
+            obj.StartLevel = [];
         end
         
         function NewSlice(obj)
@@ -84,13 +77,6 @@ classdef PTKWindowLevelTool < PTKTool
             obj.StartWindow = [];
             obj.StartLevel = [];
         end
-        
-        function ImageChanged(obj)
-        end
-        
-        function OverlayImageChanged(obj)
-        end        
-        
     end
     
 end

@@ -36,9 +36,7 @@ classdef PTKReplaceColourTool < PTKTool
         FromColour
         Colour
         
-        Enabled = false
-        
-        OverlayChangeLock
+        OverlayChangeLock = false
         
         ContextMenu
     end
@@ -46,8 +44,6 @@ classdef PTKReplaceColourTool < PTKTool
     methods
         function obj = PTKReplaceColourTool(viewer_panel)
             obj.ViewerPanel = viewer_panel;
-            obj.OverlayChangeLock = false;
-            obj.InitialiseEditMode;
             obj.AddPostSetListener(obj.ViewerPanel, 'PaintBrushSize', @obj.BrushSizeChangedCallback);            
         end
         
@@ -56,14 +52,10 @@ classdef PTKReplaceColourTool < PTKTool
                 (strcmp(sub_mode, PTKSubModes.EditBoundariesEditing) || strcmp(sub_mode, PTKSubModes.FixedBoundariesEditing) || strcmp(sub_mode, PTKSubModes.PaintEditing));
         end
         
-        function Enable(obj, enable)
-            current_status = obj.Enabled;
-            obj.Enabled = enable;
-            if enable && ~current_status
-                obj.InitialiseEditMode;
-            end
+        function Enter(obj)
+            obj.InitialiseEditMode;
         end
-        
+ 
         function processed = Keypressed(obj, key_name)
             processed = true;
             if strcmpi(key_name, 'space')
@@ -98,18 +90,12 @@ classdef PTKReplaceColourTool < PTKTool
             obj.Colour = new_colour;
         end
         
-        function NewSlice(obj)
-        end
-        
-        function NewOrientation(obj)
-        end
-        
         function ImageChanged(obj)
             obj.InitialiseEditMode;
         end
         
         function OverlayImageChanged(obj)
-            if obj.Enabled && ~obj.OverlayChangeLock
+            if ~obj.OverlayChangeLock
                 obj.InitialiseEditMode;
             end
         end
@@ -126,9 +112,6 @@ classdef PTKReplaceColourTool < PTKTool
                 end
             end
         end
-        
-        
-        
         
         function MouseDown(obj, coords)
             if obj.Enabled
@@ -206,8 +189,7 @@ classdef PTKReplaceColourTool < PTKTool
                 central_component = labeled_components == central_component_label;
                 subimage(central_component) = obj.Colour;
             end
-            
-            
+
             
             raw_image(min_coords(1):max_coords(1), min_coords(2):max_coords(2), min_coords(3):max_coords(3)) = subimage;
             
@@ -220,11 +202,6 @@ classdef PTKReplaceColourTool < PTKTool
         
         function ChangeColourCallback(obj, ~, ~, colour)
             obj.Colour = colour;
-        end
-        
-        function MouseHasMoved(obj, coords, last_coords)
-            %             if obj.Enabled
-            %             end
         end
         
         function MouseDragged(obj, coords, last_coords)
