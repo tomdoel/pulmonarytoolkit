@@ -99,7 +99,7 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
             src_filename = [mex_file.Name '.' mex_file.Extension];
             src_fullfile = fullfile(mex_file.Path, src_filename);
             files = dir(src_fullfile);
-            last_modified_datenum = files.datenum;
+            last_modified_datenum = files.date;
             
             if cached_mex_file_info.isKey(mex_file.Name)
                 cached_mex_file = cached_mex_file_info(mex_file.Name);
@@ -186,7 +186,7 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
             cached_mex_file = cached_mex_file_info(mex_file.Name);
             
             file_info = dir(fullfile(mex_file.Path, [mex_file.Name '.' mex_file.Extension]));
-            current_file_timestamp = file_info.datenum;            
+            current_file_timestamp = file_info.date;
             
             % Copy across the cached values
             mex_file.LastSuccessfulCompiledVersion = cached_mex_file.LastSuccessfulCompiledVersion;
