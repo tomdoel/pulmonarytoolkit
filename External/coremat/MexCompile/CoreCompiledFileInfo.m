@@ -29,11 +29,12 @@ classdef CoreCompiledFileInfo < handle
         CurrentVersion
         
         LastSuccessfulCompiledVersion
+        LastSuccessfulCompileDatenum
         LastAttemptedCompiledVersion
+        LastAttemptedCompileDatenum
         LastSuccessfulCompiler
         LastAttemptedCompiler
         LastCompileFailed
-        LastAttemptedCompileDatenum
         
         NeedsRecompile
         StatusID

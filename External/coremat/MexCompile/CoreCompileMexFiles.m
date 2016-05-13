@@ -154,6 +154,7 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
                     if (mex_result == 0)
                         mex_file.LastCompileFailed = false;
                         mex_file.LastSuccessfulCompiledVersion = mex_file.CurrentVersion;
+                        mex_file.LastSuccessfulCompileDatenum = last_modified_datenum;
                         mex_file.LastSuccessfulCompiler = compiler;
                         reporting.ShowMessage('CoreCompileMexFiles:MexCompilationSucceeded', [' - ' src_filename ' compiled successfully.']);
                     else
@@ -195,12 +196,13 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
             mex_file.LastAttemptedCompiler = cached_mex_file.LastAttemptedCompiler;
             mex_file.LastCompileFailed = cached_mex_file.LastCompileFailed;
             mex_file.LastAttemptedCompileDatenum = cached_mex_file.LastAttemptedCompileDatenum;
+            mex_file.LastSuccessfulCompileDatenum = cached_mex_file.LastSuccessfulCompileDatenum;
             
             if ~isequal(cached_mex_file.LastSuccessfulCompiledVersion, mex_file.CurrentVersion)
                 mex_file.StatusID = 'CoreCompileMexFiles:VersionChanged';
                 mex_file.NeedsRecompile = true;
                 
-            elseif ~isequal(cached_mex_file.LastAttemptedCompileDatenum, current_file_timestamp)
+            elseif ~isequal(cached_mex_file.LastSuccessfulCompileDatenum, current_file_timestamp)
                 mex_file.StatusID = 'CoreCompileMexFiles:TimestampChanged';
                 mex_file.NeedsRecompile = true;
                 
