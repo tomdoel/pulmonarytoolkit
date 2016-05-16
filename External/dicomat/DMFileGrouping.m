@@ -45,8 +45,8 @@ classdef DMFileGrouping < CoreBaseClass
 
         % Sorts the images according to slice location, and computes values for
         % slice thickness and global origin
-        function [slice_thickness, global_origin_mm] = SortAndGetParameters(obj, reporting)
-            [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLocation(obj, reporting);
+        function [slice_thickness, global_origin_mm, sorted_positions] = SortAndGetParameters(obj, reporting)
+            [sorted_indices, slice_thickness, global_origin_mm, sorted_positions] = DMSortImagesByLocation(obj, reporting);
             if numel(obj.Metadata) > 1
                 if isempty(sorted_indices)
                     reporting.ShowWarning('DMFileGrouping:UnableToSortFiles', 'The images in this series may appear in the wrong order because I was unable to determine the correct ordering');
