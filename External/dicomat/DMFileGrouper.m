@@ -44,6 +44,12 @@ classdef DMFileGrouper < CoreBaseClass
             number_of_groups = numel(obj.FileGroupings);
         end
 
+        function largest_group = GetGroup(obj, index)
+            % Return a particular DMFileGrouping
+            
+            largest_group = obj.FileGroupings(index);
+        end
+        
         function largest_group = GetLargestGroup(obj)
             % Return the DMFileGrouping with the gretest number of images
             
