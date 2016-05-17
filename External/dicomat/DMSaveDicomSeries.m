@@ -66,7 +66,7 @@ function DMSaveDicomSeries(base_filename, ordered_image, dicom_coordinates_list,
         
         % For label images, convert to RGB
         if isequal(image_type, DMImageType.RGBLabel)
-            [slice_data, ~] = CoreImageUtilities.GetLabeledImage(slice_data, CoreSystemUtilities.BackwardsCompatibilityColormap);
+            [slice_data, ~] = CoreImageUtilities.GetLabeledImage(slice_data, []);
         end
         
         % The current image number. Although the Dicom standard does not guarantee
