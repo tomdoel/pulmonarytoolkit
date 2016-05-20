@@ -53,6 +53,11 @@ classdef DMFileGrouper < CoreBaseClass
         function largest_group = GetLargestGroup(obj)
             % Return the DMFileGrouping with the gretest number of images
             
+            if numel(obj.FileGroupings) < 1
+                largest_group = [];
+                return;
+            end
+                
             % Get the length of each group of metadata
             grouping_lengths = cellfun(@numel, {obj.FileGroupings.Metadata});
             

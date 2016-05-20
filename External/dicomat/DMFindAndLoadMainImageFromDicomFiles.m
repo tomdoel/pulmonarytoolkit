@@ -67,6 +67,11 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, 
         reporting.ShowWarning('DMLoadMainImageFromDicomFiles:MultipleGroupings', 'I have removed some images from this dataset because the images did not form a coherent set. This may be due to the presence of scout images or dose reports, or localiser images in multiple orientations. I have formed a volume form the largest coherent set of images in the same orientation.');
     end
     
+    % Assert that there is at least one group of images
+    if fileGrouper.NumberOfGroups < 1
+        reporting.Error('DMLoadMainImageFromDicomFiles:NoGroupings', 'No suitable DICOM images were found.');
+    end
+    
     % Choose the group with the most images
     main_group = fileGrouper.GetLargestGroup;
     
