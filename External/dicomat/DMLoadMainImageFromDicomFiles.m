@@ -1,4 +1,4 @@
-function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting)
+function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, sorted_positions] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting)
     % DMLoadMainImageFromDicomFiles Loads a series of DICOM files into a coherent 3D volume.
     %
     % DMLoadMainImageFromDicomFiles parses the Dicom files and groups them into
@@ -8,7 +8,7 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
     %     Syntax
     %     ------
     %
-    %         imageWrapper = DMLoadMainImageFromDicomFiles(path, filenames, dicomLibrary, reporting)
+    %         [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, sorted_positions] = DMLoadMainImageFromDicomFiles(path, filenames, dicomLibrary, reporting)
     %
     %             imageWrapper    a CoreWrapper containing the 3D volume
     %
@@ -18,6 +18,9 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
     %                             centrepoints of each slice
     %
     %             globalOriginMm  The mm coordinates of the image origin
+    %
+    %             sorted_positions  Patient positions for each slice in the
+    %                             sorted order
     %
     %             path, filename  specify the location of the DICOM files to
     %                             load
@@ -66,7 +69,7 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
     main_group = fileGrouper.GetLargestGroup;
     
     % Sort the images into the correct order
-    [sliceThickness, globalOriginMm] = main_group.SortAndGetParameters(reporting);
+    [sliceThickness, globalOriginMm, sorted_positions] = main_group.SortAndGetParameters(reporting);
 
     % Obtain a representative set of metadata tags from the first image in the
     % sequence

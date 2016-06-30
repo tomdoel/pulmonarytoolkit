@@ -1,4 +1,4 @@
-function [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLocation(metadata_grouping, reporting)
+function [sorted_indices, slice_thickness, global_origin_mm, sorted_positions] = DMSortImagesByLocation(metadata_grouping, reporting)
     % DMSortImagesByLocation. Sorts a series of Dicom images by their slice
     %     locations and calculates additional image parameters
     %
@@ -21,11 +21,14 @@ function [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLoc
     %
     %         global_origin_mm - The coordinates of the first voxel in the image
     %             volume
+    %
+    %         sorted_positions - The ImagePositionPatient for
+    %             each slice in the sorted 
     %        
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of DicoMat. https://github.com/tomdoel/dicomat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %        
@@ -102,6 +105,13 @@ function [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLoc
         sorted_indices = [];
         global_origin_mm = [];
         slice_thicknesses = [];
+    end
+    
+    sorted_positions = [];
+    if ~isempty(image_positions_patient)
+        for slice_number = 1 : size(image_positions_patient, 1)
+            sorted_positions(slice_number, :) = image_positions_patient(sorted_indices(slice_number), :);
+        end
     end
     
     % Remove any zero thicknesses, which may indicate multiple slices at the

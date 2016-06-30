@@ -19,6 +19,7 @@ function DMSaveDicomSeries(base_filename, ordered_image, dicom_coordinates_list,
         metadata.ImageType = 'DERIVED\SECONDARY';
         metadata.Modality = 'OT';
         metadata.SOPClassUID = '1.2.840.10008.5.1.4.1.1.7'; % Secondary Capture Image Storage
+        metadata.MediaStorageSOPClassUID = metadata.SOPClassUID;
         metadata.ConversionType = 'WSD'; % Workstation
         
         % Tags for RGB image
@@ -66,7 +67,7 @@ function DMSaveDicomSeries(base_filename, ordered_image, dicom_coordinates_list,
         
         % For label images, convert to RGB
         if isequal(image_type, DMImageType.RGBLabel)
-            [slice_data, ~] = CoreImageUtilities.GetLabeledImage(slice_data, CoreSystemUtilities.BackwardsCompatibilityColormap);
+            [slice_data, ~] = CoreImageUtilities.GetLabeledImage(slice_data, []);
         end
         
         % The current image number. Although the Dicom standard does not guarantee
