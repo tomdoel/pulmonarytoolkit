@@ -38,8 +38,8 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     %                 progress bar. Processing the left lung corresponds to the
     %                 right half of the progress bar. If [] is specified, the
     %                 left lung is assumed and a warning is issued.
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %     Notes
     %     -----
     %         The filter_function is a handle to a function of the form
@@ -121,7 +121,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
   
     % Gaussian filter
     if ~isempty(gaussian_sigma) && (gaussian_sigma > 0)
-        image_data = PTKGaussianFilter(image_data, gaussian_sigma);
+        image_data = MimGaussianFilter(image_data, gaussian_sigma);
     end
     
     % Progress ia split between left and right lungs
@@ -201,7 +201,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
                 for component_index = 1 : 6
                     img = image_data.BlankCopy;
                     img.ChangeRawImage(reshape(hessian_components.RawImage(component_index, :), part_image.ImageSize));
-                    img = PTKGaussianFilter(img, hessian_filter_gaussian);
+                    img = MimGaussianFilter(img, hessian_filter_gaussian);
                     hessian_components.RawImage(component_index, :) = img.RawImage(:);
                     img.Reset();
                 end

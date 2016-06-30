@@ -15,13 +15,12 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  A PTKImage providing voxel size and image size
     %                             parameters
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %
@@ -41,8 +40,8 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     end
     
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKSaveTreeAsVTK:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKSaveTreeAsVTK:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
     
     reporting.ShowProgress('Saving tree');
@@ -67,7 +66,7 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     
     point_coordinates = zeros(num_points, 3);
     
-    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([tree_root.StartPoint.CoordX, tree_root.StartPoint.CoordY, tree_root.StartPoint.CoordZ], coordinate_system, template_image);
+    dicom_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([tree_root.StartPoint.CoordX, tree_root.StartPoint.CoordY, tree_root.StartPoint.CoordZ], coordinate_system, template_image);
     point_coordinates(1, :) = [dicom_coordinates(1), dicom_coordinates(2), dicom_coordinates(3)];
     
     lines = zeros(num_branches, 2);
@@ -119,7 +118,7 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
         point_matlab_index = branch_index + 1;
 
         % Write the next point for this branch end point
-        dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([branch.EndPoint.CoordX, branch.EndPoint.CoordY, branch.EndPoint.CoordZ], coordinate_system, template_image);
+        dicom_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([branch.EndPoint.CoordX, branch.EndPoint.CoordY, branch.EndPoint.CoordZ], coordinate_system, template_image);
         point_coordinates(point_matlab_index, :) = [dicom_coordinates(1), dicom_coordinates(2), dicom_coordinates(3)];
         
         lines(branch_index, :) = [start_point_index, end_point_index];

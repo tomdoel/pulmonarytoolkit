@@ -255,7 +255,7 @@ classdef PTKTreeModel < PTKTree
             knot = [x_coords_reduced', y_coords_reduced', z_coords_reduced'];
             
             % Generate a spline curve through the centreline points
-            spline = PTKImageCoordinateUtilities.CreateSplineCurve(knot, 2);
+            spline = MimImageCoordinateUtilities.CreateSplineCurve(knot, 2);
 
             number_of_original_points = size(radius_values, 2);
             number_of_spline_points = size(spline, 2);

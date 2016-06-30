@@ -14,7 +14,8 @@ function start_branches = PTKGetAirwaysLabelledByLobe(template, airway_centrelin
     %     airway_centreline_tree : the root PTKTreeModel of a segmented airway
     %         tree centreline produced by PTKAirwayCentreline
     %
-    %     reporting : A PTKReporting object used for error and warning messages
+    %     reporting - an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
     % Outputs:
     %

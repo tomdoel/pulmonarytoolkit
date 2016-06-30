@@ -13,9 +13,8 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
     %             edge_filename   is the name of the edge file
     %             template_image  is used to provide a reference coordinate
     %                             system
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %     Licence
     %     -------
@@ -25,11 +24,15 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
     %       
     
     if nargin < 4
-        reporting.Error('PTKLoadTreeFromChaste:BadArguments', 'No coordinate_system parameter specified');
+        error('PTKLoadTreeFromChaste:BadArguments', 'No coordinate_system parameter specified');
     end
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKLoadTreeFromChaste:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if nargin < 6
+        reporting = CoreReportingDefault;
+    end    
+    
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKLoadTreeFromChaste:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
     
     if ~CoreDiskUtilities.FileExists(file_path, node_filename)
@@ -86,7 +89,7 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
     y = node_data{3};
     z = node_data{4};
     
-    ptk_coordinates = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([x, y, z], coordinate_system, template_image);
+    ptk_coordinates = MimImageCoordinateUtilities.ConvertToPTKCoordinates([x, y, z], coordinate_system, template_image);
     x = ptk_coordinates(:, 1);
     y = ptk_coordinates(:, 2);
     z = ptk_coordinates(:, 3);

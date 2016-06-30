@@ -13,9 +13,8 @@ function [xc, yc, zc, value_list] = PTKLoadListOfPointsAndValues(file_path, file
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %     Licence
     %     -------

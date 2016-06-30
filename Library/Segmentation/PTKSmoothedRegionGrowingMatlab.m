@@ -16,8 +16,8 @@ function output_image = PTKSmoothedRegionGrowingMatlab(threshold_image, start_po
     %                 begin from all these points simultaneously
     %             smoothing_size_mm - amoung of smoothing. A larger value will
     %                 give better results but will be slower
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %         Outputs:
     %         -------

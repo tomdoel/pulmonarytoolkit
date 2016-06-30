@@ -113,29 +113,44 @@ classdef PTKToolList < handle
         
         
         function ImageChanged(obj)
-            for tool_set = obj.Tools.values
-                tool_set{1}.ImageChanged;
+            tool = obj.GetCurrentPrimaryTool;
+            if ~isempty(tool) && tool.Enabled
+                tool.ImageChanged;
             end
         end
 
         function NewOrientation(obj)
-            for tool_set = obj.Tools.values
-                tool_set{1}.NewOrientation;
+            tool = obj.GetCurrentPrimaryTool;
+            if ~isempty(tool) && tool.Enabled
+                tool.NewOrientation;
             end
         end
             
         function OverlayImageChanged(obj)
-            for tool_set = obj.Tools.values
-                tool_set{1}.OverlayImageChanged;
+            tool = obj.GetCurrentPrimaryTool;
+            if ~isempty(tool) && tool.Enabled
+                tool.OverlayImageChanged;
             end
         end
         
         function NewSlice(obj)
-            for tool_set = obj.Tools.values
-                tool_set{1}.NewSlice;
+            tool = obj.GetCurrentPrimaryTool;
+            if ~isempty(tool) && tool.Enabled
+                tool.NewSlice;
             end
         end
         
+    end
+    
+    methods (Access = private)
+        function tool = GetCurrentPrimaryTool(obj)
+            selected_control = obj.ViewerPanel.SelectedControl;
+            if obj.Tools.isKey(selected_control)
+                tool = obj.Tools(selected_control);
+            else
+                tool = [];
+            end
+        end
     end
 end
 

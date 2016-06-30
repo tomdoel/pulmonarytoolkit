@@ -7,8 +7,8 @@ function lung_image = PTKGetLungROIForGasMRI(lung_image, reporting)
     %
     %     lung_image - the full original lung volume stored as a PTKImage.
     %
-    %     reporting (optional) - an object implementing the PTKReporting
-    %         interface for reporting progress and warnings
+    %     reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Outputs
@@ -36,7 +36,7 @@ function lung_image = PTKGetLungROIForGasMRI(lung_image, reporting)
     reporting.ShowProgress('Finding region of interest');
 
     % Filter image
-    lung_threshold = PTKGaussianFilter(lung_image, 2);
+    lung_threshold = MimGaussianFilter(lung_image, 2);
     
     % Threshold
     lung_threshold.ChangeRawImage(lung_threshold.RawImage > 2);

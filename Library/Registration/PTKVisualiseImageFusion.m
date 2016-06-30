@@ -11,7 +11,7 @@ function viewer_handle = PTKVisualiseImageFusion(image_1, image_2)
 
     image_1 = image_1.Copy;
     image_2 = image_2.Copy;
-    PTKImageUtilities.MatchSizesAndOrigin(image_1, image_2);
+    MimImageUtilities.MatchSizesAndOrigin(image_1, image_2);
     viewer_handle = PTKViewer(image_1);
     viewer_handle.ViewerPanelHandle.OverlayImage = image_2;
 end

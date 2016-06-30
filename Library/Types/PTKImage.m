@@ -85,7 +85,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
     % Dependent properties are not cached in memory
     properties (Dependent = true)
         Limits       % The maximum and minimum image values
-        ImageSize    % The image size; remembers the last image size if this is s template image with no raw data
+        ImageSize    % The image size; remembers the last image size if this is a template image with no raw data
         ImageExists  % Whether any image data exists
     end
 
@@ -175,20 +175,18 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
         end
 
-        function LoadRawImage(obj, file_path, reporting)
+        function raw_image_loaded = IsRawImageLoaded(obj)
+            % Returns false if this image has a raw image that has not yet
+            % beed loaded from disk
+
+            raw_image_loaded = ~isempty(obj.RawImage) || isempty(obj.CachedRawImageFilename);
+        end
+        
+        function LoadCachedRawImage(obj, raw_image)
             % For a disk-cached image header, this loads the raw data
             
-            if (nargin < 3)
-                reporting = [];
-            end
-           
-            if isempty(obj.RawImage) && ~isempty(obj.CachedRawImageFilename)
-                
-                if ~isempty(reporting)
-                    reporting.LogVerbose(['Loading raw image file ' obj.CachedRawImageFilename]);
-                end
-                
-                obj.RawImage = PTKLoadPtkRawImage(file_path, obj.CachedRawImageFilename, obj.CachedDataType, obj.CachedImageSize, obj.CachedRawImageCompression, reporting);
+            if ~obj.IsRawImageLoaded
+                obj.RawImage = raw_image;
                 
                 % Clear cached values
                 obj.CachedImageSize = [];
@@ -199,7 +197,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 obj.NotifyImageChangedCacheStillValid
             end
         end
-
+        
         function header_file = CreateHeader(obj, raw_filename, compression)
             % Creates a cache header file template suitable for saving separately from pixel data
             
@@ -253,7 +251,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function raw_image = GetRawImageForPlotting(obj)
-            % Returns a raw image suitable for use with Matlab's plottin functions
+            % Returns a raw image suitable for use with Matlab's plotting functions
             % such as isosurface. The k-direction is inverted since the orientation
             % for PTKImage is is opposite to that for Matlab's 3D axes
             
@@ -486,11 +484,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             
             switch dimension
                 case PTKImageOrientation.Coronal
-                    slice = PTKImageUtilities.Zeros([obj.ImageSize(2), obj.ImageSize(3)], obj.LastDataType);
+                    slice = MimImageUtilities.Zeros([obj.ImageSize(2), obj.ImageSize(3)], obj.LastDataType);
                 case PTKImageOrientation.Sagittal
-                    slice = PTKImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(3)], obj.LastDataType);
+                    slice = MimImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(3)], obj.LastDataType);
                 case PTKImageOrientation.Axial
-                    slice = PTKImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(2)], obj.LastDataType);
+                    slice = MimImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(2)], obj.LastDataType);
                 otherwise
                     error('Unsupported dimension');
             end
@@ -793,7 +791,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 [new_i_grid, new_j_grid, new_k_grid] = ndgrid(new_i_mm, new_j_mm, new_k_mm);
                 
                 if ~isempty(affine_matrix)
-                    [new_i_grid, new_j_grid, new_k_grid] = PTKImageCoordinateUtilities.TransformCoordsAffine(new_i_grid, new_j_grid, new_k_grid, affine_matrix);
+                    [new_i_grid, new_j_grid, new_k_grid] = MimImageCoordinateUtilities.TransformCoordsAffine(new_i_grid, new_j_grid, new_k_grid, affine_matrix);
                 end
                 
                 % Find the nearest value for each point in the new grid
@@ -839,7 +837,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         function GeneratePreview(obj, preview_size, flatten_before_preview)
             % Creates a 2D thumbnail preview image and stores it in the Preview property
-            [preview_image_slice, preview_scale] = PTKImageUtilities.GeneratePreviewImage(obj, preview_size, flatten_before_preview);
+            [preview_image_slice, preview_scale] = MimImageUtilities.GeneratePreviewImage(obj, preview_size, flatten_before_preview);
             obj.Preview = obj.BlankCopy;
             obj.Preview.RawImage = preview_image_slice;
             obj.Preview.Scale = [preview_scale, preview_scale];
@@ -870,11 +868,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function global_indices = LocalToGlobalIndices(obj, local_indices)
-            global_indices = PTKImageCoordinateUtilities.OffsetIndices(local_indices, obj.Origin - [1, 1, 1], obj.ImageSize, obj.OriginalImageSize);
+            global_indices = MimImageCoordinateUtilities.OffsetIndices(local_indices, obj.Origin - [1, 1, 1], obj.ImageSize, obj.OriginalImageSize);
         end
         
         function local_indices = GlobalToLocalIndices(obj, global_indices)
-            local_indices = PTKImageCoordinateUtilities.OffsetIndices(global_indices, [1, 1, 1] - obj.Origin, obj.OriginalImageSize, obj.ImageSize);
+            local_indices = MimImageCoordinateUtilities.OffsetIndices(global_indices, [1, 1, 1] - obj.Origin, obj.OriginalImageSize, obj.ImageSize);
         end
         
         function [ic, jc, kc] = GlobalIndicesToCoordinatesMm(obj, global_indices)
@@ -886,7 +884,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function ptk_coordinates = GlobalIndicesToPTKCoordinates(obj, global_indices)
             % Given a set of global indices, compute the coordinates of each in mm
             [ic, jc, kc] = obj.GlobalIndicesToCoordinatesMm(global_indices);
-            [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
+            [ic, jc, kc] = MimImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
             ptk_coordinates = [ic, jc, kc];
         end
         
@@ -921,7 +919,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         end
         
         function global_indices = GlobalCoordinatesToGlobalIndices(obj, coords)
-            global_indices = PTKImageCoordinateUtilities.FastSub2ind(obj.OriginalImageSize, coords(:, 1), coords(:, 2), coords(:, 3));
+            global_indices = MimImageCoordinateUtilities.FastSub2ind(obj.OriginalImageSize, coords(:, 1), coords(:, 2), coords(:, 3));
         end
         
         function [ic, jc, kc] = GetGlobalCoordinatesMm(obj)
@@ -949,13 +947,13 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function [ic, jc, kc] = GetPTKCoordinates(obj)
             % Returns the coordinates of all points in the image in global coordinates in mm, using PTK coordinates
             [ic, jc, kc] = obj.GetGlobalCoordinatesMm;
-            [ic, jc, kc] = PTKImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
+            [ic, jc, kc] = MimImageCoordinateUtilities.CoordinatesMmToPTKCoordinates(ic, jc, kc);
         end
         
         function [xc, yc, zc] = GetDicomCoordinates(obj)
             % Returns the coordinates of all points in the image in Dicom coordinates in mm
             [ic, jc, kc] = GetPTKCoordinates(obj);
-            [xc, yc, zc] = PTKImageCoordinateUtilities.PTKToDicomCoordinatesCoordwise(ic, jc, kc, obj);
+            [xc, yc, zc] = MimImageCoordinateUtilities.PTKToDicomCoordinatesCoordwise(ic, jc, kc, obj);
         end
         
         function [xc, yc, zc] = GlobalCoordinatesMmToCornerCoordinates(obj, ic, jc, kc)
@@ -1088,7 +1086,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 image_type = PTKImageType.Colormap;
             else
                 % If the image data is noninteger then assume greyscale
-                if ~PTKMathUtilities.IsMatrixInteger(obj.RawImage)
+                if ~CoreMathUtilities.IsMatrixInteger(obj.RawImage)
                     image_type = PTKImageType.Grayscale;
                 else
                     % Otherwise choose colormap if the range of values is

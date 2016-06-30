@@ -68,7 +68,7 @@ classdef PTKPatientsSidePanel < GemListBoxWithTitle
     
     methods (Access = private)
         function mapped_patient_id = GetMappedPatientId(obj, patient_id)
-            if isempty(patient_id)
+            if isempty(patient_id) || ~ obj.PatientIdMap.isKey(patient_id);
                 mapped_patient_id = [];
             else
                 mapped_patient_id = obj.PatientIdMap(patient_id);
@@ -76,7 +76,7 @@ classdef PTKPatientsSidePanel < GemListBoxWithTitle
         end
             
         function AddPatientsToListBox(obj, selected_patient_id)
-            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject);
+            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject, PTKSoftwareInfo.GroupPatientsWithSameName);
             obj.PatientIdMap = patient_id_map;
             obj.ListBox.ClearItems;
             

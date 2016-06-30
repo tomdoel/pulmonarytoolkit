@@ -59,6 +59,13 @@ classdef PTKOrganisedPluginsModeList < CoreBaseClass
         end
         
         function Add(obj, name, mode, category, plugin_wrapper)
+            if isempty(mode)
+                mode = PTKSoftwareInfo.PluginDefaultMode;
+            end
+            if isempty(category)
+                category = PTKSoftwareInfo.DefaultCategoryName;
+            end
+
             if obj.Modes.isKey(mode)
                 mode_map = obj.Modes(mode);
             else

@@ -18,8 +18,8 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
     %                 This is better at segmenting the lungs for noisy/diseased
     %                 images where voxels take on a wider range of values, but
     %                 may segment airway walls.
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %         Outputs:
     %         -------
@@ -49,7 +49,7 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
     % Filter image to reduce noise
     if filter_image
         filter_size = 0.5;
-        filtered_lung_image = PTKGaussianFilter(original_image, filter_size);
+        filtered_lung_image = MimGaussianFilter(original_image, filter_size);
     else
         filtered_lung_image = original_image.Copy;
     end

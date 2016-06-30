@@ -51,7 +51,7 @@ classdef PTKAirwayGrowingTree < PTKTreeModel
         end
         
         function AddDensityValues(obj, density_image)
-            global_coordinates = PTKImageCoordinateUtilities.GetGlobalCoordinatesForPoints(obj.EndPoint, density_image);
+            global_coordinates = MimImageCoordinateUtilities.GetGlobalCoordinatesForPoints(obj.EndPoint, density_image);
             obj.Density = density_image.GetVoxel(global_coordinates);
             for child = obj.Children
                 child.AddDensityValues(density_image);
@@ -125,7 +125,7 @@ classdef PTKAirwayGrowingTree < PTKTreeModel
         end
             
         function segment_length = Length(obj)
-            segment_length = PTKImageCoordinateUtilities.DistanceBetweenPoints(obj.EndPoint, obj.StartPoint);
+            segment_length = MimImageCoordinateUtilities.DistanceBetweenPoints(obj.EndPoint, obj.StartPoint);
         end
         
         % Once an initial tree has been generated using AddTree(), this method

@@ -15,8 +15,8 @@ function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_g
     %                 in the set is array of points representing one region.
     %                 Each point is a global index. The region growing will 
     %                 begin from all these points simultaneously
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %         Outputs:
     %         -------
@@ -44,7 +44,7 @@ function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_g
     output_image = threshold_image.BlankCopy;
     segmented_image = zeros(threshold_image.ImageSize, 'uint8');
     
-    [linear_offsets, ~] = PTKImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
+    [linear_offsets, ~] = MimImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
 
     threshold_image_raw = logical(threshold_image.RawImage);
     number_points = length(segmented_image(:));

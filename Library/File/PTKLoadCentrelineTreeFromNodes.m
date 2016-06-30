@@ -12,15 +12,14 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  may be required, depending on the value of
     %                             coordinate_system. Provides the required
     %                             parameters for reconstructing the centreline
     %                             tree.
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %     Licence
     %     -------
@@ -33,8 +32,8 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
         reporting.Error('PTKLoadCentrelineTreeFromNodes:BadArguments', 'No coordinate_system parameter specified');
     end
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKLoadCentrelineTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKLoadCentrelineTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
 
     node_file = [filename_prefix '_node.txt'];
@@ -79,7 +78,7 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
         point_parameters = [];
         point_parameters.Radius = radius;
         
-        new_coords = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([xc, yc, zc], coordinate_system, template_image);
+        new_coords = MimImageCoordinateUtilities.ConvertToPTKCoordinates([xc, yc, zc], coordinate_system, template_image);
         new_point = PTKCentrelinePoint(new_coords(1), new_coords(2), new_coords(3), point_parameters);
         node_points(node_number + 1) = new_point;
     end

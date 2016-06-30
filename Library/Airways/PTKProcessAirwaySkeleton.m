@@ -12,8 +12,8 @@ function results = PTKProcessAirwaySkeleton(skeleton_image, start_point, reporti
     %     start_point - coordinate of the first point in the skeleton (the
     %         trachea) as a coordinate vector [i,j,k]
     %
-    %     reporting (optional) - an object implementing the PTKReporting
-    %         interface for reporting progress and warnings
+    %     reporting (optional) - an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
     %
     %     Licence

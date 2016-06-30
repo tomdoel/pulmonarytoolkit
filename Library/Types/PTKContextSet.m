@@ -11,7 +11,7 @@ classdef PTKContextSet
     %     and "RightLung". A plugin with the "SingleLung" type can only be run
     %     with one of these two input contexts. If a result is requested for
     %     another context, the Framework will try to convert the contexts
-    %     appropriately (this happens in the PTKContextHierarchy class).
+    %     appropriately (this happens in the MimContextHierarchy class).
     %
     %     For example, if a result is requested for the conext "LungROI" but the
     %     plugin being called has type "SingleLung", then the plugin will be

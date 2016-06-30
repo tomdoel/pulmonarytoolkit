@@ -11,12 +11,8 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
     %             path, filename  specify the location of the DICOM files to
     %                             load
     %
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting. If no
-    %                             reporting object is specified then a default
-    %                             reporting object with progress dialog is
-    %                             created
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence
@@ -31,7 +27,7 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
         reporting = CoreReportingDefault;
     end
     
-    dicomLibrary = PTKDicomFallbackLibrary.getLibrary;
+    dicomLibrary = DMFallbackDicomLibrary.getLibrary;
     
     [image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm] = DMLoadMainImageFromDicomFiles(image_path, filenames, dicomLibrary, reporting);
     

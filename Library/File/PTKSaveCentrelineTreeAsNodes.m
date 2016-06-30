@@ -12,14 +12,13 @@ function PTKSaveCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, coo
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  may be required, depending on the value of
     %                             coordinate_system. Provides the required
     %                             parameters for saving the centreline tree.
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence
@@ -33,8 +32,8 @@ function PTKSaveCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, coo
         reporting.Error('PTKSaveCentrelineTreeAsNodes:BadArguments', 'No coordinate_system parameter specified');
     end
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKSaveCentrelineTreeAsNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKSaveCentrelineTreeAsNodes:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
     
     
@@ -105,7 +104,7 @@ end
 
 function PrintNodeToFile(fid, node_index, point, is_endpoint, coordinate_system, template_image)
     
-    dicom_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([point.CoordX, point.CoordY, point.CoordZ], coordinate_system, template_image);
+    dicom_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([point.CoordX, point.CoordY, point.CoordZ], coordinate_system, template_image);
     
     xc = dicom_coordinates(1);
     yc = dicom_coordinates(2);

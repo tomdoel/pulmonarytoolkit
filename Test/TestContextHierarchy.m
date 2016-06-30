@@ -1,5 +1,5 @@
 classdef TestContextHierarchy < CoreTest
-    % TestContextHierarchy. Tests for the PTKContextHierarchy class.
+    % TestContextHierarchy. Tests for the MimContextHierarchy class.
     %
     %
     %     Licence
@@ -23,7 +23,7 @@ classdef TestContextHierarchy < CoreTest
             mock_reporting = CoreMockReporting;
             mock_dependency_tracker = MockPluginDependencyTracker;
             mock_image_templates = MockImageTemplates;            
-            context_hierarchy = PTKContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
+            context_hierarchy = MimContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
 
             force_generate_image = true;
             mock_plugin_info = [];
@@ -100,7 +100,7 @@ classdef TestContextHierarchy < CoreTest
             mock_reporting = CoreMockReporting;
             mock_dependency_tracker = MockPluginDependencyTracker;
             mock_image_templates = MockImageTemplates;            
-            context_hierarchy = PTKContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
+            context_hierarchy = MimContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
             
             cache_info_2 = 'Cache Info 2';
             plugin_2 = 'Plugin2';
@@ -157,7 +157,7 @@ classdef TestContextHierarchy < CoreTest
             mock_reporting = CoreMockReporting;
             mock_dependency_tracker = MockPluginDependencyTracker;
             mock_image_templates = MockImageTemplates;            
-            context_hierarchy = PTKContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
+            context_hierarchy = MimContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
             
             % Create images and image templates
             mock_original_image = PTKImage(ones(15,15,15));
@@ -391,7 +391,7 @@ classdef TestContextHierarchy < CoreTest
             mock_reporting = CoreMockReporting;
             mock_dependency_tracker = MockPluginDependencyTracker;
             mock_image_templates = MockImageTemplates;
-            context_hierarchy = PTKContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
+            context_hierarchy = MimContextHierarchy(PTKContextDef, mock_dependency_tracker, mock_image_templates);
             
             % Create images and image templates
             mock_original_image = PTKImage(ones(15,15,15));

@@ -14,12 +14,8 @@ function image = PTKLoadImageFromMatlabFiles(path, filenames, reporting)
     %                             Each file is numbered, starting from 0.
     %                             So if filename is 'MyImage.DCM' then the files will be
     %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting. If no
-    %                             reporting object is specified then a default
-    %                             reporting object with progress dialog is
-    %                             created
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence

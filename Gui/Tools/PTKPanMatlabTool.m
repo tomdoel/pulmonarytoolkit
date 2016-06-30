@@ -30,39 +30,13 @@ classdef PTKPanMatlabTool < PTKTool
             obj.Callback = callback;
         end
         
-        function MouseHasMoved(obj, screen_coords, last_coords)
+        function Enter(obj)
+            obj.Callback.EnablePan(true);
         end
         
-        function MouseDragged(obj, screen_coords, last_coords)
+        function Exit(obj)
+            obj.Callback.EnablePan(false);
         end
-        
-        function MouseDown(obj, screen_coords)
-        end
-        
-        function MouseUp(obj, screen_coords)
-        end
-        
-        function Enable(obj, enabled)
-            obj.Callback.EnablePan(enabled);
-        end
-        
-        function NewSlice(obj)
-        end
-        
-        function NewOrientation(obj)
-        end
-        
-        function ImageChanged(obj)
-        end
-
-        function OverlayImageChanged(obj)
-        end
-        
-        function processed = Keypressed(obj, key_name)
-            processed = false;
-        end
-
     end
-    
 end
 

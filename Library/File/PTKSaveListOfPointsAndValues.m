@@ -10,13 +10,12 @@ function PTKSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_li
     %                             stored
     %             file_name       is the file name
     %             xc, yc, zx      are the coordinates in PTK cordinates
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  A PTKImage providing voxel size and image size
     %                             parameters
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence
@@ -30,8 +29,8 @@ function PTKSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_li
         reporting.Error('PTKSaveListOfPointsAndValues:BadArguments', 'No coordinate_system parameter specified');
     end
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKSaveListOfPointsAndValues:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKSaveListOfPointsAndValues:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
 
     CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
@@ -41,7 +40,7 @@ function PTKSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_li
     number_points = length(xc);
     
     for index = 1 : number_points
-        dicom_coords = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([xc(index), yc(index), zc(index)], coordinate_system, template_image);
+        dicom_coords = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([xc(index), yc(index), zc(index)], coordinate_system, template_image);
         coord_x = dicom_coords(1);
         coord_y = dicom_coords(2);
         coord_z = dicom_coords(3);

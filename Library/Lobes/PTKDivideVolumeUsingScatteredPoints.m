@@ -133,6 +133,6 @@ function [region_1_indices, region_2_indices] = Separate(mask_to_separate_raw, v
 end
 
 function centroid = GetCentroid(image_size, new_coords_indices)
-    [p_x, p_y, p_z] = PTKImageCoordinateUtilities.FastInd2sub(image_size, new_coords_indices);
+    [p_x, p_y, p_z] = MimImageCoordinateUtilities.FastInd2sub(image_size, new_coords_indices);
     centroid = [mean(p_x), mean(p_y), mean(p_z)];
 end

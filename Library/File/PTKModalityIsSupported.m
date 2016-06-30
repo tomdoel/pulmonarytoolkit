@@ -7,12 +7,8 @@ function is_supported = PTKModalityIsSupported(modality, reporting)
     %         is_supportred = PTKModalityIsSupported(modality, reporting)
     %
     %             modality        DICOM modality string
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting. If no
-    %                             reporting object is specified then a default
-    %                             reporting object with progress dialog is
-    %                             created
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence

@@ -156,7 +156,7 @@ classdef PTKPatientPanel < GemPanel
         end
         
         function AddStudies(obj)
-            datasets = obj.ImageDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, obj.Id);
+            datasets = obj.ImageDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, obj.Id, PTKSoftwareInfo.GroupPatientsWithSameName);
             
             obj.SeriesDescriptionsList.ClearItems;
             

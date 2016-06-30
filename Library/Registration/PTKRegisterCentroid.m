@@ -17,7 +17,7 @@ function [affine_matrix, affine_vector] = PTKRegisterCentroid(image_to_transform
     com_float_to_ref = com_float_to_ref([2,1,3]);
     
     affine_vector = [0, 0, 0, -com_float_to_ref];
-    affine_matrix = PTKImageCoordinateUtilities.CreateRigidAffineMatrix(affine_vector);
+    affine_matrix = MimImageCoordinateUtilities.CreateRigidAffineMatrix(affine_vector);
 end
 
 function com = GetCentreOfMass(mask)

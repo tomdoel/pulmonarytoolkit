@@ -31,7 +31,7 @@ function results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, s
     %     coronal_mode - if true, the algorithm performs in a special mode
     %         designed for images with thick coronal slices
     %
-    %     reporting - an object implementing the PTKReporting
+    %     reporting - an object implementing the CoreReportingInterface
     %         interface for reporting progress and warnings
     %
     %     debug_mode (optional) - should normally be set to false. 
@@ -128,13 +128,13 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
     
     number_of_image_points_local = numel(threshold_image(:));
 
-    [linear_offsets_global, ~] = PTKImageCoordinateUtilities.GetLinearOffsets(image_size_global);
+    [linear_offsets_global, ~] = MimImageCoordinateUtilities.GetLinearOffsets(image_size_global);
 
     
     % For Coronal mode compute the linear offsets
     if coronal_mode
         dirs_coronal = [5, 23, 11, 17];
-        linear_offsets_global_jk = PTKImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs_coronal, image_size_global);
+        linear_offsets_global_jk = MimImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs_coronal, image_size_global);
         linear_offsets_neighbours = linear_offsets_global_jk;
     else
         linear_offsets_neighbours = linear_offsets_global;        

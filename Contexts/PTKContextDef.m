@@ -98,13 +98,13 @@ classdef PTKContextDef < handle
         function CreateContexts(obj)
             % Create the hierarchy of context types
             obj.ContextSets = containers.Map;
-            full_set =  PTKContextSetMapping(PTKContextSet.OriginalImage, []);
-            roi_set = PTKContextSetMapping(PTKContextSet.LungROI, full_set);
-            lungs_set = PTKContextSetMapping(PTKContextSet.Lungs, roi_set);
-            single_lung_set = PTKContextSetMapping(PTKContextSet.SingleLung, lungs_set);
-            lobe_set = PTKContextSetMapping(PTKContextSet.Lobe, single_lung_set);
-            segment_set = PTKContextSetMapping(PTKContextSet.Segment, lobe_set);
-            any_set = PTKContextSetMapping(PTKContextSet.Any, []);
+            full_set =  MimContextSetMapping(PTKContextSet.OriginalImage, []);
+            roi_set = MimContextSetMapping(PTKContextSet.LungROI, full_set);
+            lungs_set = MimContextSetMapping(PTKContextSet.Lungs, roi_set);
+            single_lung_set = MimContextSetMapping(PTKContextSet.SingleLung, lungs_set);
+            lobe_set = MimContextSetMapping(PTKContextSet.Lobe, single_lung_set);
+            segment_set = MimContextSetMapping(PTKContextSet.Segment, lobe_set);
+            any_set = MimContextSetMapping(PTKContextSet.Any, []);
             obj.ContextSets(char(PTKContextSet.OriginalImage)) = full_set;
             obj.ContextSets(char(PTKContextSet.LungROI)) = roi_set;
             obj.ContextSets(char(PTKContextSet.Lungs)) = lungs_set;
@@ -115,54 +115,54 @@ classdef PTKContextDef < handle
             
             % Create the hierarchy of contexts
             obj.Contexts = containers.Map;
-            full_context =  PTKContextMapping(PTKContext.OriginalImage, full_set, @PTKCreateTemplateForOriginalImage, 'PTKOriginalImage', []);
-            roi_context = PTKContextMapping(PTKContext.LungROI, roi_set, @PTKCreateTemplateForLungROI, 'PTKLungROI', full_context);
-            lungs_context = PTKContextMapping(PTKContext.Lungs, lungs_set, @PTKCreateTemplateForLungs, 'PTKGetContextForLungs', roi_context);
+            full_context =  MimContextMapping(PTKContext.OriginalImage, full_set, @PTKCreateTemplateForOriginalImage, 'PTKOriginalImage', []);
+            roi_context = MimContextMapping(PTKContext.LungROI, roi_set, @PTKCreateTemplateForLungROI, 'PTKLungROI', full_context);
+            lungs_context = MimContextMapping(PTKContext.Lungs, lungs_set, @PTKCreateTemplateForLungs, 'PTKGetContextForLungs', roi_context);
 
             for context = [PTKContext.LeftLung, PTKContext.RightLung]
-                context_mapping = PTKContextMapping(context, single_lung_set, @PTKCreateTemplateForSingleLung, 'PTKGetContextForSingleLung', lungs_context);
+                context_mapping = MimContextMapping(context, single_lung_set, @PTKCreateTemplateForSingleLung, 'PTKGetContextForSingleLung', lungs_context);
                 obj.Contexts(char(context)) = context_mapping;
             end
 
             % Add right lobes
             for context = [PTKContext.RightUpperLobe, PTKContext.RightMiddleLobe, PTKContext.RightLowerLobe]
-                context_mapping = PTKContextMapping(context, lobe_set, @PTKCreateTemplateForLobe, 'PTKGetContextForLobe', obj.Contexts(char(PTKContext.RightLung)));
+                context_mapping = MimContextMapping(context, lobe_set, @PTKCreateTemplateForLobe, 'PTKGetContextForLobe', obj.Contexts(char(PTKContext.RightLung)));
                 obj.Contexts(char(context)) = context_mapping;
             end
 
             % Add left lobes
             for context = [PTKContext.LeftUpperLobe, PTKContext.LeftLowerLobe]
-                context_mapping = PTKContextMapping(context, lobe_set, @PTKCreateTemplateForLobe, 'PTKGetContextForLobe', obj.Contexts(char(PTKContext.LeftLung)));
+                context_mapping = MimContextMapping(context, lobe_set, @PTKCreateTemplateForLobe, 'PTKGetContextForLobe', obj.Contexts(char(PTKContext.LeftLung)));
                 obj.Contexts(char(context)) = context_mapping;
             end
             
             % Segments for upper right lobe
             for context = [PTKContext.R_AP, PTKContext.R_P, PTKContext.R_AN]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.RightUpperLobe)));
+                context_mapping = MimContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.RightUpperLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
             
             % Segments for middle right lobe
             for context = [PTKContext.R_L, PTKContext.R_M]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.RightMiddleLobe)));
+                context_mapping = MimContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.RightMiddleLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
             
             % Segments for lower right lobe
             for context = [PTKContext.R_S, PTKContext.R_MB, PTKContext.R_AB, PTKContext.R_LB, PTKContext.R_PB]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.RightLowerLobe)));
+                context_mapping = MimContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.RightLowerLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
             
             % Segments for upper left lobe
             for context = [PTKContext.L_APP, PTKContext.L_APP2, PTKContext.L_AN, PTKContext.L_SL, PTKContext.L_IL]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.LeftUpperLobe)));
+                context_mapping = MimContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.LeftUpperLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
             
             % Segments for lower left lobe
             for context = [PTKContext.L_S, PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB]
-                context_mapping = PTKContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.LeftLowerLobe)));
+                context_mapping = MimContextMapping(context, segment_set, @PTKCreateTemplateForSegment, 'PTKGetContextForSegment', obj.Contexts(char(PTKContext.LeftLowerLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
         

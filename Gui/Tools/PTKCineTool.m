@@ -34,9 +34,6 @@ classdef PTKCineTool < PTKTool
             obj.ImageParameters = image_parameters;
         end
     
-        function MouseHasMoved(obj, screen_coords, last_coords, mouse_is_down)
-        end    
-
         function MouseDragged(obj, screen_coords, last_coords)
             if ~isempty(obj.StartCoords)
                 [min_coords, max_coords] = obj.Callback.GetImageLimits;
@@ -59,15 +56,6 @@ classdef PTKCineTool < PTKTool
             obj.StartKPosition = obj.ImageParameters.SliceNumber(obj.ImageParameters.Orientation);
         end
         
-        function MouseUp(obj, screen_coords)
-        end
-        
-        function Enable(obj, enabled)
-        end
-        
-        function NewSlice(obj)
-        end
-        
         function NewOrientation(obj)
             obj.StartCoords = [];
             obj.StartKPosition = [];
@@ -78,14 +66,10 @@ classdef PTKCineTool < PTKTool
             obj.StartKPosition = [];
         end
         
-        function OverlayImageChanged(obj)
-        end
-              
-        function processed = Keypressed(obj, key_name)
-            processed = false;
-        end
-        
+        function Enter(obj)
+            obj.StartCoords = [];
+            obj.StartKPosition = [];
+        end   
     end
-    
 end
 

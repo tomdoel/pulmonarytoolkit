@@ -41,7 +41,7 @@ classdef PTKDeformationFieldCTToGasMRI < PTKPlugin
         function results = RunPlugin(dataset, context, reporting)
             ct_to_mr_affine_matrix_single_lung = dataset.GetResult('PTKGetRigidCtToGasMRIMatrixFromCentreOfMass', context);
             deformation_field_single_lung = dataset.GetResult('PTKDeformationFieldAlignedCtToGasMr', context, '');
-            deformation_field_single_lung = PTKImageCoordinateUtilities.AdjustDeformationFieldForInitialAffineTransformation(deformation_field_single_lung, ct_to_mr_affine_matrix_single_lung);
+            deformation_field_single_lung = MimImageCoordinateUtilities.AdjustDeformationFieldForInitialAffineTransformation(deformation_field_single_lung, ct_to_mr_affine_matrix_single_lung);
             results = deformation_field_single_lung;
         end 
     end    

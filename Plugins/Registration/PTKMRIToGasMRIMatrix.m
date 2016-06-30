@@ -48,8 +48,8 @@ classdef PTKMRIToGasMRIMatrix < PTKPlugin
             gas_lung = dataset.GetResult('PTKLungROI', [], '');
             
             % Compute the translation matrix using the metadata from the images
-            mr_to_gas_affine_matrix = PTKImageCoordinateUtilities.GetAffineTranslationFromPatientPosition(gas_lung, mr_lung);
-            gas_to_mr_affine_matrix = PTKImageCoordinateUtilities.GetAffineTranslationFromPatientPosition(mr_lung, gas_lung);
+            mr_to_gas_affine_matrix = MimImageCoordinateUtilities.GetAffineTranslationFromPatientPosition(gas_lung, mr_lung);
+            gas_to_mr_affine_matrix = MimImageCoordinateUtilities.GetAffineTranslationFromPatientPosition(mr_lung, gas_lung);
             
             results = [];
             results.MrGasMrMatrix = mr_to_gas_affine_matrix;

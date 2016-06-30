@@ -205,7 +205,7 @@ classdef PTKTreeUtilities < handle
         end
         
         function centreline_indices_local = CentrelinePointsToLocalIndices(centreline_points, template_image)
-            centreline_indices_global = PTKImageCoordinateUtilities.GetGlobalIndicesForPoints(centreline_points, template_image);
+            centreline_indices_global = MimImageCoordinateUtilities.GetGlobalIndicesForPoints(centreline_points, template_image);
             centreline_indices_local = template_image.GlobalToLocalIndices(centreline_indices_global);
         end
         
@@ -267,7 +267,7 @@ classdef PTKTreeUtilities < handle
             % Add nearest neighbours to the list of voxels, otherwise it is possible for
             % a diagnoally-connected centreline segment to pass through a
             % diagnonally-connected airway segment
-            voxels = PTKImageCoordinateUtilities.AddNearestNeighbours(voxels, template);
+            voxels = MimImageCoordinateUtilities.AddNearestNeighbours(voxels, template);
         end
         
         function PruneTree(tree_root)

@@ -12,9 +12,8 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     %             path            The path where the files are located. For the
     %                             current directory, use .
     %             filenames       the filename of the header file to load.
-    %             reporting       Optional - an object implementing the PTKReporting 
-    %                             interface for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence
@@ -52,70 +51,25 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     end
 
     header_filename = fullfile(path, filenames{1});
-    [pathstr, ~, ~] = fileparts(header_filename);
 
-    header_data = PTKDiskUtilities.ReadMetaHeader(header_filename, reporting);
+    header_data = mha_read_header(header_filename);
     if isempty(header_data)
         reporting.Error('PTKLoad3DRawAndMetaFiles:MetaHeaderReadFailed', ['Unable to read metaheader data from ' header_filename]);
     end
     
     
     if isfield(header_data, 'TransformMatrix')
-        transform_matrix = str2num(header_data.TransformMatrix); %#ok<ST2NM>
-        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(transform_matrix(1:3), transform_matrix(4:6), transform_matrix(7:9), reporting);
+        transform_matrix = header_data.TransformMatrix;
+        [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(transform_matrix(1:3), transform_matrix(4:6), transform_matrix(7:9), reporting);
     else        
-        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromAnatomicalOrientation(header_data.AnatomicalOrientation, reporting);
+        [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromAnatomicalOrientation(header_data.AnatomicalOrientation, reporting);
     end
 
-    image_dims = sscanf(header_data.DimSize, '%d %d %d');
-    
     % Note: for voxel size, we have a choice of ElementSpacing or ElementSize
     % We choose ElementSpacing as we assume all the voxels are contiguous
-    voxel_size = sscanf(header_data.ElementSpacing, '%f %f %f');
-    voxel_size = voxel_size';
+    voxel_size = header_data.PixelDimensions;
     
-    if strcmp(header_data.ElementType,'MET_UCHAR')
-        data_type = 'uint8';
-    elseif strcmp(header_data.ElementType,'MET_CHAR')
-        data_type = 'int8';
-    elseif strcmp(header_data.ElementType,'MET_SHORT')
-        data_type = 'int16';
-    elseif strcmp(header_data.ElementType,'MET_USHORT')
-        data_type = 'uint16';
-    elseif strcmp(header_data.ElementType,'MET_INT')
-        data_type = 'int32';
-    elseif strcmp(header_data.ElementType,'MET_UINT')
-        data_type = 'uint32';
-    elseif strcmp(header_data.ElementType,'MET_FLOAT')
-        data_type = 'single';
-    elseif strcmp(header_data.ElementType,'MET_DOUBLE')
-        data_type = 'double';
-    else
-        data_type = 'uint16';
-    end
-
-    raw_image_filename = fullfile(pathstr, header_data.ElementDataFile);
-
-    % Read in the raw image file
-    file_id = fopen(raw_image_filename);
-    if file_id <= 0
-        reporting.Error('PTKLoad3DRawAndMetaFiles:OpenFileFailed', ['Unable to open file ' raw_image_filename]);
-    end
-    original_image = zeros(image_dims', data_type);
-    z_length = image_dims(3);
-    for z_index = 1 : z_length
-        if exist('reporting', 'var')
-            reporting.UpdateProgressValue(round(100*(z_index-1)/z_length));
-        end
-        
-        try
-            original_image(:,:,z_index) = cast(fread(file_id, image_dims(1:2)', data_type), data_type);
-        catch exc
-            reporting.Error('PTKLoad3DRawAndMetaFiles:ReadFailed', ['Failed to read data from ' raw_image_filename ' due to the following error: ' exc.message]);
-        end
-    end
-    fclose(file_id);
-    
+    original_image = mha_read_volume(header_data);
     reporting.UpdateProgressAndMessage(0, 'Reslicing');
 
     % We need to swap the X and Y dimensions in the loaded image

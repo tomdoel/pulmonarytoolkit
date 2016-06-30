@@ -41,10 +41,10 @@ classdef PTKThresholdLungFiltered < PTKPlugin
         function threshold_image = RunPlugin(dataset, ~)
             if dataset.IsGasMRI
                 lung_roi = dataset.GetResult('PTKInvertImage');
-                filtered_image = PTKGaussianFilter(lung_roi, 2);
+                filtered_image = MimGaussianFilter(lung_roi, 2);
             else
                 lung_roi = dataset.GetResult('PTKLungROI');
-                filtered_image = PTKGaussianFilter(lung_roi, 0.5, true);
+                filtered_image = MimGaussianFilter(lung_roi, 0.5, true);
             end
             
             if dataset.IsGasMRI

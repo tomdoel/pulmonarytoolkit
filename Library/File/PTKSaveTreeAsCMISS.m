@@ -12,13 +12,12 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_sy
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  A PTKImage providing voxel size and image size
     %                             parameters
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %
     %     Licence
@@ -32,8 +31,8 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_sy
         reporting.Error('PTKSaveTreeAsCMISS:BadArguments', 'No coordinate_system parameter specified');
     end
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKSaveTreeAsCMISS:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKSaveTreeAsCMISS:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
     
     
@@ -97,7 +96,7 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_sy
     % First create the node at the start of the tree
     first_point = tree_root.StartPoint;
     
-    first_point_converted = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([first_point.CoordX, first_point.CoordY, first_point.CoordZ], coordinate_system, template_image);
+    first_point_converted = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([first_point.CoordX, first_point.CoordY, first_point.CoordZ], coordinate_system, template_image);
 
     start_x_mm = first_point_converted(1);
     start_y_mm = first_point_converted(2);
@@ -266,7 +265,7 @@ function previous_values = PrintBranchToFileAsNode(ipnode_file_handle, exnode_fi
     % bifurcation point
     last_point = branch.EndPoint;
     
-    converted_coordinates = PTKImageCoordinateUtilities.ConvertFromPTKCoordinates([last_point.CoordX, last_point.CoordY, last_point.CoordZ], coordinate_system, template_image);
+    converted_coordinates = MimImageCoordinateUtilities.ConvertFromPTKCoordinates([last_point.CoordX, last_point.CoordY, last_point.CoordZ], coordinate_system, template_image);
     
     x_mm = converted_coordinates(1);
     y_mm = converted_coordinates(2);

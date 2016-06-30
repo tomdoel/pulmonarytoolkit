@@ -31,10 +31,6 @@ classdef PTKMarkerPointTool < PTKTool
         % the marker.
         ClosestDistanceForReplaceMarker = 10
     end
-    
-    properties (SetAccess = private)
-        Enabled = false
-    end
         
     properties (Access = private)
         MarkerLayer
@@ -51,32 +47,20 @@ classdef PTKMarkerPointTool < PTKTool
             obj.MarkerPointImage = PTKMarkerPointImage;
         end
 
-        function Enable(obj, enable)
+        function Enter(obj)
             % When the marker tool is selected, make existing markers
             % visible if they aren't already
-            if enable && ~obj.ViewerPanel.ShowMarkers
+            if ~obj.ViewerPanel.ShowMarkers
                 obj.ViewerPanel.ShowMarkers = true;
             end
-            
-            if ~enable && obj.ViewerPanel.ShowMarkers
+        end
+        
+        function Exit(obj)
+            if obj.ViewerPanel.ShowMarkers
                 obj.ViewerPanel.ShowMarkers = false;
             end            
-            
-            obj.Enabled = enable;
         end
         
-        function NewSlice(obj)
-        end
-        
-        function NewOrientation(obj)
-        end
-        
-        function ImageChanged(obj)
-        end
-        
-        function OverlayImageChanged(obj)
-        end
-
         function processed = Keypressed(obj, key_name)
             processed = true;
             if strcmpi(key_name, '1') % one
@@ -127,9 +111,6 @@ classdef PTKMarkerPointTool < PTKTool
                     obj.MarkerLayer.HighlightMarker(closest_marker);
                 end
             end
-        end        
-        
-        function MouseDragged(obj, screen_coords, last_coords)
         end
 
         function MouseUp(obj, coords)

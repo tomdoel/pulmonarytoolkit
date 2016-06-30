@@ -45,7 +45,7 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
             results = dataset.GetResult('PTKAxialAnalysis', contexts);            
             
-            % Convert the results into a PTKResultsTable
+            % Convert the results into a MimResultsTable
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
             patient_name = dataset.GetPatientName;
@@ -53,7 +53,7 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
             table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
-            dataset.SaveTableAsCSV('PTKSaveAxialAnalysisResults', 'Axial analysis', 'AxialResults', 'Density analysis in bins along the cranial-caudal axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveAxialAnalysisResults', 'Axial analysis', 'AxialResults', 'Density analysis in bins along the cranial-caudal axis', table, MimResultsTable.ContextDim, MimResultsTable.SliceNumberDim, MimResultsTable.MetricDim, []);
             
             x_label = 'Distance along axial axis (%)';
             

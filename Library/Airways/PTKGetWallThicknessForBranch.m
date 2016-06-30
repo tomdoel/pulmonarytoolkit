@@ -327,7 +327,7 @@ end
 
 function [interpolated_image, centre_global_indices] = GetInterpolatedImage(x_coord_mm, y_coord_mm, z_coord_mm, lung_roi, segmented_image, segment_label, centre_points_mm)
     ptk_coordinates = [x_coord_mm(:), y_coord_mm(:), z_coord_mm(:)];
-    coordinates_mm = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(ptk_coordinates);
+    coordinates_mm = MimImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(ptk_coordinates);
     global_coordinates = lung_roi.CoordinatesMmToGlobalCoordinatesUnrounded(coordinates_mm);
     local_coordinates = lung_roi.GlobalToLocalCoordinates(global_coordinates);
     
@@ -344,7 +344,7 @@ function [interpolated_image, centre_global_indices] = GetInterpolatedImage(x_co
     centre_ponts_y = [centre_points_mm.CoordY]';
     centre_ponts_z = [centre_points_mm.CoordZ]';
     centre_ponts = [centre_ponts_x, centre_ponts_y, centre_ponts_z];
-    centre_coordinates_mm = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(centre_ponts);
+    centre_coordinates_mm = MimImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(centre_ponts);
     centre_global_coordinates = lung_roi.CoordinatesMmToGlobalCoordinatesUnrounded(centre_coordinates_mm);
     centre_global_indices = lung_roi.GlobalCoordinatesToGlobalIndices(round(centre_global_coordinates));    
 end

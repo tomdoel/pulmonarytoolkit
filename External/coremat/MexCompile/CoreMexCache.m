@@ -45,10 +45,14 @@ classdef CoreMexCache < CoreBaseClass
     end
     
     methods
-        function obj = CoreMexCache(cacheFilename)
-            obj.MexInfoMap = containers.Map;
+        function obj = CoreMexCache(cacheFilename, mex_info_map)
             if nargin > 0
                 obj.CacheFilename = cacheFilename;
+                if nargin > 1 && ~isempty(mex_info_map)
+                    obj.MexInfoMap = mex_info_map;
+                else
+                    obj.MexInfoMap = containers.Map;
+                end
             end
         end
         

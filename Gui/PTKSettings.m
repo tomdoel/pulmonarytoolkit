@@ -28,13 +28,18 @@ classdef PTKSettings < CoreBaseClass
         LastUidForPatientMap
     end
     
+    properties (Transient, Access = private)
+        SettingsFilename
+    end
+    
     methods (Static)
-        function settings = LoadSettings(reporting)
+        function settings = LoadSettings(app_def, reporting)
             try
-                settings_filename = PTKDirectories.GetSettingsFilePath;
+                settings_filename = app_def.GetSettingsFilePath;
                 if exist(settings_filename, 'file')
-                    settings_struct = PTKDiskUtilities.Load(settings_filename);
+                    settings_struct = MimDiskUtilities.Load(settings_filename);
                     settings = settings_struct.settings;
+                    settings.SettingsFilename = settings_filename;
                 else
                     reporting.ShowWarning('PTKSettings:SettingsFileNotFound', 'No settings file found. Will create new one on exit', []);
                     settings = PTKSettings;
@@ -98,6 +103,9 @@ classdef PTKSettings < CoreBaseClass
                     obj.LastUidForPatientMap.remove(key{1});
                 end
             end
+            if ~isempty(obj.ImageInfo) && strcmp(obj.ImageInfo.ImageUid, series_uid)
+                obj.ImageInfo = [];
+            end
         end
         
         function SetLastSaveImagePath(obj, image_path, reporting)
@@ -114,12 +122,12 @@ classdef PTKSettings < CoreBaseClass
         
         function SaveSettings(obj, reporting)
             
-            settings_filename = PTKDirectories.GetSettingsFilePath;
+            settings_filename = obj.SettingsFilename;
             
             try
                 value = [];
                 value.settings = obj;
-                PTKDiskUtilities.Save(settings_filename, value);
+                MimDiskUtilities.Save(settings_filename, value);
             catch ex
                 reporting.ErrorFromException('PTKSettings:FailedtoSaveSettingsFile', ['Unable to save settings file ' settings_filename], ex);
             end

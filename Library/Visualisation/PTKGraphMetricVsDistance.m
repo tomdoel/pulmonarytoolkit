@@ -6,7 +6,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     % PTKSaveAxialAnalysisResults, PTKSaveCoronalAnalysisResults,
     % PTKSaveSagittalAnalysisResults for examples of how to compute these
     % measurements along the corresponding axes. Once the measurments have been
-    % computed and stored in a PTKResultsTable object, call PTKGraphMetricVsDistance
+    % computed and stored in a MimResultsTable object, call PTKGraphMetricVsDistance
     % to plot a graph based on these results for one or more subjects.
     %    
     % Labels and ticks will be automatically generated from the data.
@@ -17,7 +17,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     %     figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, figure_title, context_list, patient_list, reporting)
     %
     % Inputs:
-    %     table - a PTKResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
+    %     table - a MimResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
     %     metric - a string containing the id of the metric to plot. This must correspond to the metic id in the table.
     %     metric_std - a string containing the id of the metric to use for the error
     %         bar in the plot. This must correspond to the metic id in the table, or be
@@ -26,7 +26,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     %     patient_list - Set to [] to plot all patients, otherwise specify a set of one of more patient UIDs to appear on the graph.
     %         Each patient will appear with different markers and will appear in the legend.
     %     distance label - The distance label to be used on the x-axis
-    %     reporting - Object of class PTKReporting for errors, warnings and progress
+    %     reporting - an object implementing CoreReportingInterface for reporting progress and warnings
     %
     % Output:
     %     figure_handle - the handle of the generated figure. Use this handle to export the figure to an image file
@@ -147,7 +147,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     set(figure_handle, 'position', [0,0, graph_size]);
     hold(axes_handle, 'on');
     
-    [y_tick_spacing, min_y, max_y] = PTKGraphUtilities.GetOptimalTickSpacing(min_y, max_y);
+    [y_tick_spacing, min_y, max_y] = MimGraphUtilities.GetOptimalTickSpacing(min_y, max_y);
     y_ticks = 0 : y_tick_spacing : max_y;
     
     % Draw lines at 10% distance intervals

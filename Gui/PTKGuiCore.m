@@ -63,7 +63,7 @@ classdef PTKGuiCore < GemFigure
             
             % Create the reporting object. Later we will update it with the viewer panel and
             % the new progress panel when these have been created.
-            reporting = PTKReporting(splash_screen, PTKSoftwareInfo.WriteVerboseEntriesToLogFile, PTKDirectories.GetLogFilePath);
+            reporting = MimReporting(splash_screen, PTKSoftwareInfo.WriteVerboseEntriesToLogFile, app_def.GetLogFilePath);
             reporting.Log('New session of PTKGui');
                         
             % Call the base class to initialise the figure class
@@ -90,7 +90,7 @@ classdef PTKGuiCore < GemFigure
             obj.DefaultKeyHandlingObject = obj.ImagePanel;
 
             % Get the singleton, which gives access to the settings
-            obj.GuiSingleton = PTKGuiSingleton.GetGuiSingleton(obj.Reporting);
+            obj.GuiSingleton = PTKGuiSingleton.GetGuiSingleton(app_def, obj.Reporting);
             
             % Load the settings file
             obj.GuiSingleton.GetSettings.ApplySettingsToGui(obj, obj.ImagePanel);
@@ -103,13 +103,13 @@ classdef PTKGuiCore < GemFigure
             % Create a callback handler for the Patient Browser and sidebar
             if obj.AppDef.MatNatEnabled
                 mnConfig = matnattestconfig; % ToDo: the config file has to be defined
-                matnat_database = PTKMatNatDatabase(mnConfig);
-                combined_database = PTKCombinedImageDatabase(obj.GuiDataset.GetImageDatabase, matnat_database);
+                matnat_database = MimMatNatDatabase(mnConfig);
+                combined_database = MimCombinedImageDatabase(obj.GuiDataset.GetImageDatabase, matnat_database);
             else
                 matnat_database = [];
                 combined_database = obj.GuiDataset.GetImageDatabase;
             end
-            combined_controller = PTKCombinedImageDatabaseController(obj, matnat_database);
+            combined_controller = MimCombinedImageDatabaseController(obj, matnat_database);
             
             % Create the side panel showing available datasets
             obj.SidePanel = PTKSidePanel(obj, combined_controller, combined_database, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder);
@@ -250,7 +250,7 @@ classdef PTKGuiCore < GemFigure
                 % will start from there
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
                 
-                if (image_info.ImageFileFormat == PTKImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
+                if (image_info.ImageFileFormat == MimImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
                     uiwait(msgbox('No valid DICOM files were found in this folder', [obj.AppDef.GetName ': No image files found.']));
                     obj.Reporting.ShowMessage('PTKGuiApp:NoFilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
@@ -298,7 +298,7 @@ classdef PTKGuiCore < GemFigure
             obj.WaitDialogHandle.Hide;
         end
         
-        function uids = ImportPatch(obj)
+        function ImportPatch(obj)
             % Prompts the user to import a patch
             
             obj.WaitDialogHandle.ShowAndHold('Import patch');
@@ -313,7 +313,7 @@ classdef PTKGuiCore < GemFigure
                 % will start from there
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(folder_path, obj.Reporting);
                 
-                patch = PTKDiskUtilities.LoadPatch(fullfile(folder_path, filename{1}), obj.Reporting);
+                patch = MimDiskUtilities.LoadPatch(fullfile(folder_path, filename{1}), obj.Reporting);
                 if (strcmp(patch.PatchType, 'EditedResult'))
                     uid = patch.SeriesUid;
                     plugin = patch.PluginName;
@@ -388,7 +388,7 @@ classdef PTKGuiCore < GemFigure
             % overlay. Prompts the user for a filename
             
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
-            [filename, path_name, save_type] = PTKDiskUtilities.SaveImageDialogBox(path_name);
+            [filename, path_name, save_type] = MimDiskUtilities.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && ischar(path_name)
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
@@ -396,7 +396,7 @@ classdef PTKGuiCore < GemFigure
                 % Hide the progress bar before capture
                 obj.Reporting.ProgressDialog.Hide;
                 frame = obj.ImagePanel.Capture;
-                PTKDiskUtilities.SaveImageCapture(frame, PTKFilename(path_name, filename), save_type, obj.Reporting)
+                MimDiskUtilities.SaveImageCapture(frame, CoreFilename(path_name, filename), save_type, obj.Reporting)
             end
         end
         
@@ -417,7 +417,7 @@ classdef PTKGuiCore < GemFigure
         
         function LoadPatient(obj, patient_id)
             obj.GuiDataset.SwitchPatient(patient_id);
-            datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(PTKImageDatabase.LocalDatabaseId, patient_id);
+            datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, PTKSoftwareInfo.GroupPatientsWithSameName);
             if isempty(datasets)
                 series_uid = [];
             else
@@ -425,7 +425,7 @@ classdef PTKGuiCore < GemFigure
                 if ~isempty(last_uid) && ismember(last_uid, CoreContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid'))
                     series_uid  = last_uid;
                 else
-                    series_uid = PTKImageUtilities.FindBestSeries(datasets);
+                    series_uid = MimImageUtilities.FindBestSeries(datasets);
                 end
             end
             obj.LoadFromUid(series_uid);
@@ -513,7 +513,7 @@ classdef PTKGuiCore < GemFigure
                 case 'Delete'
                     obj.BringToFront;
                     
-                    series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(PTKImageDatabase.LocalDatabaseId, patient_id);
+                    series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, PTKSoftwareInfo.GroupPatientsWithSameName);
                     
                     series_uids = {};
                     
@@ -946,6 +946,10 @@ classdef PTKGuiCore < GemFigure
             enabled = obj.ModeTabControl.IsTabEnabled(panel_mode_name);
         end
         
+        function app_def = GetAppDef(obj)
+            app_def = obj.AppDef;
+        end
+        
         function reporting = GetReporting(obj)
             reporting = obj.Reporting;
         end
@@ -968,7 +972,7 @@ classdef PTKGuiCore < GemFigure
             % Note we could change this to the current orientation
             % (obj.ImagePanel.Orientation), but if we did this we would need to force a
             % GUI resize whenever the orientation was changed
-            optimal_direction_orientation = PTKImageUtilities.GetPreferredOrientation(obj.ImagePanel.BackgroundImage, obj.AppDef.GetDefaultOrientation);
+            optimal_direction_orientation = MimImageUtilities.GetPreferredOrientation(obj.ImagePanel.BackgroundImage, obj.AppDef.GetDefaultOrientation);
             
             [dim_x_index, dim_y_index, dim_z_index] = GemUtilities.GetXYDimensionIndex(optimal_direction_orientation);
             

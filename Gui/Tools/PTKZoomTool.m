@@ -30,9 +30,6 @@ classdef PTKZoomTool < PTKTool
             obj.Callback = callback;
         end
         
-        function MouseHasMoved(obj, screen_coords, last_coords)
-        end
-        
         function MouseDragged(obj, screen_coords, last_coords)
             [min_coords, max_coords] = obj.Callback.GetImageLimits;
             x_range = max_coords(1) - min_coords(1);
@@ -55,33 +52,6 @@ classdef PTKZoomTool < PTKTool
                 obj.Callback.SetImageLimits([x_lim(1), y_lim(1)], [x_lim(2), y_lim(2)]);
             end
         end
-        
-        function MouseDown(obj, screen_coords)
-        end
-        
-        function MouseUp(obj, screen_coords)
-        end
-        
-        function Enable(obj, enabled)
-        end
-        
-        function NewSlice(obj)
-        end
-        
-        function NewOrientation(obj)
-        end
-        
-        function ImageChanged(obj)
-        end
-        
-        function OverlayImageChanged(obj)
-        end        
-        
-        function processed = Keypressed(obj, key_name)
-            processed = false;
-        end
-        
     end
-    
 end
 

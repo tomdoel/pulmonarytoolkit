@@ -41,7 +41,7 @@ classdef PTKGuiDataset < CoreBaseClass
             obj.Gui = gui;
             obj.Reporting = reporting;
             obj.Settings = settings;
-            obj.Ptk = PTKMain(reporting);
+            obj.Ptk = MimMain(app_def.GetFrameworkAppDef, reporting);
             obj.AddEventListener(obj.GetImageDatabase, 'SeriesHasBeenDeleted', @obj.SeriesHasBeenDeleted);
             obj.AddEventListener(obj.ModeSwitcher, 'ModeChangedEvent', @obj.ModeHasChanged);
         end
@@ -106,7 +106,7 @@ classdef PTKGuiDataset < CoreBaseClass
             if obj.DatasetIsLoaded
                 dataset_cache_path = obj.Dataset.GetDatasetCachePath;
             else
-                dataset_cache_path = PTKDirectories.GetCacheDirectory;
+                dataset_cache_path = obj.Ptk.GetDirectories.GetCacheDirectory;
             end
         end
         
@@ -114,7 +114,7 @@ classdef PTKGuiDataset < CoreBaseClass
             if obj.DatasetIsLoaded
                 dataset_cache_path = obj.Dataset.GetEditedResultsPath;
             else
-                dataset_cache_path = PTKDirectories.GetEditedResultsDirectoryAndCreateIfNecessary;
+                dataset_cache_path = obj.Ptk.GetDirectories.GetEditedResultsDirectoryAndCreateIfNecessary;
             end
         end
 
@@ -122,7 +122,7 @@ classdef PTKGuiDataset < CoreBaseClass
             if obj.DatasetIsLoaded
                 dataset_cache_path = obj.Dataset.GetOutputPath;
             else
-                dataset_cache_path = PTKDirectories.GetOutputDirectoryAndCreateIfNecessary;
+                dataset_cache_path = obj.Ptk.GetDirectories.GetOutputDirectoryAndCreateIfNecessary;
             end
         end
         
@@ -164,7 +164,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 obj.Gui.UpdateGuiForNewDataset([]);
                 
             catch exc
-                if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled');
                 else
                     obj.Reporting.ShowMessage('PTKGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
@@ -186,7 +186,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 obj.Gui.UpdateGuiForNewDataset([]);
                 
             catch exc
-                if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled');
                 else
                     obj.Reporting.ShowMessage('PTKGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
@@ -212,7 +212,7 @@ classdef PTKGuiDataset < CoreBaseClass
             % is currently loaded then the callback from the image database will cause the
             % current dataset to be cleared.
             
-            obj.Ptk.DeleteDatasets(series_uids)
+            obj.Ptk.DeleteDatasets(series_uids);
             obj.Settings.RemoveLastPatientUid(series_uids);
         end
         
@@ -238,10 +238,14 @@ classdef PTKGuiDataset < CoreBaseClass
             patient_visible_name = obj.GuiDatasetState.CurrentPatientVisibleName;
             
             try
-                if isa(image_info_or_uid, 'PTKImageInfo')
+                if isa(image_info_or_uid, 'MimImageInfo')
+                    series_uid = image_info_or_uid.ImageUid;
                     new_dataset = obj.Ptk.CreateDatasetFromInfo(image_info_or_uid);
-                else
+                elseif ischar(image_info_or_uid)
+                    series_uid = image_info_or_uid;
                     new_dataset = obj.Ptk.CreateDatasetFromUid(image_info_or_uid);
+                else
+                   new_dataset = [];
                 end
 
                 obj.ModeSwitcher.UpdateMode([], [], [], [], []);
@@ -255,6 +259,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 obj.ReplacePreviewListener(new_dataset);
                 
                 image_info = obj.Dataset.GetImageInfo;
+                series_uid = image_info.ImageUid;
                 modality = image_info.Modality;
                 
                 [preferred_context, plugin_to_use] = obj.AppDef.GetPreferredContext(modality);
@@ -268,7 +273,7 @@ classdef PTKGuiDataset < CoreBaseClass
                         try
                             new_image = obj.Dataset.GetResult(plugin_to_use);
                         catch exc
-                            if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                            if MimErrors.IsErrorCancel(exc.identifier)
                                 obj.Reporting.Log('LoadImages cancelled by user');
                                 load_full_data = false;
                                 rethrow(exc)
@@ -297,7 +302,6 @@ classdef PTKGuiDataset < CoreBaseClass
                     image_info.Modality = new_image.Modality;
                 end
                 
-                series_uid = image_info.ImageUid;
                 if isfield(new_image.MetaHeader, 'PatientID')
                     patient_id = new_image.MetaHeader.PatientID;
                 else
@@ -338,15 +342,19 @@ classdef PTKGuiDataset < CoreBaseClass
 
                 
             catch exc
-                if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowProgress('Cancelling load');
                     obj.ClearDataset;
                     obj.Reporting.ShowMessage('PTKGuiDataset:LoadingCancelled', 'User cancelled loading');
-                elseif PTKSoftwareInfo.IsErrorFileMissing(exc.identifier)
+                elseif MimErrors.IsErrorUidNotFound(exc.identifier)
                     uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
                     delete_image_info = true;
-                elseif PTKSoftwareInfo.IsErrorUnknownFormat(exc.identifier)
+                elseif MimErrors.IsErrorFileMissing(exc.identifier)
+                    uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
+                    obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
+                    delete_image_info = true;
+                elseif MimErrors.IsErrorUnknownFormat(exc.identifier)
                     uiwait(errordlg('This is not an image file or the format is not supported by PTK. It will be removed from the Patient Browser.', [obj.AppDef.GetName ': Cannot load this image'], 'modal'));
                     obj.Reporting.ShowMessage('PTKGuiDataset:FormatNotSupported', 'This file format is not supported by PTK. I am removing this dataset.');
                     delete_image_info = true;
@@ -387,7 +395,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 try
                     obj.RunPluginTryCatchBlock(plugin_name, wait_dialog)
                 catch exc
-                    if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                    if MimErrors.IsErrorCancel(exc.identifier)
                         obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                     else
                         uiwait(errordlg(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [obj.AppDef.GetName ': Failure in plugin ' plugin_name], 'modal'));
@@ -457,7 +465,7 @@ classdef PTKGuiDataset < CoreBaseClass
             
         function segmentation_list = GetListOfManualSegmentations(obj)
             if isempty(obj.Dataset)
-                segmentation_list = PTKPair.empty;
+                segmentation_list = CorePair.empty;
             else
                 segmentation_list = obj.Dataset.GetListOfManualSegmentations;
             end
@@ -516,7 +524,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 
                 [~, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
                 
-                if isa(cache_info, 'PTKCompositeResult')
+                if isa(cache_info, 'MimCompositeResult')
                     cache_info = cache_info.GetFirstResult;
                 end
                 

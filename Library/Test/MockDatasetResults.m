@@ -1,9 +1,9 @@
 classdef MockDatasetResults < handle
     % MockDatasetResults. Part of the PTK test framework
     %
-    % This class is used in tests in place of a PTKDatasetResults. It allows
+    % This class is used in tests in place of a MimDatasetResults. It allows
     % expected calls to be verified, while maintaining some of the expected
-    % behaviour of a PTKDatasetResults object.
+    % behaviour of a MimDatasetResults object.
     %
     %
     %     Licence
@@ -47,13 +47,12 @@ classdef MockDatasetResults < handle
             obj.ImageTemplates.UpdateTemplates(plugin_name, context, result, has_been_run, cache_info, reporting);
         end
 
-        % Returns a PTKImageInfo structure with image information, including the
+        % Returns a MimImageInfo structure with image information, including the
         % UID, filenames and file path
         function image_info = GetImageInfo(obj)
         end
         
         % Returns an empty template image for the specified context
-        % See PTKImageTemplates.m for valid contexts
         function template_image = GetTemplateImage(obj, context, linked_dataset_chooser, dataset_stack, reporting)
         end
         

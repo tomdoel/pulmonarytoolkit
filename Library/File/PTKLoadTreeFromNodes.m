@@ -11,15 +11,14 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     %                             are to be stored
     %             node_filename   is the name of the node file
     %             edge_filename   is the name of the element file
-    %             coordinate_system  a PTKCoordinateSystem enumeration
+    %             coordinate_system  a MimCoordinateSystem enumeration
     %                             specifying the coordinate system to use
     %             template_image  may be required, depending on the value of
     %                             coordinate_system. Provides the required
     %                             parameters for reconstructing the centreline
     %                             tree.
-    %             reporting       A PTKReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a PTKReporting
-    %                             with no arguments to hide all reporting
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     %     Licence
     %     -------
@@ -32,8 +31,12 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
         reporting.Error('PTKLoadTreeFromNodes:BadArguments', 'No coordinate_system parameter specified');
     end
     
-    if ~isa(coordinate_system, 'PTKCoordinateSystem')
-        reporting.Error('PTKLoadTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type PTKCoordinateSystem');
+    if nargin < 6
+        reporting = CoreReportingDefault;
+    end    
+    
+    if ~isa(coordinate_system, 'MimCoordinateSystem')
+        reporting.Error('PTKLoadTreeFromNodes:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
 
     node_file = fullfile(file_path, node_filename);
@@ -74,7 +77,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     point_parameters = [];
     point_parameters.Radius = radius;
     
-    new_coords_start = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([start_x, start_y, start_z], coordinate_system, template_image);
+    new_coords_start = MimImageCoordinateUtilities.ConvertToPTKCoordinates([start_x, start_y, start_z], coordinate_system, template_image);
     first_point = PTKCentrelinePoint(new_coords_start(1), new_coords_start(2), new_coords_start(3), point_parameters);
 
     % Create a new branch for each node
@@ -88,7 +91,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
         
         point_parameters = [];
         point_parameters.Radius = radius;
-        new_coords_end = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([end_x, end_y, end_z], coordinate_system, template_image);
+        new_coords_end = MimImageCoordinateUtilities.ConvertToPTKCoordinates([end_x, end_y, end_z], coordinate_system, template_image);
         last_point = PTKCentrelinePoint(new_coords_end(1), new_coords_end(2), new_coords_end(3), point_parameters);
 
         new_branch = PTKTreeModel;
@@ -128,7 +131,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
         radius = node_data{5}(branch_index);
         point_parameters = [];
         point_parameters.Radius = radius;
-        new_coords_start = PTKImageCoordinateUtilities.ConvertToPTKCoordinates([start_x, start_y, start_z], coordinate_system, template_image);
+        new_coords_start = MimImageCoordinateUtilities.ConvertToPTKCoordinates([start_x, start_y, start_z], coordinate_system, template_image);
         first_point = PTKCentrelinePoint(new_coords_start(1), new_coords_start(2), new_coords_start(3), point_parameters);
         branch.StartPoint = first_point;
     end

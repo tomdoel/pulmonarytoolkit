@@ -158,7 +158,7 @@ classdef PTKWavefront < handle
             % split it into a new set of child segments
             
             % Find connected components from the wavefront (which is several voxels thick)
-            [offset, reduced_image, reduced_image_size] = PTKImageCoordinateUtilities.GetMinimalImageForIndices(int32(obj.GetWavefrontVoxels)', image_size);
+            [offset, reduced_image, reduced_image_size] = MimImageCoordinateUtilities.GetMinimalImageForIndices(int32(obj.GetWavefrontVoxels)', image_size);
             wavefront_connected_components = bwconncomp(reduced_image, 26);
             number_of_components = wavefront_connected_components.NumObjects;
             
@@ -179,7 +179,7 @@ classdef PTKWavefront < handle
                 
                 % Get voxel list, and adjust the indices to match those for the full image
                 indices_of_component_points = wavefront_connected_components.PixelIdxList{component_number};
-                indices_of_component_points = PTKImageCoordinateUtilities.OffsetIndices(int32(indices_of_component_points), offset, reduced_image_size, image_size);
+                indices_of_component_points = MimImageCoordinateUtilities.OffsetIndices(int32(indices_of_component_points), offset, reduced_image_size, image_size);
                 points_by_branches{component_number} = indices_of_component_points;
                 
                 still_growing = obj.IsThisComponentStillGrowing(indices_of_component_points);

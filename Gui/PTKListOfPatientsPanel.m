@@ -141,7 +141,7 @@ classdef PTKListOfPatientsPanel < GemPanel
     methods (Access = private)
         
         function AddPatientsToListBox(obj)
-            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject);
+            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject, PTKSoftwareInfo.GroupPatientsWithSameName);
             current_index_selected = get(obj.PatientListBox, 'Value');
             if isempty(obj.PatientIds) || isempty(current_index_selected)
                 new_index = [];

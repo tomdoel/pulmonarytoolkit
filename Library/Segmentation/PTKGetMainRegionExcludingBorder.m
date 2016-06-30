@@ -12,8 +12,8 @@ function main_image = PTKGetMainRegionExcludingBorder(threshold_image, minimum_r
     %     minimum_region_volume_mm3 (optional) - ignore any regions below this
     %         threshold
     %
-    %     reporting (optional) - an object implementing the PTKReporting
-    %         interface for reporting progress and warnings
+    %     reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     % Outputs:
     %     main_image - a PTKImage binary volume of the found region

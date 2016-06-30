@@ -68,7 +68,7 @@ classdef PTKSeriesSidePanel < GemListBoxWithTitle
     methods (Access = private)
         
         function AddSeriesToListBox(obj, patient_id, series_uid)
-            datasets = obj.PatientDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, patient_id);
+            datasets = obj.PatientDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, patient_id, PTKSoftwareInfo.GroupPatientsWithSameName);
             obj.ListBox.ClearItems;
             
             for series_index = 1 : length(datasets)
