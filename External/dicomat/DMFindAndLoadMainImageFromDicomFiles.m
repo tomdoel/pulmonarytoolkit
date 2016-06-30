@@ -1,4 +1,4 @@
-function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] = DMFindAndLoadMainImageFromDicomFiles(filenameOrRootDirectory, dicomLibrary, reporting)
+function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, sorted_positions] = DMFindAndLoadMainImageFromDicomFiles(filenameOrRootDirectory, dicomLibrary, reporting)
     % DMFindAndLoadMainImageFromDicomFiles Loads a series of DICOM files into a coherent 3D volume.
     %
     % DMFindAndLoadMainImageFromDicomFiles parses the Dicom files from a
@@ -9,7 +9,7 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
     %     Syntax
     %     ------
     %
-    %         imageWrapper = DMLoadMainImageFromDicomFiles(filenameOrRootDirectory, dicomLibrary, reporting)
+    %         [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, sorted_positions] = DMLoadMainImageFromDicomFiles(filenameOrRootDirectory, dicomLibrary, reporting)
     %
     %             imageWrapper    a CoreWrapper containing the 3D volume
     %
@@ -19,6 +19,9 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
     %                             centrepoints of each slice
     %
     %             globalOriginMm  The mm coordinates of the image origin
+    %
+    %             sorted_positions  Patient positions for each slice in the
+    %                             sorted order
     %
     %             filenameOrRootDirectory  specify the location of the DICOM files to
     %                             load. Subdirectories will also be
@@ -64,11 +67,16 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
         reporting.ShowWarning('DMLoadMainImageFromDicomFiles:MultipleGroupings', 'I have removed some images from this dataset because the images did not form a coherent set. This may be due to the presence of scout images or dose reports, or localiser images in multiple orientations. I have formed a volume form the largest coherent set of images in the same orientation.');
     end
     
+    % Assert that there is at least one group of images
+    if fileGrouper.NumberOfGroups < 1
+        reporting.Error('DMLoadMainImageFromDicomFiles:NoGroupings', 'No suitable DICOM images were found.');
+    end
+    
     % Choose the group with the most images
     main_group = fileGrouper.GetLargestGroup;
     
     % Sort the images into the correct order
-    [sliceThickness, globalOriginMm] = main_group.SortAndGetParameters(reporting);
+    [sliceThickness, globalOriginMm, sorted_positions] = main_group.SortAndGetParameters(reporting);
 
     % Obtain a representative set of metadata tags from the first image in the
     % sequence

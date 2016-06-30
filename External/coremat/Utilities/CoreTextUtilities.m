@@ -81,7 +81,11 @@ classdef CoreTextUtilities < handle
             end
         end
         
+        function adjustedString = RemoveNonprintableCharacters(string)
+            % Removes special characters from a string
+            
+            adjustedString = string(uint8(string) >= 32);
+        end        
     end
-    
 end
 
