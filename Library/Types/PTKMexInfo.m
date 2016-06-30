@@ -21,7 +21,9 @@ classdef PTKMexInfo < handle
         CurrentVersion
         
         LastSuccessfulCompiledVersion
+        LastSuccessfulCompileDatenum
         LastAttemptedCompiledVersion
+        LastAttemptedCompileDatenum
         LastSuccessfulCompiler
         LastAttemptedCompiler
         LastCompileFailed
