@@ -252,7 +252,8 @@ classdef PTKContextHierarchy < CoreBaseClass
             % plugin context is of type 'Any', then proceed to save the results
             % for this context.
             if obj.ContextDef.ContextSetMatches(plugin_context_set, input_context_set)
-                obj.DependencyTracker.SaveEditedResult(plugin_name, input_context, edited_result_image, dataset_uid, reporting);
+                plugin_version = plugin_info.PluginVersion;
+                obj.DependencyTracker.SaveEditedResult(plugin_name, input_context, edited_result_image, dataset_uid, plugin_version, reporting);
 
             % Otherwise, if the input's context set is lower in the hierarchy
             % than that of the plugin, then resize the input to match the plugin
