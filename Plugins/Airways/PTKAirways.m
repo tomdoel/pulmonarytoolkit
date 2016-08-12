@@ -58,7 +58,7 @@ classdef PTKAirways < PTKPlugin
                 coronal_mode = true;
                 
             else
-                threshold = dataset.GetResult('PTKThresholdLung');
+                threshold = dataset.GetResult('PTKThresholdLungInterior');
                 coronal_mode = false;
             end            
             

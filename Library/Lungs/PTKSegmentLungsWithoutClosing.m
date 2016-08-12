@@ -82,7 +82,7 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
         open_value = open_params(open_index);
         filtered_lung_image_copy = filtered_lung_image.Copy;
         filtered_lung_image_copy.BinaryMorph(@imerode, open_value);
-        adjusted_lung_image = PTKGetMainRegionExcludingBorder(filtered_lung_image_copy, 1000000, reporting);
+        adjusted_lung_image = PTKGetMainRegionExcludingPaddingBorder(original_image, filtered_lung_image_copy, 1000000, reporting);
         
         lung_volume = adjusted_lung_image.Volume;
         
