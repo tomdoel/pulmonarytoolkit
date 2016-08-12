@@ -34,7 +34,7 @@ classdef PTKDicomImage < PTKImage
     end
     
     methods (Static)
-        function new_dicom_image = CreateDicomImageFromMetadata(original_image, metadata, slice_thickness, global_origin_mm, reporting)
+        function new_dicom_image = CreateDicomImageFromMetadata(original_image, metadata, slice_thickness, global_origin_mm, padding_value, reporting)
 
             % Our voxel size should be equal to SpacingBetweenSlices. However, 
             % some scanners incorrectly set SpacingBetweenSlices as the
@@ -118,7 +118,7 @@ classdef PTKDicomImage < PTKImage
             
             new_dicom_image.Title = [patient_name, study_description, series_description];
             new_dicom_image.GlobalOrigin = global_origin_mm;
-            
+            new_dicom_image.PaddingValue = padding_value;
         end
     end
     
