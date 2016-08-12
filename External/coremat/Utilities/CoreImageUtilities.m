@@ -53,29 +53,36 @@ classdef CoreImageUtilities
         end
         
         function ballElement = CreateBallStructuralElement(voxelSize, sizeMm)
-            strelSizeVoxels = ceil(sizeMm./(2*voxelSize));
+            if numel(sizeMm) == 1
+                sizeMm = [sizeMm, sizeMm, sizeMm];
+            end
+            strelSizeVoxels = ceil((sizeMm - voxelSize)./(2*voxelSize));
             ispan = -strelSizeVoxels(1) : strelSizeVoxels(1);
             jspan = -strelSizeVoxels(2) : strelSizeVoxels(2);
             kspan = -strelSizeVoxels(3) : strelSizeVoxels(3);
             [i, j, k] = ndgrid(ispan, jspan, kspan);
-            i = i.*voxelSize(1);
-            j = j.*voxelSize(2);
-            k = k.*voxelSize(3);
+            i = i.*voxelSize(1)./sizeMm(1);
+            j = j.*voxelSize(2)./sizeMm(2);
+            k = k.*voxelSize(3)./sizeMm(3);
             ballElement = zeros(size(i));
             ballElement(:) = sqrt(i(:).^2 + j(:).^2 + k(:).^2);
-            ballElement = ballElement <= (sizeMm/2);
+            ballElement = ballElement <= (1/2);
         end
         
-        function disk_element = CreateDiskStructuralElement(pixel_size, size_mm)
-            strel_size_voxels = ceil(size_mm./(2*pixel_size));
+        function disk_element = CreateDiskStructuralElement(pixelSize, sizeMm)
+            if numel(sizeMm) == 1
+                sizeMm = [sizeMm, sizeMm];
+            end
+            
+            strel_size_voxels = ceil((sizeMm - pixelSize)./(2*pixelSize));
             ispan = -strel_size_voxels(1) : strel_size_voxels(1);
             jspan = -strel_size_voxels(2) : strel_size_voxels(2);
             [i, j] = ndgrid(ispan, jspan);
-            i = i.*pixel_size(1);
-            j = j.*pixel_size(2);
+            i = i.*pixelSize(1)./sizeMm(1);
+            j = j.*pixelSize(2)./sizeMm(2);
             disk_element = zeros(size(i));
             disk_element(:) = sqrt(i(:).^2 + j(:).^2);
-            disk_element = disk_element <= (size_mm/2);
+            disk_element = disk_element <= (1/2);
         end
         
         
