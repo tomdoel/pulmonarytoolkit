@@ -73,7 +73,8 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
     open_index = 1;
     
     % Find the main component, excluding any components touching the border
-    lung_image = PTKGetMainRegionExcludingBorder(filtered_lung_image, 1000000, reporting);
+    
+    lung_image = PTKGetMainRegionExcludingPaddingBorder(original_image, filtered_lung_image, 1000000, reporting);
     lung_volume = lung_image.Volume;
     still_searching = lung_volume < min_volume_warning_limit;
     
