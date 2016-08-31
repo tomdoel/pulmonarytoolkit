@@ -27,7 +27,7 @@ classdef PTKThresholdLungInterior < PTKPlugin
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
         FlattenPreviewImage = false
-        PTKVersion = '1'
+        PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
@@ -38,15 +38,18 @@ classdef PTKThresholdLungInterior < PTKPlugin
     end
     
     methods (Static)
-        function results = RunPlugin(dataset, ~)
+        function results = RunPlugin(dataset, ~, reporting)
             if dataset.IsGasMRI
                 results = dataset.GetResult('PTKThresholdLung');
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
                 results = dataset.GetResult('PTKThresholdLung');
             else
-                results = dataset.GetResult('PTKLungROI');
-                results = PTKGetInteriorLungRegion(results);
-                results.ImageType = PTKImageType.Colormap;
+                results = dataset.GetResult('PTKThresholdLung');
+                interior = dataset.GetResult('PTKLungROI');
+                interior = PTKGetInteriorLungRegion(interior, reporting);
+                results_raw = results.RawImage;
+                results_raw = results_raw & interior.RawImage;
+                results.ChangeRawImage(results_raw);
             end
         end
     end
