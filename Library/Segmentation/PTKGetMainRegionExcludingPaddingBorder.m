@@ -152,14 +152,7 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
         image_centre = round(size(bordered_image)/2);
         
         image_centre_j = image_centre(2);
-        
-        if threshold_image.IsCT
-            centre_offset = 0;
-        else
-            % Allow some leeway for MRI images where the lung boundaries may not be so
-            % clear
-            centre_offset = 10;
-        end
+        centre_offset = round(image_centre_j/2);
         
         use_both_regions = false;
         if (bb_1(2) >= image_centre_j - centre_offset) && (bb_2(5) + bb_2(2) < image_centre_j + centre_offset)
@@ -203,10 +196,13 @@ function [results, CC] = OpenAndGetRegions(bordered_image_input, ball_element, c
     num_pixels = cellfun(@numel, CC.PixelIdxList);
     [sorted_largest_areas, sorted_largest_areas_indices] = sort(num_pixels, 'descend');
     
-    % Remove regions that are below the volume threshold
+    % Remove regions that are below the volume threshold - NOTE we must
+    % reduce the size due to possible gaps due to noise
     pixel_volume = prod(voxel_size);
-    sorted_largest_areas_indices = sorted_largest_areas_indices(pixel_volume*sorted_largest_areas >= minimum_region_volume_mm3);
-    
+
+    small_area_mask = pixel_volume*sorted_largest_areas >= minimum_region_volume_mm3/100;
+    sorted_largest_areas_indices = sorted_largest_areas_indices(small_area_mask);
+    sorted_largest_areas = sorted_largest_areas(small_area_mask);
     
     result_index = 1;
     results = [];
