@@ -42,7 +42,26 @@ classdef PTKSeriesSidePanel < GemListBoxWithTitle
         function SelectSeries(obj, series_uid, selected)
             obj.ListBox.SelectItem(series_uid, selected);
         end
+       
+        function DeleteSelectedSeries(obj)
+            obj.DeleteButtonClicked([], []);
+        end
         
+       function SelectNextSeries(obj)
+            next_series_id = obj.ListBox.GetNextItemId;
+            series_item = obj.ListBox.GetItem(next_series_id);
+            if ~isempty(next_series_id)
+                obj.GuiCallback.SeriesClicked(series_item.PatientId, next_series_id);
+            end
+        end
+        
+        function SelectPreviousSeries(obj)
+            prev_series_id = obj.ListBox.GetPreviousItemId;
+            series_item = obj.ListBox.GetItem(prev_series_id);
+            if ~isempty(prev_series_id)
+                obj.GuiCallback.SeriesClicked(series_item.PatientId, prev_series_id);
+            end
+        end        
     end
     
     methods (Access = protected)
@@ -50,7 +69,7 @@ classdef PTKSeriesSidePanel < GemListBoxWithTitle
             obj.GuiCallback.AddSeries;
         end
         
-        function DeleteButtonClicked(obj, ~, event_data)
+        function DeleteButtonClicked(obj, ~, ~)
             series_uid = obj.ListBox.GetListBox.SelectedTag;
             if ~isempty(series_uid)
                 
