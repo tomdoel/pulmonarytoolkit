@@ -213,7 +213,7 @@ function [results, CC] = OpenAndGetRegions(bordered_image_input, ball_element, c
         bordered_image(CC.PixelIdxList{current_region_being_checked}) = true;
         if (bordered_image(1) || bordered_image(end))
             % This region is connected to the edge
-            reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LargestROIConnectedToExterior', 'The largest region connected with the edge of the volume. I''m assuming this region is outside the body so choosing the next largest region');
+%             reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LargestROIConnectedToExterior', 'The largest region connected with the edge of the volume. I''m assuming this region is outside the body so choosing the next largest region');
         else
             results(result_index) = current_region_being_checked;
             result_index = result_index + 1;
