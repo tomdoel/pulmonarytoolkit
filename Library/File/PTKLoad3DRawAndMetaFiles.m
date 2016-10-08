@@ -63,8 +63,10 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     if isfield(header_data, 'TransformMatrix')
         transform_matrix = str2num(header_data.TransformMatrix); %#ok<ST2NM>
         [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(transform_matrix(1:3), transform_matrix(4:6), transform_matrix(7:9), reporting);
-    else        
+    elseif isfield(header_data, 'AnatomicalOrientation')
         [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromAnatomicalOrientation(header_data.AnatomicalOrientation, reporting);
+    else
+        [new_dimension_order, flip_orientation] = PTKImageCoordinateUtilities.GetDimensionPermutationVectorFromAnatomicalOrientation('RAI', reporting);
     end
 
     image_dims = sscanf(header_data.DimSize, '%d %d %d');
