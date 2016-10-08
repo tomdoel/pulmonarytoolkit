@@ -615,6 +615,11 @@ classdef PTKGuiCore < GemFigure
             % pointer is located. If a key hasn't been processed, we divert it to the viewer
             % panel so that viewer panel shortcuts will work from other parts of the GUI.            
             input_has_been_processed = obj.ImagePanel.ShortcutKeys(key);
+
+            % Failing that, we allow the side panel to execute shortcuts
+            if ~input_has_been_processed
+                input_has_been_processed = obj.SidePanel.ShortcutKeys(key);
+            end
         end
 
         

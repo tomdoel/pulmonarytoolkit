@@ -1,6 +1,22 @@
 function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
     % PTKSaveTreeAsNodes. Exports a tree structure into node and element files
     %
+    % Two text files are produced; a node file and an element file.
+    %
+    % The node file describes points which comprise the start point of the
+    % tree (at the top of the trachea), each bifurcation point, and each
+    % end point. The first line contains the number of node points.
+    % Subequent lines are in the following text format:
+    % node_number, x_coord, y_coord, z_coord, radius_approx, is_bifurcation_point
+    %
+    % Note the radius approximation is for the element ending at this node.
+    %
+    % The element file describes which nodes are linked together.
+    % The first line contains the number of element points.
+    % Subsequent lines are in the following text format:
+    % node_1, node_2
+    % where node_1 and node_2 are connected by the tree
+    %
     %     Syntax
     %     ------
     %

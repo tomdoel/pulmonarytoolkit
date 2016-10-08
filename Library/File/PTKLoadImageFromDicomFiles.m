@@ -47,9 +47,9 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
     end
     
     % Detect and remove padding values
-    PTKRemovePaddingValues(image_volume_wrapper, representative_metadata, reporting);
+    padding_value = PTKRemovePaddingValues(image_volume_wrapper, representative_metadata, reporting);
     
     % Construct a PTKDicomImage from the loaded image volume
-    loaded_image = PTKDicomImage.CreateDicomImageFromMetadata(image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm, reporting);
+    loaded_image = PTKDicomImage.CreateDicomImageFromMetadata(image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm, padding_value, reporting);
     
 end

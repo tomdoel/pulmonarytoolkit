@@ -171,12 +171,13 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             end
         end
 
-        function SaveEditedResult(obj, plugin_name, context, result, dataset_uid, reporting)
+        function SaveEditedResult(obj, plugin_name, context, result, dataset_uid, plugin_version, reporting)
             % Saves the result of a plugin after semi-automatic editing
             
             attributes = [];
             attributes.IgnoreDependencyChecks = false;
             attributes.IsEditedResult = true;
+            attributes.PluginVersion = plugin_version;
             instance_identifier = MimDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
             new_cache_info = MimDatasetStackItem(instance_identifier, MimDependencyList, false, false, reporting);
             new_cache_info.MarkEdited;

@@ -49,7 +49,7 @@ function image = PTKLoadImages(image_info, reporting)
                     MimImageFileFormat.MicroCT, MimImageFileFormat.Par}
                 image = PTKLoadOtherFormat(image_path, filenames, study_uid, image_file_format, reporting);
             otherwise
-                reporting.Error('PTKOriginalImage:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
+                reporting.Error('PTKLoadImages:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
         end
     end
 end

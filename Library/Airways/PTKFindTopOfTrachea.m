@@ -228,7 +228,7 @@ function result = ReduceImageToCentralComponents(image_to_reduce, slices_per_ste
         if slices_per_step == 1
             connected_components = bwconncomp(slice, 8); % 2D connected components
         else
-            connected_components = bwconncomp(slice, 26); % 3D connected components
+            connected_components = bwconncomp(slice, 6); % 3D connected components
         end
         stats = regionprops(connected_components, 'BoundingBox');
         
@@ -271,7 +271,7 @@ end
 
 function result = FindLargestComponent(mask)
     result = false(size(mask));
-    connected_components = bwconncomp(mask, 26);
+    connected_components = bwconncomp(mask, 6);
     num_pixels = cellfun(@numel, connected_components.PixelIdxList);
     [~, sorted_largest_areas_indices] = sort(num_pixels, 'descend');
     voxels = connected_components.PixelIdxList{sorted_largest_areas_indices(1)};

@@ -133,6 +133,31 @@ classdef PTKSidePanel < GemPanel
         function Refresh(obj, ~, ~)
             obj.Repopulate;
         end
+        
+        function input_has_been_processed = ShortcutKeys(obj, key)
+            % Process shortcut keys for the side panel.
+            if strcmpi(key, 'end')
+                obj.PatientsSidePanel.SelectNextPatient;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 'home')
+                obj.PatientsSidePanel.SelectPreviousPatient;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 'pageup')
+                obj.SeriesSidePanel.SelectPreviousSeries;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 'pagedown')
+                obj.SeriesSidePanel.SelectNextSeries;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 'delete')
+                obj.SeriesSidePanel.DeleteSelectedSeries;
+                input_has_been_processed = true;
+            elseif strcmpi(key, 'insert')
+                obj.Controller.AddSeries;
+                input_has_been_processed = true;
+            else
+                input_has_been_processed = false;
+            end
+        end        
     end
     
     methods (Access = private)

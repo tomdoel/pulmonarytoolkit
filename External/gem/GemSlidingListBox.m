@@ -43,6 +43,14 @@ classdef GemSlidingListBox < GemSlidingPanel
                 end
             end
         end
+
+        function id = GetNextItemId(obj)
+            id = obj.FloatingPanel.GetNextItemId;
+        end
+
+        function id = GetPreviousItemId(obj)
+            id = obj.FloatingPanel.GetPreviousItemId;
+        end
         
         function ClearItems(obj)
             obj.FloatingPanel.ClearItems;
@@ -60,5 +68,8 @@ classdef GemSlidingListBox < GemSlidingPanel
             num_items = obj.FloatingPanel.NumItems;
         end
         
+        function item = GetItem(obj, tag)
+            item = obj.FloatingPanel.GetItem(tag);
+        end
     end
 end

@@ -163,14 +163,7 @@ classdef PTKMapColourTool < PTKTool
                 while ~isempty(parent_colour)
                     colourmap(parent_colour + 1) = 7;
                     parent_colour = parent_label_map{parent_colour};
-                end
-                
-                children_to_do = CoreStack(child_label_map{segmentation_colour});
-                while ~children_to_do.IsEmpty
-                    next_child_colour = children_to_do.Pop;
-                    colourmap(next_child_colour + 1) = obj.Colour;
-                    children_to_do.Push(child_label_map{next_child_colour});
-                end
+                end                
             end
             
             obj.OverlayChangeLock = true;

@@ -101,7 +101,7 @@ function success = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, max_iter,
         
     end
     
-    reporting.ShowMessage('PTKSeparateAndLabelLungs:LungsFound', 'Lung regions found.');
+%     reporting.ShowMessage('PTKSeparateAndLabelLungs:LungsFound', 'Lung regions found.');
     
     largest_area_index = largest_areas_indices(1);
     second_largest_area_index = largest_areas_indices(2);

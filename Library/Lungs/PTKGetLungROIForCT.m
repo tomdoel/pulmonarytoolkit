@@ -40,7 +40,7 @@ function lung_image = PTKGetLungROIForCT(lung_image, reporting)
     reduced_image.RescaleToMaxSize(128);
 
     reporting.ShowProgress('Filtering image');
-    reduced_image = MimGaussianFilter(reduced_image, 1.0);
+    reduced_image = MimGaussianFilter(reduced_image, 1.0, true); % ToDo
     
     scale_factor = reduced_image.Scale;
     reporting.ShowProgress('Finding region of interest');
