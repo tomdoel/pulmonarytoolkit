@@ -157,9 +157,9 @@ classdef PTKImageFromVolume < GemImage
                 if isa(image, 'double') || isa(image, 'single')
                     rgb_image = CoreLabel2Rgb(map(round(image + 1)));
                 else
-                    mapped_image = uint8(1 + mod(image - 1, numel(map)));
+                    mapped_image = uint8(1 + mod(image, numel(map)));
                     rgb_image = CoreLabel2Rgb(map(mapped_image));
-                end
+                end  
             end
             if black_is_transparent
                 alpha = int8(image ~= 0);

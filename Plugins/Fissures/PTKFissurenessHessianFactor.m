@@ -39,6 +39,7 @@ classdef PTKFissurenessHessianFactor < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
+        Version = 2
     end
     
     methods (Static)
@@ -80,7 +81,7 @@ classdef PTKFissurenessHessianFactor < PTKPlugin
             image_data.ChangeRawImage(PTKFissurenessHessianFactor.DuplicateImageInMask(image_data.RawImage, left_and_right_lungs.RawImage));
             
             mask = [];
-            fissureness = PTKImageDividerHessian(image_data, @PTKFissurenessHessianFactor.ComputeFissurenessPartImage, mask, 1.0, [], false, false, is_left_lung, reporting);
+            fissureness = PTKImageDividerHessian(image_data, @PTKFissurenessHessianFactor.ComputeFissurenessPartImage, mask, 1.5, [], false, false, is_left_lung, reporting);
         end
         
         function fissureness_wrapper = ComputeFissurenessPartImage(hessian_eigs_wrapper, voxel_size)

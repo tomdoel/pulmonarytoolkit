@@ -44,7 +44,7 @@ function image = PTKLoadImages(image_info, reporting)
             case PTKImageFileFormat.Metaheader
                 image = PTKLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
             otherwise
-                reporting.Error('PTKOriginalImage:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
+                reporting.Error('PTKLoadImages:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
         end
     end
 end

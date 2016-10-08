@@ -68,6 +68,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         ColorLabelMap
         ColourLabelChildMap
         ColourLabelParentMap
+        PaddingValue
     end
 
     properties (Access = private)

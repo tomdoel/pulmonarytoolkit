@@ -45,11 +45,24 @@ classdef PTKPatientsSidePanel < GemListBoxWithTitle
             obj.CurrentPatientId = mapped_patient_id;
         end
         
-        
         function SelectPatient(obj, patient_id, selected)
             mapped_patient_id = obj.GetMappedPatientId(patient_id);
             obj.ListBox.SelectItem(mapped_patient_id, selected);
-        end        
+        end
+        
+        function SelectNextPatient(obj)
+            next_patient_id = obj.ListBox.GetNextItemId;
+            if ~isempty(next_patient_id)
+                obj.GuiCallback.PatientClicked(next_patient_id);
+            end
+        end
+        
+        function SelectPreviousPatient(obj)
+            prev_patient_id = obj.ListBox.GetPreviousItemId;
+            if ~isempty(prev_patient_id)
+                obj.GuiCallback.PatientClicked(prev_patient_id);
+            end
+        end
     end
     
     methods (Access = protected)

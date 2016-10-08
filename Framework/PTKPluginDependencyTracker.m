@@ -168,12 +168,13 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
             end
         end
 
-        function SaveEditedResult(obj, plugin_name, context, result, dataset_uid, reporting)
+        function SaveEditedResult(obj, plugin_name, context, result, dataset_uid, plugin_version, reporting)
             % Saves the result of a plugin after semi-automatic editing
             
             attributes = [];
             attributes.IgnoreDependencyChecks = false;
             attributes.IsEditedResult = true;
+            attributes.PluginVersion = plugin_version;
             instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
             new_cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
             new_cache_info.MarkEdited;

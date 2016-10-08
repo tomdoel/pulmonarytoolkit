@@ -75,27 +75,48 @@ classdef GemFigure < GemUserInterfaceObject
             % Store old custom handlers for this figure
             obj.OldWindowScrollWheelFunction = get(obj.GraphicalComponentHandle, 'WindowScrollWheelFcn');
             obj.OldResizeFunction = get(obj.GraphicalComponentHandle, 'ResizeFcn');
-            
+
             % Set custom handlers
             set(obj.GraphicalComponentHandle, 'CloseRequestFcn', @obj.CustomCloseFunction);
             set(obj.GraphicalComponentHandle, 'WindowScrollWheelFcn', @obj.CustomWindowScrollWheelFunction);
             set(obj.GraphicalComponentHandle, 'WindowButtonDownFcn', @obj.CustomWindowButtonDownFunction);
             set(obj.GraphicalComponentHandle, 'WindowButtonUpFcn', @obj.CustomWindowButtonUpFunction);            
             set(obj.GraphicalComponentHandle, 'WindowButtonMotionFcn', @obj.CustomWindowButtonMotionFunction);
-            set(obj.GraphicalComponentHandle, 'KeyPressFcn', @obj.CustomKeyPressedFunction);
             set(obj.GraphicalComponentHandle, 'ResizeFcn', @obj.CustomResize);
+            
+            % Add custom keyboard handlers
+            obj.AddCustomKeyHandlers;
         end
         
         function RestoreCustomKeyPressCallback(obj)
-            % For the zoom and pan tools, we need to disable the Matlab fuctions
-            % that prevent custom keyboard callbacks being used; otherwise our
-            % keyboard shortcuts will be sent to the command line
-            
-            hManager = uigetmodemanager(obj.GraphicalComponentHandle);
-            
-            
-            %%%% Todo: Disabled due to incompatibality with hg2 in Matlab 8.4
-%             set(hManager.WindowListenerHandles, 'Enable', 'off');
+            % For the zoom and pan tools, Matlab will replace the keyboard
+            % handler with its own handlers, so we need to change them
+            % back in order to handle our own shortcuts. However, Matlab
+            % has listeners which prevent changing of these when the
+            % mode is active. We need to first disable these listeners.
+            % This will allow us to set the custom keyboard listeners
+            % again.
+            %
+            % Further complications result in changes in Matlab's hg2
+            %
+            % See here for more information: http://undocumentedmatlab.com/blog/enabling-user-callbacks-during-zoom-pan
+
+            try
+                hManager = uigetmodemanager(obj.GraphicalComponentHandle);
+                try
+                    % This code should work with Matlab hg1 but will throw
+                    % an exception in Matlab hg2
+                    set(hManager.WindowListenerHandles, 'Enable', 'off');
+                catch
+                    % This code should work with Matlab hg2
+                    [hManager.WindowListenerHandles.Enabled] = deal(false);
+                end
+                obj.AddCustomKeyHandlers;
+            catch ex
+                % An error here could be a change in internal
+                % implementaton of Matlab hg
+                obj.Reporting.ShowWarning('GemFigure:FailedToRestoreWindowListenerHandles', 'An error occurred while attempting to restore custom key callbacks', ex);
+            end
         end
         
         function CustomKeyPressedFunction(obj, src, eventdata)
@@ -105,7 +126,7 @@ classdef GemFigure < GemUserInterfaceObject
                 obj.ProcessActivityToSpecificObject(obj.DefaultKeyHandlingObject, 'Keypressed', current_point, eventdata.Key);
             end
         end
-        
+
         function ShowWaitCursor(obj)
             % Changes the mouse cursor to a wait cursor
             if isempty(obj.LastCursor)
@@ -134,6 +155,11 @@ classdef GemFigure < GemUserInterfaceObject
     end
 
     methods (Access = protected)
+        
+        function AddCustomKeyHandlers(obj)
+            % Set custom handlers for key press events
+            set(obj.GraphicalComponentHandle, 'KeyPressFcn', @obj.CustomKeyPressedFunction);
+        end        
         
         function CustomResize(obj, eventdata, handles)
             obj.ObjectHasBeenResized;

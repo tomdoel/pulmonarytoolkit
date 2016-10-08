@@ -62,12 +62,33 @@ function filtered_image = PTKGaussianFilter(original_image, filter_size_mm, bord
     raw_image = raw_image + intensity_offset;
     
     if border_correction
-        raw_image(1:border_region, :, :) = original_image.RawImage(1:border_region, :, :);
-        raw_image(end-border_region+1:end, :, :) = original_image.RawImage(end-border_region+1:end, :, :);
-        raw_image(:, 1:border_region, :) = original_image.RawImage(:, 1:border_region, :);
-        raw_image(:, end-border_region+1:end, :) = original_image.RawImage(:, end-border_region+1:end, :);
-        raw_image(:, :, 1:border_region) = original_image.RawImage(:, :, 1:border_region);
-        raw_image(:, :, end-border_region+1:end) = original_image.RawImage(:, :, end-border_region+1:end);
+        border_image = original_image.BlankCopy;
+        
+        % Create a mask image defining voxels where the filtered values
+        % will be replaced with the original values. This deals with border
+        % voxels that would otherwise be smoothed by the filtering
+        border_image_raw = false(original_image.ImageSize);
+
+        % Add a border around the image
+        border_image_raw(1:border_region, :, :) = true;
+        border_image_raw(end-border_region+1:end, :, :) = true;
+        border_image_raw(:, 1:border_region, :) = true;
+        border_image_raw(:, end-border_region+1:end, :) = true;
+        border_image_raw(:, :, 1:border_region) = true;
+        border_image_raw(:, :, end-border_region+1:end) = true;
+        
+        % Add in padding values if there are any
+        if ~isempty(original_image.PaddingValue)
+            border_image_raw(original_image.RawImage == original_image.PaddingValue) = true;
+        end
+        
+        border_image.ChangeRawImage(border_image_raw);
+        
+        % This is the region over which the filter will not be applied
+        border_image.BinaryMorph(@imdilate, filter_size_mm./voxel_size_mm);
+        
+        raw_image(border_image.RawImage(:)) = original_image.RawImage(border_image.RawImage(:));
+        
     end
     filtered_image.ChangeRawImage(raw_image);
 end

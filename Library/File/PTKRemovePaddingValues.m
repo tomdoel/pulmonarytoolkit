@@ -1,23 +1,25 @@
-function PTKRemovePaddingValues(image_wrapper, metadata, reporting)
+function new_padding_value = PTKRemovePaddingValues(image_wrapper, metadata, reporting)
+
+    new_padding_value = [];
+    padding_indices = [];
+    
     % Replace padding value with zero
     if (isfield(metadata, 'PixelPaddingValue'))
         padding_value = metadata.PixelPaddingValue;
         
         padding_indices = find(image_wrapper.RawImage == padding_value);
-        if (~isempty(padding_indices))
-            reporting.ShowMessage('PTKRemovePaddingValues:ReplacingPaddingValue', ['Replacing padding value ' num2str(padding_value) ' with zeros.']);
-            image_wrapper.RawImage(padding_indices) = 0;
-        end
     end
     
     % Check for unspecified padding value in GE images
     if isfield(metadata, 'Manufacturer')
         if strcmp(metadata.Manufacturer, 'GE MEDICAL SYSTEMS')
-            extra_padding_pixels = find(image_wrapper.RawImage == -2000);
-            if ~isempty(extra_padding_pixels) && (metadata.PixelPaddingValue ~= -2000)
-                reporting.ShowWarning('PTKRemovePaddingValues:IncorrectPixelPadding', 'This image is from a GE scanner and appears to have an incorrect PixelPaddingValue. This is a known issue with the some GE scanners. I am assuming the padding value is -2000 and replacing with zero.', []);
-                image_wrapper.RawImage(extra_padding_pixels) = 0;
-            end
+            padding_indices = find(image_wrapper.RawImage == -2000);
         end
-    end    
+    end
+    
+    if ~isempty(padding_indices)
+        image_wrapper.RawImage(padding_indices) = max(image_wrapper.RawImage(:));
+        new_padding_value = min(image_wrapper.RawImage(:)) - 1;
+        image_wrapper.RawImage(padding_indices) = new_padding_value;
+    end
 end
