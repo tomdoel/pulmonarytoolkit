@@ -145,7 +145,7 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, loc
         end
         bounds = bounds_middle_slice;
     else
-        [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_value, local_start_point, coronal_mode, reporting);
+        [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_value, {local_start_point}, coronal_mode, reporting);
     end
     
     if coronal_mode
