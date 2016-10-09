@@ -144,6 +144,18 @@ classdef DMUtilities
                 end
             end
         end
+        
+        function tag_string = ConvertTag32ToString(tag_32)
+            group_value = floor(tag_32/65536);
+            tag_value = mod(tag_32, 65536);
+            tag_string = ['(' dec2hex(group_value, 4) ',' dec2hex(tag_value, 4) ')']; 
+        end
+        
+        function tag_32 = ConvertStringToTag32(tag_string)
+            group = tag_string(2:5);
+            elem = tag_string(7:10);
+            tag_32 = 65536*hex2dec(group) + hex2dec(elem);
+        end
     end
 end
 
