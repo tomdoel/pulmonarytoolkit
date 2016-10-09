@@ -116,7 +116,7 @@ function [header, is_little_endian, data_pointer] = ParseFileData(file_data, dat
             tag_32 = 65536*(uint32(file_data(data_pointer + 1)) + 256*uint32(file_data(data_pointer))) + ...
                 (uint32(file_data(data_pointer + 3)) + 256*uint32(file_data(data_pointer + 2)));
         end
-
+         
         % Item delimiter tag. This indicates the end of an item of
         % undefined length, so we return control to the calling
         % ReadSequence() method to process the next item.
@@ -290,6 +290,7 @@ function [parsed_value, data_pointer_offset] = ReadSequence(data_bytes, tag_list
     
     dicom_undefined_length_tag_id = 4294967295;
     sequence_end_tag = 4294893789;
+    start_item_tag = 4294893568;
 
     sequence_number = uint32(1);
     data_pointer_offset = uint32(1);
@@ -307,11 +308,17 @@ function [parsed_value, data_pointer_offset] = ReadSequence(data_bytes, tag_list
             item_tag_32 = 65536*(uint32(data_bytes(data_pointer_offset + 1)) + 256*uint32(data_bytes(data_pointer_offset))) + ...
                 (uint32(data_bytes(data_pointer_offset + 3)) + 256*uint32(data_bytes(data_pointer_offset + 2)));
         end
-        
+
         if (item_tag_32 == sequence_end_tag)
             data_pointer_offset = data_pointer_offset + uint32(8);
             data_pointer_offset = data_pointer_offset - 1;
             return;
+        end
+        
+        % Tag should be an item tag; if not, we assume the sequence is
+        % finished and return to let he calling method parse the tag
+        if (item_tag_32 ~= start_item_tag)
+            error('Expected an ITEM tag');
         end
         
         % Read length
@@ -338,7 +345,7 @@ function [parsed_value, data_pointer_offset] = ReadSequence(data_bytes, tag_list
             item_length = processed_data_pointer - 1;
             data_pointer_offset = start_point + item_length;
         else
-            data_pointer_offset = start_point + item_length + uint32(8);
+            data_pointer_offset = start_point + item_length;
             if (item_length ~= processed_data_pointer - 1)
                 disp(['Warning: item length:' int2str(item_length) ' but offset:' int2str(processed_data_pointer - 1)]);
             end
