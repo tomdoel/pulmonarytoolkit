@@ -203,7 +203,7 @@ classdef MimImageDatabase < handle
                         reporting.UpdateProgressStage(stage_index, num_stages);
                         cache_directory = framework_app_def.GetFrameworkDirectories.GetCacheDirectory;
                         image_info_cache_name = framework_app_def.GetFrameworkConfig.ImageInfoCacheName;
-                        if 2 == exist(fullfile(cache_directory, [image_info_cache_name '.mat']), 'file')
+                        if 2 == exist(fullfile(cache_directory, temporary_uid, [image_info_cache_name '.mat']), 'file')
                             cache_parent_directory = cache_directory;
                         else
                             cache_parent_directory = framework_app_def.GetFrameworkDirectories.GetFrameworkDatasetCacheDirectory;
