@@ -10,7 +10,7 @@ function PTKAddPaths(varargin)
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    PTKAddPaths_Version_Number = 2;
+    PTKAddPaths_Version_Number = 3;
     
     persistent PTK_PathsHaveBeenSet
     
@@ -50,6 +50,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Utilities');
         path_folders{end + 1} = fullfile('Library', 'Visualisation');
         path_folders{end + 1} = 'Framework';
+        path_folders{end + 1} = 'Scripts';
         
         path_folders{end + 1} = fullfile('External', 'coremat');
         path_folders{end + 1} = fullfile('External', 'gem');
