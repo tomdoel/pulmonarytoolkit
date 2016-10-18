@@ -30,12 +30,14 @@ classdef PTKSetProfiler < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            profile_status = profile('status');
-            
-            if strcmp(profile_status.ProfilerStatus, 'on');
-                profile viewer
-            else
-                profile on
+            if ~isdeployed
+                profile_status = profile('status');
+
+                if strcmp(profile_status.ProfilerStatus, 'on');
+                    profile viewer
+                else
+                    profile on
+                end
             end
         end
 
@@ -44,8 +46,12 @@ classdef PTKSetProfiler < PTKGuiPlugin
         end
         
         function is_selected = IsSelected(ptk_gui_app)
-            profile_status = profile('status');
-            is_selected = strcmp(profile_status.ProfilerStatus, 'on');
+            if isdeployed
+                is_selected = false;
+            else
+                profile_status = profile('status');
+                is_selected = strcmp(profile_status.ProfilerStatus, 'on');
+            end
         end
     end
 end
