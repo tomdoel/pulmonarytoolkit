@@ -543,10 +543,10 @@ classdef PTKGuiCore < GemFigure
             
             wait_dialog = obj.WaitDialogHandle;
             
-            plugin_info = eval(plugin_name);
+            plugin_info = feval(plugin_name);
             wait_dialog.ShowAndHold([plugin_info.ButtonText]);
 
-            plugin_info.RunGuiPlugin(ob);
+            plugin_info.RunGuiPlugin(obj);
             
             obj.UpdateToolbar;
             
