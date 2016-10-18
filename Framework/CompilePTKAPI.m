@@ -1,14 +1,13 @@
-function CompilePTK
+function CompilePTKAPI
     PTKAddPaths;
     
     CoreDiskUtilities.CreateDirectoryIfNecessary(GetCompiledOutputPath);
     
-    
-    plugins= GetListOfPlugins;
+    plugins = GetListOfPlugins;
     scripts = GetListOfScripts;
     gui_plugins= PTKDirectories.GetListOfGuiPlugins;
     
-    dirs_to_include = {'bin', 'Contexts', 'External', 'Framework', 'Gui', 'Plugins', 'Scripts', 'SharedPlugins'};
+    dirs_to_include = {'bin', 'Contexts', 'External', 'Framework', 'Plugins', 'Scripts', 'SharedPlugins'};
     temp_compile_options_file = CreateTemporaryCompileOptionsFile(dirs_to_include);
         
     fileID = fopen(fullfile(GetCompiledOutputPath, 'plugin_dependencies.m'), 'w');
@@ -38,12 +37,12 @@ function CompilePTK
     
     fprintf(fileID, '%s\n', 'end');
     fclose(fileID);
-    mcc -B ./compiled/compileopts_gen
+    mcc -B ./compiled_api/compileopts_gen
 end
 
 function temporary_file = CreateTemporaryCompileOptionsFile(dirs_to_include)
     file_entries = [];
-    file_entries{end + 1} = ['-m ' fullfile(GetBasePath, 'PulmonaryToolkit.m') ' '];
+    file_entries{end + 1} = ['-m ' fullfile(GetBasePath, 'PulmonaryToolkitAPI.m') ' '];
     file_entries{end + 1} = '-v ';
     file_entries{end + 1} = ['-d ' GetCompiledOutputPath ' '];
     file_entries{end + 1} = ['-a ' fullfile(GetCompiledOutputPath, 'plugin_dependencies') ' '];
@@ -112,7 +111,7 @@ end
 function plugins_path = GetCompiledOutputPath(~)
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
-    plugins_path = fullfile(path_root, '..', 'compiled');
+    plugins_path = fullfile(path_root, '..', 'compiled_api');
 end
 
 function plugins_path = GetCompiledMexFilesPath(~)
@@ -138,4 +137,3 @@ function plugins_path = GetScriptsPath(~)
     [path_root, ~, ~] = fileparts(full_path);
     plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.ScriptsDirectoryName);
 end        
-

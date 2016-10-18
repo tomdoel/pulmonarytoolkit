@@ -54,6 +54,7 @@ classdef PTKSoftwareInfo < handle
         ApplicationSettingsFolderName = 'TDPulmonaryToolkit'
         SharedPluginDirectoryName = 'SharedPlugins'
         PluginDirectoryName = 'Plugins'
+        ScriptsDirectoryName = 'Scripts'
         GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')
         GuiToolDirectoryName = fullfile('Gui', 'Toolbar')
         MexSourceDirectory = fullfile('Library', 'mex')

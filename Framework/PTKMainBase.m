@@ -194,15 +194,16 @@ classdef PTKMainBase < CoreBaseClass
             obj.GetImageDatabase.DeleteSeries(series_uids, obj.Reporting);
         end
         
-        function RunScript(obj, script_name, parameters)
+        function output = RunScript(obj, script_name, varargin)
             if nargin < 3
                 parameters = [];
             end
             try
                 script_class = feval(script_name);
-                script_class.RunScript(obj, parameters, obj.Reporting);
+                output = script_class.RunScript(obj, obj.Reporting, varargin{:});
             catch ex
                 obj.Reporting.Error('PTKMainBase:ScriptFailure', ['The script ' script_name ' failed with the following error: ' ex.message]);
+                output = [];
             end
         end
     end
