@@ -240,6 +240,10 @@ classdef CoreReporting < CoreReportingInterface
         
         function ShowAndClearPendingMessages(obj)
         end
+        
+        function OpenPath(obj, file_path, message)
+            disp([message, ': ', file_path]);
+        end
     end
     
     methods (Access = private)
