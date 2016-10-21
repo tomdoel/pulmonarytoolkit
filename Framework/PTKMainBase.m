@@ -60,6 +60,7 @@ classdef PTKMainBase < CoreBaseClass
             obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(framework_app_def.GetContextDef, obj.Reporting);
             
             output_directory = framework_app_def.GetOutputDirectory;
+            CoreDiskUtilities.CreateDirectoryAndAddPathIfNotExisting(output_directory);
             files_to_compile = framework_app_def.GetFilesToCompile(reporting);
             obj.FrameworkSingleton.CompileMexFileIfRequired(files_to_compile, output_directory, obj.Reporting);
         end
