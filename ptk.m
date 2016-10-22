@@ -20,6 +20,7 @@ updated = PTKUpdate;
 
 % We may need to add new paths as a result of an update
 if updated
+    clear all classes
     PTKAddPaths force;
 end
 
