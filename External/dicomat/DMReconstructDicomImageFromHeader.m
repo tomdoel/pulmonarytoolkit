@@ -22,6 +22,12 @@ function image_data = DMReconstructDicomImageFromHeader(header, is_little_endian
         error('DMReconstructDicomImageFromHeader:UnsupportedPhotometricInterpretation', 'Jpeg Dicom images are not supported');
     end
     
+    transfer_syntax = header.TransferSyntaxUID;
+    if ~(strcmp(transfer_syntax, '1.2.840.10008.1.2') || ... % Implicit VR little endian
+         strcmp(transfer_syntax, '1.2.840.10008.1.2.1'))      % Explicit VR little endian
+        error('DMReconstructDicomImageFromHeader:UnsupportedTransferSyntax', 'Jpeg and Jpeg2000 Dicom images are not supported');
+    end
+    
     rows = header.Rows;
     cols = header.Columns;
     samples_per_pixel = header.SamplesPerPixel;
