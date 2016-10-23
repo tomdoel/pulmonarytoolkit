@@ -46,14 +46,17 @@ classdef (Sealed) PTKFrameworkSingleton < handle
     methods
         function CompileMexFileIfRequired(obj, files_to_compile, output_directory, reporting)
             % Recompiles mex files if they have changed
-            
-            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, false, ' Run PTKMain.Recompile() to force recompilation.', reporting);
+            if ~isdeployed
+                CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, false, ' Run PTKMain.Recompile() to force recompilation.', reporting);
+            end
         end
         
         function Recompile(obj, files_to_compile, output_directory, reporting)
             % Forces recompilation of mex files
             
-            CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, true, ' Run PTKMain.Recompile() to force recompilation.', reporting);
+            if ~isdeployed
+                CoreCompileMexFiles(obj.MexCache, output_directory, files_to_compile, true, ' Run PTKMain.Recompile() to force recompilation.', reporting);
+            end
         end
         
         function RebuildDatabase(obj, reporting)

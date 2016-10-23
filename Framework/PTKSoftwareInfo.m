@@ -18,7 +18,7 @@ classdef PTKSoftwareInfo < handle
     properties (Constant)
         
         % Version numbers
-        Version = '0.6.3'
+        Version = '0.6.4'
         DicomVersion = '0.1'
         DiskCacheSchema = '0.1'
         PTKVersion = '2'
@@ -54,6 +54,7 @@ classdef PTKSoftwareInfo < handle
         ApplicationSettingsFolderName = 'TDPulmonaryToolkit'
         SharedPluginDirectoryName = 'SharedPlugins'
         PluginDirectoryName = 'Plugins'
+        ScriptsDirectoryName = 'Scripts'
         GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')
         GuiToolDirectoryName = fullfile('Gui', 'Toolbar')
         MexSourceDirectory = fullfile('Library', 'mex')

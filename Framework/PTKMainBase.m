@@ -60,6 +60,7 @@ classdef PTKMainBase < CoreBaseClass
             obj.FrameworkSingleton = PTKFrameworkSingleton.GetFrameworkSingleton(framework_app_def.GetContextDef, obj.Reporting);
             
             output_directory = framework_app_def.GetOutputDirectory;
+            CoreDiskUtilities.CreateDirectoryAndAddPathIfNotExisting(output_directory);
             files_to_compile = framework_app_def.GetFilesToCompile(reporting);
             obj.FrameworkSingleton.CompileMexFileIfRequired(files_to_compile, output_directory, obj.Reporting);
         end
@@ -194,6 +195,18 @@ classdef PTKMainBase < CoreBaseClass
             obj.GetImageDatabase.DeleteSeries(series_uids, obj.Reporting);
         end
         
+        function output = RunScript(obj, script_name, varargin)
+            if nargin < 3
+                parameters = [];
+            end
+            try
+                script_class = feval(script_name);
+                output = script_class.RunScript(obj, obj.Reporting, varargin{:});
+            catch ex
+                obj.Reporting.Error('PTKMainBase:ScriptFailure', ['The script ' script_name ' failed with the following error: ' ex.message]);
+                output = [];
+            end
+        end
     end
     
     methods (Access = private)

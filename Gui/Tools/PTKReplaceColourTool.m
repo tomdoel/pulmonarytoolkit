@@ -41,6 +41,7 @@ classdef PTKReplaceColourTool < PTKTool
         OverlayChangeLock
         
         ContextMenu
+        LastValidCentrepoint
     end
     
     methods
@@ -116,6 +117,7 @@ classdef PTKReplaceColourTool < PTKTool
         
         function InitialiseEditMode(obj)
             obj.Colour = 1;
+            obj.LastValidCentrepoint = [];
             if ~isempty(obj.ViewerPanel.OverlayImage)
                 if obj.ViewerPanel.OverlayImage.ImageExists
                     obj.Brush = CoreImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.ViewerPanel.PaintBrushSize);
@@ -153,8 +155,9 @@ classdef PTKReplaceColourTool < PTKTool
 %             end
             
             obj.FromColour = segmentation_colour;
+            obj.LastValidCentrepoint = [];
             
-            obj.ApplyBrush(coords);            
+            obj.ApplyBrush(coords);
         end
         
         function ApplyBrush(obj, coords)
@@ -203,6 +206,20 @@ classdef PTKReplaceColourTool < PTKTool
                 connected_components_structure =  bwconncomp(subimage_mask, 6);
                 labeled_components = labelmatrix(connected_components_structure);
                 central_component_label = labeled_components(midpoint(1), midpoint(2), midpoint(3));
+                
+                % Dragging the mouse can move the centrepoint over the
+                % background, so we cache the last valid centrepoint
+                if central_component_label == 0
+                    if ~isempty(obj.LastValidCentrepoint)
+                        midpoint = obj.LastValidCentrepoint;
+                    end
+                    central_component_label = labeled_components(midpoint(1), midpoint(2), midpoint(3));
+                    if central_component_label == 0
+                        return;
+                    end
+                else
+                    obj.LastValidCentrepoint = midpoint;
+                end
                 central_component = labeled_components == central_component_label;
                 subimage(central_component) = obj.Colour;
             end
@@ -228,6 +245,11 @@ classdef PTKReplaceColourTool < PTKTool
         end
         
         function MouseDragged(obj, coords, last_coords)
+            if obj.Enabled
+                if obj.ViewerPanel.OverlayImage.ImageExists
+                    obj.ApplyBrush(coords);
+                end
+            end            
         end
         
         function image_coords = GetImageCoordinates(obj, coords)

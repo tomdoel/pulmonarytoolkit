@@ -187,6 +187,7 @@ classdef PTKDiskUtilities
         function [new_structure, next_index] = ConvertStructAndSaveRawImageData(old_structure, file_path, filename_base, next_index, compression, reporting)
             if isstruct(old_structure)
                 field_names = fieldnames(old_structure);
+                new_structure = struct;
                 for field = field_names'
                     field_name = field{1};
                     [new_structure.(field_name), next_index] = PTKDiskUtilities.ConvertStructAndSaveRawImageData(old_structure.(field_name), file_path, filename_base, next_index, compression, reporting);

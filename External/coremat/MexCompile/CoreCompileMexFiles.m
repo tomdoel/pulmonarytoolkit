@@ -187,7 +187,11 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
             cached_mex_file = cached_mex_file_info(mex_file.Name);
             
             file_info = dir(fullfile(mex_file.Path, [mex_file.Name '.' mex_file.Extension]));
-            current_file_timestamp = file_info.date;
+            if numel(file_info) > 0
+                current_file_timestamp = file_info.date;
+            else
+                current_file_timestamp = [];
+            end
             
             % Copy across the cached values
             mex_file.LastSuccessfulCompiledVersion = cached_mex_file.LastSuccessfulCompiledVersion;
