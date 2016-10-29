@@ -5,10 +5,10 @@ function raw_image = CoreLoadRawImage(file_path, raw_filename, data_type, image_
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %
+    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
+    %    
     
     full_raw_filename = fullfile(file_path, raw_filename);
     if ~exist(full_raw_filename, 'file');

@@ -1,4 +1,4 @@
-classdef PTK < PTKPoint
+classdef PTKCentrelinePoint < PTKPoint
     % PTKCentrelinePoint. A class for storing points on the centreline
     %
     %
