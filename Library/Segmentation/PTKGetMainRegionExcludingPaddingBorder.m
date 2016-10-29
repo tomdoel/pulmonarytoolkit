@@ -16,7 +16,7 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
     %     minimum_region_volume_mm3 (optional) - ignore any regions below this
     %         threshold
     %
-    %     reporting (optional) - an object implementing the PTKReporting
+    %     reporting (optional) - an object implementing the CoreReporting
     %         interface for reporting progress and warnings
     %
     % Outputs:

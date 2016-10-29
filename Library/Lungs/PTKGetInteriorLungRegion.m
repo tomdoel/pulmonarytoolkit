@@ -7,7 +7,7 @@ function mask = PTKGetInteriorLungRegion(lung_roi, reporting)
     %
     %     lung_image - the full original lung volume stored as a PTKImage.
     %
-    %     reporting (optional) - an object implementing the PTKReporting
+    %     reporting (optional) - an object implementing the CoreReporting
     %         interface for reporting progress and warnings
     %
     %
