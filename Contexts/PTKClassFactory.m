@@ -10,8 +10,16 @@ classdef PTKClassFactory < handle
     %    
     
     methods
-        function results_info = CreatePluginResultsInfo(~)
-            results_info = PTKPluginResultsInfo;
+        function results_info = CreatePluginResultsInfo(~, varargin)
+            results_info = PTKPluginResultsInfo(varargin{:});
+        end
+        
+        function results_info = CreateOutputInfo(~, varargin)
+            results_info = PTKOutputInfo(varargin{:});
+        end
+        
+        function results_info = CreateEmptyOutputInfo(~)
+            results_info = PTKOutputInfo.empty;
         end
     end
 end

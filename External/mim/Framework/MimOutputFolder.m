@@ -18,6 +18,7 @@ classdef MimOutputFolder < CoreBaseClass
     properties (Access = private)
         Config % Used to fetch the load/save name
         Directories % Class for fetching base output directory
+        FrameworkAppDef % Used for generating new classes using class factory
         
         OutputFolder % Caches the output folder for this dataset        
         OutputRecords % Records of files stored in the Output folder
@@ -34,10 +35,11 @@ classdef MimOutputFolder < CoreBaseClass
             obj.Config = framework_app_def.GetFrameworkConfig;
             obj.Directories = framework_app_def.GetFrameworkDirectories;
             obj.DatasetDiskCache = dataset_disk_cache;
+            obj.FrameworkAppDef = framework_app_def;
             obj.ImageTemplates = image_templates;
             obj.ImageUid = image_info.ImageUid;
             
-            obj.OutputRecords = MimOutputInfo.empty;
+            obj.OutputRecords = obj.FrameworkAppDef.GetClassFactory.CreateEmptyOutputInfo;
             
             % Loads cached template data
             obj.Load(reporting);
@@ -48,7 +50,7 @@ classdef MimOutputFolder < CoreBaseClass
             output_folder = obj.GetOutputPath(dataset_stack, reporting);
             file_path = fullfile(output_folder, subfolder_name);
             mim_file_name = CoreFilename(file_path, file_name);
-            new_record = MimOutputInfo(plugin_name, description, mim_file_name, date_text);
+            new_record = obj.FrameworkAppDef.GetClassFactory.CreateOutputInfo(plugin_name, description, mim_file_name, date_text);
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
             MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting);
             obj.AddRecord(new_record, reporting);
@@ -60,7 +62,7 @@ classdef MimOutputFolder < CoreBaseClass
             output_folder = obj.GetOutputPath(dataset_stack, reporting);
             file_path = fullfile(output_folder, subfolder_name);
             mim_file_name = CoreFilename(file_path, file_name);
-            new_record = MimOutputInfo(plugin_name, description, mim_file_name, date_text);
+            new_record = obj.FrameworkAppDef.GetClassFactory.CreateOutputInfo(plugin_name, description, mim_file_name, date_text);
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
             CoreDiskUtilities.SaveFigure(figure_handle, fullfile(file_path, file_name));
             obj.AddRecord(new_record, reporting);
@@ -72,7 +74,7 @@ classdef MimOutputFolder < CoreBaseClass
             output_folder = obj.GetOutputPath(dataset_stack, reporting);
             file_path = fullfile(output_folder, subfolder_name);
             mim_file_name = CoreFilename(file_path, file_name);
-            new_record = MimOutputInfo(plugin_name, description, mim_file_name, date_text);
+            new_record = obj.FrameworkAppDef.GetClassFactory.CreateOutputInfo(plugin_name, description, mim_file_name, date_text);
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
             MimCreateSurfaceMesh(file_path, file_name, segmentation, smoothing_size, small_structures, coordinate_system, template_image, reporting);
             obj.AddRecord(new_record, reporting);
@@ -82,7 +84,7 @@ classdef MimOutputFolder < CoreBaseClass
         function RecordNewFileAdded(obj, plugin_name, file_path, file_name, description, reporting)
             date_text = date;
             mim_file_name = CoreFilename(file_path, file_name);
-            new_record = MimOutputInfo(plugin_name, description, mim_file_name, date_text);
+            new_record = obj.FrameworkAppDef.GetClassFactory.CreateOutputInfo(plugin_name, description, mim_file_name, date_text);
             obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
         end

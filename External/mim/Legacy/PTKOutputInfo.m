@@ -1,4 +1,4 @@
-classdef PTKOutputInfo < handle
+classdef PTKOutputInfo < MimOutputInfo
     % PTKOutputInfo. Legacy support class for backwards compatibility. Replaced by MimOutputInfo
     %
     %     You should not use this class within your own code. It is intended to
@@ -10,19 +10,10 @@ classdef PTKOutputInfo < handle
     %     Author: Tom Doel, 2014.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
-
-    properties
-        Filenames
-        Description
-        DateCreated
-        PluginName
-    end
     
-    methods (Static)
-        function obj = loadobj(obj)
-            % This method is called when the object is loaded from disk.
-            
-            obj = MimOutputInfo(obj.PluginName, obj.Description, obj.Filenames, obj.DateCreated);
+    methods
+        function obj = PTKOutputInfo(varargin)
+            obj = obj@MimOutputInfo(varargin{:});
         end
     end
 end
