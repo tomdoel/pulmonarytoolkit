@@ -15,6 +15,7 @@ classdef PTKFrameworkAppDef < handle
         Config
         ContextDef
         Directories
+        ClassFactory
     end
     
     methods
@@ -22,10 +23,15 @@ classdef PTKFrameworkAppDef < handle
             obj.Config = MimConfig;
             obj.ContextDef = PTKContextDef;
             obj.Directories = MimDirectories(obj.GetApplicationParentDirectory, obj.Config);
+            obj.ClassFactory = PTKClassFactory;
         end
         
         function context_def = GetContextDef(obj)
             context_def = obj.ContextDef;
+        end
+        
+        function class_factory = GetClassFactory(obj)
+            class_factory = obj.ClassFactory;
         end
         
         function parent_directory = GetApplicationParentDirectory(obj)
