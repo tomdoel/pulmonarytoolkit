@@ -10,7 +10,7 @@ function PTKAddPaths(varargin)
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    PTKAddPaths_Version_Number = 3;
+    PTKAddPaths_Version_Number = 4;
     
     persistent PTK_PathsHaveBeenSet
     
@@ -39,7 +39,6 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Dicom');
         path_folders{end + 1} = fullfile('Library', 'File');
         path_folders{end + 1} = fullfile('Library', 'GuiComponents');
-        path_folders{end + 1} = fullfile('Library', 'Interfaces');
         path_folders{end + 1} = fullfile('Library', 'Lobes');
         path_folders{end + 1} = fullfile('Library', 'Lungs');
         path_folders{end + 1} = fullfile('Library', 'Registration');
@@ -47,7 +46,6 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Test');
         path_folders{end + 1} = fullfile('Library', 'Types');
         path_folders{end + 1} = fullfile('Library', 'Vessels');
-        path_folders{end + 1} = fullfile('Library', 'Utilities');
         path_folders{end + 1} = fullfile('Library', 'Visualisation');
         path_folders{end + 1} = 'Framework';
         
