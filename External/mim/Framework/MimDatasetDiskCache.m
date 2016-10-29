@@ -26,11 +26,13 @@ classdef MimDatasetDiskCache < handle
         ManualSegmentationsDiskCache % Stores manual segmentations
         MarkersDiskCache % Stores marker points
         FrameworkDatasetDiskCache % Stores framework cache files that are stored for each dataset
+        FrameworkAppDef
     end
     
     methods
         function obj = MimDatasetDiskCache(dataset_uid, framework_app_def, reporting)
             obj.Config = framework_app_def.GetFrameworkConfig;
+            obj.FrameworkAppDef = framework_app_def;
             directories = framework_app_def.GetFrameworkDirectories;
             obj.ManualSegmentationsDiskCache = MimDiskCache(directories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
             obj.ResultsDiskCache = MimDiskCache(directories.GetCacheDirectory, dataset_uid, obj.Config, reporting);
@@ -189,12 +191,8 @@ classdef MimDatasetDiskCache < handle
         function LoadCachedPluginResultsFile(obj, reporting)
             cached_plugin_info = obj.LoadData(obj.Config.CachedPluginInfoFileName, reporting);
             if isempty(cached_plugin_info)
-                obj.PluginResultsInfo = MimPluginResultsInfo;
-            else
-                if isa(cached_plugin_info, 'PTKPluginResultsInfo')
-                    cached_plugin_info = cached_plugin_info.ConvertToMimInfo;
-                end
-                
+                obj.PluginResultsInfo = obj.FrameworkAppDef.GetClassFactory.CreatePluginResultsInfo;
+            else                
                 if ~isa(cached_plugin_info, 'MimPluginResultsInfo')
                     reporting.Error('MimDatasetDiskCache:UnrecognisedFormat', 'The cached plugin info is not of the recognised class type');
                 end

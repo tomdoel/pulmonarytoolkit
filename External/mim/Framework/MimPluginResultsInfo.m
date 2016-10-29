@@ -19,7 +19,7 @@ classdef MimPluginResultsInfo < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties (Access = private)
+    properties (Access = protected)
         ResultsInfo
     end
     
