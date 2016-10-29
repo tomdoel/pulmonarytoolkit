@@ -1,4 +1,4 @@
-classdef PTKDatasetStackItem < handle
+classdef PTKDatasetStackItem < MimDatasetStackItem
     % PTKDatasetStackItem. Legacy support class for backwards compatibility. Replaced by MimDatasetStackItem
     %
     %     You should not use this class within your own code. It is intended to
@@ -11,12 +11,9 @@ classdef PTKDatasetStackItem < handle
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-   methods (Static)
-        function obj = loadobj(property_struct)
-            % This method is called when the object is loaded from disk.
-            % Due to the class change, we expect property_struct to be a struct
-            
-            obj = MimDatasetStackItem.loadobj(property_struct);
+    methods
+        function obj = PTKDatasetStackItem(varargin)
+            obj = obj@MimDatasetStackItem(varargin{:});
         end
     end
 end

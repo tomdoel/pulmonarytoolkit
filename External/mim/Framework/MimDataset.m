@@ -67,9 +67,9 @@ classdef MimDataset < CoreBaseClass
     
     methods
         
-        function obj = MimDataset(image_info, dataset_disk_cache, linked_dataset_chooser_factory, reporting)
+        function obj = MimDataset(image_info, dataset_disk_cache, linked_dataset_chooser_factory, class_factory, reporting)
             % MimDataset is created by the MimMain class
-            obj.DatasetStack = MimDatasetStack;
+            obj.DatasetStack = MimDatasetStack(class_factory);
             obj.Reporting = reporting;
             obj.LinkedDatasetChooser = linked_dataset_chooser_factory.GetLinkedDatasetChooser(image_info, dataset_disk_cache, reporting);
             

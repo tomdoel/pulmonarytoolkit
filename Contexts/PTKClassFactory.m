@@ -21,5 +21,13 @@ classdef PTKClassFactory < handle
         function results_info = CreateEmptyOutputInfo(~)
             results_info = PTKOutputInfo.empty;
         end
+        
+        function dataset_stack_item = CreateDatasetStackItem(~, varargin)
+            dataset_stack_item = PTKDatasetStackItem(varargin{:});
+        end
+        
+        function dataset_stack_item = CreateEmptyDatasetStackItem(~)
+            dataset_stack_item = PTKDatasetStackItem.empty;
+        end
     end
 end

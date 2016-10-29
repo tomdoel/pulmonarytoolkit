@@ -33,11 +33,14 @@ classdef MimDatasetStack < handle
         % The stack - an array of MimDatasetStackItem objects; one for each plugin which is
         % currently being executed.
         DatasetStack
+        
+        ClassFactory % We store a class factory for creating new MimDatasetStackItem objects
     end
     
     methods
-        function obj =  MimDatasetStack
-            obj.DatasetStack = MimDatasetStackItem.empty;
+        function obj =  MimDatasetStack(class_factory)
+            obj.ClassFactory = class_factory;
+            obj.DatasetStack = obj.ClassFactory.CreateEmptyDatasetStackItem;
         end
     
         function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer, plugin_version, reporting)
@@ -52,7 +55,7 @@ classdef MimDatasetStack < handle
             attributes.IsEditedResult = is_edited_result;
             attributes.PluginVersion = plugin_version;
             instance_identifier = MimDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
-            cache_info = MimDatasetStackItem(instance_identifier, MimDependencyList, ignore_dependency_checks, start_timer, reporting);
+            cache_info = obj.ClassFactory.CreateDatasetStackItem(instance_identifier, MimDependencyList, ignore_dependency_checks, start_timer, reporting);
             obj.DatasetStack(end + 1) = cache_info;
         end
         
@@ -79,7 +82,7 @@ classdef MimDatasetStack < handle
             % Clear the stack. This may be necessary if a plugin failed during
             % execution, leaving the call stack in a bad state.
         
-            obj.DatasetStack = MimDatasetStackItem.empty;
+            obj.DatasetStack = obj.ClassFactory.CreateEmptyDatasetStackItem;
         end
         
         function PauseTiming(obj)

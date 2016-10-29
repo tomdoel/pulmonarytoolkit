@@ -179,7 +179,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             attributes.IsEditedResult = true;
             attributes.PluginVersion = plugin_version;
             instance_identifier = MimDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
-            new_cache_info = MimDatasetStackItem(instance_identifier, MimDependencyList, false, false, reporting);
+            new_cache_info = obj.FrameworkAppDef.GetClassFactory.CreateDatasetStackItem(instance_identifier, MimDependencyList, false, false, reporting);
             new_cache_info.MarkEdited;
 
             obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, result, new_cache_info, reporting);

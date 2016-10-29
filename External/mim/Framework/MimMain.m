@@ -104,7 +104,7 @@ classdef MimMain < CoreBaseClass
                 obj.Reporting.Error(MimErrors.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
-            dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
+            dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.FrameworkSingleton.GetClassFactory, obj.ReportingWithCache);
             
             obj.RunCustomPostLoadFunction(dataset_uid, dataset);
         end
@@ -117,7 +117,7 @@ classdef MimMain < CoreBaseClass
             
             obj.FrameworkSingleton.AddToDatabase(image_info.ImageUid, obj.Reporting)
 
-            dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.ReportingWithCache);
+            dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.FrameworkSingleton.GetClassFactory, obj.ReportingWithCache);
             
             obj.RunCustomPostLoadFunction(dataset.GetImageInfo.ImageUid, dataset);
         end
