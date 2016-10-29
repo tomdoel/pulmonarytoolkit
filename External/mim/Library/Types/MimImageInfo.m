@@ -39,6 +39,12 @@ classdef MimImageInfo
             % Legacy conversion
             if isa(value, 'PTKImageFileFormat')
                 obj.ImageFileFormat = value.MimImageFileFormat;                
+            elseif isstruct(value)
+                if isfield(value, 'ValueNames') && numel(value.ValueNames) == 1
+                    obj.ImageFileFormat = MimImageFileFormat.(value.ValueNames{1});
+                else
+                    obj.ImageFileFormat = [];
+                end
             else
                 obj.ImageFileFormat = value;
             end
