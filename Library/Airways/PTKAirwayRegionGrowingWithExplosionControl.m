@@ -138,7 +138,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
         linear_offsets_neighbours = linear_offsets_global_jk;
     else
         dirs_18 = [2, 4, 5, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 23, 24, 26];
-        linear_offsets_global_18 = PTKImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs_18, image_size_global);
+        linear_offsets_global_18 = MimImageCoordinateUtilities.GetLinearOffsetsForDirections(dirs_18, image_size_global);
         linear_offsets_neighbours = linear_offsets_global_18;        
     end
 
