@@ -142,7 +142,7 @@ classdef MimOutputFolder < CoreBaseClass
         function CreateNewOutputFolder(obj, dataset_stack, reporting)
             root_output_path = obj.Directories.GetOutputDirectoryAndCreateIfNecessary;
             
-            template = obj.ImageTemplates.GetTemplateImage(PTKContext.OriginalImage, dataset_stack, reporting);
+            template = obj.ImageTemplates.GetTemplateImage(obj.FrameworkAppDef.GetContextDef.GetOriginalDataContext, dataset_stack, reporting);
             metadata = template.MetaHeader;
             
             if isfield(metadata, 'PatientName')

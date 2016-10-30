@@ -60,6 +60,22 @@ classdef PTKContextDef < handle
             context = PTKContextSet.LungROI;
         end
         
+        function context = GetExportContext(~)
+            % Returns the preferred context used when exporting an image.
+            % Typically this might be the same as the original context so
+            % that data are exported and imported in the same context 
+            context = PTKContext.OrignalImage;
+        end
+        
+        function context = GetOriginalDataContext(~)
+            % Returns the context of the data when it was loaded.
+            % The purpose is to aid fetching a template image where the 
+            % context is not important, for example if considering the
+            % metadata. Using the original context prevents having to
+            % create and fetch different templates
+            context = PTKContext.OrignalImage;
+        end
+        
         function matches = ContextSetMatches(~, plugin_context_set, requested_context_set)
             % Returns true if the plugin_context_set can be used to
             % generate the context_set without conversion
