@@ -54,6 +54,7 @@ classdef MimImageTemplates < CoreBaseClass
             obj.Config = framework_app_def.GetFrameworkConfig;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.DatasetResults = dataset_results;
+            obj.FrameworkAppDef = framework_app_def;
             
             % Create empty maps. Maps must be initialised in the constructor,
             % not as default property values. Initialising as default property
@@ -121,11 +122,8 @@ classdef MimImageTemplates < CoreBaseClass
             % empty image, the mask always has a binary image representing the lungs or
             % regions of the lungs corresponding to the context
             
-            if (context == PTKContext.LungROI) || (context == PTKContext.OriginalImage)
-                template = obj.GetTemplateImage(PTKContext.Lungs, dataset_stack, reporting);
-            else
-                template = obj.GetTemplateImage(context, dataset_stack, reporting);
-            end
+            template_mask_context = obj.FrameworkAppDef.GetContextDef.GetTemplateMaskContext(context);
+            template = obj.GetTemplateImage(template_mask_context, dataset_stack, reporting);
             
             template.CropToFit;
         end

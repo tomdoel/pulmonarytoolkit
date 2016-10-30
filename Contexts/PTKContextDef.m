@@ -108,7 +108,20 @@ classdef PTKContextDef < handle
             end
         end
         
-
+        function template_mask_context = GetTemplateMaskContext(~, context)
+            % Returns the template that should be used to generate a binary
+            % mask for the specified context. Not all contexts have binary
+            % masks (some can be empty images with crop regions); hence ths
+            % function provides the context which does contain an
+            % appropriate mask
+            
+            if (context == PTKContext.LungROI) || (context == PTKContext.OriginalImage)
+                template_mask_context = PTKContext.Lungs;
+            else
+                template_mask_context = context;
+            end
+        end
+        
         function context_labels = GetContextLabels(~)
             context_labels = [
                 PTKContext.Lungs, PTKContext.RightLung, PTKContext.LeftLung, ...
