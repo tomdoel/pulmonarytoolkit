@@ -1,10 +1,10 @@
-function PTKSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_list, coordinate_system, template_image)
-    % PTKSaveListOfPointsAndValues. Exports a list of coordinates and values
+function MimSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_list, coordinate_system, template_image)
+    % MimSaveListOfPointsAndValues. Exports a list of coordinates and values
     %
     %     Syntax
     %     ------
     %
-    %         PTKSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_list, template_image, reporting)
+    %         MimSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_list, template_image, reporting)
     %
     %             file_path       is the path where the output file is to be 
     %                             stored

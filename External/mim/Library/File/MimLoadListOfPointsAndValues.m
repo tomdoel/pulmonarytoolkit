@@ -1,14 +1,14 @@
-function [xc, yc, zc, value_list] = CoreLoadListOfPointsAndValues(file_path, file_name, reporting)
+function [xc, yc, zc, value_list] = MimLoadListOfPointsAndValues(file_path, file_name, reporting)
     % CoreLoadListOfPointsAndValues. Load a list of values and coordinates from a
     %     comma-separated text file
     %
     %
     %     Licence
     %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
+    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %    
+    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     
     
     full_filename = fullfile(file_path, file_name);
     fid = fopen(full_filename);
