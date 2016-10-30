@@ -1,5 +1,5 @@
-classdef PTKPatientBrowserFactory < CoreBaseClass
-    % PTKPatientBrowserFactory. Part of the gui for the Pulmonary Toolkit.
+classdef MimPatientBrowserFactory < CoreBaseClass
+    % MimPatientBrowserFactory. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
@@ -26,7 +26,7 @@ classdef PTKPatientBrowserFactory < CoreBaseClass
     end
     
     methods
-        function obj = PTKPatientBrowserFactory(controller, image_database, app_def, state, settings, title, reporting)
+        function obj = MimPatientBrowserFactory(controller, image_database, app_def, state, settings, title, reporting)
             obj.Controller = controller;
             obj.ImageDatabase = image_database;
             obj.AppDef = app_def;
@@ -50,7 +50,7 @@ classdef PTKPatientBrowserFactory < CoreBaseClass
             % Make Patient Browser visible or bring to the front
             
             if isempty(obj.PatientBrowser)
-                obj.PatientBrowser = PTKPatientBrowser(obj.Controller, obj.ImageDatabase, obj.AppDef, obj.InitialPosition, obj.Title, obj.Reporting);
+                obj.PatientBrowser = MimPatientBrowser(obj.Controller, obj.ImageDatabase, obj.AppDef, obj.InitialPosition, obj.Title, obj.Reporting);
                 obj.PatientBrowser.SelectSeries(obj.PatientBrowserSelectedPatientId, obj.PatientBrowserSelectedUid);
                 
                 obj.PatientBrowser.Show;

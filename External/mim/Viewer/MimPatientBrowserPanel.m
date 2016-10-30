@@ -1,10 +1,10 @@
-classdef PTKPatientBrowserPanel < GemPanel
-    % PTKPatientBrowserPanel.  Part of the gui for the Pulmonary Toolkit.
+classdef MimPatientBrowserPanel < GemPanel
+    % MimPatientBrowserPanel.  Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPatientBrowserPanel represents the main panel of the Patient Browser.
+    %     MimPatientBrowserPanel represents the main panel of the Patient Browser.
     %
     %
     %
@@ -22,7 +22,7 @@ classdef PTKPatientBrowserPanel < GemPanel
     end
     
     methods
-        function obj = PTKPatientBrowserPanel(parent, patient_database, gui_callback)
+        function obj = MimPatientBrowserPanel(parent, patient_database, gui_callback)
             obj = obj@GemPanel(parent);
             obj.AllPatientsSlidingPanel = PTKAllPatientsSlidingPanel(obj, patient_database, gui_callback);
             obj.ListOfPatientsPanel = PTKListOfPatientsPanel(obj, obj.AllPatientsSlidingPanel, patient_database, gui_callback);

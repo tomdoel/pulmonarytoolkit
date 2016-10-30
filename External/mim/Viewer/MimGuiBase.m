@@ -120,13 +120,13 @@ classdef MimGuiBase < GemFigure
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
-            obj.PatientBrowserFactory = PTKPatientBrowserFactory(combined_controller, obj.GuiDataset.GetImageDatabase, obj.AppDef, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'Patient Browser : Pulmonary Toolkit', obj.Reporting);
+            obj.PatientBrowserFactory = MimPatientBrowserFactory(combined_controller, obj.GuiDataset.GetImageDatabase, obj.AppDef, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'Patient Browser : Pulmonary Toolkit', obj.Reporting);
 
             if obj.AppDef.MatNatEnabled
                 % The MatNat Browser factory manages lazy creation of the
                 % MatNat Browser. This may take some time to load as it has to
                 % get the information from the server
-                obj.MatNatBrowserFactory = PTKPatientBrowserFactory(combined_controller, matnat_database, obj.AppDef, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'MatNat', obj.Reporting);
+                obj.MatNatBrowserFactory = MimPatientBrowserFactory(combined_controller, matnat_database, obj.AppDef, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'MatNat', obj.Reporting);
             end
             
             % Map of all plugins visible in the GUI

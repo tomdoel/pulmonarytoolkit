@@ -1,5 +1,5 @@
-classdef PTKPatientBrowser < GemFigure
-    % PTKPatientBrowser. Gui for choosing a dataset to view
+classdef MimPatientBrowser < GemFigure
+    % MimPatientBrowser. Gui for choosing a dataset to view
     %
     %
     %
@@ -20,14 +20,14 @@ classdef PTKPatientBrowser < GemFigure
     end
 
     methods
-        function obj = PTKPatientBrowser(controller, image_database, app_def, position, title, reporting)
+        function obj = MimPatientBrowser(controller, image_database, app_def, position, title, reporting)
             obj = obj@GemFigure(title, [], reporting);
             obj.StyleSheet = app_def.GetDefaultStyleSheet;
             obj.Controller = controller;
             obj.ArrowPointer = 'hand';
             obj.LockLoad = false;
 
-            obj.BrowserPanel = PTKPatientBrowserPanel(obj, image_database, obj);
+            obj.BrowserPanel = MimPatientBrowserPanel(obj, image_database, obj);
             obj.AddChild(obj.BrowserPanel);
             
             obj.Resize(position);
@@ -74,7 +74,7 @@ classdef PTKPatientBrowser < GemFigure
         
         function SeriesClicked(obj, patient_id, series_uid)
             if obj.LockLoad
-                obj.Reporting.ShowMessage('PTKPatientBrowser:LoadLock', 'The dataset cannot be loaded because a previous load did not complete. Close and re-open the Patient Browser to allow loading to resume.');
+                obj.Reporting.ShowMessage('MimPatientBrowser:LoadLock', 'The dataset cannot be loaded because a previous load did not complete. Close and re-open the Patient Browser to allow loading to resume.');
             else
                 obj.LockLoad = true;
                 obj.SelectSeries(patient_id, series_uid);
