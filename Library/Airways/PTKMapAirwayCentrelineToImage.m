@@ -16,7 +16,7 @@ function [airway_mapped_image, airway_tree_root] = PTKMapAirwayCentrelineToImage
     airway_mapped_image = airway_image.BlankCopy;
     
     airway_tree_root = centreline_results.AirwayCentrelineTree;
-    centreline_bronchi_to_do = PTKStack(airway_tree_root);
+    centreline_bronchi_to_do = CoreStack(airway_tree_root);
     
     bronchus_index = uint16(1);
     

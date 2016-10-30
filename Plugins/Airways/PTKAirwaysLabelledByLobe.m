@@ -83,7 +83,7 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
             left_uncertain = [];
             
             % Generate the mapping for the lobes
-            bronchi_to_do = PTKStack(tree_root);
+            bronchi_to_do = CoreStack(tree_root);
             while ~bronchi_to_do.IsEmpty
                 next_bronchus = bronchi_to_do.Pop;
                 bronchus_label = next_bronchus.BronchusIndex;
@@ -146,7 +146,7 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
         end
         
         function airway_mapping = MapTheseBranchesToLabel(airway_mapping, branch_list, label)
-            branches_to_label = PTKStack(branch_list);
+            branches_to_label = CoreStack(branch_list);
             while ~branches_to_label.IsEmpty
                 branch = branches_to_label.Pop;
                 airway_mapping(branch.BronchusIndex + 1) = label;

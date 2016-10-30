@@ -17,10 +17,10 @@ function root_branch = PTKCreateTreeFromNodesAndElements(node_index_list, xc, yc
     
     % Create the root branch
     root_branch = PTKTreeModel;
-    branches_to_do = PTKPair(root_branch, start_nodes(1));
+    branches_to_do = CorePair(root_branch, start_nodes(1));
     
     % We need to keep branches together with their node; easy to do this with a
-    % PTKPair
+    % CorePair
     while ~isempty(branches_to_do)
         next_branch_pair = branches_to_do(end);
         branches_to_do(end) = [];
@@ -44,7 +44,7 @@ function root_branch = PTKCreateTreeFromNodesAndElements(node_index_list, xc, yc
         
         % At a bifurcation, create a new branch for each child
         for child_node = next_node.Children
-            branches_to_do(end + 1) = PTKPair(PTKTreeModel(current_branch), child_node);
+            branches_to_do(end + 1) = CorePair(PTKTreeModel(current_branch), child_node);
         end        
     end
 end

@@ -272,7 +272,7 @@ classdef PTKTreeUtilities < handle
         
         function PruneTree(tree_root)
             % remove each end branch from the tree
-            bronchi_to_do = PTKStack(tree_root);
+            bronchi_to_do = CoreStack(tree_root);
             while ~bronchi_to_do.IsEmpty
                 next_bronchus = bronchi_to_do.Pop;
                 children = next_bronchus.Children;
@@ -289,7 +289,7 @@ classdef PTKTreeUtilities < handle
         function PruneTreeByLength(tree_root, min_length)
             % Recursvely prune each end branch of the tree which is less than the minimum length
             
-            bronchi_to_do = PTKStack(tree_root);
+            bronchi_to_do = CoreStack(tree_root);
             while ~bronchi_to_do.IsEmpty
                 next_bronchus = bronchi_to_do.Pop;
                 children = next_bronchus.Children;
