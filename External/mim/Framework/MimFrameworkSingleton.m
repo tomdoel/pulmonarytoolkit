@@ -105,7 +105,11 @@ classdef (Sealed) MimFrameworkSingleton < handle
         
         function plugin_info_memory_cache = GetPluginInfoMemoryCache(obj)
             plugin_info_memory_cache = obj.PluginInfoMemoryCache;
-        end        
+        end
+
+        function class_factory = GetClassFactory(obj)
+            class_factory = obj.FrameworkAppDef.GetClassFactory;
+        end
     end
     
     methods (Access = private)
