@@ -26,11 +26,11 @@ function MimSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_li
     %        
 
     if nargin < 7
-        reporting.Error('PTKSaveListOfPointsAndValues:BadArguments', 'No coordinate_system parameter specified');
+        reporting.Error('MimSaveListOfPointsAndValues:BadArguments', 'No coordinate_system parameter specified');
     end
     
     if ~isa(coordinate_system, 'MimCoordinateSystem')
-        reporting.Error('PTKSaveListOfPointsAndValues:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
+        reporting.Error('MimSaveListOfPointsAndValues:BadArguments', 'coordinate_system parameter is not of type MimCoordinateSystem');
     end
 
     CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);

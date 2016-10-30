@@ -13,7 +13,7 @@ function [xc, yc, zc, value_list] = MimLoadListOfPointsAndValues(file_path, file
     full_filename = fullfile(file_path, file_name);
     fid = fopen(full_filename);
     if fid < 0
-        reporting.Error('PTKLoadListOfPointsAndValues:FileNotFound', ['The file ' full_filename 'was not found or could not be read']);
+        reporting.Error('MimLoadListOfPointsAndValues:FileNotFound', ['The file ' full_filename 'was not found or could not be read']);
     end
     data = textscan(fid, '%f%f%f%f', 'Delimiter', ',');
     fclose(fid);
