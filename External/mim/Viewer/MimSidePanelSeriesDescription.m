@@ -1,10 +1,10 @@
-classdef PTKSidePanelSeriesDescription < GemListItem
-    % PTKSidePanelSeriesDescription. Part of the gui for the Pulmonary Toolkit.
+classdef MimSidePanelSeriesDescription < GemListItem
+    % MimSidePanelSeriesDescription. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKSidePanelSeriesDescription represents the controls showing series details in the
+    %     MimSidePanelSeriesDescription represents the controls showing series details in the
     %     side panel of the GUI.
     %
     %     Licence
@@ -46,7 +46,7 @@ classdef PTKSidePanelSeriesDescription < GemListItem
     end
     
     methods
-        function obj = PTKSidePanelSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, gui_callback)
+        function obj = MimSidePanelSeriesDescription(parent, modality, study_description, series_description, date, time, num_images, patient_id, uid, gui_callback)
             obj = obj@GemListItem(parent, uid);
             obj.TextHeight = obj.SeriesTextHeight;
             obj.SeriesUid = uid;

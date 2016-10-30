@@ -92,7 +92,7 @@ classdef PTKSeriesSidePanel < GemListBoxWithTitle
             
             for series_index = 1 : length(datasets)
                 series = datasets{series_index};
-                series_item = PTKSidePanelSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, obj.GuiCallback);
+                series_item = MimSidePanelSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, obj.GuiCallback);
                 
                 obj.ListBox.AddItem(series_item);
             end

@@ -1,14 +1,14 @@
-classdef (Sealed) PTKGuiSingleton < handle
-    % PTKGuiSingleton. The singleton used by all instances of PTKGui
+classdef (Sealed) MimGuiSingleton < handle
+    % MimGuiSingleton. The singleton used by all instances of PTKGui
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
     %
-    %     PTKGuiSingleton ensures there is only a single instance for writing
+    %     MimGuiSingleton ensures there is only a single instance for writing
     %     settings to disk, allowing multiple GUI windows to exist simultaneously.
     %
-    %     PTKGuiSingleton is a singleton. It cannot be created using the
-    %     constructor; instead call PTKGuiSingleton.GetGuiSingleton;
+    %     MimGuiSingleton is a singleton. It cannot be created using the
+    %     constructor; instead call MimGuiSingleton.GetGuiSingleton;
     %
     %
     %     Licence
@@ -26,7 +26,7 @@ classdef (Sealed) PTKGuiSingleton < handle
         function gui_singleton = GetGuiSingleton(app_def, reporting)
             persistent GuiSingleton
             if isempty(GuiSingleton) || ~isvalid(GuiSingleton)
-                GuiSingleton = PTKGuiSingleton(app_def, reporting);
+                GuiSingleton = MimGuiSingleton(app_def, reporting);
             end
             gui_singleton = GuiSingleton;
         end
@@ -39,7 +39,7 @@ classdef (Sealed) PTKGuiSingleton < handle
     end
     
     methods (Access = private)
-        function obj = PTKGuiSingleton(app_def, reporting)
+        function obj = MimGuiSingleton(app_def, reporting)
             obj.Settings = PTKSettings.LoadSettings(app_def, reporting);
         end
     end

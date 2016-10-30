@@ -94,7 +94,7 @@ classdef PTKLinkedSeriesSidePanel < GemListBoxWithTitle
                 for series_index = 1 : length(linked_series)
                     series = linked_series{series_index};
                     link_name_text = linked_name_list{series_index};
-                    series_item = PTKSidePanelLinkedSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, link_name_text, obj.GuiCallback);
+                    series_item = MimSidePanelLinkedSeriesDescription(obj.ListBox.GetListBox, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, patient_id, series.SeriesUid, link_name_text, obj.GuiCallback);
                     
                     obj.ListBox.AddItem(series_item);
                 end

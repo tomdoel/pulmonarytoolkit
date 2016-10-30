@@ -1,10 +1,10 @@
-classdef PTKSidePanel < GemPanel
-    % PTKSidePanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimSidePanel < GemPanel
+    % MimSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKSidePanel represents the panel showing patients and series at the
+    %     MimSidePanel represents the panel showing patients and series at the
     %     left side of the PTK GUI.
     %
     %     Licence
@@ -37,7 +37,7 @@ classdef PTKSidePanel < GemPanel
     end
     
     methods
-        function obj = PTKSidePanel(parent, controller, patient_database, state, linked_recorder)
+        function obj = MimSidePanel(parent, controller, patient_database, state, linked_recorder)
             obj = obj@GemPanel(parent);
             
             obj.RightBorder = true;

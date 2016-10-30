@@ -52,7 +52,7 @@ classdef MimGuiBase < GemFigure
     end
     
     methods
-        function obj = PTKGuiCore(app_def, splash_screen)
+        function obj = MimGuiBase(app_def, splash_screen)
 
             % Create the splash screen if it doesn't already exist
             if nargin < 2 || isempty(splash_screen) || ~isa(splash_screen, 'CoreProgressInterface')
@@ -88,7 +88,7 @@ classdef MimGuiBase < GemFigure
             obj.DefaultKeyHandlingObject = obj.ImagePanel;
 
             % Get the singleton, which gives access to the settings
-            obj.GuiSingleton = PTKGuiSingleton.GetGuiSingleton(app_def, obj.Reporting);
+            obj.GuiSingleton = MimGuiSingleton.GetGuiSingleton(app_def, obj.Reporting);
             
             % Load the settings file
             obj.GuiSingleton.GetSettings.ApplySettingsToGui(obj, obj.ImagePanel);
@@ -110,7 +110,7 @@ classdef MimGuiBase < GemFigure
             combined_controller = MimCombinedImageDatabaseController(obj, matnat_database);
             
             % Create the side panel showing available datasets
-            obj.SidePanel = PTKSidePanel(obj, combined_controller, combined_database, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder);
+            obj.SidePanel = MimSidePanel(obj, combined_controller, combined_database, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder);
             obj.AddChild(obj.SidePanel);
             
             % Create the status panel showing image coordinates and
