@@ -19,7 +19,6 @@ classdef PTKSoftwareInfo < handle
         
         % Version numbers
         Version = '0.6.3'
-        DicomVersion = '0.1'
         PTKVersion = '2'
         MatlabMinimumMajorVersion = 7
         MatlabMinimumMinorVersion = 12
@@ -27,14 +26,11 @@ classdef PTKSoftwareInfo < handle
         MatlabAdvisedMinorVersion = 14
 
         % Name of application
-        DicomName = 'TD Pulmonary Toolkit'
-        DicomManufacturer = 'www tomdoel com'
-        DicomStudyDescription = 'TD Pulmonary Toolkit exported images'
         WebsiteUrl = 'https://github.com/tomdoel/pulmonarytoolkit'
 
         % Appearance
         GraphFont = 'Helvetica'
-        GuiFont = 'Helvetica'
+        GuiFont = 'Helvetica' 
         DefaultCategoryName = 'Uncategorised'
         PluginDefaultMode = 'Plugins'
         DefaultModeOnNewDataset = 'Segment'

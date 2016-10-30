@@ -1,4 +1,4 @@
-function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, reporting)
+function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, dicom_metadata, reporting)
     % PTKSaveImageAsDicom. Saves an image in DICOM format, using Matlab's image processing toolbox
     %
     %     Syntax
@@ -19,6 +19,8 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     %                             (e.g. a segmentation), and should be set to false when the 
     %                             pixel data is unaltered from the original
     %                             image (except for cropping or reordering axes)
+    %             dicom_metadata  a structure containing additional manufacturer tags
+    %                             used to consttruct Dicom images
     %             reporting       an object implementing CoreReportingInterface
     %                             for reporting progress and warnings
     %
@@ -61,7 +63,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     % segmentation) then we only preserve selected tags from the metadata.
     if is_secondary_capture
         metadata = [];
-        metadata.SeriesDescription = [PTKSoftwareInfo.DicomName ' : ' image_data.Title];
+        metadata.SeriesDescription = [dicom_metadata.DicomName ' : ' image_data.Title];
     else
         metadata = original_metadata;
         metadata = CopyField('Modality', metadata, original_metadata, image_data.Modality);
@@ -104,7 +106,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     metadata = CopyField('StudyTime', metadata, original_metadata, []);
     metadata = CopyField('SpecificCharacterSet', metadata, original_metadata, []);
     
-    default_study_description = PTKSoftwareInfo.DicomStudyDescription;
+    default_study_description = dicom_metadata.DicomStudyDescription;
     metadata = CopyField('StudyDescription', metadata, original_metadata, default_study_description);
 
     metadata = CopyField('PatientName', metadata, original_metadata, patient_name);
@@ -142,7 +144,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     reordered_image = ReorderImage(image_data, orientation, reporting);
     dicom_coordinates_list = ComputeDicomSliceCoordinates(image_data, orientation);
     
-    DMSaveDicomSeries(full_filename, reordered_image, dicom_coordinates_list, metadata, image_type, PTKSoftwareInfo, reporting);
+    DMSaveDicomSeries(full_filename, reordered_image, dicom_coordinates_list, metadata, image_type, dicom_metadata, reporting);
 end
 
 function reordered_image = ReorderImage(image_data, orientation, reporting)

@@ -11,6 +11,7 @@ classdef PTKAppDef < handle
 
     properties (Access = private)
         FrameworkAppDef
+        DicomMetadata
     end
     
     methods
@@ -96,6 +97,13 @@ classdef PTKAppDef < handle
                 obj.FrameworkAppDef = PTKFrameworkAppDef;
             end
             framework_app_def = obj.FrameworkAppDef;
+        end
+        
+        function dicom_meta_data = GetDicomMetadata(obj)
+            if isempty(obj.DicomMetadata)
+                obj.DicomMetadata = PTKDicomMetadata;
+            end
+            dicom_meta_data = obj.DicomMetadata;
         end
     end
 end

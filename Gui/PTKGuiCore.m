@@ -334,7 +334,7 @@ classdef PTKGuiCore < GemFigure
             image_data = obj.ImagePanel.BackgroundImage;
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             
-            path_name = PTKSaveAs(image_data, patient_name, path_name, false, obj.Reporting);
+            path_name = PTKSaveAs(image_data, patient_name, path_name, false, obj.AppDef.GetDicomMetadata, obj.Reporting);
             if ~isempty(path_name)
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
