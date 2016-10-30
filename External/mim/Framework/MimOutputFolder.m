@@ -52,7 +52,8 @@ classdef MimOutputFolder < CoreBaseClass
             mim_file_name = CoreFilename(file_path, file_name);
             new_record = obj.FrameworkAppDef.GetClassFactory.CreateOutputInfo(plugin_name, description, mim_file_name, date_text);
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
-            MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting);
+            context_list = obj.FrameworkAppDef.GetContextDef.GetContextLabels;
+            MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, context_list, reporting);
             obj.AddRecord(new_record, reporting);
             obj.ChangedFolders{end + 1} = file_path;
         end

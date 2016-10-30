@@ -1,4 +1,4 @@
-function MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, reporting)
+function MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, context_list, reporting)
     % MimSaveTableAsCSV.
     %
     %     filters is used to filter each of the four dimensions of patient name,
@@ -27,7 +27,7 @@ function MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
     for filter_index = 1 : 4
         filter = filters{filter_index};
         if isempty(filter)
-            filters{filter_index} = Sort(table.IndexMaps{filter_index}.keys, filter_index);
+            filters{filter_index} = Sort(table.IndexMaps{filter_index}.keys, filter_index, context_list);
         end
     end
     
@@ -116,10 +116,10 @@ function [pi, mi, ci, si] = GetIndices(file_range_value, row_range_value, col_ra
     si = table_indices(4);
 end
     
-function sorted_values = Sort(values_to_sort, filter_index)
+function sorted_values = Sort(values_to_sort, filter_index, context_list)
     sorted_values = [];
     if filter_index == 3
-        for context = GetContextLabels
+        for context = context_list
             char_context = char(context);
             if ismember(char_context, values_to_sort)
                 sorted_values{end + 1} = char_context;
@@ -132,15 +132,3 @@ function sorted_values = Sort(values_to_sort, filter_index)
     end
 end
 
-function context_labels = GetContextLabels
-    context_labels = [
-        PTKContext.Lungs, PTKContext.RightLung, PTKContext.LeftLung, ...
-        PTKContext.RightUpperLobe, PTKContext.RightMiddleLobe, PTKContext.RightLowerLobe, ...
-        PTKContext.LeftUpperLobe, PTKContext.LeftLowerLobe, ...
-        PTKContext.R_AP, PTKContext.R_P, PTKContext.R_AN, ...
-        PTKContext.R_L, PTKContext.R_M, PTKContext.R_S, ...
-        PTKContext.R_MB, PTKContext.R_AB, PTKContext.R_LB, ...
-        PTKContext.R_PB, PTKContext.L_APP, PTKContext.L_APP2, ...
-        PTKContext.L_AN, PTKContext.L_SL, PTKContext.L_IL, ...
-        PTKContext.L_S, PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB];    
-end
