@@ -1,5 +1,5 @@
-classdef PTKGuiDatasetState < CoreBaseClass
-    % PTKGuiDatasetState. Stores information about the currently loaded series
+classdef MimGuiDatasetState < CoreBaseClass
+    % MimGuiDatasetState. Stores information about the currently loaded series
     %
     %     You do not need to modify this file. To add new functionality, create
     %     new plguins in the Plugins and GuiPlugins folders.

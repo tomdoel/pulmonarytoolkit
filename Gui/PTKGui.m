@@ -1,4 +1,4 @@
-classdef PTKGui < PTKGuiCore
+classdef PTKGui < MimGuiBase
     % PTKGui. The user interface for the TD Pulmonary Toolkit.
     %
     %     To start the user interface, run ptk.m.
@@ -16,7 +16,7 @@ classdef PTKGui < PTKGuiCore
     
     methods
         function obj = PTKGui(splash_screen)
-            obj = obj@PTKGuiCore(PTKAppDef, splash_screen);
+            obj = obj@MimGuiBase(PTKAppDef, splash_screen);
         end
     end
 end

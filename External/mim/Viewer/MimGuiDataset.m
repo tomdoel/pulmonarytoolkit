@@ -1,5 +1,5 @@
-classdef PTKGuiDataset < CoreBaseClass
-    % PTKGuiDataset. Handles the interaction between the GUI and the PTK interfaces
+classdef MimGuiDataset < CoreBaseClass
+    % MimGuiDataset. Handles the interaction between the GUI and the PTK interfaces
     %
     %
     %     You do not need to modify this file. To add new functionality, create
@@ -32,10 +32,10 @@ classdef PTKGuiDataset < CoreBaseClass
     end
     
     methods
-        function obj = PTKGuiDataset(app_def, gui, viewer_panel, settings, reporting)
+        function obj = MimGuiDataset(app_def, gui, viewer_panel, settings, reporting)
             obj.AppDef = app_def;
             obj.ContextDef = app_def.GetContextDef;
-            obj.GuiDatasetState = PTKGuiDatasetState;
+            obj.GuiDatasetState = MimGuiDatasetState;
             obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, app_def, settings, reporting);
             
             obj.Gui = gui;
@@ -167,7 +167,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled');
                 else
-                    obj.Reporting.ShowMessage('PTKGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
+                    obj.Reporting.ShowMessage('MimGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
                 end
             end
         end
@@ -189,7 +189,7 @@ classdef PTKGuiDataset < CoreBaseClass
                 if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled');
                 else
-                    obj.Reporting.ShowMessage('PTKGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
+                    obj.Reporting.ShowMessage('MimGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
                 end
             end
         end
@@ -345,22 +345,22 @@ classdef PTKGuiDataset < CoreBaseClass
                 if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowProgress('Cancelling load');
                     obj.ClearDataset;
-                    obj.Reporting.ShowMessage('PTKGuiDataset:LoadingCancelled', 'User cancelled loading');
+                    obj.Reporting.ShowMessage('MimGuiDataset:LoadingCancelled', 'User cancelled loading');
                 elseif MimErrors.IsErrorUidNotFound(exc.identifier)
                     uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
-                    obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
+                    obj.Reporting.ShowMessage('MimGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
                     delete_image_info = true;
                 elseif MimErrors.IsErrorFileMissing(exc.identifier)
                     uiwait(errordlg('This dataset is missing. It will be removed from the patient browser.', [obj.AppDef.GetName ': Cannot find dataset'], 'modal'));
-                    obj.Reporting.ShowMessage('PTKGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
+                    obj.Reporting.ShowMessage('MimGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
                     delete_image_info = true;
                 elseif MimErrors.IsErrorUnknownFormat(exc.identifier)
                     uiwait(errordlg('This is not an image file or the format is not supported by PTK. It will be removed from the Patient Browser.', [obj.AppDef.GetName ': Cannot load this image'], 'modal'));
-                    obj.Reporting.ShowMessage('PTKGuiDataset:FormatNotSupported', 'This file format is not supported by PTK. I am removing this dataset.');
+                    obj.Reporting.ShowMessage('MimGuiDataset:FormatNotSupported', 'This file format is not supported by PTK. I am removing this dataset.');
                     delete_image_info = true;
                 else
                     uiwait(errordlg(exc.message, [obj.AppDef.GetName ': Cannot load dataset'], 'modal'));
-                    obj.Reporting.ShowMessage('PTKGuiDataset:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
+                    obj.Reporting.ShowMessage('MimGuiDataset:LoadingFailed', ['Failed to load dataset due to error: ' exc.message]);
                 end
 
                 % We do this outside the catch block, in case it throws another exception
@@ -375,7 +375,7 @@ classdef PTKGuiDataset < CoreBaseClass
                             obj.DeleteImageInfo(series_uid);
                         end
                     catch exc
-                        obj.Reporting.ShowMessage('PTKGuiDataset:DeleteImageInfoFailed', ['Failed to delete dataset due to error: ' exc.message]);
+                        obj.Reporting.ShowMessage('MimGuiDataset:DeleteImageInfoFailed', ['Failed to delete dataset due to error: ' exc.message]);
                     end
                 end
                 obj.ClearDatasetKeepPatient;

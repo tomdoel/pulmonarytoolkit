@@ -1,10 +1,8 @@
-classdef PTKGuiCore < GemFigure
-    % PTKGui. The user interface for the TD Pulmonary Toolkit.
+classdef MimGuiBase < GemFigure
+    % MimGuiBase. The base class for MIM user interface applications
     %
-    %     To start the user interface, run ptk.m.
-    %
-    %     You do not need to modify this file. To add new functionality, create
-    %     new plguins in the Plugins and GuiPlugins folders.
+    %     To create an application, inherit from this class and provide an
+    %     app_def object. See MivGui.m for an example.
     % 
     %
     %     Licence
@@ -96,7 +94,7 @@ classdef PTKGuiCore < GemFigure
             obj.GuiSingleton.GetSettings.ApplySettingsToGui(obj, obj.ImagePanel);
             
             % Create the object which manages the current dataset
-            obj.GuiDataset = PTKGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
+            obj.GuiDataset = MimGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             obj.MarkerManager = PTKMarkerPointManager(obj.ImagePanel.MarkerLayer, obj.ImagePanel.MarkerImageSource, obj.ImagePanel.MarkerImageDisplayParameters, obj.ImagePanel, obj, obj.GuiDataset, reporting);
             
