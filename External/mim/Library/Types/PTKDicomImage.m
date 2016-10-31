@@ -8,7 +8,7 @@ classdef PTKDicomImage < PTKImage
     %
     %     In general, you do not need to create PTKDicomImages using the
     %     constructor. You should import data using function such as
-    %     PTKLoadImageFromDicomFiles() which correctly set the metadata.
+    %     MimLoadImageFromDicomFiles() which correctly set the metadata.
     %     Thereafter, use .Copy() to make copies of the image, and .BlankCopy()
     %     followed by .ChangeRawImage() to create derived images. See PTKImage.m
     %     for an example of creating functions which modify images contained in

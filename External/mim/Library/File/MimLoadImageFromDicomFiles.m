@@ -1,10 +1,10 @@
-function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
-    % PTKLoadImageFromDicomFiles. Loads a series of DICOM files into a 3D volume
+function loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, reporting)
+    % MimLoadImageFromDicomFiles. Loads a series of DICOM files into a 3D volume
     %
     %     Syntax
     %     ------
     %
-    %         loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting)
+    %         loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, reporting)
     %
     %             loaded_image    a PTKImage containing the 3D volume
     %
@@ -33,16 +33,16 @@ function loaded_image = PTKLoadImageFromDicomFiles(image_path, filenames, report
     
     if ~isempty(representative_metadata) && isfield(representative_metadata, 'Modality') && ~isempty(representative_metadata.Modality)
         if ~PTKModalityIsSupported(representative_metadata.Modality)
-            reporting.Error('PTKLoadImageFromDicomFiles:ModalityNotSupported', ['PTK does not support the ' representative_metadata.Modality ' modality']);
+            reporting.Error('MimLoadImageFromDicomFiles:ModalityNotSupported', ['PTK does not support the ' representative_metadata.Modality ' modality']);
         end
     end
     
     if isempty(image_volume_wrapper.RawImage)
-        reporting.Error('PTKLoadImageFromDicomFiles:NoPixelData', 'The DICOM file contains no pixel data');
+        reporting.Error('MimLoadImageFromDicomFiles:NoPixelData', 'The DICOM file contains no pixel data');
     end
     
     if isempty(slice_thickness)
-        reporting.ShowWarning('PTKLoadImageFromDicomFiles:NoSliceThickness', 'No information found about the slice thickness. Arbitrarily setting slice thickness to 1');
+        reporting.ShowWarning('MimLoadImageFromDicomFiles:NoSliceThickness', 'No information found about the slice thickness. Arbitrarily setting slice thickness to 1');
         slice_thickness = 1;
     end
     

@@ -281,7 +281,7 @@ classdef PTKEditMode < handle
                     obj.Settings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
                     
                     current_overlay = obj.ViewerPanel.OverlayImage;
-                    edited_result = PTKLoadImages(image_info, obj.Reporting);
+                    edited_result = MimLoadImages(image_info, obj.Reporting);
                     edited_result.ImageType = current_overlay.ImageType;
                     
                     template = obj.GuiDataset.GetTemplateImage;

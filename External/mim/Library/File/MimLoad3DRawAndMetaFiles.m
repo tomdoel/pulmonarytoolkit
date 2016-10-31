@@ -1,12 +1,12 @@
-function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, reporting)
-    % PTKLoad3DRawAndMetaFiles. Reads images from raw and meteheader files and returns as a PTKImage.
+function dicom_image = MimLoad3DRawAndMetaFiles(path, filenames, study_uid, reporting)
+    % MimLoad3DRawAndMetaFiles. Reads images from raw and meteheader files and returns as a PTKImage.
     %
     %     Note: Currently assumes that images are CT
     %
     %     Syntax
     %     ------
     %
-    %         dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, reporting)
+    %         dicom_image = MimLoad3DRawAndMetaFiles(path, filenames, study_uid, reporting)
     %
     %             dicom_image     is a PTKDicomImage class containing the image
     %             path            The path where the files are located. For the
@@ -28,7 +28,7 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     end
     
     if nargin < 2
-        reporting.Error('PTKLoad3DRawAndMetaFiles:NotEnoughArguments', 'PTKLoad3DRawAndMetaFiles requires a minimum of two arguments: the current path and  list of filenames');
+        reporting.Error('MimLoad3DRawAndMetaFiles:NotEnoughArguments', 'PTKLoad3DRawAndMetaFiles requires a minimum of two arguments: the current path and  list of filenames');
     end
 
     if isa(filenames, 'CoreFilename')
@@ -46,7 +46,7 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     end
 
     if nargin < 3
-        reporting.ShowWarning('PTKLoad3DRawAndMetaFiles:NoStudyUid', 'No study UID was specified - I am going to use the filename.', []);
+        reporting.ShowWarning('MimLoad3DRawAndMetaFiles:NoStudyUid', 'No study UID was specified - I am going to use the filename.', []);
         study_uid = filenames{1};
     end
 
@@ -54,7 +54,7 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
 
     header_data = mha_read_header(header_filename);
     if isempty(header_data)
-        reporting.Error('PTKLoad3DRawAndMetaFiles:MetaHeaderReadFailed', ['Unable to read metaheader data from ' header_filename]);
+        reporting.Error('MimLoad3DRawAndMetaFiles:MetaHeaderReadFailed', ['Unable to read metaheader data from ' header_filename]);
     end
     
     
@@ -91,7 +91,7 @@ function dicom_image = PTKLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     rescale_slope = int16(1);
     rescale_intercept = int16(0);
 
-    reporting.ShowWarning('PTKLoad3DRawAndMetaFiles:AssumedCT', 'No modality information - I am assuming these images are CT with slope 1 and intercept 0.', []);
+    reporting.ShowWarning('MimLoad3DRawAndMetaFiles:AssumedCT', 'No modality information - I am assuming these images are CT with slope 1 and intercept 0.', []);
     
     % Guess that images with some strongly negative values are from CT images while
     % others are MR

@@ -1,12 +1,12 @@
-function ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, image_file_format, reporting)
-    % PTKLoadOtherFormat. Reads images from various_formats returns as a PTKImage.
+function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_format, reporting)
+    % MimLoadOtherFormat. Reads images from various_formats returns as a PTKImage.
     %
     %     Note: Currently assumes that images are CT
     %
     %     Syntax
     %     ------
     %
-    %         ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, reporting)
+    %         ptk_image = MimLoadOtherFormat(path, filenames, study_uid, reporting)
     %
     %             ptk_image     is a PTKDicomImage class containing the image
     %             path            The path where the files are located. For the
@@ -30,7 +30,7 @@ function ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, image_file_f
     end
     
     if nargin < 2
-        reporting.Error('PTKLoadOtherFormat:NotEnoughArguments', 'PTKLoadOtherFormat requires a minimum of two arguments: the current path and  list of filenames');
+        reporting.Error('MimLoadOtherFormat:NotEnoughArguments', 'PTKLoadOtherFormat requires a minimum of two arguments: the current path and  list of filenames');
     end
 
     if isa(filenames, 'CoreFilename')
@@ -48,7 +48,7 @@ function ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, image_file_f
     end
 
     if nargin < 3
-        reporting.ShowWarning('PTKLoadOtherFormat:NoStudyUid', 'No study UID was specified - I am going to use the filename.', []);
+        reporting.ShowWarning('MimLoadOtherFormat:NoStudyUid', 'No study UID was specified - I am going to use the filename.', []);
         study_uid = filenames{1};
     end
     
@@ -105,7 +105,7 @@ function ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, image_file_f
     end
     
     if isempty(header_data)
-        reporting.Error('PTKLoadOtherFormat:MetaHeaderReadFailed', ['Unable to read metaheader data from ' header_filename]);
+        reporting.Error('MimLoadOtherFormat:MetaHeaderReadFailed', ['Unable to read metaheader data from ' header_filename]);
     end
     
     new_dimension_order = [1, 2, 3];
@@ -163,7 +163,7 @@ function ptk_image = PTKLoadOtherFormat(path, filenames, study_uid, image_file_f
     rescale_slope = int16(1);
     rescale_intercept = int16(0);
 
-    reporting.ShowWarning('PTKLoadOtherFormat:AssumedCT', 'No modality information - I am assuming these images are CT with slope 1 and intercept 0.', []);
+    reporting.ShowWarning('MimLoadOtherFormat:AssumedCT', 'No modality information - I am assuming these images are CT with slope 1 and intercept 0.', []);
     
     % Guess that images with some strongly negative values are from CT images while
     % others are MR
