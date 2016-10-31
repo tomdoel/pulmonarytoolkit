@@ -66,7 +66,7 @@ classdef MimProjectsSidePanel < GemListBoxWithTitle
             for index = 1 : numel(project_ids)
                 project_name = project_names{index};
                 project_id = project_ids{index};
-                patient_item = PTKProjectNameListItem(obj.ListBox.GetListBox, project_name, project_id, obj.GuiCallback);
+                patient_item = MimProjectNameListItem(obj.ListBox.GetListBox, project_name, project_id, obj.GuiCallback);
                 obj.ListBox.AddItem(patient_item);
             end
             

@@ -142,7 +142,7 @@ classdef MimGuiBase < GemFigure
             obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.AppDef);
             obj.AddChild(obj.ModeTabControl);
 
-            obj.PatientNamePanel = PTKNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);
+            obj.PatientNamePanel = MimNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);
             obj.AddChild(obj.PatientNamePanel);
             
             % Load the most recent dataset

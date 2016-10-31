@@ -1,10 +1,10 @@
-classdef PTKProjectNameListItem < GemListItem
-    % PTKProjectNameListItem. Part of the gui for the Pulmonary Toolkit.
+classdef MimProjectNameListItem < GemListItem
+    % MimProjectNameListItem. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKProjectNameListItem represents the control showing a project name in a
+    %     MimProjectNameListItem represents the control showing a project name in a
     %     GemListBox
     %
     %     Licence
@@ -26,7 +26,7 @@ classdef PTKProjectNameListItem < GemListItem
     end
     
     methods
-        function obj = PTKProjectNameListItem(parent, name, project_id, gui_callback)
+        function obj = MimProjectNameListItem(parent, name, project_id, gui_callback)
             obj = obj@GemListItem(parent, project_id);
             obj.TextHeight = obj.ProjectTextHeight;
             

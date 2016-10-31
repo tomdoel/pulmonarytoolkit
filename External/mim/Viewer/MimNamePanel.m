@@ -1,10 +1,10 @@
-classdef PTKNamePanel < GemPanel
-    % PTKNamePanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimNamePanel < GemPanel
+    % MimNamePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKNamePanel shows the name of the current patient, dataset, segmentatin
+    %     MimNamePanel shows the name of the current patient, dataset, segmentatin
     %     overlay and whether the result has been edited
     %
     %     Licence
@@ -41,7 +41,7 @@ classdef PTKNamePanel < GemPanel
     end
     
     methods
-        function obj = PTKNamePanel(parent, gui, gui_state)
+        function obj = MimNamePanel(parent, gui, gui_state)
             obj = obj@GemPanel(parent);
             
             obj.Gui = gui;
