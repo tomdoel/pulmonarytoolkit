@@ -1,10 +1,10 @@
-classdef PTKPatientNameListItem < GemListItem
-    % PTKPatientNameListItem. Part of the gui for the Pulmonary Toolkit.
+classdef MimPatientNameListItem < GemListItem
+    % MimPatientNameListItem. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPatientNameListItem represents the control showing a patient name in a
+    %     MimPatientNameListItem represents the control showing a patient name in a
     %     GemListBox
     %
     %     Licence
@@ -26,7 +26,7 @@ classdef PTKPatientNameListItem < GemListItem
     end
     
     methods
-        function obj = PTKPatientNameListItem(parent, name, visible_name, patient_id, gui_callback)
+        function obj = MimPatientNameListItem(parent, name, visible_name, patient_id, gui_callback)
             obj = obj@GemListItem(parent, patient_id);
             obj.TextHeight = obj.PatientTextHeight;
             

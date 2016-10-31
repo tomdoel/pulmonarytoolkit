@@ -1,10 +1,10 @@
-classdef PTKSeriesSidePanel < GemListBoxWithTitle
-    % PTKSeriesSidePanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimSeriesSidePanel < GemListBoxWithTitle
+    % MimSeriesSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKSeriesSidePanel is part of the side panel and contains the sliding list
+    %     MimSeriesSidePanel is part of the side panel and contains the sliding list
     %     box showing series
     %
     %     Licence
@@ -21,7 +21,7 @@ classdef PTKSeriesSidePanel < GemListBoxWithTitle
     end
     
     methods
-        function obj = PTKSeriesSidePanel(parent, patient_database, gui_callback)
+        function obj = MimSeriesSidePanel(parent, patient_database, gui_callback)
             obj = obj@GemListBoxWithTitle(parent, 'SERIES', 'Import images', 'Delete images');
             
             obj.PatientDatabase = patient_database;

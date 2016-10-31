@@ -5,7 +5,7 @@ classdef MimSidePanel < GemPanel
     %     build the user interface.
     %
     %     MimSidePanel represents the panel showing patients and series at the
-    %     left side of the PTK GUI.
+    %     left side of the MIV GUI.
     %
     %     Licence
     %     -------
@@ -45,16 +45,16 @@ classdef MimSidePanel < GemPanel
             obj.Controller = controller;
             obj.GuiState = state;
             
-            obj.ProjectsSidePanel = PTKProjectsSidePanel(obj, patient_database, controller);
+            obj.ProjectsSidePanel = MimProjectsSidePanel(obj, patient_database, controller);
             obj.AddChild(obj.ProjectsSidePanel);
             
-            obj.PatientsSidePanel = PTKPatientsSidePanel(obj, patient_database, controller);
+            obj.PatientsSidePanel = MimPatientsSidePanel(obj, patient_database, controller);
             obj.AddChild(obj.PatientsSidePanel);
             
-            obj.LinkedSeriesSidePanel = PTKLinkedSeriesSidePanel(obj, patient_database, linked_recorder, controller);
+            obj.LinkedSeriesSidePanel = MimLinkedSeriesSidePanel(obj, patient_database, linked_recorder, controller);
             obj.AddChild(obj.LinkedSeriesSidePanel);
             
-            obj.SeriesSidePanel = PTKSeriesSidePanel(obj, patient_database, controller);
+            obj.SeriesSidePanel = MimSeriesSidePanel(obj, patient_database, controller);
             obj.AddChild(obj.SeriesSidePanel);
             
             obj.Repopulate;

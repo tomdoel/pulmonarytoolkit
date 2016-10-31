@@ -1,10 +1,10 @@
-classdef PTKLinkedSeriesSidePanel < GemListBoxWithTitle
-    % PTKLinkedSeriesSidePanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimLinkedSeriesSidePanel < GemListBoxWithTitle
+    % MimLinkedSeriesSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKLinkedSeriesSidePanel is part of the side panel and contains the sliding list
+    %     MimLinkedSeriesSidePanel is part of the side panel and contains the sliding list
     %     box showing linked series
     %
     %     Licence
@@ -22,7 +22,7 @@ classdef PTKLinkedSeriesSidePanel < GemListBoxWithTitle
     end
     
     methods
-        function obj = PTKLinkedSeriesSidePanel(parent, patient_database, linked_recorder, gui_callback)
+        function obj = MimLinkedSeriesSidePanel(parent, patient_database, linked_recorder, gui_callback)
             obj = obj@GemListBoxWithTitle(parent, 'LINKED SERIES', 'Import images', 'Delete images');
             
             obj.PatientDatabase = patient_database;
@@ -79,7 +79,7 @@ classdef PTKLinkedSeriesSidePanel < GemListBoxWithTitle
                 if link_map.isKey(uid{1})
                     link_record = link_map(uid{1});
                     linked_uids_list{end + 1} = uid{1};
-                    linked_name_list{end + 1} = PTKLinkedSeriesSidePanel.GuessPrimaryName(link_record);
+                    linked_name_list{end + 1} = MimLinkedSeriesSidePanel.GuessPrimaryName(link_record);
                     
                     linked_uids_list = [linked_uids_list, link_record.LinkMap.keys];
                     linked_name_list = [linked_name_list, link_record.LinkMap.values];

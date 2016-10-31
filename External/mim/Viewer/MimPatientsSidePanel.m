@@ -1,10 +1,10 @@
-classdef PTKPatientsSidePanel < GemListBoxWithTitle
-    % PTKPatientsSidePanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimPatientsSidePanel < GemListBoxWithTitle
+    % MimPatientsSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPatientsSidePanel is part of the side panel and contains the sliding list
+    %     MimPatientsSidePanel is part of the side panel and contains the sliding list
     %     box showing patient names
     %
     %     Licence
@@ -26,7 +26,7 @@ classdef PTKPatientsSidePanel < GemListBoxWithTitle
     end
     
     methods
-        function obj = PTKPatientsSidePanel(parent, patient_database, gui_callback)
+        function obj = MimPatientsSidePanel(parent, patient_database, gui_callback)
             obj = obj@GemListBoxWithTitle(parent, 'PATIENT', 'Import images', 'Delete patient');
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
@@ -97,7 +97,7 @@ classdef PTKPatientsSidePanel < GemListBoxWithTitle
                 patient_id = ids{index};
                 short_name = short_visible_names{index};
                 full_name = names{index};
-                patient_item = PTKPatientNameListItem(obj.ListBox.GetListBox, full_name, short_name, patient_id, obj.GuiCallback);
+                patient_item = MimPatientNameListItem(obj.ListBox.GetListBox, full_name, short_name, patient_id, obj.GuiCallback);
                 obj.ListBox.AddItem(patient_item);
             end
             

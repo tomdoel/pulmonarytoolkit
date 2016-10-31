@@ -1,10 +1,10 @@
-classdef PTKProjectsSidePanel < GemListBoxWithTitle
-    % PTKProjectsSidePanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimProjectsSidePanel < GemListBoxWithTitle
+    % MimProjectsSidePanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKProjectsSidePanel is part of the side panel and contains the sliding list
+    %     MimProjectsSidePanel is part of the side panel and contains the sliding list
     %     box showing project names
     %
     %     Licence
@@ -25,7 +25,7 @@ classdef PTKProjectsSidePanel < GemListBoxWithTitle
     end
     
     methods
-        function obj = PTKProjectsSidePanel(parent, patient_database, gui_callback)
+        function obj = MimProjectsSidePanel(parent, patient_database, gui_callback)
             obj = obj@GemListBoxWithTitle(parent, 'PROJECT', 'Import images', 'Delete project');
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
