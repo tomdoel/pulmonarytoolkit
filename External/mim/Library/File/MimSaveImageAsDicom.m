@@ -1,10 +1,10 @@
-function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, dicom_metadata, reporting)
-    % PTKSaveImageAsDicom. Saves an image in DICOM format, using Matlab's image processing toolbox
+function MimSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, dicom_metadata, reporting)
+    % MimSaveImageAsDicom. Saves an image in DICOM format, using Matlab's image processing toolbox
     %
     %     Syntax
     %     ------
     %
-    %         PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, reporting)
+    %         MimSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, reporting)
     %
     %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved
@@ -35,7 +35,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     
     % Verify that the image is of the correct class
     if ~isa(image_data, 'PTKImage')
-        reporting.Error('PTKSaveImageAsDicom:InputMustBePTKImage', 'Requires a PTKImage as input');
+        reporting.Error('MimSaveImageAsDicom:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
     
     % Show a progress dialog
@@ -89,7 +89,7 @@ function PTKSaveImageAsDicom(image_data, path, filename, patient_name, is_second
             pixel_spacing = image_data.VoxelSize([3,1]);
             
         otherwise
-            reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is now known or unsupported.']);
+            reporting.Error('MimSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is now known or unsupported.']);
     end
     
     metadata.SliceThickness = slice_spacing;
@@ -156,7 +156,7 @@ function reordered_image = ReorderImage(image_data, orientation, reporting)
         case PTKImageOrientation.Sagittal
             saved_dimension_order = [3, 1, 2];            
         otherwise
-            reporting.Error('PTKSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is not known or unsupported.']);
+            reporting.Error('MimSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is not known or unsupported.']);
     end
     
     reordered_image = permute(image_data.RawImage, saved_dimension_order);

@@ -1,10 +1,10 @@
-function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting)
-    % PTKSaveAsMetaheaderAndRaw. Writes out a PTKImage in metaheader & raw format
+function MimSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting)
+    % MimSaveAsMetaheaderAndRaw. Writes out a PTKImage in metaheader & raw format
     %
     %     Syntax
     %     ------
     %
-    %         PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, orientation, reporting)
+    %         MimSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, orientation, reporting)
     %
     %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved
@@ -26,7 +26,7 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
     %        
 
     if ~isa(image_data, 'PTKImage')
-        reporting.Error('PTKSaveAsMetaheaderAndRaw:InputMustBePTKImage', 'Requires a PTKImage as input');
+        reporting.Error('MimSaveAsMetaheaderAndRaw:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
 
     orientation = MimImageCoordinateUtilities.ChooseOrientation(image_data.VoxelSize);
@@ -52,7 +52,7 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
         if (scale_range <= 255)
             scale = 1;
         else
-            reporting.ShowWarning('PTKSaveAsMetaheaderAndRaw:ImageRescaled', 'Image data has been rescaled', []);
+            reporting.ShowWarning('MimSaveAsMetaheaderAndRaw:ImageRescaled', 'Image data has been rescaled', []);
             scale = scale_factor/double(max_scale - min_scale);
         end
         image = uint8(scale*(original_image - min_scale));
@@ -73,6 +73,6 @@ function PTKSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
         end
     end
     
-    PTKWrite3DMetaFile(full_filename, image, resolution, data_type, offset, orientation, reporting);  
+    MimWrite3DMetaFile(full_filename, image, resolution, data_type, offset, orientation, reporting);  
 end
 

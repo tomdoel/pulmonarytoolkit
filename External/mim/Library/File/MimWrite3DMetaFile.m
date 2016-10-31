@@ -1,10 +1,10 @@
-function PTKWrite3DMetaFile(header_filename, image, resolution, data_type, offset, orientation, reporting)
-    % PTKWrite3DMetaFile. Writes out raw image data in metaheader & raw format
+function MimWrite3DMetaFile(header_filename, image, resolution, data_type, offset, orientation, reporting)
+    % MimWrite3DMetaFile. Writes out raw image data in metaheader & raw format
     %
     %     Syntax
     %     ------
     %
-    %         PTKWrite3DMetaFile(header_filename, image, resolution, data_type, offset, orientation, reporting)
+    %         MimWrite3DMetaFile(header_filename, image, resolution, data_type, offset, orientation, reporting)
     %
     %             header_filename - full path to the header file
     %             image - 3D raw image to be saved
@@ -49,13 +49,13 @@ function PTKWrite3DMetaFile(header_filename, image, resolution, data_type, offse
             transform_matrix = '1 0 0 0 0 -1 0 1 0';
             
         otherwise
-            reporting.Error('PTKWrite3DMetaFile:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is now known or unsupported.']);
+            reporting.Error('MimWrite3DMetaFile:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is now known or unsupported.']);
     end
     
     
     [fid, error_message] = fopen(header_filename, 'w');
     if (fid <= 0)
-        reporting.Error('PTKWrite3DMetaFile:ErrorCreatingHeaderFile', ['Unable to create header file ' header_filename ' because of the following error: ' error_message]);
+        reporting.Error('MimWrite3DMetaFile:ErrorCreatingHeaderFile', ['Unable to create header file ' header_filename ' because of the following error: ' error_message]);
     end
     
     fprintf(fid, 'ObjectType = Image\n');
@@ -83,7 +83,7 @@ function PTKWrite3DMetaFile(header_filename, image, resolution, data_type, offse
     
     [fid, error_message] = fopen(raw_image_filename, 'w');
     if (fid <= 0)
-        reporting.Error('PTKWrite3DMetaFile:ErrorCreatingRawFile', ['Unable to create raw data file ' raw_image_filename ' because of the following error: ' error_message]);        
+        reporting.Error('MimWrite3DMetaFile:ErrorCreatingRawFile', ['Unable to create raw data file ' raw_image_filename ' because of the following error: ' error_message]);        
     end
     
     if ~isequal(image_reorder, [1, 2, 3])

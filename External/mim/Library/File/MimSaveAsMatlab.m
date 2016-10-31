@@ -1,10 +1,10 @@
-function PTKSaveAsMatlab(image_data, path, filename, reporting)
-    % PTKSaveAsMatlab. Saves an image as a Matlab matrix
+function MimSaveAsMatlab(image_data, path, filename, reporting)
+    % MimSaveAsMatlab. Saves an image as a Matlab matrix
     %
     %     Syntax
     %     ------
     %
-    %         PTKSaveAsMatlab(image_data, path, filename, reporting)
+    %         MimSaveAsMatlab(image_data, path, filename, reporting)
     %
     %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved
@@ -21,7 +21,7 @@ function PTKSaveAsMatlab(image_data, path, filename, reporting)
     %            
     
     if ~isa(image_data, 'PTKImage')
-        reporting.Error('PTKSaveAsMatlab:InputMustBePTKImage', 'Requires a PTKImage as input');
+        reporting.Error('MimSaveAsMatlab:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
 
     value = image_data.RawImage; %#ok<NASGU>
