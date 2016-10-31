@@ -1,10 +1,10 @@
-function path_name = PTKSavePatchAs(patch_object, path_name, reporting)
-    % PTKSaveAs. Prompts the user for a filename, and saves the patch object
+function path_name = MimSavePatchAs(patch_object, path_name, reporting)
+    % MimSavePatchAs. Prompts the user for a filename, and saves the patch object
     %
     %     Syntax
     %     ------
     %
-    %         PTKSavePatchAs(patch_object, path_name, reporting)
+    %         MimSavePatchAs(patch_object, path_name, reporting)
     %
     %             patch_object    is a PTKPatch object to be saved
     %             path, filename  specify the location to save the patch pbject.

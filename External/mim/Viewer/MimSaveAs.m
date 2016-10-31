@@ -1,10 +1,10 @@
-function path_name = PTKSaveAs(image_data, patient_name, path_name, is_secondary_capture, dicom_metadata, reporting)
-    % PTKSaveAs. Prompts the user for a filename and file type, and saves the image
+function path_name = MimSaveAs(image_data, patient_name, path_name, is_secondary_capture, dicom_metadata, reporting)
+    % MimSaveAs. Prompts the user for a filename and file type, and saves the image
     %
     %     Syntax
     %     ------
     %
-    %         PTKSaveAs(image_data, patient_name, path_name, reporting)
+    %         MimSaveAs(image_data, patient_name, path_name, reporting)
     %
     %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved

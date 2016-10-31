@@ -240,7 +240,7 @@ classdef MimGuiBase < GemFigure
         
         function SelectFilesAndLoad(obj)
             % Prompts the user for file(s) to load
-            image_info = PTKChooseImagingFiles(obj.GuiSingleton.GetSettings.SaveImagePath, obj.Reporting);
+            image_info = MimChooseImagingFiles(obj.GuiSingleton.GetSettings.SaveImagePath, obj.Reporting);
             
             % An empty image_info means the user has cancelled
             if ~isempty(image_info)
@@ -332,7 +332,7 @@ classdef MimGuiBase < GemFigure
             image_data = obj.ImagePanel.BackgroundImage;
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             
-            path_name = PTKSaveAs(image_data, patient_name, path_name, false, obj.AppDef.GetDicomMetadata, obj.Reporting);
+            path_name = MimSaveAs(image_data, patient_name, path_name, false, obj.AppDef.GetDicomMetadata, obj.Reporting);
             if ~isempty(path_name)
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
@@ -346,7 +346,7 @@ classdef MimGuiBase < GemFigure
             image_data = background_image;
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             
-            path_name = PTKSaveAs(image_data, patient_name, path_name, true, obj.Reporting);
+            path_name = MimSaveAs(image_data, patient_name, path_name, true, obj.Reporting);
             if ~isempty(path_name)
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end

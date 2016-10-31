@@ -1,5 +1,5 @@
-function image_info = PTKChooseImagingFiles(image_path, reporting)
-    % PTKChooseImagingFiles. Displays a dialog for choosing image files to load.
+function image_info = MimChooseImagingFiles(image_path, reporting)
+    % MimChooseImagingFiles. Displays a dialog for choosing image files to load.
     %
     %     This function displays a dialog which allows users to select medical
     %     imaging files to load. The function returns a MimImageInfo structure
