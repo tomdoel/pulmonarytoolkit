@@ -1,10 +1,10 @@
-classdef PTKPatientPanel < GemPanel
-    % PTKPatientPanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimPatientBrowserPatientsPanel < GemPanel
+    % PTKPatientMimPatientBrowserPatientsPanelPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPatientPanel represents the panel showing patient details in the
+    %     MimPatientBrowserPatientsPanel represents the panel showing patient details in the
     %     Patient Browser. 
     %
     %     Licence
@@ -53,7 +53,7 @@ classdef PTKPatientPanel < GemPanel
     end
     
     methods
-        function obj = PTKPatientPanel(parent, image_database, patient_id, visible_name, total_number_of_series, num_patients, gui_callback)
+        function obj = MimPatientBrowserPatientsPanel(parent, image_database, patient_id, visible_name, total_number_of_series, num_patients, gui_callback)
             % Create a new panel showing the series information for one or more patients,
             % each defined by the patient_details vector. This vector may have more than one
             % patient details object if there is more than one patient id corresponding to
@@ -88,7 +88,7 @@ classdef PTKPatientPanel < GemPanel
             obj.Name = name;
 
             
-            obj.PanelHeight = obj.PatientNameHeight + total_number_of_series*PTKSeriesDescription.SeriesTextHeight + ...
+            obj.PanelHeight = obj.PatientNameHeight + total_number_of_series*MimPatientBrowserSeriesDescription.SeriesTextHeight + ...
                 max(0, total_number_of_series-1)*obj.SpacingBetweenSeries + obj.ListTopMargin + obj.ListBottomMargin + obj.TopMargin + obj.BottomMargin;
             obj.PatientNamePosition_Y = 1 + obj.PanelHeight - obj.PatientNameHeight - obj.TopMargin;
                         
@@ -162,7 +162,7 @@ classdef PTKPatientPanel < GemPanel
             
             for series_index = 1 : length(datasets)
                 series = datasets{series_index};
-                obj.SeriesDescriptionsList.AddItem(PTKSeriesDescription(obj.SeriesDescriptionsList, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, obj.Id, series.SeriesUid, obj.GuiCallback));
+                obj.SeriesDescriptionsList.AddItem(MimPatientBrowserSeriesDescription(obj.SeriesDescriptionsList, series.Modality, series.StudyName, series.Name, series.Date, series.Time, series.NumberOfImages, obj.Id, series.SeriesUid, obj.GuiCallback));
             end
         end
 

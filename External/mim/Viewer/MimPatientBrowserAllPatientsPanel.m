@@ -92,7 +92,7 @@ classdef MimPatientBrowserAllPatientsPanel < GemCompositePanel
                 full_name = names{index};
                 series_for_this_patient = num_series(index);
                 num_patients = num_patients_combined(index);
-                obj.AddPatientPanel(PTKPatientPanel(obj, obj.PatientDatabase, patient_id, full_name, series_for_this_patient, num_patients, obj.GuiCallback));
+                obj.AddPatientPanel(MimPatientBrowserPatientsPanel(obj, obj.PatientDatabase, patient_id, full_name, series_for_this_patient, num_patients, obj.GuiCallback));
             end
         end
         
