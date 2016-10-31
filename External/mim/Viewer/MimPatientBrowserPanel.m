@@ -24,7 +24,7 @@ classdef MimPatientBrowserPanel < GemPanel
     methods
         function obj = MimPatientBrowserPanel(parent, patient_database, gui_callback)
             obj = obj@GemPanel(parent);
-            obj.AllPatientsSlidingPanel = PTKAllPatientsSlidingPanel(obj, patient_database, gui_callback);
+            obj.AllPatientsSlidingPanel = MimPatientBrowserAllPatientsSlidingPanel(obj, patient_database, gui_callback);
             obj.ListOfPatientsPanel = PTKListOfPatientsPanel(obj, obj.AllPatientsSlidingPanel, patient_database, gui_callback);
             obj.AddChild(obj.AllPatientsSlidingPanel);
             obj.AddChild(obj.ListOfPatientsPanel);

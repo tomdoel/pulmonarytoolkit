@@ -1,11 +1,11 @@
-classdef PTKAllPatientsSlidingPanel < GemSlidingPanel
-    % PTKAllPatientsSlidingPanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimPatientBrowserAllPatientsSlidingPanel < GemSlidingPanel
+    % MimPatientBrowserAllPatientsSlidingPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKAllPatientsSlidingPanel represents the panel underneath the
-    %     PTKAllPatientsPanel, which allows the panel to be scrolled using a
+    %     MimPatientBrowserAllPatientsSlidingPanel represents the panel underneath the
+    %     MimPatientBrowserAllPatientsPanel, which allows the panel to be scrolled using a
     %     scrollbar and swipe gestures.
     %
     %
@@ -18,9 +18,9 @@ classdef PTKAllPatientsSlidingPanel < GemSlidingPanel
     %    
     
     methods
-        function obj = PTKAllPatientsSlidingPanel(parent, patient_database, gui_callback)
+        function obj = MimPatientBrowserAllPatientsSlidingPanel(parent, patient_database, gui_callback)
             obj = obj@GemSlidingPanel(parent);
-            obj.FloatingPanel = PTKAllPatientsPanel(obj, patient_database, gui_callback);
+            obj.FloatingPanel = MimPatientBrowserAllPatientsPanel(obj, patient_database, gui_callback);
             obj.AddChild(obj.FloatingPanel);
         end
         
@@ -34,7 +34,7 @@ classdef PTKAllPatientsSlidingPanel < GemSlidingPanel
             % Get the y-coordinates of the panel corresponding to this patient
             [y_min, y_max] = obj.FloatingPanel.GetYPositionsForPatientId(patient_id);
             if isempty(y_min)
-                obj.Reporting.ShowWarning('PTKAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
+                obj.Reporting.ShowWarning('MimPatientBrowserAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
                 return;
             end
 

@@ -1,10 +1,10 @@
-classdef PTKAllPatientsPanel < GemCompositePanel
-    % PTKAllPatientsPanel.  Part of the gui for the Pulmonary Toolkit.
+classdef MimPatientBrowserAllPatientsPanel < GemCompositePanel
+    % MimPatientBrowserAllPatientsPanel.  Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKAllPatientsPanel represents the panel in the Patient Browser
+    %     MimPatientBrowserAllPatientsPanel represents the panel in the Patient Browser
     %     showing all datasets grouped by patient.
     %
     %
@@ -23,7 +23,7 @@ classdef PTKAllPatientsPanel < GemCompositePanel
     end
     
     methods
-        function obj = PTKAllPatientsPanel(parent, patient_database, gui_callback)
+        function obj = MimPatientBrowserAllPatientsPanel(parent, patient_database, gui_callback)
             obj = obj@GemCompositePanel(parent);
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
@@ -61,7 +61,7 @@ classdef PTKAllPatientsPanel < GemCompositePanel
                 panel = obj.PatientPanels(main_id);
                 panel.SelectSeries(series_uid, selected);
             else
-                obj.Reporting.ShowWarning('PTKAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
+                obj.Reporting.ShowWarning('MimPatientBrowserAllPatientsPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
             end
         end
         
@@ -71,7 +71,7 @@ classdef PTKAllPatientsPanel < GemCompositePanel
                 panel = obj.PatientPanels(main_id);
                 panel.DeletePatient;
             else
-                obj.Reporting.ShowWarning('PTKAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
+                obj.Reporting.ShowWarning('MimPatientBrowserAllPatientsPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
             end
         end
         
