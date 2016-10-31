@@ -32,7 +32,7 @@ function loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, report
     [image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm] = DMLoadMainImageFromDicomFiles(image_path, filenames, dicomLibrary, reporting);
     
     if ~isempty(representative_metadata) && isfield(representative_metadata, 'Modality') && ~isempty(representative_metadata.Modality)
-        if ~PTKModalityIsSupported(representative_metadata.Modality)
+        if ~MimModalityIsSupported(representative_metadata.Modality)
             reporting.Error('MimLoadImageFromDicomFiles:ModalityNotSupported', ['PTK does not support the ' representative_metadata.Modality ' modality']);
         end
     end
@@ -47,7 +47,7 @@ function loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, report
     end
     
     % Detect and remove padding values
-    padding_value = PTKRemovePaddingValues(image_volume_wrapper, representative_metadata, reporting);
+    padding_value = MimRemovePaddingValues(image_volume_wrapper, representative_metadata, reporting);
     
     % Construct a PTKDicomImage from the loaded image volume
     loaded_image = PTKDicomImage.CreateDicomImageFromMetadata(image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm, padding_value, reporting);

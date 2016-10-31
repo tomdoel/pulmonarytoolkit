@@ -1,10 +1,10 @@
-function is_supported = PTKModalityIsSupported(modality, reporting)
-    % PTKModalityIsSupported. Returns true if PTK supports this modality
+function is_supported = MimModalityIsSupported(modality, reporting)
+    % MimModalityIsSupported. Returns true if PTK supports this modality
     %
     %     Syntax
     %     ------
     %
-    %         is_supportred = PTKModalityIsSupported(modality, reporting)
+    %         is_supportred = MimModalityIsSupported(modality, reporting)
     %
     %             modality        DICOM modality string
     %             reporting (optional) - an object implementing CoreReportingInterface

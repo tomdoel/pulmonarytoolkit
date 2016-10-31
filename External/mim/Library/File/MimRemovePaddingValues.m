@@ -1,4 +1,4 @@
-function new_padding_value = PTKRemovePaddingValues(image_wrapper, metadata, reporting)
+function new_padding_value = MimRemovePaddingValues(image_wrapper, metadata, reporting)
 
     new_padding_value = [];
     padding_indices = [];
