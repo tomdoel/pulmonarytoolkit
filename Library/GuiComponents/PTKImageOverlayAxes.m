@@ -52,7 +52,7 @@ classdef PTKImageOverlayAxes < GemImageAxes
                 obj.BackgroundScreenImage.SetRangeWithPositionAdjustment(x_range, y_range);
                 
                 % Overlay image
-                obj.BackgroundScreenImage.SetRangeWithPositionAdjustment(x_range, y_range);
+                obj.OverlayScreenImage.SetRangeWithPositionAdjustment(x_range, y_range);
                 
                 % Quiver image
                 obj.QuiverScreenImage.SetRangeWithPositionAdjustment(x_range, y_range);
