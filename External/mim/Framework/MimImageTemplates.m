@@ -46,6 +46,9 @@ classdef MimImageTemplates < CoreBaseClass
         
         % Callback for running the plugins required to generate template images
         DatasetResults
+        
+        % App-specific framework configuration
+        FrameworkAppDef
     end
     
     methods
