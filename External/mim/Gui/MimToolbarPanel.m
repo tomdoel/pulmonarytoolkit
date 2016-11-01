@@ -1,10 +1,10 @@
-classdef PTKToolbarPanel < GemPanel
-    % PTKToolbarPanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimToolbarPanel < GemPanel
+    % MimToolbarPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKToolbarPanel represents a panel containing tool control that
+    %     MimToolbarPanel represents a panel containing tool control that
     %     are enabled and disabled dynamically
     %
     %     Licence
@@ -38,7 +38,7 @@ classdef PTKToolbarPanel < GemPanel
     end
     
     methods
-        function obj = PTKToolbarPanel(parent, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically, allow_wrapping)
+        function obj = MimToolbarPanel(parent, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically, allow_wrapping)
             obj = obj@GemPanel(parent);
             
             obj.ModeTabName = mode_tab_name;

@@ -135,7 +135,7 @@ classdef MimGuiBase < GemFigure
 
             % Create the panel of tools across the bottom of the interface
             if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = PTKToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef, false, false);
+                obj.ToolbarPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef, false, false);
                 obj.AddChild(obj.ToolbarPanel);
             end
             
