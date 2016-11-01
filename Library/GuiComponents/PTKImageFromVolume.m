@@ -95,6 +95,12 @@ classdef PTKImageFromVolume < GemImage
             overlay_offset_y_voxels = overlay_offset_voxels(dim_y_index);
             obj.SetRange(x_range - overlay_offset_x_voxels, y_range - overlay_offset_y_voxels);
         end
+        
+        function point_is_in_image = IsPointInImage(obj, global_coords)
+            % Returns true if the point specified in global coordinates lies within the image
+
+            point_is_in_image = obj.ImageSource.Image.IsPointInImage(global_coords);        
+        end        
     end
     
     methods (Access = private, Static)

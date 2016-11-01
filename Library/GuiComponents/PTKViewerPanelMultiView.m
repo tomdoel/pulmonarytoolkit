@@ -14,6 +14,7 @@ classdef PTKViewerPanelMultiView < GemMultiPanel
 
     properties (Access = private)        
         CinePanel2D
+        ImageOverlayAxes
     end
 
     events
@@ -24,7 +25,9 @@ classdef PTKViewerPanelMultiView < GemMultiPanel
         function obj = PTKViewerPanelMultiView(viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
             obj = obj@GemMultiPanel(viewer_panel);
             
-            obj.CinePanel2D = PTKCinePanelWithTools(obj, viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
+            obj.ImageOverlayAxes = PTKImageOverlayAxes(obj, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
+
+            obj.CinePanel2D = PTKCinePanelWithTools(obj, obj.ImageOverlayAxes, viewer_panel, background_image_source, image_parameters);
             obj.AddPanel(obj.CinePanel2D, 'View2D');
             
             % Change in mouse position
@@ -63,7 +66,15 @@ classdef PTKViewerPanelMultiView < GemMultiPanel
         end
         
         function DrawImages(obj, update_background, update_overlay, update_quiver)
-            obj.CinePanel2D.DrawImages(update_background, update_overlay, update_quiver);
+            if update_background
+                obj.ImageOverlayAxes.DrawBackgroundImage;
+            end
+            if update_overlay
+                obj.ImageOverlayAxes.DrawOverlayImage;
+            end
+            if update_quiver
+                obj.ImageOverlayAxes.DrawQuiverImage;
+            end
         end
         
         function SetSliceNumber(obj, slice_number)

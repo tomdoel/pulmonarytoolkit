@@ -24,12 +24,10 @@ classdef PTKCinePanelWithTools < GemCinePanel
     end
     
     methods
-        function obj = PTKCinePanelWithTools(parent, viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
+        function obj = PTKCinePanelWithTools(parent, image_overlay_axes, viewer_panel, background_image_source, image_parameters)
             
-            image_overlay_axes = PTKImageOverlayAxes(parent, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
             obj = obj@GemCinePanel(parent, background_image_source, image_parameters, image_overlay_axes);
             obj.ViewerPanel = viewer_panel;
-            obj.ImageSource = background_image_source;
         end
 
         function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)
@@ -51,20 +49,7 @@ classdef PTKCinePanelWithTools < GemCinePanel
                 obj.CurrentCursor = new_cursor;
             end
             
-        end
-        
-        function DrawImages(obj, update_background, update_overlay, update_quiver)
-            if update_background
-                obj.Axes.DrawBackgroundImage;
-            end
-            if update_overlay
-                obj.Axes.DrawOverlayImage;
-            end
-            if update_quiver
-                obj.Axes.DrawQuiverImage;
-            end
-        end
-        
+        end        
     end
     
     methods (Access = protected)

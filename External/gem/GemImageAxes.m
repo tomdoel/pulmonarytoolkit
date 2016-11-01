@@ -127,6 +127,13 @@ classdef GemImageAxes < GemAxes
             obj.ImageParameters.SliceNumber = [round((i_limits_local(2)+i_limits_local(1))/2), round((j_limits_local(2)+j_limits_local(1))/2), round((k_limits_local(2)+k_limits_local(1))/2)];
         end
         
+        
+        function point_is_in_image = IsPointInImage(obj, global_coords)
+            % Returns true if the point specified in global coordinates lies within the image
+
+            point_is_in_image = obj.ImageSource.Image.IsPointInImage(global_coords);        
+        end        
+        
     end
     
     methods (Access = private)
