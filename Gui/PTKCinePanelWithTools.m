@@ -13,21 +13,19 @@ classdef PTKCinePanelWithTools < GemCinePanel
     %    
     
     properties (Access = protected)
-        ViewerPanel
-        
         % Used for programmatic pan, zoom, etc.
         LastCoordinates = [0, 0, 0]
         MouseIsDown = false
         ToolOnMouseDown
         LastCursor
         CurrentCursor = ''
+        Tools
     end
     
     methods
-        function obj = PTKCinePanelWithTools(parent, image_overlay_axes, viewer_panel, background_image_source, image_parameters)
-            
+        function obj = PTKCinePanelWithTools(parent, tools, image_overlay_axes, background_image_source, image_parameters)
             obj = obj@GemCinePanel(parent, background_image_source, image_parameters, image_overlay_axes);
-            obj.ViewerPanel = viewer_panel;
+            obj.Tools = tools;
         end
 
         function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)
@@ -58,7 +56,7 @@ classdef PTKCinePanelWithTools < GemCinePanel
             % Returns the tool whch is currently selected. If keyboard_modifier is
             % specified, then this may override the current tool
             
-            tool = obj.ViewerPanel.GetCurrentTool(mouse_is_down, keyboard_modifier);
+            tool = obj.Tools.GetCurrentToolForSelectedControl(mouse_is_down, keyboard_modifier);
         end
         
         function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)

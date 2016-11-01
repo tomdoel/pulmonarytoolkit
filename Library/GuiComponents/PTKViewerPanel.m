@@ -86,7 +86,9 @@ classdef PTKViewerPanel < GemPanel
         WindowMax
         
         ToolCallback
-        ViewerPanelCallback 
+        ViewerPanelCallback
+        ImageOverlayAxes
+        CinePanel2D
     end
     
     properties (Access = protected)
@@ -124,16 +126,25 @@ classdef PTKViewerPanel < GemPanel
             obj.OverlayImageDisplayParameters.Opacity = 50;
             obj.OverlayImageDisplayParameters.BlackIsTransparent = true;
             obj.MarkerImageDisplayParameters = GemMarkerDisplayParameters;
-            
-            % Create the object which handles the image processing in the viewer
-            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
-            obj.MarkerLayer = PTKMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ViewerPanelMultiView.GetAxes);
+
+            % Create the panel which contains the 2D image viewer
+            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj);
+
+            % Create the axes on which the 2D images and overlay are drawn
+            obj.ImageOverlayAxes = PTKImageOverlayAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
+
+            % Create the object which handles the marker image processing in the viewer
+            obj.MarkerLayer = PTKMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes);
 
             % Create the mouse tools
-            obj.ToolCallback = PTKToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.Reporting);
+            obj.ToolCallback = PTKToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.ImageOverlayAxes, obj.Reporting);
             obj.Tools = PTKToolList(obj.MarkerLayer, obj.ToolCallback, obj, obj.ImageSliceParameters, obj.BackgroundImageDisplayParameters);
-                        
-            obj.ToolCallback.SetAxes(obj.ViewerPanelMultiView.GetAxes);
+
+            % Create the scrolling 2D cine view and tools and add to the
+            % multiview panel
+            obj.CinePanel2D = PTKCinePanelWithTools(obj.ViewerPanelMultiView, obj.Tools, obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.ImageSliceParameters);
+            obj.ViewerPanelMultiView.Add2DCinePanel(obj.CinePanel2D, obj.Reporting);
+
             obj.AddChild(obj.ViewerPanelMultiView);
         end
         
@@ -418,7 +429,7 @@ classdef PTKViewerPanel < GemPanel
         function PostCreation(obj, position, reporting)
             % Called after the component and all its children have been created
             
-            obj.ViewerPanelCallback = PTKViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
+            obj.ViewerPanelCallback = PTKViewerPanelCallback(obj, obj.ImageOverlayAxes, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
         end            
 
         function input_has_been_processed = Keypressed(obj, click_point, key)

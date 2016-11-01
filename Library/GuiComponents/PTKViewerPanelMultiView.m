@@ -14,7 +14,6 @@ classdef PTKViewerPanelMultiView < GemMultiPanel
 
     properties (Access = private)        
         CinePanel2D
-        ImageOverlayAxes
     end
 
     events
@@ -22,12 +21,15 @@ classdef PTKViewerPanelMultiView < GemMultiPanel
     end
     
     methods
-        function obj = PTKViewerPanelMultiView(viewer_panel, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters)
-            obj = obj@GemMultiPanel(viewer_panel);
-            
-            obj.ImageOverlayAxes = PTKImageOverlayAxes(obj, background_image_source, overlay_image_source, quiver_image_source, image_parameters, background_view_parameters, overlay_view_parameters);
-
-            obj.CinePanel2D = PTKCinePanelWithTools(obj, obj.ImageOverlayAxes, viewer_panel, background_image_source, image_parameters);
+        function obj = PTKViewerPanelMultiView(parent)
+            obj = obj@GemMultiPanel(parent);
+        end
+        
+        function Add2DCinePanel(obj, cine_panel, reporting)
+            if ~isempty(obj.CinePanel2D)
+                reporting.Error('PTKViewerPanelMultiView:CinePanelAlreadySet', 'Add2DCinePanel() was called more than once');
+            end
+            obj.CinePanel2D = cine_panel;
             obj.AddPanel(obj.CinePanel2D, 'View2D');
             
             % Change in mouse position
@@ -63,18 +65,6 @@ classdef PTKViewerPanelMultiView < GemMultiPanel
         
         function axes_object = GetAxes(obj)
             axes_object = obj.CinePanel2D.GetAxes;            
-        end
-        
-        function DrawImages(obj, update_background, update_overlay, update_quiver)
-            if update_background
-                obj.ImageOverlayAxes.DrawBackgroundImage;
-            end
-            if update_overlay
-                obj.ImageOverlayAxes.DrawOverlayImage;
-            end
-            if update_quiver
-                obj.ImageOverlayAxes.DrawQuiverImage;
-            end
         end
         
         function SetSliceNumber(obj, slice_number)

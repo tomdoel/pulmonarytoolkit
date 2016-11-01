@@ -56,6 +56,11 @@ classdef PTKToolList < handle
             end            
         end
         
+        function tool = GetCurrentToolForSelectedControl(obj, mouse_is_down, keyboard_modifier)
+            
+            tool = obj.GetCurrentTool(mouse_is_down, keyboard_modifier, obj.ViewerPanel.SelectedControl);
+        end
+                
         function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier, selected_control)
             if ~isempty(keyboard_modifier) && ~isempty(mouse_is_down) && mouse_is_down
                 if strcmp(keyboard_modifier, 'extend')

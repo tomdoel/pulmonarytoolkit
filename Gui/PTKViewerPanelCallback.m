@@ -20,14 +20,16 @@ classdef PTKViewerPanelCallback < CoreBaseClass
         ViewerPanel
         ViewerPanelMultiView
         Reporting
+        ImageOverlayAxes
     end
     
     methods
         
-        function obj = PTKViewerPanelCallback(viewing_panel, viewing_panel_multi_view, tools, default_orientation, reporting)
+        function obj = PTKViewerPanelCallback(viewing_panel, axes, viewing_panel_multi_view, tools, default_orientation, reporting)
             obj.DefaultOrientation = default_orientation;
             obj.Tools = tools;
             obj.ViewerPanel = viewing_panel;
+            obj.ImageOverlayAxes = axes;
             obj.ViewerPanelMultiView = viewing_panel_multi_view;
             obj.Reporting = reporting;
             
@@ -134,7 +136,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.ViewerPanelMultiView.UpdateAxes;
             obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
-            obj.ViewerPanelMultiView.DrawImages(true, true, true);
+            obj.DrawImages(true, true, true);
             obj.UpdateStatus;
             obj.Tools.NewOrientation;
         end
@@ -144,7 +146,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             
             obj.UpdateGui;
             obj.Tools.NewSlice;
-            obj.ViewerPanelMultiView.DrawImages(true, true, true);
+            obj.DrawImages(true, true, true);
             obj.UpdateStatus;
         end
         
@@ -173,7 +175,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.ModifyWindowLevelLimits;
             
             obj.UpdateGui;
-            obj.ViewerPanelMultiView.DrawImages(true, true, true);
+            obj.DrawImages(true, true, true);
             obj.UpdateStatus;
         end
         
@@ -186,7 +188,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             obj.UpdateGuiForNewImage;
             obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
-            obj.ViewerPanelMultiView.DrawImages(true, false, false);
+            obj.DrawImages(true, false, false);
             obj.UpdateStatus;
             
             obj.Tools.ImageChanged;
@@ -196,7 +198,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             % This function is called when the overlay image is modified
             
             obj.ViewerPanelMultiView.UpdateAxes;
-            obj.ViewerPanelMultiView.DrawImages(false, true, false);
+            obj.DrawImages(false, true, false);
             obj.Tools.OverlayImageChanged;
         end
         
@@ -399,6 +401,18 @@ classdef PTKViewerPanelCallback < CoreBaseClass
             
             if window_limits_changed
                 obj.ViewerPanel.SetWindowLimits(window_min, window_max);
+            end
+        end
+        
+        function DrawImages(obj, update_background, update_overlay, update_quiver)
+            if update_background
+                obj.ImageOverlayAxes.DrawBackgroundImage;
+            end
+            if update_overlay
+                obj.ImageOverlayAxes.DrawOverlayImage;
+            end
+            if update_quiver
+                obj.ImageOverlayAxes.DrawQuiverImage;
             end
         end
     end

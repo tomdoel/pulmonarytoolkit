@@ -19,17 +19,11 @@ classdef PTKToolCallback < handle
     
     methods
         
-        function obj = PTKToolCallback(viewing_panel, image_display_parameters, reporting)
+        function obj = PTKToolCallback(viewing_panel, image_display_parameters, axes, reporting)
             obj.ImageDisplayParameters = image_display_parameters;
             obj.ViewerPanel = viewing_panel;
-            obj.Reporting = reporting;
-        end
-
-        function SetAxes(obj, axes)
-            if isempty(axes)
-                obj.Reporting.Error('PTKToolCallback:AxesDoNotExist', 'SetAxes() was called with empty axes');
-            end
             obj.Axes = axes;
+            obj.Reporting = reporting;
         end
 
         function EnablePan(obj, enabled)
