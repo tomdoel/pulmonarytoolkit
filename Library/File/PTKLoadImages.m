@@ -39,16 +39,15 @@ function image = PTKLoadImages(image_info, reporting)
         image_file_format = PTKImageFileFormat.(image_file_format.ValueNames{1});
     end
         
-    if isempty(image_file_format) || ~isenum(image_file_format)
+    if isempty(image_file_format) || isnumeric(image_file_format) || isstruct(image_file_format)
         reporting.Error(PTKSoftwareInfo.FileFormatUnknownErrorId, 'Could not load the image because the file format was not recognised.');
-    else 
-        switch image_file_format
-            case PTKImageFileFormat.Dicom
-                image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting);
-            case PTKImageFileFormat.Metaheader
-                image = PTKLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
-            otherwise
-                reporting.Error('PTKLoadImages:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
+    else
+        if CoreCompareUtilities.CompareEnumName(image_file_format, PTKImageFileFormat.Dicom)
+            image = PTKLoadImageFromDicomFiles(image_path, filenames, reporting);
+        elseif CoreCompareUtilities.CompareEnumName(image_file_format, PTKImageFileFormat.Metaheader)
+            image = PTKLoad3DRawAndMetaFiles(image_path, filenames, study_uid, reporting);
+        else
+            reporting.Error('PTKLoadImages:UnknownImageFileFormat', 'Could not load the image because the file format was not recognised.');
         end
     end
 end
