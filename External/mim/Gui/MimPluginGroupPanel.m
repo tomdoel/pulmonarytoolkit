@@ -70,7 +70,7 @@ classdef MimPluginGroupPanel < GemPanel
                 current_plugin = category_map(char(current_plugin_key));
                 
                 if isempty(current_plugin)
-                    button_handle = PTKSegmentationButton(obj, current_plugin_key{1}, obj.LoadManualSegmentationCallback);
+                    button_handle = MimSegmentationButton(obj, current_plugin_key{1}, obj.LoadManualSegmentationCallback);
                 else
                     callback_function_handle = @current_plugin.RunPlugin;
                     button_handle = MimPluginButton(obj, callback_function_handle, current_plugin);

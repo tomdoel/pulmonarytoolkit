@@ -1,4 +1,4 @@
-classdef PTKClearDiskCache < PTKGuiPlugin
+classdef PTKClearDiskCache < MimGuiPlugin
     % PTKClearDiskCache. Gui Plugin for deleting all cached results files for the current dataset
     %
     %     You should not use this class within your own code. It is intended to

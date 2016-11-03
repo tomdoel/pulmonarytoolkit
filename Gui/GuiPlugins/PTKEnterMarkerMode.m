@@ -1,4 +1,4 @@
-classdef PTKEnterMarkerMode < PTKGuiPlugin
+classdef PTKEnterMarkerMode < MimGuiPlugin
     % PTKEnterMarkerMode. Gui Plugin for entering marker edit mode
     %
     %     You should not use this class within your own code. It is intended to

@@ -40,7 +40,7 @@ classdef MimModeTabControl < GemTabControl
             obj.SegmentPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.SegmentPanel, 'Segment', 'Segment', 'Segmentation');
             
-            obj.EditPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', obj.Gui, app_def, true, true);
+            obj.EditPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', MimModes.EditMode, 'Plugin', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'Edit', 'Manual correction of results');
 
             obj.AnalysisPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);

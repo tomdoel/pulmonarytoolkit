@@ -1,4 +1,4 @@
-classdef PTKWindowLevelLung < PTKGuiPlugin
+classdef PTKWindowLevelLung < MimGuiPlugin
     % PTKWindowLevelLung. Gui Plugin for using a preset lung window/level
     %
     %     You should not use this class within your own code. It is intended to

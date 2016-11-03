@@ -1,13 +1,13 @@
-classdef (Sealed) PTKSplashScreen < CoreProgressInterface & GemFigure
-    % PTKSplashScreen. A splash screen dialog which also reports progress informaton
+classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
+    % MimSplashScreen. A splash screen dialog which also reports progress informaton
     %
-    %     PTKSplashScreen creates a dialog with the application logo and version
+    %     MimSplashScreen creates a dialog with the application logo and version
     %     information. It also displays progress information, for use during the
     %     application startup for reporting progress before the user interface
     %     is visible.
     %
-    %     PTKSplashScreen is a singleton. You cannot create it using the
-    %     constructor; instead call PTKSplashScreen.GetSplashScreen;
+    %     MimSplashScreen is a singleton. You cannot create it using the
+    %     constructor; instead call MimSplashScreen.GetSplashScreen;
     %
     %
     %     Licence
@@ -56,14 +56,14 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & GemFigure
                 app_def = PTKAppDef;
             end
             if isempty(SplashScreen) || ~isvalid(SplashScreen)
-                SplashScreen = PTKSplashScreen(app_def);
+                SplashScreen = MimSplashScreen(app_def);
             end
             splash_screen = SplashScreen;
         end
     end
     
     methods (Access = private)
-        function obj = PTKSplashScreen(app_def)
+        function obj = MimSplashScreen(app_def)
             
             % Calculate the figure windows size
             set(0, 'Units', 'pixels');
@@ -107,7 +107,7 @@ classdef (Sealed) PTKSplashScreen < CoreProgressInterface & GemFigure
             
             logo = imread(obj.AppDef.GetLogoFilename);
             image_size = size(logo);            
-            screen_image_size = PTKSplashScreen.GetOptimalLogoSize(image_size(2:-1:1), [30, 70, 223, 200]);
+            screen_image_size = MimSplashScreen.GetOptimalLogoSize(image_size(2:-1:1), [30, 70, 223, 200]);
             
             obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', screen_image_size);
             image(logo, 'Parent', obj.Image);

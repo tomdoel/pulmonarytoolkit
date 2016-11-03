@@ -1,4 +1,4 @@
-classdef PTKRemoveDataset < PTKGuiPlugin
+classdef PTKRemoveDataset < MimGuiPlugin
     % PTKClearDiskCache. Gui Plugin for removing a dataset.
     %
     %     You should not use this class within your own code. It is intended to

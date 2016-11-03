@@ -1,4 +1,4 @@
-classdef PTKSegmentAirways < PTKGuiPlugin
+classdef PTKSegmentAirways < MimGuiPlugin
     % PTKSegmentAirways. Gui Plugin for activating airway segmentation
     %
     %     You should not use this class within your own code. It is intended to

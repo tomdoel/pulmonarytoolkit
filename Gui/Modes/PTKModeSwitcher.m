@@ -31,7 +31,7 @@ classdef PTKModeSwitcher < CoreBaseClass
             obj.ViewerPanel = viewer_panel;
             obj.AddEventListener(viewer_panel.GetOverlayImageSource, 'ImageModified', @obj.OverlayImageChanged);
             obj.Modes = containers.Map;
-            obj.Modes(PTKModes.EditMode) = PTKEditMode(viewer_panel, gui_dataset, app_def, settings, reporting);
+            obj.Modes(MimModes.EditMode) = PTKEditMode(viewer_panel, gui_dataset, app_def, settings, reporting);
             obj.CurrentMode = [];
             obj.CurrentModeString = [];
         end

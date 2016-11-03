@@ -1,10 +1,10 @@
-classdef PTKSegmentationButton < GemButton
-    % PTKSegmentationButton. Part of the gui for the Pulmonary Toolkit.
+classdef MimSegmentationButton < GemButton
+    % MimSegmentationButton. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKSegmentationButton is used to build a button control representing a plugin,
+    %     MimSegmentationButton is used to build a button control representing a plugin,
     %     with a backgroud image preview of the segmentation
     %
     %
@@ -25,7 +25,7 @@ classdef PTKSegmentationButton < GemButton
     end
     
     methods
-        function obj = PTKSegmentationButton(parent, name, load_manual_segmentation_callback)
+        function obj = MimSegmentationButton(parent, name, load_manual_segmentation_callback)
             tooltip_string = ['<HTML>' name];
             
             button_text = ['<HTML><P ALIGN = RIGHT>', name];

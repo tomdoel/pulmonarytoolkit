@@ -23,7 +23,7 @@ classdef MimGuiDataset < CoreBaseClass
         Dataset
         Gui
         ModeSwitcher
-        Ptk
+        MimMain
         Reporting
         Settings
         AppDef
@@ -41,7 +41,7 @@ classdef MimGuiDataset < CoreBaseClass
             obj.Gui = gui;
             obj.Reporting = reporting;
             obj.Settings = settings;
-            obj.Ptk = MimMain(app_def.GetFrameworkAppDef, reporting);
+            obj.MimMain = MimMain(app_def.GetFrameworkAppDef, reporting);
             obj.AddEventListener(obj.GetImageDatabase, 'SeriesHasBeenDeleted', @obj.SeriesHasBeenDeleted);
             obj.AddEventListener(obj.ModeSwitcher, 'ModeChangedEvent', @obj.ModeHasChanged);
         end
@@ -53,7 +53,7 @@ classdef MimGuiDataset < CoreBaseClass
         function mode = GetMode(obj)
             mode = obj.ModeSwitcher.CurrentMode;
             if isempty(mode)
-                obj.Reporting.Error('PTKGui::NoMode', 'The operation is not possible in this mode');
+                obj.Reporting.Error('MimGuiDataset::NoMode', 'The operation is not possible in this mode');
             end
         end
         
@@ -74,19 +74,19 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function image_database = GetImageDatabase(obj)
-            image_database = obj.Ptk.GetImageDatabase;
+            image_database = obj.MimMain.GetImageDatabase;
         end
         
         function linked_recorder = GetLinkedRecorder(obj)
-            linked_recorder = obj.Ptk.FrameworkSingleton.GetLinkedDatasetRecorder;
+            linked_recorder = obj.MimMain.FrameworkSingleton.GetLinkedDatasetRecorder;
         end
         
         function uids = ImportDataRecursive(obj, folder_path)
-            uids = obj.Ptk.ImportDataRecursive(folder_path);
+            uids = obj.MimMain.ImportDataRecursive(folder_path);
         end
         
         function [sorted_paths, sorted_uids] = GetListOfPaths(obj)
-            [sorted_paths, sorted_uids] = obj.Ptk.ImageDatabase.GetListOfPaths;
+            [sorted_paths, sorted_uids] = obj.MimMain.ImageDatabase.GetListOfPaths;
         end
         
         function template_image = GetTemplateImage(obj)
@@ -106,7 +106,7 @@ classdef MimGuiDataset < CoreBaseClass
             if obj.DatasetIsLoaded
                 dataset_cache_path = obj.Dataset.GetDatasetCachePath;
             else
-                dataset_cache_path = obj.Ptk.GetDirectories.GetCacheDirectory;
+                dataset_cache_path = obj.MimMain.GetDirectories.GetCacheDirectory;
             end
         end
         
@@ -114,7 +114,7 @@ classdef MimGuiDataset < CoreBaseClass
             if obj.DatasetIsLoaded
                 dataset_cache_path = obj.Dataset.GetEditedResultsPath;
             else
-                dataset_cache_path = obj.Ptk.GetDirectories.GetEditedResultsDirectoryAndCreateIfNecessary;
+                dataset_cache_path = obj.MimMain.GetDirectories.GetEditedResultsDirectoryAndCreateIfNecessary;
             end
         end
 
@@ -122,7 +122,7 @@ classdef MimGuiDataset < CoreBaseClass
             if obj.DatasetIsLoaded
                 dataset_cache_path = obj.Dataset.GetOutputPath;
             else
-                dataset_cache_path = obj.Ptk.GetDirectories.GetOutputDirectoryAndCreateIfNecessary;
+                dataset_cache_path = obj.MimMain.GetDirectories.GetOutputDirectoryAndCreateIfNecessary;
             end
         end
         
@@ -165,7 +165,7 @@ classdef MimGuiDataset < CoreBaseClass
                 
             catch exc
                 if MimErrors.IsErrorCancel(exc.identifier)
-                    obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled');
+                    obj.Reporting.ShowMessage('MimGuiDataset:LoadingCancelled', 'User cancelled');
                 else
                     obj.Reporting.ShowMessage('MimGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
                 end
@@ -212,7 +212,7 @@ classdef MimGuiDataset < CoreBaseClass
             % is currently loaded then the callback from the image database will cause the
             % current dataset to be cleared.
             
-            obj.Ptk.DeleteDatasets(series_uids);
+            obj.MimMain.DeleteDatasets(series_uids);
             obj.Settings.RemoveLastPatientUid(series_uids);
         end
         
@@ -240,10 +240,10 @@ classdef MimGuiDataset < CoreBaseClass
             try
                 if isa(image_info_or_uid, 'MimImageInfo')
                     series_uid = image_info_or_uid.ImageUid;
-                    new_dataset = obj.Ptk.CreateDatasetFromInfo(image_info_or_uid);
+                    new_dataset = obj.MimMain.CreateDatasetFromInfo(image_info_or_uid);
                 elseif ischar(image_info_or_uid)
                     series_uid = image_info_or_uid;
-                    new_dataset = obj.Ptk.CreateDatasetFromUid(image_info_or_uid);
+                    new_dataset = obj.MimMain.CreateDatasetFromUid(image_info_or_uid);
                 else
                    new_dataset = [];
                 end
@@ -278,7 +278,7 @@ classdef MimGuiDataset < CoreBaseClass
                                 load_full_data = false;
                                 rethrow(exc)
                             else
-                                obj.Reporting.ShowMessage('PTKGuiApp:CannotGetROI', ['Unable to extract region of interest from this dataset. Error: ' exc.message]);
+                                obj.Reporting.ShowMessage('MimGuiDataset:CannotGetROI', ['Unable to extract region of interest from this dataset. Error: ' exc.message]);
                                 load_full_data = true;
                             end
                         end
@@ -355,8 +355,8 @@ classdef MimGuiDataset < CoreBaseClass
                     obj.Reporting.ShowMessage('MimGuiDataset:FileNotFound', 'The original data is missing. I am removing this dataset.');
                     delete_image_info = true;
                 elseif MimErrors.IsErrorUnknownFormat(exc.identifier)
-                    uiwait(errordlg('This is not an image file or the format is not supported by PTK. It will be removed from the Patient Browser.', [obj.AppDef.GetName ': Cannot load this image'], 'modal'));
-                    obj.Reporting.ShowMessage('MimGuiDataset:FormatNotSupported', 'This file format is not supported by PTK. I am removing this dataset.');
+                    uiwait(errordlg('This is not an image file or the format is not supported. It will be removed from the Patient Browser.', [obj.AppDef.GetName ': Cannot load this image'], 'modal'));
+                    obj.Reporting.ShowMessage('MimGuiDataset:FormatNotSupported', 'This file format is not supported. I am removing this dataset.');
                     delete_image_info = true;
                 else
                     uiwait(errordlg(exc.message, [obj.AppDef.GetName ': Cannot load dataset'], 'modal'));
@@ -396,10 +396,10 @@ classdef MimGuiDataset < CoreBaseClass
                     obj.RunPluginTryCatchBlock(plugin_name, wait_dialog)
                 catch exc
                     if MimErrors.IsErrorCancel(exc.identifier)
-                        obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
+                        obj.Reporting.ShowMessage('MimGuiDataset:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                     else
                         uiwait(errordlg(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [obj.AppDef.GetName ': Failure in plugin ' plugin_name], 'modal'));
-                        obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
+                        obj.Reporting.ShowMessage('MimGuiDataset:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     end
                 end
             end
@@ -432,7 +432,7 @@ classdef MimGuiDataset < CoreBaseClass
             image_title = visible_name;
             image_title = ['MANUAL SEGMENTATION ', image_title];
             if isempty(new_image)
-                obj.Reporting.Error('PTKGui:EmptyImage', ['The segmentation ' segmentation_name ' did not return an image when expected. ']);
+                obj.Reporting.Error('MimGuiDataset:EmptyImage', ['The segmentation ' segmentation_name ' did not return an image when expected. ']);
             end
             obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);
             obj.GuiDatasetState.SetSegmentation(segmentation_name);
@@ -476,7 +476,7 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function plugin_cache = GetPluginCache(obj)
-            plugin_cache = obj.Ptk.FrameworkSingleton.GetPluginInfoMemoryCache;
+            plugin_cache = obj.MimMain.FrameworkSingleton.GetPluginInfoMemoryCache;
         end
     end
     
@@ -534,7 +534,7 @@ classdef MimGuiDataset < CoreBaseClass
                 end
                 if strcmp(new_plugin.PluginType, 'ReplaceOverlay')                    
                     if isempty(new_image)
-                        obj.Reporting.Error('PTKGui:EmptyImage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
+                        obj.Reporting.Error('MimGuiDataset:EmptyImage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
                     end
                     obj.ModeSwitcher.PrePluginCall;
                     obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);

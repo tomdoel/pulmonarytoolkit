@@ -1,7 +1,7 @@
-classdef PTKZoomMatlabTool < PTKTool
-    % PTKZoomMatlabTool. A tool for invoking the Matlab zoom tool with PTKViewerPanel
+classdef PTKZoomMatlabTool < MimTool
+    % PTKZoomMatlabTool. A tool for invoking the Matlab zoom tool with MimViewerPanel
     %
-    %     PTKZoomMatlabTool is a tool class used with PTKViewerPanel to allow the user
+    %     PTKZoomMatlabTool is a tool class used with MimViewerPanel to allow the user
     %     to use Matlab's zoom tool.
     %
     %

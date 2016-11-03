@@ -1,6 +1,6 @@
 function figure_handle = PTKShow2DSlicesInOneFigure(viewer_panel_handle, orientation, skip_sices, reporting)
     % PTKShowAll2DSlicesInOneFigure. Creates a figure showing every slice from a
-    %     PTKViewerPanel object displayed in a grid
+    %     MimViewerPanel object displayed in a grid
     %
     %
     %     Licence

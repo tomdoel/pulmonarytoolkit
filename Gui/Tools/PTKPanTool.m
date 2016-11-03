@@ -1,7 +1,7 @@
-classdef PTKPanTool < PTKTool
-    % PTKPanTool. A tool for interactively panning an image with PTKViewerPanel
+classdef PTKPanTool < MimTool
+    % PTKPanTool. A tool for interactively panning an image with MimViewerPanel
     %
-    %     PTKPanTool is a tool class used with PTKViewerPanel to allow the user
+    %     PTKPanTool is a tool class used with MimViewerPanel to allow the user
     %     to pan an image using mouse and keyboard controls.
     %
     %

@@ -64,20 +64,20 @@ classdef PTKEditMode < handle
             if ~isempty(plugin_info)
                 obj.ImageBeforeEdit = obj.ViewerPanel.OverlayImage.Copy;
                 
-                if strcmp(plugin_info.SubMode, PTKSubModes.EditBoundariesEditing)
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.EditBoundariesEditing);
+                if strcmp(plugin_info.SubMode, MimSubModes.EditBoundariesEditing)
+                    obj.ViewerPanel.SetModes(MimModes.EditMode, MimSubModes.EditBoundariesEditing);
                     
-                elseif strcmp(plugin_info.SubMode, PTKSubModes.FixedBoundariesEditing)
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.FixedBoundariesEditing);
+                elseif strcmp(plugin_info.SubMode, MimSubModes.FixedBoundariesEditing)
+                    obj.ViewerPanel.SetModes(MimModes.EditMode, MimSubModes.FixedBoundariesEditing);
                     
-                elseif strcmp(plugin_info.SubMode, PTKSubModes.ColourRemapEditing)
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.ColourRemapEditing);
+                elseif strcmp(plugin_info.SubMode, MimSubModes.ColourRemapEditing)
+                    obj.ViewerPanel.SetModes(MimModes.EditMode, MimSubModes.ColourRemapEditing);
                     
-                elseif strcmp(plugin_info.SubMode, PTKSubModes.PaintEditing)
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, PTKSubModes.PaintEditing);
+                elseif strcmp(plugin_info.SubMode, MimSubModes.PaintEditing)
+                    obj.ViewerPanel.SetModes(MimModes.EditMode, MimSubModes.PaintEditing);
                     
                 else
-                    obj.ViewerPanel.SetModes(PTKModes.EditMode, []);
+                    obj.ViewerPanel.SetModes(MimModes.EditMode, []);
                 end
             end
             obj.IgnoreOverlayChanges = false;            
@@ -234,7 +234,7 @@ classdef PTKEditMode < handle
             obj.UnsavedChanges = false;
             obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
             obj.GuiDataset.UpdateEditedStatus(false);
-            obj.GuiDataset.ChangeMode(PTKModes.EditMode);
+            obj.GuiDataset.ChangeMode(MimModes.EditMode);
             obj.Reporting.CompleteProgress;            
         end
 
@@ -262,7 +262,7 @@ classdef PTKEditMode < handle
                     obj.GuiDataset.UpdateEditedStatus(false);
                     
                     % Ensure we are back in edit mode, as RunPlugin will have left this
-                    obj.GuiDataset.ChangeMode(PTKModes.EditMode);
+                    obj.GuiDataset.ChangeMode(MimModes.EditMode);
                 end
                 
                 obj.Reporting.CompleteProgress;
@@ -300,7 +300,7 @@ classdef PTKEditMode < handle
                         obj.GuiDataset.UpdateEditedStatus(false);
                         
                         % Ensure we are back in edit mode, as RunPlugin will have left this
-                        obj.GuiDataset.ChangeMode(PTKModes.EditMode);
+                        obj.GuiDataset.ChangeMode(MimModes.EditMode);
                     end
                 end
                 

@@ -1,5 +1,5 @@
-classdef PTKOrganisedPluginsModeList < CoreBaseClass
-    % PTKOrganisedPluginsModeList. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimOrganisedPluginsModeList < CoreBaseClass
+    % MimOrganisedPluginsModeList. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -18,7 +18,7 @@ classdef PTKOrganisedPluginsModeList < CoreBaseClass
     end
     
     methods
-        function obj = PTKOrganisedPluginsModeList(plugin_cache)
+        function obj = MimOrganisedPluginsModeList(plugin_cache)
             obj.Clear;
             obj.PluginCache = plugin_cache;
         end
@@ -38,7 +38,7 @@ classdef PTKOrganisedPluginsModeList < CoreBaseClass
         function AddList(obj, plugin_list, gui_app, reporting)
             for plugin_filename = plugin_list
                 plugin_name = plugin_filename{1}.First;
-                plugin_wrapper = PTKPluginWrapperBase.AddPluginFromName(obj.PluginCache, plugin_name, plugin_filename, gui_app, reporting);
+                plugin_wrapper = MimPluginWrapperBase.AddPluginFromName(obj.PluginCache, plugin_name, plugin_filename, gui_app, reporting);
                 if ~isempty(plugin_wrapper)
                     obj.Add(plugin_name, plugin_wrapper.ParsedPluginInfo.Mode, plugin_wrapper.ParsedPluginInfo.Category, plugin_wrapper);
                 end

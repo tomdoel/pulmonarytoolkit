@@ -56,13 +56,13 @@ classdef MimGuiBase < GemFigure
 
             % Create the splash screen if it doesn't already exist
             if nargin < 2 || isempty(splash_screen) || ~isa(splash_screen, 'CoreProgressInterface')
-                splash_screen = PTKSplashScreen.GetSplashScreen;
+                splash_screen = MimSplashScreen.GetSplashScreen;
             end
             
             % Create the reporting object. Later we will update it with the viewer panel and
             % the new progress panel when these have been created.
             reporting = MimReporting(splash_screen, PTKSoftwareInfo.WriteVerboseEntriesToLogFile, app_def.GetLogFilePath);
-            reporting.Log('New session of PTKGui');
+            reporting.Log('New session of MimGui');
                         
             % Call the base class to initialise the figure class
             obj = obj@GemFigure(app_def.GetName, [], reporting);
@@ -75,9 +75,9 @@ classdef MimGuiBase < GemFigure
             
             % Set up the viewer panel
             if PTKSoftwareInfo.ViewerPanelToolbarEnabled
-                obj.ImagePanel = PTKViewerPanelWithControlPanel(obj);
+                obj.ImagePanel = MimViewerPanelWithControlPanel(obj);
             else
-                obj.ImagePanel = PTKViewerPanel(obj);
+                obj.ImagePanel = MimViewerPanel(obj);
             end
             
             
@@ -115,7 +115,7 @@ classdef MimGuiBase < GemFigure
             
             % Create the status panel showing image coordinates and
             % values of the voxel under the cursor
-            obj.StatusPanel = PTKStatusPanel(obj, obj.ImagePanel);
+            obj.StatusPanel = MimStatusPanel(obj, obj.ImagePanel);
             obj.AddChild(obj.StatusPanel);
             
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
@@ -130,8 +130,8 @@ classdef MimGuiBase < GemFigure
             end
             
             % Map of all plugins visible in the GUI
-            obj.OrganisedPlugins = PTKOrganisedPlugins(obj, obj.GuiDataset.GetPluginCache, app_def, obj.Reporting);
-            obj.OrganisedManualSegmentations = PTKOrganisedManualSegmentations(obj, app_def, obj.Reporting);
+            obj.OrganisedPlugins = MimOrganisedPlugins(obj, obj.GuiDataset.GetPluginCache, app_def, obj.Reporting);
+            obj.OrganisedManualSegmentations = MimOrganisedManualSegmentations(obj, app_def, obj.Reporting);
 
             % Create the panel of tools across the bottom of the interface
             if PTKSoftwareInfo.ToolbarEnabled
@@ -250,7 +250,7 @@ classdef MimGuiBase < GemFigure
                 
                 if (image_info.ImageFileFormat == MimImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
                     uiwait(msgbox('No valid DICOM files were found in this folder', [obj.AppDef.GetName ': No image files found.']));
-                    obj.Reporting.ShowMessage('PTKGuiApp:NoFilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
+                    obj.Reporting.ShowMessage('MimGuiBase:NoFilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
                     obj.LoadImages(image_info);
                     
@@ -317,7 +317,7 @@ classdef MimGuiBase < GemFigure
                     plugin = patch.PluginName;
                     obj.LoadFromUid(uid);
                     obj.GuiDataset.RunPlugin(plugin, obj.WaitDialogHandle);
-                    obj.ChangeMode(PTKModes.EditMode);
+                    obj.ChangeMode(MimModes.EditMode);
                     obj.GetMode.ImportPatch(patch);
                 end
             end
@@ -433,7 +433,7 @@ classdef MimGuiBase < GemFigure
             obj.SidePanel.Refresh;
         end
         
-        function CloseAllFiguresExceptPtk(obj)
+        function CloseAllFiguresExceptMim(obj)
             all_figure_handles = get(0, 'Children');
             for figure_handle = all_figure_handles'
 
@@ -462,7 +462,7 @@ classdef MimGuiBase < GemFigure
             delete(obj.GuiDataset);
 
             if ~isempty(obj.Reporting);
-                obj.Reporting.Log('Closing PTKGui');
+                obj.Reporting.Log('Closing MimGui');
             end
         end        
 

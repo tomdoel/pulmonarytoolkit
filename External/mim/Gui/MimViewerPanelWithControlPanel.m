@@ -1,5 +1,5 @@
-classdef PTKViewerPanelWithControlPanel < PTKViewerPanel
-    % PTKViewerPanelWithControlPanel. Creates a PTKViewerPanel window with
+classdef MimViewerPanelWithControlPanel < MimViewerPanel
+    % MimViewerPanelWithControlPanel. Creates a MimViewerPanel window with
     % a basic toolbar
     %
     %
@@ -20,11 +20,11 @@ classdef PTKViewerPanelWithControlPanel < PTKViewerPanel
     end
     
     methods
-        function obj = PTKViewerPanelWithControlPanel(parent)
-            obj = obj@PTKViewerPanel(parent);
+        function obj = MimViewerPanelWithControlPanel(parent)
+            obj = obj@MimViewerPanel(parent);
             
             % Create the control panel
-            obj.ControlPanel = PTKViewerPanelToolbar(obj);
+            obj.ControlPanel = MimViewerPanelToolbar(obj);
             obj.AddChild(obj.ControlPanel);
         end
         

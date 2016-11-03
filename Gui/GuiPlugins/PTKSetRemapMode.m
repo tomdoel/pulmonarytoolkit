@@ -1,4 +1,4 @@
-classdef PTKSetRemapMode < PTKGuiPlugin
+classdef PTKSetRemapMode < MimGuiPlugin
     % PTKSetRemapMode. Gui Plugin for using a preset bone window/level
     %
     %     You should not use this class within your own code. It is intended to
@@ -39,7 +39,7 @@ classdef PTKSetRemapMode < PTKGuiPlugin
         function enabled = IsEnabled(ptk_gui_app)
             enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
                 (isequal(ptk_gui_app.GetCurrentModeName, 'Edit') || isequal(ptk_gui_app.GetCurrentModeName, 'ManualSegmentation')) && ...
-                (isequal(ptk_gui_app.GetCurrentSubModeName, PTKSubModes.ColourRemapEditing));
+                (isequal(ptk_gui_app.GetCurrentSubModeName, MimSubModes.ColourRemapEditing));
         end
         
         function is_selected = IsSelected(ptk_gui_app)

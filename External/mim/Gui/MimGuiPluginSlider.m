@@ -1,5 +1,5 @@
-classdef PTKGuiPluginSlider < PTKGuiPlugin
-    % PTKGuiPluginSlider. Base class for a slider Gui-level plugin used by the Pulmonary Toolkit.
+classdef MimGuiPluginSlider < MimGuiPlugin
+    % MimGuiPluginSlider. Base class for a slider Gui-level plugin used by the Pulmonary Toolkit.
     %
     %
     %     Licence
@@ -20,8 +20,8 @@ classdef PTKGuiPluginSlider < PTKGuiPlugin
     end
     
     methods (Static)
-        function [value_instance_handle, value_property_name, limits_instance_handle, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
-            value_instance_handle = @ptk_gui_app.ImagePanel;
+        function [value_instance_handle, value_property_name, limits_instance_handle, limits_property_name] = GetHandleAndProperty(mim_gui_app)
+            value_instance_handle = @mim_gui_app.ImagePanel;
             value_property_name = [];
             limits_instance_handle = [];
             limits_property_name = [];

@@ -1,5 +1,5 @@
-classdef PTKGuiPlugin < handle
-    % PTKGuiPlugin. Base class for a Gui-level plugin used by the Pulmonary Toolkit.
+classdef MimGuiPlugin < handle
+    % MimGuiPlugin. Base class for a Gui-level plugin used by the Pulmonary Toolkit.
     %
     %     Gui Plugins are classes you create to run gui-related routines from
     %     the Pulmonary Toolkit user interface. Like plugins, gui plugins each
@@ -10,11 +10,11 @@ classdef PTKGuiPlugin < handle
     %     images and movies.
     %
     %     Gui Plugins must reside in the GuiPlugins folder, and
-    %     inherit from this class, PTKGuiPlugin. Provided that the properties have
+    %     inherit from this class, MimGuiPlugin. Provided that the properties have
     %     been correctly set, the plugin will automatically appear in the
     %     Pulmonary Toolkit gui.
     %
-    %     Gui plugins are given a handle to the PTKGuiApp object so they can
+    %     Gui plugins are given a handle to the MimGuiApp object so they can
     %     access gui methods and obtain dataset results if necessary
     %
     %
@@ -70,16 +70,16 @@ classdef PTKGuiPlugin < handle
 
         % Called when the user has clicked the button for this gui plugin.
         % Implement this method with the code you with to run.
-        RunGuiPlugin(ptk_gui_app)
+        RunGuiPlugin(mim_gui_app)
         
     end
     
     methods (Static)
-        function enabled = IsEnabled(ptk_gui_app)
+        function enabled = IsEnabled(mim_gui_app)
             enabled = true;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
+        function is_selected = IsSelected(mim_gui_app)
             is_selected = false;
         end
     end

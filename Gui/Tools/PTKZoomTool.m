@@ -1,7 +1,7 @@
-classdef PTKZoomTool < PTKTool
-    % PTKZoomTool. A tool for interactively zooming an image with PTKViewerPanel
+classdef PTKZoomTool < MimTool
+    % PTKZoomTool. A tool for interactively zooming an image with MimViewerPanel
     %
-    %     PTKZoomTool is a tool class used with PTKViewerPanel to allow the user
+    %     PTKZoomTool is a tool class used with MimViewerPanel to allow the user
     %     to zoom an image using mouse and keyboard controls.
     %
     %

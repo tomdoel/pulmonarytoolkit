@@ -1,4 +1,4 @@
-classdef PTKCopyUID < PTKGuiPlugin
+classdef PTKCopyUID < MimGuiPlugin
     % PTKCopyUID. Copy the UID of the current dataset to the clipboard
     %
     %     You should not use this class within your own code. It is intended to

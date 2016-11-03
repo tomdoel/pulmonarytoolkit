@@ -1,4 +1,4 @@
-classdef PTKWindowLevelImage < PTKGuiPlugin
+classdef PTKWindowLevelImage < MimGuiPlugin
     % PTKWindowLevelImage. Gui Plugin for setting the window/level to
     % image-defined values
     %

@@ -1,4 +1,4 @@
-classdef PTKOpacitySlider < PTKGuiPluginSlider
+classdef PTKOpacitySlider < MimGuiPluginSlider
     % PTKOpacitySlider. Gui Plugin for changing overlay opacity
     %
     %     You should not use this class within your own code. It is intended to

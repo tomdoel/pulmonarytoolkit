@@ -1,4 +1,4 @@
-classdef PTKCapture2DImage < PTKGuiPlugin
+classdef PTKCapture2DImage < MimGuiPlugin
     % PTKCapture2DImage. Gui Plugin for exporting the image currently in the
     % visualisation window to a file
     %

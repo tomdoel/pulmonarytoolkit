@@ -1,4 +1,4 @@
-classdef PTKWindowLevelSoftTissue < PTKGuiPlugin
+classdef PTKWindowLevelSoftTissue < MimGuiPlugin
     % PTKWindowLevelSoftTissue. Gui Plugin for using a preset soft tissue window/level
     %
     %     You should not use this class within your own code. It is intended to

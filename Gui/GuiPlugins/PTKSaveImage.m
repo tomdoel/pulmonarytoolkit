@@ -1,4 +1,4 @@
-classdef PTKSaveImage < PTKGuiPlugin
+classdef PTKSaveImage < MimGuiPlugin
     % PTKSaveImage. Gui Plugin for exporting the image currently in the
     % visualisation window to a file
     %

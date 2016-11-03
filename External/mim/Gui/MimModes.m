@@ -1,5 +1,5 @@
-classdef PTKModes
-    % PTKModes
+classdef MimModes
+    % MimModes
     %
     %
     %     Licence

@@ -1,5 +1,5 @@
-classdef PTKToolCallback < handle
-    % PTKToolCallback. 
+classdef MimToolCallback < handle
+    % MimToolCallback. 
     %
     %
     %
@@ -19,7 +19,7 @@ classdef PTKToolCallback < handle
     
     methods
         
-        function obj = PTKToolCallback(viewing_panel, image_display_parameters, axes, reporting)
+        function obj = MimToolCallback(viewing_panel, image_display_parameters, axes, reporting)
             obj.ImageDisplayParameters = image_display_parameters;
             obj.ViewerPanel = viewing_panel;
             obj.Axes = axes;
@@ -74,7 +74,7 @@ classdef PTKToolCallback < handle
         function axes_handle = GetAxes(obj)
             axes_handle = obj.Axes;
             if isempty(axes_handle)
-                obj.Reporting.Error('PTKToolCallback:AxesDoNotExist', 'Axes have not been created');
+                obj.Reporting.Error('MimToolCallback:AxesDoNotExist', 'Axes have not been created');
             end
         end
         

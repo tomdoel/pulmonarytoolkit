@@ -1,4 +1,4 @@
-classdef PTKPanPlugin < PTKGuiPlugin
+classdef PTKPanPlugin < MimGuiPlugin
     % PTKPanPlugin. Gui Plugin for using a preset bone window/level
     %
     %     You should not use this class within your own code. It is intended to

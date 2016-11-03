@@ -1,5 +1,5 @@
-function new_plugin = PTKParseGuiPluginClass(plugin_name, plugin_class, suggested_category, reporting)
-    % PTKParseGuiPluginClass. Part of the internal framework of the Pulmonary Toolkit.
+function new_plugin = MimParseGuiPluginClass(plugin_name, plugin_class, suggested_category, reporting)
+    % MimParseGuiPluginClass. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.

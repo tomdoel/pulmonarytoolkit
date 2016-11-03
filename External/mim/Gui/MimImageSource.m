@@ -1,5 +1,5 @@
-classdef PTKImageSource < CoreBaseClass
-    % PTKImageSource. Wraps a PTKImage class for GUI visualisation
+classdef MimImageSource < CoreBaseClass
+    % MimImageSource. Wraps a PTKImage class for GUI visualisation
     %
     %     Licence
     %     -------
@@ -24,7 +24,7 @@ classdef PTKImageSource < CoreBaseClass
     
     methods
         
-        function obj = PTKImageSource
+        function obj = MimImageSource
             % Listen for changes to the image pointers
             obj.AddPostSetListener(obj, 'Image', @obj.ImagePointerChangedCallback);
             

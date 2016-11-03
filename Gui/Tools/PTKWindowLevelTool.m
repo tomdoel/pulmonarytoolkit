@@ -1,4 +1,4 @@
-classdef PTKWindowLevelTool < PTKTool
+classdef PTKWindowLevelTool < MimTool
     % PTKWindowLevelTool. A tool for interactively changing window and level
     %
     %     PTKWindowLevelTool is a tool class to allow the user

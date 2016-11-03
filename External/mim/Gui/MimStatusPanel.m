@@ -1,10 +1,10 @@
-classdef PTKStatusPanel < GemPanel
-    % PTKStatusPanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimStatusPanel < GemPanel
+    % MimStatusPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKStatusPanel represents the panel holding the status text,
+    %     MimStatusPanel represents the panel holding the status text,
     %     which shows the current mouse coordinates and the values of the
     %     voxels under the mouse in the image and overlay.
     %
@@ -22,7 +22,7 @@ classdef PTKStatusPanel < GemPanel
     end
     
     methods
-        function obj = PTKStatusPanel(parent, viewer_panel)
+        function obj = MimStatusPanel(parent, viewer_panel)
             obj = obj@GemPanel(parent);
             
             obj.LeftBorder = true;

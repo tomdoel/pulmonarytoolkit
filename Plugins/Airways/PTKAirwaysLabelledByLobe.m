@@ -48,8 +48,8 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
         Visibility = 'Developer'
         Version = 2
         
-        EnableModes = PTKModes.EditMode
-        SubMode = PTKSubModes.ColourRemapEditing        
+        EnableModes = MimModes.EditMode
+        SubMode = MimSubModes.ColourRemapEditing        
     end
     
     methods (Static)

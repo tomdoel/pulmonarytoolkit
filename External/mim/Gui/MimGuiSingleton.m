@@ -1,5 +1,5 @@
 classdef (Sealed) MimGuiSingleton < handle
-    % MimGuiSingleton. The singleton used by all instances of PTKGui
+    % MimGuiSingleton. The singleton used by all instances of MimGui
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.

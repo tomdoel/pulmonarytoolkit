@@ -1,4 +1,4 @@
-classdef PTKCineTool < PTKTool
+classdef PTKCineTool < MimTool
     % PTKCineTool. A tool for interactively moving through slices
     %
     %     PTKCineTool is a tool class used with GemCinePanel to allow the user

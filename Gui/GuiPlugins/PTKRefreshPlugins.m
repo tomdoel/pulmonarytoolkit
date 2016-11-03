@@ -1,4 +1,4 @@
-classdef PTKRefreshPlugins < PTKGuiPlugin
+classdef PTKRefreshPlugins < MimGuiPlugin
     % PTKRefreshPlugins. Gui Plugin for reloading plugins in the gui
     %
     %     You should not use this class within your own code. It is intended to

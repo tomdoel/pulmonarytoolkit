@@ -1,5 +1,5 @@
-classdef PTKOrganisedPlugins < CoreBaseClass
-    % PTKOrganisedPlugins. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimOrganisedPlugins < CoreBaseClass
+    % MimOrganisedPlugins. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -20,10 +20,10 @@ classdef PTKOrganisedPlugins < CoreBaseClass
     end
     
     methods
-        function obj = PTKOrganisedPlugins(gui_app, plugin_cache, app_def, reporting)
+        function obj = MimOrganisedPlugins(gui_app, plugin_cache, app_def, reporting)
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
-            obj.OrganisedPluginsModeList = PTKOrganisedPluginsModeList(plugin_cache);
+            obj.OrganisedPluginsModeList = MimOrganisedPluginsModeList(plugin_cache);
             obj.Repopulate(reporting);
         end
         

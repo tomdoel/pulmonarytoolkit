@@ -1,4 +1,4 @@
-classdef PTKClearOverlays < PTKGuiPlugin
+classdef PTKClearOverlays < MimGuiPlugin
     % PTKClearOverlays. Gui Plugin for deleting overlay images in the GUI's image panel
     %
     %     You should not use this class within your own code. It is intended to

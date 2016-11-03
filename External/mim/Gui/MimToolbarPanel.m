@@ -190,11 +190,11 @@ classdef MimToolbarPanel < GemPanel
             end
             
             tool_group = obj.ControlGroups(category_key);
-            if isa(tool, 'PTKGuiPluginSlider')
-                new_control = PTKPluginLabelSlider(obj, tool, icon, obj.GuiApp);
+            if isa(tool, 'MimGuiPluginSlider')
+                new_control = MimPluginLabelSlider(obj, tool, icon, obj.GuiApp);
                 new_control.StackVertically = tool.StackVertically;
             else
-                new_control = PTKPluginLabelButton(obj, tool, icon, obj.GuiApp);
+                new_control = MimPluginLabelButton(obj, tool, icon, obj.GuiApp);
             end
             tool_group.AddControl(new_control);
             tool_struct = [];

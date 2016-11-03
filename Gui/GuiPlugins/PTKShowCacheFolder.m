@@ -1,4 +1,4 @@
-classdef PTKShowCacheFolder < PTKGuiPlugin
+classdef PTKShowCacheFolder < MimGuiPlugin
     % PTKShowCacheFolder. Gui Plugin for opening an explorer/finder window in the
     % cache folder of the currently visualised dataset
     %

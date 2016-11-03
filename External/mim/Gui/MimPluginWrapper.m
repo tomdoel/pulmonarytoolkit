@@ -1,5 +1,5 @@
-classdef PTKPluginWrapper < PTKPluginWrapperBase
-    % PTKPluginWrapper. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimPluginWrapper < MimPluginWrapperBase
+    % MimPluginWrapper. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -13,8 +13,8 @@ classdef PTKPluginWrapper < PTKPluginWrapperBase
     %
     
     methods
-        function obj = PTKPluginWrapper(name, plugin_object, parsed_plugin_info, gui_app)
-            obj = obj@PTKPluginWrapperBase(name, plugin_object, parsed_plugin_info, gui_app);
+        function obj = MimPluginWrapper(name, plugin_object, parsed_plugin_info, gui_app)
+            obj = obj@MimPluginWrapperBase(name, plugin_object, parsed_plugin_info, gui_app);
         end
 
         function RunPlugin(obj, plugin_name)

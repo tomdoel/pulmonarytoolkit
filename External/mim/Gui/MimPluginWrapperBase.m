@@ -1,5 +1,5 @@
-classdef PTKPluginWrapperBase < handle
-    % PTKPluginWrapperBase. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimPluginWrapperBase < handle
+    % MimPluginWrapperBase. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -24,7 +24,7 @@ classdef PTKPluginWrapperBase < handle
     end
     
     methods (Access = protected)
-        function obj = PTKPluginWrapperBase(name, plugin_object, parsed_plugin_info, gui_app)
+        function obj = MimPluginWrapperBase(name, plugin_object, parsed_plugin_info, gui_app)
             obj.GuiApp = gui_app;
             obj.PluginName = name;
             obj.PluginObject = plugin_object;
@@ -37,13 +37,13 @@ classdef PTKPluginWrapperBase < handle
         function plugin = AddPluginFromName(plugin_cache, plugin_name, plugin_filename, gui_app, reporting)
             plugin = [];
             try
-                [is_ptk_plugin, plugin_class_object] = plugin_cache.IsPlugin(plugin_name, plugin_filename{1}.Second, reporting);
+                [is_mim_plugin, plugin_class_object] = plugin_cache.IsPlugin(plugin_name, plugin_filename{1}.Second, reporting);
                 
                 if ~isempty(plugin_class_object)
-                    if is_ptk_plugin
+                    if is_mim_plugin
                         is_plugin = true;
                         is_gui_plugin = false;
-                    elseif isa(plugin_class_object, 'PTKGuiPlugin')
+                    elseif isa(plugin_class_object, 'MimGuiPlugin')
                         is_plugin = true;
                         is_gui_plugin = true;
                     else
@@ -55,21 +55,21 @@ classdef PTKPluginWrapperBase < handle
                         if ~hide_plugin
                             % Parse the plugin class properties into a data structure
                             if is_gui_plugin
-                                parsed_plugin_info = PTKParseGuiPluginClass(plugin_name, plugin_class_object, plugin_filename{1}.Second, reporting);
-                                plugin = PTKGuiPluginWrapper(plugin_name, plugin_class_object, parsed_plugin_info, gui_app);
+                                parsed_plugin_info = MimParseGuiPluginClass(plugin_name, plugin_class_object, plugin_filename{1}.Second, reporting);
+                                plugin = MimGuiPluginWrapper(plugin_name, plugin_class_object, parsed_plugin_info, gui_app);
                             else
                                 parsed_plugin_info = plugin_cache.GetPluginInfo(plugin_name, plugin_filename{1}.Second, reporting);
-                                plugin = PTKPluginWrapper(plugin_name, plugin_class_object, parsed_plugin_info, gui_app);
+                                plugin = MimPluginWrapper(plugin_name, plugin_class_object, parsed_plugin_info, gui_app);
                             end
                         end
                     else
-                        reporting.ShowWarning('PTKPluginWrapper:FileNotPlugin', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class. I am ignoring this file. If this is not a plugin class, you should remove this file from the plugin directory; otherwise check the file for errors.'], []);
+                        reporting.ShowWarning('MimPluginWrapper:FileNotPlugin', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class. I am ignoring this file. If this is not a plugin class, you should remove this file from the plugin directory; otherwise check the file for errors.'], []);
                     end
                 else
-                    reporting.ShowWarning('PTKPluginWrapper:FileNotPlugin', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class. I am ignoring this file. If this is not a plugin class, you should remove this file from the plugin directory; otherwise check the file for errors.'], []);
+                    reporting.ShowWarning('MimPluginWrapper:FileNotPlugin', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class. I am ignoring this file. If this is not a plugin class, you should remove this file from the plugin directory; otherwise check the file for errors.'], []);
                 end
             catch ex
-                reporting.ShowWarning('PTKPluginWrapper:ParsePluginError', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class, or contains errors. I am ignoring this file. If this is not a plugin class, you should remove thie file from the plugin directory; otherwise check the file for errors.'], ex.message);
+                reporting.ShowWarning('MimPluginWrapper:ParsePluginError', ['The file ' plugin_name ' was found in a plugins directory but does not appear to be a plugin class, or contains errors. I am ignoring this file. If this is not a plugin class, you should remove thie file from the plugin directory; otherwise check the file for errors.'], ex.message);
             end
         end
         

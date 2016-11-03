@@ -1,5 +1,5 @@
-classdef PTKGuiPluginWrapper < PTKPluginWrapperBase
-    % PTKGuiPluginWrapper. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimGuiPluginWrapper < MimPluginWrapperBase
+    % MimGuiPluginWrapper. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -13,8 +13,8 @@ classdef PTKGuiPluginWrapper < PTKPluginWrapperBase
     %
     
     methods
-        function obj = PTKGuiPluginWrapper(name, plugin_object, parsed_plugin_info, gui_app)
-            obj = obj@PTKPluginWrapperBase(name, plugin_object, parsed_plugin_info, gui_app);
+        function obj = MimGuiPluginWrapper(name, plugin_object, parsed_plugin_info, gui_app)
+            obj = obj@MimPluginWrapperBase(name, plugin_object, parsed_plugin_info, gui_app);
         end
         
         function RunPlugin(obj, plugin_name)

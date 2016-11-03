@@ -1,4 +1,4 @@
-classdef PTKSegmentSegments < PTKGuiPlugin
+classdef PTKSegmentSegments < MimGuiPlugin
     % PTKSegmentSegments. Gui Plugin for activating segment segmentation
     %
     %     You should not use this class within your own code. It is intended to

@@ -1,4 +1,4 @@
-classdef PTKImportPatch < PTKGuiPlugin
+classdef PTKImportPatch < MimGuiPlugin
     % PTKImportPatch. Gui Plugin for importing patch files.
     %
     %     You should not use this class within your own code. It is intended to

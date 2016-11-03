@@ -1,4 +1,4 @@
-classdef PTKSetCineTool < PTKGuiPlugin
+classdef PTKSetCineTool < MimGuiPlugin
     % PTKSetCineTool. Gui Plugin for using a preset bone window/level
     %
     %     You should not use this class within your own code. It is intended to

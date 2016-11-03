@@ -1,4 +1,4 @@
-classdef PTKSegmentLungs < PTKGuiPlugin
+classdef PTKSegmentLungs < MimGuiPlugin
     % PTKSegmentLungs. Gui Plugin for activating lung segmentation
     %
     %     You should not use this class within your own code. It is intended to

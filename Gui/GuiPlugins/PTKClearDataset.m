@@ -1,4 +1,4 @@
-classdef PTKClearDataset < PTKGuiPlugin
+classdef PTKClearDataset < MimGuiPlugin
     % PTKAboutPtk. Gui Plugin for displaying an "about box" dialog
     %
     %     You should not use this class within your own code. It is intended to

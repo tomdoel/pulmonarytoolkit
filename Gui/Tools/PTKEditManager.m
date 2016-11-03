@@ -1,4 +1,4 @@
-classdef PTKEditManager < PTKTool
+classdef PTKEditManager < MimTool
     % PTKEditManager. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -53,8 +53,8 @@ classdef PTKEditManager < PTKTool
         end
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)
-            is_enabled = ~isempty(mode) && ~isempty(sub_mode) && strcmp(mode, PTKModes.EditMode) && ...
-                (strcmp(sub_mode, PTKSubModes.EditBoundariesEditing) || strcmp(sub_mode, PTKSubModes.FixedBoundariesEditing));
+            is_enabled = ~isempty(mode) && ~isempty(sub_mode) && strcmp(mode, MimModes.EditMode) && ...
+                (strcmp(sub_mode, MimSubModes.EditBoundariesEditing) || strcmp(sub_mode, MimSubModes.FixedBoundariesEditing));
         end
         
         function Enter(obj)
@@ -84,7 +84,7 @@ classdef PTKEditManager < PTKTool
             obj.EditModeInitialised = true;
             obj.UndoStack.Clear;
             
-            obj.FixedOuterBoundary = strcmp(obj.ViewerPanel.SubMode, PTKSubModes.FixedBoundariesEditing);
+            obj.FixedOuterBoundary = strcmp(obj.ViewerPanel.SubMode, MimSubModes.FixedBoundariesEditing);
         end
 
         

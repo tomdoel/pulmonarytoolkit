@@ -1,4 +1,4 @@
-classdef PTKMarkerPointTool < PTKTool
+classdef PTKMarkerPointTool < MimTool
     % PTKMarkerPointTool. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -6,7 +6,7 @@ classdef PTKMarkerPointTool < PTKTool
     %
     %     PTKMarkerPointTool provides functionality for creating, editing and
     %     deleting marker points associated with an image using the
-    %     PTKViewerPanel.
+    %     MimViewerPanel.
     %
     %
     %     Licence

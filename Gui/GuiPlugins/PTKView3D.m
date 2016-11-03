@@ -1,5 +1,5 @@
-classdef PTKView3D < PTKGuiPlugin
-    % PTKGuiPlugin. Gui Plugin for rendering the current overlay image in 3D 
+classdef PTKView3D < MimGuiPlugin
+    % MimGuiPlugin. Gui Plugin for rendering the current overlay image in 3D 
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.

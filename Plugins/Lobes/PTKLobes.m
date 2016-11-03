@@ -31,8 +31,8 @@ classdef PTKLobes < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         
-        EnableModes = PTKModes.EditMode
-        SubMode = PTKSubModes.FixedBoundariesEditing
+        EnableModes = MimModes.EditMode
+        SubMode = MimSubModes.FixedBoundariesEditing
     end
     
     methods (Static)

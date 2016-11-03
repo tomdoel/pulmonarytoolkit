@@ -1,10 +1,10 @@
-classdef PTKViewerPanelToolbar < GemPanel
-    % PTKViewerPanelToolbar. Part of the gui for the Pulmonary Toolkit.
+classdef MimViewerPanelToolbar < GemPanel
+    % MimViewerPanelToolbar. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKViewerPanelToolbar is used to build the controls for the PTKViewingPanel
+    %     MimViewerPanelToolbar is used to build the controls for the MimViewingPanel
     %
     %
     %     Licence
@@ -42,7 +42,7 @@ classdef PTKViewerPanelToolbar < GemPanel
     end
     
     methods
-        function obj = PTKViewerPanelToolbar(viewer_panel)
+        function obj = MimViewerPanelToolbar(viewer_panel)
             obj = obj@GemPanel(viewer_panel);
             obj.ViewerPanel = viewer_panel;
             obj.BackgroundColour = 'black';

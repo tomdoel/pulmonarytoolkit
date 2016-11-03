@@ -1,11 +1,11 @@
-classdef PTKPluginLabelSlider < GemLabelSlider
-    % PTKPluginLabelSlider. Part of the gui for the Pulmonary Toolkit.
+classdef MimPluginLabelSlider < GemLabelSlider
+    % MimPluginLabelSlider. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPluginLabelSlider is used to build a slider control which interacts
-    %     with the PTK GUI
+    %     MimPluginLabelSlider is used to build a slider control which interacts
+    %     with the MIM GUI
     %
     %
     %     Licence
@@ -22,7 +22,7 @@ classdef PTKPluginLabelSlider < GemLabelSlider
     end
     
     methods
-        function obj = PTKPluginLabelSlider(parent, tool, icon, gui_app)
+        function obj = MimPluginLabelSlider(parent, tool, icon, gui_app)
             obj = obj@GemLabelSlider(parent, tool.ButtonText, tool.ToolTip, class(tool));
             obj.GuiApp = gui_app;
             obj.Tool = tool;

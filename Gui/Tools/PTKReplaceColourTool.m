@@ -1,4 +1,4 @@
-classdef PTKReplaceColourTool < PTKTool
+classdef PTKReplaceColourTool < MimTool
     % PTKReplaceColourTool. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -49,8 +49,8 @@ classdef PTKReplaceColourTool < PTKTool
         end
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)
-            is_enabled = ~isempty(mode) && ~isempty(sub_mode) && strcmp(mode, PTKModes.EditMode) && ...
-                (strcmp(sub_mode, PTKSubModes.EditBoundariesEditing) || strcmp(sub_mode, PTKSubModes.FixedBoundariesEditing) || strcmp(sub_mode, PTKSubModes.PaintEditing));
+            is_enabled = ~isempty(mode) && ~isempty(sub_mode) && strcmp(mode, MimModes.EditMode) && ...
+                (strcmp(sub_mode, MimSubModes.EditBoundariesEditing) || strcmp(sub_mode, MimSubModes.FixedBoundariesEditing) || strcmp(sub_mode, MimSubModes.PaintEditing));
         end
         
         function Enter(obj)

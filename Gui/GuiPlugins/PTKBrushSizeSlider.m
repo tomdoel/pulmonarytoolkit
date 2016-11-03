@@ -1,4 +1,4 @@
-classdef PTKBrushSizeSlider < PTKGuiPluginSlider
+classdef PTKBrushSizeSlider < MimGuiPluginSlider
     % PTKBrushSizeSlider. Gui Plugin for changing the size of the edit brush
     %
     %     You should not use this class within your own code. It is intended to

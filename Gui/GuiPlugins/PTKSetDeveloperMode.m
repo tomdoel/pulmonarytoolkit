@@ -1,4 +1,4 @@
-classdef PTKSetDeveloperMode < PTKGuiPlugin
+classdef PTKSetDeveloperMode < MimGuiPlugin
     % PTKSetDeveloperMode. Gui Plugin for enabling or disabling developer mode
     %
     %     You should not use this class within your own code. It is intended to

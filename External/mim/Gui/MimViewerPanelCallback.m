@@ -1,5 +1,5 @@
-classdef PTKViewerPanelCallback < CoreBaseClass
-    % PTKViewerPanelCallback. Class to handle PTKViewerPanel callback events
+classdef MimViewerPanelCallback < CoreBaseClass
+    % MimViewerPanelCallback. Class to handle MimViewerPanel callback events
     %
     %
     %
@@ -25,7 +25,7 @@ classdef PTKViewerPanelCallback < CoreBaseClass
     
     methods
         
-        function obj = PTKViewerPanelCallback(viewing_panel, axes, viewing_panel_multi_view, tools, default_orientation, reporting)
+        function obj = MimViewerPanelCallback(viewing_panel, axes, viewing_panel_multi_view, tools, default_orientation, reporting)
             obj.DefaultOrientation = default_orientation;
             obj.Tools = tools;
             obj.ViewerPanel = viewing_panel;

@@ -1,10 +1,10 @@
-classdef PTKPluginLabelButton < GemLabelButton
-    % PTKPluginLabelButton. Part of the gui for the Pulmonary Toolkit.
+classdef MimPluginLabelButton < GemLabelButton
+    % MimPluginLabelButton. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPluginLabelButton is used to build a button control which activates a tool
+    %     MimPluginLabelButton is used to build a button control which activates a tool
     %
     %
     %     Licence
@@ -20,7 +20,7 @@ classdef PTKPluginLabelButton < GemLabelButton
     end
     
     methods
-        function obj = PTKPluginLabelButton(parent, tool, icon, gui_app)
+        function obj = MimPluginLabelButton(parent, tool, icon, gui_app)
             obj = obj@GemLabelButton(parent, tool.ButtonText, tool.ToolTip, class(tool), icon);
             obj.GuiApp = gui_app;
             obj.Tool = tool;

@@ -1,5 +1,5 @@
-classdef PTKToolList < handle
-    % PTKToolList. Stores a list of PTKTools
+classdef MimToolList < handle
+    % MimToolList. Stores a list of MimTools
     %
     %
     %
@@ -31,7 +31,7 @@ classdef PTKToolList < handle
     end
     
     methods
-        function obj = PTKToolList(marker_manager, tool_callback, viewer_panel, image_parameters, image_display_parameters)
+        function obj = MimToolList(marker_manager, tool_callback, viewer_panel, image_parameters, image_display_parameters)
             obj.ToolCallback = tool_callback;
             obj.ViewerPanel = viewer_panel;
             

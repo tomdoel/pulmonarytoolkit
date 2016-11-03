@@ -1,5 +1,5 @@
-classdef PTKOrganisedManualSegmentations < CoreBaseClass
-    % PTKOrganisedManualSegmentations. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimOrganisedManualSegmentations < CoreBaseClass
+    % MimOrganisedManualSegmentations. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -20,10 +20,10 @@ classdef PTKOrganisedManualSegmentations < CoreBaseClass
     end
     
     methods
-        function obj = PTKOrganisedManualSegmentations(gui_app, app_def, reporting)
+        function obj = MimOrganisedManualSegmentations(gui_app, app_def, reporting)
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
-            obj.OrganisedPluginsModeList = PTKOrganisedPluginsModeList([]);
+            obj.OrganisedPluginsModeList = MimOrganisedPluginsModeList([]);
             obj.Repopulate(reporting);
         end
         

@@ -1,4 +1,4 @@
-classdef PTKImportRecursive < PTKGuiPlugin
+classdef PTKImportRecursive < MimGuiPlugin
     % PTKImportRecursive. Gui Plugin for importing and loading image files.
     %
     %     You should not use this class within your own code. It is intended to

@@ -1,4 +1,4 @@
-classdef PTKCloseFigures < PTKGuiPlugin
+classdef PTKCloseFigures < MimGuiPlugin
     % PTKCloseFigures. Gui Plugin for closing all open figures except the PTK
     % gui
     %
@@ -31,7 +31,7 @@ classdef PTKCloseFigures < PTKGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.CloseAllFiguresExceptPtk();
+            ptk_gui_app.CloseAllFiguresExceptMim();
         end
         
         function enabled = IsEnabled(ptk_gui_app)

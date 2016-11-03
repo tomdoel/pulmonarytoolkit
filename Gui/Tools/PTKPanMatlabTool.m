@@ -1,7 +1,7 @@
-classdef PTKPanMatlabTool < PTKTool
-    % PTKPanMatlabTool. A tool for invoking the Matlab pan tool with PTKViewerPanel
+classdef PTKPanMatlabTool < MimTool
+    % PTKPanMatlabTool. A tool for invoking the Matlab pan tool with MimViewerPanel
     %
-    %     PTKPanMatlabTool is a tool class used with PTKViewerPanel to allow the user
+    %     PTKPanMatlabTool is a tool class used with MimViewerPanel to allow the user
     %     to use Matlab's pan tool.
     %
     %

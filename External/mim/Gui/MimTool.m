@@ -1,5 +1,5 @@
-classdef PTKTool < CoreBaseClass
-    % PTKTool. Interface for tools which are used with the PTKViewerPanel
+classdef MimTool < CoreBaseClass
+    % MimTool. Interface for tools which are used with the MimViewerPanel
     %
     %
     %

@@ -1,5 +1,5 @@
-classdef PTKSubModes
-    % PTKSubModes
+classdef MimSubModes
+    % MimSubModes
     %
     %
     %     Licence

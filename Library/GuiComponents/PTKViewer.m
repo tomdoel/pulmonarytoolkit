@@ -1,7 +1,7 @@
 classdef PTKViewer < GemFigure
     % PTKViewer. A standalone image viewer for showing 3D images slice-by-slice
     %
-    %     PTKViewer uses PTKViewerPanel to create a visualisation window for the
+    %     PTKViewer uses MimViewerPanel to create a visualisation window for the
     %     supplied image, which can be a PTKImage or raw data. If a raw data
     %     matrix is supplied, the type argument can be supplied to ensure the
     %     image is displayed as expected.
@@ -105,7 +105,7 @@ classdef PTKViewer < GemFigure
             % Call the base class to initialise the hidden window
             obj = obj@GemFigure(title, [], reporting);
 
-            obj.ViewerPanelHandle = PTKViewerPanelWithControlPanel(obj);
+            obj.ViewerPanelHandle = MimViewerPanelWithControlPanel(obj);
             obj.AddChild(obj.ViewerPanelHandle);
             
             obj.Image = image_handle;

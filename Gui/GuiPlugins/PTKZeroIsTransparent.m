@@ -1,4 +1,4 @@
-classdef PTKZeroIsTransparent < PTKGuiPlugin
+classdef PTKZeroIsTransparent < MimGuiPlugin
     % PTKZeroIsTransparent. Gui Plugin for switching transparency of zero
     %
     %     You should not use this class within your own code. It is intended to

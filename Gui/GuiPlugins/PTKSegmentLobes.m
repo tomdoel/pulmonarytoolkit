@@ -1,4 +1,4 @@
-classdef PTKSegmentLobes < PTKGuiPlugin
+classdef PTKSegmentLobes < MimGuiPlugin
     % PTKSegmentLobes. Gui Plugin for activating lobe segmentation
     %
     %     You should not use this class within your own code. It is intended to

@@ -1,4 +1,4 @@
-classdef PTKShowPatientBrowser < PTKGuiPlugin
+classdef PTKShowPatientBrowser < MimGuiPlugin
     % PTKShowPatientBrowser. Gui Plugin for displaying the study browser
     %
     %     You should not use this class within your own code. It is intended to

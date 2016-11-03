@@ -1,4 +1,4 @@
-classdef PTKSaveOverlay < PTKGuiPlugin
+classdef PTKSaveOverlay < MimGuiPlugin
     % PTKSaveOverlay. Gui Plugin for exporting the overlay image currently in the
     % visualisation window to a file
     %

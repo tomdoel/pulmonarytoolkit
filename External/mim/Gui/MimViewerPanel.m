@@ -1,12 +1,12 @@
-classdef PTKViewerPanel < GemPanel
-    % PTKViewerPanel. Creates a data viewer window for imaging 3D data slice-by-slice.
+classdef MimViewerPanel < GemPanel
+    % MimViewerPanel. Creates a data viewer window for imaging 3D data slice-by-slice.
     %
-    %     PTKViewerPanel creates a visualisation window on the supplied
+    %     MimViewerPanel creates a visualisation window on the supplied
     %     graphics handle. It creates the viewer panel, scrollbar, orientation
     %     and tool controls, a status window and controls for toggling the image
     %     and overlay on and off and changing overlay transparency.
     %
-    %     PTKViewerPanel is used as a component by the standalong data viewer
+    %     MimViewerPanel is used as a component by the standalong data viewer
     %     application PTKViewer, and by the Pulmonary Toolkit gui application.
     %     You can also use this in your own user interfaces.
     %
@@ -102,17 +102,17 @@ classdef PTKViewerPanel < GemPanel
     
     methods
         
-        function obj = PTKViewerPanel(parent)
-            % Creates a PTKViewerPanel
+        function obj = MimViewerPanel(parent)
+            % Creates a MimViewerPanel
             
             obj = obj@GemPanel(parent);
             
             obj.MouseCursorStatus = MimMouseCursorStatus;
 
             % Create the image pointer wrappers
-            obj.BackgroundImageSource = PTKImageSource;
-            obj.OverlayImageSource = PTKImageSource;
-            obj.QuiverImageSource = PTKImageSource;
+            obj.BackgroundImageSource = MimImageSource;
+            obj.OverlayImageSource = MimImageSource;
+            obj.QuiverImageSource = MimImageSource;
             obj.MarkerImageSource = PTKMarkerPointImage;
             
             % Create the model object that holds the slice number and
@@ -131,14 +131,14 @@ classdef PTKViewerPanel < GemPanel
             obj.ViewerPanelMultiView = GemViewerPanelMultiView(obj);
 
             % Create the axes on which the 2D images and overlay are drawn
-            obj.ImageOverlayAxes = PTKImageOverlayAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
+            obj.ImageOverlayAxes = MimImageOverlayAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
 
             % Create the object which handles the marker image processing in the viewer
             obj.MarkerLayer = PTKMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes);
 
             % Create the mouse tools
-            obj.ToolCallback = PTKToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.ImageOverlayAxes, obj.Reporting);
-            obj.Tools = PTKToolList(obj.MarkerLayer, obj.ToolCallback, obj, obj.ImageSliceParameters, obj.BackgroundImageDisplayParameters);
+            obj.ToolCallback = MimToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.ImageOverlayAxes, obj.Reporting);
+            obj.Tools = MimToolList(obj.MarkerLayer, obj.ToolCallback, obj, obj.ImageSliceParameters, obj.BackgroundImageDisplayParameters);
 
             % Create the scrolling 2D cine view and tools and add to the
             % multiview panel
@@ -240,14 +240,14 @@ classdef PTKViewerPanel < GemPanel
             obj.Mode = mode;
             obj.SubMode = submode;
             
-            if strcmp(mode, PTKModes.EditMode)
-                if strcmp(submode, PTKSubModes.PaintEditing)
+            if strcmp(mode, MimModes.EditMode)
+                if strcmp(submode, MimSubModes.PaintEditing)
                     obj.SetControl('Paint');
-                elseif strcmp(submode, PTKSubModes.ColourRemapEditing)
+                elseif strcmp(submode, MimSubModes.ColourRemapEditing)
                     obj.SetControl('Map');
-                elseif strcmp(submode, PTKSubModes.EditBoundariesEditing)
+                elseif strcmp(submode, MimSubModes.EditBoundariesEditing)
                     obj.SetControl('Edit');
-                elseif strcmp(submode, PTKSubModes.FixedBoundariesEditing)
+                elseif strcmp(submode, MimSubModes.FixedBoundariesEditing)
                     obj.SetControl('Edit');
                 else
                     obj.SetControl('W/L');
@@ -312,7 +312,7 @@ classdef PTKViewerPanel < GemPanel
         end
         
         function tools = GetToolList(obj)
-            % Returns a PTKToolList describing the mouse tools supported by the viewer
+            % Returns a MimToolList describing the mouse tools supported by the viewer
             
             tools = obj.Tools;
         end
@@ -429,7 +429,7 @@ classdef PTKViewerPanel < GemPanel
         function PostCreation(obj, position, reporting)
             % Called after the component and all its children have been created
             
-            obj.ViewerPanelCallback = PTKViewerPanelCallback(obj, obj.ImageOverlayAxes, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
+            obj.ViewerPanelCallback = MimViewerPanelCallback(obj, obj.ImageOverlayAxes, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
         end            
 
         function input_has_been_processed = Keypressed(obj, click_point, key)
