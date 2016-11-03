@@ -27,7 +27,6 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = 'User';
         path_folders{end + 1} = 'bin';
         path_folders{end + 1} = 'Gui';
-        path_folders{end + 1} = fullfile('Gui', 'Tools');
         path_folders{end + 1} = fullfile('Gui', 'Modes');
 
         path_folders{end + 1} = 'Contexts';

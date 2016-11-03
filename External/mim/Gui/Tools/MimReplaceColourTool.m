@@ -1,5 +1,5 @@
-classdef PTKReplaceColourTool < MimTool
-    % PTKReplaceColourTool. Part of the internal gui for the Pulmonary Toolkit.
+classdef MimReplaceColourTool < MimTool
+    % MimReplaceColourTool. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
@@ -43,7 +43,7 @@ classdef PTKReplaceColourTool < MimTool
     end
     
     methods
-        function obj = PTKReplaceColourTool(viewer_panel)
+        function obj = MimReplaceColourTool(viewer_panel)
             obj.ViewerPanel = viewer_panel;
             obj.AddPostSetListener(obj.ViewerPanel, 'PaintBrushSize', @obj.BrushSizeChangedCallback);            
         end

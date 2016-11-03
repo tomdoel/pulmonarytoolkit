@@ -35,16 +35,16 @@ classdef MimToolList < handle
             obj.ToolCallback = tool_callback;
             obj.ViewerPanel = viewer_panel;
             
-            obj.CineTool = PTKCineTool(image_parameters, tool_callback);
-            obj.WindowLevelTool = PTKWindowLevelTool(image_display_parameters, tool_callback);
-            obj.ZoomTool = PTKZoomTool(tool_callback);
-            obj.PanTool = PTKPanTool(tool_callback);
-            obj.PanMatlabTool = PTKPanMatlabTool(tool_callback);
-            obj.ZoomMatlabTool = PTKZoomMatlabTool(tool_callback);
-            obj.EditTool = PTKEditManager(obj.ViewerPanel);
-            obj.ReplaceColourTool = PTKReplaceColourTool(obj.ViewerPanel);
-            obj.MapColourTool = PTKMapColourTool(obj.ViewerPanel);
-            obj.MarkerPointTool = PTKMarkerPointTool(marker_manager, obj.ViewerPanel);
+            obj.CineTool = MimCineTool(image_parameters, tool_callback);
+            obj.WindowLevelTool = MimWindowLevelTool(image_display_parameters, tool_callback);
+            obj.ZoomTool = MimZoomTool(tool_callback);
+            obj.PanTool = MimPanTool(tool_callback);
+            obj.PanMatlabTool = MimPanMatlabTool(tool_callback);
+            obj.ZoomMatlabTool = MimZoomMatlabTool(tool_callback);
+            obj.EditTool = MimEditManager(obj.ViewerPanel);
+            obj.ReplaceColourTool = MimReplaceColourTool(obj.ViewerPanel);
+            obj.MapColourTool = MimMapColourTool(obj.ViewerPanel);
+            obj.MarkerPointTool = MimMarkerPointTool(marker_manager, obj.ViewerPanel);
            
             tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointTool, obj.WindowLevelTool, obj.CineTool, obj.EditTool, obj.ReplaceColourTool, obj.MapColourTool};
 

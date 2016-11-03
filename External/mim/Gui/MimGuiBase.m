@@ -96,7 +96,7 @@ classdef MimGuiBase < GemFigure
             % Create the object which manages the current dataset
             obj.GuiDataset = MimGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
-            obj.MarkerManager = PTKMarkerPointManager(obj.ImagePanel.MarkerLayer, obj.ImagePanel.MarkerImageSource, obj.ImagePanel.MarkerImageDisplayParameters, obj.ImagePanel, obj, obj.GuiDataset, reporting);
+            obj.MarkerManager = MimMarkerPointManager(obj.ImagePanel.MarkerLayer, obj.ImagePanel.MarkerImageSource, obj.ImagePanel.MarkerImageDisplayParameters, obj.ImagePanel, obj, obj.GuiDataset, reporting);
             
             % Create a callback handler for the Patient Browser and sidebar
             if obj.AppDef.MatNatEnabled

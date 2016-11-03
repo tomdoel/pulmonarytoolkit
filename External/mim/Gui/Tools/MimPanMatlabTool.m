@@ -1,7 +1,7 @@
-classdef PTKPanMatlabTool < MimTool
-    % PTKPanMatlabTool. A tool for invoking the Matlab pan tool with MimViewerPanel
+classdef MimPanMatlabTool < MimTool
+    % MimPanMatlabTool. A tool for invoking the Matlab pan tool with MimViewerPanel
     %
-    %     PTKPanMatlabTool is a tool class used with MimViewerPanel to allow the user
+    %     MimPanMatlabTool is a tool class used with MimViewerPanel to allow the user
     %     to use Matlab's pan tool.
     %
     %
@@ -26,7 +26,7 @@ classdef PTKPanMatlabTool < MimTool
     end
     
     methods
-        function obj = PTKPanMatlabTool(callback)
+        function obj = MimPanMatlabTool(callback)
             obj.Callback = callback;
         end
         

@@ -1,7 +1,7 @@
-classdef PTKCineTool < MimTool
-    % PTKCineTool. A tool for interactively moving through slices
+classdef MimCineTool < MimTool
+    % MimCineTool. A tool for interactively moving through slices
     %
-    %     PTKCineTool is a tool class used with GemCinePanel to allow the user
+    %     MimCineTool is a tool class used with GemCinePanel to allow the user
     %     to cine through an image using mouse controls.
     %
     %
@@ -29,7 +29,7 @@ classdef PTKCineTool < MimTool
     end
     
     methods
-        function obj = PTKCineTool(image_parameters, callback)
+        function obj = MimCineTool(image_parameters, callback)
             obj.Callback = callback;
             obj.ImageParameters = image_parameters;
         end

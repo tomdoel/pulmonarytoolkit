@@ -1,5 +1,5 @@
-classdef PTKMapColourTool < MimTool
-    % PTKMapColourTool. Part of the internal gui for the Pulmonary Toolkit.
+classdef MimMapColourTool < MimTool
+    % MimMapColourTool. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
@@ -46,7 +46,7 @@ classdef PTKMapColourTool < MimTool
     end
     
     methods
-        function obj = PTKMapColourTool(viewer_panel)
+        function obj = MimMapColourTool(viewer_panel)
             obj.ViewerPanel = viewer_panel;
         end
         

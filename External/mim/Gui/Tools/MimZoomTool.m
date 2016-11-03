@@ -1,7 +1,7 @@
-classdef PTKZoomTool < MimTool
-    % PTKZoomTool. A tool for interactively zooming an image with MimViewerPanel
+classdef MimZoomTool < MimTool
+    % MimZoomTool. A tool for interactively zooming an image with MimViewerPanel
     %
-    %     PTKZoomTool is a tool class used with MimViewerPanel to allow the user
+    %     MimZoomTool is a tool class used with MimViewerPanel to allow the user
     %     to zoom an image using mouse and keyboard controls.
     %
     %
@@ -26,7 +26,7 @@ classdef PTKZoomTool < MimTool
     end    
     
     methods
-        function obj = PTKZoomTool(callback)
+        function obj = MimZoomTool(callback)
             obj.Callback = callback;
         end
         

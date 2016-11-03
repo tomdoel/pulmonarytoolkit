@@ -1,7 +1,7 @@
-classdef PTKZoomMatlabTool < MimTool
-    % PTKZoomMatlabTool. A tool for invoking the Matlab zoom tool with MimViewerPanel
+classdef MimZoomMatlabTool < MimTool
+    % MimZoomMatlabTool. A tool for invoking the Matlab zoom tool with MimViewerPanel
     %
-    %     PTKZoomMatlabTool is a tool class used with MimViewerPanel to allow the user
+    %     MimZoomMatlabTool is a tool class used with MimViewerPanel to allow the user
     %     to use Matlab's zoom tool.
     %
     %
@@ -26,7 +26,7 @@ classdef PTKZoomMatlabTool < MimTool
     end
     
     methods
-        function obj = PTKZoomMatlabTool(callback)
+        function obj = MimZoomMatlabTool(callback)
             obj.Callback = callback;
         end
  

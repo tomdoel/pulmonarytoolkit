@@ -1,5 +1,5 @@
-classdef PTKMarkerPointManager < CoreBaseClass
-    % PTKMarkerPointManager. Part of the internal gui for the Pulmonary Toolkit.
+classdef MimMarkerPointManager < CoreBaseClass
+    % MimMarkerPointManager. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
@@ -28,7 +28,7 @@ classdef PTKMarkerPointManager < CoreBaseClass
     end
     
     methods
-        function obj = PTKMarkerPointManager(marker_layer, marker_image_source, marker_display_parameters, viewer_panel, gui, gui_dataset, reporting)
+        function obj = MimMarkerPointManager(marker_layer, marker_image_source, marker_display_parameters, viewer_panel, gui, gui_dataset, reporting)
             obj.MarkerLayer = marker_layer;
             obj.MarkerPointImage = marker_image_source;
             obj.MarkerDisplayParameters = marker_display_parameters;

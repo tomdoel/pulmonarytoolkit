@@ -1,7 +1,7 @@
-classdef PTKWindowLevelTool < MimTool
-    % PTKWindowLevelTool. A tool for interactively changing window and level
+classdef MimWindowLevelTool < MimTool
+    % MimWindowLevelTool. A tool for interactively changing window and level
     %
-    %     PTKWindowLevelTool is a tool class to allow the user
+    %     MimWindowLevelTool is a tool class to allow the user
     %     to change the window and level of an image using the mouse.
     %
     %
@@ -30,7 +30,7 @@ classdef PTKWindowLevelTool < MimTool
     end
     
     methods
-        function obj = PTKWindowLevelTool(image_display_parameters, callback)
+        function obj = MimWindowLevelTool(image_display_parameters, callback)
             obj.Callback = callback;
             obj.ImageDisplayParameters = image_display_parameters;
         end

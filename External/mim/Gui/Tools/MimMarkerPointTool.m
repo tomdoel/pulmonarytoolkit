@@ -1,10 +1,10 @@
-classdef PTKMarkerPointTool < MimTool
-    % PTKMarkerPointTool. Part of the internal gui for the Pulmonary Toolkit.
+classdef MimMarkerPointTool < MimTool
+    % MimMarkerPointTool. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     PTKMarkerPointTool provides functionality for creating, editing and
+    %     MimMarkerPointTool provides functionality for creating, editing and
     %     deleting marker points associated with an image using the
     %     MimViewerPanel.
     %
@@ -41,10 +41,10 @@ classdef PTKMarkerPointTool < MimTool
     end
     
     methods
-        function obj = PTKMarkerPointTool(marker_layer, viewer_panel)
+        function obj = MimMarkerPointTool(marker_layer, viewer_panel)
             obj.MarkerLayer = marker_layer;
             obj.ViewerPanel = viewer_panel;
-            obj.MarkerPointImage = PTKMarkerPointImage;
+            obj.MarkerPointImage = MimMarkerPointImage;
         end
 
         function Enter(obj)

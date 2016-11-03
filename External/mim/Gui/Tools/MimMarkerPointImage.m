@@ -1,10 +1,10 @@
-classdef PTKMarkerPointImage < MimImageSource
-    % PTKMarkerPointImage. Part of the gui for the Pulmonary Toolkit.
+classdef MimMarkerPointImage < MimImageSource
+    % MimMarkerPointImage. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     PTKMarkerPointImage stores the underlying image which represents marker
+    %     MimMarkerPointImage stores the underlying image which represents marker
     %     points. It abstracts the storage of the marker image away from the
     %     interactive creation and use of marker points in the MimViewerPanel.
     %

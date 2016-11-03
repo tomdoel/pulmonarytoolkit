@@ -113,7 +113,7 @@ classdef MimViewerPanel < GemPanel
             obj.BackgroundImageSource = MimImageSource;
             obj.OverlayImageSource = MimImageSource;
             obj.QuiverImageSource = MimImageSource;
-            obj.MarkerImageSource = PTKMarkerPointImage;
+            obj.MarkerImageSource = MimMarkerPointImage;
             
             % Create the model object that holds the slice number and
             % orientation
@@ -134,7 +134,7 @@ classdef MimViewerPanel < GemPanel
             obj.ImageOverlayAxes = MimImageOverlayAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
 
             % Create the object which handles the marker image processing in the viewer
-            obj.MarkerLayer = PTKMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes);
+            obj.MarkerLayer = MimMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes);
 
             % Create the mouse tools
             obj.ToolCallback = MimToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.ImageOverlayAxes, obj.Reporting);

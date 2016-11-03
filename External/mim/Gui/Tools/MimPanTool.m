@@ -1,7 +1,7 @@
-classdef PTKPanTool < MimTool
-    % PTKPanTool. A tool for interactively panning an image with MimViewerPanel
+classdef MimPanTool < MimTool
+    % MimPanTool. A tool for interactively panning an image with MimViewerPanel
     %
-    %     PTKPanTool is a tool class used with MimViewerPanel to allow the user
+    %     MimPanTool is a tool class used with MimViewerPanel to allow the user
     %     to pan an image using mouse and keyboard controls.
     %
     %
@@ -26,7 +26,7 @@ classdef PTKPanTool < MimTool
     end
     
     methods
-        function obj = PTKPanTool(callback)
+        function obj = MimPanTool(callback)
             obj.Callback = callback;
         end
         

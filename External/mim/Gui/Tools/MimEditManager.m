@@ -1,5 +1,5 @@
-classdef PTKEditManager < MimTool
-    % PTKEditManager. Part of the internal gui for the Pulmonary Toolkit.
+classdef MimEditManager < MimTool
+    % MimEditManager. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
@@ -47,7 +47,7 @@ classdef PTKEditManager < MimTool
     end
     
     methods
-        function obj = PTKEditManager(viewer_panel)
+        function obj = MimEditManager(viewer_panel)
             obj.ViewerPanel = viewer_panel;
             obj.UndoStack = CoreUndoStack([], 5);
         end
