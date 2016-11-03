@@ -36,7 +36,7 @@ classdef MimGuiDataset < CoreBaseClass
             obj.AppDef = app_def;
             obj.ContextDef = app_def.GetContextDef;
             obj.GuiDatasetState = MimGuiDatasetState;
-            obj.ModeSwitcher = PTKModeSwitcher(viewer_panel, obj, app_def, settings, reporting);
+            obj.ModeSwitcher = MimModeSwitcher(viewer_panel, obj, app_def, settings, reporting);
             
             obj.Gui = gui;
             obj.Reporting = reporting;
