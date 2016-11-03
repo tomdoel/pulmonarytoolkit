@@ -1,5 +1,5 @@
-classdef PTKViewerPanelMultiView < GemMultiPanel
-    % PTKViewerPanelMultiView. Contains panels for 2D and 3D views, and allows
+classdef GemViewerPanelMultiView < GemMultiPanel
+    % GemViewerPanelMultiView. Contains panels for 2D and 3D views, and allows
     %     switching between them
     %
     %
@@ -21,13 +21,13 @@ classdef PTKViewerPanelMultiView < GemMultiPanel
     end
     
     methods
-        function obj = PTKViewerPanelMultiView(parent)
+        function obj = GemViewerPanelMultiView(parent)
             obj = obj@GemMultiPanel(parent);
         end
         
         function Add2DCinePanel(obj, cine_panel, reporting)
             if ~isempty(obj.CinePanel2D)
-                reporting.Error('PTKViewerPanelMultiView:CinePanelAlreadySet', 'Add2DCinePanel() was called more than once');
+                reporting.Error('GemViewerPanelMultiView:CinePanelAlreadySet', 'Add2DCinePanel() was called more than once');
             end
             obj.CinePanel2D = cine_panel;
             obj.AddPanel(obj.CinePanel2D, 'View2D');

@@ -1,10 +1,10 @@
-classdef PTKPluginButton < GemButton
-    % PTKPluginButton. Part of the gui for the Pulmonary Toolkit.
+classdef MimPluginButton < GemButton
+    % MimPluginButton. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPluginButton is used to build a button control representing a plugin,
+    %     MimPluginButton is used to build a button control representing a plugin,
     %     with a backgroud image preview of the plugin result
     %
     %
@@ -21,7 +21,7 @@ classdef PTKPluginButton < GemButton
     end
     
     methods
-        function obj = PTKPluginButton(parent, callback, plugin_wrapper)
+        function obj = MimPluginButton(parent, callback, plugin_wrapper)
             plugin_info = plugin_wrapper.ParsedPluginInfo;
             tooltip_string = ['<HTML>' plugin_info.ToolTip];
             

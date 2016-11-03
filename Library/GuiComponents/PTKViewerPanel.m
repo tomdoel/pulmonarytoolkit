@@ -75,7 +75,7 @@ classdef PTKViewerPanel < GemPanel
         Mode = ''              % Specifies the current editing mode
         SubMode = ''           % Specifies the current editing submode
         EditFixedOuterBoundary % Specifies whether the current edit can modify the segmentation outer boundary
-        MouseCursorStatus      % A class of type PTKMouseCursorStatus showing data representing the voxel under the cursor
+        MouseCursorStatus      % A class of type MimMouseCursorStatus showing data representing the voxel under the cursor
         MarkerLayer
     end
     
@@ -107,7 +107,7 @@ classdef PTKViewerPanel < GemPanel
             
             obj = obj@GemPanel(parent);
             
-            obj.MouseCursorStatus = PTKMouseCursorStatus;
+            obj.MouseCursorStatus = MimMouseCursorStatus;
 
             % Create the image pointer wrappers
             obj.BackgroundImageSource = PTKImageSource;
@@ -128,7 +128,7 @@ classdef PTKViewerPanel < GemPanel
             obj.MarkerImageDisplayParameters = GemMarkerDisplayParameters;
 
             % Create the panel which contains the 2D image viewer
-            obj.ViewerPanelMultiView = PTKViewerPanelMultiView(obj);
+            obj.ViewerPanelMultiView = GemViewerPanelMultiView(obj);
 
             % Create the axes on which the 2D images and overlay are drawn
             obj.ImageOverlayAxes = PTKImageOverlayAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
@@ -142,7 +142,7 @@ classdef PTKViewerPanel < GemPanel
 
             % Create the scrolling 2D cine view and tools and add to the
             % multiview panel
-            obj.CinePanel2D = PTKCinePanelWithTools(obj.ViewerPanelMultiView, obj.Tools, obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.ImageSliceParameters);
+            obj.CinePanel2D = GemCinePanelWithTools(obj.ViewerPanelMultiView, obj.Tools, obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.ImageSliceParameters);
             obj.ViewerPanelMultiView.Add2DCinePanel(obj.CinePanel2D, obj.Reporting);
 
             obj.AddChild(obj.ViewerPanelMultiView);

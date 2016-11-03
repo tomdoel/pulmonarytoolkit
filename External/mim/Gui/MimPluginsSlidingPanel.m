@@ -1,11 +1,11 @@
-classdef PTKPluginsSlidingPanel < GemSlidingPanel
-    % PTKPluginsSlidingPanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimPluginsSlidingPanel < GemSlidingPanel
+    % MimPluginsSlidingPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPluginsSlidingPanel represents the panel underneath the
-    %     PTKPluginsPanel, which allows the panel to be scrolled using a
+    %     MimPluginsSlidingPanel represents the panel underneath the
+    %     MimPluginsPanel, which allows the panel to be scrolled using a
     %     scrollbar and swipe gestures.
     %
     %
@@ -18,9 +18,9 @@ classdef PTKPluginsSlidingPanel < GemSlidingPanel
     %    
     
     methods
-        function obj = PTKPluginsSlidingPanel(parent, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback)
+        function obj = MimPluginsSlidingPanel(parent, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback)
             obj = obj@GemSlidingPanel(parent);
-            obj.FloatingPanel = PTKPluginsPanel(obj, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback);
+            obj.FloatingPanel = MimPluginsPanel(obj, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback);
             obj.AddChild(obj.FloatingPanel);
         end
         

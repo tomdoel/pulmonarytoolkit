@@ -139,7 +139,7 @@ classdef MimGuiBase < GemFigure
                 obj.AddChild(obj.ToolbarPanel);
             end
             
-            obj.ModeTabControl = PTKModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.AppDef);
+            obj.ModeTabControl = MimModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.AppDef);
             obj.AddChild(obj.ModeTabControl);
 
             obj.PatientNamePanel = MimNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);

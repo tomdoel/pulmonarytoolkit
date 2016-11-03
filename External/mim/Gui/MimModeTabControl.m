@@ -1,5 +1,5 @@
-classdef PTKModeTabControl < GemTabControl
-    % PTKModeTabControl. Part of the gui for the Pulmonary Toolkit.
+classdef MimModeTabControl < GemTabControl
+    % MimModeTabControl. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
@@ -26,7 +26,7 @@ classdef PTKModeTabControl < GemTabControl
     end
 
     methods
-        function obj = PTKModeTabControl(parent, organised_plugins, organised_manual_segmentations, app_def)
+        function obj = MimModeTabControl(parent, organised_plugins, organised_manual_segmentations, app_def)
             obj = obj@GemTabControl(parent);
 
             obj.OrganisedPlugins = organised_plugins;
@@ -43,11 +43,11 @@ classdef PTKModeTabControl < GemTabControl
             obj.EditPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', PTKModes.EditMode, 'Plugin', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'Edit', 'Manual correction of results');
 
-            obj.AnalysisPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.AnalysisPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
             obj.AddTabbedPanel(obj.AnalysisPanel, 'Analyse', 'Analysis', 'Perform analysis and save as tables and graphs');
             obj.AnalysisPanel.AddPlugins([]);
 
-            obj.PluginsPanel = PTKPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Developer', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.PluginsPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Developer', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
             obj.AddTabbedPanel(obj.PluginsPanel, 'Plugins', 'Plugins', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
         end
@@ -139,7 +139,7 @@ classdef PTKModeTabControl < GemTabControl
                         end
                     end
                 else
-                    obj.Reporting.Error('PTKModeTabControl:UnknownModeVisibility', 'The Visibility property of the mode panel is set to an unknown value');
+                    obj.Reporting.Error('MimModeTabControl:UnknownModeVisibility', 'The Visibility property of the mode panel is set to an unknown value');
                 end
             end
             if force_change && ~isempty(first_enabled_tab)

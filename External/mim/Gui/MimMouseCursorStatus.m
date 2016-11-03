@@ -1,5 +1,5 @@
-classdef PTKMouseCursorStatus < handle
-    % PTKMouseCursorStatus. Data representing the voxel under the mouse cursor
+classdef MimMouseCursorStatus < handle
+    % MimMouseCursorStatus. Data representing the voxel under the mouse cursor
     %
     %
     %     Licence

@@ -4,8 +4,8 @@ classdef PTKSegmentationButton < GemButton
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPluginButton is used to build a button control representing a plugin,
-    %     with a backgroud image preview of the plugin result
+    %     PTKSegmentationButton is used to build a button control representing a plugin,
+    %     with a backgroud image preview of the segmentation
     %
     %
     %     Licence

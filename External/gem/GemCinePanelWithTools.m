@@ -1,5 +1,5 @@
-classdef PTKCinePanelWithTools < GemCinePanel
-    % PTKCinePanelWithTools.  Part of the gui for the Pulmonary Toolkit.
+classdef GemCinePanelWithTools < GemCinePanel
+    % GemCinePanelWithTools.  Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
@@ -23,7 +23,7 @@ classdef PTKCinePanelWithTools < GemCinePanel
     end
     
     methods
-        function obj = PTKCinePanelWithTools(parent, tools, image_overlay_axes, background_image_source, image_parameters)
+        function obj = GemCinePanelWithTools(parent, tools, image_overlay_axes, background_image_source, image_parameters)
             obj = obj@GemCinePanel(parent, background_image_source, image_parameters, image_overlay_axes);
             obj.Tools = tools;
         end

@@ -1,10 +1,10 @@
-classdef PTKPluginGroupPanel < GemPanel
-    % PTKPluginGroupPanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimPluginGroupPanel < GemPanel
+    % MimPluginGroupPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     PTKPluginGroupPanel is a panel containing a group of Plugin buttons
+    %     MimPluginGroupPanel is a panel containing a group of Plugin buttons
     %
     %     Licence
     %     -------
@@ -29,7 +29,7 @@ classdef PTKPluginGroupPanel < GemPanel
     end
     
     methods
-        function obj = PTKPluginGroupPanel(parent, category, current_category_map, load_manual_segmentation_callback)
+        function obj = MimPluginGroupPanel(parent, category, current_category_map, load_manual_segmentation_callback)
             obj = obj@GemPanel(parent);
             obj.LoadManualSegmentationCallback = load_manual_segmentation_callback;
             obj.Enabled = false;
@@ -73,7 +73,7 @@ classdef PTKPluginGroupPanel < GemPanel
                     button_handle = PTKSegmentationButton(obj, current_plugin_key{1}, obj.LoadManualSegmentationCallback);
                 else
                     callback_function_handle = @current_plugin.RunPlugin;
-                    button_handle = PTKPluginButton(obj, callback_function_handle, current_plugin);
+                    button_handle = MimPluginButton(obj, callback_function_handle, current_plugin);
                 end
                 obj.AddChild(button_handle);
                 

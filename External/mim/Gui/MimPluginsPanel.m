@@ -1,10 +1,10 @@
-classdef PTKPluginsPanel < GemCompositePanel
-    % PTKPluginsPanel. Part of the gui for the Pulmonary Toolkit.
+classdef MimPluginsPanel < GemCompositePanel
+    % MimPluginsPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     PTKPluginsPanel builds and manages the panel of plugins and gui plugins
+    %     MimPluginsPanel builds and manages the panel of plugins and gui plugins
     %     as part of the Pulmonary Toolkit gui.
     %
     %
@@ -35,7 +35,7 @@ classdef PTKPluginsPanel < GemCompositePanel
     end
     
     methods
-        function obj = PTKPluginsPanel(parent, organised_plugins, plugins_mode_group, mode_to_switch_to, visibility, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback)
+        function obj = MimPluginsPanel(parent, organised_plugins, plugins_mode_group, mode_to_switch_to, visibility, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback)
             obj = obj@GemCompositePanel(parent);
             
             obj.OrganisedPlugins = organised_plugins;
@@ -121,7 +121,7 @@ classdef PTKPluginsPanel < GemCompositePanel
             
             for category = plugins_by_category.keys
                 current_category_map = plugins_by_category(char(category));
-                new_panel_handle = PTKPluginGroupPanel(obj, category, current_category_map, obj.LoadManualSegmentationCallback);
+                new_panel_handle = MimPluginGroupPanel(obj, category, current_category_map, obj.LoadManualSegmentationCallback);
                 obj.PluginPanels(char(category)) = new_panel_handle;
                 obj.AddPanel(new_panel_handle);
             end
