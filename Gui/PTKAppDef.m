@@ -54,6 +54,12 @@ classdef PTKAppDef < handle
             logo = fullfile(path_root, 'PTKLogo.jpg');
         end
 
+        function logo = GetDefaultPluginIcon(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            logo = fullfile(path_root, '..', 'External', 'mim', 'Gui', 'Icons', 'default_plugin.png');
+        end
+        
         function plugins_path = GetPluginsPath(~)
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
@@ -107,5 +113,14 @@ classdef PTKAppDef < handle
             end
             dicom_meta_data = obj.DicomMetadata;
         end
+        
+        function icons_folders = GetIconsFolders(obj)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            app_icons_path = fullfile(path_root, 'Icons');            
+            shared_icons_path = fullfile(path_root, '..', 'External', 'mim', 'Gui', 'Icons');
+            icons_folders = {app_icons_path, shared_icons_path};
+        end
+        
     end
 end

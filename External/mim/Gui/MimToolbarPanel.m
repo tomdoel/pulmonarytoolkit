@@ -179,10 +179,21 @@ classdef MimToolbarPanel < GemPanel
                     obj.AddChild(separator);
                 end
             end
+            icon_found = false;
+            
             if isprop(tool, 'Icon')
-                icon = imread(fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.IconFolder, tool.Icon));
-            else
-                icon = imread(fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.IconFolder, PTKSoftwareInfo.DefaultPluginIcon));
+                icons_paths = obj.AppDef.GetIconsFolders;
+                for icon_path = icons_paths
+                    if CoreDiskUtilities.FileExists(icon_path{1}, tool.Icon)
+                        icon = imread(fullfile(icon_path{1}, tool.Icon));
+                        icon_found = true;
+                        break;
+                    end
+                end
+            end
+                
+            if ~icon_found
+                icon = imread(obj.AppDef.GetDefaultPluginIcon);
             end
             
             if obj.AppDef.ForceGreyscale

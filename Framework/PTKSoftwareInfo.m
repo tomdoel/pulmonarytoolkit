@@ -48,10 +48,7 @@ classdef PTKSoftwareInfo < handle
         MexSourceDirectory = fullfile('Library', 'mex')
         UserDirectoryName = 'User'
         TestSourceDirectory = 'Test'
-        IconFolder = fullfile('Gui', 'Icons')
         
-        DefaultPluginIcon = 'default_plugin.png'
-
         % Filenames
         LogFileName = 'log.txt'
         SettingsFileName = 'PTKSettings.mat'

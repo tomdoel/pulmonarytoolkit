@@ -47,10 +47,16 @@ classdef MivAppDef < handle
             style_sheet = MivDefaultStyleSheet;
         end
         
-        function logo = GetLogoFilename(obj)
+        function logo = GetLogoFilename(~)
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
             logo = fullfile(path_root, 'MivLogo.jpg');
+        end
+        
+        function logo = GetDefaultPluginIcon(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            logo = fullfile(path_root, '..', 'Gui', 'Icons', 'default_plugin.png');
         end
         
         function plugins_path = GetPluginsPath(~)
@@ -94,6 +100,14 @@ classdef MivAppDef < handle
                 obj.FrameworkAppDef = PTKFrameworkAppDef;
             end
             framework_app_def = obj.FrameworkAppDef;
-        end        
+        end
+        
+        function icons_folders = GetIconsFolders(obj)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            shared_icons_path = fullfile(path_root, '..', 'Gui', 'Icons');
+            icons_folders = {shared_icons_path};
+        end
+        
     end
 end
