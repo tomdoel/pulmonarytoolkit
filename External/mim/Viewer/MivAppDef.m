@@ -48,7 +48,9 @@ classdef MivAppDef < handle
         end
         
         function logo = GetLogoFilename(obj)
-            logo = 'MivLogo.jpg';
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            logo = fullfile(path_root, 'MivLogo.jpg');
         end
         
         function plugins_path = GetPluginsPath(~)
