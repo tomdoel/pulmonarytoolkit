@@ -27,7 +27,6 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = 'User';
         path_folders{end + 1} = 'bin';
         path_folders{end + 1} = 'Gui';
-        path_folders{end + 1} = fullfile('Gui', 'Modes');
 
         path_folders{end + 1} = 'Contexts';
         path_folders{end + 1} = 'Library';
@@ -49,6 +48,7 @@ function PTKAddPaths(varargin)
         
         path_folders{end + 1} = fullfile('External', 'coremat');
         path_folders{end + 1} = fullfile('External', 'mim', 'Gui');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Modes');
         path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Tools');
         path_folders{end + 1} = fullfile('External', 'mim', 'Framework');
         path_folders{end + 1} = fullfile('External', 'mim', 'Legacy');

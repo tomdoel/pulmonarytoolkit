@@ -1,5 +1,5 @@
-classdef PTKEditMode < handle
-    % PTKEditMode. Part of the internal gui for the Pulmonary Toolkit.
+classdef MimEditMode < handle
+    % MimEditMode. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
@@ -42,7 +42,7 @@ classdef PTKEditMode < handle
     end
     
     methods
-        function obj = PTKEditMode(viewer_panel, gui_dataset, app_def, settings, reporting)
+        function obj = MimEditMode(viewer_panel, gui_dataset, app_def, settings, reporting)
             obj.ViewerPanel = viewer_panel;
             obj.GuiDataset = gui_dataset;
             obj.AppDef = app_def;

@@ -1,5 +1,5 @@
-classdef PTKModeSwitcher < CoreBaseClass
-    % PTKModeSwitcher. Part of the internal gui for the Pulmonary Toolkit.
+classdef MimModeSwitcher < CoreBaseClass
+    % MimModeSwitcher. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
@@ -27,11 +27,11 @@ classdef PTKModeSwitcher < CoreBaseClass
     end
     
     methods
-        function obj = PTKModeSwitcher(viewer_panel, gui_dataset, app_def, settings, reporting)
+        function obj = MimModeSwitcher(viewer_panel, gui_dataset, app_def, settings, reporting)
             obj.ViewerPanel = viewer_panel;
             obj.AddEventListener(viewer_panel.GetOverlayImageSource, 'ImageModified', @obj.OverlayImageChanged);
             obj.Modes = containers.Map;
-            obj.Modes(MimModes.EditMode) = PTKEditMode(viewer_panel, gui_dataset, app_def, settings, reporting);
+            obj.Modes(MimModes.EditMode) = MimEditMode(viewer_panel, gui_dataset, app_def, settings, reporting);
             obj.CurrentMode = [];
             obj.CurrentModeString = [];
         end
