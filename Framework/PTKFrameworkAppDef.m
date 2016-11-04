@@ -67,10 +67,16 @@ classdef PTKFrameworkAppDef < handle
         end
         
         function NewDatasetLoaded(obj, dataset_uid, dataset, reporting)
-            user_path = PTKDirectories.GetUserPath;
+            user_path = obj.GetUserPath;
             if CoreDiskUtilities.FileExists(user_path, 'PTKLinkDatasets.m');
                 PTKLinkDatasets(obj, dataset_uid, dataset, reporting);
             end
+        end
+        
+        function plugins_path = GetUserPath(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            plugins_path = fullfile(path_root, '..', 'User');
         end
     end
 end

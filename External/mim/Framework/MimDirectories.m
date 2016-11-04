@@ -123,6 +123,24 @@ classdef MimDirectories < CoreBaseClass
             cache_filename = obj.Config.LinkingCacheFileName;
             linking_file_path = fullfile(settings_dir, cache_filename);
         end
+
+        function default_icons_path = GetDefaultIconsDirectory(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            default_icons_path = fullfile(path_root, '..', 'Gui', 'Icons');
+        end
+
+        function default_icons_path = GetSharedPluginsDirectory(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            default_icons_path = fullfile(path_root, '..', 'Plugins');
+        end
+        
+        function default_icons_path = GetSharedGuiPluginsDirectory(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            default_icons_path = fullfile(path_root, '..', 'Gui', 'GuiPlugins');
+        end
     end
     
     methods (Access = private)

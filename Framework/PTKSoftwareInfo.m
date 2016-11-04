@@ -41,12 +41,8 @@ classdef PTKSoftwareInfo < handle
         GroupPatientsWithSameName = true
         
         % Directories
-        SharedPluginDirectoryName = 'SharedPlugins'
-        PluginDirectoryName = 'Plugins'
-        GuiPluginDirectoryName = fullfile('Gui', 'GuiPlugins')
         GuiToolDirectoryName = fullfile('Gui', 'Toolbar')
         MexSourceDirectory = fullfile('Library', 'mex')
-        UserDirectoryName = 'User'
         TestSourceDirectory = 'Test'
         
         % Filenames

@@ -60,18 +60,20 @@ classdef PTKAppDef < handle
             logo = fullfile(path_root, '..', 'External', 'mim', 'Gui', 'Icons', 'default_plugin.png');
         end
         
-        function plugins_path = GetPluginsPath(~)
-            full_path = mfilename('fullpath');
-            [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.PluginDirectoryName);
+        function plugins_folders = GetListOfPluginsFolders(obj)
+            app_plugins_path = obj.GetPluginsPath;
+            shared_plugins_path = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetSharedPluginsDirectory;
+            user_plugins_path = obj.GetUserPluginsPath;
+            plugins_folders = {app_plugins_path, shared_plugins_path, user_plugins_path};
         end
         
-        function plugins_path = GetUserPluginsPath(~)
-            full_path = mfilename('fullpath');
-            [path_root, ~, ~] = fileparts(full_path);
-            plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.UserDirectoryName, PTKSoftwareInfo.PluginDirectoryName);
+        function plugins_folders = GetListOfGuiPluginsFolders(obj)
+            app_plugins_path = obj.GetGuiPluginsPath;
+            shared_plugins_path = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetSharedGuiPluginsDirectory;
+            user_plugins_path = obj.GetGuiUserPluginsPath;
+            plugins_folders = {app_plugins_path, shared_plugins_path, user_plugins_path};
         end
-        
+
         function force_greyscale = ForceGreyscale(~)
             force_greyscale = false;
         end
@@ -106,21 +108,42 @@ classdef PTKAppDef < handle
             end
             framework_app_def = obj.FrameworkAppDef;
         end
-        
+
         function dicom_meta_data = GetDicomMetadata(obj)
             if isempty(obj.DicomMetadata)
                 obj.DicomMetadata = PTKDicomMetadata;
             end
             dicom_meta_data = obj.DicomMetadata;
         end
-        
+
         function icons_folders = GetIconsFolders(obj)
             full_path = mfilename('fullpath');
             [path_root, ~, ~] = fileparts(full_path);
-            app_icons_path = fullfile(path_root, 'Icons');            
-            shared_icons_path = fullfile(path_root, '..', 'External', 'mim', 'Gui', 'Icons');
+            app_icons_path = fullfile(path_root, 'Icons');
+            shared_icons_path = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetDefaultIconsDirectory;
             icons_folders = {app_icons_path, shared_icons_path};
+        end 
+    end
+    
+    methods (Access = private)
+        function plugins_path = GetPluginsPath(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            plugins_path = fullfile(path_root, '..', 'Plugins');
         end
         
+        function plugins_path = GetUserPluginsPath(obj)
+            plugins_path = fullfile(obj.FrameworkAppDef.GetUserPath, 'Plugins');
+        end
+        
+        function plugins_path = GetGuiPluginsPath(~)
+            full_path = mfilename('fullpath');
+            [path_root, ~, ~] = fileparts(full_path);
+            plugins_path = fullfile(path_root, '..', 'Gui', 'GuiPlugins');
+        end
+        
+        function plugins_path = GetGuiUserPluginsPath(obj)
+            plugins_path = fullfile(obj.FrameworkAppDef.GetUserPath, 'GuiPlugins');
+        end        
     end
 end

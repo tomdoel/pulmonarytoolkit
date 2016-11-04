@@ -97,7 +97,12 @@ function PTKAddPaths(varargin)
             path_folders{end + 1} = folder{1}.First;
         end
         
-        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'SharedPlugins'));
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'External', 'mim', 'Plugins'));
+        for folder = plugin_folders
+            path_folders{end + 1} = folder{1}.First;
+        end
+
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'External', 'mim', 'Gui', 'GuiPlugins'));
         for folder = plugin_folders
             path_folders{end + 1} = folder{1}.First;
         end

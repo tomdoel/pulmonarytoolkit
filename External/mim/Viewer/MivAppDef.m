@@ -15,6 +15,7 @@ classdef MivAppDef < handle
     end
     
     properties (Access = private)
+        DicomMetadata
         FrameworkAppDef
     end
         
@@ -59,12 +60,14 @@ classdef MivAppDef < handle
             logo = fullfile(path_root, '..', 'Gui', 'Icons', 'default_plugin.png');
         end
         
-        function plugins_path = GetPluginsPath(~)
-            plugins_path = [];
+        function plugins_folders = GetListOfPluginsFolders(obj)
+            shared_plugins_path = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetSharedPluginsDirectory;
+            plugins_folders = {shared_plugins_path};
         end
         
-        function plugins_path = GetUserPluginsPath(~)
-            plugins_path = [];
+        function plugins_folders = GetListOfGuiPluginsFolders(obj)
+            shared_plugins_path = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetSharedGuiPluginsDirectory;
+            plugins_folders = {shared_plugins_path};
         end
         
         function force_greyscale = ForceGreyscale(~)
@@ -94,12 +97,19 @@ classdef MivAppDef < handle
         function cm = GetDefaultColormap(~)
             cm = colormap(PTKSoftwareInfo.Colormap);
         end
-        
+
         function framework_app_def = GetFrameworkAppDef(obj)
             if isempty(obj.FrameworkAppDef)
                 obj.FrameworkAppDef = PTKFrameworkAppDef;
             end
             framework_app_def = obj.FrameworkAppDef;
+        end
+
+        function dicom_meta_data = GetDicomMetadata(obj)
+            if isempty(obj.DicomMetadata)
+                obj.DicomMetadata = PTKDicomMetadata;
+            end
+            dicom_meta_data = obj.DicomMetadata;
         end
         
         function icons_folders = GetIconsFolders(obj)
