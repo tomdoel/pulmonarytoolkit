@@ -22,6 +22,7 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
 
     properties (Access = private)
         LinkedRecorderSingleton
+        DatasetCache
         PrimaryDatasetResults % Handle to the MimDatasetResults object for this dataset
         LinkedDatasetChooserList % Handles to MimLinkedDatasetChooser objects for all linked datasets, including this one
         PrimaryDatasetUid     % The uid of this dataset
@@ -36,6 +37,7 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
     methods
         function obj = MimLinkedDatasetChooser(framework_app_def, context_def, image_info, dataset_disk_cache, linked_recorder_singleton, plugin_cache, reporting)
             obj.LinkedRecorderSingleton = linked_recorder_singleton;
+            obj.DatasetCache = dataset_disk_cache;
             primary_dataset_results = MimDatasetResults(framework_app_def, context_def, image_info, obj, @obj.notify, dataset_disk_cache, plugin_cache, reporting);
             obj.PrimaryDatasetUid = primary_dataset_results.GetImageInfo.ImageUid;
             obj.PrimaryDatasetResults = primary_dataset_results;
@@ -69,6 +71,18 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
             % the name or uid specified
             
             is_linked_dataset = obj.LinkedDatasetChooserList.isKey(linked_name_or_uid);
+        end
+        
+        function ClearMemoryCacheInAllLinkedDatasets(obj)
+            % Clears the temporary memory cache of this and all linked
+            % datasets
+            for linker = obj.LinkedDatasetChooserList.values
+                if linker{1} == obj
+                    obj.DatasetCache.ClearTemporaryMemoryCache;
+                else
+                    linker{1}.ClearMemoryCacheInAllLinkedDatasets;
+                end
+            end
         end
     end
 

@@ -84,19 +84,20 @@ classdef MimDatasetResults < handle
             plugin_class = feval(plugin_name);
             plugin_info = MimParsePluginClass(plugin_name, plugin_class, [], reporting);
             
+            memory_cache_policy = plugin_info.MemoryCachePolicy;
+            disk_cache_policy = plugin_info.DiskCachePolicy;
+
             % Whether results can be cached is determined by the plugin
             % parameters, but the input can force this to be enabled
-            if nargin < 6 || isempty(allow_results_to_be_cached_override)
-                allow_results_to_be_cached = plugin_info.AllowResultsToBeCached;
-            else
-                allow_results_to_be_cached = allow_results_to_be_cached_override || plugin_info.AllowResultsToBeCached;
+            if (nargin > 5) && (~isempty(allow_results_to_be_cached_override)) && allow_results_to_be_cached_override
+                disk_cache_policy = MimCachePolicy.Permanent;
             end
-            
+
             % Update the progress dialog with the current plugin being run
             reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
             
             % Run the plugin
-            [result, cache_info, output_image, plugin_has_been_run] = obj.RunPluginWithOptionalImageGeneration(plugin_name, plugin_info, plugin_class, generate_results, dataset_stack, context, allow_results_to_be_cached, reporting);
+            [result, cache_info, output_image, plugin_has_been_run] = obj.RunPluginWithOptionalImageGeneration(plugin_name, plugin_info, plugin_class, generate_results, dataset_stack, context, memory_cache_policy, disk_cache_policy, reporting);
             
             % Open any output folders which have been written to by the plugin
             obj.OutputFolder.OpenChangedFolders(reporting);
@@ -335,7 +336,7 @@ classdef MimDatasetResults < handle
 
     methods (Access = private)
                 
-        function [result, cache_info, output_image, plugin_has_been_run] = RunPluginWithOptionalImageGeneration(obj, plugin_name, plugin_info, plugin_class, generate_image, dataset_stack, context, allow_results_to_be_cached, reporting)
+        function [result, cache_info, output_image, plugin_has_been_run] = RunPluginWithOptionalImageGeneration(obj, plugin_name, plugin_info, plugin_class, generate_image, dataset_stack, context, memory_cache_policy, disk_cache_policy, reporting)
             % Returns the plugin result, computing if necessary
             
             preview_exists = obj.PreviewImages.DoesPreviewExist(plugin_name);
@@ -348,7 +349,7 @@ classdef MimDatasetResults < handle
             force_generate_image = generate_image || force_generate_preview;
 
             % Run the plugin for each required context and assemble result
-            [result, output_image, plugin_has_been_run, cache_info] = obj.ComputeResultForAllContexts(plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+            [result, output_image, plugin_has_been_run, cache_info] = obj.ComputeResultForAllContexts(plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
 
             cache_preview = plugin_info.GeneratePreview && (plugin_has_been_run || ~preview_exists);
             
@@ -365,17 +366,17 @@ classdef MimDatasetResults < handle
             end
         end
         
-        function [result, output_image, plugin_has_been_run, cache_info] = ComputeResultForAllContexts(obj, plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
+        function [result, output_image, plugin_has_been_run, cache_info] = ComputeResultForAllContexts(obj, plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
             dataset_uid = obj.ImageInfo.ImageUid;
             
             % If non-debug mode 
             % In debug mode we don't try to catch exceptions so that the
             % debugger will stop at the right place
             if obj.FrameworkAppDef.IsDebugMode
-                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
             else
                 try
-                    [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+                    [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
                 catch ex
                     dataset_stack.ClearStack;
                     rethrow(ex);

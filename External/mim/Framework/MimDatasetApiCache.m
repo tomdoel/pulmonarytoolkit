@@ -1,10 +1,10 @@
-classdef MimDatasetMemoryCache < handle
-    % MimDatasetMemoryCache. Part of the internal framework for the Pulmonary Toolkit.
+classdef MimDatasetApiCache < handle
+    % MimDatasetApiCache. Part of the internal framework for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the Pulmonary Toolkit.
     %
-    %     MimDatasetMemoryCache stores a map of MimDataset objects, and
+    %     MimDatasetApiCache stores a map of MimDataset objects, and
     %     ensures only one MimDataset exists for a given UID. This improves
     %     thread safety by ensuring multiple MimDataset objects aren't
     %     interacting with the same cache files.
@@ -19,21 +19,21 @@ classdef MimDatasetMemoryCache < handle
     
     properties (Access = private)
         FrameworkAppDef
-        DatasetDiskCacheMap
+        DatasetCacheMap
     end
     
     methods
-        function obj = MimDatasetMemoryCache(framework_app_def)
+        function obj = MimDatasetApiCache(framework_app_def)
             obj.FrameworkAppDef = framework_app_def;
-            obj.DatasetDiskCacheMap = containers.Map;
+            obj.DatasetCacheMap = containers.Map;
         end
         
         function dataset_disk_cache = GetDatasetDiskCache(obj, uid, reporting)
-            if obj.DatasetDiskCacheMap.isKey(uid)
-                dataset_disk_cache = obj.DatasetDiskCacheMap(uid);
+            if obj.DatasetCacheMap.isKey(uid)
+                dataset_disk_cache = obj.DatasetCacheMap(uid);
             else
-                dataset_disk_cache = MimDatasetDiskCache(uid, obj.FrameworkAppDef, reporting);
-                obj.DatasetDiskCacheMap(uid) = dataset_disk_cache;
+                dataset_disk_cache = MimDatasetCacheSelector(uid, obj.FrameworkAppDef, reporting);
+                obj.DatasetCacheMap(uid) = dataset_disk_cache;
             end
         end
     end

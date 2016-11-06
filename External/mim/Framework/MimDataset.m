@@ -329,6 +329,9 @@ classdef MimDataset < CoreBaseClass
             % Called after methods are executed in order to ensure the Framework is
             % in a tidy state after any previous error conditions
             
+            % Clear all temporary memory caches
+            obj.LinkedDatasetChooser.ClearMemoryCacheInAllLinkedDatasets;
+            
             obj.Reporting.ShowAndClearPendingMessages;
             obj.Reporting.ClearProgressStack;
         end

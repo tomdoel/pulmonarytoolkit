@@ -29,7 +29,7 @@ classdef (Sealed) MimFrameworkSingleton < handle
         ImageDatabase      % Database of image files
         MexCache           % Information about mex files which is cached on disk
         LinkedDatasetRecorder
-        DatasetMemoryCache % Stores MimDatasetDiskCache objects in memory
+        DatasetApiCache % Stores MimDatasetCacheSelector objects in memory
         LinkedDatasetChooserMemoryCache
         PluginInfoMemoryCache % Stores parsed plugin classes in memory
     end
@@ -95,8 +95,8 @@ classdef (Sealed) MimFrameworkSingleton < handle
             linked_recorder = obj.LinkedDatasetRecorder;
         end
         
-        function dataset_memory_cache = GetDatasetMemoryCache(obj)
-            dataset_memory_cache = obj.DatasetMemoryCache;
+        function dataset_memory_cache = GetDatasetApiCache(obj)
+            dataset_memory_cache = obj.DatasetApiCache;
         end
         
         function linked_recorder_memory_cache = GetLinkedDatasetChooserMemoryCache(obj)
@@ -133,7 +133,7 @@ classdef (Sealed) MimFrameworkSingleton < handle
             end
             
             obj.LinkedDatasetRecorder = MimLinkedDatasetRecorder.Load(framework_app_def, reporting);
-            obj.DatasetMemoryCache = MimDatasetMemoryCache(framework_app_def);
+            obj.DatasetApiCache = MimDatasetApiCache(framework_app_def);
             obj.PluginInfoMemoryCache = MimPluginInfoMemoryCache;
             obj.LinkedDatasetChooserMemoryCache = MimLinkedDatasetChooserMemoryCache(framework_app_def, obj.LinkedDatasetRecorder, obj.PluginInfoMemoryCache);
             obj.ImageDatabase = MimImageDatabase.LoadDatabase(framework_app_def, reporting);

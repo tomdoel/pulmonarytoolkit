@@ -1,5 +1,5 @@
-classdef MimDatasetDiskCache < handle
-    % MimDatasetDiskCache. Part of the internal framework of the Pulmonary Toolkit.
+classdef MimDatasetCacheSelector < handle
+    % MimDatasetCacheSelector. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
@@ -22,6 +22,7 @@ classdef MimDatasetDiskCache < handle
         PluginResultsInfo
         
         ResultsDiskCache % Stores automatically generated plugin results for internal use
+        ResultsMemoryCache % Stores automatically generated plugin results for internal use
         EditedResultsDiskCache % Stores manual corrections to results
         ManualSegmentationsDiskCache % Stores manual segmentations
         MarkersDiskCache % Stores marker points
@@ -30,12 +31,13 @@ classdef MimDatasetDiskCache < handle
     end
     
     methods
-        function obj = MimDatasetDiskCache(dataset_uid, framework_app_def, reporting)
+        function obj = MimDatasetCacheSelector(dataset_uid, framework_app_def, reporting)
             obj.Config = framework_app_def.GetFrameworkConfig;
             obj.FrameworkAppDef = framework_app_def;
             directories = framework_app_def.GetFrameworkDirectories;
             obj.ManualSegmentationsDiskCache = MimDiskCache(directories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
             obj.ResultsDiskCache = MimDiskCache(directories.GetCacheDirectory, dataset_uid, obj.Config, reporting);
+            obj.ResultsMemoryCache = MimMemoryCache(reporting);
             obj.EditedResultsDiskCache = MimDiskCache(directories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
             obj.MarkersDiskCache = MimDiskCache(directories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
             obj.FrameworkDatasetDiskCache = MimDiskCache(directories.GetFrameworkDatasetCacheDirectory, dataset_uid, obj.Config, reporting);
@@ -46,7 +48,11 @@ classdef MimDatasetDiskCache < handle
         function [value, cache_info] = LoadPluginResult(obj, plugin_name, context, reporting)
             % Fetches a cached result for a plugin
             
-            [value, cache_info] = obj.ResultsDiskCache.Load(plugin_name, context, reporting);
+            if obj.ResultsMemoryCache.Exists(plugin_name, context, reporting)
+                [value, cache_info] = obj.ResultsMemoryCache.Load(plugin_name, context, reporting);
+            else
+                [value, cache_info] = obj.ResultsDiskCache.Load(plugin_name, context, reporting);
+            end
         end
         
         function [value, cache_info] = LoadEditedPluginResult(obj, plugin_name, context, reporting)
@@ -55,12 +61,15 @@ classdef MimDatasetDiskCache < handle
             [value, cache_info] = obj.EditedResultsDiskCache.Load(plugin_name, context, reporting);
         end
         
-        function SavePluginResult(obj, plugin_name, result, cache_info, context, reporting)
+        function SavePluginResult(obj, plugin_name, result, cache_info, context, disk_cache_policy, memory_cache_policy, reporting)
             % Stores a plugin result in the disk cache and updates cached dependency
             % information
-        
+
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, false, reporting);
-            obj.ResultsDiskCache.SaveWithInfo(plugin_name, result, cache_info, context, reporting);
+            if ~isempty(result)
+                obj.ResultsDiskCache.SaveWithInfo(plugin_name, result, cache_info, context, disk_cache_policy, reporting);
+                obj.ResultsMemoryCache.SaveWithInfo(plugin_name, result, cache_info, context, memory_cache_policy, reporting);
+            end
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, false, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
@@ -146,11 +155,13 @@ classdef MimDatasetDiskCache < handle
         end
  
         function Delete(obj, reporting)
+            obj.ResultsMemoryCache.Delete(reporting);
             obj.FrameworkDatasetDiskCache.Delete(reporting);
             obj.ResultsDiskCache.Delete(reporting);
         end
         
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
+            obj.ResultsMemoryCache.RemoveAllCachedFiles(remove_framework_files, reporting);
             obj.ResultsDiskCache.RemoveAllCachedFiles(remove_framework_files, reporting);
         end
         
@@ -170,7 +181,8 @@ classdef MimDatasetDiskCache < handle
         end
         
         function exists = Exists(obj, name, context, reporting)
-            exists = obj.ResultsDiskCache.Exists(name, context, reporting);
+            exists = obj.ResultsMemoryCache.Exists(name, context, reporting);
+            exists = exists || obj.ResultsDiskCache.Exists(name, context, reporting);
             exists = exists || obj.EditedResultsDiskCache.Exists(name, context, reporting);
         end
 
@@ -185,6 +197,10 @@ classdef MimDatasetDiskCache < handle
         function file_list = GetListOfManualSegmentations(obj)
             file_list = obj.ManualSegmentationsDiskCache.GetAllFilesInCache;
         end
+        
+        function ClearTemporaryMemoryCache(obj)
+            obj.ResultsMemoryCache.ClearTemporaryResults;
+        end
     end
     
     methods (Access = private)
@@ -194,7 +210,7 @@ classdef MimDatasetDiskCache < handle
                 obj.PluginResultsInfo = obj.FrameworkAppDef.GetClassFactory.CreatePluginResultsInfo;
             else                
                 if ~isa(cached_plugin_info, 'MimPluginResultsInfo')
-                    reporting.Error('MimDatasetDiskCache:UnrecognisedFormat', 'The cached plugin info is not of the recognised class type');
+                    reporting.Error('MimDatasetCacheSelector:UnrecognisedFormat', 'The cached plugin info is not of the recognised class type');
                 end
                 
                 obj.PluginResultsInfo = cached_plugin_info;

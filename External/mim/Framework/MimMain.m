@@ -97,7 +97,7 @@ classdef MimMain < CoreBaseClass
                 obj.Reporting.Error(MimErrors.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
             end
             
-            dataset_disk_cache = obj.FrameworkSingleton.GetDatasetMemoryCache.GetDatasetDiskCache(dataset_uid, obj.Reporting);
+            dataset_disk_cache = obj.FrameworkSingleton.GetDatasetApiCache.GetDatasetDiskCache(dataset_uid, obj.Reporting);
             
             image_info = dataset_disk_cache.LoadData(obj.FrameworkAppDef.GetFrameworkConfig.ImageInfoCacheName, obj.Reporting);
             if isempty(image_info)
@@ -281,7 +281,7 @@ classdef MimMain < CoreBaseClass
                 new_image_info.Modality = modality;
             end
             
-            dataset_disk_cache = obj.FrameworkSingleton.GetDatasetMemoryCache.GetDatasetDiskCache(new_image_info.ImageUid, reporting);
+            dataset_disk_cache = obj.FrameworkSingleton.GetDatasetApiCache.GetDatasetDiskCache(new_image_info.ImageUid, reporting);
             image_info = dataset_disk_cache.LoadData(obj.FrameworkAppDef.GetFrameworkConfig.ImageInfoCacheName, reporting);
             if isempty(image_info)
                 image_info = MimImageInfo;

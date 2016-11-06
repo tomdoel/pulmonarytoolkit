@@ -141,13 +141,13 @@ classdef MimDiskCache < handle
         function Save(obj, name, value, context, reporting)
             % Save a result to the cache
             
-            obj.PrivateSave(name, value, [], context, reporting);
+            obj.PrivateSave(name, value, [], context, MimCachePolicy.Permanent, reporting);
         end
 
-        function SaveWithInfo(obj, name, value, info, context, reporting)
+        function SaveWithInfo(obj, name, value, info, context, cache_policy, reporting)
             % Save a result to the cache
             
-            obj.PrivateSave(name, value, info, context, reporting);
+            obj.PrivateSave(name, value, info, context, cache_policy, reporting);
         end
         
         function Delete(obj, reporting)
@@ -272,16 +272,31 @@ classdef MimDiskCache < handle
             exists = exist(obj.CachePath, 'dir') == 7;
         end
         
-        function PrivateSave(obj, name, value, info, context, reporting)
-            obj.CreateCacheDirIfNecessary;
-            file_path_with_context = fullfile(obj.CachePath, char(context));
-            CoreDiskUtilities.CreateDirectoryIfNecessary(file_path_with_context);
-            result = [];
-            if ~isempty(info)
-                result.info = info;
+        function PrivateSave(obj, name, value, info, context, cache_policy, reporting)
+            switch cache_policy
+                case MimCachePolicy.Off
+                    cache = false;
+                case MimCachePolicy.Temporary
+                    cache = true;
+                case MimCachePolicy.Session
+                    cache = true;
+                case MimCachePolicy.Permanent
+                    cache = true;
+                otherwise
+                    reporting.Error('MimDiskCache:UnknownCachePolicy', 'The memory cache policy was not recognised.');
             end
-            result.value = value;
-            MimSave(file_path_with_context, name, result, obj.Config.Compression, reporting);
+            
+            if cache
+                obj.CreateCacheDirIfNecessary;
+                file_path_with_context = fullfile(obj.CachePath, char(context));
+                CoreDiskUtilities.CreateDirectoryIfNecessary(file_path_with_context);
+                result = [];
+                if ~isempty(info)
+                    result.info = info;
+                end
+                result.value = value;
+                MimSave(file_path_with_context, name, result, obj.Config.Compression, reporting);
+            end
         end
         
         function is_framework_file = IsFrameworkFile(obj, file_name)

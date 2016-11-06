@@ -56,7 +56,7 @@ classdef MimContextHierarchy < CoreBaseClass
             obj.ContextSets = context_def.GetContextSets;
         end
         
-        function [result, output_image, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
+        function [result, output_image, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
 
             % Determines the context and context type requested by the calling function
             if isempty(output_context)
@@ -84,7 +84,7 @@ classdef MimContextHierarchy < CoreBaseClass
             
             for next_output_context_set = context_list;
                 next_output_context = next_output_context_set{1};
-                combined_result = obj.GetResultRecursive(plugin_name, next_output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+                combined_result = obj.GetResultRecursive(plugin_name, next_output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
                 plugin_has_been_run = plugin_has_been_run | combined_result.GetPluginHasBeenRun;
                 if numel(context_list) == 1
                     result = combined_result.GetResult;
@@ -128,7 +128,7 @@ classdef MimContextHierarchy < CoreBaseClass
     end
     
     methods (Access = private)
-        function combined_result = GetResultRecursive(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting)
+        function combined_result = GetResultRecursive(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
             
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name, output_context, reporting);
 
@@ -150,18 +150,18 @@ classdef MimContextHierarchy < CoreBaseClass
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to call the plugin
             if obj.ContextDef.ContextSetMatches(plugin_context_set, output_context_set)
-                combined_result = obj.GetResultsForSameContext(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+                combined_result = obj.GetResultsForSameContext(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
             
             % Otherwise, if the plugin's context set is higher in the hierarchy
             % than the requested output, then get the result for the higher
             % context and then extract out the desired context
             elseif output_context_set_mapping.IsOtherContextSetHigher(plugin_context_set_mapping)
-                combined_result = obj.GetResultsForHigherContexts(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+                combined_result = obj.GetResultsForHigherContexts(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
                 
             % If the plugin's context set is lower in the hierarchy, then get
             % the plugin result for all lower contexts and concatenate the results
             elseif plugin_context_set_mapping.IsOtherContextSetHigher(output_context_set_mapping)
-                combined_result = obj.GetResultsForLowerContexts(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+                combined_result = obj.GetResultsForLowerContexts(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
             
             else
                 reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
@@ -172,9 +172,9 @@ classdef MimContextHierarchy < CoreBaseClass
             obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, combined_result.GetResult, combined_result.GetPluginHasBeenRun, combined_result.GetCacheInfo, reporting);
         end
         
-        function combined_result = GetResultsForSameContext(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+        function combined_result = GetResultsForSameContext(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
             
-            [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting);
+            [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting);
             
             % If the plugin has been re-run, then we will generate an output
             % image, in order to create a new preview image
@@ -198,24 +198,24 @@ classdef MimContextHierarchy < CoreBaseClass
            combined_result = MimCombinedPluginResult(result, output_image, plugin_has_been_run, cache_info);
         end
         
-        function context_results_combiner = GetResultsForHigherContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+        function context_results_combiner = GetResultsForHigherContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
             context_results_combiner = MimContextResultCombiner(obj.ImageTemplates);
             higher_context_mapping = output_context_mapping.Parent;
             if isempty(higher_context_mapping)
                 reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
             end
             parent_context = higher_context_mapping.Context;
-            this_context_results = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+            this_context_results = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
             context_results_combiner.AddParentResult(parent_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting);
         end
         
-        function context_results_combiner = GetResultsForLowerContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);    
+        function context_results_combiner = GetResultsForLowerContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);    
             context_results_combiner = MimContextResultCombiner(obj.ImageTemplates);
             child_context_mappings = output_context_mapping.Children;
             
             for child_mapping = child_context_mappings
                 child_context = child_mapping{1}.Context;
-                this_context_results = obj.GetResultRecursive(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, allow_results_to_be_cached, reporting);
+                this_context_results = obj.GetResultRecursive(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
                 
                 context_results_combiner.AddChildResult(child_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting);                
             end

@@ -81,4 +81,20 @@ function new_plugin = MimParsePluginClass(plugin_name, plugin_class, suggested_c
     else
         new_plugin.PluginVersion = 1;
     end
+    
+    if ismember('MemoryCachePolicy', property_list);
+        new_plugin.MemoryCachePolicy = MimCachePolicy.(plugin_class.MemoryCachePolicy);
+    else
+        new_plugin.MemoryCachePolicy = MimCachePolicy.Off;
+    end
+    
+    if ismember('DiskCachePolicy', property_list);
+        new_plugin.DiskCachePolicy = MimCachePolicy.(plugin_class.DiskCachePolicy);
+    else
+        if new_plugin.AllowResultsToBeCached
+            new_plugin.DiskCachePolicy = MimCachePolicy.Permanent;
+        else
+            new_plugin.DiskCachePolicy = MimCachePolicy.Off;
+        end
+    end
 end

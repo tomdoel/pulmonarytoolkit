@@ -48,7 +48,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             end
         end
         
-        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
+        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting)
             % Gets a plugin result, from the disk cache if possible. If there is no
             % cached result, or if the dependencies are invalid, or if the
             % "AlwaysRunPlugin" property is set, then the plugin is executed.
@@ -92,7 +92,12 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             if isempty(result)
                 plugin_has_been_run = true;
                 
-                ignore_dependency_checks = plugin_info.AlwaysRunPlugin || ~allow_results_to_be_cached;
+                % At present we ignore dependency checks if the results are
+                % not permanently cached to disk. This is to ensure we
+                % don't get dependency check errors when a plugin is
+                % fetched twice (by two different plugins) and has to be
+                % generated twice becase the result is not cached.
+                ignore_dependency_checks = plugin_info.DiskCachePolicy ~= MimCachePolicy.Permanent;
                 
                 % Pause the self-timing of the current plugin
                 dataset_stack.PauseTiming;                
@@ -127,12 +132,8 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 % plugin
                 dependencies = new_cache_info.DependencyList;
                 
-                % Cache the plugin result
-                if allow_results_to_be_cached && ~isempty(result)
-                    obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, reporting);
-                else
-                    obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, false, reporting);
-                end
+                % Cache the plugin result according to the specified cache policies
+                obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, disk_cache_policy, memory_cache_policy, reporting);
                 
                 dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
                 
