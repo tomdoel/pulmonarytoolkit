@@ -207,18 +207,11 @@ classdef MimDatasetResults < handle
             % Update the progress dialog with the current plugin being run
             reporting.UpdateProgressMessage(['Saving edit for ' plugin_info.ButtonText]);
             
-            
-            % In debug mode we don't try to catch exceptions so that the
-            % debugger will stop at the right place
-            if obj.FrameworkAppDef.IsDebugMode
+            try
                 obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
-            else
-                try
-                    obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
-                catch ex
-                    dataset_stack.ClearStack;
-                    rethrow(ex);
-                end
+            catch ex
+                dataset_stack.ClearStack;
+                rethrow(ex);
             end
 
             reporting.CompleteProgress;
@@ -349,7 +342,13 @@ classdef MimDatasetResults < handle
             force_generate_image = generate_image || force_generate_preview;
 
             % Run the plugin for each required context and assemble result
-            [result, output_image, plugin_has_been_run, cache_info] = obj.ComputeResultForAllContexts(plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+            dataset_uid = obj.ImageInfo.ImageUid;
+            try
+                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+            catch ex
+                dataset_stack.ClearStack;
+                rethrow(ex);
+            end
 
             cache_preview = plugin_info.GeneratePreview && (plugin_has_been_run || ~preview_exists);
             
@@ -363,24 +362,6 @@ classdef MimDatasetResults < handle
                 % will allow any listening gui to update its preview images if
                 % necessary
                 obj.ExternalWrapperNotifyFunction('PreviewImageChanged', CoreEventData(plugin_name));
-            end
-        end
-        
-        function [result, output_image, plugin_has_been_run, cache_info] = ComputeResultForAllContexts(obj, plugin_name, context, plugin_info, plugin_class, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
-            dataset_uid = obj.ImageInfo.ImageUid;
-            
-            % If non-debug mode 
-            % In debug mode we don't try to catch exceptions so that the
-            % debugger will stop at the right place
-            if obj.FrameworkAppDef.IsDebugMode
-                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
-            else
-                try
-                    [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
-                catch ex
-                    dataset_stack.ClearStack;
-                    rethrow(ex);
-                end
             end
         end
     end

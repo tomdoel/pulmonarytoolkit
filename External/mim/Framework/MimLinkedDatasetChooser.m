@@ -63,7 +63,19 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
             % The dataset is identified by its uid in varargin, or an empty
             % input will return the primary dataset.
             
-            dataset_results = obj.FindLinkedDatasetChooser(reporting, varargin{:}).PrimaryDatasetResults;
+            if nargin < 3
+                dataset_name = [];
+            else
+                dataset_name = varargin{1};
+            end
+            if isempty(dataset_name)
+                dataset_name = obj.PrimaryDatasetUid;
+            end
+            if ~obj.LinkedDatasetChooserList.isKey(dataset_name)
+                reporting.Error('MimLinkedDatasetChooser:DatasetNotFound', 'No linked dataset was found with this name. Did you add the dataset with LinkDataset()?'); 
+            end
+            linked_dataset_chooser = obj.LinkedDatasetChooserList(dataset_name);            
+            dataset_results = linked_dataset_chooser.PrimaryDatasetResults;
         end
         
         function is_linked_dataset = IsLinkedDataset(obj, linked_name_or_uid, reporting)
@@ -83,23 +95,6 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
                     linker{1}.ClearMemoryCacheInAllLinkedDatasets;
                 end
             end
-        end
-    end
-
-    methods (Access = private)
-        function linked_dataset_chooser = FindLinkedDatasetChooser(obj, reporting, varargin)
-            if nargin < 3
-                dataset_name = [];
-            else
-                dataset_name = varargin{1};
-            end
-            if isempty(dataset_name)
-                dataset_name = obj.PrimaryDatasetUid;
-            end
-            if ~obj.LinkedDatasetChooserList.isKey(dataset_name)
-                reporting.Error('MimLinkedDatasetChooser:DatasetNotFound', 'No linked dataset was found with this name. Did you add the dataset with LinkDataset()?'); 
-            end
-            linked_dataset_chooser = obj.LinkedDatasetChooserList(dataset_name);
         end
     end
 end
