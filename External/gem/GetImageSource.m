@@ -1,5 +1,5 @@
-classdef MimImageSource < CoreBaseClass
-    % MimImageSource. Wraps a PTKImage class for GUI visualisation
+classdef GemImageSource < CoreBaseClass
+    % GemImageSource. Wraps a PTKImage class for GUI visualisation
     %
     %     Licence
     %     -------
@@ -24,7 +24,7 @@ classdef MimImageSource < CoreBaseClass
     
     methods
         
-        function obj = MimImageSource
+        function obj = GemImageSource
             % Listen for changes to the image pointers
             obj.AddPostSetListener(obj, 'Image', @obj.ImagePointerChangedCallback);
             

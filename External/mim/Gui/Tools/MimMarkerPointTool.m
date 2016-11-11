@@ -44,7 +44,7 @@ classdef MimMarkerPointTool < MimTool
         function obj = MimMarkerPointTool(marker_layer, viewer_panel)
             obj.MarkerLayer = marker_layer;
             obj.ViewerPanel = viewer_panel;
-            obj.MarkerPointImage = MimMarkerPointImage;
+            obj.MarkerPointImage = GemMarkerPointImage;
         end
 
         function Enter(obj)

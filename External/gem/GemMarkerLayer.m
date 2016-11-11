@@ -1,10 +1,10 @@
-classdef MimMarkerLayer < CoreBaseClass
-    % MimMarkerLayer. Part of the internal gui for the Pulmonary Toolkit.
+classdef GemMarkerLayer < CoreBaseClass
+    % GemMarkerLayer. Part of the internal gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the gui of the Pulmonary Toolkit.
     %
-    %     MimMarkerLayer displays marker points over an image
+    %     GemMarkerLayer displays marker points over an image
     %
     %
     %     Licence
@@ -35,7 +35,7 @@ classdef MimMarkerLayer < CoreBaseClass
     end
     
     methods
-        function obj = MimMarkerLayer(marker_image_source, marker_display_parameters, viewer_panel, axes)
+        function obj = GemMarkerLayer(marker_image_source, marker_display_parameters, viewer_panel, axes)
             obj.ViewerPanel = viewer_panel;
             obj.Axes = axes;
             obj.MarkerDisplayParameters = marker_display_parameters;
@@ -202,7 +202,7 @@ classdef MimMarkerLayer < CoreBaseClass
                 obj.CoordinateLimits = slice_size;                
             end
             
-            new_marker = MimMarkerPoint(coords, obj.Axes, colour, obj, obj.GetCoordinateLimits);
+            new_marker = GemMarkerPoint(coords, obj.Axes, colour, obj, obj.GetCoordinateLimits);
             
             if isempty(obj.MarkerPoints)
                 obj.MarkerPoints = new_marker;

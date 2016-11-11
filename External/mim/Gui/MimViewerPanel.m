@@ -113,7 +113,7 @@ classdef MimViewerPanel < GemPanel
             obj.BackgroundImageSource = MimImageSource;
             obj.OverlayImageSource = MimImageSource;
             obj.QuiverImageSource = MimImageSource;
-            obj.MarkerImageSource = MimMarkerPointImage;
+            obj.MarkerImageSource = GemMarkerPointImage;
             
             % Create the model object that holds the slice number and
             % orientation
@@ -134,7 +134,7 @@ classdef MimViewerPanel < GemPanel
             obj.ImageOverlayAxes = MimImageOverlayAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
 
             % Create the object which handles the marker image processing in the viewer
-            obj.MarkerLayer = MimMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes);
+            obj.MarkerLayer = GemMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes);
 
             % Create the mouse tools
             obj.ToolCallback = MimToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.ImageOverlayAxes, obj.Reporting);
@@ -190,7 +190,7 @@ classdef MimViewerPanel < GemPanel
         end
         
         function marker_layer = GetMarkerLayer(obj)
-            % Returns a pointer to the MarkerPointManager object
+            % Returns a pointer to the GemMarkerLayer object
             
             marker_layer = obj.MarkerLayer;
         end
