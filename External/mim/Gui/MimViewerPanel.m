@@ -110,9 +110,9 @@ classdef MimViewerPanel < GemPanel
             obj.MouseCursorStatus = MimMouseCursorStatus;
 
             % Create the image pointer wrappers
-            obj.BackgroundImageSource = MimImageSource;
-            obj.OverlayImageSource = MimImageSource;
-            obj.QuiverImageSource = MimImageSource;
+            obj.BackgroundImageSource = GemImageSource;
+            obj.OverlayImageSource = GemImageSource;
+            obj.QuiverImageSource = GemImageSource;
             obj.MarkerImageSource = GemMarkerPointImage;
             
             % Create the model object that holds the slice number and
@@ -142,7 +142,7 @@ classdef MimViewerPanel < GemPanel
 
             % Create the scrolling 2D cine view and tools and add to the
             % multiview panel
-            obj.CinePanel2D = GemCinePanelWithTools(obj.ViewerPanelMultiView, obj.Tools, obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.ImageSliceParameters);
+            obj.CinePanel2D = MimCinePanelWithTools(obj.ViewerPanelMultiView, obj.Tools, obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.ImageSliceParameters);
             obj.ViewerPanelMultiView.Add2DCinePanel(obj.CinePanel2D, obj.Reporting);
 
             obj.AddChild(obj.ViewerPanelMultiView);

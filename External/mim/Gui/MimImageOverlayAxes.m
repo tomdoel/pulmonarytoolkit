@@ -36,29 +36,6 @@ classdef MimImageOverlayAxes < GemImageAxes
             obj.AddChild(obj.QuiverScreenImage);
         end
         
-        function Resize(obj, position)
-            Resize@GemImageAxes(obj, position);
-            
-            obj.BackgroundScreenImage.Resize(position);
-            obj.OverlayScreenImage.Resize(position);
-            obj.QuiverScreenImage.Resize(position);
-        end
-        
-        function [x_range, y_range] = UpdateAxes(obj)
-            [x_range, y_range] = UpdateAxes@GemImageAxes(obj);
-            
-            if (obj.ImageSource.Image.ImageExists)
-                % Background image
-                obj.BackgroundScreenImage.SetRangeWithPositionAdjustment(x_range, y_range);
-                
-                % Overlay image
-                obj.OverlayScreenImage.SetRangeWithPositionAdjustment(x_range, y_range);
-                
-                % Quiver image
-                obj.QuiverScreenImage.SetRangeWithPositionAdjustment(x_range, y_range);
-            end
-        end
-        
         function DrawBackgroundImage(obj)
             obj.BackgroundScreenImage.DrawImage;
         end

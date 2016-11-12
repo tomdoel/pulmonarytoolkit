@@ -87,13 +87,13 @@ classdef MimImageFromVolume < GemImage
             end
         end
         
-        function SetRangeWithPositionAdjustment(obj, x_range, y_range)
+        function SetRange(obj, x_range, y_range)
             [dim_x_index, dim_y_index, ~] = GemUtilities.GetXYDimensionIndex(obj.ImageParameters.Orientation);
             
             overlay_offset_voxels = MimImageCoordinateUtilities.GetOriginOffsetVoxels(obj.ReferenceImageSource.Image, obj.ImageSource.Image);
             overlay_offset_x_voxels = overlay_offset_voxels(dim_x_index);
             overlay_offset_y_voxels = overlay_offset_voxels(dim_y_index);
-            obj.SetRange(x_range - overlay_offset_x_voxels, y_range - overlay_offset_y_voxels);
+            SetRange@GemImage(obj, x_range - overlay_offset_x_voxels, y_range - overlay_offset_y_voxels);
         end
         
         function point_is_in_image = IsPointInImage(obj, global_coords)
