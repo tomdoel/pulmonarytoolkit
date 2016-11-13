@@ -429,7 +429,7 @@ classdef MimViewerPanel < GemPanel
         function PostCreation(obj, position, reporting)
             % Called after the component and all its children have been created
             
-            obj.ViewerPanelCallback = MimViewerPanelCallback(obj, obj.ImageOverlayAxes, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
+            obj.ViewerPanelCallback = MimViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
         end            
 
         function input_has_been_processed = Keypressed(obj, click_point, key)

@@ -20,16 +20,14 @@ classdef MimViewerPanelCallback < CoreBaseClass
         ViewerPanel
         ViewerPanelMultiView
         Reporting
-        ImageOverlayAxes
     end
     
     methods
         
-        function obj = MimViewerPanelCallback(viewing_panel, axes, viewing_panel_multi_view, tools, default_orientation, reporting)
+        function obj = MimViewerPanelCallback(viewing_panel, viewing_panel_multi_view, tools, default_orientation, reporting)
             obj.DefaultOrientation = default_orientation;
             obj.Tools = tools;
             obj.ViewerPanel = viewing_panel;
-            obj.ImageOverlayAxes = axes;
             obj.ViewerPanelMultiView = viewing_panel_multi_view;
             obj.Reporting = reporting;
             
