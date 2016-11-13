@@ -20,6 +20,8 @@ classdef MimImageFromVolume < GemImage
         ImageParameters
         ImageSource
         ReferenceImageSource % Used for fusing two images to adjust the positioning of an image
+        
+        PendingUpdate = false
     end
     
     methods
@@ -29,13 +31,37 @@ classdef MimImageFromVolume < GemImage
             obj.ImageParameters = image_parameters;
             obj.DisplayParameters = display_parameters;
             obj.ReferenceImageSource = reference_image_source;
+
+            obj.AddPostSetListener(image_parameters, 'Orientation', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(image_parameters, 'SliceNumber', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(display_parameters, 'Level', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(display_parameters, 'Window', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(display_parameters, 'ShowImage', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(display_parameters, 'Opacity', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(display_parameters, 'BlackIsTransparent', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(display_parameters, 'OpaqueColour', @obj.SettingsChangedCallback);
+            obj.AddEventListener(image_source, 'NewImage', @obj.SettingsChangedCallback);
+            obj.AddEventListener(image_source, 'ImageModified', @obj.SettingsChangedCallback);
+            
+            obj.AddPostSetListener(image_parameters, 'UpdateLock', @obj.UpdateLockChangedCallback);
         end
 
-        function DrawImage(obj)
-            obj.DrawImageSlice;
+        function SettingsChangedCallback(obj, ~, ~, ~)
+            if obj.ImageParameters.UpdateLock
+                obj.PendingUpdate = true;
+            else
+                obj.DrawImageSlice;
+            end
         end
 
+        function UpdateLockChangedCallback(obj, ~, ~, ~)
+            if obj.PendingUpdate && ~obj.ImageParameters.UpdateLock
+                obj.DrawImageSlice;
+            end            
+        end
+        
         function DrawImageSlice(obj)
+            obj.PendingUpdate = false;
             reference_image = obj.ReferenceImageSource.Image;
             window = obj.DisplayParameters.Window;
             level = obj.DisplayParameters.Level;

@@ -838,12 +838,14 @@ classdef MimGuiBase < GemFigure
         end
         
         function ClearImages(obj)
+            obj.ImagePanel.ImageSliceParameters.UpdateLock = true;
             if obj.GuiDataset.DatasetIsLoaded
                 obj.MarkerManager.AutoSaveMarkers;
                 obj.MarkerManager.ClearMarkers
                 obj.ImagePanel.BackgroundImage.Reset;
             end
             obj.DeleteOverlays;
+            obj.ImagePanel.ImageSliceParameters.UpdateLock = false;                        
         end
         
         function RefreshPluginsForDataset(obj, dataset)
@@ -851,6 +853,8 @@ classdef MimGuiBase < GemFigure
         end
         
         function SetImage(obj, new_image)
+            obj.ImagePanel.ImageSliceParameters.UpdateLock = true;
+
             obj.ImagePanel.BackgroundImage = new_image;
             
             if obj.ImagePanel.OverlayImage.ImageExists
@@ -874,6 +878,7 @@ classdef MimGuiBase < GemFigure
             if obj.ComponentHasBeenCreated
                 obj.ResizeGui(obj.Position, true);
             end
+            obj.ImagePanel.ImageSliceParameters.UpdateLock = false;            
         end
         
         function UpdateGuiForNewDataset(obj, dataset)

@@ -36,7 +36,7 @@ classdef MimViewerPanelCallback < CoreBaseClass
             obj.NewBackgroundImage;
             obj.NewOverlayImage;
             obj.NewQuiverImage;
-            
+
             % Change in mouse position
             obj.AddEventListener(obj.ViewerPanelMultiView, 'MousePositionChanged', @obj.MousePositionChangedCallback);
             
@@ -136,7 +136,6 @@ classdef MimViewerPanelCallback < CoreBaseClass
             obj.ViewerPanelMultiView.UpdateAxes;
             obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
-            obj.DrawImages(true, true, true);
             obj.UpdateStatus;
             obj.Tools.NewOrientation;
         end
@@ -146,7 +145,6 @@ classdef MimViewerPanelCallback < CoreBaseClass
             
             obj.UpdateGui;
             obj.Tools.NewSlice;
-            obj.DrawImages(true, true, true);
             obj.UpdateStatus;
         end
         
@@ -175,7 +173,6 @@ classdef MimViewerPanelCallback < CoreBaseClass
             obj.ModifyWindowLevelLimits;
             
             obj.UpdateGui;
-            obj.DrawImages(true, true, true);
             obj.UpdateStatus;
         end
         
@@ -188,7 +185,6 @@ classdef MimViewerPanelCallback < CoreBaseClass
             obj.UpdateGuiForNewImage;
             obj.UpdateGuiForNewOrientation;
             obj.UpdateGui;
-            obj.DrawImages(true, false, false);
             obj.UpdateStatus;
             
             obj.Tools.ImageChanged;
@@ -198,7 +194,6 @@ classdef MimViewerPanelCallback < CoreBaseClass
             % This function is called when the overlay image is modified
             
             obj.ViewerPanelMultiView.UpdateAxes;
-            obj.DrawImages(false, true, false);
             obj.Tools.OverlayImageChanged;
         end
         
@@ -401,18 +396,6 @@ classdef MimViewerPanelCallback < CoreBaseClass
             
             if window_limits_changed
                 obj.ViewerPanel.SetWindowLimits(window_min, window_max);
-            end
-        end
-        
-        function DrawImages(obj, update_background, update_overlay, update_quiver)
-            if update_background
-                obj.ImageOverlayAxes.DrawBackgroundImage;
-            end
-            if update_overlay
-                obj.ImageOverlayAxes.DrawOverlayImage;
-            end
-            if update_quiver
-                obj.ImageOverlayAxes.DrawQuiverImage;
             end
         end
     end
