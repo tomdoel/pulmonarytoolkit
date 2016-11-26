@@ -146,7 +146,7 @@ classdef MimViewerPanel < GemPanel
             obj.ImageOverlayAxes.AddChild(obj.QuiverLayer);
             
             % Create the object which handles the marker image processing in the viewer
-            obj.MarkerLayer = GemMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes);
+            obj.MarkerLayer = GemMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes, obj.ImageSliceParameters);
 
             % Create the mouse tools
             obj.ToolCallback = MimToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.ImageOverlayAxes, obj.Reporting);

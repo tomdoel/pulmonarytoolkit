@@ -27,6 +27,7 @@ classdef GemMarkerLayer < CoreBaseClass
         MarkerPointImage
         MarkerPoints
         MarkerDisplayParameters
+        ImageSliceParameters
         ViewerPanel
         CurrentlyHighlightedMarker
         CoordinateLimits
@@ -35,13 +36,14 @@ classdef GemMarkerLayer < CoreBaseClass
     end
     
     methods
-        function obj = GemMarkerLayer(marker_image_source, marker_display_parameters, viewer_panel, axes)
+        function obj = GemMarkerLayer(marker_image_source, marker_display_parameters, viewer_panel, axes, image_slice_parameters)
             obj.ViewerPanel = viewer_panel;
             obj.Axes = axes;
+            obj.ImageSliceParameters = image_slice_parameters;
             obj.MarkerDisplayParameters = marker_display_parameters;
             obj.MarkerPointImage = marker_image_source;
-            obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'Orientation', @obj.OrientationChangedCallback);            
-            obj.AddPostSetListener(obj.ViewerPanel.GetImageSliceParameters, 'SliceNumber', @obj.SliceNumberChangedCallback);            
+            obj.AddPostSetListener(image_slice_parameters, 'Orientation', @obj.OrientationChangedCallback);            
+            obj.AddPostSetListener(image_slice_parameters, 'SliceNumber', @obj.SliceNumberChangedCallback);            
             obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.BackgroundImageChangedCallback);
             obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'ImageModified', @obj.BackgroundImageChangedCallback);
             obj.AddEventListener(marker_image_source, 'NewImage', @obj.MarkerImageChangedCallback);
@@ -58,7 +60,7 @@ classdef GemMarkerLayer < CoreBaseClass
         
         function ShowMarkers(obj, show)
             if (show && ~obj.MarkersAreVisible)
-                obj.ConvertMarkerImageToPoints(obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation), obj.ViewerPanel.Orientation);
+                obj.ConvertMarkerImageToPoints(obj.ImageSliceParameters.SliceNumber(obj.ImageSliceParameters.Orientation), obj.ImageSliceParameters.Orientation);
             end
             
             if (~show && obj.MarkersAreVisible)
@@ -72,7 +74,7 @@ classdef GemMarkerLayer < CoreBaseClass
             if obj.MarkersAreVisible
                 if ~obj.LockCallback
                     obj.RemoveAllPoints;
-                    obj.ConvertMarkerImageToPoints(obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation), obj.ViewerPanel.Orientation);
+                    obj.ConvertMarkerImageToPoints(obj.ImageSliceParameters.SliceNumber(obj.ImageSliceParameters.Orientation), obj.ImageSliceParameters.Orientation);
                 end
             end
         end
@@ -81,18 +83,18 @@ classdef GemMarkerLayer < CoreBaseClass
             image_coords = zeros(1, 3);
             i_screen = coords(2);
             j_screen = coords(1);
-            k_screen = obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation);
-            
-            switch obj.ViewerPanel.Orientation
-                case PTKImageOrientation.Coronal
+            k_screen = obj.ImageSliceParameters.SliceNumber(obj.ImageSliceParameters.Orientation);
+
+            switch obj.ImageSliceParameters.Orientation
+                case GemImageOrientation.XZ
                     image_coords(1) = k_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = i_screen;
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     image_coords(1) = j_screen;
                     image_coords(2) = k_screen;
                     image_coords(3) = i_screen;
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     image_coords(1) = i_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = k_screen;
@@ -196,8 +198,8 @@ classdef GemMarkerLayer < CoreBaseClass
         function new_marker = NewMarker(obj, coords, colour)
             obj.ForceMarkerImageCreation;
             if isempty(obj.CoordinateLimits)
-                orientation = obj.ViewerPanel.Orientation;
-                slice_number = obj.ViewerPanel.SliceNumber(orientation);
+                orientation = obj.ImageSliceParameters.Orientation;
+                slice_number = obj.ImageSliceParameters.SliceNumber(orientation);
                 [~, slice_size] = obj.MarkerPointImage.GetMarkersFromImage(slice_number, orientation);
                 obj.CoordinateLimits = slice_size;                
             end
@@ -267,7 +269,7 @@ classdef GemMarkerLayer < CoreBaseClass
             if obj.MarkersAreVisible
                 if ~obj.LockCallback
                     obj.RemoveAllPoints;
-                    obj.ConvertMarkerImageToPoints(obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation), obj.ViewerPanel.Orientation);
+                    obj.ConvertMarkerImageToPoints(obj.ImageSliceParameters.SliceNumber(obj.ImageSliceParameters.Orientation), obj.ImageSliceParameters.Orientation);
                 end
             end
         end
