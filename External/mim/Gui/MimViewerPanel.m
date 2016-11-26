@@ -76,6 +76,10 @@ classdef MimViewerPanel < GemPanel
         SubMode = ''           % Specifies the current editing submode
         EditFixedOuterBoundary % Specifies whether the current edit can modify the segmentation outer boundary
         MouseCursorStatus      % A class of type MimMouseCursorStatus showing data representing the voxel under the cursor
+        
+        BackgroundLayer
+        SegmentationLayer
+        QuiverLayer
         MarkerLayer
     end
     
@@ -131,8 +135,16 @@ classdef MimViewerPanel < GemPanel
             obj.ViewerPanelMultiView = GemViewerPanelMultiView(obj);
 
             % Create the axes on which the 2D images and overlay are drawn
-            obj.ImageOverlayAxes = MimImageOverlayAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetOverlayImageSource, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetBackgroundImageDisplayParameters, obj.GetOverlayImageDisplayParameters);
-
+            obj.ImageOverlayAxes = GemImageAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetImageSliceParameters);
+            
+            % Create the image layers
+            obj.BackgroundLayer = MimImageFromVolume(obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.GetImageSliceParameters,  obj.GetBackgroundImageDisplayParameters, obj.GetBackgroundImageSource);
+            obj.ImageOverlayAxes.AddChild(obj.BackgroundLayer);
+            obj.SegmentationLayer = MimImageFromVolume(obj.ImageOverlayAxes, obj.GetOverlayImageSource, obj.GetImageSliceParameters, obj.GetOverlayImageDisplayParameters, obj.GetBackgroundImageSource);
+            obj.ImageOverlayAxes.AddChild(obj.SegmentationLayer);
+            obj.QuiverLayer = MimQuiverImageFromVolume(obj.ImageOverlayAxes, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetOverlayImageDisplayParameters, obj.GetBackgroundImageSource);
+            obj.ImageOverlayAxes.AddChild(obj.QuiverLayer);
+            
             % Create the object which handles the marker image processing in the viewer
             obj.MarkerLayer = GemMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes);
 
