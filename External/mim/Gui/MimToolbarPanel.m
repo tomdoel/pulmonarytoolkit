@@ -198,6 +198,12 @@ classdef MimToolbarPanel < GemPanel
             
             if obj.AppDef.ForceGreyscale
                 icon = repmat(0.21*icon(:,:,1) + 0.72*icon(:,:,2) + 0.07*icon(:,:,3), [1,1,3]);
+            elseif isprop(tool, 'IconColour')
+                size_icon = size(icon);
+                icon = double(icon/255);
+                icon_bw = repmat(0.21*icon(:,:,1) + 0.72*icon(:,:,2) + 0.07*icon(:,:,3), [1,1,3]);
+                colour_tint = repmat(shiftdim(double(tool.IconColour), -1), [size_icon(1:2), 1]);
+                icon = uint8(255*colour_tint.*icon_bw);
             end
             
             tool_group = obj.ControlGroups(category_key);

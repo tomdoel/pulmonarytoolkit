@@ -203,6 +203,7 @@ classdef MimGuiBase < GemFigure
             obj.AddPostSetListener(obj.ImagePanel, 'SliceSkip', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'PaintBrushSize', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.MarkerImageDisplayParameters, 'ShowMarkers', @obj.ShowMarkersChanged);
+            obj.AddPostSetListener(obj.ImagePanel.MarkerImageDisplayParameters, 'ShowLabels', @obj.ViewerPanelControlsChangedCallback);
             
             % Wait until the GUI is visible before removing the splash screen
             splash_screen.delete;

@@ -11,6 +11,7 @@ classdef MimModes
     
     properties (Constant)
         EditMode = 'Edit'
+        MarkerMode = 'Markers'
         ManualSegmentationMode = 'ManualSegmentation'
     end
     

@@ -63,6 +63,7 @@ classdef MimViewerPanelToolbar < GemPanel
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'BlackIsTransparent', @obj.GuiChangeCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'OpaqueColour', @obj.GuiChangeCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetMarkerImageDisplayParameters, 'ShowLabels', @obj.GuiChangeCallback);
             
             % Listen for new image events
             obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.NewBackgroundImageCallback);

@@ -437,7 +437,52 @@ classdef MimViewerPanel < GemPanel
         
         function opaque_colour = get.OpaqueColour(obj)
             opaque_colour = obj.OverlayImageDisplayParameters.OpaqueColour;
-        end        
+        end
+        
+        function GotoPreviousMarker(obj)
+        % Find the image slice containing the last marker
+            
+            maximum_skip = obj.SliceSkip;
+            orientation = obj.Orientation;
+            current_coordinate = obj.SliceNumber(orientation);
+            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfPreviousMarker(current_coordinate, maximum_skip, orientation);
+            obj.SliceNumber(orientation) = index_of_nearest_marker;
+        end
+        
+        function GotoNextMarker(obj)
+        % Find the image slice containing the next marker
+        
+            maximum_skip = obj.SliceSkip;
+            orientation = obj.Orientation;
+            current_coordinate = obj.SliceNumber(orientation);
+            index_of_nearest_marker =  obj.MarkerLayer.GetMarkerImage.GetIndexOfNextMarker(current_coordinate, maximum_skip, orientation);            
+            obj.SliceNumber(orientation) = index_of_nearest_marker;
+        end
+        
+        function GotoNearestMarker(obj)
+        % Find the image slice containing the nearest marker
+
+            orientation = obj.Orientation;
+            current_coordinate = obj.SliceNumber(orientation);
+            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfNearestMarker(current_coordinate, orientation);
+            obj.SliceNumber(orientation) = index_of_nearest_marker;
+        end
+        
+        function GotoFirstMarker(obj)
+        % Find the image slice containing the first marker
+
+            orientation = obj.Orientation;
+            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfFirstMarker(orientation);
+            obj.SliceNumber(orientation) = index_of_nearest_marker;
+        end
+        
+        function GotoLastMarker(obj)
+        % Find the image slice containing the last marker
+
+            orientation = obj.Orientation;
+            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfLastMarker(orientation);
+            obj.SliceNumber(orientation) = index_of_nearest_marker;
+        end
     end
     
     methods (Access = protected)

@@ -78,17 +78,17 @@ classdef MimMarkerPointTool < MimTool
             elseif strcmpi(key_name, '7')
                 obj.ChangeCurrentColour(7);
             elseif strcmpi(key_name, 'space')
-                obj.GotoNearestMarker;
+                obj.ViewerPanel.GotoNearestMarker;
             elseif strcmpi(key_name, 'backspace')
                 obj.MarkerLayer.DeleteHighlightedMarker;
             elseif strcmpi(key_name, 'leftarrow')
-                obj.GotoPreviousMarker;
+                obj.ViewerPanel.GotoPreviousMarker;
             elseif strcmpi(key_name, 'rightarrow')
-                obj.GotoNextMarker;
+                obj.ViewerPanel.GotoNextMarker;
             elseif strcmpi(key_name, 'pageup')
-                obj.GotoFirstMarker;
+                obj.ViewerPanel.GotoFirstMarker;
             elseif strcmpi(key_name, 'pagedown')
-                obj.GotoLastMarker;
+                obj.ViewerPanel.GotoLastMarker;
             else
                 processed = false;
             end
@@ -149,7 +149,7 @@ classdef MimMarkerPointTool < MimTool
                 closest_marker = [];
             end
         end
-        
+
         function [closest_point, closest_distance] = GetNearestMarker(obj, coords, desired_colour)
             closest_point = [];
             closest_distance = [];
@@ -164,41 +164,5 @@ classdef MimMarkerPointTool < MimTool
                 end
             end
         end
-
-        % Find the image slice containing the last marker
-        function GotoPreviousMarker(obj)
-            maximum_skip = obj.ViewerPanel.SliceSkip;
-            orientation = obj.ViewerPanel.Orientation;
-            current_coordinate = obj.ViewerPanel.SliceNumber(orientation);
-            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfPreviousMarker(current_coordinate, maximum_skip, orientation);
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end
-        
-        function GotoNextMarker(obj)
-            maximum_skip = obj.ViewerPanel.SliceSkip;
-            orientation = obj.ViewerPanel.Orientation;
-            current_coordinate = obj.ViewerPanel.SliceNumber(orientation);
-            index_of_nearest_marker =  obj.MarkerLayer.GetMarkerImage.GetIndexOfNextMarker(current_coordinate, maximum_skip, orientation);            
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end
-        
-        function GotoNearestMarker(obj)
-            orientation = obj.ViewerPanel.Orientation;
-            current_coordinate = obj.ViewerPanel.SliceNumber(orientation);
-            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfNearestMarker(current_coordinate, orientation);
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end
-        
-        function GotoFirstMarker(obj)
-            orientation = obj.ViewerPanel.Orientation;
-            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfFirstMarker(orientation);
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end
-        
-        function GotoLastMarker(obj)
-            orientation = obj.ViewerPanel.Orientation;
-            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfLastMarker(orientation);
-            obj.ViewerPanel.SliceNumber(orientation) = index_of_nearest_marker;
-        end        
     end
 end

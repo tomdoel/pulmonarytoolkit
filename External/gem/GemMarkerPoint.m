@@ -21,10 +21,14 @@ classdef GemMarkerPoint < CoreBaseClass
         Colour
     end
     
-    properties (Access = private)
+    properties (Constant)
         % Blue, Green, Red, Cyan, Magenta, Yellow, Grey
-        Colours = {[0.4 0.4 1.0], [0 0.8 0], [0.8 0 0], [0 0.8 0.8], [0.9 0 0.9],  [0.8 0.8 0.4], [0.7 0.7 0.7]}
+        DefaultColours = {[0.4 0.4 1.0], [0 0.8 0], [0.8 0 0], [0 0.8 0.8], [0.9 0 0.9],  [0.8 0.8 0.4], [0.7 0.7 0.7]}
+    end
+    
+    properties (Access = private)
         Handle
+        Colours
         Manager
         HighlightColour = false
         Position
@@ -37,6 +41,7 @@ classdef GemMarkerPoint < CoreBaseClass
     methods
         function obj = GemMarkerPoint(coords, axes_handle, colour, manager, coord_limits)
             obj.Colour = colour;
+            obj.Colours = obj.DefaultColours;
             obj.Manager = manager;
             limits_x = [1, coord_limits(2)];
             limits_y = [1, coord_limits(1)];
@@ -141,7 +146,7 @@ classdef GemMarkerPoint < CoreBaseClass
         function ChangeMarkerColourCallback(obj, ~, ~, colour)
             obj.Colour = colour;
             obj.Handle.setColor(obj.Colours{colour});
-            obj.Manager.ChangeCurrentColour(colour);
+%             obj.Manager.ChangeCurrentColour(colour); %ToDo
             obj.Manager.AddPointToMarkerImage(obj.Position, colour);
         end
         

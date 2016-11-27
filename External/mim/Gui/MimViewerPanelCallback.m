@@ -53,6 +53,7 @@ classdef MimViewerPanelCallback < CoreBaseClass
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'Opacity', @obj.OverlayTransparencyChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'BlackIsTransparent', @obj.SettingsChangedCallback);
             obj.AddPostSetListener(obj.ViewerPanel.GetOverlayImageDisplayParameters, 'OpaqueColour', @obj.SettingsChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel.GetMarkerImageDisplayParameters, 'ShowLabels', @obj.SettingsChangedCallback);
             
             % Listen for new image events
             obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.NewBackgroundImageCallback);
