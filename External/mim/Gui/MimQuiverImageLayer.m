@@ -1,5 +1,5 @@
-classdef MimQuiverImageFromVolume < GemQuiverImage
-    % MimQuiverImageFromVolume. Part of the gui for the Pulmonary Toolkit.
+classdef MimQuiverImageLayer < GemQuiverImage
+    % MimQuiverImageLayer. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
@@ -24,7 +24,7 @@ classdef MimQuiverImageFromVolume < GemQuiverImage
     end
     
     methods
-        function obj = MimQuiverImageFromVolume(parent, image_source, image_parameters, display_parameters, reference_image_source)
+        function obj = MimQuiverImageLayer(parent, image_source, image_parameters, display_parameters, reference_image_source)
             obj = obj@GemQuiverImage(parent, image_source, image_parameters);
             obj.ImageSource = image_source;
             obj.ImageParameters = image_parameters;

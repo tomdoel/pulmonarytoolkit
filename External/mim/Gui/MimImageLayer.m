@@ -1,10 +1,10 @@
-classdef MimImageFromVolume < GemImage
-    % MimImageFromVolume. Part of the gui for the Pulmonary Toolkit.
+classdef MimImageLayer < GemImage
+    % MimImageLayer. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     MimImageFromVolume holds a volume, and a 2D image object
+    %     MimImageLayer holds a volume, and a 2D image object
     %     which shows one slice from the image volume
     %
     %
@@ -25,7 +25,7 @@ classdef MimImageFromVolume < GemImage
     end
     
     methods
-        function obj = MimImageFromVolume(parent, image_source, image_parameters, display_parameters, reference_image_source)
+        function obj = MimImageLayer(parent, image_source, image_parameters, display_parameters, reference_image_source)
             obj = obj@GemImage(parent);
             obj.ImageSource = image_source;
             obj.ImageParameters = image_parameters;
@@ -73,7 +73,7 @@ classdef MimImageFromVolume < GemImage
             slice_number = obj.ImageParameters.SliceNumber(orientation);
             if ~isempty(image_object)
                 if image_object.ImageExists
-                    image_slice = MimImageFromVolume.GetImageSlice(reference_image, image_object, slice_number, orientation);
+                    image_slice = MimImageLayer.GetImageSlice(reference_image, image_object, slice_number, orientation);
                     image_type = image_object.ImageType;
                     
                     if (image_type == PTKImageType.Scaled)
@@ -98,7 +98,7 @@ classdef MimImageFromVolume < GemImage
                         end
                     end
                     
-                    [rgb_slice, alpha_slice] = MimImageFromVolume.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, black_is_transparent, image_object.ColorLabelMap);
+                    [rgb_slice, alpha_slice] = MimImageLayer.GetImage(image_slice, limits, image_type, window_grayscale, level_grayscale, black_is_transparent, image_object.ColorLabelMap);
                     alpha_slice = double(alpha_slice)*opacity/100;
                     
                     % Special code to highlight one colour
@@ -134,8 +134,8 @@ classdef MimImageFromVolume < GemImage
         function [rgb_slice, alpha_slice] = GetImage(image_slice, limits, image_type, window, level, black_is_transparent, map)
             switch image_type
                 case PTKImageType.Grayscale
-                    rescaled_image_slice = MimImageFromVolume.RescaleImage(image_slice, window, level);
-                    [rgb_slice, alpha_slice] = MimImageFromVolume.GetBWImage(rescaled_image_slice);
+                    rescaled_image_slice = MimImageLayer.RescaleImage(image_slice, window, level);
+                    [rgb_slice, alpha_slice] = MimImageLayer.GetBWImage(rescaled_image_slice);
                 case PTKImageType.Colormap
                     
                     % An empty limits indicates the value should never be below zero. This saves
@@ -144,9 +144,9 @@ classdef MimImageFromVolume < GemImage
                     if ~isempty(limits) && limits(1) < 0
                         image_slice = image_slice - limits(1);
                     end
-                    [rgb_slice, alpha_slice] = MimImageFromVolume.GetLabeledImage(image_slice, map, black_is_transparent);
+                    [rgb_slice, alpha_slice] = MimImageLayer.GetLabeledImage(image_slice, map, black_is_transparent);
                 case PTKImageType.Scaled
-                    [rgb_slice, alpha_slice] = MimImageFromVolume.GetColourMap(image_slice, limits, black_is_transparent);
+                    [rgb_slice, alpha_slice] = MimImageLayer.GetColourMap(image_slice, limits, black_is_transparent);
             end
             
         end

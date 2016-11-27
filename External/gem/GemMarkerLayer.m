@@ -28,7 +28,7 @@ classdef GemMarkerLayer < CoreBaseClass
         MarkerPoints
         MarkerDisplayParameters
         ImageSliceParameters
-        ViewerPanel
+        BackgroundImageSource
         CurrentlyHighlightedMarker
         CoordinateLimits
         LockCallback = false
@@ -36,16 +36,16 @@ classdef GemMarkerLayer < CoreBaseClass
     end
     
     methods
-        function obj = GemMarkerLayer(marker_image_source, marker_display_parameters, viewer_panel, axes, image_slice_parameters)
-            obj.ViewerPanel = viewer_panel;
-            obj.Axes = axes;
-            obj.ImageSliceParameters = image_slice_parameters;
+        function obj = GemMarkerLayer(parent_axes, marker_image_source, image_parameters, marker_display_parameters, background_image_source)
+            obj.BackgroundImageSource = background_image_source;
+            obj.Axes = parent_axes;
+            obj.ImageSliceParameters = image_parameters;
             obj.MarkerDisplayParameters = marker_display_parameters;
             obj.MarkerPointImage = marker_image_source;
-            obj.AddPostSetListener(image_slice_parameters, 'Orientation', @obj.OrientationChangedCallback);            
-            obj.AddPostSetListener(image_slice_parameters, 'SliceNumber', @obj.SliceNumberChangedCallback);            
-            obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'NewImage', @obj.BackgroundImageChangedCallback);
-            obj.AddEventListener(obj.ViewerPanel.GetBackgroundImageSource, 'ImageModified', @obj.BackgroundImageChangedCallback);
+            obj.AddPostSetListener(image_parameters, 'Orientation', @obj.OrientationChangedCallback);            
+            obj.AddPostSetListener(image_parameters, 'SliceNumber', @obj.SliceNumberChangedCallback);            
+            obj.AddEventListener(background_image_source, 'NewImage', @obj.BackgroundImageChangedCallback);
+            obj.AddEventListener(background_image_source, 'ImageModified', @obj.BackgroundImageChangedCallback);
             obj.AddEventListener(marker_image_source, 'NewImage', @obj.MarkerImageChangedCallback);
             obj.AddEventListener(marker_image_source, 'ImageModified', @obj.MarkerImageChangedCallback);            
             obj.AddPostSetListener(marker_display_parameters, 'ShowMarkers', @obj.ShowMarkersChangedCallback);
@@ -275,14 +275,14 @@ classdef GemMarkerLayer < CoreBaseClass
         end
         
         function ImageChanged(obj)
-            obj.MarkerPointImage.BackgroundImageChanged(obj.ViewerPanel.BackgroundImage);
+            obj.MarkerPointImage.BackgroundImageChanged(obj.BackgroundImageSource.Image);
             obj.MarkerImageChanged;
             obj.MarkerImageHasChanged = false;
         end
         
         function ForceMarkerImageCreation(obj)
             if ~obj.MarkerPointImage.Image.ImageExists
-                obj.MarkerPointImage.ForceMarkerImageCreation(obj.ViewerPanel.BackgroundImage);
+                obj.MarkerPointImage.ForceMarkerImageCreation(obj.BackgroundImageSource.Image);
             end
         end
     end

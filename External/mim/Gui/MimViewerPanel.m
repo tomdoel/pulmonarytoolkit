@@ -138,15 +138,15 @@ classdef MimViewerPanel < GemPanel
             obj.ImageOverlayAxes = GemImageAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetImageSliceParameters);
             
             % Create the image layers
-            obj.BackgroundLayer = MimImageFromVolume(obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.GetImageSliceParameters,  obj.GetBackgroundImageDisplayParameters, obj.GetBackgroundImageSource);
+            obj.BackgroundLayer = MimImageLayer(obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.GetImageSliceParameters,  obj.GetBackgroundImageDisplayParameters, obj.GetBackgroundImageSource);
             obj.ImageOverlayAxes.AddChild(obj.BackgroundLayer);
-            obj.SegmentationLayer = MimImageFromVolume(obj.ImageOverlayAxes, obj.GetOverlayImageSource, obj.GetImageSliceParameters, obj.GetOverlayImageDisplayParameters, obj.GetBackgroundImageSource);
+            obj.SegmentationLayer = MimImageLayer(obj.ImageOverlayAxes, obj.GetOverlayImageSource, obj.GetImageSliceParameters, obj.GetOverlayImageDisplayParameters, obj.GetBackgroundImageSource);
             obj.ImageOverlayAxes.AddChild(obj.SegmentationLayer);
-            obj.QuiverLayer = MimQuiverImageFromVolume(obj.ImageOverlayAxes, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetOverlayImageDisplayParameters, obj.GetBackgroundImageSource);
+            obj.QuiverLayer = MimQuiverImageLayer(obj.ImageOverlayAxes, obj.GetQuiverImageSource, obj.GetImageSliceParameters, obj.GetOverlayImageDisplayParameters, obj.GetBackgroundImageSource);
             obj.ImageOverlayAxes.AddChild(obj.QuiverLayer);
             
             % Create the object which handles the marker image processing in the viewer
-            obj.MarkerLayer = GemMarkerLayer(obj.MarkerImageSource, obj.MarkerImageDisplayParameters, obj, obj.ImageOverlayAxes, obj.ImageSliceParameters);
+            obj.MarkerLayer = GemMarkerLayer(obj.ImageOverlayAxes, obj.MarkerImageSource, obj.GetImageSliceParameters, obj.GetMarkerImageDisplayParameters, obj.GetBackgroundImageSource);
 
             % Create the mouse tools
             obj.ToolCallback = MimToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.ImageOverlayAxes, obj.Reporting);
@@ -176,12 +176,16 @@ classdef MimViewerPanel < GemPanel
             image_slice_parameters = obj.ImageSliceParameters;
         end
         
-        function image_slice_parameters = GetBackgroundImageDisplayParameters(obj)
-            image_slice_parameters = obj.BackgroundImageDisplayParameters;
+        function image_display_parameters = GetBackgroundImageDisplayParameters(obj)
+            image_display_parameters = obj.BackgroundImageDisplayParameters;
         end
         
-        function image_slice_parameters = GetOverlayImageDisplayParameters(obj)
-            image_slice_parameters = obj.OverlayImageDisplayParameters;
+        function image_display_parameters = GetOverlayImageDisplayParameters(obj)
+            image_display_parameters = obj.OverlayImageDisplayParameters;
+        end
+        
+        function image_display_parameters = GetMarkerImageDisplayParameters(obj)
+            image_display_parameters = obj.MarkerImageDisplayParameters;
         end
         
         function Resize(obj, position)
