@@ -269,12 +269,18 @@ function [right_upper_start_branches, right_midlower_start_branches, uncertain] 
         reporting.ShowWarning('PTKGetAirwaysLabelledByLobe:NotEnoughChildBranches', 'No bronchial branches were found separating the right upper and right mid lobes.', []);
         return;
     else
-        % Order branches by their computed radii and choose the largest 3
-        top_branches = GetLargestBranches(right_lung_start, 2, 3, reporting);
-        
-        % Find the ancestor branch of the two widest branches - this is the
-        % bifurcation point between the upper and middle lobes
-        ancestor_branch = PTKTreeUtilities.FindCommonAncestor(top_branches(2), top_branches(3));
+        if length(right_lung_start.Children) == 2 && isempty(right_lung_start.Children(1).Children) && isempty(right_lung_start.Children(2).Children)
+            % This is a special case where there is only one bifurcation
+            % possible
+            ancestor_branch = right_lung_start;
+        else
+            % Order branches by their computed radii and choose the largest 3
+            top_branches = GetLargestBranches(right_lung_start, 2, 3, reporting);
+
+            % Find the ancestor branch of the two widest branches - this is the
+            % bifurcation point between the upper and middle lobes
+            ancestor_branch = PTKTreeUtilities.FindCommonAncestor(top_branches(2), top_branches(3));
+        end
         
         % There are two possibilites: the lobar bifurcation happens at either
         % the first or second bifurcaton in the right bronchial tree
