@@ -77,7 +77,6 @@ classdef PTKAirways < PTKPlugin
             end
             
             explosion_multiplier = 4;
-%             explosion_multiplier = 5;
 
             debug_mode = PTKSoftwareInfo.GraphicalDebugMode;
             results = PTKAirwayRegionGrowingWithExplosionControl(threshold, start_point, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting, debug_mode);

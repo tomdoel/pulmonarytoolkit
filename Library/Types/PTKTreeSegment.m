@@ -174,10 +174,14 @@ classdef PTKTreeSegment < PTKTree
         
         function AddPendingVoxels(obj, indices_of_new_points)
             
+            if isempty(obj.PendingVoxelIndices)
+                obj.LastNumberOfVoxels = max(1, round(numel(indices_of_new_points)/2));
+            end
             obj.PendingVoxelIndices{end + 1} = indices_of_new_points;
             
             if obj.MarkedExplosion
                 obj.RejectAllPendingVoxelIndices;
+                return;
             end
             
             number_of_points = numel(indices_of_new_points);
@@ -194,6 +198,7 @@ classdef PTKTreeSegment < PTKTree
             
             % Keep track of the point at which an explosion starts to occur
             if (number_of_points <= obj.LastNumberOfVoxels)
+                obj.LastNumberOfVoxels = number_of_points;
                 obj.AcceptAllPendingVoxelIndices;
             end
             
