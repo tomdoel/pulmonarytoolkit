@@ -50,7 +50,8 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
             vessel_density_raw = 30000 - vessel_density_raw;
             vessel_density.ChangeRawImage(vessel_density_raw);
             
-            airways_by_lobe = dataset.GetResult('PTKAirwayEndpointsLabelledByLobe');
+            airways_by_lobe = dataset.GetResult('PTKAirwaysLabelledByLobe');
+            airways_by_lobe = airways_by_lobe.AirwaysByLobeImage;
             
             results_left = PTKLobesByVesselnessDensityUsingWatershed.GetLeftLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe, reporting);
             results_right = PTKLobesByVesselnessDensityUsingWatershed.GetRightLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe, reporting);
