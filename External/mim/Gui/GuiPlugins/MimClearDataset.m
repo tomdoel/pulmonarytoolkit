@@ -1,10 +1,10 @@
 classdef MimClearDataset < MimGuiPlugin
-    % PTKAboutPtk. Gui Plugin for displaying an "about box" dialog
+    % MimClearDataset. Gui Plugin for displaying an "about box" dialog
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     PTKAboutPtk is a Gui Plugin for the MIM Toolkit. The gui will
+    %     MimClearDataset is a Gui Plugin for the MIM Toolkit. The gui will
     %     create a button to run this plugin. Running this plugin will cause a
     %     splash screen dialog to be displayed.
     %

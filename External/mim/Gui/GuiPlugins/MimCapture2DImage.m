@@ -5,11 +5,9 @@ classdef MimCapture2DImage < MimGuiPlugin
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
     %
-    %     PTKSaveImage is a Gui Plugin for the MIM Toolkit.
+    %     MimCapture2DImage is a Gui Plugin for the MIM Toolkit.
     %     The gui will create a button for the user to run this plugin.
-    %     Running this plugin will raise a Save dialog allowing the user to
-    %     choose a filename and format, and then save the image currently in the
-    %     visualisation panel.
+    %     Running this plugin will capture the current viewer image and save
     %
     %
     %     Licence

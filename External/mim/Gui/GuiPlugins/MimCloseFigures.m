@@ -1,6 +1,6 @@
 classdef MimCloseFigures < MimGuiPlugin
-    % MimCloseFigures. Gui Plugin for closing all open figures except the PTK
-    % gui
+    % MimCloseFigures. Gui Plugin for closing all open figures except the
+    % main gui
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
