@@ -22,6 +22,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         ViewerPanel
         Gui
         GuiDataset
+        AppDef
         Reporting
         
         MarkersHaveBeenLoaded = false
@@ -29,13 +30,14 @@ classdef MimMarkerPointManager < CoreBaseClass
     end
     
     methods
-        function obj = MimMarkerPointManager(marker_layer, marker_image_source, marker_display_parameters, viewer_panel, gui, gui_dataset, reporting)
+        function obj = MimMarkerPointManager(marker_layer, marker_image_source, marker_display_parameters, viewer_panel, gui, gui_dataset, app_def, reporting)
             obj.MarkerLayer = marker_layer;
             obj.MarkerPointImage = marker_image_source;
             obj.MarkerDisplayParameters = marker_display_parameters;
             obj.ViewerPanel = viewer_panel;
             obj.Gui = gui;
             obj.GuiDataset = gui_dataset;
+            obj.AppDef = app_def;
             obj.Reporting = reporting;
         end
         
@@ -63,7 +65,7 @@ classdef MimMarkerPointManager < CoreBaseClass
                     
                     % Depending on the software settings, the user can be prompted before saving
                     % changes to the markers
-                    if PTKSoftwareInfo.ConfirmBeforeSavingMarkers
+                    if obj.AppDef.ConfirmBeforeSavingMarkers
                         choice = questdlg('Do you want to save the changes you have made to the current markers?', ...
                             'Unsaved changes to markers', 'Delete changes', 'Save', 'Save');
                         switch choice

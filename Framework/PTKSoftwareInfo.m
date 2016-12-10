@@ -48,9 +48,6 @@ classdef PTKSoftwareInfo < handle
         FastMode = false
         DemoMode = false % If true, user plugins will be ignored
         
-        % If true, the user will be prompted before marker changes are saved
-        ConfirmBeforeSavingMarkers = false
-        
         % Registration parameters
         ShowRegistrationConvergence = false
         RegistrationBodyForceTol = 0.01

@@ -147,5 +147,12 @@ classdef MivAppDef < handle
             
             name = 'MarkerPoints';
         end
+
+        function confirm = ConfirmBeforeSavingMarkers(~)
+            % If true, a dialog will be presented to the user before
+            % markers are auto-saved
+            
+            confirm = false;
+        end
     end
 end
