@@ -184,6 +184,7 @@ classdef MimGuiBase < GemFigure
             
             % Listen for changes in the viewer panel controls
             obj.AddPostSetListener(obj.ImagePanel, 'SelectedControl', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'NewMarkerColour', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'Orientation', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'SliceNumber', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetBackgroundImageDisplayParameters, 'Level', @obj.ViewerPanelControlsChangedCallback);

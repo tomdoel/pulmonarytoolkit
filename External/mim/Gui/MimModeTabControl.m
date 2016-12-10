@@ -93,6 +93,7 @@ classdef MimModeTabControl < GemTabControl
         function UpdateDynamicPanels(obj)
             obj.SegmentPanel.Update(obj.Gui);
             obj.EditPanel.Update(obj.Gui);
+            obj.MarkersPanel.Update(obj.Gui);
         end
         
         function UpdateMode(obj, plugin_info)

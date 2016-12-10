@@ -37,7 +37,7 @@ classdef MimMarkerBlue < MimGuiPlugin
         end
         
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists;
+            enabled = gui_app.IsDatasetLoaded && isequal(gui_app.GetCurrentModeName, MimModes.MarkerMode);
         end
         
         function is_selected = IsSelected(gui_app)
