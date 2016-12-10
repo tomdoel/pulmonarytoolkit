@@ -122,7 +122,15 @@ classdef PTKAppDef < handle
             app_icons_path = fullfile(path_root, 'Icons');
             shared_icons_path = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetDefaultIconsDirectory;
             icons_folders = {app_icons_path, shared_icons_path};
-        end 
+        end
+
+        function write_verbose = WriteVerboseEntriesToLogFile(~)
+            write_verbose = false;
+        end
+
+        function mode = DefaultModeOnNewDataset(~)
+            mode = 'Segment';
+        end
     end
     
     methods (Access = private)
@@ -144,14 +152,6 @@ classdef PTKAppDef < handle
         
         function plugins_path = GetGuiUserPluginsPath(obj)
             plugins_path = fullfile(obj.FrameworkAppDef.GetUserPath, 'GuiPlugins');
-        end
-
-        function write_verbose = WriteVerboseEntriesToLogFile(~)
-            write_verbose = false;
-        end
-
-        function mode = DefaultModeOnNewDataset(~)
-            mode = 'Segment';
         end
     end
 end
