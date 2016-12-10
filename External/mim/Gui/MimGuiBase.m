@@ -74,12 +74,7 @@ classdef MimGuiBase < GemFigure
             obj.Title = [app_def.GetName, ' ', app_def.GetVersion];
             
             % Set up the viewer panel
-            if PTKSoftwareInfo.ViewerPanelToolbarEnabled
-                obj.ImagePanel = MimViewerPanelWithControlPanel(obj);
-            else
-                obj.ImagePanel = MimViewerPanel(obj);
-            end
-            
+            obj.ImagePanel = MimViewerPanel(obj);
             
             obj.ImagePanel.DefaultOrientation = app_def.GetDefaultOrientation;
             obj.AddChild(obj.ImagePanel);
@@ -134,10 +129,8 @@ classdef MimGuiBase < GemFigure
             obj.OrganisedManualSegmentations = MimOrganisedManualSegmentations(obj, app_def, obj.Reporting);
 
             % Create the panel of tools across the bottom of the interface
-            if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef, false, false);
-                obj.AddChild(obj.ToolbarPanel);
-            end
+            obj.ToolbarPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef, false, false);
+            obj.AddChild(obj.ToolbarPanel);
             
             obj.ModeTabControl = MimModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.AppDef);
             obj.AddChild(obj.ModeTabControl);
@@ -753,11 +746,7 @@ classdef MimGuiBase < GemFigure
             end
             obj.LastWindowSize = new_size;
             
-            if PTKSoftwareInfo.ToolbarEnabled
-                toolbar_height = obj.ToolbarPanel.ToolbarHeight;
-            else
-                toolbar_height = 0;
-            end
+            toolbar_height = obj.ToolbarPanel.ToolbarHeight;
             
             status_panel_height = obj.StatusPanel.GetRequestedHeight;
             
@@ -770,12 +759,8 @@ classdef MimGuiBase < GemFigure
             
             obj.SidePanel.Resize([1, 1 + toolbar_height + status_panel_height, side_panel_width, side_panel_height]);
 
-            if PTKSoftwareInfo.ViewerPanelToolbarEnabled
-                image_height_pixels = viewer_panel_height - obj.ImagePanel.ControlPanelHeight;
-            else
-                image_height_pixels = viewer_panel_height;
-            end
-            
+            image_height_pixels = viewer_panel_height;
+
             image_width_pixels = max(obj.ImageMinimumWidth, obj.GetSuggestedWidth(image_height_pixels));
             viewer_panel_width = image_width_pixels + GemSlider.SliderWidth;
             
@@ -803,13 +788,11 @@ classdef MimGuiBase < GemFigure
             patient_name_panel_y_position = 1 + toolbar_height + viewer_panel_height;
             obj.PatientNamePanel.Resize([image_panel_x_position, patient_name_panel_y_position, patient_name_panel_width, patient_name_panel_height]);
             
-            if PTKSoftwareInfo.ToolbarEnabled
-                toolbar_width = parent_width_pixels;
-                obj.ToolbarPanel.Resize([1, 1, toolbar_width, toolbar_height]);
-            end
+            toolbar_width = parent_width_pixels;
+            obj.ToolbarPanel.Resize([1, 1, toolbar_width, toolbar_height]);
             
             right_side_position = image_panel_x_position + viewer_panel_width;
-            
+
             obj.ModeTabControl.Resize([right_side_position, 1 + toolbar_height + status_panel_height, mode_panel_width, plugins_panel_height]);
             obj.StatusPanel.Resize([right_side_position, 1 + toolbar_height, mode_panel_width, status_panel_height]);
             
@@ -910,9 +893,7 @@ classdef MimGuiBase < GemFigure
         end
         
         function UpdateToolbar(obj)
-            if PTKSoftwareInfo.ToolbarEnabled
-                obj.ToolbarPanel.Update(obj);
-            end
+            obj.ToolbarPanel.Update(obj);
             obj.ModeTabControl.UpdateDynamicPanels;
         end
 

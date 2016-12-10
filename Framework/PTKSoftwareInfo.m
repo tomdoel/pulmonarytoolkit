@@ -56,8 +56,6 @@ classdef PTKSoftwareInfo < handle
         FastMode = false
         DemoMode = false % If true, user plugins will be ignored
         WriteVerboseEntriesToLogFile = false
-        ToolbarEnabled = true
-        ViewerPanelToolbarEnabled = false
         
         % If true, the user will be prompted before marker changes are saved
         ConfirmBeforeSavingMarkers = false

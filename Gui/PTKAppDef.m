@@ -27,7 +27,7 @@ classdef PTKAppDef < handle
                 plugin_to_use = [];
             end
         end
-
+        
         function context_def = GetContextDef(obj)
             context_def = PTKContextDef;
         end
