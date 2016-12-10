@@ -31,10 +31,8 @@ classdef PTKSoftwareInfo < handle
         % Appearance
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica' 
-        DefaultCategoryName = 'Uncategorised'
-        PluginDefaultMode = 'Plugins'
         Colormap = CoreSystemUtilities.BackwardsCompatibilityColormap;
-        
+
         % If this parameter to true, then the patient browser will group together
         % datasets with the same patient name, even if the patient ID is different
         GroupPatientsWithSameName = true

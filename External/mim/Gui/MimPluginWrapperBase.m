@@ -34,7 +34,7 @@ classdef MimPluginWrapperBase < handle
     end
     
     methods (Static)
-        function plugin = AddPluginFromName(plugin_cache, plugin_name, plugin_filename, gui_app, reporting)
+        function plugin = AddPluginFromName(plugin_cache, plugin_name, plugin_filename, gui_app, default_category_name, reporting)
             plugin = [];
             try
                 [is_mim_plugin, plugin_class_object] = plugin_cache.IsPlugin(plugin_name, plugin_filename{1}.Second, reporting);
@@ -55,7 +55,7 @@ classdef MimPluginWrapperBase < handle
                         if ~hide_plugin
                             % Parse the plugin class properties into a data structure
                             if is_gui_plugin
-                                parsed_plugin_info = MimParseGuiPluginClass(plugin_name, plugin_class_object, plugin_filename{1}.Second, reporting);
+                                parsed_plugin_info = MimParseGuiPluginClass(plugin_name, plugin_class_object, plugin_filename{1}.Second, default_category_name, reporting);
                                 plugin = MimGuiPluginWrapper(plugin_name, plugin_class_object, parsed_plugin_info, gui_app);
                             else
                                 parsed_plugin_info = plugin_cache.GetPluginInfo(plugin_name, plugin_filename{1}.Second, reporting);

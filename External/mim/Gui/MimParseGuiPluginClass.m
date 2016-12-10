@@ -1,4 +1,4 @@
-function new_plugin = MimParseGuiPluginClass(plugin_name, plugin_class, suggested_category, reporting)
+function new_plugin = MimParseGuiPluginClass(plugin_name, plugin_class, suggested_category, default_category, reporting)
     % MimParseGuiPluginClass. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -25,7 +25,7 @@ function new_plugin = MimParseGuiPluginClass(plugin_name, plugin_class, suggeste
         if ~isempty(suggested_category)
             new_plugin.Category = suggested_category;
         else
-            new_plugin.Category = PTKSoftwareInfo.DefaultCategoryName;
+            new_plugin.Category = default_category;
         end
     end
     new_plugin.HidePluginInDisplay = plugin_class.HidePluginInDisplay;

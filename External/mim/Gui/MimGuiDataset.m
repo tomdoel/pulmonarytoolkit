@@ -389,7 +389,7 @@ classdef MimGuiDataset < CoreBaseClass
                 return;
             end
             
-            if obj.AppDef.GetFrameworkAppDef.IsDebugMode.DebugMode
+            if obj.AppDef.GetFrameworkAppDef.IsDebugMode
                 obj.RunPluginTryCatchBlock(plugin_name, wait_dialog)
             else
                 try

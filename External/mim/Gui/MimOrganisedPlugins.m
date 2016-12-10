@@ -23,7 +23,7 @@ classdef MimOrganisedPlugins < CoreBaseClass
         function obj = MimOrganisedPlugins(gui_app, plugin_cache, app_def, reporting)
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
-            obj.OrganisedPluginsModeList = MimOrganisedPluginsModeList(plugin_cache);
+            obj.OrganisedPluginsModeList = MimOrganisedPluginsModeList(app_def, plugin_cache);
             obj.Repopulate(reporting);
         end
         

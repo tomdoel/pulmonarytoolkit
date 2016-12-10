@@ -131,6 +131,14 @@ classdef PTKAppDef < handle
         function mode = DefaultModeOnNewDataset(~)
             mode = 'Segment';
         end
+
+        function mode = PluginDefaultMode(~)
+            mode = 'Plugins';
+        end
+
+        function mode = DefaultCategoryName(~)
+            mode = 'Uncategorised';
+        end
     end
     
     methods (Access = private)

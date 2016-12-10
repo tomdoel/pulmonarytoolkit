@@ -23,7 +23,7 @@ classdef MimOrganisedManualSegmentations < CoreBaseClass
         function obj = MimOrganisedManualSegmentations(gui_app, app_def, reporting)
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
-            obj.OrganisedPluginsModeList = MimOrganisedPluginsModeList([]);
+            obj.OrganisedPluginsModeList = MimOrganisedPluginsModeList(app_def, []);
             obj.Repopulate(reporting);
         end
         

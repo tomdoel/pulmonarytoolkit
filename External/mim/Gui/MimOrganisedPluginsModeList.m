@@ -13,12 +13,14 @@ classdef MimOrganisedPluginsModeList < CoreBaseClass
     %
     
     properties (Access = private)
+        AppDef
         Modes
         PluginCache
     end
     
     methods
-        function obj = MimOrganisedPluginsModeList(plugin_cache)
+        function obj = MimOrganisedPluginsModeList(app_def, plugin_cache)
+            obj.AppDef = app_def;
             obj.Clear;
             obj.PluginCache = plugin_cache;
         end
@@ -38,7 +40,7 @@ classdef MimOrganisedPluginsModeList < CoreBaseClass
         function AddList(obj, plugin_list, gui_app, reporting)
             for plugin_filename = plugin_list
                 plugin_name = plugin_filename{1}.First;
-                plugin_wrapper = MimPluginWrapperBase.AddPluginFromName(obj.PluginCache, plugin_name, plugin_filename, gui_app, reporting);
+                plugin_wrapper = MimPluginWrapperBase.AddPluginFromName(obj.PluginCache, plugin_name, plugin_filename, gui_app, obj.AppDef.DefaultCategoryName, reporting);
                 if ~isempty(plugin_wrapper)
                     obj.Add(plugin_name, plugin_wrapper.ParsedPluginInfo.Mode, plugin_wrapper.ParsedPluginInfo.Category, plugin_wrapper);
                 end
@@ -60,10 +62,10 @@ classdef MimOrganisedPluginsModeList < CoreBaseClass
         
         function Add(obj, name, mode, category, plugin_wrapper)
             if isempty(mode)
-                mode = PTKSoftwareInfo.PluginDefaultMode;
+                mode = obj.AppDef.PluginDefaultMode;
             end
             if isempty(category)
-                category = PTKSoftwareInfo.DefaultCategoryName;
+                category = obj.AppDef.DefaultCategoryName;
             end
 
             if obj.Modes.isKey(mode)
