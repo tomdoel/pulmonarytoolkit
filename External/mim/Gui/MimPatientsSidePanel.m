@@ -19,6 +19,7 @@ classdef MimPatientsSidePanel < GemListBoxWithTitle
         PatientDatabase
         GuiCallback
         PatientIdMap
+        GroupPatientsWithSameName
     end
     
     properties (SetAccess = private)    
@@ -26,10 +27,11 @@ classdef MimPatientsSidePanel < GemListBoxWithTitle
     end
     
     methods
-        function obj = MimPatientsSidePanel(parent, patient_database, gui_callback)
+        function obj = MimPatientsSidePanel(parent, patient_database, group_patients_with_same_name, gui_callback)
             obj = obj@GemListBoxWithTitle(parent, 'PATIENT', 'Import images', 'Delete patient');
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
+            obj.GroupPatientsWithSameName = group_patients_with_same_name;
         end
         
         function RepopulateSidePanel(obj, patient_id)
@@ -89,7 +91,7 @@ classdef MimPatientsSidePanel < GemListBoxWithTitle
         end
             
         function AddPatientsToListBox(obj, selected_patient_id)
-            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject, PTKSoftwareInfo.GroupPatientsWithSameName);
+            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject, obj.GroupPatientsWithSameName);
             obj.PatientIdMap = patient_id_map;
             obj.ListBox.ClearItems;
             

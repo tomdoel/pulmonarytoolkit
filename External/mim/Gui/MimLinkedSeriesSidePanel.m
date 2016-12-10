@@ -19,15 +19,17 @@ classdef MimLinkedSeriesSidePanel < GemListBoxWithTitle
         PatientDatabase
         GuiCallback
         LinkedRecorder
+        GroupPatientsWithSameName
     end
     
     methods
-        function obj = MimLinkedSeriesSidePanel(parent, patient_database, linked_recorder, gui_callback)
+        function obj = MimLinkedSeriesSidePanel(parent, patient_database, linked_recorder, group_patients_with_same_name, gui_callback)
             obj = obj@GemListBoxWithTitle(parent, 'LINKED SERIES', 'Import images', 'Delete images');
             
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
             obj.LinkedRecorder = linked_recorder;
+            obj.GroupPatientsWithSameName = group_patients_with_same_name;
         end
         
         function RepopulateSidePanel(obj, patient_id, series_uid)
@@ -68,7 +70,7 @@ classdef MimLinkedSeriesSidePanel < GemListBoxWithTitle
         function AddSeriesToListBox(obj, patient_id, series_uid)
             
             % Get uids for every series associated with this patient
-            datasets = obj.PatientDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, patient_id, PTKSoftwareInfo.GroupPatientsWithSameName);
+            datasets = obj.PatientDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, patient_id, obj.GroupPatientsWithSameName);
             all_uids = CoreContainerUtilities.GetFieldValuesFromSet(datasets, 'SeriesUid');
             obj.ListBox.ClearItems;
             

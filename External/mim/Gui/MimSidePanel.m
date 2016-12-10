@@ -37,7 +37,7 @@ classdef MimSidePanel < GemPanel
     end
     
     methods
-        function obj = MimSidePanel(parent, controller, patient_database, state, linked_recorder)
+        function obj = MimSidePanel(parent, controller, patient_database, state, linked_recorder, group_patients_with_same_name)
             obj = obj@GemPanel(parent);
             
             obj.RightBorder = true;
@@ -48,13 +48,13 @@ classdef MimSidePanel < GemPanel
             obj.ProjectsSidePanel = MimProjectsSidePanel(obj, patient_database, controller);
             obj.AddChild(obj.ProjectsSidePanel);
             
-            obj.PatientsSidePanel = MimPatientsSidePanel(obj, patient_database, controller);
+            obj.PatientsSidePanel = MimPatientsSidePanel(obj, patient_database, group_patients_with_same_name, controller);
             obj.AddChild(obj.PatientsSidePanel);
             
-            obj.LinkedSeriesSidePanel = MimLinkedSeriesSidePanel(obj, patient_database, linked_recorder, controller);
+            obj.LinkedSeriesSidePanel = MimLinkedSeriesSidePanel(obj, patient_database, linked_recorder, group_patients_with_same_name, controller);
             obj.AddChild(obj.LinkedSeriesSidePanel);
             
-            obj.SeriesSidePanel = MimSeriesSidePanel(obj, patient_database, controller);
+            obj.SeriesSidePanel = MimSeriesSidePanel(obj, patient_database, group_patients_with_same_name, controller);
             obj.AddChild(obj.SeriesSidePanel);
             
             obj.Repopulate;

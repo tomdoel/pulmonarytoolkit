@@ -26,17 +26,15 @@ classdef MimPatientBrowserPatientsPanel < GemPanel
 
     properties (Access = private)
         PatientNameTextControl
-        
         SeriesDescriptionsList
         
         ImageDatabase
         GuiCallback
         
+        GroupPatientsWithSameName
         PanelHeight
         PatientNamePosition_Y
-        
         LastSelectedSeriesUid
-        
         TextClickedListeners
     end
     
@@ -53,13 +51,14 @@ classdef MimPatientBrowserPatientsPanel < GemPanel
     end
     
     methods
-        function obj = MimPatientBrowserPatientsPanel(parent, image_database, patient_id, visible_name, total_number_of_series, num_patients, gui_callback)
+        function obj = MimPatientBrowserPatientsPanel(parent, image_database, patient_id, visible_name, total_number_of_series, num_patients, group_patients_with_same_name, gui_callback)
             % Create a new panel showing the series information for one or more patients,
             % each defined by the patient_details vector. This vector may have more than one
             % patient details object if there is more than one patient id corresponding to
             % the same patient, which could occur due to anonymisation
             
             obj = obj@GemPanel(parent);
+            obj.GroupPatientsWithSameName = group_patients_with_same_name;
             obj.Enabled = false;
             obj.ImageDatabase = image_database;
             obj.GuiCallback = gui_callback;
@@ -156,7 +155,7 @@ classdef MimPatientBrowserPatientsPanel < GemPanel
         end
         
         function AddStudies(obj)
-            datasets = obj.ImageDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, obj.Id, PTKSoftwareInfo.GroupPatientsWithSameName);
+            datasets = obj.ImageDatabase.GetAllSeriesForThisPatient(obj.GuiCallback.GetCurrentProject, obj.Id, obj.GroupPatientsWithSameName);
             
             obj.SeriesDescriptionsList.ClearItems;
             

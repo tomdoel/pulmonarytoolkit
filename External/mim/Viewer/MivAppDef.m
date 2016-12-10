@@ -134,5 +134,12 @@ classdef MivAppDef < handle
         function mode = DefaultCategoryName(~)
             mode = 'Uncategorised';
         end
+
+        function group_patients = GroupPatientsWithSameName(~)
+            % If this parameter to true, then the patient browser will group together
+            % datasets with the same patient name, even if the patient ID is different
+            
+            group_patients = true;
+        end        
     end
 end

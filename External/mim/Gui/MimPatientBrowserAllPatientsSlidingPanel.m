@@ -18,9 +18,9 @@ classdef MimPatientBrowserAllPatientsSlidingPanel < GemSlidingPanel
     %    
     
     methods
-        function obj = MimPatientBrowserAllPatientsSlidingPanel(parent, patient_database, gui_callback)
+        function obj = MimPatientBrowserAllPatientsSlidingPanel(parent, patient_database, group_patients_with_same_name, gui_callback)
             obj = obj@GemSlidingPanel(parent);
-            obj.FloatingPanel = MimPatientBrowserAllPatientsPanel(obj, patient_database, gui_callback);
+            obj.FloatingPanel = MimPatientBrowserAllPatientsPanel(obj, patient_database, group_patients_with_same_name, gui_callback);
             obj.AddChild(obj.FloatingPanel);
         end
         

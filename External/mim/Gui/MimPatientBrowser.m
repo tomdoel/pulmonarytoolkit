@@ -27,7 +27,7 @@ classdef MimPatientBrowser < GemFigure
             obj.ArrowPointer = 'hand';
             obj.LockLoad = false;
 
-            obj.BrowserPanel = MimPatientBrowserPanel(obj, image_database, obj);
+            obj.BrowserPanel = MimPatientBrowserPanel(obj, image_database, app_def.GroupPatientsWithSameName, obj);
             obj.AddChild(obj.BrowserPanel);
             
             obj.Resize(position);

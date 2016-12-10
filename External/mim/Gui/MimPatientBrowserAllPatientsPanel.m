@@ -20,13 +20,15 @@ classdef MimPatientBrowserAllPatientsPanel < GemCompositePanel
         PatientDatabase
         GuiCallback
         PatientIdMap
+        GroupPatientsWithSameName
     end
     
     methods
-        function obj = MimPatientBrowserAllPatientsPanel(parent, patient_database, gui_callback)
+        function obj = MimPatientBrowserAllPatientsPanel(parent, patient_database, group_patients_with_same_name, gui_callback)
             obj = obj@GemCompositePanel(parent);
             obj.PatientDatabase = patient_database;
             obj.GuiCallback = gui_callback;
+            obj.GroupPatientsWithSameName = group_patients_with_same_name;
             
             obj.PatientPanels = containers.Map;
             
@@ -83,7 +85,7 @@ classdef MimPatientBrowserAllPatientsPanel < GemCompositePanel
         function AddPatientPanels(obj)
             % The Patient Database will merge together patients with same name if this is specified by the settings
             
-            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.PatientDatabase.GetListOfPatientNamesAndSeriesCount(obj.GuiCallback.GetCurrentProject, PTKSoftwareInfo.GroupPatientsWithSameName);
+            [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = obj.PatientDatabase.GetListOfPatientNamesAndSeriesCount(obj.GuiCallback.GetCurrentProject, obj.GroupPatientsWithSameName);
             obj.PatientIdMap = patient_id_map;
             
             for index = 1 : numel(ids)
@@ -92,7 +94,7 @@ classdef MimPatientBrowserAllPatientsPanel < GemCompositePanel
                 full_name = names{index};
                 series_for_this_patient = num_series(index);
                 num_patients = num_patients_combined(index);
-                obj.AddPatientPanel(MimPatientBrowserPatientsPanel(obj, obj.PatientDatabase, patient_id, full_name, series_for_this_patient, num_patients, obj.GuiCallback));
+                obj.AddPatientPanel(MimPatientBrowserPatientsPanel(obj, obj.PatientDatabase, patient_id, full_name, series_for_this_patient, num_patients, obj.GroupPatientsWithSameName, obj.GuiCallback));
             end
         end
         

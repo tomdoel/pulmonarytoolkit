@@ -27,6 +27,7 @@ classdef MimPatientBrowserListOfPatientsPanel < GemPanel
         PatientIds
         LockSetPatient
         LastSelectedPatientId
+        GroupPatientsWithSameName
     end
     
     properties (Constant, Access = private)
@@ -39,8 +40,9 @@ classdef MimPatientBrowserListOfPatientsPanel < GemPanel
     end
     
     methods
-        function obj = MimPatientBrowserListOfPatientsPanel(parent, all_patients_panel, patient_database, gui_callback)
+        function obj = MimPatientBrowserListOfPatientsPanel(parent, all_patients_panel, patient_database, group_patients_with_same_name, gui_callback)
             obj = obj@GemPanel(parent);
+            obj.GroupPatientsWithSameName = group_patients_with_same_name;
             obj.LockSetPatient = false;
             obj.PatientDatabase = patient_database;
             obj.AllPatientsPanel = all_patients_panel;
@@ -141,7 +143,7 @@ classdef MimPatientBrowserListOfPatientsPanel < GemPanel
     methods (Access = private)
         
         function AddPatientsToListBox(obj)
-            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject, PTKSoftwareInfo.GroupPatientsWithSameName);
+            [names, ids, short_visible_names, patient_id_map] = obj.PatientDatabase.GetListOfPatientNames(obj.GuiCallback.GetCurrentProject, obj.GroupPatientsWithSameName);
             current_index_selected = get(obj.PatientListBox, 'Value');
             if isempty(obj.PatientIds) || isempty(current_index_selected)
                 new_index = [];

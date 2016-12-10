@@ -105,7 +105,7 @@ classdef MimGuiBase < GemFigure
             combined_controller = MimCombinedImageDatabaseController(obj, matnat_database);
             
             % Create the side panel showing available datasets
-            obj.SidePanel = MimSidePanel(obj, combined_controller, combined_database, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder);
+            obj.SidePanel = MimSidePanel(obj, combined_controller, combined_database, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder, obj.AppDef.GroupPatientsWithSameName);
             obj.AddChild(obj.SidePanel);
             
             % Create the status panel showing image coordinates and
@@ -409,7 +409,7 @@ classdef MimGuiBase < GemFigure
         
         function LoadPatient(obj, patient_id)
             obj.GuiDataset.SwitchPatient(patient_id);
-            datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, PTKSoftwareInfo.GroupPatientsWithSameName);
+            datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, obj.AppDef.GroupPatientsWithSameName);
             if isempty(datasets)
                 series_uid = [];
             else
@@ -505,7 +505,7 @@ classdef MimGuiBase < GemFigure
                 case 'Delete'
                     obj.BringToFront;
                     
-                    series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, PTKSoftwareInfo.GroupPatientsWithSameName);
+                    series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, obj.AppDef.GroupPatientsWithSameName);
                     
                     series_uids = {};
                     
