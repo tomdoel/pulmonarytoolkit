@@ -45,7 +45,7 @@ classdef MivAppDef < handle
         end
         
         function direction = GetDefaultOrientation(obj)
-            direction = PTKImageOrientation.Axial;
+            direction = GemImageOrientation.XY;
         end
         
         function style_sheet = GetDefaultStyleSheet(obj)

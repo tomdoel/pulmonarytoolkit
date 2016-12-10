@@ -101,7 +101,7 @@ classdef MimViewerPanel < GemPanel
     end
     
     properties
-        DefaultOrientation = PTKImageOrientation.Axial
+        DefaultOrientation = GemImageOrientation.XY
     end
     
     methods
@@ -284,13 +284,13 @@ classdef MimViewerPanel < GemPanel
                 obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) - 1;
                 input_has_been_processed = true;
             elseif strcmpi(key, 'c')
-                obj.Orientation = PTKImageOrientation.Coronal;
+                obj.Orientation = GemImageOrientation.XZ;
                 input_has_been_processed = true;
             elseif strcmpi(key, 's')
-                obj.Orientation = PTKImageOrientation.Sagittal;
+                obj.Orientation = GemImageOrientation.YZ;
                 input_has_been_processed = true;
             elseif strcmpi(key, 'a')
-                obj.Orientation = PTKImageOrientation.Axial;
+                obj.Orientation = GemImageOrientation.XY;
                 input_has_been_processed = true;
             elseif strcmpi(key, 'i')
                 obj.ShowImage = ~obj.ShowImage;

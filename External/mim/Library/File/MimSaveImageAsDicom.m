@@ -73,17 +73,17 @@ function MimSaveImageAsDicom(image_data, path, filename, patient_name, is_second
     
     
     switch orientation
-        case PTKImageOrientation.Axial
+        case GemImageOrientation.XY
             metadata.ImageOrientationPatient = [1 0 0 0 1 0]';
             slice_spacing = image_data.VoxelSize(3);
             pixel_spacing = image_data.VoxelSize(1:2);
             
-        case PTKImageOrientation.Coronal
+        case GemImageOrientation.XZ
             metadata.ImageOrientationPatient = [1 0 0 0 0 -1]';
             slice_spacing = image_data.VoxelSize(1);
             pixel_spacing = image_data.VoxelSize([3,2]);
             
-        case PTKImageOrientation.Sagittal
+        case GemImageOrientation.YZ
             metadata.ImageOrientationPatient = [0 1 0 0 0 -1]';
             slice_spacing = image_data.VoxelSize(2);
             pixel_spacing = image_data.VoxelSize([3,1]);
@@ -149,11 +149,11 @@ end
 
 function reordered_image = ReorderImage(image_data, orientation, reporting)
     switch orientation
-        case PTKImageOrientation.Axial
+        case GemImageOrientation.XY
             saved_dimension_order = [1, 2, 3];
-        case PTKImageOrientation.Coronal
+        case GemImageOrientation.XZ
             saved_dimension_order = [3, 2, 1];
-        case PTKImageOrientation.Sagittal
+        case GemImageOrientation.YZ
             saved_dimension_order = [3, 1, 2];            
         otherwise
             reporting.Error('MimSaveImageAsDicom:UnsupportedOrientation', ['The save image orientation ' char(orientation) ' is not known or unsupported.']);

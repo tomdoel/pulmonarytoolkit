@@ -98,13 +98,13 @@ classdef MimEditManager < MimTool
         function [closest_colour, second_closest_colour] = GetClosestIndices2D(obj, local_image_coords)
             orientation = obj.ViewerPanel.Orientation;
             switch orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     x_coord = local_image_coords(2);
                     y_coord = local_image_coords(3);
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     x_coord = local_image_coords(1);
                     y_coord = local_image_coords(3);
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     x_coord = local_image_coords(1);
                     y_coord = local_image_coords(2);
                 otherwise
@@ -139,13 +139,13 @@ classdef MimEditManager < MimTool
         function [distance, border_distance, border_point] = GetClosestIndices2DForColours(obj, local_image_coords, closest_colour, second_closest_colour)
             orientation = obj.ViewerPanel.Orientation;
             switch orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     x_coord = local_image_coords(2);
                     y_coord = local_image_coords(3);
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     x_coord = local_image_coords(1);
                     y_coord = local_image_coords(3);
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     x_coord = local_image_coords(1);
                     y_coord = local_image_coords(2);
                 otherwise
@@ -165,11 +165,11 @@ classdef MimEditManager < MimTool
             [border_index_x, border_index_y]  = ind2sub(size(indices), double(border_index));
             
             switch orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     border_point = [slice_number, border_index_x, border_index_y];
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     border_point = [border_index_x, slice_number, border_index_y];
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     border_point = [border_index_x, border_index_y, slice_number];
                 otherwise
                     error('Unsupported dimension');
@@ -312,15 +312,15 @@ classdef MimEditManager < MimTool
             k_screen = obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation);
             
             switch obj.ViewerPanel.Orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     image_coords(1) = k_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = i_screen;
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     image_coords(1) = j_screen;
                     image_coords(2) = k_screen;
                     image_coords(3) = i_screen;
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     image_coords(1) = i_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = k_screen;

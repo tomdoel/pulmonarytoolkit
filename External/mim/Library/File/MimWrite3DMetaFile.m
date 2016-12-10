@@ -11,7 +11,7 @@ function MimWrite3DMetaFile(header_filename, image, resolution, data_type, offse
     %             resolution - voxel size in Matlab dimension order (y-x-z)
     %             data_type - uint8, char, short
     %             offset
-    %             orientation - of type PTKImageOrientation
+    %             orientation - of type MimImageOrientation
     %
     %
     %     Licence
@@ -26,7 +26,7 @@ function MimWrite3DMetaFile(header_filename, image, resolution, data_type, offse
     end
     
     if nargin < 6 || isempty(orientation)
-        orientation = PTKImageOrientation.Axial;
+        orientation = GemImageOrientation.XY;
     end
     
     [pathstr, name, ~] = fileparts(header_filename);
@@ -34,14 +34,14 @@ function MimWrite3DMetaFile(header_filename, image, resolution, data_type, offse
     raw_image_filename_nopath = [name, '.raw'];
     
     switch orientation
-        case PTKImageOrientation.Axial            
+        case GemImageOrientation.XY            
             coordinates_save_order = [1, 2, 3];
             image_reorder = [1 2 3];
             image_flip = [false, false, true];
             anatomical_orientation = 'RAI';
             transform_matrix = '0 1 0 1 0 0 0 0 1';
             
-        case PTKImageOrientation.Coronal
+        case GemImageOrientation.XZ
             coordinates_save_order = [3, 2, 1];
             image_reorder = [2, 3, 1];
             image_flip = [false, false, false];

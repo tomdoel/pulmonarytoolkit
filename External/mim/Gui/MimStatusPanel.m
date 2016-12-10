@@ -92,13 +92,13 @@ classdef MimStatusPanel < GemPanel
                     overlay_text = '';
                     value_combined_text = '';
                     switch orientation
-                        case PTKImageOrientation.Coronal
+                        case GemImageOrientation.XZ
                             j_text = '--';
                             k_text = '--';
-                        case PTKImageOrientation.Sagittal
+                        case GemImageOrientation.YZ
                             i_text = '--';
                             k_text = '--';
-                        case PTKImageOrientation.Axial
+                        case GemImageOrientation.XY
                             i_text = '--';
                             j_text = '--';
                     end

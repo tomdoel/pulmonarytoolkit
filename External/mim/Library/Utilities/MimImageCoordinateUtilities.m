@@ -516,11 +516,11 @@ classdef MimImageCoordinateUtilities
         
         % Select an appropriate image orientation for exporting an image
         function orientation = ChooseOrientation(voxel_size)
-            orientation = PTKImageOrientation.Axial;
+            orientation = GemImageOrientation.XY;
             [sorted_voxel_size, sorted_voxel_size_index] = sort(voxel_size, 'descend');
             if abs(sorted_voxel_size(1) - sorted_voxel_size(2)) > abs(sorted_voxel_size(2) - sorted_voxel_size(3))
                 if sorted_voxel_size_index(1) == 1
-                    orientation = PTKImageOrientation.Coronal;
+                    orientation = GemImageOrientation.XZ;
                 end
             end
         end

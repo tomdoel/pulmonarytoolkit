@@ -35,7 +35,7 @@ classdef MimOrientationSagittal < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.ImagePanel.Orientation = PTKImageOrientation.Sagittal;
+            gui_app.ImagePanel.Orientation = GemImageOrientation.YZ;
         end
         
         function enabled = IsEnabled(gui_app)
@@ -43,7 +43,7 @@ classdef MimOrientationSagittal < MimGuiPlugin
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = gui_app.ImagePanel.Orientation == PTKImageOrientation.Sagittal;
+            is_selected = gui_app.ImagePanel.Orientation == GemImageOrientation.YZ;
         end
     end
 end

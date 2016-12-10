@@ -229,13 +229,13 @@ classdef MimViewerPanelToolbar < GemPanel
                     overlay_text = '';
                     value_text = '-';
                     switch orientation
-                        case PTKImageOrientation.Coronal
+                        case GemImageOrientation.XZ
                             j_text = '--';
                             k_text = '--';
-                        case PTKImageOrientation.Sagittal
+                        case GemImageOrientation.YZ
                             i_text = '--';
                             k_text = '--';
-                        case PTKImageOrientation.Axial
+                        case GemImageOrientation.XY
                             i_text = '--';
                             j_text = '--';
                     end
@@ -344,11 +344,11 @@ classdef MimViewerPanelToolbar < GemPanel
             % Coronal/sagittal/axial orientation
             switch get(eventdata.NewValue, 'Tag')
                 case 'Coronal'
-                    obj.ViewerPanel.Orientation = PTKImageOrientation.Coronal;
+                    obj.ViewerPanel.Orientation = GemImageOrientation.XZ;
                 case 'Sagittal'
-                    obj.ViewerPanel.Orientation = PTKImageOrientation.Sagittal;
+                    obj.ViewerPanel.Orientation = GemImageOrientation.YZ;
                 case 'Axial'
-                    obj.ViewerPanel.Orientation = PTKImageOrientation.Axial;
+                    obj.ViewerPanel.Orientation = GemImageOrientation.XY;
             end
         end
         

@@ -231,8 +231,8 @@ classdef MimImageUtilities
             end
             
             % Get the distance transforms
-            [~, border_1] = MimImageUtilities.GetBorderDistanceTransformBySlice(image_1, PTKImageOrientation.Coronal);
-            [~, border_2] = MimImageUtilities.GetBorderDistanceTransformBySlice(image_2, PTKImageOrientation.Coronal);
+            [~, border_1] = MimImageUtilities.GetBorderDistanceTransformBySlice(image_1, GemImageOrientation.XZ);
+            [~, border_2] = MimImageUtilities.GetBorderDistanceTransformBySlice(image_2, GemImageOrientation.XZ);
             
             dt_1 = MimImageUtilities.GetNonisotropicDistanceTransform(border_1);
             dt_2 = MimImageUtilities.GetNonisotropicDistanceTransform(border_2);
@@ -399,10 +399,10 @@ classdef MimImageUtilities
 
             if flatten_before_preview
                 image_copy = image.Copy;
-                image_copy.Flatten(PTKImageOrientation.Coronal);
-                slice = image_copy.GetSlice(slice_position, PTKImageOrientation.Coronal);
+                image_copy.Flatten(GemImageOrientation.XZ);
+                slice = image_copy.GetSlice(slice_position, GemImageOrientation.XZ);
             else
-                slice = image.GetSlice(slice_position, PTKImageOrientation.Coronal); 
+                slice = image.GetSlice(slice_position, GemImageOrientation.XZ); 
             end
             slice = slice';
 

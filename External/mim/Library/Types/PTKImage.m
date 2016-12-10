@@ -166,11 +166,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function orientation = Find2DOrientation(obj)
             image_size = obj.ImageSize;
             if image_size(3) == 1
-                orientation = PTKImageOrientation.Axial;
+                orientation = GemImageOrientation.XY;
             elseif image_size(2) == 1
-                orientation = PTKImageOrientation.Sagittal;
+                orientation = GemImageOrientation.YZ;
             elseif image_size(1) == 1
-                orientation = PTKImageOrientation.Coronal;
+                orientation = GemImageOrientation.XZ;
             else
                 orientation = [];
             end
@@ -469,11 +469,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function slice = GetSlice(obj, slice_number, dimension)
             % Returns a 2D slice from the image in the specified direction
            switch dimension
-               case PTKImageOrientation.Coronal
+               case GemImageOrientation.XZ
                    slice = squeeze(obj.RawImage(slice_number, :, :));
-               case PTKImageOrientation.Sagittal
+               case GemImageOrientation.YZ
                    slice = squeeze(obj.RawImage(:, slice_number, :));
-               case PTKImageOrientation.Axial
+               case GemImageOrientation.XY
                    slice = squeeze(obj.RawImage(:, :, slice_number));
                otherwise
                    error('Unsupported dimension');
@@ -484,11 +484,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             % Returns a blank slice from the image in the specified direction
             
             switch dimension
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     slice = MimImageUtilities.Zeros([obj.ImageSize(2), obj.ImageSize(3)], obj.LastDataType);
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     slice = MimImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(3)], obj.LastDataType);
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     slice = MimImageUtilities.Zeros([obj.ImageSize(1), obj.ImageSize(2)], obj.LastDataType);
                 otherwise
                     error('Unsupported dimension');
@@ -586,11 +586,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             flat = max(obj.RawImage, [], direction);
             number_of_repeats = size(obj.RawImage, direction);
             switch direction
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     obj.RawImage = repmat(flat, [number_of_repeats 1 1]);
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     obj.RawImage = repmat(flat, [1 number_of_repeats 1]);
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     obj.RawImage = repmat(flat, [1 1 number_of_repeats]);
             end
             obj.NotifyImageChanged;
@@ -599,11 +599,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function ReplaceImageSlice(obj, new_slice, slice_index, direction)
             % Modifies the specified 2D slice of the image
             switch direction
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     obj.RawImage(slice_index, :, :) = new_slice;
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     obj.RawImage(:, slice_index, :) = new_slice;
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     obj.RawImage(:, :, slice_index) = new_slice;
             end
             obj.NotifyImageChanged;

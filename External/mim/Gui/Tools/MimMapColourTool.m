@@ -184,15 +184,15 @@ classdef MimMapColourTool < MimTool
             k_screen = obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation);
             
             switch obj.ViewerPanel.Orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     image_coords(1) = k_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = i_screen;
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     image_coords(1) = j_screen;
                     image_coords(2) = k_screen;
                     image_coords(3) = i_screen;
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     image_coords(1) = i_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = k_screen;
@@ -233,13 +233,13 @@ classdef MimMapColourTool < MimTool
         function closest_colour = GetClosestColour2D(obj, local_image_coords)
             orientation = obj.ViewerPanel.Orientation;
             switch orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     x_coord = local_image_coords(2);
                     y_coord = local_image_coords(3);
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     x_coord = local_image_coords(1);
                     y_coord = local_image_coords(3);
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     x_coord = local_image_coords(1);
                     y_coord = local_image_coords(2);
                 otherwise

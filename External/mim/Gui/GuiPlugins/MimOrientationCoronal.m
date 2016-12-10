@@ -35,7 +35,7 @@ classdef MimOrientationCoronal < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.ImagePanel.Orientation = PTKImageOrientation.Coronal;
+            gui_app.ImagePanel.Orientation = GemImageOrientation.XZ;
         end
         
         function enabled = IsEnabled(gui_app)
@@ -43,7 +43,7 @@ classdef MimOrientationCoronal < MimGuiPlugin
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = gui_app.ImagePanel.Orientation == PTKImageOrientation.Coronal;
+            is_selected = gui_app.ImagePanel.Orientation == GemImageOrientation.XZ;
         end
     end
 end

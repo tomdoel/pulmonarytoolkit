@@ -76,11 +76,11 @@ classdef GemMarkerPointImage < GemImageSource
             coordinate_range = coordinate_range(1) : coordinate_range(2);
             
             switch orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     consider_image = obj.Image.RawImage(coordinate_range, :, :);
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     consider_image = obj.Image.RawImage(:, coordinate_range, :);
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     consider_image = obj.Image.RawImage(:, :, coordinate_range);
             end
             other_dimension = setxor([1 2 3], orientation);
@@ -101,11 +101,11 @@ classdef GemMarkerPointImage < GemImageSource
             coordinate_range = min(max_coordinate, coordinate_range);
             coordinate_range = coordinate_range(1) : coordinate_range(2);
             switch orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     consider_image = obj.Image.RawImage(coordinate_range, :, :);
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     consider_image = obj.Image.RawImage(:, coordinate_range, :);
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     consider_image = obj.Image.RawImage(:, :, coordinate_range);
             end
             other_dimension = setxor([1 2 3], orientation);

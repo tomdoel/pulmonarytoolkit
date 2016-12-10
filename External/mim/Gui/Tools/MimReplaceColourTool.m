@@ -236,15 +236,15 @@ classdef MimReplaceColourTool < MimTool
             k_screen = obj.ViewerPanel.SliceNumber(obj.ViewerPanel.Orientation);
             
             switch obj.ViewerPanel.Orientation
-                case PTKImageOrientation.Coronal
+                case GemImageOrientation.XZ
                     image_coords(1) = k_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = i_screen;
-                case PTKImageOrientation.Sagittal
+                case GemImageOrientation.YZ
                     image_coords(1) = j_screen;
                     image_coords(2) = k_screen;
                     image_coords(3) = i_screen;
-                case PTKImageOrientation.Axial
+                case GemImageOrientation.XY
                     image_coords(1) = i_screen;
                     image_coords(2) = j_screen;
                     image_coords(3) = k_screen;
