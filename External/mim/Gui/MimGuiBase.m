@@ -172,7 +172,7 @@ classdef MimGuiBase < GemFigure
             
             % Create a progress panel which will replace the progress dialog
             obj.WaitDialogHandle = GemProgressPanel(obj.ImagePanel);
-            obj.WaitDialogHandle.ShowDebuggingControls = PTKSoftwareInfo.DebugMode;
+            obj.WaitDialogHandle.ShowDebuggingControls = app_def.GetFrameworkAppDef.IsDebugMode;
             
             % Now we switch the reporting progress bar to a progress panel displayed over the gui
             obj.Reporting.ProgressDialog = obj.WaitDialogHandle;            

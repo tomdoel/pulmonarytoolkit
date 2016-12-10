@@ -389,7 +389,7 @@ classdef MimGuiDataset < CoreBaseClass
                 return;
             end
             
-            if PTKSoftwareInfo.DebugMode
+            if obj.AppDef.GetFrameworkAppDef.IsDebugMode.DebugMode
                 obj.RunPluginTryCatchBlock(plugin_name, wait_dialog)
             else
                 try
