@@ -17,8 +17,8 @@ classdef MimMarkerNearest < MimGuiPlugin
     properties
         ButtonText = 'Nearest marker'
         SelectedText = 'Nearest marker'
-        ToolTip = 'Go to nearest marker'
-        Category = 'Navigation'
+        ToolTip = 'Find the nearest slice containing a marker'
+        Category = 'Slice navigation'
         Visibility = 'Dataset'
         Mode = 'Markers'
 
@@ -26,7 +26,7 @@ classdef MimMarkerNearest < MimGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Icon = 'markers.png'
+        Icon = 'gotomarker.png'
         Location = 3
     end
     

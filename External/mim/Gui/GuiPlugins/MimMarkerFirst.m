@@ -17,8 +17,8 @@ classdef MimMarkerFirst < MimGuiPlugin
     properties
         ButtonText = 'First marker'
         SelectedText = 'First marker'
-        ToolTip = 'Go to first marker'
-        Category = 'Navigation'
+        ToolTip = 'Go to slice containing first marker'
+        Category = 'Slice navigation'
         Visibility = 'Dataset'
         Mode = 'Markers'
 
@@ -26,7 +26,7 @@ classdef MimMarkerFirst < MimGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Icon = 'markers.png'
+        Icon = 'rewind.png'
         Location = 1
     end
     

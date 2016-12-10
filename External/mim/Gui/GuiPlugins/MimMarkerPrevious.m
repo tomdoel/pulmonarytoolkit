@@ -17,8 +17,8 @@ classdef MimMarkerPrevious < MimGuiPlugin
     properties
         ButtonText = 'Previous marker'
         SelectedText = 'Previous marker'
-        ToolTip = 'Go backwards to next marker'
-        Category = 'Navigation'
+        ToolTip = 'Go backwards to slice containing the previous marker'
+        Category = 'Slice navigation'
         Visibility = 'Dataset'
         Mode = 'Markers'
 
@@ -26,7 +26,7 @@ classdef MimMarkerPrevious < MimGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Icon = 'markers.png'
+        Icon = 'backwards.png'
         Location = 2
     end
     

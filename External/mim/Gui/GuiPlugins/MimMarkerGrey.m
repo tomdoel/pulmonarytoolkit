@@ -26,7 +26,7 @@ classdef MimMarkerGrey < MimGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Icon = 'markers.png'
+        Icon = 'single_marker.png'
         IconColour = GemMarkerPoint.DefaultColours{7}
         Location = 7
     end

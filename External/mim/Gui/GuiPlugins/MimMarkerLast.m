@@ -17,8 +17,8 @@ classdef MimMarkerLast < MimGuiPlugin
     properties
         ButtonText = 'Last marker'
         SelectedText = 'Last marker'
-        ToolTip = 'Go to last marker'
-        Category = 'Navigation'
+        ToolTip = 'Go to slice containing the last marker'
+        Category = 'Slice navigation'
         Visibility = 'Dataset'
         Mode = 'Markers'
 
@@ -26,7 +26,7 @@ classdef MimMarkerLast < MimGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Icon = 'markers.png'
+        Icon = 'fastforward.png'
         Location = 5
     end
     

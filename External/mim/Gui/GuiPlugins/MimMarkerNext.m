@@ -17,8 +17,8 @@ classdef MimMarkerNext < MimGuiPlugin
     properties
         ButtonText = 'Next marker'
         SelectedText = 'Next marker'
-        ToolTip = 'Go forwards to next marker'
-        Category = 'Navigation'
+        ToolTip = 'Go forwards to the slice containing next marker'
+        Category = 'Slice navigation'
         Visibility = 'Dataset'
         Mode = 'Markers'
 
@@ -26,7 +26,7 @@ classdef MimMarkerNext < MimGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Icon = 'markers.png'
+        Icon = 'forwards.png'
         Location = 4
     end
     
