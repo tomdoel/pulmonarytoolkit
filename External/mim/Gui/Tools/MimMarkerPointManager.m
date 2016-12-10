@@ -25,6 +25,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         Reporting
         
         MarkersHaveBeenLoaded = false
+        CurrentMarkersName
     end
     
     methods
@@ -40,12 +41,13 @@ classdef MimMarkerPointManager < CoreBaseClass
         
         function ClearMarkers(obj)
             obj.MarkersHaveBeenLoaded = false;
+            obj.CurrentMarkersName = [];
             obj.ViewerPanel.MarkerImageSource.Image.Reset;
         end
         
         function AutoSaveMarkers(obj)
             if ~isempty(obj.MarkerLayer) && obj.MarkerLayer.MarkerImageHasChanged && obj.MarkersHaveBeenLoaded
-                saved_marker_points = obj.GuiDataset.LoadMarkers;
+                saved_marker_points = obj.GuiDataset.LoadMarkers(obj.CurrentMarkersName);
                 current_marker_points = obj.MarkerLayer.GetMarkerImage.Image;
                 markers_changed = false;
                 if isempty(saved_marker_points)
@@ -85,36 +87,36 @@ classdef MimMarkerPointManager < CoreBaseClass
             end
         end
         
-        function LoadMarkersIfRequired(obj)
-            if ~obj.MarkersHaveBeenLoaded && (obj.ViewerPanel.ShowMarkers || obj.ViewerPanel.IsInMarkerMode)
-                obj.LoadMarkers;
+        function LoadMarkersIfRequired(obj, name)
+            if obj.IsLoadMarkersRequired
+                obj.LoadMarkers(name);
             end
         end
         
-        function LazyLoadMarkerImage(obj)
-            if (obj.ViewerPanel.MarkerImageDisplayParameters.ShowMarkers || obj.ViewerPanel.IsInMarkerMode) && ~obj.MarkersHaveBeenLoaded
-                obj.Gui.LoadMarkers;
-            end
+        function load_required = IsLoadMarkersRequired(obj)
+            load_required = ~obj.MarkersHaveBeenLoaded && (obj.ViewerPanel.MarkerImageDisplayParameters.ShowMarkers || obj.ViewerPanel.IsInMarkerMode);
         end
         
-        function LoadMarkers(obj)
-            new_image = obj.GuiDataset.LoadMarkers;
-            if isempty(new_image)
-                disp('No previous markers found for this image');
-            else
+        function LoadMarkers(obj, name)
+            new_image = obj.GuiDataset.LoadMarkers(name);
+            if ~isempty(new_image)
                 obj.MarkerLayer.GetMarkerImage.SetBlankMarkerImage(obj.ViewerPanel.GetBackgroundImageSource.Image);
                 obj.MarkerLayer.ChangeMarkerSubImage(new_image);
             end
             obj.MarkersHaveBeenLoaded = true;
+            obj.CurrentMarkersName = name;
         end
     end
     
     methods (Access = private)
         function SaveMarkers(obj)
             if obj.GuiDataset.DatasetIsLoaded
+                if isempty(obj.CurrentMarkersName)
+                    obj.Reporting.Error('MimMarkerPointManager:NoMarkerFilename', 'The markers could not be saved as the marker filename has not been specified. ');
+                end
                 obj.Reporting.ShowProgress('Saving Markers');
                 markers = obj.MarkerLayer.GetMarkerImage.Image;
-                obj.GuiDataset.SaveMarkers(PTKSoftwareInfo.MakerPointsCacheName, markers);
+                obj.GuiDataset.SaveMarkers(obj.CurrentMarkersName, markers);
                 obj.MarkerLayer.MarkerPointsHaveBeenSaved;
                 obj.Reporting.CompleteProgress;
             end

@@ -141,5 +141,11 @@ classdef MivAppDef < handle
             
             group_patients = true;
         end        
+
+        function name = DefaultMarkersName(~)
+            % The filename for the initial marker set
+            
+            name = 'MarkerPoints';
+        end
     end
 end

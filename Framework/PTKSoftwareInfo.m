@@ -41,7 +41,6 @@ classdef PTKSoftwareInfo < handle
         % Filenames
         LogFileName = 'log.txt'
         SettingsFileName = 'PTKSettings.mat'
-        MakerPointsCacheName = 'MarkerPoints' % Default marker points name
 
         % Debugging and optional arguments
         DebugMode = false

@@ -97,8 +97,8 @@ classdef MimGuiDataset < CoreBaseClass
             obj.Dataset.SaveMarkerPoints(name, markers);
         end
         
-        function markers = LoadMarkers(obj)
-            markers = obj.Dataset.LoadMarkerPoints(PTKSoftwareInfo.MakerPointsCacheName);
+        function markers = LoadMarkers(obj, name)
+            markers = obj.Dataset.LoadMarkerPoints(name);
         end
         
         
@@ -338,7 +338,7 @@ classdef MimGuiDataset < CoreBaseClass
                 end
 
 
-                obj.Gui.LoadMarkersIfRequired;
+                obj.Gui.LoadMarkersIfRequiredWithoutProgressBar;
 
                 
             catch exc

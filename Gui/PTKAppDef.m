@@ -145,7 +145,13 @@ classdef PTKAppDef < handle
             % datasets with the same patient name, even if the patient ID is different
             
             group_patients = true;
-        end        
+        end
+        
+        function name = DefaultMarkersName(~)
+            % The filename for the initial marker set
+            
+            name = 'MarkerPoints';
+        end
     end
     
     methods (Access = private)

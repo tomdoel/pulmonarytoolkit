@@ -584,7 +584,7 @@ classdef MimGuiBase < GemFigure
         function LoadMarkers(obj)
             wait_dialog = obj.WaitDialogHandle;
             wait_dialog.ShowAndHold('Loading Markers');
-            obj.MarkerManager.LoadMarkers;
+            obj.MarkerManager.LoadMarkers(obj.AppDef.DefaultMarkersName);
             wait_dialog.Hide;
         end
     end
@@ -594,9 +594,7 @@ classdef MimGuiBase < GemFigure
         function ViewerPanelControlsChangedCallback(obj, ~, ~, ~)
             % This methods is called when controls in the viewer panel have changed
             
-            if obj.ImagePanel.IsInMarkerMode
-                obj.MarkerManager.LazyLoadMarkerImage;
-            end
+            obj.LoadMarkersIfRequiredWithProgressBar;
             
             obj.UpdateToolbar;
         end
@@ -661,7 +659,9 @@ classdef MimGuiBase < GemFigure
         
         
         function ShowMarkersChanged(obj, ~, ~)
-            obj.MarkerManager.LazyLoadMarkerImage;
+            if obj.MarkerManager.IsLoadMarkersRequired
+                obj.LoadMarkers;
+            end
         end
         
         function LoadFromUid(obj, series_uid)
@@ -888,8 +888,16 @@ classdef MimGuiBase < GemFigure
             end
         end
 
-        function LoadMarkersIfRequired(obj)
-            obj.MarkerManager.LoadMarkersIfRequired;
+        function LoadMarkersIfRequiredWithoutProgressBar(obj)
+            % If markers need to be displayed, load but do not show progress bar
+            obj.MarkerManager.LoadMarkersIfRequired(obj.AppDef.DefaultMarkersName);
+        end
+        
+        function LoadMarkersIfRequiredWithProgressBar(obj)
+            % If markers need to be displayed, load and show progress bar
+            if obj.MarkerManager.IsLoadMarkersRequired
+                obj.LoadMarkers;
+            end
         end
         
         function UpdateToolbar(obj)
