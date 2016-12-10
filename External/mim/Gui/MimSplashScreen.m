@@ -55,7 +55,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
         function splash_screen = GetSplashScreen(app_def)
             persistent SplashScreen
             if nargin < 1
-                app_def = PTKAppDef;
+                app_def = MivAppDef;
             end
             if isempty(SplashScreen) || ~isvalid(SplashScreen)
                 SplashScreen = MimSplashScreen(app_def);
