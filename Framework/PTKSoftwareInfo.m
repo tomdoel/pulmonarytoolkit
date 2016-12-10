@@ -31,17 +31,12 @@ classdef PTKSoftwareInfo < handle
         % Appearance
         GraphFont = 'Helvetica'
         GuiFont = 'Helvetica' 
-        Colormap = CoreSystemUtilities.BackwardsCompatibilityColormap;
 
         % Directories
         GuiToolDirectoryName = fullfile('Gui', 'Toolbar')
         MexSourceDirectory = fullfile('Library', 'mex')
         TestSourceDirectory = 'Test'
         
-        % Filenames
-        LogFileName = 'log.txt'
-        SettingsFileName = 'PTKSettings.mat'
-
         % Debugging and optional arguments
         DebugMode = false
         GraphicalDebugMode = false

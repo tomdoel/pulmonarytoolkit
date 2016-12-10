@@ -12,6 +12,10 @@ classdef PTKAppDef < handle
     properties (Access = private)
         FrameworkAppDef
         DicomMetadata
+        
+        LogFileName = 'log.txt'
+        SettingsFileName = 'PTKSettings.mat'
+        Colormap = CoreSystemUtilities.BackwardsCompatibilityColormap;
     end
     
     methods
@@ -86,7 +90,7 @@ classdef PTKAppDef < handle
             % Returns the full path to the settings file
             
             app_dir = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            settings_filename = PTKSoftwareInfo.SettingsFileName;
+            settings_filename = obj.SettingsFileName;
             settings_file_path = fullfile(app_dir, settings_filename);
         end
         
@@ -94,12 +98,12 @@ classdef PTKAppDef < handle
             % Returns the full path to the log file
 
             app_folder = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetApplicationDirectoryAndCreateIfNecessary;
-            log_file_name = PTKSoftwareInfo.LogFileName;
+            log_file_name = obj.LogFileName;
             log_file_path = fullfile(app_folder, log_file_name);
         end
         
         function cm = GetDefaultColormap(~)
-            cm = colormap(PTKSoftwareInfo.Colormap);
+            cm = colormap(obj.Colormap);
         end
         
         function framework_app_def = GetFrameworkAppDef(obj)
