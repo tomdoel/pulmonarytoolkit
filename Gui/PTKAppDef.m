@@ -144,6 +144,14 @@ classdef PTKAppDef < handle
         
         function plugins_path = GetGuiUserPluginsPath(obj)
             plugins_path = fullfile(obj.FrameworkAppDef.GetUserPath, 'GuiPlugins');
-        end        
+        end
+
+        function write_verbose = WriteVerboseEntriesToLogFile(~)
+            write_verbose = false;
+        end
+
+        function mode = DefaultModeOnNewDataset(~)
+            mode = 'Segment';
+        end
     end
 end

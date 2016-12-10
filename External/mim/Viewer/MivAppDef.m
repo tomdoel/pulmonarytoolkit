@@ -118,6 +118,13 @@ classdef MivAppDef < handle
             shared_icons_path = fullfile(path_root, '..', 'Gui', 'Icons');
             icons_folders = {shared_icons_path};
         end
-        
+
+        function write_verbose = WriteVerboseEntriesToLogFile(obj)
+            write_verbose = false;
+        end
+
+        function mode = DefaultModeOnNewDataset(~)
+            mode = 'Segment';
+        end
     end
 end

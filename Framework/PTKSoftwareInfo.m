@@ -33,7 +33,6 @@ classdef PTKSoftwareInfo < handle
         GuiFont = 'Helvetica' 
         DefaultCategoryName = 'Uncategorised'
         PluginDefaultMode = 'Plugins'
-        DefaultModeOnNewDataset = 'Segment'
         Colormap = CoreSystemUtilities.BackwardsCompatibilityColormap;
         
         % If this parameter to true, then the patient browser will group together
@@ -55,7 +54,6 @@ classdef PTKSoftwareInfo < handle
         GraphicalDebugMode = false
         FastMode = false
         DemoMode = false % If true, user plugins will be ignored
-        WriteVerboseEntriesToLogFile = false
         
         % If true, the user will be prompted before marker changes are saved
         ConfirmBeforeSavingMarkers = false
