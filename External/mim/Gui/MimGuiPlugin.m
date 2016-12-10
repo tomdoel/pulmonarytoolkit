@@ -27,9 +27,7 @@ classdef MimGuiPlugin < handle
         
     properties (Abstract = true)
 
-        % Set this to the value in PTKSoftwareInfo.
-        % This specifies the version of the Pulmonary Toolkit the plugin was
-        % developed with.
+        % Interface version
         PTKVersion
         
         % Set to the panel name in the gui under which you wish the gui plugin
