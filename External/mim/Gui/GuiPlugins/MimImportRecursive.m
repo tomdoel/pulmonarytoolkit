@@ -35,15 +35,15 @@ classdef MimImportRecursive < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ImportMultipleFiles();
+        function RunGuiPlugin(gui_app)
+            gui_app.ImportMultipleFiles();
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
+        function enabled = IsEnabled(gui_app)
             enabled = true;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
+        function is_selected = IsSelected(gui_app)
             is_selected = false;
         end        
         

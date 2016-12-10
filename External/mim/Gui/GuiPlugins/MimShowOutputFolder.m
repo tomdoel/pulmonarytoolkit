@@ -30,8 +30,8 @@ classdef MimShowOutputFolder < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            dataset_cache_path = ptk_gui_app.GetOutputPath;
+        function RunGuiPlugin(gui_app)
+            dataset_cache_path = gui_app.GetOutputPath;
             CoreDiskUtilities.OpenDirectoryWindow(dataset_cache_path);
         end
     end

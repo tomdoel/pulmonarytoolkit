@@ -30,15 +30,15 @@ classdef MimImportPatch < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ImportPatch();
+        function RunGuiPlugin(gui_app)
+            gui_app.ImportPatch();
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
+        function enabled = IsEnabled(gui_app)
             enabled = true;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
+        function is_selected = IsSelected(gui_app)
             is_selected = false;
         end        
         

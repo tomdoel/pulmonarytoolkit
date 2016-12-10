@@ -31,16 +31,16 @@ classdef MimPanPlugin < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ImagePanel.SetControl('Pan');
+        function RunGuiPlugin(gui_app)
+            gui_app.ImagePanel.SetControl('Pan');
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
-            is_selected = strcmp(ptk_gui_app.ImagePanel.SelectedControl, 'Pan');
+        function is_selected = IsSelected(gui_app)
+            is_selected = strcmp(gui_app.ImagePanel.SelectedControl, 'Pan');
         end
         
     end

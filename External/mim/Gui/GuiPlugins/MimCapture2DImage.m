@@ -38,16 +38,16 @@ classdef MimCapture2DImage < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
+        function RunGuiPlugin(gui_app)
             drawnow;
-            ptk_gui_app.Capture;
+            gui_app.Capture;
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
+        function is_selected = IsSelected(gui_app)
             is_selected = false;
         end                
     end

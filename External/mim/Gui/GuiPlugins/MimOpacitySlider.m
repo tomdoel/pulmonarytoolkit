@@ -41,19 +41,19 @@ classdef MimOpacitySlider < MimGuiPluginSlider
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
+        function RunGuiPlugin(gui_app)
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
+        function is_selected = IsSelected(gui_app)
             is_selected = true;
         end
         
-        function [value_instance_handle, value_property_name, limits_istance_handle, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
-            value_instance_handle = ptk_gui_app.ImagePanel.GetOverlayImageDisplayParameters;
+        function [value_instance_handle, value_property_name, limits_istance_handle, limits_property_name] = GetHandleAndProperty(gui_app)
+            value_instance_handle = gui_app.ImagePanel.GetOverlayImageDisplayParameters;
             value_property_name = 'Opacity';
             limits_istance_handle = [];
             limits_property_name = [];

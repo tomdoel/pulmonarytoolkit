@@ -34,17 +34,17 @@ classdef MimWindowLevelBone < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ImagePanel.Window = 2000;
-            ptk_gui_app.ImagePanel.Level = 300;
+        function RunGuiPlugin(gui_app)
+            gui_app.ImagePanel.Window = 2000;
+            gui_app.ImagePanel.Level = 300;
         end
 
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.IsCT;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded && gui_app.IsCT;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
-            is_selected = ptk_gui_app.ImagePanel.Window == 2000 && ptk_gui_app.ImagePanel.Level == 300;
+        function is_selected = IsSelected(gui_app)
+            is_selected = gui_app.ImagePanel.Window == 2000 && gui_app.ImagePanel.Level == 300;
         end
 
     end

@@ -35,16 +35,16 @@ classdef MimRemoveDataset < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
+        function RunGuiPlugin(gui_app)
             % Delete files from the disk cache
-            ptk_gui_app.DeleteThisImageInfo;
+            gui_app.DeleteThisImageInfo;
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
+        function is_selected = IsSelected(gui_app)
             is_selected = false;
         end        
     end

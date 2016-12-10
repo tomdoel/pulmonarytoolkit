@@ -34,13 +34,13 @@ classdef MimClearDiskCache < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
+        function RunGuiPlugin(gui_app)
             % Delete files from the disk cache and update the plugin previews
-            ptk_gui_app.ClearCacheForThisDataset;
+            gui_app.ClearCacheForThisDataset;
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.DeveloperMode && ptk_gui_app.IsDatasetLoaded;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.DeveloperMode && gui_app.IsDatasetLoaded;
         end        
     end
     

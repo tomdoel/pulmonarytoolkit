@@ -29,7 +29,7 @@ classdef MimSetProfiler < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
+        function RunGuiPlugin(gui_app)
             profile_status = profile('status');
             
             if strcmp(profile_status.ProfilerStatus, 'on');
@@ -39,11 +39,11 @@ classdef MimSetProfiler < MimGuiPlugin
             end
         end
 
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.DeveloperMode;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.DeveloperMode;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
+        function is_selected = IsSelected(gui_app)
             profile_status = profile('status');
             is_selected = strcmp(profile_status.ProfilerStatus, 'on');
         end

@@ -33,12 +33,12 @@ classdef MimClearDataset < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ClearDataset;
+        function RunGuiPlugin(gui_app)
+            gui_app.ClearDataset;
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.DeveloperMode && ptk_gui_app.IsDatasetLoaded;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.DeveloperMode && gui_app.IsDatasetLoaded;
         end        
         
     end

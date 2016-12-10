@@ -34,12 +34,12 @@ classdef MimRefreshPlugins < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.RefreshPlugins;
+        function RunGuiPlugin(gui_app)
+            gui_app.RefreshPlugins;
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.DeveloperMode;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.DeveloperMode;
         end        
     end
 end

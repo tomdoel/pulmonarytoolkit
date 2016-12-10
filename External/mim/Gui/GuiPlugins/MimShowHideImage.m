@@ -31,16 +31,16 @@ classdef MimShowHideImage < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ImagePanel.ShowImage = ~ptk_gui_app.ImagePanel.ShowImage;
+        function RunGuiPlugin(gui_app)
+            gui_app.ImagePanel.ShowImage = ~gui_app.ImagePanel.ShowImage;
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
-            is_selected = ptk_gui_app.ImagePanel.ShowImage;
+        function is_selected = IsSelected(gui_app)
+            is_selected = gui_app.ImagePanel.ShowImage;
         end
     end
 end

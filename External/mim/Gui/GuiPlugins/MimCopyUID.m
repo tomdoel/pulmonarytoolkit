@@ -30,15 +30,15 @@ classdef MimCopyUID < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            image_info = ptk_gui_app.GetImageInfo;
+        function RunGuiPlugin(gui_app)
+            image_info = gui_app.GetImageInfo;
             uid = image_info.ImageUid;
             disp(['Current dataset UID is: ' uid]);
             clipboard('copy', uid);
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.DeveloperMode && ptk_gui_app.IsDatasetLoaded;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.DeveloperMode && gui_app.IsDatasetLoaded;
         end        
     end
 end

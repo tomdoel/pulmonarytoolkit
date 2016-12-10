@@ -33,8 +33,8 @@ classdef MimShowPatientBrowser < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ShowPatientBrowser;
+        function RunGuiPlugin(gui_app)
+            gui_app.ShowPatientBrowser;
         end
     end
 end

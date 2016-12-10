@@ -30,17 +30,17 @@ classdef MimSetDeveloperMode < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
+        function RunGuiPlugin(gui_app)
             % Toggles developer mode
-            ptk_gui_app.DeveloperMode = ~ptk_gui_app.DeveloperMode;
+            gui_app.DeveloperMode = ~gui_app.DeveloperMode;
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
+        function enabled = IsEnabled(gui_app)
             enabled = true;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
-            is_selected = ptk_gui_app.DeveloperMode;
+        function is_selected = IsSelected(gui_app)
+            is_selected = gui_app.DeveloperMode;
         end
     end
 end

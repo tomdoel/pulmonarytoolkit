@@ -31,21 +31,21 @@ classdef MimEnterMarkerMode < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            if ptk_gui_app.ImagePanel.IsInMarkerMode
-                ptk_gui_app.ImagePanel.SetControl('W/L');
+        function RunGuiPlugin(gui_app)
+            if gui_app.ImagePanel.IsInMarkerMode
+                gui_app.ImagePanel.SetControl('W/L');
             else
-                ptk_gui_app.ImagePanel.SetControl('Mark');
+                gui_app.ImagePanel.SetControl('Mark');
             end
             
         end
 
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
-            is_selected = ptk_gui_app.ImagePanel.IsInMarkerMode;
+        function is_selected = IsSelected(gui_app)
+            is_selected = gui_app.ImagePanel.IsInMarkerMode;
         end
     end
 end

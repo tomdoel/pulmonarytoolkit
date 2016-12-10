@@ -34,12 +34,12 @@ classdef MimClearOverlays < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.DeleteOverlays;
+        function RunGuiPlugin(gui_app)
+            gui_app.DeleteOverlays;
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists;
         end
     end
 end

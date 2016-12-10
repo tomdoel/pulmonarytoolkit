@@ -40,20 +40,20 @@ classdef MimBrushSizeSlider < MimGuiPluginSlider
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
+        function RunGuiPlugin(gui_app)
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
-                isequal(ptk_gui_app.ImagePanel.SelectedControl, 'Paint');
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ...
+                isequal(gui_app.ImagePanel.SelectedControl, 'Paint');
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
+        function is_selected = IsSelected(gui_app)
             is_selected = true;
         end
         
-        function [value_instance_handle, value_property_name, limits_instance_handle, limits_property_name] = GetHandleAndProperty(ptk_gui_app)
-            value_instance_handle = ptk_gui_app.ImagePanel;
+        function [value_instance_handle, value_property_name, limits_instance_handle, limits_property_name] = GetHandleAndProperty(gui_app)
+            value_instance_handle = gui_app.ImagePanel;
             value_property_name = 'PaintBrushSize';
             limits_instance_handle = [];
             limits_property_name = [];

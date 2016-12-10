@@ -30,18 +30,18 @@ classdef MimSetEditBorderMode < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.ImagePanel.SetControl('Edit');
+        function RunGuiPlugin(gui_app)
+            gui_app.ImagePanel.SetControl('Edit');
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ...
-                (isequal(ptk_gui_app.GetCurrentModeName, 'Edit') || isequal(ptk_gui_app.GetCurrentModeName, 'ManualSegmentation')) && ...
-                (isequal(ptk_gui_app.GetCurrentSubModeName, MimSubModes.EditBoundariesEditing) || isequal(ptk_gui_app.GetCurrentSubModeName, MimSubModes.FixedBoundariesEditing) || isequal(ptk_gui_app.GetCurrentSubModeName, MimSubModes.PaintEditing));
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ...
+                (isequal(gui_app.GetCurrentModeName, 'Edit') || isequal(gui_app.GetCurrentModeName, 'ManualSegmentation')) && ...
+                (isequal(gui_app.GetCurrentSubModeName, MimSubModes.EditBoundariesEditing) || isequal(gui_app.GetCurrentSubModeName, MimSubModes.FixedBoundariesEditing) || isequal(gui_app.GetCurrentSubModeName, MimSubModes.PaintEditing));
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
-            is_selected = isequal(ptk_gui_app.ImagePanel.SelectedControl, 'Edit');
+        function is_selected = IsSelected(gui_app)
+            is_selected = isequal(gui_app.ImagePanel.SelectedControl, 'Edit');
         end
         
     end

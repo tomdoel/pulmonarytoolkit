@@ -35,13 +35,13 @@ classdef MimShowCacheFolder < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            dataset_cache_path = ptk_gui_app.GetDatasetCachePath;
+        function RunGuiPlugin(gui_app)
+            dataset_cache_path = gui_app.GetDatasetCachePath;
             CoreDiskUtilities.OpenDirectoryWindow(dataset_cache_path);
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.DeveloperMode && ptk_gui_app.IsDatasetLoaded;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.DeveloperMode && gui_app.IsDatasetLoaded;
         end        
     end
 end

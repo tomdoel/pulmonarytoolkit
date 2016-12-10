@@ -35,22 +35,22 @@ classdef MimWindowLevelImage < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            background_image = ptk_gui_app.ImagePanel.BackgroundImage;
+        function RunGuiPlugin(gui_app)
+            background_image = gui_app.ImagePanel.BackgroundImage;
             if isa(background_image, 'PTKDicomImage')
-                ptk_gui_app.ImagePanel.Window = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1);
-                ptk_gui_app.ImagePanel.Level = ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
+                gui_app.ImagePanel.Window = gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1);
+                gui_app.ImagePanel.Level = gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
             end
         end
 
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.IsCT;
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded && gui_app.IsCT;
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
-            background_image = ptk_gui_app.ImagePanel.BackgroundImage;
+        function is_selected = IsSelected(gui_app)
+            background_image = gui_app.ImagePanel.BackgroundImage;
             if isa(background_image, 'PTKDicomImage')
-                is_selected = isfield(ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader, 'WindowWidth') && ptk_gui_app.ImagePanel.Window == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1) && ptk_gui_app.ImagePanel.Level == ptk_gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
+                is_selected = isfield(gui_app.ImagePanel.BackgroundImage.MetaHeader, 'WindowWidth') && gui_app.ImagePanel.Window == gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1) && gui_app.ImagePanel.Level == gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
             else
                 is_selected = false;
             end

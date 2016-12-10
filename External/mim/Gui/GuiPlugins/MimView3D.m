@@ -35,11 +35,11 @@ classdef MimView3D < MimGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
+        function RunGuiPlugin(gui_app)
             
             % For airway-like segmentations (thin structures), we use a different set of
             % visualisation parameters
-            current_name = ptk_gui_app.GetCurrentPluginName;
+            current_name = gui_app.GetCurrentPluginName;
             switch current_name
                 case {'PTKAirways', 'PTKAirwaysLabelledByBronchus', 'PTKAirwaysLabelledByLobe', ...
                 'PTKAirwaysPrunedBySegment', 'PTKSegmentalBronchi', 'PTKVesselness', 'PTKPrunedAirways', ...
@@ -49,7 +49,7 @@ classdef MimView3D < MimGuiPlugin
                     airways = false;
             end
             
-            segmentation = ptk_gui_app.ImagePanel.OverlayImage.Copy;
+            segmentation = gui_app.ImagePanel.OverlayImage.Copy;
             if segmentation.ImageExists
                 if airways
                     if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
@@ -72,16 +72,16 @@ classdef MimView3D < MimGuiPlugin
                 limit_to_one_component_per_index = false;
                 minimum_component_volume_mm3 = 0;
                 
-                MimVisualiseIn3D([], segmentation, smoothing_size, airways, limit_to_one_component_per_index, minimum_component_volume_mm3, ptk_gui_app.GetAppDef.GetDefaultColormap, ptk_gui_app.GetReporting);
+                MimVisualiseIn3D([], segmentation, smoothing_size, airways, limit_to_one_component_per_index, minimum_component_volume_mm3, gui_app.GetAppDef.GetDefaultColormap, gui_app.GetReporting);
             end
         end
         
-        function enabled = IsEnabled(ptk_gui_app)
-            current_name = ptk_gui_app.GetCurrentPluginName;
-            enabled = ptk_gui_app.IsDatasetLoaded && ptk_gui_app.ImagePanel.OverlayImage.ImageExists && ~isempty(current_name);
+        function enabled = IsEnabled(gui_app)
+            current_name = gui_app.GetCurrentPluginName;
+            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ~isempty(current_name);
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
+        function is_selected = IsSelected(gui_app)
             is_selected = false;
         end        
     end
