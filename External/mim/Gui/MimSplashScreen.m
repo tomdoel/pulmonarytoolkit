@@ -47,6 +47,8 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
         PanelIsShown = false
         LastText
         LastTitle
+        
+        ShowQuitButton = false
     end
         
     methods (Static)
@@ -235,7 +237,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             set(obj.Text, 'Visible', 'on');
             set(obj.ProgressTitle, 'Visible', 'on');
 
-            if PTKSoftwareInfo.DebugMode
+            if obj.ShowQuitButton
                 set(obj.Quit, 'Visible', 'on');
             end
 
