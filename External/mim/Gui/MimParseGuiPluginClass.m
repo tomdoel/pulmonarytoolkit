@@ -1,4 +1,4 @@
-function new_plugin = MimParseGuiPluginClass(plugin_name, plugin_class, suggested_category, default_category, reporting)
+function new_plugin = MimParseGuiPluginClass(plugin_name, plugin_class, suggested_category, default_category, default_mode, reporting)
     % MimParseGuiPluginClass. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -42,7 +42,7 @@ function new_plugin = MimParseGuiPluginClass(plugin_name, plugin_class, suggeste
     if ismember('Mode', property_list) && ~isempty(plugin_class.Mode)
         new_plugin.Mode = plugin_class.Mode;
     else
-        new_plugin.Mode = PTKSoftwareInfo.PluginDefaultMode;
+        new_plugin.Mode = default_mode;
     end
     
     if ismember('SubMode', property_list)

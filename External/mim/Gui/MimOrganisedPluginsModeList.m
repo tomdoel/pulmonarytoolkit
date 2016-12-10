@@ -40,7 +40,7 @@ classdef MimOrganisedPluginsModeList < CoreBaseClass
         function AddList(obj, plugin_list, gui_app, reporting)
             for plugin_filename = plugin_list
                 plugin_name = plugin_filename{1}.First;
-                plugin_wrapper = MimPluginWrapperBase.AddPluginFromName(obj.PluginCache, plugin_name, plugin_filename, gui_app, obj.AppDef.DefaultCategoryName, reporting);
+                plugin_wrapper = MimPluginWrapperBase.AddPluginFromName(obj.PluginCache, plugin_name, plugin_filename, gui_app, obj.AppDef.DefaultCategoryName, obj.AppDef.PluginDefaultMode, reporting);
                 if ~isempty(plugin_wrapper)
                     obj.Add(plugin_name, plugin_wrapper.ParsedPluginInfo.Mode, plugin_wrapper.ParsedPluginInfo.Category, plugin_wrapper);
                 end
