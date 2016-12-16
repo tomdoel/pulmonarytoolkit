@@ -52,101 +52,116 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
         function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
             % Fetch plugin result from the disk cache
             result = [];
-            if ~plugin_info.AlwaysRunPlugin
-                
-                [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, context, reporting);
-                
-                % Check dependencies of the result. If they are invalid, set the
-                % result to null to force a re-run of the plugin
-                if ~isempty(cache_info)
-                    dependencies = cache_info.DependencyList;
-                    if ~obj.CheckPluginVersion(cache_info.InstanceIdentifier, reporting)
-                        reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The plugin ' plugin_name ' has changed since the cache was generated. I am forcing this plugin to re-run to generate new results.'], []);
-                        result = [];
+            
+            edited_result_exists = obj.DatasetDiskCache.EditedResultExists(plugin_name, context, reporting);
+            
+            % We can skip fetching the result if an edited result exists
+            % and does not depend on the automated result
+            if ~edited_result_exists || plugin_info.EditRequiresPluginResult
+
+                if ~plugin_info.AlwaysRunPlugin
+
+                    [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, context, reporting);
+
+                    % Check dependencies of the result. If they are invalid, set the
+                    % result to null to force a re-run of the plugin
+                    if ~isempty(cache_info)
+                        dependencies = cache_info.DependencyList;
+                        if ~obj.CheckPluginVersion(cache_info.InstanceIdentifier, reporting)
+                            reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The plugin ' plugin_name ' has changed since the cache was generated. I am forcing this plugin to re-run to generate new results.'], []);
+                            result = [];
+                        end
+
+                        if ~obj.CheckDependenciesValid(linked_dataset_chooser, dependencies, reporting)
+                            reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
+                            result = [];
+                        end
                     end
-                    
-                    if ~obj.CheckDependenciesValid(linked_dataset_chooser, dependencies, reporting)
-                        reporting.ShowWarning('PTKPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
-                        result = [];
+
+                    % Add the dependencies of the cached result to any other
+                    % plugins in the callstack
+                    if ~isempty(result) && ~isempty(cache_info)
+                        dependencies = cache_info.DependencyList;
+                        dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
+
+                        dependency = cache_info.InstanceIdentifier;
+                        dependency_list_for_this_plugin = PTKDependencyList;
+                        dependency_list_for_this_plugin.AddDependency(dependency, reporting);
+                        dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
                     end
+                
                 end
-                
-                % Add the dependencies of the cached result to any other
-                % plugins in the callstack
-                if ~isempty(result) && ~isempty(cache_info)
-                    dependencies = cache_info.DependencyList;
+
+                % Run the plugin
+                if isempty(result)
+                    plugin_has_been_run = true;
+
+                    ignore_dependency_checks = plugin_info.AlwaysRunPlugin || ~allow_results_to_be_cached;
+
+                    % Pause the self-timing of the current plugin
+                    dataset_stack.PauseTiming;                
+
+                    % Create a new dependency. The dependency relates to the plugin
+                    % being called (plugin_name) and the UID of the dataset the
+                    % result is being requested from; however, the stack belongs to
+                    % the primary dataset
+                    plugin_version = plugin_info.PluginVersion;
+                    dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions, plugin_version, reporting);
+
+                    dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
+
+                    % This is the actual call which runs the plugin
+                    if strcmp(plugin_info.PTKVersion, '1')
+                        result = plugin_class.RunPlugin(dataset_callback, reporting);
+                    else
+                        result = plugin_class.RunPlugin(dataset_callback, context, reporting);
+                    end
+
+                    new_cache_info = dataset_stack.Pop;
+
+                    if PTKSoftwareInfo.TimeFunctions
+                        dataset_stack.ResumeTiming;
+                    end
+
+                    if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
+                        reporting.Error('PTKPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
+                    end
+
+                    % Get the newly calculated list of dependencies for this
+                    % plugin
+                    dependencies = new_cache_info.DependencyList;
+
+                    % Cache the plugin result
+                    if allow_results_to_be_cached && ~isempty(result)
+                        obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, reporting);
+                    else
+                        obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, false, reporting);
+                    end
+
                     dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
-                    
-                    dependency = cache_info.InstanceIdentifier;
+
+                    dependency = new_cache_info.InstanceIdentifier;
                     dependency_list_for_this_plugin = PTKDependencyList;
                     dependency_list_for_this_plugin.AddDependency(dependency, reporting);
                     dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
-                end
-                
-            end
-            
-            % Run the plugin
-            if isempty(result)
-                plugin_has_been_run = true;
-                
-                ignore_dependency_checks = plugin_info.AlwaysRunPlugin || ~allow_results_to_be_cached;
-                
-                % Pause the self-timing of the current plugin
-                dataset_stack.PauseTiming;                
 
-                % Create a new dependency. The dependency relates to the plugin
-                % being called (plugin_name) and the UID of the dataset the
-                % result is being requested from; however, the stack belongs to
-                % the primary dataset
-                plugin_version = plugin_info.PluginVersion;
-                dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, PTKSoftwareInfo.TimeFunctions, plugin_version, reporting);
-                
-                dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
-
-                % This is the actual call which runs the plugin
-                if strcmp(plugin_info.PTKVersion, '1')
-                    result = plugin_class.RunPlugin(dataset_callback, reporting);
+                    cache_info = new_cache_info;
                 else
-                    result = plugin_class.RunPlugin(dataset_callback, context, reporting);
+                    plugin_has_been_run = false;
                 end
                 
-                new_cache_info = dataset_stack.Pop;
-                
-                if PTKSoftwareInfo.TimeFunctions
-                    dataset_stack.ResumeTiming;
-                end
-                
-                if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
-                    reporting.Error('PTKPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
-                end
-                
-                % Get the newly calculated list of dependencies for this
-                % plugin
-                dependencies = new_cache_info.DependencyList;
-                
-                % Cache the plugin result
-                if allow_results_to_be_cached && ~isempty(result)
-                    obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, reporting);
-                else
-                    obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, false, reporting);
-                end
-                
-                dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
-                
-                dependency = new_cache_info.InstanceIdentifier;
-                dependency_list_for_this_plugin = PTKDependencyList;
-                dependency_list_for_this_plugin.AddDependency(dependency, reporting);
-                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
-                
-                cache_info = new_cache_info;
             else
-                plugin_has_been_run = false;
+                cache_info = [];
             end
             
             % Fetch the edited result, if it exists
-            if obj.DatasetDiskCache.EditedResultExists(plugin_name, context, reporting)
+            if edited_result_exists
                 [edited_result, edited_cache_info] = obj.DatasetDiskCache.LoadEditedPluginResult(plugin_name, context, reporting);
-
+                
+                if isempty(cache_info)
+                    cache_info = edited_cache_info;
+                end
+                
                 % In case the cache is out of sync with the existance of
                 % the edited result, this will update the cache
                 obj.DatasetDiskCache.UpdateEditedResults(plugin_name, edited_cache_info, context, reporting);

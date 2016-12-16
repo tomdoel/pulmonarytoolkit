@@ -77,4 +77,10 @@ function new_plugin = PTKParsePluginClass(plugin_name, plugin_class, suggested_c
     else
         new_plugin.PluginVersion = 1;
     end
+    
+    if ismember('EditRequiresPluginResult', property_list);
+        new_plugin.EditRequiresPluginResult = plugin_class.EditRequiresPluginResult;
+    else
+        new_plugin.EditRequiresPluginResult = false;
+    end
 end
