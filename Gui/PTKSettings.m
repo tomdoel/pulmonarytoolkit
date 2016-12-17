@@ -26,6 +26,7 @@ classdef PTKSettings < CoreBaseClass
         PatientBrowserScreenPosition
         DeveloperMode = false
         LastUidForPatientMap
+        LastMarkerSetForPatientMap
     end
     
     properties (Transient, Access = private)
@@ -57,6 +58,7 @@ classdef PTKSettings < CoreBaseClass
     methods
         function obj = PTKSettings
             obj.LastUidForPatientMap = containers.Map;
+            obj.LastMarkerSetForPatientMap = containers.Map;
         end
         
         function ApplySettingsToGui(obj, gui, viewer_panel)
@@ -89,6 +91,13 @@ classdef PTKSettings < CoreBaseClass
             obj.LastUidForPatientMap(patient_id) = series_uid;
         end
         
+        function AddLastMarkerSet(obj, series_uid, marker_set_name)
+            if isempty(obj.LastMarkerSetForPatientMap)
+                obj.LastMarkerSetForPatientMap = containers.Map;
+            end
+            obj.LastMarkerSetForPatientMap(series_uid) = marker_set_name;
+        end
+
         function series_uid = GetLastPatientUid(obj, patient_id)
             if obj.LastUidForPatientMap.isKey(patient_id)
                 series_uid = obj.LastUidForPatientMap(patient_id);
@@ -97,12 +106,29 @@ classdef PTKSettings < CoreBaseClass
             end
         end
 
+        function marker_set_name = GetLastMarkerSetName(obj, series_uid)
+            if isempty(obj.LastMarkerSetForPatientMap)
+                obj.LastMarkerSetForPatientMap = containers.Map;
+            end
+            if obj.LastMarkerSetForPatientMap.isKey(series_uid)
+                marker_set_name = obj.LastMarkerSetForPatientMap(series_uid);
+            else 
+                marker_set_name = [];
+            end
+        end
+        
         function RemoveLastPatientUid(obj, series_uid)
             for key = obj.LastUidForPatientMap.keys
                 if strcmp(obj.LastUidForPatientMap(key{1}), series_uid)
                     obj.LastUidForPatientMap.remove(key{1});
                 end
             end
+            for key = obj.LastMarkerSetForPatientMap.keys
+                if strcmp(obj.LastMarkerSetForPatientMap(key{1}), series_uid)
+                    obj.LastMarkerSetForPatientMap.remove(key{1});
+                end
+            end
+            
             if ~isempty(obj.ImageInfo) && strcmp(obj.ImageInfo.ImageUid, series_uid)
                 obj.ImageInfo = [];
             end

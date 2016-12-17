@@ -462,7 +462,7 @@ classdef MimGuiDataset < CoreBaseClass
         function UpdateEditedStatus(obj, is_edited)
             obj.GuiDatasetState.UpdateEditStatus(is_edited);
         end
-            
+
         function segmentation_list = GetListOfManualSegmentations(obj)
             if isempty(obj.Dataset)
                 segmentation_list = CorePair.empty;
@@ -471,6 +471,14 @@ classdef MimGuiDataset < CoreBaseClass
             end
         end
         
+        function segmentation_list = GetListOfMarkerSets(obj)
+            if isempty(obj.Dataset)
+                segmentation_list = CorePair.empty;
+            else
+                segmentation_list = obj.Dataset.GetListOfMarkerSets;
+            end
+        end
+
         function delete(obj)
             obj.DeletePreviewListener;
         end

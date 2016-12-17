@@ -230,7 +230,9 @@ classdef MimDiskCache < handle
                     m_file_list = CoreDiskUtilities.GetDirectoryFileList(fullfile(obj.CachePath, context), '*.mat');
                     for m_file = m_file_list
                         [~, name, ~] = fileparts(m_file{1});
-                        file_list{end + 1} = CorePair(context, name);
+                        if ~strcmp(name, obj.Config.SchemaCacheName)
+                            file_list{end + 1} = CorePair(context, name);
+                        end
                     end
                 end
             end

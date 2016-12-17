@@ -297,6 +297,14 @@ classdef MimDataset < CoreBaseClass
             obj.PostCallTidy;
         end
         
+        function file_list = GetListOfMarkerSets(obj, varargin)
+            % Gets list of manual segmentation files associated with this dataset
+            
+            obj.PreCallTidy;
+            file_list = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetListOfMarkerSets;
+            obj.PostCallTidy;
+        end
+        
         function context_is_enabled = IsContextEnabled(obj, context, varargin)
             % Check to see if a context has been disabled for this dataset, due to a
             % failure when running the plugin that generates the template image for

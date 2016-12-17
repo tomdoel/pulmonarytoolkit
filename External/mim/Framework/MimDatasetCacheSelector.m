@@ -197,6 +197,10 @@ classdef MimDatasetCacheSelector < handle
         function file_list = GetListOfManualSegmentations(obj)
             file_list = obj.ManualSegmentationsDiskCache.GetAllFilesInCache;
         end
+
+        function file_list = GetListOfMarkerSets(obj)
+            file_list = obj.MarkersDiskCache.GetAllFilesInCache;
+        end
         
         function ClearTemporaryMemoryCache(obj)
             obj.ResultsMemoryCache.ClearTemporaryResults;

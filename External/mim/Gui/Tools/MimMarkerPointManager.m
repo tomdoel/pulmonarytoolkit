@@ -108,6 +108,10 @@ classdef MimMarkerPointManager < CoreBaseClass
             obj.MarkersHaveBeenLoaded = true;
             obj.CurrentMarkersName = name;
         end
+        
+        function current_markers = GetCurrentMarkerSetName(obj)
+            current_markers = obj.CurrentMarkersName;
+        end
     end
     
     methods (Access = private)

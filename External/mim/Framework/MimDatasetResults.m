@@ -190,6 +190,10 @@ classdef MimDatasetResults < handle
 
             file_list = obj.DatasetDiskCache.GetListOfManualSegmentations;
         end
+
+        function file_list = GetListOfMarkerSets(obj)
+            file_list = obj.DatasetDiskCache.GetListOfMarkerSets;
+        end
         
         function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack, reporting)
             % Save edit data to a cache file associated with this dataset
