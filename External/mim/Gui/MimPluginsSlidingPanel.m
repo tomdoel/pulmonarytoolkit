@@ -28,8 +28,8 @@ classdef MimPluginsSlidingPanel < GemSlidingPanel
             obj.FloatingPanel.AddPlugins(current_dataset); 
         end
         
-        function AddAllPreviewImagesToButtons(obj, current_dataset, window, level)
-            obj.FloatingPanel.AddAllPreviewImagesToButtons(current_dataset, window, level)
+        function UpdateForNewImage(obj, current_dataset, window, level)
+            obj.FloatingPanel.UpdateForNewImage(current_dataset, window, level)
         end
         
         function AddPreviewImage(obj, plugin_name, current_dataset, window, level)

@@ -82,7 +82,7 @@ classdef MimPluginGroupPanel < GemPanel
         end
         
         
-        function AddAllPreviewImagesToButtons(obj, current_dataset, window, level)
+        function UpdateForNewImage(obj, current_dataset, window, level)
             % Refresh the preview images for every button using the supplied dataset
             
             for button = obj.PluginButtonHandlesMap.values

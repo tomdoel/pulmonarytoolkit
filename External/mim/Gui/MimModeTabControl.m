@@ -80,7 +80,7 @@ classdef MimModeTabControl < GemTabControl
             obj.OrganisedManualSegmentations.Repopulate(obj.Reporting);
             % Add preview images to buttons
             for panel = obj.PanelMap.values
-                panel{1}.AddAllPreviewImagesToButtons(dataset, window, level);
+                panel{1}.UpdateForNewImage(dataset, window, level);
             end
         end
         

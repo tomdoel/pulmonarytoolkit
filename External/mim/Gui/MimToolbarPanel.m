@@ -148,7 +148,7 @@ classdef MimToolbarPanel < GemPanel
         function AddPlugins(obj, current_dataset)
         end
         
-        function AddAllPreviewImagesToButtons(obj, current_dataset, window, level)
+        function UpdateForNewImage(obj, current_dataset, window, level)
         end
         
         function AddPreviewImage(obj, plugin_name, current_dataset, window, level)

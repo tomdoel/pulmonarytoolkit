@@ -56,12 +56,12 @@ classdef MimPluginsPanel < GemCompositePanel
             obj.LoadManualSegmentationCallback = load_segmentation_callback;
         end        
 
-        function AddAllPreviewImagesToButtons(obj, current_dataset, window, level)
+        function UpdateForNewImage(obj, current_dataset, window, level)
             % Causes each plugin panel to refresh the preview images for every button using
             % the supplied dataset
             
             for panel = obj.PluginPanels.values
-                panel{1}.AddAllPreviewImagesToButtons(current_dataset, window, level);
+                panel{1}.UpdateForNewImage(current_dataset, window, level);
             end            
         end
         
@@ -95,7 +95,7 @@ classdef MimPluginsPanel < GemCompositePanel
             if ~isempty(obj.Position)
                 obj.Resize(obj.Position);
             end
-            obj.AddAllPreviewImagesToButtons(current_dataset, window, level);
+            obj.UpdateForNewImage(current_dataset, window, level);
         end        
 
         function visibility = GetVisibility(obj)
