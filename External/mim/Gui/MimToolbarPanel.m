@@ -61,7 +61,10 @@ classdef MimToolbarPanel < GemPanel
         
         function Resize(obj, new_position)
             Resize@GemPanel(obj, new_position);
-
+ 
+            % After calling Resize@GemPanel, the position will have been adjusted due to the border
+            new_position = obj.InnerPosition;            
+            
             panel_height = max(1, new_position(4));
             row_height = obj.RowHeight;
             panel_top = new_position(2) + panel_height;
