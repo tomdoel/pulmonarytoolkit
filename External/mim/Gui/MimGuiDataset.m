@@ -338,7 +338,7 @@ classdef MimGuiDataset < CoreBaseClass
                 end
 
 
-                obj.Gui.LoadMarkersIfRequiredWithoutProgressBar;
+                obj.Gui.LoadDefaultMarkersIfRequiredWithoutProgressBar;
 
                 
             catch exc

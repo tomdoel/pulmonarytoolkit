@@ -582,12 +582,38 @@ classdef MimGuiBase < GemFigure
             segmentation_list = obj.GuiDataset.GetListOfManualSegmentations;
         end
         
-        function LoadMarkers(obj)
+        function segmentation_list = GetListOfMarkerSets(obj)
+            segmentation_list = obj.GuiDataset.GetListOfMarkerSets;
+        end
+        
+        function LoadDefaultMarkers(obj)
+            % Loads the default marker set for this dataset, which could be
+            % the last used marker set or the marker set with the default name
+            
+            currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
+            marker_set_name = obj.GuiSingleton.GetSettings.GetLastMarkerSetName(currently_loaded_image_UID);            
+            if isempty(marker_set_name)
+                marker_set_name = obj.AppDef.DefaultMarkersName;
+            end
+            
+            obj.LoadMarkers(marker_set_name);
+        end
+        
+        function LoadMarkers(obj, name)
+            % Loads the specified marker set for this dataset
             wait_dialog = obj.WaitDialogHandle;
             wait_dialog.ShowAndHold('Loading Markers');
-            obj.MarkerManager.LoadMarkers(obj.AppDef.DefaultMarkersName);
+            
+            obj.MarkerManager.LoadMarkers(name);
+
+            % Store current marker set name
+            currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
+            obj.GuiSingleton.GetSettings.AddLastMarkerSet(currently_loaded_image_UID, name);
+            obj.SaveSettings;
+            
             wait_dialog.Hide;
         end
+        
     end
     
     methods (Access = protected)
@@ -595,7 +621,7 @@ classdef MimGuiBase < GemFigure
         function ViewerPanelControlsChangedCallback(obj, ~, ~, ~)
             % This methods is called when controls in the viewer panel have changed
             
-            obj.LoadMarkersIfRequiredWithProgressBar;
+            obj.LoadDefaultMarkersIfRequiredWithProgressBar;
             
             obj.UpdateToolbar;
         end
@@ -657,11 +683,10 @@ classdef MimGuiBase < GemFigure
             obj.GuiDataset.UpdateModeTabControl;
             obj.RefreshPlugins;
         end
-        
-        
+
         function ShowMarkersChanged(obj, ~, ~)
             if obj.MarkerManager.IsLoadMarkersRequired
-                obj.LoadMarkers;
+                obj.LoadDefaultMarkers;
             end
         end
         
@@ -889,15 +914,15 @@ classdef MimGuiBase < GemFigure
             end
         end
 
-        function LoadMarkersIfRequiredWithoutProgressBar(obj)
+        function LoadDefaultMarkersIfRequiredWithoutProgressBar(obj)
             % If markers need to be displayed, load but do not show progress bar
             obj.MarkerManager.LoadMarkersIfRequired(obj.AppDef.DefaultMarkersName);
         end
         
-        function LoadMarkersIfRequiredWithProgressBar(obj)
+        function LoadDefaultMarkersIfRequiredWithProgressBar(obj)
             % If markers need to be displayed, load and show progress bar
             if obj.MarkerManager.IsLoadMarkersRequired
-                obj.LoadMarkers;
+                obj.LoadDefaultMarkers;
             end
         end
         
@@ -951,6 +976,10 @@ classdef MimGuiBase < GemFigure
         
         function reporting = GetReporting(obj)
             reporting = obj.Reporting;
+        end
+        
+        function current_markers = GetCurrentMarkerSetName(obj)
+            current_markers = obj.MarkerManager.GetCurrentMarkerSetName;
         end
     end
     
