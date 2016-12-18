@@ -102,7 +102,7 @@ classdef PTKAppDef < handle
             log_file_path = fullfile(app_folder, log_file_name);
         end
         
-        function cm = GetDefaultColormap(~)
+        function cm = GetDefaultColormap(obj)
             cm = colormap(obj.Colormap);
         end
         
