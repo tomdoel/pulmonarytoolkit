@@ -59,10 +59,10 @@ classdef MimCinePanelWithTools < GemCinePanel
             tool = obj.Tools.GetCurrentToolForSelectedControl(mouse_is_down, keyboard_modifier);
         end
         
-        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is clicked inside the control
             
-            MouseDown@GemCinePanel(obj, click_point, selection_type, src);
+            MouseDown@GemCinePanel(obj, click_point, selection_type, src, eventdata);
             screen_coords = obj.GetScreenCoordinates;
             obj.LastCoordinates = screen_coords;
             obj.MouseIsDown = true;
@@ -81,10 +81,10 @@ classdef MimCinePanelWithTools < GemCinePanel
             
         end
 
-        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is released inside the control
             
-            MouseUp@GemCinePanel(obj, click_point, selection_type, src);
+            MouseUp@GemCinePanel(obj, click_point, selection_type, src, eventdata);
             input_has_been_processed = true;
             obj.MouseIsDown = false;
 
@@ -103,7 +103,7 @@ classdef MimCinePanelWithTools < GemCinePanel
             
         end
         
-        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src, eventdata)
             % Mouse has moved over the figure
 
             MouseHasMoved@GemCinePanel(obj, click_point, selection_type, src);
@@ -117,10 +117,10 @@ classdef MimCinePanelWithTools < GemCinePanel
             input_has_been_processed = true;
         end
         
-        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src, eventdata)
             % Mouse dragged over the figure
 
-            MouseDragged@GemCinePanel(obj, click_point, selection_type, src);
+            MouseDragged@GemCinePanel(obj, click_point, selection_type, src, eventdata);
             screen_coords = obj.GetScreenCoordinates;
             last_coords = obj.LastCoordinates;
             
@@ -131,7 +131,7 @@ classdef MimCinePanelWithTools < GemCinePanel
             input_has_been_processed = true;
         end
  
-        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse exits a control which previously
             % processed a MouseHasMoved event
 

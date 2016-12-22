@@ -139,14 +139,14 @@ classdef GemButton < GemUserInterfaceObject
             end
         end
         
-        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is moved
 
             obj.Highlight(true);
             input_has_been_processed = true;
         end
 
-        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse exits a control which previously
             % processed a MouseHasMoved event
             

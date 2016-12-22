@@ -627,7 +627,7 @@ classdef MimGuiBase < GemFigure
         end
         
         
-        function input_has_been_processed = Keypressed(obj, click_point, key)
+        function input_has_been_processed = Keypressed(obj, click_point, key, src, eventdata)
             % Shortcut keys are normally processed by the object over which the mouse
             % pointer is located. If a key hasn't been processed, we divert it to the viewer
             % panel so that viewer panel shortcuts will work from other parts of the GUI.            

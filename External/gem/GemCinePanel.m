@@ -166,35 +166,35 @@ classdef GemCinePanel < GemVirtualPanel
     end
     
     methods (Access = protected)
-        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is clicked inside the control
                         
             obj.UpdateStatus(true);
             input_has_been_processed = true;            
         end
 
-        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is released inside the control
             
             obj.UpdateStatus(true);
             input_has_been_processed = true;            
         end
         
-        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src, eventdata)
             % Mouse has moved over the figure
 
             obj.UpdateStatus(true);
             input_has_been_processed = true;
         end
         
-        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src, eventdata)
             % Mouse dragged over the figure
 
             obj.UpdateStatus(true);
             input_has_been_processed = true;
         end
  
-        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse exits a control which previously
             % processed a MouseHasMoved event
 

@@ -493,13 +493,13 @@ classdef MimViewerPanel < GemPanel
             obj.ViewerPanelCallback = MimViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
         end            
 
-        function input_has_been_processed = Keypressed(obj, click_point, key)
+        function input_has_been_processed = Keypressed(obj, click_point, key, src, eventdata)
             % Processes keys pressed while mouse is over the viewer window
             
             input_has_been_processed = obj.ShortcutKeys(key);
         end
         
-        function input_has_been_processed = Scroll(obj, current_point, scroll_count)
+        function input_has_been_processed = Scroll(obj, current_point, scroll_count, src, eventdata)
             % Mousewheel cine when the mouse is anywhere in the viewer panel
             
             obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) + scroll_count;

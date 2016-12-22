@@ -51,7 +51,7 @@ classdef GemSlidingPanel < GemPanel
     end
     
     methods (Access = protected)
-        function input_has_been_processed = Scroll(obj, current_point, scroll_count)
+        function input_has_been_processed = Scroll(obj, current_point, scroll_count, src, eventdata)
             % Called when the mousewheel is used to scroll
             % positive scroll_count = scroll down
             current_value = obj.FloatingPanelYPosition;
