@@ -99,7 +99,7 @@ classdef MimModeTabControl < GemTabControl
         function UpdateMode(obj, plugin_info)
             force_change = false;
             first_enabled_tab = [];
-            for panel_key = obj.PanelMap.keys
+            for panel_key = obj.OrderedTags
                 panel = obj.PanelMap(panel_key{1});
                 visibility = panel.GetVisibility;
                 if isempty(visibility) || strcmp(visibility, 'Always')
@@ -155,7 +155,7 @@ classdef MimModeTabControl < GemTabControl
         function AutoTabSelection(obj, mode)
             if ~isempty(mode)
             tab_to_select = [];
-            for panel_key = obj.PanelMap.keys
+            for panel_key = obj.OrderedTags
                 panel = obj.PanelMap(panel_key{1});
                 if isempty(tab_to_select) && obj.TabPanel.IsTabEnabled(panel_key{1})
                     tab_to_select = panel_key{1};

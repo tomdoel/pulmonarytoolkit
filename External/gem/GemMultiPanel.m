@@ -13,6 +13,7 @@ classdef GemMultiPanel < GemPanel
     properties (Access = protected)
         PanelMap
         CurrentPanelTag
+        OrderedTags
     end
     
     events
@@ -29,6 +30,7 @@ classdef GemMultiPanel < GemPanel
         function AddPanel(obj, panel, tag)
             obj.PanelMap(tag) = panel;
             obj.AddChild(panel);
+            obj.OrderedTags{end + 1} = tag;
             
             % If no current tab exists, then select this one
             if isempty(obj.CurrentPanelTag)
