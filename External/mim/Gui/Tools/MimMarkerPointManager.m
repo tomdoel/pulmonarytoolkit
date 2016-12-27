@@ -12,9 +12,6 @@ classdef MimMarkerPointManager < CoreBaseClass
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    properties (SetAccess = private)
-    end
-    
     properties (Access = private)
         MarkerLayer
         MarkerPointImage
@@ -26,6 +23,10 @@ classdef MimMarkerPointManager < CoreBaseClass
         Reporting
         
         MarkersHaveBeenLoaded = false
+        
+    end
+    
+    properties (SetObservable, SetAccess = private)
         CurrentMarkersName
     end
     
