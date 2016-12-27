@@ -15,7 +15,6 @@ classdef MimZoomMatlabTool < MimTool
     properties
         ButtonText = 'Zoom'
         Cursor = 'arrow'
-        RestoreKeyPressCallbackWhenSelected = true
         ToolTip = 'Zoom tool'
         Tag = 'Zoom'
         ShortcutKey = 'z'

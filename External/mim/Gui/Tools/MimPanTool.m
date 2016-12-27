@@ -15,7 +15,6 @@ classdef MimPanTool < MimTool
     properties
         ButtonText = 'Pan'
         Cursor = 'hand'
-        RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Pan tool'
         Tag = 'Pan'
         ShortcutKey = ''

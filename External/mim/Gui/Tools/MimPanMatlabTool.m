@@ -15,7 +15,6 @@ classdef MimPanMatlabTool < MimTool
     properties
         ButtonText = 'Pan'
         Cursor = 'arrow'
-        RestoreKeyPressCallbackWhenSelected = true
         ToolTip = 'Pan tool'
         Tag = 'Pan'
         ShortcutKey = 'p'

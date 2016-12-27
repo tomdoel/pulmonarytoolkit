@@ -15,7 +15,6 @@ classdef MimCineTool < MimTool
     properties
         ButtonText = 'Cine'
         Cursor = 'arrow'
-        RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Cine tool. Drag mouse to cine through slices.'
         Tag = 'Cine'
         ShortcutKey = 'n'

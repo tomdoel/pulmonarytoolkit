@@ -14,7 +14,6 @@ classdef MimTool < CoreBaseClass
     properties (Abstract = true)
         ButtonText
         Cursor
-        RestoreKeyPressCallbackWhenSelected
         ShortcutKey
         ToolTip
         Tag

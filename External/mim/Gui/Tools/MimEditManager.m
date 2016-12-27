@@ -15,7 +15,6 @@ classdef MimEditManager < MimTool
     properties
         ButtonText = 'Edit'
         Cursor = 'hand'
-        RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Manually edit current result.'
         Tag = 'Edit'
         ShortcutKey = 'e'

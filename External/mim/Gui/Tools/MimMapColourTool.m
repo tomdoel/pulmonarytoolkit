@@ -15,7 +15,6 @@ classdef MimMapColourTool < MimTool
     properties
         ButtonText = 'Map'
         Cursor = 'hand'
-        RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Manually edit current result.'
         Tag = 'Map'
         ShortcutKey = 'b'

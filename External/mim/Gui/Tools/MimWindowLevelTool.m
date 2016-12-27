@@ -15,7 +15,6 @@ classdef MimWindowLevelTool < MimTool
     properties
         ButtonText = 'W/L'
         Cursor = 'arrow'
-        RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Window/level tool. Drag mouse to change window and level.'
         Tag = 'W/L'
         ShortcutKey = 'w'

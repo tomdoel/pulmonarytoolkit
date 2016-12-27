@@ -19,7 +19,6 @@ classdef MimMarkerPointTool < MimTool
     properties
         ButtonText = 'Mark'
         Cursor = 'cross'
-        RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Add or modify marker points.'
         Tag = 'Mark'
         ShortcutKey = 'm'

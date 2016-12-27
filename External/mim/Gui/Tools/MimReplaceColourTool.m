@@ -15,10 +15,9 @@ classdef MimReplaceColourTool < MimTool
     properties
         ButtonText = 'Paint'
         Cursor = 'hand'
-        RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Manually edit current result.'
         Tag = 'Paint'
-        ShortcutKey = 'r'
+        ShortcutKey = 'x'
         
         PaintOverBackground = false % When false, acts as a replace brush
         

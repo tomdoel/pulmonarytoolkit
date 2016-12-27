@@ -15,7 +15,6 @@ classdef MimZoomTool < MimTool
     properties
         ButtonText = 'Zoom'
         Cursor = 'circle'
-        RestoreKeyPressCallbackWhenSelected = false
         ToolTip = 'Zoom tool'
         Tag = 'Zoom'
         ShortcutKey = ''
