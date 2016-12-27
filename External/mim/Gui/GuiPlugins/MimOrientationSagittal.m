@@ -35,9 +35,6 @@ classdef MimOrientationSagittal < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            if strcmp(gui_app.ImagePanel.Mode, MimModes.View3DMode)
-                gui_app.ChangeMode([]);
-            end
             gui_app.ImagePanel.Orientation = GemImageOrientation.YZ;
         end
         

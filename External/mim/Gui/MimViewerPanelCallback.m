@@ -253,6 +253,13 @@ classdef MimViewerPanelCallback < CoreBaseClass
             main_image = obj.ViewerPanel.BackgroundImage;
             if ~isempty(main_image) && main_image.ImageExists
                 
+                % If the render panel is enabled, switch to the 2D panel.
+                % This ensures that an orientation change triggered by
+                % keyboard shortcuts shows the 2D view
+                if strcmp(obj.ViewerPanel.Mode, MimModes.View3DMode)
+                    obj.ViewerPanel.SetModes([], []);
+                end
+                
                 image_size = main_image.ImageSize;
                 slider_max =  max(2, image_size(obj.ViewerPanel.Orientation));
                 slider_min = 1;
