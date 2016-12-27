@@ -40,7 +40,7 @@ classdef MimWindowLevelLung < MimGuiPlugin
         end
 
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded && gui_app.IsCT;
+            enabled = gui_app.IsDatasetLoaded && gui_app.IsCT && ~strcmp(gui_app.ImagePanel.Mode, MimModes.View3DMode);
         end
         
         function is_selected = IsSelected(gui_app)

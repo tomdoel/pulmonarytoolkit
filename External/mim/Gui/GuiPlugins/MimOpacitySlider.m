@@ -45,7 +45,7 @@ classdef MimOpacitySlider < MimGuiPluginSlider
         end
         
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists;
+            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ~strcmp(gui_app.ImagePanel.Mode, MimModes.View3DMode);
         end
         
         function is_selected = IsSelected(gui_app)

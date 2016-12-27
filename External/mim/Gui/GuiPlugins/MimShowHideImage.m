@@ -36,7 +36,7 @@ classdef MimShowHideImage < MimGuiPlugin
         end
         
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded;
+            enabled = gui_app.IsDatasetLoaded && ~strcmp(gui_app.ImagePanel.Mode, MimModes.View3DMode);
         end
         
         function is_selected = IsSelected(gui_app)
