@@ -18,12 +18,12 @@ classdef MimView3D < MimGuiPlugin
     %    
 
     properties
-        ButtonText = '3D'
-        SelectedText = '3D'        
+        ButtonText = '3D View'
+        SelectedText = '3D View'        
         ToolTip = 'Visualise the current overlay in 3D'
-        Category = 'Segmentation display'
+        Category = 'View'
         Visibility = 'Overlay'
-        Mode = 'Segment'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
@@ -31,7 +31,7 @@ classdef MimView3D < MimGuiPlugin
         ButtonHeight = 1
         
         Icon = 'view3d.png'
-        Location = 7
+        Location = 6
     end
     
     methods (Static)
@@ -40,39 +40,49 @@ classdef MimView3D < MimGuiPlugin
             % For airway-like segmentations (thin structures), we use a different set of
             % visualisation parameters
             current_name = gui_app.GetCurrentPluginName;
-            switch current_name
-                case {'PTKAirways', 'PTKAirwaysLabelledByBronchus', 'PTKAirwaysLabelledByLobe', ...
-                'PTKAirwaysPrunedBySegment', 'PTKSegmentalBronchi', 'PTKVesselness', 'PTKPrunedAirways', ...
-                'PTKPrunedAirwaysByLobe'}
-                    airways = true;
-                otherwise
-                    airways = false;
-            end
-            
-            segmentation = gui_app.ImagePanel.OverlayImage.Copy;
-            if segmentation.ImageExists
-                if airways
-                    if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
-                        segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 1));
-                        smoothing_size = 0.5;
-                    else
-                        smoothing_size = 0.5;
-                    end
-                else
-                    if segmentation.ImageExists
-                        if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
-                            segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 0.1));
-                            smoothing_size = 0; % Don't smooth for small structures
-                        else
-                            smoothing_size = 4; % 4 is good for lobes
-                        end
-                        
-                    end
+            gui_app.ChangeMode(MimModes.View3DMode);
+
+            new_label = ['MIM3D-' current_name];
+            render_panel = gui_app.GetRenderPanel;
+            current_label = render_panel.VisualisationLabel;
+            if ~strcmp(current_label, new_label)
+                render_panel.Clear;
+
+                switch current_name
+                    case {'PTKAirways', 'PTKAirwaysLabelledByBronchus', 'PTKAirwaysLabelledByLobe', ...
+                    'PTKAirwaysPrunedBySegment', 'PTKSegmentalBronchi', 'PTKVesselness', 'PTKPrunedAirways', ...
+                    'PTKPrunedAirwaysByLobe'}
+                        airways = true;
+                    otherwise
+                        airways = false;
                 end
-                limit_to_one_component_per_index = false;
-                minimum_component_volume_mm3 = 0;
-                
-                MimVisualiseIn3D([], segmentation, smoothing_size, airways, limit_to_one_component_per_index, minimum_component_volume_mm3, gui_app.GetAppDef.GetDefaultColormap, gui_app.GetReporting);
+
+                segmentation = gui_app.ImagePanel.OverlayImage.Copy;
+                if segmentation.ImageExists
+                    if airways
+                        if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
+                            segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 1));
+                            smoothing_size = 0.5;
+                        else
+                            smoothing_size = 0.5;
+                        end
+                    else
+                        if segmentation.ImageExists
+                            if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')
+                                segmentation.ChangeRawImage(3*uint8(segmentation.RawImage > 0.1));
+                                smoothing_size = 0; % Don't smooth for small structures
+                            else
+                                smoothing_size = 4; % 4 is good for lobes
+                            end
+
+                        end
+                    end
+                    limit_to_one_component_per_index = false;
+                    minimum_component_volume_mm3 = 0;
+
+                    MimVisualiseIn3D(render_panel.GetRenderAxes.GetContainerHandle, segmentation, smoothing_size, airways, limit_to_one_component_per_index, minimum_component_volume_mm3, gui_app.GetAppDef.GetDefaultColormap, gui_app.GetReporting);
+                    render_panel.SetVisualisationLabel(new_label);
+                end
             end
         end
         
