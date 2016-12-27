@@ -93,6 +93,7 @@ classdef MimViewerPanel < GemPanel
         ViewerPanelCallback
         ImageOverlayAxes
         CinePanel2D
+        RenderPanel
     end
     
     properties (Access = protected)
@@ -137,6 +138,8 @@ classdef MimViewerPanel < GemPanel
             % Create the axes on which the 2D images and overlay are drawn
             obj.ImageOverlayAxes = GemImageAxes(obj.ViewerPanelMultiView, obj.GetBackgroundImageSource, obj.GetImageSliceParameters);
             
+            obj.RenderPanel = GemAxesPanel(obj.ViewerPanelMultiView);
+            
             % Create the image layers
             obj.BackgroundLayer = MimImageLayer(obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.GetImageSliceParameters,  obj.GetBackgroundImageDisplayParameters, obj.GetBackgroundImageSource);
             obj.ImageOverlayAxes.AddChild(obj.BackgroundLayer);
@@ -149,13 +152,14 @@ classdef MimViewerPanel < GemPanel
             obj.MarkerLayer = GemMarkerLayer(obj.ImageOverlayAxes, obj.MarkerImageSource, obj.GetImageSliceParameters, obj.GetMarkerImageDisplayParameters, obj.GetBackgroundImageSource);
 
             % Create the mouse tools
-            obj.ToolCallback = MimToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.ImageOverlayAxes, obj.Reporting);
+            obj.ToolCallback = MimToolCallback(obj, obj.BackgroundImageDisplayParameters, obj.ImageOverlayAxes, obj.RenderPanel, obj.Reporting);
             obj.Tools = MimToolList(obj.MarkerLayer, obj.ToolCallback, obj, obj.ImageSliceParameters, obj.BackgroundImageDisplayParameters);
 
             % Create the scrolling 2D cine view and tools and add to the
             % multiview panel
             obj.CinePanel2D = MimCinePanelWithTools(obj.ViewerPanelMultiView, obj.Tools, obj.ImageOverlayAxes, obj.GetBackgroundImageSource, obj.ImageSliceParameters);
             obj.ViewerPanelMultiView.Add2DCinePanel(obj.CinePanel2D, obj.Reporting);
+            obj.ViewerPanelMultiView.AddRenderPanel(obj.RenderPanel, obj.Reporting);
 
             obj.AddChild(obj.ViewerPanelMultiView);
         end
@@ -217,6 +221,7 @@ classdef MimViewerPanel < GemPanel
             obj.OverlayImage.Title = [];
             obj.OverlayImage.Reset;
             obj.QuiverImage.Reset;
+            obj.ClearRenderAxes;
         end
         
         function in_marker_mode = IsInMarkerMode(obj)
@@ -257,6 +262,8 @@ classdef MimViewerPanel < GemPanel
             obj.SubMode = submode;
             
             if strcmp(mode, MimModes.EditMode)
+                obj.ViewerPanelMultiView.ChangeSelectedTab('View2D');
+
                 if strcmp(submode, MimSubModes.PaintEditing)
                     obj.SetControl('Paint');
                 elseif strcmp(submode, MimSubModes.ColourRemapEditing)
@@ -268,7 +275,14 @@ classdef MimViewerPanel < GemPanel
                 else
                     obj.SetControl('W/L');
                 end
+            elseif strcmp(mode, MimModes.View3DMode)
+                obj.ViewerPanelMultiView.ChangeSelectedTab('View3D');
+                obj.SetControl('Rotate');
+            elseif strcmp(mode, MimModes.MarkerMode)
+                obj.ViewerPanelMultiView.ChangeSelectedTab('View2D');
+                obj.SetControl('Mark');
             else
+                obj.ViewerPanelMultiView.ChangeSelectedTab('View2D');
                 obj.SetControl('W/L');
             end
         end
@@ -483,6 +497,21 @@ classdef MimViewerPanel < GemPanel
             index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfLastMarker(orientation);
             obj.SliceNumber(orientation) = index_of_nearest_marker;
         end
+        
+        function handle = GetRenderAxes(obj)
+            % Returns a handle to the render panel axes
+            handle = obj.RenderPanel.GetRenderAxes;
+        end
+        
+        function handle = GetRenderPanel(obj)
+            % Returns a handle to the render panel axes
+            handle = obj.RenderPanel;
+        end
+        
+        function ClearRenderAxes(obj)
+            obj.RenderPanel.Clear;
+        end
+        
     end
     
     methods (Access = protected)

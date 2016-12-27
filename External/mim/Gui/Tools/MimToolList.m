@@ -23,6 +23,7 @@ classdef MimToolList < handle
         ZoomTool
         PanTool
         PanMatlabTool
+        Rotate3dMatlabTool
         ZoomMatlabTool
         EditTool
         ReplaceColourTool
@@ -40,13 +41,14 @@ classdef MimToolList < handle
             obj.ZoomTool = MimZoomTool(tool_callback);
             obj.PanTool = MimPanTool(tool_callback);
             obj.PanMatlabTool = MimPanMatlabTool(tool_callback);
+            obj.Rotate3dMatlabTool = MimRotate3dMatlabTool(tool_callback);
             obj.ZoomMatlabTool = MimZoomMatlabTool(tool_callback);
             obj.EditTool = MimEditManager(obj.ViewerPanel);
             obj.ReplaceColourTool = MimReplaceColourTool(obj.ViewerPanel);
             obj.MapColourTool = MimMapColourTool(obj.ViewerPanel);
             obj.MarkerPointTool = MimMarkerPointTool(marker_manager, obj.ViewerPanel);
            
-            tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.MarkerPointTool, obj.WindowLevelTool, obj.CineTool, obj.EditTool, obj.ReplaceColourTool, obj.MapColourTool};
+            tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.Rotate3dMatlabTool, obj.MarkerPointTool, obj.WindowLevelTool, obj.CineTool, obj.EditTool, obj.ReplaceColourTool, obj.MapColourTool};
 
             obj.Tools = containers.Map;
             for tool_set = tool_list
@@ -80,28 +82,25 @@ classdef MimToolList < handle
         
         function UpdateTools(obj)
             tool_list = obj.Tools.values;
+            
+            % Disable inactive tools before enabling new tools
             for tool_set = tool_list
                 tool = tool_set{1};
-                tool_is_enabled = strcmp(obj.ViewerPanel.SelectedControl, tool.Tag);
-                tool.Enable(tool_is_enabled);
-                if tool_is_enabled
+                if ~strcmp(obj.ViewerPanel.SelectedControl, tool.Tag);
+                    tool.Enable(false);
+                end
+            end
+            
+            % Enable tools
+            for tool_set = tool_list
+                tool = tool_set{1};
+                if strcmp(obj.ViewerPanel.SelectedControl, tool.Tag);
+                    tool.Enable(true);
                     obj.ToolCallback.GetAxes.SetContextMenu(tool.GetContextMenu);
                 end
             end
         end
         
-        function SetControl(obj, tag_value)
-            tool = obj.Tools(tag_value);
-            
-            % Run the code to enable or disable tools
-            obj.UpdateTools;
-            
-            % Matlab tools require the keypress callback to be reset
-            if tool.RestoreKeyPressCallbackWhenSelected
-                obj.ViewerPanel.GetParentFigure.RestoreCustomKeyPressCallback;
-            end
-        end        
-
         function input_has_been_processed = ShortcutKeys(obj, key, selected_control)
             % Each tool has a shortcut key to select it
             for tool = obj.Tools.values

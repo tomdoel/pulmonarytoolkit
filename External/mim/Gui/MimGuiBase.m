@@ -614,6 +614,14 @@ classdef MimGuiBase < GemFigure
             wait_dialog.Hide;
         end
         
+        function handle = GetRenderAxes(obj)
+            handle = obj.ImagePanel.GetRenderAxes;
+        end
+        
+        function handle = GetRenderPanel(obj)
+            handle = obj.ImagePanel.GetRenderPanel;
+        end
+        
     end
     
     methods (Access = protected)
@@ -830,7 +838,9 @@ classdef MimGuiBase < GemFigure
 
         function ModeTabChanged(obj, ~, event_data)
             mode = obj.ModeTabControl.GetModeToSwitchTo(event_data.Data);
-            obj.ChangeMode(mode);
+            if ~isempty(mode)
+                obj.ChangeMode(mode);
+            end
         end
         
     end

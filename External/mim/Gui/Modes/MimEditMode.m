@@ -199,6 +199,7 @@ classdef MimEditMode < handle
                 obj.Settings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
         end
+
         function OverlayImageChanged(obj, ~, ~)
             if obj.ImageOverlayLock < 1
                 obj.UnsavedChanges = true;

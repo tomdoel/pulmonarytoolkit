@@ -13,6 +13,7 @@ classdef MimModes
         EditMode = 'Edit'
         MarkerMode = 'Markers'
         ManualSegmentationMode = 'ManualSegmentation'
+        View3DMode = 'View3D'
     end
     
 end

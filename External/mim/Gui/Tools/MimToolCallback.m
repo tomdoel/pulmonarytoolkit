@@ -12,6 +12,7 @@ classdef MimToolCallback < handle
     
     properties (Access = private)
         Axes
+        Axes3d
         ImageDisplayParameters
         Reporting
         ViewerPanel
@@ -19,19 +20,26 @@ classdef MimToolCallback < handle
     
     methods
         
-        function obj = MimToolCallback(viewing_panel, image_display_parameters, axes, reporting)
+        function obj = MimToolCallback(viewing_panel, image_display_parameters, axes, axes_3d, reporting)
             obj.ImageDisplayParameters = image_display_parameters;
             obj.ViewerPanel = viewing_panel;
             obj.Axes = axes;
+            obj.Axes3d = axes_3d;
             obj.Reporting = reporting;
         end
 
         function EnablePan(obj, enabled)
             obj.GetAxes.EnablePan(enabled);
+            obj.GetAxes3d.EnablePan(enabled);
         end        
         
         function EnableZoom(obj, enabled)
             obj.GetAxes.EnableZoom(enabled);
+            obj.GetAxes3d.EnableZoom(enabled);
+        end
+        
+        function EnableRotate3d(obj, enabled)
+            obj.GetAxes3d.EnableRotate3d(enabled);
         end
         
         function [min_coords, max_coords] = GetImageLimits(obj)
@@ -78,10 +86,12 @@ classdef MimToolCallback < handle
             end
         end
         
-        function axes_handle = GetAxesHandle(obj)
-            axes_handle = obj.GetAxes.GetContainerHandle;
+        function axes_handle = GetAxes3d(obj)
+            axes_handle = obj.Axes3d.GetRenderAxes;
+            if isempty(axes_handle)
+                obj.Reporting.Error('MimToolCallback:AxesDoNotExist', '3D Axes have not been created');
+            end
         end
-        
     end
 end
 

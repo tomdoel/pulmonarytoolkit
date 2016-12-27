@@ -54,11 +54,10 @@ classdef GemAxes < GemUserInterfaceObject
                 else
                     param = 'off';
                 end
+                obj.ClearCallbacks;
                 pan(obj.GraphicalComponentHandle, param);
                 if enabled
                     obj.RestoreCustomKeyPressCallback;
-                else
-                    obj.ClearCallbacks;
                 end
             end
         end        
@@ -70,11 +69,10 @@ classdef GemAxes < GemUserInterfaceObject
                 else
                     param = 'off';
                 end
+                obj.ClearCallbacks;
                 zoom(obj.GraphicalComponentHandle, param);
                 if enabled
                     obj.RestoreCustomKeyPressCallback;
-                else
-                    obj.ClearCallbacks;
                 end
             end
         end
@@ -86,11 +84,10 @@ classdef GemAxes < GemUserInterfaceObject
                 else
                     param = 'off';
                 end
+                obj.ClearCallbacks;
                 rotate3d(obj.GraphicalComponentHandle, param);
                 if enabled
                     obj.RestoreCustomKeyPressCallback;
-                else
-                    obj.ClearCallbacks;
                 end
             end
         end
@@ -201,6 +198,12 @@ classdef GemAxes < GemUserInterfaceObject
             
             % Return the figure to its original position 
             set(obj.GraphicalComponentHandle, 'Position', old_position);            
+        end
+        
+        function Clear(obj)
+            if ~isempty(obj.GraphicalComponentHandle)
+                cla(obj.GraphicalComponentHandle, 'reset');
+            end
         end
     end
 

@@ -639,7 +639,7 @@ classdef GemUserInterfaceObject < CoreBaseClass
             % Let Matlab callbacks process this scroll event
             
             if ~isempty(obj.WindowScrollWheelFcn)
-                obj.WindowScrollWheelFcn{1}(src, eventdata, obj.MatlabMouseScrollCallbacks{2:end});
+                obj.WindowScrollWheelFcn{1}(src, eventdata, obj.WindowScrollWheelFcn{2:end});
                 input_has_been_processed = true;
                 return
             end

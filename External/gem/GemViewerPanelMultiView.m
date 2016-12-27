@@ -14,6 +14,7 @@ classdef GemViewerPanelMultiView < GemMultiPanel
 
     properties (Access = private)        
         CinePanel2D
+        RenderPanel
     end
 
     events
@@ -36,6 +37,14 @@ classdef GemViewerPanelMultiView < GemMultiPanel
             obj.AddEventListener(obj.CinePanel2D, 'MousePositionChanged', @obj.MousePositionChangedCallback);
         end
         
+        function AddRenderPanel(obj, render_panel, reporting)
+            if ~isempty(obj.RenderPanel)
+                reporting.Error('GemViewerPanelMultiView:RenderPanelAlreadySet', 'AddRenderPanel() was called more than once');
+            end
+            obj.RenderPanel = render_panel;
+            obj.AddPanel(obj.RenderPanel, 'View3D');
+        end
+        
         function CreateGuiComponent(obj, position)
             CreateGuiComponent@GemMultiPanel(obj, position);
 
@@ -48,6 +57,7 @@ classdef GemViewerPanelMultiView < GemMultiPanel
             
             % Position axes and slice slider
             obj.CinePanel2D.Resize(obj.InnerPosition);
+            obj.RenderPanel.Resize(obj.InnerPosition);
             obj.UpdateAxes;
         end
         

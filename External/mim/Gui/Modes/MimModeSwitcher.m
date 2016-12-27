@@ -33,6 +33,7 @@ classdef MimModeSwitcher < CoreBaseClass
             obj.Modes = containers.Map;
             obj.Modes(MimModes.EditMode) = MimEditMode(viewer_panel, gui_dataset, app_def, settings, reporting);
             obj.Modes(MimModes.MarkerMode) = MimMarkerMode(viewer_panel, gui_dataset, app_def, settings, reporting);
+            obj.Modes(MimModes.View3DMode) = MimView3DMode(viewer_panel, gui_dataset, app_def, settings, reporting);
             obj.CurrentMode = [];
             obj.CurrentModeString = [];
         end

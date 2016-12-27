@@ -151,7 +151,7 @@ classdef MimViewerPanelCallback < CoreBaseClass
             % Change the cursor
             obj.ViewerPanelMultiView.UpdateCursor(obj.ViewerPanel.GetParentFigure.GetContainerHandle, [], []);
             
-            obj.Tools.SetControl(obj.ViewerPanel.SelectedControl);            
+            obj.Tools.UpdateTools;
         end
         
         function OverlayTransparencyChangedCallback(obj, ~, ~, ~)
