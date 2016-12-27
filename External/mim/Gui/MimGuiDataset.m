@@ -324,7 +324,8 @@ classdef MimGuiDataset < CoreBaseClass
                 
                 obj.GuiDatasetState.SetPatientAndSeries(patient_id, series_uid, patient_visible_name, series_name, modality);
                 obj.GuiDatasetState.ClearPlugin;
-                obj.UpdateModes;
+                obj.Gui.SetTab(obj.AppDef.DefaultModeOnNewDataset);
+                
                 
                 obj.Gui.UpdateGuiForNewDataset(obj.Dataset);
                 

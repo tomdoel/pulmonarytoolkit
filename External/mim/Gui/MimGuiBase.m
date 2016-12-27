@@ -903,6 +903,7 @@ classdef MimGuiBase < GemFigure
         
         function UpdateGuiForNewDataset(obj, dataset)
             obj.ModeTabControl.UpdateGuiForNewDataset(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
+            obj.UpdateToolbar;
         end
 
         function ReplaceOverlayImageCallback(obj, new_image, image_title)
