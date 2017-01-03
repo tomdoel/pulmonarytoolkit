@@ -132,7 +132,7 @@ classdef MimGuiBase < GemFigure
             obj.ToolbarPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef, false, false);
             obj.AddChild(obj.ToolbarPanel);
             
-            obj.ModeTabControl = MimModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.AppDef);
+            obj.ModeTabControl = MimModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.MarkerManager, obj.AppDef);
             obj.AddChild(obj.ModeTabControl);
 
             obj.PatientNamePanel = MimNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);
@@ -991,6 +991,9 @@ classdef MimGuiBase < GemFigure
         
         function current_markers = GetCurrentMarkerSetName(obj)
             current_markers = obj.MarkerManager.GetCurrentMarkerSetName;
+        end
+        
+        function AddMarkerSet(obj)
         end
     end
     

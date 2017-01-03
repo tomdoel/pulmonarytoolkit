@@ -39,7 +39,7 @@ classdef MimMarkerMode < handle
         end
         
         function EnterMode(obj, current_dataset, plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name)
-            obj.ViewerPanel.SetControl('Mark');
+            obj.ViewerPanel.SetModes(MimModes.MarkerMode, []);
         end
         
         function sub_mode = GetSubModeName(obj)

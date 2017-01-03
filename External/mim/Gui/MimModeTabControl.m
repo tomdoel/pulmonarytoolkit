@@ -27,7 +27,7 @@ classdef MimModeTabControl < GemTabControl
     end
 
     methods
-        function obj = MimModeTabControl(parent, organised_plugins, organised_manual_segmentations, app_def)
+        function obj = MimModeTabControl(parent, organised_plugins, organised_manual_segmentations, marker_manager, app_def)
             obj = obj@GemTabControl(parent);
 
             obj.OrganisedPlugins = organised_plugins;
@@ -44,7 +44,7 @@ classdef MimModeTabControl < GemTabControl
             obj.EditPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', MimModes.EditMode, 'Plugin', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'Edit', 'Manual correction of results');
 
-            obj.MarkersPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Markers', MimModes.MarkerMode, 'Dataset', obj.Gui, app_def, true, true);
+            obj.MarkersPanel = MimMarkerPanel(obj, marker_manager, obj.OrganisedPlugins, 'Markers', MimModes.MarkerMode, 'Dataset', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.MarkersPanel, 'Markers', 'Markers', 'Create markers for validation');
             
             obj.AnalysisPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
