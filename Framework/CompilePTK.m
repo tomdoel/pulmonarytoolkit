@@ -15,7 +15,7 @@ function Compile(is_gui)
     PTKAddPaths;
     
     % Create a PTKMain object to ensure mex files are compiled
-    PTKMain;
+    PTKMain(CoreReporting);
     
     CoreDiskUtilities.CreateDirectoryIfNecessary(compiled_output_path);
 
