@@ -1,5 +1,9 @@
 function CompilePTK
-    is_gui = true;
+    Compile(true);  % Compile GUI
+    Compile(false); % Compile API
+end
+
+function Compile(is_gui)
     if is_gui
         main_function_file = 'PulmonaryToolkit.m';
         compiled_output_subfolder = 'compiled';
