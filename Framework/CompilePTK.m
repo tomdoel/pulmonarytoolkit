@@ -24,7 +24,7 @@ function Compile(is_gui)
         dirs_to_include{end + 1} = 'Gui';
     end
     
-    temp_compile_options_file = CreateTemporaryCompileOptionsFile(dirs_to_include, main_function_file);
+    temp_compile_options_file = CreateTemporaryCompileOptionsFile(dirs_to_include, main_function_file, compiled_output_path);
         
     fileID = fopen(fullfile(compiled_output_path, 'plugin_dependencies.m'), 'w');
     fprintf(fileID, '%s\n', 'function plugin_dependencies');
@@ -53,7 +53,9 @@ function Compile(is_gui)
     
     fprintf(fileID, '%s\n', 'end');
     fclose(fileID);
+    RenameMatlabFilesInMexFolder;
     mcc('-B', fullfile(compiled_output_path, 'compileopts_gen'));
+    RestoreMatlabFilesInMexFolder;
 end
 
 function temporary_file = CreateTemporaryCompileOptionsFile(dirs_to_include, main_function_file, compiled_output_path)
@@ -86,6 +88,22 @@ end
 
 function mex_file_list = GetListOfMexFiles
     mex_file_list = CoreDiskUtilities.GetRecursiveListOfFiles(GetCompiledMexFilesPath, '*');
+end
+
+function RenameMatlabFilesInMexFolder
+    for mex_matlab_function = CoreDiskUtilities.GetDirectoryFileList(fullfile(GetBasePath, 'Library', 'mex'), '*.m')
+        next_mat_fun = mex_matlab_function{1};
+        filename = fullfile(GetBasePath, 'Library', 'mex', next_mat_fun);
+        movefile(filename, [filename '.renamed']);
+    end
+end
+
+function RestoreMatlabFilesInMexFolder
+    for mex_matlab_function = CoreDiskUtilities.GetDirectoryFileList(fullfile(GetBasePath, 'Library', 'mex'), '*.renamed')
+        next_mat_fun = mex_matlab_function{1};
+        filename = fullfile(GetBasePath, 'Library', 'mex', next_mat_fun);
+        movefile(filename, filename(1:end-8));
+    end
 end
 
 function plugin_name_list = GetListOfPlugins
