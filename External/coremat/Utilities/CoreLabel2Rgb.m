@@ -12,5 +12,5 @@ function rgb_image = CoreLabel2Rgb(label_image)
     adjusted_colourmap = [[0,0,0]; CoreSystemUtilities.BackwardsCompatibilityColormap];
     label_image_adjusted = uint8(1 + mod(label_image - 1, 63));
     label_image_adjusted(label_image == 0) = 0;
-    rgb_image = ind2rgb8(label_image_adjusted, adjusted_colourmap);
+    rgb_image = uint8(ind2rgb(label_image_adjusted, adjusted_colourmap));
 end
