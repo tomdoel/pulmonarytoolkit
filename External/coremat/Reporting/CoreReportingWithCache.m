@@ -76,7 +76,7 @@ classdef CoreReportingWithCache < CoreReportingInterface
         end
         
         function ErrorFromException(obj, identifier, message, ex)
-            obj.Reporting.Error(identifier, message, ex);
+            obj.Reporting.ErrorFromException(identifier, message, ex);
         end
                 
         function ShowProgress(obj, text)
