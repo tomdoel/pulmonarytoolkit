@@ -74,13 +74,13 @@ classdef PTKTimer < CoreBaseClass
         
         function Resume(obj)
             if isempty(obj.StartTicId)
-                reporting.Error('PTKTimer:TimerNotStarted', 'The Resume() method was called but the clock has not been started.');
+                obj.Reporting.Error('PTKTimer:TimerNotStarted', 'The Resume() method was called but the clock has not been started.');
             end
             if ~isempty(obj.TotalElapsedTime)
-                reporting.Error('PTKTimer:ClockAlreadyStopped', 'The Resume() method was called but the clock has already been stopped.');
+                obj.Reporting.Error('PTKTimer:ClockAlreadyStopped', 'The Resume() method was called but the clock has already been stopped.');
             end
             if ~isempty(obj.PauseTicId)
-                reporting.Error('PTKTimer:NotPaused', 'The Resume() method was called but the clock has not been paused.');
+                obj.Reporting.Error('PTKTimer:NotPaused', 'The Resume() method was called but the clock has not been paused.');
             end
             obj.PauseTicId = tic;
         end
