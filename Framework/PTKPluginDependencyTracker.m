@@ -52,6 +52,7 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
         function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
             % Fetch plugin result from the disk cache
             result = [];
+            edited_result = [];
             
             edited_result_exists = obj.DatasetDiskCache.EditedResultExists(plugin_name, context, reporting);
             
@@ -110,54 +111,90 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
 
                     dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
 
-                    % This is the actual call which runs the plugin
-                    if strcmp(plugin_info.PTKVersion, '1')
-                        result = plugin_class.RunPlugin(dataset_callback, reporting);
-                    else
-                        result = plugin_class.RunPlugin(dataset_callback, context, reporting);
+                    try
+                        % This is the actual call which runs the plugin
+                        if strcmp(plugin_info.PTKVersion, '1')
+                            result = plugin_class.RunPlugin(dataset_callback, reporting);
+                        else
+                            result = plugin_class.RunPlugin(dataset_callback, context, reporting);
+                        end
+
+                        new_cache_info = dataset_stack.Pop;
+
+                        if PTKSoftwareInfo.TimeFunctions
+                            dataset_stack.ResumeTiming;
+                        end
+
+                        if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
+                            reporting.Error('PTKPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
+                        end
+
+                        % Get the newly calculated list of dependencies for this
+                        % plugin
+                        dependencies = new_cache_info.DependencyList;
+
+                        % Cache the plugin result
+                        if allow_results_to_be_cached && ~isempty(result)
+                            obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, reporting);
+                        else
+                            obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, false, reporting);
+                        end
+
+                        dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
+
+                        dependency = new_cache_info.InstanceIdentifier;
+                        dependency_list_for_this_plugin = PTKDependencyList;
+                        dependency_list_for_this_plugin.AddDependency(dependency, reporting);
+                        dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
+
+                        cache_info = new_cache_info;
+                    catch ex
+                        % Get default edited result for failure case by
+                        % calling the method on the plugin. If there 
+                        % is no default then we we rethrow the error to the
+                        % caller.
+                        edited_result = plugin_class.GenerateDefaultEditedResultFollowingFailure(dataset_callback, context, reporting);
+                        if ~isempty(edited_result)
+                            
+                            choice = questdlg(['Segmentation for ' plugin_class.ButtonText ' could not be performed automatically because the algorithm was not able to process this dataset. Do you wish to create the segmentation manually using the editing tools? If you are unsure, click Cancel.'], ...
+                            [plugin_class.ButtonText ' segmentation could not be performed.'], ...
+                            'Create segmentation manually', 'Cancel', 'Cancel');
+                            switch choice
+                                case 'Create segmentation manually'
+                                    result = [];
+                                    cache_info = [];
+                                    obj.SaveEditedResult(plugin_name, context, edited_result, dataset_uid, plugin_version, reporting);
+                                    
+                                    reporting.ErrorFromException('PTKPluginDependencyTracker:ManualSegmentationCreated', ['A manual segmentation has been created for ' plugin_class.ButtonText '. You must correct this before performing any further analysis. Click on ' plugin_class.ButtonText ' to load the manual segmentation and select the Correct tab to edit the manual segmentation.'], ex);
+                                    
+                                case 'Cancel'
+                                    rethrow(ex);
+                                    
+                                otherwise
+                                    rethrow(ex);
+                            end
+                            
+                        else
+                            rethrow(ex);
+                        end
                     end
-
-                    new_cache_info = dataset_stack.Pop;
-
-                    if PTKSoftwareInfo.TimeFunctions
-                        dataset_stack.ResumeTiming;
-                    end
-
-                    if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
-                        reporting.Error('PTKPluginDependencyTracker:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
-                    end
-
-                    % Get the newly calculated list of dependencies for this
-                    % plugin
-                    dependencies = new_cache_info.DependencyList;
-
-                    % Cache the plugin result
-                    if allow_results_to_be_cached && ~isempty(result)
-                        obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, reporting);
-                    else
-                        obj.DatasetDiskCache.CachePluginInfo(plugin_name, new_cache_info, context, false, reporting);
-                    end
-
-                    dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
-
-                    dependency = new_cache_info.InstanceIdentifier;
-                    dependency_list_for_this_plugin = PTKDependencyList;
-                    dependency_list_for_this_plugin.AddDependency(dependency, reporting);
-                    dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
-
-                    cache_info = new_cache_info;
                 else
                     plugin_has_been_run = false;
                 end
                 
             else
                 cache_info = [];
+                plugin_has_been_run = false;
             end
             
             % Fetch the edited result, if it exists
             if edited_result_exists
+                
                 [edited_result, edited_cache_info] = obj.DatasetDiskCache.LoadEditedPluginResult(plugin_name, context, reporting);
                 
+                % If the edited result does not depend on the automated
+                % result, we won't have (and don't need) cache info for the
+                % plugin result so just use the edited result
                 if isempty(cache_info)
                     cache_info = edited_cache_info;
                 end
@@ -183,7 +220,7 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
             end
         end
 
-        function SaveEditedResult(obj, plugin_name, context, result, dataset_uid, plugin_version, reporting)
+        function edited_cached_info = SaveEditedResult(obj, plugin_name, context, edited_result, dataset_uid, plugin_version, reporting)
             % Saves the result of a plugin after semi-automatic editing
             
             attributes = [];
@@ -191,10 +228,10 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
             attributes.IsEditedResult = true;
             attributes.PluginVersion = plugin_version;
             instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
-            new_cache_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
-            new_cache_info.MarkEdited;
+            edited_cached_info = PTKDatasetStackItem(instance_identifier, PTKDependencyList, false, false, reporting);
+            edited_cached_info.MarkEdited;
 
-            obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, result, new_cache_info, reporting);
+            obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, edited_result, edited_cached_info, reporting);
         end
         
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
