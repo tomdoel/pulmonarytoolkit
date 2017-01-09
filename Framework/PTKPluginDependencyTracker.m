@@ -149,31 +149,11 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
 
                         cache_info = new_cache_info;
                     catch ex
-                        % Get default edited result for failure case by
-                        % calling the method on the plugin. If there 
-                        % is no default then we we rethrow the error to the
-                        % caller.
-                        edited_result = plugin_class.GenerateDefaultEditedResultFollowingFailure(dataset_callback, context, reporting);
-                        if ~isempty(edited_result)
-                            
-                            choice = questdlg(['Segmentation for ' plugin_class.ButtonText ' could not be performed automatically because the algorithm was not able to process this dataset. Do you wish to create the segmentation manually using the editing tools? If you are unsure, click Cancel.'], ...
-                            [plugin_class.ButtonText ' segmentation could not be performed.'], ...
-                            'Create segmentation manually', 'Cancel', 'Cancel');
-                            switch choice
-                                case 'Create segmentation manually'
-                                    result = [];
-                                    cache_info = [];
-                                    obj.SaveEditedResult(plugin_name, context, edited_result, dataset_uid, plugin_version, reporting);
-                                    
-                                    reporting.ErrorFromException('PTKPluginDependencyTracker:ManualSegmentationCreated', ['A manual segmentation has been created for ' plugin_class.ButtonText '. You must correct this before performing any further analysis. Click on ' plugin_class.ButtonText ' to load the manual segmentation and select the Correct tab to edit the manual segmentation.'], ex);
-                                    
-                                case 'Cancel'
-                                    rethrow(ex);
-                                    
-                                otherwise
-                                    rethrow(ex);
-                            end
-                            
+                        % For certain plugins we throw a special exception
+                        % which indicates that the user should be offered
+                        % the ability to create a manual edit
+                        if plugin_info.SuggestManualEditOnFailure
+                            throw(PTKSuggestEditException(plugin_name, context, ex, plugin_class.ButtonText));
                         else
                             rethrow(ex);
                         end
@@ -232,6 +212,11 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
             edited_cached_info.MarkEdited;
 
             obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, edited_result, edited_cached_info, reporting);
+        end
+                
+        function edited_result = GetDefaultEditedResult(obj, context, linked_dataset_chooser, plugin_class, dataset_stack, reporting)
+            dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
+            edited_result = plugin_class.GenerateDefaultEditedResultFollowingFailure(dataset_callback, context, reporting);
         end
         
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)

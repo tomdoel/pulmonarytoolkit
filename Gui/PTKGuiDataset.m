@@ -381,17 +381,41 @@ classdef PTKGuiDataset < CoreBaseClass
                 return;
             end
             
-            if PTKSoftwareInfo.DebugMode
+            try
                 obj.RunPluginTryCatchBlock(plugin_name, wait_dialog)
-            else
-                try
-                    obj.RunPluginTryCatchBlock(plugin_name, wait_dialog)
-                catch exc
-                    if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
-                        obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
-                    else
+            catch exc
+                if PTKSoftwareInfo.IsErrorCancel(exc.identifier)
+                    obj.Reporting.ShowMessage('PTKGuiApp:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
+                else
+                    obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
+                    show_error_dialog = true;
+
+                    if isa(exc, 'PTKSuggestEditException')
+                        default_edited_result = obj.Dataset.GetDefaultEditedResult(exc.PluginToEdit, exc.PluginContext);
+                        if ~isempty(default_edited_result)
+                            show_error_dialog = false;
+
+                            choice = questdlg(['Segmentation for ' exc.PluginVisibleName ' could not be performed automatically because the algorithm was not able to process this dataset. Do you wish to create the segmentation manually using the editing tools? If you are unsure, click Cancel.'], ...
+                                ['Segmentation failed for ' exc.PluginVisibleName '.'], ...
+                                'Create segmentation manually', 'Cancel', 'Cancel');
+                            switch choice
+                                case 'Create segmentation manually'
+                                    % Save the new edit
+                                    obj.Dataset.SaveEditedResult(exc.PluginToEdit, default_edited_result, exc.PluginContext);
+
+                                    % Run the plugin to load the edit
+                                    % into the viewer
+                                    obj.RunPluginTryCatchBlock(exc.PluginToEdit, wait_dialog);
+                                    
+                                    % Switch to edit mode
+                                    obj.Gui.ChangeMode(PTKModes.EditMode);
+                            end
+                        end
+
+                    end
+
+                    if show_error_dialog
                         uiwait(errordlg(['The plugin ' plugin_name ' failed with the following error: ' exc.message], [obj.AppDef.GetName ': Failure in plugin ' plugin_name], 'modal'));
-                        obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     end
                 end
             end

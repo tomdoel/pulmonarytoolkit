@@ -22,6 +22,7 @@ classdef PTKLobes < PTKPlugin
         Category = 'Lobes'
         
         AllowResultsToBeCached = true
+        SuggestManualEditOnFailure = true
         AlwaysRunPlugin = false
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
