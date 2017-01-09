@@ -409,6 +409,8 @@ classdef PTKGuiDataset < CoreBaseClass
                                     
                                     % Switch to edit mode
                                     obj.Gui.ChangeMode(PTKModes.EditMode);
+                                    
+                                    uiwait(warndlg(['The segmentation created for ' exc.PluginVisibleName ' is incomplete. Please review and corect the segmentation before performing any analysis.'], ['Review and correct  ' exc.PluginVisibleName], 'modal'));                        
                             end
                         end
 
