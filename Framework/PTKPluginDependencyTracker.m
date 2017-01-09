@@ -153,7 +153,7 @@ classdef PTKPluginDependencyTracker < CoreBaseClass
                         % which indicates that the user should be offered
                         % the ability to create a manual edit
                         if plugin_info.SuggestManualEditOnFailure
-                            throw(PTKSuggestEditException(plugin_name, context, ex, plugin_class.ButtonText));
+                            throw(PTKSuggestEditException(plugin_name, context, ex, CoreTextUtilities.RemoveHtml(plugin_class.ButtonText)));
                         else
                             rethrow(ex);
                         end
