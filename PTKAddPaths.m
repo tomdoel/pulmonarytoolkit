@@ -43,6 +43,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Vessels');
         path_folders{end + 1} = fullfile('Library', 'Visualisation');
         path_folders{end + 1} = 'Framework';
+        path_folders{end + 1} = 'Scripts';
         
         path_folders{end + 1} = fullfile('External', 'coremat');
         path_folders{end + 1} = fullfile('External', 'mim', 'Gui');

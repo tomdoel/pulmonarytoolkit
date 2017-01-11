@@ -97,4 +97,16 @@ function new_plugin = MimParsePluginClass(plugin_name, plugin_class, suggested_c
             new_plugin.DiskCachePolicy = MimCachePolicy.Off;
         end
     end
+    
+    if ismember('EditRequiresPluginResult', property_list);
+        new_plugin.EditRequiresPluginResult = plugin_class.EditRequiresPluginResult;
+    else
+        new_plugin.EditRequiresPluginResult = false;
+    end
+    
+    if ismember('SuggestManualEditOnFailure', property_list);
+        new_plugin.SuggestManualEditOnFailure = plugin_class.SuggestManualEditOnFailure;
+    else
+        new_plugin.SuggestManualEditOnFailure = false;
+    end
 end

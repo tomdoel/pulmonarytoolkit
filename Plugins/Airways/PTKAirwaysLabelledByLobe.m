@@ -50,6 +50,7 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
         
         EnableModes = MimModes.EditMode
         SubMode = MimSubModes.ColourRemapEditing        
+        EditRequiresPluginResult = true
     end
     
     methods (Static)

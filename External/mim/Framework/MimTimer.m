@@ -74,13 +74,13 @@ classdef MimTimer < CoreBaseClass
         
         function Resume(obj)
             if isempty(obj.StartTicId)
-                reporting.Error('MimTimer:TimerNotStarted', 'The Resume() method was called but the clock has not been started.');
+                obj.Reporting.Error('MimTimer:TimerNotStarted', 'The Resume() method was called but the clock has not been started.');
             end
             if ~isempty(obj.TotalElapsedTime)
-                reporting.Error('MimTimer:ClockAlreadyStopped', 'The Resume() method was called but the clock has already been stopped.');
+                obj.Reporting.Error('MimTimer:ClockAlreadyStopped', 'The Resume() method was called but the clock has already been stopped.');
             end
             if ~isempty(obj.PauseTicId)
-                reporting.Error('MimTimer:NotPaused', 'The Resume() method was called but the clock has not been paused.');
+                obj.Reporting.Error('MimTimer:NotPaused', 'The Resume() method was called but the clock has not been paused.');
             end
             obj.PauseTicId = tic;
         end

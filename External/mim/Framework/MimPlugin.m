@@ -145,9 +145,21 @@ classdef MimPlugin < handle
             % However, plugins may choose to modify the original result based on
             % an edited result, in which case the plugin must override this
             % method and define its desired behaviour.
-            if strcmp(class(result), class(edited_result))
+            if isempty(result) || strcmp(class(result), class(edited_result))
                 result = edited_result;
             end
+        end
+
+        function result = GenerateDefaultEditedResultFollowingFailure(dataset, context, reporting)
+            % Defines the behaviour if the plugin execution fails with an
+            % exception. If this method returns an empty result, then the
+            % exception will be rethrown and propagated down to the caller,
+            % which is the default behaviour. A plugin may override this
+            % method and return a default edited result, in which case the
+            % user will be prompted if they wish to accept the edited
+            % result.
+            % 
+            result = [];
         end
     end
 end

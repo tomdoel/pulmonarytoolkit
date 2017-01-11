@@ -22,6 +22,7 @@ classdef PTKLobes < PTKPlugin
         Category = 'Lobes'
         
         AllowResultsToBeCached = true
+        SuggestManualEditOnFailure = true
         AlwaysRunPlugin = false
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
@@ -45,5 +46,27 @@ classdef PTKLobes < PTKPlugin
                 results = dataset.GetResult('PTKLobesFromFissurePlane');
             end
         end
+        
+        function result = GenerateDefaultEditedResultFollowingFailure(dataset, context, reporting)
+            % Our initial edited result is based on the lungs, with lobe
+            % details added in if they exist
+            try
+                result = dataset.GetResult('PTKLeftAndRightLungs');
+                result_raw = result.RawImage;
+                result_raw(result_raw == 2) = 5;
+            catch 
+                result = [];
+                return;
+            end
+            
+            try
+                result_initial_lobes = dataset.GetResult('PTKLobesByVesselnessDensityUsingWatershed');
+                result_initial_lobes_raw = result_initial_lobes.RawImage;
+                result_raw(result_initial_lobes_raw > 0) = result_initial_lobes_raw(result_initial_lobes_raw > 0);
+            catch
+            end
+            
+            result.ChangeRawImage(result_raw);
+        end        
     end
 end

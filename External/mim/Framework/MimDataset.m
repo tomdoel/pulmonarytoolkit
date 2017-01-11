@@ -147,6 +147,16 @@ classdef MimDataset < CoreBaseClass
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveEditedPluginResult(plugin_name, context, edited_result, obj.DatasetStack, obj.Reporting);
             obj.PostCallTidy;
         end
+        
+        function edited_result = GetDefaultEditedResult(obj, plugin_name, context, varargin)
+            if nargin < 3
+                context = [];
+            end
+            
+            obj.PreCallTidy;
+            edited_result = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetDefaultEditedResult(plugin_name, obj.DatasetStack, context, obj.Reporting);
+            obj.PostCallTidy;
+        end        
 
         function SaveData(obj, name, data, varargin)
             % Save data as a cache file associated with this dataset

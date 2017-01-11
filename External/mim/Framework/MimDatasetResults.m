@@ -173,6 +173,31 @@ classdef MimDatasetResults < handle
             data = obj.DatasetDiskCache.LoadManualSegmentation(name, context, reporting);
         end
         
+        function edited_result = GetDefaultEditedResult(obj, plugin_name, dataset_stack, context, reporting)
+            % This function will run a plugin's method to compute a default
+            % edited result to be used if a plugin fails to compute a
+            % result automatically
+            
+            reporting.PushProgress;
+            if nargin < 4
+                context = [];
+            end
+            
+            % Get information about the plugin
+            plugin_class = feval(plugin_name);
+            plugin_info = PTKParsePluginClass(plugin_name, plugin_class, reporting);
+            
+            % Update the progress dialog with the current plugin being run
+            reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
+            
+            % Run the plugin
+            edited_result = obj.DependencyTracker.GetDefaultEditedResult(context, obj.LinkedDatasetChooser, plugin_class, dataset_stack, reporting);
+            
+            reporting.CompleteProgress;
+            
+            reporting.PopProgress;
+        end        
+        
         function DeleteEditedPluginResult(obj, plugin_name, reporting)
             % Delete edit data from a cache file associated with this dataset
             

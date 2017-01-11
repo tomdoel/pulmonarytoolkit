@@ -104,7 +104,7 @@ classdef MimImageTemplates < CoreBaseClass
             % If the template does not already exist, generate it now by calling
             % the appropriate plugin and creating a template copy
             if ~template_exists || ~dependency_list_exists
-                reporting.ShowWarning('MimImageTemplates:TemplateNotFound', ['No ' char(context) ' template found. I am generating one now.'], []);
+                reporting.Log(['MimImageTemplates: No ' char(context) ' template found. I am generating one now.']);
                 obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), dataset_stack, context, reporting);
 
                 % The call to GetResult should have automatically created the

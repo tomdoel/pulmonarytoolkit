@@ -18,7 +18,7 @@ classdef PTKSoftwareInfo < handle
     properties (Constant)
         
         % Version numbers
-        Version = '0.6.3'
+        Version = '0.6.6'
         PTKVersion = '2'
         MatlabMinimumMajorVersion = 7
         MatlabMinimumMinorVersion = 12
@@ -33,6 +33,7 @@ classdef PTKSoftwareInfo < handle
         GuiFont = 'Helvetica' 
 
         % Directories
+        ScriptsDirectoryName = 'Scripts'
         GuiToolDirectoryName = fullfile('Gui', 'Toolbar')
         MexSourceDirectory = fullfile('Library', 'mex')
         TestSourceDirectory = 'Test'
