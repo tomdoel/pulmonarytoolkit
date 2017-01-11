@@ -157,7 +157,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                             % which indicates that the user should be offered
                             % the ability to create a manual edit
                             if plugin_info.SuggestManualEditOnFailure
-                                throw(PTKSuggestEditException(plugin_name, context, ex, CoreTextUtilities.RemoveHtml(plugin_class.ButtonText)));
+                                throw(MimSuggestEditException(plugin_name, context, ex, CoreTextUtilities.RemoveHtml(plugin_class.ButtonText)));
                             else
                                 rethrow(ex);
                             end
@@ -220,7 +220,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
         end
                 
         function edited_result = GetDefaultEditedResult(obj, context, linked_dataset_chooser, plugin_class, dataset_stack, reporting)
-            dataset_callback = PTKDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
+            dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
             edited_result = plugin_class.GenerateDefaultEditedResultFollowingFailure(dataset_callback, context, reporting);
         end
         

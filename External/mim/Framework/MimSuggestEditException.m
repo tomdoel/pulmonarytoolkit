@@ -1,10 +1,10 @@
-classdef PTKSuggestEditException < MException
-    % PTKSuggestEditException. Error that can be overcome using a manual edit.
+classdef MimSuggestEditException < MException
+    % MimSuggestEditException. Error that can be overcome using a manual edit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     PTKSuggestEditException is raised when an error occurs in certain
+    %     MimSuggestEditException is raised when an error occurs in certain
     %     Plugins. Normally a plugin failure would mean that no clients of
     %     the Plugin can be used. However, if a manual edit can be created
     %     to replace the plugin call, clients of the Plugin can continue.
@@ -30,7 +30,7 @@ classdef PTKSuggestEditException < MException
     end
     
     methods
-        function obj = PTKSuggestEditException(plugin_to_edit, context, exception, plugin_visible_name)
+        function obj = MimSuggestEditException(plugin_to_edit, context, exception, plugin_visible_name)
             obj = obj@MException(exception.identifier, exception.message);
             obj.addCause(exception);
             obj.PluginToEdit = plugin_to_edit;

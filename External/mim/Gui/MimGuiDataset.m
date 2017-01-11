@@ -399,7 +399,7 @@ classdef MimGuiDataset < CoreBaseClass
                     obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     show_error_dialog = true;
 
-                    if isa(exc, 'PTKSuggestEditException')
+                    if isa(exc, 'MimSuggestEditException')
                         default_edited_result = obj.Dataset.GetDefaultEditedResult(exc.PluginToEdit, exc.PluginContext);
                         if ~isempty(default_edited_result)
                             show_error_dialog = false;
