@@ -49,7 +49,8 @@ classdef PTKAirwayEndpointsLabelledByLobe < PTKPlugin
         Version = 1
         
         EnableModes = PTKModes.EditMode
-        SubMode = PTKSubModes.ColourRemapEditing        
+        SubMode = PTKSubModes.ColourRemapEditing
+        EditRequiresPluginResult = true
     end
     
     methods (Static)

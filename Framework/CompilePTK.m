@@ -1,17 +1,36 @@
 function CompilePTK
+    Compile(true);  % Compile GUI
+    Compile(false); % Compile API
+end
+
+function Compile(is_gui)
+    if is_gui
+        main_function_file = 'PulmonaryToolkit.m';
+        compiled_output_subfolder = 'compiled';
+    else
+        main_function_file = 'PulmonaryToolkitAPI.m';
+        compiled_output_subfolder = 'compiled_api';
+    end
+    compiled_output_path = GetCompiledOutputPath(compiled_output_subfolder);
     PTKAddPaths;
     
-    CoreDiskUtilities.CreateDirectoryIfNecessary(GetCompiledOutputPath);
+    % Create a PTKMain object to ensure mex files are compiled
+    PTKMain(CoreReporting);
     
-    
-    plugins= GetListOfPlugins;
+    CoreDiskUtilities.CreateDirectoryIfNecessary(compiled_output_path);
+
+    plugins = GetListOfPlugins;
     scripts = GetListOfScripts;
     gui_plugins= PTKDirectories.GetListOfGuiPlugins;
     
-    dirs_to_include = {'bin', 'Contexts', 'External', 'Framework', 'Gui', 'Plugins', 'Scripts', 'SharedPlugins'};
-    temp_compile_options_file = CreateTemporaryCompileOptionsFile(dirs_to_include);
+    dirs_to_include = {'bin', 'Contexts', 'External', 'Framework', 'Plugins', 'Scripts', 'SharedPlugins'};
+    if is_gui
+        dirs_to_include{end + 1} = 'Gui';
+    end
+    
+    temp_compile_options_file = CreateTemporaryCompileOptionsFile(dirs_to_include, main_function_file, compiled_output_path);
         
-    fileID = fopen(fullfile(GetCompiledOutputPath, 'plugin_dependencies.m'), 'w');
+    fileID = fopen(fullfile(compiled_output_path, 'plugin_dependencies.m'), 'w');
     fprintf(fileID, '%s\n', 'function plugin_dependencies');
 
     for plugin = plugins
@@ -38,15 +57,17 @@ function CompilePTK
     
     fprintf(fileID, '%s\n', 'end');
     fclose(fileID);
-    mcc -B ./compiled/compileopts_gen
+    RenameMatlabFilesInMexFolder;
+    mcc('-B', fullfile(compiled_output_path, 'compileopts_gen'));
+    RestoreMatlabFilesInMexFolder;
 end
 
-function temporary_file = CreateTemporaryCompileOptionsFile(dirs_to_include)
+function temporary_file = CreateTemporaryCompileOptionsFile(dirs_to_include, main_function_file, compiled_output_path)
     file_entries = [];
-    file_entries{end + 1} = ['-m ' fullfile(GetBasePath, 'PulmonaryToolkit.m') ' '];
+    file_entries{end + 1} = ['-m ' fullfile(GetBasePath, main_function_file) ' '];
     file_entries{end + 1} = '-v ';
-    file_entries{end + 1} = ['-d ' GetCompiledOutputPath ' '];
-    file_entries{end + 1} = ['-a ' fullfile(GetCompiledOutputPath, 'plugin_dependencies') ' '];
+    file_entries{end + 1} = ['-d ' compiled_output_path ' '];
+    file_entries{end + 1} = ['-a ' fullfile(compiled_output_path, 'plugin_dependencies') ' '];
     file_entries{end + 1} = ['-a ' fullfile(GetBasePath, 'PTKConfig.m') ' '];
     for next_dir = dirs_to_include
         file_entries{end + 1} = ['-a ' fullfile(GetBasePath, next_dir{1})];
@@ -62,7 +83,7 @@ function temporary_file = CreateTemporaryCompileOptionsFile(dirs_to_include)
         end
     end
 
-    temporary_file = fopen(fullfile(GetCompiledOutputPath, 'compileopts_gen'), 'w');
+    temporary_file = fopen(fullfile(compiled_output_path, 'compileopts_gen'), 'w');
     for entry = file_entries
         fprintf(temporary_file, '%s \n', entry{1});
     end
@@ -71,6 +92,22 @@ end
 
 function mex_file_list = GetListOfMexFiles
     mex_file_list = CoreDiskUtilities.GetRecursiveListOfFiles(GetCompiledMexFilesPath, '*');
+end
+
+function RenameMatlabFilesInMexFolder
+    for mex_matlab_function = CoreDiskUtilities.GetDirectoryFileList(fullfile(GetBasePath, 'Library', 'mex'), '*.m')
+        next_mat_fun = mex_matlab_function{1};
+        filename = fullfile(GetBasePath, 'Library', 'mex', next_mat_fun);
+        movefile(filename, [filename '.renamed']);
+    end
+end
+
+function RestoreMatlabFilesInMexFolder
+    for mex_matlab_function = CoreDiskUtilities.GetDirectoryFileList(fullfile(GetBasePath, 'Library', 'mex'), '*.renamed')
+        next_mat_fun = mex_matlab_function{1};
+        filename = fullfile(GetBasePath, 'Library', 'mex', next_mat_fun);
+        movefile(filename, filename(1:end-8));
+    end
 end
 
 function plugin_name_list = GetListOfPlugins
@@ -103,39 +140,38 @@ function plugin_folders = GetListOfAppPluginFolders
     plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(GetPluginsPath);
 end
 
-function base_path = GetBasePath(~)
+function base_path = GetBasePath
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     base_path = fullfile(path_root, '..');
 end
 
-function plugins_path = GetCompiledOutputPath(~)
+function plugins_path = GetCompiledOutputPath(compiled_output_subfolder)
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
-    plugins_path = fullfile(path_root, '..', 'compiled');
+    plugins_path = fullfile(path_root, '..', compiled_output_subfolder);
 end
 
-function plugins_path = GetCompiledMexFilesPath(~)
+function plugins_path = GetCompiledMexFilesPath
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     plugins_path = fullfile(path_root, '..', 'bin');
 end
 
-function plugins_path = GetPluginsPath(~)
+function plugins_path = GetPluginsPath
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.PluginDirectoryName);
 end
 
-function plugins_path = GetSharedPluginsPath(~)
+function plugins_path = GetSharedPluginsPath
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.SharedPluginDirectoryName);
 end        
 
-function plugins_path = GetScriptsPath(~)
+function plugins_path = GetScriptsPath
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.ScriptsDirectoryName);
-end        
-
+end
