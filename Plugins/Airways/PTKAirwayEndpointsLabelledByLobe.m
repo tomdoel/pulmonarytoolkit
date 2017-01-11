@@ -48,8 +48,8 @@ classdef PTKAirwayEndpointsLabelledByLobe < PTKPlugin
         Visibility = 'Developer'
         Version = 1
         
-        EnableModes = PTKModes.EditMode
-        SubMode = PTKSubModes.ColourRemapEditing
+        EnableModes = MimModes.EditMode
+        SubMode = MimSubModes.ColourRemapEditing
         EditRequiresPluginResult = true
     end
     
