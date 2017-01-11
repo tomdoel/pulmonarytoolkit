@@ -79,7 +79,7 @@ classdef MimDatasetCacheSelector < handle
             % results disk cache and updates cached dependency information
         
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, true, reporting);
-            obj.EditedResultsDiskCache.SaveWithInfo(plugin_name, edited_result, cache_info, context, reporting);
+            obj.EditedResultsDiskCache.SaveWithInfo(plugin_name, edited_result, cache_info, context, MimCachePolicy.Permanent, reporting);
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, true, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
