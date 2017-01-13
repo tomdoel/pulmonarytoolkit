@@ -32,7 +32,7 @@ classdef MimMemoryCache < handle
             % Load a result from the cache
             
             if obj.Exists(name, context, reporting)
-                cache_item = obj.MemoryCache(MimMemoryCache.GetKey(name, context));
+                cache_item = obj.MemoryCacheMap(MimMemoryCache.GetKey(name, context));
                 result = cache_item.Value;
                 if (nargout > 1)
                     info = cache_item.Info;
@@ -99,7 +99,7 @@ classdef MimMemoryCache < handle
             
             if cache            
                 new_key = MimMemoryCache.GetKey(name, context);
-                obj.MemoryCache(new_key) = MimMemoryCacheItem(value, info);
+                obj.MemoryCacheMap(new_key) = MimMemoryCacheItem(value, info);
                 if is_temporary
                     obj.TemporaryKeys{end + 1} = new_key;
                     obj.TemporaryKeys = unique(obj.TemporaryKeys);
