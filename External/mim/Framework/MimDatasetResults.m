@@ -106,6 +106,13 @@ classdef MimDatasetResults < handle
             
             reporting.PopProgress;
         end
+        
+        function result_exists = ResultExistsForSpecificContext(obj, plugin_name, context, reporting)
+            % Returns true if a result exists for this SPECIFIC context,
+            % either in memory or on disk
+            
+            result_exists = obj.DatasetDiskCache.Exists(plugin_name, context, reporting);
+        end
 
         function image_info = GetImageInfo(obj, reporting)
             % Returns a MimImageInfo structure with image information, including the

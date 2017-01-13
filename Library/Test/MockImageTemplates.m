@@ -55,8 +55,5 @@ classdef MockImageTemplates < handle
         % Stores the fact that a plugin has been run
         function NoteAttemptToRunPlugin(obj, plugin_name, context, reporting)
         end
-        
-        function InvalidateIfInDependencyList(obj, plugin_name, context, reporting)
-        end        
     end
 end

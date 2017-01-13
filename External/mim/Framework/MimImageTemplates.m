@@ -23,16 +23,11 @@ classdef MimImageTemplates < CoreBaseClass
         
         Config                 % configuration which stroes the preview image cache filename
         
-        % Template images for each context
-        TemplateImages
-        
-        % Dependencies for each template image
-        TemplateDependencies
-        
-        % Template-related plugins which have been run. The idea is that we will 
-        % know that a template is not available because the plugin was run but 
-        % no template was generated
+        % Template-related plugins which have been run, and those that have been run and succeeded. The idea is that we will 
+        % know that a template is not available because the plugin was run
+        % but failed
         TemplatePluginsRun
+        TemplatePluginsRunSuccess
         
         % A map of all valid contexts to their corresponding plugin
         ValidContexts
@@ -63,11 +58,10 @@ classdef MimImageTemplates < CoreBaseClass
             % not as default property values. Initialising as default property
             % values results in every instance of this claas sharing the same
             % map instance
-            obj.TemplateImages = containers.Map;
-            obj.TemplateDependencies = containers.Map;
             obj.ValidContexts  = containers.Map;
             obj.TemplateGenerationFunctions = containers.Map;
             obj.TemplatePluginsRun = containers.Map;
+            obj.TemplatePluginsRunSuccess = containers.Map;
 
             context_mappings = context_def.GetContexts;
             for context = context_mappings.keys
@@ -79,8 +73,6 @@ classdef MimImageTemplates < CoreBaseClass
                 % Add handles to the functions used to generate the templates
                 obj.TemplateGenerationFunctions(char(context_mapping.Context)) = context_mapping.TemplateGenerationFunctions;
             end
-                        
-
             
             % Loads cached template data
             obj.Load(reporting);
@@ -94,29 +86,9 @@ classdef MimImageTemplates < CoreBaseClass
             if ~obj.ValidContexts.isKey(char(context))
                 reporting.Error('MimImageTemplates:UnknownContext', 'Context not recogised');
             end
-            
-            template_exists = obj.TemplateImages.isKey(char(context));
-            
-            % The dependency list will only not exist if a previous version of the template
-            % file was being used
-            dependency_list_exists = obj.TemplateDependencies.isKey(char(context));
-            
-            % If the template does not already exist, generate it now by calling
-            % the appropriate plugin and creating a template copy
-            if ~template_exists || ~dependency_list_exists
-                reporting.Log(['MimImageTemplates: No ' char(context) ' template found. I am generating one now.']);
-                obj.DatasetResults.GetResult(obj.ValidContexts(char(context)), dataset_stack, context, reporting);
 
-                % The call to GetResult should have automatically created the
-                % template image - check that this has happened
-                if ~obj.TemplateImages.isKey(char(context))
-                    reporting.Error('MimImageTemplates:NoContext', 'Code error: a template should have been created by call to plugin, but was not');
-                end
-                
-            end
-            
-            % return the template
-            template = obj.TemplateImages(char(context));
+            template_plugin = obj.TemplateGenerationFunctions(char(context));
+            template = obj.DatasetResults.GetResult(template_plugin, dataset_stack, context, reporting);
             template = template.Copy;
         end
         
@@ -148,11 +120,6 @@ classdef MimImageTemplates < CoreBaseClass
                 fields = fieldnames(cache_info);
                 cache_info = cache_info.(fields{1});
             end
-            dependencies = cache_info.DependencyList;
-            
-            if result_may_have_changed
-                obj.InvalidateIfInDependencyList(plugin_name, context, reporting);
-            end
             
             % Check whether the plugin that has been run is the template for
             % this context
@@ -165,21 +132,23 @@ classdef MimImageTemplates < CoreBaseClass
                     % generate a template image
                     if ~isempty(result_image) && isa(result_image, 'PTKImage')
                         
+                        if ~obj.TemplateGenerationFunctions.isKey(context_char)
+                            reporting.Error('MimImageTemplates:TemplateGenerationFunctionNotFound', 'Code error: the function handle required to generate this template was not found in the map.');
+                        end
+
+                        template_plugin = obj.TemplateGenerationFunctions(context_char);
+
                         % Create a new template image if required for this
                         % context, or if the template has changed
-                        if (~obj.TemplateImages.isKey(context_char)) || result_may_have_changed
+                        if result_may_have_changed || obj.DatasetResults.ResultExistsForSpecificContext(template_plugin, PTKContext.(context_char), reporting);
 
-                            if ~obj.TemplateGenerationFunctions.isKey(context_char)
-                                reporting.Error('MimImageTemplates:TemplateGenerationFunctionNotFound', 'Code error: the function handle required to generate this template was not found in the map.');
-                            end
-                            
-                            template_function = obj.TemplateGenerationFunctions(context_char);
-                            template_image = template_function(result_image, context, reporting);
-                            
-                            % Set the template image. Note: this may be an empty
-                            % image (indicating the entire cropped region) or a
-                            % boolean mask
-                            obj.SetTemplateImage(context, template_image, dependencies, reporting);
+                            % Trigger generation of the templation creation
+                            % plugin, which should use the temporarily
+                            % cached result in memory and cache the
+                            % template permanently on disk
+                            if ~dataset_stack.PluginAlreadyExistsInStack(template_plugin, PTKContext.(context_char), dataset_uid)
+                                obj.DatasetResults.GetResult(template_plugin, dataset_stack, PTKContext.(context_char), reporting);
+                            end                            
                         end
                     end
                     
@@ -200,7 +169,7 @@ classdef MimImageTemplates < CoreBaseClass
             
             % The context is enabled unless a previous attempt to run the plugin
             % did not complete (assumed to have failed)
-            context_is_enabled = ~((obj.TemplatePluginsRun.isKey(char(context))) && (~obj.TemplateImages.isKey(char(context))));
+            context_is_enabled = obj.TemplatePluginsRunSuccess.isKey(char(context)) || ~obj.TemplatePluginsRun.isKey(char(context));
         end
         
 
@@ -215,48 +184,40 @@ classdef MimImageTemplates < CoreBaseClass
             end
         end
         
-        function ClearCache(obj, reporting)
-            % Clears cached templates
-            obj.TemplateImages = containers.Map;
-            obj.TemplatePluginsRun  = containers.Map;
-        end
         
-        function InvalidateIfInDependencyList(obj, plugin_name, context, reporting)
-            % Remove any templates whch depend on the given plugin name
+        function NoteSuccessRunPlugin(obj, plugin_name, context, reporting)
+            % Stores the fact that a plugin has been run successfully
             
-            for template_name = obj.TemplateDependencies.keys
-                dependency_list = obj.TemplateDependencies(template_name{1});
-                for dependency = dependency_list.DependencyList
-                    dependency_name = dependency.PluginName;
-                    dependency_context = dependency.Context;
-                    if strcmp(dependency_name, plugin_name) && strcmp(dependency_context, context)
-                        reporting.Log(['MimImageTemplates: Context ' template_name{1} ' is now invalid']);
-                        if obj.TemplateImages.isKey(template_name{1})
-                            obj.TemplateImages.remove(template_name{1});
-                        end
-                        obj.TemplateDependencies.remove(template_name{1});
-                    end
+            if obj.ValidContexts.isKey(char(context))
+                context_plugin_name = obj.ValidContexts(char(context));
+                if strcmp(plugin_name, context_plugin_name)                    
+                    obj.MarkTemplateImageSuccess(context, reporting);
                 end
             end
+        end
+                
+        function ClearCache(obj, reporting)
+            % Clears cached templates
+            obj.TemplatePluginsRun = containers.Map;
+            obj.TemplatePluginsRunSuccess = containers.Map;
         end
     end
     
     
     methods (Access = private)
-
-        function SetTemplateImage(obj, context, template_image, dependencies, reporting)
-            % Cache a template image for this context
-            
-            obj.TemplateImages(char(context)) = template_image;
-            obj.TemplateDependencies(char(context)) = dependencies;
-
-            obj.Save(reporting);
-        end
-        
+   
         function MarkTemplateImage(obj, context, reporting)
             
             if ~obj.TemplatePluginsRun.isKey(char(context))
                 obj.TemplatePluginsRun(char(context)) = true;
+                obj.Save(reporting);
+            end
+        end
+        
+        function MarkTemplateImageSuccess(obj, context, reporting)
+            
+            if ~obj.TemplatePluginsRunSuccess.isKey(char(context))
+                obj.TemplatePluginsRunSuccess(char(context)) = true;
                 obj.Save(reporting);
             end
         end
@@ -267,14 +228,16 @@ classdef MimImageTemplates < CoreBaseClass
             filename = obj.Config.ImageTemplatesCacheName;
             if obj.DatasetDiskCache.Exists(filename, [], reporting)
                 info = obj.DatasetDiskCache.LoadData(filename, reporting);
-                if isfield(info, 'TemplateDependencies')
-                    obj.TemplateDependencies = info.TemplateDependencies;
-                    obj.TemplateImages = info.TemplateImages;
+                if isfield(info, 'TemplatePluginsRun')
                     obj.TemplatePluginsRun = info.TemplatePluginsRun;
                 else
-                    obj.TemplateDependencies = containers.Map;
-                    obj.TemplateImages = containers.Map;
                     obj.TemplatePluginsRun = containers.Map;
+                end
+                
+                if isfield(info, 'TemplatePluginsRunSuccess') && ~isempty(info.TemplatePluginsRunSuccess)
+                    obj.TemplatePluginsRunSuccess = info.TemplatePluginsRunSuccess;
+                else
+                    obj.TemplatePluginsRunSuccess = containers.Map;
                 end
             end
         end
@@ -283,9 +246,8 @@ classdef MimImageTemplates < CoreBaseClass
             % Stores current templates in the disk cache
             
             info = [];
-            info.TemplateImages = obj.TemplateImages;
             info.TemplatePluginsRun = obj.TemplatePluginsRun;
-            info.TemplateDependencies = obj.TemplateDependencies;
+            info.TemplatePluginsRunSuccess = obj.TemplatePluginsRunSuccess;
             obj.DatasetDiskCache.SaveData(obj.Config.ImageTemplatesCacheName, info, reporting);
         end
     end

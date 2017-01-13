@@ -120,9 +120,6 @@ classdef MimContextHierarchy < CoreBaseClass
             end
             
             obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
-
-            % Invalidate any image templates which depend on this plugin
-            obj.ImageTemplates.InvalidateIfInDependencyList(plugin_name, input_context, reporting);
         end
         
     end
@@ -167,8 +164,10 @@ classdef MimContextHierarchy < CoreBaseClass
                 reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
             end
             
-            % Allow the context manager to construct a template image from this
-            % result if required
+            % Note that the plugin completed successfully
+            obj.ImageTemplates.NoteSuccessRunPlugin(plugin_name, output_context, reporting);
+            
+            % Allow pipelines to be run if required
             obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, combined_result.GetResult, combined_result.GetPluginHasBeenRun, combined_result.GetCacheInfo, dataset_stack, dataset_uid, reporting);
         end
         
