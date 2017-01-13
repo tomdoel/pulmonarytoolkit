@@ -34,6 +34,9 @@ classdef PTKLobes < PTKPlugin
         
         EnableModes = MimModes.EditMode
         SubMode = MimSubModes.FixedBoundariesEditing
+
+        MemoryCachePolicy = 'Temporary'
+        DiskCachePolicy = 'Permanent'
     end
     
     methods (Static)
