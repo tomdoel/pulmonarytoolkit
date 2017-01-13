@@ -40,14 +40,6 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             obj.PluginCache = plugin_cache;
         end
         
-        
-        function cache_info = GetCacheInfo(obj, plugin_name, reporting)
-            [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, reporting);
-            if isempty(result) || isempty(cache_info)
-                reporting.ShowWarning('MimPluginDependencyTracker:NoCacheInfo', ['No cached value was found for plugin ' plugin_name '.'], []);
-            end
-        end
-        
         function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting)
             % Gets a plugin result, from the disk cache if possible. If there is no
             % cached result, or if the dependencies are invalid, or if the
