@@ -101,9 +101,6 @@ classdef MimDatasetStack < handle
                 obj.DatasetStack(end).ExecutionTimer.Resume;
             end
         end
-    end
-    
-    methods (Access = private)
         
         function plugin_exists = PluginAlreadyExistsInStack(obj, plugin_name, context, this_dataset_uid)
             % Check if this plugin already exists in the stack
@@ -116,7 +113,7 @@ classdef MimDatasetStack < handle
                     % If both contexts are null we consider this equality - but
                     % Matlab does not consider 2 null values to be equal so we
                     % check for this case explicitly
-                    if (context == this_context) || (isempty(context) && isempty(this_context))
+                    if (CoreCompareUtilities.CompareEnumName(context, this_context)) || (isempty(context) && isempty(this_context))
                         plugin_exists = true;
                         return;
                     end
