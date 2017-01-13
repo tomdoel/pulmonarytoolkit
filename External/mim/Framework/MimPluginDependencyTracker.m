@@ -65,7 +65,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
 
                 if ~plugin_info.AlwaysRunPlugin
             
-                    [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, context, reporting);
+                    [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, context, memory_cache_policy, reporting);
 
                     % Check dependencies of the result. If they are invalid, set the
                     % result to null to force a re-run of the plugin

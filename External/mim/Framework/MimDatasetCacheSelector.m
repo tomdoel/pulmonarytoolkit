@@ -45,13 +45,14 @@ classdef MimDatasetCacheSelector < handle
             obj.LoadCachedPluginResultsFile(reporting);
         end
 
-        function [value, cache_info] = LoadPluginResult(obj, plugin_name, context, reporting)
+        function [value, cache_info] = LoadPluginResult(obj, plugin_name, context, memory_cache_policy, reporting)
             % Fetches a cached result for a plugin
             
             if obj.ResultsMemoryCache.Exists(plugin_name, context, reporting)
                 [value, cache_info] = obj.ResultsMemoryCache.Load(plugin_name, context, reporting);
             else
                 [value, cache_info] = obj.ResultsDiskCache.Load(plugin_name, context, reporting);
+                obj.ResultsMemoryCache.SaveWithInfo(plugin_name, value, cache_info, context, memory_cache_policy, reporting);
             end
         end
         
