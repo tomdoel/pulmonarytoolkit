@@ -61,10 +61,14 @@ function raw_image = LoadUncompressed(full_raw_filename, data_type, image_size, 
     
     fid = fopen(full_raw_filename, 'rb');
     data = fread(fid, ['*' file_data_type]);
-    if numel(data) == prod(image_size)
-        raw_image(:) = data(:);
+    if isempty(data)
+        raw_image = [];
     else
-        raw_image(:) = data(1:numel(raw_image));
+        if numel(data) == prod(image_size)
+            raw_image(:) = data(:);
+        else
+            raw_image(:) = data(1:numel(raw_image));
+        end
     end
     fclose(fid);
 end
