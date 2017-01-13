@@ -34,6 +34,9 @@ classdef PTKLungROI < PTKPlugin
         GeneratePreview = true
         Visibility = 'Developer'
         Version = 2
+
+        MemoryCachePolicy = 'Temporary'
+        DiskCachePolicy = 'Permanent'
     end
     
     methods (Static)

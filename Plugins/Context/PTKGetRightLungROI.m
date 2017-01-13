@@ -33,7 +33,10 @@ classdef PTKGetRightLungROI < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
-        Visibility = 'Developer'
+        Visibility = 'Developer'        
+
+        MemoryCachePolicy = 'Permanent'
+        DiskCachePolicy = 'Permanent'
     end
     
     methods (Static)

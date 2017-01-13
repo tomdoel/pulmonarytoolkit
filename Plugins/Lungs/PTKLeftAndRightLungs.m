@@ -35,6 +35,9 @@ classdef PTKLeftAndRightLungs < PTKPlugin
         
         EnableModes = MimModes.EditMode
         SubMode = MimSubModes.EditBoundariesEditing
+
+        MemoryCachePolicy = 'Temporary'
+        DiskCachePolicy = 'Permanent'
     end
     
     methods (Static)

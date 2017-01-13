@@ -38,6 +38,9 @@ classdef PTKOriginalImage < PTKPlugin
         Context = PTKContextSet.OriginalImage
         Visibility = 'Developer'
         Version = 3
+
+        MemoryCachePolicy = 'Temporary'
+        DiskCachePolicy = 'Off'
     end
     
     methods (Static)
