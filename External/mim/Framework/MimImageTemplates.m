@@ -132,7 +132,7 @@ classdef MimImageTemplates < CoreBaseClass
         end
 
 
-        function UpdateTemplates(obj, plugin_name, context, result_image, result_may_have_changed, cache_info, reporting)
+        function UpdateTemplates(obj, plugin_name, context, result_image, result_may_have_changed, cache_info, dataset_stack, dataset_uid, reporting)
             % Check to see if a plugin which has been run is associated with any of
             % the contexts. If it is, create a new template image for that context
             % if one does not already exist
