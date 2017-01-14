@@ -303,7 +303,7 @@ classdef MimDatasetResults < handle
             reporting.UpdateProgressMessage(['Saving edit for ' plugin_info.ButtonText]);
             
             try
-                obj.ContextHierarchy.SaveEditedResult(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
+                obj.ContextHierarchy.SaveEditedResultRecursive(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
             catch ex
                 dataset_stack.ClearStack;
                 rethrow(ex);

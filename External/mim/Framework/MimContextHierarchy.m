@@ -100,18 +100,54 @@ classdef MimContextHierarchy < CoreBaseClass
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to call the plugin
             if obj.ContextDef.ContextSetMatches(plugin_context_set, output_context_set)
-                combined_result = obj.GetResultsForSameContext(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting);
+
+                % If the plugin has been re-run, then we will generate an output
+                % image, in order to create a new preview image
+                if (plugin_info.GeneratePreview && plugin_has_been_run)
+                    force_generate_image = true;
+                end
+
+                % We generate an output image if requested, or if the plugin has been re-run (indictaing that we will need to generate a new preview image)
+                if force_generate_image
+                    template_callback = MimTemplateCallback(linked_dataset_chooser, dataset_stack, reporting);
+
+                    if isa(result, 'PTKImage')
+                        output_image = plugin_class.GenerateImageFromResults(result.Copy, template_callback, reporting);
+                    else
+                        output_image = plugin_class.GenerateImageFromResults(result, template_callback, reporting);
+                    end
+                else
+                    output_image = [];
+                end
+
+               combined_result = MimCombinedPluginResult(result, output_image, plugin_has_been_run, cache_info);
             
             % Otherwise, if the plugin's context set is higher in the hierarchy
             % than the requested output, then get the result for the higher
             % context and then extract out the desired context
             elseif output_context_set_mapping.IsOtherContextSetHigher(plugin_context_set_mapping)
-                combined_result = obj.GetResultsForHigherContexts(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                combined_result = MimContextResultCombiner(obj.ImageTemplates);
+                higher_context_mapping = output_context_mapping.Parent;
+                if isempty(higher_context_mapping)
+                    reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
+                end
+                parent_context = higher_context_mapping.Context;
+                this_context_results = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                combined_result.AddParentResult(parent_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting);
                 
             % If the plugin's context set is lower in the hierarchy, then get
             % the plugin result for all lower contexts and concatenate the results
             elseif plugin_context_set_mapping.IsOtherContextSetHigher(output_context_set_mapping)
-                combined_result = obj.GetResultsForLowerContexts(plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                combined_result = MimContextResultCombiner(obj.ImageTemplates);
+                child_context_mappings = output_context_mapping.Children;
+
+                for child_mapping = child_context_mappings
+                    child_context = child_mapping{1}.Context;
+                    this_context_results = obj.GetResultRecursive(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+
+                    combined_result.AddChildResult(child_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting);                
+                end
             
             else
                 reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
@@ -124,7 +160,7 @@ classdef MimContextHierarchy < CoreBaseClass
             obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, combined_result.GetResult, combined_result.GetPluginHasBeenRun, combined_result.GetCacheInfo, dataset_stack, dataset_uid, reporting);
         end
         
-        function SaveEditedResult(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
+        function SaveEditedResultRecursive(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
             % This function saves a manually edited result which plugins
             % may use to modify their results
             
@@ -133,64 +169,6 @@ classdef MimContextHierarchy < CoreBaseClass
                 reporting.Error('MimContextHierarchy:NoContextSpecified', 'When calling SaveEditedResult(), the contex of the input image must be specified.');
                 input_context = obj.ContextDef.GetDefaultContext;
             end
-            
-            obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
-        end
-        
-    end
-    
-    methods (Access = private)
-        function combined_result = GetResultsForSameContext(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
-            
-            [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting);
-            
-            % If the plugin has been re-run, then we will generate an output
-            % image, in order to create a new preview image
-            if (plugin_info.GeneratePreview && plugin_has_been_run)
-                force_generate_image = true;
-            end
-            
-            % We generate an output image if requested, or if the plugin has been re-run (indictaing that we will need to generate a new preview image)
-            if force_generate_image
-                template_callback = MimTemplateCallback(linked_dataset_chooser, dataset_stack, reporting);
-                
-                if isa(result, 'PTKImage')
-                    output_image = plugin_class.GenerateImageFromResults(result.Copy, template_callback, reporting);
-                else
-                    output_image = plugin_class.GenerateImageFromResults(result, template_callback, reporting);
-                end
-            else
-                output_image = [];
-            end
-            
-           combined_result = MimCombinedPluginResult(result, output_image, plugin_has_been_run, cache_info);
-        end
-        
-        function context_results_combiner = GetResultsForHigherContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
-            context_results_combiner = MimContextResultCombiner(obj.ImageTemplates);
-            higher_context_mapping = output_context_mapping.Parent;
-            if isempty(higher_context_mapping)
-                reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
-            end
-            parent_context = higher_context_mapping.Context;
-            this_context_results = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
-            context_results_combiner.AddParentResult(parent_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting);
-        end
-        
-        function context_results_combiner = GetResultsForLowerContexts(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);    
-            context_results_combiner = MimContextResultCombiner(obj.ImageTemplates);
-            child_context_mappings = output_context_mapping.Children;
-            
-            for child_mapping = child_context_mappings
-                child_context = child_mapping{1}.Context;
-                this_context_results = obj.GetResultRecursive(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
-                
-                context_results_combiner.AddChildResult(child_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting);                
-            end
-        end
-        
-        
-        function SaveEditedResultForAllContexts(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
             
             % Determines the type of context supported by the plugin
             plugin_context_set = plugin_info.Context;
@@ -226,7 +204,7 @@ classdef MimContextHierarchy < CoreBaseClass
                 parent_image_template = obj.ImageTemplates.GetTemplateImage(parent_context, dataset_stack, reporting);
                 new_edited_image_for_context_image = edited_result_image.Copy;
                 new_edited_image_for_context_image.ResizeToMatch(parent_image_template);
-                obj.SaveEditedResultForAllContexts(plugin_name, parent_context, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);
+                obj.SaveEditedResultRecursive(plugin_name, parent_context, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);
 
 
             % If the plugin's context set is lower in the hierarchy, then get
@@ -243,13 +221,13 @@ classdef MimContextHierarchy < CoreBaseClass
                     new_edited_image_for_context_image = MimReduceResultToContext(edited_result_image, child_mapping{1}.Context, obj.ImageTemplates, dataset_stack, reporting);
                     
                     % Save this new image
-                    obj.SaveEditedResultForAllContexts(plugin_name, child_context, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);
+                    obj.SaveEditedResultRecursive(plugin_name, child_context, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);
                 end
 
             else
                 reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
             end
-        end
-    end    
+        end        
+    end
 end 
 
