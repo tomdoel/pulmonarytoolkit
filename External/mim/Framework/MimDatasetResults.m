@@ -286,13 +286,13 @@ classdef MimDatasetResults < handle
             file_list = obj.DatasetDiskCache.GetListOfMarkerSets;
         end
         
-        function SaveEditedPluginResult(obj, plugin_name, input_context, edited_result_image, dataset_stack, reporting)
+        function SaveEditedResult(obj, plugin_name, input_context, edited_result_image, dataset_stack, reporting)
             % Save edit data to a cache file associated with this dataset
             
             dataset_uid = obj.ImageInfo.ImageUid;
             reporting.PushProgress;
-            if nargin < 3
-                input_context = [];
+            if nargin < 3 || isempty(input_context)
+                reporting.Error('MimDatasetResults:NoContextSpecified', 'When calling SaveEditedResult(), the contex of the input image must be specified.');
             end
             
             % Get information about the plugin

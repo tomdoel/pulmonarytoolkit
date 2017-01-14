@@ -144,7 +144,7 @@ classdef MimDataset < CoreBaseClass
             end
             
             obj.PreCallTidy;
-            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveEditedPluginResult(plugin_name, context, edited_result, obj.DatasetStack, obj.Reporting);
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveEditedResult(plugin_name, context, edited_result, obj.DatasetStack, obj.Reporting);
             obj.PostCallTidy;
         end
         

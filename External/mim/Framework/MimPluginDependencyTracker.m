@@ -208,7 +208,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             edited_cached_info = obj.FrameworkAppDef.GetClassFactory.CreateDatasetStackItem(instance_identifier, MimDependencyList, false, false, reporting);
             edited_cached_info.MarkEdited;
 
-            obj.DatasetDiskCache.SaveEditedPluginResult(plugin_name, context, edited_result, edited_cached_info, reporting);
+            obj.DatasetDiskCache.SaveEditedResult(plugin_name, context, edited_result, edited_cached_info, reporting);
         end
                 
         function edited_result = GetDefaultEditedResult(obj, context, linked_dataset_chooser, plugin_class, dataset_stack, reporting)

@@ -75,7 +75,7 @@ classdef MimDatasetCacheSelector < handle
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
-        function SaveEditedPluginResult(obj, plugin_name, context, edited_result, cache_info, reporting)
+        function SaveEditedResult(obj, plugin_name, context, edited_result, cache_info, reporting)
             % Stores a plugin result after semi-automatic editing in the edited
             % results disk cache and updates cached dependency information
         
