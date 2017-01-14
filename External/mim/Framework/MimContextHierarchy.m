@@ -56,47 +56,13 @@ classdef MimContextHierarchy < CoreBaseClass
             obj.ContextSets = context_def.GetContextSets;
         end
         
-        function [result, output_image, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
-
+        function context_list = GetContextList(obj, output_context, plugin_info, reporting)
+            
             % Determines the context and context type requested by the calling function
             if isempty(output_context)
                 output_context = obj.ContextDef.ChooseOutputContext(plugin_info.Context);
             end
             
-            context_list = obj.GetContextList(output_context, reporting);
-            plugin_has_been_run = false;
-            result = [];
-            output_image = [];
-            cache_info = [];
-            
-            for next_output_context_set = context_list;
-                next_output_context = next_output_context_set{1};
-                combined_result = obj.GetResultRecursive(plugin_name, next_output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
-                plugin_has_been_run = plugin_has_been_run | combined_result.GetPluginHasBeenRun;
-                if numel(context_list) == 1
-                    result = combined_result.GetResult;
-                else
-                    result.(char(next_output_context)) = combined_result.GetResult;
-                end
-                
-                % Note for simplicity we return only one output image and
-                % one cache info even if we are requesting multiple
-                % results. This is because these outputs are really
-                % additional aids and we save the caller the responsibility
-                % of having to deal with a compound output. But there is an
-                % argument for packing all the results consistently - we
-                % would need to ensure this is correctly dealt with by the
-                % caller
-                if isempty(output_image)
-                    output_image = combined_result.GetOutputImage;
-                end
-                if isempty(cache_info)
-                    cache_info = combined_result.GetCacheInfo;
-                end
-            end
-        end
-        
-        function context_list = GetContextList(obj, output_context, reporting)
             context_list = [];
             for next_output_context_set = CoreContainerUtilities.ConvertToSet(output_context);
                 next_output_context = next_output_context_set{1};
@@ -112,23 +78,6 @@ classdef MimContextHierarchy < CoreBaseClass
             end            
         end
         
-        
-        function SaveEditedResult(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
-            % This function saves a manually edited result which plugins
-            % may use to modify their results
-            
-            % Determines the context and context type requested by the calling function
-            if isempty(input_context)
-                reporting.Error('MimContextHierarchy:NoContextSpecified', 'When calling SaveEditedResult(), the contex of the input image must be specified.');
-                input_context = obj.ContextDef.GetDefaultContext;
-            end
-            
-            obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
-        end
-        
-    end
-    
-    methods (Access = private)
         function combined_result = GetResultRecursive(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
             
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name, output_context, reporting);
@@ -175,6 +124,22 @@ classdef MimContextHierarchy < CoreBaseClass
             obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, combined_result.GetResult, combined_result.GetPluginHasBeenRun, combined_result.GetCacheInfo, dataset_stack, dataset_uid, reporting);
         end
         
+        function SaveEditedResult(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
+            % This function saves a manually edited result which plugins
+            % may use to modify their results
+            
+            % Determines the context and context type requested by the calling function
+            if isempty(input_context)
+                reporting.Error('MimContextHierarchy:NoContextSpecified', 'When calling SaveEditedResult(), the contex of the input image must be specified.');
+                input_context = obj.ContextDef.GetDefaultContext;
+            end
+            
+            obj.SaveEditedResultForAllContexts(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
+        end
+        
+    end
+    
+    methods (Access = private)
         function combined_result = GetResultsForSameContext(obj, plugin_name, output_context, output_context_mapping, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
             
             [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting);

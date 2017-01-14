@@ -65,7 +65,7 @@ classdef MimDatasetResults < handle
             obj.ContextHierarchy = MimContextHierarchy(context_def, obj.DependencyTracker, obj.ImageTemplates);
         end
 
-        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, context, reporting, allow_results_to_be_cached_override)
+        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, output_context, reporting, allow_results_to_be_cached_override)
             % Returns the results of a plugin. If a valid result is cached on disk,
             % this wil be returned provided all the dependencies are valid.
             % Otherwise the plugin will be executed and the new result returned.
@@ -76,7 +76,7 @@ classdef MimDatasetResults < handle
 
             reporting.PushProgress;
             if nargin < 4
-                context = [];
+                output_context = [];
             end
             generate_image = nargout > 2;
             
@@ -107,7 +107,38 @@ classdef MimDatasetResults < handle
             % Run the plugin for each required context and assemble result
             dataset_uid = obj.ImageInfo.ImageUid;
             try
-                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                context_list = obj.ContextHierarchy.GetContextList(output_context, plugin_info, reporting);
+                plugin_has_been_run = false;
+                result = [];
+                output_image = [];
+                cache_info = [];
+
+                for next_output_context_set = context_list;
+                    next_output_context = next_output_context_set{1};
+                    combined_result = obj.ContextHierarchy.GetResultRecursive(plugin_name, next_output_context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                    plugin_has_been_run = plugin_has_been_run | combined_result.GetPluginHasBeenRun;
+                    if numel(context_list) == 1
+                        result = combined_result.GetResult;
+                    else
+                        result.(char(next_output_context)) = combined_result.GetResult;
+                    end
+
+                    % Note for simplicity we return only one output image and
+                    % one cache info even if we are requesting multiple
+                    % results. This is because these outputs are really
+                    % additional aids and we save the caller the responsibility
+                    % of having to deal with a compound output. But there is an
+                    % argument for packing all the results consistently - we
+                    % would need to ensure this is correctly dealt with by the
+                    % caller
+                    if isempty(output_image)
+                        output_image = combined_result.GetOutputImage;
+                    end
+                    if isempty(cache_info)
+                        cache_info = combined_result.GetCacheInfo;
+                    end
+                end
+
             catch ex
                 dataset_stack.ClearStack;
                 rethrow(ex);
