@@ -78,7 +78,7 @@ classdef MimDatasetResults < handle
             if nargin < 4
                 context = [];
             end
-            generate_results = nargout > 2;
+            generate_image = nargout > 2;
             
             % Get information about the plugin
             plugin_class = feval(plugin_name);
@@ -96,8 +96,36 @@ classdef MimDatasetResults < handle
             % Update the progress dialog with the current plugin being run
             reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
             
-            % Run the plugin
-            [result, cache_info, output_image, plugin_has_been_run] = obj.RunPluginWithOptionalImageGeneration(plugin_name, plugin_info, plugin_class, generate_results, dataset_stack, context, memory_cache_policy, disk_cache_policy, reporting);
+            preview_exists = obj.PreviewImages.DoesPreviewExist(plugin_name);
+            
+            % We don't save the preview image if the plugin result was loaded
+            % from the cache, unless there is no existing preview image
+            force_generate_preview = (plugin_info.GeneratePreview && ~preview_exists);
+            
+            force_generate_image = generate_image || force_generate_preview;
+
+            % Run the plugin for each required context and assemble result
+            dataset_uid = obj.ImageInfo.ImageUid;
+            try
+                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+            catch ex
+                dataset_stack.ClearStack;
+                rethrow(ex);
+            end
+
+            cache_preview = plugin_info.GeneratePreview && (plugin_has_been_run || ~preview_exists);
+            
+            % Generate and cache a preview image
+            if cache_preview && ~isempty(output_image) && output_image.ImageExists
+                preview_size = [50, 50];
+                output_image.GeneratePreview(preview_size, plugin_info.FlattenPreviewImage);
+                obj.PreviewImages.AddPreview(plugin_name, output_image.Preview, reporting);
+                
+                % Fire an event indictaing the preview image has changed. This
+                % will allow any listening gui to update its preview images if
+                % necessary
+                obj.ExternalWrapperNotifyFunction('PreviewImageChanged', CoreEventData(plugin_name));
+            end
             
             % Open any output folders which have been written to by the plugin
             obj.OutputFolder.OpenChangedFolders(reporting);
@@ -360,45 +388,6 @@ classdef MimDatasetResults < handle
 
         function RecordNewFileAdded(obj, plugin_name, file_path, file_name, description, reporting)
             obj.OutputFolder.RecordNewFileAdded(plugin_name, file_path, file_name, description, reporting)
-        end
-    end
-
-    methods (Access = private)
-                
-        function [result, cache_info, output_image, plugin_has_been_run] = RunPluginWithOptionalImageGeneration(obj, plugin_name, plugin_info, plugin_class, generate_image, dataset_stack, context, memory_cache_policy, disk_cache_policy, reporting)
-            % Returns the plugin result, computing if necessary
-            
-            preview_exists = obj.PreviewImages.DoesPreviewExist(plugin_name);
-            
-            % We don't save the preview image if the plugin result was loaded
-            % from the cache, unless there is no existing preview image
-            
-            force_generate_preview = (plugin_info.GeneratePreview && ~preview_exists);
-            
-            force_generate_image = generate_image || force_generate_preview;
-
-            % Run the plugin for each required context and assemble result
-            dataset_uid = obj.ImageInfo.ImageUid;
-            try
-                [result, output_image, plugin_has_been_run, cache_info] = obj.ContextHierarchy.GetResult(plugin_name, context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
-            catch ex
-                dataset_stack.ClearStack;
-                rethrow(ex);
-            end
-
-            cache_preview = plugin_info.GeneratePreview && (plugin_has_been_run || ~preview_exists);
-            
-            % Generate and cache a preview image
-            if cache_preview && ~isempty(output_image) && output_image.ImageExists
-                preview_size = [50, 50];
-                output_image.GeneratePreview(preview_size, plugin_info.FlattenPreviewImage);
-                obj.PreviewImages.AddPreview(plugin_name, output_image.Preview, reporting);
-                
-                % Fire an event indictaing the preview image has changed. This
-                % will allow any listening gui to update its preview images if
-                % necessary
-                obj.ExternalWrapperNotifyFunction('PreviewImageChanged', CoreEventData(plugin_name));
-            end
         end
     end
 end
