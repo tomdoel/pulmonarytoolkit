@@ -63,20 +63,7 @@ classdef MimContextHierarchy < CoreBaseClass
                 output_context = obj.ContextDef.ChooseOutputContext(plugin_info.Context);
             end
             
-            context_list = [];
-            for next_output_context_set = CoreContainerUtilities.ConvertToSet(output_context);
-                next_output_context = next_output_context_set{1};
-                if obj.Contexts.isKey(char(next_output_context))
-                    context_list{end + 1} = next_output_context;
-                elseif obj.ContextSets.isKey(char(next_output_context))
-                    context_set_mapping = obj.ContextSets(char(next_output_context));
-                    context_mapping_list = context_set_mapping.ContextList;
-                    context_list = [context_list, CoreContainerUtilities.GetFieldValuesFromSet(context_mapping_list, 'Context')];
-                else
-                    reporting.Error('MimContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
-                end
-            end
-            
+            context_list = obj.GetContextList(output_context, reporting);
             plugin_has_been_run = false;
             result = [];
             output_image = [];
@@ -108,6 +95,23 @@ classdef MimContextHierarchy < CoreBaseClass
                 end
             end
         end
+        
+        function context_list = GetContextList(obj, output_context, reporting)
+            context_list = [];
+            for next_output_context_set = CoreContainerUtilities.ConvertToSet(output_context);
+                next_output_context = next_output_context_set{1};
+                if obj.Contexts.isKey(char(next_output_context))
+                    context_list{end + 1} = next_output_context;
+                elseif obj.ContextSets.isKey(char(next_output_context))
+                    context_set_mapping = obj.ContextSets(char(next_output_context));
+                    context_mapping_list = context_set_mapping.ContextList;
+                    context_list = [context_list, CoreContainerUtilities.GetFieldValuesFromSet(context_mapping_list, 'Context')];
+                else
+                    reporting.Error('MimContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
+                end
+            end            
+        end
+        
         
         function SaveEditedResult(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)
             % This function saves a manually edited result which plugins
