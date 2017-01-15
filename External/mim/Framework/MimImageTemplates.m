@@ -47,7 +47,7 @@ classdef MimImageTemplates < CoreBaseClass
     end
     
     methods
-        function obj = MimImageTemplates(framework_app_def, dataset_results, context_def, dataset_disk_cache, reporting)
+        function obj = MimImageTemplates(framework_app_def, dataset_results, context_def, dataset_disk_cache, pipelines, reporting)
             
             obj.Config = framework_app_def.GetFrameworkConfig;
             obj.DatasetDiskCache = dataset_disk_cache;
@@ -72,6 +72,9 @@ classdef MimImageTemplates < CoreBaseClass
 
                 % Add handles to the functions used to generate the templates
                 obj.TemplateGenerationFunctions(char(context_mapping.Context)) = context_mapping.TemplateGenerationFunctions;
+
+                % Add a pipeline to trigger the template generation Plugin
+                pipelines.AddPipeline(context_mapping.ContextTriggerPlugin, char(context_mapping.Context), context_mapping.TemplateGenerationFunctions);
             end
             
             % Loads cached template data
@@ -102,60 +105,6 @@ classdef MimImageTemplates < CoreBaseClass
             
             template.CropToFit;
         end
-
-
-        function UpdateTemplates(obj, plugin_name, context, result_image, result_may_have_changed, cache_info, dataset_stack, dataset_uid, reporting)
-            % Check to see if a plugin which has been run is associated with any of
-            % the contexts. If it is, create a new template image for that context
-            % if one does not already exist
-            
-            % The cache info may be returned as a heirarchy, so extract out the first
-            % stack item. This should be sufficient for parsing the dependency list
-            
-            if isempty(result_image) || isempty(cache_info)
-                return;
-            end
-            
-            while isa(cache_info, 'MimCompositeResult')
-                fields = fieldnames(cache_info);
-                cache_info = cache_info.(fields{1});
-            end
-            
-            % Check whether the plugin that has been run is the template for
-            % this context
-            context_char = char(context);
-            if obj.ValidContexts.isKey(context_char)
-                context_plugin_name = obj.ValidContexts(context_char);
-                if strcmp(plugin_name, context_plugin_name)
-                    
-                    % Check if the result image is of a type that can be used to
-                    % generate a template image
-                    if ~isempty(result_image) && isa(result_image, 'PTKImage')
-                        
-                        if ~obj.TemplateGenerationFunctions.isKey(context_char)
-                            reporting.Error('MimImageTemplates:TemplateGenerationFunctionNotFound', 'Code error: the function handle required to generate this template was not found in the map.');
-                        end
-
-                        template_plugin = obj.TemplateGenerationFunctions(context_char);
-
-                        % Create a new template image if required for this
-                        % context, or if the template has changed
-                        if result_may_have_changed || obj.DatasetResults.ResultExistsForSpecificContext(template_plugin, PTKContext.(context_char), reporting);
-
-                            % Trigger generation of the templation creation
-                            % plugin, which should use the temporarily
-                            % cached result in memory and cache the
-                            % template permanently on disk
-                            if ~dataset_stack.PluginAlreadyExistsInStack(template_plugin, PTKContext.(context_char), dataset_uid)
-                                obj.DatasetResults.GetResult(template_plugin, dataset_stack, PTKContext.(context_char), reporting);
-                            end                            
-                        end
-                    end
-                    
-                end
-            end
-        end
-
 
         function context_is_enabled = IsContextEnabled(obj, context, reporting)
             % Check to see if a context has been disabled for this dataset, due to a

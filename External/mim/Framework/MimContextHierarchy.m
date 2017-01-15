@@ -44,12 +44,14 @@ classdef MimContextHierarchy < CoreBaseClass
         
         DependencyTracker
         ImageTemplates
+        Pipelines
     end
     
     methods
-        function obj = MimContextHierarchy(context_def, dependency_tracker, image_templates)
+        function obj = MimContextHierarchy(context_def, dependency_tracker, image_templates, pipelines)
             obj.DependencyTracker = dependency_tracker;
             obj.ImageTemplates = image_templates;
+            obj.Pipelines = pipelines;
             
             obj.ContextDef = context_def;
             obj.Contexts = context_def.GetContexts;
@@ -157,7 +159,7 @@ classdef MimContextHierarchy < CoreBaseClass
             obj.ImageTemplates.NoteSuccessRunPlugin(plugin_name, output_context, reporting);
             
             % Allow pipelines to be run if required
-            obj.ImageTemplates.UpdateTemplates(plugin_name, output_context, combined_result.GetResult, combined_result.GetPluginHasBeenRun, combined_result.GetCacheInfo, dataset_stack, dataset_uid, reporting);
+            obj.Pipelines.RunPipelines(plugin_name, output_context, combined_result.GetPluginHasBeenRun, dataset_stack, dataset_uid, reporting);
         end
         
         function SaveEditedResultRecursive(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)

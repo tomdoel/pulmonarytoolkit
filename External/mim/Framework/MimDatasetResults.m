@@ -39,6 +39,7 @@ classdef MimDatasetResults < handle
         ContextHierarchy     % Processes the calls to plugins, performing conversions between contexts where necessary
         DatasetDiskCache     % Reads and writes to the disk cache for this dataset
         DependencyTracker    % Tracks plugin usage to construct dependency lists 
+        Pipelines            % Pipelines which trigger Plugins after other Plugins are called
         ImageTemplates       % Template images for different contexts
         OutputFolder         % Saves files to the output folder
         Reporting            % Object for error and progress reporting
@@ -58,11 +59,12 @@ classdef MimDatasetResults < handle
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.ExternalWrapperNotifyFunction = external_notify_function;
-            obj.ImageTemplates = MimImageTemplates(framework_app_def, obj, context_def, dataset_disk_cache, reporting);
+            obj.Pipelines = MimPipelines(obj);
+            obj.ImageTemplates = MimImageTemplates(framework_app_def, obj, context_def, dataset_disk_cache, obj.Pipelines, reporting);
             obj.OutputFolder = MimOutputFolder(framework_app_def, dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
             obj.PreviewImages = MimPreviewImages(framework_app_def, dataset_disk_cache, reporting);
             obj.DependencyTracker = MimPluginDependencyTracker(framework_app_def, dataset_disk_cache, plugin_cache);
-            obj.ContextHierarchy = MimContextHierarchy(context_def, obj.DependencyTracker, obj.ImageTemplates);
+            obj.ContextHierarchy = MimContextHierarchy(context_def, obj.DependencyTracker, obj.ImageTemplates, obj.Pipelines);
         end
 
         function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, output_context, reporting, allow_results_to_be_cached_override)
