@@ -155,7 +155,7 @@ classdef MimDatasetResults < handle
                 % Fire an event indictaing the preview image has changed. This
                 % will allow any listening gui to update its preview images if
                 % necessary
-                obj.ExternalWrapperNotifyFunction('PreviewImageChanged', CoreEventData(plugin_name));
+                obj.ExternalWrapperNotifyFunction(CoreEventData(plugin_name));
             end
             
             % Open any output folders which have been written to by the plugin

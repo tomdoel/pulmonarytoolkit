@@ -358,8 +358,7 @@ classdef MimDataset < CoreBaseClass
             % Fire an event indictaing the preview image has changed. This
             % will allow any listening gui to update its preview images if
             % necessary
-            obj.notify('PreviewImageChanged', event_data);
-            
+            obj.notify('PreviewImageChanged', CoreEventData(event_data.Data));
         end
         
     end
