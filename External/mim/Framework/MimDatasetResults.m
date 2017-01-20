@@ -175,6 +175,12 @@ classdef MimDatasetResults < handle
             result_exists = obj.DatasetDiskCache.Exists(plugin_name, context, reporting);
         end
 
+        function result_exists = ManualSegmentationExists(obj, name, reporting)
+            % Returns true if a manual segmentation results exists with this name
+            
+            result_exists = obj.DatasetDiskCache.ManualSegmentationExists(name, reporting);
+        end
+
         function image_info = GetImageInfo(obj, reporting)
             % Returns a MimImageInfo structure with image information, including the
             % UID, filenames and file path
@@ -229,16 +235,16 @@ classdef MimDatasetResults < handle
             data = obj.DatasetDiskCache.LoadMarkerPoints(name, reporting);
         end
         
-        function SaveManualSegmentation(obj, name, data, context, reporting)
+        function SaveManualSegmentation(obj, name, data, reporting)
             % Save manual segmentation as a cache file associated with this dataset
         
-            obj.DatasetDiskCache.SaveManualSegmentation(name, data, context, reporting);
+            obj.DatasetDiskCache.SaveManualSegmentation(name, data, reporting);
         end
         
-        function data = LoadManualSegmentation(obj, name, context, reporting)
+        function data = LoadManualSegmentation(obj, name, reporting)
             % Load data from a cache file associated with this dataset
         
-            data = obj.DatasetDiskCache.LoadManualSegmentation(name, context, reporting);
+            data = obj.DatasetDiskCache.LoadManualSegmentation(name, reporting);
         end
         
         function edited_result = GetDefaultEditedResult(obj, plugin_name, dataset_stack, context, reporting)

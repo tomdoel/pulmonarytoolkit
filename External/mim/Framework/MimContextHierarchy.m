@@ -59,6 +59,8 @@ classdef MimContextHierarchy < CoreBaseClass
         end
         
         function context_list = GetContextList(obj, output_context, plugin_info, reporting)
+            % Parses a list of Contexts, expands out any ContextSets into
+            % Contexts, and returns an error if a Context is not known
             
             % Determines the context and context type requested by the calling function
             if isempty(output_context)

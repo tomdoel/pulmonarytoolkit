@@ -172,17 +172,17 @@ classdef MimDataset < CoreBaseClass
             obj.PostCallTidy;
         end
 
-        function SaveManualSegmentation(obj, name, data, context, varargin)
+        function SaveManualSegmentation(obj, name, data, varargin)
             % Save data as a cache file associated with this dataset
             obj.PreCallTidy;
-            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveManualSegmentation(name, data, context, obj.Reporting);
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveManualSegmentation(name, data, obj.Reporting);
             obj.PostCallTidy;
         end
 
-        function data = LoadManualSegmentation(obj, name, context, varargin)
+        function data = LoadManualSegmentation(obj, name, varargin)
             % Load data from a cache file associated with this dataset
             obj.PreCallTidy;
-            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadManualSegmentation(name, context, obj.Reporting);
+            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadManualSegmentation(name, obj.Reporting);
             obj.PostCallTidy;
         end
         
