@@ -123,16 +123,16 @@ classdef MimDatasetCacheSelector < handle
             end
         end
         
-        function SaveManualSegmentation(obj, filename, value, context, reporting)
+        function SaveManualSegmentation(obj, filename, value, reporting)
             % Saves a manual segmentation associated with this dataset to the cache
             
-            obj.ManualSegmentationsDiskCache.Save(filename, value, context, reporting);
+            obj.ManualSegmentationsDiskCache.Save(filename, value, [], reporting);
         end
         
-        function value = LoadManualSegmentation(obj, filename, context, reporting)
+        function value = LoadManualSegmentation(obj, filename, reporting)
             % Loads a manual segmentation data associated with this dataset from the cache
             
-            value = obj.ManualSegmentationsDiskCache.Load(filename, context, reporting);
+            value = obj.ManualSegmentationsDiskCache.Load(filename, [], reporting);
         end
         
         function SaveMarkerPoints(obj, data_filename, value, reporting)
@@ -189,6 +189,10 @@ classdef MimDatasetCacheSelector < handle
 
         function exists = EditedResultExists(obj, name, context, reporting)
             exists = obj.EditedResultsDiskCache.Exists(name, context, reporting);
+        end
+        
+        function exists = ManualSegmentationExists(obj, name, reporting)
+            exists = obj.ManualSegmentationsDiskCache.Exists(name, [], reporting);
         end
         
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
