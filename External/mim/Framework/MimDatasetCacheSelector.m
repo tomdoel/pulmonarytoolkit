@@ -56,12 +56,6 @@ classdef MimDatasetCacheSelector < handle
             end
         end
         
-        function [value, cache_info] = LoadEditedPluginResult(obj, plugin_name, context, reporting)
-            % Fetches edited cached result for a plugin
-        
-            [value, cache_info] = obj.EditedResultsDiskCache.Load(plugin_name, context, reporting);
-        end
-        
         function SavePluginResult(obj, plugin_name, result, cache_info, context, disk_cache_policy, memory_cache_policy, reporting)
             % Stores a plugin result in the disk cache and updates cached dependency
             % information
@@ -75,6 +69,18 @@ classdef MimDatasetCacheSelector < handle
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
+        function cache_path = GetCachePath(obj, ~)
+            % Returns the path to the plugin results cache
+            
+           cache_path = obj.ResultsDiskCache.CachePath;
+        end
+        
+        function [value, cache_info] = LoadEditedPluginResult(obj, plugin_name, context, reporting)
+            % Fetches edited cached result for a plugin
+        
+            [value, cache_info] = obj.EditedResultsDiskCache.Load(plugin_name, context, reporting);
+        end
+        
         function SaveEditedResult(obj, plugin_name, context, edited_result, cache_info, reporting)
             % Stores a plugin result after semi-automatic editing in the edited
             % results disk cache and updates cached dependency information
@@ -85,25 +91,28 @@ classdef MimDatasetCacheSelector < handle
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
-        function CachePluginInfo(obj, plugin_name, cache_info, context, is_edited, reporting)
-            % Caches Dependency information
-            
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, is_edited, reporting);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, is_edited, reporting);
-            obj.SaveCachedPluginInfoFile(reporting);
+        function exists = EditedResultExists(obj, name, context, reporting)
+            exists = obj.EditedResultsDiskCache.Exists(name, context, reporting);
         end
         
+        function DeleteEditedPluginResult(obj, plugin_name, reporting)
+            % Deletes edited results associated with a particular plugin
+            
+            dir_list = obj.EditedResultsDiskCache.DeleteFileForAllContexts(plugin_name, reporting);
+            for context = dir_list
+                obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context{1}, true, reporting);
+            end
+        end
+        
+        function cache_path = GetEditedResultsPath(obj, ~)
+           cache_path = obj.EditedResultsDiskCache.CachePath;
+        end
+ 
         function UpdateEditedResults(obj, plugin_name, cache_info, context, reporting)
             % Updates the results cache if the existance of an edited
             % result has changed
             
             obj.PluginResultsInfo.UpdateEditedResults(plugin_name, cache_info, context, reporting);
-        end
-        
-        function SaveData(obj, data_filename, value, reporting)
-            % Saves additional data associated with this dataset to the cache
-            
-            obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], reporting);
         end
         
         function value = LoadData(obj, data_filename, reporting)
@@ -123,10 +132,10 @@ classdef MimDatasetCacheSelector < handle
             end
         end
         
-        function SaveManualSegmentation(obj, filename, value, reporting)
-            % Saves a manual segmentation associated with this dataset to the cache
+        function SaveData(obj, data_filename, value, reporting)
+            % Saves additional data associated with this dataset to the cache
             
-            obj.ManualSegmentationsDiskCache.Save(filename, value, [], reporting);
+            obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], reporting);
         end
         
         function value = LoadManualSegmentation(obj, filename, reporting)
@@ -135,10 +144,28 @@ classdef MimDatasetCacheSelector < handle
             value = obj.ManualSegmentationsDiskCache.Load(filename, [], reporting);
         end
         
-        function SaveMarkerPoints(obj, data_filename, value, reporting)
-            % Saves marker points associated with this dataset to the cache
+        function SaveManualSegmentation(obj, filename, value, reporting)
+            % Saves a manual segmentation associated with this dataset to the cache
             
-            obj.MarkersDiskCache.Save(data_filename, value, [], reporting);
+            obj.ManualSegmentationsDiskCache.Save(filename, value, [], reporting);
+        end
+        
+        function exists = ManualSegmentationExists(obj, name, reporting)
+            % Returns true if the specified manual segmentation result exists
+            
+            exists = obj.ManualSegmentationsDiskCache.Exists(name, [], reporting);
+        end
+        
+        function file_list = GetListOfManualSegmentations(obj)
+            % Returns a list of manual segmentation results in the cache
+            
+            file_list = obj.ManualSegmentationsDiskCache.GetAllFilesInCache;
+        end
+
+        function DeleteManualSegmentation(obj, segmentation_name, reporting)
+            % Deletes manual segmentation results
+            
+            obj.ManualSegmentationsDiskCache.DeleteFileForAllContexts(segmentation_name, reporting);
         end
         
         function value = LoadMarkerPoints(obj, filename, reporting)
@@ -147,38 +174,47 @@ classdef MimDatasetCacheSelector < handle
             value = obj.MarkersDiskCache.Load(filename, [], reporting);
         end
         
-        function cache_path = GetCachePath(obj, ~)
-           cache_path = obj.ResultsDiskCache.CachePath;
+        function SaveMarkerPoints(obj, data_filename, value, reporting)
+            % Saves marker points associated with this dataset to the cache
+            
+            obj.MarkersDiskCache.Save(data_filename, value, [], reporting);
         end
         
-        function cache_path = GetEditedResultsPath(obj, ~)
-           cache_path = obj.EditedResultsDiskCache.CachePath;
+        function exists = MarkerSetExists(obj, name, reporting)
+            % Returns true if the specified marker set exists
+            
+            exists = obj.MarkersDiskCache.Exists(name, [], reporting);
         end
- 
+        
+        function file_list = GetListOfMarkerSets(obj)
+            % Returns the names of all stored marker sets
+            
+            file_list = obj.MarkersDiskCache.GetAllFilesInCache;
+        end
+        
+        function DeleteMarkerSet(obj, name, reporting)
+            % Deletes manual segmentation results
+            
+            obj.MarkersDiskCache.DeleteFileForAllContexts(name, reporting);
+        end
+        
         function Delete(obj, reporting)
             obj.ResultsMemoryCache.Delete(reporting);
             obj.FrameworkDatasetDiskCache.Delete(reporting);
             obj.ResultsDiskCache.Delete(reporting);
         end
         
+        function CachePluginInfo(obj, plugin_name, cache_info, context, is_edited, reporting)
+            % Caches Dependency information
+            
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, is_edited, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, is_edited, reporting);
+            obj.SaveCachedPluginInfoFile(reporting);
+        end
+        
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
             obj.ResultsMemoryCache.RemoveAllCachedFiles(remove_framework_files, reporting);
             obj.ResultsDiskCache.RemoveAllCachedFiles(remove_framework_files, reporting);
-        end
-        
-        function DeleteEditedPluginResult(obj, plugin_name, reporting)
-            % Deletes edited results associated with a particular plugin
-            
-            dir_list = obj.EditedResultsDiskCache.DeleteFileForAllContexts(plugin_name, reporting);
-            for context = dir_list
-                obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context{1}, true, reporting);
-            end
-        end
-        
-        function DeleteManualSegmentation(obj, segmentation_name, reporting)
-            % Deletes manual segmentation results
-            
-            obj.ManualSegmentationsDiskCache.DeleteFileForAllContexts(segmentation_name, reporting);
         end
         
         function exists = Exists(obj, name, context, reporting)
@@ -187,24 +223,8 @@ classdef MimDatasetCacheSelector < handle
             exists = exists || obj.EditedResultsDiskCache.Exists(name, context, reporting);
         end
 
-        function exists = EditedResultExists(obj, name, context, reporting)
-            exists = obj.EditedResultsDiskCache.Exists(name, context, reporting);
-        end
-        
-        function exists = ManualSegmentationExists(obj, name, reporting)
-            exists = obj.ManualSegmentationsDiskCache.Exists(name, [], reporting);
-        end
-        
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
             [valid, edited_result_exists] = obj.PluginResultsInfo.CheckDependencyValid(next_dependency, reporting);
-        end
-        
-        function file_list = GetListOfManualSegmentations(obj)
-            file_list = obj.ManualSegmentationsDiskCache.GetAllFilesInCache;
-        end
-
-        function file_list = GetListOfMarkerSets(obj)
-            file_list = obj.MarkersDiskCache.GetAllFilesInCache;
         end
         
         function ClearTemporaryMemoryCache(obj)
