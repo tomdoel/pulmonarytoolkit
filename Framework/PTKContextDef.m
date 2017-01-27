@@ -115,7 +115,7 @@ classdef PTKContextDef < handle
             % function provides the context which does contain an
             % appropriate mask
             
-            if (context == PTKContext.LungROI) || (context == PTKContext.OriginalImage)
+            if CoreCompareUtilities.CompareEnumName(context, PTKContext.LungROI) || CoreCompareUtilities.CompareEnumName(context, PTKContext.OriginalImage)
                 template_mask_context = PTKContext.Lungs;
             else
                 template_mask_context = context;

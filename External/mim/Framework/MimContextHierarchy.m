@@ -42,13 +42,15 @@ classdef MimContextHierarchy < CoreBaseClass
         Contexts
         ContextDef
         
+        DiskCache
         DependencyTracker
         ImageTemplates
         Pipelines
     end
     
     methods
-        function obj = MimContextHierarchy(context_def, dependency_tracker, image_templates, pipelines)
+        function obj = MimContextHierarchy(context_def, dataset_disk_cache, dependency_tracker, image_templates, pipelines)
+            obj.DiskCache = dataset_disk_cache;
             obj.DependencyTracker = dependency_tracker;
             obj.ImageTemplates = image_templates;
             obj.Pipelines = pipelines;
@@ -68,6 +70,7 @@ classdef MimContextHierarchy < CoreBaseClass
             end
             
             context_list = [];
+            
             for next_output_context_set = CoreContainerUtilities.ConvertToSet(output_context);
                 next_output_context = next_output_context_set{1};
                 if obj.Contexts.isKey(char(next_output_context))
@@ -77,13 +80,19 @@ classdef MimContextHierarchy < CoreBaseClass
                     context_mapping_list = context_set_mapping.ContextList;
                     context_list = [context_list, CoreContainerUtilities.GetFieldValuesFromSet(context_mapping_list, 'Context')];
                 else
-                    reporting.Error('MimContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
+                    if obj.DiskCache.ManualSegmentationExists(char(next_output_context), reporting)
+                        context_list{end + 1} = next_output_context;
+                    else
+                        reporting.Error('MimContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
+                    end
                 end
             end            
         end
         
         function combined_result = GetResultRecursive(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
             
+            % Records that there has been an attempt to call this plugin,
+            % so that we can detect if a plugin call failed
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name, output_context, reporting);
 
             % Determines the type of context supported by the plugin
@@ -97,13 +106,18 @@ classdef MimContextHierarchy < CoreBaseClass
             if isempty(output_context)
                 output_context = obj.ContextDef.GetDefaultContext;
             end
-            output_context_mapping = obj.Contexts(char(output_context));
-            output_context_set_mapping = output_context_mapping.ContextSet;
-            output_context_set = output_context_set_mapping.ContextSet;
+            
+            if obj.Contexts.isKey(char(output_context))
+                output_context_mapping = obj.Contexts(char(output_context));
+                output_context_set_mapping = output_context_mapping.ContextSet;
+                output_context_set = output_context_set_mapping.ContextSet;
+            else
+                output_context_set = [];
+            end
             
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to call the plugin
-            if obj.ContextDef.ContextSetMatches(plugin_context_set, output_context_set)
+            if isempty(output_context_set) || obj.ContextDef.ContextSetMatches(plugin_context_set, output_context_set)
                 [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting);
 
                 % If the plugin has been re-run, then we will generate an output

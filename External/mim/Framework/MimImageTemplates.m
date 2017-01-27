@@ -85,14 +85,25 @@ classdef MimImageTemplates < CoreBaseClass
         function template = GetTemplateImage(obj, context, dataset_stack, reporting)
             % Returns an image template for the requested context
             
-            % Check the context is recognised
-            if ~obj.ValidContexts.isKey(char(context))
-                reporting.Error('MimImageTemplates:UnknownContext', 'Context not recogised');
+            if obj.ValidContexts.isKey(char(context))
+                % If the context is recognised then use the template
+                % generation function
+                template_plugin = obj.TemplateGenerationFunctions(char(context));
+                template = obj.DatasetResults.GetResult(template_plugin, dataset_stack, context, reporting);
+                template = template.Copy;                
+            else
+                if obj.DatasetDiskCache.ManualSegmentationExists(context, reporting)
+                    template = obj.DatasetDiskCache.LoadManualSegmentation(context, reporting);
+                    template = template.Copy;
+                    template_raw = template.RawImage;
+                    if isnumeric(template_raw)
+                        template_raw = template_raw > 0;
+                    end
+                    template.ChangeRawImage(template_raw);
+                else
+                    reporting.Error('MimImageTemplates:UnknownContext', 'Context not recogised');
+                end
             end
-
-            template_plugin = obj.TemplateGenerationFunctions(char(context));
-            template = obj.DatasetResults.GetResult(template_plugin, dataset_stack, context, reporting);
-            template = template.Copy;
         end
         
         function template = GetTemplateMask(obj, context, dataset_stack, reporting)

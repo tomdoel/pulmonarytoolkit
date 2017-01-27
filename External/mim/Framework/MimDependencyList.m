@@ -59,7 +59,7 @@ classdef MimDependencyList < handle
             for index = 1 : length(obj.DependencyList)
                 dependency = obj.DependencyList(index);
                 
-                if strcmp(dependency.PluginName, new_dependency.PluginName) && strcmp(dependency.DatasetUid, new_dependency.DatasetUid) && (dependency.Context == new_dependency.Context)
+                if strcmp(dependency.PluginName, new_dependency.PluginName) && strcmp(dependency.DatasetUid, new_dependency.DatasetUid) && CoreCompareUtilities.CompareEnumName(dependency.Context, new_dependency.Context)
                     if strcmp(dependency.Uid, new_dependency.Uid)
                         dependency_exists = true;
                         return;
