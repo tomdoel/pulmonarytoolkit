@@ -77,6 +77,13 @@ classdef MimMarkerPanel < GemPanel
             listbox_height = obj.MarkerListBox.GetRequestedHeight(new_position(3));
             panel_vertical_gap = panel_height - toolbar_height - listbox_height - obj.SpacingBetweenLists;
             
+            % Try to adjust the listbox so it fits in the space available,
+            % but ensure it has a minimum size
+            if (panel_vertical_gap < 0)
+                listbox_height = max(20, listbox_height + panel_vertical_gap);
+                panel_vertical_gap = panel_height - toolbar_height - listbox_height - obj.SpacingBetweenLists;
+            end
+            
             listbox_position = new_position;
             listbox_position(2) = new_position(2) + panel_vertical_gap;
             listbox_position(4) = listbox_height;
