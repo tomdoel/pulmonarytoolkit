@@ -10,7 +10,7 @@ function PTKAddPaths(varargin)
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    PTKAddPaths_Version_Number = 4;
+    PTKAddPaths_Version_Number = 5;
     
     persistent PTK_PathsHaveBeenSet
     
@@ -47,8 +47,13 @@ function PTKAddPaths(varargin)
         
         path_folders{end + 1} = fullfile('External', 'coremat');
         path_folders{end + 1} = fullfile('External', 'mim', 'Gui');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Controllers');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'DatabaseSidePanel');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Panels');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'PatientBrowser');
         path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Modes');
         path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Tools');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'ViewerPanel');
         path_folders{end + 1} = fullfile('External', 'mim', 'Framework');
         path_folders{end + 1} = fullfile('External', 'mim', 'Legacy');
         path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Filters');
