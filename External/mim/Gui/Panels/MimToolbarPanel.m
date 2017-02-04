@@ -4,7 +4,7 @@ classdef MimToolbarPanel < GemPanel
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.
     %
-    %     MimToolbarPanel represents a panel containing tool control that
+    %     MimToolbarPanel represents a panel containing tool controls that
     %     are enabled and disabled dynamically
     %
     %     Licence
