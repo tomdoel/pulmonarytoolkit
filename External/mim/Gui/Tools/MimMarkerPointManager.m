@@ -101,8 +101,11 @@ classdef MimMarkerPointManager < CoreBaseClass
         end
         
         function LoadMarkers(obj, name)
+            obj.AutoSaveMarkers;
             new_image = obj.GuiDataset.LoadMarkers(name);
-            if ~isempty(new_image)
+            if isempty(new_image)
+                obj.MarkerLayer.GetMarkerImage.SetBlankMarkerImage(obj.ViewerPanel.GetBackgroundImageSource.Image);
+            else
                 obj.MarkerLayer.GetMarkerImage.SetBlankMarkerImage(obj.ViewerPanel.GetBackgroundImageSource.Image);
                 obj.MarkerLayer.ChangeMarkerSubImage(new_image);
             end
@@ -112,6 +115,11 @@ classdef MimMarkerPointManager < CoreBaseClass
         
         function current_markers = GetCurrentMarkerSetName(obj)
             current_markers = obj.CurrentMarkersName;
+        end
+        
+        function AddMarkerSet(obj, name)
+            obj.LoadMarkers(name);
+            obj.SaveMarkers;
         end
     end
     

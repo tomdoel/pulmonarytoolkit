@@ -583,7 +583,11 @@ classdef MimGuiBase < GemFigure
         end
         
         function segmentation_list = GetListOfMarkerSets(obj)
-            segmentation_list = obj.GuiDataset.GetListOfMarkerSets;
+            if isempty(obj.GuiDataset)
+                segmentation_list = [];
+            else
+                segmentation_list = obj.GuiDataset.GetListOfMarkerSets;
+            end
         end
         
         function LoadDefaultMarkers(obj)
@@ -994,6 +998,10 @@ classdef MimGuiBase < GemFigure
         end
         
         function AddMarkerSet(obj)
+            name = inputdlg('Please enter a name for the new set of marker points you wish to create', 'New marker points');
+            if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
+                obj.MarkerManager.AddMarkerSet(name{1});
+            end
         end
     end
     

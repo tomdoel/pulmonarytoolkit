@@ -26,10 +26,14 @@ classdef MimMarkerListBox < GemListBoxWithTitle
         end
         
         function UpdateForNewImage(obj, current_dataset, window, level)
+            obj.Update;
+        end
+        
+        function Update(obj)
             obj.ListBox.ClearItems;
             
-            if ~isempty(current_dataset)
-                marker_sets = current_dataset.GetListOfMarkerSets;
+            marker_sets = obj.GuiCallback.GetListOfMarkerSets;
+            if ~isempty(marker_sets)
                 for marker_index = 1 : length(marker_sets)
                     marker_set = marker_sets{marker_index};
                     marker_item = MimMarkerSetItem(obj.ListBox.GetListBox, marker_set.Second, obj.GuiCallback);
@@ -38,6 +42,11 @@ classdef MimMarkerListBox < GemListBoxWithTitle
                 end
 
                 current_marker_set = obj.GuiCallback.GetCurrentMarkerSetName;
+                
+                % Resize as new marker sets may have been added
+                if ~isempty(obj.Position)
+                    obj.Resize(obj.Position);
+                end
                 obj.ListBox.SelectItem(current_marker_set, true);
             end
             
@@ -51,6 +60,7 @@ classdef MimMarkerListBox < GemListBoxWithTitle
     methods (Access = protected)
         function AddButtonClicked(obj, ~, event_data)
             obj.GuiCallback.AddMarkerSet;
+            obj.Update;
         end
         
         function DeleteButtonClicked(obj, ~, ~)
