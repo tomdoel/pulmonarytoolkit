@@ -28,7 +28,7 @@ classdef MimMarkerListBox < GemListBoxWithTitle
         function UpdateForNewImage(obj, current_dataset, window, level)
             obj.Update;
         end
-        
+         
         function Update(obj)
             obj.ListBox.ClearItems;
             
@@ -36,7 +36,8 @@ classdef MimMarkerListBox < GemListBoxWithTitle
             if ~isempty(marker_sets)
                 for marker_index = 1 : length(marker_sets)
                     marker_set = marker_sets{marker_index};
-                    marker_item = MimMarkerSetItem(obj.ListBox.GetListBox, marker_set.Second, obj.GuiCallback);
+                    gui_callback = obj.GuiCallback;
+                    marker_item = MimUserSavedItem(obj.ListBox.GetListBox, marker_set.Second, 'Select this marker set', @gui_callback.LoadMarkers, @gui_callback.DeleteMarkerSet);
 
                     obj.ListBox.AddItem(marker_item);
                 end
