@@ -48,7 +48,7 @@ classdef MimMarkerPanel < GemPanel
             obj.MarkerToolbar = MimToolbarPanel(obj, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically, allow_wrapping);
             obj.AddChild(obj.MarkerToolbar);
             
-            obj.MarkerListBox = MimMarkerListBox(obj, gui_app);
+            obj.MarkerListBox = MimUserSavedItemListBox(obj, 'marker set', @gui_app.LoadMarkers, @gui_app.DeleteMarkerSet, @gui_app.AddMarkerSet, @gui_app.GetListOfMarkerSets, @gui_app.GetCurrentMarkerSetName);
             obj.AddChild(obj.MarkerListBox);
             
             obj.ModeTabName = mode_tab_name;
@@ -59,7 +59,7 @@ classdef MimMarkerPanel < GemPanel
         end
         
         function MarkerSetNameChangedCallback(obj, ~, ~)
-            obj.MarkerListBox.SelectMarkerSetPanel(obj.MarkerManager.CurrentMarkersName, true);
+            obj.MarkerListBox.SelectSetPanel(obj.MarkerManager.CurrentMarkersName, true);
         end
         
         function Resize(obj, new_position)
