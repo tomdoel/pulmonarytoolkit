@@ -104,6 +104,8 @@ function dicom_image = MimLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
         modality = 'CT';
     elseif (min_value >= 0)
         modality = 'MR';
+    else
+        modality = [];
     end
     
     dicom_image = PTKDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid, header_data);
