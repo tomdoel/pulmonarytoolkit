@@ -1,7 +1,7 @@
 classdef MimWebSocketParser
     
     properties (Constant)
-        MimServerVersion = uint8(1)
+        MimServerSoftwareVersion = uint8(1)
         MimTextProtocolVersion = uint8(1)
         MimBinaryProtocolVersion = uint8(1)
     end
@@ -11,13 +11,23 @@ classdef MimWebSocketParser
             % Converts a data string into metadata and data
 
             json = loadjson(dataString);
+            header = json;
             protocolVersion = json.version;
             if protocolVersion > 1
                 error('Cannot process this protocol');
             end
-            metaData = json.metaData;
-            data = json.value;
-            header = rmfield(rmfield(json, 'value'), 'metaData');
+            if isfield(json, 'metaData')
+                metaData = json.metaData;
+                header = rmfield(json, 'metaData');
+            else
+                metaData = [];
+            end
+            if isfield(json, 'value')
+                data = json.value;
+                header = rmfield(header, 'value');
+            else
+                data = [];
+            end
         end
         
         function [header, metadata, data] = ParseBlob(dataBlob)
@@ -89,7 +99,7 @@ classdef MimWebSocketParser
             
             dataStruct = struct();
             dataStruct.version = MimWebSocketParser.MimTextProtocolVersion;
-            dataStruct.serverVersion = MimWebSocketServer.MimServerVersion;
+            dataStruct.softwareVersion = MimWebSocketParser.MimServerSoftwareVersion;
             dataStruct.modelName = modelName;
             dataStruct.localHash = serverHash;
             dataStruct.lastRemoteHash = lastClientHash;

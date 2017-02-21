@@ -17,7 +17,9 @@ classdef MimWebSocketServer < WebSocketServer
             % is the client's responsibility to reconstruct this using the
             % metadata
             
-            obj.sendToAll(MimWebSocketParser.EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, data));
+            blob = MimWebSocketParser.EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, data);
+            obj.LogBinaryMessage('Sending', bytearray);
+            obj.sendToAll(blob);
         end
         
         function sendTextModel(obj, modelName, serverHash, lastClientHash, metaData, data)
@@ -27,7 +29,9 @@ classdef MimWebSocketServer < WebSocketServer
             % reconstructed into a struct according to JSON, so assume the
             % values but not necessarily the data type will be preserved
 
-            obj.sendToAll(MimWebSocketParser.EncodeAsString(modelName, serverHash, lastClientHash, metaData, data));
+            message = MimWebSocketParser.EncodeAsString(modelName, serverHash, lastClientHash, metaData, data);
+            obj.LogStringMessage('Sending', message);
+            obj.sendToAll(message);
         end
     end
     
@@ -39,15 +43,13 @@ classdef MimWebSocketServer < WebSocketServer
         end
         
         function onTextMessage(obj, conn, message)
-            [header, data] = obj.ParseString(message);
-            fprintf('JSON received header: %s\n', header);
-            fprintf('JSON received data: %s\n', data);
+            obj.LogStringMessage('Received', message);
+            [header, data] = MimWebSocketParser.ParseString(message);
         end
         
         function onBinaryMessage(obj, conn, bytearray)
-            [header, data] = obj.ParseBlob(bytearray);
-            fprintf('JSON received header: %s\n', header);
-            fprintf('JSON received data: %s\n', data);
+            obj.LogBinaryMessage('Received', bytearray);
+            [header, data] = MimWebSocketParser.ParseBlob(bytearray);
         end
         
         function onError(obj,conn,message)
@@ -56,6 +58,22 @@ classdef MimWebSocketServer < WebSocketServer
         
         function onClose(obj,conn,message)
             fprintf('%s\n',message)
+        end
+        
+        function LogStringMessage(obj, messageType, message)
+            disp([messageType ' string message of length: ' int2str(length(message))]);
+            [header, data] = MimWebSocketParser.ParseString(message);
+            disp(' - Header: ');
+            disp(header);
+            disp(' - Data: ');
+            disp(data);
+        end
+        
+        function LogBinaryMessage(obj, messageType, blob)
+            disp([messageType ' binary message of length: ' int2str(length(blob))]);
+            [header, data] = MimWebSocketParser.ParseBlob(blob);
+            disp(' - Header: ');
+            disp(header);
         end
     end
 end
