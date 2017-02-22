@@ -18,7 +18,7 @@ classdef MimModelUpdater < CoreBaseClass
                     
                     % Update local cache if necessary. Do this before we update the remote.
                     if ~isequal(localCache.RemoteHash, remoteCache.CurrentHash)
-                        localCache.updateRemote(remoteCache.CurrentHash);
+                        localCache.updateHashes(localCache.CurrentHash, remoteCache.CurrentHash);
                     end
                     
                     % Update remote cache if necessary.
@@ -34,7 +34,7 @@ classdef MimModelUpdater < CoreBaseClass
                     
                     % Update local cache and value. Local and remote hash
                     % are the same as we are using the server values
-                    localProxy.updateValue(remoteCache.CurrentHash, remoteCache.CurrentHash, remoteProxy.getCurrentValue());
+                    localCache.updateAndNotify(remoteCache.CurrentHash, remoteCache.CurrentHash, remoteProxy.getCurrentValue());
 
                     % Update remote cache if necessary. Do this before we update the remote.
                     if ~isequal(remoteCache.RemoteHash, localCache.CurrentHash)
@@ -46,11 +46,11 @@ classdef MimModelUpdater < CoreBaseClass
 
                     % Update local cache if necessary. Do this before we update the remote.
                     if ~isequal(localCache.RemoteHash, remoteCache.CurrentHash)
-                        localCache.updateRemote(remoteCache.CurrentHash);
+                        localCache.updateHashes(localCache.CurrentHash, remoteCache.CurrentHash);
                     end
                     
                     % Update remote cache and model value
-                    remoteProxy.updateValue(localCache.CurrentHash, localCache.RemoteHash, localProxy.getCurrentValue());
+                    remoteProxy.updateAndNotify(localCache.CurrentHash, localCache.RemoteHash, localCache.getCurrentValue());
 
                 elseif (localCache.hasChanged() && remoteCache.hasChanged())
                     % Both have changed -> conflict. We need to make some decision here

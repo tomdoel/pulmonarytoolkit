@@ -15,7 +15,7 @@ classdef MimWebSocketServer < WebSocketServer
         function obj = MimWebSocketServer(port)
             obj@WebSocketServer(port);
             obj.ConnectionCacheMap = MimConnectionCacheMap();
-            obj.LocalCache = MimModelCache();
+            obj.LocalCache = MimLocalModelCache();
         end
         
         function sendBinaryModel(obj, modelName, serverHash, lastClientHash, metaData, data)
@@ -60,14 +60,12 @@ classdef MimWebSocketServer < WebSocketServer
             % Update the local model cache
             localModelCache.modifyCurrentHashAndValue(hash, value);
             
-            localProxy = MimLocalModelProxy(localModelCache);
-            
             for connection = obj.ConnectionCacheMap.getAllConnections
                 % Get the remote model cache for this connection
                 remoteModelCache = connection{1}.getModelCacheEntry(modelName);
                 
                 % Update models and trigger synchronisation
-                MimModelUpdater.updateModel(localProxy, MimRemoteModelProxy(obj, modelName, [], remoteModelCache));
+                MimModelUpdater.updateModel(localModelCache, MimRemoteModelProxy(obj, modelName, [], remoteModelCache));
             end
         end        
     end
@@ -125,10 +123,10 @@ classdef MimWebSocketServer < WebSocketServer
             localModelCache = obj.LocalCache.getModelCacheEntry(header.modelName);
             
             % Update the remote model cache
-            remoteModelCache.update(header.localHash, header.lastRemoteHash);
+            remoteModelCache.updateHashes(header.localHash, header.lastRemoteHash);
             
             % Update models and trigger synchronisation
-            MimModelUpdater.updateModel(MimLocalModelProxy(localModelCache), MimRemoteModelProxy(obj, header.modelName, data, remoteModelCache));
+            MimModelUpdater.updateModel(localModelCache, MimRemoteModelProxy(obj, header.modelName, data, remoteModelCache));
         end        
     end
 end

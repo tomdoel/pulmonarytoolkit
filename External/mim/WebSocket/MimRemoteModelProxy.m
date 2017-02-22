@@ -19,7 +19,7 @@ classdef MimRemoteModelProxy < handle
             obj.Websocket.updateModelHashes(obj.ModelName, currentHash, remoteHash);
         end
     
-        function updateValue(obj, currentHash, remoteHash, value)
+        function updateAndNotify(obj, currentHash, remoteHash, value)
             obj.Websocket.updateModelValue(obj.ModelName, currentHash, remoteHash, value);
         end
 
