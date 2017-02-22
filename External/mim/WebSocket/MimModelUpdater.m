@@ -3,53 +3,56 @@ classdef MimModelUpdater < CoreBaseClass
     methods
         function obj = MimModelUpdater()
         end
+    end
         
-        function updateModel(obj, clientProxy, serverProxy)
-            clientCache = clientProxy.getHashes();
-            serverCache = serverProxy.getHashes();
+    methods (Static)
+        function updateModel(localProxy, remoteProxy)
+            localCache = localProxy.getCache();
+            remoteCache = remoteProxy.getCache();
 
-            if isequal(clientCache.CurrentHash, serverCache.CurrentHash)
+            if isequal(localCache.CurrentHash, remoteCache.CurrentHash)
                 % Model values are in sync
 
-                if ~isempty(clientCache.CurrentHash) && ~isempty(serverCache.CurrentHash)
+                if ~isempty(localCache.CurrentHash) && ~isempty(remoteCache.CurrentHash)
                     %If both undefined, then ignore
                     
-                    % Update local cache if necessary. Do this before we update the server.
-                    if ~isequal(clientCache.RemoteHash, serverCache.CurrentHash)
-                        clientProxy.updateLastRemoteHash(serverCache);
+                    % Update local cache if necessary. Do this before we update the remote.
+                    if ~isequal(localCache.RemoteHash, remoteCache.CurrentHash)
+                        localCache.updateRemote(remoteCache.CurrentHash);
                     end
                     
                     % Update remote cache if necessary.
-                    if ~isequal(serverCache.RemoteHash, clientCache.CurrentHash)
-                        serverProxy.updateLastRemoteHash(clientCache);
+                    if ~isequal(remoteCache.RemoteHash, localCache.CurrentHash)
+                        remoteProxy.updateHashes(localCache.CurrentHash, localCache.RemoteHash);
                     end
                 end
             else
                 % Model values are out of sync
             
-                if isempty(clientCache.CurrentHash) || (~clientCache.hasChanged() && serverCache.hasChanged())
+                if isempty(localCache.CurrentHash) || (~localCache.hasChanged() && remoteCache.hasChanged())
                     % Server value has changed, but client is unchanged, or client is undefined
                     
-                    % Update local cache and value
-                    clientProxy.updateCurrentValueToRemoteValue(serverCache, serverProxy.getCurrentValue());
+                    % Update local cache and value. Local and remote hash
+                    % are the same as we are using the server values
+                    localProxy.updateValue(remoteCache.CurrentHash, remoteCache.CurrentHash, remoteProxy.getCurrentValue());
 
-                    % Update remote cache if necessary.
-                    if ~isequal(serverCache.RemoteHash, clientCache.CurrentHash)
-                        serverProxy.updateLastRemoteHash(clientCache);
+                    % Update remote cache if necessary. Do this before we update the remote.
+                    if ~isequal(remoteCache.RemoteHash, localCache.CurrentHash)
+                        remoteProxy.updateHashes(localCache.CurrentHash, localCache.RemoteHash);
                     end
                     
-                elseif isempty(serverCache.CurrentHash) || (clientCache.hasChanged() && ~serverCache.hasChanged())
+                elseif isempty(remoteCache.CurrentHash) || (localCache.hasChanged() && ~remoteCache.hasChanged())
                     % Client value has changed, but server is unchanged, or server is undefined
 
-                    % Update local cache if necessary. Do this before we update the server.
-                    if ~isequal(clientCache.RemoteHash, serverCache.CurrentHash)
-                        clientProxy.updateLastRemoteHash(serverCache);
+                    % Update local cache if necessary. Do this before we update the remote.
+                    if ~isequal(localCache.RemoteHash, remoteCache.CurrentHash)
+                        localCache.updateRemote(remoteCache.CurrentHash);
                     end
                     
                     % Update remote cache and model value
-                    serverProxy.updateCurrentValueToRemoteValue(clientCache, clientCache.getCurrentValue());
+                    remoteProxy.updateValue(localCache.CurrentHash, localCache.RemoteHash, localProxy.getCurrentValue());
 
-                elseif (clientCache.hasChanged() && serverCache.hasChanged())
+                elseif (localCache.hasChanged() && remoteCache.hasChanged())
                     % Both have changed -> conflict. We need to make some decision here
                     disp('Conflict');
                     

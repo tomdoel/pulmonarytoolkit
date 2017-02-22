@@ -9,13 +9,11 @@ classdef MimWebSocketServer < WebSocketServer
     properties (Access = private)
         LocalCache              % Stores the local cache
         ConnectionCacheMap      % Stores the caches for each remote
-        ReceiveMessageCallback 
     end
     
     methods
-        function obj = MimWebSocketServer(port, receiveMessageCallback)
+        function obj = MimWebSocketServer(port)
             obj@WebSocketServer(port);
-            obj.ReceiveMessageCallback = receiveMessageCallback;
             obj.ConnectionCacheMap = MimConnectionCacheMap();
             obj.LocalCache = MimModelCache();
         end
@@ -43,23 +41,38 @@ classdef MimWebSocketServer < WebSocketServer
             obj.sendToAll(message);
         end
 
-        function updateModelHashes(obj, modelName, hashes)
-            obj.sendTextModel(modelName, hashes.RemoteHash, hashes.CurrentHash, [], []);
+        function updateModelHashes(obj, modelName, localHash, remoteHash)
+            obj.sendTextModel(modelName, localHash, remoteHash, [], []);
         end
 
-        function updateModelValue(obj, modelName, hashes, value)
-            if ischar(value)
-                obj.sendTextModel(modelName, hashes.RemoteHash, hashes.CurrentHash, [], value);
+        function updateModelValue(obj, modelName, localHash, remoteHash, value)
+            if ischar(value) || iscell(value) || isstruct(value)
+                obj.sendTextModel(modelName, localHash, remoteHash, [], value);
             else
-                obj.sendBinaryModel(modelName, hashes.RemoteHash, hashes.CurrentHash, [], value);
+                obj.sendBinaryModel(modelName, localHash, remoteHash, [], value);
             end
         end
         
+        function updateLocalModelValue(obj, modelName, hash, value)
+            % Get the local model cache
+            localModelCache = obj.LocalCache.getModelCacheEntry(modelName);
+            
+            % Update the local model cache
+            localModelCache.modifyCurrentHashAndValue(hash, value);
+            
+            localProxy = MimLocalModelProxy(localModelCache);
+            
+            for connection = obj.ConnectionCacheMap.getAllConnections
+                % Get the remote model cache for this connection
+                remoteModelCache = connection{1}.getModelCacheEntry(modelName);
+                
+                % Update models and trigger synchronisation
+                MimModelUpdater.updateModel(localProxy, MimRemoteModelProxy(obj, modelName, [], remoteModelCache));
+            end
+        end        
     end
     
     methods (Access = protected)
-        
-        
         function onOpen(obj, conn, message)
             obj.ConnectionCacheMap.addConnection(conn);
         end
@@ -67,19 +80,13 @@ classdef MimWebSocketServer < WebSocketServer
         function onTextMessage(obj, conn, message)
             obj.LogStringMessage('Received', message);
             [header, metaData, data] = MimWebSocketParser.ParseString(message);
-            obj.ParseMessage(conn, header, metaData, data);
-%             parsed = MimParsedMessage(header.version, header.softwareVersion, header.modelName, header.localHash, header.lastRemoteHash, metaData, data);
-%             obj.ParseMessage
-%             obj.ConnectionCacheMap.getConnection(conn);
-%             obj.ReceiveMessageCallback(parsed);
+            obj.parseMessage(conn, header, metaData, data);
         end
         
         function onBinaryMessage(obj, conn, bytearray)
             obj.LogBinaryMessage('Received', bytearray);
             [header, metaData, data] = MimWebSocketParser.ParseBlob(bytearray);
             obj.ParseMessage(conn, header, metaData, data);
-%             parsed = MimParsedMessage(header.version, header.softwareVersion, header.modelName, header.localHash, header.lastRemoteHash, metaData, data);
-%             obj.ReceiveMessageCallback(parsed);
         end
         
         function onError(obj,conn,message)
@@ -109,21 +116,19 @@ classdef MimWebSocketServer < WebSocketServer
     
     methods (Access = private)
         function parseMessage(obj, conn, header, metaData, data)
-            parsedMessage = MimParsedMessage(header.version, header.softwareVersion, header.modelName, header.localHash, header.lastRemoteHash, metaData, data);
-            disp(['Blob message received: version:' parsedMessage.version ' software version:' parsedMessage.softwareVersion ' model:' parsedMessage.modelName ' hash server:' parsedMessage.localHash ' hash last client:' parsedMessage.lastRemoteHash ' value:' parsedMessage.value]);
+            disp(['Blob message received: version:' num2str(header.version) ' software version:' num2str(header.softwareVersion) ' model:' header.modelName ' hash server:' num2str(header.localHash) ' hash last client:' num2str(header.lastRemoteHash) ' value:' data]);
             
             % Get the remote model cache for this connection
-            remoteModelCache = obj.ConnectionCacheMap.getConnection(conn).getModelCacheEntry(parsedMessage.modelName);
+            remoteModelCache = obj.ConnectionCacheMap.getConnection(conn).getModelCacheEntry(header.modelName);
             
             % Get the local model cache
-            localModelCache = obj.LocalCache.getModelCacheEntry(parsedMessage.modelName);
+            localModelCache = obj.LocalCache.getModelCacheEntry(header.modelName);
             
             % Update the remote model cache
             remoteModelCache.update(header.localHash, header.lastRemoteHash);
             
-%             obj.ParseMessage
-%             obj.ReceiveMessageCallback(parsed);
-            obj.Updater.updateModel(MimLocalModelProxy(localModelCache), MimRemoteModelProxy(obj.WebSocketServer, parsedMessage.modelName, parsedMessage.value, remoteModelCache));
+            % Update models and trigger synchronisation
+            MimModelUpdater.updateModel(MimLocalModelProxy(localModelCache), MimRemoteModelProxy(obj, header.modelName, data, remoteModelCache));
         end        
     end
 end

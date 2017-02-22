@@ -6,7 +6,7 @@ classdef MimConnectionCacheMap < CoreBaseClass
     
     methods
         function obj = MimConnectionCacheMap()
-            obj.ConnectionCacheDictionary = containers.Map;
+            obj.ConnectionCacheDictionary = containers.Map('KeyType', 'int32', 'ValueType', 'any');
         end
         
         function addConnection(obj, connection)
@@ -19,6 +19,10 @@ classdef MimConnectionCacheMap < CoreBaseClass
             if obj.ConnectionCacheDictionary.isKey(connection.HashCode)
                 obj.ConnectionCacheDictionary.remove(connection.HashCode);
             end
+        end
+        
+        function connections = getAllConnections(obj)
+            connections = obj.ConnectionCacheDictionary.values;
         end
         
         function connectionCache = getConnection(obj, connection)

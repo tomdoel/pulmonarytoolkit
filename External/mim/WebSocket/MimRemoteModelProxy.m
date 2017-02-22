@@ -2,7 +2,6 @@ classdef MimRemoteModelProxy < handle
 
     properties (Access = private)
         Websocket
-        Hashes
         ModelName
         ModelValue
         ModelCacheEntry
@@ -11,30 +10,25 @@ classdef MimRemoteModelProxy < handle
     methods
         function obj = MimRemoteModelProxy(websocket, modelName, modelValue, modelCacheEntry)
             obj.Websocket = websocket;
-            obj.Hashes = modelCacheEntry.Hashes;
             obj.ModelName = modelName;
             obj.ModelValue = modelValue;
             obj.ModelCacheEntry = modelCacheEntry;
         end
         
-        function updateCurrentHash(obj, currentHash)
-            obj.Websocket.updateModelHashes(obj.ModelName, currentHash);
+        function updateHashes(obj, currentHash, remoteHash)
+            obj.Websocket.updateModelHashes(obj.ModelName, currentHash, remoteHash);
         end
     
-        function updateLastRemoteHash(obj, remoteHash)
-            obj.Websocket.updateModelHashes(obj.ModelName, remoteHash);
+        function updateValue(obj, currentHash, remoteHash, value)
+            obj.Websocket.updateModelValue(obj.ModelName, currentHash, remoteHash, value);
         end
 
-        function updateCurrentValueToRemoteValue(obj, currentHash, value)
-            obj.Websocket.updateModelValue(obj.ModelName, currentHash, value);
+        function cache = getCache(obj)
+        	cache = obj.ModelCacheEntry;
         end
 
         function value = getCurrentValue(obj)
             value = obj.ModelValue;
-        end
-        
-        function hashes = getHashes(obj)
-        	hashes = obj.Hashes;
         end
     end
 end
