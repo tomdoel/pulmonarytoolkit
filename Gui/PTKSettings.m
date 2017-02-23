@@ -45,6 +45,13 @@ classdef PTKSettings < CoreBaseClass
                     settings = PTKSettings;
                 end
                 settings.SettingsFilename = settings_filename;
+                if isempty(settings.LastMarkerSetForPatientMap)
+                    settings.LastMarkerSetForPatientMap = containers.Map;
+                end
+                if isempty(settings.LastUidForPatientMap)
+                    settings.LastUidForPatientMap = containers.Map;
+                end
+                
                 
             catch ex
                 reporting.ErrorFromException('PTKSettings:FailedtoLoadSettingsFile', ['Error when loading settings file ' settings_filename '. Try deleting this file.'], ex);
