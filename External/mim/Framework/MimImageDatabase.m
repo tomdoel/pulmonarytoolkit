@@ -191,58 +191,60 @@ classdef MimImageDatabase < handle
             
             database_changed = false;
             
-            for uid = uids
-                stage_index = stage_index + 1;
-                temporary_uid = uid{1};
-                if ~obj.SeriesMap.isKey(temporary_uid) || rebuild_for_each_uid
-                    if ~rebuild_for_each_uid
-                        reporting.ShowMessage('MimImageDatabase:UnimportedDatasetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the image database file. I am adding this dataset to the image database. This may occur if the database file was recently removed.']);
-                    end
-                    try
-                        % Only update the progress for datasets we are actually checking
-                        reporting.UpdateProgressStage(stage_index, num_stages);
-                        cache_directory = framework_app_def.GetFrameworkDirectories.GetCacheDirectory;
-                        image_info_cache_name = framework_app_def.GetFrameworkConfig.ImageInfoCacheName;
-                        if 2 == exist(fullfile(cache_directory, temporary_uid, [image_info_cache_name '.mat']), 'file')
-                            cache_parent_directory = cache_directory;
-                        else
-                            cache_parent_directory = framework_app_def.GetFrameworkDirectories.GetFrameworkDatasetCacheDirectory;
+            if ~isempty(uids)
+                for uid = uids
+                    stage_index = stage_index + 1;
+                    temporary_uid = uid{1};
+                    if ~obj.SeriesMap.isKey(temporary_uid) || rebuild_for_each_uid
+                        if ~rebuild_for_each_uid
+                            reporting.ShowMessage('MimImageDatabase:UnimportedDatasetFound', ['Dataset ' temporary_uid ' was found in the disk cache but not in the image database file. I am adding this dataset to the image database. This may occur if the database file was recently removed.']);
                         end
-                        temporary_disk_cache = MimDiskCache(cache_parent_directory, temporary_uid, framework_app_def.GetFrameworkConfig, reporting);
-                        temporary_image_info = temporary_disk_cache.Load(image_info_cache_name, [], reporting);
-
-                        file_path = temporary_image_info.ImagePath;
-                        file_names = temporary_image_info.ImageFilenames;
-                        for filename = file_names
-                            try
-                                next_filename = filename{1};
-                                if isa(next_filename, 'CoreFilename')
-                                    next_filepath = next_filename.Path;
-                                    next_filename = next_filename.Name;
-                                else
-                                    next_filepath = file_path;
-                                end
-                                
-                                if CoreDiskUtilities.FileExists(next_filepath, next_filename)
-                                    if isempty(tags_to_get)
-                                        tags_to_get = DMDicomDictionary.GroupingDictionary;
-                                    end
-                                    single_image_metainfo = MimGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
-                                    obj.AddImage(single_image_metainfo);
-                                else
-                                    reporting.ShowWarning('MimImageDatabase:FileNotFound', ['The image ' fullfile(next_filepath, next_filename) ' could not be found. '], []);
-                                end
-                            catch exc
-                                reporting.ShowWarning('MimImageDatabase:AddImageFailed', ['An error occured when adding image ' fullfile(next_filepath, next_filename) ' to the databse. Error: ' exc.message], exc);
+                        try
+                            % Only update the progress for datasets we are actually checking
+                            reporting.UpdateProgressStage(stage_index, num_stages);
+                            cache_directory = framework_app_def.GetFrameworkDirectories.GetCacheDirectory;
+                            image_info_cache_name = framework_app_def.GetFrameworkConfig.ImageInfoCacheName;
+                            if 2 == exist(fullfile(cache_directory, temporary_uid, [image_info_cache_name '.mat']), 'file')
+                                cache_parent_directory = cache_directory;
+                            else
+                                cache_parent_directory = framework_app_def.GetFrameworkDirectories.GetFrameworkDatasetCacheDirectory;
                             end
+                            temporary_disk_cache = MimDiskCache(cache_parent_directory, temporary_uid, framework_app_def.GetFrameworkConfig, reporting);
+                            temporary_image_info = temporary_disk_cache.Load(image_info_cache_name, [], reporting);
+
+                            file_path = temporary_image_info.ImagePath;
+                            file_names = temporary_image_info.ImageFilenames;
+                            for filename = file_names
+                                try
+                                    next_filename = filename{1};
+                                    if isa(next_filename, 'CoreFilename')
+                                        next_filepath = next_filename.Path;
+                                        next_filename = next_filename.Name;
+                                    else
+                                        next_filepath = file_path;
+                                    end
+
+                                    if CoreDiskUtilities.FileExists(next_filepath, next_filename)
+                                        if isempty(tags_to_get)
+                                            tags_to_get = DMDicomDictionary.GroupingDictionary;
+                                        end
+                                        single_image_metainfo = MimGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
+                                        obj.AddImage(single_image_metainfo);
+                                    else
+                                        reporting.ShowWarning('MimImageDatabase:FileNotFound', ['The image ' fullfile(next_filepath, next_filename) ' could not be found. '], []);
+                                    end
+                                catch exc
+                                    reporting.ShowWarning('MimImageDatabase:AddImageFailed', ['An error occured when adding image ' fullfile(next_filepath, next_filename) ' to the databse. Error: ' exc.message], exc);
+                                end
+                            end
+
+                            database_changed = true;
+
+                        catch exc
+                            reporting.ShowWarning('MimImageDatabase:AddDatasetFailed', ['An error occured when adding dataset ' temporary_uid ' to the databse. Error: ' exc.message], exc);
                         end
-                        
-                        database_changed = true;
-                        
-                    catch exc
-                        reporting.ShowWarning('MimImageDatabase:AddDatasetFailed', ['An error occured when adding dataset ' temporary_uid ' to the databse. Error: ' exc.message], exc);
-                    end
-                end                
+                    end                
+                end
             end
             
             

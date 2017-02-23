@@ -41,12 +41,13 @@ classdef MimLinkedDatasetRecorder < CoreBaseClass
                     legacy_conversion('PTKLinkedDatasetAssociatedDatasetRecord') = 'MimLinkedDatasetAssociatedDatasetRecord';
                     linked_recorder = CoreLoadXml(linked_recorder_filename, reporting, legacy_conversion);
                     linked_recorder = linked_recorder.LinkingCache;
+                    linked_recorder.FrameworkAppDef = framework_app_def;
                 else
                     reporting.ShowWarning('MimLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No linking cache file found. Will create new one on exit', []);
                     linked_recorder = MimLinkedDatasetRecorder;
+                    linked_recorder.FrameworkAppDef = framework_app_def;
                     linked_recorder.Save(reporting);
                 end
-                linked_recorder.FrameworkAppDef = framework_app_def;
             catch ex
                 reporting.ShowWarning('MimLinkedDatasetRecorder:FailedtoLoadCacheFile', ['Error when loading cache file ' linked_recorder_filename '. Any existing links between datasets will be lost'], ex);
                 linked_recorder = MimLinkedDatasetRecorder;
