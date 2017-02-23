@@ -40,11 +40,11 @@ classdef PTKSettings < CoreBaseClass
                 if exist(settings_filename, 'file')
                     settings_struct = MimDiskUtilities.Load(settings_filename);
                     settings = settings_struct.settings;
-                    settings.SettingsFilename = settings_filename;
                 else
                     reporting.ShowWarning('PTKSettings:SettingsFileNotFound', 'No settings file found. Will create new one on exit', []);
                     settings = PTKSettings;
                 end
+                settings.SettingsFilename = settings_filename;
                 
             catch ex
                 reporting.ErrorFromException('PTKSettings:FailedtoLoadSettingsFile', ['Error when loading settings file ' settings_filename '. Try deleting this file.'], ex);
