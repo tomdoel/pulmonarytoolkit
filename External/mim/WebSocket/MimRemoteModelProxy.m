@@ -4,14 +4,16 @@ classdef MimRemoteModelProxy < handle
         Websocket
         ModelName
         ModelValue
+        PayloadType
         ModelCacheEntry
     end
     
     methods
-        function obj = MimRemoteModelProxy(websocket, modelName, modelValue, modelCacheEntry)
+        function obj = MimRemoteModelProxy(websocket, modelName, modelValue, payloadType, modelCacheEntry)
             obj.Websocket = websocket;
             obj.ModelName = modelName;
             obj.ModelValue = modelValue;
+            obj.PayloadType = payloadType;
             obj.ModelCacheEntry = modelCacheEntry;
         end
         
@@ -27,6 +29,10 @@ classdef MimRemoteModelProxy < handle
         	cache = obj.ModelCacheEntry;
         end
 
+        function isProvided = isValueProvided(obj)
+            isProvided = stcmp(obj.PayloadType, MimWebSocketParser.MimPayloadData);
+        end
+    
         function value = getCurrentValue(obj)
             value = obj.ModelValue;
         end

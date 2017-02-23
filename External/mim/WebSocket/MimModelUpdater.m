@@ -1,10 +1,5 @@
 classdef MimModelUpdater < CoreBaseClass
 
-    methods
-        function obj = MimModelUpdater()
-        end
-    end
-        
     methods (Static)
         function updateModel(localProxy, remoteProxy)
             localCache = localProxy.getCache();
@@ -31,12 +26,15 @@ classdef MimModelUpdater < CoreBaseClass
             
                 if isempty(localCache.CurrentHash) || (~localCache.hasChanged() && remoteCache.hasChanged())
                     % Server value has changed, but client is unchanged, or client is undefined
-                    
-                    % Update local cache and value. Local and remote hash
-                    % are the same as we are using the server values
-                    localCache.updateAndNotify(remoteCache.CurrentHash, remoteCache.CurrentHash, remoteProxy.getCurrentValue());
 
-                    % Update remote cache if necessary. Do this before we update the remote.
+                    % If the server provided data then we can update the local value. If not, we can at least update the server about our current hashes which should trigger data sending
+                    if remoteProxy.isValueProvided()
+                        % Update local cache and value. Local and remote hash
+                        % are the same as we are using the server values
+                        localCache.updateAndNotify(remoteCache.CurrentHash, remoteCache.CurrentHash, remoteProxy.getCurrentValue());
+                    end
+
+                    % Update remote cache if necessary.
                     if ~isequal(remoteCache.RemoteHash, localCache.CurrentHash)
                         remoteProxy.updateHashes(localCache.CurrentHash, localCache.RemoteHash);
                     end

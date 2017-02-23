@@ -2,8 +2,12 @@ classdef MimWebSocketParser
     
     properties (Constant)
         MimServerSoftwareVersion = uint8(1)
+        MimHashesOnlyTextProtocolVersion = uint8(1)
         MimTextProtocolVersion = uint8(1)
         MimBinaryProtocolVersion = uint8(1)
+        
+        MimPayloadData = 'data'
+        MimPayloadHashes = 'hashes'
     end
     
     methods (Static)
@@ -49,11 +53,11 @@ classdef MimWebSocketParser
             header = rmfield(rmfield(rmfield(header, 'dataType'), 'dataDims'), 'metaData');
         end
         
-        function dataBlob = EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, data)
+        function dataBlob = EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, payloadType, data)
             % Converts model metadata and binary value into a data blob
             
-            % COnstruct the header, which includes transmission parameters and user-provided metadata
-            header_struct = MimWebSocketParser.EncodeAsStruct(modelName, serverHash, lastClientHash, metaData, []);
+            % Construct the header, which includes transmission parameters and user-provided metadata
+            header_struct = MimWebSocketParser.EncodeAsStruct(modelName, serverHash, lastClientHash, metaData, payloadType, []);
             header_struct.dataType = class(data);
             header_struct.dataDims = size(data);
             
@@ -84,8 +88,8 @@ classdef MimWebSocketParser
             dataBlob(10 + encodedHeaderLength : 9 + encodedHeaderLength + convertedDataLength) = convertedData;
         end
         
-        function dataString = EncodeAsString(modelName, serverHash, lastClientHash, metaData, data)
-            dataString = MimWebSocketParser.EncodeAsJson(MimWebSocketParser.EncodeAsStruct(modelName, serverHash, lastClientHash, metaData, data));
+        function dataString = EncodeAsString(modelName, serverHash, lastClientHash, metaData, payloadType, data)
+            dataString = MimWebSocketParser.EncodeAsJson(MimWebSocketParser.EncodeAsStruct(modelName, serverHash, lastClientHash, metaData, payloadType, data));
         end
         
         function json = EncodeAsJson(dataStruct)
@@ -94,7 +98,7 @@ classdef MimWebSocketParser
             json = savejson([], dataStruct);
         end
         
-        function dataStruct = EncodeAsStruct(modelName, serverHash, lastClientHash, metaData, data)
+        function dataStruct = EncodeAsStruct(modelName, serverHash, lastClientHash, metaData, payloadType, data)
             % Converts model metadata into a JSON string
             
             dataStruct = struct();
@@ -103,6 +107,7 @@ classdef MimWebSocketParser
             dataStruct.modelName = modelName;
             dataStruct.localHash = serverHash;
             dataStruct.lastRemoteHash = lastClientHash;
+            dataStruct.payloadType = payloadType;
             if ~isempty(metaData)
                 dataStruct.metaData = metaData;
             end

@@ -1,11 +1,5 @@
 classdef MimWebSocketServer < WebSocketServer
     
-    properties (Constant)
-        MimServerVersion = uint8(1)
-        MimTextProtocolVersion = uint8(1)
-        MimBinaryProtocolVersion = uint8(1)
-    end
-    
     properties (Access = private)
         LocalCache              % Stores the local cache
         ConnectionCacheMap      % Stores the caches for each remote
@@ -18,38 +12,38 @@ classdef MimWebSocketServer < WebSocketServer
             obj.LocalCache = MimLocalModelCache();
         end
         
-        function sendBinaryModel(obj, modelName, serverHash, lastClientHash, metaData, data)
+        function sendBinaryModel(obj, modelName, serverHash, lastClientHash, metaData, payloadType, data)
             % Encodes model metadata and a data matrix into a blob and send
             % to clients. The data array will be sent as an int8 stream; it
             % is the client's responsibility to reconstruct this using the
             % metadata
             
-            blob = MimWebSocketParser.EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, data);
+            blob = MimWebSocketParser.EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, payloadType, data);
             obj.LogBinaryMessage('Sending', bytearray);
             obj.sendToAll(blob);
         end
         
-        function sendTextModel(obj, modelName, serverHash, lastClientHash, metaData, data)
+        function sendTextModel(obj, modelName, serverHash, lastClientHash, metaData, payloadType, data)
             % Encodes model metadata and text value into a JSON string and
             % send to clients. The data must be convertable to JSON, so it
             % is not suitable for binary data. The data will will be
             % reconstructed into a struct according to JSON, so assume the
             % values but not necessarily the data type will be preserved
 
-            message = MimWebSocketParser.EncodeAsString(modelName, serverHash, lastClientHash, metaData, data);
+            message = MimWebSocketParser.EncodeAsString(modelName, serverHash, lastClientHash, metaData, payloadType, data);
             obj.LogStringMessage('Sending', message);
             obj.sendToAll(message);
         end
 
         function updateModelHashes(obj, modelName, localHash, remoteHash)
-            obj.sendTextModel(modelName, localHash, remoteHash, [], []);
+            obj.sendTextModel(modelName, localHash, remoteHash, [], MimWebSocketParser.MimPayloadHashes, []);
         end
 
         function updateModelValue(obj, modelName, localHash, remoteHash, value)
             if ischar(value) || iscell(value) || isstruct(value)
-                obj.sendTextModel(modelName, localHash, remoteHash, [], value);
+                obj.sendTextModel(modelName, localHash, remoteHash, [], MimWebSocketParser.MimPayloadData, value);
             else
-                obj.sendBinaryModel(modelName, localHash, remoteHash, [], value);
+                obj.sendBinaryModel(modelName, localHash, remoteHash, [], MimWebSocketParser.MimPayloadData, value);
             end
         end
         
@@ -65,7 +59,7 @@ classdef MimWebSocketServer < WebSocketServer
                 remoteModelCache = connection{1}.getModelCacheEntry(modelName);
                 
                 % Update models and trigger synchronisation
-                MimModelUpdater.updateModel(localModelCache, MimRemoteModelProxy(obj, modelName, [], remoteModelCache));
+                MimModelUpdater.updateModel(localModelCache, MimRemoteModelProxy(obj, modelName, [], false, remoteModelCache));
             end
         end        
     end
@@ -97,18 +91,22 @@ classdef MimWebSocketServer < WebSocketServer
         
         function LogStringMessage(obj, messageType, message)
             disp([messageType ' string message of length: ' int2str(length(message))]);
-            [header, data] = MimWebSocketParser.ParseString(message);
+            [header, metaData, data] = MimWebSocketParser.ParseString(message);
             disp(' - Header: ');
             disp(header);
+            disp(' - metaData: ');
+            disp(metaData);
             disp(' - Data: ');
             disp(data);
         end
         
         function LogBinaryMessage(obj, messageType, blob)
             disp([messageType ' binary message of length: ' int2str(length(blob))]);
-            [header, data] = MimWebSocketParser.ParseBlob(blob);
+            [header, metaData, data] = MimWebSocketParser.ParseBlob(blob);
             disp(' - Header: ');
             disp(header);
+            disp(' - metaData: ');
+            disp(metaData);
         end
     end
     
@@ -126,7 +124,8 @@ classdef MimWebSocketServer < WebSocketServer
             remoteModelCache.updateHashes(header.localHash, header.lastRemoteHash);
             
             % Update models and trigger synchronisation
-            MimModelUpdater.updateModel(localModelCache, MimRemoteModelProxy(obj, header.modelName, data, remoteModelCache));
+            payloadType = header.payloadType;
+            MimModelUpdater.updateModel(localModelCache, MimRemoteModelProxy(obj, header.modelName, data, payloadType, remoteModelCache));
         end        
     end
 end

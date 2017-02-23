@@ -1,6 +1,6 @@
 classdef MimModelCache < CoreBaseClass
 
-    properties
+    properties (Access = private)
         ModelDictionary
     end
     
