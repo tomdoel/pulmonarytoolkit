@@ -103,7 +103,11 @@ classdef MimDiskUtilities
         end
         
         function Save(filename, value) %#ok<INUSD>
-            save(filename, '-struct', 'value', '-v7');
+            if isempty(filename)
+                reporting.ShowWarning('MimDiskUtilities:NoSettingsFilename', 'The settings file could not be saved as the settings filename was not known.', []);
+            else
+                save(filename, '-struct', 'value', '-v7');
+            end
         end
         
         function value = Load(filename) %#ok<INUSD>
