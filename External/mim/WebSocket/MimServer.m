@@ -4,6 +4,7 @@ classdef MimServer < handle
         WebSocketServer
         Mim
         ModelCache
+        ModelList
         Updater
         Reporting
     end
@@ -20,6 +21,12 @@ classdef MimServer < handle
         function localUpdateModel(modelName, hash, data)
             MimServer.getServer().updateLocalModelValue(modelName, hash, data);            
         end
+        
+        function triggerLocalUpdate(modelName)
+            MimServer.getServer().triggerUpdateLocalModelValue(modelName);            
+        end
+        
+        
         
         function mimServer = getServer()
             persistent mimServerSingleton
@@ -38,6 +45,7 @@ classdef MimServer < handle
             obj.Mim = MimMain(framework_def, obj.Reporting);
             obj.ModelCache = MimModelCache();
             obj.Updater = MimModelUpdater();
+            obj.ModelList = MimModelList(obj.Mim);
         end
         
         function startServer(obj)
@@ -49,9 +57,15 @@ classdef MimServer < handle
         function stopServer(obj)
             obj.WebSocketServer.stop();
         end
-        
+
         function updateLocalModelValue(obj, modelName, hash, value)
             obj.WebSocketServer.updateLocalModelValue(modelName, hash, value);
         end
+        
+        function triggerUpdateLocalModelValue(obj, modelName)
+            [value, hash] = obj.ModelList.getValue(modelName);
+            obj.WebSocketServer.updateLocalModelValue(modelName, hash, value);
+        end
+        
     end
 end
