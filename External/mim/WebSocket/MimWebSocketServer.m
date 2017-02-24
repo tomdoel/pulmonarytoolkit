@@ -3,13 +3,15 @@ classdef MimWebSocketServer < WebSocketServer
     properties (Access = private)
         LocalCache              % Stores the local cache
         ConnectionCacheMap      % Stores the caches for each remote
+        LocalModelCallback      % For requesting local model value
     end
     
     methods
-        function obj = MimWebSocketServer(port)
+        function obj = MimWebSocketServer(port, localModelCallback)
             obj@WebSocketServer(port);
             obj.ConnectionCacheMap = MimConnectionCacheMap();
             obj.LocalCache = MimLocalModelCache();
+            obj.LocalModelCallback = localModelCallback;
         end
         
         function sendBinaryModel(obj, modelName, serverHash, lastClientHash, metaData, payloadType, data)
@@ -123,9 +125,17 @@ classdef MimWebSocketServer < WebSocketServer
             % Update the remote model cache
             remoteModelCache.updateHashes(header.localHash, header.lastRemoteHash);
             
-            % Update models and trigger synchronisation
-            payloadType = header.payloadType;
-            MimModelUpdater.updateModel(localModelCache, MimRemoteModelProxy(obj, header.modelName, data, payloadType, remoteModelCache));
+            if isempty(localModelCache.CurrentHash) && isempty(remoteModelCache.CurrentHash)
+                % If the remote has no value then assume it is requesting a
+                % value from our local cache
+                
+                [value, hash] = obj.LocalModelCallback.getValue(header.modelName);
+                obj.updateLocalModelValue(header.modelName, hash, value);
+            else
+                % Update models and trigger synchronisation
+                payloadType = header.payloadType;
+                MimModelUpdater.updateModel(localModelCache, MimRemoteModelProxy(obj, header.modelName, data, payloadType, remoteModelCache));
+            end
         end        
     end
 end

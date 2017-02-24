@@ -1,26 +1,25 @@
 classdef MimSubjectList < MimWSModel
     properties (Access = private)
         Hash
-        Mim
         SubjectList
     end
         
     methods
-        function obj = MimSubjectList(mim)
-            obj.Mim = mim;
+        function obj = MimSubjectList(mim, modelUid, parameters)
+            obj = obj@MimWSModel(mim, modelUid, parameters);
             obj.Hash = 0;
         end
         
-        function [value, hash] = getValue(obj)
+        function [value, hash] = getValue(obj, modelList)
             obj.Hash = obj.Hash + 1;
             if isempty(obj.SubjectList)
-                obj.update();
+                obj.update(modelList);
             end
             value = obj.SubjectList;
             hash = obj.Hash;
         end
         
-        function update(obj)
+        function update(obj, modelList)
             database = obj.Mim.GetImageDatabase();
             [projectNames, projectIds] = database.GetListOfProjects();
             strhash = int2str(obj.Hash);
@@ -30,16 +29,30 @@ classdef MimSubjectList < MimWSModel
                 projectId = projectIds{projectIndex};
                 [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = database.GetListOfPatientNamesAndSeriesCount(projectId, true);
                 for nameIndex = 1 : numel(names)
-                    subjectList{end + 1} = MimSubjectList.SubjectListEntry(names{nameIndex}, ids{nameIndex}, projectName, [], []);
+                    subjectId = ids{nameIndex};
+                    parameters = {};
+                    parameters.subjectId = subjectId;
+                    parameters.projectName = projectName;
+                    
+                    [model, modelUid] = obj.getDerivedModel([], 'MimSubject', parameters, modelList);
+                    subjectList{end + 1} = MimSubjectList.SubjectListEntry(modelUid, names{nameIndex}, subjectId, projectName, [], []);
+                    
                 end
             end
             obj.SubjectList = subjectList;
         end
     end
     
+    methods (Static)
+        function key = getKeyFromParameters(parameters)
+            key = 'MimSubjectList';
+        end
+    end
+    
     methods (Static, Access = private)
-        function subjectListEntry = SubjectListEntry(label, id, project, uri, insert_date)
+        function subjectListEntry = SubjectListEntry(modelUid, label, id, project, uri, insert_date)
             subjectListEntry = struct();
+            subjectListEntry.modelUid = modelUid;
             subjectListEntry.label = label;
             subjectListEntry.ID = id;
             subjectListEntry.project = project;

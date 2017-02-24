@@ -39,13 +39,13 @@ classdef MimServer < handle
     
     methods (Access = private)
         function obj = MimServer()
-            obj.WebSocketServer = MimWebSocketServer(30000);
             framework_def = PTKFrameworkAppDef;
             obj.Reporting = MimReporting([], [], 'mimserver.log');
             obj.Mim = MimMain(framework_def, obj.Reporting);
             obj.ModelCache = MimModelCache();
             obj.Updater = MimModelUpdater();
             obj.ModelList = MimModelList(obj.Mim);
+            obj.WebSocketServer = MimWebSocketServer(30000, obj.ModelList);
         end
         
         function startServer(obj)
