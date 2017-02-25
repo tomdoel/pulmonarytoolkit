@@ -63,6 +63,8 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Types');
         path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Utilities');
         path_folders{end + 1} = fullfile('External', 'mim', 'Viewer');
+        path_folders{end + 1} = fullfile('External', 'mim', 'WebSocket');
+        path_folders{end + 1} = fullfile('External', 'mim', 'WebSocket', 'Models');
         path_folders{end + 1} = fullfile('External', 'gem');
         path_folders{end + 1} = fullfile('External', 'matnat');
         path_folders{end + 1} = fullfile('External', 'dicomat');
@@ -70,6 +72,8 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('External', 'stlwrite');
         path_folders{end + 1} = fullfile('External', 'npReg');
         path_folders{end + 1} = fullfile('External', 'depmat');
+        path_folders{end + 1} = fullfile('External', 'MatlabWebSocket', 'src');
+        path_folders{end + 1} = fullfile('External', 'jsonlab-1.5', 'jsonlab-1.5');
         path_folders{end + 1} = fullfile('External', 'npReg', 'npRegLib');
         path_folders{end + 1} = fullfile('External', 'ReadData3D', 'subfunctions');
         path_folders{end + 1} = fullfile('External', 'ReadData3D', 'gipl');
