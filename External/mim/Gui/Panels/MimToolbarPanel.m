@@ -44,8 +44,7 @@ classdef MimToolbarPanel < GemPanel
             obj.ModeTabName = mode_tab_name;
             obj.ModeToSwitchTo = mode_to_switch_to;
             obj.Visibility = visibility;
-            obj.TopBorder = true;
-            
+            obj.TopBorder = ~group_vertically;
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
             obj.ControlGroups = containers.Map;
@@ -74,6 +73,7 @@ classdef MimToolbarPanel < GemPanel
             min_x = 1 + obj.LeftMargin;
             max_x = new_position(3) - obj.RightMargin;
             x_position = min_x;
+            is_first_separator = true;
             
             for tool_group_key = obj.OrderedControlGroupList
                 tool_group_panel = obj.ControlGroups(tool_group_key{1});
@@ -91,6 +91,12 @@ classdef MimToolbarPanel < GemPanel
                     if obj.GroupVertically
                         separator = obj.ControlGroupSeparators(tool_group_key{1});
                         y_position = max(1, y_column_top - separator.GetRequestedHeight);
+                        if is_first_separator
+                            is_first_separator = false;
+                            separator.TopBorder = false;
+                        else
+                            separator.TopBorder = true;
+                        end
                         separator.Enable;
                         separator.Resize([1, y_position, new_position(3), separator.GetRequestedHeight]);
                         y_column_top = y_column_top - separator.GetRequestedHeight;
@@ -108,8 +114,7 @@ classdef MimToolbarPanel < GemPanel
                         separator = obj.ControlGroupSeparators(tool_group_key{1});
                         separator.Disable;
                     end
-                end
-                
+                end 
             end
         end
         
@@ -198,15 +203,16 @@ classdef MimToolbarPanel < GemPanel
             if ~icon_found
                 icon = imread(obj.AppDef.GetDefaultPluginIcon);
             end
-            
-            if obj.AppDef.ForceGreyscale
-                icon = repmat(0.21*icon(:,:,1) + 0.72*icon(:,:,2) + 0.07*icon(:,:,3), [1,1,3]);
-            elseif isprop(tool, 'IconColour')
+
+            % IconColour overrides greyscale
+            if isprop(tool, 'IconColour')
                 size_icon = size(icon);
                 icon = double(icon/255);
                 icon_bw = repmat(0.21*icon(:,:,1) + 0.72*icon(:,:,2) + 0.07*icon(:,:,3), [1,1,3]);
                 colour_tint = repmat(shiftdim(double(tool.IconColour), -1), [size_icon(1:2), 1]);
                 icon = uint8(255*colour_tint.*icon_bw);
+            elseif obj.AppDef.ForceGreyscale
+                icon = repmat(0.21*icon(:,:,1) + 0.72*icon(:,:,2) + 0.07*icon(:,:,3), [1,1,3]);
             end
             
             tool_group = obj.ControlGroups(category_key);

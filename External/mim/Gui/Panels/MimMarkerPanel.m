@@ -40,7 +40,7 @@ classdef MimMarkerPanel < GemPanel
         function obj = MimMarkerPanel(parent, marker_manager, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically, allow_wrapping)
             obj = obj@GemPanel(parent);
             
-            obj.TopBorder = true;
+            obj.TopBorder = false;
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
             
@@ -49,6 +49,7 @@ classdef MimMarkerPanel < GemPanel
             obj.AddChild(obj.MarkerToolbar);
             
             obj.MarkerListBox = MimUserSavedItemListBox(obj, 'marker set', @gui_app.LoadMarkers, @gui_app.DeleteMarkerSet, @gui_app.AddMarkerSet, @gui_app.GetListOfMarkerSets, @gui_app.GetCurrentMarkerSetName);
+            obj.MarkerListBox.TopBorder = true;
             obj.AddChild(obj.MarkerListBox);
             
             obj.ModeTabName = mode_tab_name;
@@ -90,7 +91,6 @@ classdef MimMarkerPanel < GemPanel
             
             obj.MarkerToolbar.Resize(toolbar_position);
             obj.MarkerListBox.Resize(listbox_position);
-
         end
         
         function Update(obj, gui_app)
