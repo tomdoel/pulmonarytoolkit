@@ -11,7 +11,10 @@ classdef GemListBoxWithTitle < GemPanel
     %     Distributed under the MIT licence. Please see website for details.
     %    
     
-
+    properties
+        TitleLeftPadding = 0
+    end
+    
     properties (Access = protected)
         TitlePanel
         LowerPanel
@@ -64,6 +67,7 @@ classdef GemListBoxWithTitle < GemPanel
             list_box_height = max(1, panel_height - obj.ControlPanelHeight - obj.LowerPanelHeight - obj.TopMargin - obj.BottomMargin);
             title_panel_position = [1, panel_height - obj.ControlPanelHeight-1, panel_width, obj.ControlPanelHeight];
             lower_panel_position = [1, obj.BottomMargin, panel_width, obj.LowerPanelHeight];
+            obj.TitlePanel.TitleLeftPadding = obj.TitleLeftPadding;
             obj.TitlePanel.Resize(title_panel_position);
             obj.ListBox.Resize([obj.LeftMargin, obj.BottomMargin + obj.LowerPanelHeight, list_box_width, list_box_height]);
             obj.LowerPanel.Resize(lower_panel_position);

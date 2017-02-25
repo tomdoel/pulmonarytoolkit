@@ -50,6 +50,7 @@ classdef MimMarkerPanel < GemPanel
             
             obj.MarkerListBox = MimUserSavedItemListBox(obj, 'marker set', @gui_app.LoadMarkers, @gui_app.DeleteMarkerSet, @gui_app.AddMarkerSet, @gui_app.GetListOfMarkerSets, @gui_app.GetCurrentMarkerSetName);
             obj.MarkerListBox.TopBorder = true;
+            obj.MarkerListBox.TitleLeftPadding = 5;
             obj.AddChild(obj.MarkerListBox);
             
             obj.ModeTabName = mode_tab_name;
