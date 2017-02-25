@@ -376,6 +376,10 @@ classdef MimGuiBase < GemFigure
             plugin_name = obj.GuiDataset.GuiDatasetState.CurrentPluginName;
         end
         
+        function plugin_name = CurrentSegmentationName(obj)
+            plugin_name = obj.GuiDataset.GuiDatasetState.CurrentSegmentationName;
+        end
+        
         function Capture(obj)
             % Captures an image from the viewer, including the background and transparent
             % overlay. Prompts the user for a filename
@@ -1001,6 +1005,33 @@ classdef MimGuiBase < GemFigure
             name = inputdlg('Please enter a name for the new set of marker points you wish to create', 'New marker points');
             if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
                 obj.MarkerManager.AddMarkerSet(name{1});
+            end
+        end
+        
+        function DeleteMarkerSet(obj, name)
+            choice = questdlg('Do you want to delete this marker set?', ...
+                'Delete marker set', 'Delete', 'Don''t delete', 'Don''t delete');
+            switch choice
+                case 'Delete'
+                    obj.MarkerManager.DeleteMarkerSet(name);
+                case 'Don''t delete'
+            end
+        end
+        
+        function AddManualSegmentation(obj)
+            name = inputdlg('Please enter a name for the new manual segmentation you wish to create', 'New manual segmentation');
+            if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
+                % ToDo
+            end
+        end
+        
+        function DeleteManualSegmentation(obj, name)
+            choice = questdlg('Do you want to delete this manual segmentation?', ...
+                'Delete manual segmentation', 'Delete', 'Don''t delete', 'Don''t delete');
+            switch choice
+                case 'Delete'
+                    obj.GuiDataset.DeleteManualSegmentation(name);
+                case 'Don''t delete'
             end
         end
     end

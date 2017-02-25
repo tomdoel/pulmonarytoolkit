@@ -193,7 +193,7 @@ classdef MimDatasetCacheSelector < handle
         end
         
         function DeleteMarkerSet(obj, name, reporting)
-            % Deletes manual segmentation results
+            % Deletes marker set
             
             obj.MarkersDiskCache.DeleteFileForAllContexts(name, reporting);
         end

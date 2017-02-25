@@ -101,6 +101,13 @@ classdef MimGuiDataset < CoreBaseClass
             markers = obj.Dataset.LoadMarkerPoints(name);
         end
         
+        function DeleteMarkerSet(obj, name)
+            obj.Dataset.DeleteMarkerSet(name);
+        end
+        
+        function markers = DeleteManualSegmentation(obj, name)
+            markers = obj.Dataset.DeleteManualSegmentation(name);
+        end
         
         function dataset_cache_path = GetDatasetCachePath(obj)
             if obj.DatasetIsLoaded

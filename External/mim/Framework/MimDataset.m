@@ -192,6 +192,13 @@ classdef MimDataset < CoreBaseClass
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveMarkerPoints(name, data, obj.Reporting);
             obj.PostCallTidy;
         end
+        
+        function DeleteMarkerSet(obj, name, varargin)
+            % Deletes marker set
+            obj.PreCallTidy;
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).DeleteMarkerSet(name, obj.Reporting);
+            obj.PostCallTidy;
+        end
 
         function data = LoadMarkerPoints(obj, name, varargin)
             % Load data from a cache file associated with this dataset

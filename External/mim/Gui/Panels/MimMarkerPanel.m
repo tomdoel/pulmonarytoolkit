@@ -58,10 +58,16 @@ classdef MimMarkerPanel < GemPanel
             obj.Visibility = visibility;
             
             obj.AddPostSetListener(marker_manager, 'CurrentMarkersName', @obj.MarkerSetNameChangedCallback);
+            obj.AddEventListener(marker_manager, 'SavedMarkerListChanged', @obj.MarkerListChangedCallback);
         end
         
         function MarkerSetNameChangedCallback(obj, ~, ~)
             obj.MarkerListBox.SelectSetPanel(obj.MarkerManager.CurrentMarkersName, true);
+        end
+        
+        function MarkerListChangedCallback(obj, ~, ~)
+             obj.MarkerListBox.Update(); % Update the list contents to force the new size
+             obj.Update();
         end
         
         function Resize(obj, new_position)

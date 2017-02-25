@@ -52,7 +52,7 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
                     obj.ListBox.AddItem(this_item);
                 end
 
-                current_set = obj.GetCurrentCallback;
+                current_set = obj.GetCurrentCallback();
                 
                 % Resize as new sets may have been added
                 if ~isempty(obj.Position)
@@ -70,12 +70,12 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
     
     methods (Access = protected)
         function AddButtonClicked(obj, ~, event_data)
-            obj.AddCallback;
+            obj.AddCallback();
             obj.Update;
         end
         
         function DeleteButtonClicked(obj, ~, ~)
-            current = obj.GetCurrentCallback;
+            current = obj.GetCurrentCallback();
             if ~isempty(current)
                 obj.DeleteCallback(current);
             end

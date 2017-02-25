@@ -284,6 +284,12 @@ classdef MimDatasetResults < handle
             obj.DatasetDiskCache.DeleteManualSegmentation(segmentation_name, reporting);
         end
         
+        function DeleteMarkerSet(obj, name, reporting)
+            % Delete manual segmentation from a cache file associated with this dataset
+            
+            obj.DatasetDiskCache.DeleteMarkerSet(name, reporting);
+        end
+        
         function file_list = GetListOfManualSegmentations(obj)
             % Gets list of manual segmentation files associated with this dataset
 

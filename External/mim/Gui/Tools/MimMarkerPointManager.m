@@ -26,6 +26,10 @@ classdef MimMarkerPointManager < CoreBaseClass
         
     end
     
+    events
+        SavedMarkerListChanged
+    end
+    
     properties (SetObservable, SetAccess = private)
         CurrentMarkersName
     end
@@ -118,8 +122,16 @@ classdef MimMarkerPointManager < CoreBaseClass
         end
         
         function AddMarkerSet(obj, name)
+            obj.SaveMarkers;
             obj.LoadMarkers(name);
             obj.SaveMarkers;
+            notify(obj, 'SavedMarkerListChanged');
+        end
+        
+        function DeleteMarkerSet(obj, name)
+            obj.GuiDataset.DeleteMarkerSet(name);
+            obj.ClearMarkers();
+            notify(obj, 'SavedMarkerListChanged');
         end
     end
     
