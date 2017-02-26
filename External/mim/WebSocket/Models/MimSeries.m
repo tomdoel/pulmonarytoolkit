@@ -62,19 +62,4 @@ classdef MimSeries < MimWSModel
             key = parameters.seriesUid;
         end
     end    
-    
-    methods (Static, Access = private)
-        function seriesListEntry = SeriesListEntry(modelUid, seriesDescription, modality)
-            persistent seriesNumber
-            if isempty(seriesNumber)
-                seriesNumber = 1;
-            end
-            seriesListEntry = struct();
-            seriesListEntry.modelUid = modelUid;
-            seriesListEntry.seriesDescription = seriesDescription;
-            seriesListEntry.modality = modality;
-            seriesListEntry.seriesNumber = seriesNumber;
-            seriesNumber = seriesNumber + 1;
-        end        
-    end
 end
