@@ -65,7 +65,7 @@ Please pull changes regularly from the GitHub repository to receive new features
 
 ### Support ###
 
-Support is provided via the wiki. Tutorials, documentation and help will be added to this wiki in the future.
+Support is provided via the Tutorials and the wiki.
 
 If you are experiencing problems, please make sure you have the required version of Matlab and the Imaging Processing Toolbox. Please also ensure you have a suitable C++ compiler installed and set up. The Toolkit will not work correctly without these.
 
