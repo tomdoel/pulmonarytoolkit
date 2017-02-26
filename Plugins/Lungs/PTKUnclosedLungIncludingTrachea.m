@@ -53,7 +53,7 @@ classdef PTKUnclosedLungIncludingTrachea < PTKPlugin
                 
                 % Find the main component, excluding any components touching the border
                 original_image = dataset.GetResult('PTKLungROI');
-                threshold_image = PTKGetMainRegionExcludingPaddingBorder(original_image, threshold_image, 1000000, reporting);
+                threshold_image = PTKGetMainRegionExcludingPaddingBorder(original_image, threshold_image, 1000000, false, reporting);
                 
                 results = threshold_image;
                 results.ImageType = PTKImageType.Colormap;

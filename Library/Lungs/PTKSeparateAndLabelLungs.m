@@ -17,7 +17,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     both_lungs = unclosed_lungs.Copy;
     max_iter = 10;
     
-    both_lungs.ChangeRawImage(uint8(both_lungs.RawImage & (filtered_threshold_lung.RawImage == 1)));
+    both_lungs.ChangeRawImage(uint8(both_lungs.RawImage & (filtered_threshold_lung.RawImage > 0)));
     
     success = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, max_iter, false, reporting);
     if ~success

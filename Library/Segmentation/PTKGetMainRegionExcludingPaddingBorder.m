@@ -1,4 +1,4 @@
-function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, threshold_image, minimum_region_volume_mm3, reporting)
+function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, threshold_image, minimum_region_volume_mm3, include_interior_regions, reporting)
     % PTKGetMainRegionExcludingPaddingBorder. Finds the largest connected region in a
     % binary 3D volume, excluding any regions which touch an inner border
     % created by extending an inner padding ring from the top and bottom of the image and growing horizontally.
@@ -16,6 +16,14 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
     %     minimum_region_volume_mm3 (optional) - ignore any regions below this
     %         threshold
     %
+    %     include_interior_regions - if true, the segmentation will include
+    %         interior disconnected regions within the ROI even though they
+    %         might not be part of the lungs and airways. Generally this
+    %         might be set to true when finding a mask for airway
+    %         segmentation, but set to false when finding a mask for lung
+    %         segmentation
+    %     
+    %
     %     reporting (optional) - an object implementing the PTKReporting
     %         interface for reporting progress and warnings
     %
@@ -29,7 +37,7 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
-
+    
     if ~isa(threshold_image, 'PTKImage')
         error('Requires a PTKImage as input');
     end
@@ -127,7 +135,12 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
             % sizes)
             results = [];
         else
-            [results, CC] = OpenAndGetRegions(bordered_image, ball_element, connectivity, threshold_image.VoxelSize, minimum_region_volume_mm3, reporting);
+            if include_interior_regions
+                max_num_regions = 10000;
+            else
+                max_num_regions = 2;
+            end
+            [results, CC] = OpenAndGetRegions(bordered_image, ball_element, connectivity, threshold_image.VoxelSize, minimum_region_volume_mm3, max_num_regions, ~include_interior_regions, reporting);
         end
         if numel(results) > 0 || image_opening_index == numel(image_opening_params_mm)
             still_searching = false;
@@ -141,44 +154,56 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
         reporting.Error('PTKGetMainRegionExcludingBorder:Failed', 'Unable to extract the main image region');
     end
     
-    if numel(results) > 1
-        % If more than one region was found (after excluding boundary-touching
-        % regions), then check if they are disconnected left and right lungs
-        bounding_boxes = regionprops(CC, 'BoundingBox');
-        bb_1 = bounding_boxes(results(1)).BoundingBox;
-        bb_1 = bb_1([2,1,3,5,4,6]); % Bounding box is [xyz] but Matlab indices are [yxz]
-        bb_2 = bounding_boxes(results(2)).BoundingBox;
-        bb_2 = bb_2([2,1,3,5,4,6]); % Bounding box is [xyz] but Matlab indices are [yxz]
-        image_centre = round(size(bordered_image)/2);
-        
-        image_centre_j = image_centre(2);
-        centre_offset = round(image_centre_j/2);
-        
-        use_both_regions = false;
-        if (bb_1(2) >= image_centre_j - centre_offset) && (bb_2(5) + bb_2(2) < image_centre_j + centre_offset)
-            reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
-            use_both_regions = true;
+    if ~include_interior_regions
+        % Unless we include all interior regions, then determine whether to
+        % combine the two results or only choose one of them
+        if numel(results) > 1
+            % If more than one region was found (after excluding boundary-touching
+            % regions), then check if they are disconnected left and right lungs
+            bounding_boxes = regionprops(CC, 'BoundingBox');
+            bb_1 = bounding_boxes(results(1)).BoundingBox;
+            bb_1 = bb_1([2,1,3,5,4,6]); % Bounding box is [xyz] but Matlab indices are [yxz]
+            bb_2 = bounding_boxes(results(2)).BoundingBox;
+            bb_2 = bb_2([2,1,3,5,4,6]); % Bounding box is [xyz] but Matlab indices are [yxz]
+            image_centre = round(size(bordered_image)/2);
+
+            image_centre_j = image_centre(2);
+            centre_offset = round(image_centre_j/2);
+
+            use_both_regions = false;
+            if (bb_1(2) >= image_centre_j - centre_offset) && (bb_2(5) + bb_2(2) < image_centre_j + centre_offset)
+                reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
+                use_both_regions = true;
+            end
+
+            if (bb_2(2) >= image_centre_j - centre_offset) && (bb_1(5) + bb_1(2) < image_centre_j + centre_offset)
+                reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
+                use_both_regions = true;
+            end
+        else
+            use_both_regions = false;
         end
-        
-        if (bb_2(2) >= image_centre_j - centre_offset) && (bb_1(5) + bb_1(2) < image_centre_j + centre_offset)
-            reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
-            use_both_regions = true;
+    end
+    
+    bordered_image(:) = false;
+    if include_interior_regions
+        % Include ALL regions
+        for index = 1 : numel(results)
+            bordered_image(CC.PixelIdxList{results(index)}) = true;
         end
     else
-        use_both_regions = false;
-    end
-
-    bordered_image(:) = false;
-    bordered_image(CC.PixelIdxList{results(1)}) = true;
-    if use_both_regions
-        bordered_image(CC.PixelIdxList{results(2)}) = true;        
+        % Include the main or the main two regions
+        bordered_image(CC.PixelIdxList{results(1)}) = true;
+        if use_both_regions
+            bordered_image(CC.PixelIdxList{results(2)}) = true;        
+        end
     end
      
     main_image = threshold_image.BlankCopy;
     main_image.ChangeRawImage(bordered_image(2:end-1, 2:end-1, 2:end-1));
 end
 
-function [results, CC] = OpenAndGetRegions(bordered_image_input, ball_element, connectivity, voxel_size, minimum_region_volume_mm3, reporting)
+function [results, CC] = OpenAndGetRegions(bordered_image_input, ball_element, connectivity, voxel_size, minimum_region_volume_mm3, max_num_regions, exclude_out_of_roi, reporting)
     
     bordered_image = bordered_image_input;
     if ~isempty(ball_element)
@@ -191,6 +216,7 @@ function [results, CC] = OpenAndGetRegions(bordered_image_input, ball_element, c
     
     % Obtain connected component matrix
     CC = bwconncomp(bordered_image, connectivity);
+    stats = regionprops(CC, 'BoundingBox');
 
     % Find largest region
     num_pixels = cellfun(@numel, CC.PixelIdxList);
@@ -207,7 +233,7 @@ function [results, CC] = OpenAndGetRegions(bordered_image_input, ball_element, c
     result_index = 1;
     results = [];
     index_in_sorted_array = 1;
-    while (result_index < 3 && index_in_sorted_array <= length(sorted_largest_areas_indices))
+    while (result_index <= max_num_regions && index_in_sorted_array <= length(sorted_largest_areas_indices))
         current_region_being_checked = sorted_largest_areas_indices(index_in_sorted_array);
         bordered_image(:) = false;
         bordered_image(CC.PixelIdxList{current_region_being_checked}) = true;
@@ -215,8 +241,14 @@ function [results, CC] = OpenAndGetRegions(bordered_image_input, ball_element, c
             % This region is connected to the edge
 %             reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LargestROIConnectedToExterior', 'The largest region connected with the edge of the volume. I''m assuming this region is outside the body so choosing the next largest region');
         else
-            results(result_index) = current_region_being_checked;
-            result_index = result_index + 1;
+            bb = stats(current_region_being_checked).BoundingBox;
+            if exclude_out_of_roi && (bb(2) > (5/9)*size(bordered_image_input, 2))
+                disp('removed');
+                % ToDo
+            else
+                results(result_index) = current_region_being_checked;
+                result_index = result_index + 1;
+            end
         end
         index_in_sorted_array = index_in_sorted_array + 1;
     end
