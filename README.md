@@ -69,7 +69,7 @@ Support is provided via the wiki. Tutorials, documentation and help will be adde
 
 If you are experiencing problems, please make sure you have the required version of Matlab and the Imaging Processing Toolbox. Please also ensure you have a suitable C++ compiler installed and set up. The Toolkit will not work correctly without these.
 
-Please update your Subversion checkout to obtain the latest bug fixes.
+Please update your git checkout to obtain the latest bug fixes.
 
 The toolkit works primarily with medical Dicom images, but there is also limited support for mhd/mha files
 
