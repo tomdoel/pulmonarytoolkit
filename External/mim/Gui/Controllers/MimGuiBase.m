@@ -132,7 +132,7 @@ classdef MimGuiBase < GemFigure
             obj.ToolbarPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef, false, false);
             obj.AddChild(obj.ToolbarPanel);
             
-            obj.ModeTabControl = MimModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.MarkerManager, obj.AppDef);
+            obj.ModeTabControl = MimModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.MarkerManager, obj.GuiDataset.GuiDatasetState, obj.AppDef);
             obj.AddChild(obj.ModeTabControl);
 
             obj.PatientNamePanel = MimNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);
@@ -857,8 +857,8 @@ classdef MimGuiBase < GemFigure
 
         %%% Callbacks from GuiDataset
         
-        function UpdateModeTabControl(obj, plugin_info)
-            obj.ModeTabControl.UpdateMode(plugin_info);
+        function UpdateModeTabControl(obj, state)
+            obj.ModeTabControl.UpdateMode(state);
         end
         
         function AddPreviewImage(obj, plugin_name, dataset)

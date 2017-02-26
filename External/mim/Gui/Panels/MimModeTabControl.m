@@ -27,7 +27,7 @@ classdef MimModeTabControl < GemTabControl
     end
 
     methods
-        function obj = MimModeTabControl(parent, organised_plugins, organised_manual_segmentations, marker_manager, app_def)
+        function obj = MimModeTabControl(parent, organised_plugins, organised_manual_segmentations, marker_manager, gui_dataset_state, app_def)
             obj = obj@GemTabControl(parent);
 
             obj.OrganisedPlugins = organised_plugins;
@@ -38,7 +38,7 @@ classdef MimModeTabControl < GemTabControl
             
             obj.LeftBorder = true;
 
-            obj.SegmentPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', obj.Gui, app_def, true, true);
+            obj.SegmentPanel = MimSegmentPanel(obj, obj.OrganisedPlugins, 'Segment', [], 'Dataset', obj.Gui, app_def, gui_dataset_state, true, true);
             obj.AddTabbedPanel(obj.SegmentPanel, 'Segment', 'Segment', 'Segmentation');
             
             obj.EditPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', MimModes.EditMode, 'Plugin', obj.Gui, app_def, true, true);
@@ -96,7 +96,8 @@ classdef MimModeTabControl < GemTabControl
             obj.MarkersPanel.Update(obj.Gui);
         end
         
-        function UpdateMode(obj, plugin_info)
+        function UpdateMode(obj, state)
+            plugin_info = state.CurrentPluginInfo;
             force_change = false;
             first_enabled_tab = [];
             for panel_key = obj.OrderedTags
@@ -132,7 +133,13 @@ classdef MimModeTabControl < GemTabControl
                     end
                 elseif strcmp(visibility, 'Plugin')
                     panel_mode_name = panel.GetModeTabName;
-                    if isempty(plugin_info) || ~any(strcmp(panel_mode_name, plugin_info.EnableModes))
+                    
+                    % Force edit tabs to be enabled when there is a manual
+                    % segmentation. This could be done in a more elegant
+                    % way!
+                    manual_edit_override = isempty(plugin_info) && ~isempty(state.CurrentSegmentationName) && strcmp(panel_mode_name, MimModes.EditMode);
+                    
+                    if ~manual_edit_override && (isempty(plugin_info) || ~any(strcmp(panel_mode_name, plugin_info.EnableModes)))
                         obj.TabPanel.DisableTab(panel_key{1});
                         if strcmp(panel_key{1}, obj.CurrentPanelTag)
                             force_change = true;

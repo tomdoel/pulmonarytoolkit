@@ -104,6 +104,7 @@ classdef MimGuiDatasetState < CoreBaseClass
        function SetSegmentation(obj, segmentation_name)
            obj.ClearPlugin;
            obj.CurrentSegmentationName = segmentation_name;
+           notify(obj, 'PluginChangedEvent', CoreEventData(segmentation_name));
        end
        
        function UpdateEditStatus(obj, is_edited)

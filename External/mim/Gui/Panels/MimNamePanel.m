@@ -73,7 +73,11 @@ classdef MimNamePanel < GemPanel
         function UpdateSeriesAndPlugin(obj)
             
             if isempty(obj.GuiState.CurrentVisiblePluginName)
-                plugin_prefix = '';
+                if ~isempty(obj.GuiState.CurrentSegmentationName)
+                    plugin_prefix = ['Manual Segmentation: ' , obj.GuiState.CurrentSegmentationName ' - '];
+                else
+                    plugin_prefix = '';
+                end
             else
                 if obj.GuiState.CurrentPluginResultIsEdited
                     edited_line = 'Edited ';

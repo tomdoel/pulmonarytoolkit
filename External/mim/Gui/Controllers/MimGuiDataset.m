@@ -458,10 +458,7 @@ classdef MimGuiDataset < CoreBaseClass
             visible_name = segmentation_name;
             wait_dialog.ShowAndHold(['Loading segmentation ' visible_name]);
 
-            % At present we only support top-level context
-            context_to_request = PTKContext.OriginalImage;
-            
-            new_image = obj.Dataset.LoadManualSegmentation(segmentation_name, context_to_request, []);
+            new_image = obj.Dataset.LoadManualSegmentation(segmentation_name, []);
             
             image_title = visible_name;
             image_title = ['MANUAL SEGMENTATION ', image_title];
@@ -470,6 +467,7 @@ classdef MimGuiDataset < CoreBaseClass
             end
             obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);
             obj.GuiDatasetState.SetSegmentation(segmentation_name);
+            obj.UpdateModes;
             
             wait_dialog.Hide;
         end
@@ -479,7 +477,7 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function UpdateModeTabControl(obj)
-            obj.Gui.UpdateModeTabControl(obj.GuiDatasetState.CurrentPluginInfo);
+            obj.Gui.UpdateModeTabControl(obj.GuiDatasetState);
         end
         
         function SetNoDataset(obj, keep_patient)
@@ -606,7 +604,7 @@ classdef MimGuiDataset < CoreBaseClass
        
         function UpdateModes(obj)
             obj.ModeSwitcher.UpdateMode(obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
-            obj.Gui.UpdateModeTabControl(obj.GuiDatasetState.CurrentPluginInfo);
+            obj.Gui.UpdateModeTabControl(obj.GuiDatasetState);
             obj.Gui.UpdateToolbar;
         end
         
