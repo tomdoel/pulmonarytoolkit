@@ -31,7 +31,7 @@ classdef PTKUnclosedLungIncludingTrachea < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
-        Version = 2
+        Version = 3
     end
     
     methods (Static)

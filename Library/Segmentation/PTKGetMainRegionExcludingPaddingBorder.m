@@ -151,7 +151,7 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
     end
     
     if numel(results) == 0
-        reporting.Error('PTKGetMainRegionExcludingBorder:Failed', 'Unable to extract the main image region');
+        reporting.Error('PTKGetMainRegionExcludingPaddingBorder:Failed', 'Unable to extract the main image region');
     end
     
     if ~include_interior_regions
@@ -172,12 +172,12 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
 
             use_both_regions = false;
             if (bb_1(2) >= image_centre_j - centre_offset) && (bb_2(5) + bb_2(2) < image_centre_j + centre_offset)
-                reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
+                reporting.ShowMessage('PTKGetMainRegionExcludingPaddingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
                 use_both_regions = true;
             end
 
             if (bb_2(2) >= image_centre_j - centre_offset) && (bb_1(5) + bb_1(2) < image_centre_j + centre_offset)
-                reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
+                reporting.ShowMessage('PTKGetMainRegionExcludingPaddingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
                 use_both_regions = true;
             end
         else

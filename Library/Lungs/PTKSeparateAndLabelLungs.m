@@ -15,11 +15,10 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
     both_lungs = unclosed_lungs.Copy;
-    max_iter = 10;
     
     both_lungs.ChangeRawImage(uint8(both_lungs.RawImage & (filtered_threshold_lung.RawImage > 0)));
     
-    success = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, max_iter, false, reporting);
+    [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, reporting);
     if ~success
         reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs after ' int2str(max_iter) ' opening attempts. Trying 2D approach.']);
 
@@ -37,7 +36,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
             both_lungs_slice = PTKImage(both_lungs.GetSlice(coronal_index, PTKImageOrientation.Coronal));
             unclosed_lungs_slice = PTKImage(unclosed_lungs.GetSlice(coronal_index, PTKImageOrientation.Coronal));
             if any(both_lungs_slice.RawImage(:))
-                success = SeparateLungs(both_lungs_slice, lung_roi_slice, unclosed_lungs_slice, max_iter, true, reporting);
+                [success, max_iter] = SeparateLungs(both_lungs_slice, lung_roi_slice, unclosed_lungs_slice, true, reporting);
                 if ~success
                     any_slice_failure = true;
                     reporting.ShowMessage('PTKSeparateAndLabelLungs:FailureInCoronalSlice', ['Failed to separate left and right lungs in a coronal slice after ' int2str(max_iter) ' opening attempts.']);
@@ -64,7 +63,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     end
 end
     
-function success = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, max_iter, is_coronal, reporting)
+function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, is_coronal, reporting)
     
     % Find the connected components in this mask
     CC = bwconncomp(both_lungs.RawImage > 0, 26);
@@ -76,6 +75,8 @@ function success = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, max_iter,
     [largest_area_numpixels, largest_areas_indices] = sort(num_pixels, 'descend');
     
     iter_number = 0;
+    opening_sizes = [1, 2, 4, 7, 10, 14];
+    max_iter = numel(opening_sizes);
     
     % If there is only one large connected component, the lungs are connected,
     % so we attempt to disconnect them using morphological operations
@@ -84,9 +85,10 @@ function success = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, max_iter,
             success = false;
             return;
         end
+        disp(['Opening:' num2str(iter_number)]);
         iter_number = iter_number + 1;
         reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
-        opening_size = iter_number;
+        opening_size = opening_sizes(iter_number);
         image_to_close = both_lungs.Copy;
         image_to_close.BinaryMorph(@imopen, opening_size);
         
