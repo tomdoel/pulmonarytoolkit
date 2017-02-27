@@ -39,7 +39,7 @@ classdef PTKAirways < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = true
-%         Version = 2
+        Version = 2
     end
     
     methods (Static)

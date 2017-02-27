@@ -1,10 +1,10 @@
-function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image, use_wide_threshold, reporting)
+function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image, use_wide_threshold, include_interior_regions, reporting)
     % PTKSegmentLungsWithoutClosing. Extracts a region comprising the lung and
     % airways from a CT region of interest image.
     %
     %
     %     Syntax:
-    %         lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image, use_wide_threshold, reporting)
+    %         lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image, use_wide_threshold, include_interior_regions, reporting)
     %
     %         Inputs:
     %         ------
@@ -18,6 +18,12 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
     %                 This is better at segmenting the lungs for noisy/diseased
     %                 images where voxels take on a wider range of values, but
     %                 may segment airway walls.
+    %             include_interior_regions - if true, the segmentation will include
+    %                 interior disconnected regions within the ROI even though they
+    %                 might not be part of the lungs and airways. Generally this
+    %                 might be set to true when finding a mask for airway
+    %                 segmentation, but set to false when finding a mask for lung
+    %                 segmentation
     %             reporting - a PTKReporting object for progress, warning and
     %                 error reporting.
     %
@@ -72,9 +78,14 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
     open_params = [2, 4, 6];
     open_index = 1;
     
-    % Find the main component, excluding any components touching the border
+    if include_interior_regions
+        minimum_region_volume_mm3 = 0;
+    else
+        minimum_region_volume_mm3 = 1000000;
+    end
     
-    lung_image = PTKGetMainRegionExcludingPaddingBorder(original_image, filtered_lung_image, 1000000, reporting);
+    % Find the main component, excluding any components touching the border
+    lung_image = PTKGetMainRegionExcludingPaddingBorder(original_image, filtered_lung_image, minimum_region_volume_mm3, include_interior_regions, reporting);
     lung_volume = lung_image.Volume;
     still_searching = lung_volume < min_volume_warning_limit;
     
@@ -82,7 +93,7 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
         open_value = open_params(open_index);
         filtered_lung_image_copy = filtered_lung_image.Copy;
         filtered_lung_image_copy.BinaryMorph(@imerode, open_value);
-        adjusted_lung_image = PTKGetMainRegionExcludingPaddingBorder(original_image, filtered_lung_image_copy, 1000000, reporting);
+        adjusted_lung_image = PTKGetMainRegionExcludingPaddingBorder(original_image, filtered_lung_image_copy, minimum_region_volume_mm3, include_interior_regions, reporting);
         
         lung_volume = adjusted_lung_image.Volume;
         

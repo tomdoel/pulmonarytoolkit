@@ -36,7 +36,7 @@ function mask = PTKGetInteriorLungRegion(lung_roi, reporting)
     reporting.ShowProgress('Applying threshold');
     
     reporting.ShowProgress('Finding region of interest');
-    mask = PTKSegmentLungsWithoutClosing(lung_roi, false, false, reporting);
+    mask = PTKSegmentLungsWithoutClosing(lung_roi, false, false, true, reporting);
     mask.ResizeToMatch(lung_roi);
     
     reporting.CompleteProgress;
