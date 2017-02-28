@@ -9,6 +9,12 @@ classdef MimConnectionCacheMap < CoreBaseClass
             obj.ConnectionCacheDictionary = containers.Map('KeyType', 'int32', 'ValueType', 'any');
         end
         
+        function clear(obj)
+            for connection = obj.ConnectionCacheDictionary.values
+                connection{1}.clear();
+            end
+        end
+        
         function addConnection(obj, connection)
             if ~obj.ConnectionCacheDictionary.isKey(connection.HashCode)
                 obj.ConnectionCacheDictionary(connection.HashCode) = MimModelCache();

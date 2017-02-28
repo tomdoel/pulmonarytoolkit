@@ -15,5 +15,9 @@ classdef MimLocalModelCache < CoreBaseClass
             end
             entry = obj.ModelDictionary(modelName);
         end
+        
+        function clear(obj)
+            obj.ModelDictionary = containers.Map;
+        end
     end
 end

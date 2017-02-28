@@ -1,32 +1,41 @@
 classdef MimSubject < MimWSModel
     properties
+        SubjectName
         SubjectId
         ProjectName
+        ProjectId
         Hash
-        SeriesList
+        SubjectOutput
     end
 
     methods
         function obj = MimSubject(mim, modelUid, parameters)
             obj = obj@MimWSModel(mim, modelUid, parameters);
+            obj.SubjectName = parameters.subjectName;
             obj.ProjectName = parameters.projectName;
+            obj.ProjectId = parameters.projectId;
             obj.SubjectId = parameters.subjectId;
             obj.Hash = 0;
         end
         
         function [value, hash] = getValue(obj, modelList)
             obj.Hash = obj.Hash + 1;
-            if isempty(obj.SeriesList)
+            if isempty(obj.SubjectOutput)
                 obj.update(modelList);
             end
-            value = obj.SeriesList;
+            value = obj.SubjectOutput;
             hash = obj.Hash;
         end
         
         function update(obj, modelList)
             database = obj.Mim.GetImageDatabase();
             
-            datasets = database.GetAllSeriesForThisPatient(obj.ProjectName, obj.SubjectId, true);
+            datasets = database.GetAllSeriesForThisPatient(obj.ProjectId, obj.SubjectId, true);
+            obj.SubjectOutput = struct;
+            obj.SubjectOutput.subjectName = obj.SubjectName;
+            obj.SubjectOutput.xnatProject = obj.ProjectName;
+            obj.SubjectOutput.subjectXnatID = obj.SubjectId;
+            obj.SubjectOutput.xnatInsertDate = '';
             seriesList = {};
             
             for seriesIndex = 1 : length(datasets)
@@ -34,12 +43,12 @@ classdef MimSubject < MimWSModel
                 seriesUid = series.SeriesUid;
                 
                 parameters = {};
-                parameters.SeriesName = series.Name;
-                parameters.SeriesUid = seriesUid;
+                parameters.seriesName = series.Name;
+                parameters.seriesUid = seriesUid;
                 [model, modelUid] = obj.getDerivedModel([], 'MimSeries', parameters, modelList);
                 seriesList{end + 1} = MimSubject.SeriesListEntry(modelUid, series.Name, series.Modality);
             end
-            obj.SeriesList = seriesList;
+            obj.SubjectOutput.seriesList = seriesList;
         end
     end
     

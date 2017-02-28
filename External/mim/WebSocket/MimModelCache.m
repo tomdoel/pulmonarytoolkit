@@ -9,6 +9,10 @@ classdef MimModelCache < CoreBaseClass
             obj.ModelDictionary = containers.Map;
         end
         
+        function clear(obj)
+            obj.ModelDictionary = containers.Map;
+        end
+        
         function entry = getModelCacheEntry(obj, modelName)
             if ~obj.ModelDictionary.isKey(modelName)
                 obj.ModelDictionary(modelName) = MimModelCacheEntry([], []);

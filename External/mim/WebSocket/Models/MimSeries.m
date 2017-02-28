@@ -1,59 +1,43 @@
 classdef MimSeries < MimWSModel
     properties
-        SubjectId
+        Dataset
         SeriesUid
-        SeriesName
+        BackgroundViewModelUid
+        SegmentationViewModelUid
         Hash
-        SeriesList
-        SeriesModelMap
     end
         
     methods
         function obj = MimSeries(mim, modelUid, parameters)
             obj = obj@MimWSModel(mim, modelUid, parameters);            
             obj.SeriesUid = parameters.seriesUid;
-            obj.SeriesName = parameters.seriesName;
             obj.Hash = 0;
-            obj.SeriesModelMap = containers.Map;
         end
         
         function [value, hash] = getValue(obj, modelList)
             obj.Hash = obj.Hash + 1;
-            if isempty(obj.SeriesList)
-                obj.update(modelList);
+            if isempty(obj.Dataset)
+                obj.getDataset(modelList);
             end
-            value = obj.SeriesList;
+            value = {};
+            value.backgroundViewModelUid = obj.BackgroundViewModelUid;
+            value.segmentationViewModelUid = obj.SegmentationViewModelUid;
             hash = obj.Hash;
         end
         
-        function update(obj, modelList)
-            database = obj.Mim.GetImageDatabase();
-            
-            datasets = database.GetAllSeriesForThisPatient(obj.ProjectId, obj.SubjectId, true);
-            seriesList = {};
-            
-            for seriesIndex = 1 : length(datasets)
-                series = datasets{seriesIndex};
-                seriesUid = series.SeriesUid;
-                 
-                if obj.SeriesModelMap.isKey(seriesUid)
-                    model = obj.SeriesModelMap(seriesUid);
-                    modelUid = model.ModelUid;
-                    modelList.addModel(obj.Mim, modelUid, model);
-                else
-                    modelUid = CoreSystemUtilities.GenerateUid();
-                    numImages = series.NumberOfImages;
-                    
-                    model = MimSeries(obj.Mim, modelUid, seriesUid);
-                    obj.SeriesModelMap(seriesUid) = model;
-                end
-                seriesList{end + 1} = MimSubject.SeriesListEntry(modelUid, series.Name, series.Modality);
+        function getDataset(obj, modelList)
+            obj.Dataset = obj.Mim.CreateDatasetFromUid(obj.SeriesUid);
+            parameters = {};
+            parameters.dataset = obj.Dataset;
+            parameters.seriesUid = obj.SeriesUid;
 
-                % Add model to list, or verify it matches the existing
-                % model in the lsit
-                modelList.addModel(obj.Mim, modelUid, model);
-            end
-            obj.SeriesList = seriesList;
+            obj.BackgroundViewModelUid = CoreSystemUtilities.GenerateUid();
+            backgroundViewModel = MimWSDataView(obj.Mim, obj.BackgroundViewModelUid, parameters);
+            modelList.addModel(obj.BackgroundViewModelUid, backgroundViewModel);
+            
+            obj.SegmentationViewModelUid = CoreSystemUtilities.GenerateUid();
+            segmentationViewModel = MimWSOverlayView(obj.Mim, obj.SegmentationViewModelUid, parameters);
+            modelList.addModel(obj.SegmentationViewModelUid, segmentationViewModel);
         end
     end
     

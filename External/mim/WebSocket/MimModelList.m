@@ -17,6 +17,10 @@ classdef MimModelList < CoreBaseClass
             obj.ModelClasses('MimSeries') = {@MimSeries, @MimSeries.getKeyFromParameters};
         end
         
+        function model = getModel(obj, modelName)
+            model = obj.Models(modelName);
+        end
+        
         function [value, hash] = getValue(obj, modelName)
             [value, hash] = obj.Models(modelName).getValue(obj);
         end
@@ -48,6 +52,15 @@ classdef MimModelList < CoreBaseClass
             modelHandles = obj.ModelClasses(modelName);
             constructorHandle = modelHandles{1};
             newObject = constructorHandle(obj.Mim, modelUid, parameters);
+        end
+        
+        function clear(obj)
+            obj.Models = containers.Map;
+            obj.ModelClasses = containers.Map;
+            obj.addModel('MimSubjectList', MimSubjectList(obj.Mim, 'MimSubjectList', {}));
+            
+            obj.ModelClasses('MimSubject') = {@MimSubject, @MimSubject.getKeyFromParameters};
+            obj.ModelClasses('MimSeries') = {@MimSeries, @MimSeries.getKeyFromParameters};
         end
     end
 end

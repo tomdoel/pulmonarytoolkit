@@ -5,7 +5,6 @@ classdef MimServer < handle
         Mim
         ModelCache
         ModelList
-        Updater
         Reporting
     end
     
@@ -16,6 +15,10 @@ classdef MimServer < handle
         
         function stop()
             MimServer.getServer().stopServer();
+        end
+        
+        function clear()
+            MimServer.getServer().clearModels();
         end
         
         function localUpdateModel(modelName, hash, data)
@@ -43,7 +46,6 @@ classdef MimServer < handle
             obj.Reporting = MimReporting([], [], 'mimserver.log');
             obj.Mim = MimMain(framework_def, obj.Reporting);
             obj.ModelCache = MimModelCache();
-            obj.Updater = MimModelUpdater();
             obj.ModelList = MimModelList(obj.Mim);
             obj.WebSocketServer = MimWebSocketServer(30000, obj.ModelList);
         end
@@ -58,6 +60,12 @@ classdef MimServer < handle
             obj.WebSocketServer.stop();
         end
 
+        function clearModels(obj)
+            obj.ModelList.clear();
+            obj.ModelCache.clear();
+            obj.WebSocketServer.clearModels();
+        end
+        
         function updateLocalModelValue(obj, modelName, hash, value)
             obj.WebSocketServer.updateLocalModelValue(modelName, hash, value);
         end

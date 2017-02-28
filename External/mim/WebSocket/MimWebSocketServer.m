@@ -21,7 +21,7 @@ classdef MimWebSocketServer < WebSocketServer
             % metadata
             
             blob = MimWebSocketParser.EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, payloadType, data);
-            obj.LogBinaryMessage('Sending', bytearray);
+            obj.LogBinaryMessage('Sending', blob);
             obj.sendToAll(blob);
         end
         
@@ -63,6 +63,10 @@ classdef MimWebSocketServer < WebSocketServer
                 % Update models and trigger synchronisation
                 MimModelUpdater.updateModel(localModelCache, MimRemoteModelProxy(obj, modelName, [], false, remoteModelCache));
             end
+        end
+        
+        function clearModels(obj)
+            obj.LocalCache.clear();
         end        
     end
     

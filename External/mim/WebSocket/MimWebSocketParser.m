@@ -44,13 +44,18 @@ classdef MimWebSocketParser
             headerLength = typecast(dataBlob(2:5), 'uint32');
             dataLength = typecast(dataBlob(6:9), 'uint32');
             header = loadjson(char(dataBlob(10 : 9 + headerLength)));
-            metadata = header.metaData;
+            if isfield(header, 'metaData')
+                metadata = header.metaData;
+                header = rmfield(header, 'metaData');
+            else
+                metadata = [];
+            end
             dataType = header.dataType;
             dataDims = header.dataDims;
             data = dataBlob(10 + headerLength : end);
             data = typecast(data, dataType);
             data = reshape(data, dataDims);
-            header = rmfield(rmfield(rmfield(header, 'dataType'), 'dataDims'), 'metaData');
+            header = rmfield(rmfield(header, 'dataType'), 'dataDims');
         end
         
         function dataBlob = EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, payloadType, data)
@@ -108,9 +113,7 @@ classdef MimWebSocketParser
             dataStruct.localHash = serverHash;
             dataStruct.lastRemoteHash = lastClientHash;
             dataStruct.payloadType = payloadType;
-            if ~isempty(metaData)
-                dataStruct.metaData = metaData;
-            end
+            dataStruct.metaData = metaData;
             if ~isempty(data)
                 dataStruct.value = data;
             end

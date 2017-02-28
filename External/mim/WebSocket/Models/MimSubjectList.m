@@ -30,9 +30,12 @@ classdef MimSubjectList < MimWSModel
                 [names, ids, short_visible_names, num_series, num_patients_combined, patient_id_map] = database.GetListOfPatientNamesAndSeriesCount(projectId, true);
                 for nameIndex = 1 : numel(names)
                     subjectId = ids{nameIndex};
+                    name = names{nameIndex};
                     parameters = {};
                     parameters.subjectId = subjectId;
                     parameters.projectName = projectName;
+                    parameters.projectId = projectId;
+                    parameters.subjectName = name;
                     
                     [model, modelUid] = obj.getDerivedModel([], 'MimSubject', parameters, modelList);
                     subjectList{end + 1} = MimSubjectList.SubjectListEntry(modelUid, names{nameIndex}, subjectId, projectName, [], []);
