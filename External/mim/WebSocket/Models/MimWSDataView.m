@@ -13,6 +13,7 @@ classdef MimWSDataView < MimWSModel
             obj = obj@MimWSModel(mim, modelUid, parameters);
             obj.Dataset = parameters.dataset;
             obj.SeriesUid = parameters.seriesUid;
+            obj.AxialDimension = [];
             obj.Hash = 0;
         end
         

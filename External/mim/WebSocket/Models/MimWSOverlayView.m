@@ -5,6 +5,7 @@ classdef MimWSOverlayView < MimWSModel
         Image
         Hash
         SeriesUid
+        AxialDimension
     end
 
     methods
@@ -12,6 +13,7 @@ classdef MimWSOverlayView < MimWSModel
             obj = obj@MimWSModel(mim, modelUid, parameters);
             obj.Dataset = parameters.dataset;
             obj.SeriesUid = parameters.seriesUid;
+            obj.AxialDimension = [];
             obj.Hash = 0;
         end
         
@@ -25,16 +27,22 @@ classdef MimWSOverlayView < MimWSModel
                 else
                     obj.Image = obj.Dataset.GetTemplateImage('PTKOriginalImage');
                     obj.Image.ImageType = PTKImageType.Colormap;
-                    obj.Image.ChangeRawImage(zeros(newImage.ImageSize, 'uint8'));
+                    rawImage = zeros(newImage.ImageSize, 'uint8');
+                    ball = CoreImageUtilities.CreateBallStructuralElement([1,1,1], 100);
+                    rawImage(1:size(ball,1), 1:size(ball,2), 1:size(ball,3)) = ball;
+                    obj.Image.ChangeRawImage(rawImage);
                     obj.Dataset.SaveManualSegmentation('SlicSeg', obj.Image);
                 end
                 
-                for axial_index = 1 : obj.Image.ImageSize(3);
+                [~, obj.AxialDimension] = max(obj.Image.VoxelSize);
+                
+                for axial_index = 1 : obj.Image.ImageSize(obj.AxialDimension);
                     obj.InstanceUids(axial_index) = CoreSystemUtilities.GenerateUid();
                     parameters = {};
                     parameters.imageHandle = obj.Image;
                     parameters.imageSliceNumber = axial_index;
                     parameters.parentView = obj.ModelUid;
+                    parameters.axialDimension = obj.AxialDimension;
                     imageSliceModel = MimWSImageSlice(obj.Mim, obj.InstanceUids(axial_index), parameters);
                     modelList.addModel(obj.Mim, obj.InstanceUids(axial_index), imageSliceModel);
                     instanceList{end + 1} = obj.InstanceUids(axial_index);
