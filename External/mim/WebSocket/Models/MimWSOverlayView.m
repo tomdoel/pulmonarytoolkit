@@ -25,10 +25,14 @@ classdef MimWSOverlayView < MimWSModel
                 if any(strcmp(segs, 'SlicSeg'))
                     obj.Image = obj.Dataset.LoadManualSegmentation('SlicSeg');
                 else
-                    obj.Image = obj.Dataset.GetTemplateImage('PTKOriginalImage');
+                    obj.Image = obj.Dataset.GetTemplateImage(PTKContext.OriginalImage);
                     obj.Image.ImageType = PTKImageType.Colormap;
-                    rawImage = zeros(newImage.ImageSize, 'uint8');
+                    rawImage = zeros(obj.Image.ImageSize, 'uint8');
                     ball = CoreImageUtilities.CreateBallStructuralElement([1,1,1], 100);
+                    imageSize = obj.Image.ImageSize;
+                    ballSize = size(ball);
+                    minSize = min(imageSize, ballSize);
+                    ball = ball(1:minSize(1), 1:minSize(2), 1:minSize(3));
                     rawImage(1:size(ball,1), 1:size(ball,2), 1:size(ball,3)) = ball;
                     obj.Image.ChangeRawImage(rawImage);
                     obj.Dataset.SaveManualSegmentation('SlicSeg', obj.Image);
@@ -36,16 +40,19 @@ classdef MimWSOverlayView < MimWSModel
                 
                 [~, obj.AxialDimension] = max(obj.Image.VoxelSize);
                 
-                for axial_index = 1 : obj.Image.ImageSize(obj.AxialDimension);
-                    obj.InstanceUids(axial_index) = CoreSystemUtilities.GenerateUid();
+                for axial_index = 1 : obj.Image.ImageSize(obj.AxialDimension)
+                    newInstanceUid = CoreSystemUtilities.GenerateUid();
                     parameters = {};
                     parameters.imageHandle = obj.Image;
                     parameters.imageSliceNumber = axial_index;
                     parameters.parentView = obj.ModelUid;
                     parameters.axialDimension = obj.AxialDimension;
-                    imageSliceModel = MimWSImageSlice(obj.Mim, obj.InstanceUids(axial_index), parameters);
-                    modelList.addModel(obj.Mim, obj.InstanceUids(axial_index), imageSliceModel);
-                    instanceList{end + 1} = obj.InstanceUids(axial_index);
+                    parameters.imageType = 2;
+                    imageSliceModel = MimWSImageSlice(obj.Mim, newInstanceUid, parameters);
+                    modelList.addModel(newInstanceUid, imageSliceModel);
+                    instanceStruct = {};
+                    instanceStruct.imageId = ['mim:' newInstanceUid];
+                    instanceList{end + 1} = instanceStruct;
                 end
                 obj.InstanceList = instanceList;
             end
@@ -58,7 +65,7 @@ classdef MimWSOverlayView < MimWSModel
     
     methods (Static)
         function key = getKeyFromParameters(parameters)
-            key = [parameters.seriesUid '-DV'];
+            key = [parameters.seriesUid '-SS'];
         end
     end    
 end

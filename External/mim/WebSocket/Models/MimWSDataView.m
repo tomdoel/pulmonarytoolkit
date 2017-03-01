@@ -30,6 +30,7 @@ classdef MimWSDataView < MimWSModel
                     parameters.imageSliceNumber = axial_index;
                     parameters.parentView = obj.ModelUid;
                     parameters.axialDimension = obj.AxialDimension;
+                    parameters.imageType = 1;
                     imageSliceModel = MimWSImageSlice(obj.Mim, newInstanceUid, parameters);
                     modelList.addModel(newInstanceUid, imageSliceModel);
                     instanceStruct = {};

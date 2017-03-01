@@ -30,7 +30,7 @@ classdef MimRemoteModelProxy < handle
         end
 
         function isProvided = isValueProvided(obj)
-            isProvided = stcmp(obj.PayloadType, MimWebSocketParser.MimPayloadData);
+            isProvided = strcmp(obj.PayloadType, MimWebSocketParser.MimPayloadData);
         end
     
         function value = getCurrentValue(obj)

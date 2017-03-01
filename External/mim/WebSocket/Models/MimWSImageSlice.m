@@ -5,12 +5,14 @@ classdef MimWSImageSlice < MimWSModel
         ImageSliceNumber
         Hash
         ParentView
+        ImageType
     end
 
     methods
         function obj = MimWSImageSlice(mim, modelUid, parameters)
             obj = obj@MimWSModel(mim, modelUid, parameters);
             obj.Image = parameters.imageHandle;
+            obj.ImageType = parameters.imageType;
             obj.ImageSliceNumber = parameters.imageSliceNumber;
             obj.AxialDimension = parameters.axialDimension;
             obj.ParentView = parameters.parentView;
