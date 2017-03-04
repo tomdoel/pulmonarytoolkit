@@ -12,9 +12,17 @@ classdef PTKMexInfo < CoreCompiledFileInfo
     %
     
     methods
-        function obj = PTKMexInfo(varargin)
-            obj = obj@CoreCompiledFileInfo(varargin{:});
+        function obj = PTKMexInfo(current_version, filename, extension, file_path, compiler_options, other_files)
+            obj = obj@CoreCompiledFileInfo(current_version, filename, extension, file_path, compiler_options, other_files);
         end
+        
+        function converted = CoreCompiledFileInfo(obj)
+            converted = CoreCompiledFileInfo();
+            mco = ?PTKMexInfo;
+            for property = mco.PropertyList'
+                converted.(property.Name) = obj.(property.Name);
+            end            
+        end        
     end
     
 end
