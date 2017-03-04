@@ -25,6 +25,10 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
         ItemGenericName
     end
     
+    events
+        ListChanged
+    end
+    
     methods
         function obj = MimUserSavedItemListBox(parent, item_generic_name, load_callback, delete_callback, add_callback, list_callback, get_current_callback)
             obj = obj@GemListBoxWithTitle(parent, upper([item_generic_name 's']), ['Add ' item_generic_name], ['Delete ' item_generic_name]);
@@ -37,7 +41,7 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
         end
         
         function UpdateForNewImage(obj, current_dataset, window, level)
-            obj.Update;
+            obj.Update();
         end
          
         function Update(obj)
@@ -60,7 +64,7 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
                 end
                 obj.ListBox.SelectItem(current_set, true);
             end
-            
+            notify(obj, 'ListChanged');            
         end
         
         function SelectSetPanel(obj, set_name, selected)
@@ -71,7 +75,7 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
     methods (Access = protected)
         function AddButtonClicked(obj, ~, event_data)
             obj.AddCallback();
-            obj.Update;
+            obj.Update();
         end
         
         function DeleteButtonClicked(obj, ~, ~)
@@ -79,7 +83,7 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
             if ~isempty(current)
                 obj.DeleteCallback(current);
             end
-            obj.Update;
+            obj.Update();
         end
     end
 end

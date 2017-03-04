@@ -57,11 +57,16 @@ classdef MimSegmentPanel < GemPanel
             obj.ModeToSwitchTo = mode_to_switch_to;
             obj.Visibility = visibility;
             
-            obj.AddEventListener(gui_dataset_state, 'PluginChangedEvent', @obj.MarkerSetNameChangedCallback);
+            obj.AddEventListener(gui_dataset_state, 'PluginChangedEvent', @obj.SegmentationChangedCallback);
+            obj.AddEventListener(obj.ManualSegmentationListBox, 'ListChanged', @obj.SegmentationListChangedCallback);
         end
         
-        function MarkerSetNameChangedCallback(obj, ~, ~)
+        function SegmentationChangedCallback(obj, ~, ~)
             obj.ManualSegmentationListBox.SelectSetPanel(obj.State.CurrentSegmentationName, true);
+        end
+        
+        function SegmentationListChangedCallback(obj, ~, ~)
+            obj.Update();
         end
         
         function Resize(obj, new_position)

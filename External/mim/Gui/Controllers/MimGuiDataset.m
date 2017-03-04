@@ -94,7 +94,9 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function SaveMarkers(obj, name, markers)
-            obj.Dataset.SaveMarkerPoints(name, markers);
+            if obj.DatasetIsLoaded
+                obj.Dataset.SaveMarkerPoints(name, markers);
+            end
         end
         
         function markers = LoadMarkers(obj, name)
@@ -102,11 +104,21 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function DeleteMarkerSet(obj, name)
-            obj.Dataset.DeleteMarkerSet(name);
+            if obj.DatasetIsLoaded
+                obj.Dataset.DeleteMarkerSet(name);
+            end
         end
         
-        function markers = DeleteManualSegmentation(obj, name)
-            markers = obj.Dataset.DeleteManualSegmentation(name);
+        function SaveManualSegmentation(obj, name, segmentation)
+            if obj.DatasetIsLoaded
+                obj.Dataset.SaveManualSegmentation(name, segmentation);
+            end
+        end
+        
+        function DeleteManualSegmentation(obj, name)
+            if obj.DatasetIsLoaded
+                obj.Dataset.DeleteManualSegmentation(name);
+            end
         end
         
         function dataset_cache_path = GetDatasetCachePath(obj)

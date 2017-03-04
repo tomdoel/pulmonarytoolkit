@@ -1021,6 +1021,11 @@ classdef MimGuiBase < GemFigure
         function AddManualSegmentation(obj)
             name = inputdlg('Please enter a name for the new manual segmentation you wish to create', 'New manual segmentation');
             if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
+                segmentation = obj.GuiDataset.GetTemplateImage();
+                template_raw = zeros(segmentation.ImageSize, 'uint8');
+                segmentation.ChangeRawImage(template_raw);
+                segmentation.ImageType = PTKImageType.Colormap;
+                obj.GuiDataset.SaveManualSegmentation(name{1}, segmentation);
                 % ToDo
             end
         end
