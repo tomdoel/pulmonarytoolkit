@@ -104,14 +104,14 @@ classdef MivAppDef < handle
 
         function framework_app_def = GetFrameworkAppDef(obj)
             if isempty(obj.FrameworkAppDef)
-                obj.FrameworkAppDef = PTKFrameworkAppDef;
+                obj.FrameworkAppDef = MivFrameworkAppDef();
             end
             framework_app_def = obj.FrameworkAppDef;
         end
 
         function dicom_meta_data = GetDicomMetadata(obj)
             if isempty(obj.DicomMetadata)
-                obj.DicomMetadata = PTKDicomMetadata;
+                obj.DicomMetadata = MimDicomMetadata();
             end
             dicom_meta_data = obj.DicomMetadata;
         end
