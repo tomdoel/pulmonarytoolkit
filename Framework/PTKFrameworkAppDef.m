@@ -42,10 +42,10 @@ classdef PTKFrameworkAppDef < handle
             end
         end
         
-        function output_directory = GetOutputDirectory(obj)
+        function output_directory = GetBinDirectory(obj)
             output_directory = fullfile(PTKDirectories.GetSourceDirectory, 'bin');
         end
-        
+
         function files_to_compile = GetFilesToCompile(obj, reporting)
             files_to_compile = PTKGetMexFilesToCompile(reporting);
         end

@@ -21,9 +21,9 @@ classdef MivFrameworkAppDef < handle
     methods
         function obj = MivFrameworkAppDef
             obj.Config = MimConfig();
-            obj.ContextDef = PTKContextDef();
+            obj.ContextDef = MivContextDef();
             obj.Directories = MimDirectories(obj.GetApplicationParentDirectory, obj.Config);
-            obj.ClassFactory = PTKClassFactory();
+            obj.ClassFactory = MimClassFactory();
         end
         
         function context_def = GetContextDef(obj)
@@ -38,8 +38,8 @@ classdef MivFrameworkAppDef < handle
             parent_directory = CoreDiskUtilities.GetUserDirectory;
         end
         
-        function output_directory = GetOutputDirectory(obj)
-            output_directory = fullfile(PTKDirectories.GetSourceDirectory, 'bin');
+        function bin_directory = GetBinDirectory(obj)
+            bin_directory = fullfile(CoreDiskUtilities.GetUserDirectory, 'mim', 'bin');
         end
         
         function files_to_compile = GetFilesToCompile(obj, reporting)
