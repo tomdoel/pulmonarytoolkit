@@ -1,10 +1,10 @@
-classdef MimDependencyList < handle
-    % MimDependencyList. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKDependencyList < handle
+    % PTKDependencyList. Part of the internal framework of the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
     %     be used internally within the framework of the Pulmonary Toolkit.
     %
-    %     MimDependencyList stores a list of dependencies (MimDependency objects) 
+    %     PTKDependencyList stores a list of dependencies (PTKDependency objects) 
     %     for a particular plugin result, for a particular dataset. 
     %     Each dependency represents another 
     %     plugin result which was accessed during the generation of this result. 
@@ -24,11 +24,11 @@ classdef MimDependencyList < handle
     end
     
     methods
-        function obj = MimDependencyList(dependency_list)
+        function obj = PTKDependencyList(dependency_list)
             if (nargin > 0)
                 obj.DependencyList = dependency_list;
             else
-                obj.DependencyList = MimDependency.empty;
+                obj.DependencyList = PTKDependency.empty;
             end
         end
         
@@ -69,10 +69,10 @@ classdef MimDependencyList < handle
                          else
                              if (dependency.Attributes.IgnoreDependencyChecks && new_dependency.Attributes.IgnoreDependencyChecks)
                                  dependency_exists = true;
-                                 reporting.ShowWarning('MimDependencyList:PermittedDependencyMismatch', ['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
+                                 reporting.ShowWarning('PTKDependencyList:PermittedDependencyMismatch', ['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
                                  return;
                              else
-                                 reporting.Error('MimDependencyList:DependencyMismatch', ['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
+                                 reporting.Error('PTKDependencyList:DependencyMismatch', ['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
                              end
                          end
                     end

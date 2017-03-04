@@ -36,12 +36,12 @@ classdef MimDatasetStackItem < handle
     methods
         function obj = MimDatasetStackItem(instance_id, dependency_list, ignore_dependency_checks, start_timer, reporting)
             if nargin > 0
-                if ~isa(instance_id, 'MimDependency')
-                    reporting.Error('MimDatasetStackItem:BadInstanceID', 'instance_id must be a MimDependency object');
+                if ~isa(instance_id, 'PTKDependency')
+                    reporting.Error('MimDatasetStackItem:BadInstanceID', 'instance_id must be a PTKDependency object');
                 end
 
-                if ~isa(dependency_list, 'MimDependencyList')
-                    reporting.Error('MimDatasetStackItem:BadDependencyList', 'dependency_list must be a MimDependencyList object');
+                if ~isa(dependency_list, 'PTKDependencyList')
+                    reporting.Error('MimDatasetStackItem:BadDependencyList', 'dependency_list must be a PTKDependencyList object');
                 end
 
                 obj.InstanceIdentifier = instance_id;
