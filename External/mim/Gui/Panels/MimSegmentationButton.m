@@ -39,9 +39,9 @@ classdef MimSegmentationButton < GemButton
             obj.ButtonHeight = 2*obj.RootButtonHeight;
         end
         
-        function AddPreviewImage(obj, current_dataset, window, level)
-            if ~isempty(current_dataset)
-                preview_image = current_dataset.GetPluginPreview(obj.Tag);
+        function AddPreviewImage(obj, preview_fetcher, window, level)
+            if ~isempty(preview_fetcher)
+                preview_image = preview_fetcher.GetPluginPreview(obj.Tag);
             else
                 preview_image = [];
             end

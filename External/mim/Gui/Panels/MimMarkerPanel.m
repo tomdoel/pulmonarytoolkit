@@ -37,7 +37,7 @@ classdef MimMarkerPanel < GemPanel
     end
     
     methods
-        function obj = MimMarkerPanel(parent, marker_manager, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically, allow_wrapping)
+        function obj = MimMarkerPanel(parent, gui_dataset_state, marker_manager, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically, allow_wrapping)
             obj = obj@GemPanel(parent);
             
             obj.TopBorder = false;
@@ -59,6 +59,11 @@ classdef MimMarkerPanel < GemPanel
             
             obj.AddPostSetListener(marker_manager, 'CurrentMarkersName', @obj.MarkerSetNameChangedCallback);
             obj.AddEventListener(marker_manager, 'SavedMarkerListChanged', @obj.MarkerListChangedCallback);
+            obj.AddEventListener(gui_dataset_state, 'MarkersChanged', @obj.MarkersChangedCallback);
+        end
+        
+        function MarkersChangedCallback(obj, ~, ~)
+            obj.Update();
         end
         
         function MarkerSetNameChangedCallback(obj, ~, ~)
@@ -136,8 +141,8 @@ classdef MimMarkerPanel < GemPanel
             obj.MarkerListBox.UpdateForNewImage(current_dataset, window, level);
         end
         
-        function AddPreviewImage(obj, plugin_name, current_dataset, window, level)
-            obj.MarkerToolbar.AddPreviewImage(plugin_name, current_dataset, window, level);
+        function AddPreviewImage(obj, plugin_name, preview_fetcher, window, level)
+            obj.MarkerToolbar.AddPreviewImage(plugin_name, preview_fetcher, window, level);
         end
 
         function RefreshPlugins(obj, current_dataset, window, level)

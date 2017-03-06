@@ -82,21 +82,21 @@ classdef MimPluginGroupPanel < GemPanel
         end
         
         
-        function UpdateForNewImage(obj, current_dataset, window, level)
+        function UpdateForNewImage(obj, preview_fetcher, window, level)
             % Refresh the preview images for every button using the supplied dataset
             
             for button = obj.PluginButtonHandlesMap.values
-                button{1}.AddPreviewImage(current_dataset, window, level);
+                button{1}.AddPreviewImage(preview_fetcher, window, level);
             end
         end
         
-        function plugin_found = AddPreviewImage(obj, plugin_name, current_dataset, window, level)
+        function plugin_found = AddPreviewImage(obj, plugin_name, preview_fetcher, window, level)
             % Refresh the preview image for the specified plugin
             
             plugin_found = obj.PluginButtonHandlesMap.isKey(plugin_name);
             if plugin_found
                 plugin_button = obj.PluginButtonHandlesMap(plugin_name);
-                plugin_button.AddPreviewImage(current_dataset, window, level);
+                plugin_button.AddPreviewImage(preview_fetcher, window, level);
             end
         end
     end

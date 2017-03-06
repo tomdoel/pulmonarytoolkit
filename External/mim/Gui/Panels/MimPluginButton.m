@@ -43,12 +43,8 @@ classdef MimPluginButton < GemButton
             obj.ButtonHeight = plugin_info.ButtonHeight*obj.RootButtonHeight;
         end
         
-        function AddPreviewImage(obj, current_dataset, window, level)
-            if ~isempty(current_dataset)
-                preview_image = current_dataset.GetPluginPreview(obj.Tag);
-            else
-                preview_image = [];
-            end
+        function AddPreviewImage(obj, preview_fetcher, window, level)
+            preview_image = preview_fetcher.FetchPreview(obj.Tag);
             
             if isempty(obj.Position)
                 button_size = [obj.ButtonWidth, obj.ButtonHeight];

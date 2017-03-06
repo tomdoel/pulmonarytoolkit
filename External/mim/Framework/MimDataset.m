@@ -60,6 +60,13 @@ classdef MimDataset < CoreBaseClass
     end
     
     events
+        % This event is fired when a manual segmentaiion is added or
+        % deleted for this dataset
+        ManualSegmentationsChanged
+        
+        % This event is fired when a marker set is added or removed
+        MarkersChanged
+        
         % This event is fired when a plugin has been run for this dataset, and
         % has generated a new preview thumbnail.
         PreviewImageChanged
@@ -73,9 +80,11 @@ classdef MimDataset < CoreBaseClass
             obj.Reporting = reporting;
             obj.LinkedDatasetChooser = linked_dataset_chooser_factory.GetLinkedDatasetChooser(image_info, dataset_disk_cache, reporting);
             
-            % Listen for PreviewImageChanged events - there could be
+            % Listen for events - there could be
             % multiple MimDatasets linked to the same LinkedDatasetChooser
+            obj.AddEventListener(obj.LinkedDatasetChooser, 'MarkersChanged', @obj.MarkersChangedCallback);
             obj.AddEventListener(obj.LinkedDatasetChooser, 'PreviewImageChanged', @obj.PreviewImageChangedCallback);
+            obj.AddEventListener(obj.LinkedDatasetChooser, 'ManualSegmentationsChanged', @obj.ManualSegmentationsChangedCallback);
         end
 
         function LinkDataset(obj, linked_name, dataset_to_link)
@@ -368,5 +377,16 @@ classdef MimDataset < CoreBaseClass
             obj.notify('PreviewImageChanged', CoreEventData(event_data.Data));
         end
         
+        function MarkersChangedCallback(obj, ~, event_data)
+            % Fire an event indictaing the manual segmentation list has changed. This
+            % will allow any listening gui to update if necessary
+            obj.notify('MarkersChanged', CoreEventData(event_data.Data));
+        end
+        
+        function ManualSegmentationsChangedCallback(obj, ~, event_data)
+            % Fire an event indictaing the manual segmentation list has changed. This
+            % will allow any listening gui to update if necessary
+            obj.notify('ManualSegmentationsChanged', CoreEventData(event_data.Data));
+        end
     end
 end

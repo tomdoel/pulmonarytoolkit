@@ -31,6 +31,7 @@ classdef MimGuiBase < GemFigure
         ToolbarPanel
         StatusPanel
 
+        PreviewFetcher
         OrganisedPlugins
         OrganisedManualSegmentations
         ModeTabControl
@@ -132,7 +133,8 @@ classdef MimGuiBase < GemFigure
             obj.ToolbarPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef, false, false);
             obj.AddChild(obj.ToolbarPanel);
             
-            obj.ModeTabControl = MimModeTabControl(obj, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.MarkerManager, obj.GuiDataset.GuiDatasetState, obj.AppDef);
+            obj.PreviewFetcher = MimPreviewFetcher(obj.GuiDataset);
+            obj.ModeTabControl = MimModeTabControl(obj, obj.PreviewFetcher, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.MarkerManager, obj.GuiDataset.GuiDatasetState, obj.AppDef);
             obj.AddChild(obj.ModeTabControl);
 
             obj.PatientNamePanel = MimNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);
@@ -165,7 +167,7 @@ classdef MimGuiBase < GemFigure
             obj.Show;
             
             % After creating all the tabs, we now re-disable the ones that should be hidden
-            obj.GuiDataset.UpdateModeTabControl;
+            obj.GuiDataset.UpdateModeTabControl();
             
             % Add listener for switching modes when the tab is changed
             obj.AddEventListener(obj.ModeTabControl, 'PanelChangedEvent', @obj.ModeTabChanged);
@@ -264,6 +266,7 @@ classdef MimGuiBase < GemFigure
             if ~isempty(uids)
                 obj.GuiDataset.InternalLoadImages(uids{1});
             end
+            
             obj.WaitDialogHandle.Hide;
         end
         
@@ -696,7 +699,7 @@ classdef MimGuiBase < GemFigure
         function DeveloperModeChangedCallback(obj, ~, ~, ~)
             % This methods is called when the DeveloperMode property is changed
             
-            obj.GuiDataset.UpdateModeTabControl;
+            obj.GuiDataset.UpdateModeTabControl();
             obj.RefreshPlugins;
         end
 
@@ -861,10 +864,6 @@ classdef MimGuiBase < GemFigure
             obj.ModeTabControl.UpdateMode(state);
         end
         
-        function AddPreviewImage(obj, plugin_name, dataset)
-            obj.ModeTabControl.AddPreviewImage(plugin_name, dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
-        end
-        
         function ClearImages(obj)
             obj.ImagePanel.ImageSliceParameters.UpdateLock = true;
             if obj.GuiDataset.DatasetIsLoaded
@@ -909,8 +908,8 @@ classdef MimGuiBase < GemFigure
             obj.ImagePanel.ImageSliceParameters.UpdateLock = false;            
         end
         
-        function UpdateGuiForNewDataset(obj, dataset)
-            obj.ModeTabControl.UpdateGuiForNewDataset(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level);
+        function UpdateGuiForNewDataset(obj, preview_fetcher)
+            obj.ModeTabControl.UpdateGuiForNewDataset(obj.PreviewFetcher, obj.ImagePanel.Window, obj.ImagePanel.Level);
             obj.UpdateToolbar;
         end
 
@@ -1005,6 +1004,7 @@ classdef MimGuiBase < GemFigure
             name = inputdlg('Please enter a name for the new set of marker points you wish to create', 'New marker points');
             if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
                 obj.MarkerManager.AddMarkerSet(name{1});
+                obj.LoadMarkers(name{1});
             end
         end
         
@@ -1026,7 +1026,7 @@ classdef MimGuiBase < GemFigure
                 segmentation.ChangeRawImage(template_raw);
                 segmentation.ImageType = PTKImageType.Colormap;
                 obj.GuiDataset.SaveManualSegmentation(name{1}, segmentation);
-                % ToDo
+                obj.LoadSegmentationCallback(name{1});
             end
         end
         

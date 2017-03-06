@@ -16,6 +16,7 @@ classdef MimModeTabControl < GemTabControl
         OrganisedPlugins
         OrganisedManualSegmentations
         Gui
+        PreviewFetcher
         
         SegmentPanel
         PluginsPanel
@@ -27,9 +28,10 @@ classdef MimModeTabControl < GemTabControl
     end
 
     methods
-        function obj = MimModeTabControl(parent, organised_plugins, organised_manual_segmentations, marker_manager, gui_dataset_state, app_def)
+        function obj = MimModeTabControl(parent, preview_fetcher, organised_plugins, organised_manual_segmentations, marker_manager, gui_dataset_state, app_def)
             obj = obj@GemTabControl(parent);
 
+            obj.PreviewFetcher = preview_fetcher;
             obj.OrganisedPlugins = organised_plugins;
             obj.OrganisedManualSegmentations = organised_manual_segmentations;
             obj.TabEnabled = containers.Map;
@@ -44,7 +46,7 @@ classdef MimModeTabControl < GemTabControl
             obj.EditPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Edit', MimModes.EditMode, 'Plugin', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.EditPanel, 'Correct', 'Edit', 'Manual correction of results');
 
-            obj.MarkersPanel = MimMarkerPanel(obj, marker_manager, obj.OrganisedPlugins, 'Markers', MimModes.MarkerMode, 'Dataset', obj.Gui, app_def, true, true);
+            obj.MarkersPanel = MimMarkerPanel(obj, gui_dataset_state, marker_manager, obj.OrganisedPlugins, 'Markers', MimModes.MarkerMode, 'Dataset', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.MarkersPanel, 'Markers', 'Markers', 'Create markers for validation');
             
             obj.AnalysisPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
@@ -54,6 +56,8 @@ classdef MimModeTabControl < GemTabControl
             obj.PluginsPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Developer', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
             obj.AddTabbedPanel(obj.PluginsPanel, 'Plugins', 'Plugins', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
+            
+            obj.AddEventListener(gui_dataset_state, 'PreviewImageChanged', @obj.PreviewImageChangedCallback);
         end
         
         function mode = GetModeToSwitchTo(obj, mode_tag)
@@ -61,9 +65,14 @@ classdef MimModeTabControl < GemTabControl
             mode = panel.GetModeToSwitchTo;
         end
         
-        function AddPreviewImage(obj, plugin_name, dataset, window, level)
+        function PreviewImageChangedCallback(obj, ~, event_data)
+            plugin_name = event_data.Data;
+            obj.AddPreviewImage(plugin_name, obj.PreviewFetcher, obj.Gui.ImagePanel.Window, obj.Gui.ImagePanel.Level);
+        end
+        
+        function AddPreviewImage(obj, plugin_name, preview_fetcher, window, level)
             for panel = obj.PanelMap.values
-                panel{1}.AddPreviewImage(plugin_name, dataset, window, level);
+                panel{1}.AddPreviewImage(plugin_name, preview_fetcher, window, level);
             end
         end
         
@@ -75,12 +84,12 @@ classdef MimModeTabControl < GemTabControl
             end
         end
         
-        function UpdateGuiForNewDataset(obj, dataset, window, level)
+        function UpdateGuiForNewDataset(obj, preview_fetcher, window, level)
             % Update manual segmentations
             obj.OrganisedManualSegmentations.Repopulate(obj.Reporting);
             % Add preview images to buttons
             for panel = obj.PanelMap.values
-                panel{1}.UpdateForNewImage(dataset, window, level);
+                panel{1}.UpdateForNewImage(preview_fetcher, window, level);
             end
         end
         

@@ -56,20 +56,20 @@ classdef MimPluginsPanel < GemCompositePanel
             obj.LoadManualSegmentationCallback = load_segmentation_callback;
         end        
 
-        function UpdateForNewImage(obj, current_dataset, window, level)
+        function UpdateForNewImage(obj, preview_fetcher, window, level)
             % Causes each plugin panel to refresh the preview images for every button using
             % the supplied dataset
             
             for panel = obj.PluginPanels.values
-                panel{1}.UpdateForNewImage(current_dataset, window, level);
+                panel{1}.UpdateForNewImage(preview_fetcher, window, level);
             end            
         end
         
-        function AddPreviewImage(obj, plugin_name, current_dataset, window, level)
+        function AddPreviewImage(obj, plugin_name, preview_fetcher, window, level)
             % Updates the image for one plugin
             
             for panel = obj.PluginPanels.values
-                if panel{1}.AddPreviewImage(plugin_name, current_dataset, window, level);
+                if panel{1}.AddPreviewImage(plugin_name, preview_fetcher, window, level);
                     return;
                 end
             end

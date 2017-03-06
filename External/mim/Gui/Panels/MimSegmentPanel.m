@@ -59,10 +59,15 @@ classdef MimSegmentPanel < GemPanel
             
             obj.AddEventListener(gui_dataset_state, 'PluginChangedEvent', @obj.SegmentationChangedCallback);
             obj.AddEventListener(obj.ManualSegmentationListBox, 'ListChanged', @obj.SegmentationListChangedCallback);
+            obj.AddEventListener(gui_dataset_state, 'ManualSegmentationsChanged', @obj.ManualSegmentationsChangedCallback);
         end
         
         function SegmentationChangedCallback(obj, ~, ~)
             obj.ManualSegmentationListBox.SelectSetPanel(obj.State.CurrentSegmentationName, true);
+        end
+        
+        function ManualSegmentationsChangedCallback(obj, ~, ~)
+            obj.Update();
         end
         
         function SegmentationListChangedCallback(obj, ~, ~)
@@ -135,8 +140,8 @@ classdef MimSegmentPanel < GemPanel
             obj.ManualSegmentationListBox.UpdateForNewImage(current_dataset, window, level);
         end
         
-        function AddPreviewImage(obj, plugin_name, current_dataset, window, level)
-            obj.SegmentToolbar.AddPreviewImage(plugin_name, current_dataset, window, level);
+        function AddPreviewImage(obj, plugin_name, preview_fetcher, window, level)
+            obj.SegmentToolbar.AddPreviewImage(plugin_name, preview_fetcher, window, level);
         end
 
         function RefreshPlugins(obj, current_dataset, window, level)

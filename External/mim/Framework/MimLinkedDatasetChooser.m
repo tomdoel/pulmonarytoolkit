@@ -32,13 +32,19 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
         % This event is fired when a plugin has been run for this dataset, and
         % has generated a new preview thumbnail.
         PreviewImageChanged
+        
+        % This event is fired when a marker set is added or removed
+        MarkersChanged
+        
+        % This event is fired when the manual segmentation list for this dataset has changed
+        ManualSegmentationsChanged
     end
     
     methods
         function obj = MimLinkedDatasetChooser(framework_app_def, context_def, image_info, dataset_disk_cache, linked_recorder_singleton, plugin_cache, reporting)
             obj.LinkedRecorderSingleton = linked_recorder_singleton;
             obj.DatasetCache = dataset_disk_cache;
-            primary_dataset_results = MimDatasetResults(framework_app_def, context_def, image_info, obj, @obj.NotifyPreviewImageChanged, dataset_disk_cache, plugin_cache, reporting);
+            primary_dataset_results = MimDatasetResults(framework_app_def, context_def, image_info, obj, obj, dataset_disk_cache, plugin_cache, reporting);
             obj.PrimaryDatasetUid = primary_dataset_results.GetImageInfo.ImageUid;
             obj.PrimaryDatasetResults = primary_dataset_results;
             obj.LinkedDatasetChooserList = containers.Map;
@@ -97,8 +103,16 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
             end
         end
         
-        function NotifyPreviewImageChanged(obj, event_data)
-            obj.notify('PreviewImageChanged', CoreEventData(event_data.Data));
+        function NotifyPreviewImageChanged(obj, plugin_name)
+            obj.notify('PreviewImageChanged', CoreEventData(plugin_name));
+        end
+        
+        function NotifyMarkersChanged(obj, name)
+            obj.notify('MarkersChanged', CoreEventData(name));
+        end
+        
+        function NotifyManualSegmentationsChanged(obj, name)
+            obj.notify('ManualSegmentationsChanged', CoreEventData(name));
         end
     end
 end

@@ -28,6 +28,8 @@ classdef MimGuiDataset < CoreBaseClass
         Settings
         AppDef
         ContextDef
+        ManualSegmentationsChangedListener
+        MarkersChangedListener
         PreviewImageChangedListener
     end
     
@@ -118,6 +120,9 @@ classdef MimGuiDataset < CoreBaseClass
         function DeleteManualSegmentation(obj, name)
             if obj.DatasetIsLoaded
                 obj.Dataset.DeleteManualSegmentation(name);
+                if strcmp(name, obj.GuiDatasetState.CurrentSegmentationName)
+                    obj.Gui.DeleteOverlays();
+                end
             end
         end
         
@@ -240,7 +245,7 @@ classdef MimGuiDataset < CoreBaseClass
                 obj.ModeSwitcher.UpdateMode([], [], [], [], []);
                 obj.Gui.SetTab(obj.AppDef.DefaultModeOnNewDataset);
                 obj.Gui.ClearImages;
-                obj.DeletePreviewListener;
+                obj.DeleteListeners;
                 delete(obj.Dataset);
                 obj.GuiDatasetState.SetPatientClearSeries(patient_id, []);                
             end
@@ -275,7 +280,7 @@ classdef MimGuiDataset < CoreBaseClass
 
                 obj.Dataset = new_dataset;
                 
-                obj.ReplacePreviewListener(new_dataset);
+                obj.ReplaceListeners(new_dataset);
                 
                 image_info = obj.Dataset.GetImageInfo;
                 series_uid = image_info.ImageUid;
@@ -494,12 +499,12 @@ classdef MimGuiDataset < CoreBaseClass
         
         function SetNoDataset(obj, keep_patient)
             if keep_patient
-                obj.GuiDatasetState.ClearSeries;
+                obj.GuiDatasetState.ClearSeries();
             else
-                obj.GuiDatasetState.ClearPatientAndSeries;
+                obj.GuiDatasetState.ClearPatientAndSeries();
             end
-            obj.GuiDatasetState.ClearPlugin;
-            obj.UpdateModes;
+            obj.GuiDatasetState.ClearPlugin();
+            obj.UpdateModes();
             obj.Gui.UpdateGuiForNewDataset([]);
         end
         
@@ -511,37 +516,49 @@ classdef MimGuiDataset < CoreBaseClass
             if isempty(obj.Dataset)
                 segmentation_list = CorePair.empty;
             else
-                segmentation_list = obj.Dataset.GetListOfManualSegmentations;
+                segmentation_list = obj.Dataset.GetListOfManualSegmentations();
             end
         end
         
         function segmentation_list = GetListOfMarkerSets(obj)
             if isempty(obj.Dataset)
-                segmentation_list = CorePair.empty;
+                segmentation_list = CorePair.empty();
             else
-                segmentation_list = obj.Dataset.GetListOfMarkerSets;
+                segmentation_list = obj.Dataset.GetListOfMarkerSets();
             end
         end
 
         function delete(obj)
-            obj.DeletePreviewListener;
+            obj.DeleteListeners();
         end
         
         function plugin_cache = GetPluginCache(obj)
-            plugin_cache = obj.MimMain.FrameworkSingleton.GetPluginInfoMemoryCache;
+            plugin_cache = obj.MimMain.FrameworkSingleton.GetPluginInfoMemoryCache();
+        end
+        
+        function preview_image = FetchPreview(obj, plugin_name)
+            if isempty(obj.Dataset)
+                preview_image = [];
+            else
+                preview_image = obj.Dataset.GetPluginPreview(plugin_name);
+            end
         end
     end
     
     methods (Access = private)
 
-        function DeletePreviewListener(obj)
+        function DeleteListeners(obj)
             CoreSystemUtilities.DeleteIfValidObject(obj.PreviewImageChangedListener);
+            CoreSystemUtilities.DeleteIfValidObject(obj.MarkersChangedListener);
+            CoreSystemUtilities.DeleteIfValidObject(obj.ManualSegmentationsChangedListener);
             obj.PreviewImageChangedListener = [];
         end
         
-        function ReplacePreviewListener(obj, new_dataset)
-            obj.DeletePreviewListener;
-            obj.PreviewImageChangedListener = addlistener(new_dataset, 'PreviewImageChanged', @obj.PreviewImageChanged);
+        function ReplaceListeners(obj, new_dataset)
+            obj.DeleteListeners();
+            obj.PreviewImageChangedListener = addlistener(new_dataset, 'PreviewImageChanged', @obj.PreviewImageChangedCallback);
+            obj.MarkersChangedListener = addlistener(new_dataset, 'MarkersChanged', @obj.MarkersChangedCallback);
+            obj.ManualSegmentationsChangedListener = addlistener(new_dataset, 'ManualSegmentationsChanged', @obj.ManualSegmentationsChangedCallback);
         end
         
         function SeriesHasBeenDeleted(obj, series_uid, ~)
@@ -603,9 +620,16 @@ classdef MimGuiDataset < CoreBaseClass
             end
         end
         
-        function PreviewImageChanged(obj, ~, event_data)
-            plugin_name = event_data.Data;
-            obj.Gui.AddPreviewImage(plugin_name, obj.Dataset);
+        function PreviewImageChangedCallback(obj, ~, event_data)
+            notify(obj.GuiDatasetState, 'PreviewImageChanged', CoreEventData(event_data.Data));
+        end
+        
+        function ManualSegmentationsChangedCallback(obj, ~, event_data)
+            notify(obj.GuiDatasetState, 'ManualSegmentationsChanged', CoreEventData(event_data.Data));
+        end
+        
+        function MarkersChangedCallback(obj, ~, event_data)
+            notify(obj.GuiDatasetState, 'MarkersChanged', CoreEventData(event_data.Data));
         end
         
         function SetImage(obj, new_image, context)

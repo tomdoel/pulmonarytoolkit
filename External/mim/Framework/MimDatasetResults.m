@@ -48,17 +48,17 @@ classdef MimDatasetResults < handle
         LinkedDatasetChooser % Used to process GetResult() requests during callbacks
         
         % A pointer to the object which contains the event to be triggered when a preview thumbnail image has changed
-        ExternalWrapperNotifyFunction
+        ExternalNotifyCallback
         
     end
     
     methods
-        function obj = MimDatasetResults(framework_app_def, context_def, image_info, linked_dataset_chooser, external_notify_function, dataset_disk_cache, plugin_cache, reporting)
+        function obj = MimDatasetResults(framework_app_def, context_def, image_info, linked_dataset_chooser, notify_callback, dataset_disk_cache, plugin_cache, reporting)
             obj.FrameworkAppDef = framework_app_def;
             obj.ImageInfo = image_info;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DatasetDiskCache = dataset_disk_cache;
-            obj.ExternalWrapperNotifyFunction = external_notify_function;
+            obj.ExternalNotifyCallback = notify_callback;
             obj.Pipelines = MimPipelines(obj);
             obj.ImageTemplates = MimImageTemplates(framework_app_def, obj, context_def, dataset_disk_cache, obj.Pipelines, reporting);
             obj.OutputFolder = MimOutputFolder(framework_app_def, dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
@@ -157,7 +157,7 @@ classdef MimDatasetResults < handle
                 % Fire an event indictaing the preview image has changed. This
                 % will allow any listening gui to update its preview images if
                 % necessary
-                obj.ExternalWrapperNotifyFunction(CoreEventData(plugin_name));
+                obj.ExternalNotifyCallback.NotifyPreviewImageChanged(plugin_name);
             end
             
             % Open any output folders which have been written to by the plugin
@@ -227,6 +227,7 @@ classdef MimDatasetResults < handle
             % Save marker points as a cache file associated with this dataset
         
             obj.DatasetDiskCache.SaveMarkerPoints(name, data, reporting);
+            obj.ExternalNotifyCallback.NotifyMarkersChanged(name);
         end
         
         function data = LoadMarkerPoints(obj, name, reporting)
@@ -239,6 +240,7 @@ classdef MimDatasetResults < handle
             % Save manual segmentation as a cache file associated with this dataset
         
             obj.DatasetDiskCache.SaveManualSegmentation(name, data, reporting);
+            obj.ExternalNotifyCallback.NotifyManualSegmentationsChanged(name);
         end
         
         function data = LoadManualSegmentation(obj, name, reporting)
@@ -282,12 +284,14 @@ classdef MimDatasetResults < handle
             % Delete manual segmentation from a cache file associated with this dataset
             
             obj.DatasetDiskCache.DeleteManualSegmentation(segmentation_name, reporting);
+            obj.ExternalNotifyCallback.NotifyManualSegmentationsChanged(segmentation_name);
         end
         
         function DeleteMarkerSet(obj, name, reporting)
             % Delete manual segmentation from a cache file associated with this dataset
             
             obj.DatasetDiskCache.DeleteMarkerSet(name, reporting);
+            obj.ExternalNotifyCallback.NotifyMarkersChanged(name);
         end
         
         function file_list = GetListOfManualSegmentations(obj)
