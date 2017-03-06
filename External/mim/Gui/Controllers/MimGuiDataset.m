@@ -238,6 +238,9 @@ classdef MimGuiDataset < CoreBaseClass
             
             obj.MimMain.DeleteDatasets(series_uids);
             obj.Settings.RemoveLastPatientUid(series_uids);
+            if any(strcmp(series_uids, obj.GetUidOfCurrentDataset))
+                obj.ClearDataset();
+            end
         end
         
         function SwitchPatient(obj, patient_id)

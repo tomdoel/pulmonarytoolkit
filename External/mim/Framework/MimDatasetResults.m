@@ -227,7 +227,6 @@ classdef MimDatasetResults < handle
             % Save marker points as a cache file associated with this dataset
         
             obj.DatasetDiskCache.SaveMarkerPoints(name, data, reporting);
-            obj.ExternalNotifyCallback.NotifyMarkersChanged(name);
         end
         
         function data = LoadMarkerPoints(obj, name, reporting)
@@ -240,7 +239,6 @@ classdef MimDatasetResults < handle
             % Save manual segmentation as a cache file associated with this dataset
         
             obj.DatasetDiskCache.SaveManualSegmentation(name, data, reporting);
-            obj.ExternalNotifyCallback.NotifyManualSegmentationsChanged(name);
         end
         
         function data = LoadManualSegmentation(obj, name, reporting)
@@ -284,14 +282,12 @@ classdef MimDatasetResults < handle
             % Delete manual segmentation from a cache file associated with this dataset
             
             obj.DatasetDiskCache.DeleteManualSegmentation(segmentation_name, reporting);
-            obj.ExternalNotifyCallback.NotifyManualSegmentationsChanged(segmentation_name);
         end
         
         function DeleteMarkerSet(obj, name, reporting)
             % Delete manual segmentation from a cache file associated with this dataset
             
             obj.DatasetDiskCache.DeleteMarkerSet(name, reporting);
-            obj.ExternalNotifyCallback.NotifyMarkersChanged(name);
         end
         
         function file_list = GetListOfManualSegmentations(obj)

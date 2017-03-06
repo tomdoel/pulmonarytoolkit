@@ -30,6 +30,14 @@ classdef MimDatasetCacheSelector < handle
         FrameworkAppDef
     end
     
+    events
+        % This event is fired when a marker set is added or removed
+        MarkersChanged
+        
+        % This event is fired when the manual segmentation list for this dataset has changed
+        ManualSegmentationsChanged
+    end
+    
     methods
         function obj = MimDatasetCacheSelector(dataset_uid, framework_app_def, reporting)
             obj.Config = framework_app_def.GetFrameworkConfig;
@@ -148,6 +156,7 @@ classdef MimDatasetCacheSelector < handle
             % Saves a manual segmentation associated with this dataset to the cache
             
             obj.ManualSegmentationsDiskCache.Save(filename, value, [], reporting);
+            obj.NotifyManualSegmentationsChanged(name);
         end
         
         function exists = ManualSegmentationExists(obj, name, reporting)
@@ -166,6 +175,7 @@ classdef MimDatasetCacheSelector < handle
             % Deletes manual segmentation results
             
             obj.ManualSegmentationsDiskCache.DeleteFileForAllContexts(segmentation_name, reporting);
+            obj.NotifyManualSegmentationsChanged(segmentation_name);
         end
         
         function value = LoadMarkerPoints(obj, filename, reporting)
@@ -178,6 +188,7 @@ classdef MimDatasetCacheSelector < handle
             % Saves marker points associated with this dataset to the cache
             
             obj.MarkersDiskCache.Save(data_filename, value, [], reporting);
+            obj.NotifyMarkersChanged(name);
         end
         
         function exists = MarkerSetExists(obj, name, reporting)
@@ -196,6 +207,7 @@ classdef MimDatasetCacheSelector < handle
             % Deletes marker set
             
             obj.MarkersDiskCache.DeleteFileForAllContexts(name, reporting);
+            obj.NotifyMarkersChanged(name);
         end
         
         function Delete(obj, reporting)
@@ -248,6 +260,14 @@ classdef MimDatasetCacheSelector < handle
         
         function SaveCachedPluginInfoFile(obj, reporting)
             obj.SaveData(obj.Config.CachedPluginInfoFileName, obj.PluginResultsInfo, reporting);
+        end
+        
+        function NotifyMarkersChanged(obj, name)
+            obj.notify('MarkersChanged', CoreEventData(name));
+        end
+        
+        function NotifyManualSegmentationsChanged(obj, name)
+            obj.notify('ManualSegmentationsChanged', CoreEventData(name));
         end
     end
 end

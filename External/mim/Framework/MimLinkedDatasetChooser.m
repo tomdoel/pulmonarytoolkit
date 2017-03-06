@@ -32,12 +32,6 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
         % This event is fired when a plugin has been run for this dataset, and
         % has generated a new preview thumbnail.
         PreviewImageChanged
-        
-        % This event is fired when a marker set is added or removed
-        MarkersChanged
-        
-        % This event is fired when the manual segmentation list for this dataset has changed
-        ManualSegmentationsChanged
     end
     
     methods
@@ -104,15 +98,7 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
         end
         
         function NotifyPreviewImageChanged(obj, plugin_name)
-            obj.notify('PreviewImageChanged', CoreEventData(plugin_name));
-        end
-        
-        function NotifyMarkersChanged(obj, name)
-            obj.notify('MarkersChanged', CoreEventData(name));
-        end
-        
-        function NotifyManualSegmentationsChanged(obj, name)
-            obj.notify('ManualSegmentationsChanged', CoreEventData(name));
+            notify(obj,'PreviewImageChanged', CoreEventData(plugin_name));
         end
     end
 end

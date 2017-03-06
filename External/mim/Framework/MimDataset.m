@@ -82,9 +82,9 @@ classdef MimDataset < CoreBaseClass
             
             % Listen for events - there could be
             % multiple MimDatasets linked to the same LinkedDatasetChooser
-            obj.AddEventListener(obj.LinkedDatasetChooser, 'MarkersChanged', @obj.MarkersChangedCallback);
+            obj.AddEventListener(dataset_disk_cache, 'MarkersChanged', @obj.MarkersChangedCallback);
             obj.AddEventListener(obj.LinkedDatasetChooser, 'PreviewImageChanged', @obj.PreviewImageChangedCallback);
-            obj.AddEventListener(obj.LinkedDatasetChooser, 'ManualSegmentationsChanged', @obj.ManualSegmentationsChangedCallback);
+            obj.AddEventListener(dataset_disk_cache, 'ManualSegmentationsChanged', @obj.ManualSegmentationsChangedCallback);
         end
 
         function LinkDataset(obj, linked_name, dataset_to_link)
