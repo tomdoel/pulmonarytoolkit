@@ -14,10 +14,10 @@ classdef MimDeleteEdited < MimGuiPlugin
     %    
 
     properties
-        ButtonText = 'Delete all corrections'
-        SelectedText = 'Delete all corrections'
+        ButtonText = 'Delete edits'
+        SelectedText = 'Delete edits'
         ToolTip = ''
-        Category = 'Save / load corrections'
+        Category = 'Save / load edits'
         Visibility = 'Overlay'
         Mode = 'Edit'
         Icon = 'bin.png'

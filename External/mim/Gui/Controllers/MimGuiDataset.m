@@ -467,7 +467,11 @@ classdef MimGuiDataset < CoreBaseClass
             obj.GuiDatasetState.ClearPlugin;
             obj.UpdateModes;
         end
-        
+
+        function LoadManualSegmentationCallback(obj, segmentation_name)
+            obj.Gui.LoadSegmentationCallback(segmentation_name);
+        end
+
         function LoadManualSegmentation(obj, segmentation_name, wait_dialog)
          % Causes the GUI to run the named segmentation and display the result
          

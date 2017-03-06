@@ -15,10 +15,10 @@ classdef MimImportEditedImage < MimGuiPlugin
     %    
 
     properties
-        ButtonText = 'Import Corrections'
-        SelectedText = 'Import Corrections'
+        ButtonText = 'Import Edits'
+        SelectedText = 'Import Edits'
         ToolTip = 'Exports the current edit to an external file'
-        Category = 'Save / load corrections'
+        Category = 'Save / load edits'
         Visibility = 'Overlay'
         Mode = 'Edit'
         

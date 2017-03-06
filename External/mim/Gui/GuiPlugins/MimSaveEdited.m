@@ -14,10 +14,10 @@ classdef MimSaveEdited < MimGuiPlugin
     %    
 
     properties
-        ButtonText = 'Save Corrections'
-        SelectedText = 'Save Corrections'
+        ButtonText = 'Save Edits'
+        SelectedText = 'Save Edits'
         ToolTip = ''
-        Category = 'Save / load corrections'
+        Category = 'Save / load edits'
         Visibility = 'Overlay'
         Mode = 'Edit'
 

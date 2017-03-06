@@ -30,9 +30,11 @@ classdef MimEditMode < handle
         
         Dataset
         PluginName
-        VisiblePluginName
+        VisibleEditName
         Context
         PluginInfo
+        
+        ManualSegmentationName
         
         ImageBeforeEdit
         
@@ -58,7 +60,12 @@ classdef MimEditMode < handle
             obj.Dataset = current_dataset;
             obj.PluginInfo = plugin_info;
             obj.PluginName = current_plugin_name;
-            obj.VisiblePluginName = current_visible_plugin_name;
+            obj.ManualSegmentationName = current_segmentation_name;
+            obj.VisibleEditName = current_visible_plugin_name;
+            if isempty(plugin_info) && ~isempty(current_segmentation_name)
+                obj.VisibleEditName = current_segmentation_name;
+            end
+            
             obj.UnsavedChanges = false;
             
             if ~isempty(plugin_info)
@@ -79,6 +86,9 @@ classdef MimEditMode < handle
                 else
                     obj.ViewerPanel.SetModes(MimModes.EditMode, []);
                 end
+            elseif ~isempty(obj.ManualSegmentationName)
+                 obj.ImageBeforeEdit = obj.ViewerPanel.OverlayImage.Copy;
+                 obj.ViewerPanel.SetModes(MimModes.EditMode, MimSubModes.PaintEditing);
             end
             obj.IgnoreOverlayChanges = false;            
         end
@@ -90,8 +100,8 @@ classdef MimEditMode < handle
         function ExitMode(obj)
             
             if obj.UnsavedChanges
-                choice = questdlg(['Do you wish to save your edits for ', obj.VisiblePluginName, '?'], ...
-                    'Delete edited results', 'Save', 'Delete', 'Save');
+                choice = questdlg(['Do you wish to save your edits for ', obj.VisibleEditName, '?'], ...
+                    'Edits have not been saved', 'Save', 'Delete', 'Save');
                 switch choice
                     case 'Save'
                         obj.SaveEdit;
@@ -102,18 +112,24 @@ classdef MimEditMode < handle
             end
             obj.Dataset = [];
             obj.PluginName = [];
-            obj.VisiblePluginName = [];
+            obj.ManualSegmentationName = [];
+            obj.VisibleEditName = [];
             obj.Context = [];
             obj.UnsavedChanges = false;
             obj.IgnoreOverlayChanges = true;            
         end
         
         function SaveEdit(obj)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.PluginName) || ~isempty(obj.ManualSegmentationName)
+
                 obj.LockImageChangedCallback;
-                obj.Reporting.ShowProgress(['Saving edited image for ', obj.VisiblePluginName]);
+                obj.Reporting.ShowProgress(['Saving edited image for ', obj.VisibleEditName]);
                 edited_result = obj.ViewerPanel.OverlayImage;
-                obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
+                if ~isempty(obj.PluginName)
+                    obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
+                else
+                    obj.Dataset.SaveManualSegmentation(obj.ManualSegmentationName, edited_result);
+                end
                 obj.UnsavedChanges = false;
                 obj.GuiDataset.UpdateEditedStatus(true);
                 obj.Reporting.CompleteProgress;
@@ -122,10 +138,10 @@ classdef MimEditMode < handle
         end
         
         function DeleteAllEditsWithPrompt(obj)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.PluginName) || ~isempty(obj.ManualSegmentationName)
                 obj.LockImageChangedCallback;
                 
-                choice = questdlg(['Do you wish to delete your edits for ', obj.VisiblePluginName, '? All your edits will be lost and replaced with the automatically computed results.'], ...
+                choice = questdlg(['Do you wish to delete your edits for ', obj.VisibleEditName, '? All your manual edits will be lost if you choose delete.'], ...
                     'Delete edited results', 'Delete', 'Don''t delete', 'Don''t delete');
                 switch choice
                     case 'Delete'
@@ -149,15 +165,17 @@ classdef MimEditMode < handle
                 end
                 obj.UnLockImageChangedCallback;
             end
+            
+            % TODO: edits
         end
         
         
         function ImportEdit(obj)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.PluginName) || ~isempty(obj.ManualSegmentationName)
                 obj.LockImageChangedCallback;
                 
-                choice = questdlg('You are about to import an edited result. This will delete and replace any existing edits you have made for this plugin. Do you wish to continue?', ...
-                    'Import edited results', 'Import', 'Cancel', 'Import');
+                choice = questdlg('You are about to import a segmentation. This will delete and replace any existing edits you have made for this segmentation. Do you wish to continue?', ...
+                    'Import segmentation', 'Import', 'Cancel', 'Import');
                 switch choice
                     case 'Import'
                         obj.ChooseAndReplaceEdit;
@@ -173,30 +191,31 @@ classdef MimEditMode < handle
             patient_name = obj.ViewerPanel.BackgroundImage.Title;
             template = obj.GuiDataset.GetTemplateImage;
             edited_result.ResizeToMatch(template);
-            path_name = obj.Settings.SaveImagePath;
-            
-            path_name = MimSaveAs(edited_result, patient_name, path_name, true, obj.Reporting);
+            path_name = obj.Settings.SaveImagePath;            
+            path_name = MimSaveAs(edited_result, patient_name, path_name, true, obj.AppDef.GetDicomMetadata, obj.Reporting);
             if ~isempty(path_name)
                 obj.Settings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
         end
 
         function ExportPatch(obj)
-            obj.SaveEdit;
-            edited_result = obj.ViewerPanel.OverlayImage.Copy;
-            template = obj.GuiDataset.GetTemplateImage;
-            edited_result.ResizeToMatch(template);
-            path_name = obj.Settings.SaveImagePath;
-            
-            patch = PTKEditedResultPatch;
-            image_info = obj.GuiDataset.GetImageInfo;
-            patch.SeriesUid = image_info.ImageUid;
-            patch.PluginName = obj.PluginName;
-            patch.EditedResult = edited_result;
-            
-            path_name = MimSavePatchAs(patch, path_name, obj.Reporting);
-            if ~isempty(path_name)
-                obj.Settings.SetLastSaveImagePath(path_name, obj.Reporting);
+            if ~isempty(obj.PluginName)
+                obj.SaveEdit;
+                edited_result = obj.ViewerPanel.OverlayImage.Copy;
+                template = obj.GuiDataset.GetTemplateImage;
+                edited_result.ResizeToMatch(template);
+                path_name = obj.Settings.SaveImagePath;
+
+                patch = PTKEditedResultPatch;
+                image_info = obj.GuiDataset.GetImageInfo;
+                patch.SeriesUid = image_info.ImageUid;
+                patch.PluginName = obj.PluginName;
+                patch.EditedResult = edited_result;
+
+                path_name = MimSavePatchAs(patch, path_name, obj.Reporting);
+                if ~isempty(path_name)
+                    obj.Settings.SetLastSaveImagePath(path_name, obj.Reporting);
+                end
             end
         end
 
@@ -219,7 +238,7 @@ classdef MimEditMode < handle
         function SaveEditBackup(obj)
             if ~isempty(obj.PluginName)
                 obj.LockImageChangedCallback;                
-                obj.Reporting.ShowProgress(['Abandoning edited image for ', obj.VisiblePluginName]);
+                obj.Reporting.ShowProgress(['Abandoning edited image for ', obj.VisibleEditName]);
                 edited_result = obj.ViewerPanel.OverlayImage;
                 obj.Dataset.SaveData('AbandonedEdits', edited_result);
                 obj.UnsavedChanges = false;
@@ -230,19 +249,24 @@ classdef MimEditMode < handle
         end
         
         function DeleteAllEdits(obj)
-            obj.Reporting.ShowProgress(['Deleting edited image for ', obj.VisiblePluginName]);
-            obj.Dataset.DeleteEditedResult(obj.PluginName);
-            obj.UnsavedChanges = false;
-            obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
+            obj.Reporting.ShowProgress(['Deleting edits for ', obj.VisibleEditName]);
+            if ~isempty(obj.PluginName)
+                obj.Dataset.DeleteEditedResult(obj.PluginName);
+                obj.UnsavedChanges = false;
+                obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
+            elseif ~isempty(obj.ManualSegmentationName)
+                obj.GuiDataset.LoadManualSegmentationCallback(obj.ManualSegmentationName);
+                obj.UnsavedChanges = false;
+            end
             obj.GuiDataset.UpdateEditedStatus(false);
             obj.GuiDataset.ChangeMode(MimModes.EditMode);
-            obj.Reporting.CompleteProgress;            
+            obj.Reporting.CompleteProgress;
         end
 
         function ReplaceEditWithPatch(obj, patch)
             if ~isempty(obj.PluginName)
                 obj.LockImageChangedCallback;
-                obj.Reporting.ShowProgress(['Replacing edited image for ', obj.VisiblePluginName]);
+                obj.Reporting.ShowProgress(['Replacing edited image for ', obj.VisibleEditName]);
                 
                 current_overlay = obj.ViewerPanel.OverlayImage;
                 edited_result = patch.EditedResult;
@@ -250,9 +274,9 @@ classdef MimEditMode < handle
                 
                 template = obj.GuiDataset.GetTemplateImage;
                 if ~isequal(template.ImageSize, edited_result.ImageSize)
-                    uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                    uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisibleEditName], 'modal'));
                 elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
-                    uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                    uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisibleEditName], 'modal'));
                 else
                     obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
                     obj.UnsavedChanges = false;
@@ -272,9 +296,9 @@ classdef MimEditMode < handle
         end
                     
         function ChooseAndReplaceEdit(obj)
-            if ~isempty(obj.PluginName)
+            if ~isempty(obj.PluginName) || ~isempty(obj.ManualSegmentationName)
                 obj.LockImageChangedCallback;
-                obj.Reporting.ShowProgress(['Replacing edited image for ', obj.VisiblePluginName]);
+                obj.Reporting.ShowProgress(['Replacing edits image for ', obj.VisibleEditName]);
                 
                 image_info = MimChooseImagingFiles(obj.Settings.SaveImagePath, obj.Reporting);
                 
@@ -287,18 +311,22 @@ classdef MimEditMode < handle
                     
                     template = obj.GuiDataset.GetTemplateImage;
                     if ~isequal(template.ImageSize, edited_result.ImageSize)
-                        uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                        uiwait(errordlg('The edits cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edits for ' obj.VisibleEditName], 'modal'));
                     elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
-                        uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisiblePluginName], 'modal'));
+                        uiwait(errordlg('The edits cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edits for ' obj.VisibleEditName], 'modal'));
                     else
                         edited_result.ResizeToMatch(current_overlay);
-                        obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
-                        obj.UnsavedChanges = false;
-                        obj.GuiDataset.UpdateEditedStatus(true);
-                        
-                        % Update the loaded results
-                        obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
-                        obj.GuiDataset.UpdateEditedStatus(false);
+                        if ~isempty(obj.PluginName)
+                            obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
+                            obj.GuiDataset.UpdateEditedStatus(true);
+                            % Update the loaded results
+                            obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
+                            obj.UnsavedChanges = false;
+                        elseif ~isempty(obj.ManualSegmentationName)
+                            obj.Dataset.SaveManualSegmentation(obj.ManualSegmentationName, edited_result);
+                            obj.GuiDataset.LoadManualSegmentationCallback(obj.ManualSegmentationName);
+                            obj.UnsavedChanges = false;
+                        end
                         
                         % Ensure we are back in edit mode, as RunPlugin will have left this
                         obj.GuiDataset.ChangeMode(MimModes.EditMode);

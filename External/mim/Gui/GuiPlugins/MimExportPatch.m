@@ -18,7 +18,7 @@ classdef MimExportPatch < MimGuiPlugin
         ButtonText = 'Create Patch'
         SelectedText = 'Create Patch'
         ToolTip = 'Creates a patch for the current corrections and saves to an external patch file'
-        Category = 'Save / load corrections'
+        Category = 'Save / load edits'
         Visibility = 'Overlay'
         Mode = 'Edit'
 

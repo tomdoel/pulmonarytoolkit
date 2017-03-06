@@ -15,10 +15,10 @@ classdef MimExportEditedImage < MimGuiPlugin
     %    
 
     properties
-        ButtonText = 'Export Corrections'
-        SelectedText = 'Export Corrections'
-        ToolTip = 'Exports the current edit to an external file'
-        Category = 'Save / load corrections'
+        ButtonText = 'Export Edits'
+        SelectedText = 'Export Edits'
+        ToolTip = 'Exports the current edits to an external file'
+        Category = 'Save / load edits'
         Visibility = 'Overlay'
         Mode = 'Edit'
 
