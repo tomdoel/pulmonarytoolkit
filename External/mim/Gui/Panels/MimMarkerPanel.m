@@ -63,6 +63,7 @@ classdef MimMarkerPanel < GemPanel
         end
         
         function MarkersChangedCallback(obj, ~, ~)
+            obj.MarkerListBox.Update();
             obj.Update();
         end
         

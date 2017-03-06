@@ -152,10 +152,10 @@ classdef MimDatasetCacheSelector < handle
             value = obj.ManualSegmentationsDiskCache.Load(filename, [], reporting);
         end
         
-        function SaveManualSegmentation(obj, filename, value, reporting)
+        function SaveManualSegmentation(obj, name, value, reporting)
             % Saves a manual segmentation associated with this dataset to the cache
             
-            obj.ManualSegmentationsDiskCache.Save(filename, value, [], reporting);
+            obj.ManualSegmentationsDiskCache.Save(name, value, [], reporting);
             obj.NotifyManualSegmentationsChanged(name);
         end
         
