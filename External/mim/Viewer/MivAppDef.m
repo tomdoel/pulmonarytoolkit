@@ -11,6 +11,7 @@ classdef MivAppDef < handle
 
     properties (Constant, Access = private)
         Name = 'MIV'
+        PatientBrowserName = 'Patient Browser: MIV'
         Version = '0.1'
     end
     
@@ -38,6 +39,10 @@ classdef MivAppDef < handle
                 
         function name = GetName(obj)
             name = MivAppDef.Name;
+        end
+
+        function name = GetPatientBrowserName(obj)
+            name = MivAppDef.PatientBrowserName;
         end
         
         function name = GetVersion(obj)

@@ -26,13 +26,13 @@ classdef MimPatientBrowserFactory < CoreBaseClass
     end
     
     methods
-        function obj = MimPatientBrowserFactory(controller, image_database, app_def, state, settings, title, reporting)
+        function obj = MimPatientBrowserFactory(controller, image_database, app_def, state, settings, reporting)
             obj.Controller = controller;
             obj.ImageDatabase = image_database;
             obj.AppDef = app_def;
             obj.GuiDatasetState = state;
             obj.Reporting = reporting;
-            obj.Title = title;
+            obj.Title = app_def.GetPatientBrowserName();
            
             if isempty(settings.PatientBrowserScreenPosition)
                 obj.InitialPosition = [100 100 1000 500];

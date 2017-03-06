@@ -40,6 +40,10 @@ classdef PTKAppDef < handle
             name = 'Pulmonary Toolkit';
         end
         
+        function name = GetPatientBrowserName(obj)
+            name = 'Patient Browser : Pulmonary Toolkit';
+        end
+        
         function name = GetVersion(obj)
             name = PTKSoftwareInfo.Version;
         end
