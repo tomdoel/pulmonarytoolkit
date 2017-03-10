@@ -54,6 +54,10 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
     
     header_filename = fullfile(path, filenames{1});
     
+    new_dimension_order = [1, 2, 3];
+    flip_orientation = [false, false, false];
+    
+    
     switch image_file_format
         case MimImageFileFormat.Analyze
             header_data = hdr_read_header(header_filename);
@@ -70,6 +74,7 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
         case MimImageFileFormat.Nifti
             header_data = nii_read_header(header_filename);
             data = nii_read_volume(header_data);
+            [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromNiiOrientation(header_data, reporting);
 
         case MimImageFileFormat.V3d
             header_data = v3d_read_header(header_filename);
@@ -108,9 +113,6 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
         reporting.Error('MimLoadOtherFormat:MetaHeaderReadFailed', ['Unable to read metaheader data from ' header_filename]);
     end
     
-    new_dimension_order = [1, 2, 3];
-    flip_orientation = [false, false, false];
-    
 %     if isfield(header_data, 'TransformMatrix')
 %         transform_matrix = str2num(header_data.TransformMatrix); %#ok<ST2NM>
 %         [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromMhdCosines(transform_matrix(1:3), transform_matrix(4:6), transform_matrix(7:9), reporting);
@@ -120,6 +122,7 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
 % 
     image_dims = header_data.Dimensions(1:3);
     voxel_size = header_data.PixelDimensions(1:3);
+    voxel_size = voxel_size(:)';
 
 %     if strcmp(header_data.ElementType,'MET_UCHAR')
 %         data_type = 'uint8';

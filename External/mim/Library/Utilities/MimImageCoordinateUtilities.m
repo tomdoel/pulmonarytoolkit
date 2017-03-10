@@ -255,6 +255,31 @@ classdef MimImageCoordinateUtilities
             end
         end
         
+        function [permutation_vector, flip] = GetDimensionPermutationVectorFromNiiOrientation(header, reporting)
+            % Returns a vector which defines the order in which the dimensions of a
+            % nii image volume should be permuted in order to align it with the
+            % PTK coordinate system
+
+            if header.SformCode > 0
+                d1 = [-1; -1; 1].*header.SrowX(1:3);
+                d2 = [-1; -1; 1].*header.SrowY(1:3);
+                [permutation_vector, flip] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation([d1; d2], reporting);
+            elseif header.QformCode > 0
+                B = header.QuaternB;
+                C = header.QuaternB;
+                D = header.QuaternB;
+                A = sqrt(1 - B^2 - C^2 - D^2);
+                d1 = [-1; -1; 1].*[A^2+B^2-C^2-D^2; 2*(B*C + A*D); 2*(B*D-A*C)];
+                d2 = [-1; -1; 1].*[2*(B*C - A*D); A^2 + C^2 - B^2 - D^2];
+                [permutation_vector, flip] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation([d1; d2], reporting);
+            else
+                d1 = [-1; -1; 1].*[1; 0; 0];
+                d2 = [-1; -1; 1].*[0; 1; 0];
+                [permutation_vector, flip] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation([d1; d2], reporting);
+            end
+        end
+                
+        
         function [permutation_vector, dimension_1, dimension_2, dimension_3] = GetPermutationFromOrientations(orientation_1, orientation_2, reporting)
             [dimension_1, dimension_2, dimension_3] = MimImageCoordinateUtilities.GetDimensionIndicesFromOrientations(orientation_1, orientation_2, reporting);
             

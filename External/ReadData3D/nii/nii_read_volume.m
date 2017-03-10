@@ -1,4 +1,4 @@
-function V = nii_read_volume(info)
+function result = nii_read_volume(info)
 % function for reading volume of NifTi ( .nii ) volume file
 % nii_read_header(file-info)
 %
@@ -39,11 +39,13 @@ fid=fopen(info.Filename,'rb');
         V = int64(fread(fid,datasize,'int64'));
       case 'UINT64'
         V = uint64(fread(fid,datasize,'uint64'));    
+      case 'FLOAT'
+        V = single(fread(fid,datasize,'single'));
       otherwise
         V = uint8(fread(fid,datasize,'uint8'));
   end
 fclose(fid);
 
 % Reshape the volume data to the right dimensions
-V = reshape(V,info.Dimensions);
+result = reshape(V,info.Dimensions(1:3));
 
