@@ -280,7 +280,7 @@ classdef MimImageUtilities
                 window_grayscale = window_hu;
                 if isa(image_preview, 'PTKDicomImage')
                     if image_preview.IsCT && ~isempty(image_preview.RescaleSlope)
-                        window_grayscale = window_grayscale/image_preview.RescaleSlope;
+                        window_grayscale = window_grayscale/cast(image_preview.RescaleSlope, 'like', window_grayscale);
                     end
                 end
                 
@@ -408,6 +408,7 @@ classdef MimImageUtilities
 
             image_slice_size = image.ImageSize([3, 2]);
             image_slice_voxelsize = image.VoxelSize([3, 2]);
+            image_slice_voxelsize = image_slice_voxelsize(:)';
             
             image_slice_size_mm = image_slice_size.*image_slice_voxelsize;
             
