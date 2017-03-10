@@ -74,7 +74,7 @@ classdef MimNamePanel < GemPanel
             
             if isempty(obj.GuiState.CurrentVisiblePluginName)
                 if ~isempty(obj.GuiState.CurrentSegmentationName)
-                    plugin_prefix = [obj.GuiState.CurrentSegmentationName ' (manual segmentation): ' ,  ' - '];
+                    plugin_prefix = [obj.GuiState.CurrentSegmentationName ' (manual segmentation)' , ' - '];
                 else
                     plugin_prefix = '';
                 end
