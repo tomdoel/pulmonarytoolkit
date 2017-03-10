@@ -86,6 +86,11 @@ classdef MimTool < CoreBaseClass
         
         function Exit(obj)
             % Called when the primary tool switches to another tool
+        end
+        
+        function cursor = GetCursor(obj)
+            % Called to get the current cursor
+            cursor = obj.Cursor;
         end 
     end
     

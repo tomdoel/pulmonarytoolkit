@@ -37,13 +37,18 @@ classdef MimCinePanelWithTools < GemCinePanel
             
             if point_is_in_image
                 current_tool = obj.GetCurrentTool(mouse_is_down, keyboard_modifier);
-                new_cursor = current_tool.Cursor;
+                new_cursor = current_tool.GetCursor();
             else
                 new_cursor = 'arrow';
             end
             
             if ~strcmp(obj.CurrentCursor, new_cursor)
+                if ischar(new_cursor)
                 set(hObject, 'Pointer', new_cursor);
+                else
+                    set(hObject, 'Pointer', 'Custom');
+                    set(hObject, 'PointerShapeCData', new_cursor);
+                end
                 obj.CurrentCursor = new_cursor;
             end
             
@@ -136,7 +141,15 @@ classdef MimCinePanelWithTools < GemCinePanel
             % processed a MouseHasMoved event
 
             MouseExit@GemCinePanel(obj, click_point, selection_type, src);
-            input_has_been_processed = false;
+            
+            new_cursor = 'arrow';
+            if ~strcmp(obj.CurrentCursor, new_cursor)
+                set(src, 'Pointer', new_cursor);
+                obj.CurrentCursor = new_cursor;
+            end
+            
+            input_has_been_processed = true;
+            
         end
     end
 end
