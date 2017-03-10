@@ -25,7 +25,7 @@ classdef MimBrushSizeSlider < MimGuiPluginSlider
         PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 1
-        Location = 25
+        Location = 41
 
         MinValue = 0
         MaxValue = 100

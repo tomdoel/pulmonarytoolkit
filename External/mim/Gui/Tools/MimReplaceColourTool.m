@@ -33,7 +33,6 @@ classdef MimReplaceColourTool < MimTool
         
         ViewerPanel
         FromColour
-        Colour
         
         OverlayChangeLock = false
         
@@ -44,7 +43,8 @@ classdef MimReplaceColourTool < MimTool
     methods
         function obj = MimReplaceColourTool(viewer_panel)
             obj.ViewerPanel = viewer_panel;
-            obj.AddPostSetListener(obj.ViewerPanel, 'PaintBrushSize', @obj.BrushSizeChangedCallback);            
+            obj.AddPostSetListener(obj.ViewerPanel, 'PaintBrushSize', @obj.BrushSizeChangedCallback);
+            obj.AddPostSetListener(obj.ViewerPanel, 'PaintBrushColour', @obj.BrushColourChangedCallback);
         end
         
         function is_enabled = IsEnabled(obj, mode, sub_mode)
@@ -87,7 +87,7 @@ classdef MimReplaceColourTool < MimTool
         end
         
         function ChangeCurrentColour(obj, new_colour)
-            obj.Colour = new_colour;
+            obj.ViewerPanel.PaintBrushColour = new_colour;
         end
         
         function ImageChanged(obj)
@@ -101,7 +101,6 @@ classdef MimReplaceColourTool < MimTool
         end
         
         function InitialiseEditMode(obj)
-            obj.Colour = 1;
             obj.LastValidCentrepoint = [];
             if ~isempty(obj.ViewerPanel.OverlayImage)
                 if obj.ViewerPanel.OverlayImage.ImageExists
@@ -181,7 +180,7 @@ classdef MimReplaceColourTool < MimTool
             
             
             if obj.PaintOverBackground
-                subimage(clipped_brush) = obj.Colour;
+                subimage(clipped_brush) = obj.ViewerPanel.PaintBrushColour;
                 
             else
                 subimage_mask = clipped_brush & (subimage > 0);
@@ -203,7 +202,7 @@ classdef MimReplaceColourTool < MimTool
                     obj.LastValidCentrepoint = midpoint;
                 end
                 central_component = labeled_components == central_component_label;
-                subimage(central_component) = obj.Colour;
+                subimage(central_component) = obj.ViewerPanel.PaintBrushColour;
             end
 
             
@@ -217,7 +216,7 @@ classdef MimReplaceColourTool < MimTool
         end
         
         function ChangeColourCallback(obj, ~, ~, colour)
-            obj.Colour = colour;
+            obj.ViewerPanel.PaintBrushColour = colour;
         end
         
         function MouseDragged(obj, coords, last_coords)
@@ -285,6 +284,9 @@ classdef MimReplaceColourTool < MimTool
     end
     
     methods (Access = private)
+        
+        function BrushColourChangedCallback(obj, ~, ~, ~)
+        end
         
         function BrushSizeChangedCallback(obj, ~, ~, ~)
             obj.Brush = CoreImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.ViewerPanel.PaintBrushSize);

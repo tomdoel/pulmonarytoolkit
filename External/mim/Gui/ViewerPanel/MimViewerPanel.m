@@ -33,6 +33,7 @@ classdef MimViewerPanel < GemPanel
         SelectedControl = 'W/L'    % The currently selected tool
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
         PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
+        PaintBrushColour = 1   % The current colour of the paintbrush tools
         NewMarkerColour        % The current colour of new marker points
     end
     

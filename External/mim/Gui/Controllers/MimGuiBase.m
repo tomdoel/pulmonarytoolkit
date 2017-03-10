@@ -198,6 +198,7 @@ classdef MimGuiBase < GemFigure
             obj.AddPostSetListener(obj.ImagePanel.GetOverlayImageDisplayParameters, 'OpaqueColour', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'SliceSkip', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'PaintBrushSize', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'PaintBrushColour', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.MarkerImageDisplayParameters, 'ShowMarkers', @obj.ShowMarkersChanged);
             obj.AddPostSetListener(obj.ImagePanel.MarkerImageDisplayParameters, 'ShowLabels', @obj.ViewerPanelControlsChangedCallback);
             
