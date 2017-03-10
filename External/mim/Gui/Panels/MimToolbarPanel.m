@@ -219,6 +219,9 @@ classdef MimToolbarPanel < GemPanel
             if isa(tool, 'MimGuiPluginSlider')
                 new_control = MimPluginLabelSlider(obj, tool, icon, obj.GuiApp);
                 new_control.StackVertically = tool.StackVertically;
+            elseif isa(tool, 'MimGuiPluginEditBox')
+                new_control = MimPluginLabelEditBox(obj, tool, icon, obj.GuiApp);
+                new_control.StackVertically = tool.StackVertically;
             else
                 new_control = MimPluginLabelButton(obj, tool, icon, obj.GuiApp);
             end

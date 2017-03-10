@@ -1,5 +1,5 @@
-classdef MimGuiPluginSlider < MimGuiPlugin
-    % MimGuiPluginSlider. 
+classdef MimGuiPluginEditBox < MimGuiPlugin
+    % MimGuiPluginEditBox. 
     %
     %
     %     Licence
