@@ -44,7 +44,7 @@ classdef MimCinePanelWithTools < GemCinePanel
             
             if ~strcmp(obj.CurrentCursor, new_cursor)
                 if ischar(new_cursor)
-                set(hObject, 'Pointer', new_cursor);
+                    set(hObject, 'Pointer', new_cursor);
                 else
                     set(hObject, 'Pointer', 'Custom');
                     set(hObject, 'PointerShapeCData', new_cursor);
@@ -114,10 +114,10 @@ classdef MimCinePanelWithTools < GemCinePanel
             MouseHasMoved@GemCinePanel(obj, click_point, selection_type, src);
             screen_coords = obj.GetScreenCoordinates;
             last_coords = obj.LastCoordinates;
-            
+
             tool = obj.GetCurrentTool(false, selection_type);
             tool.MouseHasMoved(screen_coords, last_coords);
-            
+
             obj.UpdateCursor(src, false, selection_type);
             input_has_been_processed = true;
         end
