@@ -1018,9 +1018,68 @@ classdef MimGuiBase < GemFigure
             end
         end
         
+        function ImportManualSegmentation(obj)
+            if obj.IsDatasetLoaded()
+                image_info = MimChooseImagingFiles(obj.GuiSingleton.GetSettings.SaveImagePath, obj.Reporting);
+                if numel(image_info.ImageFilenames) == 1
+                    [~, default, ~] = fileparts(image_info.ImageFilenames{1});
+                else
+                    default = [];
+                end
+                if ~isempty(image_info)
+                    obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
+                        name = inputdlg('Please enter a name for this segmentation', 'Import manual segmentation', 1, {default});
+                    if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
+                        if iscell(name)
+                            name = name{1};
+                        end
+                        existing_file_list = CoreContainerUtilities.GetFieldValuesFromSet(obj.GetListOfManualSegmentations(), 'Second');
+                        if any(strcmp(existing_file_list, name))
+                            choice = questdlg('A segmentation with this name already exists. Do you want to overwrite this segmentation?', ...
+                            'Segmentation already exists', 'Overwrite', 'Cancel', 'Cancel');
+                            switch choice
+                                case 'Overwrite'
+                                otherwise
+                                    return
+                            end
+                        end
+                        
+                        obj.Reporting.ShowProgress(['Importing segmentation ', name]);
+                        
+                        template = obj.GuiDataset.GetTemplateImage();
+                        segmentation = MimLoadImages(image_info, obj.Reporting);
+                        segmentation.ChangeRawImage(uint8(segmentation.RawImage));
+                        segmentation.ImageType = PTKImageType.Colormap;
+                        
+                        if ~isequal(template.ImageSize, segmentation.ImageSize)
+                            uiwait(errordlg('The segmentation cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import segmentation for ' name], 'modal'));
+                        elseif ~isequal(template.VoxelSize, segmentation.VoxelSize)
+                            uiwait(errordlg('The segmentation cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import segmentation for ' name], 'modal'));
+                        else                        
+                            obj.GuiDataset.SaveManualSegmentation(name, segmentation);
+                            obj.LoadSegmentationCallback(name);
+                        end
+
+                        obj.Reporting.CompleteProgress;
+                    end
+                end
+            end
+        end
+        
         function AddManualSegmentation(obj)
             name = inputdlg('Please enter a name for the new manual segmentation you wish to create', 'New manual segmentation');
             if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
+                existing_file_list = CoreContainerUtilities.GetFieldValuesFromSet(obj.GetListOfManualSegmentations(), 'Second');
+                if any(strcmp(existing_file_list, name{1}))
+                    choice = questdlg('A segmentation with this name already exists. Do you want to overwrite this segmentation?', ...
+                    'Segmentation already exists', 'Overwrite', 'Cancel', 'Cancel');
+                    switch choice
+                        case 'Overwrite'
+                        otherwise
+                            return
+                    end
+                end
+
                 segmentation = obj.GuiDataset.GetTemplateImage();
                 template_raw = zeros(segmentation.ImageSize, 'uint8');
                 segmentation.ChangeRawImage(template_raw);
