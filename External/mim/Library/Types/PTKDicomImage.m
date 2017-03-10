@@ -179,7 +179,7 @@ classdef PTKDicomImage < PTKImage
                 if isempty(obj.RescaleIntercept) || isempty(obj.RescaleSlope)
                     units_greyscale = units_hu;
                 else
-                    units_greyscale = (units_hu - obj.RescaleIntercept)/obj.RescaleSlope;
+                    units_greyscale = (units_hu - cast(obj.RescaleIntercept, 'like', units_hu)/cast(obj.RescaleSlope, 'like', units_hu));
                 end
             else
                error('The HounsfieldToGreyscale() method was called, but this is not a CT image'); 

@@ -21,9 +21,9 @@ classdef MimWSOverlayView < MimWSModel
             obj.Hash = obj.Hash + 1;
             instanceList = {};
             if isempty(obj.Image)
-                segs = obj.Dataset.GetListOfManualSegmentations;
-                if any(strcmp(segs, 'SlicSeg'))
-                    obj.Image = obj.Dataset.LoadManualSegmentation('SlicSeg');
+                segs = CoreContainerUtilities.GetFieldValuesFromSet(obj.Dataset.GetListOfManualSegmentations, 'Second');
+                if any(strcmp(segs, 'Brain'))
+                    obj.Image = obj.Dataset.LoadManualSegmentation('Brain');
                 else
                     obj.Image = obj.Dataset.GetTemplateImage(PTKContext.OriginalImage);
                     obj.Image.ImageType = PTKImageType.Colormap;
@@ -35,7 +35,7 @@ classdef MimWSOverlayView < MimWSModel
                     ball = ball(1:minSize(1), 1:minSize(2), 1:minSize(3));
                     rawImage(1:size(ball,1), 1:size(ball,2), 1:size(ball,3)) = ball;
                     obj.Image.ChangeRawImage(rawImage);
-                    obj.Dataset.SaveManualSegmentation('SlicSeg', obj.Image);
+                    obj.Dataset.SaveManualSegmentation('Brain', obj.Image);
                 end
                 
                 [~, obj.AxialDimension] = max(obj.Image.VoxelSize);
