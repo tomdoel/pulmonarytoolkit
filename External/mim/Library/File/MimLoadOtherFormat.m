@@ -56,7 +56,7 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
     
     new_dimension_order = [1, 2, 3];
     flip_orientation = [false, false, false];
-    
+    modality = [];
     
     switch image_file_format
         case MimImageFileFormat.Analyze
@@ -168,13 +168,19 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
 
     reporting.ShowWarning('MimLoadOtherFormat:AssumedCT', 'No modality information - I am assuming these images are CT with slope 1 and intercept 0.', []);
     
-    % Guess that images with some strongly negative values are from CT images while
-    % others are MR
-    min_value = min(original_image(:));
-    if (min_value < -500)
-        modality = 'CT';
-    elseif (min_value >= 0)
-        modality = 'MR';
+    if isempty(modality)
+        % Guess that images with some strongly negative values are from CT images while
+        % others are MR if all positive (note: there is no strong basis for
+        % this, but it's hard to guess modality if it's not specified in
+        % the header).
+        min_value = min(original_image(:));
+        if (min_value < -500)
+            modality = 'CT';
+        elseif (min_value >= 0)
+            modality = 'MR';
+        else
+            modality = 'US';
+        end
     end
 
     ptk_image = PTKDicomImage(original_image, rescale_slope, rescale_intercept, voxel_size, modality, study_uid, header_data);
