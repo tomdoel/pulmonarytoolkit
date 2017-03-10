@@ -22,6 +22,17 @@ classdef MimWSImageSlice < MimWSModel
         function [value, hash] = getValue(obj, modelList)
             obj.Hash = obj.Hash + 1;
             value = obj.Image.GetSlice(obj.ImageSliceNumber, obj.AxialDimension);
+            globalMin = obj.Image.Limits(1);
+            globalMax = obj.Image.Limits(2);
+            if obj.ImageType == 2
+                value = uint8(value);
+            else
+                if isfloat(value)
+                    % TODO: Rescale to max 254 to address client rendering issues
+                    value = uint16(254*(value - globalMin)/(globalMax - globalMin));
+%                     value = uint16(65535*(value - globalMin)/(globalMax - globalMin));
+                end
+            end
             hash = obj.Hash;
         end
     end
