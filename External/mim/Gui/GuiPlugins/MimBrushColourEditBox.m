@@ -13,8 +13,8 @@ classdef MimBrushColourEditBox < MimGuiPluginEditBox
     %    
     
     properties
-        ButtonText = 'Other'
-        SelectedText = 'Other'
+        ButtonText = 'Custom'
+        SelectedText = 'Custom'
         
         ToolTip = 'Change the colour of the editing paint brush'
         Category = 'Segmentation label'
@@ -25,16 +25,14 @@ classdef MimBrushColourEditBox < MimGuiPluginEditBox
         PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 1
-        Location = 42
+        Location = 40
 
         MinValue = 0
-        MaxValue = 100
-        SmallStep = 0.01
-        LargeStep = 0.1
-        DefaultValue = 50
+        MaxValue = 255
+        DefaultValue = 1
         
         EditBoxPosition = 90
-        EditBoxWidth = 30
+        EditBoxWidth = 25
 
         StackVertically = false
     end

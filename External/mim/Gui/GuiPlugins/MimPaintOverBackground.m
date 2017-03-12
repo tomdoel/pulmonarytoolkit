@@ -1,5 +1,5 @@
-classdef MimBrushSizeSlider < MimGuiPluginSlider
-    % MimBrushSizeSlider. Gui Plugin for changing the size of the edit brush
+classdef MimPaintOverBackground < MimGuiPlugin
+    % MimPaintOverBackground. Gui Plugin for enabling or disabling developer mode
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the Pulmonary Toolkit.
@@ -13,34 +13,26 @@ classdef MimBrushSizeSlider < MimGuiPluginSlider
     %    
     
     properties
-        ButtonText = 'Brush size'
-        SelectedText = 'Brush size'
-        
-        ToolTip = 'Change the size of the editing paint brush'
+        ButtonText = 'Paint outside boundary'
+        SelectedText = 'Paint within boundary'
+        ToolTip = 'Determines whether painting is allowed to go beyond the boundary of the existing segmentation'
         Category = 'Paint'
         Visibility = 'Dataset'
         Mode = 'Edit'
 
         HidePluginInDisplay = false
-        PTKVersion = '2'
-        ButtonWidth = 6
+        PTKVersion = '1'
+        ButtonWidth = 4
         ButtonHeight = 1
-        Location = 42
-
-        MinValue = 0
-        MaxValue = 100
-        SmallStep = 0.01
-        LargeStep = 0.1
-        DefaultValue = 50
         
-        EditBoxPosition = 90
-        EditBoxWidth = 30
-
-        StackVertically = false
+        Icon = 'paint.png'
+        Location = 41
     end
     
     methods (Static)
         function RunGuiPlugin(gui_app)
+            % Toggles painting over background
+            gui_app.ImagePanel.PaintOverBackground = ~gui_app.ImagePanel.PaintOverBackground;
         end
         
         function enabled = IsEnabled(gui_app)
@@ -49,15 +41,7 @@ classdef MimBrushSizeSlider < MimGuiPluginSlider
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = true;
+            is_selected = gui_app.ImagePanel.PaintOverBackground;
         end
-        
-        function [value_instance_handle, value_property_name, limits_instance_handle, limits_property_name] = GetHandleAndProperty(gui_app)
-            value_instance_handle = gui_app.ImagePanel;
-            value_property_name = 'PaintBrushSize';
-            limits_instance_handle = [];
-            limits_property_name = [];
-        end
-        
     end
 end

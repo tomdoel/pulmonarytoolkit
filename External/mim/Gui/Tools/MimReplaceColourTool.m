@@ -19,8 +19,6 @@ classdef MimReplaceColourTool < MimTool
         Tag = 'Paint'
         ShortcutKey = 'x'
         
-        PaintOverBackground = false % When false, acts as a replace brush
-        
         Brush
     end
     
@@ -108,7 +106,7 @@ classdef MimReplaceColourTool < MimTool
                     
                     % For binary images, switch to paint over mode. For other
                     % images, switch to replace colour mode
-                    obj.PaintOverBackground = islogical(obj.ViewerPanel.OverlayImage.RawImage);
+                    obj.ViewerPanel.PaintOverBackground = islogical(obj.ViewerPanel.OverlayImage.RawImage);
                 end
             end
         end
@@ -144,7 +142,7 @@ classdef MimReplaceColourTool < MimTool
         function ApplyBrush(obj, coords)
             segmentation_colour = obj.FromColour;
             
-            if ~obj.PaintOverBackground && (segmentation_colour == 0)
+            if ~obj.ViewerPanel.PaintOverBackground && (segmentation_colour == 0)
                 return;
             end
             
@@ -179,7 +177,7 @@ classdef MimReplaceColourTool < MimTool
             subimage = raw_image(min_coords(1):max_coords(1), min_coords(2):max_coords(2), min_coords(3):max_coords(3));
             
             
-            if obj.PaintOverBackground
+            if obj.ViewerPanel.PaintOverBackground
                 subimage(clipped_brush) = obj.ViewerPanel.PaintBrushColour;
                 
             else

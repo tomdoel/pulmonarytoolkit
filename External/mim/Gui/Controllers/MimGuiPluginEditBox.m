@@ -12,8 +12,6 @@ classdef MimGuiPluginEditBox < MimGuiPlugin
     properties (Abstract = true)
         MinValue
         MaxValue
-        SmallStep
-        LargeStep
         DefaultValue        
         EditBoxPosition
         EditBoxWidth

@@ -34,6 +34,7 @@ classdef MimViewerPanel < GemPanel
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
         PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
         PaintBrushColour = 1   % The current colour of the paintbrush tools
+        PaintOverBackground = true % True means the paint tool will paint over colours and background; false means it will only replace existing colours
         NewMarkerColour        % The current colour of new marker points
     end
     
