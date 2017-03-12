@@ -15,6 +15,7 @@ classdef MimMarkerPointManager < CoreBaseClass
     properties (Access = private)
         MarkerLayer
         MarkerPointImage
+        BackgroundImageSource
         MarkerDisplayParameters
         ViewerPanel
         Gui
@@ -23,7 +24,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         Reporting
         
         MarkersHaveBeenLoaded = false
-        
+        MarkerImageHasUnsavedChanges = false        
     end
     
     events
@@ -35,27 +36,32 @@ classdef MimMarkerPointManager < CoreBaseClass
     end
     
     methods
-        function obj = MimMarkerPointManager(marker_layer, marker_image_source, marker_display_parameters, viewer_panel, gui, gui_dataset, app_def, reporting)
+        function obj = MimMarkerPointManager(marker_layer, marker_image_source, marker_display_parameters, background_image_source, viewer_panel, gui, gui_dataset, app_def, reporting)
             obj.MarkerLayer = marker_layer;
             obj.MarkerPointImage = marker_image_source;
+            obj.BackgroundImageSource = background_image_source;
             obj.MarkerDisplayParameters = marker_display_parameters;
             obj.ViewerPanel = viewer_panel;
             obj.Gui = gui;
             obj.GuiDataset = gui_dataset;
             obj.AppDef = app_def;
             obj.Reporting = reporting;
+            obj.AddEventListener(marker_image_source, 'MarkerImageHasChanged', @obj.MarkerImageChangedCallback);
+            obj.AddEventListener(background_image_source, 'NewImage', @obj.BackgroundImageChangedCallback);
+            obj.AddEventListener(background_image_source, 'ImageModified', @obj.BackgroundImageChangedCallback);
         end
         
         function ClearMarkers(obj)
             obj.MarkersHaveBeenLoaded = false;
             obj.CurrentMarkersName = [];
-            obj.ViewerPanel.MarkerImageSource.Image.Reset;
+            obj.MarkerPointImage.ClearMarkers();
+            obj.ResetImageChangedFlag();
         end
         
         function AutoSaveMarkers(obj)
-            if ~isempty(obj.MarkerLayer) && obj.MarkerLayer.MarkerImageHasChanged && obj.MarkersHaveBeenLoaded
+            if ~isempty(obj.MarkerLayer) && obj.MarkerImageHasUnsavedChanges && obj.MarkersHaveBeenLoaded
                 saved_marker_points = obj.GuiDataset.LoadMarkers(obj.CurrentMarkersName);
-                current_marker_points = obj.MarkerLayer.GetMarkerImage.Image;
+                current_marker_points = obj.MarkerPointImage.GetImageToSave();
                 markers_changed = false;
                 if isempty(saved_marker_points)
                     if any(current_marker_points.RawImage(:))
@@ -89,7 +95,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         
         function SaveMarkersManualBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded
-                markers = obj.MarkerLayer.GetMarkerImage;
+                markers = obj.MarkerPointImage.GetImageToSave;
                 obj.GuiDataset.SaveMarkers('MarkerPointsLastManualSave', markers);
             end
         end
@@ -101,18 +107,17 @@ classdef MimMarkerPointManager < CoreBaseClass
         end
         
         function load_required = IsLoadMarkersRequired(obj)
-            load_required = ~obj.MarkersHaveBeenLoaded && (obj.ViewerPanel.MarkerImageDisplayParameters.ShowMarkers || obj.ViewerPanel.IsInMarkerMode);
+            load_required = ~obj.MarkersHaveBeenLoaded && (obj.MarkerDisplayParameters.ShowMarkers || obj.ViewerPanel.IsInMarkerMode);
         end
         
         function LoadMarkers(obj, name)
             obj.AutoSaveMarkers;
             new_image = obj.GuiDataset.LoadMarkers(name);
-            if isempty(new_image)
-                obj.MarkerLayer.GetMarkerImage.SetBlankMarkerImage(obj.ViewerPanel.GetBackgroundImageSource.Image);
-            else
-                obj.MarkerLayer.GetMarkerImage.SetBlankMarkerImage(obj.ViewerPanel.GetBackgroundImageSource.Image);
-                obj.MarkerLayer.ChangeMarkerSubImage(new_image);
+            obj.MarkerPointImage.SetBlankMarkerImage(obj.BackgroundImageSource.Image);
+            if ~isempty(new_image)
+                obj.MarkerPointImage.ChangeMarkerSubImage(new_image);
             end
+            obj.ResetImageChangedFlag();
             obj.MarkersHaveBeenLoaded = true;
             obj.CurrentMarkersName = name;
         end
@@ -130,7 +135,9 @@ classdef MimMarkerPointManager < CoreBaseClass
         
         function DeleteMarkerSet(obj, name)
             obj.GuiDataset.DeleteMarkerSet(name);
-            obj.ClearMarkers();
+            if strcmp(name, obj.GetCurrentMarkerSetName())
+                obj.ClearMarkers();
+            end
             notify(obj, 'SavedMarkerListChanged');
         end
     end
@@ -142,9 +149,9 @@ classdef MimMarkerPointManager < CoreBaseClass
                     obj.Reporting.Error('MimMarkerPointManager:NoMarkerFilename', 'The markers could not be saved as the marker filename has not been specified. ');
                 end
                 obj.Reporting.ShowProgress('Saving Markers');
-                markers = obj.MarkerLayer.GetMarkerImage.Image;
+                markers = obj.MarkerPointImage.GetImageToSave();
                 obj.GuiDataset.SaveMarkers(obj.CurrentMarkersName, markers);
-                obj.MarkerLayer.MarkerPointsHaveBeenSaved;
+                obj.ResetImageChangedFlag();
                 obj.Reporting.CompleteProgress;
             end
         end
@@ -152,11 +159,25 @@ classdef MimMarkerPointManager < CoreBaseClass
         function SaveMarkersBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded
                 obj.Reporting.ShowProgress('Abandoning Markers');                
-                markers = obj.MarkerLayer.GetMarkerImage;
+                markers = obj.MarkerPointImage.GetImageToSave();
                 obj.GuiDataset.SaveMarkers('AbandonedMarkerPoints', markers);
                 obj.Reporting.CompleteProgress;
             end
-        end        
+        end
+        
+        function BackgroundImageChangedCallback(obj, ~, ~)
+            obj.MarkerPointImage.BackgroundImageChanged(obj.BackgroundImageSource.Image);
+            obj.MarkerLayer.MarkerImageChanged();
+            obj.ResetImageChangedFlag();
+        end
+        
+        function MarkerImageChangedCallback(obj, ~, ~)
+            obj.MarkerImageHasUnsavedChanges = true;
+        end
+        
+        function ResetImageChangedFlag(obj)
+            obj.MarkerImageHasUnsavedChanges = false;
+        end
     end
 end
 

@@ -15,9 +15,6 @@ classdef GemMarkerLayer < CoreBaseClass
     %
     
     properties (SetAccess = private)
-        % Keep a record of when we have unsaved changes to markers
-        MarkerImageHasChanged = false
-
         MarkersAreVisible = false
         TextLabelsAreVisible = false
     end
@@ -42,22 +39,13 @@ classdef GemMarkerLayer < CoreBaseClass
             obj.ImageSliceParameters = image_parameters;
             obj.MarkerDisplayParameters = marker_display_parameters;
             obj.MarkerPointImage = marker_image_source;
-            obj.AddPostSetListener(image_parameters, 'Orientation', @obj.OrientationChangedCallback);            
-            obj.AddPostSetListener(image_parameters, 'SliceNumber', @obj.SliceNumberChangedCallback);            
-            obj.AddEventListener(background_image_source, 'NewImage', @obj.BackgroundImageChangedCallback);
-            obj.AddEventListener(background_image_source, 'ImageModified', @obj.BackgroundImageChangedCallback);
-            obj.AddEventListener(marker_image_source, 'NewImage', @obj.MarkerImageChangedCallback);
-            obj.AddEventListener(marker_image_source, 'ImageModified', @obj.MarkerImageChangedCallback);            
+            obj.AddPostSetListener(image_parameters, 'Orientation', @obj.OrientationChangedCallback);
+            obj.AddPostSetListener(image_parameters, 'SliceNumber', @obj.SliceNumberChangedCallback);
+            obj.AddEventListener(marker_image_source, 'MarkerImageHasChanged', @obj.MarkerImageChangedCallback);
             obj.AddPostSetListener(marker_display_parameters, 'ShowMarkers', @obj.ShowMarkersChangedCallback);
             obj.AddPostSetListener(marker_display_parameters, 'ShowLabels', @obj.ShowLabelsChangedCallback);
         end
-        
-        function ChangeMarkerSubImage(obj, new_image)
-            obj.MarkerPointImage.ChangeMarkerSubImage(new_image);
-            obj.MarkerImageChanged;
-            obj.MarkerImageHasChanged = false;
-        end
-        
+
         function ShowMarkers(obj, show)
             if (show && ~obj.MarkersAreVisible)
                 obj.ConvertMarkerImageToPoints(obj.ImageSliceParameters.SliceNumber(obj.ImageSliceParameters.Orientation), obj.ImageSliceParameters.Orientation);
@@ -123,15 +111,9 @@ classdef GemMarkerLayer < CoreBaseClass
             obj.LockCallback = true;
             coords = obj.GetImageCoordinates(marker_position);
             
-            if obj.MarkerPointImage.ChangeMarkerPoint(coords, colour)
-                obj.MarkerImageHasChanged = true;
-            end
+            obj.MarkerPointImage.ChangeMarkerPoint(coords, colour);
             
             obj.LockCallback = false;
-        end
-                
-        function MarkerPointsHaveBeenSaved(obj)
-            obj.MarkerImageHasChanged = false;
         end
         
         function marker_image = GetMarkerImage(obj)
@@ -196,7 +178,7 @@ classdef GemMarkerLayer < CoreBaseClass
         end
                 
         function new_marker = NewMarker(obj, coords, colour)
-            obj.ForceMarkerImageCreation;
+            obj.ForceMarkerImageCreation();
             if isempty(obj.CoordinateLimits)
                 orientation = obj.ImageSliceParameters.Orientation;
                 slice_number = obj.ImageSliceParameters.SliceNumber(orientation);
@@ -274,14 +256,8 @@ classdef GemMarkerLayer < CoreBaseClass
             end
         end
         
-        function ImageChanged(obj)
-            obj.MarkerPointImage.BackgroundImageChanged(obj.BackgroundImageSource.Image);
-            obj.MarkerImageChanged;
-            obj.MarkerImageHasChanged = false;
-        end
-        
         function ForceMarkerImageCreation(obj)
-            if ~obj.MarkerPointImage.Image.ImageExists
+            if ~obj.MarkerPointImage.MarkerImageExists()
                 obj.MarkerPointImage.ForceMarkerImageCreation(obj.BackgroundImageSource.Image);
             end
         end

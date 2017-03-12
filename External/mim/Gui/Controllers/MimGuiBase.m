@@ -92,7 +92,7 @@ classdef MimGuiBase < GemFigure
             % Create the object which manages the current dataset
             obj.GuiDataset = MimGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
-            obj.MarkerManager = MimMarkerPointManager(obj.ImagePanel.MarkerLayer, obj.ImagePanel.MarkerImageSource, obj.ImagePanel.MarkerImageDisplayParameters, obj.ImagePanel, obj, obj.GuiDataset, obj.AppDef, reporting);
+            obj.MarkerManager = MimMarkerPointManager(obj.ImagePanel.MarkerLayer, obj.ImagePanel.MarkerImageSource, obj.ImagePanel.MarkerImageDisplayParameters, obj.ImagePanel.BackgroundImageSource, obj.ImagePanel, obj, obj.GuiDataset, obj.AppDef, reporting);
             
             % Create a callback handler for the Patient Browser and sidebar
             if obj.AppDef.MatNatEnabled
@@ -869,7 +869,7 @@ classdef MimGuiBase < GemFigure
             obj.ImagePanel.ImageSliceParameters.UpdateLock = true;
             if obj.GuiDataset.DatasetIsLoaded
                 obj.MarkerManager.AutoSaveMarkers;
-                obj.MarkerManager.ClearMarkers
+                obj.MarkerManager.ClearMarkers();
                 obj.ImagePanel.BackgroundImage.Reset;
             end
             obj.DeleteOverlays;

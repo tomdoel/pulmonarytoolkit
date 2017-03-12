@@ -188,7 +188,7 @@ classdef MimDatasetCacheSelector < handle
             % Saves marker points associated with this dataset to the cache
             
             obj.MarkersDiskCache.Save(data_filename, value, [], reporting);
-            obj.NotifyMarkersChanged(name);
+            obj.NotifyMarkersChanged(data_filename);
         end
         
         function exists = MarkerSetExists(obj, name, reporting)

@@ -1,4 +1,4 @@
-classdef GemMarkerPointImage < GemImageSource
+classdef GemMarkerPointImage < CoreBaseClass
     % GemMarkerPointImage. Part of the gui for the Pulmonary Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
@@ -16,7 +16,32 @@ classdef GemMarkerPointImage < GemImageSource
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
+    events
+        MarkerImageHasChanged
+    end
+    
+    properties (Access = private)
+        Image           % The PTKImage object containing the image volume
+    end
+    
     methods
+        function obj = GemMarkerPointImage()
+            % The image object must be created here, not in the properties section, to
+            % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
+            % Also note that theis will trigger the above pointer change callback, which
+            % will set up the pixel data change callback
+            obj.Image = PTKImage();            
+        end
+        
+        function ClearMarkers(obj)
+            obj.Image.Reset;
+            obj.NotifyMarkerImageChanged();
+        end
+        
+        function image_to_save = GetImageToSave(obj)
+            image_to_save = obj.Image;
+        end
+        
         function [slice_markers, slice_size] = GetMarkersFromImage(obj, slice_number, dimension)
             slice = obj.GetSlice(slice_number, dimension);
             slice_size = size(slice);
@@ -36,21 +61,20 @@ classdef GemMarkerPointImage < GemImageSource
             global_coords = obj.Image.LocalToGlobalCoordinates(local_coords);
         end
         
-        function image_has_changed = ChangeMarkerPoint(obj, local_coords, colour)
+        function ChangeMarkerPoint(obj, local_coords, colour)
             global_coords = obj.Image.LocalToGlobalCoordinates(local_coords);
             global_coords = obj.BoundCoordsInImage(obj.Image, global_coords);
 
             current_value = obj.Image.GetVoxel(global_coords);
             if (current_value ~= colour)
                 obj.Image.SetVoxelToThis(global_coords, colour);
-                image_has_changed = true;
-            else
-                image_has_changed = false;
+                obj.NotifyMarkerImageChanged();
             end
         end
         
         function ChangeMarkerSubImage(obj, new_image)
             obj.Image.ChangeSubImage(new_image);
+            obj.NotifyMarkerImageChanged();
         end
         
         function BackgroundImageChanged(obj, template)
@@ -58,13 +82,14 @@ classdef GemMarkerPointImage < GemImageSource
         end
         
         function SetBlankMarkerImage(obj, template)
-            obj.Image = template.BlankCopy;
+            obj.Image = template.BlankCopy(); % ToDo: add callback
             obj.Image.ChangeRawImage(zeros(template.ImageSize, 'uint8'));
             obj.Image.ImageType = PTKImageType.Colormap;
+            obj.NotifyMarkerImageChanged();
         end
         
         function ForceMarkerImageCreation(obj, template)
-            if ~obj.Image.ImageExists
+            if ~obj.Image.ImageExists()
                 obj.SetBlankMarkerImage(template);
             end
         end
@@ -166,12 +191,7 @@ classdef GemMarkerPointImage < GemImageSource
         
         function image_exists = MarkerImageExists(obj)
             image_exists = obj.Image.ImageExists;
-        end
-        
-        function marker_image = GetMarkerImage(obj)
-            marker_image = obj.Image;
         end        
-        
     end
     
     methods (Access = private)
@@ -181,13 +201,6 @@ classdef GemMarkerPointImage < GemImageSource
             if (dimension == 1) || (dimension == 2)
                 slice = slice'; 
             end
-        end
-
-        function SetSlice(obj, slice, slice_number, dimension)
-            if (dimension == 1) || (dimension == 2)
-                slice = slice';
-            end
-            obj.Image.ReplaceImageSlice(slice, slice_number, dimension);
         end
         
         function global_coords = BoundCoordsInImage(~, marker_image, global_coords)
@@ -201,7 +214,10 @@ classdef GemMarkerPointImage < GemImageSource
 
             global_coords = marker_image.LocalToGlobalCoordinates(local_coords);
         end
+        
+        function NotifyMarkerImageChanged(obj)
+            notify(obj, 'MarkerImageHasChanged');
+        end
     end
-    
 end
 
