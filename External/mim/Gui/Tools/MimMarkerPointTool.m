@@ -33,7 +33,6 @@ classdef MimMarkerPointTool < MimTool
         
     properties (Access = private)
         MarkerLayer
-        MarkerPointImage
         ViewerPanel
         DefaultColour = 3;
         IsDragging = false
@@ -43,7 +42,6 @@ classdef MimMarkerPointTool < MimTool
         function obj = MimMarkerPointTool(marker_layer, viewer_panel)
             obj.MarkerLayer = marker_layer;
             obj.ViewerPanel = viewer_panel;
-            obj.MarkerPointImage = GemMarkerPointImage;
         end
 
         function Enter(obj)
@@ -134,11 +132,6 @@ classdef MimMarkerPointTool < MimTool
         function ChangeCurrentColour(obj, new_colour)
             obj.ViewerPanel.NewMarkerColour = new_colour;
         end
-        
-        function marker_image = GetMarkerImage(obj)
-            marker_image = obj.MarkerPointImage;
-        end
-
     end
 
     methods (Access = private)        
