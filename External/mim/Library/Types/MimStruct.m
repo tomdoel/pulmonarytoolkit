@@ -42,5 +42,25 @@ classdef MimStruct < dynamicprops
                 result = result.(result_properties{1});
             end
         end
+        
+        function is_equal = isequal(obj, other)
+            % Custom compare method because isequal does not work with dynamicprops
+            is_equal = false;
+            if ~isa(other, 'MimStruct')
+                return
+            else
+                p1 = properties(obj);
+                p2 = properties(other);
+                if ~isequal(sort(p1), sort(p2))
+                    return
+                end
+                for p = p1'
+                    if ~isequal(obj.(p{1}), other.(p{1}))
+                        return
+                    end
+                end
+            end
+            is_equal = true;
+        end
     end
 end
