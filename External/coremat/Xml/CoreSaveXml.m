@@ -136,13 +136,11 @@ function node = AddValuesToNode(node, value, xml_doc_node, reporting)
                 node.appendChild(CreateStructArrayElementNode(value(array_index), array_index, xml_doc_node, reporting));
             end
         end
-        
-        node = AddNodesForStruct(node, value, xml_doc_node, reporting);
 
     elseif isa(value, 'containers.Map')
         % Map
         keys = value.keys;
-        for index = 1 : length(keys);
+        for index = 1 : length(keys)
             key = keys{index};
             node.appendChild(CreateMapNode(value(key), key, xml_doc_node, reporting));
         end
@@ -161,6 +159,7 @@ function node = AddValuesToNode(node, value, xml_doc_node, reporting)
         else
             % For an array of objects, add a class value node for each one
             for array_index = 1 : numel(value)
+                parent_class = value_class; % Array elements don't need to store the class name if is the same as the parent class
                 node.appendChild(CreateClassArrayElementNode(value(array_index), array_index, parent_class, xml_doc_node, reporting));
             end
         end

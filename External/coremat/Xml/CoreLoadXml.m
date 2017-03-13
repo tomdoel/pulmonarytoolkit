@@ -76,7 +76,7 @@ end
 function data = ParseClass(class_name, xml_node, conversion_map)
     attributes = GetAttributes(xml_node);
     
-    if isfield(attributes, 'Enumeration');
+    if isfield(attributes, 'Enumeration')
         % Initialise enumerations using value
         enum_value_string = char(GetData(xml_node));
         data = eval([class_name, '.', enum_value_string]);
@@ -125,52 +125,64 @@ end
 
 
 function class_array = ParseClassArray(class_name, xml_node, conversion_map)
-    
-    data = GetData(xml_node);
-    
-    if isempty(data)
-        
-        % Create an empty array
-        class_array = GetEmptyClass(class_name, conversion_map);
-        
-        % Iterate through the child nodes, looking for class element nodes
-        child_nodes = GetChildNodes(xml_node);
-        for child_node = child_nodes
-            next_child = child_node{1};
-            node_name = GetNodeName(next_child);
-            if strcmp(node_name, 'ClassArrayElement')
-                child_attributes = GetAttributes(next_child);
+    % Create an empty array
+    class_array = GetEmptyClass(class_name, conversion_map);
+
+    % Iterate through the child nodes, looking for class element nodes
+    child_nodes = GetChildNodes(xml_node);
+    indices_found = false;
+    for child_node = child_nodes
+        next_child = child_node{1};
+        node_name = GetNodeName(next_child);
+        if strcmp(node_name, 'ClassArrayElement')
+            child_attributes = GetAttributes(next_child);
+            if isfield(child_attributes, 'Index')
                 array_index = str2double(child_attributes.Index);
                 class_array(array_index) = ParseClass(class_name, next_child, conversion_map);
+                indices_found = true;
             end
         end
-    else
+    end
+    
+    % If no array elements were found, parse as a single object
+    if ~indices_found
         class_array = ParseClass(class_name, xml_node, conversion_map);
     end
 end
 
 
 function struct_array = ParseStructArray(xml_node, conversion_map)
+    struct_array = [];
+
+    % Iterate through the child nodes, looking for class element nodes
+    child_nodes = GetChildNodes(xml_node);
+    indices_found = false;
     
-    data = GetData(xml_node);
-    
-    if isempty(data)
-        
-        % Create an empty array
-        struct_array = struct;
-        
-        % Iterate through the child nodes, looking for class element nodes
-        child_nodes = GetChildNodes(xml_node);
-        for child_node = child_nodes
-            next_child = child_node{1};
-            node_name = GetNodeName(next_child);
-            if strcmp(node_name, 'StructArrayElement')
-                child_attributes = GetAttributes(next_child);
+    for child_node = child_nodes
+        next_child = child_node{1};
+        node_name = GetNodeName(next_child);
+        if strcmp(node_name, 'StructArrayElement')
+            child_attributes = GetAttributes(next_child);
+            if isfield(child_attributes, 'Index')
                 array_index = str2double(child_attributes.Index);
-                struct_array(array_index) = ParseStruct(next_child, conversion_map);
+                next_struct = ParseStruct(next_child, conversion_map);
+                if isempty(struct_array)
+                    % We need to initialise the struct array with the
+                    % correct fields. This should work even if the indexing
+                    % does not start at 1
+                    field_names = fieldnames(next_struct);
+                    struct_params = cell([2*numel(field_names), 1]);
+                    struct_params(1:2:end) = field_names(:);
+                    struct_array = struct(struct_params{:});
+                end
+                struct_array(array_index) = next_struct;
+                indices_found = true;                
             end
         end
-    else
+    end
+    
+    % If no array elements were found, parse as a single struct
+    if ~indices_found
         struct_array = ParseStruct(xml_node, conversion_map);
     end
 end
@@ -253,7 +265,7 @@ function property_value = ParsePropertyValues(attributes, xml_node, conversion_m
         if isempty(property_size)
             property_size = [1, numel(property_values_linear)];
         end
-        if strcmp(property_class, 'containers.Map');
+        if strcmp(property_class, 'containers.Map')
             property_value = property_values_linear;
         else
             % Reshape the linear values to match the original matrix size. Note that map
