@@ -82,7 +82,7 @@ classdef GemMarkerPointImage < CoreBaseClass
         end
         
         function SetBlankMarkerImage(obj, template)
-            obj.Image = template.BlankCopy(); % ToDo: add callback
+            obj.Image = template.BlankCopy();
             obj.Image.ChangeRawImage(zeros(template.ImageSize, 'uint8'));
             obj.Image.ImageType = PTKImageType.Colormap;
             obj.NotifyMarkerImageChanged();
@@ -187,7 +187,6 @@ classdef GemMarkerPointImage < CoreBaseClass
                 index_of_nearest_marker = indices(index_of_nearest_marker);
             end
         end
-        
         
         function image_exists = MarkerImageExists(obj)
             image_exists = obj.Image.ImageExists;
