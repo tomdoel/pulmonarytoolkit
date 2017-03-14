@@ -178,7 +178,7 @@ classdef GemSlidingPanel < GemPanel
             
             slider_min = 0;
             slider_max = max(1, overlap_height);
-            new_steps = [min(1, 30/(overlap_height - 0)), 300/(overlap_height - 0)];
+            new_steps = [min(1, 30/(overlap_height - 0)), min(1, 300/(overlap_height - 0))];
             obj.Slider.SetSliderLimits(slider_min, slider_max);
             obj.Slider.SetSliderSteps(new_steps);
             
