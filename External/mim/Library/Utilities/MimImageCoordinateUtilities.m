@@ -279,6 +279,10 @@ classdef MimImageCoordinateUtilities
             end
         end
                 
+        function [permutation_vector, flip] = GetDimensionPermutationVectorForAnalyze(orientation, reporting)
+            permutation_vector = [2, 1, 3];
+            flip = [false, false, true];
+        end
         
         function [permutation_vector, dimension_1, dimension_2, dimension_3] = GetPermutationFromOrientations(orientation_1, orientation_2, reporting)
             [dimension_1, dimension_2, dimension_3] = MimImageCoordinateUtilities.GetDimensionIndicesFromOrientations(orientation_1, orientation_2, reporting);
