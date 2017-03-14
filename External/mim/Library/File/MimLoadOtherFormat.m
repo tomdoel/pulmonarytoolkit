@@ -69,42 +69,51 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
             header_data = hdr_read_header(header_filename);
             data = hdr_read_volume(header_data);
             [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorForAnalyze(header_data.Orientation, reporting);
+            reporting.ShowWarning('MimLoadOtherFormat:UncertainOrientation', 'Analyze file support is experimental and images may be in the wrong orientation');
             
         case MimImageFileFormat.Vtk % Experimental: assumes fixed orientation
             header_data = vtk_read_header(header_filename);
             data = vtk_read_volume(header_data);
             new_dimension_order = [1, 2, 3];
             flip_orientation = [false, false, true];
+            reporting.ShowWarning('MimLoadOtherFormat:UncertainOrientation', 'VTK file support is experimental and images may be in the wrong orientation');
             
         case MimImageFileFormat.Gipl % Experimental: assumes fixed orientation
             header_data = gipl_read_header(header_filename);
             data = gipl_read_volume(header_data);
             new_dimension_order = [1, 2, 3];
             flip_orientation = [false, false, true];
+            reporting.ShowWarning('MimLoadOtherFormat:UncertainOrientation', 'GIPL file support is experimental and images may be in the wrong orientation');
             
         case MimImageFileFormat.Isi % Experimental: assumes fixed orientation
             header_data = isi_read_header(header_filename);
             data = isi_read_volume(header_data);
+            reporting.ShowWarning('MimLoadOtherFormat:UncertainOrientation', 'ISI file support is experimental and images may be in the wrong orientation');
 
         case MimImageFileFormat.V3d % Experimental: assumes fixed orientation
             header_data = v3d_read_header(header_filename);
             data = v3d_read_volume(header_data);
+            reporting.ShowWarning('MimLoadOtherFormat:UncertainOrientation', 'V3D file support is experimental and images may be in the wrong orientation');
 
         case MimImageFileFormat.Vmp % Experimental: assumes fixed orientation
             header_data = hdr_read_header(header_filename);
             data = hdr_read_volume(header_data);
+            reporting.ShowWarning('MimLoadOtherFormat:UncertainOrientation', 'VMP file support is experimental and images may be in the wrong orientation');
 
         case MimImageFileFormat.Xif % Experimental: assumes fixed orientation
             header_data = xif_read_header(header_filename);
             data = xif_read_volume(header_data);
+            reporting.ShowWarning('MimLoadOtherFormat:UncertainOrientation', 'XIF file support is experimental and images may be in the wrong orientation');
 
         case MimImageFileFormat.MicroCT % Experimental: assumes fixed orientation
             header_data = vff_read_header(header_filename);
             data = vff_read_volume(header_data);
+            reporting.ShowWarning('MimLoadOtherFormat:UncertainOrientation', 'MicroCT file support is experimental and images may be in the wrong orientation');
 
         case MimImageFileFormat.Par % Experimental: assumes fixed orientation
             header_data = par_read_header(header_filename);
             data = par_read_volume(header_data);            
+            reporting.ShowWarning('MimLoadOtherFormat:UncertainOrientation', 'PAR file support is experimental and images may be in the wrong orientation');
     end
     
     if isempty(header_data)
