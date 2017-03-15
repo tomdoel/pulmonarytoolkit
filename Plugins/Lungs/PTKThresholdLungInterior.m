@@ -32,6 +32,7 @@ classdef PTKThresholdLungInterior < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
+        Version = 2        
         
         EnableModes = MimModes.EditMode
         SubMode = MimSubModes.PaintEditing

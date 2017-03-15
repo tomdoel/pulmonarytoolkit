@@ -20,20 +20,17 @@ This software is intended for research purposes only. It is not intended for cli
 
 PDF tutorials can be found in the Downloads folder after checking out the project, or you can download them directly here:
 
-[Installing the Pulmonary Toolkit](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Installing.pdf)
+[Installing the Pulmonary Toolkit](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Installing.pdf)
 
-[Tutorial 1 - Loading and visualising data](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Tutorial%201.pdf)
+[Tutorial 1 - Loading and visualising data](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Tutorial%201.pdf)
 
-[Tutorial 2 - Exporting data](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Tutorial%202.pdf)
+[Tutorial 2 - Exporting data](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Tutorial%202.pdf)
 
-[Tutorial 3 - Programming with the Pulmonary Toolkit](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Tutorial%203.pdf)
+[Tutorial 3 - Programming with the Pulmonary Toolkit](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Tutorial%203.pdf)
 
-[Tutorial 4 - Lobar analysis of CT data](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Tutorial%204.pdf)
+[Tutorial 4 - Lobar analysis of CT data](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Tutorial%204.pdf)
 
-
-More tutorial guides will be added in the near future.
-
-
+Please note that the tutorials only cover a few of the features of the Toolkit.
 
 ### What can I do with the Pulmonary Toolkit? ###
 
@@ -68,11 +65,11 @@ Please pull changes regularly from the GitHub repository to receive new features
 
 ### Support ###
 
-Support is provided via the wiki. Tutorials, documentation and help will be added to this wiki in the future.
+Support is provided via the Tutorials and the wiki.
 
 If you are experiencing problems, please make sure you have the required version of Matlab and the Imaging Processing Toolbox. Please also ensure you have a suitable C++ compiler installed and set up. The Toolkit will not work correctly without these.
 
-Please update your Subversion checkout to obtain the latest bug fixes.
+Please update your git checkout to obtain the latest bug fixes.
 
 The toolkit works primarily with medical Dicom images, but there is also limited support for mhd/mha files
 

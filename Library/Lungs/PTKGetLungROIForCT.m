@@ -44,7 +44,7 @@ function lung_image = PTKGetLungROIForCT(lung_image, reporting)
     
     scale_factor = reduced_image.Scale;
     reporting.ShowProgress('Finding region of interest');
-    reduced_image = PTKSegmentLungsWithoutClosing(reduced_image, false, true, reporting);
+    reduced_image = PTKSegmentLungsWithoutClosing(reduced_image, false, true, false, reporting);
     
     % Use the crop function to find the offset and image size
     original_origin = reduced_image.Origin;
