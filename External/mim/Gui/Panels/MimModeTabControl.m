@@ -61,8 +61,12 @@ classdef MimModeTabControl < GemTabControl
         end
         
         function mode = GetModeToSwitchTo(obj, mode_tag)
-            panel = obj.PanelMap(mode_tag);
-            mode = panel.GetModeToSwitchTo;
+            if isempty(mode_tag)
+                mode = [];
+            else
+                panel = obj.PanelMap(mode_tag);
+                mode = panel.GetModeToSwitchTo;
+            end
         end
         
         function PreviewImageChangedCallback(obj, ~, event_data)
@@ -162,6 +166,9 @@ classdef MimModeTabControl < GemTabControl
                 else
                     obj.Reporting.Error('MimModeTabControl:UnknownModeVisibility', 'The Visibility property of the mode panel is set to an unknown value');
                 end
+            end
+            if isempty(first_enabled_tab) && ~isempty(obj.CurrentPanelTag)
+                obj.ChangeSelectedTab(first_enabled_tab);
             end
             if force_change && ~isempty(first_enabled_tab)
                 obj.ChangeSelectedTab(first_enabled_tab);

@@ -911,7 +911,10 @@ classdef MimGuiBase < GemFigure
         
         function UpdateGuiForNewDataset(obj, preview_fetcher)
             obj.ModeTabControl.UpdateGuiForNewDataset(obj.PreviewFetcher, obj.ImagePanel.Window, obj.ImagePanel.Level);
-            obj.UpdateToolbar;
+            
+            % We may need to enable tabs after loading a new dataset
+            obj.GuiDataset.UpdateModeTabControl();
+            obj.UpdateToolbar();
         end
 
         function ReplaceOverlayImageCallback(obj, new_image, image_title)
