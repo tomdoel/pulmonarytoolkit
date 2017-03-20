@@ -1,5 +1,5 @@
 classdef MimGuiDataset < CoreBaseClass
-    % MimGuiDataset. Handles the interaction between the GUI and the PTK interfaces
+    % MimGuiDataset. Handles the interaction between the GUI and the MIM interfaces
     %
     %
     %     You do not need to modify this file. To add new functionality, create

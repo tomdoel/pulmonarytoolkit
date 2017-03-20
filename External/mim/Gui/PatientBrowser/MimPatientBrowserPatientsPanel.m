@@ -1,5 +1,5 @@
 classdef MimPatientBrowserPatientsPanel < GemPanel
-    % PTKPatientMimPatientBrowserPatientsPanelPanel. Part of the gui for the Pulmonary Toolkit.
+    % MimPatientBrowserPatientsPanel. Part of the gui for the Pulmonary Toolkit.
     %
     %     This class is used internally within the Pulmonary Toolkit to help
     %     build the user interface.

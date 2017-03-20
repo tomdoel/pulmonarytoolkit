@@ -17,7 +17,7 @@ classdef MimCloseFigures < MimGuiPlugin
     properties
         ButtonText = 'Close Figures'
         SelectedText = 'Close Figures'
-        ToolTip = 'Close all open Matlab figures except the PTK gui'
+        ToolTip = 'Close all open Matlab figures except the MIM gui'
         Category = 'Developer tools'
         Mode = 'Segment'
 

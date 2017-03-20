@@ -1,5 +1,5 @@
 classdef MimClassFactory < handle
-    % PTKClassMimClassFactoryFactory. Allows the PTK application to create PTK-specific subclasses
+    % MimClassFactory. Allows MIM applications to create application-specific subclasses
     %
     %
     %     Licence

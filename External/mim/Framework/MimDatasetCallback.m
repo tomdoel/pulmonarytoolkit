@@ -18,7 +18,7 @@ classdef MimDatasetCallback < handle
     %     methods (Static)
     %         function results = RunPlugin(dataset_callback, reporting)
     %             ...
-    %             airway_results = dataset_callback.GetResult('PTKAirways');
+    %             airway_results = dataset_callback.GetResult('PluginName');
     %             ...
     %         end
     %     end

@@ -1,5 +1,5 @@
 function is_supported = MimModalityIsSupported(modality, reporting)
-    % MimModalityIsSupported. Returns true if PTK supports this modality
+    % MimModalityIsSupported. Returns true if MIM supports this modality
     %
     %     Syntax
     %     ------

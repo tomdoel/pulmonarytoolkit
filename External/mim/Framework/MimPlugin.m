@@ -21,7 +21,7 @@ classdef MimPlugin < handle
     %     run.
     %
     %         image_info = MimImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         ptk = PTKMain;
+    %         ptk = PTKMain();
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %         airways = dataset.GetResult('MyPluginName');
     %    

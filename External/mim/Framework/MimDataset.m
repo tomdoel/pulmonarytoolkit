@@ -25,7 +25,7 @@ classdef MimDataset < CoreBaseClass
     %
     %     You can then obtain results from this dataset, e.g.
     %
-    %         airways = dataset.GetResult('PTKAirways');
+    %         airways = dataset.GetResult('PluginName');
     %
     %
     %     Licence

@@ -206,7 +206,7 @@ classdef MimEditMode < handle
                 edited_result.ResizeToMatch(template);
                 path_name = obj.Settings.SaveImagePath;
 
-                patch = PTKEditedResultPatch;
+                patch = PTKEditedResultPatch();
                 image_info = obj.GuiDataset.GetImageInfo;
                 patch.SeriesUid = image_info.ImageUid;
                 patch.PluginName = obj.PluginName;

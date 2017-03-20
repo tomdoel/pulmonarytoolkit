@@ -33,7 +33,7 @@ function loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, report
     
     if ~isempty(representative_metadata) && isfield(representative_metadata, 'Modality') && ~isempty(representative_metadata.Modality)
         if ~MimModalityIsSupported(representative_metadata.Modality)
-            reporting.Error('MimLoadImageFromDicomFiles:ModalityNotSupported', ['PTK does not support the ' representative_metadata.Modality ' modality']);
+            reporting.Error('MimLoadImageFromDicomFiles:ModalityNotSupported', ['The ' representative_metadata.Modality ' modality is not supported']);
         end
     end
     

@@ -30,7 +30,7 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
     end
     
     if nargin < 2
-        reporting.Error('MimLoadOtherFormat:NotEnoughArguments', 'PTKLoadOtherFormat requires a minimum of two arguments: the current path and  list of filenames');
+        reporting.Error('MimLoadOtherFormat:NotEnoughArguments', 'MimLoadOtherFormat requires a minimum of two arguments: the current path and  list of filenames');
     end
 
     if isa(filenames, 'CoreFilename')
