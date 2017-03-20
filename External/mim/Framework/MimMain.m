@@ -34,7 +34,7 @@ classdef MimMain < CoreBaseClass
     %
     %     You can then obtain results from this dataset, e.g.
     %
-    %         airways = dataset.GetResult('PTKAirways');
+    %         results = dataset.GetResult('PluginName');
     %
     %
     %     Licence
@@ -215,7 +215,7 @@ classdef MimMain < CoreBaseClass
                 script_class = feval(script_name);
                 output = script_class.RunScript(obj, obj.Reporting, varargin{:});
             catch ex
-                obj.Reporting.Error('PTKMainBase:ScriptFailure', ['The script ' script_name ' failed with the following error: ' ex.message]);
+                obj.Reporting.Error('MimMain:ScriptFailure', ['The script ' script_name ' failed with the following error: ' ex.message]);
                 output = [];
             end
         end

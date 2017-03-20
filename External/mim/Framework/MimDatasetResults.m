@@ -18,7 +18,7 @@ classdef MimDatasetResults < handle
     %     methods (Static)
     %         function results = RunPlugin(dataset_results, reporting)
     %             ...
-    %             airway_results = dataset_results.GetResult('PTKAirways');
+    %             results = dataset_results.GetResult('PluginName');
     %             ...
     %         end
     %     end

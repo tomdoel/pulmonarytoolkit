@@ -224,7 +224,7 @@ classdef MimEditManager < MimTool
                 end
                 
                 gaussian_size = max(obj.BrushSize, distance_2d/2);
-                gaussian_image = PTKNormalisedGaussianKernel(voxel_size, gaussian_size, obj.MinimumEditVolume);
+                gaussian_image = MimNormalisedGaussianKernel(voxel_size, gaussian_size, obj.MinimumEditVolume);
                 
                 local_size = size(gaussian_image);
                 
@@ -279,7 +279,7 @@ classdef MimEditManager < MimTool
                 subimage((subimage == closest_colour) & (~cropped_image_copy.RawImage)) = second_closest_colour;
                 
                 % Fill holes for all colours
-                subimage = PTKFillHolesForMultiColourImage(subimage, ~obj.FixedOuterBoundary);
+                subimage = MimFillHolesForMultiColourImage(subimage, ~obj.FixedOuterBoundary);
                 
                 raw_image(min_coords(1):max_coords(1), min_coords(2):max_coords(2), min_coords(3):max_coords(3)) = subimage;
                 

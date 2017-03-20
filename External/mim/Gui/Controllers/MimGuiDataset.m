@@ -211,7 +211,7 @@ classdef MimGuiDataset < CoreBaseClass
                 
             catch exc
                 if MimErrors.IsErrorCancel(exc.identifier)
-                    obj.Reporting.ShowMessage('PTKGui:LoadingCancelled', 'User cancelled');
+                    obj.Reporting.ShowMessage('MimGuiDataset:LoadingCancelled', 'User cancelled');
                 else
                     obj.Reporting.ShowMessage('MimGuiDataset:ClearDatasetFailed', ['Failed to clear dataset due to error: ' exc.message]);
                 end
@@ -423,7 +423,7 @@ classdef MimGuiDataset < CoreBaseClass
                 if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('MimGuiDataset:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                 else
-                    obj.Reporting.ShowMessage('PTKGui:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
+                    obj.Reporting.ShowMessage('MimGuiDataset:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
                     show_error_dialog = true;
 
                     if isa(exc, 'MimSuggestEditException')

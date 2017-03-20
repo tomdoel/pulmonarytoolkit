@@ -267,7 +267,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
         
         function QuitButton(obj, ~, ~)
             obj.Hide;
-            throw(MException('PTKCustomProgressDialog:UserForceQuit', 'User forced plugin to terminate'));
+            throw(MException('MimCustomProgressDialog:UserForceQuit', 'User forced plugin to terminate'));
         end
     end
     

@@ -23,7 +23,7 @@ classdef MimPlugin < handle
     %         image_info = MimImageInfo( <image path>, <filenames>, [], [], [], []);
     %         ptk = PTKMain();
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
-    %         airways = dataset.GetResult('MyPluginName');
+    %         results = dataset.GetResult('MyPluginName');
     %    
     %
     %
