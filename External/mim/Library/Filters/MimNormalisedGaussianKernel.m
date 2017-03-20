@@ -1,5 +1,5 @@
-function kernel = PTKNormalisedGaussianKernel(voxel_size_mm, filter_size_mm, minimum_grid_size_mm)
-    % PTKNormalisedGaussianKernel.
+function kernel = MimNormalisedGaussianKernel(voxel_size_mm, filter_size_mm, minimum_grid_size_mm)
+    % MimNormalisedGaussianKernel.
     %
     %
     %     The input and output images are of class PTKImage.
