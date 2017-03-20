@@ -1,13 +1,13 @@
-classdef MimLinkedDatasetRecorder < CoreBaseClass
-    % MimLinkedDatasetRecorder. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKLinkedDatasetRecorder < CoreBaseClass
+    % PTKLinkedDatasetRecorder. Part of the internal framework of the MIM Toolkit.
     %
-    %     MimLinkedDatasetRecorder is used to cache links between datasets for
+    %     PTKLinkedDatasetRecorder is used to cache links between datasets for
     %     multimodal analysis. Links can be explicitly made using the MimDataset API
     %     call LinkDataset(). This class caches such links so that they can be made
     %     automatically.
     %
     %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the Pulmonary Toolkit.
+    %     be used internally within the framework of the MIM Toolkit.
     %
     %     Licence
     %     -------
@@ -36,26 +36,25 @@ classdef MimLinkedDatasetRecorder < CoreBaseClass
                 linked_recorder_filename = framework_app_def.GetFrameworkDirectories.GetLinkingCacheFilePath;
                 if exist(linked_recorder_filename, 'file')
                     legacy_conversion = containers.Map;
-                    legacy_conversion('PTKLinkedDatasetRecorder') = 'MimLinkedDatasetRecorder';
                     linked_recorder = CoreLoadXml(linked_recorder_filename, reporting, legacy_conversion);
                     linked_recorder = linked_recorder.LinkingCache;
                     linked_recorder.FrameworkAppDef = framework_app_def;
                 else
-                    reporting.ShowWarning('MimLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No linking cache file found. Will create new one on exit', []);
-                    linked_recorder = MimLinkedDatasetRecorder;
+                    reporting.ShowWarning('PTKLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No linking cache file found. Will create new one on exit', []);
+                    linked_recorder = PTKLinkedDatasetRecorder();
                     linked_recorder.FrameworkAppDef = framework_app_def;
                     linked_recorder.Save(reporting);
                 end
             catch ex
-                reporting.ShowWarning('MimLinkedDatasetRecorder:FailedtoLoadCacheFile', ['Error when loading cache file ' linked_recorder_filename '. Any existing links between datasets will be lost'], ex);
-                linked_recorder = MimLinkedDatasetRecorder;
+                reporting.ShowWarning('PTKLinkedDatasetRecorder:FailedtoLoadCacheFile', ['Error when loading cache file ' linked_recorder_filename '. Any existing links between datasets will be lost'], ex);
+                linked_recorder = PTKLinkedDatasetRecorder();
             end
         end
         
     end    
     
     methods
-        function obj = MimLinkedDatasetRecorder
+        function obj = PTKLinkedDatasetRecorder()
             obj.LinkMap = containers.Map;
             obj.AssociatedDatasetsMap = containers.Map;
         end
@@ -126,7 +125,7 @@ classdef MimLinkedDatasetRecorder < CoreBaseClass
                 value.cache = obj;
                 CoreSaveXml(obj, 'LinkingCache', cache_filename, reporting);
             catch ex
-                reporting.ErrorFromException('MimLinkedDatasetRecorder:FailedtoSaveCacheFile', ['Unable to save linking cache file ' cache_filename], ex);
+                reporting.ErrorFromException('PTKLinkedDatasetRecorder:FailedtoSaveCacheFile', ['Unable to save linking cache file ' cache_filename], ex);
             end
         end        
     end

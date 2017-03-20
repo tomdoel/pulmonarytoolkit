@@ -72,7 +72,7 @@ classdef MimImageDatabaseSeries < handle
         function image_info = GetImageInfo(obj)
             filenames_cells = [];
             filenames_objects = obj.ImageMap.values;
-            for image_index = 1 : numel(filenames_objects);
+            for image_index = 1 : numel(filenames_objects)
                 filenames_cells{end + 1} = filenames_objects{image_index};
             end
             path = obj.FirstImagePath;

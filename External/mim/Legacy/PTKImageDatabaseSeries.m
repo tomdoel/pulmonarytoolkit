@@ -29,7 +29,7 @@ classdef PTKImageDatabaseSeries
                 obj.ImageFileFormat = image_infos{1}.ImageFileFormat;
                 obj.StudyUid = image_infos{1}.StudyUid;
         
-                filenames = containsers.Map;
+                filenames = containers.Map;
                 for image_index = 1 : numel(image_infos)
                     single_image_info = image_infos{image_index};
                     filenames(single_image_info.ImageUid) = CoreFilename(single_image_info.ImagePath, single_image_info.ImageFilename);
