@@ -10,6 +10,14 @@ classdef PTKClassFactory < handle
     %    
     
     methods
+        function record = CreateLinkedDatasetCacheRecord(~, varargin)
+            record = PTKLinkedDatasetCacheRecord(varargin{:});
+        end
+        
+        function record = CreateLinkedDatasetAssociatedDatasetRecord(~, varargin)
+            record = PTKLinkedDatasetAssociatedDatasetRecord(varargin{:});
+        end
+        
         function results_info = CreatePluginResultsInfo(~, varargin)
             results_info = PTKPluginResultsInfo(varargin{:});
         end

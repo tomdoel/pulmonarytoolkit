@@ -1,11 +1,11 @@
-classdef MimLinkedDatasetAssociatedDatasetRecord < CoreBaseClass
-    % MimLinkedDatasetAssociatedDatasetRecord. Part of the internal framework of the Pulmonary Toolkit.
+classdef PTKLinkedDatasetAssociatedDatasetRecord < CoreBaseClass
+    % PTKLinkedDatasetAssociatedDatasetRecord. Part of the internal framework of the Pulmonary Toolkit.
     %
-    %     MimLinkedDatasetAssociatedDatasetRecord is used by MimLinkedDatasetRecorder to store
+    %     PTKLinkedDatasetAssociatedDatasetRecord is used by PTKLinkedDatasetRecorder to store
     %     a map of all linked datasets to the primary dataset for that linkage.
     %
     %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the Pulmonary Toolkit.
+    %     be used internally within the MIM framework
     %
     %     Licence
     %     -------

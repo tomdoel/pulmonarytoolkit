@@ -30,7 +30,7 @@ classdef PTKImageDatabaseSeries
                 obj.StudyUid = image_infos{1}.StudyUid;
         
                 filenames = containsers.Map;
-                for image_index = 1 : numel(image_infos);
+                for image_index = 1 : numel(image_infos)
                     single_image_info = image_infos{image_index};
                     filenames(single_image_info.ImageUid) = CoreFilename(single_image_info.ImagePath, single_image_info.ImageFilename);
                 end
@@ -45,7 +45,7 @@ classdef PTKImageDatabaseSeries
                 % The database will be rebuilt, so the following is a temporary change to get the
                 % database in a good state before the rebuild happens
                 image_map = containers.Map;
-                for image_index = 1 : numel(obj.ImageMap);
+                for image_index = 1 : numel(obj.ImageMap)
                     image_uid = int2str(image_index);
                     image_map(image_uid) = obj.ImageMap(image_index);
                 end
