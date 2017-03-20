@@ -1,5 +1,5 @@
 classdef MimContextResultCombiner < CoreBaseClass
-    % MimContextResultCombiner. Part of the internal framework of the Pulmonary Toolkit.
+    % MimContextResultCombiner. Part of the internal framework of the TD MIM Toolkit.
     %
     %     This class is used to build up aggregate results combined from results for different contexts
     %
@@ -7,9 +7,9 @@ classdef MimContextResultCombiner < CoreBaseClass
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     

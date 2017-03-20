@@ -2,7 +2,7 @@ classdef MimSuggestEditException < MException
     % MimSuggestEditException. Error that can be overcome using a manual edit.
     %
     %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the Pulmonary Toolkit.
+    %     be used internally within the framework of the TD MIM Toolkit.
     %
     %     MimSuggestEditException is raised when an error occurs in certain
     %     Plugins. Normally a plugin failure would mean that no clients of
@@ -18,9 +18,9 @@ classdef MimSuggestEditException < MException
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the MIT licence. Please see website for details.
     %
     
     properties (SetAccess = private)

@@ -1,8 +1,8 @@
 classdef PTKPlugin < MimPlugin
-    % MimPlugin. Base class for a Plugin used by the Pulmonary Toolkit
+    % MimPlugin. Base class for a Plugin used by the TD MIM Toolkit
     %
     %     Plugins are classes you create to run your own routines from the
-    %     Pulmonary Toolkit. When you create a plugin, it will automatically
+    %     TD MIM Toolkit. When you create a plugin, it will automatically
     %     appear as a button in the gui, and is available to scripts and other
     %     plugins which use the Pulmonay Toolkit. The framework automatically
     %     handles result caching, dependency tracking and preview thumbnail
@@ -33,9 +33,9 @@ classdef PTKPlugin < MimPlugin
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %
 
 end

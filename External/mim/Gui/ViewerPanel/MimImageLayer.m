@@ -1,7 +1,7 @@
 classdef MimImageLayer < GemImage
-    % MimImageLayer. Part of the gui for the Pulmonary Toolkit.
+    % MimImageLayer. Part of the gui for the TD MIM Toolkit.
     %
-    %     This class is used internally within the Pulmonary Toolkit to help
+    %     This class is used internally within the TD MIM Toolkit to help
     %     build the user interface.
     %
     %     MimImageLayer holds a volume, and a 2D image object
@@ -10,9 +10,9 @@ classdef MimImageLayer < GemImage
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = protected)

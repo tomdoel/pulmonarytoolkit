@@ -2,7 +2,7 @@ classdef PTKDicomImage < PTKImage
     % PTKDicomImage. A class for holding a 3D medical image volume.
     %
     %     PTKDicomImage is inherited from the fundamental PTKImage image class 
-    %     used by the Pulmonary Toolkit. It provides additional routines and
+    %     used by the TD MIM Toolkit. It provides additional routines and
     %     metadata associated with medical imaging data, most commonly imported
     %     from the DICOM standard.
     %
@@ -17,9 +17,9 @@ classdef PTKDicomImage < PTKImage
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %
     
     properties (SetAccess = private)

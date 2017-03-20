@@ -2,7 +2,7 @@ classdef (Sealed) MimFrameworkSingleton < handle
     % MimFrameworkSingleton. The singleton used by all instances of MimMain
     %
     %     You should not use this class within your own code. It is intended to
-    %     be used internally within the Pulmonary Toolkit.
+    %     be used internally within the TD MIM Toolkit.
     %
     %     Some parts of the MIM framework (such as the image database) rely on
     %     in-memory caches. Typically changes will be written to disk when the
@@ -19,9 +19,9 @@ classdef (Sealed) MimFrameworkSingleton < handle
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

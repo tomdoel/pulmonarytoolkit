@@ -1,8 +1,8 @@
 classdef PTKOriginalImage < PTKPlugin
     % PTKOriginalImage. Plugin to obtain hte uncropped full-size image
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
-    %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
+    %     This is a plugin for the TD MIM Toolkit. Plugins can be run using 
+    %     the gui, or through the interfaces provided by the TD MIM Toolkit.
     %     See PTKPlugin.m for more information on how to run plugins.
     %
     %     Plugins should not be run directly from your code.
@@ -15,9 +15,9 @@ classdef PTKOriginalImage < PTKPlugin
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %
     
     

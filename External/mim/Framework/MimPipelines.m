@@ -1,5 +1,5 @@
 classdef MimPipelines < CoreBaseClass
-    % MimPipelines. Part of the internal framework of the Pulmonary Toolkit.
+    % MimPipelines. Part of the internal framework of the TD MIM Toolkit.
     %
     %     This class is used to execute Plugins automatically, triggered by
     %     the completion of other Plugins. This automatic triggering is
@@ -18,9 +18,9 @@ classdef MimPipelines < CoreBaseClass
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

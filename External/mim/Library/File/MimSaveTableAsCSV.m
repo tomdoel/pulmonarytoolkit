@@ -6,9 +6,9 @@ function MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_d
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the MIT licence. Please see website for details.
     %       
 
     other_dim = setdiff([1,2,3,4], [file_dim, row_dim, col_dim]);

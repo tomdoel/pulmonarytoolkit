@@ -1,7 +1,7 @@
 classdef MimPatientBrowserListOfPatientsPanel < GemPanel
-    % MimPatientBrowserListOfPatientsPanel. Part of the gui for the Pulmonary Toolkit.
+    % MimPatientBrowserListOfPatientsPanel. Part of the gui for the TD MIM Toolkit.
     %
-    %     This class is used internally within the Pulmonary Toolkit to help
+    %     This class is used internally within the TD MIM Toolkit to help
     %     build the user interface.
     %
     %     MimPatientBrowserListOfPatientsPanel represents a panel showing the list of patients in
@@ -9,9 +9,9 @@ classdef MimPatientBrowserListOfPatientsPanel < GemPanel
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
 

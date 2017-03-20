@@ -1,7 +1,7 @@
 classdef (ConstructOnLoad = true) PTKImage < handle
     % PTKImage. A class for holding a 3D image volume.
     %
-    %     PTKImage is the fundamental image class used by the Pulmonary Toolkit.
+    %     PTKImage is the fundamental image class used by the TD MIM Toolkit.
     %     It stores the image data and associated metadata, such as the voxel
     %     size, and maintains the knowledge of the relationship between this
     %     image and the image it was derived from after cropping and scaling
@@ -35,9 +35,9 @@ classdef (ConstructOnLoad = true) PTKImage < handle
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %
         
     properties (SetObservable)

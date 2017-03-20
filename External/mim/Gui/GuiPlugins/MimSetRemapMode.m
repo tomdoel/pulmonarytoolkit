@@ -2,7 +2,7 @@ classdef MimSetRemapMode < MimGuiPlugin
     % MimSetRemapMode. Gui Plugin for using a preset bone window/level
     %
     %     You should not use this class within your own code. It is intended to
-    %     be used by the gui of the Pulmonary Toolkit.
+    %     be used by the gui of the TD MIM Toolkit.
     %
     %     MimSetRemapMode is a Gui Plugin for the MIM Toolkit. It
     %     enabled an edit mode where colour labels can be remapped
@@ -10,9 +10,9 @@ classdef MimSetRemapMode < MimGuiPlugin
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     properties

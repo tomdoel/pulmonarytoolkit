@@ -7,7 +7,7 @@ classdef MimViewerPanel < GemPanel
     %     and overlay on and off and changing overlay transparency.
     %
     %     MimViewerPanel is used as a component by the standalong data viewer
-    %     application PTKViewer, and by the Pulmonary Toolkit gui application.
+    %     application PTKViewer, and by the TD MIM Toolkit gui application.
     %     You can also use this in your own user interfaces.
     %
     %     New background, overlay and quiver plots can be viewed by assigning
@@ -19,9 +19,9 @@ classdef MimViewerPanel < GemPanel
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
 

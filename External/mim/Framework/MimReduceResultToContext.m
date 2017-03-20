@@ -1,14 +1,14 @@
 function result = MimReduceResultToContext(full_result, child_context, image_templates, dataset_stack, reporting)
-    % MimReduceResultToContext. Part of the internal framework of the Pulmonary Toolkit.
+    % MimReduceResultToContext. Part of the internal framework of the TD MIM Toolkit.
     %
     %     This function is used to convert a plugin result from one context
     %     to a lower context
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     % If the result is a composite result, then get the result for this

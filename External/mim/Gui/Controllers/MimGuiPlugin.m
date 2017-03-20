@@ -1,8 +1,8 @@
 classdef MimGuiPlugin < handle
-    % MimGuiPlugin. Base class for a Gui-level plugin used by the Pulmonary Toolkit.
+    % MimGuiPlugin. Base class for a Gui-level plugin used by the TD MIM Toolkit.
     %
     %     Gui Plugins are classes you create to run gui-related routines from
-    %     the Pulmonary Toolkit user interface. Like plugins, gui plugins each
+    %     the TD MIM Toolkit user interface. Like plugins, gui plugins each
     %     have a button on the user interface. Unlike plugins, gui plugins do
     %     not generate results and cannot be called from outside of the gui.
     %     They are intended for operations related to the gui application such
@@ -12,7 +12,7 @@ classdef MimGuiPlugin < handle
     %     Gui Plugins must reside in the GuiPlugins folder, and
     %     inherit from this class, MimGuiPlugin. Provided that the properties have
     %     been correctly set, the plugin will automatically appear in the
-    %     Pulmonary Toolkit gui.
+    %     TD MIM Toolkit gui.
     %
     %     Gui plugins are given a handle to the MimGuiApp object so they can
     %     access gui methods and obtain dataset results if necessary
@@ -20,9 +20,9 @@ classdef MimGuiPlugin < handle
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %
         
     properties (Abstract = true)

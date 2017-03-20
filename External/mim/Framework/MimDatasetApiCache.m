@@ -1,8 +1,8 @@
 classdef MimDatasetApiCache < handle
-    % MimDatasetApiCache. Part of the internal framework for the Pulmonary Toolkit.
+    % MimDatasetApiCache. Part of the internal framework for the TD MIM Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
-    %     be used internally within the Pulmonary Toolkit.
+    %     be used internally within the TD MIM Toolkit.
     %
     %     MimDatasetApiCache stores a map of MimDataset objects, and
     %     ensures only one MimDataset exists for a given UID. This improves
@@ -12,9 +12,9 @@ classdef MimDatasetApiCache < handle
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = private)

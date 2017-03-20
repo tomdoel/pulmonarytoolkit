@@ -1,8 +1,8 @@
 classdef MimMarkerPointTool < MimTool
-    % MimMarkerPointTool. Part of the internal gui for the Pulmonary Toolkit.
+    % MimMarkerPointTool. Part of the internal gui for the TD MIM Toolkit.
     %
     %     You should not use this class within your own code. It is intended to
-    %     be used internally within the gui of the Pulmonary Toolkit.
+    %     be used internally within the gui of the TD MIM Toolkit.
     %
     %     MimMarkerPointTool provides functionality for creating, editing and
     %     deleting marker points associated with an image using the
@@ -11,9 +11,9 @@ classdef MimMarkerPointTool < MimTool
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %
     
     properties

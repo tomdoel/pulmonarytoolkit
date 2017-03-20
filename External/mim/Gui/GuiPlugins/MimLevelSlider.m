@@ -2,7 +2,7 @@ classdef MimLevelSlider < MimGuiPluginSlider
     % MimLevelSlider. Gui Plugin for changing overlay opacity
     %
     %     You should not use this class within your own code. It is intended to
-    %     be used by the gui of the Pulmonary Toolkit.
+    %     be used by the gui of the TD MIM Toolkit.
     %
     %     MimLevelSlider is a Gui Plugin for changing the value of the
     %     window used to display the greyscale image
@@ -10,9 +10,9 @@ classdef MimLevelSlider < MimGuiPluginSlider
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %    
     
     properties

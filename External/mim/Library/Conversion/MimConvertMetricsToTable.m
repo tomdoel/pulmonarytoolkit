@@ -4,9 +4,9 @@ function results_table = MimConvertMetricsToTable(results, patient_name, patient
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
     %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Distributed under the MIT licence. Please see website for details.
     %       
    
     if nargin < 6 || isempty(results_table)

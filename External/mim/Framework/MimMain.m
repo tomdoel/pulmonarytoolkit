@@ -1,7 +1,7 @@
 classdef MimMain < CoreBaseClass
-    % MimMain. Imports and provides access to data from the Pulmonary Toolkit
+    % MimMain. Imports and provides access to data from the TD MIM Toolkit
     %
-    %     MimMain provides access to data from the Pulmonary Toolkit, and allows 
+    %     MimMain provides access to data from the TD MIM Toolkit, and allows 
     %     you to import new data. Data is accessed through one or more MimDataset
     %     objects. Your code should create a single MimMain object, and then ask
     %     it to create a MimDataset object for each dataset you wish to access. 
@@ -9,7 +9,7 @@ classdef MimMain < CoreBaseClass
     %     MimMain is essentially a class factory for MimDatasets, but shares the 
     %     MimReportingInterface (error/progress reporting) objects between all 
     %     datasets, so you have a single error/progress reporting pipeline for 
-    %     your use of the Pulmonary Toolkit.
+    %     your use of the TD MIM Toolkit.
     %
     %     To import a new dataset, construct a MimImageInfo object with the file
     %     path and file name set to the image file. For DICOM files it is only
@@ -39,9 +39,9 @@ classdef MimMain < CoreBaseClass
     %
     %     Licence
     %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %     Distributed under the MIT licence. Please see website for details.
     %
     
     properties (SetAccess = private)
@@ -129,7 +129,7 @@ classdef MimMain < CoreBaseClass
         end
         
         function uids = ImportData(obj, filename)
-            % Imports data into the Pulmonary Toolkit so that it can be accessed
+            % Imports data into the TD MIM Toolkit so that it can be accessed
             % from the CreateDatasetFromUid() method. The input argument is a string
             % containing the path to the data file to import. If the path points to
             % a single (non-DICOM) file, then only the file will be imported. If the
@@ -281,7 +281,7 @@ classdef MimMain < CoreBaseClass
         end
         
         function [image_info, dataset_disk_cache] = ImportDataFromInfo(obj, new_image_info, reporting)
-            % Imports data into the Pulmonary Toolkit so that it can be accessed
+            % Imports data into the TD MIM Toolkit so that it can be accessed
             % from the CreateDatasetFromUid() method. The input argument is a
             % MimImageInfo object containing the path, filenames and file type of
             % the data to import. If you do not know the file type, use the
