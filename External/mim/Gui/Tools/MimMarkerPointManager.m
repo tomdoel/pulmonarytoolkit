@@ -81,13 +81,13 @@ classdef MimMarkerPointManager < CoreBaseClass
                             'Unsaved changes to markers', 'Delete changes', 'Save', 'Save');
                         switch choice
                             case 'Save'
-                                obj.SaveMarkers;
+                                obj.SaveMarkers();
                             case 'Don''t save'
-                                obj.SaveMarkersBackup;
+                                obj.SaveMarkersBackup();
                                 disp('Abandoned changes have been stored in AbandonedMarkerPoints.mat');
                         end
                     else
-                        obj.SaveMarkers;
+                        obj.SaveMarkers();
                     end
                 end
             end
@@ -127,9 +127,9 @@ classdef MimMarkerPointManager < CoreBaseClass
         end
         
         function AddMarkerSet(obj, name)
-            obj.SaveMarkers;
+            obj.SaveMarkers();
             obj.LoadMarkers(name);
-            obj.SaveMarkers;
+            obj.SaveMarkers();
             notify(obj, 'SavedMarkerListChanged');
         end
         
@@ -146,13 +146,16 @@ classdef MimMarkerPointManager < CoreBaseClass
         function SaveMarkers(obj)
             if obj.GuiDataset.DatasetIsLoaded()
                 if isempty(obj.CurrentMarkersName)
-                    obj.Reporting.Error('MimMarkerPointManager:NoMarkerFilename', 'The markers could not be saved as the marker filename has not been specified. ');
+                    if ~isempty(obj.MarkerPointImage.MarkerList)
+                        obj.Reporting.Error('MimMarkerPointManager:NoMarkerFilename', 'The markers could not be saved as the marker filename has not been specified. ');
+                    end
+                else
+                    obj.Reporting.ShowProgress('Saving Markers');
+                    markers = obj.GetImageToSave();
+                    obj.GuiDataset.SaveMarkers(obj.CurrentMarkersName, markers);
+                    obj.ResetImageChangedFlag();
+                    obj.Reporting.CompleteProgress();
                 end
-                obj.Reporting.ShowProgress('Saving Markers');
-                markers = obj.GetImageToSave();
-                obj.GuiDataset.SaveMarkers(obj.CurrentMarkersName, markers);
-                obj.ResetImageChangedFlag();
-                obj.Reporting.CompleteProgress();
             end
         end
         

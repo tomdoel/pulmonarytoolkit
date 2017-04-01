@@ -68,11 +68,12 @@ classdef MimSegmentPanel < GemPanel
         
         function ManualSegmentationsChangedCallback(obj, ~, ~)
             obj.ManualSegmentationListBox.Update();
-            obj.Update();
+            obj.Update(obj.GuiApp);
         end
         
         function SegmentationListChangedCallback(obj, ~, ~)
-            obj.Update();
+            obj.ManualSegmentationListBox.Update();
+            obj.Update(obj.GuiApp);
         end
         
         function Resize(obj, new_position)

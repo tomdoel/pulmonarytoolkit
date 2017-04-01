@@ -63,7 +63,7 @@ classdef MimMarkerPanel < GemPanel
         
         function MarkersChangedCallback(obj, ~, ~)
             obj.MarkerListBox.Update();
-            obj.Update();
+            obj.Update(obj.GuiApp);
         end
         
         function MarkerSetNameChangedCallback(obj, ~, ~)
@@ -72,7 +72,7 @@ classdef MimMarkerPanel < GemPanel
         
         function MarkerListChangedCallback(obj, ~, ~)
              obj.MarkerListBox.Update(); % Update the list contents to force the new size
-             obj.Update();
+             obj.Update(obj.GuiApp);
         end
         
         function Resize(obj, new_position)
