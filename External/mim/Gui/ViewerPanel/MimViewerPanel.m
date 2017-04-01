@@ -35,7 +35,7 @@ classdef MimViewerPanel < GemPanel
         PaintBrushSize = 5     % Size of the paint brush used by the ReplaceColourTool
         PaintBrushColour = 1   % The current colour of the paintbrush tools
         PaintOverBackground = true % True means the paint tool will paint over colours and background; false means it will only replace existing colours
-        NewMarkerColour        % The current colour of new marker points
+        NewMarkerColour = 1        % The current colour of new marker points
     end
     
     properties (Dependent)
@@ -50,6 +50,7 @@ classdef MimViewerPanel < GemPanel
         ShowImage              % Sets whether the greyscale image is visible or invisible
         ShowOverlay            % Sets whether the transparent overlay image is visible or invisible
         ShowMarkers            % Sets whether marker points are visible or invisible
+        ShowMarkerLabels       % Sets whether coordinate labels are shown next to marker points
         BlackIsTransparent     % Sets whether black in the transparent overlay image is transparent or shown as black
         OpaqueColour           % If set, then this colour will always be shown at full opacity in the overlay
     end
@@ -318,7 +319,7 @@ classdef MimViewerPanel < GemPanel
                 obj.ShowOverlay = ~obj.ShowOverlay;
                 input_has_been_processed = true;
             elseif strcmpi(key, 'l') % L
-                obj.MarkerImageDisplayParameters.ShowLabels = ~obj.MarkerImageDisplayParameters.ShowLabels;
+                obj.ShowMarkerLabels = ~obj.ShowMarkerLabels;
                 input_has_been_processed = true;
             else
                 input_has_been_processed = obj.Tools.ShortcutKeys(key, obj.SelectedControl);
@@ -437,6 +438,14 @@ classdef MimViewerPanel < GemPanel
         
         function show_markers = get.ShowMarkers(obj)
             show_markers = obj.MarkerImageDisplayParameters.ShowMarkers;
+        end
+        
+        function set.ShowMarkerLabels(obj, show_marker_labels)
+            obj.MarkerImageDisplayParameters.ShowLabels = show_marker_labels;
+        end
+        
+        function show_marker_labels = get.ShowMarkerLabels(obj)
+            show_marker_labels = obj.MarkerImageDisplayParameters.ShowLabels;
         end
         
         function set.BlackIsTransparent(obj, black_is_transparent)

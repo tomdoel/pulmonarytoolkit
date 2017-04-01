@@ -31,7 +31,7 @@ classdef MimShowMarkerLabels < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.ImagePanel.MarkerImageDisplayParameters.ShowLabels = ~gui_app.ImagePanel.MarkerImageDisplayParameters.ShowLabels;
+            gui_app.ImagePanel.ShowMarkerLabels = ~gui_app.ImagePanel.ShowMarkerLabels;
         end
         
         function enabled = IsEnabled(gui_app)
@@ -39,7 +39,7 @@ classdef MimShowMarkerLabels < MimGuiPlugin
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = gui_app.ImagePanel.MarkerImageDisplayParameters.ShowLabels;
+            is_selected = gui_app.ImagePanel.ShowMarkerLabels;
         end
     end
 end

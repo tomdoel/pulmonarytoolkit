@@ -641,9 +641,9 @@ classdef MimGuiBase < GemFigure
         function ViewerPanelControlsChangedCallback(obj, ~, ~, ~)
             % This methods is called when controls in the viewer panel have changed
             
-            obj.LoadDefaultMarkersIfRequiredWithProgressBar;
+            obj.LoadDefaultMarkersIfRequiredWithProgressBar();
             
-            obj.UpdateToolbar;
+            obj.UpdateToolbar();
         end
         
         

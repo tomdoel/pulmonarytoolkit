@@ -15,7 +15,7 @@ classdef MimEnterMarkerMode < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Edit Markers'
+        ButtonText = 'Show Markers'
         SelectedText = 'Hide Markers'
         ToolTip = 'Enters marker edit mode'
         Category = 'Show / hide'

@@ -110,6 +110,8 @@ classdef MimSegmentPanel < GemPanel
             % become enabled that were previously disabled; this requires the position
             % (since this may not have been set if this is the first time the control has been made visible)
             
+            obj.SegmentToolbar.Update(gui_app);
+             
             if ~isempty(obj.Position)
                 obj.Resize(obj.Position);
             end
