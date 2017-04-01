@@ -91,7 +91,7 @@ classdef GemMarkerLayer < CoreBaseClass
         
         function global_image_coords = GetGlobalImageCoordinates(obj, coords)
             local_image_coords = obj.GetImageCoordinates(coords);
-            global_image_coords = obj.MarkerPointImage.LocalToGlobalCoordinates(local_image_coords);
+            global_image_coords = obj.LocalToGlobalCoordinates(local_image_coords);
         end
 
         function RemoveThisMarker(obj, marker)
@@ -111,7 +111,7 @@ classdef GemMarkerLayer < CoreBaseClass
             obj.LockCallback = true;
             coords = obj.GetImageCoordinates(marker_position);
             
-            obj.MarkerPointImage.ChangeMarkerPoint(coords, colour);
+            obj.MarkerPointImage.ChangeMarkerPoint(coords, colour, obj.BackgroundImageSource.Image);
             
             obj.LockCallback = false;
         end
@@ -164,25 +164,57 @@ classdef GemMarkerLayer < CoreBaseClass
     end
 
     methods (Access = private)
+        function [slice_markers, slice_size] = GetMarkersFromImage(obj, slice_number, dimension)
+            
+            global_slice_number = obj.LocalToGlobalCoordinates([slice_number, slice_number, slice_number]);
+            global_slice_number = global_slice_number(dimension);
+            marker_list = obj.MarkerPointImage.MarkerList;
+            col_to_consider = marker_list(:, dimension);
+            select_marker = col_to_consider == global_slice_number;
+            markers = marker_list(select_marker, :);
+            
+            slice_markers = [];
+            
+            found_marker_coords = [obj.GlobalToLocalCoordinates(markers(:, 1:3)), markers(:, 4)];
+            [markers_y, markers_x] = MimImageCoordinateUtilities.GetSliceCoordinates(found_marker_coords(:, 1:3), dimension);
+            % ToDo: Do we need to remove markers that are out of the
+            % current context image?
+            
+            for index = 1 : size(markers, 1)
+                next_marker = [];
+                next_marker.x = markers_x(index); %markers(index, 1);
+                next_marker.y = markers_y(index); % markers(index, 2);
+                next_marker.colour = markers(index, 4);
+                slice_markers{end + 1} = next_marker;
+            end
+            
+            slice_size = obj.BackgroundImageSource.Image.GetSliceDimensions(dimension);
+        end
+        
+        function global_coords = LocalToGlobalCoordinates(obj, local_coords)
+            global_coords = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates(local_coords);
+        end
+        
+        function local_coords = GlobalToLocalCoordinates(obj, global_coords)
+            local_coords = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(global_coords);
+        end
+        
         function ConvertMarkerImageToPoints(obj, slice_number, dimension)
-            if obj.MarkerPointImage.MarkerImageExists
-                [slice_markers, slice_size] = obj.MarkerPointImage.GetMarkersFromImage(slice_number, dimension);
-                
-                obj.CoordinateLimits = slice_size;
-                
-                for marker_s = slice_markers
-                    marker = marker_s{1};
-                    obj.NewMarker([marker.x, marker.y], marker.colour);
-                end
+            [slice_markers, slice_size] = obj.GetMarkersFromImage(slice_number, dimension);
+
+            obj.CoordinateLimits = slice_size;
+
+            for marker_s = slice_markers
+                marker = marker_s{1};
+                obj.NewMarker([marker.x, marker.y], marker.colour);
             end
         end
                 
         function new_marker = NewMarker(obj, coords, colour)
-            obj.ForceMarkerImageCreation();
             if isempty(obj.CoordinateLimits)
                 orientation = obj.ImageSliceParameters.Orientation;
                 slice_number = obj.ImageSliceParameters.SliceNumber(orientation);
-                [~, slice_size] = obj.MarkerPointImage.GetMarkersFromImage(slice_number, orientation);
+                [~, slice_size] = obj.GetMarkersFromImage(slice_number, orientation);
                 obj.CoordinateLimits = slice_size;                
             end
             
@@ -253,12 +285,6 @@ classdef GemMarkerLayer < CoreBaseClass
                     obj.RemoveAllPoints;
                     obj.ConvertMarkerImageToPoints(obj.ImageSliceParameters.SliceNumber(obj.ImageSliceParameters.Orientation), obj.ImageSliceParameters.Orientation);
                 end
-            end
-        end
-        
-        function ForceMarkerImageCreation(obj)
-            if ~obj.MarkerPointImage.MarkerImageExists()
-                obj.MarkerPointImage.ForceMarkerImageCreation(obj.BackgroundImageSource.Image);
             end
         end
     end

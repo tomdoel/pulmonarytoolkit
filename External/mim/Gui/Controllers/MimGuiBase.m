@@ -678,7 +678,7 @@ classdef MimGuiBase < GemFigure
                 delete(obj.MatNatBrowserFactory);
             end
             
-            % The progress dialog will porbably be destroyed before we get here
+            % The progress dialog will probably be destroyed before we get here
 %             obj.Reporting.CompleteProgress;
 
             CustomCloseFunction@GemFigure(obj, src);

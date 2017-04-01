@@ -495,6 +495,21 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
         end
         
+        function slice_dimensions = GetSliceDimensions(obj, dimension)
+            % Returns a blank slice from the image in the specified direction
+            
+            switch dimension
+                case GemImageOrientation.XZ
+                    slice_dimensions = [obj.ImageSize(2), obj.ImageSize(3)];
+                case GemImageOrientation.YZ
+                    slice_dimensions = [obj.ImageSize(1), obj.ImageSize(3)];
+                case GemImageOrientation.XY
+                    slice_dimensions = [obj.ImageSize(1), obj.ImageSize(2)];
+                otherwise
+                    error('Unsupported dimension');
+            end
+        end
+        
         function image_size = get.ImageSize(obj)
             if isempty(obj.RawImage)
                image_size = obj.LastImageSize;

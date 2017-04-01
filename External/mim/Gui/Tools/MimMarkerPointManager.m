@@ -61,7 +61,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         function AutoSaveMarkers(obj)
             if ~isempty(obj.MarkerLayer) && obj.MarkerImageHasUnsavedChanges && obj.MarkersHaveBeenLoaded
                 saved_marker_points = obj.GuiDataset.LoadMarkers(obj.CurrentMarkersName);
-                current_marker_points = obj.MarkerPointImage.GetImageToSave();
+                current_marker_points = obj.GetImageToSave();
                 markers_changed = false;
                 if isempty(saved_marker_points)
                     if any(current_marker_points.RawImage(:))
@@ -94,8 +94,8 @@ classdef MimMarkerPointManager < CoreBaseClass
         end
         
         function SaveMarkersManualBackup(obj)
-            if obj.GuiDataset.DatasetIsLoaded
-                markers = obj.MarkerPointImage.GetImageToSave;
+            if obj.GuiDataset.DatasetIsLoaded()
+                markers = obj.GetImageToSave();
                 obj.GuiDataset.SaveMarkers('MarkerPointsLastManualSave', markers);
             end
         end
@@ -144,22 +144,26 @@ classdef MimMarkerPointManager < CoreBaseClass
     
     methods (Access = private)
         function SaveMarkers(obj)
-            if obj.GuiDataset.DatasetIsLoaded
+            if obj.GuiDataset.DatasetIsLoaded()
                 if isempty(obj.CurrentMarkersName)
                     obj.Reporting.Error('MimMarkerPointManager:NoMarkerFilename', 'The markers could not be saved as the marker filename has not been specified. ');
                 end
                 obj.Reporting.ShowProgress('Saving Markers');
-                markers = obj.MarkerPointImage.GetImageToSave();
+                markers = obj.GetImageToSave();
                 obj.GuiDataset.SaveMarkers(obj.CurrentMarkersName, markers);
                 obj.ResetImageChangedFlag();
-                obj.Reporting.CompleteProgress;
+                obj.Reporting.CompleteProgress();
             end
+        end
+        
+        function image_to_save = GetImageToSave(obj)
+            image_to_save = obj.MarkerPointImage.GetImageToSave(obj.BackgroundImageSource.Image);
         end
         
         function SaveMarkersBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded
                 obj.Reporting.ShowProgress('Abandoning Markers');                
-                markers = obj.MarkerPointImage.GetImageToSave();
+                markers = obj.GetImageToSave();
                 obj.GuiDataset.SaveMarkers('AbandonedMarkerPoints', markers);
                 obj.Reporting.CompleteProgress;
             end

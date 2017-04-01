@@ -20,198 +20,160 @@ classdef GemMarkerPointImage < CoreBaseClass
         MarkerImageHasChanged
     end
     
-    properties (Access = private)
-        Image           % The PTKImage object containing the image volume
+    properties (SetAccess = private)
+        MarkerList
     end
     
     methods
         function obj = GemMarkerPointImage()
-            % The image object must be created here, not in the properties section, to
+            % The marker list must be created here, not in the properties section, to
             % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
             % Also note that theis will trigger the above pointer change callback, which
             % will set up the pixel data change callback
-            obj.Image = PTKImage();            
+            obj.MarkerList = zeros(0, 4);
         end
         
         function ClearMarkers(obj)
-            obj.Image.Reset;
+            obj.MarkerList = zeros(0, 4);
             obj.NotifyMarkerImageChanged();
         end
         
-        function image_to_save = GetImageToSave(obj)
-            image_to_save = obj.Image;
+        function image_to_save = GetImageToSave(obj, template)
+            image_to_save = obj.ConvertMarkersToImage(template);
         end
         
-        function [slice_markers, slice_size] = GetMarkersFromImage(obj, slice_number, dimension)
-            slice = obj.GetSlice(slice_number, dimension);
-            slice_size = size(slice);
+        function ConvertImageToMarkers(obj, marker_image)
+            indices = find(marker_image.RawImage > 0);
+            indices_global = marker_image.LocalToGlobalIndices(indices);
+            [i, j, k] = marker_image.GlobalIndicesToGlobalCoordinates(indices_global);
             
-            [y, x] = find(slice);
-            slice_markers = [];
-            for index = 1 : numel(y)
-                next_marker = [];
-                next_marker.x = x(index);
-                next_marker.y = y(index);
-                next_marker.colour = slice(y(index), x(index));
-                slice_markers{end + 1} = next_marker;
+            obj.MarkerList = zeros(0, 4);
+            for index = 1 : numel(indices)
+                obj.MarkerList(end + 1, :) = [i(index), j(index), k(index), double(marker_image.RawImage(indices(index)))];
             end
         end
         
-        function global_coords = LocalToGlobalCoordinates(obj, local_coords)
-            global_coords = obj.Image.LocalToGlobalCoordinates(local_coords);
+        function marker_image = ConvertMarkersToImage(obj, template)
+            marker_image = template.BlankCopy();
+            marker_image_raw = zeros(marker_image.ImageSize, 'uint8');
+            marker_image.ChangeRawImage(marker_image_raw);
+            for index = 1 : size(obj.MarkerList, 1)
+                marker_image.SetVoxelToThis(obj.MarkerList(index, 1:3), obj.MarkerList(index, 4))
+            end
         end
         
-        function ChangeMarkerPoint(obj, local_coords, colour)
-            global_coords = obj.Image.LocalToGlobalCoordinates(local_coords);
-            global_coords = obj.BoundCoordsInImage(obj.Image, global_coords);
+        function ChangeMarkerPoint(obj, local_coords, colour, template)
+            global_coords = template.LocalToGlobalCoordinates(local_coords);
+            global_coords = obj.BoundCoordsInImage(template, global_coords);
 
-            current_value = obj.Image.GetVoxel(global_coords);
-            if (current_value ~= colour)
-                obj.Image.SetVoxelToThis(global_coords, colour);
+            list_indices = find(ismember(obj.MarkerList(:, 1:3), global_coords,'rows'));
+            
+            if isempty(list_indices)
+                % No existing marker
+                if colour ~= 0
+                    obj.MarkerList(end + 1, :) = [global_coords, colour];
+                    obj.NotifyMarkerImageChanged();
+                end
+                
+            elseif numel(list_indices) > 2
+                % Multiple markers found at this point - replace with a
+                % single marker
+                
+                % Remove all existing markers
+                obj.MarkerList(list_indices, :) = [];
+                
+                if colour ~= 0
+                    % Add a single marker with the new colour
+                    obj.MarkerList(end + 1, :) = [global_coords, colour];
+                end
                 obj.NotifyMarkerImageChanged();
+                
+            else
+                if colour == 0
+                    % Remove existing marker
+                    obj.MarkerList(list_indices, :) = [];
+                    obj.NotifyMarkerImageChanged();
+                else
+                    % Replace marker colour
+                    if obj.MarkerList(list_indices, 4) ~= colour
+                        obj.MarkerList(list_indices, :) = [global_coords, colour];
+                        obj.NotifyMarkerImageChanged();
+                    end
+                end
             end
         end
         
         function ChangeMarkerSubImage(obj, new_image)
-            obj.Image.ChangeSubImage(new_image);
-            obj.NotifyMarkerImageChanged();
+            obj.ConvertImageToMarkers(new_image);
         end
         
         function BackgroundImageChanged(obj, template)
-%             obj.SetBlankMarkerImage(template); % ToDo: resize marker image
         end
         
         function SetBlankMarkerImage(obj, template)
-            obj.Image = template.BlankCopy();
-            obj.Image.ChangeRawImage(zeros(template.ImageSize, 'uint8'));
-            obj.Image.ImageType = PTKImageType.Colormap;
+            obj.MarkerList = zeros(0, 4);
             obj.NotifyMarkerImageChanged();
         end
         
-        function ForceMarkerImageCreation(obj, template)
-            if ~obj.Image.ImageExists()
-                obj.SetBlankMarkerImage(template);
-            end
-        end
-        
-        function index_of_nearest_marker = GetIndexOfPreviousMarker(obj, current_coordinate, maximum_skip, orientation)
+        function index_of_nearest_marker = GetIndexOfPreviousMarker(obj, current_coordinate_global, maximum_skip, orientation)
+            markers = obj.MarkerList(obj.MarkerList(:, orientation) < current_coordinate_global, :);
             
-            coordinate_range = [current_coordinate - maximum_skip, current_coordinate - 1];
-            coordinate_range = max(1, coordinate_range);
-            coordinate_range = coordinate_range(1) : coordinate_range(2);
+            if isempty(markers)
+                index_of_nearest_marker = max(1, current_coordinate_global - maximum_skip);
+            else
+                [~, index] = max(markers(:, orientation));
+                index_of_nearest_marker = markers(index, orientation);                
+            end
+        end
+        
+        function index_of_nearest_marker = GetIndexOfNextMarker(obj, current_coordinate_global, maximum_skip, orientation)
+            markers = obj.MarkerList(obj.MarkerList(:, orientation) > current_coordinate_global, :);
             
-            switch orientation
-                case GemImageOrientation.XZ
-                    consider_image = obj.Image.RawImage(coordinate_range, :, :);
-                case GemImageOrientation.YZ
-                    consider_image = obj.Image.RawImage(:, coordinate_range, :);
-                case GemImageOrientation.XY
-                    consider_image = obj.Image.RawImage(:, :, coordinate_range);
-            end
-            other_dimension = setxor([1 2 3], orientation);
-            any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
-            any_markers = squeeze(any_markers);
-            any_markers = any_markers(end:-1:1);
-            index_of_nearest_marker = find(any_markers, 1, 'first');
-            if isempty(index_of_nearest_marker)
-                index_of_nearest_marker = max(1, current_coordinate - maximum_skip);
+            if isempty(markers)
+                index_of_nearest_marker = current_coordinate_global + maximum_skip;
             else
-                index_of_nearest_marker = current_coordinate - index_of_nearest_marker;
-            end    
-        end
-        
-        function index_of_nearest_marker = GetIndexOfNextMarker(obj, current_coordinate, maximum_skip, orientation)
-            max_coordinate = obj.Image.ImageSize(orientation);
-            coordinate_range = [current_coordinate + 1, current_coordinate + maximum_skip, current_coordinate];
-            coordinate_range = min(max_coordinate, coordinate_range);
-            coordinate_range = coordinate_range(1) : coordinate_range(2);
-            switch orientation
-                case GemImageOrientation.XZ
-                    consider_image = obj.Image.RawImage(coordinate_range, :, :);
-                case GemImageOrientation.YZ
-                    consider_image = obj.Image.RawImage(:, coordinate_range, :);
-                case GemImageOrientation.XY
-                    consider_image = obj.Image.RawImage(:, :, coordinate_range);
-            end
-            other_dimension = setxor([1 2 3], orientation);
-            any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
-            any_markers = squeeze(any_markers);
-            index_of_nearest_marker = find(any_markers, 1, 'first');
-            if isempty(index_of_nearest_marker)
-                index_of_nearest_marker = min(max_coordinate, current_coordinate + maximum_skip);
-            else
-                index_of_nearest_marker = current_coordinate + index_of_nearest_marker;
+                [~, index] = min(markers(:, orientation));
+                index_of_nearest_marker = markers(index, orientation);                
             end
         end
         
-        function index_of_nearest_marker = GetIndexOfNearestMarker(obj, current_coordinate, orientation)
-            consider_image = obj.Image.RawImage;
-            other_dimension = setxor([1 2 3], orientation);
-            any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
-            any_markers = squeeze(any_markers);
-            indices = find(any_markers);
-            if isempty(indices)
+        function index_of_nearest_marker = GetIndexOfNearestMarker(obj, current_coordinate_global, orientation)
+            if isempty(obj.MarkerList)
                 index_of_nearest_marker = 1;
             else
-                relative_indices = indices - current_coordinate;
-                [~, min_relative_index] = min(abs(relative_indices - 0.1));
-                index_of_nearest_marker = relative_indices(min_relative_index) + current_coordinate;
+                difference = abs(current_coordinate_global - obj.MarkerList(:, orientation));
+                [~, index] = min(difference);
+                index_of_nearest_marker = obj.MarkerList(index, orientation);
             end
         end
 
         function index_of_nearest_marker = GetIndexOfFirstMarker(obj, orientation)
-            consider_image = obj.Image.RawImage;
-            other_dimension = setxor([1 2 3], orientation);
-            any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
-            any_markers = squeeze(any_markers);
-            indices = find(any_markers);
-            if isempty(indices)
+            if isempty(obj.MarkerList)
                 index_of_nearest_marker = 1;
             else
-                [~, index_of_nearest_marker] = min(indices);
-                index_of_nearest_marker = indices(index_of_nearest_marker);
+                [~, index] = min(obj.MarkerList(:, orientation));
+                index_of_nearest_marker = obj.MarkerList(index, orientation);
             end
         end
         
         function index_of_nearest_marker = GetIndexOfLastMarker(obj, orientation)
-            consider_image = obj.Image.RawImage;
-            max_coordinate = obj.Image.ImageSize(orientation);
-            other_dimension = setxor([1 2 3], orientation);
-            any_markers = any(any(consider_image, other_dimension(1)), other_dimension(2));
-            any_markers = squeeze(any_markers);
-            indices = find(any_markers);
-            if isempty(indices)
-                index_of_nearest_marker = max_coordinate;
+            if isempty(obj.MarkerList)
+                index_of_nearest_marker = 1;
             else
-                [~, index_of_nearest_marker] = max(indices);
-                index_of_nearest_marker = indices(index_of_nearest_marker);
+                [~, index] = max(obj.MarkerList(:, orientation));
+                index_of_nearest_marker = obj.MarkerList(index, orientation);
             end
         end
-        
-        function image_exists = MarkerImageExists(obj)
-            image_exists = obj.Image.ImageExists;
-        end        
     end
     
     methods (Access = private)
         
-        function slice = GetSlice(obj, slice_number, dimension)
-            slice = obj.Image.GetSlice(slice_number, dimension);
-            if (dimension == 1) || (dimension == 2)
-                slice = slice'; 
-            end
-        end
-        
-        function global_coords = BoundCoordsInImage(~, marker_image, global_coords)
-            local_coords = marker_image.GlobalToLocalCoordinates(global_coords);
-
-            local_coords = max(1, local_coords);
-            image_size = marker_image.ImageSize;
-            local_coords(1) = min(local_coords(1), image_size(1));
-            local_coords(2) = min(local_coords(2), image_size(2));
-            local_coords(3) = min(local_coords(3), image_size(3));
-
-            global_coords = marker_image.LocalToGlobalCoordinates(local_coords);
+        function global_coords = BoundCoordsInImage(~, template_image, global_coords)
+            global_coords = max(1, global_coords);
+            full_image_size = template_image.OriginalImageSize;
+            global_coords(1) = min(global_coords(1), full_image_size(1));
+            global_coords(2) = min(global_coords(2), full_image_size(2));
+            global_coords(3) = min(global_coords(3), full_image_size(3));
         end
         
         function NotifyMarkerImageChanged(obj)

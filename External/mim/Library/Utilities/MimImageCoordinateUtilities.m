@@ -563,6 +563,23 @@ classdef MimImageCoordinateUtilities
             end
         end
         
+        function [Y, X] = GetSliceCoordinates(coordinates_3d, dimension)
+            % Returns the 2D [Y, X] coordinates for a 2D slice in the 
+            % specified orientation given a set of 3D [i,j,k] coordinates
+           switch dimension
+               case GemImageOrientation.XZ
+                   Y = coordinates_3d(:, 3);
+                   X = coordinates_3d(:, 2);
+               case GemImageOrientation.YZ
+                   Y = coordinates_3d(:, 3);
+                   X = coordinates_3d(:, 1);
+               case GemImageOrientation.XY
+                   Y = coordinates_3d(:, 1);
+                   X = coordinates_3d(:, 2);
+               otherwise
+                   error('Unsupported dimension');
+           end
+        end
     end
 end
 

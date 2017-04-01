@@ -456,48 +456,63 @@ classdef MimViewerPanel < GemPanel
         end
         
         function GotoPreviousMarker(obj)
-        % Find the image slice containing the last marker
+            % Find the image slice containing the last marker
             
             maximum_skip = obj.SliceSkip;
             orientation = obj.Orientation;
-            current_coordinate = obj.SliceNumber(orientation);
-            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfPreviousMarker(current_coordinate, maximum_skip, orientation);
-            obj.SliceNumber(orientation) = index_of_nearest_marker;
+            coords_global = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates(obj.SliceNumber);
+            current_coordinate = coords_global(orientation);
+            index_of_nearest_marker_global = obj.MarkerLayer.GetMarkerImage.GetIndexOfPreviousMarker(current_coordinate, maximum_skip, orientation);
+            coords_global(orientation) = index_of_nearest_marker_global;
+            coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
+            obj.SliceNumber(orientation) = coords_local(orientation);
         end
         
         function GotoNextMarker(obj)
-        % Find the image slice containing the next marker
-        
+            % Find the image slice containing the next marker
+            
             maximum_skip = obj.SliceSkip;
             orientation = obj.Orientation;
-            current_coordinate = obj.SliceNumber(orientation);
-            index_of_nearest_marker =  obj.MarkerLayer.GetMarkerImage.GetIndexOfNextMarker(current_coordinate, maximum_skip, orientation);            
-            obj.SliceNumber(orientation) = index_of_nearest_marker;
+            coords_global = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates(obj.SliceNumber);
+            current_coordinate = coords_global(orientation);
+            index_of_nearest_marker_global = obj.MarkerLayer.GetMarkerImage.GetIndexOfNextMarker(current_coordinate, maximum_skip, orientation);
+            coords_global(orientation) = index_of_nearest_marker_global;
+            coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
+            obj.SliceNumber(orientation) = coords_local(orientation);        
         end
         
         function GotoNearestMarker(obj)
-        % Find the image slice containing the nearest marker
+            % Find the image slice containing the nearest marker
 
             orientation = obj.Orientation;
-            current_coordinate = obj.SliceNumber(orientation);
-            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfNearestMarker(current_coordinate, orientation);
-            obj.SliceNumber(orientation) = index_of_nearest_marker;
+            coords_global = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates(obj.SliceNumber);
+            current_coordinate = coords_global(orientation);
+            index_of_nearest_marker_global = obj.MarkerLayer.GetMarkerImage.GetIndexOfNearestMarker(current_coordinate, orientation);
+            coords_global(orientation) = index_of_nearest_marker_global;
+            coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
+            obj.SliceNumber(orientation) = coords_local(orientation);
         end
         
         function GotoFirstMarker(obj)
-        % Find the image slice containing the first marker
+            % Find the image slice containing the first marker
 
             orientation = obj.Orientation;
-            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfFirstMarker(orientation);
-            obj.SliceNumber(orientation) = index_of_nearest_marker;
+            coords_global = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates(obj.SliceNumber);
+            index_of_nearest_marker_global = obj.MarkerLayer.GetMarkerImage.GetIndexOfFirstMarker(orientation);
+            coords_global(orientation) = index_of_nearest_marker_global;
+            coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
+            obj.SliceNumber(orientation) = coords_local(orientation);
         end
         
         function GotoLastMarker(obj)
-        % Find the image slice containing the last marker
+            % Find the image slice containing the last marker
 
             orientation = obj.Orientation;
-            index_of_nearest_marker = obj.MarkerLayer.GetMarkerImage.GetIndexOfLastMarker(orientation);
-            obj.SliceNumber(orientation) = index_of_nearest_marker;
+            coords_global = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates(obj.SliceNumber);
+            index_of_nearest_marker_global = obj.MarkerLayer.GetMarkerImage.GetIndexOfLastMarker(orientation);
+            coords_global(orientation) = index_of_nearest_marker_global;
+            coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
+            obj.SliceNumber(orientation) = coords_local(orientation);
         end
         
         function handle = GetRenderAxes(obj)
