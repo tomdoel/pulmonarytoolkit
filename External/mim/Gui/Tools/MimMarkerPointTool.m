@@ -28,7 +28,7 @@ classdef MimMarkerPointTool < MimTool
         % When a marker is placed in close proximity to an existing marker of
         % the same colour, we assume that the user is actually trying to replace
         % the marker.
-        ClosestDistanceForReplaceMarker = 10
+        ClosestDistanceForReplaceMarker = 5
     end
         
     properties (Access = private)
