@@ -32,11 +32,15 @@ classdef MimPluginsPanel < GemCompositePanel
         ModeToSwitchTo
         ModeTabName
         Visibility
+        
+        PreviewFetcher
     end
     
     methods
-        function obj = MimPluginsPanel(parent, organised_plugins, plugins_mode_group, mode_to_switch_to, visibility, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback)
+        function obj = MimPluginsPanel(parent, organised_plugins, plugins_mode_group, mode_to_switch_to, visibility, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback, preview_fetcher)
             obj = obj@GemCompositePanel(parent);
+            
+            obj.PreviewFetcher = preview_fetcher;
             
             obj.OrganisedPlugins = organised_plugins;
             obj.ModeTabName = plugins_mode_group;
@@ -95,7 +99,7 @@ classdef MimPluginsPanel < GemCompositePanel
             if ~isempty(obj.Position)
                 obj.Resize(obj.Position);
             end
-            obj.UpdateForNewImage(current_dataset, window, level);
+            obj.UpdateForNewImage(obj.PreviewFetcher, window, level);
         end        
 
         function visibility = GetVisibility(obj)

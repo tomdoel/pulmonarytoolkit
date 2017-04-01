@@ -49,11 +49,11 @@ classdef MimModeTabControl < GemTabControl
             obj.MarkersPanel = MimMarkerPanel(obj, gui_dataset_state, marker_manager, obj.OrganisedPlugins, 'Markers', MimModes.MarkerMode, 'Dataset', obj.Gui, app_def, true, true);
             obj.AddTabbedPanel(obj.MarkersPanel, 'Markers', 'Markers', 'Create markers for validation');
             
-            obj.AnalysisPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.AnalysisPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Analysis', [], 'Dataset', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback, preview_fetcher);
             obj.AddTabbedPanel(obj.AnalysisPanel, 'Analyse', 'Analysis', 'Perform analysis and save as tables and graphs');
             obj.AnalysisPanel.AddPlugins([]);
 
-            obj.PluginsPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Developer', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback);
+            obj.PluginsPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Developer', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback, preview_fetcher);
             obj.AddTabbedPanel(obj.PluginsPanel, 'Plugins', 'Plugins', 'Algorithms for segmenting lung features');
             obj.PluginsPanel.AddPlugins([]);
             

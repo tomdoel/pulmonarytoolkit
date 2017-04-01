@@ -18,9 +18,9 @@ classdef MimPluginsSlidingPanel < GemSlidingPanel
     %    
     
     methods
-        function obj = MimPluginsSlidingPanel(parent, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback)
+        function obj = MimPluginsSlidingPanel(parent, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback, preview_fetcher)
             obj = obj@GemSlidingPanel(parent);
-            obj.FloatingPanel = MimPluginsPanel(obj, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback);
+            obj.FloatingPanel = MimPluginsPanel(obj, organised_plugins, plugins_mode_group, mode_name, enabled_flag, run_plugin_callback, run_gui_plugin_callback, load_segmentation_callback, preview_fetcher);
             obj.AddChild(obj.FloatingPanel);
         end
         
