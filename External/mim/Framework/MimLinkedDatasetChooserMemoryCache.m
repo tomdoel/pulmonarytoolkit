@@ -43,6 +43,15 @@ classdef MimLinkedDatasetChooserMemoryCache < handle
                 obj.LinkedDatasetChooserCacheMap(uid) = linked_dataset_chooser;
             end
         end
+        
+        function DeleteSeries(obj, series_uids, reporting)
+            for series_uid_cell = series_uids
+                series_uid = series_uid_cell{1};
+                if obj.LinkedDatasetChooserCacheMap.isKey(series_uid)
+                    obj.LinkedDatasetChooserCacheMap.remove(series_uid);
+                end
+            end
+        end        
     end
 end
 

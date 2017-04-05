@@ -204,6 +204,8 @@ classdef MimMain < CoreBaseClass
                 end
             end
             
+            obj.FrameworkSingleton.GetDatasetApiCache.DeleteSeries(series_uids, obj.Reporting);
+            obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache.DeleteSeries(series_uids, obj.Reporting);
             obj.GetImageDatabase.DeleteSeries(series_uids, obj.Reporting);
         end
         

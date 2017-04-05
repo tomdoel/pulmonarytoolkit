@@ -36,6 +36,15 @@ classdef MimDatasetApiCache < handle
                 obj.DatasetCacheMap(uid) = dataset_disk_cache;
             end
         end
+        
+        function DeleteSeries(obj, series_uids, reporting)
+            for series_uid_cell = series_uids
+                series_uid = series_uid_cell{1};
+                if obj.DatasetCacheMap.isKey(series_uid)
+                    obj.DatasetCacheMap.remove(series_uid);
+                end
+            end
+        end
     end
 end
 
