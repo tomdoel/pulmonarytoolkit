@@ -11,7 +11,7 @@ classdef CoreSystemUtilities
     
     methods (Static)
 
-        function uid = GenerateUid
+        function uid = GenerateUid()
             % Creates a random unique identifier
             
             % On unix systems, if java is not running we can use the system
@@ -26,7 +26,16 @@ classdef CoreSystemUtilities
             end
         end
         
-        function dimensions = GetMonitorDimensions
+        function hash = StringToHash(string)
+            % Performs an SHA hash on a string
+            persistent messageDigest
+            if isempty(messageDigest)
+                messageDigest = java.security.MessageDigest.getInstance('SHA-256');
+            end
+            hash = sprintf('%2.2x', typecast(messageDigest.digest(uint8(string)), 'uint8')');
+        end
+        
+        function dimensions = GetMonitorDimensions()
             % Gets the resolution of the screen
             
             if usejava('jvm')
@@ -55,7 +64,7 @@ classdef CoreSystemUtilities
             end
         end
         
-        function computer_endian = GetComputerEndian
+        function computer_endian = GetComputerEndian()
             % Returns an enumeration for the endian of this computer
             
             [~, ~, computer_endian_str] = computer;
@@ -88,7 +97,7 @@ classdef CoreSystemUtilities
             end
         end
         
-        function colormap = BackwardsCompatibilityColormap
+        function colormap = BackwardsCompatibilityColormap()
             % Returns a colormap which replicates the default colormap from
             % Matlab versions pre-hg2
             
@@ -97,7 +106,7 @@ classdef CoreSystemUtilities
             colormap = [colormap; [0 0 1]];
         end
         
-        function [major_version, minor_version] = GetMatlabVersion
+        function [major_version, minor_version] = GetMatlabVersion()
             % Returns the major and minor version numbers of Matlab
             
             [matlab_version, ~] = version;
@@ -106,7 +115,7 @@ classdef CoreSystemUtilities
             minor_version = version_matrix(2);
         end
         
-        function toolbox_installed = IsImageProcessingToolboxInstalled
+        function toolbox_installed = IsImageProcessingToolboxInstalled()
             % Returns true if the Matlab image processing toolbox is
             % installed
             
@@ -114,7 +123,7 @@ classdef CoreSystemUtilities
             toolbox_installed = any(strcmp('Image Processing Toolbox', {matlab_version.Name}));
         end
 
-        function toolbox_licensed = IsImageProcessingToolboxLicensed
+        function toolbox_licensed = IsImageProcessingToolboxLicensed()
             % Returns true if the Matlab image processing toolbox has a valid licence
             
             [error_code, error_message] = license('checkout', 'image_toolbox');
