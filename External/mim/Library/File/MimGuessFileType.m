@@ -1,4 +1,4 @@
-function [image_type, principal_filename, secondary_filenames] = MimGuessFileType(image_path, image_filename, default_guess, reporting)
+function [image_type, principal_filename, secondary_filenames] = MimGuessFileType(file_path, image_filename, default_guess, reporting)
     % MimGuessFileType. Heuristically determines a file format
     %
     %
@@ -9,7 +9,7 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     %     Distributed under the MIT licence. Please see website for details.
     %
 
-    [file_path, name, ext] = fileparts(image_filename);
+    [~, name, ext] = fileparts(image_filename);
     image_filename_without_extension = fullfile(file_path, name);
     if strcmp(ext, '.mat')
         image_type = MimImageFileFormat.Matlab;
@@ -27,7 +27,7 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
         image_type = MimImageFileFormat.Analyze;
         principal_filename = {image_filename};
         secondary_filenames = {};
-        if CoreDiskUtilities.FileExists(file_path, [name '.img']);
+        if CoreDiskUtilities.FileExists(file_path, [name '.img'])
             secondary_filenames = [image_filename_without_extension '.img'];
         end
         return;
