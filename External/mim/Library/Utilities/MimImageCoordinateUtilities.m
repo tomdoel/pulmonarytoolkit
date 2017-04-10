@@ -266,11 +266,12 @@ classdef MimImageCoordinateUtilities
                 [permutation_vector, flip] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation([d1; d2], reporting);
             elseif header.QformCode > 0
                 B = header.QuaternB;
-                C = header.QuaternB;
-                D = header.QuaternB;
+                C = header.QuaternC;
+                D = header.QuaternD;
                 A = sqrt(1 - B^2 - C^2 - D^2);
-                d1 = [-1; -1; 1].*[A^2+B^2-C^2-D^2; 2*(B*C + A*D); 2*(B*D-A*C)];
-                d2 = [-1; -1; 1].*[2*(B*C - A*D); A^2 + C^2 - B^2 - D^2];
+                d1 = [-1; -1; 1].*[A^2+B^2-C^2-D^2; 2*(B*C - A*D); 2*(B*D+A*C)];
+                d2 = [-1; -1; 1].*[2*(B*C + A*D); A^2 + C^2 - B^2 - D^2; 2*(C*D - A*B)];
+                d3 = [-1; -1; 1].*[2*(B*D - A*C); 2*(C*D + A*B); A^2 + D^2 - B^2 - C^2];
                 [permutation_vector, flip] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromDicomOrientation([d1; d2], reporting);
             else
                 d1 = [-1; -1; 1].*[1; 0; 0];
