@@ -124,19 +124,19 @@ classdef PTKSettings < CoreBaseClass
             end
         end
         
-        function RemoveLastPatientUid(obj, series_uid)
+        function RemoveLastPatientUid(obj, series_uids)
             for key = obj.LastUidForPatientMap.keys
-                if strcmp(obj.LastUidForPatientMap(key{1}), series_uid)
+                if any(strcmp(obj.LastUidForPatientMap(key{1}), series_uids))
                     obj.LastUidForPatientMap.remove(key{1});
                 end
             end
             for key = obj.LastMarkerSetForPatientMap.keys
-                if strcmp(obj.LastMarkerSetForPatientMap(key{1}), series_uid)
+                if any(strcmp(obj.LastMarkerSetForPatientMap(key{1}), series_uids))
                     obj.LastMarkerSetForPatientMap.remove(key{1});
                 end
             end
             
-            if ~isempty(obj.ImageInfo) && strcmp(obj.ImageInfo.ImageUid, series_uid)
+            if ~isempty(obj.ImageInfo) && any(strcmp(obj.ImageInfo.ImageUid, series_uids))
                 obj.ImageInfo = [];
             end
         end
