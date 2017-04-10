@@ -160,12 +160,12 @@ classdef MimImageDatabase < handle
             
             % Checks the disk cache and adds any missing datasets to the database.
             % Specifying a list of uids forces those datasets to update.
-            % The rebuild_menu flag builds the database from scratch
+            % The rebuild_all flag builds the database from scratch
             
             % Get the complete list of cache folders, unless we are only
             % updating specific uids
             if isempty(uids_to_update) || rebuild_all
-                uids = framework_app_def.GetFrameworkDirectories.GetUidsOfAllDatasetsInCache;
+                uids = framework_app_def.GetFrameworkDirectories.GetUidsOfAllDatasetsInCache();
             else
                 uids = uids_to_update;
             end

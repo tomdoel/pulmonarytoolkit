@@ -69,7 +69,7 @@ classdef GemSlider < GemUserInterfaceObject
         
         function SetSliderSteps(obj, steps)
             obj.SliderSteps = double(steps);
-            if obj.ComponentHasBeenCreated
+            if obj.ComponentHasBeenCreated()
                 set(obj.GraphicalComponentHandle, 'SliderStep', steps);
             end
         end

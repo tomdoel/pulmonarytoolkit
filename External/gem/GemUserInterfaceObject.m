@@ -447,7 +447,7 @@ classdef GemUserInterfaceObject < CoreBaseClass
                     
                     % Try iterating through the children to process the
                     % action
-                    for child = obj.Children;
+                    for child = obj.Children
                         processing_object = child{1}.ProcessActivity(function_name, new_click_point, varargin{:});
                         if ~isempty(processing_object)
                             return;

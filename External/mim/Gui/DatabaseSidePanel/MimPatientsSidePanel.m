@@ -83,7 +83,7 @@ classdef MimPatientsSidePanel < GemListBoxWithTitle
     
     methods (Access = private)
         function mapped_patient_id = GetMappedPatientId(obj, patient_id)
-            if isempty(patient_id) || ~ obj.PatientIdMap.isKey(patient_id);
+            if isempty(patient_id) || ~obj.PatientIdMap.isKey(patient_id)
                 mapped_patient_id = [];
             else
                 mapped_patient_id = obj.PatientIdMap(patient_id);
