@@ -235,53 +235,6 @@ classdef MimMain < CoreBaseClass
             end
         end
     
-        function uids = ImportFromSeriesGrouper(obj, grouper)
-            uids = [];
-            dicom_groups = grouper.DicomSeriesGroupings;
-            for dicom_group = dicom_groups.values
-                uids{end + 1} = obj.ImportDicomFiles(dicom_group{1}.Filenames, obj.Reporting);
-            end
-            
-            non_dicom_group = grouper.NonDicomGrouping;
-            non_dicom_uids = obj.ImportNonDicomFiles(non_dicom_group.Filenames, obj.Reporting);
-            uids = [uids, non_dicom_uids];
-        end
-        
-        function uids = ImportNonDicomFiles(obj, non_dicom_filenames, reporting)
-            uids = {};
-            while ~isempty(non_dicom_filenames)
-                next_filename = non_dicom_filenames{1};
-                non_dicom_filenames(1) = [];
-                [image_type, principal_filename, secondary_filenames] = MimGuessFileType(next_filename.Path, next_filename.Name, [], reporting);
-                
-                % Remove duplicate filenames (which can happen when loading
-                % metadata files which have raw and metaheader files)
-                non_dicom_filenames = CoreDiskUtilities.FilenameSetDiff(non_dicom_filenames, principal_filename, next_filename.Path);
-                non_dicom_filenames = CoreDiskUtilities.FilenameSetDiff(non_dicom_filenames, secondary_filenames, next_filename.Path);
-                
-                if isempty(image_type)
-                    reporting.ShowWarning('MimMain:UnableToDetermineImageType', ['Unable to determine image type for ' fullfile(next_filename.Path, next_filename.FullFile)], []);
-                else
-                    image_info_nondicom = MimImageInfo(import_folder, principal_filename, image_type, [], [], []);
-                    [image_info_nondicom, ~] = obj.ImportDataFromInfo(image_info_nondicom, reporting);
-                    uids{end + 1} = image_info_nondicom.ImageUid;
-                end
-            end
-        end
-        
-        function uid = ImportDicomFiles(obj, dicom_filenames, reporting)
-            uid = [];
-            image_info_dicom = MimImageInfo(dicom_filenames{1}.Path, dicom_filenames, MimImageFileFormat.Dicom, [], [], []);
-            try
-                tic
-                [image_info_dicom, ~] = obj.ImportDataFromInfo(image_info_dicom, reporting);
-                toc
-                uid = image_info_dicom.ImageUid;
-            catch ex
-                reporting.ShowWarning('MimMain:DicomReadFail', ['The file ' dicom_filenames{1}.FullFile ' looks like a Dicom file, but I am unable to read it. I will ignore this file.'], ex.message);
-            end
-        end
-        
         function [image_info, dataset_disk_cache] = ImportDataFromInfo(obj, new_image_info, reporting)
             % Imports data into the TD MIM Toolkit so that it can be accessed
             % from the CreateDatasetFromUid() method. The input argument is a
