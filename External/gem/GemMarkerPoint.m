@@ -54,7 +54,6 @@ classdef GemMarkerPoint < CoreBaseClass
             obj.CallbackId = obj.FigureHandle.RegisterMarkerPoint(obj.Handle);
             obj.AddContextMenu(obj.FigureHandle.GetContainerHandle);
             obj.Position = round(obj.Handle.getPosition);
-            obj.Manager.AddPointToMarkerImage(obj.Position, colour);
         end
         
         function delete(obj)

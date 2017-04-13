@@ -126,6 +126,7 @@ classdef GemMarkerLayer < CoreBaseClass
         
         function new_marker = AddMarker(obj, coords, colour)
             new_marker = obj.NewMarker(coords, colour);
+            obj.AddPointToMarkerImage(coords, colour);
         end
         
         function ChangeShowTextLabels(obj, show)

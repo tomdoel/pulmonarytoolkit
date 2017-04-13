@@ -116,7 +116,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         end
         
         function LoadMarkers(obj, name)
-            obj.AutoSaveMarkers;
+            obj.AutoSaveMarkers();
             new_image = obj.GuiDataset.LoadMarkers(name);
             obj.MarkerPointImage.LoadMarkers(new_image);
             obj.ResetImageChangedFlag();
