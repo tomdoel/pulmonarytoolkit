@@ -621,9 +621,9 @@ classdef MimGuiBase < GemFigure
             % Store current marker set name
             currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
             obj.GuiSingleton.GetSettings.AddLastMarkerSet(currently_loaded_image_UID, name);
-            obj.SaveSettings;
+            obj.SaveSettings();
             
-            wait_dialog.Hide;
+            wait_dialog.Hide();
         end
         
         function handle = GetRenderAxes(obj)
@@ -943,8 +943,8 @@ classdef MimGuiBase < GemFigure
         
         function LoadDefaultMarkersIfRequiredWithProgressBar(obj)
             % If markers need to be displayed, load and show progress bar
-            if obj.MarkerManager.IsLoadMarkersRequired
-                obj.LoadDefaultMarkers;
+            if obj.MarkerManager.IsLoadMarkersRequired()
+                obj.LoadDefaultMarkers();
             end
         end
         
