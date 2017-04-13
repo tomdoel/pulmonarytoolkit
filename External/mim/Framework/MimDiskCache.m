@@ -27,16 +27,18 @@ classdef MimDiskCache < handle
         Uuid         % A unique identifier for this dataset
         SchemaNumber % Version number
         Config       % Configuration parameters
+        IsUserCache  % True if stores user files and not auto-generated framework files
         Reporting
     end
     
     methods
         
-        function obj = MimDiskCache(cache_parent_directory, uuid, config, reporting)
+        function obj = MimDiskCache(cache_parent_directory, uuid, config, is_user_cache, reporting)
             obj.SchemaNumber = 1;
             obj.Uuid = uuid;
             obj.Config = config;
             obj.Reporting = reporting;
+            obj.IsUserCache = is_user_cache;
             
             % Create a disk cache object, and associated folder, for the dataset
             % associated with this unique identifier
@@ -45,8 +47,10 @@ classdef MimDiskCache < handle
             end
             
             obj.CachePath = fullfile(cache_parent_directory, uuid);
-            if obj.CacheDirExists
-                reporting.LogVerbose(['Using disk cache : ' obj.CachePath]);
+            
+            % We don't create a schema file for user directories
+            if obj.CacheDirExists && ~obj.IsUserCache
+%                 reporting.LogVerbose(['Using disk cache : ' obj.CachePath]);
                 if obj.Exists(obj.Config.SchemaCacheName, [], reporting)
                     schema = obj.Load(obj.Config.SchemaCacheName, [], reporting);
                     if (schema ~= obj.SchemaNumber)
@@ -207,7 +211,7 @@ classdef MimDiskCache < handle
         function dir_list = DeleteFileForAllContexts(obj, name, reporting)
             % Delete particular files from all context folders in this dataset
             
-            if obj.CacheDirExists
+            if obj.CacheDirExists()
                 % Remove cache files in the root directory for this dataset
                 obj.RemoveFilesInDirectory(obj.CachePath, name, false, reporting);
                 
@@ -250,7 +254,7 @@ classdef MimDiskCache < handle
             for index = 1 : length(file_list)
                 file_name = file_list{index};
                 is_framework_file = obj.IsFrameworkFile(file_name);
-                if (remove_framework_files || (~is_framework_file))
+                if (obj.IsUserCache || remove_framework_files || (~is_framework_file))
                     full_filename = fullfile(file_path, file_name);
                     reporting.ShowMessage('MimDiskCache:RecyclingCacheDirectory', ['Deleting: ' full_filename]);
                     

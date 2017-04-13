@@ -43,12 +43,12 @@ classdef MimDatasetCacheSelector < handle
             obj.Config = framework_app_def.GetFrameworkConfig;
             obj.FrameworkAppDef = framework_app_def;
             directories = framework_app_def.GetFrameworkDirectories;
-            obj.ManualSegmentationsDiskCache = MimDiskCache(directories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
-            obj.ResultsDiskCache = MimDiskCache(directories.GetCacheDirectory, dataset_uid, obj.Config, reporting);
+            obj.ManualSegmentationsDiskCache = MimDiskCache(directories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
+            obj.ResultsDiskCache = MimDiskCache(directories.GetCacheDirectory, dataset_uid, obj.Config, false, reporting);
             obj.ResultsMemoryCache = MimMemoryCache(reporting);
-            obj.EditedResultsDiskCache = MimDiskCache(directories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
-            obj.MarkersDiskCache = MimDiskCache(directories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, reporting);
-            obj.FrameworkDatasetDiskCache = MimDiskCache(directories.GetFrameworkDatasetCacheDirectory, dataset_uid, obj.Config, reporting);
+            obj.EditedResultsDiskCache = MimDiskCache(directories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
+            obj.MarkersDiskCache = MimDiskCache(directories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
+            obj.FrameworkDatasetDiskCache = MimDiskCache(directories.GetFrameworkDatasetCacheDirectory, dataset_uid, obj.Config, false, reporting);
             
             obj.LoadCachedPluginResultsFile(reporting);
         end
