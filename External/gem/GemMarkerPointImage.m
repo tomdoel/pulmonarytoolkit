@@ -39,7 +39,7 @@ classdef GemMarkerPointImage < CoreBaseClass
         end
         
         function image_to_save = GetImageToSave(obj, template)
-            image_to_save = obj.ConvertMarkersToImage(template);
+            image_to_save = obj;
         end
         
         function ConvertImageToMarkers(obj, marker_image)
@@ -103,11 +103,23 @@ classdef GemMarkerPointImage < CoreBaseClass
             end
         end
         
-        function ChangeMarkerSubImage(obj, new_image)
-            obj.ConvertImageToMarkers(new_image);
+        function BackgroundImageChanged(obj, template)
         end
         
-        function BackgroundImageChanged(obj, template)
+        function LoadMarkers(obj, markers)
+            if isempty(markers)
+                obj.MarkerList = zeros(0, 4);
+            else
+                if isa(markers, 'PTKImage')
+                    obj.MarkerList = zeros(0, 4);
+                    obj.ConvertImageToMarkers(markers);
+                else
+                    if isa(markers, 'GemMarkerPointImage')
+                        obj.MarkerList = markers.MarkerList;
+                    end
+                end
+            end
+            obj.NotifyMarkerImageChanged();
         end
         
         function SetBlankMarkerImage(obj, template)

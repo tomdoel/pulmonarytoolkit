@@ -64,14 +64,19 @@ classdef MimMarkerPointManager < CoreBaseClass
                 current_marker_points = obj.GetImageToSave();
                 markers_changed = false;
                 if isempty(saved_marker_points)
-                    if any(current_marker_points.RawImage(:))
+                    if ~isempty(current_marker_points.MarkerList)
                         markers_changed = true;
                     end
                 else
-                    if ~isequal(saved_marker_points.RawImage, current_marker_points.RawImage)
+                    if isa(saved_marker_points, 'PTKImage')
                         markers_changed = true;
+                    else
+                        if ~isequal(saved_marker_points.MarkerList, current_marker_points.MarkerList)
+                            markers_changed = true;
+                        end
                     end
                 end
+                
                 if markers_changed
                     
                     % Depending on the software settings, the user can be prompted before saving
@@ -113,10 +118,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         function LoadMarkers(obj, name)
             obj.AutoSaveMarkers;
             new_image = obj.GuiDataset.LoadMarkers(name);
-            obj.MarkerPointImage.SetBlankMarkerImage(obj.BackgroundImageSource.Image);
-            if ~isempty(new_image)
-                obj.MarkerPointImage.ChangeMarkerSubImage(new_image);
-            end
+            obj.MarkerPointImage.LoadMarkers(new_image);
             obj.ResetImageChangedFlag();
             obj.MarkersHaveBeenLoaded = true;
             obj.CurrentMarkersName = name;
