@@ -110,6 +110,14 @@ classdef MimDiskUtilities
             end
         end
         
+        function SaveAsXml(name, filename, value, reporting)
+            CoreSaveXml(value, name, filename, reporting);
+        end
+        
+        function SaveAsSimplifiedXml(name, filename, value, reporting)
+            CoreSaveXmlSimplified(value, name, filename, reporting);
+        end
+        
         function value = Load(filename) %#ok<INUSD>
             value = load(filename, '-mat');
         end
