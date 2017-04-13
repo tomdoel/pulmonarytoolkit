@@ -407,6 +407,7 @@ classdef MimViewerPanel < GemPanel
         end
         
         function set.Window(obj, window)
+            window = double(window);
             obj.BackgroundImageDisplayParameters.Window = window;
             obj.OverlayImageDisplayParameters.Window = window;
         end
@@ -416,6 +417,7 @@ classdef MimViewerPanel < GemPanel
         end
         
         function set.Level(obj, level)
+            level = double(level);
             obj.BackgroundImageDisplayParameters.Level = level;
             obj.OverlayImageDisplayParameters.Level = level;
         end
