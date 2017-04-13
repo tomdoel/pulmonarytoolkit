@@ -166,6 +166,9 @@ classdef MimPatientBrowserListOfPatientsPanel < GemPanel
             
             set(obj.PatientListBox, 'String', short_visible_names, 'Value', new_index);
             obj.PatientIds = ids;
+            if ~any(strcmp(obj.PatientIds, obj.LastSelectedPatientId))
+                obj.LastSelectedPatientId = [];
+            end
         end
         
         function ListBoxCallBack(obj, hObject, ~, ~)
