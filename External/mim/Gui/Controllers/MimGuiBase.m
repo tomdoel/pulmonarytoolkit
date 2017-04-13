@@ -602,7 +602,7 @@ classdef MimGuiBase < GemFigure
             % Loads the default marker set for this dataset, which could be
             % the last used marker set or the marker set with the default name
             
-            currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
+            currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset();
             marker_set_name = obj.GuiSingleton.GetSettings.GetLastMarkerSetName(currently_loaded_image_UID);            
             if isempty(marker_set_name)
                 marker_set_name = obj.AppDef.DefaultMarkersName;
@@ -1018,6 +1018,10 @@ classdef MimGuiBase < GemFigure
             switch choice
                 case 'Delete'
                     obj.MarkerManager.DeleteMarkerSet(name);
+                    currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
+                    obj.GuiSingleton.GetSettings.RemoveLastMarkerSet(currently_loaded_image_UID, name);
+                    obj.LoadDefaultMarkers();
+                    
                 case 'Don''t delete'
             end
         end

@@ -104,6 +104,12 @@ classdef PTKSettings < CoreBaseClass
             end
             obj.LastMarkerSetForPatientMap(series_uid) = marker_set_name;
         end
+        
+        function RemoveLastMarkerSet(obj, series_uid, marker_set_name)
+            if ~isempty(obj.LastMarkerSetForPatientMap) && obj.LastMarkerSetForPatientMap.isKey(series_uid) && strcmp(obj.LastMarkerSetForPatientMap(series_uid), marker_set_name)
+                obj.LastMarkerSetForPatientMap.remove(series_uid);
+            end
+        end
 
         function series_uid = GetLastPatientUid(obj, patient_id)
             if obj.LastUidForPatientMap.isKey(patient_id)
@@ -160,7 +166,11 @@ classdef PTKSettings < CoreBaseClass
             try
                 value = [];
                 value.settings = obj;
-                MimDiskUtilities.Save(settings_filename, value);
+                if isempty(settings_filename)
+                    reporting.ShowWarning('PTKSettings:NoSettingsFilename', 'The settings file could not be saved as the settings filename was not known.', []);
+                else
+                    MimDiskUtilities.Save(settings_filename, value);
+                end
             catch ex
                 reporting.ErrorFromException('PTKSettings:FailedtoSaveSettingsFile', ['Unable to save settings file ' settings_filename], ex);
             end
