@@ -183,7 +183,7 @@ classdef GemSlidingPanel < GemPanel
             % This is to prevent an error where the slider is invisible but
             % the steps are set nonetheless
             if new_steps(2) <= new_steps(1)
-                new_steps(2) = new_steps(1)*10;
+                new_steps(1) = new_steps(2)/10;
             end
             obj.Slider.SetSliderLimits(slider_min, slider_max);
             obj.Slider.SetSliderSteps(new_steps);
