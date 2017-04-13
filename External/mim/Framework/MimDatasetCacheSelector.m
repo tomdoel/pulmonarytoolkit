@@ -133,7 +133,7 @@ classdef MimDatasetCacheSelector < handle
             if ~obj.FrameworkDatasetDiskCache.Exists(data_filename, [], reporting) && obj.ResultsDiskCache.Exists(data_filename, [], reporting)
                 reporting.Log(['Moving framework cache file to framework cache: ' data_filename]);
                 value = obj.ResultsDiskCache.Load(data_filename, [], reporting);
-                obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], reporting);
+                obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], MimStorageFormat.Mat, reporting);
                 obj.ResultsDiskCache.DeleteCacheFile(data_filename, [], reporting);
             else        
                 value = obj.FrameworkDatasetDiskCache.Load(data_filename, [], reporting);
@@ -143,7 +143,7 @@ classdef MimDatasetCacheSelector < handle
         function SaveData(obj, data_filename, value, reporting)
             % Saves additional data associated with this dataset to the cache
             
-            obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], reporting);
+            obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], MimStorageFormat.Mat, reporting);
         end
         
         function value = LoadManualSegmentation(obj, filename, reporting)
@@ -155,7 +155,7 @@ classdef MimDatasetCacheSelector < handle
         function SaveManualSegmentation(obj, name, value, reporting)
             % Saves a manual segmentation associated with this dataset to the cache
             
-            obj.ManualSegmentationsDiskCache.Save(name, value, [], reporting);
+            obj.ManualSegmentationsDiskCache.Save(name, value, [], MimStorageFormat.Mat, reporting);
             obj.NotifyManualSegmentationsChanged(name);
         end
         
@@ -187,7 +187,7 @@ classdef MimDatasetCacheSelector < handle
         function SaveMarkerPoints(obj, data_filename, value, reporting)
             % Saves marker points associated with this dataset to the cache
             
-            obj.MarkersDiskCache.Save(data_filename, value, [], reporting);
+            obj.MarkersDiskCache.Save(data_filename, value, [], MimStorageFormat.Mat, reporting);
             obj.NotifyMarkersChanged(data_filename);
         end
         

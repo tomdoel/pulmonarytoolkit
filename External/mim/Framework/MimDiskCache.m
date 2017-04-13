@@ -53,7 +53,7 @@ classdef MimDiskCache < handle
                         reporting.Error('MimDiskCache:BadSchema', 'Wrong schema found. This is caused by having a disk cache from a redundant version of code. Delete your cache directory to fix.');
                     end
                 else
-                    obj.Save(obj.Config.SchemaCacheName, obj.SchemaNumber, [], reporting);
+                    obj.Save(obj.Config.SchemaCacheName, obj.SchemaNumber, [], MimStorageFormat.Mat, reporting);
                 end
                 
             end
@@ -138,16 +138,16 @@ classdef MimDiskCache < handle
             end
         end
         
-        function Save(obj, name, value, context, reporting)
+        function Save(obj, name, value, context, storage_format, reporting)
             % Save a result to the cache
             
-            obj.PrivateSave(name, value, [], context, MimCachePolicy.Permanent, reporting);
+            obj.PrivateSave(name, value, [], context, MimCachePolicy.Permanent, storage_format, reporting);
         end
 
         function SaveWithInfo(obj, name, value, info, context, cache_policy, reporting)
             % Save a result to the cache
             
-            obj.PrivateSave(name, value, info, context, cache_policy, reporting);
+            obj.PrivateSave(name, value, info, context, cache_policy, MimStorageFormat.Mat, reporting);
         end
         
         function Delete(obj, reporting)
@@ -266,7 +266,7 @@ classdef MimDiskCache < handle
                 obj.Reporting.LogVerbose(['Creating disk cache : ' obj.CachePath]);
                 
                 % Create schema
-                obj.Save(obj.Config.SchemaCacheName, obj.SchemaNumber, [], obj.Reporting);
+                obj.Save(obj.Config.SchemaCacheName, obj.SchemaNumber, [], MimStorageFormat.Mat, obj.Reporting);
             end
         end
         
@@ -274,7 +274,7 @@ classdef MimDiskCache < handle
             exists = exist(obj.CachePath, 'dir') == 7;
         end
         
-        function PrivateSave(obj, name, value, info, context, cache_policy, reporting)
+        function PrivateSave(obj, name, value, info, context, cache_policy, file_format, reporting)
             switch cache_policy
                 case MimCachePolicy.Off
                     cache = false;
@@ -287,17 +287,28 @@ classdef MimDiskCache < handle
                 otherwise
                     reporting.Error('MimDiskCache:UnknownCachePolicy', 'The memory cache policy was not recognised.');
             end
-            
+
             if cache
-                obj.CreateCacheDirIfNecessary;
+                obj.CreateCacheDirIfNecessary();
                 file_path_with_context = fullfile(obj.CachePath, char(context));
                 CoreDiskUtilities.CreateDirectoryIfNecessary(file_path_with_context);
-                result = [];
-                if ~isempty(info)
-                    result.info = info;
+                switch file_format
+                    case MimStorageFormat.Mat
+                        result = [];
+                        if ~isempty(info)
+                            result.info = info;
+                        end
+                        result.value = value;
+                        MimSave(file_path_with_context, name, result, obj.Config.Compression, reporting);
+                    case MimStorageFormat.Xml
+                        filename = fullfile(file_path_with_context, [name '.xml']);
+                        MimDiskUtilities.SaveAsXml(name, filename, value, reporting);
+                    case MimStorageFormat.XmlSimplified
+                        filename = fullfile(file_path_with_context, [name '.xml']);
+                        MimDiskUtilities.SaveAsSimplifiedXml(name, filename, value, reporting);
+                    otherwise
+                        reporting.Error('MimDiskCache:UnknownStorageFormat', 'The file storage format policy was not recognised.');
                 end
-                result.value = value;
-                MimSave(file_path_with_context, name, result, obj.Config.Compression, reporting);
             end
         end
         
