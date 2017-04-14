@@ -1,4 +1,4 @@
-function CoreSaveXmlSimplified(data, name, file_name, reporting)
+function CoreSaveXmlSimplified(data, name, file_name, alias_mapping, reporting)
     % CoreSaveXmlSimplified. Saves a data structure as an XML file
     %
     %     CoreSaveXmlSimplified saves data into an XML file in a simplified format. The data may include arrays,
@@ -10,6 +10,8 @@ function CoreSaveXmlSimplified(data, name, file_name, reporting)
     %             data - the root object of the data to store. Can be a value, a class, a structure, map or cell array
     %             name - the name of the root object 
     %             file_name - a CoreFilename or character array containing the path and filename
+    %             alias_mapping - Class names will be replaced by the
+    %                             corresponding entry in the map alias_mapping
     %             reporting - object of type CoreReportingInterface for error reporting
     %
     %
@@ -26,7 +28,7 @@ function CoreSaveXmlSimplified(data, name, file_name, reporting)
     xml_root_element = xml_doc_node.getDocumentElement;
     xml_root_element.setAttribute('XMLVersion', XMLVersion);
     
-    serialised_node = CreateNodeForPropertyMatrix('CoreSerialised', name, data, xml_doc_node, reporting);
+    serialised_node = CreateNodeForPropertyMatrix('CoreSerialised', name, data, xml_doc_node, alias_mapping, reporting);
     
     xml_root_element.appendChild(serialised_node);
     xml_doc_node.appendChild(xml_doc_node.createComment('CoreMat software by Tom Doel 2014-2015. Automatically generated XML file.'));
@@ -38,15 +40,15 @@ function CoreSaveXmlSimplified(data, name, file_name, reporting)
     xmlwrite(file_name, xml_doc_node);
 end
 
-function node = AddNodesForStruct(node, data, xml_doc_node, reporting)
+function node = AddNodesForStruct(node, data, xml_doc_node, alias_mapping, reporting)
     field_list = fieldnames(data);
     for i = 1 : length(field_list)
         next_field = field_list{i};
-        node.appendChild(CreateNodeForPropertyMatrix('Field', next_field, data.(next_field), xml_doc_node, reporting));
+        node.appendChild(CreateNodeForPropertyMatrix('Field', next_field, data.(next_field), xml_doc_node, alias_mapping, reporting));
     end
 end
 
-function node = AddNodesForClass(node, data, xml_doc_node, reporting)
+function node = AddNodesForClass(node, data, xml_doc_node, alias_mapping, reporting)
     mc = metaclass(data);
     enumeration_list = mc.EnumerationMemberList;
     if ~isempty(enumeration_list)
@@ -62,19 +64,19 @@ function node = AddNodesForClass(node, data, xml_doc_node, reporting)
     for i = 1 : length(property_list)
         next_property = property_list{i};
         if ~strcmp(next_property, 'EventListeners')
-            node.appendChild(CreateNodeForPropertyMatrix('Property', next_property, data.(next_property), xml_doc_node, reporting));
+            node.appendChild(CreateNodeForPropertyMatrix('Property', next_property, data.(next_property), xml_doc_node, alias_mapping, reporting));
         end
     end
 end
 
-function property_node = CreateNodeForPropertyMatrix(node_name, property_name, property_value, xml_doc_node, reporting)
+function property_node = CreateNodeForPropertyMatrix(node_name, property_name, property_value, xml_doc_node, alias_mapping, reporting)
     
     % Create the node for this value
     property_node = xml_doc_node.createElement(property_name);
-    property_node = AddValuesToNode(property_node, property_value, xml_doc_node, reporting);
+    property_node = AddValuesToNode(property_node, property_value, xml_doc_node, alias_mapping, reporting);
 end
 
-function node = AddValuesToNode(node, value, xml_doc_node, reporting)
+function node = AddValuesToNode(node, value, xml_doc_node, alias_mapping, reporting)
     
     value_class = class(value);
     matrix_size = size(value);
@@ -112,10 +114,10 @@ function node = AddValuesToNode(node, value, xml_doc_node, reporting)
         % Cell array
         if numel(value) == 1
             % We can omit the index if there is only one cell
-            node.appendChild(CreateCellValueNode(value{1}, [], xml_doc_node, reporting));
+            node.appendChild(CreateCellValueNode(value{1}, [], xml_doc_node, alias_mapping, reporting));
         else
             for cell_array_index = 1 : numel(value)
-                node.appendChild(CreateCellValueNode(value{cell_array_index}, cell_array_index, xml_doc_node, reporting));
+                node.appendChild(CreateCellValueNode(value{cell_array_index}, cell_array_index, xml_doc_node, alias_mapping, reporting));
             end
         end
 
@@ -123,11 +125,11 @@ function node = AddValuesToNode(node, value, xml_doc_node, reporting)
         % Structure
         if numel(value) == 1
             % We can omit the index if there is only one object
-            node = AddNodesForStruct(node, value, xml_doc_node, reporting);
+            node = AddNodesForStruct(node, value, xml_doc_node, alias_mapping, reporting);
         else
             % For an array of objects, add a class value node for each one
             for array_index = 1 : numel(value)
-                node.appendChild(CreateStructArrayElementNode(value(array_index), array_index, xml_doc_node, reporting));
+                node.appendChild(CreateStructArrayElementNode(value(array_index), array_index, xml_doc_node, alias_mapping, reporting));
             end
         end
 
@@ -136,7 +138,7 @@ function node = AddValuesToNode(node, value, xml_doc_node, reporting)
         keys = value.keys;
         for index = 1 : length(keys)
             key = keys{index};
-            node.appendChild(CreateMapNode(value(key), key, xml_doc_node, reporting));
+            node.appendChild(CreateMapNode(value(key), key, xml_doc_node, alias_mapping, reporting));
         end
         
     elseif ishghandle(value)
@@ -149,12 +151,12 @@ function node = AddValuesToNode(node, value, xml_doc_node, reporting)
         % Other class
         if numel(value) == 1
             % We can omit the index if there is only one object
-            node = AddNodesForClass(node, value, xml_doc_node, reporting);
+            node = AddNodesForClass(node, value, xml_doc_node, alias_mapping, reporting);
         else
             % For an array of objects, add a class value node for each one
             for array_index = 1 : numel(value)
                 parent_class = value_class; % Array elements don't need to store the class name if is the same as the parent class
-                node.appendChild(CreateClassArrayElementNode(value(array_index), array_index, parent_class, xml_doc_node, reporting));
+                node.appendChild(CreateClassArrayElementNode(value(array_index), array_index, parent_class, xml_doc_node, alias_mapping, reporting));
             end
         end
     end
@@ -172,31 +174,35 @@ function node = CreateLogicalNode(property_value, xml_doc_node, reporting)
     node = xml_doc_node.createTextNode(num2str(double(property_value)));
 end
 
-function value_node = CreateClassArrayElementNode(value, property_index, parent_class, xml_doc_node, reporting)
-    value_node = xml_doc_node.createElement(class(value));
+function value_node = CreateClassArrayElementNode(value, property_index, parent_class, xml_doc_node, alias_mapping, reporting)
+    key_name = class(value);
+    if alias_mapping.isKey(key_name)
+        key_name = alias_mapping(key_name);
+    end
+    value_node = xml_doc_node.createElement(key_name);
     
     % If the element's class is different from the parent, then store it
     value_class = class(value);
     if ~strcmp(parent_class, value_class)
         value_node.setAttribute('Class', value_class);
     end
-    value_node = AddNodesForClass(value_node, value, xml_doc_node, reporting);
+    value_node = AddNodesForClass(value_node, value, xml_doc_node, alias_mapping, reporting);
 end
 
-function value_node = CreateStructArrayElementNode(value, property_index, xml_doc_node, reporting)
+function value_node = CreateStructArrayElementNode(value, property_index, xml_doc_node, alias_mapping, reporting)
     value_node = xml_doc_node.createElement('StructArrayElement');
-    value_node = AddNodesForStruct(value_node, value, xml_doc_node, reporting);
+    value_node = AddNodesForStruct(value_node, value, xml_doc_node, alias_mapping, reporting);
 end
 
-function value_node = CreateCellValueNode(property_value, property_index, xml_doc_node, reporting)
+function value_node = CreateCellValueNode(property_value, property_index, xml_doc_node, alias_mapping, reporting)
     value_node = xml_doc_node.createElement('CellValue');
     if ~isempty(property_index)
         value_node.setAttribute('Index', int2str(property_index));
     end
-    AddValuesToNode(value_node, property_value, xml_doc_node, reporting);
+    AddValuesToNode(value_node, property_value, xml_doc_node, alias_mapping, reporting);
 end
 
-function map_node = CreateMapNode(value, key, xml_doc_node, reporting)
+function map_node = CreateMapNode(value, key, xml_doc_node, alias_mapping, reporting)
     map_node = xml_doc_node.createElement('MapValue');
     map_node.setAttribute('KeyClass', class(key));
     if isnumeric(key)
@@ -205,5 +211,5 @@ function map_node = CreateMapNode(value, key, xml_doc_node, reporting)
         key_str = key;
     end
     map_node.setAttribute('Key', key_str);
-    AddValuesToNode(map_node, value, xml_doc_node, reporting);
+    AddValuesToNode(map_node, value, xml_doc_node, alias_mapping, reporting);
 end

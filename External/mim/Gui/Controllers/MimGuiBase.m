@@ -626,6 +626,19 @@ classdef MimGuiBase < GemFigure
             wait_dialog.Hide();
         end
         
+        function ExportMarkers(obj)
+            obj.MarkerManager.AutoSaveMarkers();
+            
+            marker_list = obj.ImagePanel.MarkerImageSource.MarkerList;
+            patient_name = obj.ImagePanel.BackgroundImage.Title;
+            image_info = obj.GuiDataset.GetImageInfo;
+            series_uid = image_info.ImageUid;
+            template_image = obj.ImagePanel.BackgroundImage;
+            path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
+            
+            MimSaveMarkerListAsXml(path_name, marker_list, patient_name, series_uid, template_image, obj.Reporting);
+        end
+        
         function handle = GetRenderAxes(obj)
             handle = obj.ImagePanel.GetRenderAxes;
         end
