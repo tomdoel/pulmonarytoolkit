@@ -55,7 +55,7 @@ classdef MimToolbarPanel < GemPanel
             obj.GroupVertically = group_vertically;
             obj.AllowWrapping = allow_wrapping;
             
-            obj.AddTools;
+            obj.AddTools();
         end
         
         function Resize(obj, new_position)
@@ -224,6 +224,7 @@ classdef MimToolbarPanel < GemPanel
                 new_control.StackVertically = tool.StackVertically;
             else
                 new_control = MimPluginLabelButton(obj, tool, icon, obj.GuiApp);
+                new_control.ButtonWidth = 8*tool.ButtonWidth;
             end
             tool_group.AddControl(new_control);
             tool_struct = [];

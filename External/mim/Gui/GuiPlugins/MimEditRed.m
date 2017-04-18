@@ -24,7 +24,7 @@ classdef MimEditRed < MimGuiPlugin
 
         HidePluginInDisplay = false
         PTKVersion = '1'
-        ButtonWidth = 6
+        ButtonWidth = 5
         ButtonHeight = 1
         Icon = 'paint.png'
         IconColour = GemMarkerPoint.DefaultColours{3}

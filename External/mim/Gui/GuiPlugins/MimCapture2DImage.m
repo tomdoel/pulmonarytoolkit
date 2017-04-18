@@ -28,7 +28,7 @@ classdef MimCapture2DImage < MimGuiPlugin
 
         HidePluginInDisplay = false
         PTKVersion = '1'
-        ButtonWidth = 4
+        ButtonWidth = 6
         ButtonHeight = 1
 
         Icon = 'camera.png'

@@ -25,7 +25,7 @@ classdef MimLevelSlider < MimGuiPluginSlider
 
         HidePluginInDisplay = false
         PTKVersion = '2'
-        ButtonWidth = 4
+        ButtonWidth = 6
         ButtonHeight = 1
         Location = 26
 

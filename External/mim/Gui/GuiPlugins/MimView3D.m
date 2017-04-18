@@ -27,7 +27,7 @@ classdef MimView3D < MimGuiPlugin
 
         HidePluginInDisplay = false
         PTKVersion = '1'
-        ButtonWidth = 4
+        ButtonWidth = 6
         ButtonHeight = 1
         
         Icon = 'view3d.png'

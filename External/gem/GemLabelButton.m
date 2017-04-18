@@ -16,12 +16,17 @@ classdef GemLabelButton < GemVirtualPanel
     end
 
     properties
-        ButtonWidth = 50
-        ButtonHeight = 50
+        DefaultButtonWidth = 50
+        DefaultButtonHeight = 50
         TextHeight = 25
         VerticalSpacing = 2
         ButtonHorizontalSpacing = 0
         LabelFontSize = 9
+    end
+    
+    properties (Dependent)
+        ButtonWidth
+        ButtonHeight
     end
     
     events
@@ -32,8 +37,8 @@ classdef GemLabelButton < GemVirtualPanel
         function obj = GemLabelButton(parent, text, tooltip, tag, icon)
             obj = obj@GemVirtualPanel(parent);
             obj.Button = GemButton(parent, text, tooltip, tag, @obj.ButtonClickedCallback);
-            obj.Button.ButtonWidth = obj.ButtonWidth;
-            obj.Button.ButtonHeight = obj.ButtonHeight;
+            obj.Button.ButtonWidth = obj.DefaultButtonWidth;
+            obj.Button.ButtonHeight = obj.DefaultButtonHeight;
             obj.Button.UnSelectedColour = [50, 50, 50];
             obj.Button.ShowTextOnButton = false;
             obj.Button.AddAndResizeImageWithHighlightMask(icon, [0, 0, 0]);
@@ -50,7 +55,7 @@ classdef GemLabelButton < GemVirtualPanel
             obj.Text.FontSize = obj.LabelFontSize;
             obj.AddChild(obj.Text);
         end
-       
+
         function Resize(obj, new_position)
             Resize@GemVirtualPanel(obj, new_position);
             
@@ -62,7 +67,23 @@ classdef GemLabelButton < GemVirtualPanel
             obj.Button.Resize([button_x_pos, button_y_pos, button_width, button_height]);
             obj.Text.Resize([new_position(1), new_position(2), text_width, obj.TextHeight]);
         end
+       
+        function set.ButtonWidth(obj, width)
+            obj.Button.ButtonWidth = width;
+        end
         
+        function width = get.ButtonWidth(obj)
+            width = obj.Button.ButtonWidth;
+        end
+
+        function set.ButtonHeight(obj, height)
+            obj.Button.ButtonHeight = height;
+        end
+        
+        function height = get.ButtonHeight(obj)
+            height = obj.Button.ButtonHeight;
+        end
+
         function width = GetWidth(obj)
             width = obj.Button.ButtonWidth + 2*obj.ButtonHorizontalSpacing;
         end

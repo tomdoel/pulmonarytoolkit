@@ -29,7 +29,7 @@ classdef MimOrganisedPlugins < CoreBaseClass
         
         function Repopulate(obj, reporting)
             obj.OrganisedPluginsModeList.Clear;
-            plugin_list = obj.GetListOfPossiblePluginNames;
+            plugin_list = obj.GetListOfPossiblePluginNames();
             obj.OrganisedPluginsModeList.AddList(plugin_list, obj.GuiApp, reporting);
             gui_plugin_list = obj.GetListOfPossibleGuiPluginNames;
             obj.OrganisedPluginsModeList.AddList(gui_plugin_list, obj.GuiApp, reporting);

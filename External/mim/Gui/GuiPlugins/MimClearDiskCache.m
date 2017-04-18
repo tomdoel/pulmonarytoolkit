@@ -28,7 +28,7 @@ classdef MimClearDiskCache < MimGuiPlugin
 
         HidePluginInDisplay = false
         PTKVersion = '1'
-        ButtonWidth = 4
+        ButtonWidth = 6
         ButtonHeight = 1
         Location = 105
     end
