@@ -575,9 +575,11 @@ classdef MimGuiDataset < CoreBaseClass
         
         function ReplaceListeners(obj, new_dataset)
             obj.DeleteListeners();
-            obj.PreviewImageChangedListener = addlistener(new_dataset, 'PreviewImageChanged', @obj.PreviewImageChangedCallback);
-            obj.MarkersChangedListener = addlistener(new_dataset, 'MarkersChanged', @obj.MarkersChangedCallback);
-            obj.ManualSegmentationsChangedListener = addlistener(new_dataset, 'ManualSegmentationsChanged', @obj.ManualSegmentationsChangedCallback);
+            if ~isempty(new_dataset)
+                obj.PreviewImageChangedListener = addlistener(new_dataset, 'PreviewImageChanged', @obj.PreviewImageChangedCallback);
+                obj.MarkersChangedListener = addlistener(new_dataset, 'MarkersChanged', @obj.MarkersChangedCallback);
+                obj.ManualSegmentationsChangedListener = addlistener(new_dataset, 'ManualSegmentationsChanged', @obj.ManualSegmentationsChangedCallback);
+            end
         end
         
         function SeriesHasBeenDeleted(obj, series_uid, ~)
