@@ -34,7 +34,9 @@ classdef MimPatientBrowserAllPatientsSlidingPanel < GemSlidingPanel
             % Get the y-coordinates of the panel corresponding to this patient
             [y_min, y_max] = obj.FloatingPanel.GetYPositionsForPatientId(patient_id);
             if isempty(y_min)
-                obj.Reporting.ShowWarning('MimPatientBrowserAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
+                % There might be a reason the patient is not found, so
+                % don't report the warning
+%                 obj.Reporting.ShowWarning('MimPatientBrowserAllPatientsSlidingPanel.PatientNotFound', 'A patient was selected but the corresponding patient panel was not found', []);
                 return;
             end
 

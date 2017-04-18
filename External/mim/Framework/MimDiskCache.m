@@ -256,8 +256,7 @@ classdef MimDiskCache < handle
                 is_framework_file = obj.IsFrameworkFile(file_name);
                 if (obj.IsUserCache || remove_framework_files || (~is_framework_file))
                     full_filename = fullfile(file_path, file_name);
-                    reporting.ShowMessage('MimDiskCache:RecyclingCacheDirectory', ['Deleting: ' full_filename]);
-                    
+                    reporting.Log(['Deleting: ' full_filename]);
                     delete(full_filename);
                     reporting.Log(['Deleting ' full_filename]);
                 end

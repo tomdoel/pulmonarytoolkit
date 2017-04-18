@@ -209,7 +209,7 @@ classdef MimImageDatabase < handle
                             else
                                 cache_parent_directory = framework_app_def.GetFrameworkDirectories.GetFrameworkDatasetCacheDirectory;
                             end
-                            temporary_disk_cache = MimDiskCache(cache_parent_directory, temporary_uid, framework_app_def.GetFrameworkConfig, reporting);
+                            temporary_disk_cache = MimDiskCache(cache_parent_directory, temporary_uid, framework_app_def.GetFrameworkConfig, true, reporting);
                             temporary_image_info = temporary_disk_cache.Load(image_info_cache_name, [], reporting);
 
                             file_path = temporary_image_info.ImagePath;
