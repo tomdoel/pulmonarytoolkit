@@ -48,7 +48,7 @@ classdef MimSegmentPanel < GemPanel
             obj.SegmentToolbar = MimToolbarPanel(obj, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically, allow_wrapping);
             obj.AddChild(obj.SegmentToolbar);
             
-            obj.ManualSegmentationListBox = MimUserSavedItemListBox(obj, 'manual segmentation', @gui_app.LoadSegmentationCallback, @gui_app.DeleteManualSegmentation, @gui_app.AddManualSegmentation, @gui_app.GetListOfManualSegmentations, @gui_app.CurrentSegmentationName);
+            obj.ManualSegmentationListBox = MimUserSavedItemListBox(obj, 'manual segmentation', @gui_app.LoadSegmentationCallback, @gui_app.DeleteManualSegmentation, @gui_app.AddManualSegmentation, @gui_app.RenameManualSegmentation, @gui_app.DuplicateManualSegmentation, @gui_app.GetListOfManualSegmentations, @gui_app.CurrentSegmentationName);
             obj.ManualSegmentationListBox.TopBorder = true;
             obj.ManualSegmentationListBox.TitleLeftPadding = 5;
             obj.AddChild(obj.ManualSegmentationListBox);

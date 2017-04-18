@@ -27,6 +27,7 @@ function MimSaveMarkerListAsXml(path_name, marker_list, patient_name, series_uid
     st.MarkerXmlFileVersion = '1';
     st.PatientName = patient_name;
     st.SeriesUid = series_uid;
+    st.CoordinateSystem = char(MimCoordinateSystem.Dicom);
     st.Markers = marker_struct_list;
 
     MimSaveMarkersAs(st, path_name, reporting);

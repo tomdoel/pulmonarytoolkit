@@ -29,6 +29,9 @@ classdef MimUserSavedItem < GemListItem
         
         LoadCallback
         DeleteCallback
+        RenameCallback
+        DuplicateCallback
+        AddCallback
     end
     
     properties (Constant, Access = private)
@@ -36,7 +39,7 @@ classdef MimUserSavedItem < GemListItem
     end
     
     methods
-        function obj = MimUserSavedItem(parent, name, tooltip, load_callback, delete_callback)
+        function obj = MimUserSavedItem(parent, name, tooltip, load_callback, delete_callback, rename_callback, duplicate_callback, add_callback)
             obj = obj@GemListItem(parent, name);
             obj.CacheFileName = name;
             obj.VisibleName = name;
@@ -45,6 +48,9 @@ classdef MimUserSavedItem < GemListItem
             if nargin > 0
                 obj.LoadCallback = load_callback;
                 obj.DeleteCallback = delete_callback;
+                obj.RenameCallback = rename_callback;
+                obj.DuplicateCallback = duplicate_callback;
+                obj.AddCallback = add_callback;
                 
                 obj.TextControl = GemText(obj, obj.VisibleName, tooltip, 'ItemSelect');
                 obj.TextControl.FontSize = obj.UserSavedItemFontSize;
@@ -78,9 +84,12 @@ classdef MimUserSavedItem < GemListItem
         function ItemRightClicked(obj, src, eventdata)
             ItemRightClicked@GemListItem(obj, src, eventdata);
             
-            if isempty(get(obj.DescriptionControl.GraphicalComponentHandle, 'uicontextmenu'))
+            if isempty(get(obj.TextControl.GraphicalComponentHandle, 'uicontextmenu'))
                 context_menu = uicontextmenu;
                 context_menu_delete = uimenu(context_menu, 'Label', 'Delete', 'Callback', @obj.DeleteCachedItem);
+                context_menu_rename = uimenu(context_menu, 'Label', 'Rename', 'Callback', @obj.RenameCachedItem);
+                context_menu_duplicate = uimenu(context_menu, 'Label', 'Duplicate', 'Callback', @obj.DuplicateCachedItem);
+                context_menu_add = uimenu(context_menu, 'Label', 'Add', 'Callback', @obj.AddCachedItem);
                 obj.SetContextMenu(context_menu);
             end            
         end
@@ -93,6 +102,27 @@ classdef MimUserSavedItem < GemListItem
             obj.DeleteCallback(obj.CacheFileName);
             
             % Note that at this point obj may have been deleted, so we can no longer use it
+            parent_figure.HideWaitCursor;
+        end
+
+        function RenameCachedItem(obj, ~, ~)
+            parent_figure = obj.GetParentFigure;
+            parent_figure.ShowWaitCursor;
+            obj.RenameCallback(obj.CacheFileName);
+            parent_figure.HideWaitCursor;
+        end        
+        
+        function DuplicateCachedItem(obj, ~, ~)
+            parent_figure = obj.GetParentFigure;
+            parent_figure.ShowWaitCursor;
+            obj.DuplicateCallback(obj.CacheFileName);
+            parent_figure.HideWaitCursor;
+        end        
+        
+        function AddCachedItem(obj, ~, ~)
+            parent_figure = obj.GetParentFigure;
+            parent_figure.ShowWaitCursor;
+            obj.AddCallback();
             parent_figure.HideWaitCursor;
         end        
     end

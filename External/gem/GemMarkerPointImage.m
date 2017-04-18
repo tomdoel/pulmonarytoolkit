@@ -66,7 +66,7 @@ classdef GemMarkerPointImage < CoreBaseClass
             global_coords = template.LocalToGlobalCoordinates(local_coords);
             global_coords = obj.BoundCoordsInImage(template, global_coords);
 
-            list_indices = find(ismember(obj.MarkerList(:, 1:3), global_coords,'rows'));
+            list_indices = find(ismember(round(obj.MarkerList(:, 1:3)), global_coords,'rows'));
             
             if isempty(list_indices)
                 % No existing marker

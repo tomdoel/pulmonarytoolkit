@@ -71,5 +71,8 @@ classdef MimView3DMode < handle
             obj.ViewerPanel.ClearRenderAxes;
             obj.ViewerPanel.SetModes([], []);
         end
+        
+        function MarkOverlayAsUnchanged(obj)
+        end        
     end
 end

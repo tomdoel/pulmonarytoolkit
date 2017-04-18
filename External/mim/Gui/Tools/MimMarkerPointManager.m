@@ -24,7 +24,8 @@ classdef MimMarkerPointManager < CoreBaseClass
         Reporting
         
         MarkersHaveBeenLoaded = false
-        MarkerImageHasUnsavedChanges = false        
+        MarkerImageHasUnsavedChanges = false
+        MarkerSetInitialSave = false
     end
     
     events
@@ -106,7 +107,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         end
         
         function LoadMarkersIfRequired(obj, name)
-            if obj.IsLoadMarkersRequired
+            if obj.IsLoadMarkersRequired()
                 obj.LoadMarkers(name);
             end
         end
@@ -119,6 +120,9 @@ classdef MimMarkerPointManager < CoreBaseClass
             obj.AutoSaveMarkers();
             new_image = obj.GuiDataset.LoadMarkers(name);
             obj.MarkerPointImage.LoadMarkers(new_image);
+            if isempty(new_image)
+                obj.SaveMarkers();
+            end
             obj.ResetImageChangedFlag();
             obj.MarkersHaveBeenLoaded = true;
             obj.CurrentMarkersName = name;

@@ -47,7 +47,7 @@ classdef MimMarkerPanel < GemPanel
             obj.MarkerToolbar = MimToolbarPanel(obj, organised_plugins, mode_tab_name, mode_to_switch_to, visibility, gui_app, app_def, group_vertically, allow_wrapping);
             obj.AddChild(obj.MarkerToolbar);
             
-            obj.MarkerListBox = MimUserSavedItemListBox(obj, 'marker set', @gui_app.LoadMarkers, @gui_app.DeleteMarkerSet, @gui_app.AddMarkerSet, @gui_app.GetListOfMarkerSets, @gui_app.GetCurrentMarkerSetName);
+            obj.MarkerListBox = MimUserSavedItemListBox(obj, 'marker set', @gui_app.LoadAndDisplayMarkers, @gui_app.DeleteMarkerSet, @gui_app.AddMarkerSet, @gui_app.RenameMarkerSet, @gui_app.DuplicateMarkerSet, @gui_app.GetListOfMarkerSets, @gui_app.GetCurrentMarkerSetName);
             obj.MarkerListBox.TopBorder = true;
             obj.MarkerListBox.TitleLeftPadding = 5;
             obj.AddChild(obj.MarkerListBox);

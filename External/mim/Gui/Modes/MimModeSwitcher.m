@@ -88,5 +88,11 @@ classdef MimModeSwitcher < CoreBaseClass
                 obj.CurrentMode.OverlayImageChanged;
             end
         end
+        
+        function MarkOverlayAsUnchanged(obj)
+            if ~isempty(obj.CurrentMode)
+                obj.CurrentMode.MarkOverlayAsUnchanged();
+            end
+        end
     end
 end

@@ -33,7 +33,7 @@ classdef MimExportEditedImage < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.GetMode.ExportEdit;
+            gui_app.GetMode.ExportEdit();
         end
         
         function enabled = IsEnabled(gui_app)

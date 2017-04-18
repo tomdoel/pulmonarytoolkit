@@ -96,7 +96,7 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function SaveMarkers(obj, name, markers)
-            if obj.DatasetIsLoaded
+            if obj.DatasetIsLoaded()
                 obj.Dataset.SaveMarkerPoints(name, markers);
             end
         end
@@ -106,19 +106,27 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function DeleteMarkerSet(obj, name)
-            if obj.DatasetIsLoaded
+            if obj.DatasetIsLoaded()
                 obj.Dataset.DeleteMarkerSet(name);
             end
         end
         
         function SaveManualSegmentation(obj, name, segmentation)
-            if obj.DatasetIsLoaded
+            if obj.DatasetIsLoaded()
                 obj.Dataset.SaveManualSegmentation(name, segmentation);
             end
         end
         
+        function segmentation = LoadManualSegmentation(obj, segmentation_name)
+            if obj.DatasetIsLoaded()
+                segmentation = obj.Dataset.LoadManualSegmentation(segmentation_name, []);
+            else
+                segmentation = [];
+            end
+        end
+        
         function DeleteManualSegmentation(obj, name)
-            if obj.DatasetIsLoaded
+            if obj.DatasetIsLoaded()
                 obj.Dataset.DeleteManualSegmentation(name);
                 if strcmp(name, obj.GuiDatasetState.CurrentSegmentationName)
                     obj.Gui.DeleteOverlays();
@@ -127,7 +135,7 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function dataset_cache_path = GetDatasetCachePath(obj)
-            if obj.DatasetIsLoaded
+            if obj.DatasetIsLoaded()
                 dataset_cache_path = obj.Dataset.GetDatasetCachePath;
             else
                 dataset_cache_path = obj.MimMain.GetDirectories.GetCacheDirectory;
@@ -135,7 +143,7 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function dataset_cache_path = GetEditedResultsPath(obj)
-            if obj.DatasetIsLoaded
+            if obj.DatasetIsLoaded()
                 dataset_cache_path = obj.Dataset.GetEditedResultsPath;
             else
                 dataset_cache_path = obj.MimMain.GetDirectories.GetEditedResultsDirectoryAndCreateIfNecessary;
@@ -143,7 +151,7 @@ classdef MimGuiDataset < CoreBaseClass
         end
 
         function dataset_cache_path = GetOutputPath(obj)
-            if obj.DatasetIsLoaded
+            if obj.DatasetIsLoaded()
                 dataset_cache_path = obj.Dataset.GetOutputPath;
             else
                 dataset_cache_path = obj.MimMain.GetDirectories.GetOutputDirectoryAndCreateIfNecessary;
@@ -151,7 +159,7 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function image_info = GetImageInfo(obj)
-            if obj.DatasetIsLoaded
+            if obj.DatasetIsLoaded()
                 image_info = obj.Dataset.GetImageInfo;
             else
                 image_info = [];
@@ -159,7 +167,7 @@ classdef MimGuiDataset < CoreBaseClass
         end        
         
         function ClearCacheForThisDataset(obj)
-            if obj.DatasetIsLoaded
+            if obj.DatasetIsLoaded()
                 obj.Dataset.ClearCacheForThisDataset(false);
                 obj.Gui.UpdateGuiForNewDataset([]);
             end
@@ -413,7 +421,7 @@ classdef MimGuiDataset < CoreBaseClass
         function RunPlugin(obj, plugin_name, wait_dialog)
             % Causes the GUI to run the named plugin and display the result
             
-            if ~obj.DatasetIsLoaded
+            if ~obj.DatasetIsLoaded()
                 return;
             end
             
@@ -471,18 +479,18 @@ classdef MimGuiDataset < CoreBaseClass
         function LoadManualSegmentationCallback(obj, segmentation_name)
             obj.Gui.LoadSegmentationCallback(segmentation_name);
         end
-
-        function LoadManualSegmentation(obj, segmentation_name, wait_dialog)
-         % Causes the GUI to run the named segmentation and display the result
+        
+        function LoadAndDisplayManualSegmentation(obj, segmentation_name, wait_dialog)
+            % Causes the GUI to run the named segmentation and display the result
          
-            if ~obj.DatasetIsLoaded
+            if ~obj.DatasetIsLoaded()
                 return;
             end
             
             visible_name = segmentation_name;
             wait_dialog.ShowAndHold(['Loading segmentation ' visible_name]);
 
-            new_image = obj.Dataset.LoadManualSegmentation(segmentation_name, []);
+            new_image = obj.LoadManualSegmentation(segmentation_name);
             
             image_title = visible_name;
             image_title = ['MANUAL SEGMENTATION ', image_title];
@@ -490,8 +498,12 @@ classdef MimGuiDataset < CoreBaseClass
                 obj.Reporting.Error('MimGuiDataset:EmptyImage', ['The segmentation ' segmentation_name ' did not return an image when expected. ']);
             end
             obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);
+            % We need to reset the image changed callback because we have
+            % deliberately changed the image, and otherwise UpdateModes()
+            % will trigger a prompt to the user to save changes
+            obj.ModeSwitcher.MarkOverlayAsUnchanged();
             obj.GuiDatasetState.SetSegmentation(segmentation_name);
-            obj.UpdateModes;
+            obj.UpdateModes();
             
             wait_dialog.Hide;
         end

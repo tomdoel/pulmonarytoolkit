@@ -561,7 +561,7 @@ classdef MimGuiBase < GemFigure
         
         function LoadSegmentationCallback(obj, segmentation_name)
             wait_dialog = obj.WaitDialogHandle;
-            obj.GuiDataset.LoadManualSegmentation(segmentation_name, wait_dialog);
+            obj.GuiDataset.LoadAndDisplayManualSegmentation(segmentation_name, wait_dialog);
         end
         
         function dataset_is_loaded = IsDatasetLoaded(obj)
@@ -608,10 +608,10 @@ classdef MimGuiBase < GemFigure
                 marker_set_name = obj.AppDef.DefaultMarkersName;
             end
             
-            obj.LoadMarkers(marker_set_name);
+            obj.LoadAndDisplayMarkers(marker_set_name);
         end
         
-        function LoadMarkers(obj, name)
+        function LoadAndDisplayMarkers(obj, name)
             % Loads the specified marker set for this dataset
             wait_dialog = obj.WaitDialogHandle;
             wait_dialog.ShowAndHold('Loading Markers');
@@ -701,25 +701,25 @@ classdef MimGuiBase < GemFigure
     methods (Access = private)
         
         function ApplicationClosing(obj)
-            obj.MarkerManager.AutoSaveMarkers;
-            obj.SaveSettings;
+            obj.MarkerManager.AutoSaveMarkers();
+            obj.SaveSettings();
         end
         
         function ResizeCallback(obj, ~, ~, ~)
             % Executes when figure is resized
-            obj.Resize;
+            obj.Resize();
         end
         
         function DeveloperModeChangedCallback(obj, ~, ~, ~)
             % This methods is called when the DeveloperMode property is changed
             
             obj.GuiDataset.UpdateModeTabControl();
-            obj.RefreshPlugins;
+            obj.RefreshPlugins();
         end
 
         function ShowMarkersChanged(obj, ~, ~)
-            if obj.MarkerManager.IsLoadMarkersRequired
-                obj.LoadDefaultMarkers;
+            if obj.MarkerManager.IsLoadMarkersRequired()
+                obj.LoadDefaultMarkers();
             end
         end
         
@@ -1021,7 +1021,7 @@ classdef MimGuiBase < GemFigure
             name = inputdlg('Please enter a name for the new set of marker points you wish to create', 'New marker points');
             if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
                 obj.MarkerManager.AddMarkerSet(name{1});
-                obj.LoadMarkers(name{1});
+                obj.LoadAndDisplayMarkers(name{1});
             end
         end
         
@@ -1034,10 +1034,75 @@ classdef MimGuiBase < GemFigure
                     currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
                     obj.GuiSingleton.GetSettings.RemoveLastMarkerSet(currently_loaded_image_UID, name);
                     obj.LoadDefaultMarkers();
+                    obj.MarkerManager.AutoSaveMarkers;
                     
                 case 'Don''t delete'
             end
         end
+        
+        function RenameMarkerSet(obj, old_name)
+            new_name = inputdlg('Please enter a new marker set name', 'Rename marker set');
+            if ~isempty(new_name) && iscell(new_name) && (numel(new_name) > 0) && ~isempty(new_name{1})
+                existing_file_list = CoreContainerUtilities.GetFieldValuesFromSet(obj.GetListOfMarkerSets(), 'Second');
+                if any(strcmp(existing_file_list, new_name{1}))
+                    choice = questdlg('A marker set with this name already exists. Do you want to overwrite this marker set?', ...
+                    'Marker set already exists', 'Overwrite', 'Cancel', 'Cancel');
+                    switch choice
+                        case 'Overwrite'
+                        otherwise
+                            return
+                    end
+                end
+
+                current_marker_set_name = obj.MarkerManager.GetCurrentMarkerSetName();
+                is_current_marker_set = strcmp(current_marker_set_name, old_name);
+                
+                if is_current_marker_set
+                    obj.MarkerManager.AutoSaveMarkers();
+                end
+
+                markers = obj.GuiDataset.LoadMarkers(old_name);
+                if ~isempty(markers)
+                    obj.GuiDataset.SaveMarkers(new_name{1}, markers);
+                    if is_current_marker_set
+                        obj.LoadAndDisplayMarkers(new_name{1});
+                    end
+                    obj.MarkerManager.DeleteMarkerSet(old_name);
+                end
+            end
+        end
+        
+        function DuplicateMarkerSet(obj, old_name)
+            new_name = inputdlg('Please enter a marker set name', 'Duplicate marker set');
+            if ~isempty(new_name) && iscell(new_name) && (numel(new_name) > 0) && ~isempty(new_name{1})
+                existing_file_list = CoreContainerUtilities.GetFieldValuesFromSet(obj.GetListOfMarkerSets(), 'Second');
+                if any(strcmp(existing_file_list, new_name{1}))
+                    choice = questdlg('A marker set with this name already exists. Do you want to overwrite this marker set?', ...
+                    'Marker set already exists', 'Overwrite', 'Cancel', 'Cancel');
+                    switch choice
+                        case 'Overwrite'
+                        otherwise
+                            return
+                    end
+                end
+
+                current_marker_set_name = obj.MarkerManager.GetCurrentMarkerSetName();
+                is_current_marker_set = strcmp(current_marker_set_name, old_name);
+                
+                % If we are currently editing this marker set, save
+                % before duplicating
+                if is_current_marker_set
+                    obj.MarkerManager.AutoSaveMarkers();
+                end                
+
+                markers = obj.GuiDataset.LoadMarkers(old_name);
+                if ~isempty(markers)
+                    obj.GuiDataset.SaveMarkers(new_name{1}, markers);
+                end
+            end
+        end
+        
+        
         
         function ImportManualSegmentation(obj)
             if obj.IsDatasetLoaded()
@@ -1107,6 +1172,72 @@ classdef MimGuiBase < GemFigure
                 segmentation.ImageType = PTKImageType.Colormap;
                 obj.GuiDataset.SaveManualSegmentation(name{1}, segmentation);
                 obj.LoadSegmentationCallback(name{1});
+            end
+        end
+        
+        function RenameManualSegmentation(obj, old_name)
+            new_name = inputdlg('Please enter a new segmentation name', 'Rename manual segmentation');
+            if ~isempty(new_name) && iscell(new_name) && (numel(new_name) > 0) && ~isempty(new_name{1})
+                existing_file_list = CoreContainerUtilities.GetFieldValuesFromSet(obj.GetListOfManualSegmentations(), 'Second');
+                if any(strcmp(existing_file_list, new_name{1}))
+                    choice = questdlg('A segmentation with this name already exists. Do you want to overwrite this segmentation?', ...
+                    'Segmentation already exists', 'Overwrite', 'Cancel', 'Cancel');
+                    switch choice
+                        case 'Overwrite'
+                        otherwise
+                            return
+                    end
+                end
+
+                current_segmentation_name = obj.GuiDataset.GuiDatasetState.CurrentSegmentationName;
+                is_current_segentation = strcmp(current_segmentation_name, old_name);
+                
+                if is_current_segentation
+                    if isequal(obj.GetCurrentModeName, MimModes.EditMode)
+                        obj.GetMode.SaveEdit();
+                    end
+                end
+
+                segmentation = obj.GuiDataset.LoadManualSegmentation(old_name);
+                if ~isempty(segmentation)
+                    obj.GuiDataset.SaveManualSegmentation(new_name{1}, segmentation);
+                    if is_current_segentation
+                        obj.LoadSegmentationCallback(new_name{1});
+                    end
+                    obj.GuiDataset.DeleteManualSegmentation(old_name);
+                end
+            end
+        end
+        
+        function DuplicateManualSegmentation(obj, old_name)
+            new_name = inputdlg('Please enter a new segmentation name', 'Duplicate manual segmentation');
+            if ~isempty(new_name) && iscell(new_name) && (numel(new_name) > 0) && ~isempty(new_name{1})
+                existing_file_list = CoreContainerUtilities.GetFieldValuesFromSet(obj.GetListOfManualSegmentations(), 'Second');
+                if any(strcmp(existing_file_list, new_name{1}))
+                    choice = questdlg('A segmentation with this name already exists. Do you want to overwrite this segmentation?', ...
+                    'Segmentation already exists', 'Overwrite', 'Cancel', 'Cancel');
+                    switch choice
+                        case 'Overwrite'
+                        otherwise
+                            return
+                    end
+                end
+
+                current_segmentation_name = obj.GuiDataset.GuiDatasetState.CurrentSegmentationName;
+                is_current_segentation = strcmp(current_segmentation_name, old_name);
+                
+                % If we are currently editing this segmentation, save
+                % before duplicating
+                if is_current_segentation
+                    if isequal(obj.GetCurrentModeName, MimModes.EditMode)
+                        obj.GetMode.SaveEdit();
+                    end
+                end                
+
+                segmentation = obj.GuiDataset.LoadManualSegmentation(old_name);
+                if ~isempty(segmentation)
+                    obj.GuiDataset.SaveManualSegmentation(new_name{1}, segmentation);
+                end
             end
         end
         

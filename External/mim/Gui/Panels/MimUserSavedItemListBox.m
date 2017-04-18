@@ -19,6 +19,8 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
         GuiCallback
         ListCallback
         AddCallback
+        RenameCallback
+        DuplicateCallback        
         GetCurrentCallback
         LoadCallback
         DeleteCallback
@@ -30,11 +32,13 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
     end
     
     methods
-        function obj = MimUserSavedItemListBox(parent, item_generic_name, load_callback, delete_callback, add_callback, list_callback, get_current_callback)
+        function obj = MimUserSavedItemListBox(parent, item_generic_name, load_callback, delete_callback, add_callback, rename_callback, duplicate_callback, list_callback, get_current_callback)
             obj = obj@GemListBoxWithTitle(parent, upper([item_generic_name 's']), ['Add ' item_generic_name], ['Delete ' item_generic_name]);
             obj.LoadCallback = load_callback;
             obj.DeleteCallback = delete_callback;
             obj.AddCallback = add_callback;
+            obj.RenameCallback = rename_callback;
+            obj.DuplicateCallback = duplicate_callback;
             obj.GetCurrentCallback = get_current_callback;
             obj.ListCallback = list_callback;
             obj.ItemGenericName = item_generic_name;
@@ -51,7 +55,9 @@ classdef MimUserSavedItemListBox < GemListBoxWithTitle
             if ~isempty(sets)
                 for index = 1 : length(sets)
                     this_set = sets{index};
-                    this_item = MimUserSavedItem(obj.ListBox.GetListBox, this_set.Second, ['Select this ' obj.ItemGenericName], obj.LoadCallback, obj.DeleteCallback);
+                    this_item = MimUserSavedItem(obj.ListBox.GetListBox, ...
+                        this_set.Second, ['Select this ' obj.ItemGenericName], ...
+                        obj.LoadCallback, obj.DeleteCallback, obj.RenameCallback, obj.DuplicateCallback, obj.AddCallback);
 
                     obj.ListBox.AddItem(this_item);
                 end

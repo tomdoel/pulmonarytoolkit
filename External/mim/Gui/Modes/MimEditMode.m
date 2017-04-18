@@ -104,9 +104,9 @@ classdef MimEditMode < handle
                     'Edits have not been saved', 'Save', 'Delete', 'Save');
                 switch choice
                     case 'Save'
-                        obj.SaveEdit;
+                        obj.SaveEdit();
                     case 'Delete'
-                        obj.SaveEditBackup;
+                        obj.SaveEditBackup();
                 end
                 
             end
@@ -223,6 +223,10 @@ classdef MimEditMode < handle
             if obj.ImageOverlayLock < 1
                 obj.UnsavedChanges = true;
             end
+        end
+        
+        function MarkOverlayAsUnchanged(obj)
+            obj.UnsavedChanges = false;
         end
     end
     

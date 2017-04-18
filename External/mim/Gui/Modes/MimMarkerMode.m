@@ -52,5 +52,8 @@ classdef MimMarkerMode < handle
         
         function OverlayImageChanged(obj, ~, ~)
         end
+
+        function MarkOverlayAsUnchanged(obj)
+        end
     end
 end
