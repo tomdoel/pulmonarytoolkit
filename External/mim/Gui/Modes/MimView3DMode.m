@@ -51,7 +51,7 @@ classdef MimView3DMode < handle
             obj.PluginName = current_plugin_name;
             obj.VisiblePluginName = current_visible_plugin_name;
 
-            if ~isempty(plugin_info)
+            if ~isempty(plugin_info) || ~isempty(current_segmentation_name)
                 obj.ViewerPanel.SetModes(MimModes.View3DMode, []);
             end
         end
