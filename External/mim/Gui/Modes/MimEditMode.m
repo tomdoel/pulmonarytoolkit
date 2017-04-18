@@ -89,6 +89,15 @@ classdef MimEditMode < handle
             elseif ~isempty(obj.ManualSegmentationName)
                  obj.ImageBeforeEdit = obj.ViewerPanel.OverlayImage.Copy;
                  obj.ViewerPanel.SetModes(MimModes.EditMode, MimSubModes.PaintEditing);
+                 % Manual edit mode always defaults to paint over
+                 % background
+                 obj.ViewerPanel.PaintOverBackground = true;
+
+                 % Manual edit mode always defaults to painting rather then
+                 % deleting
+                 if obj.ViewerPanel.PaintBrushColour < 1
+                     obj.ViewerPanel.PaintBrushColour = 1;
+                 end
             end
             obj.IgnoreOverlayChanges = false;            
         end

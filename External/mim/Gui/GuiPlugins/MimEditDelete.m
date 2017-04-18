@@ -1,10 +1,10 @@
-classdef MimEditBlue < MimGuiPlugin
-    % MimEditBlue. Gui Plugin for setting paint colour
+classdef MimEditDelete < MimGuiPlugin
+    % MimEditDelete. Gui Plugin for setting paint colour to transparent
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the TD MIM Toolkit.
     %
-    %     MimEditBlue is a Gui Plugin for the MIM Toolkit.
+    %     MimEditDelete is a Gui Plugin for the MIM Toolkit.
     %
     %
     %     Licence
@@ -15,9 +15,9 @@ classdef MimEditBlue < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Blue'
-        SelectedText = 'Blue'
-        ToolTip = 'Edit with blue label'
+        ButtonText = 'Delete'
+        SelectedText = 'Delete'
+        ToolTip = 'Paint over edits'
         Category = 'Segmentation label'
         Visibility = 'Dataset'
         Mode = 'Edit'
@@ -27,13 +27,13 @@ classdef MimEditBlue < MimGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'paint.png'
-        IconColour = GemMarkerPoint.DefaultColours{1}
-        Location = 31
+        IconColour = GemMarkerPoint.DefaultColours{8}
+        Location = 38
     end
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.ImagePanel.PaintBrushColour = 1;
+            gui_app.ImagePanel.PaintBrushColour = 0;
         end
         
         function enabled = IsEnabled(gui_app)
@@ -42,7 +42,7 @@ classdef MimEditBlue < MimGuiPlugin
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = gui_app.ImagePanel.PaintBrushColour == 1;
+            is_selected = gui_app.ImagePanel.PaintBrushColour == 0;
         end
     end
 end

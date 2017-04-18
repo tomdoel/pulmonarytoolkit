@@ -22,8 +22,8 @@ classdef GemMarkerPoint < CoreBaseClass
     end
     
     properties (Constant)
-        % Blue, Green, Red, Cyan, Magenta, Yellow, Grey
-        DefaultColours = {[0.4 0.4 1.0], [0 0.8 0], [0.8 0 0], [0 0.8 0.8], [0.9 0 0.9],  [0.8 0.8 0.4], [0.7 0.7 0.7]}
+        % Blue, Green, Red, Cyan, Magenta, Yellow, Grey, Black
+        DefaultColours = {[0.4 0.4 1.0], [0 0.8 0], [0.8 0 0], [0 0.8 0.8], [0.9 0 0.9],  [0.8 0.8 0.4], [0.7 0.7 0.7], [0 0 0]}
     end
     
     properties (Access = private)

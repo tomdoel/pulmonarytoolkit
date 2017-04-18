@@ -1,5 +1,5 @@
 classdef MimEditGreen < MimGuiPlugin
-    % MimEditGreen. Gui Plugin for switching transparency of zero
+    % MimEditGreen. Gui Plugin for setting paint colour
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the TD MIM Toolkit.
