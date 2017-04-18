@@ -273,7 +273,7 @@ classdef MimGuiDataset < CoreBaseClass
             patient_visible_name = obj.GuiDatasetState.CurrentPatientVisibleName;
             
             try
-                if isa(image_info_or_uid, 'MimImageInfo')
+                if isa(image_info_or_uid, 'PTKImageInfo')
                     series_uid = image_info_or_uid.ImageUid;
                     new_dataset = obj.MimMain.CreateDatasetFromInfo(image_info_or_uid);
                 elseif ischar(image_info_or_uid)

@@ -20,7 +20,7 @@ classdef MimPlugin < handle
     %     to your image data, and MyPluginName with the name of the plugin to
     %     run.
     %
-    %         image_info = MimImageInfo( <image path>, <filenames>, [], [], [], []);
+    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
     %         ptk = PTKMain();
     %         dataset = ptk.CreateDatasetFromInfo(image_info);
     %         results = dataset.GetResult('MyPluginName');

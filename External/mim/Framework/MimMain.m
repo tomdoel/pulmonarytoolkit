@@ -11,7 +11,7 @@ classdef MimMain < CoreBaseClass
     %     datasets, so you have a single error/progress reporting pipeline for 
     %     your use of the TD MIM Toolkit.
     %
-    %     To import a new dataset, construct a MimImageInfo object with the file
+    %     To import a new dataset, construct a PTKImageInfo object with the file
     %     path and file name set to the image file. For DICOM files it is only
     %     necessary to specify the path since all image files in that directory
     %     will be imported. Then call CreateDatasetFromInfo. MimMain will import
@@ -28,7 +28,7 @@ classdef MimMain < CoreBaseClass
     %     Replace <image path> and <filenames> with the path and filenames
     %     to your image data.
     %
-    %         image_info = MimImageInfo( <image path>, <filenames>, [], [], [], []);
+    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
     %         mim = MimMain;
     %         dataset = mim.CreateDatasetFromInfo(image_info);
     %
@@ -112,7 +112,7 @@ classdef MimMain < CoreBaseClass
         
         function dataset = CreateDatasetFromInfo(obj, new_image_info)
             % Creates a MimDataset object for a dataset specified by the path,
-            % filenames and/or uid specified in a MimImageInfo object. The dataset is
+            % filenames and/or uid specified in a PTKImageInfo object. The dataset is
             % imported from the specified path if it does not already exist.
             [image_info, dataset_disk_cache] = obj.ImportDataFromInfo(new_image_info, obj.Reporting);
             
@@ -238,7 +238,7 @@ classdef MimMain < CoreBaseClass
         function [image_info, dataset_disk_cache] = ImportDataFromInfo(obj, new_image_info, reporting)
             % Imports data into the TD MIM Toolkit so that it can be accessed
             % from the CreateDatasetFromUid() method. The input argument is a
-            % MimImageInfo object containing the path, filenames and file type of
+            % PTKImageInfo object containing the path, filenames and file type of
             % the data to import. If you do not know the file type, use the
             % ImportData() method instead.
             
@@ -252,7 +252,7 @@ classdef MimMain < CoreBaseClass
             dataset_disk_cache = obj.FrameworkSingleton.GetDatasetApiCache.GetDatasetDiskCache(new_image_info.ImageUid, reporting);
             image_info = dataset_disk_cache.LoadData(obj.FrameworkAppDef.GetFrameworkConfig.ImageInfoCacheName, reporting);
             if isempty(image_info)
-                image_info = MimImageInfo;
+                image_info = PTKImageInfo;
             end
 
             [image_info, anything_changed] = image_info.CopyNonEmptyFields(image_info, new_image_info);

@@ -2,7 +2,7 @@ function image_info = MimChooseImagingFiles(image_path, reporting)
     % MimChooseImagingFiles. Displays a dialog for choosing image files to load.
     %
     %     This function displays a dialog which allows users to select medical
-    %     imaging files to load. The function returns a MimImageInfo structure
+    %     imaging files to load. The function returns a PTKImageInfo structure
     %     which contains the filenames and paths. If a DICOM file is selected,
     %     then all matching files in that directory will be selected.
     %
@@ -46,65 +46,65 @@ function image_info = MimChooseImagingFiles(image_path, reporting)
         % If there are no valid DICOM files then we return an ImageInfo with
         % just the path and image type set
         if isempty(filenames_dicom)
-            image_info = MimImageInfo(image_path, [], image_type, [], [], []);
+            image_info = PTKImageInfo(image_path, [], image_type, [], [], []);
             return;
         end
-        image_info = MimImageInfo(image_path, filenames_dicom, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, filenames_dicom, image_type, [], [], []);
         return;
         
     elseif (filter_index == 3)
         image_type = MimImageFileFormat.Metaheader;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 4)
         image_type = MimImageFileFormat.Analyze;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 5)
         image_type = MimImageFileFormat.Gipl;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 6)
         image_type = MimImageFileFormat.Isi;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 7)
         image_type = MimImageFileFormat.Nifti;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 8)
         image_type = MimImageFileFormat.V3d;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 9)
         image_type = MimImageFileFormat.Vmp;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 10)
         image_type = MimImageFileFormat.Xif;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 11)
         image_type = MimImageFileFormat.Vtk;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 13)
         image_type = MimImageFileFormat.MicroCT;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
     elseif (filter_index == 13)
         image_type = MimImageFileFormat.Par;
-        image_info = MimImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
+        image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
     end
     
@@ -120,12 +120,12 @@ function image_info = MimChooseImagingFiles(image_path, reporting)
         % If there are no valid DICOM files then we return an ImageInfo with
         % just the path and image type set
         if isempty(filenames)
-            image_info = MimImageInfo(image_path, [], image_type, [], [], []);
+            image_info = PTKImageInfo(image_path, [], image_type, [], [], []);
             return;
         end
     end
 
-    image_info = MimImageInfo(image_path, filenames, image_type, [], [], []);
+    image_info = PTKImageInfo(image_path, filenames, image_type, [], [], []);
 end
 
 

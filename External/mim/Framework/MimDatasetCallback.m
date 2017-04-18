@@ -80,7 +80,7 @@ classdef MimDatasetCallback < handle
         end
 
         function image_info = GetImageInfo(obj, varargin)
-            % Returns a MimImageInfo structure with image information, including the
+            % Returns a PTKImageInfo structure with image information, including the
             % UID, filenames and file path
             
             image_info = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetImageInfo(obj.Reporting);

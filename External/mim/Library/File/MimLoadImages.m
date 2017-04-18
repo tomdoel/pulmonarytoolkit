@@ -1,5 +1,5 @@
 function image = MimLoadImages(image_info, reporting)
-    % MimLoadImages. Loads images specified in a MimImageInfo structure
+    % MimLoadImages. Loads images specified in a PTKImageInfo structure
     %
     %
     %     Licence
