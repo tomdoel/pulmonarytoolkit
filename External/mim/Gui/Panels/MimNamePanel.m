@@ -26,18 +26,18 @@ classdef MimNamePanel < GemPanel
     end
     
     properties (Constant, Access = private)
-        TopMargin = 5
+        TopMargin = 4
         LeftMargin = 5
         RightMargin = 5
-        BottomMargin = 8
+        BottomMargin = 7
         VerticalSpacing = 3
         
         NoPatientText = 'No patient loaded'
         
-        PatientNameHeight = 15
-        PatientDetailsHeight = 15
-        PatientNameFontSize = 14
-        PatientDetailsFontSize = 12
+        PatientNameHeight = 20
+        PatientDetailsHeight = 18
+        PatientNameFontSize = 13
+        PatientDetailsFontSize = 11
     end
     
     methods

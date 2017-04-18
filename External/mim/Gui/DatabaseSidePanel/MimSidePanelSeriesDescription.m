@@ -20,7 +20,7 @@ classdef MimSidePanelSeriesDescription < GemListItem
     end
     
     properties (Constant)
-        SeriesTextHeight = 18
+        SeriesTextHeight = 21
     end
     
     properties (Access = private)
@@ -36,7 +36,7 @@ classdef MimSidePanelSeriesDescription < GemListItem
     end
     
     properties (Constant, Access = private)
-        SeriesFontSize = 16
+        SeriesFontSize = 14
         NumImagesFontSize = 14
         ModalityXOffset = 0
         NumberXOffset = 10

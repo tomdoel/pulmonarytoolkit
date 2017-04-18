@@ -15,8 +15,8 @@ classdef MimPatientNameListItem < GemListItem
     %    
     
     properties (Constant)
-        PatientTextHeight = 18
-        FontSize = 16
+        PatientTextHeight = 21
+        FontSize = 14
     end
     
     properties (Access = private)

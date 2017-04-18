@@ -15,8 +15,8 @@ classdef MimProjectNameListItem < GemListItem
     %    
     
     properties (Constant)
-        ProjectTextHeight = 18
-        FontSize = 16
+        ProjectTextHeight = 21
+        FontSize = 14
     end
     
     properties (Access = private)

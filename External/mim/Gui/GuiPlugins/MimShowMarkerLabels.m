@@ -15,8 +15,8 @@ classdef MimShowMarkerLabels < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Show coordinates'
-        SelectedText = 'Hide coordinates'
+        ButtonText = 'Show coords'
+        SelectedText = 'Hide coords'
         ToolTip = 'Changes whether markers show coordinate labels'
         Category = 'Marker display'
         Visibility = 'Dataset'

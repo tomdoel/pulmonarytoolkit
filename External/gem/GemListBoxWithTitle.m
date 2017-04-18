@@ -32,7 +32,7 @@ classdef GemListBoxWithTitle < GemPanel
         InnerRightMargin = 5
         InnerTopMargin = 0
         InnerBottomMargin = 0
-        SpacingBetweenItems = 4
+        SpacingBetweenItems = 1
     end
     
     methods
