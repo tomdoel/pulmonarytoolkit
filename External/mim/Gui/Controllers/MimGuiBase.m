@@ -529,7 +529,7 @@ classdef MimGuiBase < GemFigure
         end
         
         function mode = GetMode(obj)
-            mode = obj.GuiDataset.GetMode;
+            mode = obj.GuiDataset.GetMode();
         end
         
         function mode_name = GetCurrentModeName(obj)

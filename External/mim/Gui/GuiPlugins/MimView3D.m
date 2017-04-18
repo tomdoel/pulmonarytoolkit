@@ -39,7 +39,10 @@ classdef MimView3D < MimGuiPlugin
             
             % For airway-like segmentations (thin structures), we use a different set of
             % visualisation parameters
-            current_name = gui_app.GetCurrentPluginName;
+            current_name = gui_app.GetCurrentPluginName();
+            if isempty(current_name)
+                current_name = gui_app.CurrentSegmentationName();
+            end
             gui_app.ChangeMode(MimModes.View3DMode);
 
             new_label = ['MIM3D-' current_name];
@@ -87,12 +90,13 @@ classdef MimView3D < MimGuiPlugin
         end
         
         function enabled = IsEnabled(gui_app)
-            current_name = gui_app.GetCurrentPluginName;
-            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ~isempty(current_name);
+            current_name = gui_app.GetCurrentPluginName();
+            current_seg_name = gui_app.CurrentSegmentationName();
+            enabled = gui_app.IsDatasetLoaded() && gui_app.ImagePanel.OverlayImage.ImageExists() && (~isempty(current_name) || ~isempty(current_seg_name));
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = false;
+            is_selected = strcmp(gui_app.ImagePanel.Mode, char(MimModes.View3DMode));
         end        
     end
 end
