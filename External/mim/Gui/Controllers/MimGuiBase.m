@@ -1107,12 +1107,12 @@ classdef MimGuiBase < GemFigure
         function ImportManualSegmentation(obj)
             if obj.IsDatasetLoaded()
                 image_info = MimChooseImagingFiles(obj.GuiSingleton.GetSettings.SaveImagePath, obj.Reporting);
-                if numel(image_info.ImageFilenames) == 1
-                    [~, default, ~] = fileparts(image_info.ImageFilenames{1});
-                else
-                    default = [];
-                end
                 if ~isempty(image_info)
+                    if numel(image_info.ImageFilenames) == 1
+                        [~, default, ~] = fileparts(image_info.ImageFilenames{1});
+                    else
+                        default = [];
+                    end
                     obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
                         name = inputdlg('Please enter a name for this segmentation', 'Import manual segmentation', 1, {default});
                     if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
