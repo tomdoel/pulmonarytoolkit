@@ -4,6 +4,8 @@ classdef MimWebSocketServer < WebSocketServer
         LocalCache              % Stores the local cache
         ConnectionCacheMap      % Stores the caches for each remote
         LocalModelCallback      % For requesting local model value
+        
+        Debugging = false
     end
     
     methods
@@ -96,29 +98,33 @@ classdef MimWebSocketServer < WebSocketServer
         end
         
         function LogStringMessage(obj, messageType, message)
-            disp([messageType ' string message of length: ' int2str(length(message))]);
-            [header, metaData, data] = MimWebSocketParser.ParseString(message);
-            disp(' - Header: ');
-            disp(header);
-            disp(' - metaData: ');
-            disp(metaData);
-            disp(' - Data: ');
-            disp(data);
+            if obj.Debugging
+                disp([messageType ' string message of length: ' int2str(length(message))]);
+                [header, metaData, data] = MimWebSocketParser.ParseString(message);
+                disp(' - Header: ');
+                disp(header);
+                disp(' - metaData: ');
+                disp(metaData);
+                disp(' - Data: ');
+                disp(data);
+            end
         end
         
         function LogBinaryMessage(obj, messageType, blob)
-            disp([messageType ' binary message of length: ' int2str(length(blob))]);
-            [header, metaData, data] = MimWebSocketParser.ParseBlob(blob);
-            disp(' - Header: ');
-            disp(header);
-            disp(' - metaData: ');
-            disp(metaData);
+            if obj.Debugging
+                disp([messageType ' binary message of length: ' int2str(length(blob))]);
+                [header, metaData, data] = MimWebSocketParser.ParseBlob(blob);
+                disp(' - Header: ');
+                disp(header);
+                disp(' - metaData: ');
+                disp(metaData);
+            end
         end
     end
     
     methods (Access = private)
         function parseMessage(obj, conn, header, metaData, data)
-            disp(['Blob message received: version:' num2str(header.version) ' software version:' num2str(header.softwareVersion) ' model:' header.modelName ' hash server:' num2str(header.localHash) ' hash last client:' num2str(header.lastRemoteHash) ' value:' data]);
+%             disp(['Blob message received: version:' num2str(header.version) ' software version:' num2str(header.softwareVersion) ' model:' header.modelName ' hash server:' num2str(header.localHash) ' hash last client:' num2str(header.lastRemoteHash) ' value:' data]);
             
             % Get the remote model cache for this connection
             remoteModelCache = obj.ConnectionCacheMap.getConnection(conn).getModelCacheEntry(header.modelName);
