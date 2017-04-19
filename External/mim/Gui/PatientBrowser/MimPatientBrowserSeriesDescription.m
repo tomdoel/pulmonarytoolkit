@@ -40,7 +40,7 @@ classdef MimPatientBrowserSeriesDescription < GemListItem
     end
     
     properties (Constant, Access = private)
-        SeriesFontSize = 20
+        SeriesFontSize = 16
         ModalityXOffset = 20
         NumberXOffset = 10
         ModalityWidth = 50

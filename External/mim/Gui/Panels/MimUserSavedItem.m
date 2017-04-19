@@ -21,7 +21,7 @@ classdef MimUserSavedItem < GemListItem
     end
     
     properties (Constant)
-        UserSavedItemTextHeight = 18
+        UserSavedItemTextHeight = 21
     end
     
     properties (Access = private)
@@ -35,7 +35,7 @@ classdef MimUserSavedItem < GemListItem
     end
     
     properties (Constant, Access = private)
-        UserSavedItemFontSize = 16
+        UserSavedItemFontSize = 14
     end
     
     methods

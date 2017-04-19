@@ -32,7 +32,7 @@ classdef MimPatientBrowserAllPatientsPanel < GemCompositePanel
             
             obj.PatientPanels = containers.Map;
             
-            obj.AddPatientPanels;
+            obj.AddPatientPanels();
         end
 
         function DatabaseHasChanged(obj)

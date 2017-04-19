@@ -39,7 +39,7 @@ classdef MimPatientBrowserPatientsPanel < GemPanel
     end
     
     properties (Constant, Access = private)
-        PatientNameFontSize = 40
+        PatientNameFontSize = 32
         PatientNameHeight = 40
         PatientNameWidth = 200
         PatientNameLeftPadding = 10        
