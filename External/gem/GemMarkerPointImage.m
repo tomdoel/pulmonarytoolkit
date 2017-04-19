@@ -25,12 +25,16 @@ classdef GemMarkerPointImage < CoreBaseClass
     end
     
     methods
-        function obj = GemMarkerPointImage()
+        function obj = GemMarkerPointImage(marker_list)
             % The marker list must be created here, not in the properties section, to
             % prevent Matlab creating a circular dependency (see Matlab solution 1-6K9BQ7)
             % Also note that theis will trigger the above pointer change callback, which
             % will set up the pixel data change callback
-            obj.MarkerList = zeros(0, 4);
+            if nargin > 0
+                obj.MarkerList = marker_list;
+            else
+                obj.MarkerList = zeros(0, 4);
+            end
         end
         
         function ClearMarkers(obj)

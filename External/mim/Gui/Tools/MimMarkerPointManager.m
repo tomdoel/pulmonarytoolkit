@@ -62,7 +62,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         function AutoSaveMarkers(obj)
             if ~isempty(obj.MarkerLayer) && obj.MarkerImageHasUnsavedChanges && obj.MarkersHaveBeenLoaded
                 saved_marker_points = obj.GuiDataset.LoadMarkers(obj.CurrentMarkersName);
-                current_marker_points = obj.GetImageToSave();
+                current_marker_points = obj.GetMarkersToSave();
                 markers_changed = false;
                 if isempty(saved_marker_points)
                     if ~isempty(current_marker_points.MarkerList)
@@ -101,7 +101,7 @@ classdef MimMarkerPointManager < CoreBaseClass
         
         function SaveMarkersManualBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded()
-                markers = obj.GetImageToSave();
+                markers = obj.GetMarkersToSave();
                 obj.GuiDataset.SaveMarkers('MarkerPointsLastManualSave', markers);
             end
         end
@@ -118,9 +118,14 @@ classdef MimMarkerPointManager < CoreBaseClass
         
         function LoadMarkers(obj, name)
             obj.AutoSaveMarkers();
-            new_image = obj.GuiDataset.LoadMarkers(name);
-            obj.MarkerPointImage.LoadMarkers(new_image);
-            if isempty(new_image)
+            new_marker_list = obj.GuiDataset.LoadMarkers(name);
+            if isempty(new_marker_list)
+                new_marker_image = GemMarkerPointImage(zeros(0,4));
+            else
+                new_marker_image = GemMarkerPointImage(new_marker_list.ConvertToMarkerList());
+            end
+            obj.MarkerPointImage.LoadMarkers(new_marker_image);
+            if isempty(new_marker_list)
                 obj.SaveMarkers();
             end
             obj.ResetImageChangedFlag();
@@ -157,7 +162,7 @@ classdef MimMarkerPointManager < CoreBaseClass
                     end
                 else
                     obj.Reporting.ShowProgress('Saving Markers');
-                    markers = obj.GetImageToSave();
+                    markers = obj.GetMarkersToSave();
                     obj.GuiDataset.SaveMarkers(obj.CurrentMarkersName, markers);
                     obj.ResetImageChangedFlag();
                     obj.Reporting.CompleteProgress();
@@ -165,14 +170,16 @@ classdef MimMarkerPointManager < CoreBaseClass
             end
         end
         
-        function image_to_save = GetImageToSave(obj)
+        function marker_list_to_save = GetMarkersToSave(obj)
             image_to_save = obj.MarkerPointImage.GetImageToSave(obj.BackgroundImageSource.Image);
+            series_uid = obj.GuiDataset.GetUidOfCurrentDataset();
+            marker_list_to_save = MimMarkerList(image_to_save, series_uid);
         end
         
         function SaveMarkersBackup(obj)
             if obj.GuiDataset.DatasetIsLoaded
                 obj.Reporting.ShowProgress('Abandoning Markers');                
-                markers = obj.GetImageToSave();
+                markers = obj.GetMarkersToSave();
                 obj.GuiDataset.SaveMarkers('AbandonedMarkerPoints', markers);
                 obj.Reporting.CompleteProgress;
             end

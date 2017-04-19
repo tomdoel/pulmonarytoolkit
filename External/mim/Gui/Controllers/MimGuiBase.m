@@ -619,7 +619,7 @@ classdef MimGuiBase < GemFigure
             obj.MarkerManager.LoadMarkers(name);
 
             % Store current marker set name
-            currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
+            currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset();
             obj.GuiSingleton.GetSettings.AddLastMarkerSet(currently_loaded_image_UID, name);
             obj.SaveSettings();
             

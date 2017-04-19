@@ -167,29 +167,31 @@ classdef GemMarkerLayer < CoreBaseClass
     methods (Access = private)
         function [slice_markers, slice_size] = GetMarkersFromImage(obj, slice_number, dimension)
             
-            global_slice_number = obj.LocalToGlobalCoordinates([slice_number, slice_number, slice_number]);
-            global_slice_number = global_slice_number(dimension);
-            marker_list = obj.MarkerPointImage.MarkerList;
-            col_to_consider = marker_list(:, dimension);
-            select_marker = col_to_consider == global_slice_number;
-            markers = marker_list(select_marker, :);
-            
-            slice_markers = [];
-            
-            found_marker_coords = [obj.GlobalToLocalCoordinates(markers(:, 1:3)), markers(:, 4)];
-            [markers_y, markers_x] = MimImageCoordinateUtilities.GetSliceCoordinates(found_marker_coords(:, 1:3), dimension);
-            % ToDo: Do we need to remove markers that are out of the
-            % current context image?
-            
-            for index = 1 : size(markers, 1)
-                next_marker = [];
-                next_marker.x = markers_x(index); %markers(index, 1);
-                next_marker.y = markers_y(index); % markers(index, 2);
-                next_marker.colour = markers(index, 4);
-                slice_markers{end + 1} = next_marker;
-            end
-            
             slice_size = obj.BackgroundImageSource.Image.GetSliceDimensions(dimension);
+            slice_markers = [];
+
+            marker_list = obj.MarkerPointImage.MarkerList;
+            if ~isempty(marker_list)
+                global_slice_number = obj.LocalToGlobalCoordinates([slice_number, slice_number, slice_number]);
+                global_slice_number = global_slice_number(dimension);
+                col_to_consider = marker_list(:, dimension);
+                select_marker = col_to_consider == global_slice_number;
+                markers = marker_list(select_marker, :);
+
+
+                found_marker_coords = [obj.GlobalToLocalCoordinates(markers(:, 1:3)), markers(:, 4)];
+                [markers_y, markers_x] = MimImageCoordinateUtilities.GetSliceCoordinates(found_marker_coords(:, 1:3), dimension);
+                % ToDo: Do we need to remove markers that are out of the
+                % current context image?
+
+                for index = 1 : size(markers, 1)
+                    next_marker = [];
+                    next_marker.x = markers_x(index); %markers(index, 1);
+                    next_marker.y = markers_y(index); % markers(index, 2);
+                    next_marker.colour = markers(index, 4);
+                    slice_markers{end + 1} = next_marker;
+                end
+            end
         end
         
         function global_coords = LocalToGlobalCoordinates(obj, local_coords)

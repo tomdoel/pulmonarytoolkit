@@ -53,7 +53,7 @@ function SaveMarkers(markers_struct, filename, pathname, filter_index, reporting
             case 1
                 alias_mapping = containers.Map;
                 alias_mapping('MimMarkerPoint') = 'Marker';
-                CoreSaveXmlSimplified(markers_struct, 'MimMarkerList', fullfile(pathname, filename), alias_mapping, reporting);
+                CoreSaveXmlSimplified(markers_struct, 'MimMarkerPoints', fullfile(pathname, filename), alias_mapping, reporting);
         end
     end
 end
