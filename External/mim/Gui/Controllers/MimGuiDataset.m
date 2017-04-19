@@ -293,7 +293,7 @@ classdef MimGuiDataset < CoreBaseClass
                 
                 obj.ReplaceListeners(new_dataset);
                 
-                image_info = obj.Dataset.GetImageInfo;
+                image_info = obj.Dataset.GetImageInfo();
                 series_uid = image_info.ImageUid;
                 modality = image_info.Modality;
                 

@@ -1,8 +1,9 @@
-function single_image_info = MimGetSingleImageInfo(file_path, file_name, tags_to_get, reporting)
+function single_image_info = MimGetSingleImageInfo(file_path, file_name, file_format, tags_to_get, reporting)
     % MimGetSingleImageInfo. Populates a DMSingleImageMetaInfo object with meta
     %     information derived from an image file
     %
-    %
+    %     file_format (optional) - an enum of type MimImageFileFormat, or
+    %         set to [] for MIM to detect the file format automatically
     %
     %     Licence
     %     -------
@@ -19,61 +20,61 @@ function single_image_info = MimGetSingleImageInfo(file_path, file_name, tags_to
         tags_to_get = DMDicomDictionary.GroupingDictionary;
     end
 
-    try
-        full_file_name = fullfile(file_path, file_name);
-        header = DMReadDicomTags(full_file_name, tags_to_get);
-    catch ex
-        header = dicominfo(fullfile(file_path, file_name));
+    full_file_name = fullfile(file_path, file_name);
+    
+    % Attempt to load a Dicom header if the file format is Dicom or unknown
+    header = [];
+    if isempty(file_format) || CoreCompareUtilities.CompareEnumName(file_format, MimImageFileFormat.Dicom)
+        try
+            header = DMReadDicomTags(full_file_name, tags_to_get);
+        catch ex %#ok<NASGU>
+            try
+                header = dicominfo(full_file_name);
+            catch ex %#ok<NASGU>
+                header = [];
+            end
+        end
     end
     
-    if isempty(header)
-        % This does not appear to be a Dicom file
-        [image_type, principal_filename, secondary_filenames] = MimGuessFileType(file_path, file_name, [], reporting);
-        
-        modality = [];
-        file_name = principal_filename{1};
-        series_uid = DMUtilities.GetIdentifierFromFilename(principal_filename{1});
-        patient_id = series_uid;
-        study_uid = [];
-        image_uid = series_uid;
-        patient_name = [];
-        patient_name.FamilyName = series_uid;
-        study_description = '';
-        series_description = series_uid;
-        date = '';
-        time = '';
-        
-        
+    if ~isempty(header)
+        file_format = MimImageFileFormat.Dicom;
+
     else
-        image_type = MimImageFileFormat.Dicom;
+        % This does not appear to be a Dicom file
+        [file_format, principal_filename, secondary_filenames] = MimGuessFileType(file_path, file_name, [], reporting);
         
-        modality = SetFromHeader(header, 'Modality', []);
-        study_uid = SetFromHeader(header, 'StudyInstanceUID', []);
-        series_uid = SetFromHeader(header, 'SeriesInstanceUID', []);
+        % Set the filename to the principal file (i.e. the header)
+        file_name = principal_filename{1};
+        full_file_name = fullfile(file_path, principal_filename{1});
         
-        if isempty(series_uid)
-            % If no series uid then we derive this from the image filename
-            [image_type, principal_filename, secondary_filenames] = MimGuessFileType(file_path, file_name, [], reporting);
-            series_uid = DMUtilities.GetIdentifierFromFilename(principal_filename{1});
+        % Try and load headers for other types
+        if CoreCompareUtilities.CompareEnumName(file_format, MimImageFileFormat.Analyze)
+            try
+                header = hdr_read_header(full_file_name);
+            catch ex %#ok<NASGU>
+                header = [];
+            end
         end
-        
-        patient_id = SetFromHeader(header, 'PatientID', series_uid);        
-        
-        image_uid = SetFromHeader(header, 'SOPInstanceUID', []);
-        patient_name = SetFromHeader(header, 'PatientName', []);
-        
-        if isempty(patient_name)
-            patient_name = [];
-            patient_name.FamilyName = [];
-        end
-        study_description = SetFromHeader(header, 'StudyDescription', []);
-        series_description = SetFromHeader(header, 'SeriesDescription', []);
-        date = SetFromHeader(header, 'SeriesDate', []);
-        time = SetFromHeader(header, 'SeriesTime', []);
-        
     end
-        
-    single_image_info = DMSingleImageMetaInfo(file_path, file_name, image_type, modality, date, time, ...
+    
+    % Populate metadata from the header, with some sensible defaults
+    modality = SetFromHeader(header, 'Modality', []);
+    date = SetFromHeader(header, 'SeriesDate', []);
+    time = SetFromHeader(header, 'SeriesTime', []);
+    study_uid = SetFromHeader(header, 'StudyInstanceUID', []);
+    series_uid_backup = CoreSystemUtilities.StringToHash(full_file_name);
+    series_uid = SetFromHeader(header, 'SeriesInstanceUID', series_uid_backup);
+    patient_visible_name_backup = DMUtilities.GetIdentifierFromFilename(file_name);
+    patient_id = ValidateAndSetFromHeader(header, 'PatientID', series_uid);                
+    image_uid = SetFromHeader(header, 'SOPInstanceUID', series_uid);
+    backup_patient_name = [];
+    backup_patient_name.FamilyName = patient_visible_name_backup;
+    patient_name = ValidateAndSetFromHeader(header, 'PatientName', backup_patient_name);
+    study_description = ValidateAndSetFromHeader(header, 'StudyDescription', []);
+    series_description_backup = DMUtilities.GetIdentifierFromFilename(file_name);
+    series_description = ValidateAndSetFromHeader(header, 'SeriesDescription', series_description_backup);    
+    
+    single_image_info = DMSingleImageMetaInfo(file_path, file_name, file_format, modality, date, time, ...
         patient_id, study_uid, series_uid, image_uid, ...
         patient_name, study_description, series_description);
 end
@@ -81,6 +82,17 @@ end
 function result = SetFromHeader(header, field_name, default)
     if isfield(header, field_name)
         result = header.(field_name);
+    else
+        result = default;
+    end
+end
+
+function result = ValidateAndSetFromHeader(header, field_name, default)
+    if isfield(header, field_name)
+        result = CoreTextUtilities.RemoveNonprintableCharactersAndStrip(header.(field_name));
+        if isempty(result)
+            result = default;
+        end
     else
         result = default;
     end

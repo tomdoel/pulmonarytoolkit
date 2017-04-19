@@ -8,7 +8,7 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
     %     Distributed under the MIT licence. Please see website for details.
     %
-
+    
     [~, name, ext] = fileparts(image_filename);
     image_filename_without_extension = fullfile(file_path, name);
     if strcmp(ext, '.mat')
@@ -43,12 +43,12 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
         nii_filename = [name '.nii'];
         if CoreDiskUtilities.FileExists(file_path, nii_filename)
             image_type = MimImageFileFormat.Nifti;
-            principal_filename = {fullfile(file_path, nii_filename)};
+            principal_filename = {nii_filename};
             secondary_filenames = {image_filename};
             return;
         elseif CoreDiskUtilities.FileExists(file_path, hdr_filename)
             image_type = MimImageFileFormat.Analyze;
-            principal_filename = {fullfile(file_path, hdr_filename)};
+            principal_filename = {hdr_filename};
             secondary_filenames = {image_filename};
             return;
         end
@@ -97,11 +97,11 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
         rec_found = CoreDiskUtilities.FileExists(file_path, rec_filename);
         if par_found
             if rec_found
-                principal_filename = {fullfile(file_path, par_filename)};
+                principal_filename = {par_filename};
                 secondary_filenames = {fullfile(file_path, rec_filename)};
                 return;
             else
-                principal_filename = {fullfile(file_path, par_filename)};
+                principal_filename = {par_filename};
                 secondary_filenames = {};
                 return;
             end
@@ -118,7 +118,7 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     % raw image data
     elseif strcmp(ext, '.mhd') || strcmp(ext, '.mha')
         image_type = MimImageFileFormat.Metaheader;
-        [is_meta_header, raw_filename] = MimDiskUtilities.IsFileMetaHeader(fullfile(image_path, image_filename), reporting);
+        [is_meta_header, raw_filename] = MimDiskUtilities.IsFileMetaHeader(fullfile(file_path, image_filename), reporting);
         if ~is_meta_header
             reporting.Error('MimGuessFileType:OpenMHDFileFailed', ['Unable to read metaheader file ' image_filename]);
         end
@@ -131,9 +131,9 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     % be loaded or the raw filename does not match the raw file we are
     % loading
     elseif strcmp(ext, '.raw')
-        [principal_filename, secondary_filenames] = MimDiskUtilities.GetHeaderFileFromRawFile(image_path, name, reporting);
+        [principal_filename, secondary_filenames] = MimDiskUtilities.GetHeaderFileFromRawFile(file_path, name, reporting);
         if isempty(principal_filename)
-            reporting.ShowWarning('MimGuessFileType:HeaderFileLoadError', ['Unable to find valid header file for ' fullfile(image_path, image_filename)], []);
+            reporting.ShowWarning('MimGuessFileType:HeaderFileLoadError', ['Unable to find valid header file for ' fullfile(file_path, image_filename)], []);
         else
             if ~strcmp(secondary_filenames{1}, image_filename)
                 reporting.Error('MimGuessFileType:MetaHeaderRawFileMismatch', ['Mismatch between specified image filename and entry in ' principal_filename{1}]);
@@ -144,7 +144,7 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     end
 
     % Unknown file type. Try looking for a header file
-    [principal_filename_mh, secondary_filenames_mh] = MimDiskUtilities.GetHeaderFileFromRawFile(image_path, name, reporting);
+    [principal_filename_mh, secondary_filenames_mh] = MimDiskUtilities.GetHeaderFileFromRawFile(file_path, name, reporting);
     if (~isempty(principal_filename_mh)) && (strcmp(secondary_filenames_mh{1}, image_filename))
         image_type = MimImageFileFormat.Metaheader;
         principal_filename = principal_filename_mh;
@@ -153,7 +153,7 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     end
 
     % Test for a DICOM image
-    if DMUtilities.IsDicom(image_path, image_filename)
+    if DMUtilities.IsDicom(file_path, image_filename)
         image_type = MimImageFileFormat.Dicom;
         principal_filename = {image_filename};
         secondary_filenames = {};

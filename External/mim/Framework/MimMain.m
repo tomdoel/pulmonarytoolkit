@@ -266,43 +266,22 @@ classdef MimMain < CoreBaseClass
         
         function [image_uid, study_uid, modality] = GetImageUID(image_info, reporting)
             % We need a unique identifier for each dataset. For DICOM files we use
-            % the series instance UID. For other files we use the filename, which
-            % will fail if two imported images have the same filename
-            study_uid = [];
-            switch(image_info.ImageFileFormat)
-                case MimImageFileFormat.Dicom
-                    if ~isempty(image_info.ImageFilenames) && isa(image_info.ImageFilenames{1}, 'CoreFilename')
-                        first_path = image_info.ImageFilenames{1}.Path;
-                        first_filename = image_info.ImageFilenames{1}.Name;
-                        full_first_filename = image_info.ImageFilenames{1}.FullFile;
-                    else
-                        filenames = CoreDiskUtilities.GetDirectoryFileList(image_info.ImagePath, '*');
-                        first_filename = filenames{1};
-                        first_path = image_info.ImagePath;
-                        full_first_filename = fullfile(image_info.ImagePath, filenames{1});
-                    end
-                    if (exist(full_first_filename, 'file') ~= 2)
-                       throw(MException('MimMain:FileNotFound', ['The file ' first_filename ' does not exist']));
-                    end
-                    
-                    metadata = DMUtilities.ReadGroupingMetadata(fullfile(first_path, first_filename), reporting);
-                    image_uid = metadata.SeriesInstanceUID;
-                    study_uid = metadata.StudyInstanceUID;
-                    modality = metadata.Modality;
-                case {MimImageFileFormat.Metaheader, MimImageFileFormat.Analyze, MimImageFileFormat.Gipl, ...
-                        MimImageFileFormat.Isi, MimImageFileFormat.Nifti, MimImageFileFormat.V3d, ...
-                        MimImageFileFormat.Vmp, MimImageFileFormat.Xif, MimImageFileFormat.Vtk, ...        % Visualization Toolkit (VTK)
-                        MimImageFileFormat.MicroCT, MimImageFileFormat.Par}
-                        
-                    image_uid = DMUtilities.GetIdentifierFromFilename(image_info.ImageFilenames{1});
-                    study_uid = [];
-                    modality = [];
-                otherwise
-                    obj.Reporting.Error('MimMain:UnknownImageFileFormat', 'Could not import the image because the file format was not recognised.');
+            % the series instance UID. For other files we hash the full file path.
+            
+            if ~isempty(image_info.ImageFilenames) && isa(image_info.ImageFilenames{1}, 'CoreFilename')
+                first_path = image_info.ImageFilenames{1}.Path;
+                first_filename = image_info.ImageFilenames{1}.Name;
+            else
+                filenames = CoreDiskUtilities.GetDirectoryFileList(image_info.ImagePath, '*');
+                first_filename = filenames{1};
+                first_path = image_info.ImagePath;
             end
+                    
+            single_image_info = MimGetSingleImageInfo(first_path, first_filename, image_info.ImageFileFormat, DMDicomDictionary.GroupingDictionary, reporting);
+            image_uid = single_image_info.ImageUid;
+            study_uid = single_image_info.StudyUid;
+            modality = single_image_info.Modality;
         end
-        
-        
     end
 end
 

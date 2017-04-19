@@ -51,7 +51,7 @@ classdef MimSidePanelSeriesDescription < GemListItem
             obj.TextHeight = obj.SeriesTextHeight;
             obj.SeriesUid = uid;
             obj.PatientId = patient_id;
-            
+
             if nargin > 0
                 obj.GuiCallback = gui_callback;
                 if isempty(series_description)

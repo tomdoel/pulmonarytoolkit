@@ -228,7 +228,7 @@ classdef MimImageDatabase < handle
                                         if isempty(tags_to_get)
                                             tags_to_get = DMDicomDictionary.GroupingDictionary;
                                         end
-                                        single_image_metainfo = MimGetSingleImageInfo(next_filepath, next_filename, tags_to_get, reporting);
+                                        single_image_metainfo = MimGetSingleImageInfo(next_filepath, next_filename, [], tags_to_get, reporting);
                                         obj.AddImage(single_image_metainfo);
                                     else
                                         reporting.ShowWarning('MimImageDatabase:FileNotFound', ['The image ' fullfile(next_filepath, next_filename) ' could not be found. '], []);
