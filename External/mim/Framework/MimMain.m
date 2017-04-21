@@ -81,21 +81,39 @@ classdef MimMain < CoreBaseClass
             obj.FrameworkSingleton.RebuildDatabase(obj.Reporting);
         end
         
-        function dataset_exists = DatasetExists(obj, dataset_uid)
-            % Returns true if the dataset specified by the uid is found in
-            % the disk cache. Note it is possible for datasets to exist in
+        function dataset_uids = FindDataset(obj, dataset_uid_prefix)
+            % Searches for the dataset with this uid. If a dataset exactly 
+            % matches, this will be returned.
+            % Otherwise, the specified string prefix will be matched
+            % against all dataset uids in the cache, and if there is a 
+            % single match then this will be returned.
+            % 
+            % Note: it is possible for datasets to exist in
             % the cache but not in the database; this can be fixed by
             % rebuilding the database
             
-            dataset_exists = (7 == exist(fullfile(obj.FrameworkAppDef.GetFrameworkDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid), 'dir')) || (7 == exist(fullfile(obj.FrameworkAppDef.GetFrameworkDirectories.GetCacheDirectory, dataset_uid), 'dir'));
+            dataset_exists = (7 == exist(fullfile(obj.FrameworkAppDef.GetFrameworkDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid_prefix), 'dir')) || (7 == exist(fullfile(obj.FrameworkAppDef.GetFrameworkDirectories.GetCacheDirectory, dataset_uid_prefix), 'dir'));
+            
+            if dataset_exists
+                dataset_uids = {dataset_uid_prefix};
+            else
+                all_uids = obj.FrameworkAppDef.GetFrameworkDirectories().GetUidsOfAllDatasetsInCache();
+                matches = strncmp(all_uids, dataset_uid_prefix, length(dataset_uid_prefix));
+                dataset_uids = all_uids(matches);
+            end
         end
 
-        function dataset = CreateDatasetFromUid(obj, dataset_uid)
+        function dataset = CreateDatasetFromUid(obj, dataset_uid_prefix)
             % Creates a MimDataset object for a dataset specified by the uid. The
             % dataset must already be imported.
             
-            if ~obj.DatasetExists(dataset_uid)
+            dataset_uid = obj.FindDataset(dataset_uid_prefix);
+            if isempty(dataset_uid)
                 obj.Reporting.Error(MimErrors.UidNotFoundErrorId, 'Cannot find the dataset for this UID. Try importing the image using CreateDatasetFromInfo.');
+            elseif numel(dataset_uid) > 1
+                obj.Reporting.Error(MimErrors.UidNotFoundErrorId, 'More than one dataset for this UID prefix. Try specifying the complete uid.');
+            else
+                dataset_uid = dataset_uid{1};
             end
             
             dataset_disk_cache = obj.FrameworkSingleton.GetDatasetApiCache.GetDatasetDiskCache(dataset_uid, obj.Reporting);
