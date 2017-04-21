@@ -115,7 +115,7 @@ classdef MimDatasetResults < handle
                 output_image = [];
                 cache_info = [];
 
-                for next_output_context_set = context_list;
+                for next_output_context_set = context_list
                     next_output_context = next_output_context_set{1};
                     combined_result = obj.ContextHierarchy.GetResultRecursive(plugin_name, next_output_context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
                     plugin_has_been_run = plugin_has_been_run | combined_result.GetPluginHasBeenRun;
