@@ -99,7 +99,18 @@ classdef CoreTextUtilities < handle
             else
                 adjustedString = strtrim(string(uint8(string) >= 32));
             end
-        end        
+        end
+        
+        function [first, last] = SplitAtLastDelimiter(string, delimiter)
+            index = find(string == delimiter, 1, 'last');
+            if isempty(index)
+                first = string;
+                last = '';
+            else
+                first = string(1:index - 1);
+                last = string(index + 1:end);
+            end
+        end
     end
 end
 
