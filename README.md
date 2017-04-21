@@ -1,14 +1,19 @@
 The Pulmonary Toolkit is a software suite for the analysis of 3D medical lung images for academic research use.
 
+It consists of:
+  * a GUI application for visualising and analysing clinical lung images (CT & MRI);
+  * a rapid prototyping framework for running existing algorithms and developing new algorithms;
+  * an API which allows you to use the framework from within your own code, independent of the GUI application;
+  * a library of lung analysis algorithms which can be used independently.
+
 This is experimental research software and is primarily intended to support our own work. However, we are happy for you to make use of the software, and we have therefore made the source code available for free under the open-source licence (GNU-GPL3).
 
-It comprises:
-  * a library of lung analysis algorithms which can be called from your own code;
-  * a GUI application for visualising and analysing clinical lung images (CT & MRI);
-  * a rapid prototyping framework for developing new algorithms. This fully integrates with the GUI application, or can be used within your own code or through scripting.
 
-This software requires Matlab (version R2010b or later) and the Matlab Image Processing Toolbox.
-Some features also require a C++ compiler.
+This software requires:
+ * Matlab (version R2010b or later)
+ * A C++ compiler is needed for a number of the segmentation routines
+ * Matlab Image Processing Toolbox
+ * Matlab Statistics and Machine Learning toolbox is currently needed to support some of the analtics (specifically prctile)
 
 **Note: The Toolkit will not run with earlier versions of Matlab**
 
