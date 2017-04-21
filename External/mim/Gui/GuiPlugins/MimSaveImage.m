@@ -42,7 +42,7 @@ classdef MimSaveImage < MimGuiPlugin
         end
         
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded;
+            enabled = gui_app.IsDatasetLoaded();
         end
         
         function is_selected = IsSelected(gui_app)

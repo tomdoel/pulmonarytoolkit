@@ -32,7 +32,7 @@ classdef MimSaveEdited < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.GetMode.SaveEdit;
+            gui_app.GetMode.SaveEdit();
         end
         
         function enabled = IsEnabled(gui_app)
