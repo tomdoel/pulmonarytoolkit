@@ -141,6 +141,10 @@ classdef MimDatasetCallback < handle
 
         function RecordNewFileAdded(obj, plugin_name, file_path, file_name, description, varargin)
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).RecordNewFileAdded(plugin_name, file_path, file_name, description, obj.Reporting)
-        end        
+        end
+        
+        function contexts = GetAllContextsForManualSegmentations(obj, varargin)
+            contexts = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetAllContextsForManualSegmentations(obj.DatasetStack, obj.Reporting);
+        end
     end
 end

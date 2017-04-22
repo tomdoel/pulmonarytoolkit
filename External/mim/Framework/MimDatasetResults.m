@@ -122,7 +122,7 @@ classdef MimDatasetResults < handle
                     if numel(context_list) == 1
                         result = combined_result.GetResult;
                     else
-                        result.(char(next_output_context)) = combined_result.GetResult;
+                        result.(strrep(char(next_output_context), '.', '_')) = combined_result.GetResult;
                     end
 
                     % Note for simplicity we return only one output image and
@@ -448,5 +448,21 @@ classdef MimDatasetResults < handle
         function RecordNewFileAdded(obj, plugin_name, file_path, file_name, description, reporting)
             obj.OutputFolder.RecordNewFileAdded(plugin_name, file_path, file_name, description, reporting)
         end
+        
+        function contexts = GetAllContextsForManualSegmentations(obj, dataset_stack, reporting)
+            segmentation_list = obj.GetListOfManualSegmentations();
+            contexts = {};
+            for next_segmentation = segmentation_list
+                segmentation_name = next_segmentation{1}.Second;
+                segmentation = obj.LoadManualSegmentation(segmentation_name, dataset_stack, reporting);
+                labels = setdiff(unique(segmentation.RawImage(:)), 0);
+                if ~isempty(labels)
+                    for label = labels'
+                        contexts{end + 1} = [segmentation_name '.' int2str(label)];
+                    end
+                end
+            end
+        end
+        
     end
 end

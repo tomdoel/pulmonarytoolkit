@@ -101,7 +101,19 @@ classdef MimImageTemplates < CoreBaseClass
                     end
                     template.ChangeRawImage(template_raw);
                 else
-                    reporting.Error('MimImageTemplates:UnknownContext', 'Context not recogised');
+                    [context_prefix, context_suffix] = CoreTextUtilities.SplitAtLastDelimiter(context, '.');
+                    if obj.DatasetDiskCache.ManualSegmentationExists(context_prefix, reporting)
+                        label_value = str2double(context_suffix);
+                        template = obj.DatasetDiskCache.LoadManualSegmentation(context_prefix, reporting);
+                        template = template.Copy;
+                        template_raw = template.RawImage;
+                        if isnumeric(template_raw)
+                            template_raw = template_raw == label_value;
+                        end
+                        template.ChangeRawImage(template_raw);
+                    else                
+                        reporting.Error('MimImageTemplates:UnknownContext', 'Context not recogised');
+                    end
                 end
             end
         end

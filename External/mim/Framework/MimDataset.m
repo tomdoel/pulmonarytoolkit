@@ -388,5 +388,9 @@ classdef MimDataset < CoreBaseClass
             % will allow any listening gui to update if necessary
             obj.notify('ManualSegmentationsChanged', CoreEventData(event_data.Data));
         end
+        
+        function contexts = GetAllContextsForManualSegmentations(obj, varargin)
+            contexts = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetAllContextsForManualSegmentations(obj.DatasetStack, obj.Reporting);
+        end
     end
 end

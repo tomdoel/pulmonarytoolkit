@@ -83,7 +83,13 @@ classdef MimContextHierarchy < CoreBaseClass
                     if obj.DiskCache.ManualSegmentationExists(char(next_output_context), reporting)
                         context_list{end + 1} = next_output_context;
                     else
-                        reporting.Error('MimContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
+                        % Allow contexts with specific label indices
+                        [context_prefix, context_suffix] = CoreTextUtilities.SplitAtLastDelimiter(char(next_output_context), '.');
+                        if obj.DiskCache.ManualSegmentationExists(context_prefix, reporting)
+                            context_list{end + 1} = next_output_context;
+                        else
+                            reporting.Error('MimContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
+                        end
                     end
                 end
             end            

@@ -179,7 +179,7 @@ classdef MimDatasetCacheSelector < handle
             % Deletes manual segmentation results
             
             obj.ManualSegmentationsDiskCache.DeleteFileForAllContexts(segmentation_name, reporting);
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, [], MimCacheType.Manual, reporting);
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(segmentation_name, [], MimCacheType.Manual, reporting);
             obj.NotifyManualSegmentationsChanged(segmentation_name);
         end
         
