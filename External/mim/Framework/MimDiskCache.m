@@ -177,7 +177,6 @@ classdef MimDiskCache < handle
             end
         end
 
-        
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
             % Remove all results files for this dataset. Does not remove certain
             % files such as dataset info and manually-created marker files, unless

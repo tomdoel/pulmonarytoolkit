@@ -223,28 +223,42 @@ classdef MimDatasetResults < handle
             data = obj.DatasetDiskCache.LoadData(name, reporting);
         end
         
-        function SaveMarkerPoints(obj, name, data, reporting)
+        function SaveMarkerPoints(obj, name, data, dataset_stack, reporting)
             % Save marker points as a cache file associated with this dataset
-        
-            obj.DatasetDiskCache.SaveMarkerPoints(name, data, reporting);
+            
+            dataset_uid = obj.ImageInfo.ImageUid;
+            
+            try
+                obj.DependencyTracker.SaveMarkerPoints(name, data, dataset_uid, reporting);            
+            catch ex
+                dataset_stack.ClearStack;
+                rethrow(ex);
+            end
         end
         
-        function data = LoadMarkerPoints(obj, name, reporting)
+        function data = LoadMarkerPoints(obj, name, dataset_stack, reporting)
             % Load data from a cache file associated with this dataset
         
-            data = obj.DatasetDiskCache.LoadMarkerPoints(name, reporting);
+            data = obj.DependencyTracker.LoadMarkerPoints(name, dataset_stack, reporting);
         end
         
-        function SaveManualSegmentation(obj, name, data, reporting)
+        function SaveManualSegmentation(obj, name, data, dataset_stack, reporting)
             % Save manual segmentation as a cache file associated with this dataset
-        
-            obj.DatasetDiskCache.SaveManualSegmentation(name, data, reporting);
+            
+            dataset_uid = obj.ImageInfo.ImageUid;
+            
+            try
+                obj.DependencyTracker.SaveManualSegmentation(name, data, dataset_uid, reporting);
+            catch ex
+                dataset_stack.ClearStack;
+                rethrow(ex);
+            end
         end
         
-        function data = LoadManualSegmentation(obj, name, reporting)
+        function data = LoadManualSegmentation(obj, name, dataset_stack, reporting)
             % Load data from a cache file associated with this dataset
         
-            data = obj.DatasetDiskCache.LoadManualSegmentation(name, reporting);
+            data = obj.DependencyTracker.LoadManualSegmentation(name, dataset_stack, reporting);
         end
         
         function edited_result = GetDefaultEditedResult(obj, plugin_name, dataset_stack, context, reporting)

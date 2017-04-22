@@ -27,6 +27,8 @@ classdef MimDatasetCacheSelector < handle
         MarkersDiskCache % Stores marker points
         FrameworkDatasetDiskCache % Stores framework cache files that are stored for each dataset
         FrameworkAppDef
+        
+        CacheMap
     end
     
     events
@@ -47,6 +49,13 @@ classdef MimDatasetCacheSelector < handle
             obj.EditedResultsDiskCache = MimDiskCache(directories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
             obj.MarkersDiskCache = MimDiskCache(directories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
             obj.FrameworkDatasetDiskCache = MimDiskCache(directories.GetFrameworkDatasetCacheDirectory, dataset_uid, obj.Config, false, reporting);
+
+            obj.CacheMap = containers.Map;
+            obj.CacheMap(char(MimCacheType.Results)) = obj.ResultsDiskAndMemoryCache;
+            obj.CacheMap(char(MimCacheType.Edited)) = obj.EditedResultsDiskCache;
+            obj.CacheMap(char(MimCacheType.Markers)) = obj.MarkersDiskCache;
+            obj.CacheMap(char(MimCacheType.Manual)) = obj.ManualSegmentationsDiskCache;
+            obj.CacheMap(char(MimCacheType.Framework)) = obj.FrameworkDatasetDiskCache;
             
             obj.LoadCachedPluginResultsFile(reporting);
         end
@@ -61,11 +70,11 @@ classdef MimDatasetCacheSelector < handle
             % Stores a plugin result in the disk cache and updates cached dependency
             % information
 
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, false, reporting);
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, MimCacheType.Results, reporting);
             if ~isempty(result)
                 obj.ResultsDiskAndMemoryCache.SaveWithInfo(plugin_name, result, cache_info, context, disk_cache_policy, memory_cache_policy, reporting);
             end
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, false, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, MimCacheType.Results, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
@@ -85,9 +94,9 @@ classdef MimDatasetCacheSelector < handle
             % Stores a plugin result after semi-automatic editing in the edited
             % results disk cache and updates cached dependency information
         
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, true, reporting);
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, MimCacheType.Edited, reporting);
             obj.EditedResultsDiskCache.SaveWithInfo(plugin_name, edited_result, cache_info, context, MimCachePolicy.Permanent, reporting);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, true, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, MimCacheType.Edited, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
         end
         
@@ -100,7 +109,7 @@ classdef MimDatasetCacheSelector < handle
             
             dir_list = obj.EditedResultsDiskCache.DeleteFileForAllContexts(plugin_name, reporting);
             for context = dir_list
-                obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context{1}, true, reporting);
+                obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context{1}, MimCacheType.Edited, reporting);
             end
         end
         
@@ -112,7 +121,7 @@ classdef MimDatasetCacheSelector < handle
             % Updates the results cache if the existance of an edited
             % result has changed
             
-            obj.PluginResultsInfo.UpdateEditedResults(plugin_name, cache_info, context, reporting);
+            obj.PluginResultsInfo.UpdateCachedPluginInfo(plugin_name, cache_info, context, MimCacheType.Edited, reporting);
         end
         
         function value = LoadData(obj, data_filename, reporting)
@@ -138,16 +147,19 @@ classdef MimDatasetCacheSelector < handle
             obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], MimStorageFormat.Mat, reporting);
         end
         
-        function value = LoadManualSegmentation(obj, filename, reporting)
+        function [value, cache_info] = LoadManualSegmentation(obj, filename, reporting)
             % Loads a manual segmentation data associated with this dataset from the cache
             
-            value = obj.ManualSegmentationsDiskCache.Load(filename, [], reporting);
+            [value, cache_info] = obj.ManualSegmentationsDiskCache.Load(filename, [], reporting);
         end
         
-        function SaveManualSegmentation(obj, name, value, reporting)
+        function SaveManualSegmentation(obj, name, value, cache_info, reporting)
             % Saves a manual segmentation associated with this dataset to the cache
             
-            obj.ManualSegmentationsDiskCache.Save(name, value, [], MimStorageFormat.Mat, reporting);
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(name, [], MimCacheType.Manual, reporting);
+            obj.ManualSegmentationsDiskCache.SaveWithInfo(name, value, cache_info, [], MimCachePolicy.Permanent, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(name, cache_info, [], MimCacheType.Manual, reporting);
+            obj.SaveCachedPluginInfoFile(reporting);
             obj.NotifyManualSegmentationsChanged(name);
         end
         
@@ -167,19 +179,23 @@ classdef MimDatasetCacheSelector < handle
             % Deletes manual segmentation results
             
             obj.ManualSegmentationsDiskCache.DeleteFileForAllContexts(segmentation_name, reporting);
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, [], MimCacheType.Manual, reporting);
             obj.NotifyManualSegmentationsChanged(segmentation_name);
         end
         
-        function value = LoadMarkerPoints(obj, filename, reporting)
+        function [value, cache_info] = LoadMarkerPoints(obj, filename, reporting)
             % Loads marker points associated with this dataset from the cache
             
-            value = obj.MarkersDiskCache.Load(filename, [], reporting);
+            [value, cache_info] = obj.MarkersDiskCache.Load(filename, [], reporting);
         end
         
-        function SaveMarkerPoints(obj, data_filename, value, reporting)
+        function SaveMarkerPoints(obj, data_filename, value, cache_info, reporting)
             % Saves marker points associated with this dataset to the cache
             
-            obj.MarkersDiskCache.Save(data_filename, value, [], MimStorageFormat.Mat, reporting);
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(data_filename, [], MimCacheType.Markers, reporting);
+            obj.MarkersDiskCache.SaveWithInfo(data_filename, value, cache_info, [], MimCachePolicy.Permanent, reporting);
+            obj.PluginResultsInfo.AddCachedPluginInfo(data_filename, cache_info, [], MimCacheType.Markers, reporting);
+            obj.SaveCachedPluginInfoFile(reporting);
             obj.NotifyMarkersChanged(data_filename);
         end
         
@@ -199,19 +215,13 @@ classdef MimDatasetCacheSelector < handle
             % Deletes marker set
             
             obj.MarkersDiskCache.DeleteFileForAllContexts(name, reporting);
+            obj.PluginResultsInfo.DeleteCachedPluginInfo(name, [], MimCacheType.Markers, reporting);
             obj.NotifyMarkersChanged(name);
         end
         
         function Delete(obj, reporting)
             obj.ResultsDiskAndMemoryCache.Delete(reporting);
             obj.FrameworkDatasetDiskCache.Delete(reporting);
-        
-        function CachePluginInfo(obj, plugin_name, cache_info, context, is_edited, reporting)
-            % Caches Dependency information
-            
-            obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, is_edited, reporting);
-            obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, is_edited, reporting);
-            obj.SaveCachedPluginInfoFile(reporting);
         end
         
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
@@ -233,10 +243,14 @@ classdef MimDatasetCacheSelector < handle
     end
     
     methods (Access = private)
+        function cache = GetCache(obj, cache_enum)
+            cache = obj.CacheMap(char(cache_enum));
+        end
+        
         function LoadCachedPluginResultsFile(obj, reporting)
             cached_plugin_info = obj.LoadData(obj.Config.CachedPluginInfoFileName, reporting);
             if isempty(cached_plugin_info)
-                obj.PluginResultsInfo = obj.FrameworkAppDef.GetClassFactory.CreatePluginResultsInfo;
+                obj.PluginResultsInfo = obj.FrameworkAppDef.GetClassFactory.CreatePluginResultsInfo();
             else                
                 if ~isa(cached_plugin_info, 'MimPluginResultsInfo')
                     reporting.Error('MimDatasetCacheSelector:UnrecognisedFormat', 'The cached plugin info is not of the recognised class type');

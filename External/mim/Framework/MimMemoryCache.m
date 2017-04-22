@@ -62,6 +62,16 @@ classdef MimMemoryCache < handle
             obj.TemporaryKeys = [];
         end
 
+        function DeleteCacheFile(obj, name, context, reporting)
+            key = MimMemoryCache.GetKey(name, context);
+            if obj.MemoryCacheMap.isKey(key)
+                obj.MemoryCacheMap.remove(key);
+            end
+            if obj.TemporaryKeys.isKey(key)
+                obj.TemporaryKeys.remove(key);
+            end
+        end
+
         function RemoveAllCachedFiles(obj, ~, reporting)
             % Clears the cache
             

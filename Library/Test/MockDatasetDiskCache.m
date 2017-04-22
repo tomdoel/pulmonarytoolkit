@@ -39,10 +39,6 @@ classdef MockDatasetDiskCache < handle
         function SavePluginResult(obj, plugin_name, result, cache_info, context, disk_cache_policy, memory_cache_policy, reporting)
         end
         
-        % Caches Dependency information
-        function CachePluginInfo(obj, plugin_name, cache_info, context, reporting)
-        end
-        
         % Saves additional data associated with this dataset to the cache
         function SaveData(obj, data_filename, value, reporting)
             obj.StoredData(data_filename) = value;

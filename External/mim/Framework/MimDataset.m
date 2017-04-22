@@ -184,21 +184,21 @@ classdef MimDataset < CoreBaseClass
         function SaveManualSegmentation(obj, name, data, varargin)
             % Save data as a cache file associated with this dataset
             obj.PreCallTidy;
-            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveManualSegmentation(name, data, obj.Reporting);
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveManualSegmentation(name, data, obj.DatasetStack, obj.Reporting);
             obj.PostCallTidy;
         end
 
         function data = LoadManualSegmentation(obj, name, varargin)
             % Load data from a cache file associated with this dataset
             obj.PreCallTidy;
-            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadManualSegmentation(name, obj.Reporting);
+            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadManualSegmentation(name, obj.DatasetStack, obj.Reporting);
             obj.PostCallTidy;
         end
         
         function SaveMarkerPoints(obj, name, data, varargin)
             % Save data as a cache file associated with this dataset
             obj.PreCallTidy;
-            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveMarkerPoints(name, data, obj.Reporting);
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveMarkerPoints(name, data, obj.DatasetStack, obj.Reporting);
             obj.PostCallTidy;
         end
         
@@ -212,7 +212,7 @@ classdef MimDataset < CoreBaseClass
         function data = LoadMarkerPoints(obj, name, varargin)
             % Load data from a cache file associated with this dataset
             obj.PreCallTidy;
-            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadMarkerPoints(name, obj.Reporting);
+            data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadMarkerPoints(name, obj.DatasetStack, obj.Reporting);
             obj.PostCallTidy;
         end
         

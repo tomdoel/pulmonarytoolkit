@@ -561,6 +561,7 @@ classdef MimGuiBase < GemFigure
         
         function LoadSegmentationCallback(obj, segmentation_name)
             wait_dialog = obj.WaitDialogHandle;
+            obj.AutoSaveSegmentation();
             obj.GuiDataset.LoadAndDisplayManualSegmentation(segmentation_name, wait_dialog);
         end
         
@@ -702,9 +703,16 @@ classdef MimGuiBase < GemFigure
         
         function ApplicationClosing(obj)
             obj.MarkerManager.AutoSaveMarkers();
+            obj.AutoSaveSegmentation();
             obj.SaveSettings();
         end
         
+        function AutoSaveSegmentation(obj)
+            if ~isempty(obj.GetCurrentModeName)
+                obj.GetMode.SaveEdit();
+            end
+        end
+
         function ResizeCallback(obj, ~, ~, ~)
             % Executes when figure is resized
             obj.Resize();
@@ -881,7 +889,8 @@ classdef MimGuiBase < GemFigure
         function ClearImages(obj)
             obj.ImagePanel.ImageSliceParameters.UpdateLock = true;
             if obj.GuiDataset.DatasetIsLoaded
-                obj.MarkerManager.AutoSaveMarkers;
+                obj.AutoSaveSegmentation();
+                obj.MarkerManager.AutoSaveMarkers();
                 obj.MarkerManager.ClearMarkers();
                 obj.ImagePanel.BackgroundImage.Reset;
             end
@@ -1034,7 +1043,7 @@ classdef MimGuiBase < GemFigure
                     currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
                     obj.GuiSingleton.GetSettings.RemoveLastMarkerSet(currently_loaded_image_UID, name);
                     obj.LoadDefaultMarkers();
-                    obj.MarkerManager.AutoSaveMarkers;
+                    obj.MarkerManager.AutoSaveMarkers();
                     
                 case 'Don''t delete'
             end
@@ -1056,7 +1065,7 @@ classdef MimGuiBase < GemFigure
 
                 current_marker_set_name = obj.MarkerManager.GetCurrentMarkerSetName();
                 is_current_marker_set = strcmp(current_marker_set_name, old_name);
-                
+
                 if is_current_marker_set
                     obj.MarkerManager.AutoSaveMarkers();
                 end
@@ -1153,6 +1162,7 @@ classdef MimGuiBase < GemFigure
         end
         
         function AddManualSegmentation(obj)
+            obj.AutoSaveSegmentation();
             name = inputdlg('Please enter a name for the new manual segmentation you wish to create', 'New manual segmentation');
             if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
                 existing_file_list = CoreContainerUtilities.GetFieldValuesFromSet(obj.GetListOfManualSegmentations(), 'Second');
@@ -1194,7 +1204,7 @@ classdef MimGuiBase < GemFigure
                 
                 if is_current_segentation
                     if isequal(obj.GetCurrentModeName, MimModes.EditMode)
-                        obj.GetMode.SaveEdit();
+                        obj.AutoSaveSegmentation();
                     end
                 end
 
@@ -1230,7 +1240,7 @@ classdef MimGuiBase < GemFigure
                 % before duplicating
                 if is_current_segentation
                     if isequal(obj.GetCurrentModeName, MimModes.EditMode)
-                        obj.GetMode.SaveEdit();
+                        obj.AutoSaveSegmentation();
                     end
                 end                
 

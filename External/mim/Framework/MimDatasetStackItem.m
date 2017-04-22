@@ -22,6 +22,8 @@ classdef MimDatasetStackItem < handle
         IgnoreDependencyChecks % Certain types of plugin do not cached their results and so are exempt from dependency checking
         DependencyList         % Current list of plugin results this plugin depends on
         IsEdited
+        IsManual
+        IsMarkerSet
         Schema                 % The disk cache version
     end
     
@@ -49,6 +51,8 @@ classdef MimDatasetStackItem < handle
                 obj.IgnoreDependencyChecks = ignore_dependency_checks;
                 obj.Schema = obj.DiskCacheSchema;
                 obj.IsEdited = false;
+                obj.IsManual = false;
+                obj.IsMarkerSet = false;
 
                 if start_timer
                     obj.ExecutionTimer = MimTimer(reporting);
@@ -74,6 +78,14 @@ classdef MimDatasetStackItem < handle
         
         function MarkEdited(obj)
             obj.IsEdited = true;
+        end
+        
+        function MarkManual(obj)
+            obj.IsManual = true;
+        end
+        
+        function MarkMarkerSet(obj)
+            obj.IsMarkerSet = true;
         end
     end
     
