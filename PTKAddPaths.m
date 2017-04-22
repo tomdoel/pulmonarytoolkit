@@ -18,6 +18,9 @@ function PTKAddPaths(varargin)
     [path_root, ~, ~] = fileparts(full_path);
     cached_pathname = [path_root '.' PTKAddPaths_Version_Number];
     
+    % We force a class reset if the paths have changed since the last run
+    clear_classes = ~isempty(PTK_PathsHaveBeenSet) && ~strcmp(PTK_PathsHaveBeenSet, cached_pathname);
+    
     if force || (isempty(PTK_PathsHaveBeenSet) || ~strcmp(PTK_PathsHaveBeenSet, cached_pathname))
         
         path_folders = {};
@@ -135,6 +138,11 @@ function PTKAddPaths(varargin)
                 feval(user_function_name);
             end
         end
+    end
+    
+    if clear_classes
+        close all
+        clear all classes
     end
 end
 
