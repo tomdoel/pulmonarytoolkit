@@ -56,7 +56,9 @@ classdef MimDatasetDiskAndMemoryCache < handle
                 [value, cache_info] = obj.ResultsMemoryCache.Load(plugin_name, context, reporting);
             else
                 [value, cache_info] = obj.ResultsDiskCache.Load(plugin_name, context, reporting);
-                obj.ResultsMemoryCache.SaveWithInfo(plugin_name, value, cache_info, context, memory_cache_policy, reporting);
+                if ~isempty(value)
+                    obj.ResultsMemoryCache.SaveWithInfo(plugin_name, value, cache_info, context, memory_cache_policy, reporting);
+                end
             end
         end
         
