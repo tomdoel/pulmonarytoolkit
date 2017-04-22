@@ -70,8 +70,8 @@ classdef MimMemoryCache < handle
             if obj.MemoryCacheMap.isKey(key)
                 obj.MemoryCacheMap.remove(key);
             end
-            if obj.TemporaryKeys.isKey(key)
-                obj.TemporaryKeys.remove(key);
+            if any(ismember(obj.TemporaryKeys, key))
+                obj.TemporaryKeys(ismember(obj.TemporaryKeys, keys)) = [];
             end
         end
 
