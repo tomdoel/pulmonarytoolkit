@@ -21,8 +21,7 @@ classdef MimDatasetCacheSelector < handle
         Config
         PluginResultsInfo
         
-        ResultsDiskCache % Stores automatically generated plugin results for internal use
-        ResultsMemoryCache % Stores automatically generated plugin results for internal use
+        ResultsDiskAndMemoryCache % Stores automatically generated plugin results for internal use
         EditedResultsDiskCache % Stores manual corrections to results
         ManualSegmentationsDiskCache % Stores manual segmentations
         MarkersDiskCache % Stores marker points
@@ -44,8 +43,7 @@ classdef MimDatasetCacheSelector < handle
             obj.FrameworkAppDef = framework_app_def;
             directories = framework_app_def.GetFrameworkDirectories;
             obj.ManualSegmentationsDiskCache = MimDiskCache(directories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
-            obj.ResultsDiskCache = MimDiskCache(directories.GetCacheDirectory, dataset_uid, obj.Config, false, reporting);
-            obj.ResultsMemoryCache = MimMemoryCache(reporting);
+            obj.ResultsDiskAndMemoryCache = MimDatasetDiskAndMemoryCache(dataset_uid, framework_app_def, reporting);
             obj.EditedResultsDiskCache = MimDiskCache(directories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
             obj.MarkersDiskCache = MimDiskCache(directories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
             obj.FrameworkDatasetDiskCache = MimDiskCache(directories.GetFrameworkDatasetCacheDirectory, dataset_uid, obj.Config, false, reporting);
@@ -56,12 +54,7 @@ classdef MimDatasetCacheSelector < handle
         function [value, cache_info] = LoadPluginResult(obj, plugin_name, context, memory_cache_policy, reporting)
             % Fetches a cached result for a plugin
             
-            if obj.ResultsMemoryCache.Exists(plugin_name, context, reporting)
-                [value, cache_info] = obj.ResultsMemoryCache.Load(plugin_name, context, reporting);
-            else
-                [value, cache_info] = obj.ResultsDiskCache.Load(plugin_name, context, reporting);
-                obj.ResultsMemoryCache.SaveWithInfo(plugin_name, value, cache_info, context, memory_cache_policy, reporting);
-            end
+            [value, cache_info] = obj.ResultsDiskAndMemoryCache.Load(plugin_name, context, memory_cache_policy, reporting);
         end
         
         function SavePluginResult(obj, plugin_name, result, cache_info, context, disk_cache_policy, memory_cache_policy, reporting)
@@ -70,8 +63,7 @@ classdef MimDatasetCacheSelector < handle
 
             obj.PluginResultsInfo.DeleteCachedPluginInfo(plugin_name, context, false, reporting);
             if ~isempty(result)
-                obj.ResultsDiskCache.SaveWithInfo(plugin_name, result, cache_info, context, disk_cache_policy, reporting);
-                obj.ResultsMemoryCache.SaveWithInfo(plugin_name, result, cache_info, context, memory_cache_policy, reporting);
+                obj.ResultsDiskAndMemoryCache.SaveWithInfo(plugin_name, result, cache_info, context, disk_cache_policy, memory_cache_policy, reporting);
             end
             obj.PluginResultsInfo.AddCachedPluginInfo(plugin_name, cache_info, context, false, reporting);
             obj.SaveCachedPluginInfoFile(reporting);
@@ -80,7 +72,7 @@ classdef MimDatasetCacheSelector < handle
         function cache_path = GetCachePath(obj, ~)
             % Returns the path to the plugin results cache
             
-           cache_path = obj.ResultsDiskCache.CachePath;
+           cache_path = obj.ResultsDiskAndMemoryCache.GetCachePath();
         end
         
         function [value, cache_info] = LoadEditedPluginResult(obj, plugin_name, context, reporting)
@@ -130,11 +122,11 @@ classdef MimDatasetCacheSelector < handle
             % the same folder as the plugin results cache files. If we find
             % them here, load them and also move them to the framework
             % cache folder for this dataset.
-            if ~obj.FrameworkDatasetDiskCache.Exists(data_filename, [], reporting) && obj.ResultsDiskCache.Exists(data_filename, [], reporting)
+            if ~obj.FrameworkDatasetDiskCache.Exists(data_filename, [], reporting) && obj.ResultsDiskAndMemoryCache.Exists(data_filename, [], reporting)
                 reporting.Log(['Moving framework cache file to framework cache: ' data_filename]);
-                value = obj.ResultsDiskCache.Load(data_filename, [], reporting);
+                value = obj.ResultsDiskAndMemoryCache.Load(data_filename, [], MimCachePolicy.Off, reporting);
                 obj.FrameworkDatasetDiskCache.Save(data_filename, value, [], MimStorageFormat.Mat, reporting);
-                obj.ResultsDiskCache.DeleteCacheFile(data_filename, [], reporting);
+                obj.ResultsDiskAndMemoryCache.DeleteCacheFile(data_filename, [], reporting);
             else        
                 value = obj.FrameworkDatasetDiskCache.Load(data_filename, [], reporting);
             end
@@ -211,10 +203,8 @@ classdef MimDatasetCacheSelector < handle
         end
         
         function Delete(obj, reporting)
-            obj.ResultsMemoryCache.Delete(reporting);
+            obj.ResultsDiskAndMemoryCache.Delete(reporting);
             obj.FrameworkDatasetDiskCache.Delete(reporting);
-            obj.ResultsDiskCache.Delete(reporting);
-        end
         
         function CachePluginInfo(obj, plugin_name, cache_info, context, is_edited, reporting)
             % Caches Dependency information
@@ -225,13 +215,11 @@ classdef MimDatasetCacheSelector < handle
         end
         
         function RemoveAllCachedFiles(obj, remove_framework_files, reporting)
-            obj.ResultsMemoryCache.RemoveAllCachedFiles(remove_framework_files, reporting);
-            obj.ResultsDiskCache.RemoveAllCachedFiles(remove_framework_files, reporting);
+            obj.ResultsDiskAndMemoryCache.RemoveAllCachedFiles(remove_framework_files, reporting);
         end
         
         function exists = Exists(obj, name, context, reporting)
-            exists = obj.ResultsMemoryCache.Exists(name, context, reporting);
-            exists = exists || obj.ResultsDiskCache.Exists(name, context, reporting);
+            exists = obj.ResultsDiskAndMemoryCache.Exists(name, context, reporting);
             exists = exists || obj.EditedResultsDiskCache.Exists(name, context, reporting);
         end
 
@@ -240,7 +228,7 @@ classdef MimDatasetCacheSelector < handle
         end
         
         function ClearTemporaryMemoryCache(obj)
-            obj.ResultsMemoryCache.ClearTemporaryResults;
+            obj.ResultsDiskAndMemoryCache.ClearTemporaryMemoryCache();
         end
     end
     
