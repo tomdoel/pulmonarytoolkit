@@ -34,6 +34,9 @@ classdef MimMemoryCache < handle
             if obj.Exists(name, context, reporting)
                 cache_item = obj.MemoryCacheMap(MimMemoryCache.GetKey(name, context));
                 result = cache_item.Value;
+                if isa(result, 'PTKImage')
+                    result = result.Copy();
+                end
                 if (nargout > 1)
                     info = cache_item.Info;
                 end
@@ -105,6 +108,16 @@ classdef MimMemoryCache < handle
                     is_temporary = false;
                 otherwise
                     reporting.Error('MimMemoryCache:UnknownCachePolicy', 'The memory cache policy was not recognised.');
+            end
+            
+            % We do not generally save handle types since they could be altered from
+            % outside. But we can deep copy PTKImage types.
+            if cache && ishandle(value)
+                if isa(value, 'PTKImage')
+                    value = value.copy();
+                else
+                    cache = false;
+                end
             end
             
             if cache            
