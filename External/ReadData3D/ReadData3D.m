@@ -179,7 +179,7 @@ functiondir=functiondir(1:end-length(functionname));
 
 % Add the file-reader functions also to the matlab path
 addpath([functiondir '/subfunctions']);
-for i=1:length(data.fileformat), addpath([functiondir '/' data.fileformat(i).folder]); end
+for i=1:length(data.fileformat), addpath(fullfile(functiondir, data.fileformat(i).folder)); end
 
 % Make popuplist file formats
 fileformatcell=cell(1,length(data.fileformat));
