@@ -31,7 +31,7 @@ function PTKVisualiseTreeModel(parent_branch)
     set(gcf, 'Color', 'white');
     set(gca, 'DataAspectRatio', aspect_ratio);
     rotate3d;
-    cm = colormap(PTKSoftwareInfo.Colormap);
+    cm = colormap(CoreSystemUtilities.BackwardsCompatibilityColormap);
     view(-37.5, 30);
     cl = camlight('headlight');
     
