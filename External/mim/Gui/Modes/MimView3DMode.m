@@ -72,6 +72,9 @@ classdef MimView3DMode < handle
             obj.ViewerPanel.SetModes([], []);
         end
         
+        function SaveEdit(obj)
+        end
+
         function MarkOverlayAsUnchanged(obj)
         end        
     end
