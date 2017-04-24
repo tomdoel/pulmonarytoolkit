@@ -23,7 +23,7 @@ function Compile(is_gui)
     scripts = GetListOfScripts;
     gui_plugins = GetListOfGuiPlugins;
     
-    dirs_to_include = {'bin', 'External', 'Framework', 'Plugins', 'Scripts'};
+    dirs_to_include = {'bin'};
     if is_gui
         dirs_to_include{end + 1} = 'Gui';
     end
@@ -74,7 +74,7 @@ function temporary_file = CreateTemporaryCompileOptionsFile(dirs_to_include, mai
     end
     for lib_function = CoreDiskUtilities.GetDirectoryFileList(fullfile(GetBasePath, 'Library'), '*.m')
         next_lib_fun = lib_function{1};
-        file_entries{end + 1} = ['-a ' fullfile(GetBasePath, 'Library') '/' next_lib_fun];
+        file_entries{end + 1} = ['-a ' fullfile(GetBasePath, 'Library', next_lib_fun)];
     end
     for lib_dir = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(GetBasePath, 'Library'))
         next_lib_dir = lib_dir{1}.First;
