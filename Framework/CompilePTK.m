@@ -21,7 +21,7 @@ function Compile(is_gui)
 
     plugins = GetListOfPlugins;
     scripts = GetListOfScripts;
-    gui_plugins= PTKDirectories.GetListOfGuiPlugins;
+    gui_plugins = GetListOfGuiPlugins;
     
     dirs_to_include = {'bin', 'Contexts', 'External', 'Framework', 'Plugins', 'Scripts', 'SharedPlugins'};
     if is_gui
@@ -110,10 +110,27 @@ function RestoreMatlabFilesInMexFolder
     end
 end
 
-function plugin_name_list = GetListOfPlugins
-    shared_plugins = GetListOfSharedPlugins;
-    app_plugins = GetListOfAppPlugins;
-    plugin_name_list = horzcat(shared_plugins, app_plugins);
+function plugin_name_list = GetListOfPlugins(obj)
+    % Obtains a list of all plugins available for this app
+    app_def = PTKAppDef();
+    plugin_name_list = {};
+    plugins_folders = app_def.GetListOfPluginsFolders();
+    for folder = plugins_folders
+        plugin_names = CoreDiskUtilities.GetAllMatlabFilesInFolders(CoreDiskUtilities.GetRecursiveListOfDirectories(folder{1}));
+        plugin_name_list = horzcat(plugin_name_list, plugin_names);
+    end
+end
+
+function plugin_name_list = GetListOfGuiPlugins(obj)
+    % Obtains a list of all Gui plugins available for this app
+
+    app_def = PTKAppDef();
+    plugin_name_list = {};
+    plugins_folders = app_def.GetListOfGuiPluginsFolders();
+    for folder = plugins_folders
+        plugin_names = CoreDiskUtilities.GetAllMatlabFilesInFolders(CoreDiskUtilities.GetRecursiveListOfDirectories(folder{1}));
+        plugin_name_list = horzcat(plugin_name_list, plugin_names);
+    end
 end
 
 function plugin_name_list = GetListOfScripts
@@ -122,22 +139,6 @@ end
 
 function plugin_name_list = GetListOfScriptsFolders
     plugin_name_list = CoreDiskUtilities.GetRecursiveListOfDirectories(GetScriptsPath);
-end
-
-function plugin_name_list = GetListOfSharedPlugins
-    plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(GetListOfSharedPluginFolders);
-end
-
-function plugin_folders = GetListOfSharedPluginFolders
-    plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(GetSharedPluginsPath);
-end
-
-function plugin_name_list = GetListOfAppPlugins
-    plugin_name_list = CoreDiskUtilities.GetAllMatlabFilesInFolders(GetListOfAppPluginFolders);
-end
-
-function plugin_folders = GetListOfAppPluginFolders
-    plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(GetPluginsPath);
 end
 
 function base_path = GetBasePath
@@ -157,18 +158,6 @@ function plugins_path = GetCompiledMexFilesPath
     [path_root, ~, ~] = fileparts(full_path);
     plugins_path = fullfile(path_root, '..', 'bin');
 end
-
-function plugins_path = GetPluginsPath
-    full_path = mfilename('fullpath');
-    [path_root, ~, ~] = fileparts(full_path);
-    plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.PluginDirectoryName);
-end
-
-function plugins_path = GetSharedPluginsPath
-    full_path = mfilename('fullpath');
-    [path_root, ~, ~] = fileparts(full_path);
-    plugins_path = fullfile(path_root, '..', PTKSoftwareInfo.SharedPluginDirectoryName);
-end        
 
 function plugins_path = GetScriptsPath
     full_path = mfilename('fullpath');
