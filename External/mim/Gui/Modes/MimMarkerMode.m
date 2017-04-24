@@ -55,5 +55,8 @@ classdef MimMarkerMode < handle
 
         function MarkOverlayAsUnchanged(obj)
         end
+                        
+        function SaveEdit(obj)
+        end
     end
 end
