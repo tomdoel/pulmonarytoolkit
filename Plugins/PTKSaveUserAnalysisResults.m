@@ -40,9 +40,26 @@ properties
             patient_name = dataset.GetPatientName();
             uid = image_info.ImageUid;
             contexts = dataset.GetAllContextsForManualSegmentations();
-            results = dataset.GetResult('PTKManualSegmentationDensityAnalysis', contexts);
-            table = PTKConvertMetricsToTable(results, patient_name, uid, CoreReportingDefault());            
-            dataset.SaveTableAsCSV('PTKSaveUserAnalysisResults', 'User-defined analysis', 'ManualSegmentationResults', 'Analysis for manually segmented regions', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
+            if ~isempty(contexts)
+                results_in = dataset.GetResult('PTKManualSegmentationDensityAnalysis', contexts);
+                if isstruct(results_in)
+                    % For multiple segmentations and/or labels we get
+                    % multiple contexts and therefore multiple results;
+                    % these are returned as fields of a struct
+                    results = results_in;
+                else
+                    % This deals with the situation where there is only one
+                    % context, in which case the PTK API will return the
+                    % result rather than a structure containing the
+                    % results as fields. But to label the tabel correctly
+                    % we need to assemble into a struct
+                    results = struct;
+                    results.(strrep(char(contexts{1}), '.', '_')) = results_in;
+                end
+
+                table = PTKConvertMetricsToTable(results, patient_name, uid, CoreReportingDefault());            
+                dataset.SaveTableAsCSV('PTKSaveUserAnalysisResults', 'User-defined analysis', 'ManualSegmentationResults', 'Analysis for manually segmented regions', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
+            end
         end
     end
 end    
