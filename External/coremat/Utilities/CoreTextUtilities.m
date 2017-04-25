@@ -96,8 +96,15 @@ classdef CoreTextUtilities < handle
             
             if isempty(string)
                 adjustedString = string;
-            else
+            elseif ischar(string) 
                 adjustedString = strtrim(string(uint8(string) >= 32));
+            elseif isstruct(string)
+                adjustedString = struct;
+                for field = fieldnames(string)
+                    adjustedString.(field{1}) = CoreTextUtilities.RemoveNonprintableCharactersAndStrip(string.(field{1}));
+                end
+            else
+                adjustedString = string;
             end
         end
         
