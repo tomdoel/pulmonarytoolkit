@@ -81,7 +81,7 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
     % If there is only one large connected component, the lungs are connected,
     % so we attempt to disconnect them using morphological operations
     while (length(largest_areas_indices) < 2) || (largest_area_numpixels(2) < minimum_required_voxels_per_lung)
-        if (iter_number > max_iter)
+        if (iter_number >= max_iter)
             success = false;
             return;
         end
