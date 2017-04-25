@@ -23,7 +23,7 @@ function Compile(is_gui)
     scripts = GetListOfScripts;
     gui_plugins = GetListOfGuiPlugins;
     
-    dirs_to_include = {'bin', 'External', 'Framework', 'Plugins', 'Scripts'};
+    dirs_to_include = {'bin', fullfile('External', 'mim'), 'Framework', 'Plugins', 'Scripts'};
     if is_gui
         dirs_to_include{end + 1} = 'Gui';
     end
