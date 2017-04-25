@@ -55,6 +55,8 @@ function field_map = GetFieldMap(results, table, context_mapping_function)
             table.AddContextName(field_name, visible_field_name);
         end  
     else
+        visible_field_name = context_mapping_function('');
+        table.AddContextName('', visible_field_name);
         field_map('') = results;
     end
 end
