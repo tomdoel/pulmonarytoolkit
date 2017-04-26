@@ -1,4 +1,4 @@
-classdef PTKImportAndAnalyse < PTKScript
+classdef PTKImportAndAnalyse < MimScript
     % PTKImportAndAnalyse. Script for importing and analysing a number of
     % datasets
     %
