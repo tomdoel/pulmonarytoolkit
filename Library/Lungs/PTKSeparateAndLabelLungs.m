@@ -85,7 +85,6 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
             success = false;
             return;
         end
-        disp(['Opening:' num2str(iter_number)]);
         iter_number = iter_number + 1;
         reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
         opening_size = opening_sizes(iter_number);
