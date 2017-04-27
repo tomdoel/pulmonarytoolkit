@@ -39,7 +39,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
                 [success, max_iter] = SeparateLungs(both_lungs_slice, lung_roi_slice, unclosed_lungs_slice, true, reporting);
                 if ~success
                     any_slice_failure = true;
-                    reporting.ShowMessage('PTKSeparateAndLabelLungs:FailureInCoronalSlice', ['Failed to separate left and right lungs in a coronal slice after ' int2str(max_iter) ' opening attempts.']);
+                    reporting.LogVerbose(['Failed to separate left and right lungs in a coronal slice after ' int2str(max_iter) ' opening attempts. Using nearest neighbour interpolation.']);
                     voxels_to_remap.ReplaceImageSlice(both_lungs_slice.RawImage, coronal_index, PTKImageOrientation.Coronal);
                     both_lungs_slice.Clear;
                 end
@@ -50,6 +50,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
         end
         
         if any_slice_failure
+            reporting.Warning('2D lung separation failed in one or more slices. Nearest neighbour interpolation will be used to segment these slices.');
             [~, nearest_index] = bwdist(results.RawImage > 0);
             nearest_value = results.RawImage;
             nearest_value(:) = results.RawImage(nearest_index(:));
@@ -86,7 +87,7 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
             return;
         end
         iter_number = iter_number + 1;
-        reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
+        reporting.LogVerblose(['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
         opening_size = opening_sizes(iter_number);
         image_to_close = both_lungs.Copy;
         image_to_close.BinaryMorph(@imopen, opening_size);
@@ -102,7 +103,7 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
         
     end
     
-%     reporting.ShowMessage('PTKSeparateAndLabelLungs:LungsFound', 'Lung regions found.');
+    reporting.LogVerbose('Lung regions found.');
     
     largest_area_index = largest_areas_indices(1);
     second_largest_area_index = largest_areas_indices(2);
