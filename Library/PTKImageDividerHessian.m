@@ -94,11 +94,11 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     reporting.PushProgress;
     
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
-        reporting.Warning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
+        reporting.ShowWarning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
     end
 
     if dont_calculate_evals && ~isempty(mask)
-        reporting.Warning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently this function does not support a mask when not computing eigenvalues', []);
+        reporting.ShowWarning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently this function does not support a mask when not computing eigenvalues', []);
     end
 
     % Check the input image is of the correct form

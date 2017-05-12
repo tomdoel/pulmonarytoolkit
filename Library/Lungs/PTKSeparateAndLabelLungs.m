@@ -50,7 +50,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
         end
         
         if any_slice_failure
-            reporting.Warning('2D lung separation failed in one or more slices. Nearest neighbour interpolation will be used to segment these slices.');
+            reporting.ShowMessage('PTKSeparateAndLabelLungs:2DSeparationPartialFailure', '2D lung separation failed in one or more slices. Nearest neighbour interpolation will be used to segment these slices.');
             [~, nearest_index] = bwdist(results.RawImage > 0);
             nearest_value = results.RawImage;
             nearest_value(:) = results.RawImage(nearest_index(:));
@@ -87,7 +87,7 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
             return;
         end
         iter_number = iter_number + 1;
-        reporting.LogVerblose(['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
+        reporting.LogVerbose(['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
         opening_size = opening_sizes(iter_number);
         image_to_close = both_lungs.Copy;
         image_to_close.BinaryMorph(@imopen, opening_size);

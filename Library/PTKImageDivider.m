@@ -59,7 +59,7 @@ function filtered_image = PTKImageDivider(image_data, filter_function, mask, gau
     %
 
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
-        reporing.Warning('PTKImageDivider:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
+        reporing.ShowWarning('PTKImageDivider:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
     end
 
     % Check the input image is of the correct form

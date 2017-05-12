@@ -219,7 +219,7 @@ classdef PTKWavefront < handle
                 obj.CompleteThisSegment;
 
                 if isempty(obj.CurrentBranch.GetAcceptedVoxels)
-                    reporting.Warning('PTKWavefront:EmptyBranch', 'Algorithm error - no points in final branch');
+                    reporting.ShowWarning('PTKWavefront:EmptyBranch', 'Algorithm error - no points in final branch');
                 end
                 
             end
