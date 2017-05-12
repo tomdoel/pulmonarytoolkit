@@ -128,6 +128,6 @@ function matches = CompareFieldsInexactMatch(field_name, this_metadata, other_me
     end
     
     % Inexact numeric match
-    matches = max(field_this(:) - field_other(:)) < tolerance;
+    matches = max(abs(field_this(:) - field_other(:))) < tolerance;
 end
 
