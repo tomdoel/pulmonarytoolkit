@@ -63,7 +63,8 @@ function main_image = PTKGetMainRegionExcludingBorder(threshold_image, minimum_r
     end
     
     if numel(results) == 0
-        return; % ToDo
+        main_image = [];
+        obj.Reporting.Error('PTKGetMainRegionExcludingBorder:NoRegionFound', 'No region could be found');
     end
     
     if numel(results) > 1
