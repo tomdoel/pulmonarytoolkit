@@ -8,8 +8,9 @@ function loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, report
     %
     %             loaded_image    a PTKImage containing the 3D volume
     %
-    %             path, filename  specify the location of the DICOM files to
-    %                             load
+    %             image_path      location of the DICOM files to load
+    %
+    %             filenames       a filename string, or cell array of filenames
     %
     %             reporting (optional) - an object implementing CoreReportingInterface
     %                             for reporting progress and warnings
@@ -24,10 +25,15 @@ function loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, report
 
     % Create a reporting object if none was provided
     if nargin < 3
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
-    dicomLibrary = DMFallbackDicomLibrary.getLibrary;
+    % A single filename canbe specified as a string
+    if ischar(filenames)
+        filenames = {filenames};
+    end
+    
+    dicomLibrary = DMFallbackDicomLibrary.getLibrary();
     
     [image_volume_wrapper, representative_metadata, slice_thickness, global_origin_mm] = DMLoadMainImageFromDicomFiles(image_path, filenames, dicomLibrary, reporting);
     

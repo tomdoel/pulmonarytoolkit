@@ -22,8 +22,10 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, 
     %             sorted_positions  Patient positions for each slice in the
     %                             sorted order
     %
-    %             path, filename  specify the location of the DICOM files to
-    %                             load
+    %             path, filenames  specify the location of the DICOM files to
+    %                             load. filenames can be a string for a
+    %                             single filename, or a cell array of
+    %                             strings
     %
     %             dicomLibrary    (Optional) An object implementing
     %                             DMDicomLibraryInterface, used to parse
@@ -54,6 +56,11 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, 
     % Create a library object if none was provided
     if nargin < 3 || isempty(dicomLibrary)
         dicomLibrary = DMDicomLibrary.getLibrary;
+    end
+    
+    % A single filename canbe specified as a string
+    if ischar(filenames)
+        filenames = {filenames};
     end
     
     % Load the metadata from the DICOM images, and group into coherent sequences
