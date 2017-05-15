@@ -29,7 +29,7 @@ classdef PTKFissurenessHessianFactor < PTKPlugin
         ToolTip = 'The part of the fissureness filter which uses Hessian-based analysis'
         Category = 'Fissures'
 
-        AllowResultsToBeCached = true
+        AllowResultsToBeCached = false
         AlwaysRunPlugin = false
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
@@ -40,6 +40,9 @@ classdef PTKFissurenessHessianFactor < PTKPlugin
         GeneratePreview = true
         Visibility = 'Developer'
         Version = 2
+        
+        MemoryCachePolicy = 'Temporary'
+        DiskCachePolicy = 'Off'        
     end
     
     methods (Static)
