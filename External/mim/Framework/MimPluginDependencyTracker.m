@@ -202,7 +202,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
         
             [result, cache_info] = obj.DatasetDiskCache.LoadManualSegmentation(name, reporting);
 
-            % Add the dependencies of the cached result to any other
+            % Add the dependencies of the manual segmentation cache to any other
             % plugins in the callstack
             if ~isempty(result) && ~isempty(cache_info)
                 dependencies = cache_info.DependencyList;
@@ -220,7 +220,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
         
             [result, cache_info] = obj.DatasetDiskCache.LoadMarkerPoints(name, reporting);
 
-            % Add the dependencies of the cached result to any other
+            % Add the dependencies of the cache to any other
             % plugins in the callstack
             if ~isempty(result) && ~isempty(cache_info)
                 dependencies = cache_info.DependencyList;
