@@ -75,6 +75,20 @@ classdef MimPluginResultsInfo < handle
             updated = false;            
         end
         
+        function info_exists = CachedInfoExists(obj, plugin_name, context, cache_type)
+            % Returns true if a dependency entry exists in the cache
+
+            plugin_key = MimPluginResultsInfo.GetKey(plugin_name, context, cache_type);
+            info_exists = obj.ResultsInfo.isKey(plugin_key);
+        end
+        
+        function cached_info = GetCachedInfo(obj, plugin_name, context, cache_type)
+            % Returns the cached dependency information
+
+            plugin_key = MimPluginResultsInfo.GetKey(plugin_name, context, cache_type);
+            cached_info = obj.ResultsInfo(plugin_key);
+        end
+        
         function [valid, edited_key_exists] = CheckDependencyValid(obj, next_dependency, reporting)
             % Checks a given dependency against the cached values to
             % determine if it is valid (ie it depends on the most recent
@@ -104,30 +118,27 @@ classdef MimPluginResultsInfo < handle
                 type_of_dependency = 'plugin';
             end
             
-            plugin_key_nonedited = MimPluginResultsInfo.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Results);
-            plugin_key_edited = MimPluginResultsInfo.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Edited);
-            
-            edited_key_exists = obj.ResultsInfo.isKey(plugin_key_edited);
+            edited_key_exists = obj.CachedInfoExists(next_dependency.PluginName, next_dependency.Context, MimCacheType.Edited);
             
             if is_edited_result
-                plugin_key = plugin_key_edited;
+                cache_type = MimCacheType.Edited;
             elseif is_manual
-                plugin_key = MimPluginResultsInfo.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Manual);
+                cache_type = MimCacheType.Manual;
             elseif is_marker          
-                plugin_key = MimPluginResultsInfo.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Markers);
+                cache_type = MimCacheType.Markers;
             else
-                plugin_key = plugin_key_nonedited;
+                cache_type = MimCacheType.Results;
             end
             
             % The full list should always contain the most recent dependency
             % uid, unless the dependencies file was deleted
-            if ~obj.ResultsInfo.isKey(plugin_key)
+            if ~obj.CachedInfoExists(next_dependency.PluginName, next_dependency.Context, cache_type)
                 reporting.Log(['No dependency record for this ' type_of_dependency ' - forcing re-run.']);
                 valid = false;
                 return;
             end
             
-            current_info = obj.ResultsInfo(plugin_key);
+            current_info = obj.GetCachedInfo(next_dependency.PluginName, next_dependency.Context, cache_type);
             current_dependency = current_info.InstanceIdentifier;
             
             if current_info.IgnoreDependencyChecks
