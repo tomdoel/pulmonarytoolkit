@@ -279,7 +279,78 @@ classdef MimPluginDependencyTracker < CoreBaseClass
         end
         
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
-            [valid, edited_result_exists] = obj.DatasetDiskCache.CheckDependencyValid(next_dependency, reporting);
+            % Checks a given dependency against the cached values to
+            % determine if it is valid (ie it depends on the most recent
+            % computed results)
+            
+            plugin_results_info = obj.DatasetDiskCache.GetPluginResultsInfo();
+
+            if isfield(next_dependency.Attributes, 'IsEditedResult')
+                is_edited_result = next_dependency.Attributes.IsEditedResult;
+            else
+                is_edited_result = false;
+            end
+            
+            if isfield(next_dependency.Attributes, 'IsManualSegmentation')
+                is_manual = next_dependency.Attributes.IsManualSegmentation;
+            else
+                is_manual = false;
+            end
+            
+            if isfield(next_dependency.Attributes, 'IsMarkerSet')
+                is_marker = next_dependency.Attributes.IsMarkerSet;
+            else
+                is_marker = false;
+            end
+            
+            if is_manual
+                type_of_dependency = 'manual segmentation';
+            else
+                type_of_dependency = 'plugin';
+            end
+            
+            edited_result_exists = plugin_results_info.CachedInfoExists(next_dependency.PluginName, next_dependency.Context, MimCacheType.Edited);
+            
+            if is_edited_result
+                cache_type = MimCacheType.Edited;
+            elseif is_manual
+                cache_type = MimCacheType.Manual;
+            elseif is_marker          
+                cache_type = MimCacheType.Markers;
+            else
+                cache_type = MimCacheType.Results;
+            end
+            
+            % The full list should always contain the most recent dependency
+            % uid, unless the dependencies file was deleted
+            if ~plugin_results_info.CachedInfoExists(next_dependency.PluginName, next_dependency.Context, cache_type)
+                reporting.Log(['No dependency record for this ' type_of_dependency ' - forcing re-run.']);
+                valid = false;
+                return;
+            end
+            
+            current_info = plugin_results_info.GetCachedInfo(next_dependency.PluginName, next_dependency.Context, cache_type);
+            current_dependency = current_info.InstanceIdentifier;
+            
+            if current_info.IgnoreDependencyChecks
+                reporting.Log(['Ignoring dependency checks for ' type_of_dependency ' ' next_dependency.PluginName '(' char(next_dependency.Context) ')']);
+            else
+                % Sanity check - this case should never occur
+                if ~strcmp(next_dependency.DatasetUid, current_dependency.DatasetUid)
+                    reporting.Error('MimPluginResultsInfo:DatsetUidError', 'Code error - not matching dataset UID during dependency check');
+                end
+
+                if ~strcmp(next_dependency.Uid, current_dependency.Uid)
+                    reporting.Log('Mismatch in dependency version uids - forcing re-run');
+                    valid = false;
+                    return;
+                else
+                    reporting.LogVerbose(['Dependencies Ok for ' type_of_dependency ' ' next_dependency.PluginName]);
+                end
+            end
+            
+            valid = true;
+        
         end
     end
     

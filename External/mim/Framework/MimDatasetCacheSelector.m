@@ -233,8 +233,8 @@ classdef MimDatasetCacheSelector < handle
             exists = exists || obj.EditedResultsDiskCache.Exists(name, context, reporting);
         end
 
-        function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
-            [valid, edited_result_exists] = obj.PluginResultsInfo.CheckDependencyValid(next_dependency, reporting);
+        function plugin_info = GetPluginResultsInfo(obj)
+            plugin_info = obj.PluginResultsInfo;
         end
         
         function ClearTemporaryMemoryCache(obj)
