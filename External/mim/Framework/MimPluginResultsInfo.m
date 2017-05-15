@@ -39,7 +39,7 @@ classdef MimPluginResultsInfo < handle
         
         function AddCachedPluginInfo(obj, plugin_name, cache_info, context, cache_type, reporting)
             % Adds dependency record for a particular plugin result
-            plugin_key = obj.GetKey(plugin_name, context, cache_type);
+            plugin_key = MimPluginResultsInfo.GetKey(plugin_name, context, cache_type);
             if obj.ResultsInfo.isKey(plugin_key)
                 reporting.Error('MimPluginResultsInfo:CachedInfoAlreadyPresent', 'Cached plugin info already present');
             end
@@ -48,7 +48,7 @@ classdef MimPluginResultsInfo < handle
         
         function DeleteCachedPluginInfo(obj, plugin_name, context, cache_type, ~)
             % Removes the dependency record for a particular plugin result
-            plugin_key = obj.GetKey(plugin_name, context, cache_type);
+            plugin_key = MimPluginResultsInfo.GetKey(plugin_name, context, cache_type);
             if obj.ResultsInfo.isKey(plugin_key)
                 obj.ResultsInfo.remove(plugin_key);
             end
@@ -56,7 +56,7 @@ classdef MimPluginResultsInfo < handle
         
         function updated = UpdateCachedPluginInfo(obj, plugin_name, cache_info, context, cache_type, reporting)
             % Updates the cache info if the existance of the result has changed
-            plugin_key = obj.GetKey(plugin_name, context, cache_type);
+            plugin_key = MimPluginResultsInfo.GetKey(plugin_name, context, cache_type);
             result_exists = ~isempty(cache_info);
             cache_exists = obj.ResultsInfo.isKey(plugin_key);
             
@@ -104,17 +104,17 @@ classdef MimPluginResultsInfo < handle
                 type_of_dependency = 'plugin';
             end
             
-            plugin_key_nonedited = obj.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Results);
-            plugin_key_edited = obj.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Edited);
+            plugin_key_nonedited = MimPluginResultsInfo.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Results);
+            plugin_key_edited = MimPluginResultsInfo.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Edited);
             
             edited_key_exists = obj.ResultsInfo.isKey(plugin_key_edited);
             
             if is_edited_result
                 plugin_key = plugin_key_edited;
             elseif is_manual
-                plugin_key = obj.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Manual);
+                plugin_key = MimPluginResultsInfo.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Manual);
             elseif is_marker          
-                plugin_key = obj.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Markers);
+                plugin_key = MimPluginResultsInfo.GetKey(next_dependency.PluginName, next_dependency.Context, MimCacheType.Markers);
             else
                 plugin_key = plugin_key_nonedited;
             end
