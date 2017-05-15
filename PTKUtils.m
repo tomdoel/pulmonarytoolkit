@@ -26,6 +26,11 @@ classdef (Sealed) PTKUtils < handle
             m = PTKMain();
             m.RebuildDatabase();
         end
+        
+        function DeleteCacheForAllDatasets()
+            m = PTKMain();
+            m.DeleteCacheForAllDatasets();
+        end
     end
     
     methods (Access = private)

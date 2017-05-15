@@ -111,9 +111,19 @@ classdef MimDirectories < CoreBaseClass
         end
         
         function uids = GetUidsOfAllDatasetsInCache(obj)
-            uids_1 = obj.GetUidsOfAllDatasetsInFolder(obj.GetCacheDirectory);
+            uids_1 = obj.GetUidsOfAllDatasetsInFolder(obj.GetCacheDirectory());
             uids_2 = obj.GetUidsOfAllDatasetsInFolder(obj.GetFrameworkDatasetCacheDirectory);
             uids = unique([uids_1, uids_2]);
+        end
+        
+        function DeleteCacheForAllDatasets(obj)
+            % Deletes the entire plugin cache folder for all datasets
+            
+            cache_folder_base = obj.GetCacheDirectory();
+            uid_folders = obj.GetNamesOfAllMimCachesInFolder(cache_folder_base);
+            for uid_folder = uid_folders
+                rmdir(fullfile(cache_folder_base, uid_folder{1}), 's');
+            end
         end
         
         function linking_file_path = GetLinkingCacheFilePath(obj)
@@ -150,6 +160,18 @@ classdef MimDirectories < CoreBaseClass
             for subdir = subdirectories
                 candidate_uid = subdir{1};
                 full_file_name = [folder, filesep, candidate_uid, filesep, obj.Config.ImageInfoCacheName, '.mat'];
+                if 2 == exist(full_file_name, 'file')
+                    uids{end+1} = candidate_uid;
+                end
+            end
+        end
+
+        function uids = GetNamesOfAllMimCachesInFolder(obj, folder)
+            subdirectories = CoreDiskUtilities.GetListOfDirectories(folder);
+            uids = {};
+            for subdir = subdirectories
+                candidate_uid = subdir{1};
+                full_file_name = [folder, filesep, candidate_uid, filesep, obj.Config.SchemaCacheName, '.mat'];
                 if 2 == exist(full_file_name, 'file')
                     uids{end+1} = candidate_uid;
                 end

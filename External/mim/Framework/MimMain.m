@@ -81,6 +81,10 @@ classdef MimMain < CoreBaseClass
             obj.FrameworkSingleton.RebuildDatabase(obj.Reporting);
         end
         
+        function DeleteCacheForAllDatasets(obj)
+            obj.FrameworkAppDef.GetFrameworkDirectories.DeleteCacheForAllDatasets();
+        end
+        
         function dataset_uids = FindDataset(obj, dataset_uid_prefix)
             % Searches for the dataset with this uid. If a dataset exactly 
             % matches, this will be returned.
@@ -217,7 +221,7 @@ classdef MimMain < CoreBaseClass
                 end
                 
                 if ~isempty(dataset_to_delete)
-                    dataset_to_delete.DeleteCacheForThisDataset;
+                    dataset_to_delete.DeleteCacheForThisDataset();
                     delete(dataset_to_delete);
                 end
             end
