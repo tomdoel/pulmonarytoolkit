@@ -42,6 +42,8 @@ classdef MimDatasetCallback < handle
     
     methods
         function obj = MimDatasetCallback(linked_dataset_chooser, dataset_call_stack, default_context, reporting)
+            % Creates a new callback for use when running a plugin
+            
             obj.DatasetStack = dataset_call_stack;
             obj.LinkedDatasetChooser = linked_dataset_chooser;
             obj.DefaultContext = default_context;
@@ -56,8 +58,7 @@ classdef MimDatasetCallback < handle
         end        
 
         function [result, output_image] = GetResult(obj, plugin_name, context, varargin)
-            % RunPlugin: Returns the results of a plugin.
-            % If a valid result is cached on disk,
+            % Returns the results of a plugin. If a valid result is cached on disk,
             % this wil be returned provided all the dependencies are valid.
             % Otherwise the plugin will be executed and the new result returned.
             % The optional context parameter specifies the region of interest to which the output result will be framed.
