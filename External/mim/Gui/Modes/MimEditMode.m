@@ -286,9 +286,9 @@ classdef MimEditMode < handle
                 edited_result.ImageType = current_overlay.ImageType;
                 
                 template = obj.GuiDataset.GetTemplateImage;
-                if ~isequal(template.ImageSize, edited_result.ImageSize)
+                if max(abs(template.ImageSize - edited_result.ImageSize)) > 0.001
                     uiwait(errordlg('The edited results image cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisibleEditName], 'modal'));
-                elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
+                elseif max(abs(template.VoxelSize - edited_result.VoxelSize)) > 0.001
                     uiwait(errordlg('The edited results image cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edited results for ' obj.VisibleEditName], 'modal'));
                 else
                     obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
@@ -323,9 +323,9 @@ classdef MimEditMode < handle
                     edited_result.ImageType = current_overlay.ImageType;
                     
                     template = obj.GuiDataset.GetTemplateImage;
-                    if ~isequal(template.ImageSize, edited_result.ImageSize)
+                    if max(abs(template.ImageSize - edited_result.ImageSize)) > 0.001
                         uiwait(errordlg('The edits cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import edits for ' obj.VisibleEditName], 'modal'));
-                    elseif ~isequal(template.VoxelSize, edited_result.VoxelSize)
+                    elseif max(abs(template.VoxelSize - edited_result.VoxelSize)) > 0.001
                         uiwait(errordlg('The edits cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import edits for ' obj.VisibleEditName], 'modal'));
                     else
                         edited_result.ResizeToMatch(current_overlay);
