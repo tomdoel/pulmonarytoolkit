@@ -33,6 +33,12 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
         reporting.Error('MimLoadOtherFormat:NotEnoughArguments', 'MimLoadOtherFormat requires a minimum of two arguments: the current path and  list of filenames');
     end
 
+    % If a single file has been specified, put it into an array for consistency
+    % with multiple filename syntax
+    if ischar(filenames)
+        filenames = {filenames};
+    end
+
     if isa(filenames, 'CoreFilename')
         path = filenames.Path;
         filenames = filenames.Name;
@@ -41,12 +47,6 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
         filenames = filenames{1}.Name;
     end
     
-    % If a single file has been specified, put it into an array for consistency
-    % with multiple filename syntax
-    if ischar(filenames)
-        filenames = {filenames};
-    end
-
     if nargin < 3
         reporting.ShowWarning('MimLoadOtherFormat:NoStudyUid', 'No study UID was specified - I am going to use the filename.', []);
         study_uid = filenames{1};
