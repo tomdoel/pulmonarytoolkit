@@ -77,6 +77,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('External', 'npReg');
         path_folders{end + 1} = fullfile('External', 'depmat');
         path_folders{end + 1} = fullfile('External', 'MatlabWebSocket', 'src');
+        path_folders{end + 1} = fullfile('External', 'Nifti_tools');        
         path_folders{end + 1} = fullfile('External', 'jsonlab-1.5', 'jsonlab-1.5');
         path_folders{end + 1} = fullfile('External', 'npReg', 'npRegLib');
         path_folders{end + 1} = fullfile('External', 'ReadData3D', 'subfunctions');

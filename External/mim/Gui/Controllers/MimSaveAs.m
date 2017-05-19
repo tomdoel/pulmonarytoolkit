@@ -52,6 +52,7 @@ end
 function [filename, path_name, filter_index] = SaveImageDialogBox(path_name)
     filespec = {'*.dcm', 'DICOM (*.dcm)';
                 '*.mat', 'MATLAB matrix (*.mat)';
+                '*.nii', 'NIFTI (*.nii)';
                 '*.mhd', '8-bit metaheader and raw data (*.mhd)';
                 '*.mhd', '16-bit metaheader and raw data (*.mhd)';
                 };
@@ -75,8 +76,10 @@ function SaveImage(image_data, filename, pathname, filter_index, patient_name, i
             case 2
                 MimSaveAsMatlab(image_data, pathname, filename, reporting);
             case 3
-                MimSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'char', reporting)
+                MimSaveAsNifti(image_data, pathname, filename, reporting);
             case 4
+                MimSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'char', reporting)
+            case 5
                 if MimImageUtilities.IsSigned(image_data)
                     MimSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'short', reporting)
                 else
