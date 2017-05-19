@@ -348,6 +348,14 @@ classdef MimDataset < CoreBaseClass
             is_gas_mri = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).IsGasMRI(obj.DatasetStack, obj.Reporting);
             obj.PostCallTidy;
         end
+        
+        function patient_name = GetPatientName(obj, varargin)
+            % Returns a single string for identifying the patient. The 
+            % format will depend on what information is available in the
+            % file metadata.
+
+            patient_name = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetPatientName(obj.DatasetStack, obj.Reporting);
+        end
     end
     
     methods (Access = private)
