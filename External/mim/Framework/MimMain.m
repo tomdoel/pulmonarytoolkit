@@ -61,7 +61,7 @@ classdef MimMain < CoreBaseClass
             obj.ReportingWithCache = MimReportingWithCache(obj.Reporting);
             obj.FrameworkSingleton = MimFrameworkSingleton.GetFrameworkSingleton(framework_app_def, obj.Reporting);
             
-            bin_directory = framework_app_def.GetBinDirectory;
+            bin_directory = framework_app_def.GetBinDirectory();
             CoreDiskUtilities.CreateDirectoryAndAddPathIfNotExisting(bin_directory);
             files_to_compile = framework_app_def.GetFilesToCompile(reporting);
             obj.FrameworkSingleton.CompileMexFileIfRequired(files_to_compile, bin_directory, obj.Reporting);
@@ -70,7 +70,7 @@ classdef MimMain < CoreBaseClass
         function Recompile(obj)
             % Forces recompilation of mex files
             
-            bin_directory = obj.FrameworkAppDef.GetOutputDirectory;
+            bin_directory = obj.FrameworkAppDef.GetBinDirectory();
             files_to_compile = obj.FrameworkAppDef.GetFilesToCompile(obj.Reporting);
             obj.FrameworkSingleton.Recompile(files_to_compile, bin_directory, obj.Reporting);
         end
