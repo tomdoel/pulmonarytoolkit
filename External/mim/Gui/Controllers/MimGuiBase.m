@@ -339,11 +339,11 @@ classdef MimGuiBase < GemFigure
         
         function SaveOverlayImage(obj)
             patient_name = obj.ImagePanel.BackgroundImage.Title;
-            overlay_image = obj.ImagePanel.OverlayImage.Copy;
-            template = obj.GuiDataset.GetTemplateImage;
+            overlay_image = obj.ImagePanel.OverlayImage.Copy();
+            template = obj.GuiDataset.GetTemplateImage();
             overlay_image.ResizeToMatch(template);
             image_data = overlay_image;
-            path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
+            path_name = obj.GuiSingleton.GetSettings().SaveImagePath;
             
             path_name = MimSaveAs(image_data, patient_name, path_name, true, obj.AppDef.GetDicomMetadata, obj.Reporting);
             if ~isempty(path_name)
