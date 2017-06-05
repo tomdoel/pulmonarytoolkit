@@ -62,6 +62,9 @@ classdef MimDatasetStack < handle
             instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
             cache_info = obj.ClassFactory.CreateDatasetStackItem(instance_identifier, PTKDependencyList(), ignore_dependency_checks, start_timer, reporting);
             obj.DatasetStack(end + 1) = cache_info;
+            if isempty(parameters)
+                parameters = MimParameters();
+            end
             obj.ParameterStack(end + 1) = parameters;
         end
         

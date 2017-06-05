@@ -82,9 +82,6 @@ classdef MimDatasetResults < handle
             % same as the results.
 
             reporting.PushProgress;
-            if nargin < 4
-                output_context = [];
-            end
             generate_image = nargout > 2;
             
             % Get information about the plugin
@@ -96,7 +93,7 @@ classdef MimDatasetResults < handle
 
             % Whether results can be cached is determined by the plugin
             % parameters, but the input can force this to be enabled
-            if (nargin > 5) && (~isempty(allow_results_to_be_cached_override)) && allow_results_to_be_cached_override
+            if (nargin > 6) && (~isempty(allow_results_to_be_cached_override)) && allow_results_to_be_cached_override
                 disk_cache_policy = MimCachePolicy.Permanent;
             end
 
