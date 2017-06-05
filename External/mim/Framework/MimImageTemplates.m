@@ -89,12 +89,13 @@ classdef MimImageTemplates < CoreBaseClass
                 % If the context is recognised then use the template
                 % generation function
                 template_plugin = obj.TemplateGenerationFunctions(char(context));
-                template = obj.DatasetResults.GetResult(template_plugin, dataset_stack, context, reporting);
+                parameters = []; % Set parameters to null for a template call; existing parameters in the stack can still be accessed
+                template = obj.DatasetResults.GetResult(template_plugin, dataset_stack, context, parameters, reporting);
                 template = template.Copy;                
             else
                 if obj.DatasetDiskCache.ManualSegmentationExists(context, reporting)
                     template = obj.DatasetDiskCache.LoadManualSegmentation(context, reporting);
-                    template = template.Copy;
+                    template = template.Copy();
                     template_raw = template.RawImage;
                     if isnumeric(template_raw)
                         template_raw = template_raw > 0;
@@ -105,7 +106,7 @@ classdef MimImageTemplates < CoreBaseClass
                     if obj.DatasetDiskCache.ManualSegmentationExists(context_prefix, reporting)
                         label_value = str2double(context_suffix);
                         template = obj.DatasetDiskCache.LoadManualSegmentation(context_prefix, reporting);
-                        template = template.Copy;
+                        template = template.Copy();
                         template_raw = template.RawImage;
                         if isnumeric(template_raw)
                             template_raw = template_raw == label_value;
@@ -126,7 +127,7 @@ classdef MimImageTemplates < CoreBaseClass
             template_mask_context = obj.FrameworkAppDef.GetContextDef.GetTemplateMaskContext(context);
             template = obj.GetTemplateImage(template_mask_context, dataset_stack, reporting);
             
-            template.CropToFit;
+            template.CropToFit();
         end
 
         function context_is_enabled = IsContextEnabled(obj, context, reporting)

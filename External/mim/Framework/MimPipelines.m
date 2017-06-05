@@ -55,7 +55,7 @@ classdef MimPipelines < CoreBaseClass
             obj.PipelinePlugins(trigger_key) = [obj.PipelinePlugins(trigger_key), pipeline_plugin];
         end
         
-        function RunPipelines(obj, trigger_plugin, trigger_context, result_may_have_changed, dataset_stack, dataset_uid, reporting)
+        function RunPipelines(obj, trigger_plugin, trigger_context, parameters, result_may_have_changed, dataset_stack, dataset_uid, reporting)
             % Run any required pipelines associated with this plugin and context
             
             trigger_key = [trigger_plugin '.' char(trigger_context)];
@@ -71,7 +71,7 @@ classdef MimPipelines < CoreBaseClass
                         % Trigger pipeline if it is not alreadu being run
                         % (stops recursion). The plugin result which triggered the pipeline should generally be cached
                         if ~dataset_stack.PluginAlreadyExistsInStack(pipeline_plugin, trigger_context, dataset_uid)
-                            obj.DatasetResults.GetResult(pipeline_plugin, dataset_stack, trigger_context, reporting);
+                            obj.DatasetResults.GetResult(pipeline_plugin, dataset_stack, trigger_context, parameters, reporting);
                         end                            
                     end                    
                 end

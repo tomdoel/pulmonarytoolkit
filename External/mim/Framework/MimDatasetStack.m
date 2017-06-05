@@ -34,16 +34,21 @@ classdef MimDatasetStack < handle
         % currently being executed.
         DatasetStack
         
+        % Stack of MimParameters. Each plugin call creates a new entry;
+        % current parameter values are found by traversing the stack in reverse
+        ParameterStack
+        
         ClassFactory % We store a class factory for creating new MimDatasetStackItem objects
     end
     
     methods
         function obj =  MimDatasetStack(class_factory)
             obj.ClassFactory = class_factory;
-            obj.DatasetStack = obj.ClassFactory.CreateEmptyDatasetStackItem;
+            obj.DatasetStack = obj.ClassFactory.CreateEmptyDatasetStackItem();
+            obj.ParameterStack = MimParameters.empty();
         end
     
-        function CreateAndPush(obj, plugin_name, context, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer, plugin_version, reporting)
+        function CreateAndPush(obj, plugin_name, context, parameters, dataset_uid, ignore_dependency_checks, is_edited_result, start_timer, plugin_version, reporting)
             % Create a new MimDatasetStackItem object with an empty dependency list and a
             % new unique identifier. The push it to the end of the stack
         
@@ -57,6 +62,29 @@ classdef MimDatasetStack < handle
             instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
             cache_info = obj.ClassFactory.CreateDatasetStackItem(instance_identifier, PTKDependencyList(), ignore_dependency_checks, start_timer, reporting);
             obj.DatasetStack(end + 1) = cache_info;
+            obj.ParameterStack(end + 1) = parameters;
+        end
+        
+        function value = GetParameterAndAddDependenciesToAllPluginsInStack(obj, name, reporting)
+            
+            param_found = false;
+            for param_set = obj.ParameterStack(end:-1:1)
+                if param_set.IsField(name)
+                    value = param_set.(name);
+                    param_found = true;
+                    break;
+                end
+            end
+            if ~param_found
+                value = [];
+            end
+            attributes = [];
+            attributes.IsParameter = true;
+            instance_identifier = PTKDependency(name, [], value, dataset_uid, attributes);
+            
+            % ToDo: Should the dependencies only be added to the stack as far as the
+            % parameter definition?
+            obj.AddDependenciesToAllPluginsInStack(instance_identifier, reporting)
         end
         
         function cache_info = Pop(obj)
@@ -66,6 +94,7 @@ classdef MimDatasetStack < handle
             cache_info = obj.DatasetStack(end);
             cache_info.StopAndDeleteTimer;
             obj.DatasetStack(end) = [];
+            obj.ParameterStack(end) = [];
         end
         
         function AddDependenciesToAllPluginsInStack(obj, dependencies, reporting)
@@ -82,14 +111,15 @@ classdef MimDatasetStack < handle
             % Clear the stack. This may be necessary if a plugin failed during
             % execution, leaving the call stack in a bad state.
         
-            obj.DatasetStack = obj.ClassFactory.CreateEmptyDatasetStackItem;
+            obj.DatasetStack = obj.ClassFactory.CreateEmptyDatasetStackItem();
+            obj.ParameterStack = MimParameters.empty();
         end
         
         function PauseTiming(obj)
             % Pause the timer used to generate SelfTime for the most recent plugin
             % on the stack
             if ~isempty(obj.DatasetStack) && ~isempty(obj.DatasetStack(end).ExecutionTimer)
-                obj.DatasetStack(end).ExecutionTimer.Pause;
+                obj.DatasetStack(end).ExecutionTimer.Pause();
             end
         end
 
@@ -98,7 +128,7 @@ classdef MimDatasetStack < handle
             % on the stack
         
             if ~isempty(obj.DatasetStack) && ~isempty(obj.DatasetStack(end).ExecutionTimer)
-                obj.DatasetStack(end).ExecutionTimer.Resume;
+                obj.DatasetStack(end).ExecutionTimer.Resume();
             end
         end
         

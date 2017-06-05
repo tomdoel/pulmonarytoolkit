@@ -73,11 +73,19 @@ classdef MimDatasetCallback < handle
                 context = [];
             end
             
+            parameters = [] % ToDo
+            
             if nargout > 1
-                [result, ~, output_image] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, obj.Reporting, []);
+                [result, ~, output_image] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, parameters, obj.Reporting, []);
             else
-                [result, ~] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, obj.Reporting, []);
+                [result, ~] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, parameters, obj.Reporting, []);
             end
+        end
+        
+        function parameter = GetParameter(obj, parameter_name, varargin)
+            % Returns the current value of a parameter
+            
+            parameter = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetParameter(parameter_name, obj.DatasetStack, obj.Reporting);
         end
 
         function image_info = GetImageInfo(obj, varargin)

@@ -95,7 +95,7 @@ classdef MimContextHierarchy < CoreBaseClass
             end            
         end
         
-        function combined_result = GetResultRecursive(obj, plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
+        function combined_result = GetResultRecursive(obj, plugin_name, output_context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
             
             % Records that there has been an attempt to call this plugin,
             % so that we can detect if a plugin call failed
@@ -124,7 +124,7 @@ classdef MimContextHierarchy < CoreBaseClass
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to call the plugin
             if isempty(output_context_set) || obj.ContextDef.ContextSetMatches(plugin_context_set, output_context_set)
-                [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting);
+                [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting);
 
                 % If the plugin has been re-run, then we will generate an output
                 % image, in order to create a new preview image
@@ -157,7 +157,7 @@ classdef MimContextHierarchy < CoreBaseClass
                     reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
                 end
                 parent_context = higher_context_mapping.Context;
-                this_context_results = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                this_context_results = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
                 combined_result.AddParentResult(parent_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting);
                 
             % If the plugin's context set is lower in the hierarchy, then get
@@ -168,7 +168,7 @@ classdef MimContextHierarchy < CoreBaseClass
 
                 for child_mapping = child_context_mappings
                     child_context = child_mapping{1}.Context;
-                    this_context_results = obj.GetResultRecursive(plugin_name, child_context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                    this_context_results = obj.GetResultRecursive(plugin_name, child_context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
 
                     combined_result.AddChildResult(child_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting);                
                 end
@@ -181,7 +181,7 @@ classdef MimContextHierarchy < CoreBaseClass
             obj.ImageTemplates.NoteSuccessRunPlugin(plugin_name, output_context, reporting);
             
             % Allow pipelines to be run if required
-            obj.Pipelines.RunPipelines(plugin_name, output_context, combined_result.GetPluginHasBeenRun, dataset_stack, dataset_uid, reporting);
+            obj.Pipelines.RunPipelines(plugin_name, output_context, parameters, combined_result.GetPluginHasBeenRun, dataset_stack, dataset_uid, reporting);
         end
         
         function SaveEditedResultRecursive(obj, plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting)

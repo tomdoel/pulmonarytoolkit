@@ -122,16 +122,18 @@ classdef MimDataset < CoreBaseClass
                 context = [];
             end
             
-            obj.PreCallTidy;
+            parameters = []; % ToDo
+            
+            obj.PreCallTidy();
             
             % Reset the dependency stack, since this could be left in a bad state if a previous plugin call caused an exception
             obj.DatasetStack.ClearStack;
             
             try
                 if nargout > 2
-                    [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, obj.Reporting, varargin{2:end});
+                    [result, cache_info, output_image] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, parameters, obj.Reporting, varargin{2:end});
                 else
-                    [result, cache_info] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, obj.Reporting, varargin{2:end});
+                    [result, cache_info] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, parameters, obj.Reporting, varargin{2:end});
                 end
             catch ex
                 

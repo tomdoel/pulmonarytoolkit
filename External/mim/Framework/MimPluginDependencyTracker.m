@@ -40,7 +40,11 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             obj.PluginCache = plugin_cache;
         end
         
-        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting)
+        function value = GetParameter(obj, name, dataset_stack, reporting)
+            value = dataset_stack.GetParameterAndAddDependenciesToAllPluginsInStack(name, dataset_stack, reporting);
+        end
+        
+        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting)
             % Gets a plugin result, from the disk cache if possible. If there is no
             % cached result, or if the dependencies are invalid, or if the
             % "AlwaysRunPlugin" property is set, then the plugin is executed.
@@ -100,14 +104,14 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                     ignore_dependency_checks = plugin_info.DiskCachePolicy ~= MimCachePolicy.Permanent;
 
                     % Pause the self-timing of the current plugin
-                    dataset_stack.PauseTiming;                
+                    dataset_stack.PauseTiming();                
 
                     % Create a new dependency. The dependency relates to the plugin
                     % being called (plugin_name) and the UID of the dataset the
                     % result is being requested from; however, the stack belongs to
                     % the primary dataset
                     plugin_version = plugin_info.PluginVersion;
-                    dataset_stack.CreateAndPush(plugin_name, context, dataset_uid, ignore_dependency_checks, false, obj.FrameworkAppDef.TimeFunctions, plugin_version, reporting);
+                    dataset_stack.CreateAndPush(plugin_name, context, parameters, dataset_uid, ignore_dependency_checks, false, obj.FrameworkAppDef.TimeFunctions, plugin_version, reporting);
 
                     dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
                     

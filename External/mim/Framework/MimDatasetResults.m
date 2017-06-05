@@ -67,7 +67,12 @@ classdef MimDatasetResults < handle
             obj.ContextHierarchy = MimContextHierarchy(context_def, dataset_disk_cache, obj.DependencyTracker, obj.ImageTemplates, obj.Pipelines);
         end
 
-        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, output_context, reporting, allow_results_to_be_cached_override)
+        function parameter = GetParameter(obj, parameter_name, dataset_stack, reporting)
+            % ToDo
+            reporting.Error('MimDatasetResults:NotImplemented', 'Not implemented');
+        end
+        
+        function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, output_context, parameters, reporting, allow_results_to_be_cached_override)
             % Returns the results of a plugin. If a valid result is cached on disk,
             % this wil be returned provided all the dependencies are valid.
             % Otherwise the plugin will be executed and the new result returned.
@@ -117,7 +122,7 @@ classdef MimDatasetResults < handle
 
                 for next_output_context_set = context_list
                     next_output_context = next_output_context_set{1};
-                    combined_result = obj.ContextHierarchy.GetResultRecursive(plugin_name, next_output_context, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                    combined_result = obj.ContextHierarchy.GetResultRecursive(plugin_name, next_output_context, parameters, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
                     plugin_has_been_run = plugin_has_been_run | combined_result.GetPluginHasBeenRun;
                     if numel(context_list) == 1
                         result = combined_result.GetResult();
