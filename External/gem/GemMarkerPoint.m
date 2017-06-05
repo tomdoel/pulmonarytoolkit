@@ -114,7 +114,7 @@ classdef GemMarkerPoint < CoreBaseClass
         function DeleteMarker(obj)
             obj.Manager.AddPointToMarkerImage(obj.Position, 0);
             obj.Manager.RemoveThisMarker(obj)
-            obj.RemoveGraphic;
+            obj.RemoveGraphic();
         end
     end
     

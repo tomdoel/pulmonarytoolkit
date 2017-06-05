@@ -181,8 +181,6 @@ classdef GemMarkerLayer < CoreBaseClass
 
                 found_marker_coords = [obj.GlobalToLocalCoordinates(markers(:, 1:3)), markers(:, 4)];
                 [markers_y, markers_x] = MimImageCoordinateUtilities.GetSliceCoordinates(found_marker_coords(:, 1:3), dimension);
-                % ToDo: Do we need to remove markers that are out of the
-                % current context image?
 
                 for index = 1 : size(markers, 1)
                     next_marker = [];
