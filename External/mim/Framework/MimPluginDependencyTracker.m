@@ -289,6 +289,13 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             
             plugin_results_info = obj.DatasetDiskCache.GetPluginResultsInfo();
 
+            if isfield(next_dependency.Attributes, 'IsParameter')
+                is_parameter = next_dependency.Attributes.IsParameter;
+            else
+                is_parameter = false;
+            end
+            % ToDo: process dependency values
+            
             if isfield(next_dependency.Attributes, 'IsEditedResult')
                 is_edited_result = next_dependency.Attributes.IsEditedResult;
             else
