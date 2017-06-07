@@ -58,8 +58,18 @@ classdef MimWebSocketParser
             header = rmfield(rmfield(header, 'dataType'), 'dataDims');
         end
         
-        function dataBlob = EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, payloadType, data)
+        function dataBlob = EncodeAsBlob(modelName, serverHash, lastClientHash, payloadType, data)
             % Converts model metadata and binary value into a data blob
+            
+            if isa(data, 'MimStorageClass')
+                [metaData, convertedData] = data.getStream();
+                metaData.StorageClass = class(data);
+            else
+                disp('Warning: not a MimStorageClass');
+                % Convert the data to an int8 array
+                convertedData = typecast(data(:), 'int8');
+                metaData = [];
+            end
             
             % Construct the header, which includes transmission parameters and user-provided metadata
             header_struct = MimWebSocketParser.EncodeAsStruct(modelName, serverHash, lastClientHash, metaData, payloadType, []);
@@ -68,10 +78,7 @@ classdef MimWebSocketParser
             
             % Encode the header as a JSON string
             encodedHeader = MimWebSocketParser.EncodeAsJson(header_struct);
-            
-            % Convert the data to an int8 array
-            convertedData = typecast(data(:), 'int8');
-            
+
             % Construct the data blob
             dataBlob = int8([]);
             

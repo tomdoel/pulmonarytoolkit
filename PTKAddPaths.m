@@ -68,6 +68,7 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Utilities');
         path_folders{end + 1} = fullfile('External', 'mim', 'Viewer');
         path_folders{end + 1} = fullfile('External', 'mim', 'WebSocket');
+        path_folders{end + 1} = fullfile('External', 'mim', 'WebSocket', 'StorageClass');
         path_folders{end + 1} = fullfile('External', 'mim', 'WebSocket', 'Models');
         path_folders{end + 1} = fullfile('External', 'gem');
         path_folders{end + 1} = fullfile('External', 'matnat');

@@ -16,13 +16,13 @@ classdef MimWebSocketServer < WebSocketServer
             obj.LocalModelCallback = localModelCallback;
         end
         
-        function sendBinaryModel(obj, modelName, serverHash, lastClientHash, metaData, payloadType, data)
+        function sendBinaryModel(obj, modelName, serverHash, lastClientHash, payloadType, data)
             % Encodes model metadata and a data matrix into a blob and send
             % to clients. The data array will be sent as an int8 stream; it
             % is the client's responsibility to reconstruct this using the
             % metadata
             
-            blob = MimWebSocketParser.EncodeAsBlob(modelName, serverHash, lastClientHash, metaData, payloadType, data);
+            blob = MimWebSocketParser.EncodeAsBlob(modelName, serverHash, lastClientHash, payloadType, data);
             obj.LogBinaryMessage('Sending', blob);
             obj.sendToAll(blob);
         end
@@ -47,7 +47,7 @@ classdef MimWebSocketServer < WebSocketServer
             if ischar(value) || iscell(value) || isstruct(value)
                 obj.sendTextModel(modelName, localHash, remoteHash, [], MimWebSocketParser.MimPayloadData, value);
             else
-                obj.sendBinaryModel(modelName, localHash, remoteHash, [], MimWebSocketParser.MimPayloadData, value);
+                obj.sendBinaryModel(modelName, localHash, remoteHash, MimWebSocketParser.MimPayloadData, value);
             end
         end
         
