@@ -33,6 +33,7 @@ classdef MimWSImageSlice < MimWSModel
 %                     value = uint16(65535*(value - globalMin)/(globalMax - globalMin));
                 end
             end
+            value = MimImageStorage(value, obj.ImageType);
             hash = obj.Hash;
         end
     end
