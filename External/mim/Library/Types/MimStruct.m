@@ -10,6 +10,15 @@ classdef MimStruct < dynamicprops
     %        
 
     methods
+        function obj = MimStruct(varargin)
+            obj = obj@dynamicprops();
+            if ~isempty(varargin)
+                for i = 1 : 2 : numel(varargin)
+                    obj.AddField(varargin{i}, varargin{i + 1});
+                end
+            end
+        end
+    
         function AddField(obj, field_name, field_value)
             obj.addprop(char(field_name));
             obj.(field_name) = field_value;

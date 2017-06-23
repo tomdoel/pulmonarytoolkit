@@ -11,8 +11,8 @@ classdef MimParameters < MimStruct
     %        
 
     methods
-        function obj = MimParameters()
-            obj = obj@MimStruct();
+        function obj = MimParameters(varargin)
+            obj = obj@MimStruct(varargin{:});
         end
     end
 end
