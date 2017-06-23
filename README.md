@@ -10,12 +10,11 @@ This is experimental research software and is primarily intended to support our 
 
 
 This software requires:
- * Matlab (version R2010b or later)
+ * Matlab (version R2011a or later)
  * A C++ compiler is needed for a number of the segmentation routines
  * Matlab Image Processing Toolbox
  * Matlab Statistics and Machine Learning toolbox is currently needed to support some of the analtics (specifically prctile)
 
-**Note: The Toolkit will not run with earlier versions of Matlab**
 
 
 This software is intended for research purposes only. It is not intended for clinical use.
