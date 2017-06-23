@@ -13,6 +13,7 @@ classdef MivAppDef < handle
         Name = 'MIV'
         PatientBrowserName = 'Patient Browser: MIV'
         Version = '0.1'
+        Colormap = CoreSystemUtilities.BackwardsCompatibilityColormap;        
     end
     
     properties (Access = private)
@@ -21,7 +22,6 @@ classdef MivAppDef < handle
         
         LogFileName = 'log.txt'
         SettingsFileName = 'PTKSettings.mat'
-        Colormap = CoreSystemUtilities.BackwardsCompatibilityColormap;        
     end
         
     methods
@@ -104,7 +104,7 @@ classdef MivAppDef < handle
         end
         
         function cm = GetDefaultColormap(~)
-            cm = colormap(obj.Colormap);
+            cm = colormap(MivAppDef.Colormap);
         end
 
         function framework_app_def = GetFrameworkAppDef(obj)
