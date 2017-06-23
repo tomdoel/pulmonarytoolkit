@@ -73,7 +73,13 @@ classdef MimDatasetCallback < handle
                 context = [];
             end
             
-            parameters = [] % ToDo
+            parameters = [];
+            if ~isempty(varargin)
+                if isa(varargin{end}, 'MimParameters')
+                    parameters = varargin{end};
+                    varargin = varargin(1:end-1);
+                end
+            end
             
             if nargout > 1
                 [result, ~, output_image] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, parameters, obj.Reporting, []);

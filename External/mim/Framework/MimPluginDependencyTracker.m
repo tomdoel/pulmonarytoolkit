@@ -41,7 +41,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
         end
         
         function value = GetParameter(obj, name, dataset_stack, reporting)
-            value = dataset_stack.GetParameterAndAddDependenciesToAllPluginsInStack(name, dataset_stack, reporting);
+            value = dataset_stack.GetParameterAndAddDependenciesToPluginsInStack(name, reporting);
         end
         
         function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting)
@@ -72,7 +72,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                             result = [];
                         end
 
-                        if ~obj.CheckDependenciesValid(linked_dataset_chooser, dependencies, reporting)
+                        if ~obj.CheckDependenciesValid(linked_dataset_chooser, dependencies, dataset_stack, parameters, reporting)
                             reporting.ShowWarning('MimPluginDependencyTracker:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
                             result = [];
                         end
@@ -390,27 +390,41 @@ classdef MimPluginDependencyTracker < CoreBaseClass
         
         % Checks the dependencies in this result with the current dependency
         % list, and determine if the dependencies are still valid
-        function valid = CheckDependenciesValid(obj, linked_dataset_chooser, dependencies, reporting)
+        function valid = CheckDependenciesValid(obj, linked_dataset_chooser, dependencies, dataset_stack, parameters_for_next_plugin_call, reporting)
             
             dependency_list = dependencies.DependencyList;
 
-            % Build up a list of dependencies which are edited values
+            % Separate dependencies into parameters and plugin
+            % dependencies, and also create list of dependencies which are
+            % edited values
+            plugin_dependencies = {};
             known_edited_values = {};
+            parameter_list = {};
             for index = 1 : length(dependency_list)
                 next_dependency = dependency_list(index);
-                if ~obj.CheckPluginVersion(next_dependency, reporting)
-                    valid = false;
-                    reporting.Log(['A newer version of plugin ' next_dependency.PluginName ' has been found. This result must be regenerated.']);
-                    return;
-                end
-
-                if isfield(next_dependency.Attributes, 'IsEditedResult') && (next_dependency.Attributes.IsEditedResult)
-                    known_edited_values{end + 1} = next_dependency.PluginName;
+                if isfield(next_dependency.Attributes, 'IsParameter') && (next_dependency.Attributes.IsParameter)
+                    parameter_list{end + 1} = next_dependency;
+                else
+                    plugin_dependencies{end + 1} = next_dependency;
+                    if ~obj.CheckPluginVersion(next_dependency, reporting)
+                        valid = false;
+                        reporting.Log(['A newer version of plugin ' next_dependency.PluginName ' has been found. This result must be regenerated.']);
+                        return;
+                    end                    
+                    if isfield(next_dependency.Attributes, 'IsEditedResult') && (next_dependency.Attributes.IsEditedResult)
+                        known_edited_values{end + 1} = next_dependency.PluginName;
+                    end
                 end
             end
             
-            for index = 1 : length(dependency_list)
-                next_dependency = dependency_list(index);
+            if ~dataset_stack.CheckParameterDependencies(parameter_list, parameters_for_next_plugin_call, reporting)
+                valid = false;
+                return;
+            end
+            
+            % Iterate through plugin dependencies
+            for index = 1 : length(plugin_dependencies)
+                next_dependency = plugin_dependencies{index};
                 
                 dataset_uid = next_dependency.DatasetUid;
                 [valid, edited_result_exists] = linked_dataset_chooser.GetDataset(dataset_uid).CheckDependencyValid(next_dependency, reporting);

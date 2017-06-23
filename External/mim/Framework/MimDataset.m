@@ -122,7 +122,14 @@ classdef MimDataset < CoreBaseClass
                 context = [];
             end
             
-            parameters = []; % ToDo
+            parameters = [];
+            if ~isempty(varargin)
+                if isa(varargin{end}, 'MimParameters')
+                    parameters = varargin{end};
+                    varargin = varargin(1:end-1);
+                end
+            end
+            
             
             obj.PreCallTidy();
             

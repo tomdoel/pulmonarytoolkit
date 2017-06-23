@@ -95,6 +95,10 @@ classdef MimContextHierarchy < CoreBaseClass
             end            
         end
         
+        function value = GetParameter(obj, name, dataset_stack, reporting)
+            value = obj.DependencyTracker.GetParameter(name, dataset_stack, reporting);
+        end
+        
         function combined_result = GetResultRecursive(obj, plugin_name, output_context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting)
             
             % Records that there has been an attempt to call this plugin,

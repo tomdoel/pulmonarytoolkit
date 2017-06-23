@@ -68,8 +68,12 @@ classdef MimDatasetResults < handle
         end
 
         function parameter = GetParameter(obj, parameter_name, dataset_stack, reporting)
-            % ToDo
-            reporting.Error('MimDatasetResults:NotImplemented', 'Not implemented');
+            try
+                parameter = obj.ContextHierarchy.GetParameter(parameter_name, dataset_stack, reporting);        
+            catch ex
+                dataset_stack.ClearStack;
+                rethrow(ex);
+            end
         end
         
         function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, output_context, parameters, reporting, allow_results_to_be_cached_override)

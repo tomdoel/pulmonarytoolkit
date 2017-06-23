@@ -44,7 +44,7 @@ classdef PTKDependencyList < handle
             % Adds multiple dependencies to the list
             
             new_dependency_list = dependencies.DependencyList;
-            for index = 1 : length(new_dependency_list);
+            for index = 1 : length(new_dependency_list)
                 obj.AddDependency(new_dependency_list(index), reporting);
             end
         end
