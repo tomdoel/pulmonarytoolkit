@@ -54,7 +54,7 @@ classdef MimModeTabControl < GemTabControl
             obj.AnalysisPanel.AddPlugins([]);
 
             obj.PluginsPanel = MimPluginsSlidingPanel(obj, obj.OrganisedPlugins, 'Plugins', [], 'Developer', @obj.RunPluginCallback, @obj.RunGuiPluginCallback, @obj.LoadSegmentationCallback, preview_fetcher);
-            obj.AddTabbedPanel(obj.PluginsPanel, 'Plugins', 'Plugins', 'Algorithms for segmenting lung features');
+            obj.AddTabbedPanel(obj.PluginsPanel, 'Plugins', 'Plugins', 'Algorithms for segmenting features');
             obj.PluginsPanel.AddPlugins([]);
             
             obj.AddEventListener(gui_dataset_state, 'PreviewImageChanged', @obj.PreviewImageChangedCallback);

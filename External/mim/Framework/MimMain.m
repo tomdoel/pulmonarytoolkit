@@ -96,6 +96,9 @@ classdef MimMain < CoreBaseClass
             % the cache but not in the database; this can be fixed by
             % rebuilding the database
             
+            if iscell(dataset_uid_prefix)
+                dataset_uid_prefix = dataset_uid_prefix{1};
+            end
             dataset_exists = (7 == exist(fullfile(obj.FrameworkAppDef.GetFrameworkDirectories.GetFrameworkDatasetCacheDirectory, dataset_uid_prefix), 'dir')) || (7 == exist(fullfile(obj.FrameworkAppDef.GetFrameworkDirectories.GetCacheDirectory, dataset_uid_prefix), 'dir'));
             
             if dataset_exists

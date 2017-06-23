@@ -154,6 +154,12 @@ classdef MimDatasetResults < handle
 
             cache_preview = plugin_info.GeneratePreview && (plugin_has_been_run || ~preview_exists);
             
+            % Don't attempt to generate a preview if the output is not an
+            % image
+            if ~isa(output_image, 'PTKImage')
+                cache_preview = false;
+            end
+            
             % Generate and cache a preview image
             if cache_preview && ~isempty(output_image) && output_image.ImageExists
                 preview_size = [50, 50];
