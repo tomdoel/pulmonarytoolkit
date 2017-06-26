@@ -34,13 +34,13 @@ classdef GemImageSource < CoreBaseClass
             % will set up the pixel data change callback
             obj.Image = PTKImage();
         end
-    end
-    
-    methods (Access = private)
+        
         function delete(obj)
             CoreSystemUtilities.DeleteIfValidObject(obj.ImageChangedListener);
         end
-        
+    end
+    
+    methods (Access = private)
         function ImagePointerChangedCallback(obj, ~, ~)
             obj.ImageHasBeenReplaced;
         end

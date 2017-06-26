@@ -115,13 +115,13 @@ classdef MimViewerPanel < GemPanel
             
             obj = obj@GemPanel(parent);
             
-            obj.MouseCursorStatus = MimMouseCursorStatus;
+            obj.MouseCursorStatus = MimMouseCursorStatus();
 
             % Create the image pointer wrappers
-            obj.BackgroundImageSource = GemImageSource;
-            obj.OverlayImageSource = GemImageSource;
-            obj.QuiverImageSource = GemImageSource;
-            obj.MarkerImageSource = GemMarkerPointImage;
+            obj.BackgroundImageSource = GemImageSource();
+            obj.OverlayImageSource = GemImageSource();
+            obj.QuiverImageSource = GemImageSource();
+            obj.MarkerImageSource = GemMarkerPointImage();
             
             % Create the model object that holds the slice number and
             % orientation
@@ -129,11 +129,11 @@ classdef MimViewerPanel < GemPanel
             
             % Create the model objects that hold visualisation parameters
             % for each of the images
-            obj.BackgroundImageDisplayParameters = GemImageDisplayParameters;
-            obj.OverlayImageDisplayParameters = GemImageDisplayParameters;
+            obj.BackgroundImageDisplayParameters = GemImageDisplayParameters();
+            obj.OverlayImageDisplayParameters = GemImageDisplayParameters();
             obj.OverlayImageDisplayParameters.Opacity = 50;
             obj.OverlayImageDisplayParameters.BlackIsTransparent = true;
-            obj.MarkerImageDisplayParameters = GemMarkerDisplayParameters;
+            obj.MarkerImageDisplayParameters = GemMarkerDisplayParameters();
 
             % Create the panel which contains the 2D image viewer
             obj.ViewerPanelMultiView = GemViewerPanelMultiView(obj);
@@ -563,5 +563,18 @@ classdef MimViewerPanel < GemPanel
             input_has_been_processed = true;
         end
         
+    end
+    
+    methods
+        function delete(obj)
+            % We need to explicitly delete the image sources, since the
+            % image holds pointers to them via callbacks, so they will not
+            % necessarily be deleted automatically when the viewer panel is
+            % destroyed
+            CoreSystemUtilities.DeleteIfValidObject(obj.BackgroundImageSource);
+            CoreSystemUtilities.DeleteIfValidObject(obj.OverlayImageSource);
+            CoreSystemUtilities.DeleteIfValidObject(obj.QuiverImageSource);
+            CoreSystemUtilities.DeleteIfValidObject(obj.MarkerImageSource);
+        end
     end
 end

@@ -76,7 +76,7 @@ classdef GemUserInterfaceObject < CoreBaseClass
         end
         
         function delete(obj)
-            obj.RemoveAndDeleteChildren
+            obj.RemoveAndDeleteChildren();
             obj.DeleteIfGraphicsHandle(obj.GraphicalComponentHandle);
         end
         
