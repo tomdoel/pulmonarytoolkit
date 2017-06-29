@@ -151,6 +151,9 @@ classdef MimSidePanel < GemPanel
             elseif strcmpi(key, 'delete')
                 obj.SeriesSidePanel.DeleteSelectedSeries;
                 input_has_been_processed = true;
+            elseif strcmpi(key, 'backspace')
+                obj.SeriesSidePanel.DeleteSelectedSeries;
+                input_has_been_processed = true;
             elseif strcmpi(key, 'insert')
                 obj.Controller.AddSeries;
                 input_has_been_processed = true;
