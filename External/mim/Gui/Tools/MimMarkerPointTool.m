@@ -80,13 +80,13 @@ classdef MimMarkerPointTool < MimTool
                 obj.MarkerLayer.DeleteHighlightedMarker;
             elseif strcmpi(key_name, 'backspace')
                 obj.MarkerLayer.DeleteHighlightedMarker;
-            elseif strcmpi(key_name, 'leftbracket')
+            elseif strcmpi(key_name, 'leftarrow')
                 obj.ViewerPanel.GotoPreviousMarker;
-            elseif strcmpi(key_name, 'rightbracket')
+            elseif strcmpi(key_name, 'rightarrow')
                 obj.ViewerPanel.GotoNextMarker;
-            elseif strcmpi(key_name, 'pageup')
+            elseif strcmpi(key_name, 'leftbracket')
                 obj.ViewerPanel.GotoFirstMarker;
-            elseif strcmpi(key_name, 'pagedown')
+            elseif strcmpi(key_name, 'rightbracket')
                 obj.ViewerPanel.GotoLastMarker;
             else
                 processed = false;
