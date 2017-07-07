@@ -1,4 +1,4 @@
-classdef MimSeries < MimModel
+classdef MimWSSeries < MimModel
     properties
         SeriesUid
         BackgroundViewModelId
@@ -7,7 +7,7 @@ classdef MimSeries < MimModel
     end
         
     methods
-        function obj = MimSeries(modelId, parameters, modelMap, autoUpdate)
+        function obj = MimWSSeries(modelId, parameters, modelMap, autoUpdate)
             obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.SeriesUid = parameters.seriesUid;
             
