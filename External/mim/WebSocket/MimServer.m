@@ -3,7 +3,6 @@ classdef MimServer < handle
     properties (Access = private)
         WebSocketServer
         Mim
-        ModelCache
         ModelList
         Reporting
     end
@@ -45,7 +44,6 @@ classdef MimServer < handle
             framework_def = PTKFrameworkAppDef;
             obj.Reporting = MimReporting([], [], 'mimserver.log');
             obj.Mim = MimMain(framework_def, obj.Reporting);
-            obj.ModelCache = MimModelCache();
             obj.ModelList = MimModelList(obj.Mim);
             obj.WebSocketServer = MimWebSocketServer(30000, obj.ModelList);
         end
@@ -62,7 +60,6 @@ classdef MimServer < handle
 
         function clearModels(obj)
             obj.ModelList.clear();
-            obj.ModelCache.clear();
             obj.WebSocketServer.clearModels();
         end
         

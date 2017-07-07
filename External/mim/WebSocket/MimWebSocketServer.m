@@ -58,7 +58,7 @@ classdef MimWebSocketServer < WebSocketServer
             % Update the local model cache
             localModelCache.modifyCurrentHashAndValue(hash, value);
             
-            for connection = obj.ConnectionCacheMap.getAllConnections
+            for connection = obj.ConnectionCacheMap.getAllConnections()
                 % Get the remote model cache for this connection
                 remoteModelCache = connection{1}.getModelCacheEntry(modelName);
                 

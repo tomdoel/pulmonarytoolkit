@@ -6,7 +6,7 @@ classdef MimDerivedModelMap < handle
     
     methods
         function obj = MimDerivedModelMap()
-            obj.DerivedModelMap = containers.Map;
+            obj.DerivedModelMap = containers.Map();
         end
         
         function modelMap = getModelMap(obj, modelName)
