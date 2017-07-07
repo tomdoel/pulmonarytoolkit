@@ -1,16 +1,18 @@
 classdef MimModelController < CoreBaseClass
 
     properties (Access = private)
+        Mim
         ModelMap
     end
     
     methods
-        function obj = MimModelController()
-            obj.ModelMap = MimModelMap();
+        function obj = MimModelController(mim)
+            obj.Mim = mim;
+            obj.ModelMap = MimModelMap(mim);
         end
         
-        function value = getValue(obj, modelId)
-            value = obj.ModelMap.getValue(modelId);
+        function [value, hash] = getValue(obj, modelId)
+            [value, hash] = obj.ModelMap.getValue(modelId);
             obj.ModelMap.autoUpdate();
         end
         
@@ -21,6 +23,10 @@ classdef MimModelController < CoreBaseClass
         
         function modelId = buildModelId(obj, modelClassName, parameters)
             modelId = obj.ModelMap.buildModelId(modelClassName, parameters);
+        end
+        
+        function clear(obj)
+            obj.ModelMap.clear();
         end
     end
 end

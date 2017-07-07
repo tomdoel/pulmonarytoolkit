@@ -1,17 +1,22 @@
 classdef MimModelMap < CoreBaseClass
 
     properties (Access = private)
+        Mim
         ModelCache
     end
     
     methods
-        function obj = MimModelMap()
-            obj.ModelCache = containers.Map();
+        function obj = MimModelMap(mim)
+            obj.Mim = mim;
+            obj.clear();
+            
+            % Explicitly add in models with unique names
+            obj.ModelCache('MimSubjectList') = MimSubjectList('MimSubjectList', {}, obj, true);
         end
         
-        function value = getValue(obj, modelId)
+        function [value, hash] = getValue(obj, modelId)
             model = obj.ModelCache(modelId);
-            value = model.getOrRun();
+            [value, hash] = model.getOrRun();
         end
         
         function value = getDependentValue(obj, modelId, dependentModel)
@@ -41,6 +46,14 @@ classdef MimModelMap < CoreBaseClass
             modelConstructor = str2func(modelClassName);
             modelId = CoreSystemUtilities.GenerateUid();
             obj.ModelCache(modelId) = modelConstructor(modelId, parameters, obj, true);
+        end
+        
+        function clear(obj)
+            obj.ModelCache = containers.Map();
+        end
+        
+        function mim = getMim(obj)
+            mim = obj.Mim;
         end
     end
 end
