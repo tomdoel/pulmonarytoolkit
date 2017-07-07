@@ -1,4 +1,4 @@
-classdef MimWSImageSlice < MimWSModel
+classdef MimWSImageSlice < MimModel
     properties
         Image
         AxialDimension
@@ -9,8 +9,8 @@ classdef MimWSImageSlice < MimWSModel
     end
 
     methods
-        function obj = MimWSImageSlice(generatorCallback, mim, modelUid, parameters)
-            obj = obj@MimWSModel(generatorCallback, mim, modelUid, parameters);
+        function obj = MimWSImageSlice(modelId, parameters, modelMap, autoUpdate)
+            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.Image = parameters.imageHandle;
 
             obj.ImageType = parameters.imageType;

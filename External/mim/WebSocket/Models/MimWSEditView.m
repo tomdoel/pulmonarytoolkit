@@ -1,4 +1,4 @@
-classdef MimWSEditView < MimWSModel
+classdef MimWSEditView < MimModel
     properties
         InstanceList
         Dataset
@@ -9,8 +9,8 @@ classdef MimWSEditView < MimWSModel
     end
 
     methods
-        function obj = MimWSEditView(generatorCallback, mim, modelUid, parameters)
-            obj = obj@MimWSModel(generatorCallback, mim, modelUid, parameters);
+        function obj = MimWSEditView(modelId, parameters, modelMap, autoUpdate)
+            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.Dataset = parameters.dataset;
             obj.SeriesUid = parameters.seriesUid;
             obj.AxialDimension = [];

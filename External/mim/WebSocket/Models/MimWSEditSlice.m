@@ -1,4 +1,4 @@
-classdef MimWSEditSlice < MimWSModel
+classdef MimWSEditSlice < MimModel
     properties
         Image
         AxialDimension
@@ -9,8 +9,8 @@ classdef MimWSEditSlice < MimWSModel
     end
 
     methods
-        function obj = MimWSEditSlice(generatorCallback, mim, modelUid, parameters)
-            obj = obj@MimWSModel(generatorCallback, mim, modelUid, parameters);
+        function obj = MimWSEditSlice(modelId, parameters, modelMap, autoUpdate)
+            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.Image = parameters.imageHandle;
             obj.OverlayImage = parameters.overlayImageHandle;
 
