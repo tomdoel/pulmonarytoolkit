@@ -8,6 +8,7 @@ classdef (Abstract) MimModel  < CoreBaseClass
         ModelId
         Parameters
         Valid
+        Hash
     end
     
     properties (Access = protected)
@@ -28,6 +29,7 @@ classdef (Abstract) MimModel  < CoreBaseClass
             obj.AutoUpdate = autoUpdate;
             obj.Dependents = containers.Map();
             obj.Valid = false;
+            obj.Hash = 0;
         end
         
         function invalidate(obj)
@@ -64,21 +66,29 @@ classdef (Abstract) MimModel  < CoreBaseClass
             end
         end
         
-        function value = getOrRun(obj)
+        function [value, hash] = getOrRun(obj)
             % Fetches the model result, running it if it is invalid
             
             if ~obj.Valid
                 obj.LastValue = obj.run();
+                obj.Hash = obj.Hash + 1;
                 obj.Valid = true;
             end
             
             value = obj.LastValue;
+            hash = obj.Hash;
         end
-        
+    end
+    
+    methods (Access = protected)
         function value = getModelValue(obj, modelId)
             % Returns the current value of the specified model
             
            value = obj.ModelMap.getDependentValue(modelId, obj);
         end
+        
+        function modelId = buildModelId(obj, modelClassName, parameters)
+            modelId = obj.ModelMap.buildModelId(modelClassName, parameters);
+        end        
     end
 end
