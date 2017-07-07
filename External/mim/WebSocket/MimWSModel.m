@@ -1,13 +1,10 @@
-classdef (Abstract) MimWSModel  < handle
+classdef (Abstract) MimWSModel  < CoreBaseClass
 	
     properties (Access = protected)
+        GeneratorCallback
         Mim
-        ModelUid
+        ModelId
         Parameters
-    end
-    
-    properties (Access = private)
-        DerivedModelMap
     end
     
     methods (Abstract)
@@ -19,13 +16,30 @@ classdef (Abstract) MimWSModel  < handle
     end
     
     methods
-        function obj = MimWSModel(mim, modelUid, parameters)
+        function obj = MimWSModel(generatorCallback, mim, modelId, parameters)
+            obj.GeneratorCallback = generatorCallback;
             obj.Mim = mim;
-            obj.ModelUid = modelUid;
+            obj.ModelId = modelId;
             obj.Parameters = parameters;
-            obj.DerivedModelMap = MimDerivedModelMap();
         end
         
+        function value = getModelValue(obj, modelId)
+            
+        end
+        
+        function parameters = getParameters(obj)
+            parameters = obj.Parameters;
+        end
+        
+        function modelId = buildModelId(obj, modelClassName, parameters)
+            modelId = obj.GeneratorCallback.buildModelId(modelClassName, parameters);
+        end
+        
+        function createModel(obj, modelClassName, parameters)
+            modelId = obj.buildModelId(modelClassName, parameters);
+            generatorCallback.createNewModel(modelClassName, modelId, parameters);
+        end
+            
         function [model, modelUid] = getDerivedModel(obj, modelUid, modelName, parameters, modelList)
             modelMap = obj.DerivedModelMap.getModelMap(modelName);
             key = modelList.getModelKey(modelName, parameters);
