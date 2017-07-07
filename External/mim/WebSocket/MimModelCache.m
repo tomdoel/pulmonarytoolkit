@@ -6,18 +6,18 @@ classdef MimModelCache < CoreBaseClass
     
     methods
         function obj = MimModelCache()
-            obj.ModelDictionary = containers.Map;
+            obj.clear();
+        end
+        
+        function entry = getModelCacheEntry(obj, modelId)
+            if ~obj.ModelDictionary.isKey(modelId)
+                obj.ModelDictionary(modelId) = MimModelCacheEntry([], []);
+            end
+            entry = obj.ModelDictionary(modelId);
         end
         
         function clear(obj)
-            obj.ModelDictionary = containers.Map;
-        end
-        
-        function entry = getModelCacheEntry(obj, modelName)
-            if ~obj.ModelDictionary.isKey(modelName)
-                obj.ModelDictionary(modelName) = MimModelCacheEntry([], []);
-            end
-            entry = obj.ModelDictionary(modelName);
+            obj.ModelDictionary = containers.Map();
         end
     end
 end
