@@ -4,14 +4,12 @@ classdef MimSeries < MimModel
         BackgroundViewModelId
         SegmentationViewModelId
         EditViewModelId
-%         Hash
     end
         
     methods
         function obj = MimSeries(modelId, parameters, modelMap, autoUpdate)
             obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.SeriesUid = parameters.seriesUid;
-%             obj.Hash = 0;
             
             datasetModelId = obj.buildModelId('MimWSDataset', struct('seriesUid', parameters.seriesUid));
             imageVolumeId = obj.buildModelId('MimImageVolume', struct('datasetModelId', datasetModelId));

@@ -1,4 +1,4 @@
-classdef MimSubject < MimModel
+classdef MimWSSubject < MimModel
     properties
         SubjectName
         SubjectId
@@ -9,7 +9,7 @@ classdef MimSubject < MimModel
     end
 
     methods
-        function obj = MimSubject(modelId, parameters, modelMap, autoUpdate)
+        function obj = MimWSSubject(modelId, parameters, modelMap, autoUpdate)
             obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.SubjectName = parameters.subjectName;
             obj.ProjectName = parameters.projectName;

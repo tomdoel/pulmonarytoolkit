@@ -9,14 +9,16 @@ classdef MimWSImageSlice < MimWSModel
     end
 
     methods
-        function obj = MimWSImageSlice(mim, modelUid, parameters)
-            obj = obj@MimWSModel(mim, modelUid, parameters);
+        function obj = MimWSImageSlice(generatorCallback, mim, modelUid, parameters)
+            obj = obj@MimWSModel(generatorCallback, mim, modelUid, parameters);
             obj.Image = parameters.imageHandle;
+
             obj.ImageType = parameters.imageType;
             obj.ImageSliceNumber = parameters.imageSliceNumber;
             obj.AxialDimension = parameters.axialDimension;
             obj.ParentView = parameters.parentView;
             obj.Hash = 0;
+            obj.AddEventListener(obj.Image, 'ImageChanged', @obj.ImageChangedCallback);
         end
         
         function [value, hash] = getValue(obj, modelList)
@@ -36,6 +38,11 @@ classdef MimWSImageSlice < MimWSModel
             value = MimImageStorage(value, obj.ImageType);
             hash = obj.Hash;
         end
+        
+        function ImageChangedCallback(obj, ~, ~)
+           obj.Hash = obj.Hash + 1; 
+        end
+        
     end
     
     methods (Static)

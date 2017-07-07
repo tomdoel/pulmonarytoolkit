@@ -1,24 +1,21 @@
-classdef MimWSOverlayView < MimWSModel
+classdef MimWSOverlayView < MimModel
     properties
         InstanceList
         Dataset
         Image
-        Hash
         SeriesUid
         AxialDimension
     end
 
     methods
-        function obj = MimWSOverlayView(mim, modelUid, parameters)
-            obj = obj@MimWSModel(mim, modelUid, parameters);
+        function obj = MimWSOverlayView(modelId, parameters, modelMap, autoUpdate)
+            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.Dataset = parameters.dataset;
             obj.SeriesUid = parameters.seriesUid;
             obj.AxialDimension = [];
-            obj.Hash = 0;
         end
         
-        function [value, hash] = getValue(obj, modelList)
-            obj.Hash = obj.Hash + 1;
+        function value = run(obj)
             instanceList = {};
             if isempty(obj.Image)
                 segs = CoreContainerUtilities.GetFieldValuesFromSet(obj.Dataset.GetListOfManualSegmentations, 'Second');
@@ -55,12 +52,17 @@ classdef MimWSOverlayView < MimWSModel
                     instanceList{end + 1} = instanceStruct;
                 end
                 obj.InstanceList = instanceList;
+                obj.AddEventListener(obj.Image, 'ImageChanged', @obj.ImageChangedCallback);
             end
             
             value = {};
             value.instanceList = obj.InstanceList;
-            hash = obj.Hash;
         end
+        
+        function ImageChangedCallback(obj, ~, ~)
+           obj.Hash = obj.Hash + 1; 
+        end
+        
     end
     
     methods (Static)

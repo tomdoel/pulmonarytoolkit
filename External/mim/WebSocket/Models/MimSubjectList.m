@@ -1,6 +1,5 @@
 classdef MimSubjectList < MimModel
     properties (Access = private)
-%         Hash
         SubjectList
         Mim
     end
@@ -9,16 +8,13 @@ classdef MimSubjectList < MimModel
         function obj = MimSubjectList(modelId, parameters, modelMap, autoUpdate)
             obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.Mim = modelMap.getMim();
-%             obj.Hash = 0;
         end
         
         function value = run(obj)
-%             obj.Hash = obj.Hash + 1;
             if isempty(obj.SubjectList)
                 obj.updateSubjectList();
             end
             value = obj.SubjectList;
-%             hash = obj.Hash;
         end
         
         function updateSubjectList(obj)

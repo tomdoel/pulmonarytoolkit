@@ -1,47 +1,46 @@
-classdef MimWSDataView < MimWSModel
+classdef MimWSDataView < MimModel
     properties
         InstanceList
         Dataset
         Image
-        Hash
         SeriesUid
         AxialDimension
     end
 
     methods
-        function obj = MimWSDataView(mim, modelUid, parameters)
-            obj = obj@MimWSModel(mim, modelUid, parameters);
+        function obj = MimWSDataView(modelId, parameters, modelMap, autoUpdate)
+            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.Dataset = parameters.dataset;
             obj.SeriesUid = parameters.seriesUid;
+            obj.ImageVolumeModelId = parameters.imageVolumeId;
             obj.AxialDimension = [];
-            obj.Hash = 0;
         end
         
-        function [value, hash] = getValue(obj, modelList)
+        function value = run(obj)
             obj.Hash = obj.Hash + 1;
             instanceList = {};
             if isempty(obj.Image)
-                obj.Image = obj.Dataset.GetResult('PTKOriginalImage');
+                obj.Image = obj.getValue(obj.ImageVolumeModelId);
                 [~, obj.AxialDimension] = max(obj.Image.VoxelSize);
-                for axial_index = 1 : obj.Image.ImageSize(obj.AxialDimension);
+                for axial_index = 1 : obj.Image.ImageSize(obj.AxialDimension)
                     newInstanceUid = CoreSystemUtilities.GenerateUid();
                     parameters = {};
-                    parameters.imageHandle = obj.Image;
+                    parameters.imageVolumeModelId = obj.ImageVolumeModelId;
                     parameters.imageSliceNumber = axial_index;
-                    parameters.parentView = obj.ModelUid;
+                    parameters.parentViewModelId = obj.ModelId;
                     parameters.axialDimension = obj.AxialDimension;
                     parameters.imageType = 1;
-                    imageSliceModel = MimWSImageSlice(obj.Mim, newInstanceUid, parameters);
-                    modelList.addModel(newInstanceUid, imageSliceModel);
+                    imageSliceModelId = obj.buildModelId('MimWSImageSlice', parameters);
+%                     imageSliceModel = MimWSImageSlice(obj.Mim, newInstanceUid, parameters);
+%                     modelList.addModel(newInstanceUid, imageSliceModel);
                     instanceStruct = {};
-                    instanceStruct.imageId = ['mim:' newInstanceUid];
+                    instanceStruct.imageId = ['mim:' imageSliceModelId];
                     instanceList{end + 1} = instanceStruct;
                 end
                 obj.InstanceList = instanceList;
             end
             value = {};
             value.instanceList = obj.InstanceList;
-            hash = obj.Hash;
         end
     end
     
