@@ -1,44 +1,39 @@
-classdef MimSeries < MimWSModel
+classdef MimSeries < MimModel
     properties
-        Dataset
         SeriesUid
-        BackgroundViewModelUid
-        SegmentationViewModelUid
-        Hash
+        BackgroundViewModelId
+        SegmentationViewModelId
+        EditViewModelId
+%         Hash
     end
         
     methods
-        function obj = MimSeries(mim, modelUid, parameters)
-            obj = obj@MimWSModel(mim, modelUid, parameters);            
+        function obj = MimSeries(modelId, parameters, modelMap, autoUpdate)
+            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.SeriesUid = parameters.seriesUid;
-            obj.Hash = 0;
-        end
-        
-        function [value, hash] = getValue(obj, modelList)
-            obj.Hash = obj.Hash + 1;
-            if isempty(obj.Dataset)
-                obj.getDataset(modelList);
-            end
-            value = {};
-            value.backgroundViewModelUid = obj.BackgroundViewModelUid;
-            value.segmentationViewModelUid = obj.SegmentationViewModelUid;
-            hash = obj.Hash;
-        end
-        
-        function getDataset(obj, modelList)
-            obj.Dataset = obj.Mim.CreateDatasetFromUid(obj.SeriesUid);
-            parameters = {};
-            parameters.dataset = obj.Dataset;
-            parameters.seriesUid = obj.SeriesUid;
-
-            obj.BackgroundViewModelUid = CoreSystemUtilities.GenerateUid();
-            backgroundViewModel = MimWSDataView(obj.Mim, obj.BackgroundViewModelUid, parameters);
-            modelList.addModel(obj.BackgroundViewModelUid, backgroundViewModel);
+%             obj.Hash = 0;
             
-            obj.SegmentationViewModelUid = CoreSystemUtilities.GenerateUid();
-            segmentationViewModel = MimWSOverlayView(obj.Mim, obj.SegmentationViewModelUid, parameters);
-            modelList.addModel(obj.SegmentationViewModelUid, segmentationViewModel);
+            datasetModelId = obj.buildModelId('MimWSDataset', struct('seriesUid', parameters.seriesUid));
+            imageVolumeId = obj.buildModelId('MimImageVolume', struct('datasetModelId', datasetModelId));
+            
+            parameters = {};
+            parameters.imageVolumeId = imageVolumeId;
+            parameters.seriesUid = obj.SeriesUid;
+            parameters.seriesModelId = obj.ModelId;
+
+            obj.BackgroundViewModelId = obj.buildModelId('MimWSDataView', parameters);
+            obj.SegmentationViewModelId = obj.buildModelId('MimWSOverlayView', parameters);
+            obj.EditViewModelId = obj.buildModelId('MimWSEditView', parameters);
         end
+        
+        function value = run(obj)
+%             obj.Hash = obj.Hash + 1;
+            value = {};
+            value.backgroundViewModelUid = obj.BackgroundViewModelId;
+            value.segmentationViewModelUid = obj.SegmentationViewModelId;
+            value.editViewModelUid = obj.EditViewModelId;
+%             hash = obj.Hash;
+        end        
     end
     
     methods (Static)

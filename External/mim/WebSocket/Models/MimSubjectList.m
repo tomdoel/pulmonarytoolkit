@@ -1,25 +1,27 @@
-classdef MimSubjectList < MimWSModel
+classdef MimSubjectList < MimModel
     properties (Access = private)
-        Hash
+%         Hash
         SubjectList
+        Mim
     end
         
     methods
-        function obj = MimSubjectList(mim, modelUid, parameters)
-            obj = obj@MimWSModel(mim, modelUid, parameters);
-            obj.Hash = 0;
+        function obj = MimSubjectList(modelId, parameters, modelMap, autoUpdate)
+            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
+            obj.Mim = modelMap.getMim();
+%             obj.Hash = 0;
         end
         
-        function [value, hash] = getValue(obj, modelList)
-            obj.Hash = obj.Hash + 1;
+        function value = run(obj)
+%             obj.Hash = obj.Hash + 1;
             if isempty(obj.SubjectList)
-                obj.update(modelList);
+                obj.updateSubjectList();
             end
             value = obj.SubjectList;
-            hash = obj.Hash;
+%             hash = obj.Hash;
         end
         
-        function update(obj, modelList)
+        function updateSubjectList(obj)
             database = obj.Mim.GetImageDatabase();
             [projectNames, projectIds] = database.GetListOfProjects();
             strhash = int2str(obj.Hash);
@@ -37,8 +39,8 @@ classdef MimSubjectList < MimWSModel
                     parameters.projectId = projectId;
                     parameters.subjectName = name;
                     
-                    [model, modelUid] = obj.getDerivedModel([], 'MimSubject', parameters, modelList);
-                    subjectList{end + 1} = MimSubjectList.SubjectListEntry(modelUid, names{nameIndex}, subjectId, projectName, [], []);
+                    modelId = obj.buildModelId('MimWSSubject', parameters);
+                    subjectList{end + 1} = MimSubjectList.SubjectListEntry(modelId, name, subjectId, projectName, [], []);
                     
                 end
             end
@@ -53,9 +55,9 @@ classdef MimSubjectList < MimWSModel
     end
     
     methods (Static, Access = private)
-        function subjectListEntry = SubjectListEntry(modelUid, label, id, project, uri, insert_date)
+        function subjectListEntry = SubjectListEntry(modelId, label, id, project, uri, insert_date)
             subjectListEntry = struct();
-            subjectListEntry.modelUid = modelUid;
+            subjectListEntry.modelUid = modelId;
             subjectListEntry.label = label;
             subjectListEntry.ID = id;
             subjectListEntry.project = project;

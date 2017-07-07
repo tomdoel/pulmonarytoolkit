@@ -1,16 +1,16 @@
-classdef MimSubject < MimWSModel
+classdef MimSubject < MimModel
     properties
         SubjectName
         SubjectId
         ProjectName
         ProjectId
-        Hash
+%         Hash
         SubjectOutput
     end
 
     methods
-        function obj = MimSubject(mim, modelUid, parameters)
-            obj = obj@MimWSModel(mim, modelUid, parameters);
+        function obj = MimSubject(modelId, parameters, modelMap, autoUpdate)
+            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
             obj.SubjectName = parameters.subjectName;
             obj.ProjectName = parameters.projectName;
             obj.ProjectId = parameters.projectId;
@@ -18,17 +18,17 @@ classdef MimSubject < MimWSModel
             obj.Hash = 0;
         end
         
-        function [value, hash] = getValue(obj, modelList)
-            obj.Hash = obj.Hash + 1;
+        function value = run(obj)
+%             obj.Hash = obj.Hash + 1;
             if isempty(obj.SubjectOutput)
-                obj.update(modelList);
+                obj.updateSubjectOutput();
             end
             value = obj.SubjectOutput;
-            hash = obj.Hash;
+%             hash = obj.Hash;
         end
         
-        function update(obj, modelList)
-            database = obj.Mim.GetImageDatabase();
+        function updateSubjectOutput(obj)
+            database = obj.ModelMap.getMim().GetImageDatabase();
             
             datasets = database.GetAllSeriesForThisPatient(obj.ProjectId, obj.SubjectId, true);
             obj.SubjectOutput = struct;
@@ -45,8 +45,9 @@ classdef MimSubject < MimWSModel
                 parameters = {};
                 parameters.seriesName = series.Name;
                 parameters.seriesUid = seriesUid;
-                [model, modelUid] = obj.getDerivedModel([], 'MimSeries', parameters, modelList);
-                seriesList{end + 1} = MimSubject.SeriesListEntry(modelUid, series.Name, series.Modality);
+                parameters.subjectModelId = obj.ModelId;
+                modelId = obj.buildModelId('MimSeries', parameters);
+                seriesList{end + 1} = MimSubject.SeriesListEntry(modelId, series.Name, series.Modality);
             end
             obj.SubjectOutput.seriesList = seriesList;
         end
@@ -59,13 +60,13 @@ classdef MimSubject < MimWSModel
     end    
     
     methods (Static, Access = private)
-        function seriesListEntry = SeriesListEntry(modelUid, seriesDescription, modality)
+        function seriesListEntry = SeriesListEntry(modelId, seriesDescription, modality)
             persistent seriesNumber
             if isempty(seriesNumber)
                 seriesNumber = 1;
             end
             seriesListEntry = struct();
-            seriesListEntry.modelUid = modelUid;
+            seriesListEntry.modelId = modelId;
             seriesListEntry.seriesDescription = seriesDescription;
             seriesListEntry.modality = modality;
             seriesListEntry.seriesNumber = seriesNumber;
