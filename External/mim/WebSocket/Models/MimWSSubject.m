@@ -14,11 +14,6 @@ classdef MimWSSubject < MimModel
             subjectId = obj.Parameters.subjectId;
             
             datasets = database.GetAllSeriesForThisPatient(projectId, subjectId, true);
-            obj.SubjectOutput = struct;
-            obj.SubjectOutput.subjectName = subjectName;
-            obj.SubjectOutput.xnatProject = projectName;
-            obj.SubjectOutput.subjectXnatID = subjectId;
-            obj.SubjectOutput.xnatInsertDate = '';
             seriesList = {};
             
             for seriesIndex = 1 : length(datasets)

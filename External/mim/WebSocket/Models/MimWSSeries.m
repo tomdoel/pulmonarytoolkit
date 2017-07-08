@@ -7,7 +7,7 @@ classdef MimWSSeries < MimModel
     
     methods (Access = protected)        
         function value = run(obj)            
-            datasetModelId = obj.buildModelId('MimWSDataset', struct('seriesUid', parameters.seriesUid));
+            datasetModelId = obj.buildModelId('MimWSDataset', struct('seriesUid', obj.Parameters.seriesUid));
             imageVolumeId = obj.buildModelId('MimImageVolume', struct('datasetModelId', datasetModelId));
             segmentationVolumeId = obj.buildModelId('MimSegmentationVolume', struct('datasetModelId', datasetModelId, 'segmentationName', 'BRAIN'));
 
