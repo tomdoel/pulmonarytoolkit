@@ -8,7 +8,7 @@ classdef MimWSOverlayView < MimModel
     methods (Access = protected)
         function value = run(obj)
             instanceList = {};
-            imageVolumeModelId = obj.Parameters.segmentationVolumeId;
+            imageVolumeModelId = obj.Parameters.imageVolumeId;
             imageVolume = obj.getModelValue(imageVolumeModelId);
             [~, axialDimension] = max(imageVolume.VoxelSize);
             for axial_index = 1 : imageVolume.ImageSize(axialDimension)

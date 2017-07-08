@@ -12,6 +12,9 @@ classdef MimWSSeries < MimModel
             datasetModelId = obj.buildModelId('MimWSDataset', struct('seriesUid', parameters.seriesUid));
             imageVolumeId = obj.buildModelId('MimImageVolume', struct('datasetModelId', datasetModelId));
             segmentationVolumeId = obj.buildModelId('MimSegmentationVolume', struct('datasetModelId', datasetModelId, 'segmentationName', 'BRAIN'));
+
+            obj.BackgroundViewModelId = obj.buildModelId('MimWSDataView', struct('imageVolumeId', imageVolumeId));
+            obj.SegmentationViewModelId = obj.buildModelId('MimWSOverlayView', struct('imageVolumeId', imageVolumeId));
             
             parameters = {};
             parameters.imageVolumeId = imageVolumeId;
@@ -20,8 +23,6 @@ classdef MimWSSeries < MimModel
             parameters.seriesModelId = obj.ModelId;
             parameters.datasetId = datasetModelId;
 
-            obj.BackgroundViewModelId = obj.buildModelId('MimWSDataView', struct('imageVolumeId', imageVolumeId));
-            obj.SegmentationViewModelId = obj.buildModelId('MimWSOverlayView', parameters);
             obj.EditViewModelId = obj.buildModelId('MimWSEditView', parameters);
         end
     end
