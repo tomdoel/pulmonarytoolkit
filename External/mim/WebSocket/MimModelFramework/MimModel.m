@@ -21,6 +21,11 @@ classdef (Abstract) MimModel  < CoreBaseClass
         value = run(obj)
     end
     
+    methods (Access = protected)
+        function ValueHasChanged(obj, value)
+        end
+    end
+    
     methods
         function obj = MimModel(modelId, parameters, modelMap, autoUpdate)
             obj.ModelId = modelId;
@@ -55,6 +60,7 @@ classdef (Abstract) MimModel  < CoreBaseClass
             if ~obj.Valid || ~isequal(obj.LastValue, value)
                 obj.invalidate();
                 obj.LastValue = value;
+                obj.ValueHasChanged(value);
                 obj.Valid = true;
             end
         end
