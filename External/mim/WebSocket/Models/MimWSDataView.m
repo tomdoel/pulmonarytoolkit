@@ -9,15 +9,14 @@ classdef MimWSDataView < MimModel
         function value = run(obj)
             instanceList = {};
             imageVolumeModelId = obj.Parameters.imageVolumeId;
-            baseImage = obj.getModelValue(imageVolumeModelId);
-            [~, axialDimension] = max(baseImage.VoxelSize);
-            for axial_index = 1 : baseImage.ImageSize(axialDimension)
-                parameters = {};
-                parameters.imageVolumeModelId = imageVolumeModelId;
-                parameters.imageSliceNumber = axial_index;
-                parameters.parentViewModelId = obj.ModelId;
-                parameters.axialDimension = axialDimension;
-                parameters.imageType = 1;
+            imageVolume = obj.getModelValue(imageVolumeModelId);
+            [~, axialDimension] = max(imageVolume.VoxelSize);
+            for axial_index = 1 : imageVolume.ImageSize(axialDimension)
+                parameters = struct(...
+                    'imageVolumeModelId', imageVolumeModelId, ...
+                    'imageSliceNumber', axial_index, ...
+                    'axialDimension', axialDimension, ...
+                    'imageType', imageVolume.ImageType);
                 imageSliceModelId = obj.buildModelId('MimWSImageSlice', parameters);
                 instanceList{end + 1} = struct('imageId', ['mim:' imageSliceModelId]);
             end

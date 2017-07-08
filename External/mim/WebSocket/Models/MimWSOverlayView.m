@@ -8,16 +8,15 @@ classdef MimWSOverlayView < MimModel
     methods (Access = protected)
         function value = run(obj)
             instanceList = {};
-            segmentationVolumeId = obj.Parameters.segmentationVolumeId;
-            overlayImage = obj.getModelValue(obj.segmentationVolumeId);
-            [~, axialDimension] = max(overlayImage.VoxelSize);
-            for axial_index = 1 : overlayImage.ImageSize(axialDimension)
-                parameters = {};
-                parameters.imageVolumeModelId = segmentationVolumeId;
-                parameters.imageSliceNumber = axial_index;
-                parameters.parentViewModelId = obj.ModelId;
-                parameters.axialDimension = axialDimension;
-                parameters.imageType = 2;
+            imageVolumeModelId = obj.Parameters.segmentationVolumeId;
+            imageVolume = obj.getModelValue(imageVolumeModelId);
+            [~, axialDimension] = max(imageVolume.VoxelSize);
+            for axial_index = 1 : imageVolume.ImageSize(axialDimension)
+                parameters = struct(...
+                    'imageVolumeModelId', imageVolumeModelId, ...
+                    'imageSliceNumber', axial_index, ...
+                    'axialDimension', axialDimension, ...
+                    'imageType', imageVolume.ImageType);
                 imageSliceModelId = obj.buildModelId('MimWSImageSlice', parameters);
                 instanceList{end + 1} = struct('imageId', ['mim:' imageSliceModelId]);
             end
