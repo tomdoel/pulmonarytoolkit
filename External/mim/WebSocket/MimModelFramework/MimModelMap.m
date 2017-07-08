@@ -10,8 +10,6 @@ classdef MimModelMap < CoreBaseClass
             obj.Mim = mim;
             obj.clear();
             
-            % Explicitly add in models with unique names
-            obj.ModelCache('MimSubjectList') = MimSubjectList('MimSubjectList', {}, obj, true);
         end
         
         function [value, hash] = getValue(obj, modelId)
@@ -50,6 +48,8 @@ classdef MimModelMap < CoreBaseClass
         
         function clear(obj)
             obj.ModelCache = containers.Map();
+            % Explicitly add in models with unique names
+            obj.ModelCache('MimSubjectList') = MimSubjectList('MimSubjectList', {}, obj, true);
         end
         
         function mim = getMim(obj)
