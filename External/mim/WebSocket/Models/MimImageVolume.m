@@ -1,27 +1,14 @@
 classdef MimImageVolume < MimModel
-    properties
-        DatasetModelId
-        Image
-    end
-
     methods
-        function obj = MimImageVolume(modelId, parameters, modelMap, autoUpdat)
-            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdat);
-            obj.DatasetModelId = parameters.datasetModelId;
-        end
-        
-        function value = run(obj)
-            if isempty(obj.Image)
-                dataset = obj.getValue(obj.DatasetModelId);
-                obj.Image = dataset.GetResult('PTKOriginalImage');
-            end
-            value = obj.Image;
+        function obj = MimImageVolume(modelId, parameters, modelMap, autoUpdate)
+            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
         end
     end
     
-    methods (Static)
-        function key = getKeyFromParameters(parameters)
-            key = [parameters.seriesUid '-VOL'];
+    methods (Access = protected)
+        function value = run(obj)
+            dataset = obj.getModelValue(obj.Parameters.datasetModelId);
+            value = dataset.GetResult('PTKOriginalImage');
         end
     end
 end

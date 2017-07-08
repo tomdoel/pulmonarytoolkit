@@ -17,7 +17,7 @@ classdef (Abstract) MimModel  < CoreBaseClass
         LastValue
     end
     
-    methods (Abstract)
+    methods (Abstract, Access = protected)
         value = run(obj)
     end
     
