@@ -26,9 +26,9 @@ classdef MimWebSocketParser
             else
                 metaData = [];
             end
-            if isfield(json, 'value')
-                data = json.value;
-                header = rmfield(header, 'value');
+            if isfield(json, 'data')
+                data = json.data;
+                header = rmfield(header, 'data');
             else
                 data = [];
             end
@@ -53,7 +53,14 @@ classdef MimWebSocketParser
             dataType = header.dataType;
             dataDims = header.dataDims;
             data = dataBlob(10 + headerLength : end);
-            data = typecast(data, dataType);
+            
+            if isfield(metadata, 'StorageClass') && isfield(metadata, 'imageType')
+                storageClassConstructor = str2func(metadata.StorageClass);
+                data = storageClassConstructor(data, metadata.imageType);
+            else
+                data = typecast(data, dataType);
+            end
+            
             data = reshape(data, dataDims);
             header = rmfield(rmfield(header, 'dataType'), 'dataDims');
         end
