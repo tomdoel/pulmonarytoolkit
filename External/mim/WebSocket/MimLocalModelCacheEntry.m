@@ -2,11 +2,24 @@ classdef MimLocalModelCacheEntry < MimModelCacheEntry
 
     properties
         CachedValue
+        Controller
+        ModelId
+    end
+    
+    events
+        ValueChanged
+    end
+    
+    properties (Access = private)
+        Listeners
     end
     
     methods
-        function obj = MimLocalModelCacheEntry(currentHash, remoteHash)
+        function obj = MimLocalModelCacheEntry(currentHash, remoteHash, controller, modelId)
             obj = obj@MimModelCacheEntry(currentHash, remoteHash);
+            obj.Controller = controller;
+            obj.ModelId = modelId;
+            obj.Listeners = [];
         end
         
         function updateAndNotify(obj, currentHash, remoteHash, value)
@@ -15,8 +28,9 @@ classdef MimLocalModelCacheEntry < MimModelCacheEntry
             obj.updateHashes(currentHash, remoteHash);
             obj.CachedValue = value;
             
-            % ToDo: Notify listeners
-%         	obj.Notify(value);
+            % Notifies the local model framework
+            obj.Controller.setValue(obj.ModelId, value);
+%         	obj.notify(value);
         end
         
         function modifyCurrentHashAndValue(obj, newHash, newValue)
@@ -34,7 +48,19 @@ classdef MimLocalModelCacheEntry < MimModelCacheEntry
         
         function value = getCurrentValue(obj)
             value = obj.CachedValue;
-        end        
+        end
+%         
+%         function addListener(obj, listener)
+%             obj.Listeners{end + 1} = listener;
+%         end
     end
+%     
+%     methods (Access = private)
+%         function notify(obj, value)
+%             for listener = obj.Listeners
+%                 listener{1}.ValueChanged(value);
+%             end
+%         end
+%     end
 end
 
