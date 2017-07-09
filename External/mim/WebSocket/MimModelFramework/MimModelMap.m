@@ -13,7 +13,7 @@ classdef MimModelMap < CoreBaseClass
         end
         
         function [value, hash] = getValue(obj, modelId)
-            model = obj.ModelCache(modelId);
+            model = obj.ModelCache(modelId);    
             [value, hash] = model.getOrRun();
         end
         

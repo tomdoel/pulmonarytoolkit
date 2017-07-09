@@ -93,6 +93,12 @@ classdef (Abstract) MimModel  < CoreBaseClass
            value = obj.ModelMap.getDependentValue(modelId, obj);
         end
         
+        function value = setModelValue(obj, modelId, value)
+            % Sets the current value of the specified model
+            
+           obj.ModelMap.setValue(modelId, value);
+        end
+        
         function modelId = buildModelId(obj, modelClassName, parameters)
             modelId = obj.ModelMap.buildModelId(modelClassName, parameters);
         end        
