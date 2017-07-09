@@ -35,7 +35,7 @@ classdef MimSubjectList < MimModel
     methods (Static, Access = private)
         function subjectListEntry = SubjectListEntry(modelId, label, id, project, uri, insert_date)
             subjectListEntry = struct();
-            subjectListEntry.modelUid = modelId;
+            subjectListEntry.modelId = modelId;
             subjectListEntry.label = label;
             subjectListEntry.ID = id;
             subjectListEntry.project = project;

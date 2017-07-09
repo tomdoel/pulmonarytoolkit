@@ -9,7 +9,7 @@ classdef MimWSImageSlice < MimModel
         function value = run(obj)
             imageType = obj.Parameters.imageType;
             imageVolume = obj.getModelValue(obj.Parameters.imageVolumeModelId);
-            slice = imageVolume.GetSlice(obj.Parameters.imageSliceNumber, obj.Paramaters.axialDimension);
+            slice = imageVolume.GetSlice(obj.Parameters.imageSliceNumber, obj.Parameters.axialDimension);
             globalMin = imageVolume.Limits(1);
             globalMax = imageVolume.Limits(2);
             if imageType == 2

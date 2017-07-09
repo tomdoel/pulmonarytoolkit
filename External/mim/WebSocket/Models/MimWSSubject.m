@@ -27,7 +27,12 @@ classdef MimWSSubject < MimModel
                 modelId = obj.buildModelId('MimWSSeries', parameters);
                 seriesList{end + 1} = MimWSSubject.SeriesListEntry(modelId, series.Name, series.Modality);
             end
-            value = seriesList;
+            value = struct();
+            value.subjectName = subjectName;
+            value.xnatProject = projectName;
+            value.subjectXnatID = subjectId;
+            value.xnatInsertDate = '';
+            value.seriesList = seriesList;            
         end
     end
     

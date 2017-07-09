@@ -22,7 +22,7 @@ classdef MimWSEditView < MimModel
                 instanceList{end + 1} = struct('imageId', ['mim:' imageSliceModelId]);
             end
             
-            value = struct('instanceList', instanceList);
+            value = struct('instanceList', {instanceList});
         end
     end
 end

@@ -16,9 +16,9 @@ classdef MimWSSeries < MimModel
             editViewModelId = obj.buildModelId('MimWSEditView', struct('segmentationVolumeId', segmentationVolumeId));
             
             value = {};
-            value.backgroundViewModelUid = backgroundViewModelId;
-            value.segmentationViewModelUid = segmentationViewModelId;
-            value.editViewModelUid = editViewModelId;
+            value.backgroundViewModelId = backgroundViewModelId;
+            value.segmentationViewModelId = segmentationViewModelId;
+            value.editViewModelId = editViewModelId;
         end        
     end
 end

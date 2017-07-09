@@ -8,10 +8,10 @@ classdef MimSegmentationVolume < MimModel
     methods (Access = protected)
         function value = run(obj)
             datasetModelId = obj.Parameters.datasetModelId;
-            segmentationName = obj.Parameters.segmentationName;            
+            segmentationName = obj.Parameters.segmentationName;        
             dataset = obj.getModelValue(datasetModelId);
             segs = CoreContainerUtilities.GetFieldValuesFromSet(dataset.GetListOfManualSegmentations, 'Second');
-            if any(strcmp(segs, segmentationName))
+            if any(strcmpi(segs, segmentationName))
                 segImage = dataset.LoadManualSegmentation(segmentationName);
             else
                 segImage = dataset.GetTemplateImage(PTKContext.OriginalImage);
@@ -27,6 +27,17 @@ classdef MimSegmentationVolume < MimModel
                 dataset.SaveManualSegmentation(segmentationName, segImage);
             end
             value = segImage;
+        end
+        
+        function ValueHasChanged(obj, value)
+            if isa(value, 'PTKImage')
+                datasetModelId = obj.Parameters.datasetModelId;
+                segmentationName = obj.Parameters.segmentationName;        
+                dataset = obj.getModelValue(datasetModelId);
+                dataset.SaveManualSegmentation(segmentationName, value);
+            else
+                disp('Error: wrong type of image');
+            end
         end
     end
 end
