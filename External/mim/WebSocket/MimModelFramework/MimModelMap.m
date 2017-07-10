@@ -29,6 +29,16 @@ classdef MimModelMap < CoreBaseClass
             model = obj.ModelCache(modelId);
             model.setValue(value);
         end
+
+        function addItem(obj, modelId, itemId)
+            model = obj.ModelCache(modelId);
+            model.addItem(modelId, itemId);
+        end
+        
+        function removeItem(obj, modelId, itemId)
+            model = obj.ModelCache(modelId);
+            model.removeItem(itemId);
+        end
         
         function autoUpdate(obj)
             % Triggers updating of invalid models that have AutoUpdate

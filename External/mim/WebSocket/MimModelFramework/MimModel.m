@@ -14,6 +14,7 @@ classdef (Abstract) MimModel  < CoreBaseClass
     properties (Access = protected)
         ModelMap
         Dependents
+        CollectionItems
         LastValue
     end
     
@@ -34,6 +35,7 @@ classdef (Abstract) MimModel  < CoreBaseClass
             obj.AutoUpdate = autoUpdate;
             obj.Dependents = containers.Map();
             obj.Valid = false;
+            obj.CollectionItems = {};
             obj.Hash = 0;
         end
         
@@ -72,6 +74,20 @@ classdef (Abstract) MimModel  < CoreBaseClass
             end
         end
         
+        function addItem(obj, itemId)
+            if ~ismember(itemId, obj.CollectionItems)
+                obj.CollectionItems{end + 1} = itemId;
+                obj.setValue(obj.CollectionItems);
+            end
+        end
+        
+        function removeItem(obj, itemId)
+            if ismember(itemId, obj.CollectionItems)
+                obj.CollectionItems = setdiff(obj.CollectionItems, itemId);
+                obj.setValue(obj.CollectionItems);
+            end
+        end
+        
         function [value, hash] = getOrRun(obj)
             % Fetches the model result, running it if it is invalid
             
@@ -93,10 +109,18 @@ classdef (Abstract) MimModel  < CoreBaseClass
            value = obj.ModelMap.getDependentValue(modelId, obj);
         end
         
-        function value = setModelValue(obj, modelId, value)
+        function setModelValue(obj, modelId, value)
             % Sets the current value of the specified model
             
            obj.ModelMap.setValue(modelId, value);
+        end
+
+        function addModelItem(obj, modelId, itemId)
+           obj.ModelMap.addItem(modelId, itemId);
+        end
+        
+        function removeModelItem(obj, modelId, itemId)
+           obj.ModelMap.removeItem(modelId, itemId);
         end
         
         function modelId = buildModelId(obj, modelClassName, parameters)
