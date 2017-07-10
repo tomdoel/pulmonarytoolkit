@@ -1,17 +1,11 @@
 classdef MimWSEditSlice < MimModel
-    methods
-        function obj = MimWSEditSlice(modelId, parameters, modelMap, autoUpdate)
-            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
-        end
-    end
-    
     methods (Access = protected)
         function value = run(obj)
             value = struct();
         end
         
         function ValueHasChanged(obj, value)
-            overlayImage = obj.getModelValue(obj.Parameters.segmentationVolumeId);
+            overlayImage = obj.Callback.getModelValue(obj.Parameters.segmentationVolumeId);
             imageSliceNumber = obj.Parameters.imageSliceNumber;
             axialDimension = obj.Parameters.axialDimension;
             disp('New value for seg slice:');
@@ -31,7 +25,7 @@ classdef MimWSEditSlice < MimModel
             end
             
             overlayImage.ReplaceImageSlice(slice, imageSliceNumber, axialDimension);
-            obj.setModelValue(obj.Parameters.segmentationVolumeId, overlayImage.Copy());
+            obj.Callback.setModelValue(obj.Parameters.segmentationVolumeId, overlayImage.Copy());
         end
     end
     

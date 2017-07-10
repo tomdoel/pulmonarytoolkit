@@ -1,13 +1,7 @@
 classdef MimSubjectList < MimModel
-    methods
-        function obj = MimSubjectList(modelId, parameters, modelMap, autoUpdate)
-            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
-        end
-    end
-        
     methods (Access = protected)
         function value = run(obj)
-            database = obj.ModelMap.getMim().GetImageDatabase();
+            database = obj.Callback.getMim().GetImageDatabase();
             [projectNames, projectIds] = database.GetListOfProjects();
             subjectList = {};
             for projectIndex = 1 : numel(projectNames)
@@ -23,7 +17,7 @@ classdef MimSubjectList < MimModel
                     parameters.projectId = projectId;
                     parameters.subjectName = name;
                     
-                    modelId = obj.buildModelId('MimWSSubject', parameters);
+                    modelId = obj.Callback.buildModelId('MimWSSubject', parameters);
                     subjectList{end + 1} = MimSubjectList.SubjectListEntry(modelId, name, subjectId, projectName, [], []);
                     
                 end

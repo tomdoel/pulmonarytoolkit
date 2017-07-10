@@ -9,7 +9,6 @@ classdef MimModelMap < CoreBaseClass
         function obj = MimModelMap(mim)
             obj.Mim = mim;
             obj.clear();
-            
         end
         
         function [value, hash] = getValue(obj, modelId)
@@ -17,11 +16,11 @@ classdef MimModelMap < CoreBaseClass
             [value, hash] = model.getOrRun();
         end
         
-        function value = getDependentValue(obj, modelId, dependentModel)
+        function value = getDependentValue(obj, modelId, dependentModelId)
             % Gets a model value and adds the caller as a dependent
             
             model = obj.ModelCache(modelId);
-            model.addDependentModel(dependentModel);
+            model.addDependentModel(obj.ModelCache(dependentModelId));
             value = model.getOrRun();
         end        
         
@@ -53,17 +52,17 @@ classdef MimModelMap < CoreBaseClass
             
             modelConstructor = str2func(modelClassName);
             modelId = CoreSystemUtilities.GenerateUid();
-            obj.ModelCache(modelId) = modelConstructor(modelId, parameters, obj, true);
+            model = modelConstructor();
+            model.initialise(modelId, parameters, MimModelCallback(modelId, obj, obj.Mim), true);
+            obj.ModelCache(modelId) = model;
         end
         
         function clear(obj)
             obj.ModelCache = containers.Map();
             % Explicitly add in models with unique names
-            obj.ModelCache('MimSubjectList') = MimSubjectList('MimSubjectList', {}, obj, true);
-        end
-        
-        function mim = getMim(obj)
-            mim = obj.Mim;
+            model = MimSubjectList();
+            model.initialise('MimSubjectList', {}, MimModelCallback('MimSubjectList', obj, obj.Mim), true);
+            obj.ModelCache('MimSubjectList') = model;
         end
     end
 end

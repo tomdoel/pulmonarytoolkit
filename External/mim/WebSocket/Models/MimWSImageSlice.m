@@ -1,14 +1,8 @@
 classdef MimWSImageSlice < MimModel
-    methods
-        function obj = MimWSImageSlice(modelId, parameters, modelMap, autoUpdate)
-            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
-        end
-    end
-    
     methods (Access = protected)
         function value = run(obj)
             imageType = obj.Parameters.imageType;
-            imageVolume = obj.getModelValue(obj.Parameters.imageVolumeModelId);
+            imageVolume = obj.Callback.getModelValue(obj.Parameters.imageVolumeModelId);
             slice = imageVolume.GetSlice(obj.Parameters.imageSliceNumber, obj.Parameters.axialDimension);
             globalMin = imageVolume.Limits(1);
             globalMax = imageVolume.Limits(2);

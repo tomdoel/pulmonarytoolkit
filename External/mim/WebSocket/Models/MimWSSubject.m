@@ -1,13 +1,7 @@
 classdef MimWSSubject < MimModel
-    methods
-        function obj = MimWSSubject(modelId, parameters, modelMap, autoUpdate)
-            obj = obj@MimModel(modelId, parameters, modelMap, autoUpdate);
-        end 
-    end
-    
     methods (Access = protected)
         function value = run(obj)
-            database = obj.ModelMap.getMim().GetImageDatabase();
+            database = obj.Callback.getMim().GetImageDatabase();
             subjectName = obj.Parameters.subjectName;
             projectName = obj.Parameters.projectName;
             projectId = obj.Parameters.projectId;
@@ -24,7 +18,7 @@ classdef MimWSSubject < MimModel
                 parameters.seriesName = series.Name;
                 parameters.seriesUid = seriesUid;
                 parameters.subjectModelId = obj.ModelId;
-                modelId = obj.buildModelId('MimWSSeries', parameters);
+                modelId = obj.Callback.buildModelId('MimWSSeries', parameters);
                 seriesList{end + 1} = MimWSSubject.SeriesListEntry(modelId, series.Name, series.Modality);
             end
             value = struct();

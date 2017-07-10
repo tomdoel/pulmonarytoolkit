@@ -4,7 +4,8 @@ classdef (Abstract) MimModel  < CoreBaseClass
         AutoUpdate
     end
     
-    properties (SetAccess = protected)
+    properties (SetAccess = private)
+        Callback
         ModelId
         Parameters
         Valid
@@ -12,9 +13,11 @@ classdef (Abstract) MimModel  < CoreBaseClass
     end
     
     properties (Access = protected)
-        ModelMap
-        Dependents
         CollectionItems
+    end
+    
+    properties (Access = private)
+        Dependents
         LastValue
     end
     
@@ -28,10 +31,13 @@ classdef (Abstract) MimModel  < CoreBaseClass
     end
     
     methods
-        function obj = MimModel(modelId, parameters, modelMap, autoUpdate)
+        function obj = MimModel()
+        end
+        
+        function initialise(obj, modelId, parameters, callback, autoUpdate)
             obj.ModelId = modelId;
             obj.Parameters = parameters;
-            obj.ModelMap = modelMap;
+            obj.Callback = callback;
             obj.AutoUpdate = autoUpdate;
             obj.Dependents = containers.Map();
             obj.Valid = false;
@@ -100,31 +106,5 @@ classdef (Abstract) MimModel  < CoreBaseClass
             value = obj.LastValue;
             hash = obj.Hash;
         end
-    end
-    
-    methods (Access = protected)
-        function value = getModelValue(obj, modelId)
-            % Returns the current value of the specified model
-            
-           value = obj.ModelMap.getDependentValue(modelId, obj);
-        end
-        
-        function setModelValue(obj, modelId, value)
-            % Sets the current value of the specified model
-            
-           obj.ModelMap.setValue(modelId, value);
-        end
-
-        function addModelItem(obj, modelId, itemId)
-           obj.ModelMap.addItem(modelId, itemId);
-        end
-        
-        function removeModelItem(obj, modelId, itemId)
-           obj.ModelMap.removeItem(modelId, itemId);
-        end
-        
-        function modelId = buildModelId(obj, modelClassName, parameters)
-            modelId = obj.ModelMap.buildModelId(modelClassName, parameters);
-        end        
     end
 end
