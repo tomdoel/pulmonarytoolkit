@@ -8,7 +8,7 @@ classdef MimSegmentationVolume < MimModel
     methods (Access = protected)
         function value = run(obj)
             datasetModelId = obj.Parameters.datasetModelId;
-            segmentationName = obj.Parameters.segmentationName;        
+            segmentationName = obj.Parameters.segmentationName;
             dataset = obj.getModelValue(datasetModelId);
             segs = CoreContainerUtilities.GetFieldValuesFromSet(dataset.GetListOfManualSegmentations, 'Second');
             if any(strcmpi(segs, segmentationName))
