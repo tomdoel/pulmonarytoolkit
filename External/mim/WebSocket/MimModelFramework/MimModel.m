@@ -79,21 +79,7 @@ classdef (Abstract) MimModel  < CoreBaseClass
                 obj.Dependents(modelId) = model;
             end
         end
-        
-        function addItem(obj, itemId)
-            if ~ismember(itemId, obj.CollectionItems)
-                obj.CollectionItems{end + 1} = itemId;
-                obj.setValue(obj.CollectionItems);
-            end
-        end
-        
-        function removeItem(obj, itemId)
-            if ismember(itemId, obj.CollectionItems)
-                obj.CollectionItems = setdiff(obj.CollectionItems, itemId);
-                obj.setValue(obj.CollectionItems);
-            end
-        end
-        
+
         function [value, hash] = getOrRun(obj)
             % Fetches the model result, running it if it is invalid
             
