@@ -82,7 +82,7 @@ classdef MimMarkerPanel < GemPanel
             new_position = obj.InnerPosition;            
             
             panel_height = max(0, new_position(4));
-            toolbar_height = 315;
+            toolbar_height = obj.MarkerToolbar.GetRequestedHeight(new_position(3));
             toolbar_position = new_position;
             toolbar_position(2) = new_position(2) + panel_height - toolbar_height;
             toolbar_position(4) = toolbar_height;

@@ -4,8 +4,9 @@ classdef MimToolbarPanel < GemPanel
     %     This class is used internally within the TD MIM Toolkit to help
     %     build the user interface.
     %
-    %     MimToolbarPanel represents a panel containing tool controls that
-    %     are enabled and disabled dynamically
+    %     MimToolbarPanel represents a dynamic panel containing tool 
+    %     controls that can enable or disable themselves when updated.
+    %     
     %
     %     Licence
     %     -------
@@ -64,16 +65,33 @@ classdef MimToolbarPanel < GemPanel
             % After calling Resize@GemPanel, the position will have been adjusted due to the border
             new_position = obj.InnerPosition;            
             
+            resize_list = obj.ComputeSizes(new_position(3));
+            
+            % Do the actual resize
             panel_height = max(1, new_position(4));
-            row_height = obj.RowHeight;
             panel_top = new_position(2) + panel_height;
-            y_column_top = panel_top;
-            y_column_base = y_column_top - row_height;
+            for resize_item = resize_list
+                item = resize_item{1}{1};
+                new_size = resize_item{1}{2};
+                new_size(2) = new_size(2) + panel_top;
+                item.Resize(new_size);
+            end
+            
+        end
+        
+        function resize_list = ComputeSizes(obj, width)
+            % Create a structure containing the new positions
             
             min_x = 1 + obj.LeftMargin;
-            max_x = new_position(3) - obj.RightMargin;
+            max_x = width - obj.RightMargin;
             x_position = min_x;
+            
+            row_height = obj.RowHeight;
+            y_column_top = 0;
+            y_column_base = y_column_top - row_height;
+            
             is_first_separator = true;
+            resize_list = [];
             
             for tool_group_key = obj.OrderedControlGroupList
                 tool_group_panel = obj.ControlGroups(tool_group_key{1});
@@ -90,31 +108,31 @@ classdef MimToolbarPanel < GemPanel
                     
                     if obj.GroupVertically
                         separator = obj.ControlGroupSeparators(tool_group_key{1});
-                        y_position = max(1, y_column_top - separator.GetRequestedHeight);
+                        y_position = y_column_top - separator.GetRequestedHeight;
                         if is_first_separator
                             is_first_separator = false;
                             separator.TopBorder = false;
                         else
                             separator.TopBorder = true;
                         end
-                        separator.Enable;
-                        separator.Resize([1, y_position, new_position(3), separator.GetRequestedHeight]);
-                        y_column_top = y_column_top - separator.GetRequestedHeight;
+                        separator.Enable();
+                        resize_list{end + 1} = {separator, [1, y_position, width, separator.GetRequestedHeight]};
+                        y_column_top = y_column_top - separator.GetRequestedHeight();
                         y_column_base = y_column_top - row_height;
                     end
                 
                     
                     y_offset = round((row_height - group_panel_height)/2);
-                    y_position = max(1, y_column_base + y_offset);
-                    tool_group_panel.Resize([x_position, y_position, group_panel_width, group_panel_height]);
+                    y_position = y_column_base + y_offset;
+                    resize_list{end + 1} = {tool_group_panel, [x_position, y_position, group_panel_width, group_panel_height]};
                     x_position = x_position + obj.HorizontalSpacing + group_panel_width;
                     
                 else
                     if obj.GroupVertically
                         separator = obj.ControlGroupSeparators(tool_group_key{1});
-                        separator.Disable;
+                        separator.Disable();
                     end
-                end 
+                end                
             end
         end
         
@@ -135,7 +153,16 @@ classdef MimToolbarPanel < GemPanel
         end
         
         function height = GetRequestedHeight(obj, width)
-            height = obj.ToolbarHeight;
+            if obj.GroupVertically
+                resize_list = obj.ComputeSizes(width);
+                if isempty(resize_list)
+                    height = 0;
+                else
+                    height = abs(resize_list{end}{2}(2));
+                end
+            else
+                height = obj.ToolbarHeight;
+            end
         end
         
         function mode = GetModeTabName(obj)
