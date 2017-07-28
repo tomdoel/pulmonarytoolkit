@@ -116,7 +116,8 @@ classdef MimToolbarPanel < GemPanel
                             separator.TopBorder = true;
                         end
                         separator.Enable();
-                        resize_list{end + 1} = {separator, [1, y_position, width, separator.GetRequestedHeight]};
+                        
+                        resize_list{end + 1} = {separator, [1, y_position, width, separator.GetRequestedHeight()]};
                         y_column_top = y_column_top - separator.GetRequestedHeight();
                         y_column_base = y_column_top - row_height;
                     end
