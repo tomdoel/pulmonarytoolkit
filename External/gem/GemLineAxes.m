@@ -19,7 +19,7 @@ classdef GemLineAxes < GemAxes
         BottomLineObject
     end
 
-    properties
+    properties (SetObservable)
         LineColour
         LeftLine = false
         RightLine = false
@@ -31,31 +31,20 @@ classdef GemLineAxes < GemAxes
         function obj = GemLineAxes(parent)
             obj = obj@GemAxes(parent);
             obj.LineColour = [0.5, 0.5, 0.5];
+            
+            % We listen to changes in the border properties so we know when
+            % to create axes for the lines which comprise the borders
+            obj.AddPostSetListener(obj, 'LineColour', @obj.LineChangedCallback);
+            obj.AddPostSetListener(obj, 'LeftLine', @obj.LineChangedCallback);
+            obj.AddPostSetListener(obj, 'RightLine', @obj.LineChangedCallback);
+            obj.AddPostSetListener(obj, 'TopLine', @obj.LineChangedCallback);
+            obj.AddPostSetListener(obj, 'BottomLine', @obj.LineChangedCallback);
         end
         
         function CreateGuiComponent(obj, position)
             CreateGuiComponent@GemAxes(obj, position);
             
-            if obj.LeftLine
-                x_position = [position(1), position(2)];
-                y_position = [position(2), position(2) + position(4) - 1];
-                obj.LeftLineObject = line('parent', obj.GraphicalComponentHandle, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
-            end
-            if obj.RightLine
-                x_position = [position(1) + position(3) - 1, position(1) + position(3) - 1];
-                y_position = [position(2), position(2) + position(4) - 1];
-                obj.RightLineObject = line('parent', obj.GraphicalComponentHandle, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
-            end
-            if obj.TopLine
-                x_position = [position(1), position(1) + position(3) - 1];
-                y_position = [position(2) + position(4) - 1, position(2) + position(4) - 1];
-                obj.TopLineObject = line('parent', obj.GraphicalComponentHandle, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
-            end
-            if obj.BottomLine
-                x_position = [position(1), position(1) + position(3) - 1];
-                y_position = [position(2), position(2)];
-                obj.BottomLineObject = line('parent', obj.GraphicalComponentHandle, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
-            end
+            obj.UpdateBorders(position);
         end
 
         function Resize(obj, position)
@@ -68,31 +57,69 @@ classdef GemLineAxes < GemAxes
 
             obj.SetLimits(x_limits, y_limits);
             
-            if ishandle(obj.LeftLineObject)
-                x_position = [position(1), position(1)];
-                y_position = [position(2), position(2) + position(4) - 1];
-                set(obj.LeftLineObject, 'XData', x_position, 'YData', y_position);
-            end
-            
-            if ishandle(obj.RightLineObject)
-                x_position = [position(1) + position(3) - 1, position(1) + position(3) - 1];
-                y_position = [position(2), position(2) + position(4) - 1];
-                set(obj.RightLineObject, 'XData', x_position, 'YData', y_position);
-            end
-            
-            if ishandle(obj.TopLineObject)
-                x_position = [position(1), position(1) + position(3) - 1];
-                y_position = [position(2) + position(4) - 1, position(2) + position(4) - 1];
-                set(obj.TopLineObject, 'XData', x_position, 'YData', y_position);
-            end
-            
-            if ishandle(obj.BottomLineObject)
-                x_position = [position(1), position(1) + position(3) - 1];
-                y_position = [position(2), position(2)];
-                set(obj.BottomLineObject, 'XData', x_position, 'YData', y_position);
-            end
-            
+            obj.UpdateBorders(position);
+        end        
+    end
+    
+    methods (Access = protected)
+        function LineChangedCallback(obj, ~, ~, ~)
+            obj.UpdateBorders(obj.Position);
         end
         
+        function UpdateBorders(obj, position)
+            if ~isempty(obj.GraphicalComponentHandle) && ~isempty(position)
+                if obj.LeftLine
+                    x_position = [position(1), position(2)];
+                    y_position = [position(2), position(2) + position(4) - 1];
+                    if ~isempty(obj.LeftLineObject) && ishandle(obj.LeftLineObject)
+                        set(obj.LeftLineObject, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
+                    else
+                        obj.LeftLineObject = line('parent', obj.GraphicalComponentHandle, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
+                    end
+                elseif ~isempty(obj.LeftLineObject)
+                    delete(obj.LeftLineObject);
+                    obj.LeftLineObject = [];
+                end
+
+                if obj.RightLine
+                    x_position = [position(1) + position(3) - 1, position(1) + position(3) - 1];
+                    y_position = [position(2), position(2) + position(4) - 1];
+                    if ~isempty(obj.RightLineObject) && ishandle(obj.RightLineObject)
+                        set(obj.RightLineObject, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
+                    else
+                        obj.RightLineObject = line('parent', obj.GraphicalComponentHandle, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
+                    end
+                elseif ~isempty(obj.RightLineObject)
+                    delete(obj.RightLineObject);
+                    obj.RightLineObject = [];
+                end
+
+                if obj.TopLine
+                    x_position = [position(1), position(1) + position(3) - 1];
+                    y_position = [position(2) + position(4) - 1, position(2) + position(4) - 1];
+                    if ~isempty(obj.TopLineObject) && ishandle(obj.TopLineObject)
+                        set(obj.TopLineObject, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
+                    else
+                        obj.TopLineObject = line('parent', obj.GraphicalComponentHandle, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
+                    end
+                elseif ~isempty(obj.TopLineObject)
+                    delete(obj.TopLineObject);
+                    obj.TopLineObject = [];
+                end
+
+                if obj.BottomLine
+                    x_position = [position(1), position(1) + position(3) - 1];
+                    y_position = [position(2), position(2)];
+                    if ~isempty(obj.BottomLineObject) && ishandle(obj.BottomLineObject)
+                        set(obj.BottomLineObject, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
+                    else
+                        obj.BottomLineObject = line('parent', obj.GraphicalComponentHandle, 'XData', x_position, 'YData', y_position, 'color', obj.LineColour);
+                    end
+                elseif ~isempty(obj.BottomLineObject)
+                    delete(obj.BottomLineObject);
+                    obj.BottomLineObject = [];
+                end
+            end
+        end
     end
 end

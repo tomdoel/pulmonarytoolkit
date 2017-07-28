@@ -36,16 +36,6 @@ classdef GemPanel < GemUserInterfaceObject
         end
         
         function CreateGuiComponent(obj, position)
-%             if ~isempty(obj.BorderAxes)
-%                 obj.BorderAxes.TopLine = obj.TopBorder;
-%                 obj.BorderAxes.BottomLine = obj.BottomBorder;
-%                 obj.BorderAxes.LeftLine = obj.LeftBorder;
-%                 obj.BorderAxes.RightLine = obj.RightBorder;
-%                 if ~isempty(obj.BorderColour)
-%                     obj.BorderAxes.Colour = obj.BorderColour;
-%                 end
-%             end
-%             
             obj.GraphicalComponentHandle = uipanel('Parent', obj.Parent.GetContainerHandle, 'BorderType', 'none', 'Units', 'pixels', ...
                 'BackgroundColor', obj.BackgroundColour, 'ForegroundColor', obj.StyleSheet.TextPrimaryColour, 'ResizeFcn', '', 'Position', position);
         end
