@@ -23,12 +23,12 @@ classdef MimExportMarkerList < MimGuiPlugin
         Mode = 'Markers'
 
         Icon = 'save_markers.png'
-        Location = 28
 
         HidePluginInDisplay = false
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 2
+        Location = 3
     end
     
     methods (Static)

@@ -26,6 +26,7 @@ classdef MimShowMarkerLabels < MimGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
+        Location = 2
         Icon = 'marker_label.png'
     end
     

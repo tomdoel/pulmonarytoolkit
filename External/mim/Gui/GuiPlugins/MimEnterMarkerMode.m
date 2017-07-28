@@ -18,26 +18,21 @@ classdef MimEnterMarkerMode < MimGuiPlugin
         ButtonText = 'Show Markers'
         SelectedText = 'Hide Markers'
         ToolTip = 'Enters marker edit mode'
-        Category = 'Show / hide'
+        Category = 'Marker display'
         Visibility = 'Dataset'
-        Mode = 'Toolbar'
+        Mode = 'Markers'
 
         HidePluginInDisplay = false
         PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 1
-        Location = 11
+        Location = 1
         Icon = 'markers.png'
     end
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            if gui_app.ImagePanel.IsInMarkerMode
-                gui_app.ImagePanel.SetControl('W/L');
-            else
-                gui_app.ImagePanel.SetControl('Mark');
-            end
-            
+            gui_app.ImagePanel.ShowMarkers = ~gui_app.ImagePanel.ShowMarkers;
         end
 
         function enabled = IsEnabled(gui_app)
@@ -45,7 +40,7 @@ classdef MimEnterMarkerMode < MimGuiPlugin
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = gui_app.ImagePanel.IsInMarkerMode;
+            is_selected = gui_app.ImagePanel.ShowMarkers;
         end
     end
 end

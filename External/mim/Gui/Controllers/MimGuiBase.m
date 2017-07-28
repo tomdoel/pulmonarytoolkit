@@ -578,7 +578,7 @@ classdef MimGuiBase < GemFigure
         end
         
         function ToolClicked(obj)
-            obj.UpdateToolbar;
+            obj.UpdateToolbar();
         end
     
         function ClearDataset(obj)
@@ -618,12 +618,14 @@ classdef MimGuiBase < GemFigure
             wait_dialog.ShowAndHold('Loading Markers');
             
             obj.MarkerManager.LoadMarkers(name);
+            obj.ImagePanel.ShowMarkers = true;
 
             % Store current marker set name
             currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset();
             obj.GuiSingleton.GetSettings.AddLastMarkerSet(currently_loaded_image_UID, name);
             obj.SaveSettings();
             
+            obj.UpdateToolbar();
             wait_dialog.Hide();
         end
         
@@ -972,7 +974,7 @@ classdef MimGuiBase < GemFigure
         
         function UpdateToolbar(obj)
             obj.ToolbarPanel.Update(obj);
-            obj.ModeTabControl.UpdateDynamicPanels;
+            obj.ModeTabControl.UpdateDynamicPanels();
         end
 
         
@@ -1023,7 +1025,7 @@ classdef MimGuiBase < GemFigure
         end
         
         function current_markers = GetCurrentMarkerSetName(obj)
-            current_markers = obj.MarkerManager.GetCurrentMarkerSetName;
+            current_markers = obj.MarkerManager.GetCurrentMarkerSetName();
         end
         
         function AddMarkerSet(obj)
