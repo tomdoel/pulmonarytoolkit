@@ -48,7 +48,7 @@ classdef MimView3D < MimGuiPlugin
             new_label = ['MIM3D-' current_name];
             render_panel = gui_app.GetRenderPanel;
             current_label = render_panel.VisualisationLabel;
-            if ~strcmp(current_label, new_label)
+            if ~isempty(current_name) && ~strcmp(current_label, new_label)
                 render_panel.Clear;
 
                 switch current_name
