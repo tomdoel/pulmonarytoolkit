@@ -18,8 +18,8 @@ classdef MimView3D < MimGuiPlugin
     %    
 
     properties
-        ButtonText = '3D View'
-        SelectedText = '3D View'        
+        ButtonText = '3D'
+        SelectedText = '3D'        
         ToolTip = 'Visualise the current overlay in 3D'
         Category = 'View'
         Visibility = 'Overlay'

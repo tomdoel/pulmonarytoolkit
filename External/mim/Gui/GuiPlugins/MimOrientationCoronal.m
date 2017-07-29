@@ -18,8 +18,8 @@ classdef MimOrientationCoronal < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Coronal View'
-        SelectedText = 'Coronal View'
+        ButtonText = 'Coronal'
+        SelectedText = 'Coronal'
         ToolTip = 'Changes the image orientation to a coronal view'
         Category = 'View'
         Visibility = 'Dataset'

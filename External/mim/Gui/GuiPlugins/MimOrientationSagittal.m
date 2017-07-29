@@ -18,8 +18,8 @@ classdef MimOrientationSagittal < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Sagittal View'
-        SelectedText = 'Sagittal View'
+        ButtonText = 'Sagittal'
+        SelectedText = 'Sagittal'
         ToolTip = 'Changes the image orientation to a sagittal view'
         Category = 'View'
         Visibility = 'Dataset'
