@@ -218,7 +218,7 @@ classdef MimGuiBase < GemFigure
         
         function ChangeMode(obj, mode)
             obj.GuiDataset.ChangeMode(mode);
-            obj.UpdateToolbar;
+            obj.UpdateToolbar();
         end
         
         function SetTabMode(obj, mode)

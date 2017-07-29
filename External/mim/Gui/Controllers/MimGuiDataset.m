@@ -372,7 +372,10 @@ classdef MimGuiDataset < CoreBaseClass
                 else
                     obj.SetImage(new_image, PTKContext.LungROI);
                 end
-
+                
+                % Update toolbar again because setting the image will
+                % change the visibility of some gui plugins
+                obj.Gui.UpdateToolbar();
 
                 obj.Gui.LoadDefaultMarkersIfRequiredWithoutProgressBar;
 
