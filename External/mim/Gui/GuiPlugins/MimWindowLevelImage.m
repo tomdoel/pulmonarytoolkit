@@ -44,12 +44,13 @@ classdef MimWindowLevelImage < MimGuiPlugin
         end
 
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded && gui_app.IsCT && ~strcmp(gui_app.ImagePanel.Mode, MimModes.View3DMode);
+            background_image = gui_app.ImagePanel.BackgroundImage;
+            enabled = gui_app.IsDatasetLoaded && gui_app.IsCT && ~strcmp(gui_app.ImagePanel.Mode, MimModes.View3DMode) && isa(background_image, 'PTKDicomImage') && isfield(background_image.MetaHeader, 'WindowWidth') && isfield(background_image.MetaHeader, 'WindowCenter');
         end
         
         function is_selected = IsSelected(gui_app)
             background_image = gui_app.ImagePanel.BackgroundImage;
-            if isa(background_image, 'PTKDicomImage')
+            if isa(background_image, 'PTKDicomImage') && isfield(background_image.MetaHeader, 'WindowWidth') && isfield(background_image.MetaHeader, 'WindowCenter')
                 is_selected = isfield(gui_app.ImagePanel.BackgroundImage.MetaHeader, 'WindowWidth') && gui_app.ImagePanel.Window == gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowWidth(1) && gui_app.ImagePanel.Level == gui_app.ImagePanel.BackgroundImage.MetaHeader.WindowCenter(1);
             else
                 is_selected = false;
