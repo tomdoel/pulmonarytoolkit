@@ -285,7 +285,14 @@ classdef GemUserInterfaceObject < CoreBaseClass
                 reordered_handles = [other_handles; handle_for_bottom];
                 set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
             end
-        end        
+        end
+
+        function SetContextMenu(obj, context_menu)
+            if obj.ComponentHasBeenCreated && ishandle(obj.GraphicalComponentHandle)
+                set(obj.GraphicalComponentHandle, 'uicontextmenu', context_menu);
+                obj.GraphicalComponentHandle.UIContextMenu = context_menu;
+            end
+        end
     end
 
     methods (Access = protected)
@@ -638,7 +645,7 @@ classdef GemUserInterfaceObject < CoreBaseClass
         function input_has_been_processed = MatlabScroll(obj, click_point, scroll_count, src, eventdata)
             % Let Matlab callbacks process this scroll event
             
-            if ~isempty(obj.WindowScrollWheelFcn)
+            if ~isempty(obj.WindowScrollWheelFcn) && iscell(obj.WindowScrollWheelFcn)
                 obj.WindowScrollWheelFcn{1}(src, eventdata, obj.WindowScrollWheelFcn{2:end});
                 input_has_been_processed = true;
                 return

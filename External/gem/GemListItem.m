@@ -58,6 +58,12 @@ classdef GemListItem < GemVirtualPanel
         function height = GetRequestedHeight(obj, width)
             height = obj.TextHeight;
         end
+        
+        function SetContextMenu(obj, context_menu)
+            for text_item = obj.TextItems
+                text_item.SetContextMenu(context_menu);
+            end
+        end
     end
     
     methods (Access = protected)
@@ -84,10 +90,5 @@ classdef GemListItem < GemVirtualPanel
         function ItemRightClicked(obj, ~, ~)
         end
         
-        function SetContextMenu(obj, context_menu)
-            for text_item = obj.TextItems
-                set(text_item.GraphicalComponentHandle, 'uicontextmenu', context_menu);
-            end
-        end
     end
 end

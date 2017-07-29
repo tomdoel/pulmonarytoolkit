@@ -94,9 +94,12 @@ classdef MimToolList < handle
             % Enable tools
             for tool_set = tool_list
                 tool = tool_set{1};
-                if strcmp(obj.ViewerPanel.SelectedControl, tool.Tag);
+                if strcmp(obj.ViewerPanel.SelectedControl, tool.Tag)
                     tool.Enable(true);
-                    obj.ToolCallback.GetAxes.SetContextMenu(tool.GetContextMenu);
+                    % Set the context menu. Note this would be hidden by
+                    % the images if it were set on the axes, so we set it
+                    % on the topmost image, i.e. the segmentation overlay
+                    obj.ViewerPanel.SegmentationLayer.SetContextMenu(tool.GetContextMenu);
                 end
             end
         end

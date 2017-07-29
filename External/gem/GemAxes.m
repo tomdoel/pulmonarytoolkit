@@ -43,10 +43,6 @@ classdef GemAxes < GemUserInterfaceObject
             current_point = get(obj.GraphicalComponentHandle, 'CurrentPoint');
         end
         
-        function SetContextMenu(obj, context_menu)
-            set(obj.GraphicalComponentHandle, 'uicontextmenu', context_menu);
-        end
-        
         function EnablePan(obj, enabled)
             if ~isempty(obj.GraphicalComponentHandle)
                 if enabled
