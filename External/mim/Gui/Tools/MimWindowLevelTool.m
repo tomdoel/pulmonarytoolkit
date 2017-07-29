@@ -26,11 +26,14 @@ classdef MimWindowLevelTool < MimTool
         StartCoords
         StartWindow
         StartLevel
+        ContextMenu
+        ViewerPanel
     end
     
     methods
-        function obj = MimWindowLevelTool(image_display_parameters, callback)
+        function obj = MimWindowLevelTool(image_display_parameters, callback, viewer_panel)
             obj.Callback = callback;
+            obj.ViewerPanel = viewer_panel;
             obj.ImageDisplayParameters = image_display_parameters;
         end
         
@@ -75,6 +78,37 @@ classdef MimWindowLevelTool < MimTool
             obj.StartCoords = [];
             obj.StartWindow = [];
             obj.StartLevel = [];
+        end
+        
+        function menu = GetContextMenu(obj)
+            if isempty(obj.ContextMenu)
+                figure_handle = obj.ViewerPanel.GetParentFigure.GetContainerHandle;
+                obj.ContextMenu = uicontextmenu('Parent', figure_handle);
+                menu_bone = @(x, y) obj.ChangeWLCallback(x, y, 2000, 300);
+                menu_lung = @(x, y) obj.ChangeWLCallback(x, y, 1600, -600);
+                menu_soft = @(x, y) obj.ChangeWLCallback(x, y, 350, 40);
+                
+                uimenu(obj.ContextMenu, 'Label', 'Set window and level:', 'Separator', 'off', 'Enable', 'off');
+                uimenu(obj.ContextMenu, 'Label', '  Lung', 'Callback', menu_lung);
+                uimenu(obj.ContextMenu, 'Label', '  Bone', 'Callback', menu_bone);
+                uimenu(obj.ContextMenu, 'Label', '  Soft Tissue', 'Callback', menu_soft);
+                uimenu(obj.ContextMenu, 'Label', '  Image', 'Callback', @obj.WLImageCallback);
+            end
+            
+            menu = obj.ContextMenu;
+        end
+        
+        function ChangeWLCallback(obj, ~, ~, window, level)
+            obj.ViewerPanel.Window = window;
+            obj.ViewerPanel.Level = level;
+        end
+        
+        function WLImageCallback(obj, ~, ~)
+            background_image = obj.ViewerPanel.BackgroundImage;
+            if isa(background_image, 'PTKDicomImage') && isfield(background_image.MetaHeader, 'WindowWidth') && isfield(background_image.MetaHeader, 'WindowCenter')
+                obj.ViewerPanel.Window = background_image.MetaHeader.WindowWidth(1);
+                obj.ViewerPanel.Level = background_image.MetaHeader.WindowCenter(1);
+            end
         end
     end
     
