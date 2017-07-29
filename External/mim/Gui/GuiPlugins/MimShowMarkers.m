@@ -1,10 +1,10 @@
-classdef MimEnterMarkerMode < MimGuiPlugin
-    % MimEnterMarkerMode. Gui Plugin for entering marker edit mode
+classdef MimShowMarkers < MimGuiPlugin
+    % MimShowMarkers. Gui Plugin for entering marker edit mode
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the TD MIM Toolkit.
     %
-    %     MimEnterMarkerMode is a Gui Plugin for entering or leaving marker mode.
+    %     MimEnterMarkerMode is a Gui Plugin for showing or hiding markers
     %
     %
     %     Licence
