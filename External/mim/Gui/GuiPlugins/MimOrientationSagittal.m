@@ -44,7 +44,6 @@ classdef MimOrientationSagittal < MimGuiPlugin
         
         function is_selected = IsSelected(gui_app)
             is_selected = gui_app.ImagePanel.Orientation == GemImageOrientation.YZ && ~strcmp(gui_app.ImagePanel.Mode, char(MimModes.View3DMode));
-;
         end
     end
 end

@@ -20,10 +20,10 @@ classdef MimSaveOverlay < MimGuiPlugin
     %    
 
     properties
-        ButtonText = 'Export Overlay'
-        SelectedText = 'Export Overlay'
-        ToolTip = 'Save the current overlay view to a file'
-        Category = 'Segmentation display'
+        ButtonText = 'Export Segmentation'
+        SelectedText = 'Export Segmentation'
+        ToolTip = 'Save the current Segmentation overlay to a file'
+        Category = 'Correct and Export'
         Visibility = 'Overlay'
         Mode = 'Segment'
 
@@ -33,7 +33,7 @@ classdef MimSaveOverlay < MimGuiPlugin
         ButtonHeight = 1
         
         Icon = 'export_overlay.png'
-        Location = 14
+        Location = 32
     end
     
     methods (Static)

@@ -27,7 +27,7 @@ classdef MimZeroIsTransparent < MimGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'show_black.png'
-        Location = 11
+        Location = 24
     end
     
     methods (Static)
@@ -36,7 +36,7 @@ classdef MimZeroIsTransparent < MimGuiPlugin
         end
         
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ~strcmp(gui_app.ImagePanel.Mode, MimModes.View3DMode);
+            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ~strcmp(gui_app.ImagePanel.Mode, MimModes.View3DMode) && gui_app.ImagePanel.ShowOverlay;
         end
         
         function is_selected = IsSelected(gui_app)

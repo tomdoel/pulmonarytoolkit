@@ -1,10 +1,10 @@
-classdef MimEnterEditMode < MimGuiPlugin
-    % MimEnterEditMode. Gui Plugin for using a preset bone window/level
+classdef MimShowImageAndOverlay < MimGuiPlugin
+    % MimShowImageAndOverlay. Gui Plugin for using a preset bone window/level
     %
     %     You should not use this class within your own code. It is intended to
     %     be used by the gui of the TD MIM Toolkit.
     %
-    %     MimEnterEditMode is a Gui Plugin for the MIM Toolkit.
+    %     MimShowImageAndOverlay is a Gui Plugin for the MIM Toolkit.
     %
     %
     %     Licence
@@ -15,10 +15,10 @@ classdef MimEnterEditMode < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Correct'
-        SelectedText = 'Correct'
-        ToolTip = 'Enter correction mode where you can edit the segmented result'
-        Category = 'Correct and Export'
+        ButtonText = 'Image & Overlay'
+        SelectedText = 'Image & Overlay'
+        ToolTip = 'Shows the image and the segmentation'
+        Category = 'Segmentation display'
         Visibility = 'Dataset'
         Mode = 'Segment'
 
@@ -26,23 +26,22 @@ classdef MimEnterEditMode < MimGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        Icon = 'edit.png'
-        Location = 31
+        Icon = 'show_image.png'
+        Location = 23
     end
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.ChangeMode(MimModes.EditMode);
+            gui_app.ImagePanel.ShowImage = true;
+            gui_app.ImagePanel.ShowOverlay = true;
         end
         
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ...
-                ~isequal(gui_app.GetCurrentModeName, MimModes.EditMode) && gui_app.IsTabEnabled('Edit');
+            enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ~strcmp(gui_app.ImagePanel.Mode, MimModes.View3DMode);
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = isequal(gui_app.ImagePanel.SelectedControl, 'Edit');
+            is_selected = gui_app.ImagePanel.ShowImage && gui_app.ImagePanel.ShowOverlay;
         end
-        
     end
 end
