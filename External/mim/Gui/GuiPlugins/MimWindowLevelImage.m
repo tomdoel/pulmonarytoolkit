@@ -19,8 +19,8 @@ classdef MimWindowLevelImage < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Image preset'
-        SelectedText = 'Image preset'
+        ButtonText = 'Image'
+        SelectedText = 'Image'
         ToolTip = 'Changes the window and level settings to values specified in the image'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'

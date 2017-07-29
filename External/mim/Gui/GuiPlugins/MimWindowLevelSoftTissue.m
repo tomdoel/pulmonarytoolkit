@@ -18,8 +18,8 @@ classdef MimWindowLevelSoftTissue < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Soft tissue preset'
-        SelectedText = 'Soft tissue preset'
+        ButtonText = 'Soft tissue'
+        SelectedText = 'Soft tissue'
         ToolTip = 'Changes the window and level settings to standard soft tissue values (Window 350HU Level 40HU)'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'

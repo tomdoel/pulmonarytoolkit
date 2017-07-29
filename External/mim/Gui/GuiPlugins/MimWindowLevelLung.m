@@ -18,8 +18,8 @@ classdef MimWindowLevelLung < MimGuiPlugin
     %
     
     properties
-        ButtonText = 'Lung preset'
-        SelectedText = 'Lung preset'
+        ButtonText = 'Lung'
+        SelectedText = 'Lung'
         ToolTip = 'Changes the window and level settings to standard lung values (Window 1600HU Level -600HU)'
         Category = 'Window/Level Presets'
         Visibility = 'Dataset'
