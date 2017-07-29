@@ -38,7 +38,7 @@ classdef MimToolList < handle
             
             obj.CineTool = MimCineTool(image_parameters, tool_callback);
             obj.WindowLevelTool = MimWindowLevelTool(image_display_parameters, tool_callback);
-            obj.ZoomTool = MimZoomTool(tool_callback);
+            obj.ZoomTool = MimZoomTool(image_parameters, tool_callback);
             obj.PanTool = MimPanTool(tool_callback);
             obj.PanMatlabTool = MimPanMatlabTool(tool_callback);
             obj.Rotate3dMatlabTool = MimRotate3dMatlabTool(tool_callback);
