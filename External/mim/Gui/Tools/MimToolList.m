@@ -37,7 +37,7 @@ classdef MimToolList < handle
             obj.ViewerPanel = viewer_panel;
             
             obj.CineTool = MimCineTool(image_parameters, tool_callback);
-            obj.WindowLevelTool = MimWindowLevelTool(image_display_parameters, tool_callback);
+            obj.WindowLevelTool = MimWindowLevelTool(image_display_parameters, tool_callback, viewer_panel);
             obj.ZoomTool = MimZoomTool(image_parameters, tool_callback);
             obj.PanTool = MimPanTool(tool_callback);
             obj.PanMatlabTool = MimPanMatlabTool(tool_callback);
@@ -96,9 +96,9 @@ classdef MimToolList < handle
                 tool = tool_set{1};
                 if strcmp(obj.ViewerPanel.SelectedControl, tool.Tag)
                     tool.Enable(true);
-                    % Set the context menu. Note this would be hidden by
-                    % the images if it were set on the axes, so we set it
-                    % on the topmost image, i.e. the segmentation overlay
+                    % Set the context menu on the images. Note it would be hidden by
+                    % the images if it were set on the axes
+                    obj.ViewerPanel.BackgroundLayer.SetContextMenu(tool.GetContextMenu);
                     obj.ViewerPanel.SegmentationLayer.SetContextMenu(tool.GetContextMenu);
                 end
             end
