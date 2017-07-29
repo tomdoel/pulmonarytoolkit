@@ -537,7 +537,7 @@ classdef MimGuiBase < GemFigure
         end
         
         function mode_name = GetCurrentSubModeName(obj)
-            mode_name = obj.GuiDataset.GetCurrentSubModeName;
+            mode_name = obj.GuiDataset.GetCurrentSubModeName();
         end
         
         function RunGuiPluginCallback(obj, plugin_name)
@@ -549,7 +549,7 @@ classdef MimGuiBase < GemFigure
 
             plugin_info.RunGuiPlugin(obj);
             
-            obj.UpdateToolbar;
+            obj.UpdateToolbar();
             
             wait_dialog.Hide;
         end
@@ -668,6 +668,11 @@ classdef MimGuiBase < GemFigure
             % pointer is located. If a key hasn't been processed, we divert it to the viewer
             % panel so that viewer panel shortcuts will work from other parts of the GUI.            
             input_has_been_processed = obj.ImagePanel.ShortcutKeys(key);
+
+            if strcmpi(key, 'd')
+                obj.RunGuiPluginCallback('MimView3D');
+                input_has_been_processed = true;
+            end
 
             % Failing that, we allow the side panel to execute shortcuts
             if ~input_has_been_processed
