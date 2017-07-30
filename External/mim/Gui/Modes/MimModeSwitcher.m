@@ -47,18 +47,20 @@ classdef MimModeSwitcher < CoreBaseClass
         end
         
         function SwitchMode(obj, mode, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name)
-            if ~isempty(obj.CurrentMode)
-                obj.CurrentMode.ExitMode;
+            if ~strcmp(mode, obj.CurrentModeString)
+                if ~isempty(obj.CurrentMode)
+                    obj.CurrentMode.ExitMode();
+                end
+                obj.CurrentModeString = mode;
+                if isempty(mode)
+                    obj.CurrentMode = [];
+                    obj.ViewerPanel.SetModes([], []);
+                else
+                    obj.CurrentMode = obj.Modes(mode);
+                    obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name);
+                end
+                notify(obj, 'ModeChangedEvent', CoreEventData(mode));
             end
-            obj.CurrentModeString = mode;
-            if isempty(mode)
-                obj.CurrentMode = [];
-                obj.ViewerPanel.SetModes([], []);
-            else
-                obj.CurrentMode = obj.Modes(mode);
-                obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name);
-            end
-            notify(obj, 'ModeChangedEvent', CoreEventData(mode));
         end
         
         function PrePluginCall(obj)
