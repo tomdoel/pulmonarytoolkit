@@ -37,7 +37,7 @@ classdef MimEnterEditMode < MimGuiPlugin
         
         function enabled = IsEnabled(gui_app)
             enabled = gui_app.IsDatasetLoaded && gui_app.ImagePanel.OverlayImage.ImageExists && ...
-                ~isequal(gui_app.GetCurrentModeName, MimModes.EditMode) && gui_app.IsTabEnabled('Edit');
+                gui_app.IsTabEnabled('Edit');
         end
         
         function is_selected = IsSelected(gui_app)
