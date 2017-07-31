@@ -82,6 +82,7 @@ classdef DepMat
         function installed = isGitInstalled
             if ispc
                 command = 'where git';
+                command = split(command, char(13));
             else
                 command = 'which git';
             end

@@ -12,6 +12,7 @@ function cuda_compiler = CoreFindCudaCompiler
     
     if ispc
         [status, cuda_compiler] = system('where nvcc');
+        cuda_compiler = split(cuda_compiler, char(13));
 
         if status ~= 0
             cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramFiles'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
