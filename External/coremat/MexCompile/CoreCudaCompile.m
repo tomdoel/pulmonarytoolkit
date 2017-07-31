@@ -12,7 +12,7 @@ classdef CoreCudaCompile < handle
     
     methods (Static)
         function mex_result = Compile(compiler, mex_file, src_fullfile, output_directory)
-            compile_arguments = [compiler ' -ptx --output-directory ' output_directory ' ' src_fullfile, ' ' mex_file.OtherCompilerFiles];
+            compile_arguments = ['"' compiler '" -ptx --output-directory ' output_directory ' ' src_fullfile, ' ' mex_file.OtherCompilerFiles];
             mex_result = system(compile_arguments);
         end
     end
