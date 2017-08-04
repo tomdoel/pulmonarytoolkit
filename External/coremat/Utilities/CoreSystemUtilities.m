@@ -130,6 +130,24 @@ classdef CoreSystemUtilities
             toolbox_licensed = error_code == 1;
         end
         
+        function path_to_executable = FindFirstExecutableOnPath(executable_name)
+            % Returns the path of the first executable found on the system
+            % path with the specified name
+
+            if ispc
+                [status, path_to_executable] = system(['where ' executable_name]);
+            else
+                [status, path_to_executable] = system(['which ' executable_name]);
+            end
+            
+            if status == 0
+                % Extract out the first executable, if more than one are
+                % returned (which can happen with where on Windows)
+                path_to_executable = CoreTextUtilities.RemoveNonprintableCharactersAndStrip(strtok(path_to_executable, char(13)));
+            else
+                path_to_executable = [];
+            end
+        end
     end
 end
 

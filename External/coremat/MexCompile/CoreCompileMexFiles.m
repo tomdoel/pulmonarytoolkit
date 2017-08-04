@@ -253,7 +253,7 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
     end
 end
 
-function name = GetNameOfCppCompiler
+function name = GetNameOfCppCompiler()
     cc = mex.getCompilerConfigurations('C++', 'Selected');
     if isempty(cc)
         name = [];
@@ -262,12 +262,10 @@ function name = GetNameOfCppCompiler
     end
 end
 
-function cuda_compiler = GetCudaCompiler
-    if ispc
-        [status, cuda_compiler] = system('where nvcc');
-        cuda_compiler = split(cuda_compiler, char(13));
-
-        if status ~= 0
+function cuda_compiler = GetCudaCompiler()
+    cuda_compiler = CoreSystemUtilities.FindFirstExecutableOnPath('nvcc');
+    if isempty(cuda_compiler)
+        if ispc
             cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramFiles'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
             if isempty(cuda_compiler)
                 cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramW6432'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
@@ -277,16 +275,10 @@ function cuda_compiler = GetCudaCompiler
             end
         end
     else
-        [status, cuda_compiler] = system('which nvcc');
-
-        if status == 0
-            cuda_compiler = CoreTextUtilities.RemoveNonprintableCharactersAndStrip(cuda_compiler);
+        if 2 == exist('/usr/local/cuda/bin/nvcc', 'file')
+            cuda_compiler = '/usr/local/cuda/bin/nvcc';
         else
-            if 2 == exist('/usr/local/cuda/bin/nvcc', 'file')
-                cuda_compiler = '/usr/local/cuda/bin/nvcc';
-            else
-                cuda_compiler = [];
-            end
+            cuda_compiler = [];
         end
     end
 end
