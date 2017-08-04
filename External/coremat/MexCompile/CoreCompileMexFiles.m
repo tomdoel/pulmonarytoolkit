@@ -273,12 +273,12 @@ function cuda_compiler = GetCudaCompiler()
             if isempty(cuda_compiler)
                 cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramFiles(x86)'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
             end
-        end
-    else
-        if 2 == exist('/usr/local/cuda/bin/nvcc', 'file')
-            cuda_compiler = '/usr/local/cuda/bin/nvcc';
         else
-            cuda_compiler = [];
+            if 2 == exist('/usr/local/cuda/bin/nvcc', 'file')
+                cuda_compiler = '/usr/local/cuda/bin/nvcc';
+            else
+                cuda_compiler = [];
+            end
         end
     end
 end
