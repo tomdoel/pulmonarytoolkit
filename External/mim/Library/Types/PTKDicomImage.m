@@ -149,7 +149,7 @@ classdef PTKDicomImage < PTKImage
         end
         
         function [value, units] = GetRescaledValue(obj, global_coords)
-            if obj.IsCT
+            if obj.IsCT && CoreCompareUtilities.CompareEnumName(obj.ImageType, PTKImageType.Grayscale)
                 value = obj.GreyscaleToHounsfield(obj.GetVoxel(global_coords));
                 units = obj.RescaleUnits;
             else
