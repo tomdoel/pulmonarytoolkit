@@ -321,7 +321,7 @@ classdef MimViewerPanelCallback < CoreBaseClass
                     voxel_value = main_image.GetVoxel(global_coords);
                     [rescale_value, rescale_units] = main_image.GetRescaledValue(global_coords);
                     
-                    if isempty(overlay_image) || ~overlay_image.ImageExists || ~overlay_image.IsPointInImage(global_coords);
+                    if isempty(overlay_image) || ~overlay_image.ImageExists || ~overlay_image.IsPointInImage(global_coords)
                         overlay_value = [];
                     else
                         overlay_value = overlay_image.GetVoxel(global_coords);
