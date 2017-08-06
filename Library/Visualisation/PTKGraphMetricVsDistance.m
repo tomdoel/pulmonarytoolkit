@@ -47,6 +47,10 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
 
     if isempty(context_list)
         context_list = table.IndexMaps{3}.keys;
+    else
+        % Ensure we only plot for known contexts
+        known_context_list = table.IndexMaps{3}.keys;
+        context_list = intersect(context_list, known_context_list);
     end
     
     if numel(context_list) > 1 && numel(patient_list) > 1
@@ -96,7 +100,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     legend_strings = {};
     
     if plot_for_contexts
-        for context_list_index = 1 : numel(context_list);
+        for context_list_index = 1 : numel(context_list)
             context = context_list(context_list_index);
             legend_text = table.NameMaps{3}(char(context));
             results_list{context_list_index} = GetResultsFromTable(table, patient_uid, char(context), metric, metric_std, legend_text);
@@ -172,12 +176,16 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     
     % Set the axes
     ylabel(axes_handle, y_label, 'FontName', font_name, 'FontSize', label_font_size);
-    set(gca, 'YTick', y_ticks)
+    set(gca, 'YTick', y_ticks);
     
     % Work out number of decimal places for y-axis
     required_num_dp = abs(min(0, floor(log10(y_tick_spacing))));
     
-    set(gca, 'YTickLabel', sprintf(['%1.', int2str(required_num_dp), 'f|'], y_ticks))
+    if verLessThan('matlab', '8.4') % Syntax changed in Matlab 2014b (8.4)
+        set(gca, 'YTickLabel', sprintf(['%1.', int2str(required_num_dp), 'f|'], y_ticks));
+    else
+        set(gca, 'YTickLabel', sprintf(['%1.', int2str(required_num_dp), 'f\n'], y_ticks));
+    end
     xlabel(axes_handle, x_label, 'FontName', font_name, 'FontSize', label_font_size);
     axis([0 100 min(y_ticks) max_y]);
 end
