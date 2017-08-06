@@ -235,7 +235,7 @@ classdef PTKDicomImage < PTKImage
         function is_equal = eq(obj, other)
             metaclass = ?PTKImage;
             property_list = metaclass.Properties;
-            for i = 1 : length(property_list);
+            for i = 1 : length(property_list)
                 property = property_list{i};
                 if (~property.Dependent) && (~ismember(property.Name, obj.PropertiesToIgnoreOnComparison))
                     if ~isequal(other.(property.Name), obj.(property.Name))
