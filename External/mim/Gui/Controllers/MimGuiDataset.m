@@ -258,6 +258,7 @@ classdef MimGuiDataset < CoreBaseClass
                 obj.Gui.ClearImages;
                 obj.DeleteListeners;
                 delete(obj.Dataset);
+                obj.Dataset = [];
                 obj.GuiDatasetState.SetPatientClearSeries(patient_id, []);                
             end
         end
