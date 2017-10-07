@@ -67,7 +67,7 @@ classdef MimPluginResultsInfo < handle
             end
             
             if (~result_exists && cache_exists)
-                obj.DeleteCachedPluginInfo(plugin_name, cache_info, context, cache_type, reporting);
+                obj.DeleteCachedPluginInfo(plugin_name, context, cache_type, reporting);
                 updated = true;
                 return;
             end
