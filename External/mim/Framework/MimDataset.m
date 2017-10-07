@@ -353,9 +353,9 @@ classdef MimDataset < CoreBaseClass
         function is_gas_mri = IsGasMRI(obj, varargin)
             % Check if this is a hyperpolarised gas MRI image
             
-            obj.PreCallTidy;
+            obj.PreCallTidy();
             is_gas_mri = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).IsGasMRI(obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
         
         function patient_name = GetPatientName(obj, varargin)

@@ -37,7 +37,7 @@ classdef MimGuiDataset < CoreBaseClass
         function obj = MimGuiDataset(app_def, gui, viewer_panel, settings, reporting)
             obj.AppDef = app_def;
             obj.ContextDef = app_def.GetContextDef;
-            obj.GuiDatasetState = MimGuiDatasetState;
+            obj.GuiDatasetState = MimGuiDatasetState();
             obj.ModeSwitcher = MimModeSwitcher(viewer_panel, obj, app_def, settings, reporting);
             
             obj.Gui = gui;
@@ -76,11 +76,11 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function image_database = GetImageDatabase(obj)
-            image_database = obj.MimMain.GetImageDatabase;
+            image_database = obj.MimMain.GetImageDatabase();
         end
         
         function linked_recorder = GetLinkedRecorder(obj)
-            linked_recorder = obj.MimMain.FrameworkSingleton.GetLinkedDatasetRecorder;
+            linked_recorder = obj.MimMain.FrameworkSingleton.GetLinkedDatasetRecorder();
         end
         
         function uids = ImportDataRecursive(obj, folder_path)
@@ -88,7 +88,7 @@ classdef MimGuiDataset < CoreBaseClass
         end
         
         function [sorted_paths, sorted_uids] = GetListOfPaths(obj)
-            [sorted_paths, sorted_uids] = obj.MimMain.ImageDatabase.GetListOfPaths;
+            [sorted_paths, sorted_uids] = obj.MimMain.ImageDatabase.GetListOfPaths();
         end
         
         function template_image = GetTemplateImage(obj)
@@ -136,31 +136,31 @@ classdef MimGuiDataset < CoreBaseClass
         
         function dataset_cache_path = GetDatasetCachePath(obj)
             if obj.DatasetIsLoaded()
-                dataset_cache_path = obj.Dataset.GetDatasetCachePath;
+                dataset_cache_path = obj.Dataset.GetDatasetCachePath();
             else
-                dataset_cache_path = obj.MimMain.GetDirectories.GetCacheDirectory;
+                dataset_cache_path = obj.MimMain.GetDirectories.GetCacheDirectory();
             end
         end
         
         function dataset_cache_path = GetEditedResultsPath(obj)
             if obj.DatasetIsLoaded()
-                dataset_cache_path = obj.Dataset.GetEditedResultsPath;
+                dataset_cache_path = obj.Dataset.GetEditedResultsPath();
             else
-                dataset_cache_path = obj.MimMain.GetDirectories.GetEditedResultsDirectoryAndCreateIfNecessary;
+                dataset_cache_path = obj.MimMain.GetDirectories.GetEditedResultsDirectoryAndCreateIfNecessary();
             end
         end
 
         function dataset_cache_path = GetOutputPath(obj)
             if obj.DatasetIsLoaded()
-                dataset_cache_path = obj.Dataset.GetOutputPath;
+                dataset_cache_path = obj.Dataset.GetOutputPath();
             else
-                dataset_cache_path = obj.MimMain.GetDirectories.GetOutputDirectoryAndCreateIfNecessary;
+                dataset_cache_path = obj.MimMain.GetDirectories.GetOutputDirectoryAndCreateIfNecessary();
             end
         end
         
         function image_info = GetImageInfo(obj)
             if obj.DatasetIsLoaded()
-                image_info = obj.Dataset.GetImageInfo;
+                image_info = obj.Dataset.GetImageInfo();
             else
                 image_info = [];
             end
@@ -228,11 +228,11 @@ classdef MimGuiDataset < CoreBaseClass
         
         
         function SaveEditedResult(obj)
-            obj.ModeSwitcher.SaveEditedResult;
+            obj.ModeSwitcher.SaveEditedResult();
         end
         
         function DeleteThisImageInfo(obj)
-            obj.DeleteDatasets(obj.GetUidOfCurrentDataset);
+            obj.DeleteDatasets(obj.GetUidOfCurrentDataset());
         end
         
         function DeleteImageInfo(obj, uid)
@@ -246,7 +246,7 @@ classdef MimGuiDataset < CoreBaseClass
             
             obj.MimMain.DeleteDatasets(series_uids);
             obj.Settings.RemoveLastPatientUid(series_uids);
-            if any(strcmp(series_uids, obj.GetUidOfCurrentDataset))
+            if any(strcmp(series_uids, obj.GetUidOfCurrentDataset()))
                 obj.ClearDataset();
             end
         end
@@ -287,7 +287,7 @@ classdef MimGuiDataset < CoreBaseClass
                 obj.ModeSwitcher.UpdateMode([], [], [], [], []);
                 obj.Gui.SetTab(obj.AppDef.DefaultModeOnNewDataset);
                 
-                obj.Gui.ClearImages;
+                obj.Gui.ClearImages();
                 delete(obj.Dataset);
 
                 obj.Dataset = new_dataset;
