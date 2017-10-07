@@ -64,7 +64,7 @@ function main_image = PTKGetMainRegionExcludingBorder(threshold_image, minimum_r
     
     if numel(results) == 0
         main_image = [];
-        obj.Reporting.Error('PTKGetMainRegionExcludingBorder:NoRegionFound', 'No region could be found');
+        reporting.Error('PTKGetMainRegionExcludingBorder:NoRegionFound', 'No region could be found');
     end
     
     if numel(results) > 1
