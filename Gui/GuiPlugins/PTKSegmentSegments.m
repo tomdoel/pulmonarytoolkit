@@ -34,7 +34,7 @@ classdef PTKSegmentSegments < MimGuiPlugin
         end
 
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded && (gui_app.IsCT);
+            enabled = gui_app.DeveloperMode && gui_app.IsDatasetLoaded && (gui_app.IsCT);
         end
         
         function is_selected = IsSelected(gui_app)
