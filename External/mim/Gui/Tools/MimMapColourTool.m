@@ -39,7 +39,6 @@ classdef MimMapColourTool < MimTool
     properties (Access = private)
         ViewerPanel
         FromColour
-        Colour
         OverlayChangeLock = false
         ContextMenu
     end
@@ -84,7 +83,7 @@ classdef MimMapColourTool < MimTool
         end
         
         function ChangeCurrentColour(obj, new_colour)
-            obj.Colour = new_colour;
+            obj.ViewerPanel.PaintBrushColour = new_colour;
         end
         
         function ShowMenu(obj)
@@ -102,7 +101,7 @@ classdef MimMapColourTool < MimTool
         end
         
         function InitialiseEditMode(obj)
-            obj.Colour = 1;
+            obj.ViewerPanel.PaintBrushColour = 1;
             if ~isempty(obj.ViewerPanel.OverlayImage)
                 if obj.ViewerPanel.OverlayImage.ImageExists
                     obj.Brush = CoreImageUtilities.CreateBallStructuralElement(obj.ViewerPanel.OverlayImage.VoxelSize, obj.BrushSize);
@@ -139,9 +138,10 @@ classdef MimMapColourTool < MimTool
             end
             
             obj.FromColour = segmentation_colour;
+            to_colour = obj.ViewerPanel.PaintBrushColour;
             
             colourmap = obj.ViewerPanel.OverlayImage.ColorLabelMap;
-            colourmap(obj.FromColour + 1) = obj.Colour;
+            colourmap(obj.FromColour + 1) = to_colour;
             
             child_label_map = obj.ViewerPanel.OverlayImage.ColourLabelChildMap;
             parent_label_map = obj.ViewerPanel.OverlayImage.ColourLabelParentMap;
@@ -151,7 +151,7 @@ classdef MimMapColourTool < MimTool
                 children_to_do = CoreStack(child_label_map{segmentation_colour});
                 while ~children_to_do.IsEmpty
                     next_child_colour = children_to_do.Pop;
-                    colourmap(next_child_colour + 1) = obj.Colour;
+                    colourmap(next_child_colour + 1) = to_colour;
                     children_to_do.Push(child_label_map{next_child_colour});
                 end
             end
@@ -173,7 +173,7 @@ classdef MimMapColourTool < MimTool
         
         
         function ChangeColourCallback(obj, ~, ~, colour)
-            obj.Colour = colour;
+            obj.ViewerPanel.PaintBrushColour = colour;
         end
         
         function image_coords = GetImageCoordinates(obj, coords)
