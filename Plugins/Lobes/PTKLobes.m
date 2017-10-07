@@ -44,7 +44,8 @@ classdef PTKLobes < PTKPlugin
             if dataset.IsGasMRI
                 results = dataset.GetResult('PTKLobeMapForGasMRI');
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
-                results = dataset.GetResult('PTKLobeMapForMRI'); % ToDo: not yet implemented for MRI
+                reporting.Error('PTKLobes:MRLobesNotImplemented', 'Lobe segmentation for MR is not currently supported.');
+%                 results = dataset.GetResult('PTKLobeMapForMRI'); % ToDo: not yet implemented for MRI
             else
                 results = dataset.GetResult('PTKLobesFromFissurePlane');
             end

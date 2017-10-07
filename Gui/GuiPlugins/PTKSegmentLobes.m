@@ -34,11 +34,11 @@ classdef PTKSegmentLobes < MimGuiPlugin
         end
 
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded && (gui_app.IsCT || gui_app.IsMR);
+            enabled = gui_app.IsDatasetLoaded() && (gui_app.IsCT() || (gui_app.IsGasMRI() && gui.app.IsLinkedDataset('CT')));
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = gui_app.IsDatasetLoaded && strcmp(gui_app.GetCurrentPluginName, 'PTKLobes');
+            is_selected = gui_app.IsDatasetLoaded() && strcmp(gui_app.GetCurrentPluginName(), 'PTKLobes');
         end
 
     end

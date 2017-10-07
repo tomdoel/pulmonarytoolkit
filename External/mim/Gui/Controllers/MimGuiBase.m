@@ -402,12 +402,12 @@ classdef MimGuiBase < GemFigure
         end
         
         function DeleteOverlays(obj)
-            obj.ImagePanel.ClearOverlays;
-            obj.GuiDataset.InvalidateCurrentPluginResult;
+            obj.ImagePanel.ClearOverlays();
+            obj.GuiDataset.InvalidateCurrentPluginResult();
         end
         
         function ResetCurrentPlugin(obj)
-            obj.GuiDataset.InvalidateCurrentPluginResult;
+            obj.GuiDataset.InvalidateCurrentPluginResult();
         end
         
         function LoadFromPatientBrowser(obj, series_uid, fallback_patient_id)
@@ -576,6 +576,19 @@ classdef MimGuiBase < GemFigure
         function is_mr = IsMR(obj)
             is_mr = strcmp(obj.GuiDataset.GuiDatasetState.CurrentModality, 'MR');
         end
+        
+        function is_linked_dataset = IsLinkedDataset(obj, linked_name_or_uid)
+            % Returns true if another dataset has been linked to this one, using
+            % the name or uid specified
+            
+            is_linked_dataset = obj.GuiDataset.IsLinkedDataset(linked_name_or_uid);
+       end
+        
+        function is_gas_mri = IsGasMRI(obj)
+            % Check if this is a hyperpolarised gas MRI image
+            
+            is_gas_mri = obj.GuiDataset.IsGasMRI();
+        end        
         
         function ToolClicked(obj)
             obj.UpdateToolbar();
@@ -758,7 +771,7 @@ classdef MimGuiBase < GemFigure
                     obj.LoadImages(series_uid);
                 else
                     % Clear dataset
-                    obj.ClearDataset;
+                    obj.ClearDataset();
                 end
             end
         end
@@ -901,7 +914,7 @@ classdef MimGuiBase < GemFigure
                 obj.MarkerManager.ClearMarkers();
                 obj.ImagePanel.BackgroundImage.Reset;
             end
-            obj.DeleteOverlays;
+            obj.DeleteOverlays();
             obj.ImagePanel.ImageSliceParameters.UpdateLock = false;                        
         end
         

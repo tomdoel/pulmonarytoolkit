@@ -566,6 +566,27 @@ classdef MimGuiDataset < CoreBaseClass
                 preview_image = obj.Dataset.GetPluginPreview(plugin_name);
             end
         end
+        
+       function is_linked_dataset = IsLinkedDataset(obj, linked_name_or_uid)
+            % Returns true if another dataset has been linked to this one, using
+            % the name or uid specified
+            
+            if isempty(obj.Dataset)
+                is_linked_dataset = false;
+            else
+                is_linked_dataset = obj.Dataset.IsLinkedDataset(linked_name_or_uid);
+            end
+       end
+        
+        function is_gas_mri = IsGasMRI(obj)
+            % Check if this is a hyperpolarised gas MRI image
+            
+            if isempty(obj.Dataset)
+                is_gas_mri = false;
+            else
+                is_gas_mri = obj.Dataset.IsGasMRI();
+            end
+        end
     end
     
     methods (Access = private)
