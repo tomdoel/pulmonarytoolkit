@@ -168,7 +168,7 @@ classdef PTKTreeModel < PTKTree
             % Copy properties, except for Children and Parent
             metaclass = ?PTKTreeModel;
             property_list = metaclass.Properties;
-            for i = 1 : length(property_list);
+            for i = 1 : length(property_list)
                 property = property_list{i};
                 if (~strcmp(property.Name, 'Parent') && (~strcmp(property.Name, 'Children')))
                     copy.(property.Name) = obj.(property.Name);

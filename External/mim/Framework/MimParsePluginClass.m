@@ -38,9 +38,9 @@ function new_plugin = MimParsePluginClass(plugin_name, plugin_class, suggested_c
     new_plugin.FlattenPreviewImage = plugin_class.FlattenPreviewImage;
     
     property_list = properties(plugin_class);
-    if ismember('PluginInterfaceVersion', property_list);
+    if ismember('PluginInterfaceVersion', property_list)
         new_plugin.PluginInterfaceVersion = plugin_class.PluginInterfaceVersion;
-    elseif ismember('PTKVersion', property_list);
+    elseif ismember('PTKVersion', property_list)
         new_plugin.PluginInterfaceVersion = plugin_class.PTKVersion;
     else
         new_plugin.PluginInterfaceVersion = 1;
@@ -58,37 +58,37 @@ function new_plugin = MimParsePluginClass(plugin_name, plugin_class, suggested_c
         new_plugin.Mode = [];
     end
     
-    if ismember('EnableModes', property_list);
+    if ismember('EnableModes', property_list)
         new_plugin.EnableModes = plugin_class.EnableModes;
     else
         new_plugin.EnableModes = {};
     end
     
-    if ismember('SubMode', property_list);
+    if ismember('SubMode', property_list)
         new_plugin.SubMode = plugin_class.SubMode;
     else
         new_plugin.SubMode = [];
     end
     
-    if ismember('Location', property_list);
+    if ismember('Location', property_list)
         new_plugin.Location = plugin_class.Location;
     else
         new_plugin.Location = 100;
     end
     
-    if ismember('Version', property_list);
+    if ismember('Version', property_list)
         new_plugin.PluginVersion = plugin_class.Version;
     else
         new_plugin.PluginVersion = 1;
     end
     
-    if ismember('MemoryCachePolicy', property_list);
+    if ismember('MemoryCachePolicy', property_list)
         new_plugin.MemoryCachePolicy = MimCachePolicy.(plugin_class.MemoryCachePolicy);
     else
         new_plugin.MemoryCachePolicy = MimCachePolicy.Off;
     end
     
-    if ismember('DiskCachePolicy', property_list);
+    if ismember('DiskCachePolicy', property_list)
         new_plugin.DiskCachePolicy = MimCachePolicy.(plugin_class.DiskCachePolicy);
     else
         if new_plugin.AllowResultsToBeCached
@@ -98,13 +98,13 @@ function new_plugin = MimParsePluginClass(plugin_name, plugin_class, suggested_c
         end
     end
     
-    if ismember('EditRequiresPluginResult', property_list);
+    if ismember('EditRequiresPluginResult', property_list)
         new_plugin.EditRequiresPluginResult = plugin_class.EditRequiresPluginResult;
     else
         new_plugin.EditRequiresPluginResult = false;
     end
     
-    if ismember('SuggestManualEditOnFailure', property_list);
+    if ismember('SuggestManualEditOnFailure', property_list)
         new_plugin.SuggestManualEditOnFailure = plugin_class.SuggestManualEditOnFailure;
     else
         new_plugin.SuggestManualEditOnFailure = false;

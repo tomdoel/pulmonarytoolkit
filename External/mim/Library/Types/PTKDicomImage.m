@@ -212,7 +212,7 @@ classdef PTKDicomImage < PTKImage
             copy = PTKDicomImage(obj.RawImage, obj.RescaleSlope, obj.RescaleIntercept, obj.VoxelSize, obj.Modality, obj.StudyUid, obj.MetaHeader);
             metaclass = ?PTKDicomImage;
             property_list = metaclass.Properties;
-            for i = 1 : length(property_list);
+            for i = 1 : length(property_list)
                 property = property_list{i};
                 if (~property.Dependent) && (~property.Constant)
                     copy.(property.Name) = obj.(property.Name);
@@ -224,7 +224,7 @@ classdef PTKDicomImage < PTKImage
             copy = PTKDicomImage([], obj.RescaleSlope, obj.RescaleIntercept, obj.VoxelSize, obj.Modality, obj.StudyUid, obj.MetaHeader);
             metaclass = ?PTKDicomImage;
             property_list = metaclass.Properties;
-            for i = 1 : length(property_list);
+            for i = 1 : length(property_list)
                 property = property_list{i};
                 if (~property.Dependent) && (~property.Constant) && (~strcmp(property.Name, 'RawImage'))
                     copy.(property.Name) = obj.(property.Name);

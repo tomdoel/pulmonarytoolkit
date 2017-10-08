@@ -418,7 +418,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             copy = PTKImage(obj.RawImage, obj.ImageType, obj.VoxelSize);
             metaclass = ?PTKImage;
             property_list = metaclass.Properties;
-            for i = 1 : length(property_list);
+            for i = 1 : length(property_list)
                 property = property_list{i};
                 if (~property.Dependent) && (~property.Constant)
                     copy.(property.Name) = obj.(property.Name);
@@ -431,7 +431,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             copy = PTKImage([], obj.ImageType, obj.VoxelSize);
             metaclass = ?PTKImage;
             property_list = metaclass.Properties;
-            for i = 1 : length(property_list);
+            for i = 1 : length(property_list)
                 property = property_list{i};
                 if (~property.Dependent) && (~property.Constant) && (~strcmp(property.Name, 'RawImage'))
                     copy.(property.Name) = obj.(property.Name);
