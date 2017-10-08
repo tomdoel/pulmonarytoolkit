@@ -16,7 +16,7 @@ classdef PTKSaveUserAnalysisResults < PTKPlugin
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-properties
+    properties
         ButtonText = 'Manual segmentation analysis'
         ToolTip = 'Performs density analysis over manual segmentation regions'
         Category = 'Analysis'
@@ -40,7 +40,9 @@ properties
             patient_name = dataset.GetPatientName();
             uid = image_info.ImageUid;
             contexts = dataset.GetAllContextsForManualSegmentations();
-            if ~isempty(contexts)
+            if isempty(contexts)
+                results = [];
+            else
                 results_in = dataset.GetResult('PTKManualSegmentationDensityAnalysis', contexts);
                 if isstruct(results_in)
                     % For multiple segmentations and/or labels we get
@@ -51,10 +53,11 @@ properties
                     % This deals with the situation where there is only one
                     % context, in which case the PTK API will return the
                     % result rather than a structure containing the
-                    % results as fields. But to label the tabel correctly
+                    % results as fields. But to label the table correctly
                     % we need to assemble into a struct
                     results = struct;
-                    results.(strrep(char(contexts{1}), '.', '_')) = results_in;
+                    context_valid = CoreTextUtilities.CreateValidFieldName(char(contexts{1}));
+                    results.(context_valid) = results_in;
                 end
 
                 table = PTKConvertMetricsToTable(results, patient_name, uid, CoreReportingDefault());            

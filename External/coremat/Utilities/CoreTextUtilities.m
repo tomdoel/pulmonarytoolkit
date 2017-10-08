@@ -26,6 +26,15 @@ classdef CoreTextUtilities < handle
             file_name(ismember(file_name, ' %*,.:;!?/<>\^%"')) = [];
         end
         
+        function valid_field_name = CreateValidFieldName(original_field_name)
+            % Strips out invalid characters from a filename
+            
+            valid_field_name = regexprep(char(original_field_name), '[^a-zA-Z0-9]', '_');
+            if isempty(regexprep(valid_field_name(1), '[^a-zA-Z]', ''))
+                valid_field_name = ['A' valid_field_name];
+            end
+        end
+        
         function [sorted_filenames, sorted_indices] = SortFilenames(original_filenames)
             % Sorts a list of filenames, taking into account numbers
             

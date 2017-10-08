@@ -20,8 +20,9 @@ classdef MimStruct < dynamicprops
         end
     
         function AddField(obj, field_name, field_value)
-            obj.addprop(char(field_name));
-            obj.(field_name) = field_value;
+            valid_field_name = CoreTextUtilities.CreateValidFieldName(field_name);
+            obj.addprop(valid_field_name);
+            obj.(valid_field_name) = field_value;
         end
         
         function field_name_list = GetListOfFields(obj)

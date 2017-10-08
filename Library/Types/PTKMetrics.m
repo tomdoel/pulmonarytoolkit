@@ -19,9 +19,10 @@ classdef PTKMetrics < dynamicprops
         end
         
         function AddMetric(obj, property_name, value, user_visible_name)
-            obj.addprop(property_name);
-            obj.(property_name) = value;
-            obj.MetricNameMap(property_name) = user_visible_name;
+            valid_property_name = CoreTextUtilities.CreateValidFieldName(property_name);
+            obj.addprop(valid_property_name);
+            obj.(valid_property_name) = value;
+            obj.MetricNameMap(valid_property_name) = user_visible_name;
         end
         
         function property_list = GetListOfMetrics(obj)

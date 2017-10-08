@@ -128,7 +128,7 @@ classdef MimDatasetResults < handle
                     if numel(context_list) == 1
                         result = combined_result.GetResult();
                     else
-                        result.(strrep(char(next_output_context), '.', '_')) = combined_result.GetResult();
+                        result.(CoreTextUtilities.CreateValidFieldName(next_output_context)) = combined_result.GetResult();
                     end
 
                     % Note for simplicity we return only one output image and
