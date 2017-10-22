@@ -29,7 +29,7 @@ classdef MimMain < CoreBaseClass
     %     to your image data.
     %
     %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         mim = MimMain;
+    %         mim = MimMain();
     %         dataset = mim.CreateDatasetFromInfo(image_info);
     %
     %     You can then obtain results from this dataset, e.g.
