@@ -21,6 +21,10 @@ switch(lower(info.DataFile))
 end
         
 % Open file
+if 2 ~= exist(info.Filename(:)', 'file')
+    error(['This image cannot be loaded because the image data has been moved or deleted. Please correct the header file ' info.Filename ' and re-import this image.']);
+end
+
 switch(info.ByteOrder(1))
     case ('t')
         fid=fopen(info.Filename(:)','rb','ieee-be');
