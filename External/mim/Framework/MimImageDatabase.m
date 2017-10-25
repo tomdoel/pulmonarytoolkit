@@ -472,7 +472,7 @@ classdef MimImageDatabase < handle
                     
                     
                 else
-                    reporting.ShowWarning('MimImageDatabase:DatabaseFileNotFound', 'No image database file found. Will create new one on exit', []);
+                    reporting.Log('No image database file found. Will create new one on exit');
                     database = MimImageDatabase(database_filename);
                     database.IsNewlyCreated = true;
                 end

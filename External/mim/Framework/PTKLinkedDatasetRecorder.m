@@ -40,7 +40,7 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
                     linked_recorder = linked_recorder.LinkingCache;
                     linked_recorder.FrameworkAppDef = framework_app_def;
                 else
-                    reporting.ShowWarning('PTKLinkedDatasetRecorder:LinkedRecorderFileNotFound', 'No linking cache file found. Will create new one on exit', []);
+                    reporting.Log('No linking cache file found. Will create new one on exit');
                     linked_recorder = PTKLinkedDatasetRecorder();
                     linked_recorder.FrameworkAppDef = framework_app_def;
                     linked_recorder.Save(reporting);

@@ -28,7 +28,7 @@ classdef PTKFrameworkCache < handle
                     cache.CacheFilename = new_cache_filename;
                 else
                     cache = [];
-                    reporting.ShowWarning('PTKFrameworkCache:CacheFileNotFound', 'No cache file found. Will create new one on exit', []);
+                    reporting.Log('No cache file found. Will create new one on exit');
                 end
                 
             catch ex
