@@ -262,7 +262,7 @@ classdef MimGuiBase < GemFigure
             obj.WaitDialogHandle.ShowAndHold('Loading data');
             
             % Import all datasets from this path
-            uids = obj.GuiDataset.ImportDataRecursive(file_path);
+            [uids, patient_ids] = obj.GuiDataset.ImportDataRecursive(file_path);
             
             if ~isempty(uids)
                 obj.GuiDataset.InternalLoadImages(uids{1});
@@ -286,13 +286,18 @@ classdef MimGuiBase < GemFigure
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(folder_path, obj.Reporting);
                 
                 % Import all datasets from this path
-                uids = obj.GuiDataset.ImportDataRecursive(folder_path);
+                [uids, patient_ids] = obj.GuiDataset.ImportDataRecursive(folder_path);
 
+                % Load the first patient
+                if ~isempty(patient_ids)
+                    obj.LoadPatient(patient_ids{1});
+                end
+                
                 % Bring Patient Browser to the front after import
-                obj.PatientBrowserFactory.Show;
+                obj.PatientBrowserFactory.Show();
             end
             
-            obj.WaitDialogHandle.Hide;
+            obj.WaitDialogHandle.Hide();
         end
         
         function ImportPatch(obj)

@@ -83,8 +83,8 @@ classdef MimGuiDataset < CoreBaseClass
             linked_recorder = obj.MimMain.FrameworkSingleton.GetLinkedDatasetRecorder();
         end
         
-        function uids = ImportDataRecursive(obj, folder_path)
-            uids = obj.MimMain.ImportDataRecursive(folder_path);
+        function [uids, patient_ids] = ImportDataRecursive(obj, folder_path)
+            [uids, patient_ids] = obj.MimMain.ImportDataRecursive(folder_path);
         end
         
         function [sorted_paths, sorted_uids] = GetListOfPaths(obj)

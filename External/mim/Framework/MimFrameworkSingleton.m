@@ -86,8 +86,8 @@ classdef (Sealed) MimFrameworkSingleton < handle
             obj.ImageDatabase.SaveDatabase(reporting);
         end
         
-        function uids = ImportData(obj, filename, reporting)
-            uids = MimImageImporter(filename, obj.ImageDatabase, reporting);
+        function [uids, patient_ids] = ImportData(obj, filename, reporting)
+            [uids, patient_ids] = MimImageImporter(filename, obj.ImageDatabase, reporting);
         end
         
         function image_database = GetImageDatabase(obj)

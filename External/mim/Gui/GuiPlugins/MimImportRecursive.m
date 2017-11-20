@@ -36,7 +36,7 @@ classdef MimImportRecursive < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.ImportMultipleFiles();
+            uids = gui_app.ImportMultipleFiles();
         end
         
         function enabled = IsEnabled(gui_app)

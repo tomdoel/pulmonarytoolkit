@@ -1,4 +1,4 @@
-function uids = MimImageImporter(filename_or_root_directory, database, reporting)
+function [uids, patient_ids] = MimImageImporter(filename_or_root_directory, database, reporting)
     % MimImageImporter. Recrusively imports image files into a MimImageDatabase object
     %
     %
@@ -20,18 +20,19 @@ function uids = MimImageImporter(filename_or_root_directory, database, reporting
     
     if exist_result == 7
         % For a directory, we import every file
-        uids = ImportDirectoryRecursive(database, import_folder, tags_to_get, reporting);
+        [uids, patient_ids] = ImportDirectoryRecursive(database, import_folder, tags_to_get, reporting);
         
     elseif exist_result == 2
         % For a single file, we check if it is Dicom.
         single_image_metainfo = MimGetSingleImageInfo(import_folder, filename_only, [], tags_to_get, reporting);
         if single_image_metainfo.ImageFileFormat == MimImageFileFormat.Dicom
             % For a Dicom file we import the whole folder
-            uids = ImportDirectoryRecursive(database, import_folder, tags_to_get, reporting);
+            [uids, patient_ids] = ImportDirectoryRecursive(database, import_folder, tags_to_get, reporting);
         else
             % For a non-Dicom file we import only the primary file
             database.AddImage(single_image_metainfo);
             uids = {single_image_metainfo.SeriesUid};
+            patient_ids = {single_image_metainfo.PatientId};
         end
         
     else
@@ -41,8 +42,9 @@ function uids = MimImageImporter(filename_or_root_directory, database, reporting
     reporting.CompleteProgress;
 end
 
-function uids = ImportDirectoryRecursive(database, import_folder, tags_to_get, reporting)
+function [uids, patient_ids] = ImportDirectoryRecursive(database, import_folder, tags_to_get, reporting)
     uids = [];
+    patient_ids = [];
     directories_to_do = CoreStack(import_folder);
     
     while ~directories_to_do.IsEmpty
@@ -54,7 +56,9 @@ function uids = ImportDirectoryRecursive(database, import_folder, tags_to_get, r
             reporting.Error(CoreReporting.CancelErrorId, 'User cancelled');
         end
         
-        uids = [uids, ImportFilesInDirectory(database, current_dir, tags_to_get, reporting)];
+        [new_uids, new_patient_ids] = ImportFilesInDirectory(database, current_dir, tags_to_get, reporting);
+        uids = [uids, new_uids];
+        patient_ids = [patient_ids, new_patient_ids];
         next_dirs = CoreDiskUtilities.GetListOfDirectories(current_dir);
         for dir_to_add = next_dirs
             new_dir = fullfile(current_dir, dir_to_add{1});
@@ -64,8 +68,9 @@ function uids = ImportDirectoryRecursive(database, import_folder, tags_to_get, r
     uids = unique(uids);
 end
 
-function uids = ImportFilesInDirectory(database, directory, tags_to_get, reporting)
+function [uids, patient_ids] = ImportFilesInDirectory(database, directory, tags_to_get, reporting)
     uids = [];
+    patient_ids = [];
     all_filenames = CoreTextUtilities.SortFilenames(CoreDiskUtilities.GetDirectoryFileList(directory, '*'));
     for filename = all_filenames
         if ~strcmp(filename{1}, 'DICOMDIR')
@@ -74,8 +79,12 @@ function uids = ImportFilesInDirectory(database, directory, tags_to_get, reporti
                 if ~isempty(single_image_metainfo.ImageFileFormat)
                     database.AddImage(single_image_metainfo);
                     new_uid = single_image_metainfo.SeriesUid;
+                    new_patient_id = single_image_metainfo.PatientId;
                     if ~ismember(new_uid, uids)
                         uids{end + 1} = new_uid;
+                    end
+                    if ~ismember(new_patient_id, patient_ids)
+                        patient_ids{end + 1} = new_patient_id;
                     end
                 end
             catch ex

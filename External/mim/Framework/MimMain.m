@@ -148,12 +148,12 @@ classdef MimMain < CoreBaseClass
             obj.RunCustomPostLoadFunction(dataset.GetImageInfo.ImageUid, dataset);
         end
         
-        function uids = ImportDataRecursive(obj, filename)
+        function [uids, patient_ids] = ImportDataRecursive(obj, filename)
             % Identical to ImportData()
-            uids = obj.ImportData(filename);
+            [uids, patient_ids] = obj.ImportData(filename);
         end
         
-        function uids = ImportData(obj, filename)
+        function [uids, patient_ids] = ImportData(obj, filename)
             % Imports data into the TD MIM Toolkit so that it can be accessed
             % from the CreateDatasetFromUid() method. The input argument is a string
             % containing the path to the data file to import. If the path points to
@@ -168,7 +168,7 @@ classdef MimMain < CoreBaseClass
             
             % Adds the files to the image database, which groups them into
             % series
-            uids = obj.FrameworkSingleton.ImportData(filename, obj.ReportingWithCache);
+            [uids, patient_ids] = obj.FrameworkSingleton.ImportData(filename, obj.ReportingWithCache);
             
             % Add the necessary files to the cache
             obj.ImportSeries(uids);
