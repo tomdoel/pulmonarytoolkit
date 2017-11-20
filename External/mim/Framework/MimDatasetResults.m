@@ -50,6 +50,8 @@ classdef MimDatasetResults < handle
         % A pointer to the object which contains the event to be triggered when a preview thumbnail image has changed
         ExternalNotifyCallback
         
+        IsGasMri             % Whether this dataset is a gas MRI. Can be manually overridden by SetGasMri
+        
     end
     
     methods
@@ -427,18 +429,29 @@ classdef MimDatasetResults < handle
         % ToDo: This check is based on series description and should be more
         % general
         function is_gas_mri = IsGasMRI(obj, dataset_stack, reporting)
-            is_gas_mri = false;
-            if ~strcmp(obj.GetImageInfo.Modality, 'MR')
-                return;
+            if ~isempty(obj.IsGasMri)
+                is_gas_mri = obj.IsGasMri;
             else
-                template = obj.GetTemplateImage(obj.FrameworkAppDef.GetContextDef.GetOriginalDataContext, dataset_stack, reporting);
-                if ~isfield(template.MetaHeader, 'ReceiveCoilName')
-                    return;
+                is_gas_mri = false;
+                if strcmp(obj.GetImageInfo.Modality, 'MR')
+                    template = obj.GetTemplateImage(obj.FrameworkAppDef.GetContextDef.GetOriginalDataContext, dataset_stack, reporting);
+                    if isfield(template.MetaHeader, 'ReceiveCoilName')
+                        if strcmpi(template.MetaHeader.ReceiveCoilName, 'MNS 129Xe TR')
+                            is_gas_mri = true;
+                        end
+                    end
                 end
-                if strcmpi(template.MetaHeader.ReceiveCoilName, 'MNS 129Xe TR')
-                    is_gas_mri = true;
-                end
+                obj.IsGasMri = is_gas_mri;
             end
+        end
+        
+        function SetGasMri(obj, is_gas_mri)
+            % Manually sets this dataset to be gas MRI. This overrides the heuristics.
+            % Note this setting does not persist and must be set every time the dataset is created
+            if nargin < 2
+                is_gas_mri = true;
+            end
+            obj.IsGasMri = is_gas_mri;
         end
 
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
