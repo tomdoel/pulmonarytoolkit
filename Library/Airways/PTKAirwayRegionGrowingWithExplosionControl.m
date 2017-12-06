@@ -196,8 +196,8 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
                 indices_of_new_points_global = indices_of_new_points_global(in_range);
                 
                 in_threshold = threshold_image(indices_of_new_points_local);
-                indices_of_new_points_local = indices_of_new_points_local(in_threshold)';
-                indices_of_new_points_global = indices_of_new_points_global(in_threshold)';
+                indices_of_new_points_local = indices_of_new_points_local(in_threshold);
+                indices_of_new_points_global = indices_of_new_points_global(in_threshold);
                 
                 if isempty(indices_of_new_points_global)
                     frontmost_points_global = current_segment.CurrentBranch.GetAcceptedVoxels;
