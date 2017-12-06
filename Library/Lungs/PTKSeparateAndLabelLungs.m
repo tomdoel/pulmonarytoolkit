@@ -4,7 +4,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     %
     %     The left and right lungs are separated using morphological opening
     %     with spherical structural element of increasing size until the left
-    %     and right components are separated. Then and voxels removed by the
+    %     and right components are separated. Then any voxels removed by the
     %     opening are added to the left and right segmentations using a
     %     watershed algorithm based on the supplied (filtered) image data.
     %
