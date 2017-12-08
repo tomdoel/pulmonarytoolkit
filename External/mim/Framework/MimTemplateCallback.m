@@ -35,7 +35,7 @@ classdef MimTemplateCallback < CoreBaseClass
             if nargin < 3
                 dataset_name = [];
             end
-            template = obj.LinkedDatasetChooser.GetDataset(dataset_name).GetTemplateImage(context, obj.DatasetStack, obj.Reporting);
+            template = obj.LinkedDatasetChooser.GetDataset(reporting, dataset_name).GetTemplateImage(context, obj.DatasetStack, obj.Reporting);
         end
     end
 end

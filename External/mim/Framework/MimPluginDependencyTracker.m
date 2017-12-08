@@ -427,7 +427,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 next_dependency = plugin_dependencies{index};
                 
                 dataset_uid = next_dependency.DatasetUid;
-                [valid, edited_result_exists] = linked_dataset_chooser.GetDataset(dataset_uid).CheckDependencyValid(next_dependency, reporting);
+                [valid, edited_result_exists] = linked_dataset_chooser.GetDataset(reporting, dataset_uid).CheckDependencyValid(next_dependency, reporting);
                 if ~valid
                     valid = false;
                     return;
