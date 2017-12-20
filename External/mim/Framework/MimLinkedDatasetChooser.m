@@ -100,5 +100,10 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
         function NotifyPreviewImageChanged(obj, plugin_name)
             notify(obj,'PreviewImageChanged', CoreEventData(plugin_name));
         end
+        
+        function primary_uid = GetPrimaryDatasetUid(obj)
+            primary_uid = obj.PrimaryDatasetUid;
+        end
+        
     end
 end

@@ -365,6 +365,10 @@ classdef MimDataset < CoreBaseClass
 
             patient_name = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetPatientName(obj.DatasetStack, obj.Reporting);
         end
+        
+        function primary_uid = GetPrimaryDatasetUid(obj)
+            primary_uid = obj.LinkedDatasetChooser.GetPrimaryDatasetUid();
+        end
     end
     
     methods (Access = private)
