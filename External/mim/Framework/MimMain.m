@@ -131,6 +131,8 @@ classdef MimMain < CoreBaseClass
             end
             
             dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.FrameworkSingleton.GetClassFactory, obj.ReportingWithCache);
+
+            obj.AutoLinkDatasets(dataset);
             
             obj.RunCustomPostLoadFunction(dataset_uid, dataset);
         end
@@ -145,6 +147,8 @@ classdef MimMain < CoreBaseClass
 
             dataset = MimDataset(image_info, dataset_disk_cache, obj.FrameworkSingleton.GetLinkedDatasetChooserMemoryCache, obj.FrameworkSingleton.GetClassFactory, obj.ReportingWithCache);
             
+            obj.AutoLinkDatasets(dataset);
+
             obj.RunCustomPostLoadFunction(dataset.GetImageInfo.ImageUid, dataset);
         end
         
@@ -249,6 +253,21 @@ classdef MimMain < CoreBaseClass
     end
     
     methods (Access = private)
+        
+        function AutoLinkDatasets(obj, primary_dataset)
+            linked_recorder = obj.FrameworkSingleton.GetLinkedDatasetRecorder();
+            link_map = linked_recorder.LinkMap;
+            primary_uid = primary_dataset.GetPrimaryDatasetUid();
+            if link_map.isKey(primary_uid)
+               link_record = link_map(primary_uid);
+               link_map = link_record.LinkMap;
+               for uid = link_map.keys
+                   name = link_map(uid{1});
+                   dataset_to_link = obj.CreateDatasetFromUid(uid{1});
+                   primary_dataset.LinkDataset(name, dataset_to_link)
+               end
+            end
+        end
         
         function ImportSeries(obj, uids)
             if ~isempty(uids)
