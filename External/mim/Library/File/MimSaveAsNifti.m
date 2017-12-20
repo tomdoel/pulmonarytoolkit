@@ -28,7 +28,7 @@ function MimSaveAsNifti(image_to_save, path, filename, reporting)
     
     full_filename = fullfile(path, filename);
 
-    resolution = image_to_save.VoxelSize([1, 2, 3]);
+    resolution = image_to_save.VoxelSize([2, 1, 3]);
     
     offset = [0 0 0];
     if isa(image_data, 'PTKDicomImage')
