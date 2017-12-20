@@ -398,10 +398,14 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             % dependencies, and also create list of dependencies which are
             % edited values
             plugin_dependencies = {};
-            known_edited_values = {};
+            known_edited_values = containers.Map();
             parameter_list = {};
             for index = 1 : length(dependency_list)
                 next_dependency = dependency_list(index);
+                dataset_uid = next_dependency.DatasetUid;
+                if ~known_edited_values.isKey(dataset_uid)
+                    known_edited_values(dataset_uid) = {};
+                end
                 if isfield(next_dependency.Attributes, 'IsParameter') && (next_dependency.Attributes.IsParameter)
                     parameter_list{end + 1} = next_dependency;
                 else
@@ -412,7 +416,9 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                         return;
                     end                    
                     if isfield(next_dependency.Attributes, 'IsEditedResult') && (next_dependency.Attributes.IsEditedResult)
-                        known_edited_values{end + 1} = next_dependency.PluginName;
+                        edited_list = known_edited_values(dataset_uid);
+                        edited_list{end + 1} = next_dependency.PluginName;
+                        known_edited_values(dataset_uid) = edited_list;
                     end
                 end
             end
@@ -435,7 +441,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 
                 % If the dependency is based on a non-edited result, but we have an edited
                 % result in the cache, then this plugin result is invalid
-                if edited_result_exists && ~ismember(next_dependency.PluginName, known_edited_values)
+                if edited_result_exists && ~ismember(next_dependency.PluginName, known_edited_values(dataset_uid))
                     reporting.Log(['The result for dependency ' next_dependency.PluginName '(' char(next_dependency.Context) ') has been edited - forcing re-run for plugin.']);
                     valid = false;
                     return;
