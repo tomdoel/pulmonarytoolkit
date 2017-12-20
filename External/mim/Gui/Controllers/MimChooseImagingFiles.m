@@ -92,7 +92,7 @@ function image_info = MimChooseImagingFiles(image_path, reporting)
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
-    elseif (filter_index == 11)
+    elseif (filter_index == 12)
         image_type = MimImageFileFormat.Vtk;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
