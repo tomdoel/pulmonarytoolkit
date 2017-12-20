@@ -23,7 +23,7 @@ classdef PTKVentilationMask < PTKPlugin
         Category = 'Lungs'
 
         AllowResultsToBeCached = true
-        AlwaysRunPlugin = true
+        AlwaysRunPlugin = false
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
         FlattenPreviewImage = true
