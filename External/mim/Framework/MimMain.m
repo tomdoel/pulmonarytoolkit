@@ -250,9 +250,6 @@ classdef MimMain < CoreBaseClass
                 output = [];
             end
         end
-    end
-    
-    methods (Access = private)
         
         function AutoLinkDatasets(obj, primary_dataset)
             linked_recorder = obj.FrameworkSingleton.GetLinkedDatasetRecorder();
@@ -267,7 +264,10 @@ classdef MimMain < CoreBaseClass
                    primary_dataset.LinkDataset(name, dataset_to_link)
                end
             end
-        end
+        end        
+    end
+    
+    methods (Access = private)
         
         function ImportSeries(obj, uids)
             if ~isempty(uids)
