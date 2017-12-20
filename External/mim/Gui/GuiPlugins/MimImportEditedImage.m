@@ -33,7 +33,7 @@ classdef MimImportEditedImage < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.GetMode.ImportEdit;
+            gui_app.GetMode.ImportEdit();
         end
         
         function enabled = IsEnabled(gui_app)

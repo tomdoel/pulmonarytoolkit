@@ -181,16 +181,16 @@ classdef MimEditMode < handle
         
         function ImportEdit(obj)
             if ~isempty(obj.PluginName) || ~isempty(obj.ManualSegmentationName)
-                obj.LockImageChangedCallback;
+                obj.LockImageChangedCallback();
                 
                 choice = questdlg('You are about to import a segmentation. This will delete and replace any existing edits you have made for this segmentation. Do you wish to continue?', ...
                     'Import segmentation', 'Import', 'Cancel', 'Import');
                 switch choice
                     case 'Import'
-                        obj.ChooseAndReplaceEdit;
+                        obj.ChooseAndReplaceEdit();
                     case 'Cancel'
                 end
-                obj.UnLockImageChangedCallback;
+                obj.UnLockImageChangedCallback();
             end
         end
         
