@@ -66,20 +66,3 @@ classdef PTKSaveUserAnalysisResults < PTKPlugin
         end
     end
 end    
-    
-
-%     
-%     methods (Static)
-%         function RunGuiPlugin(gui_app)
-%         end
-% 
-%         function enabled = IsEnabled(gui_app)
-%             enabled = gui_app.IsDatasetLoaded && (gui_app.IsCT);
-%         end
-%         
-%         function is_selected = IsSelected(gui_app)
-%             is_selected = false;
-%         end
-% 
-%     end    
-% end
