@@ -68,7 +68,7 @@ classdef MimGuiPlugin < handle
 
         % Called when the user has clicked the button for this gui plugin.
         % Implement this method with the code you with to run.
-        RunGuiPlugin(mim_gui_app)
+        RunGuiPlugin(mim_gui_app, reporting)
         
     end
     
