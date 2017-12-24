@@ -27,7 +27,7 @@ function updated = PTKUpdate(varargin)
         elseif ~isWebsiteFound()
             disp('Note: cannot check for updates as cannot connect to repository.');        
         elseif ~isMasterBranch()
-            disp('Note: not on master branch. PTK only checks for updates on master branch.');
+            disp('Note: PTK only checks for updates when master branch is checked out.');
         else
             clearDoNotUpdate();
             full_path = mfilename('fullpath');
