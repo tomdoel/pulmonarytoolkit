@@ -323,7 +323,7 @@ classdef MimGuiBase < GemFigure
                     uid = patch.SeriesUid;
                     plugin = patch.PluginName;
                     obj.LoadFromUid(uid);
-                    obj.GuiDataset.RunPlugin(plugin, obj.WaitDialogHandle);
+                    obj.GuiDataset.RunPlugin(plugin, [], obj.WaitDialogHandle);
                     obj.ChangeMode(MimModes.EditMode);
                     obj.GetMode.ImportPatch(patch);
                 end
@@ -571,9 +571,12 @@ classdef MimGuiBase < GemFigure
             wait_dialog.Hide;
         end
         
-        function RunPluginCallback(obj, plugin_name)
+        function result = RunPluginCallback(obj, plugin_name, context)
             wait_dialog = obj.WaitDialogHandle;
-            obj.GuiDataset.RunPlugin(plugin_name, wait_dialog);
+            if nargin < 3
+                context = [];
+            end
+            result = obj.GuiDataset.RunPlugin(plugin_name, context, wait_dialog);
         end
         
         function LoadSegmentationCallback(obj, segmentation_name)

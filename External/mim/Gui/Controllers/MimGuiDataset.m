@@ -430,7 +430,7 @@ classdef MimGuiDataset < CoreBaseClass
             end
         end
         
-        function RunPlugin(obj, plugin_name, wait_dialog)
+        function result = RunPlugin(obj, plugin_name, context, wait_dialog)
             % Causes the GUI to run the named plugin and display the result
             
             if ~obj.DatasetIsLoaded()
@@ -438,8 +438,9 @@ classdef MimGuiDataset < CoreBaseClass
             end
             
             try
-                obj.RunPluginTryCatchBlock(plugin_name, wait_dialog)
+                result = obj.RunPluginTryCatchBlock(plugin_name, context, wait_dialog);
             catch exc
+                result = [];
                 if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('MimGuiDataset:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                 else
@@ -461,7 +462,7 @@ classdef MimGuiDataset < CoreBaseClass
 
                                     % Run the plugin to load the edit
                                     % into the viewer
-                                    obj.RunPluginTryCatchBlock(exc.PluginToEdit, wait_dialog);
+                                    obj.RunPluginTryCatchBlock(exc.PluginToEdit, context, wait_dialog);
                                     
                                     % Switch to edit mode
                                     obj.Gui.ChangeMode(MimModes.EditMode);
@@ -636,24 +637,29 @@ classdef MimGuiDataset < CoreBaseClass
             obj.Gui.SetTabMode(mode.Data);
         end
         
-        function RunPluginTryCatchBlock(obj, plugin_name, wait_dialog)
+        function result = RunPluginTryCatchBlock(obj, plugin_name, context_to_request, wait_dialog)
             new_plugin = obj.LoadPluginInfoStructure(plugin_name, obj.Reporting);
             visible_name = CoreTextUtilities.RemoveHtml(new_plugin.ButtonText);
             wait_dialog.ShowAndHold(['Computing ' visible_name]);
             
             if strcmp(new_plugin.PluginType, 'DoNothing')
-                obj.Dataset.GetResult(plugin_name);
+                % Call with 2 output arguments to prevent fetching of cache
+                % info
+                [result, ~] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
             else
                 
-                % Determine the context we require (full image, lung ROI, etc).
+                % Determine the context we require (full image, lung ROI,
+                % etc) if not specified by the caller
                 % Normally we keep the last context, but if a context plugin is
                 % selected, we switch to the new context
-                context_to_request = obj.CurrentContext;
+                if isempty(context_to_request)
+                    context_to_request = obj.CurrentContext;
+                end
                 if strcmp(new_plugin.PluginType, 'ReplaceImage')
                     context_to_request = obj.ContextDef.ChooseOutputContext(new_plugin.Context);
                 end
                 
-                [~, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
+                [result, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
                 
                 if isa(cache_info, 'MimCompositeResult')
                     cache_info = cache_info.GetFirstResult;

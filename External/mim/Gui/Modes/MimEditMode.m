@@ -266,7 +266,7 @@ classdef MimEditMode < handle
             if ~isempty(obj.PluginName)
                 obj.Dataset.DeleteEditedResult(obj.PluginName);
                 obj.UnsavedChanges = false;
-                obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
+                obj.GuiDataset.RunPlugin(obj.PluginName, [], obj.Reporting.ProgressDialog);
             elseif ~isempty(obj.ManualSegmentationName)
                 obj.GuiDataset.LoadManualSegmentationCallback(obj.ManualSegmentationName);
                 obj.UnsavedChanges = false;
@@ -296,7 +296,7 @@ classdef MimEditMode < handle
                     obj.GuiDataset.UpdateEditedStatus(true);
                     
                     % Update the loaded results
-                    obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
+                    obj.GuiDataset.RunPlugin(obj.PluginName, [], obj.Reporting.ProgressDialog);
                     obj.GuiDataset.UpdateEditedStatus(false);
                     
                     % Ensure we are back in edit mode, as RunPlugin will have left this
@@ -333,7 +333,7 @@ classdef MimEditMode < handle
                             obj.Dataset.SaveEditedResult(obj.PluginName, edited_result, obj.Context);
                             obj.GuiDataset.UpdateEditedStatus(true);
                             % Update the loaded results
-                            obj.GuiDataset.RunPlugin(obj.PluginName, obj.Reporting.ProgressDialog);
+                            obj.GuiDataset.RunPlugin(obj.PluginName, [], obj.Reporting.ProgressDialog);
                             obj.UnsavedChanges = false;
                         elseif ~isempty(obj.ManualSegmentationName)
                             obj.Dataset.SaveManualSegmentation(obj.ManualSegmentationName, edited_result);
