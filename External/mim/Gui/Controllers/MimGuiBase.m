@@ -14,7 +14,8 @@ classdef MimGuiBase < GemFigure
     
     properties (SetAccess = private)
         ImagePanel
-        GuiSingleton
+        GuiSingleton        
+        AnalysisProfile % For enabling/disabling context sets for anlaysis
     end
     
     properties (SetObservable)
@@ -64,13 +65,13 @@ classdef MimGuiBase < GemFigure
             % the new progress panel when these have been created.
             reporting = MimReporting(splash_screen, app_def.WriteVerboseEntriesToLogFile, app_def.GetLogFilePath);
             reporting.Log('New session of MimGui');
-                        
+
             % Call the base class to initialise the figure class
             obj = obj@GemFigure(app_def.GetName, [], reporting);
             obj.StyleSheet = app_def.GetDefaultStyleSheet;
 
             obj.AppDef = app_def;
-
+            
             % Set the figure title to the sotware name and version
             obj.Title = [app_def.GetName, ' ', app_def.GetVersion];
             
@@ -93,6 +94,8 @@ classdef MimGuiBase < GemFigure
             obj.GuiDataset = MimGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             obj.MarkerManager = MimMarkerPointManager(obj.ImagePanel.MarkerLayer, obj.ImagePanel.MarkerImageSource, obj.ImagePanel.MarkerImageDisplayParameters, obj.ImagePanel.BackgroundImageSource, obj.ImagePanel, obj, obj.GuiDataset, obj.AppDef, reporting);
+            
+            obj.AnalysisProfile = MimAnalysisProfile();
             
             % Create a callback handler for the Patient Browser and sidebar
             if obj.AppDef.MatNatEnabled
