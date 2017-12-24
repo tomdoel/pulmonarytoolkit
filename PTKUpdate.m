@@ -23,11 +23,13 @@ function updated = PTKUpdate(varargin)
 
         updated = false;
         if checkDoNotUpdate() && ~force_update
-            disp('Ignoring updates as requested by user.');
+            disp('Note: automatic update checks have been turned off.');
         elseif ~isWebsiteFound()
-            disp('Ignoring updates as cannot connect to repository.');        
+            disp('Note: cannot check for updates as cannot connect to repository.');        
+        elseif ~isMasterBranch()
+            disp('Note: not on master branch. PTK only checks for updates on master branch.');
         else
-            clearDoNotUpdate;
+            clearDoNotUpdate();
             full_path = mfilename('fullpath');
             [rootSourceDir, ~, ~] = fileparts(full_path);
             [rootSourceDir, ~, ~] = fileparts(rootSourceDir);
@@ -35,37 +37,31 @@ function updated = PTKUpdate(varargin)
             depMat = DepMat(repoList, rootSourceDir);
             status = depMat.getAllStatus;
 
-            if ~isMasterBranch()
-                disp('! Cannot check for updates as the master branch is not checked out');
-            else
-                switch status
-                    case DepMatStatus.GitNotFound
-                        disp('! Cannot check for updates as git could not be found');
-                    case DepMatStatus.DirectoryNotFound
-                        disp('! Cannot check for updates as the repository could not be found');
-                    case DepMatStatus.NotUnderSourceControl
-                        disp('! Cannot check for updates as this repository does not appear to be under git source control');
-                    case DepMatStatus.FetchFailure
-                        disp('! Cannot check for updates because a failure occurred previously during fetch. Pleaes fix the repository and delete the depmat_fetch_failure file.');
-                    case DepMatStatus.UpToDate
-                    case {DepMatStatus.UpdateAvailable, DepMatStatus.LocalChanges}
-                        answer = questdlg('A new version of PTK is available. Do you wish to update PTK?','Pulmonary Toolkit','Later','Do not ask me again', 'Update','Update');
-                        if strcmp(answer, 'Do not ask me again')
-                            setDoNotUpdateFlag();
-                        elseif strcmp(answer, 'Update')
-                            if depMat.updateAll()
-                                updated = true;
-                            end
+            switch status
+                case DepMatStatus.GitNotFound
+                    disp('! Cannot check for updates as git could not be found');
+                case DepMatStatus.DirectoryNotFound
+                    disp('! Cannot check for updates as the repository could not be found');
+                case DepMatStatus.NotUnderSourceControl
+                    disp('! Cannot check for updates as this repository does not appear to be under git source control');
+                case DepMatStatus.FetchFailure
+                    disp('! Cannot check for updates because a failure occurred previously during fetch. Pleaes fix the repository and delete the depmat_fetch_failure file.');
+                case DepMatStatus.UpToDate
+                case {DepMatStatus.UpdateAvailable, DepMatStatus.LocalChanges}
+                    answer = questdlg('A new version of PTK is available. Do you wish to update PTK?','Pulmonary Toolkit','Later','Do not ask me again', 'Update','Update');
+                    if strcmp(answer, 'Do not ask me again')
+                        setDoNotUpdateFlag();
+                    elseif strcmp(answer, 'Update')
+                        if depMat.updateAll()
+                            updated = true;
                         end
-                    case DepMatStatus.Conflict
-                        disp('! An update is available but this would cause a conflict. Please update and merge manually.');
-                    case DepMatStatus.GitFailure
-                        disp('! Cannot check for updates because a git command failed to execute.');
-                end
+                    end
+                case DepMatStatus.Conflict
+                    disp('! An update is available but this would cause a conflict. Please update and merge manually.');
+                case DepMatStatus.GitFailure
+                    disp('! Cannot check for updates because a git command failed to execute.');
             end
         end
-    else
-        updated = false;
     end
 end
 
