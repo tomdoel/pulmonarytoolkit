@@ -559,13 +559,12 @@ classdef MimGuiBase < GemFigure
             plugin_info = feval(plugin_name);
             wait_dialog.ShowAndHold([plugin_info.ButtonText]);
 
-            if strcmp(plugin_info.PluginInterfaceVersion, '1')
-                plugin_info.RunGuiPlugin(obj);
-            else
+            if ((isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')) || ...
+                    (isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')))
                 plugin_info.RunGuiPlugin(obj, obj.Reporting);
+            else
+                plugin_info.RunGuiPlugin(obj);
             end
-            
-            plugin_info.RunGuiPlugin(obj, obj.Reporting);
             
             obj.UpdateToolbar();
             
