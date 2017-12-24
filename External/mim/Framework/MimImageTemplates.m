@@ -91,6 +91,14 @@ classdef MimImageTemplates < CoreBaseClass
                 template_plugin = obj.TemplateGenerationFunctions(char(context));
                 parameters = []; % Set parameters to null for a template call; existing parameters in the stack can still be accessed
                 template = obj.DatasetResults.GetResult(template_plugin, dataset_stack, context, parameters, reporting);
+
+                % Extract the template
+                context_list = fieldnames(template);
+                if numel(context_list) ~= 1 || ~strcmp(context_list{1}, context)
+                    reporting.Error('MimImageTemplates:ContextDoesNotMatch', 'The returned context does not match');
+                end
+                template = template.(context_list{1});
+                
                 template = template.Copy;                
             else
                 if obj.DatasetDiskCache.ManualSegmentationExists(context, reporting)

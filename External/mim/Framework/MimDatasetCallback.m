@@ -86,6 +86,13 @@ classdef MimDatasetCallback < handle
             else
                 [result, ~] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, parameters, obj.Reporting, []);
             end
+
+            % Simplify output; if only one context requested then only
+            % return that result
+            context_list = fieldnames(result);
+            if numel(context_list) == 1
+                result = result.(context_list{1});
+            end            
         end
         
         function parameter = GetParameter(obj, parameter_name, varargin)

@@ -115,6 +115,13 @@ classdef MimDataset < CoreBaseClass
             else
                 [result, ~] = obj.GetResultWithCacheInfo(plugin_name, varargin{:});
             end
+
+            % Simplify output; if only one context requested then only
+            % return that result
+            context_list = fieldnames(result);
+            if numel(context_list) == 1
+                result = result.(context_list{1});
+            end
         end
 
         function [result, cache_info, output_image] = GetResultWithCacheInfo(obj, plugin_name, context, varargin)
@@ -142,6 +149,7 @@ classdef MimDataset < CoreBaseClass
                 else
                     [result, cache_info] = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetResult(plugin_name, obj.DatasetStack, context, parameters, obj.Reporting, varargin{2:end});
                 end
+                
             catch ex
                 
                 % Tidy up
