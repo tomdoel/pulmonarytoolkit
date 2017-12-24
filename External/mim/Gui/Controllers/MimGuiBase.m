@@ -377,6 +377,10 @@ classdef MimGuiBase < GemFigure
             image_info = obj.GuiDataset.GetImageInfo;
         end        
         
+        function image_info = GetPatientName(obj)
+            image_info = obj.GuiDataset.GetPatientName;
+        end        
+        
         function ClearCacheForThisDataset(obj)
             obj.GuiDataset.ClearCacheForThisDataset;
         end
@@ -621,6 +625,10 @@ classdef MimGuiBase < GemFigure
             else
                 segmentation_list = obj.GuiDataset.GetListOfMarkerSets;
             end
+        end
+        
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters)
+            obj.GuiDataset.SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters);
         end
         
         function LoadDefaultMarkers(obj)

@@ -369,6 +369,10 @@ classdef MimDataset < CoreBaseClass
         function primary_uid = GetPrimaryDatasetUid(obj)
             primary_uid = obj.LinkedDatasetChooser.GetPrimaryDatasetUid();
         end
+        
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, varargin)
+            obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, obj.DatasetStack, obj.Reporting);
+        end
     end
     
     methods (Access = private)

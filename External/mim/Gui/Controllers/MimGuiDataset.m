@@ -164,7 +164,15 @@ classdef MimGuiDataset < CoreBaseClass
             else
                 image_info = [];
             end
-        end        
+        end
+        
+        function patint_name = GetPatientName(obj)
+            if obj.DatasetIsLoaded()
+                patint_name = obj.Dataset.GetPatientName();
+            else
+                patint_name = [];
+            end
+        end
         
         function ClearCacheForThisDataset(obj)
             if obj.DatasetIsLoaded()
@@ -585,6 +593,14 @@ classdef MimGuiDataset < CoreBaseClass
                 is_gas_mri = false;
             else
                 is_gas_mri = obj.Dataset.IsGasMRI();
+            end
+        end
+        
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters)
+            if isempty(obj.Dataset)
+                obj.Reporting.Error('MimGuiDataset:NoDatasetLoaded', ['Could not save analysis results because no dataset is currently loaded.']);
+            else
+                obj.Dataset.SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters);
             end
         end
     end
