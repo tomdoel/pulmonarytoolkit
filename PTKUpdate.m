@@ -15,13 +15,13 @@ function updated = PTKUpdate(varargin)
     force_update = nargin > 0 && strcmp(varargin{1}, 'force');
     
     current_date = date();
+    updated = false;
     
     % We check for updates at most once per day, to avoid unnecessary
     % startup delays
     if force_update || isempty(PTK_LastUpdated) || ~strcmp(PTK_LastUpdated, current_date)
         PTK_LastUpdated = current_date;
 
-        updated = false;
         if checkDoNotUpdate() && ~force_update
             disp('Note: automatic update checks have been turned off.');
         elseif ~isWebsiteFound()
