@@ -161,5 +161,13 @@ classdef MimPlugin < handle
             % 
             result = [];
         end
+        
+        function enabled = IsEnabled(mim_gui_app)
+            enabled = true;
+        end
+        
+        function is_selected = IsSelected(mim_gui_app)
+            is_selected = false;
+        end
     end
 end
