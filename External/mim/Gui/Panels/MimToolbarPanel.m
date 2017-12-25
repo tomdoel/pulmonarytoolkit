@@ -196,11 +196,12 @@ classdef MimToolbarPanel < GemPanel
         function AddTools(obj)
             tools = obj.OrganisedPlugins.GetOrderedPlugins(obj.ModeTabName);
             for tool = tools
-                obj.AddTool(tool{1}.PluginObject);
+                obj.AddTool(tool{1});
             end
         end
         
-        function AddTool(obj, tool)
+        function AddTool(obj, tool_wrapper)
+            tool = tool_wrapper.PluginObject;
             tool_name = class(tool);
             category_key = tool.Category;
             if ~obj.ControlGroups.isKey(category_key)
@@ -251,7 +252,7 @@ classdef MimToolbarPanel < GemPanel
                 new_control = MimPluginLabelEditBox(obj, tool, icon, obj.GuiApp);
                 new_control.StackVertically = tool.StackVertically;
             else
-                new_control = MimPluginLabelButton(obj, tool, icon, obj.GuiApp);
+                new_control = MimPluginLabelButton(obj, tool, icon, @tool_wrapper.RunPlugin);
                 new_control.ButtonWidth = 8*tool.ButtonWidth;
             end
             tool_group.AddControl(new_control);
