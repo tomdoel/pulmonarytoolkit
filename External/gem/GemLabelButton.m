@@ -13,6 +13,7 @@ classdef GemLabelButton < GemVirtualPanel
     properties (Access = protected)
         Button
         Text
+        Tag
     end
 
     properties
@@ -53,6 +54,7 @@ classdef GemLabelButton < GemVirtualPanel
             obj.Text = GemText(parent, text, tooltip, tag);
             obj.Text.HorizontalAlignment = 'center';
             obj.Text.FontSize = obj.LabelFontSize;
+            obj.Tag = tag;
             obj.AddChild(obj.Text);
         end
 
