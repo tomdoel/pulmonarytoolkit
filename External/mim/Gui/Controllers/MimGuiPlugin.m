@@ -62,6 +62,9 @@ classdef MimGuiPlugin < handle
         
         % The text that appears on the button when the tool is selected
         SelectedText
+        
+        % Optional parameters
+        % ShowProgresDialog
     end
     
     methods (Abstract, Static)

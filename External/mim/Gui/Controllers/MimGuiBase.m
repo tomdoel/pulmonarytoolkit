@@ -552,12 +552,20 @@ classdef MimGuiBase < GemFigure
             mode_name = obj.GuiDataset.GetCurrentSubModeName();
         end
         
-        function RunGuiPluginCallback(obj, plugin_name)
+        function RunGuiPluginCallback(obj, plugin_name_or_obj)
             
-            wait_dialog = obj.WaitDialogHandle;
             
-            plugin_info = feval(plugin_name);
-            wait_dialog.ShowAndHold([plugin_info.ButtonText]);
+            if isa(plugin_name_or_obj, 'MimGuiPlugin')
+                plugin_info = plugin_name_or_obj;
+            else
+                plugin_info = feval(plugin_name_or_obj);
+            end
+    
+            show_progress = isprop(plugin_info, 'ShowProgressDialog') && plugin_info.ShowProgressDialog;
+            if show_progress
+                wait_dialog = obj.WaitDialogHandle;
+                wait_dialog.ShowAndHold([plugin_info.ButtonText]);
+            end
 
             if ((isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')) || ...
                     (isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')))
@@ -568,7 +576,9 @@ classdef MimGuiBase < GemFigure
             
             obj.UpdateToolbar();
             
-            wait_dialog.Hide;
+            if show_progress
+                wait_dialog.Hide;
+            end
         end
         
         function result = RunPluginCallback(obj, plugin_name, context)
@@ -610,10 +620,6 @@ classdef MimGuiBase < GemFigure
             is_gas_mri = obj.GuiDataset.IsGasMRI();
         end        
         
-        function ToolClicked(obj)
-            obj.UpdateToolbar();
-        end
-    
         function ClearDataset(obj)
             obj.WaitDialogHandle.ShowAndHold('Clearing dataset');
             obj.GuiDataset.ClearDataset;
