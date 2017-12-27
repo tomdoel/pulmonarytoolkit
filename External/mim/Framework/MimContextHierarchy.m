@@ -74,7 +74,7 @@ classdef MimContextHierarchy < CoreBaseClass
             for next_output_context_set = CoreContainerUtilities.ConvertToSet(output_context)
                 next_output_context = next_output_context_set{1};
                 if obj.Contexts.isKey(char(next_output_context))
-                    context_list{end + 1} = next_output_context;
+                    context_list{end + 1} = obj.Contexts(char(next_output_context)).Context;
                 elseif obj.ContextSets.isKey(char(next_output_context))
                     context_set_mapping = obj.ContextSets(char(next_output_context));
                     context_mapping_list = context_set_mapping.ContextList;
