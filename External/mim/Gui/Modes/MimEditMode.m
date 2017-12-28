@@ -109,14 +109,14 @@ classdef MimEditMode < handle
         function ExitMode(obj)
             
             if obj.UnsavedChanges
-                choice = questdlg(['Do you wish to save your edits for ', obj.VisibleEditName, '?'], ...
-                    'Edits have not been saved', 'Save', 'Delete', 'Save');
-                switch choice
-                    case 'Save'
+%                 choice = questdlg(['Do you wish to save your edits for ', obj.VisibleEditName, '?'], ...
+%                     'Edits have not been saved', 'Save', 'Delete', 'Save');
+%                 switch choice
+%                     case 'Save'
                         obj.SaveEdit();
-                    case 'Delete'
-                        obj.SaveEditBackup();
-                end
+%                     case 'Delete'
+%                         obj.SaveEditBackup();
+%                 end
                 
             end
             obj.Dataset = [];
