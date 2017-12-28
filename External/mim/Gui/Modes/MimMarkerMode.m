@@ -50,6 +50,10 @@ classdef MimMarkerMode < handle
             obj.ViewerPanel.SetControl('W/L');
         end
         
+        function AutoSave(obj)
+            obj.GuiDataset.AutoSaveMarkers();
+        end
+        
         function OverlayImageChanged(obj, ~, ~)
         end
 

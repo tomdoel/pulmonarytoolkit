@@ -224,6 +224,10 @@ classdef MimGuiBase < GemFigure
             obj.UpdateToolbar();
         end
         
+        function ModeAutoSave(obj)
+            obj.GuiDataset.ModeAutoSave();
+        end
+        
         function SetTabMode(obj, mode)
             obj.ModeTabControl.AutoTabSelection(mode);
         end
@@ -697,6 +701,10 @@ classdef MimGuiBase < GemFigure
             handle = obj.ImagePanel.GetRenderPanel;
         end
         
+        function AutoSaveMarkers(obj)
+            obj.MarkerManager.AutoSaveMarkers();
+        end
+        
     end
     
     methods (Access = protected)
@@ -925,7 +933,9 @@ classdef MimGuiBase < GemFigure
 
         function ModeTabChanged(obj, ~, event_data)
             mode = obj.ModeTabControl.GetModeToSwitchTo(event_data.Data);
-            if ~isempty(mode)
+            if isempty(mode)
+                obj.ModeAutoSave();
+            else
                 obj.ChangeMode(mode);
             end
         end

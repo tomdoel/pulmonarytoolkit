@@ -63,6 +63,12 @@ classdef MimModeSwitcher < CoreBaseClass
             end
         end
         
+        function ModeAutoSave(obj)
+            if ~isempty(obj.CurrentMode)
+                obj.CurrentMode.AutoSave();
+            end
+        end
+        
         function PrePluginCall(obj)
             % Called before a new plugin is executed, allowing modes to exit before this
             % happens

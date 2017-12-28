@@ -50,7 +50,15 @@ classdef MimGuiDataset < CoreBaseClass
 
         function ChangeMode(obj, mode)
             obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext, obj.GuiDatasetState.CurrentSegmentationName);
-        end        
+        end
+        
+        function ModeAutoSave(obj)
+            obj.ModeSwitcher.ModeAutoSave();
+        end
+        
+        function AutoSaveMarkers(obj)
+            obj.Gui.AutoSaveMarkers();
+        end
 
         function mode = GetMode(obj)
             mode = obj.ModeSwitcher.CurrentMode;

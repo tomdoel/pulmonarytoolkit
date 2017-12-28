@@ -128,6 +128,12 @@ classdef MimEditMode < handle
             obj.IgnoreOverlayChanges = true;            
         end
         
+        function AutoSave(obj)
+            if obj.UnsavedChanges
+                obj.SaveEdit();
+            end
+        end
+        
         function SaveEdit(obj)
             if ~isempty(obj.PluginName) || ~isempty(obj.ManualSegmentationName)
 

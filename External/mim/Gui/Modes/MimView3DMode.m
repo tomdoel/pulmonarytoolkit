@@ -67,6 +67,9 @@ classdef MimView3DMode < handle
             obj.Context = [];
         end
 
+        function AutoSave(obj)
+        end
+
         function OverlayImageChanged(obj, ~, ~)
             obj.ViewerPanel.ClearRenderAxes;
             obj.ViewerPanel.SetModes([], []);
