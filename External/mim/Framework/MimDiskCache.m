@@ -219,6 +219,8 @@ classdef MimDiskCache < handle
                 for next_dir = dir_list
                     obj.RemoveFilesInDirectory(fullfile(obj.CachePath, next_dir{1}), name, false, reporting);
                 end
+            else
+                dir_list = [];
             end
         end
         
