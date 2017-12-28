@@ -317,7 +317,7 @@ classdef MimDatasetResults < handle
         function file_list = GetListOfManualSegmentations(obj)
             % Gets list of manual segmentation files associated with this dataset
 
-            file_list = obj.DatasetDiskCache.GetListOfManualSegmentations;
+            file_list = obj.DatasetDiskCache.GetListOfManualSegmentations();
         end
 
         function file_list = GetListOfMarkerSets(obj)

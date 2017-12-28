@@ -381,6 +381,10 @@ classdef MimDataset < CoreBaseClass
         function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, varargin)
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, obj.DatasetStack, obj.Reporting);
         end
+        
+        function contexts = GetAllContextsForManualSegmentations(obj, varargin)
+            contexts = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetAllContextsForManualSegmentations(obj.DatasetStack, obj.Reporting);
+        end        
     end
     
     methods (Access = private)
@@ -420,10 +424,6 @@ classdef MimDataset < CoreBaseClass
             % Fire an event indictaing the manual segmentation list has changed. This
             % will allow any listening gui to update if necessary
             obj.notify('ManualSegmentationsChanged', CoreEventData(event_data.Data));
-        end
-        
-        function contexts = GetAllContextsForManualSegmentations(obj, varargin)
-            contexts = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetAllContextsForManualSegmentations(obj.DatasetStack, obj.Reporting);
         end
     end
 end

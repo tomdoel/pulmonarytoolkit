@@ -551,6 +551,14 @@ classdef MimGuiDataset < CoreBaseClass
                 segmentation_list = obj.Dataset.GetListOfManualSegmentations();
             end
         end
+
+        function context_list = GetAllContextsForManualSegmentations(obj)
+            if isempty(obj.Dataset)
+                context_list = {};
+            else
+                context_list = obj.Dataset.GetAllContextsForManualSegmentations();
+            end
+        end
         
         function segmentation_list = GetListOfMarkerSets(obj)
             if isempty(obj.Dataset)

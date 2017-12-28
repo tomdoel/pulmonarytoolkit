@@ -629,7 +629,11 @@ classdef MimGuiBase < GemFigure
         function segmentation_list = GetListOfManualSegmentations(obj)
             segmentation_list = obj.GuiDataset.GetListOfManualSegmentations;
         end
-        
+
+        function context_list = GetAllContextsForManualSegmentations(obj)
+            context_list = obj.GuiDataset.GetAllContextsForManualSegmentations();
+        end
+
         function segmentation_list = GetListOfMarkerSets(obj)
             if isempty(obj.GuiDataset)
                 segmentation_list = [];
