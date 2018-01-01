@@ -1,5 +1,9 @@
 classdef PTKDensityAnalysis < PTKPlugin
-    % PTKDensityAnalysis. Plugin for performing analysis of density
+    % PTKDensityAnalysis. Plugin for aggregated density and airway measurements from CT
+    %
+    %     Returns a PTKMetrics structure with combined density, emphysema 
+    %     and airway measurements for the region defined by the specified 
+    %     context. Can be used for any lung context including manually created regions.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
@@ -35,31 +39,18 @@ classdef PTKDensityAnalysis < PTKPlugin
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
             
-            % Get the density image
-            roi = dataset.GetResult('PTKLungROI', PTKContext.LungROI);
-            if ~roi.IsCT
-                reporting.ShowMessage('PTKDensityAnalysis:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
-                return;
-            end
-            
-            % Get a mask for the current region to analyse
-            context_mask = dataset.GetTemplateMask(context);
-            
-            % Special case if this context doesn't exist for this dataset
-            if isempty(context_mask) || ~context_mask.ImageExists
+            % Get density and air/tissue fraction measurements
+            results = dataset.GetResult('PTKCTDensityAnalysis', context);
+            if isempty(results)
                 results = PTKMetrics.empty;
                 return;
             end
             
-            % Create a region mask excluding the airways
-            context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);
-            
-            % Reduce all images to a consistent size
-            roi.ResizeToMatch(context_mask);
-    
-            results = PTKComputeAirTissueFraction(roi, context_mask, reporting);
-            [emphysema_results, ~] = PTKComputeEmphysemaFromMask(roi, context_no_airways);
+            % Merge in emphysema results
+            emphysema_results = dataset.GetResult('PTKEmphysemaAnalysis', context);
             results.Merge(emphysema_results);
+            
+            % Merge in airway results
             airway_metrics = dataset.GetResult('PTKAirwayAnalysis', context);
             if ~isempty(airway_metrics)
                 results.Merge(airway_metrics, reporting);
