@@ -91,6 +91,15 @@ classdef MimModeSwitcher < CoreBaseClass
             end
         end
         
+        function ViewerPanelModeChanged(obj, new_mode, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
+            if ~isempty(obj.CurrentMode)
+                if obj.CurrentMode.ExitOnViewerPanelModeChanged(new_mode)
+                    obj.CurrentMode.ExitMode();
+                    obj.SwitchMode([], current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context);
+                end
+            end
+        end
+        
         function OverlayImageChanged(obj, ~, ~)
             if ~isempty(obj.CurrentMode)
                 obj.CurrentMode.OverlayImageChanged;

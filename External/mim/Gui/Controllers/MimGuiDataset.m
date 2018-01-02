@@ -620,6 +620,12 @@ classdef MimGuiDataset < CoreBaseClass
                 obj.Dataset.SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters);
             end
         end
+        
+        function ViewerPanelModeChanged(obj, new_mode)
+            % This methods is called when the current mode in the viewer panel has changed
+            
+            obj.ModeSwitcher.ViewerPanelModeChanged(new_mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
+        end
     end
     
     methods (Access = private)

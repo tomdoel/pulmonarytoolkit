@@ -55,6 +55,10 @@ classdef MimEditMode < handle
             obj.ImageOverlayLock = 0;
         end
         
+        function exit = ExitOnViewerPanelModeChanged(obj, new_mode)
+            exit = ~strcmp(new_mode, MimModes.EditMode);
+        end
+        
         function EnterMode(obj, current_dataset, plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name)
             obj.Context = current_context;
             obj.Dataset = current_dataset;

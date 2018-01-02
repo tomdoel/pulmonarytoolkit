@@ -38,6 +38,10 @@ classdef MimMarkerMode < handle
             obj.Reporting = reporting;
         end
         
+        function exit = ExitOnViewerPanelModeChanged(obj, new_mode)
+            exit = ~strcmp(new_mode, MimModes.MarkerMode);
+        end
+        
         function EnterMode(obj, current_dataset, plugin_info, current_plugin_name, current_visible_plugin_name, current_context, current_segmentation_name)
             obj.ViewerPanel.SetModes(MimModes.MarkerMode, []);
         end

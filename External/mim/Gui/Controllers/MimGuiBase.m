@@ -189,6 +189,7 @@ classdef MimGuiBase < GemFigure
             
             % Listen for changes in the viewer panel controls
             obj.AddPostSetListener(obj.ImagePanel, 'SelectedControl', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'Mode', @obj.ViewerPanelModeChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'NewMarkerColour', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'Orientation', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'SliceNumber', @obj.ViewerPanelControlsChangedCallback);
@@ -708,6 +709,12 @@ classdef MimGuiBase < GemFigure
     end
     
     methods (Access = protected)
+        
+        function ViewerPanelModeChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the current mode in the viewer panel has changed
+            
+            obj.GuiDataset.ViewerPanelModeChanged(obj.ImagePanel.Mode);
+        end
         
         function ViewerPanelControlsChangedCallback(obj, ~, ~, ~)
             % This methods is called when controls in the viewer panel have changed
