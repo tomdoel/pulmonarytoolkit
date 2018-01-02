@@ -200,7 +200,7 @@ classdef MimGuiDataset < CoreBaseClass
         
         function ClearDataset(obj)
             try
-                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.ModeSwitcher.UpdateCurrentMode([], [], [], [], []);
                 obj.Gui.ClearImages;
                 delete(obj.Dataset);
 
@@ -222,7 +222,7 @@ classdef MimGuiDataset < CoreBaseClass
         
         function ClearDatasetKeepPatient(obj)
             try
-                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.ModeSwitcher.UpdateCurrentMode([], [], [], [], []);
                 obj.Gui.ClearImages;
                 delete(obj.Dataset);
 
@@ -269,7 +269,7 @@ classdef MimGuiDataset < CoreBaseClass
         
         function SwitchPatient(obj, patient_id)
             if ~strcmp(patient_id, obj.GuiDatasetState.CurrentPatientId)
-                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.ModeSwitcher.UpdateCurrentMode([], [], [], [], []);
                 obj.Gui.SetTab(obj.AppDef.DefaultModeOnNewDataset);
                 obj.Gui.ClearImages;
                 obj.DeleteListeners;
@@ -300,7 +300,7 @@ classdef MimGuiDataset < CoreBaseClass
                    new_dataset = [];
                 end
 
-                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.ModeSwitcher.UpdateCurrentMode([], [], [], [], []);
                 obj.Gui.SetTab(obj.AppDef.DefaultModeOnNewDataset);
                 
                 obj.Gui.ClearImages();
@@ -493,8 +493,8 @@ classdef MimGuiDataset < CoreBaseClass
             % Indicates that the currently loaded result has been deleted or modified in
             % such a way that it is no longer representative of the plugin 
             
-            obj.GuiDatasetState.ClearPlugin;
-            obj.UpdateModes;
+            obj.GuiDatasetState.ClearPlugin();
+            obj.UpdateModes();
         end
 
         function LoadManualSegmentationCallback(obj, segmentation_name)
@@ -692,7 +692,7 @@ classdef MimGuiDataset < CoreBaseClass
                     obj.ModeSwitcher.PrePluginCall;
                     obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);
                     obj.GuiDatasetState.SetPlugin(new_plugin, plugin_name, visible_name, cache_info.IsEdited);
-                    obj.UpdateModes;
+                    obj.UpdateModes();
                     
                 elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
                     
@@ -721,11 +721,10 @@ classdef MimGuiDataset < CoreBaseClass
             obj.Gui.SetImage(new_image);
         end
         
-       
         function UpdateModes(obj)
-            obj.ModeSwitcher.UpdateMode(obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
+            obj.ModeSwitcher.UpdateCurrentMode(obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
             obj.Gui.UpdateModeTabControl(obj.GuiDatasetState);
-            obj.Gui.UpdateToolbar;
+            obj.Gui.UpdateToolbar();
         end
         
         function new_plugin = LoadPluginInfoStructure(obj, plugin_name, reporting)

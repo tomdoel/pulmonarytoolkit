@@ -80,9 +80,9 @@ classdef MimModeSwitcher < CoreBaseClass
             end            
         end
         
-        function UpdateMode(obj, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
-            if ~isempty(obj.CurrentMode)
-                obj.CurrentMode.ExitMode;
+        function UpdateCurrentMode(obj, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
+            if ~isempty(obj.CurrentMode) 
+                obj.CurrentMode.ExitMode();
                 if obj.CurrentMode.AllowAutomaticModeEntry
                     obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context);
                 else
