@@ -21,9 +21,9 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
     %
 
     properties
-        ButtonText = 'Coronal metrics'
+        ButtonText = 'Coronal analysis'
         ToolTip = 'Performs density analysis in bins along the anterior-posterior axis'
-        Category = 'Slice analysis'
+        Category = 'Slice-by-slice analysis'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -36,6 +36,7 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 31
     end
     
     methods (Static)

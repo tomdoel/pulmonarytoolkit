@@ -23,7 +23,7 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Sagittal analysis'
         ToolTip = 'Performs density analysis in bins along the left-right axis'
-        Category = 'Slice analysis'
+        Category = 'Slice-by-slice analysis'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -36,6 +36,7 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 32
     end
     
     methods (Static)

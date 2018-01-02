@@ -26,7 +26,7 @@ classdef PTKSpongeModel < PTKPlugin
     properties
         ButtonText = 'Gas vs. Tissue'
         ToolTip = 'Shows a schematic representation of a sponge model based on density analysis'
-        Category = 'Graphs'
+        Category = 'Slice-by-slice analysis'
         Mode = 'Analysis'
 
         AllowResultsToBeCached = true
@@ -38,6 +38,7 @@ classdef PTKSpongeModel < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 34
     end
     
     methods (Static)

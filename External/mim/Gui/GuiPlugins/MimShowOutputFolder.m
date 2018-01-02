@@ -16,17 +16,18 @@ classdef MimShowOutputFolder < MimGuiPlugin
     %    
 
     properties
-        ButtonText = 'Open the results folder (output folder) for this dataset'
-        SelectedText = 'Open the results folder (output folder) for this dataset'
+        ButtonText = 'Show results files'
+        SelectedText = 'Show results files'
         ToolTip = 'Opens a folder containing the output files for the current dataset'
-        Category = 'File'
+        Category = 'Analysis output files'
         Visibility = 'Dataset'
         Mode = 'Analysis'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
-        ButtonWidth = 14
+        ButtonWidth = 6
         ButtonHeight = 2
+        Location = 41
     end
     
     methods (Static)

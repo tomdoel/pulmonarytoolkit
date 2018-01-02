@@ -26,7 +26,7 @@ classdef PTKSaveLobarAnalysisResults < PTKPlugin
         AllowResultsToBeCached = true
         AlwaysRunPlugin = true
         PluginType = 'DoNothing'
-        HidePluginInDisplay = false
+        HidePluginInDisplay = true
         FlattenPreviewImage = false
         PTKVersion = '2'
         ButtonWidth = 6

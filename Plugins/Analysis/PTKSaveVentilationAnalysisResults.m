@@ -31,6 +31,7 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 21
     end
     
     methods (Static)

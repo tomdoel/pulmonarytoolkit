@@ -23,7 +23,7 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Axial analysis'
         ToolTip = 'Performs density analysis in bins along the cranial-caudal axis'
-        Category = 'Slice analysis'
+        Category = 'Slice-by-slice analysis'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -36,6 +36,7 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 33        
     end
     
     methods (Static)

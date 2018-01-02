@@ -31,6 +31,7 @@ classdef PTKSaveADCAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 22
     end
     
     methods (Static)
