@@ -24,7 +24,7 @@ classdef MimOpacitySlider < MimGuiPluginSlider
         Mode = 'Segment'
 
         HidePluginInDisplay = false
-        PTKVersion = '2'
+        PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
         Location = 25
