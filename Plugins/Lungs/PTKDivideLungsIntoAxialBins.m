@@ -45,6 +45,7 @@ classdef PTKDivideLungsIntoAxialBins < PTKPlugin
         
         function results = GenerateImageFromResults(bins_results, image_templates, reporting)
             results = bins_results.BinImage;
+            reporting.ChangeViewingOrientation(PTKImageOrientation.Coronal);
         end        
     end
 end
