@@ -13,8 +13,8 @@ classdef MimSetDeveloperMode < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Show Dev tools'
-        SelectedText = 'Hide Dev tools'
+        ButtonText = 'Show dev tools'
+        SelectedText = 'Hide dev tools'
         ToolTip = 'Enables or disabled developer mode'
         Category = 'Developer'
         Visibility = 'Always'

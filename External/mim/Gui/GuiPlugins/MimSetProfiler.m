@@ -13,12 +13,12 @@ classdef MimSetProfiler < MimGuiPlugin
     %    
     
     properties
-        ButtonText = 'Profiler'
+        ButtonText = 'Start profiler'
         SelectedText = 'Finish profiling'
         ToolTip = 'Starts or stops the Matlab profiler'
         Category = 'Developer tools'
-        Visibility = 'Developer'
-        Mode = 'Segment'
+        Visibility = 'Always'
+        Mode = 'Toolbar'
 
         HidePluginInDisplay = false
         PTKVersion = '1'
