@@ -16,7 +16,7 @@ classdef PTKEnableLobeAnalysis < MimGuiPlugin
         ButtonText = 'Turn on lobes'
         SelectedText = 'Turn off lobes'
         ToolTip = 'Controls whether analysis will include lobar regions'
-        Category = 'Analyse CT regions'
+        Category = 'CT regional'
         Visibility = 'Dataset'
         Mode = 'Analysis'
 

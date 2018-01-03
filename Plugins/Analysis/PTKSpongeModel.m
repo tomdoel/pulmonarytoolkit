@@ -26,7 +26,7 @@ classdef PTKSpongeModel < PTKPlugin
     properties
         ButtonText = 'Gas vs. Tissue'
         ToolTip = 'Shows a schematic representation of a sponge model based on density analysis'
-        Category = 'Slice-by-slice analysis'
+        Category = 'Slice-by-slice'
         Mode = 'Analysis'
 
         AllowResultsToBeCached = true
@@ -39,6 +39,7 @@ classdef PTKSpongeModel < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = false
         Location = 34
+        Icon = 'gas_vs_tissue.png'
     end
     
     methods (Static)
@@ -150,5 +151,8 @@ classdef PTKSpongeModel < PTKPlugin
             results.AddMetric('StdDensityHu', std_density_hu, 'Std of density (HU)');
         end
         
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsCT();
+        end        
     end
 end

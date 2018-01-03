@@ -16,7 +16,7 @@ classdef PTKEnableUserAnalysis < MimGuiPlugin
         ButtonText = 'Turn on manual regions'
         SelectedText = 'Turn off manual regions'
         ToolTip = 'Controls whether analysis will include suer defined regions'
-        Category = 'Analyse CT regions'
+        Category = 'CT regional'
         Visibility = 'Dataset'
         Mode = 'Analysis'
 

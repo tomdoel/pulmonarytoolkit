@@ -16,7 +16,7 @@ classdef PTKAnalyseAndSaveCT < MimGuiPlugin
         ButtonText = 'Run analysis'
         SelectedText = 'Run analysis'
         ToolTip = 'Performs density analysis over specified regions'
-        Category = 'Analyse CT regions'
+        Category = 'CT regional'
         Visibility = 'Dataset'
         Mode = 'Analysis'
 

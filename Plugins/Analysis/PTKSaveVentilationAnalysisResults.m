@@ -18,7 +18,7 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Ventilation analysis'
         ToolTip = 'Performs ventilated volume analysis'
-        Category = 'Multi-modal analysis'
+        Category = 'Multi-modal'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -47,5 +47,9 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
             
             dataset.SaveTableAsCSV('PTKSaveVentilationAnalysisResults', 'Ventilation analysis', 'VentilationResults', 'Ventilated volume', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
         end
+        
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsGasMRI();
+        end        
     end
 end

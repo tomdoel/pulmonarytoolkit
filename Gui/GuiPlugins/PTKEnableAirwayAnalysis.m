@@ -16,7 +16,7 @@ classdef PTKEnableAirwayAnalysis < MimGuiPlugin
         ButtonText = 'Turn on airways'
         SelectedText = 'Turn off airways'
         ToolTip = 'Controls whether analysis will include airway metrics'
-        Category = 'Analyse CT regions'
+        Category = 'CT regional'
         Visibility = 'Dataset'
         Mode = 'Analysis'
 

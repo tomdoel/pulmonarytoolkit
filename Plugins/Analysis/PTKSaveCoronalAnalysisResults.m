@@ -23,7 +23,7 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Coronal analysis'
         ToolTip = 'Performs density analysis in bins along the anterior-posterior axis'
-        Category = 'Slice-by-slice analysis'
+        Category = 'Slice-by-slice'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -37,6 +37,7 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = false
         Location = 31
+        Icon = 'cor_slices.png'
     end
     
     methods (Static)
@@ -68,6 +69,10 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
             PTKSaveCoronalAnalysisResults.DrawGraphAndSave(dataset, table, y_label, context_list_lobes, '_Lobes', reporting);
             
             results = [];
+        end
+        
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsCT();
         end
     end
     

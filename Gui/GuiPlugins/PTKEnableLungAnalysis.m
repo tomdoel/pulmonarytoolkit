@@ -16,7 +16,7 @@ classdef PTKEnableLungAnalysis < MimGuiPlugin
         ButtonText = 'Turn on lungs'
         SelectedText = 'Turn off lungs'
         ToolTip = 'Controls whether analysis will include lung regions'
-        Category = 'Analyse CT regions'
+        Category = 'CT regional'
         Visibility = 'Dataset'
         Mode = 'Analysis'
 

@@ -16,9 +16,9 @@ classdef PTKSaveADCAnalysisResults < PTKPlugin
     %
 
     properties
-        ButtonText = 'Mean ADC analysis'
+        ButtonText = 'Mean ADC'
         ToolTip = 'Computes mean ADC over lung regions'
-        Category = 'Multi-modal analysis'
+        Category = 'Multi-modal'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -48,5 +48,9 @@ classdef PTKSaveADCAnalysisResults < PTKPlugin
             
             dataset.SaveTableAsCSV('PTKSaveADCAnalysisResults', 'ADC analysis', 'ADCResults', 'Mean ADC', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
         end
+        
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsGasMRI();
+        end        
     end
 end

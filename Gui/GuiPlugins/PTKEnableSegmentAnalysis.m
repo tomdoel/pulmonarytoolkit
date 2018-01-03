@@ -16,7 +16,7 @@ classdef PTKEnableSegmentAnalysis < MimGuiPlugin
         ButtonText = 'Turn on segments'
         SelectedText = 'Turn off segments'
         ToolTip = 'Controls whether analysis will include segmental regions'
-        Category = 'Analyse CT regions'
+        Category = 'CT regional'
         Visibility = 'Dataset'
         Mode = 'Analysis'
 
