@@ -64,9 +64,12 @@ classdef PTKAnalyseAndSaveCT < MimGuiPlugin
                 results = PTKMetrics.MergeResults(results, airway_metrics);            
             end
             
-            table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
-            
-            gui_app.SaveTableAsCSV('PTKCTAnalysis', 'CT analysis', 'CTResults', 'Analysis of CT datasets over regions', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
+            if isempty(results)
+                reporting.Error('PTKAnalyseAndSaveCT:NoResults', 'Results could not be obtained for the selected regions');
+            else
+                table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);        
+                gui_app.SaveTableAsCSV('PTKCTAnalysis', 'CT analysis', 'CTResults', 'Analysis of CT datasets over regions', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
+            end
         end
 
         function enabled = IsEnabled(gui_app)
