@@ -49,7 +49,7 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
         end
         
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded() && gui_app.IsGasMRI();
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsGasMRI() && gui_app.IsLinkedDataset('CT') && gui_app.IsLinkedDataset('MR');
         end        
     end
 end
