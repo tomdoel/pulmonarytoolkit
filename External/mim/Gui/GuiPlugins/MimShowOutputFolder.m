@@ -28,6 +28,7 @@ classdef MimShowOutputFolder < MimGuiPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         Location = 41
+        Icon = 'output_files.png'
     end
     
     methods (Static)
