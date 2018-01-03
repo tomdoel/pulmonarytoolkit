@@ -38,7 +38,7 @@ classdef PTKEnableSegmentAnalysis < MimGuiPlugin
         end
         
         function is_selected = IsSelected(gui_app)
-            is_selected = gui_app.AnalysisProfile.IsActive('Segments', true);
+            is_selected = gui_app.AnalysisProfile.IsActive('Segments', false);
         end
 
     end

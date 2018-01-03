@@ -51,6 +51,10 @@ classdef PTKAnalyseAndSaveCT < MimGuiPlugin
                 contexts{end + 1} = PTKContextSet.Lobe;
             end
             
+            if gui_app.AnalysisProfile.IsActive('Segments', false)
+                contexts{end + 1} = PTKContextSet.Segment;
+            end
+                        
             density_metrics = gui_app.RunPluginCallback('PTKCTDensityAnalysis', contexts);
             emphysema_results = gui_app.RunPluginCallback('PTKEmphysemaAnalysis', contexts);
             results = PTKMetrics.MergeResults(density_metrics, emphysema_results);            
