@@ -69,6 +69,9 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         ColourLabelChildMap
         ColourLabelParentMap
         PaddingValue
+        
+        PreferredSliceNumber
+        PreferredOrientation
     end
 
     properties (Access = private)
@@ -1063,6 +1066,17 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             offset_in_mm = offset + global_origin;
         end
         
+        function SetPreferredOrientation(obj, orientation)
+            if isempty(orientation)
+                obj.PreferredOrientation = [];
+            else
+                obj.PreferredOrientation = char(GemImageOrientation(uint8(orientation)));
+            end
+        end
+        
+        function SetPreferredSliceNumber(obj, preferred_slice_number)
+            obj.PreferredSliceNumber = preferred_slice_number;
+        end
     end
     
     methods (Access = private)

@@ -695,7 +695,7 @@ classdef MimGuiDataset < CoreBaseClass
                     if isempty(new_image)
                         obj.Reporting.Error('MimGuiDataset:EmptyImage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
                     end
-                    obj.ModeSwitcher.PrePluginCall;
+                    obj.ModeSwitcher.PrePluginCall();
                     obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);
                     obj.GuiDatasetState.SetPlugin(new_plugin, plugin_name, visible_name, cache_info.IsEdited);
                     obj.UpdateModes();

@@ -85,7 +85,7 @@ classdef PTKTopOfTrachea < PTKPlugin
             results.ChangeRawImage(trachea);
             results.ImageType = PTKImageType.Colormap;
             
-            reporting.ChangeViewingPosition(top_of_trachea);
+            results.SetPreferredSliceNumber(top_of_trachea);
         end
     end    
 end

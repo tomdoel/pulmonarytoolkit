@@ -95,7 +95,7 @@ classdef PTKCarina < PTKPlugin
             results.ChangeRawImage(carina);
             results.ImageType = PTKImageType.Colormap;
             
-            reporting.ChangeViewingPosition(top_of_carina);
+            results.SetPreferredSliceNumber(top_of_carina);
         end
         
     end

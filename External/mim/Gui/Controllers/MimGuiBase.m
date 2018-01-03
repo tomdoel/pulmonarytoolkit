@@ -1019,6 +1019,14 @@ classdef MimGuiBase < GemFigure
             
             % Make overlay visible when it is altered
             obj.ImagePanel.ShowOverlay = true;
+
+            % Change the image orientation and slice number if requested 
+            if isprop(new_image, 'PreferredOrientation') && ~isempty(new_image.PreferredOrientation)
+                obj.ImagePanel.Orientation = GemImageOrientation(new_image.PreferredOrientation);
+            end
+            if isprop(new_image, 'PreferredSliceNumber') && ~isempty(new_image.PreferredSliceNumber)
+                obj.ImagePanel.SliceNumber = new_image.PreferredSliceNumber;
+            end
         end
         
         function ReplaceQuiverImageCallback(obj, new_image)
