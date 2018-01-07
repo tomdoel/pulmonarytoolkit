@@ -33,7 +33,7 @@ classdef MimPluginLabelButton < GemLabelButton
 
             % If the tool defines SelectedText then it has special behaviour - different text
             % for selected or unselected
-            if selected
+            if selected && isprop(obj.Tool, 'SelectedText')
                 obj.Text.ChangeText(obj.Tool.SelectedText);
             else
                 obj.Text.ChangeText(obj.Tool.ButtonText);
