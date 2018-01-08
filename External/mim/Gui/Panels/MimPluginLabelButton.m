@@ -15,15 +15,15 @@ classdef MimPluginLabelButton < GemLabelButton
     %
     
     properties (Access = private)
-        GuiApp
         Tool
+        Callback
     end
     
     methods
-        function obj = MimPluginLabelButton(parent, tool, icon, gui_app)
+        function obj = MimPluginLabelButton(parent, tool, icon, callback)
             obj = obj@GemLabelButton(parent, tool.ButtonText, tool.ToolTip, class(tool), icon);
-            obj.GuiApp = gui_app;
             obj.Tool = tool;
+            obj.Callback = callback;
         end
 
         function enabled = UpdateToolEnabled(obj, gui_app)
@@ -33,7 +33,7 @@ classdef MimPluginLabelButton < GemLabelButton
 
             % If the tool defines SelectedText then it has special behaviour - different text
             % for selected or unselected
-            if selected
+            if selected && isprop(obj.Tool, 'SelectedText')
                 obj.Text.ChangeText(obj.Tool.SelectedText);
             else
                 obj.Text.ChangeText(obj.Tool.ButtonText);
@@ -44,8 +44,8 @@ classdef MimPluginLabelButton < GemLabelButton
     methods (Access = protected)
         function ButtonClickedCallback(obj, plugin_name)
             ButtonClickedCallback@GemLabelButton(obj, plugin_name);
-            obj.Tool.RunGuiPlugin(obj.GuiApp);
-            obj.GuiApp.ToolClicked;
+            
+            obj.Callback(obj.Tag);
         end
     end    
 end

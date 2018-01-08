@@ -14,7 +14,8 @@ classdef MimGuiBase < GemFigure
     
     properties (SetAccess = private)
         ImagePanel
-        GuiSingleton
+        GuiSingleton        
+        AnalysisProfile % For enabling/disabling context sets for anlaysis
     end
     
     properties (SetObservable)
@@ -64,13 +65,13 @@ classdef MimGuiBase < GemFigure
             % the new progress panel when these have been created.
             reporting = MimReporting(splash_screen, app_def.WriteVerboseEntriesToLogFile, app_def.GetLogFilePath);
             reporting.Log('New session of MimGui');
-                        
+
             % Call the base class to initialise the figure class
             obj = obj@GemFigure(app_def.GetName, [], reporting);
             obj.StyleSheet = app_def.GetDefaultStyleSheet;
 
             obj.AppDef = app_def;
-
+            
             % Set the figure title to the sotware name and version
             obj.Title = [app_def.GetName, ' ', app_def.GetVersion];
             
@@ -93,6 +94,8 @@ classdef MimGuiBase < GemFigure
             obj.GuiDataset = MimGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             obj.MarkerManager = MimMarkerPointManager(obj.ImagePanel.MarkerLayer, obj.ImagePanel.MarkerImageSource, obj.ImagePanel.MarkerImageDisplayParameters, obj.ImagePanel.BackgroundImageSource, obj.ImagePanel, obj, obj.GuiDataset, obj.AppDef, reporting);
+            
+            obj.AnalysisProfile = MimAnalysisProfile();
             
             % Create a callback handler for the Patient Browser and sidebar
             if obj.AppDef.MatNatEnabled
@@ -186,6 +189,7 @@ classdef MimGuiBase < GemFigure
             
             % Listen for changes in the viewer panel controls
             obj.AddPostSetListener(obj.ImagePanel, 'SelectedControl', @obj.ViewerPanelControlsChangedCallback);
+            obj.AddPostSetListener(obj.ImagePanel, 'Mode', @obj.ViewerPanelModeChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'NewMarkerColour', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'Orientation', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.GetImageSliceParameters, 'SliceNumber', @obj.ViewerPanelControlsChangedCallback);
@@ -219,6 +223,10 @@ classdef MimGuiBase < GemFigure
         function ChangeMode(obj, mode)
             obj.GuiDataset.ChangeMode(mode);
             obj.UpdateToolbar();
+        end
+        
+        function ModeAutoSave(obj)
+            obj.GuiDataset.ModeAutoSave();
         end
         
         function SetTabMode(obj, mode)
@@ -320,7 +328,7 @@ classdef MimGuiBase < GemFigure
                     uid = patch.SeriesUid;
                     plugin = patch.PluginName;
                     obj.LoadFromUid(uid);
-                    obj.GuiDataset.RunPlugin(plugin, obj.WaitDialogHandle);
+                    obj.GuiDataset.RunPlugin(plugin, [], obj.WaitDialogHandle);
                     obj.ChangeMode(MimModes.EditMode);
                     obj.GetMode.ImportPatch(patch);
                 end
@@ -375,6 +383,10 @@ classdef MimGuiBase < GemFigure
         
         function image_info = GetImageInfo(obj)
             image_info = obj.GuiDataset.GetImageInfo;
+        end        
+        
+        function image_info = GetPatientName(obj)
+            image_info = obj.GuiDataset.GetPatientName;
         end        
         
         function ClearCacheForThisDataset(obj)
@@ -545,23 +557,51 @@ classdef MimGuiBase < GemFigure
             mode_name = obj.GuiDataset.GetCurrentSubModeName();
         end
         
-        function RunGuiPluginCallback(obj, plugin_name)
+        function RunGuiPluginCallback(obj, plugin_name_or_obj)
             
-            wait_dialog = obj.WaitDialogHandle;
+            if isa(plugin_name_or_obj, 'MimGuiPlugin')
+                plugin_name = class(plugin_name_or_obj);
+                plugin_info = plugin_name_or_obj;
+            else
+                plugin_name = plugin_name_or_obj;
+                plugin_info = feval(plugin_name_or_obj);                
+            end
+    
+            show_progress = isprop(plugin_info, 'ShowProgressDialog') && plugin_info.ShowProgressDialog;
+            if show_progress
+                wait_dialog = obj.WaitDialogHandle;
+                wait_dialog.ShowAndHold([plugin_info.ButtonText]);
+            end
             
-            plugin_info = feval(plugin_name);
-            wait_dialog.ShowAndHold([plugin_info.ButtonText]);
-
-            plugin_info.RunGuiPlugin(obj);
-            
+            try
+                if ((isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')) || ...
+                        (isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')))
+                    plugin_info.RunGuiPlugin(obj, obj.Reporting);
+                else
+                    plugin_info.RunGuiPlugin(obj);
+                end
+            catch exc
+                if MimErrors.IsErrorCancel(exc.identifier)
+                    obj.Reporting.ShowMessage('MimGuiDataset:GuiPluginCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
+                else
+                    obj.Reporting.ShowMessage('MimGuiDataset:GuiPluginFailed', ['The gui plugin ' plugin_name ' failed with the following error: ' exc.message]);
+                    uiwait(errordlg([plugin_name ' failed with the following error: ' exc.message], [obj.AppDef.GetName ': Failure in plugin ' plugin_name], 'modal'));
+                end
+            end
+           
             obj.UpdateToolbar();
             
-            wait_dialog.Hide;
+            if show_progress
+                wait_dialog.Hide();
+            end
         end
         
-        function RunPluginCallback(obj, plugin_name)
+        function result = RunPluginCallback(obj, plugin_name, context)
             wait_dialog = obj.WaitDialogHandle;
-            obj.GuiDataset.RunPlugin(plugin_name, wait_dialog);
+            if nargin < 3
+                context = [];
+            end
+            result = obj.GuiDataset.RunPlugin(plugin_name, context, wait_dialog);
         end
         
         function LoadSegmentationCallback(obj, segmentation_name)
@@ -595,10 +635,6 @@ classdef MimGuiBase < GemFigure
             is_gas_mri = obj.GuiDataset.IsGasMRI();
         end        
         
-        function ToolClicked(obj)
-            obj.UpdateToolbar();
-        end
-    
         function ClearDataset(obj)
             obj.WaitDialogHandle.ShowAndHold('Clearing dataset');
             obj.GuiDataset.ClearDataset;
@@ -608,13 +644,21 @@ classdef MimGuiBase < GemFigure
         function segmentation_list = GetListOfManualSegmentations(obj)
             segmentation_list = obj.GuiDataset.GetListOfManualSegmentations;
         end
-        
+
+        function context_list = GetAllContextsForManualSegmentations(obj)
+            context_list = obj.GuiDataset.GetAllContextsForManualSegmentations();
+        end
+
         function segmentation_list = GetListOfMarkerSets(obj)
             if isempty(obj.GuiDataset)
                 segmentation_list = [];
             else
                 segmentation_list = obj.GuiDataset.GetListOfMarkerSets;
             end
+        end
+        
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters)
+            obj.GuiDataset.SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters);
         end
         
         function LoadDefaultMarkers(obj)
@@ -668,9 +712,19 @@ classdef MimGuiBase < GemFigure
             handle = obj.ImagePanel.GetRenderPanel;
         end
         
+        function AutoSaveMarkers(obj)
+            obj.MarkerManager.AutoSaveMarkers();
+        end
+        
     end
     
     methods (Access = protected)
+        
+        function ViewerPanelModeChangedCallback(obj, ~, ~, ~)
+            % This methods is called when the current mode in the viewer panel has changed
+            
+            obj.GuiDataset.ViewerPanelModeChanged(obj.ImagePanel.Mode);
+        end
         
         function ViewerPanelControlsChangedCallback(obj, ~, ~, ~)
             % This methods is called when controls in the viewer panel have changed
@@ -896,7 +950,9 @@ classdef MimGuiBase < GemFigure
 
         function ModeTabChanged(obj, ~, event_data)
             mode = obj.ModeTabControl.GetModeToSwitchTo(event_data.Data);
-            if ~isempty(mode)
+            if isempty(mode)
+                obj.ModeAutoSave();
+            else
                 obj.ChangeMode(mode);
             end
         end
@@ -973,6 +1029,14 @@ classdef MimGuiBase < GemFigure
             
             % Make overlay visible when it is altered
             obj.ImagePanel.ShowOverlay = true;
+
+            % Change the image orientation and slice number if requested 
+            if isprop(new_image, 'PreferredOrientation') && ~isempty(new_image.PreferredOrientation)
+                obj.ImagePanel.Orientation = GemImageOrientation(new_image.PreferredOrientation);
+            end
+            if isprop(new_image, 'PreferredSliceNumber') && ~isempty(new_image.PreferredSliceNumber)
+                obj.ImagePanel.SliceNumber = new_image.PreferredSliceNumber;
+            end
         end
         
         function ReplaceQuiverImageCallback(obj, new_image)

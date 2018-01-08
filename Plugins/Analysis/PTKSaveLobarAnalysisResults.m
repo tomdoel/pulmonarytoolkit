@@ -19,11 +19,12 @@ classdef PTKSaveLobarAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Lobar analysis'
         ToolTip = 'Performs density analysis over lungs and lobes'
-        Category = 'Analysis'
+        Category = 'CT regional'
         Mode = 'Analysis'
+        Visibility = 'Dataset'
 
         Context = PTKContextSet.LungROI
-        AllowResultsToBeCached = true
+        AllowResultsToBeCached = false
         AlwaysRunPlugin = true
         PluginType = 'DoNothing'
         HidePluginInDisplay = false
@@ -32,6 +33,9 @@ classdef PTKSaveLobarAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        
+        Icon = 'lobe_analysis.png'
+        Location = 4
     end
     
     methods (Static)
@@ -47,5 +51,13 @@ classdef PTKSaveLobarAnalysisResults < PTKPlugin
             
             dataset.SaveTableAsCSV('PTKSaveLobarAnalysisResults', 'Lobar analysis', 'LobarResults', 'Analysis for lung and lobar regions', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
         end
+
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsCT();
+        end
+        
+        function is_selected = IsSelected(gui_app)
+            is_selected = false;
+        end        
     end
 end

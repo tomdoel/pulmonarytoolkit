@@ -17,13 +17,14 @@ classdef PTKSaveUserAnalysisResults < PTKPlugin
     %
     
     properties
-        ButtonText = 'Manual segmentation analysis'
+        ButtonText = 'Manual regions analysis'
         ToolTip = 'Performs density analysis over manual segmentation regions'
-        Category = 'Analysis'
+        Category = 'CT regional'
+        Visibility = 'Dataset'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
-        AllowResultsToBeCached = true
+        AllowResultsToBeCached = false
         AlwaysRunPlugin = true
         PluginType = 'DoNothing'
         HidePluginInDisplay = false
@@ -32,6 +33,9 @@ classdef PTKSaveUserAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        
+        Icon = 'user_analysis.png'
+        Location = 6        
     end
     
     methods (Static)
@@ -64,22 +68,13 @@ classdef PTKSaveUserAnalysisResults < PTKPlugin
                 dataset.SaveTableAsCSV('PTKSaveUserAnalysisResults', 'User-defined analysis', 'ManualSegmentationResults', 'Analysis for manually segmented regions', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
             end
         end
+
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsCT() && ~isempty(gui_app.GetListOfManualSegmentations());
+        end
+        
+        function is_selected = IsSelected(gui_app)
+            is_selected = false;
+        end        
     end
 end    
-    
-
-%     
-%     methods (Static)
-%         function RunGuiPlugin(gui_app)
-%         end
-% 
-%         function enabled = IsEnabled(gui_app)
-%             enabled = gui_app.IsDatasetLoaded && (gui_app.IsCT);
-%         end
-%         
-%         function is_selected = IsSelected(gui_app)
-%             is_selected = false;
-%         end
-% 
-%     end    
-% end

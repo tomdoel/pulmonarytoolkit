@@ -58,6 +58,8 @@ classdef MimViewerPanel < GemPanel
     properties (SetObservable, SetAccess = private)
         WindowLimits           % The limits of the image window (in HU for CT images)  
         LevelLimits            % The limits of the image level (in HU for CT images)  
+        Mode = ''              % Specifies the current editing mode
+        SubMode = ''           % Specifies the current editing submode
     end
     
     properties (SetAccess = private)
@@ -75,8 +77,6 @@ classdef MimViewerPanel < GemPanel
         OverlayImageDisplayParameters
         MarkerImageDisplayParameters
 
-        Mode = ''              % Specifies the current editing mode
-        SubMode = ''           % Specifies the current editing submode
         EditFixedOuterBoundary % Specifies whether the current edit can modify the segmentation outer boundary
         MouseCursorStatus      % A class of type MimMouseCursorStatus showing data representing the voxel under the cursor
         

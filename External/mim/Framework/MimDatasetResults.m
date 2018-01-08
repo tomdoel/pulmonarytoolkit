@@ -127,11 +127,7 @@ classdef MimDatasetResults < handle
                     next_output_context = next_output_context_set{1};
                     combined_result = obj.ContextHierarchy.GetResultRecursive(plugin_name, next_output_context, parameters, obj.LinkedDatasetChooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
                     plugin_has_been_run = plugin_has_been_run | combined_result.GetPluginHasBeenRun;
-                    if numel(context_list) == 1
-                        result = combined_result.GetResult();
-                    else
-                        result.(CoreTextUtilities.CreateValidFieldName(next_output_context)) = combined_result.GetResult();
-                    end
+                    result.(CoreTextUtilities.CreateValidFieldName(next_output_context)) = combined_result.GetResult();
 
                     % Note for simplicity we return only one output image and
                     % one cache info even if we are requesting multiple
@@ -321,7 +317,7 @@ classdef MimDatasetResults < handle
         function file_list = GetListOfManualSegmentations(obj)
             % Gets list of manual segmentation files associated with this dataset
 
-            file_list = obj.DatasetDiskCache.GetListOfManualSegmentations;
+            file_list = obj.DatasetDiskCache.GetListOfManualSegmentations();
         end
 
         function file_list = GetListOfMarkerSets(obj)

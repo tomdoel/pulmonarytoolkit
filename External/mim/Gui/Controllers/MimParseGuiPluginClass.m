@@ -35,6 +35,14 @@ function new_plugin = MimParseGuiPluginClass(plugin_name, plugin_class, suggeste
     
     property_list = properties(plugin_class);
     
+    if ismember('PluginInterfaceVersion', property_list)
+        new_plugin.PluginInterfaceVersion = plugin_class.PluginInterfaceVersion;
+    elseif ismember('PTKVersion', property_list)
+        new_plugin.PluginInterfaceVersion = plugin_class.PTKVersion;
+    else
+        new_plugin.PluginInterfaceVersion = 1;
+    end
+
     if ismember('Visibility', property_list)
         new_plugin.Visibility = plugin_class.Visibility;
     end
@@ -51,7 +59,7 @@ function new_plugin = MimParseGuiPluginClass(plugin_name, plugin_class, suggeste
         new_plugin.SubMode = [];
     end
     
-    if ismember('Location', property_list);
+    if ismember('Location', property_list)
         new_plugin.Location = plugin_class.Location;
     else
         new_plugin.Location = 100;

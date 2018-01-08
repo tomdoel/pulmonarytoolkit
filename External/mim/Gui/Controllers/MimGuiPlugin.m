@@ -62,13 +62,16 @@ classdef MimGuiPlugin < handle
         
         % The text that appears on the button when the tool is selected
         SelectedText
+        
+        % Optional parameters
+        % ShowProgresDialog
     end
     
     methods (Abstract, Static)
 
         % Called when the user has clicked the button for this gui plugin.
         % Implement this method with the code you with to run.
-        RunGuiPlugin(mim_gui_app)
+        RunGuiPlugin(mim_gui_app, reporting)
         
     end
     

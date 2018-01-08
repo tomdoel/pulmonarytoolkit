@@ -63,6 +63,12 @@ classdef MimModeSwitcher < CoreBaseClass
             end
         end
         
+        function ModeAutoSave(obj)
+            if ~isempty(obj.CurrentMode)
+                obj.CurrentMode.AutoSave();
+            end
+        end
+        
         function PrePluginCall(obj)
             % Called before a new plugin is executed, allowing modes to exit before this
             % happens
@@ -74,12 +80,21 @@ classdef MimModeSwitcher < CoreBaseClass
             end            
         end
         
-        function UpdateMode(obj, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
-            if ~isempty(obj.CurrentMode)
-                obj.CurrentMode.ExitMode;
+        function UpdateCurrentMode(obj, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
+            if ~isempty(obj.CurrentMode) 
+                obj.CurrentMode.ExitMode();
                 if obj.CurrentMode.AllowAutomaticModeEntry
                     obj.CurrentMode.EnterMode(current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context);
                 else
+                    obj.SwitchMode([], current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context);
+                end
+            end
+        end
+        
+        function ViewerPanelModeChanged(obj, new_mode, current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context)
+            if ~isempty(obj.CurrentMode)
+                if obj.CurrentMode.ExitOnViewerPanelModeChanged(new_mode)
+                    obj.CurrentMode.ExitMode();
                     obj.SwitchMode([], current_dataset, current_plugin_info, current_plugin_name, current_visible_plugin_name, current_context);
                 end
             end

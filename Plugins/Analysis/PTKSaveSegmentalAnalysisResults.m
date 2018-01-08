@@ -23,19 +23,23 @@ classdef PTKSaveSegmentalAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Segmental analysis'
         ToolTip = 'Performs density analysis in bins along the cranial-caudal axis'
-        Category = 'Analysis'
+        Category = 'CT regional'
         Mode = 'Analysis'
+        Visibility = 'Dataset'        
 
         Context = PTKContextSet.LungROI
-        AllowResultsToBeCached = true
+        AllowResultsToBeCached = false
         AlwaysRunPlugin = true
         PluginType = 'DoNothing'
-        HidePluginInDisplay = false
+        HidePluginInDisplay = true
         FlattenPreviewImage = false
         PTKVersion = '2'
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        
+        Icon = 'segment_analysis.png'
+        Location = 5        
     end
     
     methods (Static)
@@ -67,5 +71,13 @@ classdef PTKSaveSegmentalAnalysisResults < PTKPlugin
             dataset.SaveTableAsCSV('PTKSaveSegmentalAnalysisResults', 'Segmental analysis', 'DensityResults_Segmental', 'Density analysis for the pulmonary segments', density_table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
             results.DensityResults = density_results;
         end
+        
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsCT();
+        end
+        
+        function is_selected = IsSelected(gui_app)
+            is_selected = false;
+        end        
     end
 end

@@ -22,7 +22,7 @@ classdef MimBrushColourEditBox < MimGuiPluginEditBox
         Mode = 'Edit'
 
         HidePluginInDisplay = false
-        PTKVersion = '2'
+        PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
         Location = 40

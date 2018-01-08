@@ -46,5 +46,29 @@ classdef PTKMetrics < dynamicprops
             end
         end
     end
+    
+    methods (Static)
+        function results = MergeResults(results_1, results_2)
+            if isempty(results_2)
+                results = results_1;
+            else
+                metric_names = unique([fieldnames(results_1), fieldnames(results_2)]);
+                results = [];
+                for metric_cell = metric_names'
+                    metric_name = metric_cell{1};
+                    if isfield(results_1, metric_name)
+                        results.(metric_name) = results_1.(metric_name);
+                    end
+                    if isfield(results, metric_name)
+                        if isfield(results_2, metric_name)
+                            results.(metric_name).Merge(results_2.(metric_name))
+                        else
+                            results.(metric_name) = results_2.(metric_name);
+                        end
+                    end
+                end
+            end
+        end 
+    end
 end
 

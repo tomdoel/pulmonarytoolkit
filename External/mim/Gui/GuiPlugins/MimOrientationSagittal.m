@@ -26,7 +26,7 @@ classdef MimOrientationSagittal < MimGuiPlugin
         Mode = 'Toolbar'
 
         HidePluginInDisplay = false
-        PTKVersion = '2'
+        PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
         Icon = 'sagittal_thumb.png'
@@ -35,7 +35,7 @@ classdef MimOrientationSagittal < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.ImagePanel.Orientation = GemImageOrientation.YZ;
+            gui_app.ImagePanel.Orientation = GemImageOrientation.YZ; 
         end
         
         function enabled = IsEnabled(gui_app)

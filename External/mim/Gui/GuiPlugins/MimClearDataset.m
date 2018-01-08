@@ -28,7 +28,7 @@ classdef MimClearDataset < MimGuiPlugin
         PTKVersion = '1'
         ButtonWidth = 6
         ButtonHeight = 1
-        
+        Icon = 'clear_overlay.png'
         Location = 101
     end
     

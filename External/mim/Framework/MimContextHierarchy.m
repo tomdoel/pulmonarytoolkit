@@ -74,19 +74,22 @@ classdef MimContextHierarchy < CoreBaseClass
             for next_output_context_set = CoreContainerUtilities.ConvertToSet(output_context)
                 next_output_context = next_output_context_set{1};
                 if obj.Contexts.isKey(char(next_output_context))
-                    context_list{end + 1} = next_output_context;
+                    % Note that if the enum name of the context set matches
+                    % the enum name of a context, we need to be sure the
+                    % contet gets added, not the context set
+                    context_list{end + 1} = obj.Contexts(char(next_output_context)).Context;
                 elseif obj.ContextSets.isKey(char(next_output_context))
                     context_set_mapping = obj.ContextSets(char(next_output_context));
                     context_mapping_list = context_set_mapping.ContextList;
                     context_list = [context_list, CoreContainerUtilities.GetFieldValuesFromSet(context_mapping_list, 'Context')];
                 else
                     if obj.DiskCache.ManualSegmentationExists(char(next_output_context), reporting)
-                        context_list{end + 1} = next_output_context;
+                        context_list{end + 1} = char(next_output_context);
                     else
                         % Allow contexts with specific label indices
                         [context_prefix, context_suffix] = CoreTextUtilities.SplitAtLastDelimiter(char(next_output_context), '.');
                         if obj.DiskCache.ManualSegmentationExists(context_prefix, reporting)
-                            context_list{end + 1} = next_output_context;
+                            context_list{end + 1} = char(next_output_context);
                         else
                             reporting.Error('MimContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');
                         end

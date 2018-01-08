@@ -46,7 +46,7 @@ function new_plugin = MimParsePluginClass(plugin_name, plugin_class, suggested_c
         new_plugin.PluginInterfaceVersion = 1;
     end
 
-    if ismember('Context', property_list);
+    if ismember('Context', property_list)
         new_plugin.Context = plugin_class.Context;
     else
         new_plugin.Context = [];

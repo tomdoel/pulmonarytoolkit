@@ -50,7 +50,15 @@ classdef MimGuiDataset < CoreBaseClass
 
         function ChangeMode(obj, mode)
             obj.ModeSwitcher.SwitchMode(mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext, obj.GuiDatasetState.CurrentSegmentationName);
-        end        
+        end
+        
+        function ModeAutoSave(obj)
+            obj.ModeSwitcher.ModeAutoSave();
+        end
+        
+        function AutoSaveMarkers(obj)
+            obj.Gui.AutoSaveMarkers();
+        end
 
         function mode = GetMode(obj)
             mode = obj.ModeSwitcher.CurrentMode;
@@ -164,7 +172,15 @@ classdef MimGuiDataset < CoreBaseClass
             else
                 image_info = [];
             end
-        end        
+        end
+        
+        function patint_name = GetPatientName(obj)
+            if obj.DatasetIsLoaded()
+                patint_name = obj.Dataset.GetPatientName();
+            else
+                patint_name = [];
+            end
+        end
         
         function ClearCacheForThisDataset(obj)
             if obj.DatasetIsLoaded()
@@ -184,7 +200,7 @@ classdef MimGuiDataset < CoreBaseClass
         
         function ClearDataset(obj)
             try
-                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.ModeSwitcher.UpdateCurrentMode([], [], [], [], []);
                 obj.Gui.ClearImages;
                 delete(obj.Dataset);
 
@@ -206,7 +222,7 @@ classdef MimGuiDataset < CoreBaseClass
         
         function ClearDatasetKeepPatient(obj)
             try
-                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.ModeSwitcher.UpdateCurrentMode([], [], [], [], []);
                 obj.Gui.ClearImages;
                 delete(obj.Dataset);
 
@@ -253,7 +269,7 @@ classdef MimGuiDataset < CoreBaseClass
         
         function SwitchPatient(obj, patient_id)
             if ~strcmp(patient_id, obj.GuiDatasetState.CurrentPatientId)
-                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.ModeSwitcher.UpdateCurrentMode([], [], [], [], []);
                 obj.Gui.SetTab(obj.AppDef.DefaultModeOnNewDataset);
                 obj.Gui.ClearImages;
                 obj.DeleteListeners;
@@ -284,7 +300,7 @@ classdef MimGuiDataset < CoreBaseClass
                    new_dataset = [];
                 end
 
-                obj.ModeSwitcher.UpdateMode([], [], [], [], []);
+                obj.ModeSwitcher.UpdateCurrentMode([], [], [], [], []);
                 obj.Gui.SetTab(obj.AppDef.DefaultModeOnNewDataset);
                 
                 obj.Gui.ClearImages();
@@ -422,7 +438,7 @@ classdef MimGuiDataset < CoreBaseClass
             end
         end
         
-        function RunPlugin(obj, plugin_name, wait_dialog)
+        function result = RunPlugin(obj, plugin_name, context, wait_dialog)
             % Causes the GUI to run the named plugin and display the result
             
             if ~obj.DatasetIsLoaded()
@@ -430,8 +446,9 @@ classdef MimGuiDataset < CoreBaseClass
             end
             
             try
-                obj.RunPluginTryCatchBlock(plugin_name, wait_dialog)
+                result = obj.RunPluginTryCatchBlock(plugin_name, context, wait_dialog);
             catch exc
+                result = [];
                 if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('MimGuiDataset:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                 else
@@ -453,7 +470,7 @@ classdef MimGuiDataset < CoreBaseClass
 
                                     % Run the plugin to load the edit
                                     % into the viewer
-                                    obj.RunPluginTryCatchBlock(exc.PluginToEdit, wait_dialog);
+                                    obj.RunPluginTryCatchBlock(exc.PluginToEdit, context, wait_dialog);
                                     
                                     % Switch to edit mode
                                     obj.Gui.ChangeMode(MimModes.EditMode);
@@ -476,8 +493,8 @@ classdef MimGuiDataset < CoreBaseClass
             % Indicates that the currently loaded result has been deleted or modified in
             % such a way that it is no longer representative of the plugin 
             
-            obj.GuiDatasetState.ClearPlugin;
-            obj.UpdateModes;
+            obj.GuiDatasetState.ClearPlugin();
+            obj.UpdateModes();
         end
 
         function LoadManualSegmentationCallback(obj, segmentation_name)
@@ -542,6 +559,14 @@ classdef MimGuiDataset < CoreBaseClass
                 segmentation_list = obj.Dataset.GetListOfManualSegmentations();
             end
         end
+
+        function context_list = GetAllContextsForManualSegmentations(obj)
+            if isempty(obj.Dataset)
+                context_list = {};
+            else
+                context_list = obj.Dataset.GetAllContextsForManualSegmentations();
+            end
+        end
         
         function segmentation_list = GetListOfMarkerSets(obj)
             if isempty(obj.Dataset)
@@ -587,6 +612,20 @@ classdef MimGuiDataset < CoreBaseClass
                 is_gas_mri = obj.Dataset.IsGasMRI();
             end
         end
+        
+        function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters)
+            if isempty(obj.Dataset)
+                obj.Reporting.Error('MimGuiDataset:NoDatasetLoaded', ['Could not save analysis results because no dataset is currently loaded.']);
+            else
+                obj.Dataset.SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters);
+            end
+        end
+        
+        function ViewerPanelModeChanged(obj, new_mode)
+            % This methods is called when the current mode in the viewer panel has changed
+            
+            obj.ModeSwitcher.ViewerPanelModeChanged(new_mode, obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
+        end
     end
     
     methods (Access = private)
@@ -620,24 +659,29 @@ classdef MimGuiDataset < CoreBaseClass
             obj.Gui.SetTabMode(mode.Data);
         end
         
-        function RunPluginTryCatchBlock(obj, plugin_name, wait_dialog)
+        function result = RunPluginTryCatchBlock(obj, plugin_name, context_to_request, wait_dialog)
             new_plugin = obj.LoadPluginInfoStructure(plugin_name, obj.Reporting);
             visible_name = CoreTextUtilities.RemoveHtml(new_plugin.ButtonText);
             wait_dialog.ShowAndHold(['Computing ' visible_name]);
             
             if strcmp(new_plugin.PluginType, 'DoNothing')
-                obj.Dataset.GetResult(plugin_name);
+                % Call with 2 output arguments to prevent fetching of cache
+                % info
+                [result, ~] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
             else
                 
-                % Determine the context we require (full image, lung ROI, etc).
+                % Determine the context we require (full image, lung ROI,
+                % etc) if not specified by the caller
                 % Normally we keep the last context, but if a context plugin is
                 % selected, we switch to the new context
-                context_to_request = obj.CurrentContext;
+                if isempty(context_to_request)
+                    context_to_request = obj.CurrentContext;
+                end
                 if strcmp(new_plugin.PluginType, 'ReplaceImage')
                     context_to_request = obj.ContextDef.ChooseOutputContext(new_plugin.Context);
                 end
                 
-                [~, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
+                [result, cache_info, new_image] = obj.Dataset.GetResultWithCacheInfo(plugin_name, context_to_request);
                 
                 if isa(cache_info, 'MimCompositeResult')
                     cache_info = cache_info.GetFirstResult;
@@ -651,10 +695,10 @@ classdef MimGuiDataset < CoreBaseClass
                     if isempty(new_image)
                         obj.Reporting.Error('MimGuiDataset:EmptyImage', ['The plugin ' plugin_name ' did not return an image when expected. If this plugin should not return an image, then set its PluginType property to "DoNothing"']);
                     end
-                    obj.ModeSwitcher.PrePluginCall;
+                    obj.ModeSwitcher.PrePluginCall();
                     obj.Gui.ReplaceOverlayImageCallback(new_image, image_title);
                     obj.GuiDatasetState.SetPlugin(new_plugin, plugin_name, visible_name, cache_info.IsEdited);
-                    obj.UpdateModes;
+                    obj.UpdateModes();
                     
                 elseif strcmp(new_plugin.PluginType, 'ReplaceQuiver')
                     
@@ -683,11 +727,10 @@ classdef MimGuiDataset < CoreBaseClass
             obj.Gui.SetImage(new_image);
         end
         
-       
         function UpdateModes(obj)
-            obj.ModeSwitcher.UpdateMode(obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
+            obj.ModeSwitcher.UpdateCurrentMode(obj.Dataset, obj.GuiDatasetState.CurrentPluginInfo, obj.GuiDatasetState.CurrentPluginName, obj.GuiDatasetState.CurrentVisiblePluginName, obj.CurrentContext);
             obj.Gui.UpdateModeTabControl(obj.GuiDatasetState);
-            obj.Gui.UpdateToolbar;
+            obj.Gui.UpdateToolbar();
         end
         
         function new_plugin = LoadPluginInfoStructure(obj, plugin_name, reporting)
