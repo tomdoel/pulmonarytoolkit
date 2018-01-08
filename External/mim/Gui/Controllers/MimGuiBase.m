@@ -559,11 +559,12 @@ classdef MimGuiBase < GemFigure
         
         function RunGuiPluginCallback(obj, plugin_name_or_obj)
             
-            
             if isa(plugin_name_or_obj, 'MimGuiPlugin')
+                plugin_name = class(plugin_name_or_obj);
                 plugin_info = plugin_name_or_obj;
             else
-                plugin_info = feval(plugin_name_or_obj);
+                plugin_name = plugin_name_or_obj;
+                plugin_info = feval(plugin_name_or_obj);                
             end
     
             show_progress = isprop(plugin_info, 'ShowProgressDialog') && plugin_info.ShowProgressDialog;
@@ -571,18 +572,27 @@ classdef MimGuiBase < GemFigure
                 wait_dialog = obj.WaitDialogHandle;
                 wait_dialog.ShowAndHold([plugin_info.ButtonText]);
             end
-
-            if ((isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')) || ...
-                    (isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')))
-                plugin_info.RunGuiPlugin(obj, obj.Reporting);
-            else
-                plugin_info.RunGuiPlugin(obj);
-            end
             
+            try
+                if ((isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')) || ...
+                        (isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')))
+                    plugin_info.RunGuiPlugin(obj, obj.Reporting);
+                else
+                    plugin_info.RunGuiPlugin(obj);
+                end
+            catch exc
+                if MimErrors.IsErrorCancel(exc.identifier)
+                    obj.Reporting.ShowMessage('MimGuiDataset:GuiPluginCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
+                else
+                    obj.Reporting.ShowMessage('MimGuiDataset:GuiPluginFailed', ['The gui plugin ' plugin_name ' failed with the following error: ' exc.message]);
+                    uiwait(errordlg([plugin_name ' failed with the following error: ' exc.message], [obj.AppDef.GetName ': Failure in plugin ' plugin_name], 'modal'));
+                end
+            end
+           
             obj.UpdateToolbar();
             
             if show_progress
-                wait_dialog.Hide;
+                wait_dialog.Hide();
             end
         end
         
