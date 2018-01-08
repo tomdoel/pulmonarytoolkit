@@ -17,7 +17,7 @@ classdef PTKSaveUserAnalysisResults < PTKPlugin
     %
     
     properties
-        ButtonText = 'Manual region analysis'
+        ButtonText = 'Manual regions analysis'
         ToolTip = 'Performs density analysis over manual segmentation regions'
         Category = 'CT regional'
         Visibility = 'Dataset'
