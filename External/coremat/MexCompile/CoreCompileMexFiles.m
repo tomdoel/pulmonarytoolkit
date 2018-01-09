@@ -79,11 +79,11 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:FileAdded')
                 reporting.ShowMessage('CoreCompileMexFiles:FileAdded', ['A new mex file ' mex_file.Name ' has been found and requires compilation.']);
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoCachedInfoForMex')
-                reporting.ShowMessage('CoreCompileMexFiles:NoCachedInfoForMex', [mex_file.Name ' requires compilation.']);
+                reporting.Log([mex_file.Name ' requires compilation.']);
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:CacheFileDeleted')
                 reporting.ShowMessage('CoreCompileMexFiles:CacheFileDeleted', [mex_file.Name ' requires recompilation because it appears the cache file ' framework_cache.GetCacheFilename ' was deleted.']);
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:CompiledFileNotFound')
-                reporting.ShowMessage('CoreCompileMexFiles:CompiledFileNotFound', [mex_file.Name ' requires compilation.']);
+                reporting.Log([mex_file.Name ' requires compilation.']);
 
 
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoRecompileNeeded')

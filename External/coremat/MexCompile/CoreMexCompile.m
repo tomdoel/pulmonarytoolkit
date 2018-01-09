@@ -12,7 +12,7 @@ classdef CoreMexCompile < handle
     
     methods (Static)
         function mex_result = Compile(compiler, mex_file, src_fullfile, output_directory)
-            mex_arguments = [{'-outdir', output_directory}, mex_file.CompilerOptions, src_fullfile, mex_file.OtherCompilerFiles];
+            mex_arguments = ['-silent', {'-outdir', output_directory}, mex_file.CompilerOptions, src_fullfile, mex_file.OtherCompilerFiles];
             try
                 mex_result = mex(mex_arguments{:});
             catch ex
