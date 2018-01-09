@@ -596,12 +596,12 @@ classdef MimGuiBase < GemFigure
             end
         end
         
-        function result = RunPluginCallback(obj, plugin_name, context)
+        function RunPluginCallback(obj, plugin_name, context)
             wait_dialog = obj.WaitDialogHandle;
             if nargin < 3
                 context = [];
             end
-            result = obj.GuiDataset.RunPlugin(plugin_name, context, wait_dialog);
+            obj.GuiDataset.RunPlugin(plugin_name, context, wait_dialog);
         end
         
         function LoadSegmentationCallback(obj, segmentation_name)

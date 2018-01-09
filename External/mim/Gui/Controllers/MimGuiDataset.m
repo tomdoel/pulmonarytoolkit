@@ -438,7 +438,7 @@ classdef MimGuiDataset < CoreBaseClass
             end
         end
         
-        function result = RunPlugin(obj, plugin_name, context, wait_dialog)
+        function RunPlugin(obj, plugin_name, context, wait_dialog)
             % Causes the GUI to run the named plugin and display the result
             
             if ~obj.DatasetIsLoaded()
@@ -446,9 +446,8 @@ classdef MimGuiDataset < CoreBaseClass
             end
             
             try
-                result = obj.RunPluginTryCatchBlock(plugin_name, context, wait_dialog);
+                obj.RunPluginTryCatchBlock(plugin_name, context, wait_dialog);
             catch exc
-                result = [];
                 if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('MimGuiDataset:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                 else
