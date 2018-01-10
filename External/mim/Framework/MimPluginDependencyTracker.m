@@ -367,27 +367,6 @@ classdef MimPluginDependencyTracker < CoreBaseClass
     
     methods (Access = private)
         
-        function AddDependenciesToPlugin(obj, plugin_name, dependencies)
-            if ~obj.DependencyList.isKey(plugin_name)
-                obj.DependencyList(plugin_name) = containers.Map;
-            end
-            
-            current_dependency_list = obj.DependencyList(plugin_name);
-            dependencies_keys = dependencies.keys;
-            for index = 1 : length(dependencies_keys)
-                next_dependency = dependencies(dependencies_keys{index});
-                if current_dependency_list.isKey(next_dependency.name)
-                    current_dependency = current_dependency_list(next_dependency.name);
-                    if ~strcmp(next_dependency.uid, current_dependency.uid)
-                        error('Mismatch in dependency version uids');
-                    end
-                else
-                    current_dependency_list(next_dependency.name) = next_dependency;
-                end
-            end
-            obj.DependencyList(plugin_name) = current_dependency_list;
-        end
-        
         % Checks the dependencies in this result with the current dependency
         % list, and determine if the dependencies are still valid
         function valid = CheckDependenciesValid(obj, linked_dataset_chooser, dependencies, dataset_stack, parameters_for_next_plugin_call, reporting)
