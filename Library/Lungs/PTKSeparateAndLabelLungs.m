@@ -14,13 +14,20 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
-    both_lungs = unclosed_lungs.Copy;
+    both_lungs = unclosed_lungs.Copy; 
     
-    both_lungs.ChangeRawImage(uint8(both_lungs.RawImage & (filtered_threshold_lung.RawImage > 0)));
-    
+    both_lungs.ChangeRawImage(uint8(unclosed_lungs.RawImage & (filtered_threshold_lung.RawImage > 0)));
     [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, reporting);
+    
+    if ~success
+        reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs after ' int2str(max_iter) ' opening attempts. Trying narrower threshold.']);
+        both_lungs.ChangeRawImage(uint8(unclosed_lungs.RawImage & (filtered_threshold_lung.RawImage == 1)));
+        [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, reporting);
+    end
+
     if ~success
         reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs after ' int2str(max_iter) ' opening attempts. Trying 2D approach.']);
+        both_lungs.ChangeRawImage(uint8(unclosed_lungs.RawImage & (filtered_threshold_lung.RawImage > 0)));
 
         % 3D approach failed. Try slice-by-slice coronal approach
         results = both_lungs.Copy;
@@ -33,7 +40,9 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
         any_slice_failure = false;
         for coronal_index = 1 : lung_roi.ImageSize(1)
             lung_roi_slice = PTKImage(lung_roi.GetSlice(coronal_index, PTKImageOrientation.Coronal));
-            both_lungs_slice = PTKImage(both_lungs.GetSlice(coronal_index, PTKImageOrientation.Coronal));
+            slice_raw = both_lungs.GetSlice(coronal_index, PTKImageOrientation.Coronal);
+            slice_raw = imfill(slice_raw, 'holes');
+            both_lungs_slice = PTKImage(slice_raw);
             unclosed_lungs_slice = PTKImage(unclosed_lungs.GetSlice(coronal_index, PTKImageOrientation.Coronal));
             if any(both_lungs_slice.RawImage(:))
                 [success, max_iter] = SeparateLungs(both_lungs_slice, lung_roi_slice, unclosed_lungs_slice, true, reporting);
@@ -50,14 +59,16 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
         end
         
         if any_slice_failure
-            reporting.ShowMessage('PTKSeparateAndLabelLungs:2DSeparationPartialFailure', '2D lung separation failed in one or more slices. Nearest neighbour interpolation will be used to segment these slices.');
-            [~, nearest_index] = bwdist(results.RawImage > 0);
-            nearest_value = results.RawImage;
-            nearest_value(:) = results.RawImage(nearest_index(:));
-            voxel_indices_to_remap = voxels_to_remap.RawImage(:) > 0;
-            results_image = results.RawImage;
-            results_image(voxel_indices_to_remap) = nearest_value(voxel_indices_to_remap);
-            results.ChangeRawImage(results_image);
+            
+            % Watershed to fill remaining voxels
+            lung_exterior = unclosed_lungs.RawImage == 0;
+            starting_voxels = int8(results.RawImage);
+            starting_voxels(lung_exterior) = -1;
+
+            labeled_output = PTKWatershedFromStartingPoints(int16(lung_roi.RawImage), starting_voxels);
+            labeled_output(labeled_output == -1) = 0;
+
+            results.ChangeRawImage(uint8(labeled_output));
         end
         
         both_lungs = results;
