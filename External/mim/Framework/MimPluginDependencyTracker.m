@@ -277,11 +277,6 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             obj.DatasetDiskCache.SaveMarkerPoints(name, result, manual_cache_info, reporting);
         end
         
-        function edited_result = GetDefaultEditedResult(obj, context, linked_dataset_chooser, plugin_class, dataset_stack, reporting)
-            dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
-            edited_result = plugin_class.GenerateDefaultEditedResultFollowingFailure(dataset_callback, context, reporting);
-        end
-        
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
             % Checks a given dependency against the cached values to
             % determine if it is valid (ie it depends on the most recent

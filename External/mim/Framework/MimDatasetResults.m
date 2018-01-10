@@ -289,7 +289,8 @@ classdef MimDatasetResults < handle
             reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
             
             % Run the plugin
-            edited_result = obj.DependencyTracker.GetDefaultEditedResult(context, obj.LinkedDatasetChooser, plugin_class, dataset_stack, reporting);
+            dataset_callback = MimDatasetCallback(obj.LinkedDatasetChooser, dataset_stack, context, reporting);
+            edited_result = plugin_class.GenerateDefaultEditedResultFollowingFailure(dataset_callback, context, reporting);
             
             reporting.CompleteProgress;
             
