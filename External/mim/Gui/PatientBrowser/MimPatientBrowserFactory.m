@@ -93,7 +93,7 @@ classdef MimPatientBrowserFactory < CoreBaseClass
         function matches = HandleMatchesPatientBrowser(obj, ui_handle)
             % Check if this handle is the Patient Browser's
             
-            matches = (~isempty(obj.PatientBrowser)) && (ui_handle == obj.PatientBrowser.GetContainerHandle(obj.Reporting));
+            matches = (~isempty(obj.PatientBrowser)) && (ui_handle == obj.PatientBrowser.GetContainerHandle());
         end
 
         function Hide(obj)
