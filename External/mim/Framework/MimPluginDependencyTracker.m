@@ -40,7 +40,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             obj.PluginCache = plugin_cache;
         end
         
-        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting)
+        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, output_context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting)
             % Gets a plugin result, from the disk cache if possible. If there is no
             % cached result, or if the dependencies are invalid, or if the
             % "AlwaysRunPlugin" property is set, then the plugin is executed.
@@ -49,7 +49,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             result = [];
             edited_result = [];
             
-            edited_result_exists = obj.DatasetDiskCache.EditedResultExists(plugin_name, context, reporting);
+            edited_result_exists = obj.DatasetDiskCache.EditedResultExists(plugin_name, output_context, reporting);
             
             % We can skip fetching the result if an edited result exists
             % and does not depend on the automated result
@@ -57,7 +57,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
 
                 if ~plugin_info.AlwaysRunPlugin
             
-                    [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, context, memory_cache_policy, reporting);
+                    [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, output_context, memory_cache_policy, reporting);
 
                     % Check dependencies of the result. If they are invalid, set the
                     % result to null to force a re-run of the plugin
@@ -107,16 +107,16 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                     % result is being requested from; however, the stack belongs to
                     % the primary dataset
                     plugin_version = plugin_info.PluginVersion;
-                    dataset_stack.CreateAndPush(plugin_name, context, parameters, dataset_uid, ignore_dependency_checks, false, obj.FrameworkAppDef.TimeFunctions, plugin_version, reporting);
+                    dataset_stack.CreateAndPush(plugin_name, output_context, parameters, dataset_uid, ignore_dependency_checks, false, obj.FrameworkAppDef.TimeFunctions, plugin_version, reporting);
 
-                    dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, context, reporting);
+                    dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, output_context, reporting);
                     
                     try
                         % This is the actual call which runs the plugin
                         if strcmp(plugin_info.PluginInterfaceVersion, '1')
                             result = plugin_class.RunPlugin(dataset_callback, reporting);
                         else
-                            result = plugin_class.RunPlugin(dataset_callback, context, reporting);
+                            result = plugin_class.RunPlugin(dataset_callback, output_context, reporting);
                         end
 
                         new_cache_info = dataset_stack.Pop;
@@ -134,7 +134,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                         dependencies = new_cache_info.DependencyList;
 
                         % Cache the plugin result according to the specified cache policies
-                        obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, context, disk_cache_policy, memory_cache_policy, reporting);
+                        obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, output_context, disk_cache_policy, memory_cache_policy, reporting);
     
                         dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
 
@@ -149,7 +149,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                             % which indicates that the user should be offered
                             % the ability to create a manual edit
                             if plugin_info.SuggestManualEditOnFailure
-                                throw(MimSuggestEditException(plugin_name, context, ex, CoreTextUtilities.RemoveHtml(plugin_class.ButtonText)));
+                                throw(MimSuggestEditException(plugin_name, output_context, ex, CoreTextUtilities.RemoveHtml(plugin_class.ButtonText)));
                             else
                                 rethrow(ex);
                             end
@@ -167,7 +167,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             % Fetch the edited result, if it exists
             if edited_result_exists
                 
-                [edited_result, edited_cache_info] = obj.DatasetDiskCache.LoadEditedPluginResult(plugin_name, context, reporting);
+                [edited_result, edited_cache_info] = obj.DatasetDiskCache.LoadEditedPluginResult(plugin_name, output_context, reporting);
                 
                 % If the edited result does not depend on the automated
                 % result, we won't have (and don't need) cache info for the
@@ -178,7 +178,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
                 
                 % In case the cache is out of sync with the existance of
                 % the edited result, this will update the cache
-                obj.DatasetDiskCache.UpdateEditedResults(plugin_name, edited_cache_info, context, reporting);
+                obj.DatasetDiskCache.UpdateEditedResults(plugin_name, edited_cache_info, output_context, reporting);
 
                 % Call the plugin to create an edited output
                 result = plugin_class.GetEditedResult(result, edited_result, reporting);
@@ -192,7 +192,7 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             else
                 % In case the cache is out of sync with the existance of
                 % the edited result, this will delete the edited result entry from the cache
-                obj.DatasetDiskCache.UpdateEditedResults(plugin_name, [], context, reporting);
+                obj.DatasetDiskCache.UpdateEditedResults(plugin_name, [], output_context, reporting);
 
             end
         end
