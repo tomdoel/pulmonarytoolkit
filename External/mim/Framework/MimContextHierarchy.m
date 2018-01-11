@@ -225,7 +225,7 @@ classdef MimContextHierarchy < CoreBaseClass
             % for this context.
             if obj.ContextDef.ContextSetMatches(plugin_context_set, input_context_set)
                 plugin_version = plugin_info.PluginVersion;
-                obj.DependencyTracker.SaveEditedResult(plugin_name, input_context, edited_result_image, dataset_uid, plugin_version, reporting);
+                obj.SaveEditedResult(plugin_name, input_context, edited_result_image, dataset_uid, plugin_version, reporting);
 
             % Otherwise, if the input's context set is lower in the hierarchy
             % than that of the plugin, then resize the input to match the plugin
@@ -262,6 +262,22 @@ classdef MimContextHierarchy < CoreBaseClass
             else
                 reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
             end
+        end        
+    end
+    
+    methods (Access = private)
+        function edited_cached_info = SaveEditedResult(obj, plugin_name, context, edited_result, dataset_uid, plugin_version, reporting)
+            % Saves the result of a plugin after semi-automatic editing
+            
+            attributes = [];
+            attributes.IgnoreDependencyChecks = false;
+            attributes.IsEditedResult = true;
+            attributes.PluginVersion = plugin_version;
+            instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
+            edited_cached_info = obj.FrameworkAppDef.GetClassFactory.CreateDatasetStackItem(instance_identifier, PTKDependencyList(), false, false, reporting);
+            edited_cached_info.MarkEdited();
+
+            obj.DatasetDiskCache.SaveEditedResult(plugin_name, context, edited_result, edited_cached_info, reporting);
         end        
     end
 end 

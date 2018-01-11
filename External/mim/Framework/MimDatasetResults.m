@@ -239,17 +239,37 @@ classdef MimDatasetResults < handle
             dataset_uid = obj.ImageInfo.ImageUid;
             
             try
-                obj.DependencyTracker.SaveMarkerPoints(name, data, dataset_uid, reporting);            
+                attributes = [];
+                attributes.IgnoreDependencyChecks = false;
+                attributes.IsMarkerSet = true;
+                instance_identifier = PTKDependency(name, [], CoreSystemUtilities.GenerateUid(), dataset_uid, attributes);
+                manual_cache_info = obj.FrameworkAppDef.GetClassFactory.CreateDatasetStackItem(instance_identifier, PTKDependencyList(), false, false, reporting);
+                manual_cache_info.MarkMarkerSet();
+
+                obj.DatasetDiskCache.SaveMarkerPoints(name, result, manual_cache_info, reporting);
+                
             catch ex
                 dataset_stack.ClearStack;
                 rethrow(ex);
             end
         end
         
-        function data = LoadMarkerPoints(obj, name, dataset_stack, reporting)
+        function result = LoadMarkerPoints(obj, name, dataset_stack, reporting)
             % Load data from a cache file associated with this dataset
         
-            data = obj.DependencyTracker.LoadMarkerPoints(name, dataset_stack, reporting);
+            [result, cache_info] = obj.DatasetDiskCache.LoadMarkerPoints(name, reporting);
+
+            % Add the dependencies of the cache to any other
+            % plugins in the callstack
+            if ~isempty(result) && ~isempty(cache_info)
+                dependencies = cache_info.DependencyList;
+                dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
+
+                dependency = cache_info.InstanceIdentifier;
+                dependency_list_for_this_plugin = PTKDependencyList();
+                dependency_list_for_this_plugin.AddDependency(dependency, reporting);
+                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
+            end
         end
         
         function SaveManualSegmentation(obj, name, data, dataset_stack, reporting)
@@ -258,7 +278,15 @@ classdef MimDatasetResults < handle
             dataset_uid = obj.ImageInfo.ImageUid;
             
             try
-                obj.DependencyTracker.SaveManualSegmentation(name, data, dataset_uid, reporting);
+                attributes = [];
+                attributes.IgnoreDependencyChecks = false;
+                attributes.IsManualSegmentation = true;
+                instance_identifier = PTKDependency(name, [], CoreSystemUtilities.GenerateUid(), dataset_uid, attributes);
+                manual_cache_info = obj.FrameworkAppDef.GetClassFactory.CreateDatasetStackItem(instance_identifier, PTKDependencyList(), false, false, reporting);
+                manual_cache_info.MarkManual();
+
+                obj.DatasetDiskCache.SaveManualSegmentation(name, data, manual_cache_info, reporting);
+                
             catch ex
                 dataset_stack.ClearStack;
                 rethrow(ex);

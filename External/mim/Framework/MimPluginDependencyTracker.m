@@ -215,64 +215,6 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             end
         end
 
-        function [result, cache_info] = LoadMarkerPoints(obj, name, dataset_stack, reporting)
-            % Loads a manual segmentation from the disk cache
-        
-            [result, cache_info] = obj.DatasetDiskCache.LoadMarkerPoints(name, reporting);
-
-            % Add the dependencies of the cache to any other
-            % plugins in the callstack
-            if ~isempty(result) && ~isempty(cache_info)
-                dependencies = cache_info.DependencyList;
-                dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
-
-                dependency = cache_info.InstanceIdentifier;
-                dependency_list_for_this_plugin = PTKDependencyList();
-                dependency_list_for_this_plugin.AddDependency(dependency, reporting);
-                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
-            end
-        end
-        
-        function edited_cached_info = SaveEditedResult(obj, plugin_name, context, edited_result, dataset_uid, plugin_version, reporting)
-            % Saves the result of a plugin after semi-automatic editing
-            
-            attributes = [];
-            attributes.IgnoreDependencyChecks = false;
-            attributes.IsEditedResult = true;
-            attributes.PluginVersion = plugin_version;
-            instance_identifier = PTKDependency(plugin_name, context, CoreSystemUtilities.GenerateUid, dataset_uid, attributes);
-            edited_cached_info = obj.FrameworkAppDef.GetClassFactory.CreateDatasetStackItem(instance_identifier, PTKDependencyList(), false, false, reporting);
-            edited_cached_info.MarkEdited();
-
-            obj.DatasetDiskCache.SaveEditedResult(plugin_name, context, edited_result, edited_cached_info, reporting);
-        end
-
-        function manual_cache_info = SaveManualSegmentation(obj, segmentation_name, result, dataset_uid, reporting)
-            % Saves a manual segmentation
-            
-            attributes = [];
-            attributes.IgnoreDependencyChecks = false;
-            attributes.IsManualSegmentation = true;
-            instance_identifier = PTKDependency(segmentation_name, [], CoreSystemUtilities.GenerateUid(), dataset_uid, attributes);
-            manual_cache_info = obj.FrameworkAppDef.GetClassFactory.CreateDatasetStackItem(instance_identifier, PTKDependencyList(), false, false, reporting);
-            manual_cache_info.MarkManual();
-
-            obj.DatasetDiskCache.SaveManualSegmentation(segmentation_name, result, manual_cache_info, reporting);
-        end
-        
-        function manual_cache_info = SaveMarkerPoints(obj, name, result, dataset_uid, reporting)
-            % Saves a manual segmentation
-            
-            attributes = [];
-            attributes.IgnoreDependencyChecks = false;
-            attributes.IsMarkerSet = true;
-            instance_identifier = PTKDependency(name, [], CoreSystemUtilities.GenerateUid(), dataset_uid, attributes);
-            manual_cache_info = obj.FrameworkAppDef.GetClassFactory.CreateDatasetStackItem(instance_identifier, PTKDependencyList(), false, false, reporting);
-            manual_cache_info.MarkMarkerSet();
-
-            obj.DatasetDiskCache.SaveMarkerPoints(name, result, manual_cache_info, reporting);
-        end
-        
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
             % Checks a given dependency against the cached values to
             % determine if it is valid (ie it depends on the most recent
