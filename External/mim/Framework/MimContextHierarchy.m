@@ -112,15 +112,8 @@ classdef MimContextHierarchy < CoreBaseClass
             % so that we can detect if a plugin call failed
             obj.ImageTemplates.NoteAttemptToRunPlugin(plugin_name, output_context, reporting);
 
-            % Determines the type of context supported by the plugin
-            plugin_context_set = plugin_info.Context;
-            if isempty(plugin_context_set)
-                plugin_context_set = obj.ContextDef.GetDefaultContextSet;
-            end
-            
-            plugin_context_set_mapping = obj.ContextSets(char(plugin_context_set));
-            
-            [output_context, output_context_set, output_context_mapping, output_context_set_mapping] = obj.GetOutputContext(output_context);
+            [plugin_context_set, plugin_context_set_mapping] = obj.GetContextSetMappings(plugin_info.Context);            
+            [output_context, output_context_set, output_context_mapping, output_context_set_mapping] = obj.GetContextMaps(output_context);
             
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to call the plugin
@@ -189,20 +182,9 @@ classdef MimContextHierarchy < CoreBaseClass
                 input_context = obj.ContextDef.GetDefaultContext;
             end
             
-            % Determines the type of context supported by the plugin
-            plugin_context_set = plugin_info.Context;
-            if isempty(plugin_context_set)
-                plugin_context_set = obj.ContextDef.GetDefaultContextSet;
-            end
-            plugin_context_set_mapping = obj.ContextSets(char(plugin_context_set));
-            
-            % Determines the context and context type requested by the calling function
-            if isempty(input_context)
-                input_context = obj.ContextDef.GetDefaultContext;
-            end
-            input_context_mapping = obj.Contexts(char(input_context));
-            input_context_set_mapping = input_context_mapping.ContextSet;
-            input_context_set = input_context_set_mapping.ContextSet;
+            [plugin_context_set, plugin_context_set_mapping] = obj.GetContextSetMappings(plugin_info.Context);
+        
+            [input_context, input_context_set, input_context_mapping, input_context_set_mapping] = obj.GetContextMaps(input_context);
             
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to save the results
@@ -250,19 +232,30 @@ classdef MimContextHierarchy < CoreBaseClass
     end
     
     methods (Access = private)
-        function [output_context, output_context_set, output_context_mapping, output_context_set_mapping] = GetOutputContext(obj, output_context)
+        function [context_set, context_set_mapping] = obj.GetContextSetMapings(obj, context)
+            % Determines the type of context supported by the plugin
+
+            context_set = context;
+            if isempty(context_set)
+                    context_set = obj.ContextDef.GetDefaultContextSet();
+            end
+            context_set_mapping = obj.ContextSets(char(context_set));
+        end
+
+        function [context, context_set, context_mapping, context_set_mapping] = GetContextMaps(obj, context)
             % Determines the context and context type requested by the calling function
 
-            if isempty(output_context)
-                output_context = obj.ContextDef.GetDefaultContext();
+            if isempty(context)
+                context = obj.ContextDef.GetDefaultContext();
             end
-
-            if obj.Contexts.isKey(char(output_context))
-                output_context_mapping = obj.Contexts(char(output_context));
-                output_context_set_mapping = output_context_mapping.ContextSet;
-                output_context_set = output_context_set_mapping.ContextSet;
+            if obj.Contexts.isKey(char(context))
+                context_mapping = obj.Contexts(char(context));
+                context_set_mapping = context_mapping.ContextSet;
+                context_set = context_set_mapping.ContextSet;
             else
-                output_context_set = [];
+                context_mapping = [];
+                context_set_mapping = [];
+                context_set = [];
             end
         end
         
