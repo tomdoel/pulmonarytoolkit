@@ -232,7 +232,7 @@ classdef MimContextHierarchy < CoreBaseClass
     end
     
     methods (Access = private)
-        function [context_set, context_set_mapping] = obj.GetContextSetMapings(obj, context)
+        function [context_set, context_set_mapping] = obj.GetContextSetMappings(obj, context)
             % Determines the type of context supported by the plugin
 
             context_set = context;
