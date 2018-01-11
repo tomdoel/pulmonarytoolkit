@@ -145,18 +145,12 @@ classdef MimContextHierarchy < CoreBaseClass
 
                 % We generate an output image if requested, or if the plugin has been re-run (indictaing that we will need to generate a new preview image)
                 if force_generate_image
-                    template_callback = MimTemplateCallback(linked_dataset_chooser, dataset_stack, reporting);
-
-                    if isa(result, 'PTKImage')
-                        output_image = plugin_class.GenerateImageFromResults(result.Copy, template_callback, reporting);
-                    else
-                        output_image = plugin_class.GenerateImageFromResults(result, template_callback, reporting);
-                    end
+                    output_image = obj.GenerateImageFromResults(result, plugin_class, linked_dataset_chooser, dataset_stack, reporting);
                 else
                     output_image = [];
                 end
 
-               combined_result = MimCombinedPluginResult(result, output_image, plugin_has_been_run, cache_info);
+                combined_result = MimCombinedPluginResult(result, output_image, plugin_has_been_run, cache_info);
             
             % Otherwise, if the plugin's context set is higher in the hierarchy
             % than the requested output, then get the result for the higher
@@ -266,6 +260,17 @@ classdef MimContextHierarchy < CoreBaseClass
     end
     
     methods (Access = private)
+        function output_image = GenerateImageFromResults(obj, result, plugin_class, linked_dataset_chooser, dataset_stack, reporting)
+            template_callback = MimTemplateCallback(linked_dataset_chooser, dataset_stack, reporting);
+
+            if isa(result, 'PTKImage')
+                output_image = plugin_class.GenerateImageFromResults(result.Copy, template_callback, reporting);
+            else
+                output_image = plugin_class.GenerateImageFromResults(result, template_callback, reporting);
+            end
+        end
+
+        
         function edited_cached_info = SaveEditedResult(obj, plugin_name, context, edited_result, dataset_uid, plugin_version, reporting)
             % Saves the result of a plugin after semi-automatic editing
             
