@@ -42,18 +42,22 @@ classdef MimContextHierarchy < CoreBaseClass
         Contexts
         ContextDef
         
-        DiskCache
+        DatasetDiskCache
         DependencyTracker
         ImageTemplates
         Pipelines
+        FrameworkAppDef % Framework configuration
+        PluginCache % Used to check plugin version numbers        
     end
     
     methods
-        function obj = MimContextHierarchy(context_def, dataset_disk_cache, dependency_tracker, image_templates, pipelines)
-            obj.DiskCache = dataset_disk_cache;
+        function obj = MimContextHierarchy(context_def, dataset_disk_cache, dependency_tracker, image_templates, pipelines, framework_app_def, plugin_cache)
+            obj.DatasetDiskCache = dataset_disk_cache;
             obj.DependencyTracker = dependency_tracker;
             obj.ImageTemplates = image_templates;
             obj.Pipelines = pipelines;
+            obj.FrameworkAppDef = framework_app_def;
+            obj.PluginCache = plugin_cache;
             
             obj.ContextDef = context_def;
             obj.Contexts = context_def.GetContexts;
@@ -83,12 +87,12 @@ classdef MimContextHierarchy < CoreBaseClass
                     context_mapping_list = context_set_mapping.ContextList;
                     context_list = [context_list, CoreContainerUtilities.GetFieldValuesFromSet(context_mapping_list, 'Context')];
                 else
-                    if obj.DiskCache.ManualSegmentationExists(char(next_output_context), reporting)
+                    if obj.DatasetDiskCache.ManualSegmentationExists(char(next_output_context), reporting)
                         context_list{end + 1} = char(next_output_context);
                     else
                         % Allow contexts with specific label indices
                         [context_prefix, context_suffix] = CoreTextUtilities.SplitAtLastDelimiter(char(next_output_context), '.');
-                        if obj.DiskCache.ManualSegmentationExists(context_prefix, reporting)
+                        if obj.DatasetDiskCache.ManualSegmentationExists(context_prefix, reporting)
                             context_list{end + 1} = char(next_output_context);
                         else
                             reporting.Error('MimContextHierarchy:UnknownOutputContext', 'I do not understand the requested output context.');

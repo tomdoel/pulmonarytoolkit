@@ -66,7 +66,7 @@ classdef MimDatasetResults < handle
             obj.OutputFolder = MimOutputFolder(framework_app_def, dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
             obj.PreviewImages = MimPreviewImages(framework_app_def, dataset_disk_cache, reporting);
             obj.DependencyTracker = MimPluginDependencyTracker(framework_app_def, dataset_disk_cache, plugin_cache);
-            obj.ContextHierarchy = MimContextHierarchy(context_def, dataset_disk_cache, obj.DependencyTracker, obj.ImageTemplates, obj.Pipelines);
+            obj.ContextHierarchy = MimContextHierarchy(context_def, dataset_disk_cache, obj.DependencyTracker, obj.ImageTemplates, obj.Pipelines, framework_app_def, plugin_cache);
         end
 
         function parameter = GetParameter(obj, parameter_name, dataset_stack, reporting)
