@@ -117,20 +117,10 @@ classdef MimContextHierarchy < CoreBaseClass
             if isempty(plugin_context_set)
                 plugin_context_set = obj.ContextDef.GetDefaultContextSet;
             end
+            
             plugin_context_set_mapping = obj.ContextSets(char(plugin_context_set));
             
-            % Determines the context and context type requested by the calling function
-            if isempty(output_context)
-                output_context = obj.ContextDef.GetDefaultContext;
-            end
-            
-            if obj.Contexts.isKey(char(output_context))
-                output_context_mapping = obj.Contexts(char(output_context));
-                output_context_set_mapping = output_context_mapping.ContextSet;
-                output_context_set = output_context_set_mapping.ContextSet;
-            else
-                output_context_set = [];
-            end
+            [output_context, output_context_set, output_context_mapping, output_context_set_mapping] = obj.GetOutputContext(output_context);
             
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to call the plugin
@@ -260,6 +250,22 @@ classdef MimContextHierarchy < CoreBaseClass
     end
     
     methods (Access = private)
+        function [output_context, output_context_set, output_context_mapping, output_context_set_mapping] = GetOutputContext(obj, output_context)
+            % Determines the context and context type requested by the calling function
+
+            if isempty(output_context)
+                output_context = obj.ContextDef.GetDefaultContext();
+            end
+
+            if obj.Contexts.isKey(char(output_context))
+                output_context_mapping = obj.Contexts(char(output_context));
+                output_context_set_mapping = output_context_mapping.ContextSet;
+                output_context_set = output_context_set_mapping.ContextSet;
+            else
+                output_context_set = [];
+            end
+        end
+        
         function output_image = GenerateImageFromResults(obj, result, plugin_class, linked_dataset_chooser, dataset_stack, reporting)
             template_callback = MimTemplateCallback(linked_dataset_chooser, dataset_stack, reporting);
 
