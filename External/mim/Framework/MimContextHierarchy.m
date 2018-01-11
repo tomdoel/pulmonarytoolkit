@@ -168,7 +168,7 @@ classdef MimContextHierarchy < CoreBaseClass
                     reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
                 end
                 parent_context = higher_context_mapping.Context;
-                this_context_results = obj.GetResultRecursive(plugin_name, higher_context_mapping.Context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
+                this_context_results = obj.GetResultRecursive(plugin_name, parent_context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, force_generate_image, memory_cache_policy, disk_cache_policy, reporting);
                 combined_result.AddParentResult(parent_context, this_context_results, output_context, output_context_mapping, dataset_stack, reporting);
                 
             % If the plugin's context set is lower in the hierarchy, then get
