@@ -40,10 +40,6 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             obj.PluginCache = plugin_cache;
         end
         
-        function value = GetParameter(obj, name, dataset_stack, reporting)
-            value = dataset_stack.GetParameterAndAddDependenciesToPluginsInStack(name, reporting);
-        end
-        
         function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting)
             % Gets a plugin result, from the disk cache if possible. If there is no
             % cached result, or if the dependencies are invalid, or if the
