@@ -38,7 +38,6 @@ classdef MimDatasetResults < handle
         FrameworkAppDef      % Framework configuration
         ContextHierarchy     % Processes the calls to plugins, performing conversions between contexts where necessary
         DatasetDiskCache     % Reads and writes to the disk cache for this dataset
-        DependencyTracker    % Tracks plugin usage to construct dependency lists 
         Pipelines            % Pipelines which trigger Plugins after other Plugins are called
         ImageTemplates       % Template images for different contexts
         OutputFolder         % Saves files to the output folder
@@ -65,8 +64,7 @@ classdef MimDatasetResults < handle
             obj.ImageTemplates = MimImageTemplates(framework_app_def, obj, context_def, dataset_disk_cache, obj.Pipelines, reporting);
             obj.OutputFolder = MimOutputFolder(framework_app_def, dataset_disk_cache, image_info, obj.ImageTemplates, reporting);
             obj.PreviewImages = MimPreviewImages(framework_app_def, dataset_disk_cache, reporting);
-            obj.DependencyTracker = MimPluginDependencyTracker(framework_app_def, dataset_disk_cache, plugin_cache);
-            obj.ContextHierarchy = MimContextHierarchy(context_def, dataset_disk_cache, obj.DependencyTracker, obj.ImageTemplates, obj.Pipelines, framework_app_def, plugin_cache);
+            obj.ContextHierarchy = MimContextHierarchy(context_def, dataset_disk_cache, obj.ImageTemplates, obj.Pipelines, framework_app_def, plugin_cache);
         end
 
         function parameter = GetParameter(obj, parameter_name, dataset_stack, reporting)
@@ -492,7 +490,7 @@ classdef MimDatasetResults < handle
         end
 
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
-            [valid, edited_result_exists] = obj.DependencyTracker.CheckDependencyValid(next_dependency, reporting);
+            [valid, edited_result_exists] = obj.ContextHierarchy.CheckDependencyValid(next_dependency, reporting);
         end
 
         function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters, dataset_stack, reporting)

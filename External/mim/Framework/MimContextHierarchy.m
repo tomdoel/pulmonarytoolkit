@@ -43,7 +43,6 @@ classdef MimContextHierarchy < CoreBaseClass
         ContextDef
         
         DatasetDiskCache
-        DependencyTracker
         ImageTemplates
         Pipelines
         FrameworkAppDef % Framework configuration
@@ -51,9 +50,8 @@ classdef MimContextHierarchy < CoreBaseClass
     end
     
     methods
-        function obj = MimContextHierarchy(context_def, dataset_disk_cache, dependency_tracker, image_templates, pipelines, framework_app_def, plugin_cache)
+        function obj = MimContextHierarchy(context_def, dataset_disk_cache, image_templates, pipelines, framework_app_def, plugin_cache)
             obj.DatasetDiskCache = dataset_disk_cache;
-            obj.DependencyTracker = dependency_tracker;
             obj.ImageTemplates = image_templates;
             obj.Pipelines = pipelines;
             obj.FrameworkAppDef = framework_app_def;
@@ -118,8 +116,165 @@ classdef MimContextHierarchy < CoreBaseClass
             % If the input and output contexts are of the same type, or if the
             % plugin context is of type 'Any', then proceed to call the plugin
             if isempty(output_context_set) || obj.ContextDef.ContextSetMatches(plugin_context_set, output_context_set)
-                [result, plugin_has_been_run, cache_info] = obj.DependencyTracker.GetResult(plugin_name, output_context, parameters, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting);
+                
+                
+                % Code moved from PluginDependencyTracker
+                
+                
+                % Fetch plugin result from the disk cache
+                result = [];
 
+                edited_result_exists = obj.DatasetDiskCache.EditedResultExists(plugin_name, output_context, reporting);
+
+                % We can skip fetching the result if an edited result exists
+                % and does not depend on the automated result
+                if ~edited_result_exists || plugin_info.EditRequiresPluginResult
+
+                    if ~plugin_info.AlwaysRunPlugin
+
+                        [result, cache_info] = obj.DatasetDiskCache.LoadPluginResult(plugin_name, output_context, memory_cache_policy, reporting);
+
+                        % Check dependencies of the result. If they are invalid, set the
+                        % result to null to force a re-run of the plugin
+                        if ~isempty(cache_info)
+                            dependencies = cache_info.DependencyList;
+                            if ~obj.CheckPluginVersion(cache_info.InstanceIdentifier, reporting)
+                                reporting.ShowWarning('MimContextHierarchy:InvalidDependency', ['The plugin ' plugin_name ' has changed since the cache was generated. I am forcing this plugin to re-run to generate new results.'], []);
+                                result = [];
+                            end
+
+                            if ~obj.CheckDependenciesValid(linked_dataset_chooser, dependencies, dataset_stack, parameters, reporting)
+                                reporting.ShowWarning('MimContextHierarchy:InvalidDependency', ['The cached value for plugin ' plugin_name ' is no longer valid since some of its dependencies have changed. I am forcing this plugin to re-run to generate new results.'], []);
+                                result = [];
+                            end
+                        end
+
+                        % Add the dependencies of the cached result to any other
+                        % plugins in the callstack
+                        if ~isempty(result) && ~isempty(cache_info)
+                            dependencies = cache_info.DependencyList;
+                            dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
+
+                            dependency = cache_info.InstanceIdentifier;
+                            dependency_list_for_this_plugin = PTKDependencyList();
+                            dependency_list_for_this_plugin.AddDependency(dependency, reporting);
+                            dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
+                        end
+
+                    end
+
+                    % Run the plugin
+                    if isempty(result)
+                        plugin_has_been_run = true;
+
+                        % At present we ignore dependency checks if the results are
+                        % not permanently cached to disk. This is to ensure we
+                        % don't get dependency check errors when a plugin is
+                        % fetched twice (by two different plugins) and has to be
+                        % generated twice becase the result is not cached.
+                        ignore_dependency_checks = plugin_info.DiskCachePolicy ~= MimCachePolicy.Permanent;
+
+                        % Pause the self-timing of the current plugin
+                        dataset_stack.PauseTiming();                
+
+                        % Create a new dependency. The dependency relates to the plugin
+                        % being called (plugin_name) and the UID of the dataset the
+                        % result is being requested from; however, the stack belongs to
+                        % the primary dataset
+                        plugin_version = plugin_info.PluginVersion;
+                        dataset_stack.CreateAndPush(plugin_name, output_context, parameters, dataset_uid, ignore_dependency_checks, false, obj.FrameworkAppDef.TimeFunctions, plugin_version, reporting);
+
+                        dataset_callback = MimDatasetCallback(linked_dataset_chooser, dataset_stack, output_context, reporting);
+
+                        try
+                            % This is the actual call which runs the plugin
+                            if strcmp(plugin_info.PluginInterfaceVersion, '1')
+                                result = plugin_class.RunPlugin(dataset_callback, reporting);
+                            else
+                                result = plugin_class.RunPlugin(dataset_callback, output_context, reporting);
+                            end
+
+                            new_cache_info = dataset_stack.Pop;
+
+                            if obj.FrameworkAppDef.TimeFunctions
+                                dataset_stack.ResumeTiming;
+                            end
+
+                            if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)
+                                reporting.Error('MimContextHierarchy:GetResult', 'Inconsistency in plugin call stack. To resolve this error, try deleting the cache for this dataset.');
+                            end
+
+                            % Get the newly calculated list of dependencies for this
+                            % plugin
+                            dependencies = new_cache_info.DependencyList;
+
+                            % Cache the plugin result according to the specified cache policies
+                            obj.DatasetDiskCache.SavePluginResult(plugin_name, result, new_cache_info, output_context, disk_cache_policy, memory_cache_policy, reporting);
+
+                            dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
+
+                            dependency = new_cache_info.InstanceIdentifier;
+                            dependency_list_for_this_plugin = PTKDependencyList();
+                            dependency_list_for_this_plugin.AddDependency(dependency, reporting);
+                            dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
+
+                            cache_info = new_cache_info;
+                        catch ex
+                                % For certain plugins we throw a special exception
+                                % which indicates that the user should be offered
+                                % the ability to create a manual edit
+                                if plugin_info.SuggestManualEditOnFailure
+                                    throw(MimSuggestEditException(plugin_name, output_context, ex, CoreTextUtilities.RemoveHtml(plugin_class.ButtonText)));
+                                else
+                                    rethrow(ex);
+                                end
+                        end        
+
+                    else
+                        plugin_has_been_run = false;
+                    end
+
+                else
+                    cache_info = [];
+                    plugin_has_been_run = false;
+                end
+
+                % Fetch the edited result, if it exists
+                if edited_result_exists
+
+                    [edited_result, edited_cache_info] = obj.DatasetDiskCache.LoadEditedPluginResult(plugin_name, output_context, reporting);
+
+                    % If the edited result does not depend on the automated
+                    % result, we won't have (and don't need) cache info for the
+                    % plugin result so just use the edited result
+                    if isempty(cache_info)
+                        cache_info = edited_cache_info;
+                    end
+
+                    % In case the cache is out of sync with the existance of
+                    % the edited result, this will update the cache
+                    obj.DatasetDiskCache.UpdateEditedResults(plugin_name, edited_cache_info, output_context, reporting);
+
+                    % Call the plugin to create an edited output
+                    result = plugin_class.GetEditedResult(result, edited_result, reporting);
+
+                    % Get the dependency for this edit and add to calling functions
+                    edited_dependency = edited_cache_info.InstanceIdentifier;
+                    dependency_list_for_edit = PTKDependencyList();
+                    dependency_list_for_edit.AddDependency(edited_dependency, reporting);
+                    dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_edit, reporting);
+                    cache_info.MarkEdited();
+                else
+                    % In case the cache is out of sync with the existance of
+                    % the edited result, this will delete the edited result entry from the cache
+                    obj.DatasetDiskCache.UpdateEditedResults(plugin_name, [], output_context, reporting);
+
+                end
+                
+                % End of code moved from PluginDependencyTracker
+                
+
+                
                 % If the plugin has been re-run, then we will generate an output
                 % image, in order to create a new preview image
                 if (plugin_info.GeneratePreview && plugin_has_been_run)
@@ -228,10 +383,168 @@ classdef MimContextHierarchy < CoreBaseClass
             else
                 reporting.Error('MimContextHierarchy:UnexpectedSituation', 'The requested plugin call cannot be made as I am unable to determine the relationship between the plugin context and the requested result context.');
             end
-        end        
+        end
+        
+        function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
+            % Checks a given dependency against the cached values to
+            % determine if it is valid (ie it depends on the most recent
+            % computed results)
+            
+            plugin_results_info = obj.DatasetDiskCache.GetPluginResultsInfo();
+
+            if isfield(next_dependency.Attributes, 'IsParameter')
+                is_parameter = next_dependency.Attributes.IsParameter;
+            else
+                is_parameter = false;
+            end
+            % ToDo: process dependency values
+            
+            if isfield(next_dependency.Attributes, 'IsEditedResult')
+                is_edited_result = next_dependency.Attributes.IsEditedResult;
+            else
+                is_edited_result = false;
+            end
+            
+            if isfield(next_dependency.Attributes, 'IsManualSegmentation')
+                is_manual = next_dependency.Attributes.IsManualSegmentation;
+            else
+                is_manual = false;
+            end
+            
+            if isfield(next_dependency.Attributes, 'IsMarkerSet')
+                is_marker = next_dependency.Attributes.IsMarkerSet;
+            else
+                is_marker = false;
+            end
+            
+            if is_manual
+                type_of_dependency = 'manual segmentation';
+            else
+                type_of_dependency = 'plugin';
+            end
+            
+            edited_result_exists = plugin_results_info.CachedInfoExists(next_dependency.PluginName, next_dependency.Context, MimCacheType.Edited);
+            
+            if is_edited_result
+                cache_type = MimCacheType.Edited;
+            elseif is_manual
+                cache_type = MimCacheType.Manual;
+            elseif is_marker          
+                cache_type = MimCacheType.Markers;
+            else
+                cache_type = MimCacheType.Results;
+            end
+            
+            % The full list should always contain the most recent dependency
+            % uid, unless the dependencies file was deleted
+            if ~plugin_results_info.CachedInfoExists(next_dependency.PluginName, next_dependency.Context, cache_type)
+                reporting.Log(['No dependency record for this ' type_of_dependency ' - forcing re-run.']);
+                valid = false;
+                return;
+            end
+            
+            current_info = plugin_results_info.GetCachedInfo(next_dependency.PluginName, next_dependency.Context, cache_type);
+            current_dependency = current_info.InstanceIdentifier;
+            
+            if current_info.IgnoreDependencyChecks
+                reporting.Log(['Ignoring dependency checks for ' type_of_dependency ' ' next_dependency.PluginName '(' char(next_dependency.Context) ')']);
+            else
+                % Sanity check - this case should never occur
+                if ~strcmp(next_dependency.DatasetUid, current_dependency.DatasetUid)
+                    reporting.Error('MimPluginResultsInfo:DatsetUidError', 'Code error - not matching dataset UID during dependency check');
+                end
+
+                if ~strcmp(next_dependency.Uid, current_dependency.Uid)
+                    reporting.Log('Mismatch in dependency version uids - forcing re-run');
+                    valid = false;
+                    return;
+                else
+                    reporting.LogVerbose(['Dependencies Ok for ' type_of_dependency ' ' next_dependency.PluginName]);
+                end
+            end
+            
+            valid = true;
+        
+        end
+        
     end
     
     methods (Access = private)
+        
+        function valid = CheckDependenciesValid(obj, linked_dataset_chooser, dependencies, dataset_stack, parameters_for_next_plugin_call, reporting)
+            % Checks the dependencies in this result with the current dependency
+            % list, and determine if the dependencies are still valid
+            
+            dependency_list = dependencies.DependencyList;
+
+            % Separate dependencies into parameters and plugin
+            % dependencies, and also create list of dependencies which are
+            % edited values
+            plugin_dependencies = {};
+            known_edited_values = containers.Map();
+            parameter_list = {};
+            for index = 1 : length(dependency_list)
+                next_dependency = dependency_list(index);
+                dataset_uid = next_dependency.DatasetUid;
+                if ~known_edited_values.isKey(dataset_uid)
+                    known_edited_values(dataset_uid) = {};
+                end
+                if isfield(next_dependency.Attributes, 'IsParameter') && (next_dependency.Attributes.IsParameter)
+                    parameter_list{end + 1} = next_dependency;
+                else
+                    plugin_dependencies{end + 1} = next_dependency;
+                    if ~obj.CheckPluginVersion(next_dependency, reporting)
+                        valid = false;
+                        reporting.Log(['A newer version of plugin ' next_dependency.PluginName ' has been found. This result must be regenerated.']);
+                        return;
+                    end                    
+                    if isfield(next_dependency.Attributes, 'IsEditedResult') && (next_dependency.Attributes.IsEditedResult)
+                        edited_list = known_edited_values(dataset_uid);
+                        edited_list{end + 1} = next_dependency.PluginName;
+                        known_edited_values(dataset_uid) = edited_list;
+                    end
+                end
+            end
+            
+            if ~dataset_stack.CheckParameterDependencies(parameter_list, parameters_for_next_plugin_call, reporting)
+                valid = false;
+                return;
+            end
+            
+            % Iterate through plugin dependencies
+            for index = 1 : length(plugin_dependencies)
+                next_dependency = plugin_dependencies{index};
+                
+                dataset_uid = next_dependency.DatasetUid;
+                [valid, edited_result_exists] = linked_dataset_chooser.GetDataset(reporting, dataset_uid).CheckDependencyValid(next_dependency, reporting);
+                if ~valid
+                    valid = false;
+                    return;
+                end
+                
+                % If the dependency is based on a non-edited result, but we have an edited
+                % result in the cache, then this plugin result is invalid
+                if edited_result_exists && ~ismember(next_dependency.PluginName, known_edited_values(dataset_uid))
+                    reporting.Log(['The result for dependency ' next_dependency.PluginName '(' char(next_dependency.Context) ') has been edited - forcing re-run for plugin.']);
+                    valid = false;
+                    return;
+                end
+            end
+            
+            valid = true;
+        end
+        
+        function valid = CheckPluginVersion(obj, next_dependency, reporting)
+            if isfield(next_dependency.Attributes, 'PluginVersion')
+                dependency_version = next_dependency.Attributes.PluginVersion;
+            else
+                dependency_version = 1;
+            end
+            
+            plugin_info = obj.PluginCache.GetPluginInfo(next_dependency.PluginName, [], reporting);
+            valid = plugin_info.PluginVersion == dependency_version;
+        end
+
         function [context_set, context_set_mapping] = GetContextSetMappings(obj, context)
             % Determines the type of context supported by the plugin
 
