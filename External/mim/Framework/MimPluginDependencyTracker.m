@@ -197,24 +197,6 @@ classdef MimPluginDependencyTracker < CoreBaseClass
             end
         end
 
-        function [result, cache_info] = LoadManualSegmentation(obj, name, dataset_stack, reporting)
-            % Loads a manual segmentation from the disk cache
-        
-            [result, cache_info] = obj.DatasetDiskCache.LoadManualSegmentation(name, reporting);
-
-            % Add the dependencies of the manual segmentation cache to any other
-            % plugins in the callstack
-            if ~isempty(result) && ~isempty(cache_info)
-                dependencies = cache_info.DependencyList;
-                dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
-
-                dependency = cache_info.InstanceIdentifier;
-                dependency_list_for_this_plugin = PTKDependencyList();
-                dependency_list_for_this_plugin.AddDependency(dependency, reporting);
-                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
-            end
-        end
-
         function [valid, edited_result_exists] = CheckDependencyValid(obj, next_dependency, reporting)
             % Checks a given dependency against the cached values to
             % determine if it is valid (ie it depends on the most recent

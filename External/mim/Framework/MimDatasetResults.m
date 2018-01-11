@@ -296,7 +296,19 @@ classdef MimDatasetResults < handle
         function data = LoadManualSegmentation(obj, name, dataset_stack, reporting)
             % Load data from a cache file associated with this dataset
         
-            data = obj.DependencyTracker.LoadManualSegmentation(name, dataset_stack, reporting);
+            [data, cache_info] = obj.DatasetDiskCache.LoadManualSegmentation(name, reporting);
+
+            % Add the dependencies of the manual segmentation cache to any other
+            % plugins in the callstack
+            if ~isempty(data) && ~isempty(cache_info)
+                dependencies = cache_info.DependencyList;
+                dataset_stack.AddDependenciesToAllPluginsInStack(dependencies, reporting);
+
+                dependency = cache_info.InstanceIdentifier;
+                dependency_list_for_this_plugin = PTKDependencyList();
+                dependency_list_for_this_plugin.AddDependency(dependency, reporting);
+                dataset_stack.AddDependenciesToAllPluginsInStack(dependency_list_for_this_plugin, reporting);
+            end
         end
         
         function edited_result = GetDefaultEditedResult(obj, plugin_name, dataset_stack, context, reporting)
