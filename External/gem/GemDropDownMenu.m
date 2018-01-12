@@ -17,6 +17,7 @@ classdef GemDropDownMenu < GemUserInterfaceObject
         SelectedIndex
         Tag
         ToolTip
+        CallbackLock = false
     end
     
     methods
@@ -29,6 +30,7 @@ classdef GemDropDownMenu < GemUserInterfaceObject
             obj.FontSize = 11;
             obj.HorizontalAlignment = 'left';
             obj.SelectedIndex = 1;
+            obj.CallbackLock = false;
         end
         
         function delete(obj)
@@ -65,7 +67,17 @@ classdef GemDropDownMenu < GemUserInterfaceObject
         
         function PopupmenuCallback(obj, hObject, ~, ~)
             % Item selected from the pop-up menu
-            obj.Callback(get(hObject, 'Value'));
+            
+            if ~obj.CallbackLock
+                try
+                    obj.CallbackLock = true;
+                    obj.Callback(get(hObject, 'Value'));
+                    obj.CallbackLock = false;
+                catch ex
+                    obj.CallbackLock = false;
+                    rethrow(ex);
+                end
+            end
         end        
 
     end
