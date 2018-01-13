@@ -228,7 +228,11 @@ classdef CoreReporting < CoreReportingInterface
             
         function PopProgress(obj)
             obj.CurrentProgressStackItem = obj.ParentProgressStackItem;
-            obj.ParentProgressStackItem = obj.ProgressStack(end);
+            if isempty(obj.ProgressStack)
+                obj.ParentProgressStackItem = [];
+            else
+                obj.ParentProgressStackItem = obj.ProgressStack(end);
+            end
             obj.ProgressStack(end) = [];
         end
         
