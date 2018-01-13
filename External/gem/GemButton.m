@@ -45,13 +45,11 @@ classdef GemButton < GemUserInterfaceObject
     properties (Access = protected)
         Tag
         Callback
-        CallbackLock
     end
     
     methods
         function obj = GemButton(parent, text, tooltip, tag, callback)
             obj = obj@GemUserInterfaceObject(parent);
-            obj.CallbackLock = false;
             obj.Text = text;
             obj.ToolTip = tooltip;
             obj.Tag = tag;
@@ -129,23 +127,17 @@ classdef GemButton < GemUserInterfaceObject
     
     methods (Access = protected)
         function ButtonClickedCallback(obj, ~, ~)
-            if ~obj.CallbackLock
-                try
-                    obj.CallbackLock = true;
-                    obj.Select(true);
-                    notify(obj, 'ButtonClicked', CoreEventData(obj.Tag));
-                    obj.Callback(obj.Tag);
+            
+            if ~obj.IsCurrentlyRunning()
+                obj.Select(true);
+                notify(obj, 'ButtonClicked', CoreEventData(obj.Tag));
+                obj.Callback(obj.Tag);
 
-                    % It is possible that the callback may lead to a rebuild of the interface and
-                    % thus deletion of the button that triggered the callback; in which case we
-                    % can't continue with the select
-                    if isvalid(obj) && ~obj.AutoUpdateStatus
-                        obj.Select(false);
-                    end
-                    obj.CallbackLock = false;
-                catch ex
-                    obj.CallbackLock = false;
-                    rethrow(ex);
+                % It is possible that the callback may lead to a rebuild of the interface and
+                % thus deletion of the button that triggered the callback; in which case we
+                % can't continue with the select
+                if isvalid(obj) && ~obj.AutoUpdateStatus
+                    obj.Select(false);
                 end
             end
         end
