@@ -12,7 +12,22 @@ function results = PTKGetWallThicknessForBranch(bronchus, image_roi, context, fi
         
         
         initial_smoothed_centreline = SmoothCentrelineByNeighbours(centreline);
-        [direction_vector, first_radius_index, last_radius_index] = ComputeDirectionVector(initial_smoothed_centreline);
+        
+        if numel(initial_smoothed_centreline) == 1
+            % If there is only one point in the bronchus centreline then 
+            % use the parent endpoint to determine the direction
+            if isempty(bronchus.Parent)
+                disp('Insufficient centreline points to compute the wall thickness for this branch');
+                results = [];
+                return;
+            end
+            temp_initial_smoothed_centreline = [bronchus.Parent.EndPoint, initial_smoothed_centreline];
+            [direction_vector, ~, ~] = ComputeDirectionVector(temp_initial_smoothed_centreline);
+            first_radius_index = 1;
+            last_radius_index = 1;
+        else
+            [direction_vector, first_radius_index, last_radius_index] = ComputeDirectionVector(initial_smoothed_centreline);
+        end
         
         current_centreline = initial_smoothed_centreline;
         
