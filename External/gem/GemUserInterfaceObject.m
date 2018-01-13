@@ -654,6 +654,22 @@ classdef GemUserInterfaceObject < CoreBaseClass
             input_has_been_processed = false;
         end
         
+        function is_running = IsCurrentlyRunning(obj)
+            % Returns true if the calling function is currently executing.
+            % Used to stop callback reentrancy. This uses the debug stack
+            % rather than a flag, since a flag may not be cleared if the
+            % program exeution terminates through a dbquit
+
+            db_stack = dbstack();
+            if numel(db_stack) > 2
+                calling_func_name = db_stack(2).name;
+                if any(strcmp(calling_func_name, {db_stack(3:end).name}))
+                    is_running = true;
+                    return;
+                end
+            end
+            is_running = false;
+        end
     end
     
     methods (Access = private)
