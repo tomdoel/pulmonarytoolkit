@@ -244,7 +244,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
                     debug_image.SetIndexedVoxelsToThis(wavefront_voxels, colour_index);
                     colour_index = colour_index + 1;
                 end
-                if (length(next_segments) > 1) || (pause_skip > 10);
+                if (length(next_segments) > 1) || (pause_skip > 10)
                     pause_skip = 0;
                     reporting.UpdateOverlayImage(debug_image);
                     disp('PAUSED');
