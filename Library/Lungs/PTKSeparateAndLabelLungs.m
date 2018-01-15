@@ -14,15 +14,20 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
-    both_lungs = unclosed_lungs.Copy; 
+    both_lungs = unclosed_lungs.Copy;
     
+    % We first use a wide threshold for the lung values and attempt to
+    % separate. If not readily separable, then we will try a narrower
+    % threshold
     both_lungs.ChangeRawImage(uint8(unclosed_lungs.RawImage & (filtered_threshold_lung.RawImage > 0)));
-    [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, reporting);
+    [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, 2, reporting);
     
     if ~success
+        % For the narrow threshold we allow the full range of separation
+        % values
         reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs after ' int2str(max_iter) ' opening attempts. Trying narrower threshold.']);
         both_lungs.ChangeRawImage(uint8(unclosed_lungs.RawImage & (filtered_threshold_lung.RawImage == 1)));
-        [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, reporting);
+        [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, [], reporting);
     end
 
     if ~success
@@ -75,7 +80,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     end
 end
     
-function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, is_coronal, reporting)
+function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, is_coronal, max_iter, reporting)
     
     % Find the connected components in this mask
     CC = bwconncomp(both_lungs.RawImage > 0, 26);
@@ -88,7 +93,9 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
     
     iter_number = 0;
     opening_sizes = [1, 2, 4, 7, 10, 14];
-    max_iter = numel(opening_sizes);
+    if isempty(max_iter)
+        max_iter = numel(opening_sizes);
+    end
     
     % If there is only one large connected component, the lungs are connected,
     % so we attempt to disconnect them using morphological operations
