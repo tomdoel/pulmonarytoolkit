@@ -1,4 +1,4 @@
-function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting)
+function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, trachea_top_local, reporting)
     % PTKSeparateAndLabelLungs. Separates left and right lungs from a lung
     %     segmentation.
     %
@@ -20,14 +20,14 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     % separate. If not readily separable, then we will try a narrower
     % threshold
     both_lungs.ChangeRawImage(uint8(unclosed_lungs.RawImage & (filtered_threshold_lung.RawImage > 0)));
-    [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, 2, reporting);
+    [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, 2, trachea_top_local, reporting);
     
     if ~success
         % For the narrow threshold we allow the full range of separation
         % values
         reporting.ShowMessage('PTKSeparateAndLabelLungs:OpeningLungs', ['Failed to separate left and right lungs after ' int2str(max_iter) ' opening attempts. Trying narrower threshold.']);
         both_lungs.ChangeRawImage(uint8(unclosed_lungs.RawImage & (filtered_threshold_lung.RawImage == 1)));
-        [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, [], reporting);
+        [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, false, [], trachea_top_local, reporting);
     end
 
     if ~success
@@ -50,7 +50,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
             both_lungs_slice = PTKImage(slice_raw);
             unclosed_lungs_slice = PTKImage(unclosed_lungs.GetSlice(coronal_index, PTKImageOrientation.Coronal));
             if any(both_lungs_slice.RawImage(:))
-                [success, max_iter] = SeparateLungs(both_lungs_slice, lung_roi_slice, unclosed_lungs_slice, true, reporting);
+                [success, max_iter] = SeparateLungs(both_lungs_slice, lung_roi_slice, unclosed_lungs_slice, true, [], trachea_top_local, reporting);
                 if ~success
                     any_slice_failure = true;
                     reporting.LogVerbose(['Failed to separate left and right lungs in a coronal slice after ' int2str(max_iter) ' opening attempts. Using nearest neighbour interpolation.']);
@@ -80,7 +80,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
     end
 end
     
-function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, is_coronal, max_iter, reporting)
+function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lungs, is_coronal, max_iter, trachea_top_local, reporting)
     
     % Find the connected components in this mask
     CC = bwconncomp(both_lungs.RawImage > 0, 26);
@@ -88,8 +88,17 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
     % Find largest regions
     num_pixels = cellfun(@numel, CC.PixelIdxList);
     total_num_pixels = sum(num_pixels);
-    minimum_required_voxels_per_lung = total_num_pixels/10;
     [largest_area_numpixels, largest_areas_indices] = sort(num_pixels, 'descend');
+
+    if ~isempty(trachea_top_local)
+        left_region = both_lungs.RawImage(:, 1:trachea_top_local(2), :);
+        right_region = both_lungs.RawImage(:, trachea_top_local(2) + 1, :);
+        left_sum = sum(left_region(:));
+        right_sum = sum(right_region(:));
+        minimum_required_voxels_per_lung = min(left_sum, right_sum)/5;
+    else
+        minimum_required_voxels_per_lung = total_num_pixels/10;
+    end
     
     iter_number = 0;
     opening_sizes = [1, 2, 4, 7, 10, 14];
