@@ -32,7 +32,6 @@ classdef PTKSoftwareInfo < handle
 
         % Appearance
         GraphFont = 'Helvetica'
-        GuiFont = 'Helvetica' 
 
         % Directories
         ScriptsDirectoryName = 'Scripts'
