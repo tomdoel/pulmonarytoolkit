@@ -23,8 +23,8 @@ classdef PTKMRILevelSetsInitialiser < PTKPlugin
         ToolTip = 'Segment lungs from MRI images using level sets'
         Category = 'Lungs'
         
-        AllowResultsToBeCached = true
-        AlwaysRunPlugin = false
+        AllowResultsToBeCached = false
+        AlwaysRunPlugin = true
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
         FlattenPreviewImage = false
@@ -33,6 +33,9 @@ classdef PTKMRILevelSetsInitialiser < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
+        
+        MemoryCachePolicy = 'Off'
+        DiskCachePolicy = 'Off'          
     end
     
     methods (Static)
@@ -44,7 +47,9 @@ classdef PTKMRILevelSetsInitialiser < PTKPlugin
             left_roi = PTKGetLeftLungROIFromLeftAndRightLungs(roi, left_and_right_lungs, reporting);
             right_roi = PTKGetRightLungROIFromLeftAndRightLungs(roi, left_and_right_lungs, reporting);
             results = dataset.GetTemplateImage(PTKContext.LungROI);
+            reporting.UpdateProgressStage(0, 2);
             results_left = PTKMRILevelSetsInitialiser.ProcessLevelSets(left_roi, left_and_right_lungs, 2, is_gas, reporting);
+            reporting.UpdateProgressStage(1, 2);
             results_right = PTKMRILevelSetsInitialiser.ProcessLevelSets(right_roi, left_and_right_lungs, 1, is_gas, reporting);
             results_right.ResizeToMatch(results);
             results_left.ResizeToMatch(results);
@@ -64,9 +69,9 @@ classdef PTKMRILevelSetsInitialiser < PTKPlugin
             else
                 is_right = mask_colour == 1;
             end
-            reporting.PushProgress;
+            reporting.PushProgress();
             results = PTKFillCoronalHoles(lung_mask, is_right, reporting);
-            reporting.PopProgress;
+            reporting.PopProgress();
 
             results.ImageType = PTKImageType.Colormap;
         end
