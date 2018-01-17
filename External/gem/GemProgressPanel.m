@@ -91,7 +91,7 @@ classdef GemProgressPanel < CoreProgressInterface
             
             
             obj.UiControlTitle = uicontrol('parent', obj.PanelHandle, 'style', 'text', 'units', 'pixel', 'Position', title_position, ...
-                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 26, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
+                'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 24, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
             obj.UiControlText = uicontrol('parent', obj.PanelHandle, 'style', 'text', 'units', 'pixel', 'Position', text_position, ...
                 'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 16, 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
             obj.UiControlCancel = uicontrol('parent', obj.PanelHandle, 'string', 'Cancel', ...
@@ -122,7 +122,7 @@ classdef GemProgressPanel < CoreProgressInterface
             obj.UserClickedCancel = false;
             obj.PanelVisibility = true;
             obj.ShowProgressBar = false;
-            obj.Update;
+            obj.Update();
         end
         
         function Hide(obj)
@@ -130,7 +130,7 @@ classdef GemProgressPanel < CoreProgressInterface
             obj.Hold = false;
             obj.PanelVisibility = false;
             obj.ShowProgressBar = false;
-            obj.Update;
+            obj.Update();
         end
         
         % Call to complete a progress operaton, which will also hide the dialog
@@ -143,7 +143,7 @@ classdef GemProgressPanel < CoreProgressInterface
             else
                 obj.SetProgressText('');
             end
-            obj.Update;
+            obj.Update();
         end
         
         function SetProgressText(obj, text)
@@ -152,14 +152,14 @@ classdef GemProgressPanel < CoreProgressInterface
             end            
             obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.PanelVisibility = true;
-            obj.Update;
+            obj.Update();
         end
         
         function SetProgressValue(obj, progress_value)
             obj.ShowProgressBar = true;
             obj.ProgressValue = progress_value;
             obj.PanelVisibility = true;
-            obj.Update;
+            obj.Update();
         end
         
         function SetProgressAndMessage(obj, progress_value, text)
@@ -167,7 +167,7 @@ classdef GemProgressPanel < CoreProgressInterface
             obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
             obj.PanelVisibility = true;
-            obj.Update;
+            obj.Update();
         end
         
         function cancelled = CancelClicked(obj)
@@ -270,20 +270,20 @@ classdef GemProgressPanel < CoreProgressInterface
             obj.UserClickedCancel = true;
             obj.PanelVisibility = false;
             obj.Hold = false;
-            obj.Update;
+            obj.Update();
         end
         
         function QuitButton(obj, ~, ~)
             obj.PanelVisibility = false;
             obj.Hold = false;
-            obj.UpdateVisibility;
+            obj.UpdateVisibility();
             throw(MException('GemProgressPanel:UserForceQuit', 'User forced plugin to quit'));
         end
 
         function HideButton(obj, ~, ~)
             obj.PanelVisibility = false;
             obj.Hold = false;
-            obj.UpdateVisibility;
+            obj.UpdateVisibility();
         end
         
         function progress_position = GetPanelPosition(obj)

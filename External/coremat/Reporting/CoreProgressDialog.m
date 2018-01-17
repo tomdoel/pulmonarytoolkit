@@ -73,7 +73,7 @@ classdef CoreProgressDialog < CoreProgressInterface
             obj.Update;
             
             % ishandle is quite slow, so avoid too many Update() calls
-            if abs(progress_value - obj.ProgressValue) >= obj.IncrementThreshold;
+            if abs(progress_value - obj.ProgressValue) >= obj.IncrementThreshold
                 obj.ProgressValue = progress_value;
                 obj.Update;
             end
