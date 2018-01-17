@@ -42,7 +42,9 @@ classdef PTKMRILevelSets < PTKPlugin
             left_roi = PTKGetLeftLungROIFromLeftAndRightLungs(roi, left_and_right_lungs_initial, reporting);
             right_roi = PTKGetRightLungROIFromLeftAndRightLungs(roi, left_and_right_lungs_initial, reporting);
             results = dataset.GetTemplateImage(PTKContext.LungROI);
+            reporting.UpdateProgressStage(0, 2);
             results_left = PTKMRILevelSets.ProcessLevelSets(dataset, left_roi, left_and_right_lungs_initial, 2, reporting);
+            reporting.UpdateProgressStage(1, 2);
             results_right = PTKMRILevelSets.ProcessLevelSets(dataset, right_roi, left_and_right_lungs_initial, 1, reporting);
 
             results_right.ResizeToMatch(results);
@@ -54,6 +56,7 @@ classdef PTKMRILevelSets < PTKPlugin
         end
         
         function results = ProcessLevelSets(dataset, lung_roi, left_and_right_lungs_initial, mask_colour, reporting)
+            reporting.PushProgress();
             lung_mask = left_and_right_lungs_initial.Copy;
             lung_mask.ResizeToMatch(lung_roi);
             lung_mask.ChangeRawImage(lung_mask.RawImage == mask_colour);
@@ -63,6 +66,7 @@ classdef PTKMRILevelSets < PTKPlugin
             results = PTKMRILevelSets.SolveLevelSetsByCoronalSlice(lung_roi, lung_mask, threshold.Bounds, reporting);
             
             results.ImageType = PTKImageType.Colormap;
+            reporting.PopProgress();
         end
         
         function results = SolveLevelSetsByCoronalSlice(lung_roi, lung_mask, bounds, reporting)
@@ -75,6 +79,7 @@ classdef PTKMRILevelSets < PTKPlugin
             results = lung_mask.Copy;
             results.ImageType = PTKImageType.Colormap;
             for coronal_index = 1 : lung_roi.ImageSize(1)
+                reporting.UpdateProgressStage(coronal_index, lung_roi.ImageSize(1));
                 lung_roi_slice = PTKImage(lung_roi.GetSlice(coronal_index, PTKImageOrientation.Coronal));
                 lung_mask_slice = PTKImage(lung_mask.GetSlice(coronal_index, PTKImageOrientation.Coronal));
                 if any(lung_mask_slice.RawImage(:))
