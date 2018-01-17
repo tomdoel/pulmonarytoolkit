@@ -18,7 +18,7 @@ classdef MimStatusPanel < GemPanel
     properties (Access = private)
         ViewerPanel
         StatusText
-        StatusPanelHeight = 20;
+        StatusPanelHeight = 40;
     end
     
     methods
@@ -30,6 +30,7 @@ classdef MimStatusPanel < GemPanel
             
             obj.ViewerPanel = viewer_panel;
             obj.StatusText = GemText(obj, 'No Image', 'Coordinates of the voxel, relative to the image, the value of the voxel under the cursor, and the value of the overlay under the cursor', 'StatusText');
+            obj.StatusText.FontSize = 20;
             obj.AddChild(obj.StatusText);
             obj.AddEventListener(viewer_panel, 'MouseCursorStatusChanged', @obj.MouseCursorStatusChangedCallback);                        
         end
