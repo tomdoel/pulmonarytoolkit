@@ -232,8 +232,8 @@ classdef CoreReporting < CoreReportingInterface
                 obj.ParentProgressStackItem = [];
             else
                 obj.ParentProgressStackItem = obj.ProgressStack(end);
+                obj.ProgressStack(end) = [];
             end
-            obj.ProgressStack(end) = [];
         end
         
         function ClearProgressStack(obj)
