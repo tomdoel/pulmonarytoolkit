@@ -92,7 +92,7 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
 
     if ~isempty(trachea_top_local)
         left_region = both_lungs.RawImage(:, 1:trachea_top_local(2), :);
-        right_region = both_lungs.RawImage(:, trachea_top_local(2) + 1, :);
+        right_region = both_lungs.RawImage(:, trachea_top_local(2) + 1:end, :);
         left_sum = sum(left_region(:));
         right_sum = sum(right_region(:));
         minimum_required_voxels_per_lung = min(left_sum, right_sum)/5;
