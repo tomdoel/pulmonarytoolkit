@@ -52,7 +52,9 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     
     coronal_mode = filtered_image.VoxelSize(1) > 5;
     
+    reporting.UpdateProgressStage(0, 2);
     [image_raw_left, bounds_left] = FindMaximumRegionNotTouchingSides(new_image_left, start_point_left, coronal_mode, reporting);
+    reporting.UpdateProgressStage(1, 2);
     [image_raw_right, bounds_right] = FindMaximumRegionNotTouchingSides(new_image_right, start_point_right, coronal_mode, reporting);
     
     new_image_left.ChangeRawImage(image_raw_left);
@@ -103,6 +105,7 @@ function lung_point = AutoFindLungPoint(original_image, find_left)
 end
 
 function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, local_start_point, coronal_mode, reporting)
+    reporting.PushProgress();
     
     % This code deals with the case where there are missing thick coronal slices
     if coronal_mode
@@ -130,7 +133,10 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, loc
         [new_image_slice, bounds_middle_slice, first_slice_points] = GetVariableThresholdForSlice(first_coronal_slice_index, lung_image, min_value, max_value, {local_start_point}, coronal_mode, reporting);
         new_image.ChangeSubImage(new_image_slice);
         next_points = first_slice_points;
+        progress_stage = 1;
         for coronal_index = first_coronal_slice_index + 1 : lung_image.ImageSize(1)
+            reporting.UpdateProgressStage(progress_stage, lung_image.ImageSize(1));
+            progress_stage = progress_stage + 1;
             if ~isempty(next_points)
                 [new_image_slice, bounds_slice, next_points] = GetVariableThresholdForSlice(coronal_index, lung_image, min_value, max_value, next_points, coronal_mode, reporting);
                 new_image.ChangeSubImage(new_image_slice);
@@ -138,6 +144,8 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, loc
         end
         next_points = first_slice_points;
         for coronal_index = first_coronal_slice_index - 1 : - 1 : 1
+            reporting.UpdateProgressStage(progress_stage, lung_image.ImageSize(1));
+            progress_stage = progress_stage + 1;
             if ~isempty(next_points)
                 [new_image_slice, bounds_slice, next_points] = GetVariableThresholdForSlice(coronal_index, lung_image, min_value, max_value, next_points, coronal_mode, reporting);
                 new_image.ChangeSubImage(new_image_slice);
@@ -152,6 +160,8 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, loc
         lung_image.RemoveBorder(1);
         new_image = new_image.RawImage(2:end-1, 2:end-1, 2:end-1);
     end
+    
+    reporting.PopProgress();
 end
 
 function [new_image_slice, bounds, next_points] = GetVariableThresholdForSlice(coronal_index, lung_image, min_value, max_value, local_start_points, coronal_mode, reporting)
@@ -212,9 +222,14 @@ function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_v
     start_points_global = num2cell(start_points_global, 2)';
     
     next_image_open = lung_image.BlankCopy;
+    progress_stage = 1;
+    approx_stages = double(round((max(lung_image.Limits(2) - max_value))/2));
     
+    reporting.PushProgress();
     for increment = increments
         while (~IsTouchingSides(next_image, coronal_mode))
+            reporting.UpdateProgressStage(progress_stage, approx_stages);
+            progress_stage = progress_stage + 1;
             max_value = max_value + increment;
             new_image = next_image;
             next_image = int16((lung_image.RawImage >= min_value) & (lung_image.RawImage <= max_value));
@@ -228,6 +243,7 @@ function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_v
         max_value = max_value - increment;
         next_image = new_image;
     end
+    reporting.PopProgress();
     
     bounds = [min_value max_value];
     new_image = logical(new_image);
