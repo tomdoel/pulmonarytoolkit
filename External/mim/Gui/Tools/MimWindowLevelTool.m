@@ -81,21 +81,24 @@ classdef MimWindowLevelTool < MimTool
         end
         
         function menu = GetContextMenu(obj)
-            if isempty(obj.ContextMenu)
-                figure_handle = obj.ViewerPanel.GetParentFigure.GetContainerHandle;
-                obj.ContextMenu = uicontextmenu('Parent', figure_handle);
-                menu_bone = @(x, y) obj.ChangeWLCallback(x, y, 2000, 300);
-                menu_lung = @(x, y) obj.ChangeWLCallback(x, y, 1600, -600);
-                menu_soft = @(x, y) obj.ChangeWLCallback(x, y, 350, 40);
-                
-                uimenu(obj.ContextMenu, 'Label', 'Set window and level:', 'Separator', 'off', 'Enable', 'off');
-                uimenu(obj.ContextMenu, 'Label', '  Lung', 'Callback', menu_lung);
-                uimenu(obj.ContextMenu, 'Label', '  Bone', 'Callback', menu_bone);
-                uimenu(obj.ContextMenu, 'Label', '  Soft Tissue', 'Callback', menu_soft);
-                uimenu(obj.ContextMenu, 'Label', '  Image', 'Callback', @obj.WLImageCallback);
-            end
-            
-            menu = obj.ContextMenu;
+            % Disable W/L context menu because it interferes with zoom
+            % shortcut
+            menu = [];
+%             if isempty(obj.ContextMenu)
+%                 figure_handle = obj.ViewerPanel.GetParentFigure.GetContainerHandle;
+%                 obj.ContextMenu = uicontextmenu('Parent', figure_handle);
+%                 menu_bone = @(x, y) obj.ChangeWLCallback(x, y, 2000, 300);
+%                 menu_lung = @(x, y) obj.ChangeWLCallback(x, y, 1600, -600);
+%                 menu_soft = @(x, y) obj.ChangeWLCallback(x, y, 350, 40);
+%                 
+%                 uimenu(obj.ContextMenu, 'Label', 'Set window and level:', 'Separator', 'off', 'Enable', 'off');
+%                 uimenu(obj.ContextMenu, 'Label', '  Lung', 'Callback', menu_lung);
+%                 uimenu(obj.ContextMenu, 'Label', '  Bone', 'Callback', menu_bone);
+%                 uimenu(obj.ContextMenu, 'Label', '  Soft Tissue', 'Callback', menu_soft);
+%                 uimenu(obj.ContextMenu, 'Label', '  Image', 'Callback', @obj.WLImageCallback);
+%             end
+%             
+%             menu = obj.ContextMenu;
         end
         
         function ChangeWLCallback(obj, ~, ~, window, level)
