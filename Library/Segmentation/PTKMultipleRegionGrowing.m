@@ -37,7 +37,6 @@ function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_g
     end
     
     if exist('reporting', 'var')
-        reporting.Log('Started region growing');
         reporting.ShowProgress('Region growing');
     end
     
@@ -101,7 +100,6 @@ function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_g
     output_image.ChangeRawImage(segmented_image);
     
     if exist('reporting', 'var')
-        reporting.Log('Finished region growing');
         reporting.CompleteProgress;
     end
  end

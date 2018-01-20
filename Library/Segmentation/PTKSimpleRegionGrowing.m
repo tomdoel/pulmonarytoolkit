@@ -35,7 +35,6 @@ function output_image = PTKSimpleRegionGrowing(threshold_image, start_points_glo
     end
     
     if exist('reporting', 'var')
-        reporting.Log('Started region growing');
         reporting.ShowProgress('Region growing');
     end
     
@@ -71,7 +70,6 @@ function output_image = PTKSimpleRegionGrowing(threshold_image, start_points_glo
     output_image.ChangeRawImage(segmented_image);
     
     if exist('reporting', 'var')
-        reporting.Log('Finished region growing');
         reporting.CompleteProgress;
     end
  end
