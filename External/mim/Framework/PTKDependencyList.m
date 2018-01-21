@@ -65,11 +65,11 @@ classdef PTKDependencyList < handle
                         return;
                     else
                          if isfield(dependency.Attributes, 'IsEditedResult') && isfield(new_dependency.Attributes, 'IsEditedResult') && (dependency.Attributes.IsEditedResult ~= new_dependency.Attributes.IsEditedResult)
-%                             disp(['Accepting duplicate dependency due to edited result for ' dependency.PluginName]);
+                            reporting.LogVerbose(['Accepting duplicate dependency due to edited result for ' dependency.PluginName]);
                          else
                              if (dependency.Attributes.IgnoreDependencyChecks && new_dependency.Attributes.IgnoreDependencyChecks)
                                  dependency_exists = true;
-                                 reporting.ShowWarning('PTKDependencyList:PermittedDependencyMismatch', ['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.'], []);
+                                 reporting.LogVerbose(['A dependency mismatch for plugin ' dependency.PluginName ' was ignored because the plugin has been set to always run or not to cache results. This dependency mismatch indicates a possible inefficiency in the code as the plugin has been run more than once.']);
                                  return;
                              else
                                  reporting.Error('PTKDependencyList:DependencyMismatch', ['Dependency mismatch found for plugin ' dependency.PluginName '. You can fix this by clearing the cache for this datset.']);
