@@ -65,7 +65,7 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
         mex_file = mex_file_s{1};
         
         if (~mex_file.NeedsRecompile) && (~force_recompile)
-            reporting.Log([mex_file.Name ' is up to date']);
+            reporting.LogVerbose([mex_file.Name ' is up to date']);
             if ~strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoRecompileNeeded')
                 reporting.Error('CoreCompileMexFiles:WrongStatus', 'Program error: mex status should be OK if a recompile is not required');
             end
