@@ -64,6 +64,10 @@ classdef CoreReportingWithCache < CoreReportingInterface
             obj.WarningsCache.AddPendingMessages(identifier, message);
         end
         
+        function ShowMessageFromException(obj, identifier, message, ex)
+            obj.Reporting.ShowMessageFromException(identifier, message, ex);
+        end
+        
         function ShowWarning(obj, identifier, message, supplementary_info)
             if nargin < 4
                 supplementary_info = [];

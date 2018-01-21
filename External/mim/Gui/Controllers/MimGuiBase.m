@@ -584,7 +584,7 @@ classdef MimGuiBase < GemFigure
                 if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('MimGuiDataset:GuiPluginCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                 else
-                    obj.Reporting.ShowMessage('MimGuiDataset:GuiPluginFailed', ['The gui plugin ' plugin_name ' failed with the following error: ' exc.message]);
+                    obj.Reporting.ShowMessageFromException('MimGuiDataset:GuiPluginFailed', ['The gui plugin ' plugin_name ' failed with the following error: ' exc.message], exc);
                     uiwait(errordlg([plugin_name ' failed with the following error: ' exc.message], [obj.AppDef.GetName ': Failure in plugin ' plugin_name], 'modal'));
                 end
             end

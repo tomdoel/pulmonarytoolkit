@@ -451,7 +451,7 @@ classdef MimGuiDataset < CoreBaseClass
                 if MimErrors.IsErrorCancel(exc.identifier)
                     obj.Reporting.ShowMessage('MimGuiDataset:LoadingCancelled', ['The cancel button was clicked while the plugin ' plugin_name ' was running.']);
                 else
-                    obj.Reporting.ShowMessage('MimGuiDataset:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message]);
+                    obj.Reporting.ShowMessageFromException('MimGuiDataset:PluginFailed', ['The plugin ' plugin_name ' failed with the following error: ' exc.message], exc);
                     show_error_dialog = true;
 
                     if isa(exc, 'MimSuggestEditException')
