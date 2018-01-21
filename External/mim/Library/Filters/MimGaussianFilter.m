@@ -69,13 +69,15 @@ function filtered_image = MimGaussianFilter(original_image, filter_size_mm, bord
         % voxels that would otherwise be smoothed by the filtering
         border_image_raw = false(original_image.ImageSize);
 
+        border_region_size = [border_region, border_region, border_region];
+        border_region_size = min(border_region_size, original_image.ImageSize);
         % Add a border around the image
-        border_image_raw(1:border_region, :, :) = true;
-        border_image_raw(end-border_region+1:end, :, :) = true;
-        border_image_raw(:, 1:border_region, :) = true;
-        border_image_raw(:, end-border_region+1:end, :) = true;
-        border_image_raw(:, :, 1:border_region) = true;
-        border_image_raw(:, :, end-border_region+1:end) = true;
+        border_image_raw(1:border_region_size(1), :, :) = true;
+        border_image_raw(end-border_region_size(1)+1:end, :, :) = true;
+        border_image_raw(:, 1:border_region_size(2), :) = true;
+        border_image_raw(:, end-border_region_size(2)+1:end, :) = true;
+        border_image_raw(:, :, 1:border_region_size(3)) = true;
+        border_image_raw(:, :, end-border_region_size(3)+1:end) = true;
         
         % Add in padding values if there are any
         if ~isempty(original_image.PaddingValue)
