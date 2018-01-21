@@ -246,7 +246,7 @@ classdef MimMain < CoreBaseClass
                 script_class = feval(script_name);
                 output = script_class.RunScript(obj, obj.Reporting, varargin{:});
             catch ex
-                obj.Reporting.Error('MimMain:ScriptFailure', ['The script ' script_name ' failed with the following error: ' ex.message]);
+                obj.Reporting.ErrorFromException('MimMain:ScriptFailure', ['The script ' script_name ' failed with the following error: ' ex.message], ex);
                 output = [];
             end
         end
