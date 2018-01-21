@@ -447,7 +447,7 @@ classdef MimContextHierarchy < CoreBaseClass
             current_dependency = current_info.InstanceIdentifier;
             
             if current_info.IgnoreDependencyChecks
-                reporting.Log(['Ignoring dependency checks for ' type_of_dependency ' ' next_dependency.PluginName '(' char(next_dependency.Context) ')']);
+                reporting.LogVerbose(['Ignoring dependency checks for ' type_of_dependency ' ' next_dependency.PluginName '(' char(next_dependency.Context) ')']);
             else
                 % Sanity check - this case should never occur
                 if ~strcmp(next_dependency.DatasetUid, current_dependency.DatasetUid)
