@@ -105,13 +105,15 @@ classdef CoreTextUtilities < handle
             
             if isempty(string)
                 adjustedString = string;
-            elseif ischar(string) 
+            elseif ischar(string)
                 adjustedString = strtrim(string(uint8(string) >= 32));
             elseif isstruct(string)
                 adjustedString = struct;
                 for field = fieldnames(string)
                     adjustedString.(field{1}) = CoreTextUtilities.RemoveNonprintableCharactersAndStrip(string.(field{1}));
                 end
+            elseif iscell(string)
+                adjustedString = cellfun(@CoreTextUtilities.RemoveNonprintableCharactersAndStrip, string, 'UniformOutput', false);
             else
                 adjustedString = string;
             end
@@ -127,6 +129,29 @@ classdef CoreTextUtilities < handle
                 last = string(index + 1:end);
             end
         end
+        
+        function is_equal = CompareStringsNoCase(st1, st2)
+            % Compare strings ignoring case, mnonprintable characters and
+            % leading/trailing spaces
+            is_equal = strcmpi(CoreTextUtilities.RemoveNonprintableCharactersAndStrip(st1), CoreTextUtilities.RemoveNonprintableCharactersAndStrip(st2)); 
+        end
+        
+        function alphanum = GetAlphaNumString(string)
+            % Returns a simplified string containing only uppercase and
+            % numerals
+            if iscell(string)
+                alphanum = cellfun(@CoreTextUtilities.GetAlphaNumString, string, 'UniformOutput', false);
+            else
+                alphanum = string(isstrprop(string, 'alphanum'));
+            end
+        end
+        
+        function basic = GetBasicString(string)
+            % Returns a simplified string containing only uppercase and
+            % numerals
+            basic = upper(CoreTextUtilities.GetAlphaNumString(string));
+        end
+
     end
 end
 
