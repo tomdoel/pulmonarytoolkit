@@ -243,8 +243,8 @@ classdef MimDatasetResults < handle
                 instance_identifier = PTKDependency(name, [], CoreSystemUtilities.GenerateUid(), dataset_uid, attributes);
                 manual_cache_info = obj.FrameworkAppDef.GetClassFactory.CreateDatasetStackItem(instance_identifier, PTKDependencyList(), false, false, reporting);
                 manual_cache_info.MarkMarkerSet();
-
-                obj.DatasetDiskCache.SaveMarkerPoints(name, result, manual_cache_info, reporting);
+                
+                obj.DatasetDiskCache.SaveMarkerPoints(name, data, manual_cache_info, reporting);
                 
             catch ex
                 dataset_stack.ClearStack;
