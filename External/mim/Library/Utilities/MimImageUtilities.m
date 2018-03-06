@@ -458,6 +458,9 @@ classdef MimImageUtilities
             else
                 matches_modality = ismember(modalities, 'CT') | ismember(modalities, 'MR');
                 selected_datasets = datasets(matches_modality);
+                if isempty(selected_datasets)
+                    selected_datasets = datasets;
+                end
             end
             num_images = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(selected_datasets, 'NumberOfImages');
             [~, max_index] = max(num_images);
