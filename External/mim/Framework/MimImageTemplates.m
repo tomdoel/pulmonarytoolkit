@@ -94,7 +94,7 @@ classdef MimImageTemplates < CoreBaseClass
 
                 % Extract the template
                 context_list = fieldnames(template);
-                if numel(context_list) ~= 1 || ~strcmp(context_list{1}, context)
+                if numel(context_list) ~= 1 || ~CoreCompareUtilities.CompareEnumName(context_list{1}, context)
                     reporting.Error('MimImageTemplates:ContextDoesNotMatch', 'The returned context does not match');
                 end
                 template = template.(context_list{1});
