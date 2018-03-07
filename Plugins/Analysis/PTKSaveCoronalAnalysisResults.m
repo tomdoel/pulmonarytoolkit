@@ -21,9 +21,9 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
     %
 
     properties
-        ButtonText = 'Coronal metrics'
+        ButtonText = 'Coronal analysis'
         ToolTip = 'Performs density analysis in bins along the anterior-posterior axis'
-        Category = 'Slice analysis'
+        Category = 'Slice-by-slice'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -36,6 +36,8 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 31
+        Icon = 'cor_slices.png'
     end
     
     methods (Static)
@@ -45,15 +47,14 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
             results = dataset.GetResult('PTKCoronalAnalysis', contexts);            
             
-            % Convert the results into a PTKResultsTable
+            % Convert the results into a MimResultsTable
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
-            template = dataset.GetTemplateImage(PTKContext.LungROI);
-            patient_name = [template.MetaHeader.PatientName.FamilyName '-'  template.MetaHeader.PatientID];
+            patient_name = dataset.GetPatientName;
             table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
-            dataset.SaveTableAsCSV('PTKSaveCoronalAnalysisResults', 'Coronal analysis', 'CoronalResults', 'Density analysis in bins along the anterior-posterior axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveCoronalAnalysisResults', 'Coronal analysis', 'CoronalResults', 'Density analysis in bins along the anterior-posterior axis', table, MimResultsTable.ContextDim, MimResultsTable.SliceNumberDim, MimResultsTable.MetricDim, []);
             
             % Generate graphs of the results
             y_label = 'Distance along coronal axis (%)';
@@ -68,6 +69,10 @@ classdef PTKSaveCoronalAnalysisResults < PTKPlugin
             PTKSaveCoronalAnalysisResults.DrawGraphAndSave(dataset, table, y_label, context_list_lobes, '_Lobes', reporting);
             
             results = [];
+        end
+        
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsCT();
         end
     end
     

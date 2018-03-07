@@ -71,7 +71,7 @@ function match = CompareMainTags(this_metadata, other_metadata)
     
     end
   
-    if ~CompareFieldsInexactMatch('ImageOrientationPatient', this_metadata, other_metadata)
+    if ~CompareFieldsInexactMatch('ImageOrientationPatient', this_metadata, other_metadata, 0.5)
         match = false;
         return;
     end
@@ -86,12 +86,22 @@ function match = CompareMainTags(this_metadata, other_metadata)
         return;
     end
     
+    if isfield(this_metadata, 'ImagePositionPatient') ~= isfield(other_metadata, 'ImagePositionPatient')
+        match = false;
+        return;
+    end
     
+    % If the positions match exactly, then these are should not be in the
+    % same group - they may be duplicates, or different time points
+    if CompareFieldsInexactMatch('ImagePositionPatient', this_metadata, other_metadata, 0.0001)
+        match = false;
+        return;
+    end
     
     match = true;
 end
 
-function matches = CompareFieldsInexactMatch(field_name, this_metadata, other_metadata)
+function matches = CompareFieldsInexactMatch(field_name, this_metadata, other_metadata, tolerance)
     
     % If this field does not exist in either metadata, then return a
     % true match
@@ -118,6 +128,6 @@ function matches = CompareFieldsInexactMatch(field_name, this_metadata, other_me
     end
     
     % Inexact numeric match
-    matches = max(field_this(:) - field_other(:)) < 0.5;
+    matches = max(abs(field_this(:) - field_other(:))) < tolerance;
 end
 

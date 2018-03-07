@@ -6,7 +6,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     % PTKSaveAxialAnalysisResults, PTKSaveCoronalAnalysisResults,
     % PTKSaveSagittalAnalysisResults for examples of how to compute these
     % measurements along the corresponding axes. Once the measurments have been
-    % computed and stored in a PTKResultsTable object, call PTKGraphMetricVsDistance
+    % computed and stored in a MimResultsTable object, call PTKGraphMetricVsDistance
     % to plot a graph based on these results for one or more subjects.
     %    
     % Labels and ticks will be automatically generated from the data.
@@ -17,7 +17,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     %     figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, figure_title, context_list, patient_list, reporting)
     %
     % Inputs:
-    %     table - a PTKResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
+    %     table - a MimResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
     %     metric - a string containing the id of the metric to plot. This must correspond to the metic id in the table.
     %     metric_std - a string containing the id of the metric to use for the error
     %         bar in the plot. This must correspond to the metic id in the table, or be
@@ -26,7 +26,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     %     patient_list - Set to [] to plot all patients, otherwise specify a set of one of more patient UIDs to appear on the graph.
     %         Each patient will appear with different markers and will appear in the legend.
     %     distance label - The distance label to be used on the x-axis
-    %     reporting - Object of class PTKReporting for errors, warnings and progress
+    %     reporting - an object implementing CoreReportingInterface for reporting progress and warnings
     %
     % Output:
     %     figure_handle - the handle of the generated figure. Use this handle to export the figure to an image file
@@ -47,6 +47,10 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
 
     if isempty(context_list)
         context_list = table.IndexMaps{3}.keys;
+    else
+        % Ensure we only plot for known contexts
+        known_context_list = table.IndexMaps{3}.keys;
+        context_list = intersect(context_list, known_context_list);
     end
     
     if numel(context_list) > 1 && numel(patient_list) > 1
@@ -96,7 +100,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     legend_strings = {};
     
     if plot_for_contexts
-        for context_list_index = 1 : numel(context_list);
+        for context_list_index = 1 : numel(context_list)
             context = context_list(context_list_index);
             legend_text = table.NameMaps{3}(char(context));
             results_list{context_list_index} = GetResultsFromTable(table, patient_uid, char(context), metric, metric_std, legend_text);
@@ -147,7 +151,7 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     set(figure_handle, 'position', [0,0, graph_size]);
     hold(axes_handle, 'on');
     
-    [y_tick_spacing, min_y, max_y] = PTKGraphUtilities.GetOptimalTickSpacing(min_y, max_y);
+    [y_tick_spacing, min_y, max_y] = MimGraphUtilities.GetOptimalTickSpacing(min_y, max_y);
     y_ticks = 0 : y_tick_spacing : max_y;
     
     % Draw lines at 10% distance intervals
@@ -172,12 +176,16 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     
     % Set the axes
     ylabel(axes_handle, y_label, 'FontName', font_name, 'FontSize', label_font_size);
-    set(gca, 'YTick', y_ticks)
+    set(gca, 'YTick', y_ticks);
     
     % Work out number of decimal places for y-axis
     required_num_dp = abs(min(0, floor(log10(y_tick_spacing))));
     
-    set(gca, 'YTickLabel', sprintf(['%1.', int2str(required_num_dp), 'f|'], y_ticks))
+    if verLessThan('matlab', '8.4') % Syntax changed in Matlab 2014b (8.4)
+        set(gca, 'YTickLabel', sprintf(['%1.', int2str(required_num_dp), 'f|'], y_ticks));
+    else
+        set(gca, 'YTickLabel', sprintf(['%1.', int2str(required_num_dp), 'f\n'], y_ticks));
+    end
     xlabel(axes_handle, x_label, 'FontName', font_name, 'FontSize', label_font_size);
     axis([0 100 min(y_ticks) max_y]);
 end

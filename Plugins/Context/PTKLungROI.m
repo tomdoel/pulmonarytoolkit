@@ -33,7 +33,10 @@ classdef PTKLungROI < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
-        Version = 2
+        Version = 3
+
+        MemoryCachePolicy = 'Temporary'
+        DiskCachePolicy = 'Permanent'
     end
     
     methods (Static)

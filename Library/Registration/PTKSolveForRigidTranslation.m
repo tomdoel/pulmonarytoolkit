@@ -28,8 +28,8 @@ function [affine_matrix, transformed_matrix] = PTKSolveForRigidTranslation(image
     reference_image2.AddBorder(20);
     image_to_transform2.AddBorder(20);
     
-    dt_float = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, image_to_transform2, image_to_transform2, reporting);
-    dt_ref = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, reference_image2, reference_image2, reporting);
+    dt_float = PTKRunForEachComponentAndCombine(@MimImageUtilities.GetNormalisedDT, image_to_transform2, image_to_transform2, reporting);
+    dt_ref = PTKRunForEachComponentAndCombine(@MimImageUtilities.GetNormalisedDT, reference_image2, reference_image2, reporting);
     
     dt_float.RescaleToMaxSize(128);
 
@@ -50,13 +50,13 @@ function [affine_matrix, transformed_matrix] = Solve(image_to_transform, referen
     
     [x_vector, fval, exitflag, output] = fminsearch(AnonFn, x_0, optimset('TolX',0.0001, 'TolFun', 0.01, 'PlotFcns', @optimplotfval));
     
-    affine_matrix = PTKImageCoordinateUtilities.CreateAffineTranslationMatrix(x_vector);
+    affine_matrix = MimImageCoordinateUtilities.CreateAffineTranslationMatrix(x_vector);
 
     transformed_matrix = PTKRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
 end
 
 function closeness = FnToMinimiseRigid(x_vector, image_to_transform, reference_image, i_o, j_o, k_o, i_r, j_r, k_r, reporting)
-    affine_matrix = PTKImageCoordinateUtilities.CreateAffineTranslationMatrix(x_vector);
+    affine_matrix = MimImageCoordinateUtilities.CreateAffineTranslationMatrix(x_vector);
     transformed_image = PTKRegisterImageAffineUsingCoordinates(image_to_transform, reference_image, affine_matrix, i_o, j_o, k_o, i_r, j_r, k_r, '*linear', reporting);
     closeness = ComputeCloseness(transformed_image, reference_image);
 end

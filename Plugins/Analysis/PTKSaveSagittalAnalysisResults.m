@@ -23,7 +23,7 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Sagittal analysis'
         ToolTip = 'Performs density analysis in bins along the left-right axis'
-        Category = 'Slice analysis'
+        Category = 'Slice-by-slice'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -36,6 +36,8 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 32
+        Icon = 'sag_slices.png'
     end
     
     methods (Static)
@@ -45,15 +47,14 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
             results = dataset.GetResult('PTKSagittalAnalysis', contexts);            
             
-            % Convert the results into a PTKResultsTable
+            % Convert the results into a MimResultsTable
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
-            template = dataset.GetTemplateImage(PTKContext.LungROI);
-            patient_name = [template.MetaHeader.PatientName.FamilyName '-'  template.MetaHeader.PatientID];
+            patient_name = dataset.GetPatientName;
             table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
-            dataset.SaveTableAsCSV('PTKSaveSagittalAnalysisResults', 'Sagittal analysis', 'SagittalResults', 'Density analysis in bins along the left-right axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveSagittalAnalysisResults', 'Sagittal analysis', 'SagittalResults', 'Density analysis in bins along the left-right axis', table, MimResultsTable.ContextDim, MimResultsTable.SliceNumberDim, MimResultsTable.MetricDim, []);
             
             % Generate graphs of the results
             y_label = 'Distance along sagittal axis (%)';
@@ -69,6 +70,10 @@ classdef PTKSaveSagittalAnalysisResults < PTKPlugin
             
             results = [];
         end
+        
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsCT();
+        end        
     end
     
     methods (Static, Access = private)

@@ -72,7 +72,7 @@ function result_points = GetClosedIndicesForSegmentAndChildren(current_segment, 
 end
 
 function new_points = GetClosedIndices(voxel_indices, closing_size_mm, image_size)
-    [offset, segment_image, ~] = PTKImageCoordinateUtilities.GetMinimalImageForIndices(voxel_indices', image_size);
+    [offset, segment_image, ~] = MimImageCoordinateUtilities.GetMinimalImageForIndices(voxel_indices', image_size);
     border_size = 3;
     bordered_segment_image = PTKImage(segment_image);
     bordered_segment_image.AddBorder(border_size);
@@ -81,6 +81,6 @@ function new_points = GetClosedIndices(voxel_indices, closing_size_mm, image_siz
     border_offset = border_size;
     bordered_image_size = bordered_segment_image.ImageSize;
     all_points = find(bordered_segment_image.RawImage(:));
-    new_points = PTKImageCoordinateUtilities.OffsetIndices(int32(all_points), -border_offset + int32(offset), int32(bordered_image_size), int32(image_size));
+    new_points = MimImageCoordinateUtilities.OffsetIndices(int32(all_points), -border_offset + int32(offset), int32(bordered_image_size), int32(image_size));
 end
 

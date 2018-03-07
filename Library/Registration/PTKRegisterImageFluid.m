@@ -18,7 +18,7 @@ function deformed_image = PTKRegisterImageFluid(original_image, deformation_fiel
     [i_r, j_r, k_r] = ndgrid(i_r, j_r, k_r);
 
     % Transform the coordinates using the deformation field
-    [i_r, j_r, k_r] = PTKImageCoordinateUtilities.TransformCoordsFluid(i_r, j_r, k_r, deformation_field);
+    [i_r, j_r, k_r] = MimImageCoordinateUtilities.TransformCoordsFluid(i_r, j_r, k_r, deformation_field);
     
     % Interpolate the image to the deformed coordinates
     deformed_image_raw = interpn(i_o, j_o, k_o, single(original_image.RawImage), i_r, j_r, k_r, interpolation_type, 0);

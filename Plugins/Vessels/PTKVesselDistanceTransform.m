@@ -54,7 +54,7 @@ classdef PTKVesselDistanceTransform < PTKPlugin
             vesselness_raw = single(vesselness.RawImage);
             filter_size = 10;            
             vesselness.ChangeRawImage(vesselness_raw);
-            filtered_vesselness = PTKGaussianFilter(vesselness, filter_size);
+            filtered_vesselness = MimGaussianFilter(vesselness, filter_size);
         end
     end
 end

@@ -47,9 +47,9 @@ classdef TestStack < CoreTest
             obj.Assert(strcmp({v1}, test_stack4.GetAndClear), 'Expected value from stack');
             obj.Assert(test_stack4.IsEmpty, 'Stack empty');
 
-            p1 = PTKPair(v1, 10);
-            p2 = PTKPair(v2, 99);
-            p3 = PTKPair(v3, 101);
+            p1 = CorePair(v1, 10);
+            p2 = CorePair(v2, 99);
+            p3 = CorePair(v3, 101);
             test_stack4 = PTKStack(p1);
             obj.Assert(~test_stack4.IsEmpty, 'Stack not empty');
             obj.Assert(isequal({p1}, test_stack4.GetAndClear), 'Expected value from stack');

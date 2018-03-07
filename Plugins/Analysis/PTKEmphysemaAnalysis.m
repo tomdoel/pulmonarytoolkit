@@ -1,7 +1,10 @@
 classdef PTKEmphysemaAnalysis < PTKPlugin
-    % PTKEmphysemaAnalysis. Plugin for computing the percentage of emphysema
-    %     voxels
+    % PTKEmphysemaAnalysis. Plugin for computing emphysema metrics from CT
     %
+    %     Returns a PTKMetrics structure with emphysema percentage and 
+    %     percentile density. Can be used for any lung context including
+    %     manually created regions.
+    % 
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
     %     See PTKPlugin.m for more information on how to run plugins.
@@ -37,24 +40,24 @@ classdef PTKEmphysemaAnalysis < PTKPlugin
     methods (Static)
         function emphysema_results = RunPlugin(dataset, context, reporting)
             
-            % Get a mask for the current region to analyse
-            context_mask = dataset.GetTemplateMask(context);
-
+            roi = dataset.GetResult('PTKLungROI', PTKContext.LungROI);
+            if ~roi.IsCT
+                reporting.ShowMessage('PTKEmphysemaAnalysis:NotCTImage', 'Cannot perform density analysis as this is not a CT image');
+                return;
+            end
+            
+            % Create a region mask excluding the airways
+            context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);            
+            
             % Special case if this context doesn't exist for this dataset
-            if isempty(context_mask) || ~context_mask.ImageExists
+            if isempty(context_no_airways) || ~context_no_airways.ImageExists
                 emphysema_results = PTKMetrics.empty;
                 return;
             end
             
-            roi = dataset.GetResult('PTKLungROI', PTKContext.LungROI);
-            [~, airway_image] = dataset.GetResult('PTKAirways', PTKContext.LungROI);
-            roi.ResizeToMatch(context_mask);
-            airway_image.ResizeToMatch(context_mask);
-            lung_mask_raw = context_mask.RawImage;
-            lung_mask_raw(airway_image.RawImage == 1) = 0;
-            context_mask.ChangeRawImage(lung_mask_raw);
+            roi.ResizeToMatch(context_no_airways);
             
-            emphysema_results = PTKComputeEmphysemaFromMask(roi, context_mask);
+            emphysema_results = PTKComputeEmphysemaFromMask(roi, context_no_airways);
         end
     end
 end

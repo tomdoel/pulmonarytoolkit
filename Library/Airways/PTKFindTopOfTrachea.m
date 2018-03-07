@@ -19,8 +19,8 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     %         crop the image, so that the correct VoxelSize,
     %         OriginalImageSize and Origin parameters are set.
     %
-    %     reporting (optional) - an object implementing the PTKReporting
-    %         interface for reporting progress and warnings
+    %     reporting (optional) - an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
     % Outputs:
     %     top_of_trachea - coordinate (i,j,k) of a point inside and near the top
@@ -43,6 +43,10 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     
     if nargin < 2
         reporting = CoreReportingDefault;
+    end
+    
+    if nargin < 3
+        debug_mode = false;
     end
     
     reporting.UpdateProgressMessage('Finding top of trachea');
@@ -93,7 +97,7 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     if debug_mode
         debug_image.ChangeRawImage(partial_image.RawImage);
         reporting.UpdateOverlaySubImage(debug_image);
-        PTKVisualiseIn3D([], debug_image, [], true, true, 0, reporting);
+        MimVisualiseIn3D([], debug_image, [], true, true, 0, CoreSystemUtilities.BackwardsCompatibilityColormap, reporting);
         pause;
     end
     
@@ -107,7 +111,7 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     if debug_mode
         debug_image.ChangeRawImage(partial_image2);
         reporting.UpdateOverlayImage(debug_image);
-        PTKVisualiseIn3D([], debug_image, [], true, true, 0, reporting);
+        MimVisualiseIn3D([], debug_image, [], true, true, 0, CoreSystemUtilities.BackwardsCompatibilityColormap, reporting);
         pause;
     end
     
@@ -117,7 +121,7 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     if debug_mode
         debug_image.ChangeRawImage(result);
         reporting.UpdateOverlayImage(debug_image);
-        PTKVisualiseIn3D([], debug_image, [], true, true, 0, reporting);
+        MimVisualiseIn3D([], debug_image, [], true, true, 0, CoreSystemUtilities.BackwardsCompatibilityColormap, reporting);
         pause;
     end
     
@@ -224,7 +228,7 @@ function result = ReduceImageToCentralComponents(image_to_reduce, slices_per_ste
         if slices_per_step == 1
             connected_components = bwconncomp(slice, 8); % 2D connected components
         else
-            connected_components = bwconncomp(slice, 26); % 3D connected components
+            connected_components = bwconncomp(slice, 6); % 3D connected components
         end
         stats = regionprops(connected_components, 'BoundingBox');
         
@@ -267,7 +271,7 @@ end
 
 function result = FindLargestComponent(mask)
     result = false(size(mask));
-    connected_components = bwconncomp(mask, 26);
+    connected_components = bwconncomp(mask, 6);
     num_pixels = cellfun(@numel, connected_components.PixelIdxList);
     [~, sorted_largest_areas_indices] = sort(num_pixels, 'descend');
     voxels = connected_components.PixelIdxList{sorted_largest_areas_indices(1)};

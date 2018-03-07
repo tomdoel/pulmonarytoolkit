@@ -1,4 +1,4 @@
-classdef CoreEventData < event.EventData
+classdef (ConstructOnLoad) CoreEventData < event.EventData
     % CoreEventData. Encapsulate data to be passed when an event occurs.
     %
     %     Use this class when you trigger an event which needs to provide data

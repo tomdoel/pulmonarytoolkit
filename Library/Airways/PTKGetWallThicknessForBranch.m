@@ -12,7 +12,22 @@ function results = PTKGetWallThicknessForBranch(bronchus, image_roi, context, fi
         
         
         initial_smoothed_centreline = SmoothCentrelineByNeighbours(centreline);
-        [direction_vector, first_radius_index, last_radius_index] = ComputeDirectionVector(initial_smoothed_centreline);
+        
+        if numel(initial_smoothed_centreline) == 1
+            % If there is only one point in the bronchus centreline then 
+            % use the parent endpoint to determine the direction
+            if isempty(bronchus.Parent)
+                disp('Insufficient centreline points to compute the wall thickness for this branch');
+                results = [];
+                return;
+            end
+            temp_initial_smoothed_centreline = [bronchus.Parent.EndPoint, initial_smoothed_centreline];
+            [direction_vector, ~, ~] = ComputeDirectionVector(temp_initial_smoothed_centreline);
+            first_radius_index = 1;
+            last_radius_index = 1;
+        else
+            [direction_vector, first_radius_index, last_radius_index] = ComputeDirectionVector(initial_smoothed_centreline);
+        end
         
         current_centreline = initial_smoothed_centreline;
         
@@ -327,7 +342,7 @@ end
 
 function [interpolated_image, centre_global_indices] = GetInterpolatedImage(x_coord_mm, y_coord_mm, z_coord_mm, lung_roi, segmented_image, segment_label, centre_points_mm)
     ptk_coordinates = [x_coord_mm(:), y_coord_mm(:), z_coord_mm(:)];
-    coordinates_mm = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(ptk_coordinates);
+    coordinates_mm = MimImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(ptk_coordinates);
     global_coordinates = lung_roi.CoordinatesMmToGlobalCoordinatesUnrounded(coordinates_mm);
     local_coordinates = lung_roi.GlobalToLocalCoordinates(global_coordinates);
     
@@ -344,7 +359,7 @@ function [interpolated_image, centre_global_indices] = GetInterpolatedImage(x_co
     centre_ponts_y = [centre_points_mm.CoordY]';
     centre_ponts_z = [centre_points_mm.CoordZ]';
     centre_ponts = [centre_ponts_x, centre_ponts_y, centre_ponts_z];
-    centre_coordinates_mm = PTKImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(centre_ponts);
+    centre_coordinates_mm = MimImageCoordinateUtilities.PTKCoordinatesToCoordinatesMm(centre_ponts);
     centre_global_coordinates = lung_roi.CoordinatesMmToGlobalCoordinatesUnrounded(centre_coordinates_mm);
     centre_global_indices = lung_roi.GlobalCoordinatesToGlobalIndices(round(centre_global_coordinates));    
 end

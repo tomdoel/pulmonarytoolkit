@@ -1,7 +1,7 @@
 classdef GemUserInterfaceObject < CoreBaseClass
     % GemUserInterfaceObject. Base class for GEM user interface components
     %
-    %
+    % All GEM controls inherit from this class
     %
     %     Licence
     %     -------
@@ -31,10 +31,19 @@ classdef GemUserInterfaceObject < CoreBaseClass
         LastHandleVisible  % Stores the last visibility state set to the handle of the graphics component
         
         VisibleParameter = 'on' % Defines the argument for component visibility
+        
+        Hg2Permitted
     end
     
-    properties (Access = protected)
+    properties (Access = protected)        
         Reporting
+        
+        % Matlab callbacks
+        WindowButtonDownFcn
+        WindowButtonUpFcn
+        WindowButtonMotionFcn
+        WindowScrollWheelFcn
+        KeyPressFcn
     end
     
     methods (Abstract)
@@ -65,11 +74,12 @@ classdef GemUserInterfaceObject < CoreBaseClass
             obj.ComponentHasBeenCreated = false;
             obj.Children = [];
             obj.ResizeRequired = false;
-            obj.LockResize = false;            
+            obj.LockResize = false;
+            obj.Hg2Permitted = obj.IsHg2Permitted();
         end
         
         function delete(obj)
-            obj.RemoveAndDeleteChildren
+            obj.RemoveAndDeleteChildren();
             obj.DeleteIfGraphicsHandle(obj.GraphicalComponentHandle);
         end
         
@@ -278,7 +288,14 @@ classdef GemUserInterfaceObject < CoreBaseClass
                 reordered_handles = [other_handles; handle_for_bottom];
                 set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
             end
-        end        
+        end
+
+        function SetContextMenu(obj, context_menu)
+            if obj.ComponentHasBeenCreated && ishandle(obj.GraphicalComponentHandle)
+                set(obj.GraphicalComponentHandle, 'uicontextmenu', context_menu);
+                obj.GraphicalComponentHandle.UIContextMenu = context_menu;
+            end
+        end
     end
 
     methods (Access = protected)
@@ -384,44 +401,42 @@ classdef GemUserInterfaceObject < CoreBaseClass
             
         end
         
-        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is clicked inside the control
             input_has_been_processed = false;
         end
         
-        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is clicked inside the control
             input_has_been_processed = false;
         end
         
-        function input_has_been_processed = Keypressed(obj, click_point, key)
+        function input_has_been_processed = Keypressed(obj, click_point, key, src, eventdata)
             % This method is called when the mouse is clicked inside the control
             input_has_been_processed = false;
         end
         
-        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is moved
             input_has_been_processed = false;
         end
         
-        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse exits a control which previously
             % processed a MouseHasMoved event
             input_has_been_processed = false;
         end
         
-        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is moved
             input_has_been_processed = false;
         end
         
-        function input_has_been_processed = Scroll(obj, click_point, scroll_count)
+        function input_has_been_processed = Scroll(obj, click_point, scroll_count, sr, eventdata)
             % This method is called when the mouse is clicked inside the control
             input_has_been_processed = false;
         end
-        
-        
-    
+
         function ProcessActivityToSpecificObject(obj, processing_object, function_name, click_point, varargin)
             % Sends an activity to a specific user interface object
             
@@ -442,7 +457,7 @@ classdef GemUserInterfaceObject < CoreBaseClass
                     
                     % Try iterating through the children to process the
                     % action
-                    for child = obj.Children;
+                    for child = obj.Children
                         processing_object = child{1}.ProcessActivity(function_name, new_click_point, varargin{:});
                         if ~isempty(processing_object)
                             return;
@@ -498,6 +513,182 @@ classdef GemUserInterfaceObject < CoreBaseClass
             end
         end
     
+        function RestoreCustomKeyPressCallback(obj)
+            % For certain tools, Matlab will replace the keyboard/mouse
+            % handlers with its own handlers, so we need to change them
+            % back in order to handle our own shortcuts. However, Matlab
+            % has listeners which prevent changing of these when the
+            % mode is active. We need to first disable these listeners.
+            
+            try
+                obj.DisableMatlabHandleListeners
+                obj.AddCustomKeyHandlers;
+            catch ex
+                % An error here could be a change in internal
+                % implementaton of Matlab hg
+                obj.Reporting.ShowWarning('GemFigure:FailedToRestoreWindowListenerHandles', 'An error occurred while attempting to restore custom key callbacks', ex);
+            end
+        end
+        
+        function DisableMatlabHandleListeners(obj)
+            % Matlab has listeners which prevent changing of keyboard/mouse
+            % callbacks when certain modes are active. We need to first
+            % disable these listeners before we can set the custom
+            % listeners.
+            %
+            % Further complications result in changes in Matlab's hg2
+            %
+            % See here for more information: http://undocumentedmatlab.com/blog/enabling-user-callbacks-during-zoom-pan
+            
+            hManager = uigetmodemanager(obj.GetParentFigure.GetContainerHandle);
+            
+            if obj.Hg2Permitted
+                try
+                    % This code should work with Matlab hg2
+                    [hManager.WindowListenerHandles.Enabled] = deal(false);
+                catch
+                    % This code should work with Matlab hg1 but will throw
+                    % an exception in Matlab hg2
+                    set(hManager.WindowListenerHandles, 'Enable', 'off');
+                end
+            else
+                try
+                    % This code should work with Matlab hg1 but will throw
+                    % an exception in Matlab hg2
+                    set(hManager.WindowListenerHandles, 'Enable', 'off');
+                catch
+                    % This code should work with Matlab hg2
+                    [hManager.WindowListenerHandles.Enabled] = deal(false);
+                end
+            end
+        end
+        
+        function ClearCallbacks(obj)
+            obj.KeyPressFcn = [];
+            obj.WindowScrollWheelFcn = [];
+            obj.WindowButtonUpFcn = [];
+            obj.WindowButtonDownFcn = [];
+            obj.WindowButtonMotionFcn = [];
+        end
+        
+        function AddCustomKeyHandlers(obj)
+            % Store Matlab's callbacks for mouse and key events and replace
+            % with custom handlers. This allows us to choose for each
+            % control whether we want Matlab to handle the callback or if
+            % we want to handle it ourselves.
+            
+            parent_figure = obj.GetParentFigure;
+            obj.ReplaceCallback('KeyPressFcn', 'CustomKeyPressedFunction', @parent_figure.CustomKeyPressedFunction);
+            obj.ReplaceCallback('WindowScrollWheelFcn', 'CustomWindowScrollWheelFunction', @parent_figure.CustomWindowScrollWheelFunction);
+            obj.ReplaceCallback('WindowButtonDownFcn', 'CustomWindowButtonDownFunction', @parent_figure.CustomWindowButtonDownFunction);
+            obj.ReplaceCallback('WindowButtonUpFcn', 'CustomWindowButtonUpFunction', @parent_figure.CustomWindowButtonUpFunction);
+            obj.ReplaceCallback('WindowButtonMotionFcn', 'CustomWindowButtonMotionFunction', @parent_figure.CustomWindowButtonMotionFunction);
+        end        
+        
+        function ReplaceCallback(obj, property, gem_callback_name, gem_callback)
+            parent_figure = obj.GetParentFigure;
+            component = parent_figure.GraphicalComponentHandle;
+            current_callback = get(component, property);
+            if isempty(current_callback) || iscell(current_callback) || isempty(strfind(char(current_callback), gem_callback_name))
+                obj.(property) = current_callback;
+                set(component, property, gem_callback);
+            end
+        end
+        
+        function input_has_been_processed = MatlabKeypressed(obj, click_point, key)
+            % This method is called when the mouse is clicked inside the control
+
+            if ~isempty(obj.KeyPressFcn)
+                obj.KeyPressFcn{1}(src, eventdata, obj.KeyPressFcn{2:end});
+                input_has_been_processed = true;
+                return
+            end
+            
+            input_has_been_processed = false;
+        end
+        
+        
+        function input_has_been_processed = MatlabMouseDown(obj, click_point, selection_type, src, eventdata)
+            % Let Matlab callbacks process this mouse down event
+            
+            if ~isempty(obj.WindowButtonDownFcn)
+                obj.WindowButtonDownFcn{1}(src, eventdata, obj.WindowButtonDownFcn{2:end});
+                input_has_been_processed = true;
+                return
+            end
+            
+            input_has_been_processed = false;
+        end
+
+        function input_has_been_processed = MatlabMouseUp(obj, click_point, selection_type, src, eventdata)
+            % Let Matlab callbacks process this mouse up event
+
+            if ~isempty(obj.WindowButtonUpFcn)
+                obj.WindowButtonUpFcn{1}(src, eventdata, obj.WindowButtonUpFcn{2:end});
+                input_has_been_processed = true;
+                return
+            end
+            
+            input_has_been_processed = false;
+        end
+        
+        function input_has_been_processed = MatlabMouseHasMoved(obj, click_point, selection_type, src, eventdata)
+            % Let Matlab callbacks process this mouse moved event
+
+            if ~isempty(obj.WindowButtonMotionFcn)
+                obj.WindowButtonMotionFcn(src, eventdata);
+                input_has_been_processed = true;
+                return
+            end
+            
+            input_has_been_processed = false;
+        end
+        
+        function input_has_been_processed = MatlabMouseDragged(obj, click_point, selection_type, src, eventdata)
+            % Let Matlab callbacks process this mouse dragged event
+
+            if ~isempty(obj.WindowButtonMotionFcn)
+                obj.WindowButtonMotionFcn(src, eventdata);
+                input_has_been_processed = true;
+                return
+            end
+            
+            input_has_been_processed = false;
+        end
+        
+        function input_has_been_processed = MatlabScroll(obj, click_point, scroll_count, src, eventdata)
+            % Let Matlab callbacks process this scroll event
+            
+            if ~isempty(obj.WindowScrollWheelFcn) && iscell(obj.WindowScrollWheelFcn)
+                obj.WindowScrollWheelFcn{1}(src, eventdata, obj.WindowScrollWheelFcn{2:end});
+                input_has_been_processed = true;
+                return
+            end
+            
+            input_has_been_processed = false;
+        end
+        
+        function is_running = IsCurrentlyRunning(obj)
+            % Returns true if the calling function is currently executing.
+            % Used to stop callback reentrancy. This uses the debug stack
+            % rather than a flag, since a flag may not be cleared if the
+            % program exeution terminates through a dbquit
+
+            db_stack = dbstack();
+            if numel(db_stack) > 2
+                calling_func_name = db_stack(2).name;
+                if any(strcmp(calling_func_name, {db_stack(3:end).name}))
+                    is_running = true;
+                    return;
+                end
+            end
+            is_running = false;
+        end
+        
+        function is_hg2 = IsHg2Permitted(obj)
+            % Returns true if HG2 is supported
+            is_hg2 = ~verLessThan('matlab','8.4.0');
+        end
     end
     
     methods (Access = private)

@@ -221,6 +221,16 @@ classdef CoreDiskUtilities
             end
         end
         
+        function CreateDirectoryAndAddPathIfNotExisting(dir_name)
+            % If a directory does not exist, then create and add to the path.
+            % The assumption is that if the directory already exists,
+            % it is already in the path
+            if ~(exist(dir_name, 'dir') == 7)
+                mkdir(dir_name);
+                addpath(dir_name);
+            end
+        end
+        
         function dir = GetDirectoryForFile(filename)
             exist_result = exist(filename, 'file');
             

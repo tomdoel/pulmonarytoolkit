@@ -4,7 +4,7 @@ function CoreAddPaths(varargin)
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    CoreAddPaths_Version_Number = 2;
+    CoreAddPaths_Version_Number = 3;
     
     persistent Core_PathsHaveBeenSet
     
@@ -17,6 +17,7 @@ function CoreAddPaths(varargin)
         
         % List of folders to add to the path
         path_folders{end + 1} = '';
+        path_folders{end + 1} = 'File';
         path_folders{end + 1} = 'MexCompile';
         path_folders{end + 1} = 'MTest';
         path_folders{end + 1} = 'Reporting';

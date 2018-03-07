@@ -12,8 +12,8 @@ function results = PTKProcessAirwaySkeleton(skeleton_image, start_point, reporti
     %     start_point - coordinate of the first point in the skeleton (the
     %         trachea) as a coordinate vector [i,j,k]
     %
-    %     reporting (optional) - an object implementing the PTKReporting
-    %         interface for reporting progress and warnings
+    %     reporting (optional) - an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
     %
     %     Licence
@@ -135,6 +135,12 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
                 segments_to_do = skeleton_parent.GetIncompleteSegments;
             end
             
+            % Remove inedices outside of ROI
+            if any(neighbour_indices(:) > numel(skeleton))
+                neighbour_indices = neighbour_indices(neighbour_indices <= numel(skeleton));
+                reporting.ShowWarning('PTKProcessAirwaySkeleton:ExternalNeighbours', 'The airway skeleton touches the boundary of the ROI. This may lead to unexpected airway results.', []);
+            end
+
             % Get indices of neighbours which are part of the skeleton
             neighbour_indices = neighbour_indices(skeleton(neighbour_indices(:)));
             

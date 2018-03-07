@@ -47,7 +47,7 @@ classdef PTKSaveAirwayMesh < PTKPlugin
             results_upsampled.DownsampleImage(0.25);
 
             % Specifies the coordinate system to use when saving out files
-            coordinate_system = PTKCoordinateSystem.DicomUntranslated;
+            coordinate_system = MimCoordinateSystem.DicomUntranslated;
             
             template_image = results;
             

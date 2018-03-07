@@ -9,15 +9,15 @@ function deformation_field = PTKSolveMatchedImagesForFluidRegistration(image_to_
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    PTKImageUtilities.MatchSizes(reference_image, image_to_transform);
+    MimImageUtilities.MatchSizes(reference_image, image_to_transform);
     
     if ~isequal(image_to_transform.VoxelSize, reference_image.VoxelSize)
         reporting.Error('SolveMatchedImagesForFluidRegistration:UnequalVoxelSize', 'SolveMatchedImagesForFluidRegistration requires images to have the same voxel size');
     end
     
     % Convert to distance transforms
-    dt_float = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, image_to_transform, image_to_transform, reporting);
-    dt_ref = PTKRunForEachComponentAndCombine(@PTKImageUtilities.GetNormalisedDT, reference_image, reference_image, reporting);
+    dt_float = PTKRunForEachComponentAndCombine(@MimImageUtilities.GetNormalisedDT, image_to_transform, image_to_transform, reporting);
+    dt_ref = PTKRunForEachComponentAndCombine(@MimImageUtilities.GetNormalisedDT, reference_image, reference_image, reporting);
     
     % Solve to find the deformation field between these images
     [deformation_field, ~] = Solve(dt_float, dt_ref, reporting);

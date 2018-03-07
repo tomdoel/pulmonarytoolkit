@@ -1,9 +1,9 @@
 classdef MockImageTemplates < handle
     % MockImageTemplates. Part of the PTK test framework
     %
-    % This class is used in tests in place of a PTKImageTemplates. It allows
+    % This class is used in tests in place of a MimImageTemplates. It allows
     % expected calls to be verified, while maintaining some of the expected
-    % behaviour of a PTKImageTemplates object.
+    % behaviour of a MimImageTemplates object.
     %
     %
     %     Licence
@@ -55,8 +55,5 @@ classdef MockImageTemplates < handle
         % Stores the fact that a plugin has been run
         function NoteAttemptToRunPlugin(obj, plugin_name, context, reporting)
         end
-        
-        function InvalidateIfInDependencyList(obj, plugin_name, reporting)
-        end        
     end
 end

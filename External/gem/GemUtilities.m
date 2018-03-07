@@ -139,7 +139,12 @@ classdef GemUtilities
             dpi = round(screen_size_pixels(3)/screen_size_inches(3));
             
             % Get image
-            cdata = hardcopy(figureHandle, imageRenderer, ['-r' int2str(dpi)]);
+            try
+                % Hardcopy does not work in later versions
+                cdata = hardcopy(figureHandle, imageRenderer, ['-r' int2str(dpi)]);
+            catch ex
+                cdata = print('-RGBImage', figureHandle, '-opengl', ['-r' int2str(dpi)]);
+            end
             frame = im2frame(cdata);
             
             % Restore figure settings

@@ -51,7 +51,7 @@ classdef GemSlidingPanel < GemPanel
     end
     
     methods (Access = protected)
-        function input_has_been_processed = Scroll(obj, current_point, scroll_count)
+        function input_has_been_processed = Scroll(obj, current_point, scroll_count, src, eventdata)
             % Called when the mousewheel is used to scroll
             % positive scroll_count = scroll down
             current_value = obj.FloatingPanelYPosition;
@@ -178,7 +178,13 @@ classdef GemSlidingPanel < GemPanel
             
             slider_min = 0;
             slider_max = max(1, overlap_height);
-            new_steps = [min(1, 30/(overlap_height - 0)), 300/(overlap_height - 0)];
+            new_steps = [min(1, 30/(overlap_height - 0)), min(1, 300/(overlap_height - 0))];
+            
+            % This is to prevent an error where the slider is invisible but
+            % the steps are set nonetheless
+            if new_steps(2) <= new_steps(1)
+                new_steps(1) = new_steps(2)/10;
+            end
             obj.Slider.SetSliderLimits(slider_min, slider_max);
             obj.Slider.SetSliderSteps(new_steps);
             

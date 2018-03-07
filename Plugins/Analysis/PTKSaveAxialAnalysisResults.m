@@ -23,7 +23,7 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Axial analysis'
         ToolTip = 'Performs density analysis in bins along the cranial-caudal axis'
-        Category = 'Slice analysis'
+        Category = 'Slice-by-slice'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -36,6 +36,8 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 33
+        Icon = 'ax_slices.png'
     end
     
     methods (Static)
@@ -45,15 +47,15 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
             results = dataset.GetResult('PTKAxialAnalysis', contexts);            
             
-            % Convert the results into a PTKResultsTable
+            % Convert the results into a MimResultsTable
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
-            template = dataset.GetTemplateImage(PTKContext.LungROI);
-            patient_name = [template.MetaHeader.PatientName.FamilyName '-'  template.MetaHeader.PatientID];
+            patient_name = dataset.GetPatientName;
+
             table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
 
             % Save the results table as a series of CSV files
-            dataset.SaveTableAsCSV('PTKSaveAxialAnalysisResults', 'Axial analysis', 'AxialResults', 'Density analysis in bins along the cranial-caudal axis', table, PTKResultsTable.ContextDim, PTKResultsTable.SliceNumberDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveAxialAnalysisResults', 'Axial analysis', 'AxialResults', 'Density analysis in bins along the cranial-caudal axis', table, MimResultsTable.ContextDim, MimResultsTable.SliceNumberDim, MimResultsTable.MetricDim, []);
             
             x_label = 'Distance along axial axis (%)';
             
@@ -69,6 +71,10 @@ classdef PTKSaveAxialAnalysisResults < PTKPlugin
             
             results = [];
         end
+
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsCT();
+        end        
     end
     
     methods (Static, Access = private)

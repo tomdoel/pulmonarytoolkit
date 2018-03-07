@@ -12,7 +12,7 @@ function transformed_matrix = PTKRegisterImageAffineUsingCoordinates(image_to_tr
     %
 
     % We use augmented matrices for the affine transformation
-    [it, jt, kt] = PTKImageCoordinateUtilities.TransformCoordsAffine(i_r, j_r, k_r, affine_matrix);
+    [it, jt, kt] = MimImageCoordinateUtilities.TransformCoordsAffine(i_r, j_r, k_r, affine_matrix);
 
     % If we are using nearest point interpolation we should keep the same data
     % type as the source image; otherwise we shoud change to a floating point

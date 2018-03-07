@@ -1,16 +1,20 @@
 The Pulmonary Toolkit is a software suite for the analysis of 3D medical lung images for academic research use.
 
+It consists of:
+  * a GUI application for visualising and analysing clinical lung images (CT & MRI);
+  * a rapid prototyping framework for running existing algorithms and developing new algorithms;
+  * an API which allows you to use the framework from within your own code, independent of the GUI application;
+  * a library of lung analysis algorithms which can be used independently.
+
 This is experimental research software and is primarily intended to support our own work. However, we are happy for you to make use of the software, and we have therefore made the source code available for free under the open-source licence (GNU-GPL3).
 
-It comprises:
-  * a library of lung analysis algorithms which can be called from your own code;
-  * a GUI application for visualising and analysing clinical lung images (CT & MRI);
-  * a rapid prototyping framework for developing new algorithms. This fully integrates with the GUI application, or can be used within your own code or through scripting.
 
-This software requires Matlab (version R2010b or later) and the Matlab Image Processing Toolbox.
-Some features also require a C++ compiler.
+This software requires:
+ * Matlab (version R2011a or later)
+ * A C++ compiler is needed for a number of the segmentation routines
+ * Matlab Image Processing Toolbox
+ * Matlab Statistics and Machine Learning toolbox is currently needed to support some of the analtics (specifically prctile)
 
-**Note: The Toolkit will not run with earlier versions of Matlab**
 
 
 This software is intended for research purposes only. It is not intended for clinical use.
@@ -20,20 +24,17 @@ This software is intended for research purposes only. It is not intended for cli
 
 PDF tutorials can be found in the Downloads folder after checking out the project, or you can download them directly here:
 
-[Installing the Pulmonary Toolkit](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Installing.pdf)
+[Installing the Pulmonary Toolkit](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Installing.pdf)
 
-[Tutorial 1 - Loading and visualising data](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Tutorial%201.pdf)
+[Tutorial 1 - Loading and visualising data](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Tutorial%201.pdf)
 
-[Tutorial 2 - Exporting data](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Tutorial%202.pdf)
+[Tutorial 2 - Exporting data](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Tutorial%202.pdf)
 
-[Tutorial 3 - Programming with the Pulmonary Toolkit](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Tutorial%203.pdf)
+[Tutorial 3 - Programming with the Pulmonary Toolkit](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Tutorial%203.pdf)
 
-[Tutorial 4 - Lobar analysis of CT data](https://pulmonarytoolkit.googlecode.com/svn/trunk/Documentation/PTK%20-%20Tutorial%204.pdf)
+[Tutorial 4 - Lobar analysis of CT data](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Tutorial%204.pdf)
 
-
-More tutorial guides will be added in the near future.
-
-
+Please note that the tutorials only cover a few of the features of the Toolkit.
 
 ### What can I do with the Pulmonary Toolkit? ###
 
@@ -68,11 +69,11 @@ Please pull changes regularly from the GitHub repository to receive new features
 
 ### Support ###
 
-Support is provided via the wiki. Tutorials, documentation and help will be added to this wiki in the future.
+Support is provided via the Tutorials and the wiki.
 
 If you are experiencing problems, please make sure you have the required version of Matlab and the Imaging Processing Toolbox. Please also ensure you have a suitable C++ compiler installed and set up. The Toolkit will not work correctly without these.
 
-Please update your Subversion checkout to obtain the latest bug fixes.
+Please update your git checkout to obtain the latest bug fixes.
 
 The toolkit works primarily with medical Dicom images, but there is also limited support for mhd/mha files
 

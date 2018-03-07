@@ -438,6 +438,7 @@ function [values, values_replaced] = ReplaceOutliersWithMean(values)
 end
 
 function value = GenerateSpline(knots, num_points)
+    value = [];
     knots_add=zeros(size(knots, 1) + 2, size(knots, 2));
     knots_add(2 : size(knots, 1) + 1, :) = knots;
     knots_add(1, :) = knots_add(2, :) - (knots_add(3, :) - knots_add(2, :));

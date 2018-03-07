@@ -10,13 +10,16 @@ function PTKAddPaths(varargin)
     
     % This version number should be incremented whenever new paths are added to
     % the list
-    PTKAddPaths_Version_Number = 2;
+    PTKAddPaths_Version_Number = 6;
     
     persistent PTK_PathsHaveBeenSet
     
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     cached_pathname = [path_root '.' PTKAddPaths_Version_Number];
+    
+    % We force a class reset if the paths have changed since the last run
+    clear_classes = ~isempty(PTK_PathsHaveBeenSet) && ~strcmp(PTK_PathsHaveBeenSet, cached_pathname);
     
     if force || (isempty(PTK_PathsHaveBeenSet) || ~strcmp(PTK_PathsHaveBeenSet, cached_pathname))
         
@@ -27,19 +30,13 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = 'User';
         path_folders{end + 1} = 'bin';
         path_folders{end + 1} = 'Gui';
-        path_folders{end + 1} = fullfile('Gui', 'Tools');
-        path_folders{end + 1} = fullfile('Gui', 'Modes');
-
-        path_folders{end + 1} = 'Contexts';
         path_folders{end + 1} = 'Library';
         path_folders{end + 1} = 'Test';
         path_folders{end + 1} = fullfile('Library', 'Airways');
         path_folders{end + 1} = fullfile('Library', 'Analysis');
         path_folders{end + 1} = fullfile('Library', 'Conversion');
         path_folders{end + 1} = fullfile('Library', 'Dicom');
-        path_folders{end + 1} = fullfile('Library', 'File');
         path_folders{end + 1} = fullfile('Library', 'GuiComponents');
-        path_folders{end + 1} = fullfile('Library', 'Interfaces');
         path_folders{end + 1} = fullfile('Library', 'Lobes');
         path_folders{end + 1} = fullfile('Library', 'Lungs');
         path_folders{end + 1} = fullfile('Library', 'Registration');
@@ -47,11 +44,33 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('Library', 'Test');
         path_folders{end + 1} = fullfile('Library', 'Types');
         path_folders{end + 1} = fullfile('Library', 'Vessels');
-        path_folders{end + 1} = fullfile('Library', 'Utilities');
         path_folders{end + 1} = fullfile('Library', 'Visualisation');
         path_folders{end + 1} = 'Framework';
+        path_folders{end + 1} = 'Scripts';
         
         path_folders{end + 1} = fullfile('External', 'coremat');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Controllers');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'DatabaseSidePanel');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Panels');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'PatientBrowser');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Modes');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'Tools');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Gui', 'ViewerPanel');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Framework');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Legacy');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Filters');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Visualisation');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Conversion');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'File');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Segmentation');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Types');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Library', 'Utilities');
+        path_folders{end + 1} = fullfile('External', 'mim', 'Viewer');
+        path_folders{end + 1} = fullfile('External', 'mim', 'WebSocket');
+        path_folders{end + 1} = fullfile('External', 'mim', 'WebSocket', 'StorageClass');
+        path_folders{end + 1} = fullfile('External', 'mim', 'WebSocket', 'Models');
+        path_folders{end + 1} = fullfile('External', 'mim', 'WebSocket', 'MimModelFramework');
         path_folders{end + 1} = fullfile('External', 'gem');
         path_folders{end + 1} = fullfile('External', 'matnat');
         path_folders{end + 1} = fullfile('External', 'dicomat');
@@ -59,7 +78,22 @@ function PTKAddPaths(varargin)
         path_folders{end + 1} = fullfile('External', 'stlwrite');
         path_folders{end + 1} = fullfile('External', 'npReg');
         path_folders{end + 1} = fullfile('External', 'depmat');
+        path_folders{end + 1} = fullfile('External', 'MatlabWebSocket', 'src');
+        path_folders{end + 1} = fullfile('External', 'Nifti_tools');        
+        path_folders{end + 1} = fullfile('External', 'jsonlab-1.5', 'jsonlab-1.5');
         path_folders{end + 1} = fullfile('External', 'npReg', 'npRegLib');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'subfunctions');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'gipl');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'hdr');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'isi');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'mha');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'nii');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'par');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'v3d');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'vff');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'vmp');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'vtk');
+        path_folders{end + 1} = fullfile('External', 'ReadData3D', 'xif');
         
         AddToPath(path_root, path_folders);
         
@@ -80,7 +114,12 @@ function PTKAddPaths(varargin)
             path_folders{end + 1} = folder{1}.First;
         end
         
-        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'SharedPlugins'));
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'External', 'mim', 'Plugins'));
+        for folder = plugin_folders
+            path_folders{end + 1} = folder{1}.First;
+        end
+
+        plugin_folders = CoreDiskUtilities.GetRecursiveListOfDirectories(fullfile(path_root, 'External', 'mim', 'Gui', 'GuiPlugins'));
         for folder = plugin_folders
             path_folders{end + 1} = folder{1}.First;
         end
@@ -102,6 +141,11 @@ function PTKAddPaths(varargin)
                 feval(user_function_name);
             end
         end
+    end
+    
+    if clear_classes
+        close all
+        clear all classes
     end
 end
 

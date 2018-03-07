@@ -72,5 +72,4 @@ classdef GemImage < GemPositionlessUserInterfaceObject
             end
         end    
     end
-    
 end

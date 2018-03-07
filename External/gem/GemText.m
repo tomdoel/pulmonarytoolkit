@@ -1,4 +1,4 @@
-classdef GemText < GemUserInterfaceObject
+ classdef GemText < GemUserInterfaceObject
     % GemText GEM class for a read-only, clickable text object
     %
     %
@@ -103,7 +103,7 @@ classdef GemText < GemUserInterfaceObject
     
     methods (Access = protected)
         
-        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is clicked inside the control
 
             if ~obj.Clickable

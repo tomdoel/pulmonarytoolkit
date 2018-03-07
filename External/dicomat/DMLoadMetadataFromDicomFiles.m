@@ -10,7 +10,9 @@ function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, dico
     %                             metadata grouped into coherent sequences of images
     %
     %             image_path, filenames specify the location of the DICOM
-    %                             files.
+    %                             files. filenames can be a string for a
+    %                             single filename, or a cell array of
+    %                             strings
     %
     %             dicomLibrary    (Optional) An object implementing
     %                             DMDicomLibraryInterface, used to parse
@@ -45,6 +47,11 @@ function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, dico
     % Show a progress dialog
     reporting.ShowProgress('Reading image metadata');
     reporting.UpdateProgressValue(0);
+    
+    % A single filename canbe specified as a string
+    if ischar(filenames)
+        filenames = {filenames};
+    end
     
     % Sort the filenames into numerical order. Normally, this ordering will be
     % overruled by the ImagePositionPatient or SliceLocation tags, but in the

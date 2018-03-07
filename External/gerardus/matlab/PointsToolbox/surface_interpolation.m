@@ -150,6 +150,9 @@ switch PARAM
         m = mean(x, 2);
         em = x - m(:, ones(1, size(x, 2)));
         eigv = pts_pca(em);
+        if any(isnan(eigv(:)))
+            error('Cannot interpolate surface');
+        end
         em = eigv' * em;
         em = em(1:2, :);
         

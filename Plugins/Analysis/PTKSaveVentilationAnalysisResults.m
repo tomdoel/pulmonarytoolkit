@@ -18,7 +18,7 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Ventilation analysis'
         ToolTip = 'Performs ventilated volume analysis'
-        Category = 'Multi-modal analysis'
+        Category = 'Multi-modal'
         Mode = 'Analysis'
 
         Context = PTKContextSet.LungROI
@@ -31,21 +31,25 @@ classdef PTKSaveVentilationAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        Location = 21
     end
     
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
-            template = dataset.GetTemplateImage(PTKContext.LungROI);
-            patient_name = template.MetaHeader.PatientName.FamilyName;
+            patient_name = dataset.GetPatientName;
 
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung, PTKContextSet.Lobe};
             results = dataset.GetResult('PTKVentilationAnalysis', contexts);
             
-            table = PTKConvertMetricsToTable(results, patient_name, uid, CoreReportingDefault);
+            table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
             
-            dataset.SaveTableAsCSV('PTKSaveVentilationAnalysisResults', 'Ventilation analysis', 'VentilationResults', 'Ventilated volume', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveVentilationAnalysisResults', 'Ventilation analysis', 'VentilationResults', 'Ventilated volume', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
         end
+        
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsGasMRI() && gui_app.IsLinkedDataset('CT') && gui_app.IsLinkedDataset('MR');
+        end        
     end
 end

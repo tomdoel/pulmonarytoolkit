@@ -93,6 +93,24 @@ classdef GemListBox < GemPanel
             max_y = [];
         end
         
+        function id = GetNextItemId(obj)
+            id = [];
+            index = obj.GetIndexOfItem(obj.SelectedTag);
+            if index < numel(obj.Items)
+                next_item = obj.Items(index + 1);
+                id = next_item.Tag;
+            end
+        end
+
+        function id = GetPreviousItemId(obj)
+            id = [];
+            index = obj.GetIndexOfItem(obj.SelectedTag);
+            if index > 1
+                prev_item = obj.Items(index - 1);
+                id = prev_item.Tag;
+            end
+        end
+        
         function SelectItem(obj, tag, selected)
 
             obj.Deselect;
@@ -157,6 +175,33 @@ classdef GemListBox < GemPanel
         function num_items = NumItems(obj)
             num_items = numel(obj.Items);
         end
+        
+        function item = GetItem(obj, tag)
+            item = [];
+            item_index = 0;
+            while item_index < numel(obj.Items)
+                item_index = item_index + 1;
+                next_item = obj.Items(item_index);
+                if strcmp(next_item.Tag, tag)
+                    item = next_item;
+                    return
+                end
+            end
+        end
     end
     
+    methods (Access = private)
+        function index = GetIndexOfItem(obj, tag)
+            item_index = 0;
+            while item_index < numel(obj.Items)
+                item_index = item_index + 1;
+                item = obj.Items(item_index);
+                if strcmp(item.Tag, tag)
+                    index = item_index;
+                    return
+                end
+            end
+            index = [];
+        end        
+    end
 end

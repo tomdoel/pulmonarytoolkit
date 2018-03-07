@@ -22,7 +22,6 @@ function CoreCompileMexFiles(mex_cache, output_directory, mex_files_to_compile, 
     %     Distributed under the MIT licence. Please see website for details.
     %    
     
-    reporting.ShowProgress('Checking mex files');
     cached_mex_file_info = mex_cache.MexInfoMap;
     framework_cache_was_missing = mex_cache.IsNewlyCreated;
     
@@ -38,7 +37,6 @@ function CoreCompileMexFiles(mex_cache, output_directory, mex_files_to_compile, 
     end
     
     mex_cache.UpdateCache(mex_files_to_compile, reporting);
-    reporting.CompleteProgress;
 end
 
 function compiler = MexSetup(retry_instructions, reporting)
@@ -67,23 +65,25 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
         mex_file = mex_file_s{1};
         
         if (~mex_file.NeedsRecompile) && (~force_recompile)
-            reporting.Log([mex_file.Name ' is up to date']);
+            reporting.LogVerbose([mex_file.Name ' is up to date']);
             if ~strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoRecompileNeeded')
                 reporting.Error('CoreCompileMexFiles:WrongStatus', 'Program error: mex status should be OK if a recompile is not required');
             end
         else
             if strcmp(mex_file.StatusID, 'CoreCompileMexFiles:VersionChanged')
-                reporting.ShowMessage('CoreCompileMexFiles:VersionChanged', [mex_file.Name ' is out of date']);
+                reporting.ShowMessage('CoreCompileMexFiles:VersionChanged', [mex_file.Name ' is out of date.']);
+            elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:TimestampChanged')
+                reporting.ShowMessage('CoreCompileMexFiles:TimestampChanged', [mex_file.Name ' has been modified.']);
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:CompiledFileRemoved')
                 reporting.ShowMessage('CoreCompileMexFiles:CompiledFileRemoved', [mex_file.Name ': The compiled mex file was removed and must be recompiled.']);
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:FileAdded')
                 reporting.ShowMessage('CoreCompileMexFiles:FileAdded', ['A new mex file ' mex_file.Name ' has been found and requires compilation.']);
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoCachedInfoForMex')
-                reporting.ShowMessage('CoreCompileMexFiles:NoCachedInfoForMex', [mex_file.Name ' requires compilation.']);
+                reporting.Log([mex_file.Name ' requires compilation.']);
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:CacheFileDeleted')
                 reporting.ShowMessage('CoreCompileMexFiles:CacheFileDeleted', [mex_file.Name ' requires recompilation because it appears the cache file ' framework_cache.GetCacheFilename ' was deleted.']);
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:CompiledFileNotFound')
-                reporting.ShowMessage('CoreCompileMexFiles:CompiledFileNotFound', [mex_file.Name ' requires compilation.']);
+                reporting.Log([mex_file.Name ' requires compilation.']);
 
 
             elseif strcmp(mex_file.StatusID, 'CoreCompileMexFiles:NoRecompileNeeded')
@@ -95,17 +95,27 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
             else
                 reporting.Error('CoreCompileMexFiles:UnexpectedStatus', 'Program error: An unexpected status condiiton was found'); 
             end
-                
+
+            src_filename = [mex_file.Name '.' mex_file.Extension];
+            src_fullfile = fullfile(mex_file.Path, src_filename);
+            files = dir(src_fullfile);
+            last_modified_datenum = files.date;
+            
             if cached_mex_file_info.isKey(mex_file.Name)
                 cached_mex_file = cached_mex_file_info(mex_file.Name);
                 version_unchanged_since_last_compilation_attempt = isequal(cached_mex_file.LastAttemptedCompiledVersion, mex_file.CurrentVersion);
                 compiler_unchanged_since_last_compilation_attempt = isequal(cached_mex_file.LastAttemptedCompiler, compiler);
+                if isempty(cached_mex_file.LastAttemptedCompileDatenum)
+                    datenum_unchanged_since_last_compilation_attempt = true;
+                else
+                    datenum_unchanged_since_last_compilation_attempt = isequal(cached_mex_file.LastAttemptedCompileDatenum, last_modified_datenum);
+                end
                 compiled_failed_last_time = cached_mex_file.LastCompileFailed;
                 if isempty(compiled_failed_last_time)
                     compiled_failed_last_time = false;
                 end
                 
-                if compiled_failed_last_time && version_unchanged_since_last_compilation_attempt && compiler_unchanged_since_last_compilation_attempt;
+                if compiled_failed_last_time && version_unchanged_since_last_compilation_attempt && compiler_unchanged_since_last_compilation_attempt && datenum_unchanged_since_last_compilation_attempt;
                     try_compilation_again = false;
                 else
                     try_compilation_again = true;
@@ -114,8 +124,6 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
                 try_compilation_again = true;
             end
             
-            src_filename = [mex_file.Name '.' mex_file.Extension];
-            src_fullfile = fullfile(mex_file.Path, src_filename);
             if ~(try_compilation_again || force_recompile)
                 reporting.ShowWarning('CoreCompileMexFiles:NotRecompiling', ['The mex source file ' src_fullfile ' needs recompilation, but the previous attempt to compile failed so I am not going to try again. You need to force a recompilation.' retry_instructions], []);
             else
@@ -124,18 +132,29 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
                 else
                     if ~progress_message_showing_compile
                         progress_message_showing_compile = true;
-                        reporting.UpdateProgressMessage('Compiling mex files');
+                        reporting.ShowProgress('Compiling mex files');
                     end
+                    use_cuda = false;
                     if isa(mex_file, 'CoreCudaInfo')
+                        if isempty(cuda_compiler)
+                            reporting.ShowWarning('CoreCompileMexFiles:NoCudaCompilerFound', ['The mex source file ' src_fullfile ' requires the CUDA SDK to be installed.'], []);
+                        else
+                            use_cuda = true;
+                        end
+                    end
+                    
+                    if use_cuda
                         mex_result = CoreCudaCompile.Compile(cuda_compiler, mex_file, src_fullfile, output_directory);
                     else
                         mex_result = CoreMexCompile.Compile(compiler, mex_file, src_fullfile, output_directory);
                     end
                     mex_file.LastAttemptedCompiledVersion = mex_file.CurrentVersion;
                     mex_file.LastAttemptedCompiler = compiler;
+                    mex_file.LastAttemptedCompileDatenum = last_modified_datenum;
                     if (mex_result == 0)
                         mex_file.LastCompileFailed = false;
                         mex_file.LastSuccessfulCompiledVersion = mex_file.CurrentVersion;
+                        mex_file.LastSuccessfulCompileDatenum = last_modified_datenum;
                         mex_file.LastSuccessfulCompiler = compiler;
                         reporting.ShowMessage('CoreCompileMexFiles:MexCompilationSucceeded', [' - ' src_filename ' compiled successfully.']);
                     else
@@ -145,6 +164,9 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
                 end
             end
         end
+    end
+    if progress_message_showing_compile
+        reporting.CompleteProgress;        
     end
 end
 
@@ -164,16 +186,30 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
         if cached_mex_file_info.isKey(mex_file.Name)
             cached_mex_file = cached_mex_file_info(mex_file.Name);
             
+            file_info = dir(fullfile(mex_file.Path, [mex_file.Name '.' mex_file.Extension]));
+            if numel(file_info) > 0
+                current_file_timestamp = file_info.date;
+            else
+                current_file_timestamp = [];
+            end
+            
             % Copy across the cached values
             mex_file.LastSuccessfulCompiledVersion = cached_mex_file.LastSuccessfulCompiledVersion;
             mex_file.LastSuccessfulCompiler = cached_mex_file.LastSuccessfulCompiler;
             mex_file.LastAttemptedCompiledVersion = cached_mex_file.LastAttemptedCompiledVersion;
             mex_file.LastAttemptedCompiler = cached_mex_file.LastAttemptedCompiler;
             mex_file.LastCompileFailed = cached_mex_file.LastCompileFailed;
+            mex_file.LastAttemptedCompileDatenum = cached_mex_file.LastAttemptedCompileDatenum;
+            mex_file.LastSuccessfulCompileDatenum = cached_mex_file.LastSuccessfulCompileDatenum;
             
             if ~isequal(cached_mex_file.LastSuccessfulCompiledVersion, mex_file.CurrentVersion)
                 mex_file.StatusID = 'CoreCompileMexFiles:VersionChanged';
                 mex_file.NeedsRecompile = true;
+                
+            elseif ~isequal(cached_mex_file.LastSuccessfulCompileDatenum, current_file_timestamp)
+                mex_file.StatusID = 'CoreCompileMexFiles:TimestampChanged';
+                mex_file.NeedsRecompile = true;
+                
             else
                 mex_file.StatusID = 'CoreCompileMexFiles:NoRecompileNeeded';
             end
@@ -217,7 +253,7 @@ function CheckMexFiles(mex_files_to_compile, cached_mex_file_info, output_direct
     end
 end
 
-function name = GetNameOfCppCompiler
+function name = GetNameOfCppCompiler()
     cc = mex.getCompilerConfigurations('C++', 'Selected');
     if isempty(cc)
         name = [];
@@ -226,11 +262,10 @@ function name = GetNameOfCppCompiler
     end
 end
 
-function cuda_compiler = GetCudaCompiler
-    if ispc
-        [status, cuda_compiler] = system('where nvcc');
-
-        if status ~= 0
+function cuda_compiler = GetCudaCompiler()
+    cuda_compiler = CoreSystemUtilities.FindFirstExecutableOnPath('nvcc');
+    if isempty(cuda_compiler)
+        if ispc
             cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramFiles'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
             if isempty(cuda_compiler)
                 cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramW6432'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
@@ -238,18 +273,10 @@ function cuda_compiler = GetCudaCompiler
             if isempty(cuda_compiler)
                 cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramFiles(x86)'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
             end
-            if isempty(cuda_compiler)
-                disp('Cannot find nvcc');
-            end
-        end
-    else
-        [status, cuda_compiler] = system('which nvcc');
-
-        if status ~= 0
+        else
             if 2 == exist('/usr/local/cuda/bin/nvcc', 'file')
                 cuda_compiler = '/usr/local/cuda/bin/nvcc';
             else
-                disp('Cannot find nvcc');
                 cuda_compiler = [];
             end
         end
@@ -263,7 +290,7 @@ function compiler = TryToFindCudaCompilerPc(base_dir)
     for dir_name = directories
         bin_dir = fullfile(base_dir, dir_name{1}, 'bin');
         if isdir(bin_dir)
-            compiler = bin_dir;
+            compiler = fullfile(bin_dir, 'NVCC.EXE');
             return;
         end
     end

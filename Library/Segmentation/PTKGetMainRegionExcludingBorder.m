@@ -12,8 +12,8 @@ function main_image = PTKGetMainRegionExcludingBorder(threshold_image, minimum_r
     %     minimum_region_volume_mm3 (optional) - ignore any regions below this
     %         threshold
     %
-    %     reporting (optional) - an object implementing the PTKReporting
-    %         interface for reporting progress and warnings
+    %     reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %
     % Outputs:
     %     main_image - a PTKImage binary volume of the found region
@@ -63,7 +63,8 @@ function main_image = PTKGetMainRegionExcludingBorder(threshold_image, minimum_r
     end
     
     if numel(results) == 0
-        return; % ToDo
+        main_image = [];
+        reporting.Error('PTKGetMainRegionExcludingBorder:NoRegionFound', 'No region could be found');
     end
     
     if numel(results) > 1
@@ -88,12 +89,12 @@ function main_image = PTKGetMainRegionExcludingBorder(threshold_image, minimum_r
         
         use_both_regions = false;
         if (bb_1(2) >= image_centre_j - centre_offset) && (bb_2(5) < image_centre_j + centre_offset)
-            reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
+            reporting.LogVerbose('I appear to have found 2 disconnected lungs. I am connecting them.');
             use_both_regions = true;
         end
         
         if (bb_2(2) >= image_centre_j - centre_offset) && (bb_1(5) < image_centre_j + centre_offset)
-            reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LungsDisconnected', 'I appear to have found 2 disconnected lungs. I am connecting them.');
+            reporting.LogVerbose('I appear to have found 2 disconnected lungs. I am connecting them.');
             use_both_regions = true;
         end
     else
@@ -143,7 +144,7 @@ function [results, CC] = OpenAndGetRegions(bordered_image_input, opening_mm, vox
         bordered_image(CC.PixelIdxList{current_region_being_checked}) = true;
         if (bordered_image(1) || bordered_image(end))
             % This region is connected to the edge
-            reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LargestROIConnectedToExterior', 'The largest region connected with the edge of the volume. I''m assuming this region is outside the body so choosing the next largest region');
+%             reporting.ShowMessage('PTKGetMainRegionExcludingBorder:LargestROIConnectedToExterior', 'The largest region connected with the edge of the volume. I''m assuming this region is outside the body so choosing the next largest region');
         else
             results(result_index) = current_region_being_checked;
             result_index = result_index + 1;

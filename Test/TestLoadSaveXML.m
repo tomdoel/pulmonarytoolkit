@@ -12,12 +12,14 @@ classdef TestLoadSaveXML < CoreTest
     methods
         function obj = TestLoadSaveXML
             reporting = CoreReportingDefault;
-            test_class = obj.getTestClass;
+            test_class = obj.getTestClass('MimStruct');
             obj.TestLoadAndSave(test_class, reporting);
+            test_class_2 = obj.getTestClass('TestClass');
+            obj.TestLoadAndSaveWithClassConversion(test_class_2, reporting, 'MimStruct');
         end
 
-        function test_class = getTestClass(obj)
-            test_class = PTKStruct;
+        function test_class = getTestClass(obj, class_name)
+            test_class = feval(class_name);
             test_class.AddField('Avalue', 'ValueA');
             test_class.AddField('Bvalue', [42, 1, -53, 9]);
             test_class.AddField('Cvalue', uint8(43));
@@ -27,6 +29,17 @@ classdef TestLoadSaveXML < CoreTest
             test_class.AddField('Gvalue', [true, false; false, true]);
             test_class.AddField('Hvalue', [42; -1; -53; 99]);
             test_class.AddField('Ivalue', {magic(2), magic(3); [1,2,3], 'Magic'; [], false});
+            
+            test_class_1 = TestClass();
+            test_class_1.AddField('O', 'Pvalue');
+            test_class_2 = TestClass();
+            test_class_2.AddField('Q', 'RValue');
+            test_class_3 = TestClass();
+            test_class_3.AddField('S', 'TValue');
+            
+            test_class.AddField('SingleClass', test_class_1);
+            test_class.AddField('ClassArray', [test_class_2, test_class_3]);
+            test_class.AddField('StructArray', [struct('M', 1, 'N', 'blah'), struct('M', 2, 'N', 'oh')]);            
             
             im_info = obj.GetTestImageInfo;
             test_class.AddField('Jvalue', im_info);
@@ -50,7 +63,7 @@ classdef TestLoadSaveXML < CoreTest
             im_info = PTKImageInfo;
             im_info.ImagePath = 'ABCDE/GHIJK';
             im_info.ImageFilenames = {'0.dcm', '1.dcm', '2.dcm'};
-            im_info.ImageFileFormat = PTKImageFileFormat.Matlab;
+            im_info.ImageFileFormat = MimImageFileFormat.Matlab;
             im_info.Modality = 'CT';
         end
         
@@ -66,17 +79,42 @@ classdef TestLoadSaveXML < CoreTest
             test_struct.Gvalue = [true, false; false, true];
             test_struct.Hvalue = [42; -1; -53; 99];
             test_struct.Ivalue = {magic(2), magic(3); [1,2,3], 'Blah'; [], false};
+            test_class_1 = TestClass();
+            test_class_1.AddField('O', 'Pvalue');
+            test_class_2 = TestClass();
+            test_class_2.AddField('Q', 'RValue');
+            test_class_3 = TestClass();
+            test_class_3.AddField('S', 'TValue');
+            test_struct.SingleClass = test_class_3;
+            test_struct.ClassArray = [test_class_1, test_class_2];
+            test_struct.StructArray = [struct('M', 1, 'N', 'blah'), struct('M', 2, 'N', 'oh')];
         end
         
         
         function TestLoadAndSave(obj, base_class, reporting)
             temp_folder = tempdir;
             file_name = 'TestXML.xml';
-            CoreSaveXml(base_class, 'Test', PTKFilename(temp_folder, file_name), reporting);
-            loaded_base_class = CoreLoadXml(PTKFilename(temp_folder, file_name), reporting);
+            CoreSaveXml(base_class, 'Test', CoreFilename(temp_folder, file_name), reporting);
+            loaded_base_class = CoreLoadXml(CoreFilename(temp_folder, file_name), reporting);
             loaded_base_class = loaded_base_class.Test;
             
             obj.TestEquality(base_class, loaded_base_class);
+            obj.Assert(isequal(class(base_class), class(loaded_base_class)), 'Same class');
+        end
+
+        function TestLoadAndSaveWithClassConversion(obj, base_class, reporting, new_class_name)
+            temp_folder = tempdir;
+            file_name = 'TestXML.xml';
+            CoreSaveXml(base_class, 'Test', CoreFilename(temp_folder, file_name), reporting);
+            
+            conversion_map = containers.Map;
+            conversion_map(class(base_class)) = new_class_name;
+            loaded_base_class = CoreLoadXml(CoreFilename(temp_folder, file_name), reporting, conversion_map);
+            loaded_base_class = loaded_base_class.Test;
+            
+            obj.TestEquality(base_class, loaded_base_class);
+            obj.Assert(~isequal(class(base_class), class(loaded_base_class)), 'Not same class');
+            obj.Assert(isequal(new_class_name, class(loaded_base_class)), 'Not same class');
         end
         
         function TestEquality(obj, class_1, class_2)

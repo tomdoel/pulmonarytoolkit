@@ -15,40 +15,27 @@ classdef GemPanel < GemUserInterfaceObject
     
     properties
         BackgroundColour
-        BorderColour
     end
     
     properties (SetObservable)
-        LeftBorder = false
-        RightBorder = false
-        TopBorder = false
-        BottomBorder = false
+        BorderColour
+    end
+    
+    properties (Dependent)
+        LeftBorder
+        RightBorder
+        TopBorder
+        BottomBorder
     end
     
     methods
         function obj = GemPanel(parent_handle)
             obj = obj@GemUserInterfaceObject(parent_handle);
             obj.BackgroundColour = obj.StyleSheet.BackgroundColour;
-
-            % We listen to changes in the border properties so we know when
-            % to create axes for the lines which comprise the borders
-            obj.AddPostSetListener(obj, 'LeftBorder', @obj.BorderChangedCallback);
-            obj.AddPostSetListener(obj, 'RightBorder', @obj.BorderChangedCallback);
-            obj.AddPostSetListener(obj, 'TopBorder', @obj.BorderChangedCallback);
-            obj.AddPostSetListener(obj, 'BottomBorder', @obj.BorderChangedCallback);
+            obj.AddPostSetListener(obj, 'BorderColour', @obj.BorderColourChangedCallback);            
         end
         
         function CreateGuiComponent(obj, position)
-            if ~isempty(obj.BorderAxes)
-                obj.BorderAxes.TopLine = obj.TopBorder;
-                obj.BorderAxes.BottomLine = obj.BottomBorder;
-                obj.BorderAxes.LeftLine = obj.LeftBorder;
-                obj.BorderAxes.RightLine = obj.RightBorder;
-                if ~isempty(obj.BorderColour)
-                    obj.BorderAxes.Colour = obj.BorderColour;
-                end
-            end
-            
             obj.GraphicalComponentHandle = uipanel('Parent', obj.Parent.GetContainerHandle, 'BorderType', 'none', 'Units', 'pixels', ...
                 'BackgroundColor', obj.BackgroundColour, 'ForegroundColor', obj.StyleSheet.TextPrimaryColour, 'ResizeFcn', '', 'Position', position);
         end
@@ -99,15 +86,90 @@ classdef GemPanel < GemUserInterfaceObject
                 inner_position(4) = inner_position(4) - 1;
             end
         end
+        
+        function set.LeftBorder(obj, border)
+            if border
+                obj.lazyCreateBorderAxes();
+            end
+            if ~isempty(obj.BorderAxes)
+                obj.BorderAxes.LeftLine = border;
+            end
+        end
+        
+        function border = get.LeftBorder(obj)
+            if isempty(obj.BorderAxes)
+                border = false;
+            else
+                border = obj.BorderAxes.LeftLine;
+            end
+        end        
+        function set.RightBorder(obj, border)
+            if border
+                obj.lazyCreateBorderAxes();
+            end
+            if ~isempty(obj.BorderAxes)
+                obj.BorderAxes.RightLine = border;
+            end
+        end
+        
+        function border = get.RightBorder(obj)
+            if isempty(obj.BorderAxes)
+                border = false;
+            else
+                border = obj.BorderAxes.RightLine;
+            end
+        end        
+        function set.TopBorder(obj, border)
+            if border
+                obj.lazyCreateBorderAxes();
+            end
+            if ~isempty(obj.BorderAxes)
+                obj.BorderAxes.TopLine = border;
+            end
+        end
+        
+        function border = get.TopBorder(obj)
+            if isempty(obj.BorderAxes)
+                border = false;
+            else
+                border = obj.BorderAxes.TopLine;
+            end
+        end        
+        function set.BottomBorder(obj, border)
+            if border
+                obj.lazyCreateBorderAxes();
+            end
+            if ~isempty(obj.BorderAxes)
+                obj.BorderAxes.BottomLine = border;
+            end
+        end
+        
+        function border = get.BottomBorder(obj)
+            if isempty(obj.BorderAxes)
+                border = false;
+            else
+                border = obj.BorderAxes.BottomLine;
+            end
+        end        
     end
     
     methods (Access = protected)
-        function BorderChangedCallback(obj, ~, ~, ~)
-            if isempty(obj.BorderAxes) && (obj.LeftBorder || obj.RightBorder || obj.TopBorder || obj.BottomBorder)
+        function BorderColourChangedCallback(obj, ~, ~, ~)
+            if ~isempty(obj.BorderAxes)
+                obj.BorderAxes.LineColour = obj.BorderColour;
+            end
+        end
+        
+        function lazyCreateBorderAxes(obj)
+            if isempty(obj.BorderAxes)
                 obj.BorderAxes = GemLineAxes(obj);
+                if ~isempty(obj.BorderColour)
+                    obj.BorderAxes.LineColour = obj.BorderColour;
+                end                
                 obj.AddChild(obj.BorderAxes);
             end
         end
+        
     end
 
 end

@@ -20,7 +20,7 @@ function new_mask = PTKAddMissingCoronalEdgeSlices(mask_image, resample_voxel_si
         bounds = new_mask.GetBounds;
     end
     mask_resampled.Resample(resample_voxel_size, '*nearest');
-    mask_resampled = PTKGaussianFilter(mask_resampled, 20);
+    mask_resampled = MimGaussianFilter(mask_resampled, 20);
     mask_resampled.ChangeRawImage(mask_resampled.RawImage > 0.5);
     mask_resampled.Resample(mask_image.VoxelSize, '*nearest');
     mask_resampled.ResizeToMatch(new_mask);

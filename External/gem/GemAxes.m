@@ -43,10 +43,6 @@ classdef GemAxes < GemUserInterfaceObject
             current_point = get(obj.GraphicalComponentHandle, 'CurrentPoint');
         end
         
-        function SetContextMenu(obj, context_menu)
-            set(obj.GraphicalComponentHandle, 'uicontextmenu', context_menu);
-        end
-        
         function EnablePan(obj, enabled)
             if ~isempty(obj.GraphicalComponentHandle)
                 if enabled
@@ -54,7 +50,11 @@ classdef GemAxes < GemUserInterfaceObject
                 else
                     param = 'off';
                 end
+                obj.ClearCallbacks;
                 pan(obj.GraphicalComponentHandle, param);
+                if enabled
+                    obj.RestoreCustomKeyPressCallback;
+                end
             end
         end        
         
@@ -65,7 +65,26 @@ classdef GemAxes < GemUserInterfaceObject
                 else
                     param = 'off';
                 end
+                obj.ClearCallbacks;
                 zoom(obj.GraphicalComponentHandle, param);
+                if enabled
+                    obj.RestoreCustomKeyPressCallback;
+                end
+            end
+        end
+        
+        function EnableRotate3d(obj, enabled)
+            if ~isempty(obj.GraphicalComponentHandle)
+                if enabled
+                    param = 'on';
+                else
+                    param = 'off';
+                end
+                obj.ClearCallbacks;
+                rotate3d(obj.GraphicalComponentHandle, param);
+                if enabled
+                    obj.RestoreCustomKeyPressCallback;
+                end
             end
         end
         
@@ -177,5 +196,43 @@ classdef GemAxes < GemUserInterfaceObject
             set(obj.GraphicalComponentHandle, 'Position', old_position);            
         end
         
+        function Clear(obj)
+            if ~isempty(obj.GraphicalComponentHandle)
+                cla(obj.GraphicalComponentHandle, 'reset');
+            end
+        end
+    end
+
+    methods (Access = protected)
+        
+        function input_has_been_processed = MouseDown(obj, click_point, selection_type, src, eventdata)
+            % This method is called when the mouse is clicked inside the control
+            
+            input_has_been_processed = obj.MatlabMouseDown(click_point, selection_type, src, eventdata);
+        end
+
+        function input_has_been_processed = MouseUp(obj, click_point, selection_type, src, eventdata)
+            % This method is called when the mouse is clicked inside the control
+
+            input_has_been_processed = obj.MatlabMouseUp(click_point, selection_type, src, eventdata);
+        end
+        
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src, eventdata)
+            % This method is called when the mouse is clicked inside the control
+
+            input_has_been_processed = obj.MatlabMouseHasMoved(click_point, selection_type, src, eventdata);
+        end
+        
+        function input_has_been_processed = MouseDragged(obj, click_point, selection_type, src, eventdata)
+            % This method is called when the mouse is clicked inside the control
+
+            input_has_been_processed = obj.MatlabMouseDragged(click_point, selection_type, src, eventdata);
+        end
+        
+        function input_has_been_processed = Scroll(obj, click_point, scroll_count, src, eventdata)
+            % This method is called when the mouse is clicked inside the control
+            
+            input_has_been_processed = obj.MatlabScroll(click_point, scroll_count, src, eventdata);
+        end
     end
 end

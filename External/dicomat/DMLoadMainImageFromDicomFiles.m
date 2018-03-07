@@ -1,4 +1,4 @@
-function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting)
+function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, sorted_positions] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting)
     % DMLoadMainImageFromDicomFiles Loads a series of DICOM files into a coherent 3D volume.
     %
     % DMLoadMainImageFromDicomFiles parses the Dicom files and groups them into
@@ -8,7 +8,7 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
     %     Syntax
     %     ------
     %
-    %         imageWrapper = DMLoadMainImageFromDicomFiles(path, filenames, dicomLibrary, reporting)
+    %         [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, sorted_positions] = DMLoadMainImageFromDicomFiles(path, filenames, dicomLibrary, reporting)
     %
     %             imageWrapper    a CoreWrapper containing the 3D volume
     %
@@ -19,8 +19,13 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
     %
     %             globalOriginMm  The mm coordinates of the image origin
     %
-    %             path, filename  specify the location of the DICOM files to
-    %                             load
+    %             sorted_positions  Patient positions for each slice in the
+    %                             sorted order
+    %
+    %             path, filenames  specify the location of the DICOM files to
+    %                             load. filenames can be a string for a
+    %                             single filename, or a cell array of
+    %                             strings
     %
     %             dicomLibrary    (Optional) An object implementing
     %                             DMDicomLibraryInterface, used to parse
@@ -53,6 +58,11 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
         dicomLibrary = DMDicomLibrary.getLibrary;
     end
     
+    % A single filename canbe specified as a string
+    if ischar(filenames)
+        filenames = {filenames};
+    end
+    
     % Load the metadata from the DICOM images, and group into coherent sequences
     fileGrouper = DMLoadMetadataFromDicomFiles(imagePath, filenames, dicomLibrary, reporting);
     
@@ -66,7 +76,7 @@ function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm] 
     main_group = fileGrouper.GetLargestGroup;
     
     % Sort the images into the correct order
-    [sliceThickness, globalOriginMm] = main_group.SortAndGetParameters(reporting);
+    [sliceThickness, globalOriginMm, sorted_positions] = main_group.SortAndGetParameters(reporting);
 
     % Obtain a representative set of metadata tags from the first image in the
     % sequence

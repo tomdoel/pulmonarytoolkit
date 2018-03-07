@@ -1,0 +1,3 @@
+classdef TestClass < MimStruct
+end
+

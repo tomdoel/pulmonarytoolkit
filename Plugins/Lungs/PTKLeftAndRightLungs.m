@@ -33,8 +33,11 @@ classdef PTKLeftAndRightLungs < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         
-        EnableModes = PTKModes.EditMode
-        SubMode = PTKSubModes.EditBoundariesEditing
+        EnableModes = MimModes.EditMode
+        SubMode = MimSubModes.EditBoundariesEditing
+
+        MemoryCachePolicy = 'Temporary'
+        DiskCachePolicy = 'Permanent'
     end
     
     methods (Static)

@@ -19,9 +19,10 @@ classdef PTKMetrics < dynamicprops
         end
         
         function AddMetric(obj, property_name, value, user_visible_name)
-            obj.addprop(property_name);
-            obj.(property_name) = value;
-            obj.MetricNameMap(property_name) = user_visible_name;
+            valid_property_name = CoreTextUtilities.CreateValidFieldName(property_name);
+            obj.addprop(valid_property_name);
+            obj.(valid_property_name) = value;
+            obj.MetricNameMap(valid_property_name) = user_visible_name;
         end
         
         function property_list = GetListOfMetrics(obj)
@@ -44,6 +45,30 @@ classdef PTKMetrics < dynamicprops
                 obj.AddMetric([prefix, metric], metrics.(metric), [user_visible_prefix, metrics.MetricNameMap(metric)]);
             end
         end
+    end
+    
+    methods (Static)
+        function results = MergeResults(results_1, results_2)
+            if isempty(results_2)
+                results = results_1;
+            else
+                metric_names = unique([fieldnames(results_1), fieldnames(results_2)]);
+                results = [];
+                for metric_cell = metric_names'
+                    metric_name = metric_cell{1};
+                    if isfield(results_1, metric_name)
+                        results.(metric_name) = results_1.(metric_name);
+                    end
+                    if isfield(results, metric_name)
+                        if isfield(results_2, metric_name)
+                            results.(metric_name).Merge(results_2.(metric_name))
+                        else
+                            results.(metric_name) = results_2.(metric_name);
+                        end
+                    end
+                end
+            end
+        end 
     end
 end
 

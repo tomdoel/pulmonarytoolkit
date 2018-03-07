@@ -8,7 +8,8 @@ classdef GemListBoxControlPanel < GemPanel
     %     Distributed under the MIT licence. Please see website for details.
     %    
     
-    properties (Constant)
+    properties
+        TitleLeftPadding = 5
         ButtonFontSize = 12
         TitleFontSize = 11
         ButtonSize = 16
@@ -55,7 +56,7 @@ classdef GemListBoxControlPanel < GemPanel
             panel_height = panel_position(4);
             
             text_width = panel_width; % Text is full width of control to ensure scrolling list box is blocked out
-            text_position = [1, 0, text_width, panel_height];
+            text_position = [1 + obj.TitleLeftPadding, 0, text_width, panel_height];
             obj.TitleText.Resize(text_position);
             
             delete_button_position = [text_width - 2*obj.ButtonSize - obj.ButtonSpacing, obj.ButtonSpacing, obj.ButtonSize, obj.ButtonSize];

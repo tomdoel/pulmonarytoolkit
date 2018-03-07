@@ -35,8 +35,8 @@ function filtered_image = PTKImageDivider(image_data, filter_function, mask, gau
     %                 progress bar. Processing the left lung corresponds to the
     %                 right half of the progress bar. If [] is specified, the
     %                 left lung is assumed and a warning is issued.
-    %             reporting - a PTKReporting object for progress, warning and
-    %                 error reporting.
+    %             reporting       an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
     %     Notes
     %     -----
     %         The filter_function is a handle to a function of the form
@@ -59,7 +59,7 @@ function filtered_image = PTKImageDivider(image_data, filter_function, mask, gau
     %
 
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
-        reporing.Warning('PTKImageDivider:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
+        reporing.ShowWarning('PTKImageDivider:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
     end
 
     % Check the input image is of the correct form
@@ -78,7 +78,7 @@ function filtered_image = PTKImageDivider(image_data, filter_function, mask, gau
   
     % Gaussian filter
     if ~isempty(gaussian_sigma) && (gaussian_sigma > 0)
-        image_data = PTKGaussianFilter(image_data, gaussian_sigma);
+        image_data = MimGaussianFilter(image_data, gaussian_sigma);
     end
     
     % Progress ia split between left and right lungs

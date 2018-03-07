@@ -10,23 +10,33 @@ function updated = PTKUpdate(varargin)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    updated = false;
-    if checkDoNotUpdate && ~(nargin > 0 && strcmp(varargin{1}, 'force'))
-        disp('Ignoring updates as requested by user.');
-    elseif ~isWebsiteFound
-        disp('Ignoring updates as cannot connect to repository.');        
-    else
-        clearDoNotUpdate;
-        full_path = mfilename('fullpath');
-        [rootSourceDir, ~, ~] = fileparts(full_path);
-        [rootSourceDir, ~, ~] = fileparts(rootSourceDir);
-        repoList = DepMatRepo('pulmonarytoolkit', 'master', 'https://github.com/tomdoel/pulmonarytoolkit.git', 'pulmonarytoolkit');
-        depMat = DepMat(repoList, rootSourceDir);
-        status = depMat.getAllStatus;
+    persistent PTK_LastUpdated
     
-        if ~isMasterBranch
-            disp('! Cannot check for updates as the master branch is not checked out');
+    force_update = nargin > 0 && strcmp(varargin{1}, 'force');
+    
+    current_date = date();
+    updated = false;
+    
+    % We check for updates at most once per day, to avoid unnecessary
+    % startup delays
+    if force_update || isempty(PTK_LastUpdated) || ~strcmp(PTK_LastUpdated, current_date)
+        PTK_LastUpdated = current_date;
+
+        if checkDoNotUpdate() && ~force_update
+            disp('Note: automatic update checks have been turned off.');
+        elseif ~isWebsiteFound()
+            disp('Note: cannot check for updates as cannot connect to repository.');        
+        elseif ~isMasterBranch()
+            disp('Note: PTK only checks for updates when master branch is checked out.');
         else
+            clearDoNotUpdate();
+            full_path = mfilename('fullpath');
+            [rootSourceDir, ~, ~] = fileparts(full_path);
+            [rootSourceDir, ~, ~] = fileparts(rootSourceDir);
+            repoList = DepMatRepo('pulmonarytoolkit', 'master', 'https://github.com/tomdoel/pulmonarytoolkit.git', 'pulmonarytoolkit');
+            depMat = DepMat(repoList, rootSourceDir);
+            status = depMat.getAllStatus;
+
             switch status
                 case DepMatStatus.GitNotFound
                     disp('! Cannot check for updates as git could not be found');
@@ -40,9 +50,9 @@ function updated = PTKUpdate(varargin)
                 case {DepMatStatus.UpdateAvailable, DepMatStatus.LocalChanges}
                     answer = questdlg('A new version of PTK is available. Do you wish to update PTK?','Pulmonary Toolkit','Later','Do not ask me again', 'Update','Update');
                     if strcmp(answer, 'Do not ask me again')
-                        setDoNotUpdateFlag;
+                        setDoNotUpdateFlag();
                     elseif strcmp(answer, 'Update')
-                        if depMat.updateAll;
+                        if depMat.updateAll()
                             updated = true;
                         end
                     end
@@ -70,7 +80,7 @@ function doNotUpdate = checkDoNotUpdate
     doNotUpdate = (2 == exist(filename, 'file'));
 end
 
-function found = isWebsiteFound
+function found = isWebsiteFound()
     % Checks for basic website connectivity
 
     url = 'https://github.com/tomdoel/pulmonarytoolkit';
@@ -85,7 +95,7 @@ function found = isWebsiteFound
     end
 end
 
-function clearDoNotUpdate
+function clearDoNotUpdate()
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     filename = fullfile(path_root, 'do-not-update-git');
@@ -94,7 +104,7 @@ function clearDoNotUpdate
     end
 end
 
-function repoExists = isMasterBranch
+function repoExists = isMasterBranch()
     [success, branch] = DepMat.execute('git rev-parse --symbolic-full-name --abbrev-ref HEAD');
     branch = strtrim(branch);
     repoExists = success && strcmp(branch, 'master');

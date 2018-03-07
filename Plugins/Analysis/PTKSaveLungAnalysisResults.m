@@ -19,11 +19,12 @@ classdef PTKSaveLungAnalysisResults < PTKPlugin
     properties
         ButtonText = 'Lung analysis'
         ToolTip = 'Performs density analysis over lungs and lobes'
-        Category = 'Analysis'
+        Category = 'CT regional'
         Mode = 'Analysis'
+        Visibility = 'Dataset'
 
         Context = PTKContextSet.LungROI
-        AllowResultsToBeCached = true
+        AllowResultsToBeCached = false
         AlwaysRunPlugin = true
         PluginType = 'DoNothing'
         HidePluginInDisplay = false
@@ -32,21 +33,31 @@ classdef PTKSaveLungAnalysisResults < PTKPlugin
         ButtonWidth = 6
         ButtonHeight = 2
         GeneratePreview = false
+        
+        Icon = 'lung_analysis.png'
+        Location = 3        
     end
     
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
             image_info = dataset.GetImageInfo;
             uid = image_info.ImageUid;
-            template = dataset.GetTemplateImage(PTKContext.LungROI);
-            patient_name = template.MetaHeader.PatientName.FamilyName;
+            patient_name = dataset.GetPatientName;
 
             contexts = {PTKContextSet.Lungs, PTKContextSet.SingleLung};
             results = dataset.GetResult('PTKDensityAnalysis', contexts);
             
-            table = PTKConvertMetricsToTable(results, patient_name, uid, CoreReportingDefault);
+            table = PTKConvertMetricsToTable(results, patient_name, uid, reporting);
             
-            dataset.SaveTableAsCSV('PTKSaveLungAnalysisResults', 'Lung analysis', 'LungResults', 'Analysis for both lungs and individual lungs', table, PTKResultsTable.PatientDim, PTKResultsTable.ContextDim, PTKResultsTable.MetricDim, []);
+            dataset.SaveTableAsCSV('PTKSaveLungAnalysisResults', 'Lung analysis', 'LungResults', 'Analysis for both lungs and individual lungs', table, MimResultsTable.PatientDim, MimResultsTable.ContextDim, MimResultsTable.MetricDim, []);
         end
+        
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.IsDatasetLoaded() && gui_app.IsCT();
+        end
+        
+        function is_selected = IsSelected(gui_app)
+            is_selected = false;
+        end        
     end
 end

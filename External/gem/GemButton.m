@@ -127,26 +127,29 @@ classdef GemButton < GemUserInterfaceObject
     
     methods (Access = protected)
         function ButtonClickedCallback(obj, ~, ~)
-            obj.Select(true);
-            notify(obj, 'ButtonClicked', CoreEventData(obj.Tag));
-            obj.Callback(obj.Tag);
             
-            % It is possible that the callback may lead to a rebuild of the interface and
-            % thus deletion of the button that triggered the callback; in which case we
-            % can't continue with the select
-            if isvalid(obj) && ~obj.AutoUpdateStatus
-                obj.Select(false);
+            if ~obj.IsCurrentlyRunning()
+                obj.Select(true);
+                notify(obj, 'ButtonClicked', CoreEventData(obj.Tag));
+                obj.Callback(obj.Tag);
+
+                % It is possible that the callback may lead to a rebuild of the interface and
+                % thus deletion of the button that triggered the callback; in which case we
+                % can't continue with the select
+                if isvalid(obj) && ~obj.AutoUpdateStatus
+                    obj.Select(false);
+                end
             end
         end
         
-        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseHasMoved(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse is moved
 
             obj.Highlight(true);
             input_has_been_processed = true;
         end
 
-        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src)
+        function input_has_been_processed = MouseExit(obj, click_point, selection_type, src, eventdata)
             % This method is called when the mouse exits a control which previously
             % processed a MouseHasMoved event
             

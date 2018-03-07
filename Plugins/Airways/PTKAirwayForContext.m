@@ -81,7 +81,7 @@ classdef PTKAirwayForContext < PTKPlugin
         
         function bronchus = FindSegmentalBronchus(airways, context)
             segment_label = uint8(PTKPulmonarySegmentLabels.(char(context)));
-            airways_to_do = PTKStack(airways);
+            airways_to_do = CoreStack(airways);
             while ~airways_to_do.IsEmpty
                 next_airways = airways_to_do.Pop;
                 if next_airways.SegmentIndex == segment_label

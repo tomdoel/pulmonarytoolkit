@@ -20,7 +20,7 @@ classdef PTKLeftAndRightLungsInitialiser < PTKPlugin
         ToolTip = 'Separate and label left and right lungs'
         Category = 'Lungs'
         
-        AllowResultsToBeCached = true
+        AllowResultsToBeCached = false
         AlwaysRunPlugin = false
         PluginType = 'ReplaceOverlay'
         HidePluginInDisplay = false
@@ -30,6 +30,10 @@ classdef PTKLeftAndRightLungsInitialiser < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
+        Version = 3
+        
+        MemoryCachePolicy = 'Off'
+        DiskCachePolicy = 'Off'        
     end
     
     methods (Static)
@@ -43,10 +47,12 @@ classdef PTKLeftAndRightLungsInitialiser < PTKPlugin
             end
             
             lung_roi = dataset.GetResult('PTKLungROI');
+            trachea = dataset.GetResult('PTKTopOfTrachea');
+            trachea_top = lung_roi.GlobalToLocalCoordinates(trachea.top_of_trachea);
             
             filtered_threshold_lung = dataset.GetResult('PTKThresholdLungFiltered', PTKContext.LungROI);
             
-            results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, reporting);
+            results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, trachea_top, reporting);
         end
     end
 end

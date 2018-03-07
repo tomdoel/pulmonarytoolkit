@@ -65,7 +65,10 @@ classdef GemDropDownMenu < GemUserInterfaceObject
         
         function PopupmenuCallback(obj, hObject, ~, ~)
             % Item selected from the pop-up menu
-            obj.Callback(get(hObject, 'Value'));
+            
+            if ~obj.IsCurrentlyRunning()
+                obj.Callback(get(hObject, 'Value'));
+            end
         end        
 
     end

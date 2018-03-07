@@ -73,7 +73,7 @@ classdef CoreProgressDialog < CoreProgressInterface
             obj.Update;
             
             % ishandle is quite slow, so avoid too many Update() calls
-            if abs(progress_value - obj.ProgressValue) >= obj.IncrementThreshold;
+            if abs(progress_value - obj.ProgressValue) >= obj.IncrementThreshold
                 obj.ProgressValue = progress_value;
                 obj.Update;
             end
@@ -106,9 +106,15 @@ classdef CoreProgressDialog < CoreProgressInterface
         
         function Update(obj)
             if ishandle(obj.HandleToWaitDialog)
-                waitbar(double(obj.ProgressValue)/100, obj.HandleToWaitDialog, obj.DialogText);
+                try
+                    h = waitbar(double(obj.ProgressValue)/100, obj.HandleToWaitDialog, obj.DialogText);
+                    set(findall(h, 'type', 'text'), 'Interpreter', 'none');
+                catch ex
+                    disp(ex);
+                end
             else
                 obj.HandleToWaitDialog = waitbar(obj.ProgressValue/100, obj.DialogText, 'Name', obj.DialogTitle, 'CreateCancelBtn', 'setappdata(gcbf,''canceling'',1)');
+                set(findall(obj.HandleToWaitDialog, 'type', 'text'), 'Interpreter', 'none');
                 setappdata(obj.HandleToWaitDialog, 'canceling', 0);
             end
         end

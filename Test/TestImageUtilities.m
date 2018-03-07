@@ -24,7 +24,7 @@ classdef TestImageUtilities < CoreTest
             datasets{end + 1} = obj.MakeDataset('CT', 1, 'CT2');
             datasets{end + 1} = obj.MakeDataset('MR', 13, 'MR1');
             datasets{end + 1} = obj.MakeDataset('OT', 25, 'OT1');
-            obj.Assert(strcmp(PTKImageUtilities.FindBestSeries(datasets), 'CTlarge'));
+            obj.Assert(strcmp(MimImageUtilities.FindBestSeries(datasets), 'CTlarge'));
         end
     
         function TestMR(obj)
@@ -36,7 +36,7 @@ classdef TestImageUtilities < CoreTest
             datasets{end + 1} = obj.MakeDataset('MR', 13, 'MR1');
             datasets{end + 1} = obj.MakeDataset('MR', 100, 'MRlarge');
             datasets{end + 1} = obj.MakeDataset('OT', 250, 'OT1');
-            obj.Assert(strcmp(PTKImageUtilities.FindBestSeries(datasets), 'MRlarge'));
+            obj.Assert(strcmp(MimImageUtilities.FindBestSeries(datasets), 'MRlarge'));
         end
         
         function TestOther(obj)
@@ -47,7 +47,7 @@ classdef TestImageUtilities < CoreTest
             datasets{end + 1} = obj.MakeDataset('GH', 1300, 'GHuid');
             datasets{end + 1} = obj.MakeDataset('IJ', 100, 'MRlarge');
             datasets{end + 1} = obj.MakeDataset('KL', 250, 'OT1');
-            obj.Assert(strcmp(PTKImageUtilities.FindBestSeries(datasets), 'GHuid'));
+            obj.Assert(strcmp(MimImageUtilities.FindBestSeries(datasets), 'GHuid'));
         end
     end
     

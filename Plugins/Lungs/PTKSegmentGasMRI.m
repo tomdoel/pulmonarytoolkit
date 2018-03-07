@@ -37,7 +37,7 @@ classdef PTKSegmentGasMRI < PTKPlugin
     methods (Static)
         function results = RunPlugin(dataset, context, reporting)
             results = dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage);
-            results = PTKGaussianFilter(results, 2);
+            results = MimGaussianFilter(results, 2);
             results.ChangeRawImage(results.RawImage > 15);
             results.ImageType = PTKImageType.Colormap;
        end

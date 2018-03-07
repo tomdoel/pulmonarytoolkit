@@ -43,7 +43,7 @@ classdef PTKSaveLobeMesh < PTKPlugin
             lobe_names = {'RU', 'RM', 'RL', 'LU', 'LL'};
             lobe_index_colours = [1, 2, 4, 5, 6];
 
-            coordinate_system = PTKCoordinateSystem.DicomUntranslated;
+            coordinate_system = MimCoordinateSystem.DicomUntranslated;
             template_image = lobes;
 
             for lobe_index = 1 : 5

@@ -60,6 +60,8 @@ classdef GemSlider < GemUserInterfaceObject
         end
         
         function SetSliderLimits(obj, min, max)
+            min = double(min);
+            max = double(max);
             obj.SliderMin = min;
             obj.SliderMax = max;
             if obj.ComponentHasBeenCreated
@@ -68,8 +70,9 @@ classdef GemSlider < GemUserInterfaceObject
         end
         
         function SetSliderSteps(obj, steps)
+            steps = double(steps);
             obj.SliderSteps = steps;
-            if obj.ComponentHasBeenCreated
+            if obj.ComponentHasBeenCreated()
                 set(obj.GraphicalComponentHandle, 'SliderStep', steps);
             end
         end

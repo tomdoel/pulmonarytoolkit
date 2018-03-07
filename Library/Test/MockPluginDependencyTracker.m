@@ -1,9 +1,9 @@
 classdef MockPluginDependencyTracker < handle
     % MockPluginDependencyTracker. Part of the PTK test framework
     %
-    % This class is used in tests in place of a PTKPluginDependencyTracker. It
+    % This class is used in tests in place of a MimPluginDependencyTracker. It
     % allows expected calls to be verified, while maintaining some of the 
-    % expected behaviour of a PTKPluginDependencyTracker object.
+    % expected behaviour of a MimPluginDependencyTracker object.
     %
     %
     %     Licence
@@ -37,7 +37,7 @@ classdef MockPluginDependencyTracker < handle
         function cache_info = GetCacheInfo(obj, plugin_name)
         end
         
-        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, allow_results_to_be_cached, reporting)
+        function [result, plugin_has_been_run, cache_info] = GetResult(obj, plugin_name, context, linked_dataset_chooser, plugin_info, plugin_class, dataset_uid, dataset_stack, memory_cache_policy, disk_cache_policy, reporting)
 
             key_name = [plugin_name '.' char(context) '.' dataset_uid];
             

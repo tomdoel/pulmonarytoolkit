@@ -101,6 +101,25 @@ classdef CoreReporting < CoreReportingInterface
             obj.AppendToLogFile([calling_function ': ' identifier ':' message]);
         end
         
+        function ShowMessageFromException(obj, identifier, message, ex)
+            [calling_function, ~] = CoreErrorUtilities.GetCallingFunction(2);
+            if isempty(calling_function)
+                calling_function = 'Command Window';
+            end
+            message = [calling_function ': ' identifier ':' message '; Exception message:' ex.message ' : ' ex.stack(1).name];
+            [summary, stack_text] = obj.GetExceptionSummary(ex);
+
+            obj.AppendToLogFile(message);
+            obj.AppendToLogFile(summary);
+            obj.AppendToLogFile(stack_text);
+            disp(message);
+            disp(' ');            
+            disp('If reporting an error, please include the following information:');
+            disp(['  ' summary]);
+            disp(['  ' stack_text '\n']);
+            disp(' ');
+        end
+        
         function ShowWarning(obj, identifier, message, supplementary_info)
             [calling_function, ~] = CoreErrorUtilities.GetCallingFunction(2);
             
@@ -132,10 +151,23 @@ classdef CoreReporting < CoreReportingInterface
             [calling_function, stack] = CoreErrorUtilities.GetCallingFunction(2);
 
             msgStruct = [];
-            msgStruct.message = ['Error in function ' calling_function ': ' message ' Exception message:' ex.message];
+            [summary, stack_text] = obj.GetExceptionSummary(ex);
+            message_text = ['Error in function ' calling_function ': ' identifier ': ' message ' Exception message:' ex.message ' : ' ex.stack(1).name];
+            msgStruct.message = message_text;
             msgStruct.identifier = identifier;
             msgStruct.stack = stack;
-            obj.AppendToLogFile([calling_function ': ERROR: ' identifier ':' message]);
+
+            obj.AppendToLogFile(message_text);
+            obj.AppendToLogFile(summary);
+            obj.AppendToLogFile(stack_text);
+
+            disp(message_text);
+            disp(' ');
+            disp('If reporting an error, please include the following information');
+            disp(['  ' summary]);
+            disp(['  ' stack_text]);
+            disp(' ');
+
             error(msgStruct);
         end
                 
@@ -228,8 +260,12 @@ classdef CoreReporting < CoreReportingInterface
             
         function PopProgress(obj)
             obj.CurrentProgressStackItem = obj.ParentProgressStackItem;
-            obj.ParentProgressStackItem = obj.ProgressStack(end);
-            obj.ProgressStack(end) = [];
+            if isempty(obj.ProgressStack)
+                obj.ParentProgressStackItem = [];
+            else
+                obj.ParentProgressStackItem = obj.ProgressStack(end);
+                obj.ProgressStack(end) = [];
+            end
         end
         
         function ClearProgressStack(obj)
@@ -240,6 +276,10 @@ classdef CoreReporting < CoreReportingInterface
         
         function ShowAndClearPendingMessages(obj)
         end
+        
+        function OpenPath(obj, file_path, message)
+            disp([message, ': ', file_path]);
+        end
     end
     
     methods (Access = private)
@@ -248,6 +288,14 @@ classdef CoreReporting < CoreReportingInterface
             message = [datestr(now) ': ' message];
             fprintf(file_id, '%s\n', message);
             fclose(file_id);
+        end
+        
+        function [summary, stack] = GetExceptionSummary(obj, exc)
+            stack = 'Stack:';
+            for s = exc.stack'
+                stack = [stack s.name '(' num2str(s.line) '); '];
+            end
+            summary = ['Error in ' exc.stack(1).name '(PTK' PTKSoftwareInfo.Version ') : ' exc.message];
         end
         
         function adjusted_text = AdjustProgressText(obj, text)

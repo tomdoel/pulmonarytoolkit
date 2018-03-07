@@ -39,6 +39,7 @@ classdef PTKVentilationAnalysis < PTKPlugin
             
             if ~dataset.IsGasMRI
                 reporting.ShowMessage('PTKVentilationAnalysis:NotGasMRIImage', 'Cannot perform ventilation analysis as this is not a gas MRI image');
+                results = [];
                 return;
             end
 

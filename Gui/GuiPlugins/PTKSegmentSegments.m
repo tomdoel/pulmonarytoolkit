@@ -1,4 +1,4 @@
-classdef PTKSegmentSegments < PTKGuiPlugin
+classdef PTKSegmentSegments < MimGuiPlugin
     % PTKSegmentSegments. Gui Plugin for activating segment segmentation
     %
     %     You should not use this class within your own code. It is intended to
@@ -29,16 +29,16 @@ classdef PTKSegmentSegments < PTKGuiPlugin
     end
     
     methods (Static)
-        function RunGuiPlugin(ptk_gui_app)
-            ptk_gui_app.RunPluginCallback('PTKPulmonarySegments');
+        function RunGuiPlugin(gui_app)
+            gui_app.RunPluginCallback('PTKPulmonarySegments');
         end
 
-        function enabled = IsEnabled(ptk_gui_app)
-            enabled = ptk_gui_app.IsDatasetLoaded && (ptk_gui_app.IsCT || ptk_gui_app.IsMR);
+        function enabled = IsEnabled(gui_app)
+            enabled = gui_app.DeveloperMode && gui_app.IsDatasetLoaded && (gui_app.IsCT);
         end
         
-        function is_selected = IsSelected(ptk_gui_app)
-            is_selected = ptk_gui_app.IsDatasetLoaded && strcmp(ptk_gui_app.GetCurrentPluginName, 'PTKSegments');
+        function is_selected = IsSelected(gui_app)
+            is_selected = gui_app.IsDatasetLoaded && strcmp(gui_app.GetCurrentPluginName, 'PTKSegments');
         end
 
     end

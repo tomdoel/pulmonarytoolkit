@@ -43,7 +43,7 @@ classdef PTKAcinarMapLabelledBySegment < PTKPlugin
             results = template.BlankCopy;
             
             segmental_index_map = zeros(template.ImageSize, 'uint8');
-            airways_to_do = PTKStack(segmental_bronchi_for_lobes.StartBranches);
+            airways_to_do = CoreStack(segmental_bronchi_for_lobes.StartBranches);
             while ~airways_to_do.IsEmpty
                 airway = airways_to_do.Pop;
                 

@@ -31,7 +31,7 @@ classdef PTKUnclosedLungIncludingTrachea < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
-        Version = 2
+        Version = 3
     end
     
     methods (Static)
@@ -52,7 +52,8 @@ classdef PTKUnclosedLungIncludingTrachea < PTKPlugin
                 reporting.ShowProgress('Searching for largest connected region');
                 
                 % Find the main component, excluding any components touching the border
-                threshold_image = PTKGetMainRegionExcludingBorder(threshold_image, 1000000, reporting);
+                original_image = dataset.GetResult('PTKLungROI');
+                threshold_image = PTKGetMainRegionExcludingPaddingBorder(original_image, threshold_image, 1000000, false, reporting);
                 
                 results = threshold_image;
                 results.ImageType = PTKImageType.Colormap;

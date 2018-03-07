@@ -26,6 +26,15 @@ classdef CoreTextUtilities < handle
             file_name(ismember(file_name, ' %*,.:;!?/<>\^%"')) = [];
         end
         
+        function valid_field_name = CreateValidFieldName(original_field_name)
+            % Strips out invalid characters from a filename
+            
+            valid_field_name = regexprep(char(original_field_name), '[^a-zA-Z0-9]', '_');
+            if isempty(regexprep(valid_field_name(1), '[^a-zA-Z]', ''))
+                valid_field_name = ['A' valid_field_name];
+            end
+        end
+        
         function [sorted_filenames, sorted_indices] = SortFilenames(original_filenames)
             % Sorts a list of filenames, taking into account numbers
             
@@ -81,7 +90,68 @@ classdef CoreTextUtilities < handle
             end
         end
         
+        function adjustedString = RemoveNonprintableCharacters(string)
+            % Removes special characters from a string
+            
+            if isempty(string)
+                adjustedString = string;
+            else
+                adjustedString = string(uint8(string) >= 32);
+            end
+        end
+        
+        function adjustedString = RemoveNonprintableCharactersAndStrip(string)
+            % Removes special characters from a string
+            
+            if isempty(string)
+                adjustedString = string;
+            elseif ischar(string)
+                adjustedString = strtrim(string(uint8(string) >= 32));
+            elseif isstruct(string)
+                adjustedString = struct;
+                for field = fieldnames(string)
+                    adjustedString.(field{1}) = CoreTextUtilities.RemoveNonprintableCharactersAndStrip(string.(field{1}));
+                end
+            elseif iscell(string)
+                adjustedString = cellfun(@CoreTextUtilities.RemoveNonprintableCharactersAndStrip, string, 'UniformOutput', false);
+            else
+                adjustedString = string;
+            end
+        end
+        
+        function [first, last] = SplitAtLastDelimiter(string, delimiter)
+            index = find(string == delimiter, 1, 'last');
+            if isempty(index)
+                first = string;
+                last = '';
+            else
+                first = string(1:index - 1);
+                last = string(index + 1:end);
+            end
+        end
+        
+        function is_equal = CompareStringsNoCase(st1, st2)
+            % Compare strings ignoring case, mnonprintable characters and
+            % leading/trailing spaces
+            is_equal = strcmpi(CoreTextUtilities.RemoveNonprintableCharactersAndStrip(st1), CoreTextUtilities.RemoveNonprintableCharactersAndStrip(st2)); 
+        end
+        
+        function alphanum = GetAlphaNumString(string)
+            % Returns a simplified string containing only uppercase and
+            % numerals
+            if iscell(string)
+                alphanum = cellfun(@CoreTextUtilities.GetAlphaNumString, string, 'UniformOutput', false);
+            else
+                alphanum = string(isstrprop(string, 'alphanum'));
+            end
+        end
+        
+        function basic = GetBasicString(string)
+            % Returns a simplified string containing only uppercase and
+            % numerals
+            basic = upper(CoreTextUtilities.GetAlphaNumString(string));
+        end
+
     end
-    
 end
 

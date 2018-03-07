@@ -40,6 +40,10 @@ classdef GemImageAxes < GemAxes
         function Resize(obj, position)
             Resize@GemAxes(obj, position);
             
+            for child = obj.Children
+                child{1}.Resize(position);
+            end
+            
 %             axis(obj.GraphicalComponentHandle, 'fill');
         end
         
@@ -88,6 +92,12 @@ classdef GemImageAxes < GemAxes
                 end
 
                 obj.PreviousOrientation = orientation;
+
+                for child = obj.Children
+                    if isa(child{1}, 'GemImage')
+                        child{1}.SetRange(x_range, y_range);
+                    end
+                end                
             else
                 x_range = [0 1];
                 y_range = [0 1];
@@ -126,6 +136,13 @@ classdef GemImageAxes < GemAxes
             % requested box
             obj.ImageParameters.SliceNumber = [round((i_limits_local(2)+i_limits_local(1))/2), round((j_limits_local(2)+j_limits_local(1))/2), round((k_limits_local(2)+k_limits_local(1))/2)];
         end
+        
+        
+        function point_is_in_image = IsPointInImage(obj, global_coords)
+            % Returns true if the point specified in global coordinates lies within the image
+
+            point_is_in_image = obj.ImageSource.Image.IsPointInImage(global_coords);        
+        end        
         
     end
     
