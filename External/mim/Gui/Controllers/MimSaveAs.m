@@ -34,11 +34,11 @@ function path_name = MimSaveAs(image_data, patient_name, path_name, is_secondary
         error('Requires a PTKImage as input');
     end
     
-    if nargin < 4
+    if nargin < 4 || isempty(is_secondary_capture)
         is_secondary_capture = false;
     end
     
-    if nargin < 5
+    if nargin < 5 || isempty(dicom_metadata)
         dicom_metadata = struct('DicomName', patient_name, 'DicomStudyDescription', patient_name);
     end
     
