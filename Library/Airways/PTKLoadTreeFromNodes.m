@@ -4,7 +4,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     %     Syntax
     %     ------
     %
-    %         root_branch = PTKLoadTreeFromNodes(file_path, filename_prefix, reporting)
+    %         root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_filename, coordinate_system, template_image, reporting)
     %
     %             root_branch     is the root branch in a PTKTreeModel structure 
     %             file_path       is the path where the node and element files
