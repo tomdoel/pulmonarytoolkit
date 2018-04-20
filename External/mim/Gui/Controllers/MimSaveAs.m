@@ -4,13 +4,13 @@ function path_name = MimSaveAs(image_data, patient_name, path_name, is_secondary
     %     Syntax
     %     ------
     %
-    %         MimSaveAs(image_data, patient_name, path_name, reporting)
+    %         MimSaveAs(image_data, patient_name, path_name, is_secondary_capture, dicom_metadata, reporting)
     %
     %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
     %                             to be saved
     %             patient_name    specifies the patient name to be stored in the image (only
     %                             used when there is no metadata available in the image)
-    %             path, filename  specify the location to save the DICOM data. One 2D file
+    %             path_name       specify the location to save the DICOM data. One 2D file
     %                             will be created for each image slice in the z direction. 
     %                             Each file is numbered, starting from 0.
     %                             So if filename is 'MyImage.DCM' then the files will be
@@ -34,7 +34,15 @@ function path_name = MimSaveAs(image_data, patient_name, path_name, is_secondary
         error('Requires a PTKImage as input');
     end
     
-    if nargin < 4
+    if nargin < 4 || isempty(is_secondary_capture)
+        is_secondary_capture = false;
+    end
+    
+    if nargin < 5 || isempty(dicom_metadata)
+        dicom_metadata = struct('DicomName', patient_name, 'DicomStudyDescription', patient_name);
+    end
+    
+    if nargin < 6
         reporting = CoreReportingDefault;
     end
     
