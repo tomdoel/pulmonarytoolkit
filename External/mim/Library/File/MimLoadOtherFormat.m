@@ -41,10 +41,10 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
 
     if isa(filenames, 'CoreFilename')
         path = filenames.Path;
-        filenames = filenames.Name;
+        filenames = {filenames.Name};
     elseif isa(filenames{1}, 'CoreFilename')
         path = filenames{1}.Path;
-        filenames = filenames{1}.Name;
+        filenames = {filenames{1}.Name};
     end
     
     if nargin < 3
