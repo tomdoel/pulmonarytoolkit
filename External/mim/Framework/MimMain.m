@@ -109,7 +109,18 @@ classdef MimMain < CoreBaseClass
                 dataset_uids = all_uids(matches);
             end
         end
-
+        
+        function dataset = Load(obj, filename)
+            % Helper method to import the data from the specified file path and create a MimDataset for the first series found
+            
+            [uids, ~] = obj.ImportData(filename);
+            if isempty(uids)
+                dataset = [];
+            else
+                dataset = obj.CreateDatasetFromUid(uids{1});
+            end
+        end
+        
         function dataset = CreateDatasetFromUid(obj, dataset_uid_prefix)
             % Creates a MimDataset object for a dataset specified by the uid. The
             % dataset must already be imported.
@@ -182,7 +193,7 @@ classdef MimMain < CoreBaseClass
             
             % Tell the image database to fire a database changed event. We do this here
             % rather than during the import to prevent multiple events being fired
-            obj.FrameworkSingleton.ReportChangesToDatabase;
+            obj.FrameworkSingleton.ReportChangesToDatabase();
         end
                 
         function RunCustomPostLoadFunction(obj, dataset_uid, dataset)
