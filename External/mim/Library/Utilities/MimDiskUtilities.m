@@ -109,6 +109,9 @@ classdef MimDiskUtilities
             if isempty(filename)
                 reporting.Error('MimDiskUtilities:NoSettingsFilename', 'The file could not be saved as the specified filename was empty.');
             else
+                if ~isstruct(value)
+                    reporting.Error('MimDiskUtilities:NotAStruct', 'The file could not be saved as the variable was not in a structure.');
+                end
                 save(filename, '-struct', 'value', '-v7');
             end
         end

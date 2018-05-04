@@ -2,7 +2,7 @@ function path_name = MimSaveAs(image_data, patient_name, path_name, is_secondary
     % MimSaveAs. Prompts the user for a filename and file type, and saves the image
     %
     %     Syntax
-    %     ------
+    %     ------ 
     %
     %         MimSaveAs(image_data, patient_name, path_name, is_secondary_capture, dicom_metadata, reporting)
     %
@@ -18,7 +18,7 @@ function path_name = MimSaveAs(image_data, patient_name, path_name, is_secondary
     %             is_secondary_capture   true if the image is derived, false if the pixel data 
     %                             directly corresponds to the original image pixel data
     %             dicom_metadata  a structure containing additional manufacturer tags
-    %                             used to consttruct Dicom images
+    %                             used to construct Dicom images
     %             reporting       an object implementing CoreReportingInterface
     %                             for reporting progress and warnings
     %
@@ -39,7 +39,7 @@ function path_name = MimSaveAs(image_data, patient_name, path_name, is_secondary
     end
     
     if nargin < 5 || isempty(dicom_metadata)
-        dicom_metadata = struct('DicomName', patient_name, 'DicomStudyDescription', patient_name);
+        dicom_metadata = MimDicomMetadata();
     end
     
     if nargin < 6

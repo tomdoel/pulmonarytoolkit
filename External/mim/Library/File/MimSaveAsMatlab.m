@@ -24,7 +24,8 @@ function MimSaveAsMatlab(image_data, path, filename, reporting)
         reporting.Error('MimSaveAsMatlab:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
 
-    value = image_data.RawImage; %#ok<NASGU>
     full_filename = fullfile(path, filename);
+    value = [];
+    value.image = image_data.RawImage;
     MimDiskUtilities.Save(full_filename, value);
 end

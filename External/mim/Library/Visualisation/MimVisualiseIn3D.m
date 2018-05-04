@@ -51,11 +51,27 @@ function axes_handle = MimVisualiseIn3D(axes_handle, segmentation, smoothing_siz
         error('Requires a PTKImage as input');
     end
     
-    if nargin < 2
+    if nargin < 3
         smoothing_size = 4; % A good value for lobes
     end
     
-    if nargin < 3
+    if nargin < 4
+        small_structures = false;
+    end
+    
+    if nargin < 5
+        limit_to_one_component_per_index = false;
+    end
+    
+    if nargin < 6
+        minimum_component_volume_mm3 = 0;
+    end
+
+    if nargin < 7
+        surface_colormap = CoreSystemUtilities.BackwardsCompatibilityColormap();
+    end
+
+    if nargin < 8
         reporting = CoreReportingDefault;    
     end
     

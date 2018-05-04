@@ -36,7 +36,7 @@ function [uids, patient_ids] = MimImageImporter(filename_or_root_directory, data
         end
         
     else
-        reporting.Error('MimImageImporter:FileDoesNotExist', ['The file or directory ' filename ' does not exist.']);
+        reporting.Error('MimImageImporter:FileDoesNotExist', ['The file or directory ' filename_or_root_directory ' does not exist.']);
     end
     
     reporting.CompleteProgress;

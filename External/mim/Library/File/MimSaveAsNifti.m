@@ -19,7 +19,11 @@ function MimSaveAsNifti(image_to_save, path, filename, reporting)
     %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
     %     Distributed under the MIT licence. Please see website for details.
     %        
-
+    
+    if nargin < 4
+        reporting = CoreReportingDefault();
+    end
+    
     if ~isa(image_to_save, 'PTKImage')
         reporting.Error('MimSaveAsNifti:InputMustBePTKImage', 'Requires a PTKImage as input');
     end

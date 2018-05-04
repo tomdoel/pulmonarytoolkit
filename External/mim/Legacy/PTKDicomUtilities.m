@@ -22,7 +22,7 @@ classdef PTKDicomUtilities
             
             full_file_name = [file_path, filesep, file_name];
             
-            is_dicom = PTKDicomFallbackLibrary.getLibrary.isdicom(full_file_name);
+            is_dicom = DMFallbackDicomLibrary.getLibrary.isdicom(full_file_name);
         end
         
         function dicom_series_uid = GetDicomSeriesUid(fileName, dictionary)
@@ -32,7 +32,7 @@ classdef PTKDicomUtilities
                 dictionary = DMDicomDictionary.GroupingDictionary;
             end
             
-            header = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, dictionary);
+            header = DMFallbackDicomLibrary.getLibrary.dicominfo(fileName, dictionary);
             
             if isempty(header)
                 dicom_series_uid = [];
@@ -50,7 +50,7 @@ classdef PTKDicomUtilities
         function metadata = ReadMetadata(fileName, dictionary, reporting)
             % Reads in Dicom metadata from the specified file
             try
-                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, dictionary);
+                metadata = DMFallbackDicomLibrary.getLibrary.dicominfo(fileName, dictionary);
             catch exception
                 reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
             end
@@ -59,7 +59,7 @@ classdef PTKDicomUtilities
         function metadata = ReadGroupingMetadata(fileName, reporting)
             % Reads in Dicom metadata from the specified file
             try
-                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName, DMDicomDictionary.GroupingDictionary);
+                metadata = DMFallbackDicomLibrary.getLibrary.dicominfo(fileName, DMDicomDictionary.GroupingDictionary);
             catch exception
                 reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
             end
@@ -68,7 +68,7 @@ classdef PTKDicomUtilities
         function metadata = ReadEssentialMetadata(fileName, reporting)
             % Reads in Dicom metadata from the specified file
             try
-                metadata = PTKDicomFallbackLibrary.getLibrary.dicominfo(fileName);
+                metadata = DMFallbackDicomLibrary.getLibrary.dicominfo(fileName);
             catch exception
                 reporting.Error('PTKDicomUtilities:MetaDataReadFail', ['Could not read metadata from the Dicom file ' file_name '. Error:' exception.message]);
             end
@@ -78,7 +78,7 @@ classdef PTKDicomUtilities
             % Reads in Dicom image data from the specified metadata
 
             try
-                image_data = PTKDicomFallbackLibrary.getLibrary.dicomread(metadata);
+                image_data = DMFallbackDicomLibrary.getLibrary.dicomread(metadata);
             catch exception
                 reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
             end
@@ -88,7 +88,7 @@ classdef PTKDicomUtilities
             % Reads in Dicom image data from the specified metadata. The image data
             % is stored directly into the RawImage matrix of a CoreWrapper object
             try
-                image_wrapper.RawImage(:, :, slice_index, :) = PTKDicomFallbackLibrary.getLibrary.dicomread(metadata);
+                image_wrapper.RawImage(:, :, slice_index, :) = DMFallbackDicomLibrary.getLibrary.dicomread(metadata);
                 
             catch exception
                 reporting.Error('PTKDicomUtilities:DicomReadError', ['Error while reading the Dicom file. Error:' exception.message]);
