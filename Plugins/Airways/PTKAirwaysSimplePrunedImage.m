@@ -64,7 +64,7 @@ classdef PTKAirwaysSimplePrunedImage < PTKPlugin
             % cases.            
             airway_tree.PruneDescendants(3);
             
-            labeled_region = PTKAirwaysSimplePruneImage.GetLabeledSegmentedImageFromAirwayTree(airway_results.AirwayTree, results_image);
+            labeled_region = PTKAirwaysSimplePrunedImage.GetLabeledSegmentedImageFromAirwayTree(airway_results.AirwayTree, results_image);
             results_image.ChangeRawImage(labeled_region);
             results_image.ImageType = PTKImageType.Colormap;
         end

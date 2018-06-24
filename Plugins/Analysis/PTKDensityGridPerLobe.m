@@ -101,7 +101,7 @@ classdef PTKDensityGridPerLobe < PTKPlugin
             file_name = ['DensityValues_' lobe_name '.txt'];
             template_image = dataset.GetTemplateImage(PTKContext.LungROI);
             coordinate_system = MimCoordinateSystem.DicomUntranslated;
-            PTKSaveListOfPointsAndValues(results_directory, file_name, xc, yc, zc, density_values, coordinate_system, template_image)
+            MimSaveListOfPointsAndValues(results_directory, file_name, xc, yc, zc, density_values, coordinate_system, template_image);
         end        
     end
 end
