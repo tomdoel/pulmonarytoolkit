@@ -47,34 +47,43 @@ classdef PTKAirwaysSimplePruneImage < PTKPlugin
     methods (Static)
         function results_image = RunPlugin(dataset, reporting)
             
-            left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
-            lobes = dataset.GetResult('PTKLobes');
-            [airway_results, airway_image] = dataset.GetResult('PTKAirways');
-            airway_tree = airway_results.AirwayTree;
-            template = airway_image;
-            
+            % Fetch a template image
+            results_image = dataset.GetTemplateImage(PTKContext.LungROI);
 
-            centreline_tree = dataset.GetResult('PTKAirwayCentreline');
-            centreline_tree.AirwayCentrelineTree.GenerateBranchParameters;
-            results_image_seg_bronchi = dataset.GetTemplateImage(PTKContext.LungROI);
-            new_centreline_tree = PTKGetSegmentalBronchiCentrelinesForEachLobe(centreline_tree.AirwayCentrelineTree, lobes, results_image_seg_bronchi, reporting);
+            % Get the segmented airway tree
+            airway_results = dataset.GetResult('PTKAirways');
+            airway_tree = airway_results.AirwayTree;
             
-            unpruned_segmental_centreline_tree = new_centreline_tree;
+            % A simple segmental pruning based on generation number: 
+            % This will (roughly speaking) keep the
+            % segmental bronchi and remove bronchi below this, but it may
+            % over-prune, especially in the right mid and lower lobes where
+            % the generation numbers would be higher. Ths advantage of this
+            % approach is it is very robust, whereas any attempt to
+            % determine the lobar and segmental bronchi may fail in some
+            % cases.            
+            airway_tree.PruneDescendants(3);
             
-            
-            segmental_bronchi_for_lobes_start_branches = new_centreline_tree;
-            [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchus(airway_tree, left_and_right_lungs, segmental_bronchi_for_lobes_start_branches, lobes, reporting);
-            start_branches = labelled_segments;
-            
-            
-            start_branches = PTKPruneAirwaysBySegment(start_branches);
-            
-            results_image = PTKGetPrunedSegmentalAirwayImageFromCentreline(start_branches, unpruned_segmental_centreline_tree, airway_tree, template, false);
+            labeled_region = PTKAirwaysSimplePruneImage.GetLabeledSegmentedImageFromAirwayTree(airway_results.AirwayTree, results_image);
+            results_image.ChangeRawImage(labeled_region);
             results_image.ImageType = PTKImageType.Colormap;
         end
-        
-        function results = GenerateImageFromResults(airway_results, image_templates, reporting)
-            results = airway_results; %.PrunedSegmentsByLobeImage;            
-        end        
     end
+ 
+    methods (Static, Access = private)
+
+        function segmented_image = GetLabeledSegmentedImageFromAirwayTree(airway_tree, template)
+            airway_tree.AddColourValues(1);
+            segmented_image = zeros(template.ImageSize, 'uint8');
+            
+            segments_to_do = airway_tree;
+            
+            while ~isempty(segments_to_do)
+                segment = segments_to_do(end);
+                segments_to_do(end) = [];
+                segmented_image(template.GlobalToLocalIndices(segment.GetAllAirwayPoints)) = segment.Colour;
+                segments_to_do = [segments_to_do segment.Children];
+            end
+        end
+    end    
 end

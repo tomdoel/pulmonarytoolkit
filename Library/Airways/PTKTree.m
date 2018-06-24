@@ -26,7 +26,6 @@ classdef PTKTree < handle
             end
         end
         
-        
         function root = GetRoot(obj)
             % Get the topmost branch from the tree containing this branch
 
@@ -59,6 +58,18 @@ classdef PTKTree < handle
             % Remove all child branches from this branch
             
             obj.Children = [];
+        end
+        
+        function PruneDescendants(obj, num_generations_to_keep)
+            % Keeps a given number of generations, and remove descendants of those
+            
+            if num_generations_to_keep <= 0
+                obj.RemoveChildren()
+            else
+                for branch = obj.Children
+                    branch.PruneDescendants(num_generations_to_keep - 1);
+                end
+            end
         end
         
         function number_of_branches = CountBranches(obj)
