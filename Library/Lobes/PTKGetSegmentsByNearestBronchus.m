@@ -1,6 +1,10 @@
 function [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchus(airway_root, left_and_right_lungs, segmental_bronchi_by_lobe, lobes, reporting)
-    % PTKGetSegmentsByNearestBronchus. Allocates airways to pulmonary segments
+    % PTKGetSegmentsByNearestBronchus. Allocates each bronchus to a
+    % pulmonary segment, sets the segmental label of that bronchus, and
+    % creates an image of the airways coloured by segments.
     %
+    % Note: the output labelled_segments is the input segmental structure
+    % with segment indices set on each bronchus.
     %
     %
     %     Licence

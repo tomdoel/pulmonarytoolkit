@@ -19,13 +19,16 @@ classdef PTKTree < handle
     
     methods
         function obj = PTKTree(parent)
+            % Create an empty PTKTree segment with an optional parent segment
+
             if nargin > 0
                 obj.Parent = parent;
             end
         end
         
-        
         function root = GetRoot(obj)
+            % Get the topmost branch from the tree containing this branch
+
             root = obj;
             if numel(root) > 0
                 root = root(1);
@@ -35,28 +38,43 @@ classdef PTKTree < handle
             end
         end
         
-        % Remove this branch from the tree
         function CutFromTree(obj)
+            % Remove this branch from the tree
+            
             if ~isempty(obj.Parent)
                 obj.Parent.Children = setdiff(obj.Parent.Children, obj);
             end
         end
         
-        % Remove this branch from the tree, connecting its children to its parent branch
         function CutAndSplice(obj)
+            % Remove this branch from the tree, connecting its children to its parent branch
+            
             if ~isempty(obj.Parent)
                 obj.Parent.Children = [setdiff(obj.Parent.Children, obj), obj.Children];
             end
         end
 
-        % Remove all child branches from this branch
         function RemoveChildren(obj)
+            % Remove all child branches from this branch
+            
             obj.Children = [];
         end
         
-        % Returns the number of branches in this tree, from this branch
-        % downwards
+        function PruneDescendants(obj, num_generations_to_keep)
+            % Keeps a given number of generations, and remove descendants of those
+            
+            if num_generations_to_keep <= 0
+                obj.RemoveChildren()
+            else
+                for branch = obj.Children
+                    branch.PruneDescendants(num_generations_to_keep - 1);
+                end
+            end
+        end
+        
         function number_of_branches = CountBranches(obj)
+            % Return the number of branches in this tree, from this branch downwards
+
             number_of_branches = 0;
             branches_to_do = obj;
             while ~isempty(branches_to_do)
@@ -67,8 +85,9 @@ classdef PTKTree < handle
             end
         end
 
-        % Returns true if this subtree contains the branch
         function contains_branch = ContainsBranch(obj, branch)
+            % Return true if this subtree contains the branch
+
             segments_to_do = obj;
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
@@ -83,9 +102,9 @@ classdef PTKTree < handle
             contains_branch = false;
         end
         
-        % Returns the number of branches in this tree, from this branch
-        % downwards
         function number_of_branches = CountTerminalBranches(obj)
+            % Return the number of branches in this tree, from this branch downwards
+
             number_of_branches = 0;
             branches_to_do = obj;
             while ~isempty(branches_to_do)
@@ -98,9 +117,9 @@ classdef PTKTree < handle
             end
         end
         
-        % Returns the number of branches in this tree, from this branch
-        % downwards
         function minimum_generation = GetMinimumTerminalGeneration(obj)
+            % Returns the number of branches in this tree, from this branch downwards
+
             minimum_generation = 99;
             branches_to_do = obj;
             while ~isempty(branches_to_do)
@@ -113,13 +132,8 @@ classdef PTKTree < handle
             end
         end
         
-        
-        
-
-        
-
-        % Returns all the branches as a set, from this branch onwards
         function branches_list = GetBranchesAsList(obj)
+            % Return all the branches as a set, from this branch onwards
             branches_list = obj;
             branches_to_do = obj.Children;
 
@@ -131,9 +145,9 @@ classdef PTKTree < handle
             end
         end
 
-        % Returns all the branches as a set, with this branch first, then its
-        % children, then its grandchildren, and so on.
         function branches_list = GetBranchesAsListByGeneration(obj)
+            % Returns all the branches as a set, with this branch first, then its children, then its grandchildren, and so on.
+            
             current_generation = obj;
             branches_list = current_generation.empty();
             
@@ -147,11 +161,12 @@ classdef PTKTree < handle
             end
         end
         
-        % Returns all the branches as a set, from this branch onwards
-        % This is similar to GetBranchesAsList, but the branches are assembled
-        % in a different order. This is simply to match the output produced by
-        % other code
         function branches_list = GetBranchesAsListUsingRecursion(obj)
+            % Returns all the branches as a set, from this branch onwards
+            % This is similar to GetBranchesAsList, but the branches are assembled
+            % in a different order. This is simply to match the output produced by
+            % other code
+
             branches_list = obj;
             for child = obj.Children
                 branches_list = [branches_list child.GetBranchesAsListUsingRecursion];

@@ -54,7 +54,7 @@ classdef MimView3D < MimGuiPlugin
                 switch current_name
                     case {'PTKAirways', 'PTKAirwaysLabelledByBronchus', 'PTKAirwaysLabelledByLobe', ...
                     'PTKAirwaysPrunedBySegment', 'PTKSegmentalBronchi', 'PTKVesselness', 'PTKPrunedAirways', ...
-                    'PTKPrunedAirwaysByLobe'}
+                    'PTKPrunedAirwaysByLobe', 'PTKAirwaysSimplePrunedImage'}
                         airways = true;
                     otherwise
                         airways = false;

@@ -44,7 +44,7 @@ classdef PTKAirwaysLabelledByBronchus < PTKPlugin
         ButtonHeight = 2
         GeneratePreview = true
         Visibility = 'Developer'
-end
+    end
     
     methods (Static)
         function results = RunPlugin(dataset, ~)

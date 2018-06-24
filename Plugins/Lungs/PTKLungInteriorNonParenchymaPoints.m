@@ -43,7 +43,7 @@ classdef PTKLungInteriorNonParenchymaPoints < PTKPlugin
             airways_image.ChangeRawImage(airways_image.RawImage == 1);
             airways_image.BinaryMorph(@imdilate, 3);
             
-            pruned_airways = dataset.GetResult('PTKAirwaysPrunedBySegment').PrunedSegmentsByLobeImage;
+            pruned_airways = dataset.GetResult('PTKAirwaysSimplePrunedImage');
             pruned_airways.ChangeRawImage(pruned_airways.RawImage > 0);
             pruned_airways.BinaryMorph(@imdilate, 6);
 
