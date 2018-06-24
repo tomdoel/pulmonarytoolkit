@@ -1,5 +1,5 @@
-classdef PTKAirwaysSimplePruneImage < PTKPlugin
-    % PTKAirwaysSimplePruneImage. Plugin for creating an image of the
+classdef PTKAirwaysSimplePrunedImage < PTKPlugin
+    % PTKAirwaysSimplePrunedImage. Plugin for creating an image of the
     % airways pruned at approximately the segmental bronchi level.
     %
     %     This plugin does not attempt to perform advanced segmental
