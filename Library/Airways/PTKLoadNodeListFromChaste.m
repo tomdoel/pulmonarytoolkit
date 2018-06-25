@@ -1,0 +1,89 @@
+function [node_index, x, y, z, radius, is_terminal, node_index_1, node_index_2] = PTKLoadNodeListFromChaste(file_path, node_filename, edge_filename, reporting)
+    % PTKLoadNodeListFromChaste. Loads lists of node parameters from Chaste
+    % format node/element files.
+    %
+    % Use this function if you just want to load in the values.
+    % If you want to parse the files into a tree structure, use
+    % PTKLoadTreeFromChaste instead.
+    %
+    %
+    %     Syntax
+    %     ------
+    %
+    %         [node_index, x, y, z, radius, node_index_1, node_index_2] = PTKLoadNodeListFromChaste(file_path, node_filename, edge_filename, coordinate_system, reporting)
+    %
+    %             file_path       is the path where the node and edge files
+    %                             are to be stored
+    %             node_filename   is the name of the node file
+    %             edge_filename   is the name of the edge file
+    %             reporting (optional) - an object implementing CoreReportingInterface
+    %                             for reporting progress and warnings
+    %
+    %     Licence
+    %     -------
+    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %     Author: Tom Doel, 2013.  www.tomdoel.com
+    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %       
+    
+    if nargin < 4
+        reporting = CoreReportingDefault();
+    end    
+    
+    if ~CoreDiskUtilities.FileExists(file_path, node_filename)
+        reporting.Error('PTKLoadNodeListFromChaste:FileDoesNotExist', ['The node file ', node_filename ,' does not exist']);
+    end
+    
+    if ~CoreDiskUtilities.FileExists(file_path, edge_filename)
+        reporting.Error('PTKLoadNodeListFromChaste:FileDoesNotExist', ['The edge file ', edge_filename ,' does not exist']);
+    end
+    
+    node_file = fullfile(file_path, node_filename);
+    element_file = fullfile(file_path, edge_filename);
+    
+    % Read node file
+    fid = fopen(node_file);
+    
+    % First line is the number of nodes, number of dimensions, number of
+    % parameters, number of boundary markers
+    param_line = fgetl(fid);
+    file_format_params = textscan(param_line, '%u%u%u%u', 1);    
+    num_nodes = file_format_params{1};
+    space_dims = file_format_params{2};
+    num_attributes = file_format_params{3};
+    number_boundary_markers = file_format_params{4};
+    
+    if space_dims ~= 3
+        reporting.Error('PTKLoadNodeListFromChaste:InvalidDimensions', 'This Chaste model does not have 3 dimensions. I can only load 3D trees.');
+    end
+    
+    node_format_string = ['%u' repmat('%f', 1, space_dims) repmat('%f', 1, num_attributes) repmat('%c', 1, number_boundary_markers)];
+    
+    % Subsequent lines are node_number, x, y, z, params
+    node_data = textscan(fid, node_format_string, num_nodes, 'Delimiter', ',');
+    
+    fclose(fid);
+    
+    % Read element file
+    fid = fopen(element_file);
+    
+    % First line is the number of edges, number of boundary markers
+    param_line = fgetl(fid);
+    file_format_params = textscan(param_line, '%u%u', 1);    
+    num_edges = file_format_params{1};
+    number_boundary_markers = file_format_params{2};
+        
+    % Subsequent lines are edge_number, node_1, node_2
+    node_format_string = ['%u%u%u' repmat('%c', 1, number_boundary_markers)];
+    element_data = textscan(fid, node_format_string, num_edges, 'Delimiter', ',');
+    fclose(fid);
+    
+    node_index = node_data{1};
+    x = node_data{2};
+    y = node_data{3};
+    z = node_data{4};
+    radius = node_data{5};
+    is_terminal  = node_data{6};
+    node_index_1 = element_data{2};
+    node_index_2 = element_data{3};
+end
