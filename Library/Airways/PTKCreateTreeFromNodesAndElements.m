@@ -34,7 +34,9 @@ function root_branch = PTKCreateTreeFromNodesAndElements(node_index_list, xc, yc
         node_file_index = centreline.Parameters.NodeFileIndex;
         while numel(next_node.Children) == 1
             next_node = next_node.Children;
-            centreline(end + 1) = next_node.CentrelinePoint;
+            if ~isempty(next_node.CentrelinePoint)
+                centreline(end + 1) = next_node.CentrelinePoint;
+            end
         end
         
         current_branch.Centreline = centreline;

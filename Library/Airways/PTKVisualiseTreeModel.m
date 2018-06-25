@@ -41,6 +41,9 @@ function PTKVisualiseTreeModel(parent_branch)
         start_point = branch.StartPoint;
         end_point = branch.EndPoint;
         radius = branch.Radius;
+        if isempty(radius)
+            radius = 1;
+        end
         thickness = 4*radius;
         parent = branch.Parent;
         if isempty(parent)
