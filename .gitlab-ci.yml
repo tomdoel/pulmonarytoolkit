@@ -1,0 +1,52 @@
+stages:
+  - build
+  - deploy
+  - run
+
+variables:
+  CI_SCRIPTS_DIR: "./ci"
+
+macos build:
+  stage: build
+  script:
+    - MATLAB_SCRIPT=$(pwd)/build_executables.m
+    - MATLAB_EXE=/Applications/MATLAB_R2017a.app/bin/matlab
+    - XCODE_EXE=/Applications/Xcode7.3.1.app/Contents/Developer
+    - env DEVELOPER_DIR=$XCODE_EXE $CI_SCRIPTS_DIR/build-mac.sh $MATLAB_EXE $MATLAB_SCRIPT
+  artifacts:
+    paths:
+    - dist
+    expire_in: 2 days
+  tags:
+    - macOS
+    - matlab
+
+linux build:
+  stage: build
+  script:
+    - MATLAB_SCRIPT=$(pwd)/build_executables.m
+    - MATLAB_EXE=/usr/local/R2017a/bin/matlab
+    - LD_PRELOAD_DIR=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
+    - env LD_PRELOAD=$LD_PRELOAD_DIR CORE_CXX=/usr/bin/g++-4.9 $CI_SCRIPTS_DIR/build-linux.sh $MATLAB_EXE $MATLAB_SCRIPT
+  artifacts:
+    paths:
+    - dist
+    expire_in: 2 days
+  tags:
+    - linux
+    - matlab
+
+windows build:
+  stage: build
+  script:
+    - set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin
+    - set MATLAB_SCRIPT="%CI_PROJECT_DIR%\build_executables.m"
+    - set MATLAB_EXE="C:\Program Files\MATLAB\R2017a\bin\matlab.exe"
+    - "call .\\ci\\build-win.bat %MATLAB_EXE% %MATLAB_SCRIPT%"
+  artifacts:
+    paths:
+    - dist
+    expire_in: 2 days
+  tags:
+    - windows-10
+    - matlab
