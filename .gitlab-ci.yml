@@ -16,7 +16,9 @@ macos build:
   artifacts:
     paths:
     - dist
-    expire_in: 2 days
+    expire_in: 7 days
+  only:
+    - tags
   tags:
     - macOS
     - matlab
@@ -31,7 +33,9 @@ linux build:
   artifacts:
     paths:
     - dist
-    expire_in: 2 days
+    expire_in: 7 days
+  only:
+    - tags
   tags:
     - linux
     - matlab
@@ -46,7 +50,9 @@ windows build:
   artifacts:
     paths:
     - dist
-    expire_in: 2 days
+    expire_in: 7 days
+  only:
+    - tags
   tags:
     - windows-10
     - matlab
