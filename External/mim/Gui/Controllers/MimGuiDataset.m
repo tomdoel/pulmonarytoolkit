@@ -426,7 +426,7 @@ classdef MimGuiDataset < CoreBaseClass
                         % exception was thrown, in which case we use this
                         % to specify which dataset to delete
                         if isempty(series_uid)
-                            obj.DeleteThisImageInfo;
+                            obj.DeleteThisImageInfo();
                         else
                             obj.DeleteImageInfo(series_uid);
                         end
@@ -434,7 +434,7 @@ classdef MimGuiDataset < CoreBaseClass
                         obj.Reporting.ShowMessage('MimGuiDataset:DeleteImageInfoFailed', ['Failed to delete dataset due to error: ' exc.message]);
                     end
                 end
-                obj.ClearDatasetKeepPatient;
+                obj.ClearDatasetKeepPatient();
             end
         end
         

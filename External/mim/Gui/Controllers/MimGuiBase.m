@@ -529,7 +529,7 @@ classdef MimGuiBase < GemFigure
                 'Delete patient', 'Delete', 'Don''t delete', 'Don''t delete');
             switch choice
                 case 'Delete'
-                    obj.BringToFront;
+                    obj.BringToFront();
                     
                     series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, obj.AppDef.GroupPatientsWithSameName);
                     
