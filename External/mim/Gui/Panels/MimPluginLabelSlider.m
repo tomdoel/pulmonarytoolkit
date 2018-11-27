@@ -88,6 +88,7 @@ classdef MimPluginLabelSlider < GemLabelSlider
             
             value = round(str2double(obj.EditBox.Text));
             instance_handle.(value_property_name) = value;
+            value = instance_handle.(value_property_name); % The property set method is allowed to restrict the value
             obj.Slider.SetSliderValue(value);
         end
         
