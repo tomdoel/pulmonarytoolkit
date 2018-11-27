@@ -370,6 +370,13 @@ classdef MimViewerPanelCallback < CoreBaseClass
                 window_min = window_limits(1);
                 window_max = window_limits(2);
                 
+                if isnan(obj.ViewerPanel.Level)
+                    obj.ViewerPanel.Level = level_min;
+                end
+                
+                if isnan(obj.ViewerPanel.Window)
+                    obj.ViewerPanel.Window = window_min;
+                end
                 
                 if obj.ViewerPanel.Level > level_max
                     level_max = obj.ViewerPanel.Level;
