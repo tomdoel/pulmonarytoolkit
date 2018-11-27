@@ -59,11 +59,30 @@ classdef MimPluginLabelEditBox < GemLabelEditBox
             
             [instance_handle, value_property_name, ~, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
             
-            value = round(str2double(obj.EditBox.Text));
-            if obj.FixToInteger
-                value = round(value);
+            % Get the current textbox contents
+            value = str2double(obj.EditBox.Text);
+            
+            % If it's a number then update the property value
+            if ~isnan(value)
+                if obj.FixToInteger
+                    new_value = round(value);
+                else
+                    new_value = value;
+                end
+                instance_handle.(value_property_name) = new_value;
             end
-            instance_handle.(value_property_name) = value;
+            
+            % Get the current property value. If we didn't update the
+            % property value, this should be the old value. If we did
+            % update it, the property set method may have modified the 
+            % value. 
+            adjusted_value = instance_handle.(value_property_name);
+            
+            % In either case we want to update the text box to reflect the
+            % actual value of the property
+            if adjusted_value ~= value
+                obj.EditBox.SetText(num2str(adjusted_value, '%.6g'));
+            end
         end
         
         function PropertyChangedCallback(obj, ~, ~, ~)

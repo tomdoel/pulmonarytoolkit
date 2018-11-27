@@ -332,12 +332,26 @@ classdef MimViewerPanelToolbar < GemPanel
         
         function WindowTextCallback(obj, hObject, ~, ~)
             % Window edit box
-            obj.ViewerPanel.Window = round(str2double(get(hObject,'String')));
+            new_value = round(str2double(get(hObject, 'String')));
+            
+            if isnan(new_value)
+                new_value = obj.ViewerPanel.Window;
+                set(hObject, 'String', num2str(new_value, '%.6g'));
+            else
+                obj.ViewerPanel.Window = new_value;
+            end            
         end
         
         function LevelTextCallback(obj, hObject, ~, ~)
             % Level edit box
-            obj.ViewerPanel.Level = round(str2double(get(hObject,'String')));
+            new_value = round(str2double(get(hObject, 'String')));
+            
+            if isnan(new_value)
+                new_value = obj.ViewerPanel.Level;
+                set(hObject, 'String', num2str(new_value, '%.6g'));
+            else
+                obj.ViewerPanel.Level = new_value;
+            end
         end
         
         function OrientationCallback(obj, ~, eventdata, ~)

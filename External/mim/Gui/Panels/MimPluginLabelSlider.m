@@ -86,10 +86,40 @@ classdef MimPluginLabelSlider < GemLabelSlider
             
             [instance_handle, value_property_name, ~, ~] = obj.Tool.GetHandleAndProperty(obj.GuiApp);
             
-            value = round(str2double(obj.EditBox.Text));
-            instance_handle.(value_property_name) = value;
-            value = instance_handle.(value_property_name); % The property set method is allowed to restrict the value
-            obj.Slider.SetSliderValue(value);
+            value = str2double(obj.EditBox.Text);
+            
+            % If it's a number then update the property value
+            if ~isnan(value)
+                if obj.FixToInteger
+                    new_value = round(value);
+                else
+                    new_value = value;
+                end
+                if new_value < obj.Slider.SliderMin
+                    new_value = obj.Slider.SliderMin;
+                end
+                if new_value > obj.Slider.SliderMax
+                    new_value = obj.Slider.SliderMax;
+                end
+                
+                % Update the property value
+                instance_handle.(value_property_name) = new_value;
+            end
+
+            % Get the current property value. If we didn't update the
+            % property value, this should be the old value. If we did
+            % update it, the property set method may have modified the 
+            % value. 
+            adjusted_value = instance_handle.(value_property_name);
+            
+            % Update the slider to the actually used value
+            obj.Slider.SetSliderValue(adjusted_value);
+                        
+            % In either case we want to update the text box to reflect the
+            % actual value of the property
+            if adjusted_value ~= value
+                obj.EditBox.SetText(num2str(adjusted_value, '%.6g'));
+            end            
         end
         
         function PropertyChangedCallback(obj, ~, ~, ~)
