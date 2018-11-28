@@ -1,9 +1,16 @@
 classdef CoreProgressDialog < CoreProgressInterface
     % CoreProgressDialog. A dialog used to report progress informaton
     %
-    %     CoreProgressDialog implements the CoreProgressInterface, which is an
-    %     interface used by CoreMat and related libraries to report the progress of
-    %     operations.
+    %     CoreProgressDialog creates and manages a waitbar to mark progress
+    %     in operations performed by the coremat framework and related
+    %     libraries. It provides a default implementation of
+    %     CoreProgressInterface that can be used by your own code or can be
+    %     instantiated automatically be functions when no progress
+    %     interface object is provided.
+    %
+    %     GUI applications may prefer to create their own implementation of
+    %     CoreProgressInterface which matches their application, rather
+    %     than using this default implementation.
     %
     %
     %     Licence
@@ -21,7 +28,7 @@ classdef CoreProgressDialog < CoreProgressInterface
         DialogTitle = ''
         ProgressValue = 0
         
-        Hold = false;
+        Hold = false
         ShowProgressBar = false
     end
 
@@ -30,12 +37,12 @@ classdef CoreProgressDialog < CoreProgressInterface
             if nargin < 2
                text = 'Please wait'; 
             end
-            obj.Hide;
+            obj.Hide();
             obj.DialogTitle = CoreTextUtilities.RemoveHtml(text);
             obj.DialogText = '';
             obj.ProgressValue = 0;
             obj.Hold = true;
-            obj.Update;
+            obj.Update();
         end
         
         function Hide(obj)
@@ -48,15 +55,16 @@ classdef CoreProgressDialog < CoreProgressInterface
             obj.Hold = false;
         end
         
-        % Call to complete a progress operaton, which will also hide the dialog
-        % unless the dialog is being held
         function Complete(obj)
+            % Call to complete a progress operaton, which will also hide the dialog
+            % unless the dialog is being held
+            
             obj.ShowProgressBar = false;
             obj.ProgressValue = 100;
             if ~obj.Hold
-                obj.Hide;
+                obj.Hide();
             else
-                obj.Update;
+                obj.Update();
             end
         end
         
@@ -65,17 +73,17 @@ classdef CoreProgressDialog < CoreProgressInterface
                text = 'Please wait'; 
             end            
             obj.DialogText = CoreTextUtilities.RemoveHtml(text);
-            obj.Update;
+            obj.Update();
         end
         
         function SetProgressValue(obj, progress_value)
             obj.ShowProgressBar = true;
-            obj.Update;
+            obj.Update();
             
             % ishandle is quite slow, so avoid too many Update() calls
             if abs(progress_value - obj.ProgressValue) >= obj.IncrementThreshold
                 obj.ProgressValue = progress_value;
-                obj.Update;
+                obj.Update();
             end
         end
         
@@ -83,7 +91,7 @@ classdef CoreProgressDialog < CoreProgressInterface
             obj.ShowProgressBar = true;
             obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
-            obj.Update;
+            obj.Update();
         end
         
         function cancelled = CancelClicked(obj)
@@ -98,7 +106,7 @@ classdef CoreProgressDialog < CoreProgressInterface
         end
         
         function delete(obj)
-            obj.Hide;
+            obj.Hide();
         end        
     end
     
