@@ -23,10 +23,13 @@ classdef CoreProgressInterface < CoreBaseClass
         
         % Indicates the gui has been resized
         Resize(obj, panel_position)        
-               
+
         % Show the progress bar, and keep it displayed until Hide() is called
         ShowAndHold(obj, text)
         
+        % Similar to ShowAndHold(), but the GUI may keep progress hidden until ReleaseDeay() is called
+        DelayedShowAndHold(obj, text)
+
         % Hide the progress bar
         Hide(obj)
         
@@ -45,6 +48,9 @@ classdef CoreProgressInterface < CoreBaseClass
         
         % Checks if the cancel button was clicked by the user
         cancelled = CancelClicked(obj)
+
+        % Show the dialog if it is currently in a delayed state
+        ReleaseDelay(obj)        
     end    
 end
 

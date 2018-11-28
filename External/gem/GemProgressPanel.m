@@ -126,6 +126,29 @@ classdef GemProgressPanel < CoreProgressInterface
             obj.Update();
         end
         
+        function DelayedShowAndHold(obj, text)
+            if nargin < 2
+                text = 'Please wait';
+            end
+            obj.DialogTitle = CoreTextUtilities.RemoveHtml(text);
+            obj.DialogText = '';
+            obj.ProgressValue = 0;
+            obj.Hold = true;
+            obj.UserClickedCancel = false;
+            obj.PanelVisibility = false;
+            obj.ShowProgressBar = false;
+            obj.TimerRef = [];
+            obj.Update();
+        end
+
+        function ReleaseDelay(obj)
+            if ~obj.PanelVisibility
+                obj.TimerRef = [];
+                obj.PanelVisibility = true;
+                obj.Update();
+            end
+        end
+        
         function Hide(obj)
             obj.DialogTitle = 'Please wait';
             obj.Hold = false;

@@ -96,7 +96,10 @@ classdef CoreReportingInterface < CoreBaseClass
         ClearProgressStack(obj)
         
         % Show any error or warning messages and clear the message stack
-        ShowAndClearPendingMessages(obj)        
+        ShowAndClearPendingMessages(obj)
+        
+        % Show the dialog if it is currently in a delayed state
+        ReleaseDelay(obj)
     end
 end
 

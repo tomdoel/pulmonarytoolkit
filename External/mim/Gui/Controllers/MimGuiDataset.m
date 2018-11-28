@@ -661,7 +661,7 @@ classdef MimGuiDataset < CoreBaseClass
         function result = RunPluginTryCatchBlock(obj, plugin_name, context_to_request, wait_dialog)
             new_plugin = obj.LoadPluginInfoStructure(plugin_name, obj.Reporting);
             visible_name = CoreTextUtilities.RemoveHtml(new_plugin.ButtonText);
-            wait_dialog.ShowAndHold(['Computing ' visible_name]);
+            wait_dialog.DelayedShowAndHold(['Computing ' visible_name]);
             
             if strcmp(new_plugin.PluginType, 'DoNothing')
                 % Call with 2 output arguments to prevent fetching of cache

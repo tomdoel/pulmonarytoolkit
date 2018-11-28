@@ -106,6 +106,11 @@ classdef CoreReportingWithCache < CoreReportingInterface
         function UpdateProgressStage(obj, progress_stage, num_stages)
             obj.Reporting.UpdateProgressStage(progress_stage, num_stages);
         end
+
+        function ReleaseDelay(obj)
+            obj.Reporting.ReleaseDelay();
+        end
+        
         
         function cancelled = HasBeenCancelled(obj)
             cancelled = obj.Reporting.HasBeenCancelled;

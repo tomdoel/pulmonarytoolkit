@@ -45,6 +45,16 @@ classdef CoreProgressDialog < CoreProgressInterface
             obj.Update();
         end
         
+        function DelayedShowAndHold(obj, text)
+            if nargin < 2
+               text = 'Please wait'; 
+            end
+            obj.ShowAndHold(text);
+        end
+        
+        function ReleaseDelay(obj)
+        end
+        
         function Hide(obj)
             obj.DialogTitle = 'Please wait';
             obj.ShowProgressBar = false;

@@ -165,6 +165,10 @@ classdef MimContextHierarchy < CoreBaseClass
 
                     % Run the plugin
                     if isempty(result)
+                        reporting.ReleaseDelay();
+                        reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
+
+                        
                         plugin_has_been_run = true;
 
                         % At present we ignore dependency checks if the results are

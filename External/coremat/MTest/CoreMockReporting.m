@@ -52,6 +52,9 @@ classdef CoreMockReporting < CoreReportingInterface
         function CompleteProgress(obj)
         end
         
+        function ReleaseDelay(obj)
+        end
+        
         function UpdateProgressMessage(obj, text)
         end
         

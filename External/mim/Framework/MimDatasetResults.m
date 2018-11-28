@@ -102,7 +102,7 @@ classdef MimDatasetResults < handle
             end
 
             % Update the progress dialog with the current plugin being run
-            reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
+%             reporting.UpdateProgressMessage(['Computing ' plugin_info.ButtonText]);
             
             preview_exists = obj.PreviewImages.DoesPreviewExist(plugin_name);
             

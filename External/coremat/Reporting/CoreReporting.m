@@ -274,6 +274,11 @@ classdef CoreReporting < CoreReportingInterface
             obj.ParentProgressStackItem = CoreProgressStackItem('', 0, 100);
         end
         
+        function ReleaseDelay(obj)
+            obj.ProgressDialog.ReleaseDelay();
+        end
+
+        
         function ShowAndClearPendingMessages(obj)
         end
         
