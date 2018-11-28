@@ -155,7 +155,7 @@ classdef GemAxes < GemUserInterfaceObject
             % Fetch the current screen coordinates of the axes
             rect_screenpixels = get(obj.GraphicalComponentHandle, 'Position');
             
-            rect_screenpixels(1:2) = obj.GetScreenPosition;
+            rect_screenpixels(1:2) = obj.GetScreenPosition();
             
             % The image may not occupy the entire axes, so we need to crop the
             % rectangle to only include the image
@@ -187,10 +187,11 @@ classdef GemAxes < GemUserInterfaceObject
             rect_screenpixels(2) = rect_screenpixels(2) + y_offset_screenvoxels;
             rect_screenpixels(3) = rect_screenpixels(3) - x_offset_screenvoxels - x_endoffset_screenvoxels;
             rect_screenpixels(4) = rect_screenpixels(4) - y_offset_screenvoxels - y_endoffset_screenvoxels;
+            
             rect_screenpixels = round(rect_screenpixels);
 
             % Capture the image as a bitmap
-            frame = GemUtilities.CaptureFigure(obj.GetParentFigure.GetContainerHandle, rect_screenpixels); %TODO
+            frame = GemUtilities.CaptureFigure(obj.GetParentFigure.GetContainerHandle(), rect_screenpixels);
             
             % Return the figure to its original position 
             set(obj.GraphicalComponentHandle, 'Position', old_position);            

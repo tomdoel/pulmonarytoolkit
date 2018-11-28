@@ -66,7 +66,12 @@ classdef GemViewerPanelMultiView < GemMultiPanel
         end
 
         function frame = Capture(obj, image_size, orientation)
-            frame = obj.CinePanel2D.Capture(image_size, orientation);
+            if strcmp(obj.CurrentPanelTag, 'View3D')
+                frame = obj.RenderPanel.Capture(image_size, orientation);
+            else
+                frame = obj.CinePanel2D.Capture(image_size, orientation);
+            end
+            
         end
         
         function UpdateCursor(obj, hObject, mouse_is_down, keyboard_modifier)

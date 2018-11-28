@@ -51,5 +51,16 @@ classdef GemAxesPanel < GemPanel
         function SetVisualisationLabel(obj, label)
             obj.VisualisationLabel = label;
         end
+
+        function frame = Capture(obj, image_size, orientation)
+            drawnow;
+            
+            origin = [0.5, 0.5, 0.5];
+            image_limit = origin + image_size;
+            xlim_image = [min(origin), max(image_limit)];
+            ylim_image = xlim_image;
+
+            frame = obj.Axes.Capture(xlim_image, ylim_image);
+        end        
     end
 end
