@@ -122,6 +122,7 @@ classdef GemProgressPanel < CoreProgressInterface
             obj.UserClickedCancel = false;
             obj.PanelVisibility = true;
             obj.ShowProgressBar = false;
+            obj.TimerRef = [];
             obj.Update();
         end
         
