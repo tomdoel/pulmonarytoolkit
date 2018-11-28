@@ -166,9 +166,9 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.Hold = false;
         end
         
-        % Call to complete a progress operaton, which will also hide the dialog
-        % unless the dialog is being held
         function Complete(obj)
+            % Call to complete a progress operaton, which will also hide the dialog
+            % unless the dialog is being held
             obj.ShowProgressBar = false;
             obj.ProgressValue = 100;
             if ~obj.Hold
