@@ -178,7 +178,7 @@ classdef CoreReporting < CoreReportingInterface
                 if nargin > 1
                     obj.ProgressDialog.SetProgressText(adjusted_text);
                 else
-                    obj.ProgressDialog.ProgressText();                    
+                    obj.ProgressDialog.SetProgressText();                    
                 end
                 obj.CurrentProgressStackItem.Visible = true;
             end
