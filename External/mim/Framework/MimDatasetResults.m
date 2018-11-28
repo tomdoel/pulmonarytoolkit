@@ -85,7 +85,7 @@ classdef MimDatasetResults < handle
             % the results. For plugins whose result is an image, this will generally be the
             % same as the results.
 
-            reporting.PushProgress;
+            reporting.PushProgress();
             generate_image = nargout > 2;
             
             % Get information about the plugin
@@ -171,9 +171,9 @@ classdef MimDatasetResults < handle
             % Open any output folders which have been written to by the plugin
             obj.OutputFolder.OpenChangedFolders(reporting);
             
-            reporting.CompleteProgress;
+            reporting.CompleteProgress();
             
-            reporting.PopProgress;
+            reporting.PopProgress();
         end
         
         function result_exists = ResultExistsForSpecificContext(obj, plugin_name, context, reporting)
