@@ -17,6 +17,11 @@ classdef (Sealed) PTKUtils < handle
             path(pathdef);
         end
         
+        function RunScript(script_name, varargin)
+            m = PTKMain();
+            m.RunScript(script_name, varargin{:});
+        end
+        
         function Recompile()
             m = PTKMain();
             m.Recompile();
