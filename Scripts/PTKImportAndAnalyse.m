@@ -33,31 +33,32 @@ classdef PTKImportAndAnalyse < MimScript
                 this_uid = uid{1};
                 try
                     dataset = ptk_obj.CreateDatasetFromUid(this_uid);
-                    im_info = dataset.GetImageInfo;
+                    im_info = dataset.GetImageInfo();
+                    im_path = im_info.ImagePath;
                     if isempty(im_info.Modality) || strcmp(im_info.Modality, 'CT')
                         filenames = im_info.ImageFilenames;
                         if numel(filenames) >= 50
                             lobes = dataset.GetResult('PTKSaveLobarAnalysisResults');
                             success{end + 1} = this_uid;
                             fileID = fopen(output_file_name, 'a');
-                            fprintf(fileID, 'Success: %s\n', this_uid);
+                            fprintf(fileID, 'Success: %s %s\n', this_uid, im_path);
                             fclose(fileID);
                         else
                             ignored{end + 1} = this_uid;
                             fileID = fopen(output_file_name, 'a');
-                            fprintf(fileID, 'Ignored: %s\n', this_uid);
+                            fprintf(fileID, 'Ignored: %s %s\n', this_uid, im_path);
                             fclose(fileID);
                         end
                     else
                         ignored{end + 1} = this_uid;                    
                         fileID = fopen(output_file_name, 'a');
-                        fprintf(fileID, 'Ignored: %s\n', this_uid);
+                        fprintf(fileID, 'Ignored: %s %s\n', this_uid, im_path);
                         fclose(fileID);
                     end
                 catch ex
                     failures{end + 1} = this_uid;
                     fileID = fopen(output_file_name, 'a');
-                    fprintf(fileID, 'Failed: %s\n', this_uid);
+                    fprintf(fileID, 'Failed: %s %s\n', this_uid, im_path);
                     fclose(fileID);
                     reporting.ShowWarning('PTKImportAndAnalyse:Failure', ['Failure on dataset ' this_uid ' : ' ex.message], ex);
                 end
