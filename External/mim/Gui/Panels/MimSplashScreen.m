@@ -114,7 +114,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', screen_image_size);
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
-            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', obj.AppDef.GetName, 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 36, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour);
+            obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', obj.AppDef.GetName, 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 34, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour);
             
             obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour, 'HorizontalAlignment', 'Center');
             set(obj.BodyText, 'String', sprintf(['Version ' obj.AppDef.GetVersion]));
