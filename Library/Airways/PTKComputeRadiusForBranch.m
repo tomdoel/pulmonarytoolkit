@@ -50,30 +50,34 @@ function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_dou
         three_quarter_point_index = min(number_knots, three_quarter_point_index + 2);
     end
 
-    % Compute the direction based on the selected points
-    direction_vector_voxels = knot(three_quarter_point_index, :) - knot(quarter_point_index, :);
-    
     radius_mm_allknots = [];
     wall_thickness_mm_allknots = [];
     global_coords_list = [];
     
     middle_point = first_radius_index + round((last_radius_index - first_radius_index)/2);
     
-    for central_knot_index = first_radius_index : last_radius_index
+    % direction_vector_voxels will fail if the points are the same 
+    if three_quarter_point_index ~= quarter_point_index
         
-        % Only show the figure if this is the centre point
-        if central_knot_index == middle_point
-            debug_figure = figure_airways_3d;
-        else
-            debug_figure = [];
-        end
-        central_knot = knot(central_knot_index, :);
-        [radius_mm_list, wall_thickness_mm_list, global_coords] = GetRadiusAndCentrepoint(central_knot, direction_vector_voxels, ...
-            lung_image_as_double, expected_radius_mm, lung_image_as_double.VoxelSize, debug_figure);
-        if ~isempty(radius_mm_list)
-            radius_mm_allknots = [radius_mm_allknots; radius_mm_list'];
-            wall_thickness_mm_allknots = [wall_thickness_mm_allknots; wall_thickness_mm_list'];
-            global_coords_list = [global_coords_list; global_coords];
+        % Compute the direction based on the selected points
+        direction_vector_voxels = knot(three_quarter_point_index, :) - knot(quarter_point_index, :);
+
+        for central_knot_index = first_radius_index : last_radius_index
+
+            % Only show the figure if this is the centre point
+            if central_knot_index == middle_point
+                debug_figure = figure_airways_3d;
+            else
+                debug_figure = [];
+            end
+            central_knot = knot(central_knot_index, :);
+            [radius_mm_list, wall_thickness_mm_list, global_coords] = GetRadiusAndCentrepoint(central_knot, direction_vector_voxels, ...
+                lung_image_as_double, expected_radius_mm, lung_image_as_double.VoxelSize, debug_figure);
+            if ~isempty(radius_mm_list)
+                radius_mm_allknots = [radius_mm_allknots; radius_mm_list'];
+                wall_thickness_mm_allknots = [wall_thickness_mm_allknots; wall_thickness_mm_list'];
+                global_coords_list = [global_coords_list; global_coords];
+            end
         end
     end
     
