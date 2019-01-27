@@ -21,9 +21,9 @@ classdef MimPluginInfoMemoryCache < handle
     end
     
     methods
-        function obj = MimPluginInfoMemoryCache
-            obj.PluginHandleMap = containers.Map;
-            obj.PluginInfoMap = containers.Map;
+        function obj = MimPluginInfoMemoryCache()
+            obj.PluginHandleMap = containers.Map();
+            obj.PluginInfoMap = containers.Map();
         end
         
         function plugin_info = GetPluginInfo(obj, plugin_name, category, reporting)
@@ -50,6 +50,11 @@ classdef MimPluginInfoMemoryCache < handle
         
         function [is_mim_plugin, plugin_class_object] = IsPlugin(obj, plugin_name, category, reporting)
             [is_mim_plugin, plugin_class_object] = obj.PopulateCache(plugin_name, category, reporting);
+        end
+        
+        function Clear(obj)
+            obj.PluginHandleMap = containers.Map();
+            obj.PluginInfoMap = containers.Map();
         end
     end
     

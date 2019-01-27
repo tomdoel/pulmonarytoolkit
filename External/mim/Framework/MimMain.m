@@ -82,7 +82,20 @@ classdef MimMain < CoreBaseClass
         end
         
         function DeleteCacheForAllDatasets(obj)
+            % Delete automatic plugin results cache files on disk and in memory. Does not remove manually genereted files (edits, markers etc.)
+            
+            % Remove memory and disk results cache files for known datasets
+            obj.FrameworkSingleton.GetDatasetApiCache().RemoveAllCachedFiles(obj.Reporting);
+            
+            % Do a hard clearout of the results cache to get rid of
+            % anything else that's left
             obj.FrameworkAppDef.GetFrameworkDirectories.DeleteCacheForAllDatasets();
+        end
+        
+        function ReloadPlugins(obj)
+            % Forces a reload of plugin classes to pick up changes in properties etc.
+            
+            obj.FrameworkSingleton.GetPluginInfoMemoryCache.Clear();
         end
         
         function dataset_uids = FindDataset(obj, dataset_uid_prefix)

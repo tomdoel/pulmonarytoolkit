@@ -28,6 +28,13 @@ classdef MimDatasetApiCache < handle
             obj.DatasetCacheMap = containers.Map;
         end
         
+        function RemoveAllCachedFiles(obj, reporting)
+            % Clear all temporary results caches
+            for cache_map = obj.DatasetCacheMap.values
+                cache_map{1}.RemoveAllCachedFiles(false, reporting);
+            end
+        end
+        
         function dataset_disk_cache = GetDatasetDiskCache(obj, uid, reporting)
             if obj.DatasetCacheMap.isKey(uid)
                 dataset_disk_cache = obj.DatasetCacheMap(uid);
