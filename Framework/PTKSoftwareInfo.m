@@ -18,7 +18,7 @@ classdef PTKSoftwareInfo < handle
     properties (Constant)
         
         % Version numbers
-        Version = '1.0.0'
+        Version = '1.0.1'
         DicomVersion = '0.1'
         DiskCacheSchema = '0.1'
         PTKVersion = '2'
