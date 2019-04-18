@@ -13,7 +13,7 @@ This software requires:
  * Matlab (version R2011a or later)
  * A C++ compiler is needed for a number of the segmentation routines
  * Matlab Image Processing Toolbox
- * Matlab Statistics and Machine Learning toolbox is currently needed to support some of the analtics (specifically prctile)
+ * Matlab Statistics and Machine Learning toolbox is currently needed to support some of the analytics (specifically `prctile`)
 
 
 
@@ -22,7 +22,7 @@ This software is intended for research purposes only. It is not intended for cli
 
 ### Online manuals ###
 
-PDF tutorials can be found in the Downloads folder after checking out the project, or you can download them directly here:
+PDF tutorials can be found in the `Downloads` folder after checking out the project, or you can download them directly here:
 
 [Installing the Pulmonary Toolkit](https://github.com/tomdoel/pulmonarytoolkit/tree/master/Documentation/PTK%20-%20Installing.pdf)
 
