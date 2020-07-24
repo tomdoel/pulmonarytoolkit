@@ -37,6 +37,7 @@ function MimSaveNiftiAsNifti(image_to_save, path, filename, reporting)
     % x y switch
     resolution = image_to_save.VoxelSize([2, 1, 3]);
     image_data = permute(image_data, [2, 1, 3]);
+    image_data = flip(image_data, 3);
     
     % populate header class to with required accurate fields
     metadata = image_to_save.MetaHeader;
