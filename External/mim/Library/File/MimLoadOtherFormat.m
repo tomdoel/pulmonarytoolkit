@@ -61,8 +61,8 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
     switch image_file_format
 
         case MimImageFileFormat.Nifti
-            header_data = nii_read_header(header_filename);
-            data = nii_read_volume(header_data);
+            header_data = niftiinfo(header_filename);
+            data = niftiread(header_data);
             [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromNiiOrientation(header_data, reporting);
         
         case MimImageFileFormat.Analyze % Experimental: assumes fixed orientation
@@ -127,10 +127,17 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
 %         [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromAnatomicalOrientation(header_data.AnatomicalOrientation, reporting);
 %     end
 % 
+
+if image_file_format == MimImageFileFormat.Nifti
+    image_dims = header_data.ImageSize(1:3);
+    voxel_size = header_data.PixelDimensions(1:3);
+    voxel_size = voxel_size(:)';
+else
     image_dims = header_data.Dimensions(1:3);
     voxel_size = header_data.PixelDimensions(1:3);
     voxel_size = voxel_size(:)';
-
+end
+    
 %     if strcmp(header_data.ElementType,'MET_UCHAR')
 %         data_type = 'uint8';
 %     elseif strcmp(header_data.ElementType,'MET_CHAR')
