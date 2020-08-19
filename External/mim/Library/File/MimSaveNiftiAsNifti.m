@@ -37,7 +37,8 @@ function MimSaveNiftiAsNifti(image_to_save, path, filename, reporting)
     % x y switch
     resolution = image_to_save.VoxelSize([2, 1, 3]);
     image_data = permute(image_data, [2, 1, 3]);
-    image_data = flip(image_data, 3);
+    image_data = flip(image_data, 3); % switch data LPI to LPS
+    
     
     % populate header class to with required accurate fields
     metadata = image_to_save.MetaHeader;
@@ -47,5 +48,14 @@ function MimSaveNiftiAsNifti(image_to_save, path, filename, reporting)
     metadata.Datatype = class(image_data);
     
     niftiwrite(image_data, full_filename, metadata);
+    
+    % cannot change affine matrix with matlab nifti tools
+    % function below changes the orientation of the affine for given nifti
+    % file.
+    affine4x4 = metadata.Transform.T;
+    affine3x3 = affine4x4(1:3,1:3);
+    affine3x3 = affine3x3/abs(affine3x3);
+    affine3x3(isnan(affine3x3)) = 0;
+    writeniiaffine(full_filename, affine3x3)
 end
 
