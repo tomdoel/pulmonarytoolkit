@@ -63,7 +63,7 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
         case MimImageFileFormat.Nifti
             header_data = niftiinfo(header_filename);
             data = niftiread(header_data);
-            data = flip(data, 3);
+             data = flip(data, 3);
             [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromNiiOrientation(header_data, reporting);
         
         case MimImageFileFormat.Analyze % Experimental: assumes fixed orientation
