@@ -57,7 +57,7 @@ Size GetDimensions(const mxArray* array) {
     const mwSize* array_dimensions = mxGetDimensions(array);
          
     if (number_of_dimensions != 3) {
-        mexErrMsgTxt("The input matricx must have 3 dimensions.");
+        mexErrMsgTxt("The input matrix must have 3 dimensions.");
     }
              
     dimensions.size[0] = array_dimensions[0];
