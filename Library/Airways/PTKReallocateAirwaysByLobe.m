@@ -12,6 +12,9 @@ function start_branches = PTKReallocateAirwaysByLobe(start_branches, lobes, repo
     
     uncertain_bronchi = start_branches.LeftUncertain;
     for bonchus = uncertain_bronchi
+        if ~isfield(bonchus(1).GetCentrelineTree,'GlobalIndex')
+            continue;
+        end
         indices = GetVoxelsForTheseBranches(bonchus, lobes);
         lobe_values = lobes.RawImage(indices);
         lobe_values = setdiff(lobe_values, 0);
