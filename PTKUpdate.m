@@ -11,12 +11,12 @@ function updated = PTKUpdate(varargin)
     %
 
     persistent PTK_LastUpdated
-    
+
     force_update = nargin > 0 && strcmp(varargin{1}, 'force');
-    
+
     current_date = date();
     updated = false;
-    
+
     % We check for updates at most once per day, to avoid unnecessary
     % startup delays
     if force_update || isempty(PTK_LastUpdated) || ~strcmp(PTK_LastUpdated, current_date)
@@ -25,7 +25,7 @@ function updated = PTKUpdate(varargin)
         if checkDoNotUpdate() && ~force_update
             disp('Note: automatic update checks have been turned off.');
         elseif ~isWebsiteFound()
-            disp('Note: cannot check for updates as cannot connect to repository.');        
+            disp('Note: cannot check for updates as cannot connect to repository.');
         elseif ~isMasterBranch()
             disp('Note: PTK only checks for updates when master branch is checked out.');
         else
@@ -45,7 +45,7 @@ function updated = PTKUpdate(varargin)
                 case DepMatStatus.NotUnderSourceControl
                     disp('! Cannot check for updates as this repository does not appear to be under git source control');
                 case DepMatStatus.FetchFailure
-                    disp('! Cannot check for updates because a failure occurred previously during fetch. Pleaes fix the repository and delete the depmat_fetch_failure file.');
+                    disp('! Cannot check for updates because a failure occurred previously during fetch. Please fix the repository and delete the depmat_fetch_failure file.');
                 case DepMatStatus.UpToDate
                 case {DepMatStatus.UpdateAvailable, DepMatStatus.LocalChanges}
                     answer = questdlg('A new version of PTK is available. Do you wish to update PTK?','Pulmonary Toolkit','Later','Do not ask me again', 'Update','Update');
@@ -67,7 +67,7 @@ end
 
 function setDoNotUpdateFlag
     full_path = mfilename('fullpath');
-    [path_root, ~, ~] = fileparts(full_path);    
+    [path_root, ~, ~] = fileparts(full_path);
     filename = fullfile(path_root, 'do-not-update-git');
     fileHandle = fopen(filename, 'w');
     fclose(fileHandle);
@@ -84,7 +84,7 @@ function found = isWebsiteFound()
     % Checks for basic website connectivity
 
     url = 'https://github.com/tomdoel/pulmonarytoolkit';
-    
+
     % read the URL
     try
         options = weboptions('Timeout', 1);
@@ -109,5 +109,3 @@ function repoExists = isMasterBranch()
     branch = strtrim(branch);
     repoExists = success && strcmp(branch, 'master');
 end
-
-

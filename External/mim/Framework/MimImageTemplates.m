@@ -121,7 +121,7 @@ classdef MimImageTemplates < CoreBaseClass
                         end
                         template.ChangeRawImage(template_raw);
                     else                
-                        reporting.Error('MimImageTemplates:UnknownContext', 'Context not recogised');
+                        reporting.Error('MimImageTemplates:UnknownContext', 'Context not recognised');
                     end
                 end
             end
@@ -145,7 +145,7 @@ classdef MimImageTemplates < CoreBaseClass
         
             % Check the context is recognised
             if ~obj.ValidContexts.isKey(char(context))
-                reporting.Error('MimImageTemplates:UnknownContext', 'Context not recogised');
+                reporting.Error('MimImageTemplates:UnknownContext', 'Context not recognised');
             end
             
             % The context is enabled unless a previous attempt to run the plugin

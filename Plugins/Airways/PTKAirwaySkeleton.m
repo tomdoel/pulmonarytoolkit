@@ -1,5 +1,5 @@
 classdef PTKAirwaySkeleton < PTKPlugin
-    % PTKAirwayCentreline. Plugin for finding the centreline of the pulmonary airway tree.
+    % PTKAirwaySkeleton. Plugin for finding the centreline of the pulmonary airway tree.
     %
     %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.

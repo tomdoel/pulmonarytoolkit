@@ -213,7 +213,7 @@ classdef MimDataset < CoreBaseClass
         end
         
         function SaveMarkerPoints(obj, name, data, varargin)
-            % Save data as a cache file associated with this dataset
+            % Save marker point set
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveMarkerPoints(name, data, obj.DatasetStack, obj.Reporting);
             obj.PostCallTidy;
@@ -227,7 +227,7 @@ classdef MimDataset < CoreBaseClass
         end
 
         function data = LoadMarkerPoints(obj, name, varargin)
-            % Load data from a cache file associated with this dataset
+            % Load marker point set
             obj.PreCallTidy;
             data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadMarkerPoints(name, obj.DatasetStack, obj.Reporting);
             obj.PostCallTidy;
