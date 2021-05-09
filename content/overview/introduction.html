@@ -1,0 +1,614 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Introduction &#8212; Pulmonary Toolkit</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Getting started" href="GettingStarted.html" />
+    <link rel="prev" title="Pulmonary Toolkit" href="../intro.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      <img src="../../_static/PTKLogo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pulmonary Toolkit</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   Pulmonary Toolkit
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Overview
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Introduction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="GettingStarted.html">
+   Getting started
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Tutorials.html">
+   PDF tutorial guides
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Running-PTK-without-Matlab.html">
+   Running PTK without Matlab
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ExternalDependencies.html">
+   External Depenencies
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  GUI
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
+   Tutorial: Lobar analysis of CT data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
+   Importing and loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/How-to-perform-and-correct-lobe-Segmentations.html">
+   How to perform and correct lobe Segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Fixing-lobe-segmentation-failures.html">
+   Fixing lobe segmentation failures
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Features
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/ManualSegmentations.html">
+   Manual segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/Markers.html">
+   Markers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/PTKViewer.html">
+   PTKViewer
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Maintenance
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/delete-or-reset.html">
+   Complete reset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">
+   Deleting data in PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/disk-space.html">
+   Recovering disk space
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Developer documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/EditedResults.html">
+   Edited Results for manual and semi-automated correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/CodingStandards.html">
+   Coding standards
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/PTK-internal-directories-and-caches.html">
+   PTK internal directories and caches
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/UnitTests.html">
+   Unit tests
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/profiling.html">
+   Profiling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/Mex-files.html">
+   MEX files
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/ErrorAndProgressReporting.html">
+   Error and Progress Reporting
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/Scripts.html">
+   Scripts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/BuildingGuis.html">
+   Building user interfaces using PTK classes
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  About PTK datatypes
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Contexts.html">
+   Contexts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKImage.html">
+   PTKImage
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Metrics.html">
+   Metrics
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKResultsTable.html">
+   PTKResultsTable
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Scripting
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../scripting/Command-Line.html">
+   Running the PTK GUI via Matlab from the macOS terminal
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Legacy documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/ReleaseNotes0_7.html">
+   Release notes v0.7
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/ReleaseNotes0_8.html">
+   Release notes v0.8
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/MigratingToGitHub.html">
+   HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Additional resources
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">
+   Medical Imaging Analysis Software
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/SampleData.html">
+   Sample Data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/Citations.html">
+   How to cite PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/additional-topics.html">
+   Additional help topics
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/content/overview/introduction.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-pulmonary-toolkit-ptk">
+   The Pulmonary Toolkit (PTK)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#overview">
+   Overview
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#online-manuals">
+   Online manuals
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#what-can-i-do-with-the-pulmonary-toolkit">
+     What can I do with the Pulmonary Toolkit?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#requirements">
+     Requirements
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#releases">
+     Releases
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#support">
+     Support
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#license">
+     License
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-pulmonary-toolkit-ptk">
+<h2>The Pulmonary Toolkit (PTK)<a class="headerlink" href="#the-pulmonary-toolkit-ptk" title="Permalink to this headline">¶</a></h2>
+<p>version: ALPHA 1.1
+Please note this version is not stable.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="GettingStarted.html"><span class="doc std std-doc">Getting Started</span></a></p></li>
+<li><p><a class="reference internal" href="../resources/SampleData.html"><span class="doc std std-doc">Sample Data</span></a></p></li>
+<li><p><a class="reference internal" href="../resources/Citations.html"><span class="doc std std-doc">Citing in publications, posters etc.</span></a></p></li>
+<li><p><span class="xref myst">Release notes for version v0.8</span></p></li>
+<li><p><span class="xref myst">Release notes for version v0.7</span></p></li>
+</ul>
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The Pulmonary Toolkit is a software suite for the analysis of 3D medical lung images for academic research use.</p>
+<p>This is experimental research software and is primarily intended to support our own work. However, we are happy for you to make use of the software, and we have therefore made the source code available for free under the open-source licence (GNU-GPL3).</p>
+<p>It comprises:</p>
+<ul class="simple">
+<li><p>a library of lung analysis algorithms which can be called from your own code;</p></li>
+<li><p>a GUI application for visualising and analysing clinical lung images (CT &amp; MRI);</p></li>
+<li><p>a rapid prototyping framework for developing new algorithms. This fully integrates with the GUI application, or can be used within your own code or through scripting.</p></li>
+</ul>
+<p>This software requires Matlab (version R2010b or later) and the Matlab Image Processing Toolbox.
+Some features also require a C++ compiler.</p>
+<p><strong>Note: The Toolkit will not run with earlier versions of Matlab</strong></p>
+<p>This software is intended for research purposes only. It is not intended for clinical use.</p>
+</div>
+<div class="section" id="online-manuals">
+<h2>Online manuals<a class="headerlink" href="#online-manuals" title="Permalink to this headline">¶</a></h2>
+<p>PDF tutorials can be found in the Downloads folder after checking out the project, or you can download them directly here:</p>
+<p>Please note some of the information in the tutorials may be out of date.</p>
+<p><a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit/raw/master/Documentation/PTK%20-%20Installing.pdf">Installing the Pulmonary Toolkit</a></p>
+<p><a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit/raw/master/Documentation/PTK%20-%20Tutorial%201.pdf">Tutorial 1 - Loading and visualising data</a></p>
+<p><a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit/raw/master/Documentation/PTK%20-%20Tutorial%202.pdf">Tutorial 2 - Exporting data</a></p>
+<p><a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit/raw/master/Documentation/PTK%20-%20Tutorial%203.pdf">Tutorial 3 - Programming with the Pulmonary Toolkit</a></p>
+<p><a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit/raw/master/Documentation/PTK%20-%20Tutorial%204.pdf">Tutorial 4 - Lobar analysis of CT data</a></p>
+<div class="section" id="what-can-i-do-with-the-pulmonary-toolkit">
+<h3>What can I do with the Pulmonary Toolkit?<a class="headerlink" href="#what-can-i-do-with-the-pulmonary-toolkit" title="Permalink to this headline">¶</a></h3>
+<p>There are many ways of using the Toolkit, for example:</p>
+<ul class="simple">
+<li><p>Use the GUI to load lung images from Dicom or mhd/raw files, perform automated analysis such as lobe segmentation or emphysema detection, and then save the results out;</p></li>
+<li><p>Write your own plugins to perform image analysis tasks, such as regional detection of lung disease;</p></li>
+<li><p>Write a Matlab script to perform automated analysis on hundreds of datasets using the Toolkit’s API, for example gathering airway measurements;</p></li>
+<li><p>Using the PTKViewer tool to quickly view 3D datasets from the Matlab command window;</p></li>
+<li><p>Build your own medical application, by adding the Toolkit’s image viewing panel (PTKViewerPanel) to your application;</p></li>
+<li><p>Use the Toolkit’s suite of library functions to help in loading/saving, image processing (e.g. 3D watershed transforms) and image analysis</p></li>
+</ul>
+</div>
+<div class="section" id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
+<p>To run the current alpha version you will need the following:</p>
+<ul class="simple">
+<li><p>Matlab version R2010b or later</p></li>
+<li><p>The Matlab Image Processing Toolbox</p></li>
+<li><p>A C++ compiler compatible with Matlab</p></li>
+<li><p>(recommended) a Git client</p></li>
+</ul>
+</div>
+<div class="section" id="releases">
+<h3>Releases<a class="headerlink" href="#releases" title="Permalink to this headline">¶</a></h3>
+<p>You can download and run the software but please be aware <strong>the Toolkit is currently in alpha</strong>. There is currently no stable release. We recommend you check out the latest version using Git and update regularly to obtain new features and bug fixes.</p>
+<p>See the GitHub website for more information on how to obtain the source code. While you can download a zip file, I recommend you use Git as it is easier to obtain updates. Git clients are available for all operating systems</p>
+<p>Please pull changes regularly from the GitHub repository to receive new features and fixes.</p>
+<p>PTK has an experimental auto-update mechanism where you will be prompted to update when an update appears on the MASTER branch exists. This depends on git being correctly configured.</p>
+</div>
+<div class="section" id="support">
+<h3>Support<a class="headerlink" href="#support" title="Permalink to this headline">¶</a></h3>
+<p>If you have questions or problems, please check the following:</p>
+<ul class="simple">
+<li><p>You have the Matlab Image Processing Toolbox installed and licensed;</p></li>
+<li><p>You have the latest master version of PTK (update using <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code>);</p></li>
+<li><p>You have a C++ compiler that is fully compatible with your version of Matlab;</p></li>
+<li><p>Your C++ compiler can be found and invoked by Matlab (see <code class="docutils literal notranslate"><span class="pre">mex</span></code> for details).</p></li>
+</ul>
+<p>Documentation and help:</p>
+<ul class="simple">
+<li><p>see the wiki pages on GitHub;</p></li>
+<li><p>download the tutorials;</p></li>
+<li><p>code documentation using <code class="docutils literal notranslate"><span class="pre">doc</span> <span class="pre">&lt;functionname&gt;</span></code> - many of the PTK classes and functions are documented;</p></li>
+<li><p>Issues page on GitHub.</p></li>
+</ul>
+<p>If you still have problems, please create a new issue on GitHub.</p>
+<p>The toolkit works primarily with medical Dicom images, but there is also limited support for mhd/mha files. At the time of writing, the dev branch includes improved mha/mhd support and some untested support for other file formats such as NIFTI.</p>
+</div>
+<div class="section" id="license">
+<h3>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h3>
+<p>You may download and use the Toolkit subject to the conditions of the GNU GPL v3 license. Note that under this license you can use the Toolkit in your own software, but if you do, and if you distribute your software to anyone else, then you must also make your software source code freely available. See the GNU GPL v3 license for details.</p>
+<p><em>Note: Some parts of the software in the External folder are covered by different licences - see the licence files in the External folder for details</em>.</p>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./content/overview"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="../intro.html" title="previous page">Pulmonary Toolkit</a>
+    <a class='right-next' id="next-link" href="GettingStarted.html" title="next page">Getting started</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Tom Doel<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

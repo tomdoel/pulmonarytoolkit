@@ -1,0 +1,584 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Building user interfaces using PTK classes &#8212; Pulmonary Toolkit</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Contexts" href="../datatypes/Contexts.html" />
+    <link rel="prev" title="Scripts" href="Scripts.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      <img src="../../_static/PTKLogo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pulmonary Toolkit</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   Pulmonary Toolkit
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Overview
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/introduction.html">
+   Introduction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/GettingStarted.html">
+   Getting started
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Tutorials.html">
+   PDF tutorial guides
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">
+   Running PTK without Matlab
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/ExternalDependencies.html">
+   External Depenencies
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  GUI
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
+   Tutorial: Lobar analysis of CT data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
+   Importing and loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/How-to-perform-and-correct-lobe-Segmentations.html">
+   How to perform and correct lobe Segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Fixing-lobe-segmentation-failures.html">
+   Fixing lobe segmentation failures
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Features
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/ManualSegmentations.html">
+   Manual segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/Markers.html">
+   Markers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/PTKViewer.html">
+   PTKViewer
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Maintenance
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/delete-or-reset.html">
+   Complete reset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">
+   Deleting data in PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/disk-space.html">
+   Recovering disk space
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Developer documentation
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="EditedResults.html">
+   Edited Results for manual and semi-automated correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="CodingStandards.html">
+   Coding standards
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="PTK-internal-directories-and-caches.html">
+   PTK internal directories and caches
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="UnitTests.html">
+   Unit tests
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="profiling.html">
+   Profiling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Mex-files.html">
+   MEX files
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ErrorAndProgressReporting.html">
+   Error and Progress Reporting
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Scripts.html">
+   Scripts
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Building user interfaces using PTK classes
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  About PTK datatypes
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Contexts.html">
+   Contexts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKImage.html">
+   PTKImage
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Metrics.html">
+   Metrics
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKResultsTable.html">
+   PTKResultsTable
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Scripting
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../scripting/Command-Line.html">
+   Running the PTK GUI via Matlab from the macOS terminal
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Legacy documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="ReleaseNotes0_7.html">
+   Release notes v0.7
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ReleaseNotes0_8.html">
+   Release notes v0.8
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MigratingToGitHub.html">
+   HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Additional resources
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">
+   Medical Imaging Analysis Software
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/SampleData.html">
+   Sample Data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/Citations.html">
+   How to cite PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/additional-topics.html">
+   Additional help topics
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/content/developer/BuildingGuis.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#classes">
+   Classes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#building-guis-essential-concepts">
+   Building GUIs - essential concepts
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#examples">
+   Examples
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="building-user-interfaces-using-ptk-classes">
+<h1>Building user interfaces using PTK classes<a class="headerlink" href="#building-user-interfaces-using-ptk-classes" title="Permalink to this headline">¶</a></h1>
+<p>Please note: some of the GUI-related class are now called Gem*</p>
+<p>The PTK provides a suite of classes which extend Matlab’s user interface features to provide more power and functionality. The advantages offered include:</p>
+<ul class="simple">
+<li><p>Modern-style tab controls</p></li>
+<li><p>Scrolling panels. These can be scrolled with the mouse wheel or a side slider which automatically appears or disappears if necessary</p></li>
+<li><p>Composite panels (a panel formed of an arbitrary number of sub-panels)</p></li>
+<li><p>Auomatic lazy creation of graphical objects (the actual components are only created when they become visible)</p></li>
+<li><p>Correct positioning of components before they become visible, so no ugly flicker while the GUI is being resized</p></li>
+<li><p>Button controls with custom colours and image backgrounds</p></li>
+<li><p>Clickable and selectable text controls and which can highlight as the mouse moves over</p></li>
+<li><p>Mouse over, Left-click, mouse drag, right-click, shift-click and mouse wheel commands for all controls and panels</p></li>
+<li><p>Keyboard shortcuts</p></li>
+<li><p>Control classes can be extended to add your own functionality</p></li>
+</ul>
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<p>The core GUI classes are found in Library/GuiComponents. All graphical objects inherit from <code class="docutils literal notranslate"><span class="pre">PTKUserInterfaceObject</span></code>. A number of components are provided:</p>
+<p>Base classes</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PTKUserInterfaceObject</span></code> - base class for graphical components. All classes must inherit from this</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> -  you must have at least one <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object. This contains a Matlab figure on which the controls are placed</p></li>
+</ul>
+<p>Controls</p>
+<ul class="simple">
+<li><p>PTKText</p></li>
+<li><p>PTKButton</p></li>
+<li><p>PTKSlider</p></li>
+<li><p>PTKDropDownMenu</p></li>
+</ul>
+<p>Panels</p>
+<ul class="simple">
+<li><p>PTKPanel</p></li>
+<li><p>PTKSlidingPanel</p></li>
+<li><p>PTKCompositePanel</p></li>
+<li><p>PTKTabPanel</p></li>
+<li><p>PTKTabPanel</p></li>
+</ul>
+<p>To modify control behaviour for individual controls, create the control and then modify its properties. To change control behaviour more generally, create your own control class inheriting from controls and modify the properties in that inherited class</p>
+</div>
+<div class="section" id="building-guis-essential-concepts">
+<h2>Building GUIs - essential concepts<a class="headerlink" href="#building-guis-essential-concepts" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>You should create a <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object which will be the figure upon which your GUI is based. Generally you do this by creating a new class which inherits from <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code>. This is your basic interface window.</p></li>
+<li><p>Create other controls - typically in the constructor. You must call <code class="docutils literal notranslate"><span class="pre">AddChild()</span></code> on the parent class to add a control. For example:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyFigure</span> <span class="o">&lt;</span> <span class="n">PTKFigure</span>
+
+<span class="o">...</span>
+
+<span class="n">properties</span> <span class="p">(</span><span class="n">Access</span> <span class="o">=</span> <span class="n">private</span><span class="p">)</span>
+    <span class="n">MyText</span>
+<span class="n">end</span>
+
+<span class="n">methods</span>  <span class="p">(</span><span class="n">Access</span> <span class="o">=</span> <span class="n">private</span><span class="p">)</span>
+    <span class="n">function</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">MyFigure</span>
+        <span class="o">%</span> <span class="n">Constructor</span>
+
+        <span class="o">%</span> <span class="n">Call</span> <span class="n">the</span> <span class="n">base</span> <span class="k">class</span> <span class="nc">to</span> <span class="n">initialise</span> <span class="n">the</span> <span class="n">hidden</span> <span class="n">window</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="nd">@PTKFigure</span><span class="p">(</span><span class="s1">&#39;Figure title&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">50</span> <span class="mi">50</span> <span class="mi">300</span> <span class="mi">400</span><span class="p">]);</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">MyText</span> <span class="o">=</span> <span class="n">PTKText</span><span class="p">(</span><span class="o">....</span><span class="p">);</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">AddChild</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">MyText</span><span class="p">);</span>
+
+        <span class="o">...</span>
+
+        <span class="o">%</span> <span class="n">Make</span> <span class="n">the</span> <span class="n">window</span> <span class="n">visible</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Show</span><span class="p">(</span><span class="n">PTKReportingDefault</span><span class="p">);</span>
+    <span class="n">end</span>
+<span class="n">end</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Override the <code class="docutils literal notranslate"><span class="pre">Resize()</span></code> method to define the layout of your GUI. Remember to call the superclass <code class="docutils literal notranslate"><span class="pre">Resize()</span></code> method (this is important!)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> is hidden by default. Call <code class="docutils literal notranslate"><span class="pre">Show()</span></code> to make it visible.</p></li>
+<li><p>You can create the underlying PTK object at any point. The actual graphical components are generally created when they first become visible, via the <code class="docutils literal notranslate"><span class="pre">CreateGuiComponent()</span></code> method.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Resize()</span></code> method will remember the component’s size, even if it currently has not been created yet (i.e. it is still invisible). When it becomes visible, it will be created with the correct size. This means you can lay out your GUI before it has been created, so when it comes visible it already has the correct size and layout.</p></li>
+<li><p>If you are using Matlab gui components directly, you cannot create them in your constructor because there is go graphical handle yet to which you can attach them. You must instead create them in the <code class="docutils literal notranslate"><span class="pre">CreateGuiComponent()</span></code> method. Call the superclass method and you will then have a Matlab handle <code class="docutils literal notranslate"><span class="pre">obj.GraphicalComponentHandle</span></code> which you can use to create your Matlab gui object. NB If you are resizing these Matlab GUI objects in <code class="docutils literal notranslate"><span class="pre">Resize()</span></code> you will need to put a null check on them so they don’t get resized before they have been created.</p></li>
+</ul>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PTKViewer.m</span></code> is an example viewer application built using the <code class="docutils literal notranslate"><span class="pre">PTKGui</span></code> classes. <code class="docutils literal notranslate"><span class="pre">PTKViewer</span></code> itself is a <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object, containing a single panel (<code class="docutils literal notranslate"><span class="pre">PTKViewerPanel</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PTKPatientBrowser</span></code> is a <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object containing 2 panels. The left panel is <code class="docutils literal notranslate"><span class="pre">PTKListOfPatientsPanel</span></code>, which is a PTKPanel containing a listbox text and button controls. The right panel is a scrolling panel <code class="docutils literal notranslate"><span class="pre">PTKPatientsSlidingPanel</span></code>, which is a <code class="docutils literal notranslate"><span class="pre">PTKSlidingPanel</span></code> containing a <code class="docutils literal notranslate"><span class="pre">PTKCompositePanel</span></code> consisting of multiple  <code class="docutils literal notranslate"><span class="pre">PTKPanel</span></code>s of class <code class="docutils literal notranslate"><span class="pre">PTKPatientPanel</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PTKGui</span></code> is a <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object containing multiple panels including a <code class="docutils literal notranslate"><span class="pre">PTKTabControl</span></code> which contains the plugin panels.</p></li>
+</ul>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./content/developer"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="Scripts.html" title="previous page">Scripts</a>
+    <a class='right-next' id="next-link" href="../datatypes/Contexts.html" title="next page">Contexts</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Tom Doel<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

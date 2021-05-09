@@ -1,0 +1,547 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit tests &#8212; Pulmonary Toolkit</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Profiling" href="profiling.html" />
+    <link rel="prev" title="PTK internal directories and caches" href="PTK-internal-directories-and-caches.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      <img src="../../_static/PTKLogo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pulmonary Toolkit</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   Pulmonary Toolkit
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Overview
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/introduction.html">
+   Introduction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/GettingStarted.html">
+   Getting started
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Tutorials.html">
+   PDF tutorial guides
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">
+   Running PTK without Matlab
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/ExternalDependencies.html">
+   External Depenencies
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  GUI
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
+   Tutorial: Lobar analysis of CT data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
+   Importing and loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/How-to-perform-and-correct-lobe-Segmentations.html">
+   How to perform and correct lobe Segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Fixing-lobe-segmentation-failures.html">
+   Fixing lobe segmentation failures
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Features
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/ManualSegmentations.html">
+   Manual segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/Markers.html">
+   Markers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/PTKViewer.html">
+   PTKViewer
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Maintenance
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/delete-or-reset.html">
+   Complete reset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">
+   Deleting data in PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/disk-space.html">
+   Recovering disk space
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Developer documentation
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="EditedResults.html">
+   Edited Results for manual and semi-automated correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="CodingStandards.html">
+   Coding standards
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="PTK-internal-directories-and-caches.html">
+   PTK internal directories and caches
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Unit tests
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="profiling.html">
+   Profiling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Mex-files.html">
+   MEX files
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ErrorAndProgressReporting.html">
+   Error and Progress Reporting
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Scripts.html">
+   Scripts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="BuildingGuis.html">
+   Building user interfaces using PTK classes
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  About PTK datatypes
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Contexts.html">
+   Contexts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKImage.html">
+   PTKImage
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Metrics.html">
+   Metrics
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKResultsTable.html">
+   PTKResultsTable
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Scripting
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../scripting/Command-Line.html">
+   Running the PTK GUI via Matlab from the macOS terminal
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Legacy documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="ReleaseNotes0_7.html">
+   Release notes v0.7
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ReleaseNotes0_8.html">
+   Release notes v0.8
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MigratingToGitHub.html">
+   HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Additional resources
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">
+   Medical Imaging Analysis Software
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/SampleData.html">
+   Sample Data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/Citations.html">
+   How to cite PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/additional-topics.html">
+   Additional help topics
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/content/developer/UnitTests.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#running-tests">
+   Running tests
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#note-if-you-are-using-the-debugger">
+     Note: if you are using the debugger
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#unit-test-files">
+   Unit test files
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adding-tests">
+   Adding tests
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#test-coding-standards">
+   Test coding standards
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="unit-tests">
+<h1>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h1>
+<p>The PTK provides a simple framework for developing and running unit tests.
+Unit tests are helpful for the development of new code, but are particularly useful for regression testing (detecting when code changes cause unanticipated consequences).</p>
+<div class="section" id="running-tests">
+<h2>Running tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
+<p>From the Matlab command window, run</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PTKRunTests</span>
+</pre></div>
+</div>
+<p>This will run all tests and report whether each one passes or fails.</p>
+<p>You can also run a specific test</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PTKRunTests</span> <span class="n">test_name</span>
+</pre></div>
+</div>
+<p>where test_name is the name of the test class you want to run. You can run multiple tests by passing them as a cell array, e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PTKRunTests</span><span class="p">({</span><span class="s1">&#39;first test name&#39;</span><span class="p">,</span> <span class="s1">&#39;second test name&#39;</span><span class="p">,</span> <span class="s1">&#39;third test name&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<div class="section" id="note-if-you-are-using-the-debugger">
+<h3>Note: if you are using the debugger<a class="headerlink" href="#note-if-you-are-using-the-debugger" title="Permalink to this headline">¶</a></h3>
+<p>Some tests deliberately trigger a special type of exception (PTKTestException), in order to ensure errors are detected when they should be.</p>
+<p>If you have your debugger set to stop on all exceptions, then this will trigger when the tests are run.</p>
+<p>To stop this happening, set the following debugging option:</p>
+<p>Editor tab &gt; Breakpoints &gt; Stop if errors/warnings for all files &gt; Try/Catch errors &gt; Never stop when an error is caught</p>
+<p>Or configure your debugger to not stop on PTKTestExceptions</p>
+</div>
+</div>
+<div class="section" id="unit-test-files">
+<h2>Unit test files<a class="headerlink" href="#unit-test-files" title="Permalink to this headline">¶</a></h2>
+<p>Unit tests are stored in the \Test folder. Each file in this folder is a class of type PTKTest, which contains a number of tests. Normally, a single test class is used to test a single real class. The test filename generally corresponds to the real class or function being tested, e.g. the test class TestStack tests the real class PTKStack.</p>
+</div>
+<div class="section" id="adding-tests">
+<h2>Adding tests<a class="headerlink" href="#adding-tests" title="Permalink to this headline">¶</a></h2>
+<p>A test is added by creating a new class in the \Test directory. This class must inherit from PTKTest. All code in the test must be invoked by the constructor, as the test will be executed by instantiating and then deleting an object of the test class. Tests can be put into methods, providing the methods are called by the constructor.</p>
+</div>
+<div class="section" id="test-coding-standards">
+<h2>Test coding standards<a class="headerlink" href="#test-coding-standards" title="Permalink to this headline">¶</a></h2>
+<p>In general, one test class should be created for each corresponding class (or function file) being tested. Test classes should be called “TestFoo” corresponding to “PTKFoo” and are placed in \Test. Classes required as parameters  to the class being tested should in general be mocked (fake objects are OK where the interaction is not important). Mock and fake objects objects should be placed in \Library\Test, since these are not tests in themselves but helper classes.</p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./content/developer"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="PTK-internal-directories-and-caches.html" title="previous page">PTK internal directories and caches</a>
+    <a class='right-next' id="next-link" href="profiling.html" title="next page">Profiling</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Tom Doel<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

@@ -1,0 +1,545 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Importing and loading data &#8212; Pulmonary Toolkit</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="How to perform and correct lobe Segmentations" href="How-to-perform-and-correct-lobe-Segmentations.html" />
+    <link rel="prev" title="Keyboard and mouse shortcuts" href="KeyboardShortcuts.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      <img src="../../_static/PTKLogo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pulmonary Toolkit</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   Pulmonary Toolkit
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Overview
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/introduction.html">
+   Introduction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/GettingStarted.html">
+   Getting started
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Tutorials.html">
+   PDF tutorial guides
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">
+   Running PTK without Matlab
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/ExternalDependencies.html">
+   External Depenencies
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  GUI
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="Tutorial-Lobar-analysis-of-CT-data.html">
+   Tutorial: Lobar analysis of CT data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="KeyboardShortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Importing and loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="How-to-perform-and-correct-lobe-Segmentations.html">
+   How to perform and correct lobe Segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Fixing-lobe-segmentation-failures.html">
+   Fixing lobe segmentation failures
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Features
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/ManualSegmentations.html">
+   Manual segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/Markers.html">
+   Markers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/PTKViewer.html">
+   PTKViewer
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Maintenance
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/delete-or-reset.html">
+   Complete reset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">
+   Deleting data in PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/disk-space.html">
+   Recovering disk space
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Developer documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/EditedResults.html">
+   Edited Results for manual and semi-automated correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/CodingStandards.html">
+   Coding standards
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/PTK-internal-directories-and-caches.html">
+   PTK internal directories and caches
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/UnitTests.html">
+   Unit tests
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/profiling.html">
+   Profiling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/Mex-files.html">
+   MEX files
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/ErrorAndProgressReporting.html">
+   Error and Progress Reporting
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/Scripts.html">
+   Scripts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/BuildingGuis.html">
+   Building user interfaces using PTK classes
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  About PTK datatypes
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Contexts.html">
+   Contexts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKImage.html">
+   PTKImage
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Metrics.html">
+   Metrics
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKResultsTable.html">
+   PTKResultsTable
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Scripting
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../scripting/Command-Line.html">
+   Running the PTK GUI via Matlab from the macOS terminal
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Legacy documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/ReleaseNotes0_7.html">
+   Release notes v0.7
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/ReleaseNotes0_8.html">
+   Release notes v0.8
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/MigratingToGitHub.html">
+   HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Additional resources
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">
+   Medical Imaging Analysis Software
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/SampleData.html">
+   Sample Data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/Citations.html">
+   How to cite PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/additional-topics.html">
+   Additional help topics
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/content/gui/ImportingAndLoadingData.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#importing-data">
+   Importing data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-data">
+   Loading data
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#using-the-sidebar">
+     Using the sidebar
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#using-the-patient-browser">
+     Using the Patient Browser
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-first-time-you-load-a-dataset">
+   The first time you load a dataset
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#switching-between-datasets">
+   Switching between datasets
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="importing-and-loading-data">
+<h1>Importing and loading data<a class="headerlink" href="#importing-and-loading-data" title="Permalink to this headline">¶</a></h1>
+<p>As with many Dicom-based programs, getting data into PTK is a two-step process. You first <strong>import</strong> images into the PTK database. Then you can <strong>load</strong> any dataset from the database. Once imported, images remain in the database permanently (unless you delete them), and they are accessible from the sidebar or the Patient Browser. You can only have one dataset loaded at a time, but switching to a different dataset is fast due to PTK’s smart caching.</p>
+<div class="section" id="importing-data">
+<h2>Importing data<a class="headerlink" href="#importing-data" title="Permalink to this headline">¶</a></h2>
+<p>The way Dicom images are stored on disk can be a mess - image stacks can be split across multiple folders and mixed in with image and non-image data. PTK simplifies the whole import process because you just need to specify a root directory. PTK will search for images recursively through all the subdirectories, ignoring all non-Dicom images, and will group all the images into patients and series based on the image metadata. PTK will group together series even if they are spread across multiple directories (this does happen!) However, all the images do need to be imported at the same time.</p>
+<p>The easiest way to import data is to startup PTK</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ptk</span>
+</pre></div>
+</div>
+<p>and then click the <code class="docutils literal notranslate"><span class="pre">+</span></code> (Import) button at the bottom left. Choose a root folder. PTK will recursively search for and import the data it finds. This could take some time if you have a lot of images. Once all the images have been found you will see the left sidebar populated with patient and series data.</p>
+<p>You can also show the Patient Browser to see all the image series grouped by patient in a separate window.</p>
+</div>
+<div class="section" id="loading-data">
+<h2>Loading data<a class="headerlink" href="#loading-data" title="Permalink to this headline">¶</a></h2>
+<p>You can load one dataset at a time. You can load any dataset that has been imported. You can either load from the sidebar, or from the Patient Browser.</p>
+<div class="section" id="using-the-sidebar">
+<h3>Using the sidebar<a class="headerlink" href="#using-the-sidebar" title="Permalink to this headline">¶</a></h3>
+<p>First click on the patient you want to load (scroll if necessary down the patient list). Then all the available series will be shown underneath. Click on a series to load that dataset.</p>
+</div>
+<div class="section" id="using-the-patient-browser">
+<h3>Using the Patient Browser<a class="headerlink" href="#using-the-patient-browser" title="Permalink to this headline">¶</a></h3>
+<p>Click the Patient Browser button to show the Patient Browser if it is not already shown. Then scroll through all the series (grouped by patient) and click the series you wish to load. The left-hand sidebar is a shortcut to patients and scrolls the main panel to that patient.</p>
+</div>
+</div>
+<div class="section" id="the-first-time-you-load-a-dataset">
+<h2>The first time you load a dataset<a class="headerlink" href="#the-first-time-you-load-a-dataset" title="Permalink to this headline">¶</a></h2>
+<p>PTK does some initial processing of images the first time it loads a particular dataset. This is to identify the lung region of interest (ROI), and can take up to a minute or two depending on how large the dataset is. Identifying this ROI allows the non-lung regions to be internally discarded (the original data is not affected!) which substantially speeds up execution time and reduces memory usage. This ROI calculation is performed once per dataset the first time you load that dataset. Even if you restart PTK, restart Matlab or reboot your computer, it will not need to perform it again for that dataset.</p>
+</div>
+<div class="section" id="switching-between-datasets">
+<h2>Switching between datasets<a class="headerlink" href="#switching-between-datasets" title="Permalink to this headline">¶</a></h2>
+<p>To switch to another dataset simply click on the series you wish to load in the sidebar or Patient Browser. If you are switching to a series you have not previously loaded then you may have to wait for the ROI computation. However, once this has been done switching between datasets is very fast and usually takes only a second or two.</p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./content/gui"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="KeyboardShortcuts.html" title="previous page">Keyboard and mouse shortcuts</a>
+    <a class='right-next' id="next-link" href="How-to-perform-and-correct-lobe-Segmentations.html" title="next page">How to perform and correct lobe Segmentations</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Tom Doel<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

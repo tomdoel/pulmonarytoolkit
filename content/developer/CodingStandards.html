@@ -1,0 +1,615 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coding standards &#8212; Pulmonary Toolkit</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="PTK internal directories and caches" href="PTK-internal-directories-and-caches.html" />
+    <link rel="prev" title="Edited Results for manual and semi-automated correction" href="EditedResults.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      <img src="../../_static/PTKLogo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pulmonary Toolkit</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   Pulmonary Toolkit
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Overview
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/introduction.html">
+   Introduction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/GettingStarted.html">
+   Getting started
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Tutorials.html">
+   PDF tutorial guides
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">
+   Running PTK without Matlab
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/ExternalDependencies.html">
+   External Depenencies
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  GUI
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
+   Tutorial: Lobar analysis of CT data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
+   Importing and loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/How-to-perform-and-correct-lobe-Segmentations.html">
+   How to perform and correct lobe Segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Fixing-lobe-segmentation-failures.html">
+   Fixing lobe segmentation failures
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Features
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/ManualSegmentations.html">
+   Manual segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/Markers.html">
+   Markers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/PTKViewer.html">
+   PTKViewer
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Maintenance
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/delete-or-reset.html">
+   Complete reset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">
+   Deleting data in PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/disk-space.html">
+   Recovering disk space
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Developer documentation
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="EditedResults.html">
+   Edited Results for manual and semi-automated correction
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Coding standards
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="PTK-internal-directories-and-caches.html">
+   PTK internal directories and caches
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="UnitTests.html">
+   Unit tests
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="profiling.html">
+   Profiling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Mex-files.html">
+   MEX files
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ErrorAndProgressReporting.html">
+   Error and Progress Reporting
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Scripts.html">
+   Scripts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="BuildingGuis.html">
+   Building user interfaces using PTK classes
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  About PTK datatypes
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Contexts.html">
+   Contexts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKImage.html">
+   PTKImage
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Metrics.html">
+   Metrics
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKResultsTable.html">
+   PTKResultsTable
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Scripting
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../scripting/Command-Line.html">
+   Running the PTK GUI via Matlab from the macOS terminal
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Legacy documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="ReleaseNotes0_7.html">
+   Release notes v0.7
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ReleaseNotes0_8.html">
+   Release notes v0.8
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MigratingToGitHub.html">
+   HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Additional resources
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">
+   Medical Imaging Analysis Software
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/SampleData.html">
+   Sample Data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/Citations.html">
+   How to cite PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/additional-topics.html">
+   Additional help topics
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/content/developer/CodingStandards.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#development">
+   Development
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#commenting">
+   Commenting
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#functions-and-classes">
+   Functions and Classes
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#variables">
+   Variables
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#naming">
+     Naming
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#global-variables">
+     Global variables
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#persistent-variables">
+     Persistent variables
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#singletons">
+     Singletons
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#display-of-messages-errors-warnings-and-progress">
+   Display of Messages, errors, warnings and progress
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plugins">
+   Plugins
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#button-text">
+     Button text
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="coding-standards">
+<h1>Coding standards<a class="headerlink" href="#coding-standards" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This page describes standards and conventions which should be followed by code which is to be added to the project. These standards help to make the framework stable and consistent.</p>
+</div>
+<div class="section" id="development">
+<h2>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch contains the latest code. This may be unstable. To add a feature or fix an issue, create a new branch from <code class="docutils literal notranslate"><span class="pre">dev</span></code>, for example <code class="docutils literal notranslate"><span class="pre">my-feature</span></code>, implement the changes and commit them to <code class="docutils literal notranslate"><span class="pre">my-feature</span></code>. Then request a pull request to the <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">master</span></code> branch contains the latest stable release. The project owner will pull changes from the <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch to the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch.</p>
+</div>
+<div class="section" id="commenting">
+<h2>Commenting<a class="headerlink" href="#commenting" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Code should aim to be self-commenting. In other words, choose variable, property and method names which are self-explanatory, rather than having to explain them using comments. If <code class="docutils literal notranslate"><span class="pre">r</span></code> is the radius of a circle in mm, rename it <code class="docutils literal notranslate"><span class="pre">radius_of_circle_in_mm</span></code>. If the function <code class="docutils literal notranslate"><span class="pre">Multiply</span></code> multiplies two vectors together, rename it <code class="docutils literal notranslate"><span class="pre">MultiplyTwoVectors</span></code>.</p></li>
+<li><p>Descriptive comments should be added where this aids in the understanding of the code, but not where an operation is obvious from reading the code. Only add comments where self-commenting is insufficient to explain what is going on.</p></li>
+<li><p>A brief summary should be included at the top of each file, in Matlab help format.</p></li>
+<li><p>Academic references should be included where appropriate, e.g. if the function is implementing an algorithm described in a journal paper.</p></li>
+<li><p>Website links should not be included, except to the Pulmonary Toolkit project.</p></li>
+<li><p>Commented-out code should never be committed to the codebase. Commented-out code that is checked into the codebase will be deleted.</p></li>
+</ul>
+</div>
+<div class="section" id="functions-and-classes">
+<h2>Functions and Classes<a class="headerlink" href="#functions-and-classes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Code within the framework and user interface should be in classes.</p></li>
+<li><p>Data types and interfaces should be declared as classes in the Types folder.</p></li>
+<li><p>General utility functions should be located in the Utilities folder. They can be single function files or grouped into static classes.</p></li>
+<li><p>Image processing algorithms should be single function files and should be located in the Library folder.</p></li>
+<li><p>All classes must inherit from handle (and preferably CoreBaseClass), unless there is a specific reason not to - for example if you wish the classes to be passed as call-by-value</p></li>
+<li><p>Class properties which contain handle objects must <strong>never</strong> be initialised in the Properties definition list of the class. This is due to the way Matlab initialises variables. If a handle class is instantiated in the properties list, a single instance will be created of that property object which will be applied to all instances of the class.</p></li>
+</ul>
+</div>
+<div class="section" id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="naming">
+<h3>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Local variables should be named in lower case with connecting underscores, e.g. <code class="docutils literal notranslate"><span class="pre">radius_of_circle_in_mm</span></code>.</p></li>
+<li><p>Properties should be named in Java style like this: <code class="docutils literal notranslate"><span class="pre">PropertyName</span></code></p></li>
+<li><p>Variables should be given meaningful names, and should not be named <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">i</span></code>, etc. except for co-ordinates.</p></li>
+<li><p>Co-ordinates should be named <code class="docutils literal notranslate"><span class="pre">i</span></code>, <code class="docutils literal notranslate"><span class="pre">j</span></code>, <code class="docutils literal notranslate"><span class="pre">k</span></code> instead of <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">z</span></code>. This is because Matlab stores matrices as <code class="docutils literal notranslate"><span class="pre">(y,x,z)</span></code> which causes confusion between the <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> co-ordinates. Always use <code class="docutils literal notranslate"><span class="pre">(i,j,k)</span></code> where <code class="docutils literal notranslate"><span class="pre">i</span></code> is the first coordinate. This avoids any ambiguity.</p></li>
+<li><p>Index variables should not be named <code class="docutils literal notranslate"><span class="pre">i</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code> etc. They should at least be called <code class="docutils literal notranslate"><span class="pre">index</span></code>, and better still something more descriptive e.g. <code class="docutils literal notranslate"><span class="pre">file_list_index</span></code>.</p></li>
+</ul>
+</div>
+<div class="section" id="global-variables">
+<h3>Global variables<a class="headerlink" href="#global-variables" title="Permalink to this headline">¶</a></h3>
+<p>Global variables should not be used.</p>
+</div>
+<div class="section" id="persistent-variables">
+<h3>Persistent variables<a class="headerlink" href="#persistent-variables" title="Permalink to this headline">¶</a></h3>
+<p>Persistent variables should only be used in the rare cases where it is necessary to create a singleton (see below). Persistent variables may also be used to store state between sessions which relates to configuring the Matlab environment (e.g. the paths), but not for storing state related to the Pulmonary Toolkit.</p>
+</div>
+<div class="section" id="singletons">
+<h3>Singletons<a class="headerlink" href="#singletons" title="Permalink to this headline">¶</a></h3>
+<p>Singletons should not be used, except where it is essential to synchronise disk-based state from multiple PTK instances. In other words, cache files stored on disk (such as files containing the database, image previews, templates, settings etc) are liable to corruption if multiple instances of PTK attempt to write to these simultaneously. Therefore these should be protected by a singleton mechanism. All other classes should not be singletons.</p>
+</div>
+</div>
+<div class="section" id="display-of-messages-errors-warnings-and-progress">
+<h2>Display of Messages, errors, warnings and progress<a class="headerlink" href="#display-of-messages-errors-warnings-and-progress" title="Permalink to this headline">¶</a></h2>
+<p>All display of messages, warnings, errors and progress bars should be made through CoreReporting objects. Code within the framework and plugins should not write to the command window or dialogs directly. This ensures that the framework and libraries can be run from batch scripts.</p>
+</div>
+<div class="section" id="plugins">
+<h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="button-text">
+<h3>Button text<a class="headerlink" href="#button-text" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>When choosing text for the <code class="docutils literal notranslate"><span class="pre">ButtonText</span></code> property, note that this is used both for the GUI and also in the progress dialog. Choose text that makes sense when you see the phrase <code class="docutils literal notranslate"><span class="pre">Computing</span> <span class="pre">&lt;button</span> <span class="pre">text&gt;</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">Airway</span> <span class="pre">Skeleton</span></code> is OK because <code class="docutils literal notranslate"><span class="pre">Computing</span> <span class="pre">Airway</span> <span class="pre">Skeleton</span></code> sounds fine, but <code class="docutils literal notranslate"><span class="pre">Show</span> <span class="pre">Airway</span> <span class="pre">Skeleton</span></code> is not good because Computing Show Airway Skeleton` makes no sense.</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./content/developer"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="EditedResults.html" title="previous page">Edited Results for manual and semi-automated correction</a>
+    <a class='right-next' id="next-link" href="PTK-internal-directories-and-caches.html" title="next page">PTK internal directories and caches</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Tom Doel<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

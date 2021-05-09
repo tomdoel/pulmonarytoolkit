@@ -1,0 +1,581 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edited Results for manual and semi-automated correction &#8212; Pulmonary Toolkit</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Coding standards" href="CodingStandards.html" />
+    <link rel="prev" title="Recovering disk space" href="../maintenance/disk-space.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      <img src="../../_static/PTKLogo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pulmonary Toolkit</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   Pulmonary Toolkit
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Overview
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/introduction.html">
+   Introduction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/GettingStarted.html">
+   Getting started
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Tutorials.html">
+   PDF tutorial guides
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">
+   Running PTK without Matlab
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/ExternalDependencies.html">
+   External Depenencies
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  GUI
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
+   Tutorial: Lobar analysis of CT data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
+   Importing and loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/How-to-perform-and-correct-lobe-Segmentations.html">
+   How to perform and correct lobe Segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Fixing-lobe-segmentation-failures.html">
+   Fixing lobe segmentation failures
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Features
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/ManualSegmentations.html">
+   Manual segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/Markers.html">
+   Markers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/PTKViewer.html">
+   PTKViewer
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Maintenance
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/delete-or-reset.html">
+   Complete reset
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">
+   Deleting data in PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/disk-space.html">
+   Recovering disk space
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Developer documentation
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Edited Results for manual and semi-automated correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="CodingStandards.html">
+   Coding standards
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="PTK-internal-directories-and-caches.html">
+   PTK internal directories and caches
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="UnitTests.html">
+   Unit tests
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="profiling.html">
+   Profiling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Mex-files.html">
+   MEX files
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ErrorAndProgressReporting.html">
+   Error and Progress Reporting
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="Scripts.html">
+   Scripts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="BuildingGuis.html">
+   Building user interfaces using PTK classes
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  About PTK datatypes
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Contexts.html">
+   Contexts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKImage.html">
+   PTKImage
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Metrics.html">
+   Metrics
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKResultsTable.html">
+   PTKResultsTable
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Scripting
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../scripting/Command-Line.html">
+   Running the PTK GUI via Matlab from the macOS terminal
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Legacy documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="ReleaseNotes0_7.html">
+   Release notes v0.7
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="ReleaseNotes0_8.html">
+   Release notes v0.8
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="MigratingToGitHub.html">
+   HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Additional resources
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">
+   Medical Imaging Analysis Software
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/SampleData.html">
+   Sample Data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/Citations.html">
+   How to cite PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/additional-topics.html">
+   Additional help topics
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/content/developer/EditedResults.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#using-edited-results-with-the-ptk-gui">
+   Using Edited Results with the PTK GUI
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#using-edited-results-with-the-sdk">
+   Using Edited Results with the SDK
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#special-behaviour-plugins-may-use-edited-results-to-modify-automated-results">
+     Special behaviour: Plugins may use Edited Results to modify automated results
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#when-to-use-edited-results">
+   When to use Edited Results
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#saving-edited-results-for-plugins-that-are-used-by-other-plugins">
+   Saving Edited Results for Plugins that are used by other Plugins
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#caching-behaviour">
+   Caching behaviour
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-edited-results-are-stored">
+   How Edited Results are stored
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <p>PTK Developer SDK</p>
+<div class="section" id="edited-results-for-manual-and-semi-automated-correction">
+<h1>Edited Results for manual and semi-automated correction<a class="headerlink" href="#edited-results-for-manual-and-semi-automated-correction" title="Permalink to this headline">¶</a></h1>
+<p>:grey_exclamation: Advanced topic</p>
+<p>PTK allows you to save manual corrections to the output of a plugin. When you do this, your corrections will override the normal plugin output for that dataset.</p>
+<p>These corrections are called <strong>Edited Results</strong>. An Edited Result is specific to the output of a particular Plugin for a particular Dataset. After you save an Edited Result, PTK will store that result permanently, and use it to either replace or modify the result that is returned through API calls such as <code class="docutils literal notranslate"><span class="pre">GetResult()</span></code>.</p>
+<div class="section" id="using-edited-results-with-the-ptk-gui">
+<h2>Using Edited Results with the PTK GUI<a class="headerlink" href="#using-edited-results-with-the-ptk-gui" title="Permalink to this headline">¶</a></h2>
+<p>The GUI provides some tools for modifying Plugin outputs in 3D and saving the corrections as Edited Results. These provide the PTK GUI’s “correction” functionality for segmentations; under the surface what these tools actually do is display the current plugin output, allow you to modify the segmentations in 3D, and then save the modifications as Edited Results.</p>
+<p>These tools are only enabled for certain Plugins by default. This is deliberate, to encourage manual editing only at the appropriate points in the workflow. However, you can enable editing tools on the GUI for other Plugins, including your own. Just be aware that it’s up to you to ensure the tools enabled are appropriate for the Plugins you enable them for.</p>
+<p>The editing tools can be enabled for a Plugin by modifying the <code class="docutils literal notranslate"><span class="pre">EnableModes</span></code> and <code class="docutils literal notranslate"><span class="pre">SubMode</span></code> properties in the Plugin class.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">PTKLeftAndRightLungs</span></code>, modification of the outer boundaries of the left and right lung regions is allowed by setting</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">EnableModes</span> <span class="o">=</span> <span class="n">MimModes</span><span class="o">.</span><span class="n">EditMode</span>
+<span class="n">SubMode</span> <span class="o">=</span> <span class="n">MimSubModes</span><span class="o">.</span><span class="n">EditBoundariesEditing</span>
+</pre></div>
+</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">PTKLobes</span></code>, modification of the the inner boundaries between lobar regions is allowed by the following properties. Editing of the outer boundaries is prevented as these will already have been set by editing the lung boundaries.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">EnableModes</span> <span class="o">=</span> <span class="n">MimModes</span><span class="o">.</span><span class="n">EditMode</span>
+<span class="n">SubMode</span> <span class="o">=</span> <span class="n">MimSubModes</span><span class="o">.</span><span class="n">FixedBoundariesEditing</span>
+</pre></div>
+</div>
+<p>Remapping of airway labelling (see <em>Special behaviour: Plugins may use Edited Results to modify automated results</em> below) is enabled for the <code class="docutils literal notranslate"><span class="pre">PTKAirwaysLabelledByLobe</span></code> plugin.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">EnableModes</span> <span class="o">=</span> <span class="n">MimModes</span><span class="o">.</span><span class="n">EditMode</span>
+<span class="n">SubMode</span> <span class="o">=</span> <span class="n">MimSubModes</span><span class="o">.</span><span class="n">ColourRemapEditing</span>
+<span class="n">EditRequiresPluginResult</span> <span class="o">=</span> <span class="n">true</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-edited-results-with-the-sdk">
+<h2>Using Edited Results with the SDK<a class="headerlink" href="#using-edited-results-with-the-sdk" title="Permalink to this headline">¶</a></h2>
+<p>:grey_exclamation: Advanced topic</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">MimDataset</span></code> object has methods <code class="docutils literal notranslate"><span class="pre">SaveEditedResult()</span></code> and <code class="docutils literal notranslate"><span class="pre">DeleteEditedResult()</span></code> to save or delete an Edited Result.</p>
+<p>As a developer, it’s your responsibility to ensure the result you save is stored in the correct way for the Plugin you are saving it for. Once you save your Edited Result, most Plugins will simply return your Edited Result instead of the automated Plugin result, so if it’s not in the right format, then Plugins which depend on it will fail.</p>
+<p>In these cases, the Edited Result you save should match the type of whatever the Plugin would normally return. For example, the <code class="docutils literal notranslate"><span class="pre">PTKLeftAndRightLungs</span></code> Plugin returns a <code class="docutils literal notranslate"><span class="pre">PTKImage</span></code> object which contains a Uint8 segmentation mask with 1 for right lung, 2 for left lung, and 0 everywhere else. Since you often want to modify the existing result rather than create a new one from scratch, you can use <code class="docutils literal notranslate"><span class="pre">GetResult()</span></code> to return the current result, modify it as necessary, and then save the modified result as an Edited Result.</p>
+<p>In some cases you can’t call <code class="docutils literal notranslate"><span class="pre">GetResult()</span></code> because the plugin throws an exception (eg if the data are too poor to segment). Some Plugins (such as <code class="docutils literal notranslate"><span class="pre">PTKLobes</span></code>) provide a partial result in this case which you can use as a starting point for creating your Edited Result. This is returned by the method <code class="docutils literal notranslate"><span class="pre">MimDataset:GetDefaultEditedResult()</span></code>, but this will return <code class="docutils literal notranslate"><span class="pre">[]</span></code> if the Plugin does not provide this functionality.</p>
+<div class="section" id="special-behaviour-plugins-may-use-edited-results-to-modify-automated-results">
+<h3>Special behaviour: Plugins may use Edited Results to modify automated results<a class="headerlink" href="#special-behaviour-plugins-may-use-edited-results-to-modify-automated-results" title="Permalink to this headline">¶</a></h3>
+<p>As mentioned above, most Plugins simply to replace the computed Plugin result with the stored Edited Result. However, it is also possible for Plugins to adopt a smarter approach, where the output uses the Edited Result to modify the computed output. For example, the <code class="docutils literal notranslate"><span class="pre">PTKAirwaysLabelledByLobe</span></code> plugin returns an airway tree where branches have been labelled by lung lobes. The Edited Result does not store the airway tree structure, it stores a label map image which is used to label the airway tree structure returned by other plugins. This means that changes to the airway tree will be reflected in the output even if an Edited Result is remapping the output.</p>
+<p>A Plugin implements this special behaviour by overriding the <code class="docutils literal notranslate"><span class="pre">MimPlugin::GetEditedResult()</span></code> method. What should be stored in the Edited Result is then determined by how this method is implemented. See the plugin <code class="docutils literal notranslate"><span class="pre">PTKAirwaysLabelledByLobe</span></code> for an example implementation which is designed to work the <strong>Remap</strong> tool in the PTK GUI.</p>
+</div>
+</div>
+<div class="section" id="when-to-use-edited-results">
+<h2>When to use Edited Results<a class="headerlink" href="#when-to-use-edited-results" title="Permalink to this headline">¶</a></h2>
+<p>Edited Results are best suited for making manual corrections to the output of a fully automated Plugin.</p>
+<ul class="simple">
+<li><p>If you want to perform processing on manually-defined regions, you might be better off using PTK <strong>Manual Segmentations</strong></p></li>
+<li><p>If you want to try running a Plugin with different parameter values, you might be better off using PTK <strong>Parameters</strong></p></li>
+</ul>
+</div>
+<div class="section" id="saving-edited-results-for-plugins-that-are-used-by-other-plugins">
+<h2>Saving Edited Results for Plugins that are used by other Plugins<a class="headerlink" href="#saving-edited-results-for-plugins-that-are-used-by-other-plugins" title="Permalink to this headline">¶</a></h2>
+<p>Edited Results will automatically override all uses of that Plugin for the particular Dataset, including when that Plugin is called by another Plugin. For example, the lung segmentation Plugin <code class="docutils literal notranslate"><span class="pre">PTKLeftAndRightLungs</span></code> is used by the lobe segmentation Plugin <code class="docutils literal notranslate"><span class="pre">PTKLobes</span></code>. If you save an Edited Result for <code class="docutils literal notranslate"><span class="pre">PTKLeftAndRightLungs</span></code>, then <code class="docutils literal notranslate"><span class="pre">PTKLobes</span></code> will use the Edited Result in its lobe computations.</p>
+</div>
+<div class="section" id="caching-behaviour">
+<h2>Caching behaviour<a class="headerlink" href="#caching-behaviour" title="Permalink to this headline">¶</a></h2>
+<p>The automated caching should do the right thing. Edited Results are part of the dependency tree for a Plugin result. If you add, modify or delete an Edited Result to a particular Plugin for a particular Dataset, then any Plugin Results which depend on it should have their cached results invalidated and should re-run as required.</p>
+</div>
+<div class="section" id="how-edited-results-are-stored">
+<h2>How Edited Results are stored<a class="headerlink" href="#how-edited-results-are-stored" title="Permalink to this headline">¶</a></h2>
+<p><strong>Edited Results are stored permanently, not just for the current session</strong>. They will be maintained even if you delete and re-import the dataset. You can delete them using the API.</p>
+<p>The idea is that a lot of manual work may have gone into making the manual corrections. You don’t want to lose this work, and also you want to maintain future reproducibility of results.</p>
+<p>:grey_exclamation: Be careful if using Edited Results while you are developing algorithms — you might not see the effects of your changes because they are being overridden by your Edited Results! To warn you of this, the PTK Viewer usually displays the word “<strong>(Edited)</strong>” in the title of a Plugin output that includes an Edited Result.</p>
+<p>Edited Result files are stored in the <code class="docutils literal notranslate"><span class="pre">~/TDPulmonaryToolkit/EditedResults</span></code> folder.</p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./content/developer"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="../maintenance/disk-space.html" title="previous page">Recovering disk space</a>
+    <a class='right-next' id="next-link" href="CodingStandards.html" title="next page">Coding standards</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Tom Doel<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>
