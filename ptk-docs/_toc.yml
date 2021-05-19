@@ -3,7 +3,8 @@
 - part: Overview
   chapters:
   - file: content/overview/introduction
-  - file: content/overview/GettingStarted
+  - file: content/overview/getting-started
+  - file: content/overview/using-ptk
   - file: content/overview/Installing
   - file: content/overview/Tutorials
   - file: content/overview/Running-PTK-without-Matlab

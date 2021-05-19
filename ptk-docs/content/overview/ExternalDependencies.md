@@ -29,4 +29,4 @@ Required to compile a number of mex functions used by the project
 
 ## gerardus
 
-We use the mba fitting code. The open-source licence allows us to include the relevant files in our project so we can add these and include them in our build procedure.
+We use the mba fitting code from [Geradus](https://github.com/vigente/gerardus). The open-source licence allows us to include the relevant files in our project so we can add these and include them in our build procedure.
