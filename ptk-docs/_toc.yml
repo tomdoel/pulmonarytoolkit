@@ -30,6 +30,13 @@
   - file: content/maintenance/deleting-series-and-subjects
   - file: content/maintenance/disk-space
 
+- part: Plugins
+  chapters:
+  - file: content/plugins/introduction
+  - file: content/plugins/running-plugins
+  - file: content/plugins/developing-plugins
+  - file: content/plugins/gui-plugins
+
 - part: Developer documentation
   chapters:
   - file: content/developer/EditedResults
