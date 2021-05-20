@@ -51,7 +51,7 @@
 
 - part: Scripting
   chapters:
-  - file: content/scripting/Command-Line
+  - file: content/scripting/command-line
 
 - part: Legacy documentation
   chapters:
