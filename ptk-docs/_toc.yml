@@ -58,6 +58,7 @@
   - file: content/developer/ErrorAndProgressReporting
   - file: content/developer/Scripts
   - file: content/developer/BuildingGuis
+  - file: content/developer/octave-compatibility
 
 - part: About PTK datatypes
   chapters:

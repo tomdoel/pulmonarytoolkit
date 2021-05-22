@@ -10,7 +10,7 @@ I would like to remove this dependency. However, several important functions are
 
 The following functions are used
   * ~~imshow - for initial creation of the image axes. Should be able to remove this~~
-  * dicomread / dicomwrite / dicominfo / dicomuid - for reading and writing DICOM files. Have been replaced with master custom-written functions (see DicoMat codebase) but we still use the Matlab functions as a fallback
+  * dicomread / dicomwrite / dicominfo / dicomuid - for reading and writing DICOM files. Have been replaced with custom-written functions (see DicoMat codebase) but we still use the Matlab functions as a fallback
   * ~~label2rgb - For displaying TDImage.Colormap images (e.g. colour overlays). Writing a replacement function should be straightforward~~
   * imclose, imdilate, imerode, imopen, strel - Morphological operations - widely used. Need to be replaced with fast C++ code
   * bwconncomp - connected component analysis - widely used. Needs to be replaced with fast C++ code.
