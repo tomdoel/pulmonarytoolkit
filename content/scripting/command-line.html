@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Running the PTK GUI via Matlab from the macOS terminal &#8212; Pulmonary Toolkit</title>
+    <title>Running PTK from the command line &#8212; Pulmonary Toolkit</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -209,6 +209,33 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
+  Plugins
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../plugins/introduction.html">
+   Introduction to PTK Plugins
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../plugins/running-plugins.html">
+   Running plugins
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../plugins/developing-plugins.html">
+   How to develop your own Plugins
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../plugins/gui-plugins.html">
+   GUI Plugins
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
   Developer documentation
  </span>
 </p>
@@ -294,7 +321,7 @@
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Running the PTK GUI via Matlab from the macOS terminal
+   Running PTK from the command line
   </a>
  </li>
 </ul>
@@ -387,7 +414,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/content/scripting/Command-Line.md"><button type="button"
+        <a class="dropdown-buttons" href="../../_sources/content/scripting/command-line.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -417,40 +444,56 @@
             </div>
             <nav id="bd-toc-nav">
                 <ul class="visible nav section-nav flex-column">
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#">
-   Running the PTK GUI via Matlab from the macOS terminal
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-to-start-the-ptk-gui-from-the-command-line-using-matlab">
+   How to start the PTK GUI from the command line using Matlab
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#from-the-macos-terminal">
+     From the macOS terminal
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#from-the-linux-terminal">
+     From the Linux terminal
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#from-the-windows-command-prompt">
+     From the Windows Command Prompt
+    </a>
+   </li>
+  </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#running-the-ptk-gui-via-matlab-from-the-linux-terminal">
-   Running the PTK GUI via Matlab from the linux terminal
-  </a>
- </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#running-ptk-via-matlab-from-the-windows-command-prompt">
-   Running PTK via Matlab from the Windows Command Prompt
-  </a>
- </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#running-a-ptk-script-in-a-non-interactive-mode">
    Running a PTK Script in a non-interactive mode
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#example-batch-file-for-running-a-ptkscript">
+     Example batch file for running a PTKScript
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#example-bash-script-for-running-a-ptkscript">
+     Example bash script for running a PTKScript
+    </a>
+   </li>
+  </ul>
  </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#example-batch-file-for-running-a-ptkscript">
-   Example batch file for running a PTKScript
-  </a>
- </li>
- <li class="toc-h1 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#example-bash-script-for-running-a-ptkscript">
-   Example bash script for running a PTKScript
-  </a>
- </li>
- <li class="toc-h1 nav-item toc-entry">
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#running-ptk-without-matlab">
    Running PTK without Matlab
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#compiling-ptk-yourself">
+     Compiling PTK yourself
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -463,38 +506,44 @@
         
               <div>
                 
-  <p>PTK can be run from the command line, or from scripts or batch files in your system. If you have Matlab installed on your system, you can use the Matlab executable to run PTK. If you want to run without calling Matlab, you will need to first compile PTK into executables using Matlab on the same machine or a compatible platform, or obtain a precompiled version suitable for your system. In either case, you can either run the PTK GUI application in an interactive mode, or you can run PTK is a non-iterative mode where you specify a PTKScript file to be executed.</p>
-<div class="section" id="running-the-ptk-gui-via-matlab-from-the-macos-terminal">
-<h1>Running the PTK GUI via Matlab from the macOS terminal<a class="headerlink" href="#running-the-ptk-gui-via-matlab-from-the-macos-terminal" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="running-ptk-from-the-command-line">
+<h1>Running PTK from the command line<a class="headerlink" href="#running-ptk-from-the-command-line" title="Permalink to this headline">¶</a></h1>
+<p>PTK can be run from the command line, or from scripts or batch files in your system. If you have Matlab installed on your system, you can use the Matlab executable to run PTK. This runs PTK the same way as if you were running from within Matlab, so it gives you access to all of your custom Plugins or code modifications.</p>
+<p>If you want to run PTK without calling Matlab, you will need to either obtain a pre-compiled release for your system from the GitHub site, or you will need to compile PTK yourself into executables using Matlab on the same machine or a compatible platform. You will need to compile PTK yourself if you want to customise the code or run your own Plugins. Running a compiled version of PTK does not require a Matlab license, but it does require the free Matlab MCR software to be installed. Compiling your own version of PTK requires a Matlab compiler license.</p>
+<p>In all cases, you can either run the PTK GUI application in an interactive mode, or you can run PTK is a non-iterative mode where you specify a PTKScript file to be executed.</p>
+<div class="section" id="how-to-start-the-ptk-gui-from-the-command-line-using-matlab">
+<h2>How to start the PTK GUI from the command line using Matlab<a class="headerlink" href="#how-to-start-the-ptk-gui-from-the-command-line-using-matlab" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="from-the-macos-terminal">
+<h3>From the macOS terminal<a class="headerlink" href="#from-the-macos-terminal" title="Permalink to this headline">¶</a></h3>
 <p>You need a command similar to this (replace with your Matlab version and the path to <code class="docutils literal notranslate"><span class="pre">PulmonaryToolkit.m</span></code>)</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>/Applications/MATLAB_R2015b.app/bin/matlab -nosplash -nodesktop -r &quot;run(&#39;/PATH_TO_PTK/PulmonaryToolkit.m&#39;);&quot;
 </pre></div>
 </div>
 </div>
-<div class="section" id="running-the-ptk-gui-via-matlab-from-the-linux-terminal">
-<h1>Running the PTK GUI via Matlab from the linux terminal<a class="headerlink" href="#running-the-ptk-gui-via-matlab-from-the-linux-terminal" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="from-the-linux-terminal">
+<h3>From the Linux terminal<a class="headerlink" href="#from-the-linux-terminal" title="Permalink to this headline">¶</a></h3>
 <p>You may need to set <code class="docutils literal notranslate"><span class="pre">LD_PRELOAD</span></code>, for example:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/local/R2015b/bin/matlab -nosplash -nodesktop -r &quot;run(&#39;/PATH_TO_PTK/PulmonaryToolkit.m&#39;);&quot;
 </pre></div>
 </div>
 </div>
-<div class="section" id="running-ptk-via-matlab-from-the-windows-command-prompt">
-<h1>Running PTK via Matlab from the Windows Command Prompt<a class="headerlink" href="#running-ptk-via-matlab-from-the-windows-command-prompt" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="from-the-windows-command-prompt">
+<h3>From the Windows Command Prompt<a class="headerlink" href="#from-the-windows-command-prompt" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;C:\Program Files\MATLAB\R2015b\bin\matlab.exe&quot; -wait -nosplash -nodesktop -r &quot;run(&#39;/PATH_TO_PTK/PulmonaryToolkit.m&#39;);&quot;
 </pre></div>
 </div>
 </div>
+</div>
 <div class="section" id="running-a-ptk-script-in-a-non-interactive-mode">
-<h1>Running a PTK Script in a non-interactive mode<a class="headerlink" href="#running-a-ptk-script-in-a-non-interactive-mode" title="Permalink to this headline">¶</a></h1>
+<h2>Running a PTK Script in a non-interactive mode<a class="headerlink" href="#running-a-ptk-script-in-a-non-interactive-mode" title="Permalink to this headline">¶</a></h2>
 <p>If you want to execute a PTKScript and you don’t want to bring up the GUI, then you can run the above commands but do the following:</p>
 <ul class="simple">
 <li><p>Replace <code class="docutils literal notranslate"><span class="pre">PulmonaryToolkit.m</span></code> with <code class="docutils literal notranslate"><span class="pre">PulmonaryToolkitApi.m</span></code> to run the API</p></li>
 <li><p>You must add arguments to the <code class="docutils literal notranslate"><span class="pre">PulmonaryToolkitApi</span></code> function call. The first argument is the name of the PTKScript to run. Subsequent arguments are those required by the script.</p></li>
 <li><p>You can add a <code class="docutils literal notranslate"><span class="pre">-nodisplay</span></code> option to the <code class="docutils literal notranslate"><span class="pre">Matlab</span></code> call, as you don’t need a GUI</p></li>
 </ul>
-</div>
 <div class="section" id="example-batch-file-for-running-a-ptkscript">
-<h1>Example batch file for running a PTKScript<a class="headerlink" href="#example-batch-file-for-running-a-ptkscript" title="Permalink to this headline">¶</a></h1>
+<h3>Example batch file for running a PTKScript<a class="headerlink" href="#example-batch-file-for-running-a-ptkscript" title="Permalink to this headline">¶</a></h3>
 <p>Here is a sample batch script illustrating how to return error codes for successful completion or failure of a PTKScript.  (Note: this is not a tested example, it is just for illustration)</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>echo Running script
 call &quot;C:\Program Files\MATLAB\R2015b\bin\matlab.exe&quot; -wait -nodisplay -nosplash -nodesktop -r &quot;try, cd(&#39;PATH_TO_PTK&#39;), PulmonaryToolkitApi SCRIPTNAME ARGUMENTS, catch ex, disp([&#39;Exception during PulmonaryToolkitApi.m: &#39; ex.message]), exit(1), end,     exit(0);&quot;
@@ -507,7 +556,7 @@ if not &quot;%ERRORLEVEL%&quot; == &quot;0&quot; (
 </div>
 </div>
 <div class="section" id="example-bash-script-for-running-a-ptkscript">
-<h1>Example bash script for running a PTKScript<a class="headerlink" href="#example-bash-script-for-running-a-ptkscript" title="Permalink to this headline">¶</a></h1>
+<h3>Example bash script for running a PTKScript<a class="headerlink" href="#example-bash-script-for-running-a-ptkscript" title="Permalink to this headline">¶</a></h3>
 <p>Here is a sample macOS bash script illustrating how to return error codes for successful completion or failure of a PTKScript. (Note: this is not a tested example, it is just for illustration)</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>#!/bin/bash
 /Applications/MATLAB_R2015b.app/bin/matlab -nosplash -nodesktop -r &quot;try, cd(PATH_TO_PATH), PulmonaryToolkitAPI SCRIPTNAME ARGUMENTS, catch ex, disp([&#39;Exception when running PulmonaryToolkitAPI: &#39; ex.message]), exit(1), end, exit(0); &quot;
@@ -521,15 +570,31 @@ fi
 </pre></div>
 </div>
 </div>
+</div>
 <div class="section" id="running-ptk-without-matlab">
-<h1>Running PTK without Matlab<a class="headerlink" href="#running-ptk-without-matlab" title="Permalink to this headline">¶</a></h1>
-<p>You can run PTK without having Matlab installed, but you will need to compile it first within Matlab, or obtain a precompiled version.</p>
-<p>NB. Please do not confuse the compiling of mex files (a standard part of running PTK) with the compiling of the PTK application (an additional process which you only need to perform to run PTK on a system without Matlab).</p>
+<h2>Running PTK without Matlab<a class="headerlink" href="#running-ptk-without-matlab" title="Permalink to this headline">¶</a></h2>
+<p>You can run PTK without having Matlab installed by using a compiled version of PTK.
+You can find pre-compiled versions of PTK for Windows, Linux and macOS under the GitHub <a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit/releases">releases</a> page. You can also compile PTK yourself compile. Compiling PTK requires a Matlab license, but using the compiled version does not require a license.</p>
+<p>Running compiled version requires the following:</p>
 <ul class="simple">
-<li><p>You can compile PTK yourself by running the <code class="docutils literal notranslate"><span class="pre">CompilePTK</span></code> script from within Matlab. This requires the Matlab compiler</p></li>
-<li><p>You will need to install the Matlab MCR on the target machine. This must be the same version as the version of Matlab used to compile PTK. If you have a different version, you must also install the correct version of the MCR. You can have multiple versions of the MCR installed on one machine. MCRs are available free from the Mathworks website.</p></li>
-<li><p>On Windows, you may need to install the Visual Studio redistributable on the target machine. The redistributable is available free from the Microsoft website.</p></li>
+<li><p>The free Matlab MCR to be installed, which MUST match the version of Matlab used to compile PTK.</p></li>
+<li><p>(Windows only): the Visual Studio runtime distributable which matches the version of Visual Studio used to compile PTK</p></li>
+<li><p>the compiled PTK files: e.g. <code class="docutils literal notranslate"><span class="pre">PulmonaryToolkit.exe</span></code> and <code class="docutils literal notranslate"><span class="pre">PulmonaryToolkitApi.exe</span></code> or equivalent for macOS/linux</p></li>
+<li><p>(macOS/Linux) - certain environment variables might need to be set in order to locate the correct version of the Matlab MCR - see Mathworks documentation for more details</p></li>
 </ul>
+<p>In each release, two executables are included for each platform (Windows, Linux, macOS). On Windows the executables have <code class="docutils literal notranslate"><span class="pre">exe</span></code> and on macOS they have extension <code class="docutils literal notranslate"><span class="pre">app</span></code>. On Linux and macOS you may need to run the accompanying shell scripts (<code class="docutils literal notranslate"><span class="pre">.sh</span></code>) in order to correctly invoke the MCR.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PulmonaryToolkit</span></code> runs the graphical user interface (GUI).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PulmonaryToolkitApi</span></code> runs a specified PTKScript using the API. The PTKScript must be compiled into the application (see above). When running <code class="docutils literal notranslate"><span class="pre">PulmonaryToolkitApi.exe</span></code> specify the script as the first argument, and then any additional arguments that your script requires.</p></li>
+</ul>
+<div class="section" id="compiling-ptk-yourself">
+<h3>Compiling PTK yourself<a class="headerlink" href="#compiling-ptk-yourself" title="Permalink to this headline">¶</a></h3>
+<p>You can compile PTK yourself by running the <code class="docutils literal notranslate"><span class="pre">CompilePTK</span></code> script from within Matlab. This requires the Matlab compiler.
+Compiling PTK yourself will include your own Plugins and modifications into the compilation, provided the source files are within the PTK directory structure.</p>
+<p>Running your own compiled version of PTK has the same requirements as running a pre-compiled version, namely the appropriate MCR or an equivalent version of Matlab must be installed on the target machine.</p>
+<p>NB. Don’t confuse compiling of PTK with compiling of mex files. Compiling of mex files is a standard part of running PTK, whereas compiling PTK is something you only need to do if you are need to generate a stand-alone PTK executable and the pre-built ones are not suitable.</p>
+</div>
+</div>
 </div>
 
     <script type="text/x-thebe-config">

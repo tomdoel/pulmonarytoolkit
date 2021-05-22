@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Building user interfaces using PTK classes &#8212; Pulmonary Toolkit</title>
+    <title>Running plugins &#8212; Pulmonary Toolkit</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -51,8 +51,8 @@
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Contexts" href="../datatypes/Contexts.html" />
-    <link rel="prev" title="Scripts" href="Scripts.html" />
+    <link rel="next" title="How to develop your own Plugins" href="developing-plugins.html" />
+    <link rel="prev" title="Introduction to PTK Plugins" href="introduction.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -212,24 +212,24 @@
   Plugins
  </span>
 </p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../plugins/introduction.html">
+  <a class="reference internal" href="introduction.html">
    Introduction to PTK Plugins
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../plugins/running-plugins.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Running plugins
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../plugins/developing-plugins.html">
+  <a class="reference internal" href="developing-plugins.html">
    How to develop your own Plugins
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../plugins/gui-plugins.html">
+  <a class="reference internal" href="gui-plugins.html">
    GUI Plugins
   </a>
  </li>
@@ -239,49 +239,49 @@
   Developer documentation
  </span>
 </p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="EditedResults.html">
+  <a class="reference internal" href="../developer/EditedResults.html">
    Edited Results for manual and semi-automated correction
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="CodingStandards.html">
+  <a class="reference internal" href="../developer/CodingStandards.html">
    Coding standards
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="PTK-internal-directories-and-caches.html">
+  <a class="reference internal" href="../developer/PTK-internal-directories-and-caches.html">
    PTK internal directories and caches
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="UnitTests.html">
+  <a class="reference internal" href="../developer/UnitTests.html">
    Unit tests
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="profiling.html">
+  <a class="reference internal" href="../developer/profiling.html">
    Profiling
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="Mex-files.html">
+  <a class="reference internal" href="../developer/Mex-files.html">
    MEX files
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="ErrorAndProgressReporting.html">
+  <a class="reference internal" href="../developer/ErrorAndProgressReporting.html">
    Error and Progress Reporting
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="Scripts.html">
+  <a class="reference internal" href="../developer/Scripts.html">
    Scripts
   </a>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/BuildingGuis.html">
    Building user interfaces using PTK classes
   </a>
  </li>
@@ -332,17 +332,17 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="ReleaseNotes0_7.html">
+  <a class="reference internal" href="../developer/ReleaseNotes0_7.html">
    Release notes v0.7
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="ReleaseNotes0_8.html">
+  <a class="reference internal" href="../developer/ReleaseNotes0_8.html">
    Release notes v0.8
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="MigratingToGitHub.html">
+  <a class="reference internal" href="../developer/MigratingToGitHub.html">
    HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
   </a>
  </li>
@@ -414,7 +414,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/content/developer/BuildingGuis.md"><button type="button"
+        <a class="dropdown-buttons" href="../../_sources/content/plugins/running-plugins.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -445,18 +445,13 @@
             <nav id="bd-toc-nav">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#classes">
-   Classes
+  <a class="reference internal nav-link" href="#running-plugins-from-the-gui">
+   Running Plugins from the GUI
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#building-guis-essential-concepts">
-   Building GUIs - essential concepts
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#examples">
-   Examples
+  <a class="reference internal nav-link" href="#running-plugins-from-the-api">
+   Running Plugins from the API
   </a>
  </li>
 </ul>
@@ -470,94 +465,18 @@
         
               <div>
                 
-  <div class="section" id="building-user-interfaces-using-ptk-classes">
-<h1>Building user interfaces using PTK classes<a class="headerlink" href="#building-user-interfaces-using-ptk-classes" title="Permalink to this headline">¶</a></h1>
-<p>Please note: some of the GUI-related class are now called Gem*</p>
-<p>The PTK provides a suite of classes which extend Matlab’s user interface features to provide more power and functionality. The advantages offered include:</p>
-<ul class="simple">
-<li><p>Modern-style tab controls</p></li>
-<li><p>Scrolling panels. These can be scrolled with the mouse wheel or a side slider which automatically appears or disappears if necessary</p></li>
-<li><p>Composite panels (a panel formed of an arbitrary number of sub-panels)</p></li>
-<li><p>Auomatic lazy creation of graphical objects (the actual components are only created when they become visible)</p></li>
-<li><p>Correct positioning of components before they become visible, so no ugly flicker while the GUI is being resized</p></li>
-<li><p>Button controls with custom colours and image backgrounds</p></li>
-<li><p>Clickable and selectable text controls and which can highlight as the mouse moves over</p></li>
-<li><p>Mouse over, Left-click, mouse drag, right-click, shift-click and mouse wheel commands for all controls and panels</p></li>
-<li><p>Keyboard shortcuts</p></li>
-<li><p>Control classes can be extended to add your own functionality</p></li>
-</ul>
-<div class="section" id="classes">
-<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
-<p>The core GUI classes are found in Library/GuiComponents. All graphical objects inherit from <code class="docutils literal notranslate"><span class="pre">PTKUserInterfaceObject</span></code>. A number of components are provided:</p>
-<p>Base classes</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">PTKUserInterfaceObject</span></code> - base class for graphical components. All classes must inherit from this</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> -  you must have at least one <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object. This contains a Matlab figure on which the controls are placed</p></li>
-</ul>
-<p>Controls</p>
-<ul class="simple">
-<li><p>PTKText</p></li>
-<li><p>PTKButton</p></li>
-<li><p>PTKSlider</p></li>
-<li><p>PTKDropDownMenu</p></li>
-</ul>
-<p>Panels</p>
-<ul class="simple">
-<li><p>PTKPanel</p></li>
-<li><p>PTKSlidingPanel</p></li>
-<li><p>PTKCompositePanel</p></li>
-<li><p>PTKTabPanel</p></li>
-<li><p>PTKTabPanel</p></li>
-</ul>
-<p>To modify control behaviour for individual controls, create the control and then modify its properties. To change control behaviour more generally, create your own control class inheriting from controls and modify the properties in that inherited class</p>
+  <div class="section" id="running-plugins">
+<h1>Running plugins<a class="headerlink" href="#running-plugins" title="Permalink to this headline">¶</a></h1>
+<p>You can run Plugins from the GUI for using the PTK API.</p>
+<div class="section" id="running-plugins-from-the-gui">
+<h2>Running Plugins from the GUI<a class="headerlink" href="#running-plugins-from-the-gui" title="Permalink to this headline">¶</a></h2>
+<p>Plugins are hidden in the GUI by default but can be displayed by clicking the <code class="docutils literal notranslate"><span class="pre">Show</span> <span class="pre">Dev</span> <span class="pre">Tools</span></code> button, which will enable the <code class="docutils literal notranslate"><span class="pre">Plugins</span></code> tab.</p>
+<p>Clicking a Plugin button will execute the plugin. If it produces an output image, that will be shown as an overlay once the Plugin completes.</p>
+<p>Plugins should not be confused with <a class="reference internal" href="gui-plugins.html"><span class="doc std std-doc">Gui Plugins</span></a></p>
 </div>
-<div class="section" id="building-guis-essential-concepts">
-<h2>Building GUIs - essential concepts<a class="headerlink" href="#building-guis-essential-concepts" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>You should create a <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object which will be the figure upon which your GUI is based. Generally you do this by creating a new class which inherits from <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code>. This is your basic interface window.</p></li>
-<li><p>Create other controls - typically in the constructor. You must call <code class="docutils literal notranslate"><span class="pre">AddChild()</span></code> on the parent class to add a control. For example:</p></li>
-</ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyFigure</span> <span class="o">&lt;</span> <span class="n">PTKFigure</span>
-
-<span class="o">...</span>
-
-<span class="n">properties</span> <span class="p">(</span><span class="n">Access</span> <span class="o">=</span> <span class="n">private</span><span class="p">)</span>
-    <span class="n">MyText</span>
-<span class="n">end</span>
-
-<span class="n">methods</span>  <span class="p">(</span><span class="n">Access</span> <span class="o">=</span> <span class="n">private</span><span class="p">)</span>
-    <span class="n">function</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">MyFigure</span>
-        <span class="o">%</span> <span class="n">Constructor</span>
-
-        <span class="o">%</span> <span class="n">Call</span> <span class="n">the</span> <span class="n">base</span> <span class="k">class</span> <span class="nc">to</span> <span class="n">initialise</span> <span class="n">the</span> <span class="n">hidden</span> <span class="n">window</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="nd">@PTKFigure</span><span class="p">(</span><span class="s1">&#39;Figure title&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">50</span> <span class="mi">50</span> <span class="mi">300</span> <span class="mi">400</span><span class="p">]);</span>
-
-        <span class="n">obj</span><span class="o">.</span><span class="n">MyText</span> <span class="o">=</span> <span class="n">PTKText</span><span class="p">(</span><span class="o">....</span><span class="p">);</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">AddChild</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">MyText</span><span class="p">);</span>
-
-        <span class="o">...</span>
-
-        <span class="o">%</span> <span class="n">Make</span> <span class="n">the</span> <span class="n">window</span> <span class="n">visible</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">Show</span><span class="p">(</span><span class="n">PTKReportingDefault</span><span class="p">);</span>
-    <span class="n">end</span>
-<span class="n">end</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>Override the <code class="docutils literal notranslate"><span class="pre">Resize()</span></code> method to define the layout of your GUI. Remember to call the superclass <code class="docutils literal notranslate"><span class="pre">Resize()</span></code> method (this is important!)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> is hidden by default. Call <code class="docutils literal notranslate"><span class="pre">Show()</span></code> to make it visible.</p></li>
-<li><p>You can create the underlying PTK object at any point. The actual graphical components are generally created when they first become visible, via the <code class="docutils literal notranslate"><span class="pre">CreateGuiComponent()</span></code> method.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Resize()</span></code> method will remember the component’s size, even if it currently has not been created yet (i.e. it is still invisible). When it becomes visible, it will be created with the correct size. This means you can lay out your GUI before it has been created, so when it comes visible it already has the correct size and layout.</p></li>
-<li><p>If you are using Matlab gui components directly, you cannot create them in your constructor because there is go graphical handle yet to which you can attach them. You must instead create them in the <code class="docutils literal notranslate"><span class="pre">CreateGuiComponent()</span></code> method. Call the superclass method and you will then have a Matlab handle <code class="docutils literal notranslate"><span class="pre">obj.GraphicalComponentHandle</span></code> which you can use to create your Matlab gui object. NB If you are resizing these Matlab GUI objects in <code class="docutils literal notranslate"><span class="pre">Resize()</span></code> you will need to put a null check on them so they don’t get resized before they have been created.</p></li>
-</ul>
-</div>
-<div class="section" id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">PTKViewer.m</span></code> is an example viewer application built using the <code class="docutils literal notranslate"><span class="pre">PTKGui</span></code> classes. <code class="docutils literal notranslate"><span class="pre">PTKViewer</span></code> itself is a <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object, containing a single panel (<code class="docutils literal notranslate"><span class="pre">PTKViewerPanel</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PTKPatientBrowser</span></code> is a <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object containing 2 panels. The left panel is <code class="docutils literal notranslate"><span class="pre">PTKListOfPatientsPanel</span></code>, which is a PTKPanel containing a listbox text and button controls. The right panel is a scrolling panel <code class="docutils literal notranslate"><span class="pre">PTKPatientsSlidingPanel</span></code>, which is a <code class="docutils literal notranslate"><span class="pre">PTKSlidingPanel</span></code> containing a <code class="docutils literal notranslate"><span class="pre">PTKCompositePanel</span></code> consisting of multiple  <code class="docutils literal notranslate"><span class="pre">PTKPanel</span></code>s of class <code class="docutils literal notranslate"><span class="pre">PTKPatientPanel</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PTKGui</span></code> is a <code class="docutils literal notranslate"><span class="pre">PTKFigure</span></code> object containing multiple panels including a <code class="docutils literal notranslate"><span class="pre">PTKTabControl</span></code> which contains the plugin panels.</p></li>
-</ul>
+<div class="section" id="running-plugins-from-the-api">
+<h2>Running Plugins from the API<a class="headerlink" href="#running-plugins-from-the-api" title="Permalink to this headline">¶</a></h2>
+<p>If you are using the PTK API from within your own code, you call <code class="docutils literal notranslate"><span class="pre">GetResult()</span></code> on your <code class="docutils literal notranslate"><span class="pre">PTKDataset</span></code> object to run a plugin and return the result. You will need to get a different <code class="docutils literal notranslate"><span class="pre">PTKDataset</span></code> for each series you wish to process. <code class="docutils literal notranslate"><span class="pre">PTKDataset</span></code> objects are returned by calling the appropriate methods on the <code class="docutils literal notranslate"><span class="pre">PTKMain</span></code> singleton object which you should create once at the start of your program.</p>
 </div>
 </div>
 
@@ -574,7 +493,7 @@
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./content/developer"
+            path: "./content/plugins"
         },
         predefinedOutput: true
     }
@@ -586,8 +505,8 @@
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="Scripts.html" title="previous page">Scripts</a>
-    <a class='right-next' id="next-link" href="../datatypes/Contexts.html" title="next page">Contexts</a>
+    <a class='left-prev' id="prev-link" href="introduction.html" title="previous page">Introduction to PTK Plugins</a>
+    <a class='right-next' id="next-link" href="developing-plugins.html" title="next page">How to develop your own Plugins</a>
 
         </div>
         
