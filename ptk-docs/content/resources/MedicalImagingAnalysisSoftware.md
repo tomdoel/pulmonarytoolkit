@@ -1,4 +1,4 @@
-# Medical Imaging Analysis Software
+# Other software for medical imaging analysis
 
 This is list of other medical imaging toolkits and frameworks that you may find useful
 
@@ -11,11 +11,10 @@ Applications for 3D medical imaging
  * [MeVisLab](http://www.mevislab.de)
 
 Data storage
- * [XNAT](http://xnat.org) - Web-based data storage, processing and collaboration platform
+ * [XNAT](http://xnat.org) - Open-source web-based data storage, processing and collaboration platform
 
 Libraries
  * [MITK](http://mitk.org) - medical application development
  * [ITK](https://itk.org) - Image processing
  * [VTK](https://www.vtk.org) - Visualisation
  * [CTK](http://www.commontk.org/index.php/Main_Page) - common toolkit for biomedical computing
- * [NiftyNet](http://niftynet.io) - neural networks for biomedical imaging
