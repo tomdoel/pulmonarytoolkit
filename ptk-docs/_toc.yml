@@ -9,6 +9,13 @@
   - file: content/overview/Tutorials
   - file: content/overview/Running-PTK-without-Matlab
 
+- part: Installing PTK
+  chapters:
+  - file: content/installing/installing
+  - file: content/installing/installing-for-matlab
+  - file: content/installing/installing-without-matlab
+  - file: content/installing/running
+  - file: content/installing/updating
 
 - part: Importing and visualising data
   chapters:
