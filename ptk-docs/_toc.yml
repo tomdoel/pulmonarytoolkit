@@ -8,7 +8,6 @@
   - file: content/overview/Installing
   - file: content/overview/Tutorials
   - file: content/overview/Running-PTK-without-Matlab
-  - file: content/overview/ExternalDependencies
 
 - part: GUI
   chapters:
@@ -68,7 +67,8 @@
 
 - part: Additional resources
   chapters:
-  - file: content/resources/MedicalImagingAnalysisSoftware
-  - file: content/resources/SampleData
   - file: content/resources/Citations
+  - file: content/resources/external-dependencies
+  - file: content/resources/SampleData
+  - file: content/resources/MedicalImagingAnalysisSoftware
   - file: content/resources/additional-topics
