@@ -27,11 +27,11 @@ Sometimes, Matlab can get confused by updates to `.m` files while it is running,
 
 
 ### Using GitHub Desktop
-Open GitHub Desktop.
-Select the Pulmonary Toolkit project
-Click Update from master
+- Open GitHub Desktop.
+- Select the `Pulmonary Toolkit` project
+- Click `Update` from main
 
-### Using a SourceTree
-Open SourceTree.
-Select the Pulmonary Toolkit project
-Click pull to obtain the latest version
+### Using SourceTree
+- Open SourceTree
+- Select the `Pulmonary Toolkit` project
+- Click `pull` to obtain the latest version
