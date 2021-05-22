@@ -31,6 +31,7 @@
 - part: Features
   chapters:
   - file: content/features/ManualSegmentations
+  - file: content/features/parameters
   - file: content/features/Markers
   - file: content/features/PTKViewer
 

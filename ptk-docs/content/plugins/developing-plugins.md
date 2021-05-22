@@ -37,7 +37,7 @@ The following three parameters are passed to your Plugin when it is run by PTK:
 | Parameter | Description |
 |---------------|-------------|
 | dataset | A `MimDatasetCallback` object which provides access to the dataset similar to how you use it from the API. In particular, you can fetch other Plugin results using `GetResult()` and [parameters](../features/parameters) using `GetParameter()` |
-| context | The current [context](../datatypes/Context) which PTK is asking you to process. If your Plugin supports processing over different Contexts then you may need to use this value to fetch the appropriate Context results from other Plugins |
+| context | The current [context](../datatypes/Contexts) which PTK is asking you to process. If your Plugin supports processing over different Contexts then you may need to use this value to fetch the appropriate Context results from other Plugins |
 | reporting | A [PTKReporting](../developer/ErrorAndProgressReporting) object for progress and error reporting |
 
 
