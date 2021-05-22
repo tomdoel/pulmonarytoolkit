@@ -9,11 +9,15 @@
   - file: content/overview/Tutorials
   - file: content/overview/Running-PTK-without-Matlab
 
+
+- part: Importing and visualising data
+  chapters:
+  - file: content/gui/ImportingAndLoadingData
+
 - part: GUI
   chapters:
   - file: content/gui/Tutorial-Lobar-analysis-of-CT-data
   - file: content/gui/KeyboardShortcuts
-  - file: content/gui/ImportingAndLoadingData
   - file: content/gui/How-to-perform-and-correct-lobe-Segmentations
   - file: content/gui/Fixing-lobe-segmentation-failures
 
@@ -25,9 +29,9 @@
 
 - part: Maintenance
   chapters:
-  - file: content/maintenance/delete-or-reset
   - file: content/maintenance/deleting-series-and-subjects
   - file: content/maintenance/disk-space
+  - file: content/maintenance/delete-or-reset
 
 - part: Plugins
   chapters:
