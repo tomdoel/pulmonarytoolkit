@@ -1,0 +1,786 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Installing the Pulmonary Toolkit for use with Matlab &#8212; Pulmonary Toolkit</title>
+    
+  <link href="../../_static/css/theme.css" rel="stylesheet" />
+  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler" href="installing-without-matlab.html" />
+    <link rel="prev" title="Installing the Pulmonary Toolkit" href="installing.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      <img src="../../_static/PTKLogo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pulmonary Toolkit</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   Pulmonary Toolkit
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Overview
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/introduction.html">
+   Introduction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/getting-started.html">
+   Getting started
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/using-ptk.html">
+   Ways of using the Pulmonary Toolkit (PTK)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Installing.html">
+   Installing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Tutorials.html">
+   PDF tutorial guides
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">
+   Running PTK without Matlab
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Installing PTK
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="installing.html">
+   Installing the Pulmonary Toolkit
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Installing the Pulmonary Toolkit for use with Matlab
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="installing-without-matlab.html">
+   Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="running.html">
+   Running the Pulmonary Toolkit
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="updating.html">
+   Updating the Pulmonary Toolkit
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Importing and visualising data
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
+   Importing and loading data
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  GUI
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
+   Tutorial: Lobar analysis of CT data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/How-to-perform-and-correct-lobe-Segmentations.html">
+   How to perform and correct lobe Segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Fixing-lobe-segmentation-failures.html">
+   Fixing lobe segmentation failures
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Features
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/ManualSegmentations.html">
+   Manual segmentations
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/Markers.html">
+   Markers
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/PTKViewer.html">
+   PTKViewer
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Maintenance
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">
+   Deleting data in PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/disk-space.html">
+   Recovering disk space
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../maintenance/delete-or-reset.html">
+   Complete reset
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Plugins
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../plugins/introduction.html">
+   Introduction to PTK Plugins
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../plugins/running-plugins.html">
+   Running plugins
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../plugins/developing-plugins.html">
+   How to develop your own Plugins
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../plugins/gui-plugins.html">
+   GUI Plugins
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Developer documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/EditedResults.html">
+   Edited Results for manual and semi-automated correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/CodingStandards.html">
+   Coding standards
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/PTK-internal-directories-and-caches.html">
+   PTK internal directories and caches
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/UnitTests.html">
+   Unit tests
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/profiling.html">
+   Profiling
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/Mex-files.html">
+   MEX files
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/ErrorAndProgressReporting.html">
+   Error and Progress Reporting
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/Scripts.html">
+   Scripts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/BuildingGuis.html">
+   Building user interfaces using PTK classes
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  About PTK datatypes
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Contexts.html">
+   Contexts
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKImage.html">
+   PTKImage
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/Metrics.html">
+   Metrics
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../datatypes/PTKResultsTable.html">
+   PTKResultsTable
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Scripting
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../scripting/command-line.html">
+   Running PTK from the command line
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Legacy documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/ReleaseNotes0_7.html">
+   Release notes v0.7
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/ReleaseNotes0_8.html">
+   Release notes v0.8
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/MigratingToGitHub.html">
+   HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Additional resources
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/Citations.html">
+   How to cite PTK
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/external-dependencies.html">
+   External Depenencies
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/SampleData.html">
+   Sample Data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">
+   Other software for medical imaging analysis
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../resources/additional-topics.html">
+   Additional help topics
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/content/installing/installing-for-matlab.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#requirements">
+   Requirements
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#installing-matlab-and-the-matlab-image-processing-toolbox">
+   1. Installing Matlab and the Matlab Image Processing Toolbox
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#if-you-dont-currently-have-matlab-installed">
+     If you don’t currently have Matlab installed
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#if-you-already-have-matlab-installed">
+     If you already have Matlab installed
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#installing-a-c-compiler">
+   2. Installing a C++ compiler
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#windows">
+     Windows
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#macos">
+     macOS
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#linux">
+     Linux
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#verifying-your-c-compiler-optional">
+     Verifying your C++ compiler (optional)
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#installing-a-git-client">
+   3. Installing a Git client
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#visual-git-clients">
+     Visual git clients
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#command-line-git-clients">
+     Command-line git clients
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#download-the-pulmonary-toolkit-using-git">
+   4. Download the Pulmonary Toolkit using git
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#using-a-command-line-git-client">
+     Using a command-line git client
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#using-github-desktop">
+     Using GitHub Desktop
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#using-sourcetree">
+     Using SourceTree
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#run-the-pulmonary-toolkit">
+   5. Run the Pulmonary Toolkit
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="installing-the-pulmonary-toolkit-for-use-with-matlab">
+<h1>Installing the Pulmonary Toolkit for use with Matlab<a class="headerlink" href="#installing-the-pulmonary-toolkit-for-use-with-matlab" title="Permalink to this headline">¶</a></h1>
+<p>These instructions are for developing and using the Pulmonary Toolkit with Matlab.</p>
+<p>This is the recommended approach for most users, as it allows you to get develop custom Plugins and Scripts and to use  the Pulmonary Toolkit without your own software.</p>
+<p>If you want to run PTK without Matlab, see <span class="xref myst">Installing without Matlab</span></p>
+<hr class="docutils" />
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>You will need to install certain software before you can use the Pulmonary Toolkit. I recommend you install everything so that all the features are available to you. However, you can miss out certain programs if you don’t mind not being able to use certain features.</p>
+<p>Apart from Matlab and the Matlab Image Processing Toolbox, all the required software is free and available for Windows, Linux and Mac OSX.</p>
+<p>Required:</p>
+<ul class="simple">
+<li><p>Matlab version R2010b or later</p></li>
+<li><p>The Matlab Image Processing Toolbox</p></li>
+<li><p>C++ compiler (required to use advance features such as lobe segmentation).</p></li>
+</ul>
+<p>Recommended:</p>
+<ul class="simple">
+<li><p>A git client</p></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="section" id="installing-matlab-and-the-matlab-image-processing-toolbox">
+<h2>1. Installing Matlab and the Matlab Image Processing Toolbox<a class="headerlink" href="#installing-matlab-and-the-matlab-image-processing-toolbox" title="Permalink to this headline">¶</a></h2>
+<p>The Pulmonary Toolkit requires <a class="reference external" href="http://www.mathworks.com/products/matlab/">Matlab</a> version R2010b (also known as release 7.11) or later. The add-on [Matlab Image Processing Toolbox](<a class="reference external" href="http://www.mathworks.com/products/image/">http://www.mathworks.com/products/image/</a> is also required.</p>
+<div class="section" id="if-you-dont-currently-have-matlab-installed">
+<h3>If you don’t currently have Matlab installed<a class="headerlink" href="#if-you-dont-currently-have-matlab-installed" title="Permalink to this headline">¶</a></h3>
+<p>Matlab is available for Windows, Linux and Mac. Your IT department may have Matlab licences which you can use on your own machine. You will first need to install Matlab and the Image Processing Toolbox from the Mathworks website (<a class="reference external" href="http://www.mathworks.co.uk">http://www.mathworks.co.uk</a>) - this may require you to create a free Mathworks account. You then need to link your account to the licence keys or licence servers provided by your institution.</p>
+</div>
+<div class="section" id="if-you-already-have-matlab-installed">
+<h3>If you already have Matlab installed<a class="headerlink" href="#if-you-already-have-matlab-installed" title="Permalink to this headline">¶</a></h3>
+<p>You can check the Matlab version by typing</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">ver</span>
+</pre></div>
+</div>
+<p>in the Matlab command window. You should see something like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------------------------------------------</span>
+<span class="n">MATLAB</span> <span class="n">Version</span><span class="p">:</span> <span class="mf">8.2.0.701</span> <span class="p">(</span><span class="n">R2013b</span><span class="p">)</span>
+<span class="n">Operating</span> <span class="n">System</span><span class="p">:</span> <span class="n">Mac</span> <span class="n">OS</span> <span class="n">X</span>  <span class="n">Version</span><span class="p">:</span> <span class="mf">10.8.5</span> <span class="n">Build</span><span class="p">:</span> <span class="mi">12</span><span class="n">F45</span>
+<span class="n">Java</span> <span class="n">Version</span><span class="p">:</span> <span class="n">Java</span> <span class="mf">1.7.0_11</span><span class="o">-</span><span class="n">b21</span> <span class="k">with</span> <span class="n">Oracle</span> <span class="n">Corporation</span> <span class="n">Java</span> <span class="n">HotSpot</span><span class="p">(</span><span class="n">TM</span><span class="p">)</span> <span class="mi">64</span><span class="o">-</span><span class="n">Bit</span> <span class="n">Server</span> <span class="n">VM</span> <span class="n">mixed</span> <span class="n">mode</span>
+<span class="o">------------------------------------------------------------------</span>
+<span class="n">MATLAB</span>                                <span class="n">Version</span> <span class="mf">8.2</span>        <span class="p">(</span><span class="n">R2013b</span><span class="p">)</span>
+<span class="n">Image</span> <span class="n">Processing</span> <span class="n">Toolbox</span>              <span class="n">Version</span> <span class="mf">8.3</span>        <span class="p">(</span><span class="n">R2013b</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If your Matlab version is less than 7.11, you will need to update. Click on the Help menu, and Check for Updates.
+If your licence is due to expire, you can check for licence updates. In the current version, this is found on the Home tab. Click the arrow underneath Help, select Licensing and click Update Current Licenses.</p>
+<p>Note: Matlab is a paid-for product, but if you are associated with an educational institution it may have licenses you can use.</p>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="installing-a-c-compiler">
+<h2>2. Installing a C++ compiler<a class="headerlink" href="#installing-a-c-compiler" title="Permalink to this headline">¶</a></h2>
+<p>Some parts of the Pulmonary Toolkit require a C++ compiler. Your system may already have a compiler installed, or you may have to install one yourself. Some details are provided below. Please see the Mathworks site <a class="reference external" href="https://uk.mathworks.com/support/compilers.html">https://uk.mathworks.com/support/compilers.html</a> for details of which compilers are supported for your version of Matlab.
+If you do not install a compiler, some parts of the Toolkit will be very slow, and other parts will not function at all.</p>
+<div class="section" id="windows">
+<h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h3>
+<p>Microsoft provides a free community edition of Visual Studio which can be downloaded from <a class="reference external" href="https://www.visualstudio.com">https://www.visualstudio.com</a>. Please check supported compiler versions at <a class="reference external" href="https://uk.mathworks.com/support/compilers.html">https://uk.mathworks.com/support/compilers.html</a>.</p>
+</div>
+<div class="section" id="macos">
+<h3>macOS<a class="headerlink" href="#macos" title="Permalink to this headline">¶</a></h3>
+<p>Apple provides a C++ compiler as part of its free Command Line Tools. You can install these from a terminal using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ xcode-select --install
+</pre></div>
+</div>
+<p>For older versions of macOS you can install Xcode for free and then install the Command Line Tools from within Xcode. You can also download command line tools from the Apple developer site here: <a class="reference external" href="http://developer.apple.com/downloads">http://developer.apple.com/downloads</a>. You may have to create a free developer account.
+Warning: when Apple releases a new version of macOS and Xcode, sometimes to get these new compilers to work you need to modify files such as  (MATLAB)/bin/maci64/mexopts/clang++_maci64.xml and (MATLAB)/bin/maci64mexopts/clang_maci64.xml and add entries for the new version of the SDK. Mathworks usually update these files in their next Matlab release. Please check the Matlab support sites and Stack Overflow for more information.</p>
+</div>
+<div class="section" id="linux">
+<h3>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h3>
+<p>You probably already have the gcc compiler installed - you can check where it is installed by typing the following in a terminal window:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ which gcc
+</pre></div>
+</div>
+</div>
+<div class="section" id="verifying-your-c-compiler-optional">
+<h3>Verifying your C++ compiler (optional)<a class="headerlink" href="#verifying-your-c-compiler-optional" title="Permalink to this headline">¶</a></h3>
+<p>Once you have a C++ compiler installed, you can check that Matlab can find the compiler. To do this, launch Matlab and type the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">mex</span> <span class="o">-</span><span class="n">setup</span>
+</pre></div>
+</div>
+<p>Matlab will attempt to find your compiler. If it successfully finds one or more compilers, they will be listed in the command window. Press the number of the compiler you wish to use.
+Compilation problems
+The first time you run the Pulmonary Toolkit (see Tutorial 1), it will attempt to run the above command to ensure the C++ compiler is correctly set up. Then it will attempt to automatically compile the C++ files it requires. If there are problems, errors will be reported to the command window. Compilation be be attempted a second time when you next run the Toolkit, but if this fails again, then further compilation will not be attempted. Once you fix the compiler you can force the Pulmonary Toolkit to recompile the files using the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">ptk_main</span> <span class="o">=</span> <span class="n">PTKMain</span><span class="p">();</span>
+<span class="o">&gt;&gt;</span> <span class="n">ptk_main</span><span class="o">.</span><span class="n">Recompile</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="installing-a-git-client">
+<h2>3. Installing a Git client<a class="headerlink" href="#installing-a-git-client" title="Permalink to this headline">¶</a></h2>
+<p>The main PTK codebase lives on GitHub: <a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit">https://github.com/tomdoel/pulmonarytoolkit</a>. While it is <em>possible</em> to download the source files directly as a zip file from GitHub, I would <em>strongly</em> advise using git to clone the repository from GitHub. This makes it easy to “pull” the latest changes from GitHub as new versions are released. It is also much easier to keep track of your own changes using version control.</p>
+<div class="section" id="visual-git-clients">
+<h3>Visual git clients<a class="headerlink" href="#visual-git-clients" title="Permalink to this headline">¶</a></h3>
+<p>You may prefer to install a visual git client such as <a class="reference external" href="https://desktop.github.com">GitHub Desktop</a>, <a class="reference external" href="https://www.sourcetreeapp.com">SourceTree</a> or <a class="reference external" href="https://www.gitkraken.com">GitKraken</a>. Some of these may require registration but have free plans. Windows also has <a class="reference external" href="https://tortoisegit.org">TortoiseGit</a> which integrates directly into Windows Explorer.</p>
+</div>
+<div class="section" id="command-line-git-clients">
+<h3>Command-line git clients<a class="headerlink" href="#command-line-git-clients" title="Permalink to this headline">¶</a></h3>
+<p>Many operating systems already have command-line git installed, so if you are comfortable using the terminal you can use this. To check if you have a command-line git installed, type the following in a Terminal or Command Prompt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<p>macOS users might be prompted to install command-line tools when running this command - if so, this will install git for you.</p>
+<p>If you don’t have a command-line git installed, or if you want to update your command-line git to a newer version, <a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">see the official docs</a>. You can also use package managers such as Homebrew (macOS) which allow you to install new versions without affecting with your system installation.</p>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="download-the-pulmonary-toolkit-using-git">
+<h2>4. Download the Pulmonary Toolkit using git<a class="headerlink" href="#download-the-pulmonary-toolkit-using-git" title="Permalink to this headline">¶</a></h2>
+<p>The main PTK codebase lives on GitHub: <a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit">https://github.com/tomdoel/pulmonarytoolkit</a>.</p>
+<div class="section" id="using-a-command-line-git-client">
+<h3>Using a command-line git client<a class="headerlink" href="#using-a-command-line-git-client" title="Permalink to this headline">¶</a></h3>
+<p>You can download the Toolkit into a folder called “pulmonarytoolkit” using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">tomdoel</span><span class="o">/</span><span class="n">pulmonarytoolkit</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-github-desktop">
+<h3>Using GitHub Desktop<a class="headerlink" href="#using-github-desktop" title="Permalink to this headline">¶</a></h3>
+<p>Go to GitHub: <a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit">https://github.com/tomdoel/pulmonarytoolkit</a>
+Click Clone or Download
+Click Open in Desktop
+Select a folder to store your local clone</p>
+</div>
+<div class="section" id="using-sourcetree">
+<h3>Using SourceTree<a class="headerlink" href="#using-sourcetree" title="Permalink to this headline">¶</a></h3>
+<p>Open SourceTree
+From the File menu, click New / Clone.
+Click + New Repository
+Click Clone from URL
+In the Source URL, enter <a class="reference external" href="https://github.com/tomdoel/pulmonarytoolkit">https://github.com/tomdoel/pulmonarytoolkit</a>
+Choose a destination path
+Click Clone</p>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="run-the-pulmonary-toolkit">
+<h2>5. Run the Pulmonary Toolkit<a class="headerlink" href="#run-the-pulmonary-toolkit" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="running.html"><span class="doc std std-doc">Running the Pulmonary Toolkit</span></a></p>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./content/installing"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="installing.html" title="previous page">Installing the Pulmonary Toolkit</a>
+    <a class='right-next' id="next-link" href="installing-without-matlab.html" title="next page">Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Tom Doel<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>
