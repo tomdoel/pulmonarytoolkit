@@ -4,7 +4,7 @@ These instructions are for developing and using the Pulmonary Toolkit with Matla
 
 This is the recommended approach for most users, as it allows you to get develop custom Plugins and Scripts and to use  the Pulmonary Toolkit without your own software.
 
-If you want to run PTK without Matlab, see [Installing without Matlab](../installing/installing0without-mtlab)
+If you want to run PTK without Matlab, see [Installing without Matlab](../installing/installing-without-matlab)
 
 ---
 
