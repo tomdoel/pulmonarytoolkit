@@ -12,8 +12,9 @@
 - part: Installing PTK
   chapters:
   - file: content/installing/installing
-  - file: content/installing/installing-for-matlab
-  - file: content/installing/installing-without-matlab
+    sections:
+      - file: content/installing/installing-for-matlab
+      - file: content/installing/installing-without-matlab
   - file: content/installing/running
   - file: content/installing/updating
 

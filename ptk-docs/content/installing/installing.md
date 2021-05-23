@@ -11,7 +11,7 @@ See [Installing for Matlab](../installing/installing-for-matlab) for detailed in
 
 ---
 
-## 2. Install PTK for without Matlab, git or a C++ compiler
+## 2. Install PTK without Matlab
 
 You can install a pre-built release, which does not require a Matlab license.
 
