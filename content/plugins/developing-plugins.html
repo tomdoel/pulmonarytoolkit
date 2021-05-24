@@ -111,11 +111,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Installing.html">
-   Installing
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../overview/Tutorials.html">
    PDF tutorial guides
   </a>
@@ -132,20 +127,27 @@
  </span>
 </p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../installing/installing.html">
    Installing the Pulmonary Toolkit
   </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-for-matlab.html">
-   Installing the Pulmonary Toolkit for use with Matlab
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-without-matlab.html">
-   Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler
-  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-for-matlab.html">
+     Installing the Pulmonary Toolkit for use with Matlab
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-without-matlab.html">
+     Installing the Pulmonary Toolkit without
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../installing/running.html">
@@ -165,25 +167,42 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
-   Importing and loading data
+  <a class="reference internal" href="../data/importing-data.html">
+   Loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../data/supported-formats.html">
+   Supported data and imaging formats
   </a>
  </li>
 </ul>
 <p class="caption">
  <span class="caption-text">
-  GUI
+  Visualising data
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/visualising-data.html">
+   Visualising data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/shortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Lung and lobe analysis
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
    Tutorial: Lobar analysis of CT data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
-   Keyboard and mouse shortcuts
   </a>
  </li>
  <li class="toctree-l1">
@@ -209,13 +228,28 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/parameters.html">
+   Parameters
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/Markers.html">
    Markers
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/linked-datasets.html">
+   Linked datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/PTKViewer.html">
    PTKViewer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/miv.html">
+   MIV
   </a>
  </li>
 </ul>
@@ -317,6 +351,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="../developer/BuildingGuis.html">
    Building user interfaces using PTK classes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/octave-compatibility.html">
+   Octave compatibility
   </a>
  </li>
 </ul>
@@ -565,10 +604,10 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>dataset</p></td>
-<td><p>A <code class="docutils literal notranslate"><span class="pre">MimDatasetCallback</span></code> object which provides access to the dataset similar to how you use it from the API. In particular, you can fetch other Plugin results using <code class="docutils literal notranslate"><span class="pre">GetResult()</span></code> and <span class="xref myst">parameters</span> using <code class="docutils literal notranslate"><span class="pre">GetParameter()</span></code></p></td>
+<td><p>A <code class="docutils literal notranslate"><span class="pre">MimDatasetCallback</span></code> object which provides access to the dataset similar to how you use it from the API. In particular, you can fetch other Plugin results using <code class="docutils literal notranslate"><span class="pre">GetResult()</span></code> and <a class="reference internal" href="../features/parameters.html"><span class="doc std std-doc">parameters</span></a> using <code class="docutils literal notranslate"><span class="pre">GetParameter()</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>context</p></td>
-<td><p>The current <span class="xref myst">context</span> which PTK is asking you to process. If your Plugin supports processing over different Contexts then you may need to use this value to fetch the appropriate Context results from other Plugins</p></td>
+<td><p>The current <a class="reference internal" href="../datatypes/Contexts.html"><span class="doc std std-doc">context</span></a> which PTK is asking you to process. If your Plugin supports processing over different Contexts then you may need to use this value to fetch the appropriate Context results from other Plugins</p></td>
 </tr>
 <tr class="row-even"><td><p>reporting</p></td>
 <td><p>A <a class="reference internal" href="../developer/ErrorAndProgressReporting.html"><span class="doc std std-doc">PTKReporting</span></a> object for progress and error reporting</p></td>

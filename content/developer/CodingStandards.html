@@ -111,11 +111,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Installing.html">
-   Installing
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../overview/Tutorials.html">
    PDF tutorial guides
   </a>
@@ -132,20 +127,27 @@
  </span>
 </p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../installing/installing.html">
    Installing the Pulmonary Toolkit
   </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-for-matlab.html">
-   Installing the Pulmonary Toolkit for use with Matlab
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-without-matlab.html">
-   Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler
-  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-for-matlab.html">
+     Installing the Pulmonary Toolkit for use with Matlab
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-without-matlab.html">
+     Installing the Pulmonary Toolkit without
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../installing/running.html">
@@ -165,25 +167,42 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
-   Importing and loading data
+  <a class="reference internal" href="../data/importing-data.html">
+   Loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../data/supported-formats.html">
+   Supported data and imaging formats
   </a>
  </li>
 </ul>
 <p class="caption">
  <span class="caption-text">
-  GUI
+  Visualising data
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/visualising-data.html">
+   Visualising data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/shortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Lung and lobe analysis
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
    Tutorial: Lobar analysis of CT data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
-   Keyboard and mouse shortcuts
   </a>
  </li>
  <li class="toctree-l1">
@@ -209,13 +228,28 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/parameters.html">
+   Parameters
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/Markers.html">
    Markers
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/linked-datasets.html">
+   Linked datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/PTKViewer.html">
    PTKViewer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/miv.html">
+   MIV
   </a>
  </li>
 </ul>
@@ -317,6 +351,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="BuildingGuis.html">
    Building user interfaces using PTK classes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="octave-compatibility.html">
+   Octave compatibility
   </a>
  </li>
 </ul>
@@ -531,8 +570,8 @@
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#display-of-messages-errors-warnings-and-progress">
-   Display of Messages, errors, warnings and progress
+  <a class="reference internal nav-link" href="#display-of-messages-errors-warnings-logs-and-progress">
+   Display of Messages, errors, warnings, logs and progress
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -566,28 +605,31 @@
 </div>
 <div class="section" id="development">
 <h2>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch contains the latest code. This may be unstable. To add a feature or fix an issue, create a new branch from <code class="docutils literal notranslate"><span class="pre">dev</span></code>, for example <code class="docutils literal notranslate"><span class="pre">my-feature</span></code>, implement the changes and commit them to <code class="docutils literal notranslate"><span class="pre">my-feature</span></code>. Then request a pull request to the <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">master</span></code> branch contains the latest stable release. The project owner will pull changes from the <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch to the <code class="docutils literal notranslate"><span class="pre">master</span></code> branch.</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">main</span></code> branch contains the latest code. The <code class="docutils literal notranslate"><span class="pre">main</span></code> branch should always be release-ready, i.e. incomplete or untested code should never be committed to <code class="docutils literal notranslate"><span class="pre">main</span></code>.</p></li>
+<li><p>Development work should generally occur on a dedicated feature branch e.g. <code class="docutils literal notranslate"><span class="pre">my-feature</span></code>. A pull request be submitted when the feature is complete ready to merge. Developers without write-access to the core repository should create their own fork, where they should still use a dedicated feature branch.</p></li>
+<li><p>Releases are tagged on the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch using semantic versioning e.g. <code class="docutils literal notranslate"><span class="pre">v1.0.1</span></code>.</p></li>
+</ul>
 </div>
 <div class="section" id="commenting">
 <h2>Commenting<a class="headerlink" href="#commenting" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Code should aim to be self-commenting. In other words, choose variable, property and method names which are self-explanatory, rather than having to explain them using comments. If <code class="docutils literal notranslate"><span class="pre">r</span></code> is the radius of a circle in mm, rename it <code class="docutils literal notranslate"><span class="pre">radius_of_circle_in_mm</span></code>. If the function <code class="docutils literal notranslate"><span class="pre">Multiply</span></code> multiplies two vectors together, rename it <code class="docutils literal notranslate"><span class="pre">MultiplyTwoVectors</span></code>.</p></li>
+<li><p>Code should aim to be self-commenting where practical. In other words, choose variable, property and method names which are self-explanatory, rather than having to explain them using comments. If <code class="docutils literal notranslate"><span class="pre">r</span></code> is the radius of a circle in mm, rename it <code class="docutils literal notranslate"><span class="pre">circle_radius_mm</span></code> or <code class="docutils literal notranslate"><span class="pre">radius_of_circle_in_mm</span></code>. If the function <code class="docutils literal notranslate"><span class="pre">Multiply()</span></code> multiplies two vectors together, rename it <code class="docutils literal notranslate"><span class="pre">MultiplyTwoVectors()</span></code>.</p></li>
 <li><p>Descriptive comments should be added where this aids in the understanding of the code, but not where an operation is obvious from reading the code. Only add comments where self-commenting is insufficient to explain what is going on.</p></li>
 <li><p>A brief summary should be included at the top of each file, in Matlab help format.</p></li>
 <li><p>Academic references should be included where appropriate, e.g. if the function is implementing an algorithm described in a journal paper.</p></li>
 <li><p>Website links should not be included, except to the Pulmonary Toolkit project.</p></li>
-<li><p>Commented-out code should never be committed to the codebase. Commented-out code that is checked into the codebase will be deleted.</p></li>
+<li><p>Commented-out code should never be committed.</p></li>
 </ul>
 </div>
 <div class="section" id="functions-and-classes">
 <h2>Functions and Classes<a class="headerlink" href="#functions-and-classes" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Code within the framework and user interface should be in classes.</p></li>
+<li><p>Code within the framework and user interface should generally be implemented as classes. Functionality which does not require state can be extracted out into Library functions where this makes sense.</p></li>
 <li><p>Data types and interfaces should be declared as classes in the Types folder.</p></li>
 <li><p>General utility functions should be located in the Utilities folder. They can be single function files or grouped into static classes.</p></li>
 <li><p>Image processing algorithms should be single function files and should be located in the Library folder.</p></li>
-<li><p>All classes must inherit from handle (and preferably CoreBaseClass), unless there is a specific reason not to - for example if you wish the classes to be passed as call-by-value</p></li>
+<li><p>Classes should inherit from handle (and preferably CoreBaseClass), unless there is a specific reason not to - for example if you wish the classes to be passed as call-by-value</p></li>
 <li><p>Class properties which contain handle objects must <strong>never</strong> be initialised in the Properties definition list of the class. This is due to the way Matlab initialises variables. If a handle class is instantiated in the properties list, a single instance will be created of that property object which will be applied to all instances of the class.</p></li>
 </ul>
 </div>
@@ -616,9 +658,9 @@
 <p>Singletons should not be used, except where it is essential to synchronise disk-based state from multiple PTK instances. In other words, cache files stored on disk (such as files containing the database, image previews, templates, settings etc) are liable to corruption if multiple instances of PTK attempt to write to these simultaneously. Therefore these should be protected by a singleton mechanism. All other classes should not be singletons.</p>
 </div>
 </div>
-<div class="section" id="display-of-messages-errors-warnings-and-progress">
-<h2>Display of Messages, errors, warnings and progress<a class="headerlink" href="#display-of-messages-errors-warnings-and-progress" title="Permalink to this headline">¶</a></h2>
-<p>All display of messages, warnings, errors and progress bars should be made through CoreReporting objects. Code within the framework and plugins should not write to the command window or dialogs directly. This ensures that the framework and libraries can be run from batch scripts.</p>
+<div class="section" id="display-of-messages-errors-warnings-logs-and-progress">
+<h2>Display of Messages, errors, warnings, logs and progress<a class="headerlink" href="#display-of-messages-errors-warnings-logs-and-progress" title="Permalink to this headline">¶</a></h2>
+<p>All display of messages, warnings, errors, logs and progress bars should be made through CoreReporting objects. Code within the framework and plugins should not write to the command window or dialogs directly. This ensures that the framework and libraries can be run from batch scripts and do not bring up unexpected graphical windows when being run from scripts.</p>
 </div>
 <div class="section" id="plugins">
 <h2>Plugins<a class="headerlink" href="#plugins" title="Permalink to this headline">¶</a></h2>

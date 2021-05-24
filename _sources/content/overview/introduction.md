@@ -8,8 +8,8 @@ Please note this version is not stable.
  * [Getting Started](getting-started)
  * [Sample Data](../resources/SampleData)
  * [Citing in publications, posters etc.](../resources/Citations)
- * [Release notes for version v0.8](../developer/ReleaseNotes0.8)
- * [Release notes for version v0.7](../developer/ReleaseNotes0.7)
+ * [Release notes for version v0.8](../developer/ReleaseNotes0_8)
+ * [Release notes for version v0.7](../developer/ReleaseNotes0_7)
 
 
 ## Overview

@@ -1,5 +1,5 @@
 
-# Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler
+# Installing the Pulmonary Toolkit without
 
 If you do not need to develop your own plugins and scripts, you can run the Pulmonary Toolkit without a Matlab license by installing a pre-built release: https://github.com/tomdoel/pulmonarytoolkit/releases
 

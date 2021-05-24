@@ -52,7 +52,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Updating the Pulmonary Toolkit" href="updating.html" />
-    <link rel="prev" title="Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler" href="installing-without-matlab.html" />
+    <link rel="prev" title="Installing the Pulmonary Toolkit without" href="installing-without-matlab.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -111,11 +111,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Installing.html">
-   Installing
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../overview/Tutorials.html">
    PDF tutorial guides
   </a>
@@ -132,20 +127,27 @@
  </span>
 </p>
 <ul class="current nav bd-sidenav">
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="installing.html">
    Installing the Pulmonary Toolkit
   </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="installing-for-matlab.html">
-   Installing the Pulmonary Toolkit for use with Matlab
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="installing-without-matlab.html">
-   Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler
-  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-for-matlab.html">
+     Installing the Pulmonary Toolkit for use with Matlab
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-without-matlab.html">
+     Installing the Pulmonary Toolkit without
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
@@ -165,25 +167,42 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
-   Importing and loading data
+  <a class="reference internal" href="../data/importing-data.html">
+   Loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../data/supported-formats.html">
+   Supported data and imaging formats
   </a>
  </li>
 </ul>
 <p class="caption">
  <span class="caption-text">
-  GUI
+  Visualising data
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/visualising-data.html">
+   Visualising data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/shortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Lung and lobe analysis
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
    Tutorial: Lobar analysis of CT data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
-   Keyboard and mouse shortcuts
   </a>
  </li>
  <li class="toctree-l1">
@@ -209,13 +228,28 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/parameters.html">
+   Parameters
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/Markers.html">
    Markers
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/linked-datasets.html">
+   Linked datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/PTKViewer.html">
    PTKViewer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/miv.html">
+   MIV
   </a>
  </li>
 </ul>
@@ -317,6 +351,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="../developer/BuildingGuis.html">
    Building user interfaces using PTK classes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/octave-compatibility.html">
+   Octave compatibility
   </a>
  </li>
 </ul>
@@ -487,6 +526,13 @@
   <a class="reference internal nav-link" href="#running-the-gui-from-matlab">
    Running the GUI from Matlab
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#compilation-errors">
+     Compilation errors
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#running-a-pre-build-release">
@@ -496,16 +542,6 @@
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#using-the-api">
    Using the API
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#compilation-errors">
-   Compilation errors
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#running-the-toolkit">
-   7. Running the Toolkit
   </a>
  </li>
 </ul>
@@ -525,14 +561,33 @@
 <hr class="docutils" />
 <div class="section" id="running-the-gui-from-matlab">
 <h2>Running the GUI from Matlab<a class="headerlink" href="#running-the-gui-from-matlab" title="Permalink to this headline">¶</a></h2>
-<p>You don’t need to set any Matlab paths.</p>
-<p>Navigate Matlab to the root folder of the pulmonarytoolkit project (the one containing ptk.m)</p>
-<p>From the <strong>Matlab Command Window</strong>, run:</p>
+<ol class="simple">
+<li><p>Start Matlab.</p></li>
+<li><p>Change the current Matlab directory to the main folder on your hard disk containing the Pulmonary Toolkit. This is the folder containing the file <code class="docutils literal notranslate"><span class="pre">ptk.m</span></code> and is the path you specified when checking out the Toolkit in your git client.</p></li>
+</ol>
+<ul class="simple">
+<li><p>Note 1: the current Matlab folder is shown below the Matlab ribbon.You can choose a different folder using the yellow/green “Browser for folder” icon  to the left of this.</p></li>
+<li><p>Note 2: you can add this folder to the Matlab path if you wish to avoid having to change the folder in future.</p></li>
+</ul>
+<ol>
+<li><p>In the <strong>Matlab Command Window</strong>, type</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ptk</span>
 </pre></div>
 </div>
+<p>This will bring up the splash screen.</p>
+<p>You don’t need to set any Matlab paths.</p>
 <p>Provided you have set up your compiler, the Toolkit should automatically compile the mex files the first time it starts up. This may take a few minutes. It only needs to do this once, or when the source files change.</p>
+</li>
+</ol>
+<div class="section" id="compilation-errors">
+<h3>Compilation errors<a class="headerlink" href="#compilation-errors" title="Permalink to this headline">¶</a></h3>
+<p>If the mex compilation fails (e.g. you have not set up a C++ compiler) you will need to fix your compiler installation and then force the Toolkit to re-run compilation using</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ptk_main</span> <span class="o">=</span> <span class="n">PTKMain</span><span class="p">();</span>
+<span class="n">ptk_main</span><span class="o">.</span><span class="n">Recompile</span><span class="p">();</span>
+</pre></div>
+</div>
 <p>If everything is installed correctly, it will compile the C++ files and you can then import data using the Import Data button.</p>
+</div>
 </div>
 <hr class="docutils" />
 <div class="section" id="running-a-pre-build-release">
@@ -549,23 +604,6 @@ From the Matlab Command Window:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ptk_main</span> <span class="o">=</span> <span class="n">PTKMain</span><span class="p">();</span>
 </pre></div>
 </div>
-</div>
-<hr class="docutils" />
-<div class="section" id="compilation-errors">
-<h2>Compilation errors<a class="headerlink" href="#compilation-errors" title="Permalink to this headline">¶</a></h2>
-<p>If the mex compilation fails (e.g. you have not set up a C++ compiler) you will need to fix your compiler installation and then force the Toolkit to re-run compilation using</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ptk_main</span> <span class="o">=</span> <span class="n">PTKMain</span><span class="p">;</span>
-<span class="n">ptk_main</span><span class="p">;</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="running-the-toolkit">
-<h2>7. Running the Toolkit<a class="headerlink" href="#running-the-toolkit" title="Permalink to this headline">¶</a></h2>
-<p>Ensure you have Matlab installed and the Matlab Image Processing Toolbox
-Ensure you a C++ compiler installed and working with Matlab
-Clone the latest version of the pulmonarytoolkit repository from GitHub
-Start Matlab
-Run the PTK graphical interface using:</p>
 </div>
 </div>
 
@@ -594,7 +632,7 @@ Run the PTK graphical interface using:</p>
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="installing-without-matlab.html" title="previous page">Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler</a>
+    <a class='left-prev' id="prev-link" href="installing-without-matlab.html" title="previous page">Installing the Pulmonary Toolkit without</a>
     <a class='right-next' id="next-link" href="updating.html" title="next page">Updating the Pulmonary Toolkit</a>
 
         </div>

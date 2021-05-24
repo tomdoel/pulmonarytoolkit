@@ -110,11 +110,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="overview/Installing.html">
-   Installing
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="overview/Tutorials.html">
    PDF tutorial guides
   </a>
@@ -131,20 +126,27 @@
  </span>
 </p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="installing/installing.html">
    Installing the Pulmonary Toolkit
   </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="installing/installing-for-matlab.html">
-   Installing the Pulmonary Toolkit for use with Matlab
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="installing/installing-without-matlab.html">
-   Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler
-  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing/installing-for-matlab.html">
+     Installing the Pulmonary Toolkit for use with Matlab
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing/installing-without-matlab.html">
+     Installing the Pulmonary Toolkit without
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="installing/running.html">
@@ -164,25 +166,42 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="gui/ImportingAndLoadingData.html">
-   Importing and loading data
+  <a class="reference internal" href="data/importing-data.html">
+   Loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="data/supported-formats.html">
+   Supported data and imaging formats
   </a>
  </li>
 </ul>
 <p class="caption">
  <span class="caption-text">
-  GUI
+  Visualising data
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="gui/visualising-data.html">
+   Visualising data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="gui/shortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Lung and lobe analysis
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="gui/Tutorial-Lobar-analysis-of-CT-data.html">
    Tutorial: Lobar analysis of CT data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="gui/KeyboardShortcuts.html">
-   Keyboard and mouse shortcuts
   </a>
  </li>
  <li class="toctree-l1">
@@ -208,13 +227,28 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="features/parameters.html">
+   Parameters
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="features/Markers.html">
    Markers
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="features/linked-datasets.html">
+   Linked datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="features/PTKViewer.html">
    PTKViewer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="features/miv.html">
+   MIV
   </a>
  </li>
 </ul>
@@ -316,6 +350,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="developer/BuildingGuis.html">
    Building user interfaces using PTK classes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="developer/octave-compatibility.html">
+   Octave compatibility
   </a>
  </li>
 </ul>
@@ -494,35 +533,40 @@
 <li class="toctree-l1"><a class="reference internal" href="overview/introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview/getting-started.html">Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview/using-ptk.html">Ways of using the Pulmonary Toolkit (PTK)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="overview/Installing.html">Installing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview/Tutorials.html">PDF tutorial guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="overview/Running-PTK-without-Matlab.html">Running PTK without Matlab</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Installing PTK</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installing/installing.html">Installing the Pulmonary Toolkit</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installing/installing-for-matlab.html">Installing the Pulmonary Toolkit for use with Matlab</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installing/installing-without-matlab.html">Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installing/running.html">Running the Pulmonary Toolkit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installing/updating.html">Updating the Pulmonary Toolkit</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Importing and visualising data</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="gui/ImportingAndLoadingData.html">Importing and loading data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data/importing-data.html">Loading data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data/supported-formats.html">Supported data and imaging formats</a></li>
 </ul>
-<p class="caption"><span class="caption-text">GUI</span></p>
+<p class="caption"><span class="caption-text">Visualising data</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gui/visualising-data.html">Visualising data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui/shortcuts.html">Keyboard and mouse shortcuts</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Lung and lobe analysis</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="gui/Tutorial-Lobar-analysis-of-CT-data.html">Tutorial: Lobar analysis of CT data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gui/KeyboardShortcuts.html">Keyboard and mouse shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui/How-to-perform-and-correct-lobe-Segmentations.html">How to perform and correct lobe Segmentations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui/Fixing-lobe-segmentation-failures.html">Fixing lobe segmentation failures</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="features/ManualSegmentations.html">Manual segmentations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features/parameters.html">Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features/Markers.html">Markers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features/linked-datasets.html">Linked datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features/PTKViewer.html">PTKViewer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features/PTKViewer.html#keyboard-and-mouse-shortcuts">Keyboard and mouse shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features/miv.html">MIV</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Maintenance</span></p>
 <ul>
@@ -548,6 +592,7 @@
 <li class="toctree-l1"><a class="reference internal" href="developer/ErrorAndProgressReporting.html">Error and Progress Reporting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer/Scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer/BuildingGuis.html">Building user interfaces using PTK classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/octave-compatibility.html">Octave compatibility</a></li>
 </ul>
 <p class="caption"><span class="caption-text">About PTK datatypes</span></p>
 <ul>
@@ -574,6 +619,8 @@
 <li class="toctree-l1"><a class="reference internal" href="resources/MedicalImagingAnalysisSoftware.html">Other software for medical imaging analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="resources/additional-topics.html">Additional help topics</a></li>
 </ul>
+</div>
+<div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
 </div>

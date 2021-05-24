@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Keyboard and mouse shortcuts &#8212; Pulmonary Toolkit</title>
+    <title>Visualising data &#8212; Pulmonary Toolkit</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -51,8 +51,8 @@
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="How to perform and correct lobe Segmentations" href="How-to-perform-and-correct-lobe-Segmentations.html" />
-    <link rel="prev" title="Tutorial: Lobar analysis of CT data" href="Tutorial-Lobar-analysis-of-CT-data.html" />
+    <link rel="next" title="Keyboard and mouse shortcuts" href="shortcuts.html" />
+    <link rel="prev" title="Supported data and imaging formats" href="../data/supported-formats.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -111,11 +111,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Installing.html">
-   Installing
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../overview/Tutorials.html">
    PDF tutorial guides
   </a>
@@ -132,20 +127,27 @@
  </span>
 </p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../installing/installing.html">
    Installing the Pulmonary Toolkit
   </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-for-matlab.html">
-   Installing the Pulmonary Toolkit for use with Matlab
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-without-matlab.html">
-   Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler
-  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-for-matlab.html">
+     Installing the Pulmonary Toolkit for use with Matlab
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-without-matlab.html">
+     Installing the Pulmonary Toolkit without
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../installing/running.html">
@@ -165,25 +167,42 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="ImportingAndLoadingData.html">
-   Importing and loading data
+  <a class="reference internal" href="../data/importing-data.html">
+   Loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../data/supported-formats.html">
+   Supported data and imaging formats
   </a>
  </li>
 </ul>
 <p class="caption">
  <span class="caption-text">
-  GUI
+  Visualising data
  </span>
 </p>
 <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Visualising data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="shortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Lung and lobe analysis
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="Tutorial-Lobar-analysis-of-CT-data.html">
    Tutorial: Lobar analysis of CT data
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   Keyboard and mouse shortcuts
   </a>
  </li>
  <li class="toctree-l1">
@@ -209,13 +228,28 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/parameters.html">
+   Parameters
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/Markers.html">
    Markers
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/linked-datasets.html">
+   Linked datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/PTKViewer.html">
    PTKViewer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/miv.html">
+   MIV
   </a>
  </li>
 </ul>
@@ -317,6 +351,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="../developer/BuildingGuis.html">
    Building user interfaces using PTK classes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/octave-compatibility.html">
+   Octave compatibility
   </a>
  </li>
 </ul>
@@ -453,7 +492,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/content/gui/KeyboardShortcuts.md"><button type="button"
+        <a class="dropdown-buttons" href="../../_sources/content/gui/visualising-data.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -484,38 +523,28 @@
             <nav id="bd-toc-nav">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#imaging-data">
-   Imaging data
+  <a class="reference internal nav-link" href="#window-level">
+   Window/level
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#orientation">
-   Orientation
+  <a class="reference internal nav-link" href="#moving-through-image-slices">
+   Moving through image slices
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#tool">
-   Tool
+  <a class="reference internal nav-link" href="#image-orientation">
+   Image orientation
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#image-viewing">
-   Image viewing
+  <a class="reference internal nav-link" href="#density-values">
+   Density values
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#cine-through-image-slices">
-   Cine through image slices
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#marker-mode-shortcuts">
-   Marker mode shortcuts
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#segmentation-editing-mode-shortcuts">
-   Segmentation editing mode shortcuts
+  <a class="reference internal nav-link" href="#zoom-and-pan">
+   Zoom and pan
   </a>
  </li>
 </ul>
@@ -529,78 +558,43 @@
         
               <div>
                 
-  <p>These are the shortcuts used when using the graphical user interface (GUI) of the Toolkit.</p>
-<div class="section" id="keyboard-and-mouse-shortcuts">
-<h1>Keyboard and mouse shortcuts<a class="headerlink" href="#keyboard-and-mouse-shortcuts" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="imaging-data">
-<h2>Imaging data<a class="headerlink" href="#imaging-data" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="visualising-data">
+<h1>Visualising data<a class="headerlink" href="#visualising-data" title="Permalink to this headline">¶</a></h1>
+<p>First, <a class="reference internal" href="../data/importing-data.html"><span class="doc std std-doc">load a dataset</span></a> into the PTK GUI.</p>
+<p>Once your dataset has loaded, you will a 2D slice from the 3D dataset. What you are seeing in CT is a greyscale image representing the radiodensity of tissue. This is calibrated and (to a good approximation, in general) is proportional to tissue density.</p>
+<div class="section" id="window-level">
+<h2>Window/level<a class="headerlink" href="#window-level" title="Permalink to this headline">¶</a></h2>
+<p>The first thing to do is set the window and level in order to visualise the features you are interested in. There’s a quick way to do this - select the “Lung” button inside the Window/Level presets pane at the right of the screen. Try out other presets.</p>
+<p>Now try using the window/level tool. Note the W/L button underneath the image is selected (if it isn’t, select it now).
+Click inside the lung image and drag the mouse around. Note how the values of the window and level sliders below the image change. Select different Window/Level presets from the presets panel and see how the numbers change again.
+You can manually edit the window and level values if you want specific values.</p>
+</div>
+<div class="section" id="moving-through-image-slices">
+<h2>Moving through image slices<a class="headerlink" href="#moving-through-image-slices" title="Permalink to this headline">¶</a></h2>
+<p>There are several ways to move through the images slices in the 3D image:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Page</span> <span class="pre">Down</span></code> - Load next series for this subject</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Page</span> <span class="pre">Up</span></code> - Load previous series for this subject</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">End</span></code> - Load next subject</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Home</span></code> - Load previous subject</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Insert</span></code> - import data</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Backspace</span></code>/`Delete’ - delete current series (except in marker mode)</p></li>
+<li><p>Scroll the mousewheel while over the image</p></li>
+<li><p>up/down cursors on keyboard</p></li>
+<li><p>scrollbar to the right of the image</p></li>
+<li><p>Select the Cine tool (<code class="docutils literal notranslate"><span class="pre">n</span></code> key) (in the toolbar under the image), and drag up/down inside the image</p></li>
 </ul>
 </div>
-<div class="section" id="orientation">
-<h2>Orientation<a class="headerlink" href="#orientation" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">C</span></code> - coronal mode</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">S</span></code> - sagittal mode</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">A</span></code> - axial mode</p></li>
-</ul>
+<div class="section" id="image-orientation">
+<h2>Image orientation<a class="headerlink" href="#image-orientation" title="Permalink to this headline">¶</a></h2>
+<p>The three available image orientations are Coronal, Sagittal and Axial.
+Use the buttons at the bottom-left of the screen, or the keys C, S, A to change orientation</p>
 </div>
-<div class="section" id="tool">
-<h2>Tool<a class="headerlink" href="#tool" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Z</span></code> - zoom mode</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">P</span></code> - pan mode</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">N</span></code> - cine mode (drag to cine)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">M</span></code> - marker mode</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">W</span></code> - window/level mode (drag to change window and level)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">E</span></code> - edit mode (available when a segmentation has been selected)</p></li>
-</ul>
+<div class="section" id="density-values">
+<h2>Density values<a class="headerlink" href="#density-values" title="Permalink to this headline">¶</a></h2>
+<p>As you move the mouse cursor over the image, the value of the image under the cursor is displayed underneath the image (after the coordinate values). For CT, two values are shown; the raw image value (I:xxx) and the calibrated Hounsfield value (HU:xxx).</p>
 </div>
-<div class="section" id="image-viewing">
-<h2>Image viewing<a class="headerlink" href="#image-viewing" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">I</span></code> - toggle image on/off</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">O</span></code> - toggle segmentation overlay on/off</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code> - toggle whether black in an overlay image is transparent</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SHIFT+mouse</span> <span class="pre">drag</span></code> - pan (in any mode)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">CTRL+mouse</span> <span class="pre">drag</span></code> - zoom (in any mode)</p></li>
-</ul>
-</div>
-<div class="section" id="cine-through-image-slices">
-<h2>Cine through image slices<a class="headerlink" href="#cine-through-image-slices" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">Down</span> <span class="pre">Arrow</span></code> - next slice</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Up</span> <span class="pre">Arrow</span></code> - next slice</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">mouse</span> <span class="pre">scrollwheel</span> <span class="pre">/</span> <span class="pre">trackpad</span></code> - cine through images</p></li>
-</ul>
-</div>
-<div class="section" id="marker-mode-shortcuts">
-<h2>Marker mode shortcuts<a class="headerlink" href="#marker-mode-shortcuts" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">L</span></code> - Toggle marker labels on/off (marker mode)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>,<code class="docutils literal notranslate"> <span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">3</span></code>, <code class="docutils literal notranslate"><span class="pre">4</span></code>,<code class="docutils literal notranslate"> <span class="pre">5</span></code>, <code class="docutils literal notranslate"><span class="pre">6</span></code>, <code class="docutils literal notranslate"><span class="pre">7</span></code> - change colour of next marker to place</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Backspace</span></code>/`Delete’ - delete the marker the mouse is currently over</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Space</span></code> - Cine to the nearest image slice containing a marker</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Right</span> <span class="pre">Arrow</span></code> - Cine forward 10 slices, but stop at a slice if it contains a marker</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">Arrow</span></code> - Cine back 10 slices, but stop at a slice if it contains a marker</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Right</span> <span class="pre">Arrow</span></code> - Cine forward 10 slices, but stop at a slice if it contains a marker</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[</span></code> (<em>Page Up before version 0.8</em>)  - Cine to the first slice in the image containing a marker, or to the beginning of the image if the current slice contains the first marker</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">]</span></code> (<em>Page Down before version 0.8</em>) - Cine to the last slice in the image containing a marker, or to the end of the image if the current slice contains the last marker</p></li>
-</ul>
-</div>
-<div class="section" id="segmentation-editing-mode-shortcuts">
-<h2>Segmentation editing mode shortcuts<a class="headerlink" href="#segmentation-editing-mode-shortcuts" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code>,<code class="docutils literal notranslate"> <span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">3</span></code>, <code class="docutils literal notranslate"><span class="pre">4</span></code>,<code class="docutils literal notranslate"> <span class="pre">5</span></code>, <code class="docutils literal notranslate"><span class="pre">6</span></code>, <code class="docutils literal notranslate"><span class="pre">7</span></code> - change colour of paintbrush (when available)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">u</span></code> - undo last edit</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">space</span></code> - show context menu</p></li>
-</ul>
+<div class="section" id="zoom-and-pan">
+<h2>Zoom and pan<a class="headerlink" href="#zoom-and-pan" title="Permalink to this headline">¶</a></h2>
+<p>SHIFT+mouse drag: pan the image.
+CTRL+mouse drag: zooms the image
+Or use the Zoom and Pan buttons (these work with standard Matlab zoom/pan tools; you can right-click to reset the view). The P and Z keys select these tools.</p>
+<p>## Other keyboard and mouse shortcuts</p>
+<p>See <a class="reference internal" href="shortcuts.html"><span class="doc std std-doc">Shortcuts</span></a></p>
 </div>
 </div>
 
@@ -629,8 +623,8 @@
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="Tutorial-Lobar-analysis-of-CT-data.html" title="previous page">Tutorial: Lobar analysis of CT data</a>
-    <a class='right-next' id="next-link" href="How-to-perform-and-correct-lobe-Segmentations.html" title="next page">How to perform and correct lobe Segmentations</a>
+    <a class='left-prev' id="prev-link" href="../data/supported-formats.html" title="previous page">Supported data and imaging formats</a>
+    <a class='right-next' id="next-link" href="shortcuts.html" title="next page">Keyboard and mouse shortcuts</a>
 
         </div>
         

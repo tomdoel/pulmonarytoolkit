@@ -110,11 +110,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Installing.html">
-   Installing
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../overview/Tutorials.html">
    PDF tutorial guides
   </a>
@@ -131,20 +126,27 @@
  </span>
 </p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../installing/installing.html">
    Installing the Pulmonary Toolkit
   </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-for-matlab.html">
-   Installing the Pulmonary Toolkit for use with Matlab
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-without-matlab.html">
-   Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler
-  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-for-matlab.html">
+     Installing the Pulmonary Toolkit for use with Matlab
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-without-matlab.html">
+     Installing the Pulmonary Toolkit without
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../installing/running.html">
@@ -164,25 +166,42 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../gui/ImportingAndLoadingData.html">
-   Importing and loading data
+  <a class="reference internal" href="../data/importing-data.html">
+   Loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../data/supported-formats.html">
+   Supported data and imaging formats
   </a>
  </li>
 </ul>
 <p class="caption">
  <span class="caption-text">
-  GUI
+  Visualising data
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/visualising-data.html">
+   Visualising data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/shortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Lung and lobe analysis
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
    Tutorial: Lobar analysis of CT data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../gui/KeyboardShortcuts.html">
-   Keyboard and mouse shortcuts
   </a>
  </li>
  <li class="toctree-l1">
@@ -208,13 +227,28 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/parameters.html">
+   Parameters
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/Markers.html">
    Markers
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/linked-datasets.html">
+   Linked datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/PTKViewer.html">
    PTKViewer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/miv.html">
+   MIV
   </a>
  </li>
 </ul>
@@ -316,6 +350,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="../developer/BuildingGuis.html">
    Building user interfaces using PTK classes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/octave-compatibility.html">
+   Octave compatibility
   </a>
  </li>
 </ul>
@@ -483,11 +522,6 @@
             <nav id="bd-toc-nav">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#essential-programming-concepts">
-   Essential programming concepts
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#using-ptk-through-scripting">
    Using PTK through Scripting
   </a>
@@ -495,11 +529,6 @@
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#useful-library-functions">
    Useful library functions
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#writing-your-own-plugins-and-libraries">
-   Writing your own plugins and libraries
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -523,21 +552,10 @@
 <ul class="simple">
 <li><p>GUI</p>
 <ul>
-<li><p><span class="xref myst">Selecting data with the Patient Browser</span></p></li>
-<li><p><span class="xref myst">Reading a dataset</span></p></li>
-<li><p><span class="xref myst">Segmenting the lungs, lobes, airways and segments</span></p></li>
-<li><p><span class="xref myst">Visualising segmentations in 2D and 3D</span></p></li>
 <li><p><span class="xref myst">Running analysis</span></p></li>
-<li><p><span class="xref myst">Manual correction of segmentation results</span></p></li>
 </ul>
 </li>
 </ul>
-<div class="section" id="essential-programming-concepts">
-<h2>Essential programming concepts<a class="headerlink" href="#essential-programming-concepts" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><span class="xref myst">Plugins</span></p></li>
-</ul>
-</div>
 <div class="section" id="using-ptk-through-scripting">
 <h2>Using PTK through Scripting<a class="headerlink" href="#using-ptk-through-scripting" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -547,16 +565,9 @@
 <div class="section" id="useful-library-functions">
 <h2>Useful library functions<a class="headerlink" href="#useful-library-functions" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p><span class="xref myst">Visualisation</span></p></li>
 <li><p>Importing and exporting images, airway trees</p></li>
 <li><p>Saving data to CSV files</p></li>
 <li><p>Plotting graphs</p></li>
-</ul>
-</div>
-<div class="section" id="writing-your-own-plugins-and-libraries">
-<h2>Writing your own plugins and libraries<a class="headerlink" href="#writing-your-own-plugins-and-libraries" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><span class="xref myst">Writing a Plugin class</span></p></li>
 </ul>
 </div>
 <div class="section" id="architecture">

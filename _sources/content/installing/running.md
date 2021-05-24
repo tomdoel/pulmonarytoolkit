@@ -7,17 +7,31 @@ Make sure you have followed the installation instructions. If running from Matla
 
 ## Running the GUI from Matlab
 
-You don't need to set any Matlab paths.
+1. Start Matlab.
 
-Navigate Matlab to the root folder of the pulmonarytoolkit project (the one containing ptk.m)
+2. Change the current Matlab directory to the main folder on your hard disk containing the Pulmonary Toolkit. This is the folder containing the file `ptk.m` and is the path you specified when checking out the Toolkit in your git client.
+ - Note 1: the current Matlab folder is shown below the Matlab ribbon.You can choose a different folder using the yellow/green “Browser for folder” icon  to the left of this.
+ - Note 2: you can add this folder to the Matlab path if you wish to avoid having to change the folder in future.
 
-From the **Matlab Command Window**, run:
+3. In the **Matlab Command Window**, type
+    ```
+    ptk
+    ```
 
-```
-ptk
-```
+   This will bring up the splash screen.
 
-Provided you have set up your compiler, the Toolkit should automatically compile the mex files the first time it starts up. This may take a few minutes. It only needs to do this once, or when the source files change.
+   You don't need to set any Matlab paths.
+
+   Provided you have set up your compiler, the Toolkit should automatically compile the mex files the first time it starts up. This may take a few minutes. It only needs to do this once, or when the source files change.
+
+### Compilation errors
+
+   If the mex compilation fails (e.g. you have not set up a C++ compiler) you will need to fix your compiler installation and then force the Toolkit to re-run compilation using
+   ```
+   ptk_main = PTKMain();
+   ptk_main.Recompile();
+   ```
+
 
 If everything is installed correctly, it will compile the C++ files and you can then import data using the Import Data button.
 
@@ -39,21 +53,3 @@ From the Matlab Command Window:
 ```
 ptk_main = PTKMain();
 ```
-
----
-
-## Compilation errors
-
-If the mex compilation fails (e.g. you have not set up a C++ compiler) you will need to fix your compiler installation and then force the Toolkit to re-run compilation using
-```
-ptk_main = PTKMain;
-ptk_main;
-```
-
-## 7. Running the Toolkit
-
-Ensure you have Matlab installed and the Matlab Image Processing Toolbox
-Ensure you a C++ compiler installed and working with Matlab
-Clone the latest version of the pulmonarytoolkit repository from GitHub
-Start Matlab
-Run the PTK graphical interface using:

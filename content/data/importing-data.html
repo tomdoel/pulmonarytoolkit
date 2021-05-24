@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Importing and loading data &#8212; Pulmonary Toolkit</title>
+    <title>Loading data &#8212; Pulmonary Toolkit</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -51,7 +51,7 @@
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Tutorial: Lobar analysis of CT data" href="Tutorial-Lobar-analysis-of-CT-data.html" />
+    <link rel="next" title="Supported data and imaging formats" href="supported-formats.html" />
     <link rel="prev" title="Updating the Pulmonary Toolkit" href="../installing/updating.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -111,11 +111,6 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Installing.html">
-   Installing
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="../overview/Tutorials.html">
    PDF tutorial guides
   </a>
@@ -132,20 +127,27 @@
  </span>
 </p>
 <ul class="nav bd-sidenav">
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../installing/installing.html">
    Installing the Pulmonary Toolkit
   </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-for-matlab.html">
-   Installing the Pulmonary Toolkit for use with Matlab
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/installing-without-matlab.html">
-   Installing the Pulmonary Toolkit without Matlab, git or a C++ compiler
-  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-for-matlab.html">
+     Installing the Pulmonary Toolkit for use with Matlab
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../installing/installing-without-matlab.html">
+     Installing the Pulmonary Toolkit without
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../installing/running.html">
@@ -166,33 +168,50 @@
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Importing and loading data
+   Loading data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="supported-formats.html">
+   Supported data and imaging formats
   </a>
  </li>
 </ul>
 <p class="caption">
  <span class="caption-text">
-  GUI
+  Visualising data
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="Tutorial-Lobar-analysis-of-CT-data.html">
+  <a class="reference internal" href="../gui/visualising-data.html">
+   Visualising data
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/shortcuts.html">
+   Keyboard and mouse shortcuts
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Lung and lobe analysis
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
    Tutorial: Lobar analysis of CT data
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="KeyboardShortcuts.html">
-   Keyboard and mouse shortcuts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="How-to-perform-and-correct-lobe-Segmentations.html">
+  <a class="reference internal" href="../gui/How-to-perform-and-correct-lobe-Segmentations.html">
    How to perform and correct lobe Segmentations
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="Fixing-lobe-segmentation-failures.html">
+  <a class="reference internal" href="../gui/Fixing-lobe-segmentation-failures.html">
    Fixing lobe segmentation failures
   </a>
  </li>
@@ -209,13 +228,28 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/parameters.html">
+   Parameters
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/Markers.html">
    Markers
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../features/linked-datasets.html">
+   Linked datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../features/PTKViewer.html">
    PTKViewer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../features/miv.html">
+   MIV
   </a>
  </li>
 </ul>
@@ -317,6 +351,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="../developer/BuildingGuis.html">
    Building user interfaces using PTK classes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/octave-compatibility.html">
+   Octave compatibility
   </a>
  </li>
 </ul>
@@ -453,7 +492,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/content/gui/ImportingAndLoadingData.md"><button type="button"
+        <a class="dropdown-buttons" href="../../_sources/content/data/importing-data.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -484,36 +523,48 @@
             <nav id="bd-toc-nav">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#importing-data">
-   Importing data
+  <a class="reference internal nav-link" href="#importing-new-data">
+   Importing new data
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#loading-data">
-   Loading data
+  <a class="reference internal nav-link" href="#viewing-a-different-dataset">
+   Viewing a different dataset
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#using-the-sidebar">
-     Using the sidebar
+    <a class="reference internal nav-link" href="#linked-datasets">
+     Linked Datasets
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#using-the-patient-browser">
-     Using the Patient Browser
+    <a class="reference internal nav-link" href="#delays-when-you-first-load-a-dataset">
+     Delays when you first load a dataset
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#loading-failures">
+     Loading failures
     </a>
    </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#the-first-time-you-load-a-dataset">
-   The first time you load a dataset
+  <a class="reference internal nav-link" href="#the-patient-browser">
+   The Patient Browser
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#switching-between-datasets">
-   Switching between datasets
+  <a class="reference internal nav-link" href="#how-subjects-are-grouped">
+   How subjects are grouped
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#subject-grouping-for-anonymised-data">
+     Subject grouping for anonymised data
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -526,38 +577,71 @@
         
               <div>
                 
-  <div class="section" id="importing-and-loading-data">
-<h1>Importing and loading data<a class="headerlink" href="#importing-and-loading-data" title="Permalink to this headline">¶</a></h1>
-<p>As with many Dicom-based programs, getting data into PTK is a two-step process. You first <strong>import</strong> images into the PTK database. Then you can <strong>load</strong> any dataset from the database. Once imported, images remain in the database permanently (unless you delete them), and they are accessible from the sidebar or the Patient Browser. You can only have one dataset loaded at a time, but switching to a different dataset is fast due to PTK’s smart caching.</p>
-<div class="section" id="importing-data">
-<h2>Importing data<a class="headerlink" href="#importing-data" title="Permalink to this headline">¶</a></h2>
-<p>The way Dicom images are stored on disk can be a mess - image stacks can be split across multiple folders and mixed in with image and non-image data. PTK simplifies the whole import process because you just need to specify a root directory. PTK will search for images recursively through all the subdirectories, ignoring all non-Dicom images, and will group all the images into patients and series based on the image metadata. PTK will group together series even if they are spread across multiple directories (this does happen!) However, all the images do need to be imported at the same time.</p>
-<p>The easiest way to import data is to startup PTK</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ptk</span>
-</pre></div>
+  <div class="section" id="loading-data">
+<h1>Loading data<a class="headerlink" href="#loading-data" title="Permalink to this headline">¶</a></h1>
+<p>PTK was primarily designed for 3D CT or MRI images covering the whole lung. PTK has varying levels of support for DICOM. MetaIO and other formats. See <a class="reference internal" href="supported-formats.html"><span class="doc std std-doc">Supported Data Formats</span></a> for more details.</p>
+<p>You can use PTK for other types of images, although not all plugins will work.</p>
+<p>For non-lung images, consider using the <a class="reference internal" href="../features/miv.html"><span class="doc std std-doc">Medical Imaging Viewer (MIV)</span></a>, which is similar to PTK but for non-lung images.</p>
+<hr class="docutils" />
+<div class="section" id="importing-new-data">
+<h2>Importing new data<a class="headerlink" href="#importing-new-data" title="Permalink to this headline">¶</a></h2>
+<p>You need to first import data into PTK. Data only need to be imported once, as PTK rememberes previously imported data.</p>
+<ol class="simple">
+<li><p><a class="reference internal" href="../installing/running.html"><span class="doc std std-doc">Start up the PTK viewer</span></a></p></li>
+<li><p>Click the <code class="docutils literal notranslate"><span class="pre">Import</span> <span class="pre">Data</span></code> button in the toolbar panel at the bottom left of the screen.</p></li>
+<li><p>In the dialog that appears, select a folder containing the data you want to import. PTK will import all data from this folder and its subfolders.</p>
+<ul class="simple">
+<li><p>Alternatively, you can select an individual image file to import</p></li>
+<li><p>:warning: DICOM series are sometimes split across multiple folders. If this is the case for your data, make sure you select a <strong>parent directory</strong> above all of the relevant folders. This will ensure that your complete series is imported</p></li>
+</ul>
+</li>
+<li><p>When the data have finished importing, PTK will choose a representative series from the data you have imported and load that into the viewer. You can select a different subject or series by clicking in the sidebar or using the Patient Browser window as described below.</p></li>
+</ol>
 </div>
-<p>and then click the <code class="docutils literal notranslate"><span class="pre">+</span></code> (Import) button at the bottom left. Choose a root folder. PTK will recursively search for and import the data it finds. This could take some time if you have a lot of images. Once all the images have been found you will see the left sidebar populated with patient and series data.</p>
-<p>You can also show the Patient Browser to see all the image series grouped by patient in a separate window.</p>
+<hr class="docutils" />
+<div class="section" id="viewing-a-different-dataset">
+<h2>Viewing a different dataset<a class="headerlink" href="#viewing-a-different-dataset" title="Permalink to this headline">¶</a></h2>
+<p>PTK displays a single dataset (series) at a time.</p>
+<p>The left sidebar contains a <strong>Subject List</strong> showing all subjects (patients) imported into PTK. The current subject is highlighted.</p>
+<p>Below this is a <strong>Series List</strong> showing datasets (Series) for the <strong>current Subject</strong></p>
+<ul class="simple">
+<li><p>Click on a subject to switch to that subject (scroll if necessary down the subject list). When you change subject, PTK will load into the viewer the most recent dataset you viewed for that subject.</p></li>
+<li><p>Click on a series to load that series dataset into the viewer</p></li>
+</ul>
+<div class="section" id="linked-datasets">
+<h3>Linked Datasets<a class="headerlink" href="#linked-datasets" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>If you have any <a class="reference internal" href="../features/linked-datasets.html"><span class="doc std std-doc">linked datasets</span></a> (for example for CT-MR registration or other analysis comparing multiple datasets) there is an additional list showing these below the subect and series lists.</p></li>
+</ul>
 </div>
-<div class="section" id="loading-data">
-<h2>Loading data<a class="headerlink" href="#loading-data" title="Permalink to this headline">¶</a></h2>
-<p>You can load one dataset at a time. You can load any dataset that has been imported. You can either load from the sidebar, or from the Patient Browser.</p>
-<div class="section" id="using-the-sidebar">
-<h3>Using the sidebar<a class="headerlink" href="#using-the-sidebar" title="Permalink to this headline">¶</a></h3>
-<p>First click on the patient you want to load (scroll if necessary down the patient list). Then all the available series will be shown underneath. Click on a series to load that dataset.</p>
+<div class="section" id="delays-when-you-first-load-a-dataset">
+<h3>Delays when you first load a dataset<a class="headerlink" href="#delays-when-you-first-load-a-dataset" title="Permalink to this headline">¶</a></h3>
+<p>It may take a minute or two to visualise a dataset the very first time you load it. This is because PTK does some initial processing, in order to identify the lung region of interest (ROI). Identifying this ROI allows the non-lung regions to be internally discarded (the original data is not affected!) which substantially speeds up execution time and reduces memory usage. This ROI calculation is performed once per dataset the first time you load that dataset. Even if you restart PTK, restart Matlab or reboot your computer, it will not need to perform it again for that dataset.</p>
 </div>
-<div class="section" id="using-the-patient-browser">
-<h3>Using the Patient Browser<a class="headerlink" href="#using-the-patient-browser" title="Permalink to this headline">¶</a></h3>
-<p>Click the Patient Browser button to show the Patient Browser if it is not already shown. Then scroll through all the series (grouped by patient) and click the series you wish to load. The left-hand sidebar is a shortcut to patients and scrolls the main panel to that patient.</p>
+<div class="section" id="loading-failures">
+<h3>Loading failures<a class="headerlink" href="#loading-failures" title="Permalink to this headline">¶</a></h3>
+<p>If PTK cannot load or process a series, it will either revert to the previous displayed series, or will unload all images. In either case you should select a working series to load in order to continue.</p>
 </div>
 </div>
-<div class="section" id="the-first-time-you-load-a-dataset">
-<h2>The first time you load a dataset<a class="headerlink" href="#the-first-time-you-load-a-dataset" title="Permalink to this headline">¶</a></h2>
-<p>PTK does some initial processing of images the first time it loads a particular dataset. This is to identify the lung region of interest (ROI), and can take up to a minute or two depending on how large the dataset is. Identifying this ROI allows the non-lung regions to be internally discarded (the original data is not affected!) which substantially speeds up execution time and reduces memory usage. This ROI calculation is performed once per dataset the first time you load that dataset. Even if you restart PTK, restart Matlab or reboot your computer, it will not need to perform it again for that dataset.</p>
+<hr class="docutils" />
+<div class="section" id="the-patient-browser">
+<h2>The Patient Browser<a class="headerlink" href="#the-patient-browser" title="Permalink to this headline">¶</a></h2>
+<p>The Patient Browser is a separate window which shows you all the subjects and series in the database.</p>
+<p>Click the Patient Browser button to show the Patient Browser if it is not already shown. Then scroll through all the series (grouped by patient) and click the series you wish to load.</p>
+<p>The left-hand sidebar is a shortcut to patients - clicking on a patient scrolls the main panel to that patient (but it will not automatically load a series).</p>
 </div>
-<div class="section" id="switching-between-datasets">
-<h2>Switching between datasets<a class="headerlink" href="#switching-between-datasets" title="Permalink to this headline">¶</a></h2>
-<p>To switch to another dataset simply click on the series you wish to load in the sidebar or Patient Browser. If you are switching to a series you have not previously loaded then you may have to wait for the ROI computation. However, once this has been done switching between datasets is very fast and usually takes only a second or two.</p>
+<hr class="docutils" />
+<div class="section" id="how-subjects-are-grouped">
+<h2>How subjects are grouped<a class="headerlink" href="#how-subjects-are-grouped" title="Permalink to this headline">¶</a></h2>
+<p>Grouping of series into subjects (patients) is done through <code class="docutils literal notranslate"><span class="pre">Patient</span> <span class="pre">ID</span></code> and <code class="docutils literal notranslate"><span class="pre">Patient</span> <span class="pre">Name</span></code> metadata in the DICOM headers.</p>
+<p>For non-DICOM data, such patient identifiers may not exist. In such cases, each series will be given its own subject.</p>
+<p>In most situations the subject grouping is not important to the functioning of PTK, since PTK considers each series independently. Subject grouping is mostly done as a convenience to the user when using the GUI to see related series grouped together for the same subject.</p>
+<div class="section" id="subject-grouping-for-anonymised-data">
+<h3>Subject grouping for anonymised data<a class="headerlink" href="#subject-grouping-for-anonymised-data" title="Permalink to this headline">¶</a></h3>
+<p>For anonymised data, the Patient ID and Patient Name should ideally be consistent across all images in order for the images to be grouped under the same subject. (In a clinical setting, this would be a requirement.) However, as PTK is a research tool which is mainly used with anonymised data, it is recognised that anonymisation may not have been applied consistently. Sometimes, the anonymisation process might allocate an inconsistent Patient ID, but set the Patient Name to a consistent research identifier (such as <code class="docutils literal notranslate"><span class="pre">PATIENT1</span></code>, <code class="docutils literal notranslate"><span class="pre">PATIENT2</span></code> etc). For this reason, PTK has enabled by default a setting which allows series with the same <code class="docutils literal notranslate"><span class="pre">Patient</span> <span class="pre">Name</span></code> to always be grouped together even if they have different Patient IDs. This setting is <code class="docutils literal notranslate"><span class="pre">GroupPatientsWithSameName</span></code> in the <code class="docutils literal notranslate"><span class="pre">PTKAppDef.m</span></code> class. Note that changing this setting may require rebuilding of the subject database.</p>
+<hr class="docutils" />
+<p>Next: see <a class="reference internal" href="../gui/visualising-data.html"><span class="doc std std-doc">Visualising Data</span></a></p>
+</div>
 </div>
 </div>
 
@@ -574,7 +658,7 @@
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./content/gui"
+            path: "./content/data"
         },
         predefinedOutput: true
     }
@@ -587,7 +671,7 @@
         <div class='prev-next-bottom'>
             
     <a class='left-prev' id="prev-link" href="../installing/updating.html" title="previous page">Updating the Pulmonary Toolkit</a>
-    <a class='right-next' id="next-link" href="Tutorial-Lobar-analysis-of-CT-data.html" title="next page">Tutorial: Lobar analysis of CT data</a>
+    <a class='right-next' id="next-link" href="supported-formats.html" title="next page">Supported data and imaging formats</a>
 
         </div>
         

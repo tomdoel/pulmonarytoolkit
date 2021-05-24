@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scripts &#8212; Pulmonary Toolkit</title>
+    <title>Supported data and imaging formats &#8212; Pulmonary Toolkit</title>
     
   <link href="../../_static/css/theme.css" rel="stylesheet" />
   <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -51,8 +51,8 @@
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Building user interfaces using PTK classes" href="BuildingGuis.html" />
-    <link rel="prev" title="Error and Progress Reporting" href="ErrorAndProgressReporting.html" />
+    <link rel="next" title="Visualising data" href="../gui/visualising-data.html" />
+    <link rel="prev" title="Loading data" href="importing-data.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -165,14 +165,14 @@
   Importing and visualising data
  </span>
 </p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../data/importing-data.html">
+  <a class="reference internal" href="importing-data.html">
    Loading data
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../data/supported-formats.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    Supported data and imaging formats
   </a>
  </li>
@@ -307,54 +307,54 @@
   Developer documentation
  </span>
 </p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="EditedResults.html">
+  <a class="reference internal" href="../developer/EditedResults.html">
    Edited Results for manual and semi-automated correction
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="CodingStandards.html">
+  <a class="reference internal" href="../developer/CodingStandards.html">
    Coding standards
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="PTK-internal-directories-and-caches.html">
+  <a class="reference internal" href="../developer/PTK-internal-directories-and-caches.html">
    PTK internal directories and caches
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="UnitTests.html">
+  <a class="reference internal" href="../developer/UnitTests.html">
    Unit tests
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="profiling.html">
+  <a class="reference internal" href="../developer/profiling.html">
    Profiling
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="Mex-files.html">
+  <a class="reference internal" href="../developer/Mex-files.html">
    MEX files
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="ErrorAndProgressReporting.html">
+  <a class="reference internal" href="../developer/ErrorAndProgressReporting.html">
    Error and Progress Reporting
   </a>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../developer/Scripts.html">
    Scripts
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="BuildingGuis.html">
+  <a class="reference internal" href="../developer/BuildingGuis.html">
    Building user interfaces using PTK classes
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="octave-compatibility.html">
+  <a class="reference internal" href="../developer/octave-compatibility.html">
    Octave compatibility
   </a>
  </li>
@@ -405,17 +405,17 @@
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="ReleaseNotes0_7.html">
+  <a class="reference internal" href="../developer/ReleaseNotes0_7.html">
    Release notes v0.7
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="ReleaseNotes0_8.html">
+  <a class="reference internal" href="../developer/ReleaseNotes0_8.html">
    Release notes v0.8
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="MigratingToGitHub.html">
+  <a class="reference internal" href="../developer/MigratingToGitHub.html">
    HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
   </a>
  </li>
@@ -492,7 +492,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/content/developer/Scripts.md"><button type="button"
+        <a class="dropdown-buttons" href="../../_sources/content/data/supported-formats.md"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.md</button></a>
         <!-- Download PDF via print -->
@@ -517,6 +517,36 @@
         <!-- Table of contents -->
         <div class="d-none d-md-block col-md-2 bd-toc show">
             
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#non-lung-data">
+   Non-lung data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#supported-data-formats">
+   Supported data formats
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#dicom">
+     DICOM
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#metaio">
+     MetaIO
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -525,25 +555,30 @@
         
               <div>
                 
-  <div class="section" id="scripts">
-<h1>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h1>
-<p><em>Added in PTK v0.6.4</em>
-<em>Base class PTKScript renamed to MimScript in PTK v0.7.3</em></p>
-<p>Scripts are functions you can run to script analysis across a range of datasets. The function is encapsulated in a class that inherits from <code class="docutils literal notranslate"><span class="pre">MimScript</span></code>. You call a <code class="docutils literal notranslate"><span class="pre">MimScript</span></code> using the <code class="docutils literal notranslate"><span class="pre">RunScript</span></code> method of a <code class="docutils literal notranslate"><span class="pre">PTKMain</span></code> object:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ptk_main.RunScript(script_name, script_arguments);
-</pre></div>
+  <div class="section" id="supported-data-and-imaging-formats">
+<h1>Supported data and imaging formats<a class="headerlink" href="#supported-data-and-imaging-formats" title="Permalink to this headline">¶</a></h1>
+<p>PTK is primarily designed to work with 3D CT and MRI images covering the whole lung.</p>
+<p>You may be able to load and visualise other data into PTK, but you may find the segmentation and other Plugins do not work.</p>
+<hr class="docutils" />
+<p>## Data not covering the whole lung</p>
+<p>The PTK algorithms work best when the 3D volume covers the entire lung. There are adjustment mechanisms in place which allow for lung boundaries to extend outside the image in some cases, although this could result in inaccurate measurements such as for lung volume.</p>
+<hr class="docutils" />
+<div class="section" id="non-lung-data">
+<h2>Non-lung data<a class="headerlink" href="#non-lung-data" title="Permalink to this headline">¶</a></h2>
+<p>If you want to work on non-lung images, you might consider using the provided MIV (Medical Imaging Viewer), which is similar to PTK but is not lung-specific.</p>
 </div>
-<p>For example, the <code class="docutils literal notranslate"><span class="pre">PTKImportAndAnalyse</span></code> script takes two input arguments, <code class="docutils literal notranslate"><span class="pre">import_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">log_file_name</span></code>. This script will import all datasets from the  <code class="docutils literal notranslate"><span class="pre">import_dir</span></code> folder and perform lobe analysis and metrics for each dataset:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ptk_main = PTKMain;
-ptk_main.RunScript(&#39;PTKImportAndAnalyse&#39;, import_dir, log_file_name);
-</pre></div>
+<hr class="docutils" />
+<div class="section" id="supported-data-formats">
+<h2>Supported data formats<a class="headerlink" href="#supported-data-formats" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dicom">
+<h3>DICOM<a class="headerlink" href="#dicom" title="Permalink to this headline">¶</a></h3>
+<p>PTK uses <a class="reference external" href="https://github.com/tomdoel/dicomat">DicomMat</a> to group DICOM images into Datasets. This allows PTK to separate out scout or report images from the core image files, and to separate non-contiguous datasets.</p>
 </div>
-<p>You can write your own <code class="docutils literal notranslate"><span class="pre">PTKScript</span></code> by creating a class that implements <code class="docutils literal notranslate"><span class="pre">MimScript</span></code> and placing it in the <code class="docutils literal notranslate"><span class="pre">Scripts</span></code> folder. The <code class="docutils literal notranslate"><span class="pre">RunScript</span></code> method takes in the following arguments:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>function output = RunScript(ptk_obj, reporting, varargin)
-</pre></div>
+<div class="section" id="metaio">
+<h3>MetaIO<a class="headerlink" href="#metaio" title="Permalink to this headline">¶</a></h3>
+<p>MetaIO files are usually a single <code class="docutils literal notranslate"><span class="pre">.mha</span></code> file, or a pair of files eg. <code class="docutils literal notranslate"><span class="pre">.mhd</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">.raw</span></code>. If</p>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">ptk_obj</span></code> is the <code class="docutils literal notranslate"><span class="pre">PTKMain</span></code> object that was used to run the script. <code class="docutils literal notranslate"><span class="pre">Reporting</span></code> is the <code class="docutils literal notranslate"><span class="pre">PTKReporting</span></code> object you can use to reports errors, warnings and progress. You can have multiple custom input arguments in <code class="docutils literal notranslate"><span class="pre">varargin</span></code>.</p>
-<p>Coding a <code class="docutils literal notranslate"><span class="pre">Script</span></code> is similar to using the API directly; however, you may find it easier to share scripts with others using a <code class="docutils literal notranslate"><span class="pre">Script</span></code>. They are also compatible with the PTK Compiler, so you can create standalone applications for other to run your script without the user having to install or run Matlab.</p>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -559,7 +594,7 @@ ptk_main.RunScript(&#39;PTKImportAndAnalyse&#39;, import_dir, log_file_name);
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./content/developer"
+            path: "./content/data"
         },
         predefinedOutput: true
     }
@@ -571,8 +606,8 @@ ptk_main.RunScript(&#39;PTKImportAndAnalyse&#39;, import_dir, log_file_name);
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="ErrorAndProgressReporting.html" title="previous page">Error and Progress Reporting</a>
-    <a class='right-next' id="next-link" href="BuildingGuis.html" title="next page">Building user interfaces using PTK classes</a>
+    <a class='left-prev' id="prev-link" href="importing-data.html" title="previous page">Loading data</a>
+    <a class='right-next' id="next-link" href="../gui/visualising-data.html" title="next page">Visualising data</a>
 
         </div>
         
