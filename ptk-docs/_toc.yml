@@ -5,7 +5,6 @@
   - file: content/overview/introduction
   - file: content/overview/getting-started
   - file: content/overview/using-ptk
-  - file: content/overview/Installing
   - file: content/overview/Tutorials
   - file: content/overview/Running-PTK-without-Matlab
 
@@ -20,12 +19,17 @@
 
 - part: Importing and visualising data
   chapters:
-  - file: content/gui/ImportingAndLoadingData
+  - file: content/data/importing-data
+  - file: content/data/supported-formats
 
-- part: GUI
+- part: Visualising data
+  chapters:
+  - file: content/gui/visualising-data
+  - file: content/gui/shortcuts
+
+- part: Lung and lobe analysis
   chapters:
   - file: content/gui/Tutorial-Lobar-analysis-of-CT-data
-  - file: content/gui/KeyboardShortcuts
   - file: content/gui/How-to-perform-and-correct-lobe-Segmentations
   - file: content/gui/Fixing-lobe-segmentation-failures
 
@@ -34,7 +38,9 @@
   - file: content/features/ManualSegmentations
   - file: content/features/parameters
   - file: content/features/Markers
+  - file: content/features/linked-datasets
   - file: content/features/PTKViewer
+  - file: content/features/miv
 
 - part: Maintenance
   chapters:

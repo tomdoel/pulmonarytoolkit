@@ -66,4 +66,4 @@ Note you must specify an image uid, because this is not specified in the metahea
 
 > # Keyboard and mouse shortcuts #
 
-See [KeyboardShortcuts](./../gui/KeyboardShortcuts)
+See [KeyboardShortcuts](./../gui/shortcuts)
