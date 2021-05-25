@@ -61,10 +61,32 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
     switch image_file_format
 
         case MimImageFileFormat.Nifti
-            header_data = nii_read_header(header_filename);
+            [~,~,ext] = fileparts(header_filename);
+            % if compressed (*.nii.gz) extract to read
+            if strcmp(ext,'.gz')
+                compressed = 1;
+                if isfile(header_filename(1:end-3))
+                    reporting.Error('MimLoadNiiGz:extractedniiexists', ...
+                        ['Non-compressed *.nii of ', header_filename,...
+                        ' already exists at path. Move/delete and try again.']);
+                end
+                gunzip(header_filename)
+                readfile = header_filename(1:end-3);
+            else
+                readfile = header_filename(1:end-3);
+                compressed = 0;
+            end
+            
+            header_data = nii_read_header(readfile);
             data = nii_read_volume(header_data);
+            if compressed == 1
+                % remove temp decompressed file
+                delete(readfile);
+                % change header data to point back to original file
+                header_data.Filename = header_data.Filename;
+            end
             [new_dimension_order, flip_orientation] = MimImageCoordinateUtilities.GetDimensionPermutationVectorFromNiiOrientation(header_data, reporting);
-        
+
         case MimImageFileFormat.Analyze % Experimental: assumes fixed orientation
             header_data = hdr_read_header(header_filename);
             data = hdr_read_volume(header_data);
