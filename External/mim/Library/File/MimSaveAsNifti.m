@@ -27,20 +27,24 @@ function MimSaveAsNifti(image_to_save, path, filename, reporting)
     if ~isa(image_to_save, 'PTKImage')
         reporting.Error('MimSaveAsNifti:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
+    full_filename = fullfile(path, filename);
 
     % check if .nii.gz given
     [~,~,ext] = fileparts(filename);
     if strcmp(ext,'.gz')
         compressed = 1;
         filename = filename(1:end-3);
+        if isfile(fullfile(path, filename))
+            reporting.Error('MimSaveAsNifti:rawniiexists', ...
+                        ['Non-compressed *.nii of ', full_filename,...
+                        ' already exists at path. Move/delete and try again.']);
+        end
     else
         compressed = 0;
     end
     
     image_data = image_to_save.RawImage;
     
-    full_filename = fullfile(path, filename);
-
     resolution = image_to_save.VoxelSize([2, 1, 3]);
     
     offset = [0 0 0];
