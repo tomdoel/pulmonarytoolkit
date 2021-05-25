@@ -28,6 +28,15 @@ function MimSaveAsNifti(image_to_save, path, filename, reporting)
         reporting.Error('MimSaveAsNifti:InputMustBePTKImage', 'Requires a PTKImage as input');
     end
 
+    % check if .nii.gz given
+    [~,~,ext] = fileparts(filename);
+    if strcmp(ext,'.gz')
+        compressed = 1;
+        filename = filename(1:end-3);
+    else
+        compressed = 0;
+    end
+    
     image_data = image_to_save.RawImage;
     
     full_filename = fullfile(path, filename);
@@ -35,17 +44,40 @@ function MimSaveAsNifti(image_to_save, path, filename, reporting)
     resolution = image_to_save.VoxelSize([2, 1, 3]);
     
     offset = [0 0 0];
-    if isa(image_data, 'PTKDicomImage')
-        metadata = image_data. MetaHeader;
-        if isfield(metadata, 'Offset')
-            offset = metadata.Offset;
+    if isa(image_to_save, 'PTKDicomImage')
+        metadata = image_to_save. MetaHeader;
+        if isfield(metadata, 'ImagePositionPatient')
+            offset = metadata.ImagePositionPatient;
         end
     end
     
     image_data = permute(image_data, [2, 1, 3]);
-    image_data = flip(flip(flip(image_data, 3), 2), 1);
+    image_data = flip(image_data, 3); % only flip last dimension
+
     
     nii_data = make_nii(image_data, resolution, offset, [], image_to_save.Title);
     save_nii(nii_data, full_filename);
+    
+    % set orientation
+    if isa(image_to_save, 'PTKDicomImage')
+        % get LPS form from dicom
+        if isfield(metadata, 'ImagePositionPatient')
+            dicomorientation = metadata.ImageOrientationPatient;
+            d1 = dicomorientation(1:3);
+            d2 = dicomorientation(4:6);
+            d3 = cross(d1,d2);
+            LPS_affine4 = [d1, d2, d3, offset];
+            LPS_affine4 = [LPS_affine4; [0,0,0,1]];
+            % convert to RAS for nifti
+            RAS_affine4 = diag([-1,-1,1,1])*LPS_affine4;
+            WriteNiftiOrientation(full_filename, RAS_affine4)
+        end
+    end
+    
+    % if .nii.gz save as .nii.gz
+    if compressed == 1
+        gzip(full_filename)
+    end
+
 end
 
