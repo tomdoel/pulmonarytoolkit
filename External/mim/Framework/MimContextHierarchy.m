@@ -194,10 +194,10 @@ classdef MimContextHierarchy < CoreBaseClass
                                 result = plugin_class.RunPlugin(dataset_callback, output_context, reporting);
                             end
 
-                            new_cache_info = dataset_stack.Pop;
+                            new_cache_info = dataset_stack.Pop();
 
-                            if obj.FrameworkAppDef.TimeFunctions
-                                dataset_stack.ResumeTiming;
+                            if obj.FrameworkAppDef.TimeFunctions()
+                                dataset_stack.ResumeTiming();
                             end
 
                             if ~strcmp(plugin_name, new_cache_info.InstanceIdentifier.PluginName)

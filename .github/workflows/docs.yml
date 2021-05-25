@@ -1,0 +1,37 @@
+name: deploy-docs
+
+on:
+  push:
+    branches:
+    - master
+
+    paths:
+    - ptk-docs/**
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        pip install -U jupyter-book
+
+    - name: Build docs
+      run: |
+        jupyter-book build ./ptk-docs/
+
+    - name: Publish to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ptk-docs/_build/html
+        enable_jekyll: false
