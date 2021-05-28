@@ -37,6 +37,11 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
         principal_filename = {image_filename};
         secondary_filenames = {};
         return;
+    elseif strcmp(ext, '.gz')
+        image_type = MimImageFileFormat.Nifti;
+        principal_filename = {image_filename};
+        secondary_filenames = {};
+        return;
 
     elseif strcmp(ext, '.img')
         hdr_filename = [name '.hdr'];
