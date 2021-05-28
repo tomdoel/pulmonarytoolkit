@@ -81,6 +81,7 @@ function MimSaveAsNifti(image_to_save, path, filename, reporting)
     % if .nii.gz save as .nii.gz
     if compressed == 1
         gzip(full_filename)
+        delete(full_filename)
     end
 
 end
