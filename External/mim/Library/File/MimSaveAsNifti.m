@@ -33,12 +33,12 @@ function MimSaveAsNifti(image_to_save, path, filename, reporting)
     [~,~,ext] = fileparts(filename);
     if strcmp(ext,'.gz')
         compressed = 1;
-        filename = filename(1:end-3);
-        if isfile(fullfile(path, filename))
+        if isfile(fullfile(path, filename(1:end-3)))
             reporting.Error('MimSaveAsNifti:rawniiexists', ...
                         ['Non-compressed *.nii of ', full_filename,...
                         ' already exists at path. Move/delete and try again.']);
         end
+        full_filename = fullfile(path, filename(1:end-3));
     else
         compressed = 0;
     end
