@@ -32,96 +32,96 @@ classdef PTKContextDef < handle
     %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %    
-    
+    %
+
     properties (Access = private)
         Contexts
         ContextSets
     end
-    
+
     methods
         function obj = PTKContextDef
             obj.CreateContexts;
         end
-        
+
         function context = GetContexts(obj)
             context = obj.Contexts;
         end
-        
+
         function context_sets = GetContextSets(obj)
             context_sets = obj.ContextSets;
         end
-        
+
         function context = GetDefaultContext(~)
             context = PTKContext.LungROI;
         end
-        
+
         function context = GetDefaultContextSet(~)
             context = PTKContextSet.LungROI;
         end
-        
+
         function context = GetExportContext(~)
             % Returns the preferred context used when exporting an image.
             % Typically this might be the same as the original context so
-            % that data are exported and imported in the same context 
+            % that data are exported and imported in the same context
             context = PTKContext.OriginalImage;
         end
-        
+
         function context = GetOriginalDataContext(~)
             % Returns the context of the data when it was loaded.
-            % The purpose is to aid fetching a template image where the 
+            % The purpose is to aid fetching a template image where the
             % context is not important, for example if considering the
             % metadata. Using the original context prevents having to
             % create and fetch different templates
             context = PTKContext.OriginalImage;
         end
-        
+
         function matches = ContextSetMatches(~, plugin_context_set, requested_context_set)
             % Returns true if the plugin_context_set can be used to
             % generate the context_set without conversion
-            
+
             matches = (plugin_context_set == requested_context_set) || (plugin_context_set == PTKContextSet.Any);
         end
-        
+
         function output_context = ChooseOutputContext(~, context)
             % If a specific context has been specified in the plugin, we use
             % this (note this is not normally the case, as plugins usually
             % specify a PTKContextSet rather than a PTKContext)
             if isa(context, 'PTKContext')
                 output_context = plugin_info.Context;
-                
+
                 % If the plugin specifies a PTKContextSet of type
                 % PTKContextSet.OriginalImage, then we choose to return a context
                 % of PTKContext.OriginalImage
             elseif context == PTKContextSet.OriginalImage
                 output_context = PTKContext.OriginalImage;
-                
+
                 % If the plugin specifies a PTKContextSet of type
                 % PTKContextSet.LungROI, then we choose to return a context
                 % of PTKContext.LungROI
             elseif context == PTKContextSet.LungROI
                 output_context = PTKContext.LungROI;
-                
+
             % In all other cases we choose a default context of the lung ROI
             else
                 output_context = PTKContext.LungROI;
             end
         end
-        
+
         function template_mask_context = GetTemplateMaskContext(~, context)
             % Returns the template that should be used to generate a binary
             % mask for the specified context. Not all contexts have binary
             % masks (some can be empty images with crop regions); hence ths
             % function provides the context which does contain an
             % appropriate mask
-            
+
             if CoreCompareUtilities.CompareEnumName(context, PTKContext.LungROI) || CoreCompareUtilities.CompareEnumName(context, PTKContext.OriginalImage)
                 template_mask_context = PTKContext.Lungs;
             else
                 template_mask_context = context;
             end
         end
-        
+
         function context_labels = GetContextLabels(~)
             context_labels = [
                 PTKContext.Lungs, PTKContext.RightLung, PTKContext.LeftLung, ...
@@ -132,10 +132,10 @@ classdef PTKContextDef < handle
                 PTKContext.R_MB, PTKContext.R_AB, PTKContext.R_LB, ...
                 PTKContext.R_PB, PTKContext.L_APP, PTKContext.L_APP2, ...
                 PTKContext.L_AN, PTKContext.L_SL, PTKContext.L_IL, ...
-                PTKContext.L_S, PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB];    
-        end        
+                PTKContext.L_S, PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB];
+        end
     end
-    
+
     methods (Access = private)
         function CreateContexts(obj)
             % Create the hierarchy of context types
@@ -154,7 +154,7 @@ classdef PTKContextDef < handle
             obj.ContextSets(char(PTKContextSet.Lobe)) = lobe_set;
             obj.ContextSets(char(PTKContextSet.Segment)) = segment_set;
             obj.ContextSets(char(PTKContextSet.Any)) = any_set;
-            
+             
             % Create the hierarchy of contexts
             obj.Contexts = containers.Map;
             full_context =  MimContextMapping(PTKContext.OriginalImage, full_set, 'PTKGetContextForOriginalImage', 'PTKOriginalImage', []);
@@ -177,40 +177,40 @@ classdef PTKContextDef < handle
                 context_mapping = MimContextMapping(context, lobe_set, 'PTKGetContextForLobe', 'PTKLobes', obj.Contexts(char(PTKContext.LeftLung)));
                 obj.Contexts(char(context)) = context_mapping;
             end
-            
+
             % Segments for upper right lobe
             for context = [PTKContext.R_AP, PTKContext.R_P, PTKContext.R_AN]
                 context_mapping = MimContextMapping(context, segment_set, 'PTKGetContextForSegment', 'PTKPulmonarySegments', obj.Contexts(char(PTKContext.RightUpperLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
-            
+
             % Segments for middle right lobe
             for context = [PTKContext.R_L, PTKContext.R_M]
                 context_mapping = MimContextMapping(context, segment_set, 'PTKGetContextForSegment', 'PTKPulmonarySegments', obj.Contexts(char(PTKContext.RightMiddleLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
-            
+
             % Segments for lower right lobe
             for context = [PTKContext.R_S, PTKContext.R_MB, PTKContext.R_AB, PTKContext.R_LB, PTKContext.R_PB]
                 context_mapping = MimContextMapping(context, segment_set, 'PTKGetContextForSegment', 'PTKPulmonarySegments', obj.Contexts(char(PTKContext.RightLowerLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
-            
+
             % Segments for upper left lobe
             for context = [PTKContext.L_APP, PTKContext.L_APP2, PTKContext.L_AN, PTKContext.L_SL, PTKContext.L_IL]
                 context_mapping = MimContextMapping(context, segment_set, 'PTKGetContextForSegment', 'PTKPulmonarySegments', obj.Contexts(char(PTKContext.LeftUpperLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
-            
+
             % Segments for lower left lobe
             for context = [PTKContext.L_S, PTKContext.L_AMB, PTKContext.L_LB, PTKContext.L_PB]
                 context_mapping = MimContextMapping(context, segment_set, 'PTKGetContextForSegment', 'PTKPulmonarySegments', obj.Contexts(char(PTKContext.LeftLowerLobe)));
                 obj.Contexts(char(context)) = context_mapping;
             end
-        
+
             obj.Contexts(char(PTKContext.OriginalImage)) = full_context;
             obj.Contexts(char(PTKContext.LungROI)) = roi_context;
             obj.Contexts(char(PTKContext.Lungs)) = lungs_context;
-        end        
+        end
     end
 end

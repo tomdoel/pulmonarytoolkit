@@ -2,7 +2,7 @@ classdef PTKGetContextForOriginalImage < PTKPlugin
     % PTKGetContextForOriginalImage. Plugin for fetching a template for the
     %     original loaded image before any cropping or resizing
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using
     %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
     %     See PTKPlugin.m for more information on how to run plugins.
     %
@@ -17,8 +17,8 @@ classdef PTKGetContextForOriginalImage < PTKPlugin
     %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
     %     Author: Tom Doel, 2012.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %    
-    
+    %
+
     properties
         ButtonText = 'Context for Full Lung'
         ToolTip = 'Change the context to display the full lung'
@@ -39,9 +39,9 @@ classdef PTKGetContextForOriginalImage < PTKPlugin
         MemoryCachePolicy = 'Permanent'
         DiskCachePolicy = 'Permanent'
     end
-    
+
     methods (Static)
-        function results = RunPlugin(dataset, ~, ~)
+        function results = RunPlugin(dataset, ~, ~) 
             results = dataset.GetResult('PTKOriginalImage', PTKContext.OriginalImage).BlankCopy;
         end
     end
