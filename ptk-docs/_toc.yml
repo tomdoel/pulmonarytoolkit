@@ -1,39 +1,35 @@
-- file: content/intro
-
-- part: Overview
+format: jb-book
+root: content/intro
+parts:
+- caption: Overview
   chapters:
   - file: content/overview/introduction
   - file: content/overview/getting-started
   - file: content/overview/using-ptk
   - file: content/overview/Tutorials
   - file: content/overview/Running-PTK-without-Matlab
-
-- part: Installing PTK
+- caption: Installing PTK
   chapters:
   - file: content/installing/installing
     sections:
-      - file: content/installing/installing-for-matlab
-      - file: content/installing/installing-without-matlab
+    - file: content/installing/installing-for-matlab
+    - file: content/installing/installing-without-matlab
   - file: content/installing/running
   - file: content/installing/updating
-
-- part: Importing data
+- caption: Importing data
   chapters:
   - file: content/data/importing-data
   - file: content/data/supported-formats
-
-- part: Visualising data
+- caption: Visualising data
   chapters:
   - file: content/gui/visualising-data
   - file: content/gui/shortcuts
-
-- part: Lung and lobe analysis
+- caption: Lung and lobe analysis
   chapters:
   - file: content/gui/Tutorial-Lobar-analysis-of-CT-data
   - file: content/gui/How-to-perform-and-correct-lobe-Segmentations
   - file: content/gui/Fixing-lobe-segmentation-failures
-
-- part: Features
+- caption: Features
   chapters:
   - file: content/features/ManualSegmentations
   - file: content/features/parameters
@@ -41,21 +37,18 @@
   - file: content/features/linked-datasets
   - file: content/features/PTKViewer
   - file: content/features/miv
-
-- part: Maintenance
+- caption: Maintenance
   chapters:
   - file: content/maintenance/deleting-series-and-subjects
   - file: content/maintenance/disk-space
   - file: content/maintenance/delete-or-reset
-
-- part: Plugins
+- caption: Plugins
   chapters:
   - file: content/plugins/introduction
   - file: content/plugins/running-plugins
   - file: content/plugins/developing-plugins
   - file: content/plugins/gui-plugins
-
-- part: Developer documentation
+- caption: Developer documentation
   chapters:
   - file: content/developer/EditedResults
   - file: content/developer/CodingStandards
@@ -67,25 +60,21 @@
   - file: content/developer/Scripts
   - file: content/developer/BuildingGuis
   - file: content/developer/octave-compatibility
-
-- part: About PTK datatypes
+- caption: About PTK datatypes
   chapters:
   - file: content/datatypes/Contexts
   - file: content/datatypes/PTKImage
   - file: content/datatypes/Metrics
   - file: content/datatypes/PTKResultsTable
-
-- part: Scripting
+- caption: Scripting
   chapters:
   - file: content/scripting/command-line
-
-- part: Legacy documentation
+- caption: Legacy documentation
   chapters:
   - file: content/developer/ReleaseNotes0_7
   - file: content/developer/ReleaseNotes0_8
   - file: content/developer/MigratingToGitHub
-
-- part: Additional resources
+- caption: Additional resources
   chapters:
   - file: content/resources/Citations
   - file: content/resources/external-dependencies
