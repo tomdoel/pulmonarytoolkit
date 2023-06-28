@@ -26,16 +26,16 @@ function updated = PTKUpdate(varargin)
             disp('Note: automatic update checks have been turned off.');
         elseif ~isWebsiteFound()
             disp('Note: cannot check for updates as cannot connect to repository.');
-        elseif ~isMasterBranch()
-            disp('Note: PTK only checks for updates when master branch is checked out.');
+        elseif ~isMainBranch()
+            disp('Note: PTK only checks for updates when main branch is checked out.');
         else
             clearDoNotUpdate();
             full_path = mfilename('fullpath');
             [rootSourceDir, ~, ~] = fileparts(full_path);
             [rootSourceDir, ~, ~] = fileparts(rootSourceDir);
-            repoList = DepMatRepo('pulmonarytoolkit', 'master', 'https://github.com/tomdoel/pulmonarytoolkit.git', 'pulmonarytoolkit');
+            repoList = DepMatRepo('pulmonarytoolkit', 'main', 'https://github.com/tomdoel/pulmonarytoolkit.git', 'pulmonarytoolkit');
             depMat = DepMat(repoList, rootSourceDir);
-            status = depMat.getAllStatus;
+            status = depMat.getAllStatus();
 
             switch status
                 case DepMatStatus.GitNotFound
@@ -65,7 +65,7 @@ function updated = PTKUpdate(varargin)
     end
 end
 
-function setDoNotUpdateFlag
+function setDoNotUpdateFlag()
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     filename = fullfile(path_root, 'do-not-update-git');
@@ -73,7 +73,7 @@ function setDoNotUpdateFlag
     fclose(fileHandle);
 end
 
-function doNotUpdate = checkDoNotUpdate
+function doNotUpdate = checkDoNotUpdate()
     full_path = mfilename('fullpath');
     [path_root, ~, ~] = fileparts(full_path);
     filename = fullfile(path_root, 'do-not-update-git');
@@ -104,8 +104,8 @@ function clearDoNotUpdate()
     end
 end
 
-function repoExists = isMasterBranch()
+function repoExists = isMainBranch()
     [success, branch] = DepMat.execute('git rev-parse --symbolic-full-name --abbrev-ref HEAD');
     branch = strtrim(branch);
-    repoExists = success && strcmp(branch, 'master');
+    repoExists = success && (strcmp(branch, 'main') || strcmp(branch, 'master'));
 end
