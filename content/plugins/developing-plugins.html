@@ -1,592 +1,436 @@
 
+
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
     <title>How to develop your own Plugins &#8212; Pulmonary Toolkit</title>
-    
-  <link href="../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    
-      
-
-    
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
-    
-  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/togglebutton.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
-    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
-    <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/plugins/developing-plugins';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="GUI Plugins" href="gui-plugins.html" />
     <link rel="prev" title="Running plugins" href="running-plugins.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-    
-
-    <div class="container-xl">
-      <div class="row">
-          
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-    
-        <div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="../../index.html">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
       
-      <img src="../../_static/PTKLogo.jpg" class="logo" alt="logo">
-      
-      
-      <h1 class="site-logo" id="site-title">Pulmonary Toolkit</h1>
-      
-    </a>
-</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-    <div class="bd-toc-item active">
-        <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../intro.html">
-   Pulmonary Toolkit
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Overview
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/introduction.html">
-   Introduction
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/getting-started.html">
-   Getting started
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/using-ptk.html">
-   Ways of using the Pulmonary Toolkit (PTK)
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Tutorials.html">
-   PDF tutorial guides
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">
-   Running PTK without Matlab
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Installing PTK
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../installing/installing.html">
-   Installing the Pulmonary Toolkit
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../installing/installing-for-matlab.html">
-     Installing the Pulmonary Toolkit for use with Matlab
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../installing/installing-without-matlab.html">
-     Installing the Pulmonary Toolkit without
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/running.html">
-   Running the Pulmonary Toolkit
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/updating.html">
-   Updating the Pulmonary Toolkit
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Importing and visualising data
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../data/importing-data.html">
-   Loading data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../data/supported-formats.html">
-   Supported data and imaging formats
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Visualising data
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../gui/visualising-data.html">
-   Visualising data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../gui/shortcuts.html">
-   Keyboard and mouse shortcuts
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Lung and lobe analysis
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">
-   Tutorial: Lobar analysis of CT data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../gui/How-to-perform-and-correct-lobe-Segmentations.html">
-   How to perform and correct lobe Segmentations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../gui/Fixing-lobe-segmentation-failures.html">
-   Fixing lobe segmentation failures
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Features
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/ManualSegmentations.html">
-   Manual segmentations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/parameters.html">
-   Parameters
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/Markers.html">
-   Markers
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/linked-datasets.html">
-   Linked datasets
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/PTKViewer.html">
-   PTKViewer
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/miv.html">
-   MIV
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Maintenance
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">
-   Deleting data in PTK
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../maintenance/disk-space.html">
-   Recovering disk space
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../maintenance/delete-or-reset.html">
-   Complete reset
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Plugins
- </span>
-</p>
-<ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="introduction.html">
-   Introduction to PTK Plugins
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="running-plugins.html">
-   Running plugins
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   How to develop your own Plugins
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="gui-plugins.html">
-   GUI Plugins
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Developer documentation
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/EditedResults.html">
-   Edited Results for manual and semi-automated correction
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/CodingStandards.html">
-   Coding standards
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/PTK-internal-directories-and-caches.html">
-   PTK internal directories and caches
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/UnitTests.html">
-   Unit tests
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/profiling.html">
-   Profiling
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/Mex-files.html">
-   MEX files
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/ErrorAndProgressReporting.html">
-   Error and Progress Reporting
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/Scripts.html">
-   Scripts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/BuildingGuis.html">
-   Building user interfaces using PTK classes
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/octave-compatibility.html">
-   Octave compatibility
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  About PTK datatypes
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../datatypes/Contexts.html">
-   Contexts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../datatypes/PTKImage.html">
-   PTKImage
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../datatypes/Metrics.html">
-   Metrics
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../datatypes/PTKResultsTable.html">
-   PTKResultsTable
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Scripting
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../scripting/command-line.html">
-   Running PTK from the command line
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Legacy documentation
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/ReleaseNotes0_7.html">
-   Release notes v0.7
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/ReleaseNotes0_8.html">
-   Release notes v0.8
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/MigratingToGitHub.html">
-   HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Additional resources
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/Citations.html">
-   How to cite PTK
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/external-dependencies.html">
-   External Depenencies
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/SampleData.html">
-   Sample Data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">
-   Other software for medical imaging analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/additional-topics.html">
-   Additional help topics
-  </a>
- </li>
-</ul>
-
-    </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
-            
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
-            
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
+      <div class="bd-sidebar-primary bd-sidebar">
         
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/content/plugins/developing-plugins.md"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
-    </div>
-</div>
 
-            <!-- Source interaction buttons -->
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
 
-            <!-- Full screen (wrap in <a> to have style consistency -->
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/PTKLogo.jpg" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../_static/PTKLogo.jpg" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Pulmonary Toolkit
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../overview/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/using-ptk.html">Ways of using the Pulmonary Toolkit (PTK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/Tutorials.html">PDF tutorial guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">Running PTK without Matlab</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Installing PTK</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../installing/installing.html">Installing the Pulmonary Toolkit</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installing/installing-for-matlab.html">Installing the Pulmonary Toolkit for use with Matlab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installing/installing-without-matlab.html">Installing the Pulmonary Toolkit without</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installing/running.html">Running the Pulmonary Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installing/updating.html">Updating the Pulmonary Toolkit</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Importing data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../data/importing-data.html">Loading data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/supported-formats.html">Supported data and imaging formats</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Visualising data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../gui/visualising-data.html">Visualising data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui/shortcuts.html">Keyboard and mouse shortcuts</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lung and lobe analysis</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../gui/Tutorial-Lobar-analysis-of-CT-data.html">Tutorial: Lobar analysis of CT data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui/How-to-perform-and-correct-lobe-Segmentations.html">How to perform and correct lobe Segmentations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gui/Fixing-lobe-segmentation-failures.html">Fixing lobe segmentation failures</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Features</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../features/ManualSegmentations.html">Manual segmentations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features/parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features/Markers.html">Markers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features/linked-datasets.html">Linked datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features/PTKViewer.html">PTKViewer</a></li>
 
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
-
-            <!-- Launch buttons -->
-
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
-            
-            <div class="tocsection onthispage pt-5 pb-3">
-                <i class="fas fa-list"></i> Contents
-            </div>
-            <nav id="bd-toc-nav">
-                <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#plugin-naming">
-   Plugin naming
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#modifying-paths-and-auto-detecting-new-plugins">
-   Modifying paths and auto-detecting new Plugins
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#implement-the-runplugin-method">
-   Implement the
-   <code class="docutils literal notranslate">
-    <span class="pre">
-     RunPlugin()
-    </span>
-   </code>
-   method
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#plugin-properties">
-   Plugin properties
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#properties-determining-how-the-plugin-is-run">
-     Properties determining how the Plugin is run
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#properties-determining-how-the-plugin-button-is-shown-in-the-gui">
-     Properties determining how the Plugin button is shown in the GUI
-    </a>
-   </li>
-  </ul>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="../features/miv.html">MIV</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">Deleting data in PTK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintenance/disk-space.html">Recovering disk space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintenance/delete-or-reset.html">Complete reset</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plugins</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to PTK Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-plugins.html">Running plugins</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">How to develop your own Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui-plugins.html">GUI Plugins</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer/EditedResults.html">Edited Results for manual and semi-automated correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/CodingStandards.html">Coding standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/PTK-internal-directories-and-caches.html">PTK internal directories and caches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/UnitTests.html">Unit tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/Mex-files.html">MEX files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/ErrorAndProgressReporting.html">Error and Progress Reporting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/Scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/BuildingGuis.html">Building user interfaces using PTK classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/octave-compatibility.html">Octave compatibility</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About PTK datatypes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../datatypes/Contexts.html">Contexts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datatypes/PTKImage.html">PTKImage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datatypes/Metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datatypes/PTKResultsTable.html">PTKResultsTable</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Scripting</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../scripting/command-line.html">Running PTK from the command line</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Legacy documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer/ReleaseNotes0_7.html">Release notes v0.7</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/ReleaseNotes0_8.html">Release notes v0.8</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/MigratingToGitHub.html">HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Additional resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../resources/Citations.html">How to cite PTK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources/external-dependencies.html">External Depenencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources/SampleData.html">Sample Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">Other software for medical imaging analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources/additional-topics.html">Additional help topics</a></li>
 </ul>
 
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/plugins/developing-plugins.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>How to develop your own Plugins</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plugin-naming">Plugin naming</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modifying-paths-and-auto-detecting-new-plugins">Modifying paths and auto-detecting new Plugins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implement-the-runplugin-method">Implement the <code class="docutils literal notranslate"><span class="pre">RunPlugin()</span></code> method</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plugin-properties">Plugin properties</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#properties-determining-how-the-plugin-is-run">Properties determining how the Plugin is run</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#properties-determining-how-the-plugin-button-is-shown-in-the-gui">Properties determining how the Plugin button is shown in the GUI</a></li>
+</ul>
+</li>
+</ul>
             </nav>
         </div>
     </div>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
-              <div>
+
+              
                 
-  <div class="section" id="how-to-develop-your-own-plugins">
-<h1>How to develop your own Plugins<a class="headerlink" href="#how-to-develop-your-own-plugins" title="Permalink to this headline">¶</a></h1>
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="how-to-develop-your-own-plugins">
+<h1>How to develop your own Plugins<a class="headerlink" href="#how-to-develop-your-own-plugins" title="Permalink to this heading">#</a></h1>
 <p>To develop a Plugin you need to create a class inheriting from <code class="docutils literal notranslate"><span class="pre">PTKPlugin</span></code>, set the appropriate property values and write the implementation in the <code class="docutils literal notranslate"><span class="pre">RunPlugin()</span></code> method. You should look to existing Plugins for examples.</p>
-<div class="section" id="plugin-naming">
-<h2>Plugin naming<a class="headerlink" href="#plugin-naming" title="Permalink to this headline">¶</a></h2>
+<section id="plugin-naming">
+<h2>Plugin naming<a class="headerlink" href="#plugin-naming" title="Permalink to this heading">#</a></h2>
 <p>It is recommended not to use the prefix <code class="docutils literal notranslate"><span class="pre">PTK</span></code> for your own class names, so that you can clearly distinguish between core Plugins provided by PTK and those you have developed yourself.</p>
-</div>
-<div class="section" id="modifying-paths-and-auto-detecting-new-plugins">
-<h2>Modifying paths and auto-detecting new Plugins<a class="headerlink" href="#modifying-paths-and-auto-detecting-new-plugins" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="modifying-paths-and-auto-detecting-new-plugins">
+<h2>Modifying paths and auto-detecting new Plugins<a class="headerlink" href="#modifying-paths-and-auto-detecting-new-plugins" title="Permalink to this heading">#</a></h2>
 <p>If you add a Plugin, it needs to be in one of the existing Plugin directories, or else you need to modify the <code class="docutils literal notranslate"><span class="pre">PTKAddPaths.m</span></code> function to include your additional paths.</p>
 <p>If you modify <code class="docutils literal notranslate"><span class="pre">PTKAddPaths.m</span></code> during a Matlab session, you may need to run <code class="docutils literal notranslate"><span class="pre">PTKAddPaths</span> <span class="pre">force</span></code> to force it to detect the new paths (restarting Matlab will always pick up the new paths).</p>
 <p>When running Plugins using the API, PTK will find them if they are on the current path set by <code class="docutils literal notranslate"><span class="pre">PTKAddPaths</span></code>.</p>
 <p>The GUI will only display Plugins that were found in the <code class="docutils literal notranslate"><span class="pre">Plugin</span></code> directories during the first run in a Matlab session. To force it to search again, close all Matlab windows then run <code class="docutils literal notranslate"><span class="pre">clear</span> <span class="pre">all</span> <span class="pre">classes</span></code> to clear the memory caches.</p>
-</div>
-<div class="section" id="implement-the-runplugin-method">
-<h2>Implement the <code class="docutils literal notranslate"><span class="pre">RunPlugin()</span></code> method<a class="headerlink" href="#implement-the-runplugin-method" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="implement-the-runplugin-method">
+<h2>Implement the <code class="docutils literal notranslate"><span class="pre">RunPlugin()</span></code> method<a class="headerlink" href="#implement-the-runplugin-method" title="Permalink to this heading">#</a></h2>
 <p>Assuming you have set the property <code class="docutils literal notranslate"><span class="pre">PTKVersion</span> <span class="pre">=</span> <span class="pre">'2'</span></code> (see below), then you need to implement the following <code class="docutils literal notranslate"><span class="pre">RunPlugin()</span></code> method:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">methods</span> <span class="p">(</span><span class="n">Static</span><span class="p">)</span>
       <span class="n">function</span> <span class="n">results_image</span> <span class="o">=</span> <span class="n">RunPlugin</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">reporting</span><span class="p">)</span>
@@ -596,7 +440,7 @@
 </pre></div>
 </div>
 <p>The following three parameters are passed to your Plugin when it is run by PTK:</p>
-<table class="colwidths-auto table">
+<table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Description</p></th>
@@ -614,12 +458,12 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="plugin-properties">
-<h2>Plugin properties<a class="headerlink" href="#plugin-properties" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="properties-determining-how-the-plugin-is-run">
-<h3>Properties determining how the Plugin is run<a class="headerlink" href="#properties-determining-how-the-plugin-is-run" title="Permalink to this headline">¶</a></h3>
-<table class="colwidths-auto table">
+</section>
+<section id="plugin-properties">
+<h2>Plugin properties<a class="headerlink" href="#plugin-properties" title="Permalink to this heading">#</a></h2>
+<section id="properties-determining-how-the-plugin-is-run">
+<h3>Properties determining how the Plugin is run<a class="headerlink" href="#properties-determining-how-the-plugin-is-run" title="Permalink to this heading">#</a></h3>
+<table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Property name</p></th>
 <th class="head"><p>Recommended value</p></th>
@@ -652,15 +496,15 @@
 <td><p>Determines the Plugin interface version which your Plugin implements. This determines the parameters passed into the <code class="docutils literal notranslate"><span class="pre">RunPlugin()</span></code> method. At time of writing this is <code class="docutils literal notranslate"><span class="pre">2</span></code> so you should set this parameter to <code class="docutils literal notranslate"><span class="pre">'2'</span></code> and implement your Plugin to expect the corresponding inputs. The value <code class="docutils literal notranslate"><span class="pre">'1'</span></code> can be specified to allow older Plugins to be run without modification</p></td>
 </tr>
 <tr class="row-even"><td><p>Context</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">'PTKContextSet.LungROI'</span> <span class="pre">|</span> <span class="pre">Advanced</span> <span class="pre">property.</span> <span class="pre">The</span> <span class="pre">[Context</span> <span class="pre">or</span> <span class="pre">ContextSet](../datatypes/Contexts.md)</span> <span class="pre">over</span> <span class="pre">which</span> <span class="pre">the</span> <span class="pre">Plugin</span> <span class="pre">will</span> <span class="pre">be</span> <span class="pre">run.</span> <span class="pre">When</span> <span class="pre">running</span> <span class="pre">the</span> <span class="pre">Plugin,</span> <span class="pre">PTK</span> <span class="pre">will</span> <span class="pre">convert</span> <span class="pre">the</span> <span class="pre">Context</span> <span class="pre">to</span> <span class="pre">what</span> <span class="pre">the</span> <span class="pre">Plugin</span> <span class="pre">is</span> <span class="pre">expecting.</span> <span class="pre">For</span> <span class="pre">lung</span> <span class="pre">analysis,</span> <span class="pre">most</span> <span class="pre">plugins</span> <span class="pre">run</span> <span class="pre">on</span> <span class="pre">the</span> </code>LungROI<code class="docutils literal notranslate"><span class="pre">context</span> <span class="pre">set</span> <span class="pre">which</span> <span class="pre">means</span> <span class="pre">they</span> <span class="pre">receive</span> <span class="pre">the</span> <span class="pre">lung</span> <span class="pre">image</span> <span class="pre">cropped</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">ROI.</span> <span class="pre">It</span> <span class="pre">is</span> <span class="pre">also</span> <span class="pre">possible</span> <span class="pre">to</span> <span class="pre">specify</span></code>’PTKContextSet.OriginalImage’<code class="docutils literal notranslate"><span class="pre">to</span> <span class="pre">receive</span> <span class="pre">the</span> <span class="pre">full-size</span> <span class="pre">original</span> <span class="pre">image,</span> <span class="pre">or</span> <span class="pre">to</span> <span class="pre">receive</span> <span class="pre">Lung</span> <span class="pre">or</span> <span class="pre">Lobe</span> <span class="pre">regions.</span> <span class="pre">Or,</span> <span class="pre">if</span> <span class="pre">your</span> <span class="pre">Plugin</span> <span class="pre">can</span> <span class="pre">operate</span> <span class="pre">on</span> <span class="pre">an</span> <span class="pre">arbitrary</span> <span class="pre">region</span> <span class="pre">(such</span> <span class="pre">as</span> <span class="pre">specified</span> <span class="pre">by</span> <span class="pre">a</span> <span class="pre">manual</span> <span class="pre">segmentation),</span> <span class="pre">then</span> <span class="pre">set</span> <span class="pre">to</span></code>’PTKContextSet.Any’<code class="docutils literal notranslate"><span class="pre">to</span> <span class="pre">allow</span> <span class="pre">any</span> <span class="pre">Context.</span> <span class="pre">See</span></code>PTKCTDensityAnalysis.m` for an example of how to use the Any context.</p></td>
-<td><p></p></td>
+<td><p>`’PTKContextSet.LungROI’</p></td>
+<td><p>Advanced property. The <a class="reference internal" href="../datatypes/Contexts.html"><span class="doc std std-doc">Context or ContextSet</span></a> over which the Plugin will be run. When running the Plugin, PTK will convert the Context to what the Plugin is expecting. For lung analysis, most plugins run on the <code class="docutils literal notranslate"><span class="pre">LungROI</span></code> context set which means they receive the lung image cropped to the ROI. It is also possible to specify <code class="docutils literal notranslate"><span class="pre">'PTKContextSet.OriginalImage'</span></code> to receive the full-size original image, or to receive Lung or Lobe regions. Or, if your Plugin can operate on an arbitrary region (such as specified by a manual segmentation), then set to <code class="docutils literal notranslate"><span class="pre">'PTKContextSet.Any'</span></code> to allow any Context. See <code class="docutils literal notranslate"><span class="pre">PTKCTDensityAnalysis.m</span></code> for an example of how to use the Any context.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="properties-determining-how-the-plugin-button-is-shown-in-the-gui">
-<h3>Properties determining how the Plugin button is shown in the GUI<a class="headerlink" href="#properties-determining-how-the-plugin-button-is-shown-in-the-gui" title="Permalink to this headline">¶</a></h3>
-<table class="colwidths-auto table">
+</section>
+<section id="properties-determining-how-the-plugin-button-is-shown-in-the-gui">
+<h3>Properties determining how the Plugin button is shown in the GUI<a class="headerlink" href="#properties-determining-how-the-plugin-button-is-shown-in-the-gui" title="Permalink to this heading">#</a></h3>
+<table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Property name</p></th>
 <th class="head"><p>Recommended value</p></th>
@@ -698,9 +542,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -714,7 +558,7 @@
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            name: "python3",
             path: "./content/plugins"
         },
         predefinedOutput: true
@@ -722,36 +566,112 @@
     </script>
     <script>kernelName = 'python3'</script>
 
-              </div>
+                </article>
               
-        
-        <div class='prev-next-bottom'>
-            
-    <a class='left-prev' id="prev-link" href="running-plugins.html" title="previous page">Running plugins</a>
-    <a class='right-next' id="next-link" href="gui-plugins.html" title="next page">GUI Plugins</a>
 
-        </div>
-        
-        </div>
-    </div>
-    <footer class="footer mt-5 mt-md-0">
-    <div class="container">
-      <p>
-        
-          By Tom Doel<br/>
-        
-            &copy; Copyright 2020.<br/>
-      </p>
-    </div>
-  </footer>
-</main>
-
-
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="running-plugins.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Running plugins</p>
       </div>
-    </div>
+    </a>
+    <a class="right-next"
+       href="gui-plugins.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">GUI Plugins</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
   
-  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+</div>
 
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plugin-naming">Plugin naming</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modifying-paths-and-auto-detecting-new-plugins">Modifying paths and auto-detecting new Plugins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implement-the-runplugin-method">Implement the <code class="docutils literal notranslate"><span class="pre">RunPlugin()</span></code> method</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plugin-properties">Plugin properties</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#properties-determining-how-the-plugin-is-run">Properties determining how the Plugin is run</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#properties-determining-how-the-plugin-button-is-shown-in-the-gui">Properties determining how the Plugin button is shown in the GUI</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
   
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Doel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
   </body>
 </html>

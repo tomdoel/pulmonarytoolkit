@@ -1,599 +1,445 @@
 
+
 <!DOCTYPE html>
 
-<html>
+
+<html lang="en" >
+
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
     <title>Tutorial: Lobar analysis of CT data &#8212; Pulmonary Toolkit</title>
-    
-  <link href="../../_static/css/theme.css" rel="stylesheet" />
-  <link href="../../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
-    
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    
-      
-
-    
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.acff12b8f9c144ce68a297486a2fa670.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
-    
-  <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/togglebutton.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
-    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
-    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
-    <script >
-        const thebe_selector = ".thebe"
-        const thebe_selector_input = "pre"
-        const thebe_selector_output = ".output"
-    </script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/gui/Tutorial-Lobar-analysis-of-CT-data';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="How to perform and correct lobe Segmentations" href="How-to-perform-and-correct-lobe-Segmentations.html" />
     <link rel="prev" title="Keyboard and mouse shortcuts" href="shortcuts.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="en" />
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
-    
-
-    <div class="container-xl">
-      <div class="row">
-          
-<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
-    
-        <div class="navbar-brand-box">
-    <a class="navbar-brand text-wrap" href="../../index.html">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
       
-      <img src="../../_static/PTKLogo.jpg" class="logo" alt="logo">
-      
-      
-      <h1 class="site-logo" id="site-title">Pulmonary Toolkit</h1>
-      
-    </a>
-</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-    <div class="bd-toc-item active">
-        <ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../intro.html">
-   Pulmonary Toolkit
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Overview
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/introduction.html">
-   Introduction
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/getting-started.html">
-   Getting started
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/using-ptk.html">
-   Ways of using the Pulmonary Toolkit (PTK)
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Tutorials.html">
-   PDF tutorial guides
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">
-   Running PTK without Matlab
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Installing PTK
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../installing/installing.html">
-   Installing the Pulmonary Toolkit
-  </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../installing/installing-for-matlab.html">
-     Installing the Pulmonary Toolkit for use with Matlab
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../installing/installing-without-matlab.html">
-     Installing the Pulmonary Toolkit without
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/running.html">
-   Running the Pulmonary Toolkit
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../installing/updating.html">
-   Updating the Pulmonary Toolkit
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Importing and visualising data
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../data/importing-data.html">
-   Loading data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../data/supported-formats.html">
-   Supported data and imaging formats
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Visualising data
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="visualising-data.html">
-   Visualising data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="shortcuts.html">
-   Keyboard and mouse shortcuts
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Lung and lobe analysis
- </span>
-</p>
-<ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   Tutorial: Lobar analysis of CT data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="How-to-perform-and-correct-lobe-Segmentations.html">
-   How to perform and correct lobe Segmentations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="Fixing-lobe-segmentation-failures.html">
-   Fixing lobe segmentation failures
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Features
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/ManualSegmentations.html">
-   Manual segmentations
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/parameters.html">
-   Parameters
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/Markers.html">
-   Markers
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/linked-datasets.html">
-   Linked datasets
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/PTKViewer.html">
-   PTKViewer
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../features/miv.html">
-   MIV
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Maintenance
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">
-   Deleting data in PTK
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../maintenance/disk-space.html">
-   Recovering disk space
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../maintenance/delete-or-reset.html">
-   Complete reset
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Plugins
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../plugins/introduction.html">
-   Introduction to PTK Plugins
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../plugins/running-plugins.html">
-   Running plugins
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../plugins/developing-plugins.html">
-   How to develop your own Plugins
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../plugins/gui-plugins.html">
-   GUI Plugins
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Developer documentation
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/EditedResults.html">
-   Edited Results for manual and semi-automated correction
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/CodingStandards.html">
-   Coding standards
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/PTK-internal-directories-and-caches.html">
-   PTK internal directories and caches
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/UnitTests.html">
-   Unit tests
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/profiling.html">
-   Profiling
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/Mex-files.html">
-   MEX files
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/ErrorAndProgressReporting.html">
-   Error and Progress Reporting
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/Scripts.html">
-   Scripts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/BuildingGuis.html">
-   Building user interfaces using PTK classes
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/octave-compatibility.html">
-   Octave compatibility
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  About PTK datatypes
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../datatypes/Contexts.html">
-   Contexts
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../datatypes/PTKImage.html">
-   PTKImage
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../datatypes/Metrics.html">
-   Metrics
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../datatypes/PTKResultsTable.html">
-   PTKResultsTable
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Scripting
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../scripting/command-line.html">
-   Running PTK from the command line
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Legacy documentation
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/ReleaseNotes0_7.html">
-   Release notes v0.7
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/ReleaseNotes0_8.html">
-   Release notes v0.8
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../developer/MigratingToGitHub.html">
-   HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
-  Additional resources
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/Citations.html">
-   How to cite PTK
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/external-dependencies.html">
-   External Depenencies
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/SampleData.html">
-   Sample Data
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">
-   Other software for medical imaging analysis
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../resources/additional-topics.html">
-   Additional help topics
-  </a>
- </li>
-</ul>
-
-    </div>
-</nav> <!-- To handle the deprecated key -->
-
-<div class="navbar_extra_footer">
-  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
-</div>
-
-</div>
-
-
-          
-
-
-          
-<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
-    
-    <div class="topbar container-xl fixed-top">
-    <div class="topbar-contents row">
-        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
-        <div class="col pl-md-4 topbar-main">
-            
-            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-                <i class="fas fa-bars"></i>
-                <i class="fas fa-arrow-left"></i>
-                <i class="fas fa-arrow-up"></i>
-            </button>
-            
-            
-<div class="dropdown-buttons-trigger">
-    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
-            class="fas fa-download"></i></button>
-
-    <div class="dropdown-buttons">
-        <!-- ipynb file if we had a myst markdown file -->
+      <div class="bd-sidebar-primary bd-sidebar">
         
-        <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../../_sources/content/gui/Tutorial-Lobar-analysis-of-CT-data.md"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
-        <!-- Download PDF via print -->
-        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
-            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
-    </div>
-</div>
 
-            <!-- Source interaction buttons -->
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
 
-            <!-- Full screen (wrap in <a> to have style consistency -->
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/PTKLogo.jpg" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../_static/PTKLogo.jpg" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Pulmonary Toolkit
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../overview/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/using-ptk.html">Ways of using the Pulmonary Toolkit (PTK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/Tutorials.html">PDF tutorial guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/Running-PTK-without-Matlab.html">Running PTK without Matlab</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Installing PTK</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../installing/installing.html">Installing the Pulmonary Toolkit</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installing/installing-for-matlab.html">Installing the Pulmonary Toolkit for use with Matlab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installing/installing-without-matlab.html">Installing the Pulmonary Toolkit without</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installing/running.html">Running the Pulmonary Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installing/updating.html">Updating the Pulmonary Toolkit</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Importing data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../data/importing-data.html">Loading data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/supported-formats.html">Supported data and imaging formats</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Visualising data</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="visualising-data.html">Visualising data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shortcuts.html">Keyboard and mouse shortcuts</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Lung and lobe analysis</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tutorial: Lobar analysis of CT data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="How-to-perform-and-correct-lobe-Segmentations.html">How to perform and correct lobe Segmentations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Fixing-lobe-segmentation-failures.html">Fixing lobe segmentation failures</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Features</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../features/ManualSegmentations.html">Manual segmentations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features/parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features/Markers.html">Markers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features/linked-datasets.html">Linked datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features/PTKViewer.html">PTKViewer</a></li>
 
-<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-        title="Fullscreen mode"><i
-            class="fas fa-expand"></i></button></a>
-
-            <!-- Launch buttons -->
-
-        </div>
-
-        <!-- Table of contents -->
-        <div class="d-none d-md-block col-md-2 bd-toc show">
-            
-            <div class="tocsection onthispage pt-5 pb-3">
-                <i class="fas fa-list"></i> Contents
-            </div>
-            <nav id="bd-toc-nav">
-                <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#introduction">
-   Introduction
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#loading-the-dataset">
-   Loading the dataset
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#verifying-the-lobe-segmentation">
-   Verifying the lobe segmentation
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#correcting-the-outer-lung-boundaries">
-   Correcting the outer lung boundaries
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#removing-manual-corrections">
-   Removing manual corrections
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#using-an-external-editor">
-   Using an external editor
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#performing-lobar-analysis">
-   Performing lobar analysis
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="../features/miv.html">MIV</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../maintenance/deleting-series-and-subjects.html">Deleting data in PTK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintenance/disk-space.html">Recovering disk space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maintenance/delete-or-reset.html">Complete reset</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plugins</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../plugins/introduction.html">Introduction to PTK Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plugins/running-plugins.html">Running plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plugins/developing-plugins.html">How to develop your own Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plugins/gui-plugins.html">GUI Plugins</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer/EditedResults.html">Edited Results for manual and semi-automated correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/CodingStandards.html">Coding standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/PTK-internal-directories-and-caches.html">PTK internal directories and caches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/UnitTests.html">Unit tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/profiling.html">Profiling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/Mex-files.html">MEX files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/ErrorAndProgressReporting.html">Error and Progress Reporting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/Scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/BuildingGuis.html">Building user interfaces using PTK classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/octave-compatibility.html">Octave compatibility</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">About PTK datatypes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../datatypes/Contexts.html">Contexts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datatypes/PTKImage.html">PTKImage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datatypes/Metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datatypes/PTKResultsTable.html">PTKResultsTable</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Scripting</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../scripting/command-line.html">Running PTK from the command line</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Legacy documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer/ReleaseNotes0_7.html">Release notes v0.7</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/ReleaseNotes0_8.html">Release notes v0.8</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/MigratingToGitHub.html">HOW TO MIGRATE YOUR PTK CODEBASE FROM GOOGLE CODE</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Additional resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../resources/Citations.html">How to cite PTK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources/external-dependencies.html">External Depenencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources/SampleData.html">Sample Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources/MedicalImagingAnalysisSoftware.html">Other software for medical imaging analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources/additional-topics.html">Additional help topics</a></li>
 </ul>
 
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/content/gui/Tutorial-Lobar-analysis-of-CT-data.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Tutorial: Lobar analysis of CT data</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-the-dataset">Loading the dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verifying-the-lobe-segmentation">Verifying the lobe segmentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correcting-the-outer-lung-boundaries">Correcting the outer lung boundaries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#removing-manual-corrections">Removing manual corrections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-an-external-editor">Using an external editor</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performing-lobar-analysis">Performing lobar analysis</a></li>
+</ul>
             </nav>
         </div>
     </div>
 </div>
-    <div id="main-content" class="row">
-        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
-        
-              <div>
+
+              
                 
-  <div class="section" id="tutorial-lobar-analysis-of-ct-data">
-<h1>Tutorial: Lobar analysis of CT data<a class="headerlink" href="#tutorial-lobar-analysis-of-ct-data" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="tutorial-lobar-analysis-of-ct-data">
+<h1>Tutorial: Lobar analysis of CT data<a class="headerlink" href="#tutorial-lobar-analysis-of-ct-data" title="Permalink to this heading">#</a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
 <p>This tutorial will describe the completed process for obtaining lobar analysis results using the Pulmonary Toolkit. Some stages (such as loading and visualisation) and covered in more detail in previous tutorials, so refer to these if you are unclear on certain concepts.</p>
-</div>
-<div class="section" id="loading-the-dataset">
-<h2>Loading the dataset<a class="headerlink" href="#loading-the-dataset" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="loading-the-dataset">
+<h2>Loading the dataset<a class="headerlink" href="#loading-the-dataset" title="Permalink to this heading">#</a></h2>
 <p>Click the Patients button to open the Patient Browser. To import a new dataset, click the + button. Then select the folder or folders containing the data to import. Importing data may take a few minutes.
 Once your dataset has been imported, it will appear in the Patient Browser. The right side of the Patient Browser shows every dataset (series) you have available, grouped by patient. Use the scrollbar or the mousewheel to move through the patients. The left panel is a shortcut list which allows you to scroll straight to a particular patient.</p>
 <p>Click on a dataset (image series) to load that series into the PTK. If this is the first time you have visualised this series, the PTK will automatically perform some initial operations such as detecting the lung region of interest. This may take a few minutes.</p>
 <p>#Segmenting the lobes #
 On the right of the main PTK screen there are a number of ‘tabs’ (File, Segment, View, etc.). Click Segment to select the Segmentation panel.</p>
 <p>Then click Lobes to perform lobe segmentation. This may take 5–10 minutes if this is the first time you have run lobe segmentation for this dataset.</p>
-</div>
-<div class="section" id="verifying-the-lobe-segmentation">
-<h2>Verifying the lobe segmentation<a class="headerlink" href="#verifying-the-lobe-segmentation" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="verifying-the-lobe-segmentation">
+<h2>Verifying the lobe segmentation<a class="headerlink" href="#verifying-the-lobe-segmentation" title="Permalink to this heading">#</a></h2>
 <p>After the lobe segmentation completes, the segmentation will appear as a colour overlay on the main lung image.
 Verifying the lobe segmentation
 It is important you always verify the automated lobe segmentation for every dataset you analyse. You may need to correct the lobar boundaries, depending on the level of accuracy you require.
 You only need to perform verification and correction once for each dataset; the PTK will remember your corrections for future use.
 After the lobe segmentation completes, the segmentation will appear as a colour overlay on the main lung image, as shown above. Verify the lobar boundaries are correct by scrolling through the image slices (use the mouse wheel or scrollbar at the side of the image). You can switch orientation, zoom and pan as required. If you don’t know how to do this, go back to the earlier tutorials and familiarise yourself with navigating the image in the PTK. You may also wish to adjust the overlay opacity (the opacity is set by the slider to the right of Opacity – slide it to the right to make the segmentation overlay more opaque).
 If you don’t see the colour overlay, make sure you have the ‘Overlay’ checkbox selected (underneath the image window), and make sure the overlay opacity is set high enough to be visible.</p>
-</div>
-<div class="section" id="correcting-the-outer-lung-boundaries">
-<h2>Correcting the outer lung boundaries<a class="headerlink" href="#correcting-the-outer-lung-boundaries" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="correcting-the-outer-lung-boundaries">
+<h2>Correcting the outer lung boundaries<a class="headerlink" href="#correcting-the-outer-lung-boundaries" title="Permalink to this heading">#</a></h2>
 <p>Normally, you won’t need to correct the outer boundaries of the lung segmentation, so you can skip straight on to correcting the boundaries between the lobes in the next section.
 However, if you do need to correct the outer boundaries of the lungs, the procedure is similar to the lobar boundary correction described below. Click Left and Right Lungs to load the lung segmentation, then choose the Correct tab (as described below) and follow the instructions below, except now you are clicking to modify the outer boundaries of the lung.
 You should make any corrections to the lung boundaries before making corrections to the lobar boundaries.</p>
@@ -606,20 +452,20 @@ You may need to click a number of times on different slices to get the boundary 
 You can press U (for undo) one or more times to undo the last few edits.
 While in Edit mode you can still switch image orientation, cine through the slices using the mouse wheel or the scrollbar, pan using SHIFT+drag, and zoom using CTRL+drag. You can switch to a different tool (eg W/L, Cine etc.) but this will switch away from the Edit tool, and you will have to switch back to the Edit tool in order to continue correcting the boundaries. To switch back to the edit tool, click the Edit button below the image.
 When you have finished your editing, click the Save button in the Correct tab. The corrections will be saved internally (you don’t need to enter a filename) and your corrected lobar boundaries will be used for all future anlaysis. If you don’t click Save, you will be asked whether you want to save when you leave correction mode.</p>
-</div>
-<div class="section" id="removing-manual-corrections">
-<h2>Removing manual corrections<a class="headerlink" href="#removing-manual-corrections" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="removing-manual-corrections">
+<h2>Removing manual corrections<a class="headerlink" href="#removing-manual-corrections" title="Permalink to this heading">#</a></h2>
 <p>When in correction mode, the Delete all editing button will erase all of your edits for the lobe segmentation for this dataset, and revert back to the automatically generated segmentation.</p>
-</div>
-<div class="section" id="using-an-external-editor">
-<h2>Using an external editor<a class="headerlink" href="#using-an-external-editor" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="using-an-external-editor">
+<h2>Using an external editor<a class="headerlink" href="#using-an-external-editor" title="Permalink to this heading">#</a></h2>
 <p>As an alternative to using the PTK’s correct tools, you can edit the segmentations using an external editor. You can use the Export edit button to save the lobe segmentation in a suitable format (such as raw/mhd), load up the edit in a 3D editor, make the appropriate corrections, and then import the edited image back into PTK using the Import Edit button.
 See the appendix for a step-by-step example of how to do this using ITK-Snap.
 If you use the Import Edit facility, be very careful not to accidentally load in the wrong segmentation from a different dataset. Always verify any segmentation you import looks OK after importing.
 Be aware that unlike the PTK, many external editing tools are 2D and will not guarantee connectivity and smoothness of the lobar boundaries between adjacent slices. As a result, if you manually draw lobar boundaries in one orientation (e.g. on axial slices), they may look odd when viewed in a different orientation (e.g. coronal slices). The PTK’s internal correction tools operate in 3D and do not suffer from this problem</p>
-</div>
-<div class="section" id="performing-lobar-analysis">
-<h2>Performing lobar analysis<a class="headerlink" href="#performing-lobar-analysis" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="performing-lobar-analysis">
+<h2>Performing lobar analysis<a class="headerlink" href="#performing-lobar-analysis" title="Permalink to this heading">#</a></h2>
 <p>Once you have verified and corrected the lobar boundaries, you can run automated lobar analysis to generate lobar measurements such as emphysema percentage and mean tissue density.
 Click the Analyse tab
 Click Density Metrics to run CT density-based analysis across the lungs and lobes</p>
@@ -645,8 +491,8 @@ If you are modifying a lung segmentation, 1 is the right lung and 2 is the left 
 Use the Paintbrush or other tools to modify the segmentation, remembering you can move between slices using the mouse scroll wheel or page up/page down.
 Once you have made your changes, Save As Image from the Segmentation menu, and choose an 8-bit metaheader file.
 Load your new segmentation into PTK using the Import Edit from the Correct tab.</p>
-</div>
-</div>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -660,7 +506,7 @@ Load your new segmentation into PTK using the Import Edit from the Correct tab.<
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            name: "python3",
             path: "./content/gui"
         },
         predefinedOutput: true
@@ -668,36 +514,111 @@ Load your new segmentation into PTK using the Import Edit from the Correct tab.<
     </script>
     <script>kernelName = 'python3'</script>
 
-              </div>
+                </article>
               
-        
-        <div class='prev-next-bottom'>
-            
-    <a class='left-prev' id="prev-link" href="shortcuts.html" title="previous page">Keyboard and mouse shortcuts</a>
-    <a class='right-next' id="next-link" href="How-to-perform-and-correct-lobe-Segmentations.html" title="next page">How to perform and correct lobe Segmentations</a>
 
-        </div>
-        
-        </div>
-    </div>
-    <footer class="footer mt-5 mt-md-0">
-    <div class="container">
-      <p>
-        
-          By Tom Doel<br/>
-        
-            &copy; Copyright 2020.<br/>
-      </p>
-    </div>
-  </footer>
-</main>
-
-
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="shortcuts.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Keyboard and mouse shortcuts</p>
       </div>
-    </div>
+    </a>
+    <a class="right-next"
+       href="How-to-perform-and-correct-lobe-Segmentations.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">How to perform and correct lobe Segmentations</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
   
-  <script src="../../_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+</div>
 
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-the-dataset">Loading the dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#verifying-the-lobe-segmentation">Verifying the lobe segmentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correcting-the-outer-lung-boundaries">Correcting the outer lung boundaries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#removing-manual-corrections">Removing manual corrections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-an-external-editor">Using an external editor</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performing-lobar-analysis">Performing lobar analysis</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
   
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tom Doel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
   </body>
 </html>
