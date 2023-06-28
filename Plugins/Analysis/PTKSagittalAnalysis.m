@@ -53,8 +53,8 @@ classdef PTKSagittalAnalysis < PTKPlugin
             % Create a region mask excluding the airways
             context_no_airways = dataset.GetResult('PTKGetMaskForContextExcludingAirways', context);
             
-            % Divide the lung into bins along the cranial-caudal axis
-            bins = dataset.GetResult('PTKDivideLungsIntoCoronalBins', PTKContext.Lungs);
+            % Divide the lung into bins
+            bins = dataset.GetResult('PTKDivideLungsIntoSagittalBins', PTKContext.Lungs); % TODO
             
             results = PTKMultipleRegionAnalysis(bins, roi, context_mask, context_no_airways, 'Sagittal distance from lung edge (mm)', reporting);
         end
