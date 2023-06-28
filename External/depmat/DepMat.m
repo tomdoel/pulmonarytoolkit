@@ -10,7 +10,7 @@ classdef DepMat
     %     Distributed under the MIT licence. Please see website for details.
     %
 
-    
+
     properties (SetAccess = private)
         RepoList
         RootSourceDir
@@ -18,17 +18,17 @@ classdef DepMat
         RepoDirList
         RepoNameList
     end
-    
+
     methods
         function obj = DepMat(repoList, rootSourceDir)
             obj.RepoList = repoList;
             obj.RootSourceDir = rootSourceDir;
-            DepMat.fixCurlPath;
-            
+            DepMat.fixCurlPath();
+
             obj.RepoDirList = cell(1, numel(obj.RepoList));
             obj.RepoNameList = cell(1, numel(obj.RepoList));
-            obj.RepoUpdaterList = DepMatRepositoryUpdater.empty;
-            
+            obj.RepoUpdaterList = DepMatRepositoryUpdater.empty();
+
             for repoIndex = 1 : numel(obj.RepoList)
                 repo = obj.RepoList(repoIndex);
                 repoCombinedName = repo.FolderName;
@@ -39,38 +39,37 @@ classdef DepMat
                 obj.RepoNameList{repoIndex} = repoCombinedName;
             end
         end
-        
+
         function statusList = getAllStatus(obj)
-            statusList = DepMatStatus.empty;
+            statusList = DepMatStatus.empty();
             for repoIndex = 1 : numel(obj.RepoList)
                 repo = obj.RepoUpdaterList(repoIndex);
-                statusList(repoIndex) = repo.getStatus;
+                statusList(repoIndex) = repo.getStatus();
             end
         end
-        
+
         function success = updateAll(obj)
             success = true;
             for repoIndex = 1 : numel(obj.RepoList)
                 repo = obj.RepoUpdaterList(repoIndex);
-                success = success && repo.updateRepo;
+                success = success && repo.updateRepo();
             end
         end
-        
+
         function anyChanged = cloneOrUpdateAll(obj)
             anyChanged = false;
-            
+
             for repoIndex = 1 : numel(obj.RepoList)
                 repo = obj.RepoUpdaterList(repoIndex);
-                [~, changed] = repo.cloneOrUpdate;
+                [~, changed] = repo.cloneOrUpdate();
                 anyChanged = anyChanged || changed;
             end
 
         end
     end
-    
+
     methods (Static)
         function [success, output] = execute(command)
-
             % Fixes issue #5. Apparent hang on launch if GitHub has not 
             % been added to authorized_hosts. Ensure the `Are you sure you
             % want to continue connecting (yes/no)?` message is reported to
@@ -78,8 +77,7 @@ classdef DepMat
             if ~ispc()
                 command = [command ' > /dev/null'];
             end
-            [return_value, output] = system(command, '-echo');
-            
+            [return_value, output] = system(command);
             success = return_value == 0;
             if ~success
                 if strfind(output, 'Protocol https not supported or disabled in libcurl')
@@ -88,21 +86,21 @@ classdef DepMat
             end
         end
 
-        function installed = isGitInstalled
+        function installed = isGitInstalled()
             if ispc
                 command = 'where git';
             else
                 command = 'which git';
             end
-            
+
             installed = DepMat.execute(command);
         end
-        
-        function fixCurlPath
+
+        function fixCurlPath()
             % Matlab's curl configuration doesn't include https so git will not work.
             % We need to add the system curl configuration directory earlier in the
             % path so that it picks up this one instead of Matlab's
-            
+
             try
                 if ismac
                     pathName = 'DYLD_LIBRARY_PATH';
@@ -114,7 +112,7 @@ classdef DepMat
                     pathName = [];
                     binDir = [];
                 end
-                
+
                 if ~isempty(pathName)
                     currentLibPath = getenv(pathName);
                     if (7 == exist(binDir, 'dir')) && ~strcmp(currentLibPath(1:length(binDir) + 1), [binDir ':'])
@@ -126,6 +124,5 @@ classdef DepMat
             end
         end
     end
-    
-end
 
+end
