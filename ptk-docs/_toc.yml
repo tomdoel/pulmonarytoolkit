@@ -17,7 +17,7 @@
   - file: content/installing/running
   - file: content/installing/updating
 
-- part: Importing and visualising data
+- part: Importing data
   chapters:
   - file: content/data/importing-data
   - file: content/data/supported-formats
