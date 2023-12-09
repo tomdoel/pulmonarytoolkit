@@ -1,4 +1,4 @@
-function PTKCheckMatlabVersion
+function PTKCheckMatlabVersion()
     % PTKCheckMatlabVersion. A function for verifying that an appropriate version
     %     of Matlab is installed for the Pulmonary Toolkit.
     %
@@ -11,7 +11,7 @@ function PTKCheckMatlabVersion
     %
 
     % Get the current Matlab version
-    [major_version, minor_version] = CoreSystemUtilities.GetMatlabVersion;
+    [major_version, minor_version] = CoreSystemUtilities.GetMatlabVersion();
 
     % Get the minimum Matlab version required to run the software
     minimum_major_version = PTKSoftwareInfo.MatlabMinimumMajorVersion;
@@ -45,12 +45,11 @@ function PTKCheckMatlabVersion
        end
     end
     
-    if ~CoreSystemUtilities.IsImageProcessingToolboxInstalled
+    if ~CoreSystemUtilities.IsImageProcessingToolboxInstalled()
         warning('PTKCheckMatlabVersion:NoImageProcessingToolbox', 'The Matlab Image Processing Toolbox is not installed. Some parts of the PTK will not work correctly.');
     else
-        if ~CoreSystemUtilities.IsImageProcessingToolboxLicensed
+        if ~CoreSystemUtilities.IsImageProcessingToolboxLicensed()
             warning('PTKCheckMatlabVersion:ImageProcessingToolboxUnlicensed', 'The Matlab Image Processing Toolbox is not licensed. Some parts of the PTK will not work correctly.');
         end
     end    
 end
-

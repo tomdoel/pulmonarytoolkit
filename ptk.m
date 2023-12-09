@@ -13,15 +13,15 @@
 clc
 
 % Add all necessary paths
-PTKAddPaths;
+PTKAddPaths();
 
 % Update the repository
-updated = PTKUpdate;
+updated = PTKUpdate();
 
 % We may need to add new paths as a result of an update
 if updated
-    clear all classes
-    PTKAddPaths force;
+    clear all classes %#ok<CLALL,CLCLS>
+    PTKAddPaths('force');
 end
 
 % Create the splash screen - do this early so the user knows something is
@@ -30,7 +30,7 @@ splash_screen = MimSplashScreen.GetSplashScreen(PTKAppDef);
 splash_screen.ShowAndHold('Initialising');
 
 % Verify that an appropriate version of Matlab is being run
-PTKCheckMatlabVersion;
+PTKCheckMatlabVersion();
 
 % Run the toolkit gui
 PTKGui(splash_screen);

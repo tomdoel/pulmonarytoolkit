@@ -35,7 +35,7 @@ function updated = PTKUpdate(varargin)
             [rootSourceDir, ~, ~] = fileparts(rootSourceDir);
             repoList = DepMatRepo('pulmonarytoolkit', 'master', 'https://github.com/tomdoel/pulmonarytoolkit.git', 'pulmonarytoolkit');
             depMat = DepMat(repoList, rootSourceDir);
-            status = depMat.getAllStatus;
+            status = depMat.getAllStatus();
 
             switch status
                 case DepMatStatus.GitNotFound
