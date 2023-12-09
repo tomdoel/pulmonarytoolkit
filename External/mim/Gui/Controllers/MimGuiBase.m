@@ -287,7 +287,9 @@ classdef MimGuiBase < GemFigure
             folder_path = CoreDiskUtilities.ChooseDirectory('Select a directory from which files will be imported', obj.GuiSingleton.GetSettings.SaveImagePath);
             
             % An empty folder_path means the user has cancelled
-            if ~isempty(folder_path)
+            if isempty(folder_path)
+                uids = [];
+            else
                 
                 % Save the path in the settings so that future load dialogs 
                 % will start from there
