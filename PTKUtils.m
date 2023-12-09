@@ -57,7 +57,7 @@ classdef (Sealed) PTKUtils < handle
 
         function Clear()
             PTKUtils.ClearMemory();
-            PTKAddPaths;
+            PTKAddPaths();
         end
 
     end

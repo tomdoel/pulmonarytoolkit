@@ -161,10 +161,8 @@ function AddToPath(path_root, path_folders)
         end
     end
     
-    
     % Add all the paths together (much faster than adding them individually)
     if ~isempty(full_paths_to_add) 
         addpath(full_paths_to_add{:});
     end
-    
 end

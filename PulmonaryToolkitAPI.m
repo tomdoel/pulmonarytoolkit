@@ -11,7 +11,7 @@ function PulmonaryToolkitAPI(script_name, varargin)
 
     if ~isdeployed
         % Add all necessary paths
-        PTKAddPaths;
+        PTKAddPaths();
     end
 
     % Create the main PTK object without a progress dialog
