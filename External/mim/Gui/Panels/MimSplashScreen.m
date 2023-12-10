@@ -25,6 +25,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
         PanelHandle
         Disabled = false
         
+        ProgressAxes
         ProgressBarHandle
         Text
         ProgressTitle
@@ -83,10 +84,10 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.AppDef = app_def;
             
             % Hide the progress bar
-            obj.Hide;
+            obj.Hide();
             
             % Create the figure
-            obj.Show;
+            obj.Show();
             set(obj.ProgressBarHandle, 'visible', 0);
             
             drawnow;
@@ -115,7 +116,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
             obj.TitleText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 210, 350, 75], 'String', obj.AppDef.GetName, 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 34, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour);
-            
+
             obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour, 'HorizontalAlignment', 'Center');
             set(obj.BodyText, 'String', sprintf(['Version ' obj.AppDef.GetVersion]));
             
@@ -128,8 +129,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             cancel_position = [400, 20, 140, 30];
             quit_position = [580, 20, 70, 30];
             progress_bar_position = [300, 70, 350, 18];
-            
-            
+
             obj.ProgressTitle = uicontrol('parent', obj.GraphicalComponentHandle, 'style', 'text', 'units', 'pixel', 'Position', title_position, ...
                 'string', 'Please wait', 'FontUnits', 'pixels', 'FontSize', 22, 'FontWeight', 'bold', 'Fore', text_color, 'Back', panel_background_colour, 'Visible', 'off');
             obj.Text = uicontrol('parent', obj.GraphicalComponentHandle, 'style', 'text', 'units', 'pixel', 'Position', text_position, ...
@@ -139,8 +139,9 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.Quit = uicontrol('parent', obj.GraphicalComponentHandle, 'string', 'Force Quit', ...
                 'FontUnits', 'pixels', 'Position', quit_position, 'Visible', 'off', 'Callback', @obj.QuitButton);
             
-            [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', progress_bar_position, obj.GraphicalComponentHandle);
-            obj.ProgressBarHandle.setValue(0);
+            obj.ProgressAxes = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', progress_bar_position, 'xlim', [0, 1], 'ylim', [0, 1], 'xtick', [], 'ytick', [], 'Color', [0.8, 0.8, 0.8], 'box', 'on');
+            obj.ProgressBarHandle = patch(obj.ProgressAxes, [0 0 0 0], [0 0 1 1], 'blue');
+            obj.ProgressBarHandle.XData = [0 0 0 0];
             set(obj.ProgressBarHandle, 'visible', 0);
         end        
                        
@@ -148,13 +149,13 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             if nargin < 2
                 text = 'Please wait';
             end
-            obj.Hide;
+            obj.Hide();
             obj.DialogTitle = CoreTextUtilities.RemoveHtml(text);
             obj.DialogText = '';
             obj.ProgressValue = 0;
             obj.Hold = true;
-            obj.Update;
-            obj.ShowPanel;
+            obj.Update();
+            obj.ShowPanel();
             obj.UserClickedCancel = false;
         end
         
@@ -162,7 +163,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.DialogTitle = 'Please wait';
             obj.ShowProgressBar = false;
 
-            obj.HidePanel;
+            obj.HidePanel();
             obj.Hold = false;
         end
         
@@ -184,23 +185,23 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
                text = 'Please wait'; 
             end            
             obj.DialogText = CoreTextUtilities.RemoveHtml(text);
-            obj.Update;
-            obj.ShowPanel;            
+            obj.Update();
+            obj.ShowPanel();
         end
         
         function SetProgressValue(obj, progress_value)
             obj.ProgressValue = progress_value;
             obj.ShowProgressBar = true;
-            obj.Update;
-            obj.ShowPanel;
+            obj.Update();
+            obj.ShowPanel();
         end
         
         function SetProgressAndMessage(obj, progress_value, text)
             obj.ShowProgressBar = true;
             obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.ProgressValue = progress_value;
-            obj.Update;
-            obj.ShowPanel;            
+            obj.Update();
+            obj.ShowPanel();
         end
         
         function cancelled = CancelClicked(obj)
@@ -222,7 +223,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
                 obj.LastText = obj.DialogText;
             end
             
-            obj.ProgressBarHandle.setValue(obj.ProgressValue);
+            obj.ProgressBarHandle.XData = [0 obj.ProgressValue/100 obj.ProgressValue/100 0];
             
             if isempty(obj.TimerRef) || toc(obj.TimerRef) > obj.MaxTimeBetweenUpdates
                 obj.TimerRef = tic;
@@ -233,7 +234,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
         function ShowPanel(obj)
             if obj.Disabled || obj.PanelIsShown
                 return;
-            end            
+            end
             set(obj.Text, 'Visible', 'on');
             set(obj.ProgressTitle, 'Visible', 'on');
 
@@ -243,7 +244,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
 
             set(obj.Cancel, 'Visible', 'on');
             set(obj.ProgressBarHandle, 'visible', 1);
-            
+
             obj.PanelIsShown = true;            
         end
         
@@ -266,7 +267,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
         end
         
         function QuitButton(obj, ~, ~)
-            obj.Hide;
+            obj.Hide();
             throw(MException('MimCustomProgressDialog:UserForceQuit', 'User forced plugin to terminate'));
         end
     end

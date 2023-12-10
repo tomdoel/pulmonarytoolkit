@@ -23,6 +23,7 @@ classdef GemProgressPanel < CoreProgressInterface
         % Handles to the GUI components
         Parent
         PanelHandle
+        ProgressAxes
         UiControlTitle
         UiControlText
         UiControlCancel
@@ -42,8 +43,7 @@ classdef GemProgressPanel < CoreProgressInterface
         DialogTitle = ''
         ProgressValue = 0
         PanelVisibility = false;
-        
-        
+
         % The previous values
         CurrentlyDisplayedDialogTitle
         CurrentlyDisplayedDialogText
@@ -100,10 +100,10 @@ classdef GemProgressPanel < CoreProgressInterface
                 'Position', quit_position, 'FontUnits', 'pixels', 'Callback', @obj.QuitButton, 'Visible', 'off');
             obj.UiControlHide = uicontrol('parent', obj.PanelHandle, 'string', 'Hide Dialog', ...
                 'Position', hide_position, 'FontUnits', 'pixels', 'Callback', @obj.HideButton, 'Visible', 'off');
-            
-            [obj.ProgressBarHandle, ~] = javacomponent('javax.swing.JProgressBar', ...
-                progress_bar_position, obj.PanelHandle);
-            obj.ProgressBarHandle.setBackground(java.awt.Color(panel_background_colour(1), panel_background_colour(2), panel_background_colour(3)));
+
+            obj.ProgressAxes = axes('Parent', obj.PanelHandle, 'Units', 'Pixels', 'Position', progress_bar_position, 'xlim', [0, 1], 'ylim', [0, 1], 'xtick', [], 'ytick', [], 'Color', [0.8, 0.8, 0.8], 'box', 'on');
+            obj.ProgressBarHandle = patch(obj.ProgressAxes, [0 0 0 0], [0 0 1 1], 'blue');
+
             set(obj.ProgressBarHandle, 'visible', 0);
         end
         
@@ -181,11 +181,11 @@ classdef GemProgressPanel < CoreProgressInterface
     methods (Access = private)
         function changed = Update(obj)
             changed = false;
-            changed = obj.UpdateDialogTitle || changed;
-            changed = obj.UpdateDialogText || changed;
-            changed = obj.UpdateProgressValue || changed;
-            changed = obj.UpdateVisibility || changed;
-            changed = obj.UpdateProgressBarVisibility || changed;
+            changed = obj.UpdateDialogTitle() || changed;
+            changed = obj.UpdateDialogText() || changed;
+            changed = obj.UpdateProgressValue() || changed;
+            changed = obj.UpdateVisibility() || changed;
+            changed = obj.UpdateProgressBarVisibility() || changed;
             
             if changed
                 obj.ChangePending = true;
@@ -222,7 +222,7 @@ classdef GemProgressPanel < CoreProgressInterface
         function changed = UpdateProgressValue(obj)
             changed = false;
             if isempty(obj.CurrentlyDisplayedProgressValue) || (obj.ProgressValue ~= obj.CurrentlyDisplayedProgressValue)
-                obj.ProgressBarHandle.setValue(obj.ProgressValue);
+                obj.ProgressBarHandle.XData = [0 obj.ProgressValue/100 obj.ProgressValue/100 0];
                 obj.CurrentlyDisplayedProgressValue = obj.ProgressValue;
                 changed = true;
             end            
