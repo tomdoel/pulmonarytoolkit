@@ -1,4 +1,6 @@
 .svn/
+*.asv
+.DS_Store
 compiled
 compiled_api
 ptk-docs/_build
