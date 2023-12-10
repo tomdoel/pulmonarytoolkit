@@ -73,11 +73,16 @@ classdef DepMat
             % Fixes issue #5. Apparent hang on launch if GitHub has not 
             % been added to authorized_hosts. Ensure the `Are you sure you
             % want to continue connecting (yes/no)?` message is reported to
-            % the user            
-            if ~ispc()
-                command = [command ' > /dev/null'];
+            % the user
+            [return_value, output] = system(command, '-echo');
+            output_split = strsplit(output, newline);
+            if isempty(output)
+                output = '';
+            elseif length(output_split) > 1 && isempty(output_split{end})
+                output = output_split{end-1};
+            else
+                output = output_split{end};
             end
-            [return_value, output] = system(command);
             success = return_value == 0;
             if ~success
                 if strfind(output, 'Protocol https not supported or disabled in libcurl')
