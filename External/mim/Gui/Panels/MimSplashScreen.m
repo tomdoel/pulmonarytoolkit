@@ -173,10 +173,10 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.ShowProgressBar = false;
             obj.ProgressValue = 100;
             if ~obj.Hold
-                obj.Hide;
+                obj.Hide();
             else
                 obj.DialogText = '';
-                obj.Update;
+                obj.Update();
             end
         end
         

@@ -276,7 +276,7 @@ classdef MimGuiBase < GemFigure
                 obj.GuiDataset.InternalLoadImages(uids{1});
             end
             
-            obj.WaitDialogHandle.Hide;
+            obj.WaitDialogHandle.Hide();
         end
         
         function uids = ImportMultipleFiles(obj)
@@ -336,7 +336,7 @@ classdef MimGuiBase < GemFigure
                 end
             end
             
-            obj.WaitDialogHandle.Hide;
+            obj.WaitDialogHandle.Hide();
         end
                
         
@@ -414,8 +414,8 @@ classdef MimGuiBase < GemFigure
             end
             if (filename ~= 0)
                 % Hide the progress bar before capture
-                obj.Reporting.ProgressDialog.Hide;
-                frame = obj.ImagePanel.Capture;
+                obj.Reporting.ProgressDialog.Hide();
+                frame = obj.ImagePanel.Capture();
                 MimDiskUtilities.SaveImageCapture(frame, CoreFilename(path_name, filename), save_type, obj.Reporting)
             end
         end
@@ -499,7 +499,7 @@ classdef MimGuiBase < GemFigure
         function DeleteDatasets(obj, series_uids)
             obj.WaitDialogHandle.ShowAndHold('Deleting data');
             obj.GuiDataset.DeleteDatasets(series_uids);
-            obj.WaitDialogHandle.Hide;
+            obj.WaitDialogHandle.Hide();
         end
         
         function UnlinkDataset(obj, series_uid)
@@ -639,8 +639,8 @@ classdef MimGuiBase < GemFigure
         
         function ClearDataset(obj)
             obj.WaitDialogHandle.ShowAndHold('Clearing dataset');
-            obj.GuiDataset.ClearDataset;
-            obj.WaitDialogHandle.Hide;
+            obj.GuiDataset.ClearDataset();
+            obj.WaitDialogHandle.Hide();
         end
         
         function segmentation_list = GetListOfManualSegmentations(obj)
@@ -760,10 +760,10 @@ classdef MimGuiBase < GemFigure
             obj.Reporting.ShowProgress('Saving settings');
             
             % Hide the Patient Browser and MatNatBrowser, as they can take a short time to close
-            obj.PatientBrowserFactory.Hide;
+            obj.PatientBrowserFactory.Hide();
             
             if ~isempty(obj.MatNatBrowserFactory)
-                obj.MatNatBrowserFactory.Hide;
+                obj.MatNatBrowserFactory.Hide();
             end
 
             obj.ApplicationClosing();
@@ -841,7 +841,7 @@ classdef MimGuiBase < GemFigure
         function LoadImages(obj, image_info_or_uid)
             obj.WaitDialogHandle.ShowAndHold('Loading dataset');
             obj.GuiDataset.InternalLoadImages(image_info_or_uid);
-            obj.WaitDialogHandle.Hide;
+            obj.WaitDialogHandle.Hide();
         end
 
         function ReplaceOverlayImageAdjustingSize(obj, new_image, title, colour_label_map, new_parent_map, new_child_map)
@@ -1075,7 +1075,7 @@ classdef MimGuiBase < GemFigure
             if ~isempty(settings)
                 set(obj.GraphicalComponentHandle, 'units', 'pixels');
                 settings = obj.GuiSingleton.GetSettings;
-                settings.SetPosition(get(obj.GraphicalComponentHandle, 'Position'), obj.PatientBrowserFactory.GetScreenPosition);
+                settings.SetPosition(get(obj.GraphicalComponentHandle, 'Position'), obj.PatientBrowserFactory.GetScreenPosition());
                 settings.UpdateSettingsFromGui(obj, obj.ImagePanel);
                 settings.SaveSettings(obj.Reporting);
             end

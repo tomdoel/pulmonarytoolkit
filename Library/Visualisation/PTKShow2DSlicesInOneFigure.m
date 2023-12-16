@@ -49,7 +49,7 @@ function figure_handle = PTKShow2DSlicesInOneFigure(viewer_panel_handle, orienta
         viewer_panel_handle.SliceNumber = panel_slice_number;
         
         % Capture the frame (including overlay)
-        frame = viewer_panel_handle.Capture;
+        frame = viewer_panel_handle.Capture();
         
         yc = floor((figure_num - 1)/num_plots_x);
         xc = mod(figure_num - 1, num_plots_x);

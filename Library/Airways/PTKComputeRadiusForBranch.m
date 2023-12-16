@@ -272,7 +272,7 @@ function figure_handle = ShowInterpolatedWall(interp_image, midpoints_part, midp
     
     viewer2.ViewerPanelHandle.Window = 928;
     viewer2.ViewerPanelHandle.Level = -200; % 272;
-    frame = viewer2.ViewerPanelHandle.Capture;
+    frame = viewer2.ViewerPanelHandle.Capture();
     
     figure(11);
     figure_handle = gcf;

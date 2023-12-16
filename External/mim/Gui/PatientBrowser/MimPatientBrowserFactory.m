@@ -100,7 +100,7 @@ classdef MimPatientBrowserFactory < CoreBaseClass
             % Hide the Patient Browser
             
             if ~isempty(obj.PatientBrowser)
-                obj.PatientBrowser.Hide;
+                obj.PatientBrowser.Hide();
                 drawnow;
             end
         end

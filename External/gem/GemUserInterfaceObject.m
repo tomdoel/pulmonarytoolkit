@@ -219,11 +219,11 @@ classdef GemUserInterfaceObject < CoreBaseClass
             obj.ParentWindowVisible = false;
 
             % Make the graphical object hidden
-            obj.UpdateComponentVisibility;
+            obj.UpdateComponentVisibility();
 
             % Hide all the child components
             for child = obj.Children
-                child{1}.Hide;
+                child{1}.Hide();
             end
         end
      
@@ -246,7 +246,7 @@ classdef GemUserInterfaceObject < CoreBaseClass
             if isempty(obj.Parent)
                 screen_coords = [1, 0];
             else
-                screen_coords = obj.ChildToParentCoordinates(obj.Parent.GetScreenPosition);
+                screen_coords = obj.ChildToParentCoordinates(obj.Parent.GetScreenPosition());
             end
             
         end

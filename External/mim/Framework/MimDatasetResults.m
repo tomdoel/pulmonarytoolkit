@@ -71,7 +71,7 @@ classdef MimDatasetResults < handle
             try
                 parameter = obj.ContextHierarchy.GetParameter(parameter_name, dataset_stack, reporting);        
             catch ex
-                dataset_stack.ClearStack;
+                dataset_stack.ClearStack();
                 rethrow(ex);
             end
         end
@@ -144,7 +144,7 @@ classdef MimDatasetResults < handle
                 end
 
             catch ex
-                dataset_stack.ClearStack;
+                dataset_stack.ClearStack();
                 rethrow(ex);
             end
 
@@ -247,7 +247,7 @@ classdef MimDatasetResults < handle
                 obj.DatasetDiskCache.SaveMarkerPoints(name, data, manual_cache_info, reporting);
                 
             catch ex
-                dataset_stack.ClearStack;
+                dataset_stack.ClearStack();
                 rethrow(ex);
             end
         end
@@ -286,7 +286,7 @@ classdef MimDatasetResults < handle
                 obj.DatasetDiskCache.SaveManualSegmentation(name, data, manual_cache_info, reporting);
                 
             catch ex
-                dataset_stack.ClearStack;
+                dataset_stack.ClearStack();
                 rethrow(ex);
             end
         end
@@ -382,7 +382,7 @@ classdef MimDatasetResults < handle
             try
                 obj.ContextHierarchy.SaveEditedResultRecursive(plugin_name, input_context, edited_result_image, plugin_info, dataset_stack, dataset_uid, reporting);
             catch ex
-                dataset_stack.ClearStack;
+                dataset_stack.ClearStack();
                 rethrow(ex);
             end
 

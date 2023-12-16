@@ -38,11 +38,11 @@ classdef MimCapture2DImage < MimGuiPlugin
     methods (Static)
         function RunGuiPlugin(gui_app)
             drawnow;
-            gui_app.Capture;
+            gui_app.Capture();
         end
         
         function enabled = IsEnabled(gui_app)
-            enabled = gui_app.IsDatasetLoaded;
+            enabled = gui_app.IsDatasetLoaded();
         end
         
         function is_selected = IsSelected(gui_app)

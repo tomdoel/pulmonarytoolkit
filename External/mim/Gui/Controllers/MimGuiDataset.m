@@ -485,7 +485,7 @@ classdef MimGuiDataset < CoreBaseClass
                     end
                 end
             end
-            wait_dialog.Hide;            
+            wait_dialog.Hide();
         end        
        
         function InvalidateCurrentPluginResult(obj)
@@ -525,7 +525,7 @@ classdef MimGuiDataset < CoreBaseClass
             obj.GuiDatasetState.SetSegmentation(segmentation_name);
             obj.UpdateModes();
             
-            wait_dialog.Hide;
+            wait_dialog.Hide();
         end
     
         function OverlayImageChanged(obj)

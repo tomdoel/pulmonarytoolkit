@@ -101,7 +101,7 @@ classdef MimPatientBrowser < GemFigure
         
         function CustomCloseFunction(obj, src, ~)
             % Override the default behaviour
-            obj.Hide;
+            obj.Hide();
         end
     end
 end

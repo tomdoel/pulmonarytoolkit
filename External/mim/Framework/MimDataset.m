@@ -141,7 +141,7 @@ classdef MimDataset < CoreBaseClass
             obj.PreCallTidy();
             
             % Reset the dependency stack, since this could be left in a bad state if a previous plugin call caused an exception
-            obj.DatasetStack.ClearStack;
+            obj.DatasetStack.ClearStack();
             
             try
                 if nargout > 2
@@ -153,15 +153,15 @@ classdef MimDataset < CoreBaseClass
             catch ex
                 
                 % Tidy up
-                obj.DatasetStack.ClearStack;
-                obj.PostCallTidy;
+                obj.DatasetStack.ClearStack();
+                obj.PostCallTidy();
                 
                 rethrow(ex)
             end
             
             % Tidy up
-            obj.DatasetStack.ClearStack;
-            obj.PostCallTidy;
+            obj.DatasetStack.ClearStack();
+            obj.PostCallTidy();
         end
 
         function SaveEditedResult(obj, plugin_name, edited_result, context, varargin)
@@ -171,7 +171,7 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveEditedResult(plugin_name, context, edited_result, obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
         
         function edited_result = GetDefaultEditedResult(obj, plugin_name, context, varargin)
@@ -181,84 +181,84 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             edited_result = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetDefaultEditedResult(plugin_name, obj.DatasetStack, context, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end        
 
         function SaveData(obj, name, data, varargin)
             % Save data as a cache file associated with this dataset
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveData(name, data, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function data = LoadData(obj, name, varargin)
             % Load data from a cache file associated with this dataset
             obj.PreCallTidy;
             data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadData(name, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function SaveManualSegmentation(obj, name, data, varargin)
             % Save data as a cache file associated with this dataset
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveManualSegmentation(name, data, obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function data = LoadManualSegmentation(obj, name, varargin)
             % Load data from a cache file associated with this dataset
             obj.PreCallTidy;
             data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadManualSegmentation(name, obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
         
         function SaveMarkerPoints(obj, name, data, varargin)
             % Save marker point set
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).SaveMarkerPoints(name, data, obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
         
         function DeleteMarkerSet(obj, name, varargin)
             % Deletes marker set
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).DeleteMarkerSet(name, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function data = LoadMarkerPoints(obj, name, varargin)
             % Load marker point set
             obj.PreCallTidy;
             data = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).LoadMarkerPoints(name, obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
         
         function dataset_cache_path = GetDatasetCachePath(obj, varargin)
             % Gets the path of the folder where the results for this dataset are stored
             obj.PreCallTidy;
             dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetDatasetCachePath(obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function dataset_cache_path = GetEditedResultsPath(obj, varargin)
             % Gets the path of the folder where the edited results for this dataset are stored
             obj.PreCallTidy;
             dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetEditedResultsPath(obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function dataset_cache_path = GetOutputPath(obj, varargin)
             % Gets the path of the folder where the output for this dataset are stored
             obj.PreCallTidy;
             dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetOutputPathAndCreateIfNecessary(obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function dataset_cache_path = GetOutputPathAndCreateIfNecessary(obj, varargin)
             % Gets the path of the folder where the output files for this dataset are stored
             obj.PreCallTidy;
             dataset_cache_path = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetOutputPathAndCreateIfNecessary(obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function image_info = GetImageInfo(obj, varargin)
@@ -266,7 +266,7 @@ classdef MimDataset < CoreBaseClass
             % UID, filenames and file path
             obj.PreCallTidy;
             image_info = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetImageInfo(obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function template_image = GetTemplateImage(obj, context, varargin)
@@ -275,7 +275,7 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             template_image = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetTemplateImage(context, obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function template_image = GetTemplateMask(obj, context, varargin)
@@ -284,7 +284,7 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             template_image = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetTemplateMask(context, obj.DatasetStack, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function preview = GetPluginPreview(obj, plugin_name, varargin)
@@ -304,7 +304,7 @@ classdef MimDataset < CoreBaseClass
             % results.
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).ClearCacheForThisDataset(remove_framework_files, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function DeleteCacheForThisDataset(obj, varargin)
@@ -313,7 +313,7 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).DeleteCacheForThisDataset(obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function DeleteEditedResult(obj, plugin_name, varargin)
@@ -321,7 +321,7 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).DeleteEditedPluginResult(plugin_name, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function DeleteManualSegmentation(obj, segmentation_name, varargin)
@@ -329,7 +329,7 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).DeleteManualSegmentation(segmentation_name, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
         
         function file_list = GetListOfManualSegmentations(obj, varargin)
@@ -337,7 +337,7 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             file_list = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetListOfManualSegmentations;
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
         
         function file_list = GetListOfMarkerSets(obj, varargin)
@@ -345,7 +345,7 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             file_list = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).GetListOfMarkerSets;
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
         
         function context_is_enabled = IsContextEnabled(obj, context, varargin)
@@ -355,7 +355,7 @@ classdef MimDataset < CoreBaseClass
             
             obj.PreCallTidy;
             context_is_enabled = obj.LinkedDatasetChooser.GetDataset(obj.Reporting, varargin{:}).IsContextEnabled(context, obj.Reporting);
-            obj.PostCallTidy;
+            obj.PostCallTidy();
         end
 
         function is_gas_mri = IsGasMRI(obj, varargin)

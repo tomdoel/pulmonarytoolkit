@@ -14,8 +14,8 @@ classdef PTKMetrics < dynamicprops
     end
     
     methods
-        function obj = PTKMetrics
-            obj.MetricNameMap = containers.Map;
+        function obj = PTKMetrics()
+            obj.MetricNameMap = containers.Map();
         end
         
         function AddMetric(obj, property_name, value, user_visible_name)

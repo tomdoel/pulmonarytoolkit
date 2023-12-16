@@ -88,7 +88,7 @@ classdef CoreReportingWithCache < CoreReportingInterface
         end
         
         function CompleteProgress(obj)
-            obj.Reporting.CompleteProgress;
+            obj.Reporting.CompleteProgress();
         end
         
         function UpdateProgressMessage(obj, text)

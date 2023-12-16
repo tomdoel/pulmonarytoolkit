@@ -76,7 +76,7 @@ classdef CoreReporting < CoreReportingInterface
                 obj.LogFileName = fullfile(CoreDiskUtilities.GetUserDirectory, 'corereporting.log');
             end
             
-            obj.ClearProgressStack;
+            obj.ClearProgressStack();
         end
         
         function Log(obj, message)
