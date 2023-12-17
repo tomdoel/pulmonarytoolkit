@@ -251,7 +251,7 @@ classdef CoreReporting < CoreReportingInterface
         end
         
         function PushProgress(obj)
-            obj.ProgressStack(end + 1) = obj.ParentProgressStackItem;
+            obj.ProgressStack{end + 1} = obj.ParentProgressStackItem;
             obj.ParentProgressStackItem = obj.CurrentProgressStackItem;
             obj.CurrentProgressStackItem = CoreProgressStackItem('', obj.ParentProgressStackItem.MinPosition, obj.ParentProgressStackItem.MaxPosition);
             obj.CurrentProgressStackItem.Visible = obj.ParentProgressStackItem.Visible;
@@ -263,13 +263,13 @@ classdef CoreReporting < CoreReportingInterface
             if isempty(obj.ProgressStack)
                 obj.ParentProgressStackItem = [];
             else
-                obj.ParentProgressStackItem = obj.ProgressStack(end);
+                obj.ParentProgressStackItem = obj.ProgressStack{end};
                 obj.ProgressStack(end) = [];
             end
         end
         
         function ClearProgressStack(obj)
-            obj.ProgressStack = CoreProgressStackItem.empty(0);
+            obj.ProgressStack = {};
             obj.CurrentProgressStackItem = CoreProgressStackItem('', 0, 100);
             obj.ParentProgressStackItem = CoreProgressStackItem('', 0, 100);
         end
