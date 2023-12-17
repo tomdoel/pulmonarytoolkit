@@ -18,6 +18,6 @@ classdef GemImageOrientation < uint8
         YZ (2)
         XY (3)
     end
-    
+
 end
 

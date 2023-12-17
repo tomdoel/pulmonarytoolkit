@@ -3,7 +3,7 @@ classdef MimGuiBase < GemFigure
     %
     %     To create an application, inherit from this class and provide an
     %     app_def object. See MivGui.m for an example.
-    % 
+    %
     %
     %     Licence
     %     -------
@@ -11,22 +11,22 @@ classdef MimGuiBase < GemFigure
     %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
     %     Distributed under the MIT licence. Please see website for details.
     %
-    
+
     properties (SetAccess = private)
         ImagePanel
-        GuiSingleton        
+        GuiSingleton
         AnalysisProfile % For enabling/disabling context sets for anlaysis
     end
-    
+
     properties (SetObservable)
         DeveloperMode = false
     end
-    
+
     properties (Access = private)
         AppDef
         GuiDataset
         WaitDialogHandle
-        
+
         PatientNamePanel
         SidePanel
         ToolbarPanel
@@ -39,12 +39,12 @@ classdef MimGuiBase < GemFigure
 
         MatNatBrowserFactory
         PatientBrowserFactory
-        
+
         LastWindowSize % Keep track of window size to prevent unnecessary resize
-        
+
         MarkerManager  % For loading and saving marker points
     end
-    
+
     properties (Constant, Access = private)
         LoadMenuHeight = 23
         PatientBrowserWidth = 100
@@ -52,7 +52,7 @@ classdef MimGuiBase < GemFigure
         ModePanelMinimumWidth = 250
         ImageMinimumWidth = 200
     end
-    
+
     methods
         function obj = MimGuiBase(app_def, splash_screen)
 
@@ -60,7 +60,7 @@ classdef MimGuiBase < GemFigure
             if nargin < 2 || isempty(splash_screen) || ~isa(splash_screen, 'CoreProgressInterface')
                 splash_screen = MimSplashScreen.GetSplashScreen();
             end
-            
+
             % Create the reporting object. Later we will update it with the viewer panel and
             % the new progress panel when these have been created.
             reporting = MimReporting(splash_screen, app_def.WriteVerboseEntriesToLogFile, app_def.GetLogFilePath);
@@ -71,32 +71,32 @@ classdef MimGuiBase < GemFigure
             obj.StyleSheet = app_def.GetDefaultStyleSheet;
 
             obj.AppDef = app_def;
-            
+
             % Set the figure title to the sotware name and version
             obj.Title = [app_def.GetName, ' ', app_def.GetVersion];
-            
+
             % Set up the viewer panel
             obj.ImagePanel = MimViewerPanel(obj);
-            
+
             obj.ImagePanel.DefaultOrientation = app_def.GetDefaultOrientation;
             obj.AddChild(obj.ImagePanel);
-            
+
             % Any unhandled keyboard input goes to the viewer panel
             obj.DefaultKeyHandlingObject = obj.ImagePanel;
 
             % Get the singleton, which gives access to the settings
             obj.GuiSingleton = MimGuiSingleton.GetGuiSingleton(app_def, obj.Reporting);
-            
+
             % Load the settings file
             obj.GuiSingleton.GetSettings.ApplySettingsToGui(obj, obj.ImagePanel);
-            
+
             % Create the object which manages the current dataset
             obj.GuiDataset = MimGuiDataset(app_def, obj, obj.ImagePanel, obj.GuiSingleton.GetSettings, obj.Reporting);
 
             obj.MarkerManager = MimMarkerPointManager(obj.ImagePanel.MarkerLayer, obj.ImagePanel.MarkerImageSource, obj.ImagePanel.MarkerImageDisplayParameters, obj.ImagePanel.BackgroundImageSource, obj.ImagePanel, obj, obj.GuiDataset, obj.AppDef, reporting);
-            
+
             obj.AnalysisProfile = MimAnalysisProfile();
-            
+
             % Create a callback handler for the Patient Browser and sidebar
             if obj.AppDef.MatNatEnabled
                 mnConfig = matnattestconfig; % ToDo: the config file has to be defined
@@ -107,16 +107,16 @@ classdef MimGuiBase < GemFigure
                 combined_database = obj.GuiDataset.GetImageDatabase;
             end
             combined_controller = MimCombinedImageDatabaseController(obj, matnat_database);
-            
+
             % Create the side panel showing available datasets
             obj.SidePanel = MimSidePanel(obj, combined_controller, combined_database, obj.GuiDataset.GuiDatasetState, obj.GuiDataset.GetLinkedRecorder, obj.AppDef.GroupPatientsWithSameName);
             obj.AddChild(obj.SidePanel);
-            
+
             % Create the status panel showing image coordinates and
             % values of the voxel under the cursor
             obj.StatusPanel = MimStatusPanel(obj, obj.ImagePanel);
             obj.AddChild(obj.StatusPanel);
-            
+
             % The Patient Browser factory manages lazy creation of the Patient Browser. The
             % PB may take time to load if there are many datasets
             obj.PatientBrowserFactory = MimPatientBrowserFactory(combined_controller, obj.GuiDataset.GetImageDatabase, obj.AppDef, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, obj.Reporting);
@@ -127,7 +127,7 @@ classdef MimGuiBase < GemFigure
                 % get the information from the server
                 obj.MatNatBrowserFactory = MimPatientBrowserFactory(combined_controller, matnat_database, obj.AppDef, obj.GuiDataset.GuiDatasetState, obj.GuiSingleton.GetSettings, 'MatNat', obj.Reporting);
             end
-            
+
             % Map of all plugins visible in the GUI
             obj.OrganisedPlugins = MimOrganisedPlugins(obj, obj.GuiDataset.GetPluginCache, app_def, obj.Reporting);
             obj.OrganisedManualSegmentations = MimOrganisedManualSegmentations(obj, app_def, obj.Reporting);
@@ -135,14 +135,14 @@ classdef MimGuiBase < GemFigure
             % Create the panel of tools across the bottom of the interface
             obj.ToolbarPanel = MimToolbarPanel(obj, obj.OrganisedPlugins, 'Toolbar', [], 'Always', obj, obj.AppDef, false, false);
             obj.AddChild(obj.ToolbarPanel);
-            
+
             obj.PreviewFetcher = MimPreviewFetcher(obj.GuiDataset);
             obj.ModeTabControl = MimModeTabControl(obj, obj.PreviewFetcher, obj.OrganisedPlugins, obj.OrganisedManualSegmentations, obj.MarkerManager, obj.GuiDataset.GuiDatasetState, obj.AppDef);
             obj.AddChild(obj.ModeTabControl);
 
             obj.PatientNamePanel = MimNamePanel(obj, obj, obj.GuiDataset.GuiDatasetState);
             obj.AddChild(obj.PatientNamePanel);
-            
+
             % Load the most recent dataset
             image_info = obj.GuiSingleton.GetSettings.ImageInfo;
             if ~isempty(image_info)
@@ -151,8 +151,8 @@ classdef MimGuiBase < GemFigure
             else
                 obj.GuiDataset.SetNoDataset(false);
 
-            end            
-            
+            end
+
             % Resizing has to be done before we call Show(), and will ensure the GUI is
             % correctly laid out when it is shown
             position = obj.GuiSingleton.GetSettings.ScreenPosition;
@@ -160,33 +160,33 @@ classdef MimGuiBase < GemFigure
                 position = [0, 0, CoreSystemUtilities.GetMonitorDimensions];
             end
             obj.Resize(position);
-            
+
             % We need to force all the tabs to be created at this point, to ensure the
             % ordering is correct. The following Show() command will create the tabs, but
             % only if they are eabled
             obj.ModeTabControl.ForceEnableAllTabs;
-            
+
             % Create the figure and graphical components
             obj.Show;
-            
+
             % After creating all the tabs, we now re-disable the ones that should be hidden
             obj.GuiDataset.UpdateModeTabControl();
-            
+
             % Add listener for switching modes when the tab is changed
             obj.AddEventListener(obj.ModeTabControl, 'PanelChangedEvent', @obj.ModeTabChanged);
-            
+
             % Create a progress panel which will replace the progress dialog
             obj.WaitDialogHandle = GemProgressPanel(obj.ImagePanel);
             obj.WaitDialogHandle.ShowDebuggingControls = app_def.GetFrameworkAppDef.IsDebugMode;
-            
+
             % Now we switch the reporting progress bar to a progress panel displayed over the gui
-            obj.Reporting.ProgressDialog = obj.WaitDialogHandle;            
-            
+            obj.Reporting.ProgressDialog = obj.WaitDialogHandle;
+
             % Ensure the GUI stack ordering is correct
             obj.ReorderPanels;
 
             obj.AddPostSetListener(obj, 'DeveloperMode', @obj.DeveloperModeChangedCallback);
-            
+
             % Listen for changes in the viewer panel controls
             obj.AddPostSetListener(obj.ImagePanel, 'SelectedControl', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel, 'Mode', @obj.ViewerPanelModeChangedCallback);
@@ -205,96 +205,95 @@ classdef MimGuiBase < GemFigure
             obj.AddPostSetListener(obj.ImagePanel, 'PaintBrushColour', @obj.ViewerPanelControlsChangedCallback);
             obj.AddPostSetListener(obj.ImagePanel.MarkerImageDisplayParameters, 'ShowMarkers', @obj.ShowMarkersChanged);
             obj.AddPostSetListener(obj.ImagePanel.MarkerImageDisplayParameters, 'ShowLabels', @obj.ViewerPanelControlsChangedCallback);
-            
+
             % Wait until the GUI is visible before removing the splash screen
             splash_screen.delete;
         end
-        
+
         function ShowPatientBrowser(obj)
             obj.PatientBrowserFactory.Show;
         end
-        
+
         function ShowMatNatBrowser(obj)
             if ~isempty(obj.MatNatBrowserFactory)
                 obj.MatNatBrowserFactory.Show;
             end
         end
-        
+
         function ChangeMode(obj, mode)
             obj.GuiDataset.ChangeMode(mode);
             obj.UpdateToolbar();
         end
-        
+
         function ModeAutoSave(obj)
             obj.GuiDataset.ModeAutoSave();
         end
-        
+
         function SetTabMode(obj, mode)
             obj.ModeTabControl.AutoTabSelection(mode);
         end
-        
+
         function CreateGuiComponent(obj, position)
             CreateGuiComponent@GemFigure(obj, position);
 
             obj.Reporting.SetViewerPanel(obj.ImagePanel);
         end
-        
+
         function SaveEditedResult(obj)
             obj.GuiDataset.SaveEditedResult;
         end
-        
-        
+
+
         function SelectFilesAndLoad(obj)
             % Prompts the user for file(s) to load
             image_info = MimChooseImagingFiles(obj.GuiSingleton.GetSettings.SaveImagePath, obj.Reporting);
-            
+
             % An empty image_info means the user has cancelled
             if ~isempty(image_info)
-                % Save the path in the settings so that future load dialogs 
+                % Save the path in the settings so that future load dialogs
                 % will start from there
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(image_info.ImagePath, obj.Reporting);
-                
+
                 if (image_info.ImageFileFormat == MimImageFileFormat.Dicom) && (isempty(image_info.ImageFilenames))
                     uiwait(msgbox('No valid DICOM files were found in this folder', [obj.AppDef.GetName ': No image files found.']));
                     obj.Reporting.ShowMessage('MimGuiBase:NoFilesToLoad', ['No valid DICOM files were found in folder ' image_info.ImagePath]);
                 else
                     obj.LoadImages(image_info);
-                    
+
                 end
             end
         end
 
         function uids = ImportFromPath(obj, file_path)
             % Imports from a given location
-            
+
             obj.WaitDialogHandle.ShowAndHold('Loading data');
-            
+
             % Import all datasets from this path
             [uids, patient_ids] = obj.GuiDataset.ImportDataRecursive(file_path);
-            
+
             if ~isempty(uids)
                 obj.GuiDataset.InternalLoadImages(uids{1});
             end
-            
             obj.WaitDialogHandle.Hide();
         end
-        
+
         function uids = ImportMultipleFiles(obj)
             % Prompts the user for file(s) to import
-            
+
             obj.WaitDialogHandle.ShowAndHold('Import data');
-            
+
             folder_path = CoreDiskUtilities.ChooseDirectory('Select a directory from which files will be imported', obj.GuiSingleton.GetSettings.SaveImagePath);
-            
+
             % An empty folder_path means the user has cancelled
             if isempty(folder_path)
                 uids = [];
             else
-                
-                % Save the path in the settings so that future load dialogs 
+
+                % Save the path in the settings so that future load dialogs
                 % will start from there
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(folder_path, obj.Reporting);
-                
+
                 % Import all datasets from this path
                 [uids, patient_ids] = obj.GuiDataset.ImportDataRecursive(folder_path);
 
@@ -302,29 +301,29 @@ classdef MimGuiBase < GemFigure
                 if ~isempty(patient_ids)
                     obj.LoadPatient(patient_ids{1});
                 end
-                
+
                 % Bring Patient Browser to the front after import
                 obj.PatientBrowserFactory.Show();
             end
-            
+
             obj.WaitDialogHandle.Hide();
         end
-        
+
         function ImportPatch(obj)
             % Prompts the user to import a patch
-            
+
             obj.WaitDialogHandle.ShowAndHold('Import patch');
-            
+
             [folder_path, filename, filter_index] = CoreDiskUtilities.ChooseFiles('Select the patch to import', obj.GuiSingleton.GetSettings.SaveImagePath, false, {'*.ptk', 'PTK Patch'});
-            
-            
+
+
             % An empty folder_path means the user has cancelled
             if ~isempty(folder_path)
-                
-                % Save the path in the settings so that future load dialogs 
+
+                % Save the path in the settings so that future load dialogs
                 % will start from there
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(folder_path, obj.Reporting);
-                
+
                 patch = MimDiskUtilities.LoadPatch(fullfile(folder_path, filename{1}), obj.Reporting);
                 if (strcmp(patch.PatchType, 'EditedResult'))
                     uid = patch.SeriesUid;
@@ -335,23 +334,22 @@ classdef MimGuiBase < GemFigure
                     obj.GetMode.ImportPatch(patch);
                 end
             end
-            
             obj.WaitDialogHandle.Hide();
         end
-               
-        
-               
+
+
+
         function SaveBackgroundImage(obj)
             patient_name = obj.ImagePanel.BackgroundImage.Title;
             image_data = obj.ImagePanel.BackgroundImage;
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
-            
+
             path_name = MimSaveAs(image_data, patient_name, path_name, false, obj.AppDef.GetDicomMetadata, obj.Reporting);
             if ~isempty(path_name)
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
         end
-        
+
         function SaveOverlayImage(obj)
             patient_name = obj.ImagePanel.BackgroundImage.Title;
             overlay_image = obj.ImagePanel.OverlayImage.Copy();
@@ -359,13 +357,13 @@ classdef MimGuiBase < GemFigure
             overlay_image.ResizeToMatch(template);
             image_data = overlay_image;
             path_name = obj.GuiSingleton.GetSettings().SaveImagePath;
-            
+
             path_name = MimSaveAs(image_data, patient_name, path_name, true, obj.AppDef.GetDicomMetadata, obj.Reporting);
             if ~isempty(path_name)
                 obj.GuiSingleton.GetSettings.SetLastSaveImagePath(path_name, obj.Reporting);
             end
         end
-        
+
         function RefreshPlugins(obj)
             obj.GuiDataset.RefreshPlugins;
             obj.ResizeGui(obj.Position, true);
@@ -374,7 +372,7 @@ classdef MimGuiBase < GemFigure
         function dataset_cache_path = GetDatasetCachePath(obj)
             dataset_cache_path = obj.GuiDataset.GetDatasetCachePath;
         end
-        
+
         function edited_results_path = GetEditedResultsPath(obj)
             edited_results_path = obj.GuiDataset.GetEditedResultsPath;
         end
@@ -382,31 +380,31 @@ classdef MimGuiBase < GemFigure
         function dataset_cache_path = GetOutputPath(obj)
             dataset_cache_path = obj.GuiDataset.GetOutputPath;
         end
-        
+
         function image_info = GetImageInfo(obj)
             image_info = obj.GuiDataset.GetImageInfo;
-        end        
-        
+        end
+
         function image_info = GetPatientName(obj)
             image_info = obj.GuiDataset.GetPatientName;
-        end        
-        
+        end
+
         function ClearCacheForThisDataset(obj)
             obj.GuiDataset.ClearCacheForThisDataset;
         end
-        
+
         function plugin_name = GetCurrentPluginName(obj)
             plugin_name = obj.GuiDataset.GuiDatasetState.CurrentPluginName;
         end
-        
+
         function plugin_name = CurrentSegmentationName(obj)
             plugin_name = obj.GuiDataset.GuiDatasetState.CurrentSegmentationName;
         end
-        
+
         function Capture(obj)
             % Captures an image from the viewer, including the background and transparent
             % overlay. Prompts the user for a filename
-            
+
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
             [filename, path_name, save_type] = MimDiskUtilities.SaveImageDialogBox(path_name);
             if ~isempty(path_name) && ischar(path_name)
@@ -419,22 +417,22 @@ classdef MimGuiBase < GemFigure
                 MimDiskUtilities.SaveImageCapture(frame, CoreFilename(path_name, filename), save_type, obj.Reporting)
             end
         end
-        
+
         function DeleteOverlays(obj)
             obj.ImagePanel.ClearOverlays();
             obj.GuiDataset.InvalidateCurrentPluginResult();
         end
-        
+
         function ResetCurrentPlugin(obj)
             obj.GuiDataset.InvalidateCurrentPluginResult();
         end
-        
+
         function LoadFromPatientBrowser(obj, series_uid, fallback_patient_id)
             obj.BringToFront;
             obj.GuiDataset.SwitchPatient(fallback_patient_id);
             obj.LoadFromUid(series_uid);
         end
-        
+
         function LoadPatient(obj, patient_id)
             obj.GuiDataset.SwitchPatient(patient_id);
             datasets = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, obj.AppDef.GroupPatientsWithSameName);
@@ -450,11 +448,11 @@ classdef MimGuiBase < GemFigure
             end
             obj.LoadFromUid(series_uid);
         end
-        
+
         function ForceRefresh(obj)
             obj.SidePanel.Refresh;
         end
-        
+
         function CloseAllFiguresExceptMim(obj)
             all_figure_handles = get(0, 'Children');
             for figure_handle = all_figure_handles'
@@ -474,24 +472,24 @@ classdef MimGuiBase < GemFigure
                 end
             end
         end
-        
+
         function Resize(obj, new_position)
             Resize@GemFigure(obj, new_position);
             obj.ResizeGui(new_position, false);
         end
-        
+
         function delete(obj)
             delete(obj.GuiDataset);
 
             if ~isempty(obj.Reporting);
                 obj.Reporting.Log('Closing MimGui');
             end
-        end        
+        end
 
         function DeleteThisImageInfo(obj)
             obj.GuiDataset.DeleteThisImageInfo;
         end
-        
+
         function DeleteImageInfo(obj, uid)
             obj.GuiDataset.DeleteImageInfo(uid);
         end
@@ -501,7 +499,7 @@ classdef MimGuiBase < GemFigure
             obj.GuiDataset.DeleteDatasets(series_uids);
             obj.WaitDialogHandle.Hide();
         end
-        
+
         function UnlinkDataset(obj, series_uid)
             if obj.GuiDataset.GetLinkedRecorder.IsPrimaryDataset(series_uid)
                 choice = questdlg('This dataset is linked to multiple other datasets. Do you want to unlink all these datasets?', ...
@@ -514,7 +512,7 @@ classdef MimGuiBase < GemFigure
             else
                 obj.GuiDataset.GetLinkedRecorder.RemoveLink(series_uid, obj.Reporting);
             end
-        end     
+        end
 
         function DeleteDataset(obj, series_uid)
             choice = questdlg('Do you want to delete this series?', ...
@@ -525,56 +523,56 @@ classdef MimGuiBase < GemFigure
                 case 'Don''t delete'
             end
         end
-        
+
         function DeletePatient(obj, patient_id)
             choice = questdlg('Do you want to delete this patient?', ...
                 'Delete patient', 'Delete', 'Don''t delete', 'Don''t delete');
             switch choice
                 case 'Delete'
                     obj.BringToFront();
-                    
+
                     series_descriptions = obj.GuiDataset.GetImageDatabase.GetAllSeriesForThisPatient(MimImageDatabase.LocalDatabaseId, patient_id, obj.AppDef.GroupPatientsWithSameName);
-                    
+
                     series_uids = {};
-                    
+
                     for series_index = 1 : numel(series_descriptions)
                         series_uids{series_index} = series_descriptions{series_index}.SeriesUid;
                     end
-                    
+
                     obj.DeleteDatasets(series_uids);
-                    
+
                 case 'Don''t delete'
             end
         end
-        
+
         function mode = GetMode(obj)
             mode = obj.GuiDataset.GetMode();
         end
-        
+
         function mode_name = GetCurrentModeName(obj)
             mode_name = obj.GuiDataset.GetCurrentModeName;
         end
-        
+
         function mode_name = GetCurrentSubModeName(obj)
             mode_name = obj.GuiDataset.GetCurrentSubModeName();
         end
-        
+
         function RunGuiPluginCallback(obj, plugin_name_or_obj)
-            
+
             if isa(plugin_name_or_obj, 'MimGuiPlugin')
                 plugin_name = class(plugin_name_or_obj);
                 plugin_info = plugin_name_or_obj;
             else
                 plugin_name = plugin_name_or_obj;
-                plugin_info = feval(plugin_name_or_obj);                
+                plugin_info = feval(plugin_name_or_obj);
             end
-    
+
             show_progress = isprop(plugin_info, 'ShowProgressDialog') && plugin_info.ShowProgressDialog;
             if show_progress
                 wait_dialog = obj.WaitDialogHandle;
                 wait_dialog.ShowAndHold([plugin_info.ButtonText]);
             end
-            
+
             try
                 if ((isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')) || ...
                         (isprop(plugin_info, 'PTKVersion') && ~strcmp(plugin_info.PTKVersion, '1')))
@@ -590,14 +588,14 @@ classdef MimGuiBase < GemFigure
                     uiwait(errordlg([plugin_name ' failed with the following error: ' exc.message], [obj.AppDef.GetName ': Failure in plugin ' plugin_name], 'modal'));
                 end
             end
-           
+
             obj.UpdateToolbar();
-            
+
             if show_progress
                 wait_dialog.Hide();
             end
         end
-        
+
         function RunPluginCallback(obj, plugin_name, context)
             wait_dialog = obj.WaitDialogHandle;
             if nargin < 3
@@ -605,44 +603,44 @@ classdef MimGuiBase < GemFigure
             end
             obj.GuiDataset.RunPlugin(plugin_name, context, wait_dialog);
         end
-        
+
         function LoadSegmentationCallback(obj, segmentation_name)
             wait_dialog = obj.WaitDialogHandle;
             obj.AutoSaveSegmentation();
             obj.GuiDataset.LoadAndDisplayManualSegmentation(segmentation_name, wait_dialog);
         end
-        
+
         function dataset_is_loaded = IsDatasetLoaded(obj)
             dataset_is_loaded = obj.GuiDataset.DatasetIsLoaded;
         end
-        
+
         function is_ct = IsCT(obj)
             is_ct = strcmp(obj.GuiDataset.GuiDatasetState.CurrentModality, 'CT');
         end
-        
+
         function is_mr = IsMR(obj)
             is_mr = strcmp(obj.GuiDataset.GuiDatasetState.CurrentModality, 'MR');
         end
-        
+
         function is_linked_dataset = IsLinkedDataset(obj, linked_name_or_uid)
             % Returns true if another dataset has been linked to this one, using
             % the name or uid specified
-            
+
             is_linked_dataset = obj.GuiDataset.IsLinkedDataset(linked_name_or_uid);
        end
-        
+
         function is_gas_mri = IsGasMRI(obj)
             % Check if this is a hyperpolarised gas MRI image
-            
+
             is_gas_mri = obj.GuiDataset.IsGasMRI();
-        end        
-        
+        end
+
         function ClearDataset(obj)
             obj.WaitDialogHandle.ShowAndHold('Clearing dataset');
             obj.GuiDataset.ClearDataset();
             obj.WaitDialogHandle.Hide();
         end
-        
+
         function segmentation_list = GetListOfManualSegmentations(obj)
             segmentation_list = obj.GuiDataset.GetListOfManualSegmentations;
         end
@@ -658,29 +656,29 @@ classdef MimGuiBase < GemFigure
                 segmentation_list = obj.GuiDataset.GetListOfMarkerSets;
             end
         end
-        
+
         function SaveTableAsCSV(obj, plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters)
             obj.GuiDataset.SaveTableAsCSV(plugin_name, subfolder_name, file_name, description, table, file_dim, row_dim, col_dim, filters);
         end
-        
+
         function LoadDefaultMarkers(obj)
             % Loads the default marker set for this dataset, which could be
             % the last used marker set or the marker set with the default name
-            
+
             currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset();
-            marker_set_name = obj.GuiSingleton.GetSettings.GetLastMarkerSetName(currently_loaded_image_UID);            
+            marker_set_name = obj.GuiSingleton.GetSettings.GetLastMarkerSetName(currently_loaded_image_UID);
             if isempty(marker_set_name)
                 marker_set_name = obj.AppDef.DefaultMarkersName;
             end
-            
+
             obj.LoadAndDisplayMarkers(marker_set_name);
         end
-        
+
         function LoadAndDisplayMarkers(obj, name)
             % Loads the specified marker set for this dataset
             wait_dialog = obj.WaitDialogHandle;
             wait_dialog.ShowAndHold('Loading Markers');
-            
+
             obj.MarkerManager.LoadMarkers(name);
             obj.ImagePanel.ShowMarkers = true;
 
@@ -688,59 +686,59 @@ classdef MimGuiBase < GemFigure
             currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset();
             obj.GuiSingleton.GetSettings.AddLastMarkerSet(currently_loaded_image_UID, name);
             obj.SaveSettings();
-            
+
             obj.UpdateToolbar();
             wait_dialog.Hide();
         end
-        
+
         function ExportMarkers(obj)
             obj.MarkerManager.AutoSaveMarkers();
-            
+
             marker_list = obj.ImagePanel.MarkerImageSource.MarkerList;
             patient_name = obj.ImagePanel.BackgroundImage.Title;
             image_info = obj.GuiDataset.GetImageInfo;
             series_uid = image_info.ImageUid;
             template_image = obj.ImagePanel.BackgroundImage;
             path_name = obj.GuiSingleton.GetSettings.SaveImagePath;
-            
+
             MimSaveMarkerListAsXml(path_name, marker_list, patient_name, series_uid, template_image, obj.Reporting);
         end
-        
+
         function handle = GetRenderAxes(obj)
             handle = obj.ImagePanel.GetRenderAxes;
         end
-        
+
         function handle = GetRenderPanel(obj)
             handle = obj.ImagePanel.GetRenderPanel;
         end
-        
+
         function AutoSaveMarkers(obj)
             obj.MarkerManager.AutoSaveMarkers();
         end
-        
+
     end
-    
+
     methods (Access = protected)
-        
+
         function ViewerPanelModeChangedCallback(obj, ~, ~, ~)
             % This methods is called when the current mode in the viewer panel has changed
-            
+
             obj.GuiDataset.ViewerPanelModeChanged(obj.ImagePanel.Mode);
         end
-        
+
         function ViewerPanelControlsChangedCallback(obj, ~, ~, ~)
             % This methods is called when controls in the viewer panel have changed
-            
+
             obj.LoadDefaultMarkersIfRequiredWithProgressBar();
-            
+
             obj.UpdateToolbar();
         end
-        
-        
+
+
         function input_has_been_processed = Keypressed(obj, click_point, key, src, eventdata)
             % Shortcut keys are normally processed by the object over which the mouse
             % pointer is located. If a key hasn't been processed, we divert it to the viewer
-            % panel so that viewer panel shortcuts will work from other parts of the GUI.            
+            % panel so that viewer panel shortcuts will work from other parts of the GUI.
             input_has_been_processed = obj.ImagePanel.ShortcutKeys(key);
 
             if strcmpi(key, 'd')
@@ -754,40 +752,39 @@ classdef MimGuiBase < GemFigure
             end
         end
 
-        
+
         function CustomCloseFunction(obj, src, ~)
             % Executes when application closes
             obj.Reporting.ShowProgress('Saving settings');
-            
+
             % Hide the Patient Browser and MatNatBrowser, as they can take a short time to close
             obj.PatientBrowserFactory.Hide();
-            
             if ~isempty(obj.MatNatBrowserFactory)
                 obj.MatNatBrowserFactory.Hide();
             end
 
             obj.ApplicationClosing();
-            
+
             delete(obj.PatientBrowserFactory);
             if ~isempty(obj.MatNatBrowserFactory)
                 delete(obj.MatNatBrowserFactory);
             end
-            
+
             % The progress dialog will probably be destroyed before we get here
 %             obj.Reporting.CompleteProgress;
 
             CustomCloseFunction@GemFigure(obj, src);
-        end    
+        end
     end
-    
+
     methods (Access = private)
-        
+
         function ApplicationClosing(obj)
             obj.MarkerManager.AutoSaveMarkers();
             obj.AutoSaveSegmentation();
             obj.SaveSettings();
         end
-        
+
         function AutoSaveSegmentation(obj)
             if ~isempty(obj.GetCurrentModeName)
                 obj.GetMode.SaveEdit();
@@ -798,10 +795,10 @@ classdef MimGuiBase < GemFigure
             % Executes when figure is resized
             obj.Resize();
         end
-        
+
         function DeveloperModeChangedCallback(obj, ~, ~, ~)
             % This methods is called when the DeveloperMode property is changed
-            
+
             obj.GuiDataset.UpdateModeTabControl();
             obj.RefreshPlugins();
         end
@@ -811,20 +808,20 @@ classdef MimGuiBase < GemFigure
                 obj.LoadDefaultMarkers();
             end
         end
-        
+
         function LoadFromUid(obj, series_uid)
-            
+
             % Get the UID of the currently loaded dataset
             currently_loaded_image_UID = obj.GuiDataset.GetUidOfCurrentDataset;
-            
+
             % Check whether this image is already loaded. If no dataset is loaded and a null
             % dataset is requested, this also counts as a match
             image_already_loaded = strcmp(series_uid, currently_loaded_image_UID) || ...
                 (isempty(series_uid) && isempty(currently_loaded_image_UID));
-            
+
             % We prevent data re-loading when the same dataset is selected.
-            % Also, due to a Matlab/Java bug, this callback may be called twice 
-            % when an option is selected from the drop-down load menu using 
+            % Also, due to a Matlab/Java bug, this callback may be called twice
+            % when an option is selected from the drop-down load menu using
             % keyboard shortcuts. This will prevent the loading function from
             % being called twice
             if ~image_already_loaded
@@ -836,8 +833,8 @@ classdef MimGuiBase < GemFigure
                 end
             end
         end
-        
-        
+
+
         function LoadImages(obj, image_info_or_uid)
             obj.WaitDialogHandle.ShowAndHold('Loading dataset');
             obj.GuiDataset.InternalLoadImages(image_info_or_uid);
@@ -882,72 +879,72 @@ classdef MimGuiBase < GemFigure
 
 
 
-        
+
         function ResizeGui(obj, parent_position, force_resize)
-            
+
             parent_width_pixels = parent_position(3);
             parent_height_pixels = parent_position(4);
-            
+
             new_size = [parent_width_pixels, parent_height_pixels];
             if isequal(new_size, obj.LastWindowSize) && ~force_resize
                 return;
             end
             obj.LastWindowSize = new_size;
-            
+
             toolbar_height = obj.ToolbarPanel.ToolbarHeight;
-            
+
             status_panel_height = obj.StatusPanel.GetRequestedHeight;
-            
+
             patient_name_panel_height = obj.PatientNamePanel.GetRequestedHeight;
-            
+
             viewer_panel_height = max(1, parent_height_pixels - toolbar_height - patient_name_panel_height);
-            
+
             side_panel_height = max(1, parent_height_pixels - toolbar_height - status_panel_height);
             side_panel_width = obj.SidePanelWidth;
-            
+
             obj.SidePanel.Resize([1, 1 + toolbar_height + status_panel_height, side_panel_width, side_panel_height]);
 
             image_height_pixels = viewer_panel_height;
 
             image_width_pixels = max(obj.ImageMinimumWidth, obj.GetSuggestedWidth(image_height_pixels));
             viewer_panel_width = image_width_pixels + GemSlider.SliderWidth;
-            
-            
+
+
             mode_panel_width = max(1, parent_width_pixels - viewer_panel_width - side_panel_width);
 
             % The right panel has a minimum width
             viewer_panel_reduction = max(0, obj.ModePanelMinimumWidth - mode_panel_width);
-            
+
             % The image has a minimum width
             viewer_panel_reduction = viewer_panel_reduction - max(0, (obj.ImageMinimumWidth - (image_width_pixels - viewer_panel_reduction)));
-            
+
             viewer_panel_width = viewer_panel_width - viewer_panel_reduction;
             mode_panel_width = mode_panel_width + viewer_panel_reduction;
 
             patient_name_panel_width = viewer_panel_width;
 
-            
+
             plugins_panel_height = max(1, parent_height_pixels - toolbar_height - status_panel_height);
-            
+
             image_panel_x_position = 1 + side_panel_width;
             image_panel_y_position = 1 + toolbar_height;
             obj.ImagePanel.Resize([image_panel_x_position, image_panel_y_position, viewer_panel_width, viewer_panel_height]);
 
             patient_name_panel_y_position = 1 + toolbar_height + viewer_panel_height;
             obj.PatientNamePanel.Resize([image_panel_x_position, patient_name_panel_y_position, patient_name_panel_width, patient_name_panel_height]);
-            
+
             toolbar_width = parent_width_pixels;
             obj.ToolbarPanel.Resize([1, 1, toolbar_width, toolbar_height]);
-            
+
             right_side_position = image_panel_x_position + viewer_panel_width;
 
             obj.ModeTabControl.Resize([right_side_position, 1 + toolbar_height + status_panel_height, mode_panel_width, plugins_panel_height]);
             obj.StatusPanel.Resize([right_side_position, 1 + toolbar_height, mode_panel_width, status_panel_height]);
-            
+
             if ~isempty(obj.WaitDialogHandle)
                 obj.WaitDialogHandle.Resize();
             end
-            
+
         end
 
         function ModeTabChanged(obj, ~, event_data)
@@ -958,17 +955,17 @@ classdef MimGuiBase < GemFigure
                 obj.ChangeMode(mode);
             end
         end
-        
+
     end
-    
+
     methods
 
         %%% Callbacks from GuiDataset
-        
+
         function UpdateModeTabControl(obj, state)
             obj.ModeTabControl.UpdateMode(state);
         end
-        
+
         function ClearImages(obj)
             obj.ImagePanel.ImageSliceParameters.UpdateLock = true;
             if obj.GuiDataset.DatasetIsLoaded
@@ -978,45 +975,45 @@ classdef MimGuiBase < GemFigure
                 obj.ImagePanel.BackgroundImage.Reset;
             end
             obj.DeleteOverlays();
-            obj.ImagePanel.ImageSliceParameters.UpdateLock = false;                        
+            obj.ImagePanel.ImageSliceParameters.UpdateLock = false;
         end
-        
+
         function RefreshPluginsForDataset(obj, dataset)
             obj.ModeTabControl.RefreshPlugins(dataset, obj.ImagePanel.Window, obj.ImagePanel.Level)
         end
-        
+
         function SetImage(obj, new_image)
             obj.ImagePanel.ImageSliceParameters.UpdateLock = true;
 
             obj.ImagePanel.BackgroundImage = new_image;
-            
+
             if obj.ImagePanel.OverlayImage.ImageExists
                 obj.ImagePanel.OverlayImage.ResizeToMatch(new_image);
             else
                 obj.ImagePanel.OverlayImage = new_image.BlankCopy;
             end
-            
+
             if obj.ImagePanel.QuiverImage.ImageExists
                 obj.ImagePanel.QuiverImage.ResizeToMatch(new_image);
             else
                 obj.ImagePanel.QuiverImage = new_image.BlankCopy;
             end
-            
+
             % Make image visible when it is altered
             obj.ImagePanel.ShowImage = true;
-            
+
             % Force a resize. This is so that the image panel can resize itself to optimally
             % fit the image. If however the image panel is changed to retain a fixed size
             % between datasets, then this resize is not necessary.
             if obj.ComponentHasBeenCreated
                 obj.ResizeGui(obj.Position, true);
             end
-            obj.ImagePanel.ImageSliceParameters.UpdateLock = false;            
+            obj.ImagePanel.ImageSliceParameters.UpdateLock = false;
         end
-        
+
         function UpdateGuiForNewDataset(obj, preview_fetcher)
             obj.ModeTabControl.UpdateGuiForNewDataset(obj.PreviewFetcher, obj.ImagePanel.Window, obj.ImagePanel.Level);
-            
+
             % We may need to enable tabs after loading a new dataset
             obj.GuiDataset.UpdateModeTabControl();
             obj.UpdateToolbar();
@@ -1028,11 +1025,11 @@ classdef MimGuiBase < GemFigure
             else
                 obj.ReplaceOverlayImageAdjustingSize(new_image, image_title, new_image.ColorLabelMap, new_image.ColourLabelParentMap, new_image.ColourLabelChildMap);
             end
-            
+
             % Make overlay visible when it is altered
             obj.ImagePanel.ShowOverlay = true;
 
-            % Change the image orientation and slice number if requested 
+            % Change the image orientation and slice number if requested
             if isprop(new_image, 'PreferredOrientation') && ~isempty(new_image.PreferredOrientation)
                 obj.ImagePanel.Orientation = GemImageOrientation(new_image.PreferredOrientation);
             end
@@ -1040,7 +1037,7 @@ classdef MimGuiBase < GemFigure
                 obj.ImagePanel.SliceNumber = new_image.PreferredSliceNumber;
             end
         end
-        
+
         function ReplaceQuiverImageCallback(obj, new_image)
             if all(new_image.ImageSize(1:3) == obj.ImagePanel.BackgroundImage.ImageSize(1:3)) && all(new_image.Origin == obj.ImagePanel.BackgroundImage.Origin)
                 obj.ReplaceQuiverImage(new_image.RawImage, 4);
@@ -1053,23 +1050,23 @@ classdef MimGuiBase < GemFigure
             % If markers need to be displayed, load but do not show progress bar
             obj.MarkerManager.LoadMarkersIfRequired(obj.AppDef.DefaultMarkersName);
         end
-        
+
         function LoadDefaultMarkersIfRequiredWithProgressBar(obj)
             % If markers need to be displayed, load and show progress bar
             if obj.MarkerManager.IsLoadMarkersRequired()
                 obj.LoadDefaultMarkers();
             end
         end
-        
+
         function UpdateToolbar(obj)
             obj.ToolbarPanel.Update(obj);
             obj.ModeTabControl.UpdateDynamicPanels();
         end
 
-        
+
         %%% Callbacks and also called from within this class
-        
-        
+
+
         function SaveSettings(obj)
             settings = obj.GuiSingleton.GetSettings;
             if ~isempty(settings)
@@ -1080,13 +1077,13 @@ classdef MimGuiBase < GemFigure
                 settings.SaveSettings(obj.Reporting);
             end
         end
-        
+
         function ReorderPanels(obj)
             % Ensure the stack order is correct, to stop the scrolling panels appearing on
             % top of the version panel or drop-down menu
-            
+
             child_handles = get(obj.GraphicalComponentHandle, 'Children');
-            
+
             if isempty(obj.ToolbarPanel)
                 toolbar_handle = [];
             else
@@ -1096,27 +1093,27 @@ classdef MimGuiBase < GemFigure
             reordered_handles = [other_handles; toolbar_handle];
             set(obj.GraphicalComponentHandle, 'Children', reordered_handles);
         end
-        
+
         function SetTab(obj, tab_name)
             obj.ModeTabControl.ChangeSelectedTab(tab_name);
         end
-        
+
         function enabled = IsTabEnabled(obj, panel_mode_name)
             enabled = obj.ModeTabControl.IsTabEnabled(panel_mode_name);
         end
-        
+
         function app_def = GetAppDef(obj)
             app_def = obj.AppDef;
         end
-        
+
         function reporting = GetReporting(obj)
             reporting = obj.Reporting;
         end
-        
+
         function current_markers = GetCurrentMarkerSetName(obj)
             current_markers = obj.MarkerManager.GetCurrentMarkerSetName();
         end
-        
+
         function AddMarkerSet(obj)
             name = inputdlg('Please enter a name for the new set of marker points you wish to create', 'New marker points');
             if ~isempty(name) && iscell(name) && (numel(name) > 0) && ~isempty(name{1})
@@ -1124,7 +1121,7 @@ classdef MimGuiBase < GemFigure
                 obj.LoadAndDisplayMarkers(name{1});
             end
         end
-        
+
         function DeleteMarkerSet(obj, name)
             choice = questdlg('Do you want to delete this marker set?', ...
                 'Delete marker set', 'Delete', 'Don''t delete', 'Don''t delete');
@@ -1135,11 +1132,11 @@ classdef MimGuiBase < GemFigure
                     obj.GuiSingleton.GetSettings.RemoveLastMarkerSet(currently_loaded_image_UID, name);
                     obj.LoadDefaultMarkers();
                     obj.MarkerManager.AutoSaveMarkers();
-                    
+
                 case 'Don''t delete'
             end
         end
-        
+
         function RenameMarkerSet(obj, old_name)
             new_name = inputdlg('Please enter a new marker set name', 'Rename marker set');
             if ~isempty(new_name) && iscell(new_name) && (numel(new_name) > 0) && ~isempty(new_name{1})
@@ -1171,7 +1168,7 @@ classdef MimGuiBase < GemFigure
                 end
             end
         end
-        
+
         function DuplicateMarkerSet(obj, old_name)
             new_name = inputdlg('Please enter a marker set name', 'Duplicate marker set');
             if ~isempty(new_name) && iscell(new_name) && (numel(new_name) > 0) && ~isempty(new_name{1})
@@ -1188,12 +1185,12 @@ classdef MimGuiBase < GemFigure
 
                 current_marker_set_name = obj.MarkerManager.GetCurrentMarkerSetName();
                 is_current_marker_set = strcmp(current_marker_set_name, old_name);
-                
+
                 % If we are currently editing this marker set, save
                 % before duplicating
                 if is_current_marker_set
                     obj.MarkerManager.AutoSaveMarkers();
-                end                
+                end
 
                 markers = obj.GuiDataset.LoadMarkers(old_name);
                 if ~isempty(markers)
@@ -1201,9 +1198,9 @@ classdef MimGuiBase < GemFigure
                 end
             end
         end
-        
-        
-        
+
+
+
         function ImportManualSegmentation(obj)
             if obj.IsDatasetLoaded()
                 image_info = MimChooseImagingFiles(obj.GuiSingleton.GetSettings.SaveImagePath, obj.Reporting);
@@ -1229,19 +1226,19 @@ classdef MimGuiBase < GemFigure
                                     return
                             end
                         end
-                        
+
                         obj.Reporting.ShowProgress(['Importing segmentation ', name]);
-                        
+
                         template = obj.GuiDataset.GetTemplateImage();
                         segmentation = MimLoadImages(image_info, obj.Reporting);
                         segmentation.ChangeRawImage(uint8(segmentation.RawImage));
                         segmentation.ImageType = PTKImageType.Colormap;
-                        
+
                         if ~isequal(template.ImageSize, segmentation.ImageSize)
                             uiwait(errordlg('The segmentation cannot be imported as the image size does not match the original image', [obj.AppDef.GetName ': Cannot import segmentation for ' name], 'modal'));
                         elseif ~isequal(template.VoxelSize, segmentation.VoxelSize)
                             uiwait(errordlg('The segmentation cannot be imported as the voxel size does not match the original image', [obj.AppDef.GetName ': Cannot import segmentation for ' name], 'modal'));
-                        else                        
+                        else
                             obj.GuiDataset.SaveManualSegmentation(name, segmentation);
                             obj.LoadSegmentationCallback(name);
                         end
@@ -1251,7 +1248,7 @@ classdef MimGuiBase < GemFigure
                 end
             end
         end
-        
+
         function AddManualSegmentation(obj)
             obj.AutoSaveSegmentation();
             name = inputdlg('Please enter a name for the new manual segmentation you wish to create', 'New manual segmentation');
@@ -1275,7 +1272,7 @@ classdef MimGuiBase < GemFigure
                 obj.LoadSegmentationCallback(name{1});
             end
         end
-        
+
         function RenameManualSegmentation(obj, old_name)
             new_name = inputdlg('Please enter a new segmentation name', 'Rename manual segmentation');
             if ~isempty(new_name) && iscell(new_name) && (numel(new_name) > 0) && ~isempty(new_name{1})
@@ -1292,7 +1289,7 @@ classdef MimGuiBase < GemFigure
 
                 current_segmentation_name = obj.GuiDataset.GuiDatasetState.CurrentSegmentationName;
                 is_current_segentation = strcmp(current_segmentation_name, old_name);
-                
+
                 if is_current_segentation
                     if isequal(obj.GetCurrentModeName, MimModes.EditMode)
                         obj.AutoSaveSegmentation();
@@ -1309,7 +1306,7 @@ classdef MimGuiBase < GemFigure
                 end
             end
         end
-        
+
         function DuplicateManualSegmentation(obj, old_name)
             new_name = inputdlg('Please enter a new segmentation name', 'Duplicate manual segmentation');
             if ~isempty(new_name) && iscell(new_name) && (numel(new_name) > 0) && ~isempty(new_name{1})
@@ -1326,14 +1323,14 @@ classdef MimGuiBase < GemFigure
 
                 current_segmentation_name = obj.GuiDataset.GuiDatasetState.CurrentSegmentationName;
                 is_current_segentation = strcmp(current_segmentation_name, old_name);
-                
+
                 % If we are currently editing this segmentation, save
                 % before duplicating
                 if is_current_segentation
                     if isequal(obj.GetCurrentModeName, MimModes.EditMode)
                         obj.AutoSaveSegmentation();
                     end
-                end                
+                end
 
                 segmentation = obj.GuiDataset.LoadManualSegmentation(old_name);
                 if ~isempty(segmentation)
@@ -1341,7 +1338,7 @@ classdef MimGuiBase < GemFigure
                 end
             end
         end
-        
+
         function DeleteManualSegmentation(obj, name)
             choice = questdlg('Do you want to delete this manual segmentation?', ...
                 'Delete manual segmentation', 'Delete', 'Don''t delete', 'Don''t delete');
@@ -1352,18 +1349,18 @@ classdef MimGuiBase < GemFigure
             end
         end
     end
-    
+
     methods (Access = private)
-        
+
         function suggested_width_pixels = GetSuggestedWidth(obj, image_height_pixels)
             % Computes the width of the viewer so that the coronal view fills the whole window
-            
+
             % If no dataset, then just make the viewer square
             if ~obj.GuiDataset.DatasetIsLoaded
                 suggested_width_pixels = image_height_pixels;
                 return;
             end
-            
+
             image_size_mm = obj.ImagePanel.BackgroundImage.ImageSize.*obj.ImagePanel.BackgroundImage.VoxelSize;
 
             % We choose the preferred orientation based on the image
@@ -1371,13 +1368,13 @@ classdef MimGuiBase < GemFigure
             % (obj.ImagePanel.Orientation), but if we did this we would need to force a
             % GUI resize whenever the orientation was changed
             optimal_direction_orientation = MimImageUtilities.GetPreferredOrientation(obj.ImagePanel.BackgroundImage, obj.AppDef.GetDefaultOrientation);
-            
+
             [dim_x_index, dim_y_index, dim_z_index] = GemUtilities.GetXYDimensionIndex(optimal_direction_orientation);
-            
+
             image_height_mm = image_size_mm(dim_y_index);
             image_width_mm = image_size_mm(dim_x_index);
             suggested_width_pixels = ceil(image_width_mm*image_height_pixels/image_height_mm);
-            
+
             suggested_width_pixels = max(suggested_width_pixels, ceil((2/3)*image_height_pixels));
             suggested_width_pixels = min(suggested_width_pixels, ceil((5/3)*image_height_pixels));
         end

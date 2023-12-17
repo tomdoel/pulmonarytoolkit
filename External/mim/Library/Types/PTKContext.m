@@ -10,7 +10,6 @@ classdef PTKContext
     %     Part of the TD MIM Toolkit. https://github.com/tomdoel
     %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
     %     Distributed under the MIT licence. Please see website for details.
-    %    
     
     enumeration
         OriginalImage,  % The full image
@@ -29,6 +28,7 @@ classdef PTKContext
         LeftUpperLobe,
         LeftLowerLobe,
         
+    %
         % Right lung segments
         R_AP,
         R_P,

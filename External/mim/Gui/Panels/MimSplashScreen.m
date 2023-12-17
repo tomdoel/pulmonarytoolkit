@@ -15,8 +15,8 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
     %     Part of the TD MIM Toolkit. https://github.com/tomdoel
     %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
     %     Distributed under the MIT licence. Please see website for details.
-    %    
-    
+    %
+
     properties (Access = private)
         AppDef
         Image
@@ -24,7 +24,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
         BodyText
         PanelHandle
         Disabled = false
-        
+
         ProgressAxes
         ProgressBarHandle
         Text
@@ -38,20 +38,20 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
         DialogText
         DialogTitle = ''
         ProgressValue = 0
-        
+
         Hold = false;
         ShowProgressBar = false
-        
+
         TimerRef
         MaxTimeBetweenUpdates = 0.25
-        
+
         PanelIsShown = false
         LastText
         LastTitle
-        
+
         ShowQuitButton = false
     end
-        
+
     methods (Static)
         function splash_screen = GetSplashScreen(app_def)
             persistent SplashScreen
@@ -64,55 +64,54 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             splash_screen = SplashScreen;
         end
     end
-    
+
     methods (Access = private)
         function obj = MimSplashScreen(app_def)
-            
+
             % Calculate the figure windows size
             set(0, 'Units', 'pixels');
             screen_size = get(0, 'ScreenSize');
             position = [1, 1, 700, 300];
             position(1) = max(1, round((screen_size(3) - position(3))/2));
             position(2) = max(1, round((screen_size(4) - position(4))/2));
-            
+
             % Call the base class to initialise the hidden window
             reporting = CoreReportingDefault;
             obj = obj@GemFigure('', position, reporting);
             obj.StyleSheet = app_def.GetDefaultStyleSheet;
-            
+
             obj.TimerRef = tic;
             obj.AppDef = app_def;
-            
+
             % Hide the progress bar
             obj.Hide();
-            
+
             % Create the figure
             obj.Show();
             set(obj.ProgressAxes, 'Visible', 'off');
             set(obj.ProgressBarHandle, 'Visible', 'off');
-            
             drawnow;
         end
     end
-    
+
     methods
         function delete(obj)
             delete(obj.GraphicalComponentHandle);
-        end        
+        end
 
         function CreateGuiComponent(obj, position)
             CreateGuiComponent@GemFigure(obj, position);
-            
+
             background_colour = obj.StyleSheet.TextPrimaryColour;
             text_colour = obj.StyleSheet.BackgroundColour;
 
             % Override the colour and resize behaviour
             set(obj.GraphicalComponentHandle, 'Color', background_colour, 'Resize', 'off');
-            
+
             logo = imread(obj.AppDef.GetLogoFilename);
-            image_size = size(logo);            
+            image_size = size(logo);
             screen_image_size = MimSplashScreen.GetOptimalLogoSize(image_size(2:-1:1), [30, 70, 223, 200]);
-            
+
             obj.Image = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', screen_image_size);
             image(logo, 'Parent', obj.Image);
             axis(obj.Image, 'off');
@@ -120,11 +119,11 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
 
             obj.BodyText = uicontrol('Style', 'text', 'Units', 'Pixels', 'Position', [300, 130, 350, 110], 'FontName', obj.StyleSheet.Font, 'FontUnits', 'pixels', 'FontSize', 16, 'FontWeight', 'bold', 'ForegroundColor', text_colour, 'BackgroundColor', background_colour, 'HorizontalAlignment', 'Center');
             set(obj.BodyText, 'String', sprintf(['Version ' obj.AppDef.GetVersion]));
-            
+
             % Create the progress reporting
             panel_background_colour = background_colour;
             text_color = text_colour;
-            
+
             title_position = [250, 150, 450, 30];
             text_position = [250, 90, 450, 60];
             cancel_position = [400, 20, 140, 30];
@@ -139,7 +138,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
                 'FontUnits', 'pixels', 'Position', cancel_position, 'Visible', 'off', 'Callback', @obj.CancelButton);
             obj.Quit = uicontrol('parent', obj.GraphicalComponentHandle, 'string', 'Force Quit', ...
                 'FontUnits', 'pixels', 'Position', quit_position, 'Visible', 'off', 'Callback', @obj.QuitButton);
-            
+
             obj.ProgressAxes = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', progress_bar_position, 'xlim', [0, 1], 'ylim', [0, 1], 'xtick', [], 'ytick', [], 'Color', [0.8, 0.8, 0.8], 'box', 'on', 'Visible', 'off');
             obj.ProgressBarHandle = patch(obj.ProgressAxes, [0 0 0 0], [0 0 1 1], 'blue', 'Visible', 'off');
             obj.ProgressBarHandle.XData = [0 0 0 0];
@@ -158,7 +157,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.ShowPanel();
             obj.UserClickedCancel = false;
         end
-        
+
         function Hide(obj)
             obj.DialogTitle = 'Please wait';
             obj.ShowProgressBar = false;
@@ -166,7 +165,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.HidePanel();
             obj.Hold = false;
         end
-        
+
         function Complete(obj)
             % Call to complete a progress operaton, which will also hide the dialog
             % unless the dialog is being held
@@ -179,23 +178,23 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
                 obj.Update();
             end
         end
-        
+
         function SetProgressText(obj, text)
             if nargin < 2
-               text = 'Please wait'; 
-            end            
+               text = 'Please wait';
+            end
             obj.DialogText = CoreTextUtilities.RemoveHtml(text);
             obj.Update();
             obj.ShowPanel();
         end
-        
+
         function SetProgressValue(obj, progress_value)
             obj.ProgressValue = progress_value;
             obj.ShowProgressBar = true;
             obj.Update();
             obj.ShowPanel();
         end
-        
+
         function SetProgressAndMessage(obj, progress_value, text)
             obj.ShowProgressBar = true;
             obj.DialogText = CoreTextUtilities.RemoveHtml(text);
@@ -203,34 +202,34 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.Update();
             obj.ShowPanel();
         end
-        
+
         function cancelled = CancelClicked(obj)
             cancelled = obj.UserClickedCancel;
             obj.UserClickedCancel = false;
         end
-        
+
     end
-    
+
     methods (Access = private)
         function Update(obj)
             if isempty(obj.LastTitle) || ~strcmp(obj.DialogTitle, obj.LastTitle)
                 set(obj.ProgressTitle, 'String', obj.DialogTitle);
                 obj.LastTitle = obj.DialogTitle;
             end
-            
+
             if isempty(obj.LastText) || ~strcmp(obj.DialogText, obj.LastText)
                 set(obj.Text, 'String', obj.DialogText);
                 obj.LastText = obj.DialogText;
             end
-            
+
             obj.ProgressBarHandle.XData = [0 obj.ProgressValue/100 obj.ProgressValue/100 0];
-            
+
             if isempty(obj.TimerRef) || toc(obj.TimerRef) > obj.MaxTimeBetweenUpdates
                 obj.TimerRef = tic;
                 drawnow;
             end
         end
-        
+
         function ShowPanel(obj)
             if obj.Disabled || obj.PanelIsShown
                 return;
@@ -246,15 +245,15 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             set(obj.ProgressAxes, 'Visible', 'on');
             set(obj.ProgressBarHandle, 'Visible', 'on');
 
-            obj.PanelIsShown = true;            
+            obj.PanelIsShown = true;
         end
-        
+
         function HidePanel(obj)
-            
+
             if obj.Disabled || ~obj.PanelIsShown
                 return;
             end
-            
+
             set(obj.Text, 'Visible', 'off');
             set(obj.ProgressTitle, 'Visible', 'off');
             set(obj.Quit, 'Visible', 'off');
@@ -263,17 +262,17 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             set(obj.ProgressBarHandle, 'visible', 'off');
             obj.PanelIsShown = false;
         end
-        
+
         function CancelButton(obj, ~, ~)
             obj.UserClickedCancel = true;
         end
-        
+
         function QuitButton(obj, ~, ~)
             obj.Hide();
             throw(MException('MimCustomProgressDialog:UserForceQuit', 'User forced plugin to terminate'));
         end
     end
-    
+
     methods (Static, Access = private)
         function logo_position = GetOptimalLogoSize(image_size, frame_position)
             frame_size = frame_position(3:4);
@@ -287,5 +286,5 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             logo_position = [frame_position(1:2) + round((frame_size - scaled_image_size)/2), scaled_image_size];
         end
     end
-    
+
 end

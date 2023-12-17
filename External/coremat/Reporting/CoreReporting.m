@@ -4,10 +4,10 @@ classdef CoreReporting < CoreReportingInterface
     %     CoreReporting. Implementation of CoreReportingInterface, which is used by
     %     CoreMat and other libraries for progress and error/message reporting. This
     %     implementation displays warnings and messages on the command window,
-    %     and uses Matlab's error() command to process errors. Logging 
+    %     and uses Matlab's error() command to process errors. Logging
     %     information is writen to a log file. An object which implements
     %     the CoreProgressInterface can be passed in for progress reporting.
-    % 
+    %
     %     Usage
     %     -----
     %
@@ -25,7 +25,7 @@ classdef CoreReporting < CoreReportingInterface
     %
     %             progress_dialog - a CoreProgressInterface object such as
     %                 a CoreProgressDialog for displaying a progress bar. You can omit this argument
-    %                 or replace it with [] if you are writing scripts to run 
+    %                 or replace it with [] if you are writing scripts to run
     %                 in the background and do not want progress dialogs popping
     %                 up. Otherwise, you should create a CoreProgressDialog
     %                 or else implement your own progress class if you want
@@ -40,26 +40,26 @@ classdef CoreReporting < CoreReportingInterface
     %     Part of CoreMat. https://github.com/tomdoel/coremat
     %     Author: Tom Doel, 2013.  www.tomdoel.com
     %     Distributed under the MIT licence. Please see website for details.
-    %    
+    %
 
     properties (Constant)
         CancelErrorId = 'CoreReporting:UserCancel'
     end
-    
+
     properties
         ProgressDialog  % Handle to a CoreProgressInterface object
     end
-    
+
     properties (Access = private)
         LogFileName     % Full path to log file
-        
+
         % Stack for nested progress reporting
         ProgressStack
         CurrentProgressStackItem
         ParentProgressStackItem
         VerboseMode
     end
-    
+
     methods
         function obj = CoreReporting(progress_dialog, verbose_mode, log_file_name)
             if nargin > 0
@@ -75,23 +75,22 @@ classdef CoreReporting < CoreReportingInterface
             else
                 obj.LogFileName = fullfile(CoreDiskUtilities.GetUserDirectory, 'corereporting.log');
             end
-            
             obj.ClearProgressStack();
         end
-        
+
         function Log(obj, message)
             [calling_function, ~] = CoreErrorUtilities.GetCallingFunction(2);
-            
+
             obj.AppendToLogFile([calling_function ': ' message]);
         end
-        
+
         function LogVerbose(obj, message)
             if obj.VerboseMode
                 [calling_function, ~] = CoreErrorUtilities.GetCallingFunction(2);
                 obj.AppendToLogFile([calling_function ': ' message]);
             end
         end
-        
+
         function ShowMessage(obj, identifier, message)
             [calling_function, ~] = CoreErrorUtilities.GetCallingFunction(2);
             if isempty(calling_function)
@@ -100,7 +99,7 @@ classdef CoreReporting < CoreReportingInterface
             disp(message);
             obj.AppendToLogFile([calling_function ': ' identifier ':' message]);
         end
-        
+
         function ShowMessageFromException(obj, identifier, message, ex)
             [calling_function, ~] = CoreErrorUtilities.GetCallingFunction(2);
             if isempty(calling_function)
@@ -113,28 +112,28 @@ classdef CoreReporting < CoreReportingInterface
             obj.AppendToLogFile(summary);
             obj.AppendToLogFile(stack_text);
             disp(message);
-            disp(' ');            
+            disp(' ');
             disp('If reporting an error, please include the following information:');
             disp(['  ' summary]);
             disp(['  ' stack_text '\n']);
             disp(' ');
         end
-        
+
         function ShowWarning(obj, identifier, message, supplementary_info)
             [calling_function, ~] = CoreErrorUtilities.GetCallingFunction(2);
-            
+
             obj.AppendToLogFile([calling_function ': WARNING: ' identifier ':' message]);
             disp(['WARNING: ' message]);
             if nargin > 3 && ~isempty(supplementary_info)
                 disp('Additional information on this warning:');
                 disp(supplementary_info);
             end
-            
+
         end
-        
+
         function Error(obj, identifier, message)
             [calling_function, stack] = CoreErrorUtilities.GetCallingFunction(2);
-            
+
             if ischar(calling_function) && length(calling_function) >= 13 && strcmp(calling_function(1:13), 'CoreReporting')
                 [calling_function, stack] = CoreErrorUtilities.GetCallingFunction(3);
             end
@@ -146,7 +145,7 @@ classdef CoreReporting < CoreReportingInterface
             obj.AppendToLogFile([calling_function ': ERROR: ' identifier ':' message]);
             error(msgStruct);
         end
-        
+
         function ErrorFromException(obj, identifier, message, ex)
             [calling_function, stack] = CoreErrorUtilities.GetCallingFunction(2);
 
@@ -170,20 +169,20 @@ classdef CoreReporting < CoreReportingInterface
 
             error(msgStruct);
         end
-                
+
         function ShowProgress(obj, text)
             adjusted_text = obj.AdjustProgressText(text);
-            
+
             if ~isempty(obj.ProgressDialog) && isvalid(obj.ProgressDialog)
                 if nargin > 1
                     obj.ProgressDialog.SetProgressText(adjusted_text);
                 else
-                    obj.ProgressDialog.SetProgressText();                    
+                    obj.ProgressDialog.SetProgressText();
                 end
                 obj.CurrentProgressStackItem.Visible = true;
             end
         end
-        
+
         function CompleteProgress(obj)
             if ~isempty(obj.ProgressDialog)
                 if isempty(obj.ProgressStack) || ~obj.ParentProgressStackItem.Visible
@@ -192,26 +191,26 @@ classdef CoreReporting < CoreReportingInterface
                 end
             end
         end
-        
+
         function UpdateProgressMessage(obj, text)
             adjusted_text = obj.AdjustProgressText(text);
-            
+
             if ~isempty(obj.ProgressDialog)
                 obj.ProgressDialog.SetProgressText(adjusted_text);
                 obj.CurrentProgressStackItem.Visible = true;
             end
         end
-        
+
         function UpdateProgressValue(obj, progress_value)
             adjusted_value = obj.AdjustProgressValue(progress_value, []);
-            
+
             if ~isempty(obj.ProgressDialog)
                 obj.ProgressDialog.SetProgressValue(adjusted_value);
                 obj.CurrentProgressStackItem.Visible = true;
             end
             obj.CheckForCancel;
         end
-        
+
         function UpdateProgressStage(obj, progress_stage, num_stages)
             progress_value = 100*progress_stage/num_stages;
             value_change = 100/num_stages;
@@ -222,20 +221,20 @@ classdef CoreReporting < CoreReportingInterface
             end
             obj.CheckForCancel;
         end
-        
+
         function UpdateProgressAndMessage(obj, progress_value, text)
             adjusted_value = obj.AdjustProgressValue(progress_value, []);
             adjusted_text = obj.AdjustProgressText(text);
-            
+
             if ~isempty(obj.ProgressDialog)
                 obj.ProgressDialog.SetProgressAndMessage(adjusted_value, adjusted_text);
                 obj.CurrentProgressStackItem.Visible = true;
             end
-            
+
             obj.CheckForCancel;
 
         end
-        
+
         function cancelled = HasBeenCancelled(obj)
             if ~isempty(obj.ProgressDialog)
                 cancelled = obj.ProgressDialog.CancelClicked;
@@ -243,13 +242,13 @@ classdef CoreReporting < CoreReportingInterface
                 cancelled = false;
             end
         end
-        
+
         function CheckForCancel(obj)
             if obj.HasBeenCancelled
                 obj.Error(CoreReporting.CancelErrorId, 'User cancelled');
             end
         end
-        
+
         function PushProgress(obj)
             obj.ProgressStack{end + 1} = obj.ParentProgressStackItem;
             obj.ParentProgressStackItem = obj.CurrentProgressStackItem;
@@ -257,7 +256,7 @@ classdef CoreReporting < CoreReportingInterface
             obj.CurrentProgressStackItem.Visible = obj.ParentProgressStackItem.Visible;
 
         end
-            
+
         function PopProgress(obj)
             obj.CurrentProgressStackItem = obj.ParentProgressStackItem;
             if isempty(obj.ProgressStack)
@@ -267,21 +266,21 @@ classdef CoreReporting < CoreReportingInterface
                 obj.ProgressStack(end) = [];
             end
         end
-        
+
         function ClearProgressStack(obj)
             obj.ProgressStack = {};
             obj.CurrentProgressStackItem = CoreProgressStackItem('', 0, 100);
             obj.ParentProgressStackItem = CoreProgressStackItem('', 0, 100);
         end
-        
+
         function ShowAndClearPendingMessages(obj)
         end
-        
+
         function OpenPath(obj, file_path, message)
             disp([message, ': ', file_path]);
         end
     end
-    
+
     methods (Access = private)
         function AppendToLogFile(obj, message)
             file_id = fopen(obj.LogFileName, 'at');
@@ -289,7 +288,7 @@ classdef CoreReporting < CoreReportingInterface
             fprintf(file_id, '%s\n', message);
             fclose(file_id);
         end
-        
+
         function [summary, stack] = GetExceptionSummary(obj, exc)
             stack = 'Stack:';
             for s = exc.stack'
@@ -297,18 +296,18 @@ classdef CoreReporting < CoreReportingInterface
             end
             summary = ['Error in ' exc.stack(1).name '(PTK' PTKSoftwareInfo.Version ') : ' exc.message];
         end
-        
+
         function adjusted_text = AdjustProgressText(obj, text)
             adjusted_text = text;
             obj.CurrentProgressStackItem.ProgressText = text;
         end
-        
+
         function adjusted_value = AdjustProgressValue(obj, value, value_change)
             if isempty(value_change)
                 value_change = value - obj.CurrentProgressStackItem.LastProgressValue;
             end
             obj.CurrentProgressStackItem.LastProgressValue = value;
-            
+
             scale = (obj.ParentProgressStackItem.MaxPosition - obj.ParentProgressStackItem.MinPosition)/100;
             adjusted_value = obj.ParentProgressStackItem.MinPosition + scale*value;
             obj.CurrentProgressStackItem.MinPosition = adjusted_value;
@@ -316,7 +315,7 @@ classdef CoreReporting < CoreReportingInterface
                 obj.CurrentProgressStackItem.MaxPosition = adjusted_value + scale*value_change;
             end
         end
-        
+
         function SetValueChange(obj, value_change)
             value = obj.CurrentProgressStackItem.LastProgressValue;
             scale = (obj.ParentProgressStackItem.MaxPosition - obj.ParentProgressStackItem.MinPosition)/100;

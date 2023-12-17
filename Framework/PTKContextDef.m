@@ -154,7 +154,7 @@ classdef PTKContextDef < handle
             obj.ContextSets(char(PTKContextSet.Lobe)) = lobe_set;
             obj.ContextSets(char(PTKContextSet.Segment)) = segment_set;
             obj.ContextSets(char(PTKContextSet.Any)) = any_set;
-             
+
             % Create the hierarchy of contexts
             obj.Contexts = containers.Map;
             full_context =  MimContextMapping(PTKContext.OriginalImage, full_set, 'PTKGetContextForOriginalImage', 'PTKOriginalImage', []);

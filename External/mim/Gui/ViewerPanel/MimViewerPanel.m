@@ -22,13 +22,13 @@ classdef MimViewerPanel < GemPanel
     %     Part of the TD MIM Toolkit. https://github.com/tomdoel
     %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
     %     Distributed under the MIT licence. Please see website for details.
-    %    
-    
+    %
+
 
     events
         MouseCursorStatusChanged % An event to indicate if the MouseCursorStatus property has changed
     end
-    
+
     properties (SetObservable)
         SelectedControl = 'W/L'    % The currently selected tool
         SliceSkip = 10         % Number of slices skipped when navigating throough images with the space key
@@ -37,7 +37,7 @@ classdef MimViewerPanel < GemPanel
         PaintOverBackground = true % True means the paint tool will paint over colours and background; false means it will only replace existing colours
         NewMarkerColour = 1        % The current colour of new marker points
     end
-    
+
     properties (Dependent)
         BackgroundImage        % The greyscale image
         OverlayImage           % The colour transparent overlay image
@@ -54,24 +54,24 @@ classdef MimViewerPanel < GemPanel
         BlackIsTransparent     % Sets whether black in the transparent overlay image is transparent or shown as black
         OpaqueColour           % If set, then this colour will always be shown at full opacity in the overlay
     end
-    
+
     properties (SetObservable, SetAccess = private)
-        WindowLimits           % The limits of the image window (in HU for CT images)  
-        LevelLimits            % The limits of the image level (in HU for CT images)  
+        WindowLimits           % The limits of the image window (in HU for CT images)
+        LevelLimits            % The limits of the image level (in HU for CT images)
         Mode = ''              % Specifies the current editing mode
         SubMode = ''           % Specifies the current editing submode
     end
-    
+
     properties (SetAccess = private)
         % Image volume models
         BackgroundImageSource
         OverlayImageSource
         QuiverImageSource
         MarkerImageSource
-        
+
         % Slice number and orientation model
         ImageSliceParameters
-        
+
         % Visualisation property models
         BackgroundImageDisplayParameters
         OverlayImageDisplayParameters
@@ -79,37 +79,37 @@ classdef MimViewerPanel < GemPanel
 
         EditFixedOuterBoundary % Specifies whether the current edit can modify the segmentation outer boundary
         MouseCursorStatus      % A class of type MimMouseCursorStatus showing data representing the voxel under the cursor
-        
+
         BackgroundLayer
         SegmentationLayer
         QuiverLayer
         MarkerLayer
     end
-    
+
     properties (Access = private)
         LevelMin
         LevelMax
         WindowMin
         WindowMax
-        
+
         ToolCallback
         ViewerPanelCallback
         ImageOverlayAxes
         CinePanel2D
         RenderPanel
     end
-    
+
     properties (Access = protected)
         ViewerPanelMultiView
         Tools
     end
-    
+
     properties
         DefaultOrientation = GemImageOrientation.XY
     end
-    
+
     methods
-        
+
         function obj = MimViewerPanel(parent)
             % Creates a MimViewerPanel
             
@@ -170,100 +170,100 @@ classdef MimViewerPanel < GemPanel
         function background_image = GetBackgroundImageSource(obj)
             background_image = obj.BackgroundImageSource;
         end
-        
+
         function background_image = GetOverlayImageSource(obj)
             background_image = obj.OverlayImageSource;
         end
-        
+
         function quiver_image = GetQuiverImageSource(obj)
             quiver_image = obj.QuiverImageSource;
         end
-        
+
         function image_slice_parameters = GetImageSliceParameters(obj)
             image_slice_parameters = obj.ImageSliceParameters;
         end
-        
+
         function image_display_parameters = GetBackgroundImageDisplayParameters(obj)
             image_display_parameters = obj.BackgroundImageDisplayParameters;
         end
-        
+
         function image_display_parameters = GetOverlayImageDisplayParameters(obj)
             image_display_parameters = obj.OverlayImageDisplayParameters;
         end
-        
+
         function image_display_parameters = GetMarkerImageDisplayParameters(obj)
             image_display_parameters = obj.MarkerImageDisplayParameters;
         end
-        
+
         function Resize(obj, position)
             % Resize the viewer panel and its subcomponents
-            
+
             Resize@GemPanel(obj, position);
-            
+
             % Position axes and slice slider
             parent_width_pixels = position(3);
             parent_height_pixels = position(4);
             image_width = parent_width_pixels;
-            
+
             image_height = max(1, parent_height_pixels);
             image_panel_position = [1, 1, image_width, image_height];
-            
+
             % Resize the image and slider
             obj.ViewerPanelMultiView.Resize(image_panel_position);
         end
-        
+
         function marker_layer = GetMarkerLayer(obj)
             % Returns a pointer to the GemMarkerLayer object
-            
+
             marker_layer = obj.MarkerLayer;
         end
-        
+
         function ClearOverlays(obj)
             % Erase the image in the transparent overlay
-            
+
             obj.OverlayImage.Title = [];
             obj.OverlayImage.Reset;
             obj.QuiverImage.Reset;
             obj.ClearRenderAxes;
         end
-        
+
         function in_marker_mode = IsInMarkerMode(obj)
             % Returns true if the viewer panel is currently in marker editing mode
-            
+
             in_marker_mode = strcmp(obj.SelectedControl, 'Mark');
         end
 
         function in_edit_mode = IsInEditMode(obj)
             % Returns true if the viewer panel is currently in segmentation editing mode
-            
+
             in_edit_mode = strcmp(obj.SelectedControl, 'Edit');
         end
-        
+
         function ZoomTo(obj, i_limits, j_limits, k_limits)
             % Changes the current axis limits to the specified global coordinates
             % i_limits = [minimum_i, maximum_i] and the same for j, k.
 
             obj.ViewerPanelMultiView.ZoomTo(i_limits, j_limits, k_limits);
         end
-        
+
         function frame = Capture(obj)
             % Captures a 2D image from the currently displayed slice
-            
+
             frame = obj.ViewerPanelMultiView.Capture(obj.BackgroundImage.ImageSize, obj.Orientation);
         end
 
         function SetControl(obj, tag_value)
             % Changes the active tool, specified by tag string, e.g. 'Cine'
-            
+
             obj.SelectedControl = tag_value;
         end
-        
+
         function SetModes(obj, mode, submode)
             % Changes the active edit mode and submode
-            
+
             obj.Mode = mode;
             obj.SubMode = submode;
-            
+
             if strcmp(mode, MimModes.EditMode)
                 obj.ViewerPanelMultiView.ChangeSelectedTab('View2D');
 
@@ -289,10 +289,10 @@ classdef MimViewerPanel < GemPanel
                 obj.SetControl('W/L');
             end
         end
-        
+
         function input_has_been_processed = ShortcutKeys(obj, key)
             % Process shortcut keys for the viewer panel.
-            
+
             % First deal with priority shortcut keys for the panel
             if strcmpi(key, 'downarrow')
                 obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) + 1;
@@ -325,150 +325,150 @@ classdef MimViewerPanel < GemPanel
                 input_has_been_processed = obj.Tools.ShortcutKeys(key, obj.SelectedControl);
             end
         end
-     
+
         function SetWindowLimits(obj, window_min, window_max)
             % Sets the minimum and maximum values for the level slider
-            
+
             obj.WindowLimits = [window_min, window_max];
         end
-        
+
         function SetLevelLimits(obj, level_min, level_max)
             % Sets the minimum and maximum values for the level slider
-            
+
             obj.LevelLimits = [level_min, level_max];
         end
-        
+
         function tool = GetCurrentTool(obj, mouse_is_down, keyboard_modifier)
             % Returns the currently enabled mouse tool
-            
+
             tool = obj.Tools.GetCurrentTool(mouse_is_down, keyboard_modifier, obj.SelectedControl);
         end
-        
+
         function tools = GetToolList(obj)
             % Returns a MimToolList describing the mouse tools supported by the viewer
-            
+
             tools = obj.Tools;
         end
 
         function set.BackgroundImage(obj, new_image)
             obj.BackgroundImageSource.Image = new_image;
         end
-        
+
         function current_image = get.BackgroundImage(obj)
             current_image = obj.BackgroundImageSource.Image;
         end
-        
+
         function set.OverlayImage(obj, new_image)
             obj.OverlayImageSource.Image = new_image;
         end
-        
+
         function current_image = get.OverlayImage(obj)
             current_image = obj.OverlayImageSource.Image;
         end
-        
+
         function set.QuiverImage(obj, new_image)
             obj.QuiverImageSource.Image = new_image;
         end
-        
+
         function current_image = get.QuiverImage(obj)
             current_image = obj.QuiverImageSource.Image;
         end
-        
+
         function set.SliceNumber(obj, slice_number)
             obj.ImageSliceParameters.SliceNumber = slice_number;
         end
-        
+
         function slice_number = get.SliceNumber(obj)
             slice_number = obj.ImageSliceParameters.SliceNumber;
-        end        
-        
+        end
+
         function set.Orientation(obj, orientation)
             obj.ImageSliceParameters.Orientation = orientation;
         end
-        
+
         function orientation = get.Orientation(obj)
             orientation = obj.ImageSliceParameters.Orientation;
         end
-        
+
         function set.OverlayOpacity(obj, opacity)
             obj.OverlayImageDisplayParameters.Opacity = opacity;
         end
-        
+
         function opacity = get.OverlayOpacity(obj)
             opacity = obj.OverlayImageDisplayParameters.Opacity;
-        end        
-        
+        end
+
         function set.ShowImage(obj, show_image)
             obj.BackgroundImageDisplayParameters.ShowImage = show_image;
         end
-        
+
         function show_image = get.ShowImage(obj)
             show_image = obj.BackgroundImageDisplayParameters.ShowImage;
         end
-        
+
         function set.Window(obj, window)
             window = double(window);
             obj.BackgroundImageDisplayParameters.Window = window;
             obj.OverlayImageDisplayParameters.Window = window;
         end
-        
+
         function level = get.Level(obj)
             level = obj.BackgroundImageDisplayParameters.Level;
         end
-        
+
         function set.Level(obj, level)
             level = double(level);
             obj.BackgroundImageDisplayParameters.Level = level;
             obj.OverlayImageDisplayParameters.Level = level;
         end
-        
+
         function window = get.Window(obj)
             window = obj.BackgroundImageDisplayParameters.Window;
         end
-        
+
         function set.ShowOverlay(obj, show_image)
             obj.OverlayImageDisplayParameters.ShowImage = show_image;
         end
-        
+
         function show_image = get.ShowOverlay(obj)
             show_image = obj.OverlayImageDisplayParameters.ShowImage;
         end
-        
+
         function set.ShowMarkers(obj, show_markers)
             obj.MarkerImageDisplayParameters.ShowMarkers = show_markers;
         end
-        
+
         function show_markers = get.ShowMarkers(obj)
             show_markers = obj.MarkerImageDisplayParameters.ShowMarkers;
         end
-        
+
         function set.ShowMarkerLabels(obj, show_marker_labels)
             obj.MarkerImageDisplayParameters.ShowLabels = show_marker_labels;
         end
-        
+
         function show_marker_labels = get.ShowMarkerLabels(obj)
             show_marker_labels = obj.MarkerImageDisplayParameters.ShowLabels;
         end
-        
+
         function set.BlackIsTransparent(obj, black_is_transparent)
             obj.OverlayImageDisplayParameters.BlackIsTransparent = black_is_transparent;
         end
-        
+
         function black_is_transparent = get.BlackIsTransparent(obj)
             black_is_transparent = obj.OverlayImageDisplayParameters.BlackIsTransparent;
         end
-        
+
         function set.OpaqueColour(obj, opaque_colour)
             obj.OverlayImageDisplayParameters.OpaqueColour = opaque_colour;
         end
-        
+
         function opaque_colour = get.OpaqueColour(obj)
             opaque_colour = obj.OverlayImageDisplayParameters.OpaqueColour;
         end
-        
+
         function GotoPreviousMarker(obj)
             % Find the image slice containing the last marker
-            
+
             maximum_skip = obj.SliceSkip;
             orientation = obj.Orientation;
             coords_global = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates(obj.SliceNumber);
@@ -478,10 +478,10 @@ classdef MimViewerPanel < GemPanel
             coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
             obj.SliceNumber(orientation) = coords_local(orientation);
         end
-        
+
         function GotoNextMarker(obj)
             % Find the image slice containing the next marker
-            
+
             maximum_skip = obj.SliceSkip;
             orientation = obj.Orientation;
             coords_global = obj.BackgroundImageSource.Image.LocalToGlobalCoordinates(obj.SliceNumber);
@@ -489,9 +489,9 @@ classdef MimViewerPanel < GemPanel
             index_of_nearest_marker_global = obj.MarkerLayer.GetMarkerImage.GetIndexOfNextMarker(current_coordinate, maximum_skip, orientation);
             coords_global(orientation) = index_of_nearest_marker_global;
             coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
-            obj.SliceNumber(orientation) = coords_local(orientation);        
+            obj.SliceNumber(orientation) = coords_local(orientation);
         end
-        
+
         function GotoNearestMarker(obj)
             % Find the image slice containing the nearest marker
 
@@ -503,7 +503,7 @@ classdef MimViewerPanel < GemPanel
             coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
             obj.SliceNumber(orientation) = coords_local(orientation);
         end
-        
+
         function GotoFirstMarker(obj)
             % Find the image slice containing the first marker
 
@@ -514,7 +514,7 @@ classdef MimViewerPanel < GemPanel
             coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
             obj.SliceNumber(orientation) = coords_local(orientation);
         end
-        
+
         function GotoLastMarker(obj)
             % Find the image slice containing the last marker
 
@@ -525,46 +525,46 @@ classdef MimViewerPanel < GemPanel
             coords_local = obj.BackgroundImageSource.Image.GlobalToLocalCoordinates(coords_global);
             obj.SliceNumber(orientation) = coords_local(orientation);
         end
-        
+
         function handle = GetRenderAxes(obj)
             % Returns a handle to the render panel axes
             handle = obj.RenderPanel.GetRenderAxes;
         end
-        
+
         function handle = GetRenderPanel(obj)
             % Returns a handle to the render panel axes
             handle = obj.RenderPanel;
         end
-        
+
         function ClearRenderAxes(obj)
             obj.RenderPanel.Clear;
         end
-        
+
     end
-    
+
     methods (Access = protected)
-        
+
         function PostCreation(obj, position, reporting)
             % Called after the component and all its children have been created
-            
+
             obj.ViewerPanelCallback = MimViewerPanelCallback(obj, obj.ViewerPanelMultiView, obj.Tools, obj.DefaultOrientation, obj.Reporting);
-        end            
+        end
 
         function input_has_been_processed = Keypressed(obj, click_point, key, src, eventdata)
             % Processes keys pressed while mouse is over the viewer window
-            
+
             input_has_been_processed = obj.ShortcutKeys(key);
         end
-        
+
         function input_has_been_processed = Scroll(obj, current_point, scroll_count, src, eventdata)
             % Mousewheel cine when the mouse is anywhere in the viewer panel
-            
+
             obj.SliceNumber(obj.Orientation) = obj.SliceNumber(obj.Orientation) + scroll_count;
             input_has_been_processed = true;
         end
-        
+
     end
-    
+
     methods
         function delete(obj)
             % We need to explicitly delete the image sources, since the
