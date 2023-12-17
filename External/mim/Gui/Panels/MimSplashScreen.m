@@ -58,7 +58,9 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             if nargin < 1
                 app_def = MivAppDef;
             end
-            if isempty(SplashScreen) || ~isvalid(SplashScreen)
+
+            # ToDo
+            if isempty(SplashScreen)  % || ~isvalid(SplashScreen)
                 SplashScreen = MimSplashScreen(app_def);
             end
             splash_screen = SplashScreen;
@@ -141,7 +143,9 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
 
             obj.ProgressAxes = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', progress_bar_position, 'xlim', [0, 1], 'ylim', [0, 1], 'xtick', [], 'ytick', [], 'Color', [0.8, 0.8, 0.8], 'box', 'on', 'Visible', 'off');
             obj.ProgressBarHandle = patch(obj.ProgressAxes, [0 0 0 0], [0 0 1 1], 'blue', 'Visible', 'off');
-            obj.ProgressBarHandle.XData = [0 0 0 0];
+
+            # ToDo
+            %obj.ProgressBarHandle.XData = [0 0 0 0];
         end
 
         function ShowAndHold(obj, text)
@@ -222,7 +226,8 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
                 obj.LastText = obj.DialogText;
             end
 
-            obj.ProgressBarHandle.XData = [0 obj.ProgressValue/100 obj.ProgressValue/100 0];
+            # ToDo
+            #obj.ProgressBarHandle.XData = [0 obj.ProgressValue/100 obj.ProgressValue/100 0];
 
             if isempty(obj.TimerRef) || toc(obj.TimerRef) > obj.MaxTimeBetweenUpdates
                 obj.TimerRef = tic;
