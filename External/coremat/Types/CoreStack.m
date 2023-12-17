@@ -18,7 +18,7 @@ classdef CoreStack < handle
             if nargin > 0
                 obj.Stack = CoreContainerUtilities.ConvertToSet(stack_items);
             else
-                obj.Stack = cell.empty;
+                obj.Stack = {};
             end
         end
         
