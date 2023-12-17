@@ -31,25 +31,25 @@ classdef CoreReportingWithCache < CoreReportingInterface
             if nargin > 0
                 obj.Reporting = reporting;
             else
-                obj.Reporting = CoreReportingDefault;
+                obj.Reporting = CoreReportingDefault();
             end
             obj.WarningsCache = CoreReportingWarningsCache(obj);
         end
         
         function delete(obj)
-            obj.ShowAndClearPendingMessages;
+            obj.ShowAndClearPendingMessages();
         end        
         
         function ClearProgressStack(obj)
-            obj.Reporting.ClearProgressStack;
+            obj.Reporting.ClearProgressStack();
         end
         
         function PushProgress(obj)
-            obj.Reporting.PushProgress;
+            obj.Reporting.PushProgress();
         end
         
         function PopProgress(obj)
-            obj.Reporting.PopProgress;
+            obj.Reporting.PopProgress();
         end
         
         function Log(obj, message)
@@ -108,16 +108,16 @@ classdef CoreReportingWithCache < CoreReportingInterface
         end
         
         function cancelled = HasBeenCancelled(obj)
-            cancelled = obj.Reporting.HasBeenCancelled;
+            cancelled = obj.Reporting.HasBeenCancelled();
         end
         
         function CheckForCancel(obj)
-            obj.Reporting.CheckForCancel;
+            obj.Reporting.CheckForCancel();
         end
         
         function ShowAndClearPendingMessages(obj)
-            obj.WarningsCache.ShowAndClear;
-            obj.Reporting.ShowAndClearPendingMessages;
+            obj.WarningsCache.ShowAndClear();
+            obj.Reporting.ShowAndClearPendingMessages();
         end
         
         function ShowCachedMessage(obj, identifier, message)
