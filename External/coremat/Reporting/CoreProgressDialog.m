@@ -49,9 +49,9 @@ classdef CoreProgressDialog < CoreProgressInterface
             obj.DialogTitle = 'Please wait';
             obj.ShowProgressBar = false;
 
-            if ishandle(obj.HandleToWaitDialog)
+#            if ishandle(obj.HandleToWaitDialog)
                delete(obj.HandleToWaitDialog)
-            end
+#            end
             obj.Hold = false;
         end
 

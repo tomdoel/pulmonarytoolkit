@@ -687,7 +687,10 @@ classdef GemUserInterfaceObject < CoreBaseClass
 
         function is_hg2 = IsHg2Permitted(obj)
             % Returns true if HG2 is supported
-            is_hg2 = ~verLessThan('matlab','8.4.0');
+
+            %% TODO
+            is_hg2 = true;
+            %is_hg2 = ~verLessThan('matlab','8.4.0');
         end
     end
 
