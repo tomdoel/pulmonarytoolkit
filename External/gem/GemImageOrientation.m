@@ -1,4 +1,4 @@
-classdef GemImageOrientation < uint8
+classdef GemImageOrientation
     % GemImageOrientation. An enumeration used to specify the orientation of an
     % image
     %
@@ -13,10 +13,10 @@ classdef GemImageOrientation < uint8
     %     Distributed under the MIT licence. Please see website for details.
     %
 
-    enumeration
-        XZ (1)
-        YZ (2)
-        XY (3)
+    properties (Constant)
+        XZ = 1
+        YZ = 2
+        XY = 3
     end
 
 end

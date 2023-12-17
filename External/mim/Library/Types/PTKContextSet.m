@@ -1,6 +1,6 @@
 classdef PTKContextSet
     % PTKContextSet. An enumeration used to specify the regions of interest
-    %     over which a plugin can operate 
+    %     over which a plugin can operate
     %
     %     A context set represents a set of contexts. A context is a region
     %     of interest for which the plugin can be executed. Therefore the
@@ -27,18 +27,18 @@ classdef PTKContextSet
     %     Part of the TD MIM Toolkit. https://github.com/tomdoel
     %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
     %     Distributed under the MIT licence. Please see website for details.
-    %    
-    
-    enumeration
-        OriginalImage,  % The full image
-        LungROI,        % A region containing the lung and airways
-        Lungs,          % Left and right lungs
-        SingleLung,     % Left lung or right lung
-        Lobe,
-        Segment,
-        
-        Any             % Valid for any context
+    %
+
+    properties (Constant)
+        OriginalImage = 'OriginalImage' % The full image
+        LungROI = 'LungROI'             % Region containing the lung and airways
+        Lungs = 'Lungs'                 % Left and right lungs
+        SingleLung = 'SingleLung'       % Left lung or right lung
+        Lobe = 'Lobe'
+        Segment = 'Segment'
+
+        Any = 'Any'                     % Valid for any context
     end
-    
+
 end
 
