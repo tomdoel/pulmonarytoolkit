@@ -143,8 +143,8 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.ProgressAxes = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', progress_bar_position, 'xlim', [0, 1], 'ylim', [0, 1], 'xtick', [], 'ytick', [], 'Color', [0.8, 0.8, 0.8], 'box', 'on', 'Visible', 'off');
             obj.ProgressBarHandle = patch(obj.ProgressAxes, [0 0 0 0], [0 0 1 1], 'blue', 'Visible', 'off');
             obj.ProgressBarHandle.XData = [0 0 0 0];
-        end        
-                       
+        end
+
         function ShowAndHold(obj, text)
             if nargin < 2
                 text = 'Please wait';
