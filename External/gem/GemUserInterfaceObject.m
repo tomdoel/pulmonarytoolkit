@@ -46,9 +46,9 @@ classdef GemUserInterfaceObject < CoreBaseClass
         KeyPressFcn
     end
 
-    methods (Abstract)
-        CreateGuiComponent(obj, position)
-    end
+    #methods (Abstract)
+    #    CreateGuiComponent(obj, position)
+    #end
 
     methods
         function obj = GemUserInterfaceObject(parent, reporting)

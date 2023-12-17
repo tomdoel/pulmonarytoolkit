@@ -20,31 +20,31 @@ classdef CoreProgressInterface < CoreBaseClass
     %
     
     methods (Abstract)
-        
-        % Indicates the gui has been resized
-        Resize(obj, panel_position)        
-               
-        % Show the progress bar, and keep it displayed until Hide() is called
-        ShowAndHold(obj, text)
-        
-        % Hide the progress bar
-        Hide(obj)
-        
-        % Call to complete a progress operaton, which will also hide the dialog
-        % unless the dialog has been held by ShowAndHold()
-        Complete(obj)
-        
-        % Changes the subtext in the progress dialog
-        SetProgressText(obj, text)
-        
-        % Changes the value of the progress bar
-        SetProgressValue(obj, progress_value)
-        
-        % Changes the value of the progress bar and the subtext
-        SetProgressAndMessage(obj, progress_value, text)
-        
-        % Checks if the cancel button was clicked by the user
-        cancelled = CancelClicked(obj)
+##        
+##        % Indicates the gui has been resized
+##        Resize(obj, panel_position)
+##               
+##        % Show the progress bar, and keep it displayed until Hide() is called
+##        ShowAndHold(obj, text)
+##        
+##        % Hide the progress bar
+##        Hide(obj)
+##        
+##        % Call to complete a progress operaton, which will also hide the dialog
+##        % unless the dialog has been held by ShowAndHold()
+##        Complete(obj)
+##        
+##        % Changes the subtext in the progress dialog
+##        SetProgressText(obj, text)
+##        
+##        % Changes the value of the progress bar
+##        SetProgressValue(obj, progress_value)
+##        
+##        % Changes the value of the progress bar and the subtext
+##        SetProgressAndMessage(obj, progress_value, text)
+##        
+##        % Checks if the cancel button was clicked by the user
+##        cancelled = CancelClicked(obj)
     end    
 end
 
