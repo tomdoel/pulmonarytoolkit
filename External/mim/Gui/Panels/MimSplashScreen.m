@@ -88,7 +88,8 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             
             % Create the figure
             obj.Show();
-            set(obj.ProgressBarHandle, 'visible', 0);
+            set(obj.ProgressAxes, 'Visible', 'off');
+            set(obj.ProgressBarHandle, 'Visible', 'off');
             
             drawnow;
         end
@@ -139,10 +140,9 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             obj.Quit = uicontrol('parent', obj.GraphicalComponentHandle, 'string', 'Force Quit', ...
                 'FontUnits', 'pixels', 'Position', quit_position, 'Visible', 'off', 'Callback', @obj.QuitButton);
             
-            obj.ProgressAxes = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', progress_bar_position, 'xlim', [0, 1], 'ylim', [0, 1], 'xtick', [], 'ytick', [], 'Color', [0.8, 0.8, 0.8], 'box', 'on');
-            obj.ProgressBarHandle = patch(obj.ProgressAxes, [0 0 0 0], [0 0 1 1], 'blue');
+            obj.ProgressAxes = axes('Parent', obj.GraphicalComponentHandle, 'Units', 'Pixels', 'Position', progress_bar_position, 'xlim', [0, 1], 'ylim', [0, 1], 'xtick', [], 'ytick', [], 'Color', [0.8, 0.8, 0.8], 'box', 'on', 'Visible', 'off');
+            obj.ProgressBarHandle = patch(obj.ProgressAxes, [0 0 0 0], [0 0 1 1], 'blue', 'Visible', 'off');
             obj.ProgressBarHandle.XData = [0 0 0 0];
-            set(obj.ProgressBarHandle, 'visible', 0);
         end        
                        
         function ShowAndHold(obj, text)
@@ -243,7 +243,8 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             end
 
             set(obj.Cancel, 'Visible', 'on');
-            set(obj.ProgressBarHandle, 'visible', 1);
+            set(obj.ProgressAxes, 'Visible', 'on');
+            set(obj.ProgressBarHandle, 'Visible', 'on');
 
             obj.PanelIsShown = true;            
         end
@@ -258,7 +259,8 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             set(obj.ProgressTitle, 'Visible', 'off');
             set(obj.Quit, 'Visible', 'off');
             set(obj.Cancel, 'Visible', 'off');
-            set(obj.ProgressBarHandle, 'visible', 0);
+            set(obj.ProgressAxes, 'Visible', 'off');
+            set(obj.ProgressBarHandle, 'visible', 'off');
             obj.PanelIsShown = false;
         end
         
