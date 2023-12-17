@@ -58,7 +58,7 @@ classdef MimGuiBase < GemFigure
 
             % Create the splash screen if it doesn't already exist
             if nargin < 2 || isempty(splash_screen) || ~isa(splash_screen, 'CoreProgressInterface')
-                splash_screen = MimSplashScreen.GetSplashScreen;
+                splash_screen = MimSplashScreen.GetSplashScreen();
             end
             
             % Create the reporting object. Later we will update it with the viewer panel and

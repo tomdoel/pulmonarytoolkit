@@ -40,8 +40,8 @@ classdef PTKContextDef < handle
     end
 
     methods
-        function obj = PTKContextDef
-            obj.CreateContexts;
+        function obj = PTKContextDef()
+            obj.CreateContexts();
         end
 
         function context = GetContexts(obj)
@@ -139,7 +139,7 @@ classdef PTKContextDef < handle
     methods (Access = private)
         function CreateContexts(obj)
             % Create the hierarchy of context types
-            obj.ContextSets = containers.Map;
+            obj.ContextSets = containers.Map();
             full_set =  MimContextSetMapping(PTKContextSet.OriginalImage, []);
             roi_set = MimContextSetMapping(PTKContextSet.LungROI, full_set);
             lungs_set = MimContextSetMapping(PTKContextSet.Lungs, roi_set);

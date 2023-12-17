@@ -206,10 +206,10 @@ classdef GemUserInterfaceObject < CoreBaseClass
             obj.SetAllParentVisibility(true);
             
             % Ensure any controls are created
-            obj.CreateVisibleComponents;
-            
+            obj.CreateVisibleComponents();
+
             % Make the graphical object visible
-            obj.UpdateAllComponentVisibility;
+            obj.UpdateAllComponentVisibility();
         end
 
         function Hide(obj)
