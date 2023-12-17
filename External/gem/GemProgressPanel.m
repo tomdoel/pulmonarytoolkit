@@ -101,10 +101,9 @@ classdef GemProgressPanel < CoreProgressInterface
             obj.UiControlHide = uicontrol('parent', obj.PanelHandle, 'string', 'Hide Dialog', ...
                 'Position', hide_position, 'FontUnits', 'pixels', 'Callback', @obj.HideButton, 'Visible', 'off');
 
-            obj.ProgressAxes = axes('Parent', obj.PanelHandle, 'Units', 'Pixels', 'Position', progress_bar_position, 'xlim', [0, 1], 'ylim', [0, 1], 'xtick', [], 'ytick', [], 'Color', [0.8, 0.8, 0.8], 'box', 'on');
-            obj.ProgressBarHandle = patch(obj.ProgressAxes, [0 0 0 0], [0 0 1 1], 'blue');
-
-            set(obj.ProgressBarHandle, 'visible', 0);
+            obj.ProgressAxes = axes('Parent', obj.PanelHandle, 'Units', 'Pixels', 'Position', progress_bar_position, 'xlim', [0, 1], 'ylim', [0, 1], 'xtick', [], 'ytick', [], 'Color', [0.8, 0.8, 0.8], 'box', 'on', 'Visible', 'off');
+            obj.ProgressBarHandle = patch(obj.ProgressAxes, [0 0 0 0], [0 0 1 1], 'blue', 'Visible', 'off');
+            obj.ProgressBarHandle.XData = [0 0 0 0];
         end
         
         function Resize(obj)
@@ -231,11 +230,13 @@ classdef GemProgressPanel < CoreProgressInterface
         function changed = UpdateProgressBarVisibility(obj)
             changed = false;
             if ~obj.ProgressBarCurrentlyVisible && obj.ShowProgressBar && obj.PanelVisibility 
-                set(obj.ProgressBarHandle, 'visible', 1);
+                set(obj.ProgressAxes, 'Visible', 'on');
+                set(obj.ProgressBarHandle, 'Visible', 'on');
                 obj.ProgressBarCurrentlyVisible = true;
                 changed = true;
             elseif obj.ProgressBarCurrentlyVisible && (~obj.ShowProgressBar || ~obj.PanelVisibility)
-                set(obj.ProgressBarHandle, 'visible', 0);
+                set(obj.ProgressAxes, 'Visible', 'off');
+                set(obj.ProgressBarHandle, 'Visible', 'off');
                 obj.ProgressBarCurrentlyVisible = false;
                 changed = true;
             end
@@ -260,7 +261,8 @@ classdef GemProgressPanel < CoreProgressInterface
                 set(obj.UiControlQuit, 'Visible', 'off');
                 set(obj.UiControlHide, 'Visible', 'off');
                 set(obj.UiControlCancel, 'Visible', 'off');
-                set(obj.ProgressBarHandle, 'visible', 0);
+                set(obj.ProgressAxes, 'Visible', 'off');
+                set(obj.ProgressBarHandle, 'Visible', 'off');
                 set(obj.PanelHandle, 'Visible', 'off');
                 obj.CurrentlyDisplayedVisibility = false;
                 obj.ProgressBarCurrentlyVisible = false;
