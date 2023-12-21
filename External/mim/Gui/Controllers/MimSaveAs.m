@@ -63,6 +63,7 @@ function [filename, path_name, filter_index] = SaveImageDialogBox(path_name)
                 '*.nii', 'NIFTI (*.nii)';
                 '*.mhd', '8-bit metaheader and raw data (*.mhd)';
                 '*.mhd', '16-bit metaheader and raw data (*.mhd)';
+                '*.nii.gz', 'Compressed NIFTI [beta] (*.nii.gz)';
                 };
 
     if path_name == 0
@@ -83,7 +84,7 @@ function SaveImage(image_data, filename, pathname, filter_index, patient_name, i
                 MimSaveImageAsDicom(image_data, pathname, filename, patient_name, is_secondary_capture, dicom_metadata, reporting)
             case 2
                 MimSaveAsMatlab(image_data, pathname, filename, reporting);
-            case 3
+            case {3,6}
                 MimSaveAsNifti(image_data, pathname, filename, reporting);
             case 4
                 MimSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'char', reporting)
@@ -92,7 +93,7 @@ function SaveImage(image_data, filename, pathname, filter_index, patient_name, i
                     MimSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'short', reporting)
                 else
                     MimSaveAsMetaheaderAndRaw(image_data, pathname, filename, 'ushort', reporting)
-                end
+                end                
         end
     end
 end

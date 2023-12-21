@@ -27,7 +27,8 @@ function image_info = MimChooseImagingFiles(image_path, reporting)
         '*.xif', 'HDllab/ATL Ultrasound';
         '*.vtk', 'Visualization Toolkit (VTK)';
         '*.vff', 'MicroCT';
-        '*.par;*.rec', 'Philips PAR/REC'
+        '*.par;*.rec', 'Philips PAR/REC';
+        '*.nii.gz', 'Compressed NIFTI [beta]'
         };
 
     [image_path, filenames, filter_index] = CoreDiskUtilities.ChooseFiles('Select the file to import', image_path, true, filespec);
@@ -72,7 +73,7 @@ function image_info = MimChooseImagingFiles(image_path, reporting)
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
 
-    elseif (filter_index == 7)
+    elseif (filter_index == 7) || (filter_index == 14)
         image_type = MimImageFileFormat.Nifti;
         image_info = PTKImageInfo(image_path, {filenames{1}}, image_type, [], [], []);
         return;
