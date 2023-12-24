@@ -1,20 +1,20 @@
 function image_data = DMReconstructDicomImageFromHeader(header, is_little_endian)
     % DMReconstructDicomImageFromHeader. Converts Dicom pixel data into an image
     %
-    % Usage:
+    % Syntax:
     %     image_data = DMReconstructDicomImageFromHeader(header, is_little_endian)
     %
-    %     header - A structure holding the Dicom tags needed for image
+    % Parameters:
+    %     header: A structure holding the Dicom tags needed for image
     %         reconstruction
+    %     is_little_endian: true if the pixel data is little endian
     %
-    %     is_little_endian - true if the pixel data is little endian
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
 
     photometric_interpretation = header.PhotometricInterpretation;

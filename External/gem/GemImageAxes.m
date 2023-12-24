@@ -1,15 +1,15 @@
 classdef GemImageAxes < GemAxes
-    % GemImageAxes GEM control for Matlab axes representing an image
+    % GEM control for Matlab axes representing an image
     %
-    %     GemImageAxes inherits from GemAxes, and includes members for caching axis
-    %     limits based on image orientation.
+    % GemImageAxes inherits from GemAxes, and includes members for caching axis
+    % limits based on image orientation.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = protected)

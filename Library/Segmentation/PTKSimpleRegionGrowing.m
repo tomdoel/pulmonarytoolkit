@@ -1,32 +1,32 @@
 function output_image = PTKSimpleRegionGrowing(threshold_image, start_points_global, reporting)
-    % PTKSimpleRegionGrowing. Performs 3D region growing through the supplied
-    %     binary threshold image, starting from the specified points
+    % Performs 3D region growing through the supplied
+    % binary threshold image, starting from one or more specified points.
+    % 
+    % A single region be produced.
+    %
+    % See Also: PTKMultipleRegionGrowing, PTKSmoothedRegionGrowing
+    %
+    % Example:
+    %     output_image = PTKSimpleRegionGrowing(threshold_image, start_points_global, reporting)
+    %
+    % Parameters:
+    %     threshold_image - The threshold image in a PTKImage class. 1s
+    %         represents voxels which are connected
+    %     start_points - an array of points, where each point is a
+    %         coordinate in the form [i, j, k]. The region growing will
+    %         begin from all these points simultaneously
+    %     reporting (CoreReportingInterface) - object for reporting progress and warnings
+    %
+    % Returns:
+    %     output_image: A binary PTKImage containing the segmented region
+    %                   of all voxels connected to the starting points
     %
     %
-    %     Syntax:
-    %         output_image = PTKSimpleRegionGrowing(threshold_image, start_points_global, reporting)
-    %
-    %         Inputs:
-    %         ------
-    %             threshold_image - The threshold image in a PTKImage class. 1s
-    %                 represents voxels which are connected
-    %             start_points - an array of points, where each point is a
-    %                 coordinate in the form [i, j, k]. The region growing will
-    %                 begin from all these points simultaneously
-    %             reporting - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %
-    %         Outputs:
-    %         -------
-    %             output_image - A binary PTKImage containing the segmented region
-    %                 of all voxels connected to the starting points
-    %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     % Check the input image is of the correct form

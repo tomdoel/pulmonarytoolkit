@@ -5,11 +5,11 @@ classdef MimPanMatlabTool < MimTool
     %     to use Matlab's pan tool.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
         
     properties

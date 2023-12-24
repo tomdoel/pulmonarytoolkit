@@ -1,5 +1,5 @@
 function match = DMAreImageLocationsConsistent(first_metadata, second_metadata, third_metadata)
-    % DMAreImageLocationsConsistent Determines if several Dicom images are
+    % Determine if several Dicom images are
     % parallel and lie approximately on a straight line, i.e. they form a
     % volume
     % 
@@ -7,11 +7,11 @@ function match = DMAreImageLocationsConsistent(first_metadata, second_metadata, 
     % by the coordinates in the ImagePositionPatient Dicom tags)
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %    
     
     % If the ImagePositionPatient tag is not present, assume it is

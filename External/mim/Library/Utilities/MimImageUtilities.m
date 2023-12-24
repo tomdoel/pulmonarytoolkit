@@ -2,11 +2,11 @@ classdef MimImageUtilities
     % MimImageUtilities. Utility functions related to displaying images
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
         
     methods (Static)

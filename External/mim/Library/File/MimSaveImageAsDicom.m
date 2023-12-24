@@ -1,38 +1,36 @@
 function MimSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, dicom_metadata, reporting)
-    % MimSaveImageAsDicom. Saves an image in DICOM format, using Matlab's image processing toolbox
+    % Save an image in DICOM format, using Matlab's image processing toolbox
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     MimSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, reporting)
     %
-    %         MimSaveImageAsDicom(image_data, path, filename, patient_name, is_secondary_capture, reporting)
+    % Parameters:
+    %     image_data: is a PTKImage (or PTKDicomImage) class containing the image
+    %         to be saved
+    %     path: specify the location to save the DICOM data.
+    %     filename: One 2D file will be created for each image slice in the z direction. 
+    %         Each file is numbered, starting from 0.
+    %         So if filename is 'MyImage.DCM' then the files will be
+    %         'MyImage0.DCM', 'MyImage1.DCM', etc.
+    %     patient_name: specifies the patient name to be stored in the image (only
+    %         used when there is no metadata available in the image)
+    %     is_secondary_capture: should be set to true when the image is derived
+    %         (e.g. a segmentation), and should be set to false when the 
+    %         pixel data is unaltered from the original
+    %         image (except for cropping or reordering axes)
+    %     dicom_metadata: a structure containing additional manufacturer tags
+    %         used to consttruct Dicom images
+    %     reporting (CoreReportingInterface):an object
+    %         for reporting progress and warnings
     %
-    %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
-    %                             to be saved
-    %             path, filename  specify the location to save the DICOM data. One 2D file
-    %                             will be created for each image slice in the z direction. 
-    %                             Each file is numbered, starting from 0.
-    %                             So if filename is 'MyImage.DCM' then the files will be
-    %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
-    %             patient_name    specifies the patient name to be stored in the image (only
-    %                             used when there is no metadata available in the image)
-    %             is_secondary_capture  should be set to true when the image is derived
-    %                             (e.g. a segmentation), and should be set to false when the 
-    %                             pixel data is unaltered from the original
-    %                             image (except for cropping or reordering axes)
-    %             dicom_metadata  a structure containing additional manufacturer tags
-    %                             used to consttruct Dicom images
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
     %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %        
-   
-    
+
     % Verify that the image is of the correct class
     if ~isa(image_data, 'PTKImage')
         reporting.Error('MimSaveImageAsDicom:InputMustBePTKImage', 'Requires a PTKImage as input');
@@ -183,4 +181,3 @@ function metadata = CopyField(tag_name, metadata, original_metadata, default)
         end
     end
 end
-

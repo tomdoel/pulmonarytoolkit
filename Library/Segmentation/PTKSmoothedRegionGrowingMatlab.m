@@ -1,35 +1,32 @@
 function output_image = PTKSmoothedRegionGrowingMatlab(threshold_image, start_points_global, smoothing_size_mm, reporting)
-    % PTKSmoothedRegionGrowingMatlab. Performs 3D region growing for multiple
-    %     regions, with a smoothing constraint applied to the region boundaries.
+    % Perform 3D region growing for multiple regions, with a smoothing constraint 
+    % applied to the region boundaries.
     %
     %
-    %     Syntax:
-    %         output_image = PTKSmoothedRegionGrowingMatlab(threshold_image, start_points_global, reporting)
+    % Syntax:
+    %     output_image = PTKSmoothedRegionGrowingMatlab(threshold_image, start_points_global, reporting)
     %
-    %         Inputs:
-    %         ------
-    %             threshold_image - The threshold image in a PTKImage class. 1s
-    %                 represents voxels which are connected
-    %             start_points - an set of starting points, where each element
-    %                 in the set is array of points representing one region.
-    %                 Each point is a global index. The region growing will 
-    %                 begin from all these points simultaneously
-    %             smoothing_size_mm - amoung of smoothing. A larger value will
-    %                 give better results but will be slower
-    %             reporting - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
+    % Parameters:
+    %     threshold_image: The threshold image in a PTKImage class. 1s
+    %         represents voxels which are connected
+    %     start_points: an set of starting points, where each element
+    %         in the set is array of points representing one region.
+    %         Each point is a global index. The region growing will 
+    %         begin from all these points simultaneously
+    %     smoothing_size_mm: amoung of smoothing. A larger value will
+    %         give better results but will be slower
+    %     reporting (CoreReportingInterface): an object 
+    %         for reporting progress and warnings
     %
-    %         Outputs:
-    %         -------
-    %             output_image - A binary PTKImage containing the segmented region
-    %                 of all voxels connected to the starting points
+    % Returns:
+    %     output_image: A binary PTKImage containing the segmented region
+    %         of all voxels connected to the starting points
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     % Check the input image is of the correct form

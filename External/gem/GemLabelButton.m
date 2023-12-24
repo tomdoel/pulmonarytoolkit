@@ -1,13 +1,13 @@
 classdef GemLabelButton < GemVirtualPanel
-    % GemLabelButton GEM class for a button image with label text below
+    % GEM class for a button image with label text below
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = protected)

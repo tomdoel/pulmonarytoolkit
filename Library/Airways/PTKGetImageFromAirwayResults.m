@@ -1,15 +1,15 @@
 function airway_image = PTKGetImageFromAirwayResults(airway_tree, template_image, suppress_small_structures, reporting)
-    % PTKGetImageFromAirwayResults. Creates an image of the segmented airways
+    % Create an image of the segmented airways
     %
-    %     This function takes the airway results structure from the PTKAirways
-    %     plugin and creates an image of the segmented airways.
+    % This function takes the airway results structure from the PTKAirways
+    % plugin and creates an image of the segmented airways.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     image_size = template_image.ImageSize;
@@ -35,4 +35,3 @@ function airway_image = PTKGetImageFromAirwayResults(airway_tree, template_image
     airway_image.ChangeRawImage(airway_image_raw);
     airway_image.ImageType = PTKImageType.Colormap;
 end
-

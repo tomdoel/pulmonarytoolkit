@@ -6,7 +6,7 @@ classdef PTKViewer < GemFigure
     %     matrix is supplied, the type argument can be supplied to ensure the
     %     image is displayed as expected.
     %
-    %     Syntax:
+    %     Example:
     %         obj = PTKViewer;
     %         obj = PTKViewer(image);
     %         obj = PTKViewer(image, image_type);
@@ -32,11 +32,11 @@ classdef PTKViewer < GemFigure
     %         viewer.ViewerPanelHandle.OverlayImage = overlay_image; % Must be a PTKImage
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
 
     properties

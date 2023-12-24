@@ -1,13 +1,29 @@
 function [metrics, emphysema_mask] = PTKComputeEmphysemaFromMask(roi_data, mask)
-    % PTKComputeEmphysemaFromMask. Computes emphysema percentage and percentile
-    % density
+    % Compute emphysema percentage and percentile density
     %
+    % Syntax:
+    %     metrics = PTKComputeEmphysemaFromMask(roi_data, mask);
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %     [metrics, emphysema_mask] = PTKComputeEmphysemaFromMask(roi_data, mask);
+    %
+    % Parameters:
+    %     roi_data (PTKImage):
+    %         the imaged data. This can optionally cropped to the ROI
+    %     mask (PTKImage):
+    %         binary mask defining the context of the image (the region of interest).
+    %         Only voxels in the mask are included in the computation
+    %
+    % Returns:
+    %     metrics (PTKMetrics):
+    %         contains the results of the emphysema computation
+    %     emphysema_mask (PTKImage):
+    %         a binary mask of voxels which have values in the emphsyema threshold
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     
     emphysema_threshold_value_hu_1 = -950;
     emphysema_threshold_value_hu_2 = -910;

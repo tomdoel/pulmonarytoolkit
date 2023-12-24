@@ -1,12 +1,12 @@
 function results_image = PTKGetPrunedAirwayImageFromCentreline(parent_bronchi, child_bronchi, airway_root, template, colour_by_segment_index)
-    % PTKGetPrunedAirwayImageFromCentreline. 
+    % Return an image of the airway centreline, pruned to the child bronchi
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     airways_image = PTKGetAirwayImageFromCentreline(parent_bronchi, airway_root, template, colour_by_segment_index);

@@ -1,23 +1,22 @@
 function MimSaveAsMatlab(image_data, path, filename, reporting)
-    % MimSaveAsMatlab. Saves an image as a Matlab matrix
+    % Save an image as a Matlab matrix
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     MimSaveAsMatlab(image_data, path, filename, reporting);
     %
-    %         MimSaveAsMatlab(image_data, path, filename, reporting)
+    % Parameters:
+    %     image_data: a PTKImage (or PTKDicomImage) class containing the image
+    %                 to be saved
+    %     path, filename: specify the location to save the files.
+    %     reporting (CoreReportingInterface): an object
+    %         for reporting progress and warnings
     %
-    %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
-    %                             to be saved
-    %             path, filename  specify the location to save the files.
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %            
     
     if ~isa(image_data, 'PTKImage')

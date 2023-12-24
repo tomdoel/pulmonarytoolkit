@@ -8,11 +8,11 @@ classdef MimStatusPanel < GemPanel
     %     which shows the current mouse coordinates and the values of the
     %     voxels under the mouse in the image and overlay.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

@@ -1,17 +1,13 @@
 classdef PTKLinkedDatasetAssociatedDatasetRecord < CoreBaseClass
-    % PTKLinkedDatasetAssociatedDatasetRecord. Part of the internal framework of the TD MIM Toolkit.
+    % Used by PTKLinkedDatasetRecorder to store a map of all linked datasets to 
+    % the primary dataset for that linkage.
     %
-    %     PTKLinkedDatasetAssociatedDatasetRecord is used by PTKLinkedDatasetRecorder to store
-    %     a map of all linked datasets to the primary dataset for that linkage.
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the MIM framework
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
 
     properties

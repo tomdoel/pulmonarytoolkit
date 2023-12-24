@@ -1,38 +1,38 @@
 classdef MimDataset < CoreBaseClass
-    % MimDataset. Use this class to obtain results and associated data for a particualar dataset.
+    % Use this class to obtain results and associated data for a particualar dataset.
     %
-    %     This class is used by scripts and GUI applications to run
-    %     calculations, fetch cached results and access data associated with a
-    %     dataset. The difference between MimDataset and MimDatasetResults is that
-    %     MimDataset is called from outside the toolkit, whereas MimDatasetResults
-    %     is called by plugins during their RunPlugin() call. MimDataset
-    %     calls MimDatasetResults, but provides additional progress and error
-    %     reporting and dependency tracking.
+    % This class is used by scripts and GUI applications to run
+    % calculations, fetch cached results and access data associated with a
+    % dataset. The difference between MimDataset and MimDatasetResults is that
+    % MimDataset is called from outside the toolkit, whereas MimDatasetResults
+    % is called by plugins during their RunPlugin() call. MimDataset
+    % calls MimDatasetResults, but provides additional progress and error
+    % reporting and dependency tracking.
     %
-    %     Each dataset will have its own instance of MimDataset.
+    % Each dataset will have its own instance of MimDataset.
     %
-    %     You should not create this class directly. Instead, create an instance of
-    %     the class MimMain and use the methods CreateDatasetFromInfo and
-    %     CreateDatasetFromUid to get a MimDataset object for each dataset you are
-    %     working with.
+    % You should not create this class directly. Instead, create an instance of
+    % the class MimMain and use the methods CreateDatasetFromInfo and
+    % CreateDatasetFromUid to get a MimDataset object for each dataset you are
+    % working with.
     %
-    %     Example: Replace <image path> and <filenames> with the path and filenames
-    %     to your image data.
+    % Example: Replace <image path> and <filenames> with the path and filenames
+    % to your image data.
     %
-    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         mim = MimMain;
-    %         dataset = mim.CreateDatasetFromInfo(image_info);
+    %     image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
+    %     mim = MimMain;
+    %     dataset = mim.CreateDatasetFromInfo(image_info);
     %
-    %     You can then obtain results from this dataset, e.g.
+    % You can then obtain results from this dataset, e.g.
     %
-    %         results = dataset.GetResult('PluginName');
+    %     results = dataset.GetResult('PluginName');
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = private)

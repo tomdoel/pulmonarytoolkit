@@ -1,12 +1,50 @@
 function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, context_no_airways, distance_label, reporting)
-    % PTKMultipleRegionAnalysis. Calculates metrics based on bins
+    % Calculates metrics for an input image over multiple regions (bins).
+    % 
+    % Analysis is performed on the input image (roi). The context mask
+    % defines which voxels wil be included in the analysis.
+    % 
+    % The slice_bins further divide the region of interest into a number
+    % of sub regions, or bins. Metrics are then computed separately for
+    % each bin.
+    %
+    % For example, the PTKDivideVolumeIntoSlices can be used to divide a
+    % lung volume into thick slices in one of the coordinate directions,
+    % and then PTKMultipleRegionAnalysis can be used to cqlculate 
+    % metrics for each of these slices.
+    % 
+    % Parareters:
+    %     slice_bins:
+    %         defines the slices (bins). This is a structure with
+    %         bin_image providing an image with all the regions and 
+    %         bin_regions defining each region. See 
+    %         PTKDivideVolumeIntoSlices for an example of how this is 
+    %         constructed.
+    %     roi:
+    %         the input image
+    %     context_mask:
+    %         a mask for the whole image defining which voxels
+    %         to included in the analysis
+    %     context_mask:
+    %         the context mask with the airways removed.
+    %     distance_label: 
+    %         a string defining the label to add to distance measurements
+    %     reporting (CoreReporting):
+    %          object for error reporting
+    %
+    % Returns:
+    %     an array of PTKMetrics objects, one for each bin, containing measurements
+    %         air tissue fraction (see PTKComputeAirTissueFraction)
+    %         emphysema (see PTKComputeEmphysemaFromMask)
+    %         region number and coordinates
+    %         Distance form the lung base
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     
     results = PTKMetrics.empty();
 

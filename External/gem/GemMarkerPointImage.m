@@ -1,19 +1,14 @@
 classdef GemMarkerPointImage < CoreBaseClass
-    % GemMarkerPointImage. Part of the gui for the Pulmonary Toolkit.
-    %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the gui of the Pulmonary Toolkit.
-    %
-    %     GemMarkerPointImage stores the underlying image which represents marker
-    %     points. It abstracts the storage of the marker image away from the
-    %     interactive creation and use of marker points in the MimViewerPanel.
+    % GemMarkerPointImage stores the underlying image which represents marker
+    % points. It abstracts the storage of the marker image away from the
+    % interactive creation and use of marker points in the MimViewerPanel.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     events

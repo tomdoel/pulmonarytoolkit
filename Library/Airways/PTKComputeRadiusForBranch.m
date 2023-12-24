@@ -1,15 +1,15 @@
 function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_double, radius_approximation, figure_airways_3d, reporting)
-    % PTKComputeRadiusForBranch. Image-derived radius estimation of an airway.
+    % Image-derived radius estimation of an airway.
     %
-    %     PTKComputeRadiusForBranch creates a projection of the lung image
-    %     perpendicular to the centrepoint of the airway branch and uses a FWHM
-    %     method to estimate the airway radius.
+    % PTKComputeRadiusForBranch creates a projection of the lung image
+    % perpendicular to the centrepoint of the airway branch and uses a FWHM
+    % method to estimate the airway radius.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
     image_size = lung_image_as_double.ImageSize;
@@ -240,8 +240,8 @@ function [radius_mm_list, wall_thickness_mm_list, global_coords] = GetRadiusAndC
     end
 end
 
-% For showing the stretched out wall with midpoints and walls superimposed
 function figure_handle = ShowInterpolatedWall(interp_image, midpoints_part, midpoints_mask, wall_mask_upper, wall_mask_lower, outer_wall_mask_upper, outer_wall_mask_lower, midpoint, airway_max_mm)
+    % For showing the stretched out wall with midpoints and walls superimposed
     
     midpoint_colour = 3;
     

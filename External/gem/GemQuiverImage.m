@@ -1,12 +1,12 @@
 classdef GemQuiverImage < GemImage
-    % GemQuiverImage. GEM class for displaying a quiver image object
+    % GEM class for displaying a quiver image object
     %
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = private)

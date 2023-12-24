@@ -1,14 +1,12 @@
 classdef PTKMexInfo < CoreCompiledFileInfo
-    % PTKMexInfo. Structure for caching information about compiled mex files.
+    % Structure for caching information about compiled mex files.
     %
-    %     PTKMexInfo is an internal part of the TD MIM Toolkit
-    %     Framework and should not be called by your own code.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     methods

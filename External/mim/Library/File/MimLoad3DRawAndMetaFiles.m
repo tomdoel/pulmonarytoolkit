@@ -1,26 +1,29 @@
 function dicom_image = MimLoad3DRawAndMetaFiles(path, filenames, study_uid, reporting)
-    % MimLoad3DRawAndMetaFiles. Reads images from raw and meteheader files and returns as a PTKImage.
+    % Read images from raw and meteheader files and returns as a PTKImage.
     %
-    %     Note: Currently assumes that images are CT
+    % Caution:
+    %     Currently assumes that images are CT
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     dicom_image = MimLoad3DRawAndMetaFiles(path, filenames, study_uid, reporting);
     %
-    %         dicom_image = MimLoad3DRawAndMetaFiles(path, filenames, study_uid, reporting)
+    % Parameters:
+    %     dicom_image: a PTKDicomImage class containing the image
+    %     path: The path where the files are located. For the
+    %           current directory, use .
+    %     filenames: the filename of the header file to load.
+    %     reporting (optional): an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
-    %             dicom_image     is a PTKDicomImage class containing the image
-    %             path            The path where the files are located. For the
-    %                             current directory, use .
-    %             filenames       the filename of the header file to load.
-    %             reporting (optional) - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
+    % Returns:
+    %     dicom_image (PTKDicomImage): object containing loaded image data
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %        
 
     if nargin < 4

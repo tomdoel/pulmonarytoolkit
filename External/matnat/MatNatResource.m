@@ -1,11 +1,11 @@
 classdef MatNatResource < MatNatBase
-    % MatNatResource An object representing an XNAT resource
+    % An object representing an XNAT resource
     %
-    %     Licence
-    %     -------
-    %     Part of MatNat. https://github.com/tomdoel/matnat
-    %     Author: Tom Doel, 2015.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of MatNat. https://github.com/tomdoel/matnat
+    %    Author: Tom Doel, 2015.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
     
     properties (SetAccess = protected)

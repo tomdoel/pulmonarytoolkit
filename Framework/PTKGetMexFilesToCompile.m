@@ -1,12 +1,12 @@
 function mex_files_to_compile_map = PTKGetMexFilesToCompile(reporting)
-    % PTKGetMexFilesToCompile. Returns a list of mex files used by PTK
+    % Return a list of mex files used by PTK
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     root_dir = PTKDirectories.GetSourceDirectory();

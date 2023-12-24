@@ -3,11 +3,11 @@ function results = PTKComputeVentilatedVolume(ventilation_mask, region_mask)
     %     ventilation in gas MRI images
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
 
     ventilation_mask_raw = ventilation_mask.RawImage > 0;
     ventilation_mask_raw = ventilation_mask_raw & region_mask.RawImage > 0;

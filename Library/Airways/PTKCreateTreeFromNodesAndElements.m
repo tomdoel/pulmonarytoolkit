@@ -1,12 +1,12 @@
 function root_branch = PTKCreateTreeFromNodesAndElements(node_index_list, xc, yc, zc, radius_list, node_index_1, node_index_2, reporting)
-    % PTKCreateTreeFromNodesAndElements. Converts a list of nodes into a PTKModelTree
+    % Converts a list of nodes into a PTKModelTree
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
     start_nodes = PTKConvertListsToNodes(node_index_list, xc, yc, zc, radius_list, node_index_1, node_index_2, reporting);

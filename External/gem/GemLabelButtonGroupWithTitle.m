@@ -1,14 +1,13 @@
 classdef GemLabelButtonGroupWithTitle < GemVirtualPanel
-    % GemLabelButtonGroupWithTitle GEM class for a group of label buttons
-    % with a title above
+    % GEM class for a group of label buttons with a title above
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = private)

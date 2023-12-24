@@ -1,12 +1,12 @@
 classdef DMDicomDictionary < handle
-    % DMDicomDictionary Builds a dictionary for use with DMReadDicomTags
+    % Build a dictionary for use with DMReadDicomTags
     %
-    %    DMDicomDictionary can be used to construct a dictionary containing
-    %    the Dicom tags you wish to read in using DMReadDicomTags. A
-    %    smaller subset of tags can reduce the time taken to parse a Dicom
-    %    file.
+    % DMDicomDictionary can be used to construct a dictionary containing
+    % the Dicom tags you wish to read in using DMReadDicomTags. A
+    % smaller subset of tags can reduce the time taken to parse a Dicom
+    % file.
     %
-    % Usage:
+    % Examples:
     %    Several static factory methods provide useful dictionaties for
     %    most purposes:
     %    
@@ -27,11 +27,11 @@ classdef DMDicomDictionary < handle
     %         the pixel data
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %    
 
     properties

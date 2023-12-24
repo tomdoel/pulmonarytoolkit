@@ -1,56 +1,55 @@
 function [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, sorted_positions] = DMLoadMainImageFromDicomFiles(imagePath, filenames, dicomLibrary, reporting)
-    % DMLoadMainImageFromDicomFiles Loads a series of DICOM files into a coherent 3D volume.
+    % Load a series of DICOM files into a coherent 3D volume.
     %
     % DMLoadMainImageFromDicomFiles parses the Dicom files and groups them into
     % coherent image volumes. The largest image volume is returned as a 3D
     % image volume in a CoreWrapper object.
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, sorted_positions] = DMLoadMainImageFromDicomFiles(path, filenames, dicomLibrary, reporting);
     %
-    %         [imageWrapper, representativeMetadata, sliceThickness, globalOriginMm, sorted_positions] = DMLoadMainImageFromDicomFiles(path, filenames, dicomLibrary, reporting)
+    % Parameters:
+    %     imageWrapper    a CoreWrapper containing the 3D volume
     %
-    %             imageWrapper    a CoreWrapper containing the 3D volume
+    %     representativeMetadata  metadata from one slice of the main group
     %
-    %             representativeMetadata  metadata from one slice of the main group
+    %     sliceThickness the computed distance between
+    %                     centrepoints of each slice
     %
-    %             sliceThickness the computed distance between
-    %                             centrepoints of each slice
+    %     globalOriginMm  The mm coordinates of the image origin
     %
-    %             globalOriginMm  The mm coordinates of the image origin
+    %     sorted_positions  Patient positions for each slice in the
+    %                     sorted order
     %
-    %             sorted_positions  Patient positions for each slice in the
-    %                             sorted order
+    %     path, filenames  specify the location of the DICOM files to
+    %                     load. filenames can be a string for a
+    %                     single filename, or a cell array of
+    %                     strings
     %
-    %             path, filenames  specify the location of the DICOM files to
-    %                             load. filenames can be a string for a
-    %                             single filename, or a cell array of
-    %                             strings
+    %     dicomLibrary    (Optional) An object implementing
+    %                     DMDicomLibraryInterface, used to parse
+    %                     the Dicom files. If no object is provided
+    %                     then the default DMDicomLibrary is used
     %
-    %             dicomLibrary    (Optional) An object implementing
-    %                             DMDicomLibraryInterface, used to parse
-    %                             the Dicom files. If no object is provided
-    %                             then the default DMDicomLibrary is used
-    %
-    %             reporting       (Optional) An object implementing
-    %                             CoreReportingInterface for error, warning
-    %                             and progress reporting. If no object is
-    %                             provided then a default reporting object
-    %                             is created.
-    %
+    %     reporting       (Optional) An object implementing
+    %                     CoreReportingInterface for error, warning
+    %                     and progress reporting. If no object is
+    %                     provided then a default reporting object
+    %                     is created.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    %
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
 
     
     % Create a reporting object if none was provided
     if nargin < 4 || isempty(reporting)
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     % Create a library object if none was provided

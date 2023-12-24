@@ -1,21 +1,22 @@
 function isDicom = DMisdicom(fileName)
-    % DMisdicom. Tests whether a file is in DICOM format
+    % Test whether a file is in DICOM format
     %
-    % Usage:
+    % Syntax:
     %     isDicom = DMisdicom(fileName)
     %
+    % Parameters:
     %     fileName: path and filename of the file to test
     %
-    %  Returns:
+    % Returns:
     %     true if the file appears to be a Dicom file
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
     
     fileId = fopen(fileName);

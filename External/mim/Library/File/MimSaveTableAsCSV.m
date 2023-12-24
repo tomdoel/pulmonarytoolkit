@@ -1,14 +1,28 @@
 function MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, context_list, reporting)
-    % MimSaveTableAsCSV.
+    % Output a MimResultsTable as one or more CSV files
     %
-    %     filters is used to filter each of the four dimensions of patient name,
-    %     metric name, context name and slice number
+    %     
+    % Syntax:
+    %     MimSaveTableAsCSV(file_path, file_name, table, file_dim, row_dim, col_dim, filters, context_list, reporting);
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % Parameters:
+    %     file_path: path where the CSV file is to be stored
+    %     file_name: name of the output CSV file
+    %     table (MimResultsTable): table object containing the data to export
+    %     file_dim: the dimension to iterate over when saving out files
+    %     row_dim: the dimension to iterate over when saving out rows
+    %     col_dim: the dimension to iterate over when saving out columns
+    %     filters: used to filter each of the four dimensions of patient name, metric name, context name and slice number
+    %     context_list: Contexts to include
+    %     reporting (CoreReportingInterface): an object implementing 
+    %         for reporting progress and warnings
+    %
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %       
 
     other_dim = setdiff([1,2,3,4], [file_dim, row_dim, col_dim]);
@@ -131,4 +145,3 @@ function sorted_values = Sort(values_to_sort, filter_index, context_list)
         sorted_values = values_to_sort;
     end
 end
-

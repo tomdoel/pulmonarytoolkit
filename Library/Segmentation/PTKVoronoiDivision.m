@@ -1,31 +1,31 @@
 function labeled_subregion_mask = PTKVoronoiDivision(region_mask, start_points, reporting)
-    % PTKVoronoiDivision. Allocates voxels in an image region to the nearest label
+    % Allocates voxels in an image region to the nearest label
     %
-    %     PTKVoronoiDivision takes an image region defined by the boolean image 
-    %         region_mask. The region is subdivided into subregions, by grouping
-    %         voxels according to the nearest point in start_points. Each
-    %         subregion is allocated the colour of its corresponding
-    %         start_point. The output image is therefore a label matrix.
-    
-    %         The input start_points can either be a labelled PTKImage, with
-    %         positive values representing start points. Voxels of value 1 will
-    %         be used to define subregion 1, those of value 2 will define
-    %         subregion 2 etc. 
+    % PTKVoronoiDivision takes an image region defined by the boolean image 
+    % region_mask. The region is subdivided into subregions, by grouping
+    % voxels according to the nearest point in start_points. Each
+    % subregion is allocated the colour of its corresponding
+    % start_point. The output image is therefore a label matrix.
+
+    % The input start_points can either be a labelled PTKImage, with
+    % positive values representing start points. Voxels of value 1 will
+    % be used to define subregion 1, those of value 2 will define
+    % subregion 2 etc. 
+
+    % Alternatively, start_points can be a set of
+    % regions, each member of which is a vector of start points for that
+    % region. Each start point is defined by its global index.
+    % So if start_points == {[1, 3, 5], [490, 138]}, then the first set
+    % member [1,3,5] represents points with label 1, and the second set
+    % member [490, 138] represets points with label 2. There are five
+    % start points altogether, and each is defined by its global index.
     %
-    %         Alternatively, start_points can be a set of
-    %         regions, each member of which is a vector of start points for that
-    %         region. Each start point is defined by its global index.
-    %         So if start_points == {[1, 3, 5], [490, 138]}, then the first set
-    %         member [1,3,5] represents points with label 1, and the second set
-    %         member [490, 138] represets points with label 2. There are five
-    %         start points altogether, and each is defined by its global index.
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
      
     if ~isa(region_mask, 'PTKImage')

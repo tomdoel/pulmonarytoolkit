@@ -1,12 +1,12 @@
 function results_image = PTKColourBranchesBelowLobe(start_branches, airway_tree, template)
-    % PTKColourBranchesBelowLobe. Given a set of labelled branches, this creates an output image with all the subtrees coloured by lobe
+    % Given a set of labelled branches, this creates an output image with all the subtrees coloured by lobe
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     left_upper_startindices = start_branches.LeftUpper;

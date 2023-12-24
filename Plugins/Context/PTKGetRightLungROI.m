@@ -1,22 +1,22 @@
 classdef PTKGetRightLungROI < PTKPlugin
     % PTKGetRightLungROI. Plugin for finding the right lung region of interest.
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
-    %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See PTKPlugin.m for more information on how to run plugins.
+    % This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    % the gui, or through the interfaces provided by the Pulmonary Toolkit.
+    % See PTKPlugin.m for more information on how to run plugins.
     %
-    %     Plugins should not be run directly from your code.
+    % Plugins should not be run directly from your code.
     %
     %     PTKGetRightLungROI runs the library function PTKLeftAndRightLungs to 
     %     segment the left and right lungs, and uses this to determine a region 
     %     of interest for the right lung only.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
     properties

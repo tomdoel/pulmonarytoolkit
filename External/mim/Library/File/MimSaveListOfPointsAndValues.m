@@ -1,29 +1,26 @@
 function MimSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_list, coordinate_system, template_image)
-    % MimSaveListOfPointsAndValues. Exports a list of coordinates and values
+    % Export a list of coordinates and values
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     MimSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_list, template_image, reporting)
     %
-    %         MimSaveListOfPointsAndValues(file_path, file_name, xc, yc, zc, value_list, template_image, reporting)
-    %
-    %             file_path       is the path where the output file is to be 
-    %                             stored
-    %             file_name       is the file name
-    %             xc, yc, zx      are the coordinates in PTK cordinates
-    %             coordinate_system  a MimCoordinateSystem enumeration
-    %                             specifying the coordinate system to use
-    %             template_image  A PTKImage providing voxel size and image size
-    %                             parameters
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
+    % Parameters:
+    %     file_path: path where the output file is to be stored
+    %     file_name: the file name
+    %     xc, yc, zx: the coordinates in PTK cordinates
+    %     coordinate_system (MimCoordinateSystem): enumeration
+    %         specifying the coordinate system to use
+    %     template_image: A PTKImage providing voxel size and image size parameters
+    %     reporting (CoreReportingInterface): an object implementing 
+    %         for reporting progress and warnings
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %        
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
+    %
 
     if nargin < 7
         reporting.Error('MimSaveListOfPointsAndValues:BadArguments', 'No coordinate_system parameter specified');

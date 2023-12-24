@@ -1,31 +1,27 @@
 function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix, coordinate_system, template_image, reporting)
-    % PTKLoadCentrelineTreeFromNodes. Load a tree strucure from centreline points stored in node/element files
+    % Load a tree strucure from centreline points stored in node/element files
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix, reporting)
     %
-    %         root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix, reporting)
+    % Parameters:
+    %     root_branch: the root branch in a PTKTreeModel structure 
+    %     file_path: the path where the node and element files are to be stored
+    %     filename_prefix: the filename prefix. The node and element files will have '_node.txt' 
+    %                      and '_element.txt' appended to this prefix before saving.
+    %     coordinate_system: a MimCoordinateSystem enumeration
+    %                        specifying the coordinate system to use
+    %     template_image: may be required, depending on the value of
+    %                     coordinate_system. Provides the required
+    %                     parameters for reconstructing the centreline tree.
+    %     reporting (optional): an object implementing CoreReportingInterface
+    %                           for reporting progress and warnings
     %
-    %             root_branch     is the root branch in a PTKTreeModel structure 
-    %             file_path       is the path where the node and element files
-    %                             are to be stored
-    %             filename_prefix is the filename prefix. The node and element
-    %                             files will have '_node.txt' and '_element.txt'
-    %                             appended to this prefix before saving.
-    %             coordinate_system  a MimCoordinateSystem enumeration
-    %                             specifying the coordinate system to use
-    %             template_image  may be required, depending on the value of
-    %                             coordinate_system. Provides the required
-    %                             parameters for reconstructing the centreline
-    %                             tree.
-    %             reporting (optional) - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
     if nargin < 3
@@ -135,4 +131,3 @@ function root_branch = PTKLoadCentrelineTreeFromNodes(file_path, filename_prefix
 %     root_branch.RemoveTerminatingNodes;
     
 end
-

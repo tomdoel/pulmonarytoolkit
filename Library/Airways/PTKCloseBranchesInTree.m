@@ -1,16 +1,15 @@
 function airway_tree = PTKCloseBranchesInTree(airway_tree, closing_size_mm, image_size, reporting)
-    % PTKCloseBranchesInTree. Takes a segmented airway tree and
-    %     performs a morphological closing on each segment, and between each segment
-    %     and its child segments.
+    % Takes a segmented airway tree and performs a morphological closing 
+    % on each segment, and between each segment and its child segments.
     %
     % This function is used by PTKAirwayRegionGrowingWithExplosionControl.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     if ~exist('reporting', 'var')
@@ -83,4 +82,3 @@ function new_points = GetClosedIndices(voxel_indices, closing_size_mm, image_siz
     all_points = find(bordered_segment_image.RawImage(:));
     new_points = MimImageCoordinateUtilities.OffsetIndices(int32(all_points), -border_offset + int32(offset), int32(bordered_image_size), int32(image_size));
 end
-

@@ -1,15 +1,15 @@
 classdef MimReportingWithCache < CoreReportingWithCache
-    % MimReportingWithCache. Provides error, message and progress reporting.
+    % Provides error, message and progress reporting.
     %
-    %     MimReportingWithCache extends CoreReportingWithCache to provide
-    %     additional, MIM-specific functions
+    % MimReportingWithCache extends CoreReportingWithCache to provide
+    % additional, MIM-specific functions
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
 
     properties (Access = private)
@@ -52,4 +52,3 @@ classdef MimReportingWithCache < CoreReportingWithCache
         end
     end
 end
-

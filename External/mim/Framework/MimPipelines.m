@@ -1,26 +1,26 @@
 classdef MimPipelines < CoreBaseClass
-    % MimPipelines. Part of the internal framework of the TD MIM Toolkit.
+    % Part of the internal framework of the TD MIM Toolkit.
     %
-    %     This class is used to execute Plugins automatically, triggered by
-    %     the completion of other Plugins. This automatic triggering is
-    %     called a Pipeline. A Pipeline might be used to perform some
-    %     automatic operation.
+    % This class is used to execute Plugins automatically, triggered by
+    % the completion of other Plugins. This automatic triggering is
+    % called a Pipeline. A Pipeline might be used to perform some
+    % automatic operation.
     
-    %     Pipelines can also be used to more efficiently
-    %     generate results which depend on some other result. For example,
-    %     suppose plugins A and B depends on plugin C, but suppose you do
-    %     not wish to cache the results of C permanently. Calling A will
-    %     result in a call to C; it may be efficient to also compute B
-    %     while the result of C is available in memory. This can be accomplished by
-    %     creating a pipeline such that B is called automatically when C is
-    %     run. For this to work, the result of C should have its memory
-    %     cache policy set to at least temporary.
+    % Pipelines can also be used to more efficiently
+    % generate results which depend on some other result. For example,
+    % suppose plugins A and B depends on plugin C, but suppose you do
+    % not wish to cache the results of C permanently. Calling A will
+    % result in a call to C; it may be efficient to also compute B
+    % while the result of C is available in memory. This can be accomplished by
+    % creating a pipeline such that B is called automatically when C is
+    % run. For this to work, the result of C should have its memory
+    % cache policy set to at least temporary.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

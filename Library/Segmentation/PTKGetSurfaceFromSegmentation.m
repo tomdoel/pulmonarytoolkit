@@ -1,15 +1,15 @@
 function segmentation = PTKGetSurfaceFromSegmentation(segmentation, exclude_direction)
-    % PTKGetSurfaceFromSegmentation. Finds the surface of a segmented 3D binary volume.
+    % Find the surface of a segmented 3D binary volume.
     %
     % The input and output images are raw image matrices containing a mask of 0s
     % and 1s where 1 is a segmented voxel.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     if nargin < 2

@@ -1,17 +1,17 @@
 classdef GemProgressPanel < CoreProgressInterface
-    % GemProgressPanel. A panel used to report progress informaton
+    % A panel used to report progress informaton
     %
-    %     GemProgressPanel implements the CoreProgressInterface, which is an
-    %     interface used by applications that use CoreMat to report the progress of
-    %     operations. This panel is displayed over the centre of the panel
-    %     object whose handle is supplied in the constructor.
+    % GemProgressPanel implements the CoreProgressInterface, which is an
+    % interface used by applications that use CoreMat to report the progress of
+    % operations. This panel is displayed over the centre of the panel
+    % object whose handle is supplied in the constructor.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties

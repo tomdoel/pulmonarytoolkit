@@ -1,24 +1,24 @@
 function MimSaveAsNifti(image_to_save, path, filename, reporting)
-    % MimSaveAsNifti. Writes out a PTKImage in NIFTI format
+    % Write out a PTKImage in NIFTI format
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     MimSaveAsNifti(image_data, path, filename, data_type, orientation, reporting);
     %
-    %         MimSaveAsNifti(image_data, path, filename, data_type, orientation, reporting)
+    % Parameters:
+    %     image_to_save: a PTKImage (or PTKDicomImage) class containing the image
+    %         to be saved
+    %     path: specify the location to save the NIFTI data
+    %     filename: specify the filename
+    %     reporting (CoreReportingInterface):an object
+    %         for reporting progress and warnings
     %
-    %             image_to_save   is a PTKImage (or PTKDicomImage) class containing the image
-    %                             to be saved
-    %             path, filename  specify the location to save the NIFTI data.
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
     %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %        
     
     if nargin < 4
         reporting = CoreReportingDefault();
@@ -48,4 +48,3 @@ function MimSaveAsNifti(image_to_save, path, filename, reporting)
     nii_data = make_nii(image_data, resolution, offset, [], image_to_save.Title);
     save_nii(nii_data, full_filename);
 end
-

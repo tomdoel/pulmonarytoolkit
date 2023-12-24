@@ -1,20 +1,31 @@
 function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, trachea_top_local, reporting)
-    % PTKSeparateAndLabelLungs. Separates left and right lungs from a lung
-    %     segmentation.
+    % Separate left and right lungs from a lung segmentation.
     %
-    %     The left and right lungs are separated using morphological opening
-    %     with spherical structural element of increasing size until the left
-    %     and right components are separated. Then any voxels removed by the
-    %     opening are added to the left and right segmentations using a
-    %     watershed algorithm based on the supplied (filtered) image data.
+    % The left and right lungs are separated using morphological opening
+    % with spherical structural element of increasing size until the left
+    % and right components are separated. Then any voxels removed by the
+    % opening are added to the left and right segmentations using a
+    % watershed algorithm based on the supplied (filtered) image data.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    
-    both_lungs = unclosed_lungs.Copy;
+    % Syntax:
+    %     both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, trachea_top_local, reporting);
+    %
+    % Parameters:
+    %     unclosed_lungs (PTKImage): Binary segmentation of the lungs which may contain holes
+    %     filtered_threshold_lung (PTKImage) Binary segmentation of the original image after 
+    %         a smoothing operation and lung threshold has been applied
+    %     lung_roi (PTKImage): original image data
+    %     trachea_top_local: Local coordinates of the top point of the trachea, relative to the lung ROI
+    %     reporting (CoreReportingInterface): for error and progress reporting
+    %     
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
+
+    both_lungs = unclosed_lungs.Copy();
     
     % We first use a wide threshold for the lung values and attempt to
     % separate. If not readily separable, then we will try a narrower

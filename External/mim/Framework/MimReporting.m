@@ -1,39 +1,39 @@
 classdef MimReporting < CoreReporting
-    % MimReporting. Provides error, message and progress reporting.
+    % Provides error, message and progress reporting.
     %
-    %     MimReporting is an extension of CoreReporting. CoreReporting
-    %     provides error, progress and warning methods for MIM routines.
-    %     MimReporting provides additional methods allowing updates to a
-    %     MIM viewer if it exists.
+    % MimReporting is an extension of CoreReporting. CoreReporting
+    % provides error, progress and warning methods for MIM routines.
+    % MimReporting provides additional methods allowing updates to a
+    % MIM viewer if it exists.
     %
-    %     The purpose of MimReporting is to allow algorithms to manipulate
-    %     the viewer for the benefit of the user (e.g. updating the
-    %     segmentatino in real time) while fully supporting non-gui modes.
+    % The purpose of MimReporting is to allow algorithms to manipulate
+    % the viewer for the benefit of the user (e.g. updating the
+    % segmentatino in real time) while fully supporting non-gui modes.
     %
-    %     Usage
-    %     -----
+    % Usage
+    % -----
     %
-    %     Normally you would not create MimReporting directly. If you are
-    %     implementing a MimPlugin then a suitable MimReporting object is
-    %     passed in when your plugin is called, and that is the object you
-    %     should pass to any library function that requires a MimReporting.
+    % Normally you would not create MimReporting directly. If you are
+    % implementing a MimPlugin then a suitable MimReporting object is
+    % passed in when your plugin is called, and that is the object you
+    % should pass to any library function that requires a MimReporting.
     %
-    %     If you are directly calling a library function from outside of
-    %     the Mim Framework, you can create a CoreReportingDefault object
-    %     for default erorr and progress reporting.
+    % If you are directly calling a library function from outside of
+    % the Mim Framework, you can create a CoreReportingDefault object
+    % for default erorr and progress reporting.
     %
-    %     See CoreReporting.m and CoreReportingIntertface.m for details of
-    %     the methods this class implements.
+    % See CoreReporting.m and CoreReportingIntertface.m for details of
+    % the methods this class implements.
     %
-    %     You only need to create your own MimReporting class if you want
-    %     to customise error and progress reporting.
+    % You only need to create your own MimReporting class if you want
+    % to customise error and progress reporting.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
 
     properties (Access = private)

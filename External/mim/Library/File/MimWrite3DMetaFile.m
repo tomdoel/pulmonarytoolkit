@@ -1,24 +1,23 @@
 function MimWrite3DMetaFile(header_filename, image, resolution, data_type, offset, orientation, reporting)
-    % MimWrite3DMetaFile. Writes out raw image data in metaheader & raw format
+    % Writes out raw image data in metaheader and raw format
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     MimWrite3DMetaFile(header_filename, image, resolution, data_type, offset, orientation, reporting);
     %
-    %         MimWrite3DMetaFile(header_filename, image, resolution, data_type, offset, orientation, reporting)
+    % Parameters:
+    %     header_filename: full path to the header file
+    %     image: 3D raw image to be saved
+    %     resolution: voxel size in Matlab dimension order (y-x-z)
+    %     data_type: for example uint8, char, short
+    %     offset: offset coordinates to be written into header
+    %     orientation (MimImageOrientation): orientation of the image
     %
-    %             header_filename - full path to the header file
-    %             image - 3D raw image to be saved
-    %             resolution - voxel size in Matlab dimension order (y-x-z)
-    %             data_type - uint8, char, short
-    %             offset
-    %             orientation - of type MimImageOrientation
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     if nargin < 7
@@ -99,4 +98,3 @@ function MimWrite3DMetaFile(header_filename, image, resolution, data_type, offse
     fwrite(fid, image, data_type);
     fclose(fid);
 end
-    

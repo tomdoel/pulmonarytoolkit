@@ -1,41 +1,37 @@
 function results_image = PTKColourBranchesByLobe(start_branches, airway_tree, template)
-    % PTKColourBranchesByLobe. Given a set of labelled branches, this creates an output image with all the subtrees coloured by lobe
+    % Given a set of labelled branches, this creates an output image with all the subtrees coloured by lobe
     %
-    % Usage:
+    % Syntax:
     %
     %     results_image = PTKColourBranchesByLobe(start_branches, airway_tree, template)
     %
-    % Inputs:
-    %
-    %     start_branches : The lobar start branches from PTKGetAirwaysLabelledByLobe
-    %
-    %     airway_tree : the root PTKTreeSegment of a segmented airway tree
+    % Parameters:
+    %     start_branches:
+    %         The lobar start branches from PTKGetAirwaysLabelledByLobe
+    %     airway_tree: 
+    %         the root PTKTreeSegment of a segmented airway tree
     %         structure produced by PTKAirwayRegionGrowingWithExplosionControl
-    %
-    %     template : A PTKImage representing the region of interest used by the
+    %     template (PTKImage): A PTKImage representing the region of interest used by the
     %         centreline algorithm
     %
-    %
-    %
-    %  Output:
-    %     results_image : An image showing the segmented airways labelled by lobe.
-    %         The following colours are used:
-    %             1 (blue)   : Right upper lobe
-    %             2 (green)  : Right middle lobe
-    %             4 (cyan)   : Right lower lobe
-    %             5 (magenta): Left lower lobe
-    %             6 (yellow) : Left upper lobe
-    %
-    %             3 (red)    : Uncertain - unable to allocate to a lobe
-    %             7 (grey)   : Airways supplying more than one lobe (before the
+    % Returns:
+    %     results_image is an image showing the segmented airways labelled by lobe.
+    %     The following colours are used:
+    %         - 1 (blue)   : Right upper lobe
+    %         - 2 (green)  : Right middle lobe
+    %         - 4 (cyan)   : Right lower lobe
+    %         - 5 (magenta): Left lower lobe
+    %         - 6 (yellow) : Left upper lobe
+    %         - 3 (red)    : Uncertain - unable to allocate to a lobe
+    %         - 7 (grey)   : Airways supplying more than one lobe (before the
     %                          lobar bifurcations)
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     start_segment = start_branches.Trachea;

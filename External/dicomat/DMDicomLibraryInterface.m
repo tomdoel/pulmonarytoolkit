@@ -1,17 +1,16 @@
 classdef DMDicomLibraryInterface < CoreBaseClass
-    % DMDicomLibraryInterface Interface for a class that parses Dicom
-    % files.
+    % Interface for a class that parses Dicom files
     %
     % This interface allows you to use your own Dicom parsing libraries
     % with DicoMat functions, by wrapping them up in a class that
     % implements this interface.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2015.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2015.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
     
     methods (Abstract)

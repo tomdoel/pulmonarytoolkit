@@ -1,22 +1,22 @@
 classdef CoreProgressInterface < CoreBaseClass
-    % CoreProgressInterface. Interface for classes which implement a progress bar.
+    % Interface for classes which implement a progress bar.
     %
-    %     The CoreReporting class uses this interface to display and update a
-    %     progress bar and associated text. The CoreProgressDialog class
-    %     implements the progress bar as a standard Matlab progress dialog,
-    %     whereas other implementations may implement a custom progress panel for an
-    %     existing figure.
+    % The CoreReporting class uses this interface to display and update a
+    % progress bar and associated text. The CoreProgressDialog class
+    % implements the progress bar as a standard Matlab progress dialog,
+    % whereas other implementations may implement a custom progress panel for an
+    % existing figure.
     %
-    %     You can implement custom progress reporting by creating a class which
-    %     implements this interface, and then passing an instance of your
-    %     progress class into CoreReporting.
+    % You can implement custom progress reporting by creating a class which
+    % implements this interface, and then passing an instance of your
+    % progress class into CoreReporting.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     methods (Abstract)

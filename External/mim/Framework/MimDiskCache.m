@@ -1,22 +1,17 @@
 classdef MimDiskCache < handle
-    % MimDiskCache. Part of the internal framework of the TD MIM Toolkit.
+    % Used to cache image analysis results for a particular dataset.
+    % This class stores a list of dependencies for a particular plugin 
+    % result, for a particular dataset. Each dependency represents another 
+    % plugin result which was accessed during the generation of this result. 
+    % These are used to ensure that any given result is still valid, by 
+    % ensuring that the dependency list matches the dependencies currently 
+    % held in the cache for each plugin.
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
-    %
-    %     Used to cache image analysis results for a particular dataset.
-    %     This class stores a list of dependencies for a particular plugin 
-    %     result, for a particular dataset. Each dependency represents another 
-    %     plugin result which was accessed during the generation of this result. 
-    %     These are used to ensure that any given result is still valid, by 
-    %     ensuring that the dependency list matches the dependencies currently 
-    %     held in the cache for each plugin.
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %        
     
     properties (SetAccess = private)

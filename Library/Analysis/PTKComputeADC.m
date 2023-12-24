@@ -1,7 +1,7 @@
 function adc = PTKComputeADC(weighted_image_1, weighted_image_2, bvalue_1, bvalue_2, max_value)
-    % PTKComputeADC. Computes an ADC image from two images with weighted diffusion.
+    % Compute an ADC image from two images with weighted diffusion.
     %
-    % Inputs:
+    % Parameters:
     %     weighted_image_1 - weighted diffusion image or unweighted ventilation image in a PTKImage class
     %     weighted_image_2 - weighted diffusion image or unweighted ventilation image in a PTKImage class
     %     b_value_1 - the comptued b_value of weighted_image_1 (zero for an unweighted image)
@@ -9,17 +9,17 @@ function adc = PTKComputeADC(weighted_image_1, weighted_image_2, bvalue_1, bvalu
     %     max_value - Threshold for the maximum allowed value in the output ADC.
     %          Values above this are assumed to be noise and set to zero
     %
-    % Outputs:
-    %     adc - a PTKImage containing the computed ADC values at each voxel
+    % Returns:
+    %     PTKImage: a PTKImage containing the computed ADC values at each voxel
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    adc = weighted_image_1.BlankCopy;
+    adc = weighted_image_1.BlankCopy();
     S1 = double(weighted_image_1.RawImage);
     S2 = double(weighted_image_2.RawImage);
     

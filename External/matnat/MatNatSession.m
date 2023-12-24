@@ -1,11 +1,11 @@
 classdef MatNatSession < MatNatBase
-    % MatNatSession A Matlab class representing an XNAT session
+    % A Matlab class representing an XNAT session
     %
-    %     Licence
-    %     -------
-    %     Part of MatNat. https://github.com/tomdoel/matnat
-    %     Author: Tom Doel, 2015.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of MatNat. https://github.com/tomdoel/matnat
+    %    Author: Tom Doel, 2015.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
     
     properties (SetAccess = protected)

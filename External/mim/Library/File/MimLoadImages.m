@@ -1,15 +1,24 @@
 function image = MimLoadImages(image_info, reporting)
-    % MimLoadImages. Loads images specified in a PTKImageInfo structure
+    % Load images specified in a PTKImageInfo structure
+    %
+    % Syntax:
+    %     image = MimLoadImages(image_info, reporting);
+    %
+    % Parameters:
+    %     image_info: PTKImageInfo struture defining the images to load
+    %     reporting (CoreReportingInterface): object for reporting 
+    %         progress and warnings
+    %
+    % Returns:
+    %     image: PTKImage object containing data from the loaded series
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
-    
-    
     
     image_path = image_info.ImagePath;
     filenames = image_info.ImageFilenames;

@@ -1,5 +1,14 @@
 function CoreAddPaths(varargin)
-    
+    % Adds paths required for CoreMat
+    %
+    %
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
+    %    
+
     force = nargin > 0 && strcmp(varargin{1}, 'force');
     
     % This version number should be incremented whenever new paths are added to

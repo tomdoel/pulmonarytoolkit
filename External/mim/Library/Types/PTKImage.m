@@ -1,43 +1,44 @@
 classdef (ConstructOnLoad = true) PTKImage < handle
     % PTKImage. A class for holding a 3D image volume.
     %
-    %     PTKImage is the fundamental image class used by the TD MIM Toolkit.
-    %     It stores the image data and associated metadata, such as the voxel
-    %     size, and maintains the knowledge of the relationship between this
-    %     image and the image it was derived from after cropping and scaling
-    %     operations. This class also provides a variety of utility routines for
-    %     cropping, scaling, generating thumbnail images, fast saving/loading to
-    %     disk, morphological operations, and the ability to extract out
-    %     subimages, modify them and reinsert them.
+    % PTKImage is the fundamental image class used by the TD MIM Toolkit.
+    % It stores the image data and associated metadata, such as the voxel
+    % size, and maintains the knowledge of the relationship between this
+    % image and the image it was derived from after cropping and scaling
+    % operations. This class also provides a variety of utility routines for
+    % cropping, scaling, generating thumbnail images, fast saving/loading to
+    % disk, morphological operations, and the ability to extract out
+    % subimages, modify them and reinsert them.
     %
-    %     Any function which takes a PTKImage as input, should also return a
-    %     PTKImage as output, with the metadata preserved. You can do this by
-    %     creating a 'template image' using the BlankCopy() method, e.g.
+    % Any function which takes a PTKImage as input, should also return a
+    % PTKImage as output, with the metadata preserved. You can do this by
+    % creating a 'template image' using the BlankCopy() method, e.g.
     %
-    %         % This function doubles the values in a PTKImage
-    %         function output_image = DoubleImage(input_image)
+    % Example:
+    %     % This function doubles the values in a PTKImage
+    %     function output_image = DoubleImage(input_image)
     %
-    %             % Creates a template image with no data, but with metadata
-    %             % matching the input image
-    %             output_image = input_image.BlankCopy();
+    %         % Creates a template image with no data, but with metadata
+    %         % matching the input image
+    %         output_image = input_image.BlankCopy();
     %
-    %             % Access the actual image data
-    %             image_data = input_image.RawImage;
+    %         % Access the actual image data
+    %         image_data = input_image.RawImage;
     %
-    %             % Double the image data
-    %             image_data = 2*image_data;
+    %         % Double the image data
+    %         image_data = 2*image_data;
     %
-    %             % Set the data for the output image
-    %             output_image.ChangeRawImage(image_data);
-    %         end
+    %         % Set the data for the output image
+    %         output_image.ChangeRawImage(image_data);
+    %     end
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
         
     properties (SetObservable)

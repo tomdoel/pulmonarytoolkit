@@ -1,31 +1,30 @@
 function [density_average, density_values_computed_mask, density_valid_values_mask] = PTKComputeDensityAverage(lung_roi, mask, non_parenchyma_voxels, reporting)
-    % PTKComputeDensityAverage. Computes the density of parenchymal tissue by averaging over neighbouring voxels
+    % Compute the density of parenchymal tissue by averaging over neighbouring voxels
     %
     % Given a DICOM lung image, returns the density of voxels in the lung
     % parenchyma, averaged over a 5x5x5 voxel neighbourgood. Voxels close to the
     % image boundaries and in the airways are excluded.
     %
+    % Syntax:
+    %     [density_average, density_values_computed_mask, density_valid_values_mask] = PTKComputeDensityAverage(lung_roi, mask, non_parenchyma_voxels, reporting);
     %
-    % Inputs:
-    %     lung_roi - a PTKImage containing the raw image values
+    % Parameters:
+    %     lung_roi: a PTKImage containing the raw image values
+    %     mask: a PTKImage mask containing the voxels inside the lung
+    %     non_parenchyma_voxels: mask of voxels to exclude because they are not in the parenchyma
+    %     reporting (Optional[CoreReportingInterface]): an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
-    %     mask - a PTKImage mask containing the voxels inside the lung
-    %
-    %     reporting (optional) - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %
-    % Outputs:
-    %     density_average - a PTKImage containing average density values in g/mL
-    %
-    %     density_average_mask - a PTKImage containing a mask of voxels whose
-    %         densities were calculated
+    % Returns:
+    %     density_average (PTKImage) is a PTKImage containing average density values in g/mL
+    %     density_average_mask (PTKImage) is a PTKImage containing a mask of voxels whose densities were calculated
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     
@@ -46,13 +45,13 @@ function [density_average, density_values_computed_mask, density_valid_values_ma
     size_el = numel(density_average_el);
     
     % Create a mask of the lung parenchyma
-    lung_mask = mask.BlankCopy;
+    lung_mask = mask.BlankCopy();
     lung_mask.ChangeRawImage(mask.RawImage > 0);
     
     % Create a mask of valid density values to be used in the calculation
     % These are points in the parenchyma excluding the points specified by the
     % non_parenchyma_voxels mask
-    density_valid_values_mask = lung_mask.BlankCopy;
+    density_valid_values_mask = lung_mask.BlankCopy();
     density_valid_values_mask.ChangeRawImage(lung_mask.RawImage & ~non_parenchyma_voxels.RawImage);
     
     % Remove the lung exterior and non-parenchyma points from the density image. We
@@ -91,7 +90,7 @@ function [density_average, density_values_computed_mask, density_valid_values_ma
     density_values_computed_mask = mask.Copy;
     
     reporting.ShowProgress('Storing results');
-    density_average = lung_roi.BlankCopy;
+    density_average = lung_roi.BlankCopy();
     density_average.ChangeRawImage(density_average_raw);
     density_average.ImageType = PTKImageType.Scaled;
 end

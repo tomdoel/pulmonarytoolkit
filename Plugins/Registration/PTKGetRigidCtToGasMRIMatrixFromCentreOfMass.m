@@ -1,21 +1,21 @@
 classdef PTKGetRigidCtToGasMRIMatrixFromCentreOfMass < PTKPlugin
     % PTKGetRigidCtToGasMRIMatrixFromCentreOfMass.
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
-    %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See PTKPlugin.m for more information on how to run plugins.
+    % This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    % the gui, or through the interfaces provided by the Pulmonary Toolkit.
+    % See PTKPlugin.m for more information on how to run plugins.
     %
-    %     Plugins should not be run directly from your code.
+    % Plugins should not be run directly from your code.
     %
     %     PTKGetRigidCtToGasMRIMatrixFromCentreOfMass performs a rigid registration
     %     of the CT dataset based on the centroids of the lung masks
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     properties

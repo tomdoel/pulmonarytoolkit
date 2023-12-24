@@ -1,13 +1,13 @@
 function cuda_compiler = CoreFindCudaCompiler()
-    % CoreFindCudaCompiler Attempts to locate the cuda compiler
+    % Attempts to locate the cuda compiler
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     cuda_compiler = CoreSystemUtilities.FindFirstExecutableOnPath('nvcc');

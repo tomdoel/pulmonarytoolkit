@@ -1,11 +1,11 @@
 classdef PTKVesselness < PTKPlugin
     % PTKVesselness. Plugin for detecting blood vessels
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
-    %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See PTKPlugin.m for more information on how to run plugins.
+    % This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    % the gui, or through the interfaces provided by the Pulmonary Toolkit.
+    % See PTKPlugin.m for more information on how to run plugins.
     %
-    %     Plugins should not be run directly from your code.
+    % Plugins should not be run directly from your code.
     %
     %     PTKVesselness computes a mutiscale vesselness filter based on Frangi et
     %     al., 1998. "Multiscale Vessel Enhancement Filtering". The filter
@@ -20,11 +20,11 @@ classdef PTKVesselness < PTKPlugin
     %     function.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     properties

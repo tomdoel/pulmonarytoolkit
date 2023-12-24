@@ -1,22 +1,17 @@
 classdef MimPluginResultsInfo < handle
-    % MimPluginResultsInfo. Part of the internal MIM framework
-    %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
-    %
-    %     Provides metadata about plugin results, concerning the list of 
-    %     dependencies used in generating each result for this dataset.
-    %     This data is stored alongside plugin results in the disk cache, and is
-    %     used to determine if a particular result is still valid. A result is
-    %     still valid if the uid of each dependency in the dependency list 
-    %     matches the uid of the current result for the matching plugin.
+    % Provides metadata about plugin results, concerning the list of 
+    % dependencies used in generating each result for this dataset.
+    % This data is stored alongside plugin results in the disk cache, and is
+    % used to determine if a particular result is still valid. A result is
+    % still valid if the uid of each dependency in the dependency list 
+    % matches the uid of the current result for the matching plugin.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = protected)

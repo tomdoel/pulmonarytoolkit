@@ -1,20 +1,15 @@
 classdef GemMarkerPoint < CoreBaseClass
-    % GemMarkerPoint. Part of the internal gui for the Pulmonary Toolkit.
-    %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the gui of the Pulmonary Toolkit.
-    %
-    %     A GemMarkerPoint object is created for each marker currently displayed
-    %     on the image. The purpose behind this class is to store the previous
-    %     marker position in order to remove points from the underlying marker
-    %     image when markers are moved.
+    % A GemMarkerPoint object is created for each marker currently displayed
+    % on the image. The purpose behind this class is to store the previous
+    % marker position in order to remove points from the underlying marker
+    % image when markers are moved.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (SetAccess = private)

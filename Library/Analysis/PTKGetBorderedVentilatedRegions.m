@@ -3,11 +3,11 @@ function masked_ventilated_volume = PTKGetBorderedVentilatedRegions(ventilation_
     %     border
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
 
     % Resize the lung mask
     lung_mask = lung_mask.Copy;

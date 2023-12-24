@@ -3,11 +3,11 @@ classdef DepMatRepositoryUpdater < handle
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DepMat. https://github.com/tomdoel/depmat
-    %     Author: Tom Doel, 2015.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of DepMat. https://github.com/tomdoel/depmat
+    %    Author: Tom Doel, 2015.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
 
     properties (SetAccess = private)

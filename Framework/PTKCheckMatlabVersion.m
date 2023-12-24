@@ -1,13 +1,13 @@
-function PTKCheckMatlabVersion()
-    % PTKCheckMatlabVersion. A function for verifying that an appropriate version
-    %     of Matlab is installed for the Pulmonary Toolkit.
+function PTKCheckMatlabVersion
+    % A function for verifying that an appropriate version
+    % of Matlab is installed for the Pulmonary Toolkit.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     % Get the current Matlab version

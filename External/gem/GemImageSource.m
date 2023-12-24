@@ -1,12 +1,12 @@
 classdef GemImageSource < CoreBaseClass
-    % GemImageSource. Wraps a PTKImage class for GUI visualisation
+    % Wraps a PTKImage class for GUI visualisation
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %    
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
+    %
 
     events
         NewImage        % An event to indicate the image has been replaced

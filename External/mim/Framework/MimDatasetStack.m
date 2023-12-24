@@ -1,31 +1,26 @@
 classdef MimDatasetStack < handle
-    % MimDatasetStack. Part of the internal framework of the TD MIM Toolkit.
+    % Used to build up a list of dependencies for a plugin. A plugin may
+    % call other plugins during its execution, so a dependency list needs to
+    % be built up in a recursive manner, and include plugins called both
+    % directly and indirectly, hence we use a stack.
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
-    %
-    %     Used to build up a list of dependencies for a plugin. A plugin may
-    %     call other plugins during its execution, so a dependency list needs to
-    %     be built up in a recursive manner, and include plugins called both
-    %     directly and indirectly, hence we use a stack.
-    %
-    %     When a plugin is called, it is given an empty dependency list, and is 
-    %     added to the plugin call stack. If there are any other plugins on the 
-    %     stack, this plugin is added to the dependency list of each of those
-    %     plugins. When a plugin finished its execution, it is removed from the
-    %     call stack, and its dependency list is stored. This list should now
-    %     contain a complete list of plugins called both directly and indirectly
-    %     during execution of the plugin. Note that when a plugin
-    %     result is retrieved from the disk cache, its dependencies must still
-    %     be added to any plugins on the call stack, to ensure dependency lists
-    %     are complete.
+    % When a plugin is called, it is given an empty dependency list, and is 
+    % added to the plugin call stack. If there are any other plugins on the 
+    % stack, this plugin is added to the dependency list of each of those
+    % plugins. When a plugin finished its execution, it is removed from the
+    % call stack, and its dependency list is stored. This list should now
+    % contain a complete list of plugins called both directly and indirectly
+    % during execution of the plugin. Note that when a plugin
+    % result is retrieved from the disk cache, its dependencies must still
+    % be added to any plugins on the call stack, to ensure dependency lists
+    % are complete.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

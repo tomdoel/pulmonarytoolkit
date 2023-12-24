@@ -1,14 +1,13 @@
 function lung_image = PTKFillCoronalHoles(lung_image, is_right, reporting)
-    % PTKFillCoronalHoles. Operates on each coronal slice, applying a closing
-    % filter then filling interior holes
+    % Operates on each coronal slice, applying a closing filter then filling interior holes
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     reporting.ShowProgress('Filling holes');
@@ -57,9 +56,9 @@ function mask = OpenOrClose(mask, is_right, opening_size, closing_size, reportin
     
     start_points = {right_border_indices, other_border_indices};
     
-    reporting.PushProgress;
+    reporting.PushProgress();
     regions = PTKMultipleRegionGrowing(threshold, start_points, reporting);
-    reporting.PopProgress;
+    reporting.PopProgress();
     
     
     regions.RemoveBorder(1);

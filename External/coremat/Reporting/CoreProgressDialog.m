@@ -1,25 +1,24 @@
 classdef CoreProgressDialog < CoreProgressInterface
-    % CoreProgressDialog. A dialog used to report progress informaton
+    % A dialog used to report progress informaton
     %
-    %     CoreProgressDialog creates and manages a waitbar to mark progress
-    %     in operations performed by the coremat framework and related
-    %     libraries. It provides a default implementation of
-    %     CoreProgressInterface that can be used by your own code or can be
-    %     instantiated automatically be functions when no progress
-    %     interface object is provided.
+    % CoreProgressDialog creates and manages a waitbar to mark progress
+    % in operations performed by the coremat framework and related
+    % libraries. It provides a default implementation of
+    % CoreProgressInterface that can be used by your own code or can be
+    % instantiated automatically be functions when no progress
+    % interface object is provided.
     %
-    %     GUI applications may prefer to create their own implementation of
-    %     CoreProgressInterface which matches their application, rather
-    %     than using this default implementation.
+    % GUI applications may prefer to create their own implementation of
+    % CoreProgressInterface which matches their application, rather
+    % than using this default implementation.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %
-
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
+    %    
 
     properties (Access = private)
         IncrementThreshold = 5

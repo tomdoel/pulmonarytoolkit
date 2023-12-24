@@ -1,11 +1,11 @@
 classdef GemListBoxControlPanel < GemPanel
-    % GemListBoxControlPanel. A title panel and controls used with a GemListbox
+    % A title panel and controls used with a GemListbox
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties

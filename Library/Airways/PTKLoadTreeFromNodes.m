@@ -1,30 +1,32 @@
 function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_filename, coordinate_system, template_image, reporting)
-    % PTKLoadTreeFromNodes. Load a tree strucure from branches stored in node/element files
+    % Load a tree strucure from branches stored in node/element files
     %
-    %     Syntax
-    %     ------
+    % Example:
+    %     root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_filename, coordinate_system, template_image, reporting);
     %
-    %         root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_filename, coordinate_system, template_image, reporting)
+    % Parameters:
+    %     root_branch:     is the root branch in a PTKTreeModel structure 
+    %     file_path:       is the path where the node and element files
+    %                     are to be stored
+    %     node_filename:   is the name of the node file
+    %     edge_filename:   is the name of the element file
+    %     coordinate_system [MimCoordinateSystem]: a MimCoordinateSystem enumeration
+    %                     specifying the coordinate system to use
+    %     template_image: may be required, depending on the value of
+    %                 coordinate_system. Provides the required
+    %                 parameters for reconstructing the centreline
+    %                 tree.
+    %     reporting (optional[CoreReportingInterface]): an object 
+    %                 for reporting progress and warnings
     %
-    %             root_branch     is the root branch in a PTKTreeModel structure 
-    %             file_path       is the path where the node and element files
-    %                             are to be stored
-    %             node_filename   is the name of the node file
-    %             edge_filename   is the name of the element file
-    %             coordinate_system  a MimCoordinateSystem enumeration
-    %                             specifying the coordinate system to use
-    %             template_image  may be required, depending on the value of
-    %                             coordinate_system. Provides the required
-    %                             parameters for reconstructing the centreline
-    %                             tree.
-    %             reporting (optional) - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
+    % Returns:
+    %     The root branch of the loaded tree structure as a PTKTreeModel
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
     if nargin < 4
@@ -94,7 +96,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
         new_coords_end = MimImageCoordinateUtilities.ConvertToPTKCoordinates([end_x, end_y, end_z], coordinate_system, template_image);
         last_point = PTKCentrelinePoint(new_coords_end(1), new_coords_end(2), new_coords_end(3), point_parameters);
 
-        new_branch = PTKTreeModel;
+        new_branch = PTKTreeModel();
         new_branch.Radius = radius;
 %         new_branch.Length = branch_length;
 %         new_branch.StartPoint = first_point;

@@ -1,5 +1,5 @@
 function CoreRunTests(testsOrDirectory)
-    % CoreRunTests Runs MTest unit tests for Matlab
+    % Runs MTest unit tests for Matlab
     %
     % Executes the specified unit tests and reports on the sucess and
     % failures.
@@ -7,13 +7,14 @@ function CoreRunTests(testsOrDirectory)
     % Syntax:
     %     CoreRunTests(testsOrDirectory);
     %
-    %         testsOrDirectory - a folder or a cell array of strings, each containing the name of a test to run
+    % Parameters:
+    %     testsOrDirectory: a folder or a cell array of strings, each containing the name of a test to run
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     if (nargin > 0) && ~isempty(testsOrDirectory)

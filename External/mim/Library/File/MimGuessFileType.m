@@ -1,12 +1,29 @@
 function [image_type, principal_filename, secondary_filenames] = MimGuessFileType(file_path, image_filename, default_guess, reporting)
-    % MimGuessFileType. Heuristically determines a file format
+    % Heuristically determines a file format
+    %
+    % Syntax:
+    %     [image_type, principal_filename, secondary_filenames] = MimGuessFileType(file_path, image_filename, default_guess, reporting)
+    %
+    % Parameters:
+    %     file_path: path where the image file is located
+    %     image_filename: Filename for the image file in the filepath
+    %     default_guess (MimImageFileFormat): format to return if the format cannot
+    %         be determined
+    %     reporting (CoreReportingInterface): object for reporting progress and warnings
+    %
+    % Returns:
+    %     image_type (MimImageFileFormat): Format of the image file 
+    %     principal_filename: Set containing the filename of the main image,
+    %         for example the header file if there are separate header and raw data files
+    %     secondary_filenames: Set containing additional files which comprise
+    %         the image data, if any. Does not include the principal_filename
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     [~, name, ext] = fileparts(image_filename);
@@ -165,4 +182,3 @@ function [image_type, principal_filename, secondary_filenames] = MimGuessFileTyp
     principal_filename = {image_filename};
     secondary_filenames = {};
 end
-

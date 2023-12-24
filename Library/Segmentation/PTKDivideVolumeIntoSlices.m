@@ -1,12 +1,12 @@
 function results = PTKDivideVolumeIntoSlices(region_mask, dimension, reporting)
-    % PTKDivideVolumeIntoSlices. Divides an image volume into a number of thick slices
+    % Divide an image volume into a number of thick slices
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     
     [xc_mm, yc_mm, zc_mm] = region_mask.GetDicomCoordinates;
     midpoint_mm = [min(xc_mm(:)) + max(xc_mm(:)), min(yc_mm(:)) + max(yc_mm(:)), min(zc_mm(:)) + max(zc_mm(:))]/2;
@@ -56,7 +56,7 @@ function results = PTKDivideVolumeIntoSlices(region_mask, dimension, reporting)
     end
     
     bin_image_raw = bin_matrix.*uint8(region_mask.RawImage);
-    bin_image = region_mask.BlankCopy;
+    bin_image = region_mask.BlankCopy();
     bin_image.ChangeRawImage(bin_image_raw);
     bin_image.ImageType = PTKImageType.Colormap;
     

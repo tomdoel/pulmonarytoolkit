@@ -1,19 +1,19 @@
 function labeled_output = PTKWatershedMeyerFromStartingPointsMatlab(image, starting_labels)
-    % PTKWatershedMeyerFromStartingPointsMatlab. Implementation of Meyer flooding algorithm.
+    % Implementation of Meyer flooding algorithm.
     %
+    % Attention:
     %     This is a Matlab-only implementation of the mex function
-    %     PTKWatershedMeyerFromStartingPoints. Use the mex function is possible
-    %     as this is faster.
+    %     PTKWatershedMeyerFromStartingPoints. It exists to prodive an alternative if the mex function
+    %     cannot be compiled or for testing purposes.
     %
-    %     Inputs
-    %     ------
+    %     Use the mex function PTKWatershedMeyerFromStartingPoints instead of using this function 
+    %     if possible, as that is faster. 
     %
-    %     image = 16-bit ingeter image (int16). The watershed regions grow according to the minima of these points
-    %
-    %     starting_labels - 8-bit integer (int8). Labels of starting points for the watershed
-    %
-    %     labeled_output - 8-bit integer (int8). Labels of the image assigned to
-    %                       watershed regions. Watershed points are given the label -2
+    % Parameters:
+    %     image: 16-bit ingeter image (int16). The watershed regions grow according to the minima of these points
+    %     starting_labels: 8-bit integer (int8). Labels of starting points for the watershed
+    %     labeled_output: 8-bit integer (int8). Labels of the image assigned to
+    %         watershed regions. Watershed points are given the label -2
     %
     %     The watershed starts from the positive-valued labels in
     %     starting_labels and grows out into the zero-valued points, with the
@@ -22,11 +22,11 @@ function labeled_output = PTKWatershedMeyerFromStartingPointsMatlab(image, start
     %     fixed barriers. The do not grow and other regions cannot grow into
     %     them.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     disp('PTKWatershedMeyerFromStartingPointsMatlab');

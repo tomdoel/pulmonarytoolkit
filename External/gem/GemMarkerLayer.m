@@ -1,17 +1,12 @@
 classdef GemMarkerLayer < CoreBaseClass
-    % GemMarkerLayer. Part of the internal gui for the Pulmonary Toolkit.
-    %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the gui of the Pulmonary Toolkit.
-    %
-    %     GemMarkerLayer displays marker points over an image
+    % Displays marker points over an image
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (SetAccess = private)

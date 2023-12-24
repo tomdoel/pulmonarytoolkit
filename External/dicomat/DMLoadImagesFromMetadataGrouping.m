@@ -1,34 +1,32 @@
 function imageWrapper = DMLoadImagesFromMetadataGrouping(metadataGrouping, dicomLibrary, reporting)
-    % DMLoadImagesFromMetadataGrouping. Loads metadata from a series of DICOM files
+    % Loads metadata from a series of DICOM files
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     image_volume = DMLoadImagesFromMetadataGrouping(metadata_list, reporting)
     %
-    %         image_volume = DMLoadImagesFromMetadataGrouping(metadata_list, reporting)
+    % Parameters:
+    %     imageWrapper: a CoreWrapper object containing the image volume     
     %
-    %             imageWrapper     a CoreWrapper object containing the image volume     
+    %     metadataGrouping: a DMFileGrouping containing metadata
     %
-    %             metadataGrouping a DMFileGrouping containing metadata
+    %     dicomLibrary: (Optional) An object implementing DMDicomLibraryInterface
     %
-    %             dicomLibrary     (Optional) An object implementing DMDicomLibraryInterface
-    %
-    %             reporting       (Optional) A CoreReporting or other implementor of CoreReportingInterface,
-    %                             for error and progress reporting. Create a CoreReporting
-    %                             with no arguments to hide all reporting. If no
-    %                             reporting object is specified then a default
-    %                             reporting object with progress dialog is
-    %                             created
+    %     reporting:      (Optional) A CoreReporting or other implementor of CoreReportingInterface,
+    %                     for error and progress reporting. Create a CoreReporting
+    %                     with no arguments to hide all reporting. If no
+    %                     reporting object is specified then a default
+    %                     reporting object with progress dialog is created
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
 
     if nargin < 3
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     if nargin < 2
@@ -69,5 +67,5 @@ function imageWrapper = DMLoadImagesFromMetadataGrouping(metadataGrouping, dicom
         reporting.UpdateProgressValue(round(100*(file_index)/num_slices));
     end
     
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end

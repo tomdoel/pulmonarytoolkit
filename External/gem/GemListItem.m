@@ -1,14 +1,14 @@
 classdef GemListItem < GemVirtualPanel
-    % GemListItem. An item in a GemListBox
+    % An item in a GemListBox
     %
-    %     Each item in a GemListBox is of this type, and consists of one or more
-    %     text items.
+    % Each item in a GemListBox is of this type, and consists of one or more
+    % text items.
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties

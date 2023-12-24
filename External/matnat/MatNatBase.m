@@ -1,11 +1,11 @@
 classdef MatNatBase < handle
-    % MatNatBase The base types for MatNat classes
+    % The base types for MatNat classes
     %
-    %     Licence
-    %     -------
-    %     Part of MatNat. https://github.com/tomdoel/matnat
-    %     Author: Tom Doel, 2015.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of MatNat. https://github.com/tomdoel/matnat
+    %    Author: Tom Doel, 2015.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
     
     methods (Static, Access = protected)

@@ -1,19 +1,19 @@
 classdef DMFileGrouper < CoreBaseClass
-    % DMFileGrouper. Used to separate a series of Dicom images into groups of coherent images
+    % Separate a series of Dicom images into groups of coherent images
     %
-    %     DMFileGrouper splits a series of Dicom images into 'bins' or 'groups'
-    %     of images with similar orientations and image properties. For example,
-    %     a series containing a scout image will typically be separated into a
-    %     group containing the scan images and another group containing the
-    %     scout image. Similarly, a localiser series containing images in multiple
-    %     orientations will typically be separated into a separate group for
-    %     each orientation. 
+    % DMFileGrouper splits a series of Dicom images into 'bins' or 'groups'
+    % of images with similar orientations and image properties. For example,
+    % a series containing a scout image will typically be separated into a
+    % group containing the scan images and another group containing the
+    % scout image. Similarly, a localiser series containing images in multiple
+    % orientations will typically be separated into a separate group for
+    % each orientation. 
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %        
 
     

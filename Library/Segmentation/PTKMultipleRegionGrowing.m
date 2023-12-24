@@ -1,34 +1,34 @@
 function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_global, reporting)
-    % PTKMultipleRegionGrowing. Performs 3D region growing of several regions
-    %      simultaneously through the supplied binary threshold image, beginning
-    %      at the specified starting points for each region.
+    % Perform 3D region growing of several regions
+    % simultaneously through the supplied binary threshold image, beginning
+    % at the specified starting points for each region.
+    %
+    % Multiple regions will be produced, one for each set of starting points.
+    %
+    % See Also: PTKSimpleRegionGrowing, PTKSmoothedRegionGrowing
+    %
+    % Syntax:
+    %     output_image = PTKMultipleRegionGrowing(threshold_image, start_points_global, reporting);
+    %
+    % Parameters:
+    %     threshold_image: The threshold image in a PTKImage class. 1s
+    %         represents voxels which are connected
+    %     start_points: an set of starting points, where each element
+    %                   in the set is array of points representing one region.
+    %                   Each point is a global index. The region growing will 
+    %                   begin from all these points simultaneously
+    %     reporting (CoreReportingInterface): object for reporting progress and warnings
+    %
+    % Returns:
+    %     output_image (PTKImage): A binary PTKImage containing the segmented region
+    %         of all voxels connected to the starting points
     %
     %
-    %     Syntax:
-    %         output_image = PTKMultipleRegionGrowing(threshold_image, start_points_global, reporting)
-    %
-    %         Inputs:
-    %         ------
-    %             threshold_image - The threshold image in a PTKImage class. 1s
-    %                 represents voxels which are connected
-    %             start_points - an set of starting points, where each element
-    %                 in the set is array of points representing one region.
-    %                 Each point is a global index. The region growing will 
-    %                 begin from all these points simultaneously
-    %             reporting - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %
-    %         Outputs:
-    %         -------
-    %             output_image - A binary PTKImage containing the segmented region
-    %                 of all voxels connected to the starting points
-    %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     % Check the input image is of the correct form

@@ -1,36 +1,36 @@
 function [sorted_indices, slice_thickness, global_origin_mm, sorted_positions] = DMSortImagesByLocation(metadata_grouping, reporting)
-    % DMSortImagesByLocation. Sorts a series of Dicom images by their slice
-    %     locations and calculates additional image parameters
+    % Sorts a series of Dicom images by their slice
+    % locations and calculates additional image parameters
     %
-    %     Syntax:
-    %         [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLocation(metadata_grouping, reporting)
+    % Syntax:
+    %     [sorted_indices, slice_thickness, global_origin_mm] = DMSortImagesByLocation(metadata_grouping, reporting)
     %
-    %     Inputs:
-    %         metadata_grouping - A DMFileGrouping object containing the
-    %             metadata from the group of Dicom images to be sorted
+    % Parameters:
+    %     metadata_grouping: A DMFileGrouping object containing the
+    %         metadata from the group of Dicom images to be sorted
     %
-    %         reporting - A CoreReporting or implementor of the same interface,
-    %             for error and progress reporting. 
+    %     reporting: A CoreReporting or implementor of the same interface,
+    %         for error and progress reporting. 
     %
-    %     Outputs:
-    %         sorted_indices - The indices of the metadata structures in
-    %             metadata_grouping, ordered by slice location
+    % Outputs:
+    %     sorted_indices - The indices of the metadata structures in
+    %         metadata_grouping, ordered by slice location
     %
-    %         slice_thickness - A typical slice thickness for this group of
-    %             images
+    %     slice_thickness - A typical slice thickness for this group of
+    %         images
     %
-    %         global_origin_mm - The coordinates of the first voxel in the image
-    %             volume
+    %     global_origin_mm - The coordinates of the first voxel in the image
+    %         volume
     %
-    %         sorted_positions - The ImagePositionPatient for
-    %             each slice in the sorted 
-    %        
+    %     sorted_positions - The ImagePositionPatient for
+    %         each slice in the sorted 
+    %    
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %    
     
     
@@ -137,5 +137,5 @@ function [sorted_indices, slice_thickness, global_origin_mm, sorted_positions] =
         end
     end
     
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end

@@ -1,4 +1,14 @@
 function results = PTKGetWallThicknessForBranch(bronchus, image_roi, context, figure_airways_3d, segmented_image)
+    % PTKGetWallThicknessForBranch
+    %
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
+
     if isempty(bronchus)
         results = [];
     else
@@ -868,4 +878,3 @@ function [values, values_replaced] = ReplaceOutliersWithMean(values)
     
     values(values_replaced) = adjusted_mean;
 end
-

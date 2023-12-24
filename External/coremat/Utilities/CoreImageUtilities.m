@@ -1,12 +1,12 @@
 classdef CoreImageUtilities
-    % CoreImageUtilities. Utility functions related to displaying images
+    % Utility functions related to displaying images
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
         
     methods (Static)

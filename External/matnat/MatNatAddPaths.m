@@ -1,11 +1,11 @@
 function MatNatAddPaths(varargin)
-    %     Adds paths for MatNat
+    % Adds paths for MatNat
     %
-    %     Licence
-    %     -------
-    %     Part of MatNat. https://github.com/tomdoel/matnat
-    %     Author: Tom Doel, 2015.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of MatNat. https://github.com/tomdoel/matnat
+    %    Author: Tom Doel, 2015.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
     
     force = nargin > 0 && strcmp(varargin{1}, 'force');

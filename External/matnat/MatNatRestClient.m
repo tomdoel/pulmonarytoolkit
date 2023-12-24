@@ -1,11 +1,11 @@
 classdef MatNatRestClient < handle
-    % MatNatRestClient Provides an API for communicating with an XNAT server via REST calls
+    % Provides an API for communicating with an XNAT server via REST calls
     %
-    %     Licence
-    %     -------
-    %     Part of MatNat. https://github.com/tomdoel/matnat
-    %     Author: Tom Doel, 2015.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of MatNat. https://github.com/tomdoel/matnat
+    %    Author: Tom Doel, 2015.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     properties (Access = private)

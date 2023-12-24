@@ -1,13 +1,13 @@
 classdef GemSlidingPanel < GemPanel
-    % GemSlidingPanel GEM class for a sliding panel, where the panel can
-    %     be scrolled vertically.
+    % GEM class for a sliding panel, where the panel can
+    % be scrolled vertically.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = protected)

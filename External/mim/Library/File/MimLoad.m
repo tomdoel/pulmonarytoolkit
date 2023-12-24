@@ -1,35 +1,35 @@
 function image_data = MimLoad(file_path, filename_base, reporting)
-    % MimLoad. Loads an image or a structure previously saved with MimSave
+    % Load an image or a structure previously saved with MimSave
     %
-    %    MimLoad allows you to load a structure from .mat and .raw files
-    %    that have previously been saved using MimSave. MimLoad will
-    %    decompress the images and combine into a single structure or image
-    %    that matches the original image or structure saved.
+    % MimLoad allows you to load a structure from .mat and .raw files
+    % that have previously been saved using MimSave. MimLoad will
+    % decompress the images and combine into a single structure or image
+    % that matches the original image or structure saved.
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     image_data = MimLoad(file_path, filename_base, reporting)
     %
-    %         image_data = MimLoad(file_path, filename_base, reporting)
+    % Parameters:
+    %     file_path:      specify the location to save the files.
+    %     filename_base:  specify the file prefix. Suffixes will be
+    %                     added automatically. A single header file
+    %                     will be saved for the structure or image,
+    %                     and a separate raw image file will be
+    %                     created for each image in the structure
+    %     reporting:      an object implementing CoreReportingInterface
+    %                     for reporting progress and warnings
     %
-    %             file_path       specify the location to save the files.
-    %             filename_base   specify the file prefix. Suffixes will be
-    %                             added automatically. A single header file
-    %                             will be saved for the structure or image,
-    %                             and a separate raw image file will be
-    %                             created for each image in the structure
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %
-    %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
-    %                             to be saved, or a structure which could
-    %                             contain one or more PTKImages
+    % Returns:
+    %     image_data (PTKImage): a PTKImage or PTKDicomImage class containing
+    %         the image to be saved, or a structure which could
+    %         contain one or more PTKImages
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %            
     
     filename = [fullfile(file_path, filename_base) '.mat'];
@@ -55,7 +55,3 @@ function new_structure = ConvertStructAndLoadRawImageData(old_structure, file_pa
         end
     end
 end
-
-
-        
-   

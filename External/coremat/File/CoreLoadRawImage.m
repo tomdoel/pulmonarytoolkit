@@ -1,13 +1,13 @@
 function raw_image = CoreLoadRawImage(file_path, raw_filename, data_type, image_size, compression, reporting)
-    % CoreLoadRawImage. Loads raw image data from disk
+    % Load raw image data from disk
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     full_raw_filename = fullfile(file_path, raw_filename);

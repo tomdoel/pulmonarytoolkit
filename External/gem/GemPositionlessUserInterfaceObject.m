@@ -1,15 +1,15 @@
 classdef GemPositionlessUserInterfaceObject < GemUserInterfaceObject
-    % GemPositionlessUserInterfaceObject. Base class for GEM user interface
+    % Base class for GEM user interface
     % components whose Matlab objects do not have an underlying Position property
     %
-    %     Use GemPositionlessUserInterfaceObject for user interface objects which
-    %     are graphical components but do not have a Position property
+    % Use GemPositionlessUserInterfaceObject for user interface objects which
+    % are graphical components but do not have a Position property
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     methods

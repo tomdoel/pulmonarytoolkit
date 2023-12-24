@@ -1,13 +1,13 @@
 function CoreSaveRawImage(raw_image, file_path, raw_filename, compression, reporting)
-    % CoreSaveRawImage. Saves raw image data from disk
+    % Save raw image data from disk
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     full_raw_filename = fullfile(file_path, raw_filename);

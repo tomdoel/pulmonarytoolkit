@@ -1,27 +1,23 @@
 function mask = PTKGetInteriorLungRegion(lung_roi, reporting)
-    % PTKGetInteriorLungRegion. Finds a mask for a region of interest from a chest CT image which
-    %     contains the lungs and airways
+    % Finds a mask for a region of interest from a chest CT image which
+    % contains the lungs and airways
     %
-    %     Inputs
-    %     ------
+    % Syntax:
+    %     mask = PTKGetInteriorLungRegion(lung_roi, reporting);
     %
-    %     lung_image - the full original lung volume stored as a PTKImage.
+    % Parameters:
+    %     lung_image (PTKImage): the full original lung volume stored as a PTKImage.
+    %     reporting (CoreReportingInterface): optional object for reporting progress and warnings
     %
-    %     reporting (optional) - an object implementing the CoreReporting
-    %         interface for reporting progress and warnings
-    %
-    %
-    %     Outputs
-    %     -------
-    %
-    %     lung_image - a PTKImage containing the mask of the relevant region
+    % Returns:
+    %     lung_image (PTJKImage): image containing the mask of the relevant region
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     

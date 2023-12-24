@@ -1,17 +1,17 @@
 function results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, start_point_global, maximum_number_of_generations, explosion_multiplier, coronal_mode, reporting, debug_mode)
-    % PTKAirwayRegionGrowingWithExplosionControl. Segments the airways from a
-    %     threshold image using a region growing method.
+    % Segments the airways from a threshold image using a region growing 
+    % method.
     %
-    %     Given a binary image which representes an airway threshold applied to
-    %     a lung CT image, PTKAirwayRegionGrowingWithExplosionControl finds a
-    %     tree structure representing the bifurcating airway tree. Airway
-    %     segmentation proceeds by wavefront growing and splitting, with
-    %     heuristics to prevent 'explosions' into the lung parenchyma.
+    % Given a binary image which representes an airway threshold applied to
+    % a lung CT image, PTKAirwayRegionGrowingWithExplosionControl finds a
+    % tree structure representing the bifurcating airway tree. Airway
+    % segmentation proceeds by wavefront growing and splitting, with
+    % heuristics to prevent 'explosions' into the lung parenchyma.
     %
-    % Syntax:
+    % Example:
     %     results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, start_point, maximum_number_of_generations, explosion_multiplier, reporting, debug_mode)
     %
-    % Inputs:
+    % Parameters:
     %     threshold_image - a lung volume stored as a PTKImage which has been
     %         thresholded for air voxels (1=air, 0=background).
     %         Note: the lung volume can be a region-of-interest, or the entire
@@ -37,28 +37,28 @@ function results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, s
     %     debug_mode (optional) - should normally be set to false. 
     %         Provides visual debugging, but the algorithm will run much slower.
     %
-    % Outputs:
-    %     results - a structure containing the following fields:
-    %         airway_tree - a PTKTreeSegment object which represents the trachea.
-    %             This is linked to its child segments via its Children
-    %             property, and so on, so the entre tree can be accessed from
-    %             this property.
-    %         explosion_points - Indices of all voxels which were marked as
-    %             explosions during the region-growing process.
-    %         endpoints - Indices of final points in each
-    %             branch of the airway tree
-    %         start_point - the trachea location as passed into the function
-    %         image_size - the image size
+    % Returns:
+    %     results is a structure containing the following fields
+    %         - airway_tree: a PTKTreeSegment object which represents the trachea.
+    %           This is linked to its child segments via its Children
+    %           property, and so on, so the entre tree can be accessed from
+    %           this property.
+    %         - explosion_points: Indices of all voxels which were marked as
+    %           explosions during the region-growing process.
+    %         - endpoints - Indices of final points in each
+    %           branch of the airway tree
+    %         - start_point - the trachea location as passed into the function
+    %         - image_size - the image size
     %
-    % See the PTKAirways plugin for an example of how to reconstruct this results
-    % structure into an image
+    %     See the PTKAirways plugin for an example of how to reconstruct this results
+    %     structure into an image
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     if nargin < 7
@@ -303,9 +303,9 @@ function explosion_points = GetExplosionPoints(processed_segments)
     end
 end
 
-% Check the segments have completed correctly, and warn the user if some
-% branches terminated early
 function CheckSegments(airway_tree, reporting)
+    % Check the segments have completed correctly, and warn the user if some
+    % branches terminated early
     number_of_branches_with_exceeded_generations = 0;
     segments_to_do = airway_tree;
     while ~isempty(segments_to_do)
@@ -395,4 +395,3 @@ function endpoints = FindEndpointsInAirwayTree(airway_tree, reporting)
         end        
     end
 end
-

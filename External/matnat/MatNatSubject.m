@@ -1,11 +1,11 @@
 classdef MatNatSubject < MatNatBase
-    % MatNatSubject A Matlab class representing an XNAT subject
+    % A Matlab class representing an XNAT subject
     %
-    %     Licence
-    %     -------
-    %     Part of MatNat. https://github.com/tomdoel/matnat
-    %     Author: Tom Doel, 2015.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of MatNat. https://github.com/tomdoel/matnat
+    %    Author: Tom Doel, 2015.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
     
     properties (SetAccess = protected)

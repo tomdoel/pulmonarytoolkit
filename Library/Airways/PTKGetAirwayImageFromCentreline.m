@@ -1,15 +1,13 @@
 function results_image = PTKGetAirwayImageFromCentreline(label_bronchi, airway_root, template, colour_by_segment_index)
-    % PTKGetAirwayImageFromCentreline. Generates an image of the airways
-    %     coloured according to a number of subtrees. The start branch of the
-    %     subtrees are specified in label_bronchi. Any bronchi serving more than
-    %     one subtree is coloured grey.
+    % Generate an image of the airways coloured according to a number of subtrees. The start branch of the
+    % subtrees are specified in label_bronchi. Any bronchi serving more than one subtree is coloured grey.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     results_image = template.BlankCopy();

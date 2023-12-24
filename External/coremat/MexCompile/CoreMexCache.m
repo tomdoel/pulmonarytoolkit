@@ -1,16 +1,14 @@
 classdef CoreMexCache < CoreBaseClass
-    % CoreMexCache. 
-    %
-    %     CoreMexCache stores compiled mex file information that needs to
-    %     persist between sessions, such as the version numbers of the currently
-    %     compiled mex files.
+    % CoreMexCache stores compiled mex file information that needs to
+    % persist between sessions, such as the version numbers of the currently
+    % compiled mex files.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties
@@ -98,4 +96,3 @@ classdef CoreMexCache < CoreBaseClass
         end
     end
 end
-

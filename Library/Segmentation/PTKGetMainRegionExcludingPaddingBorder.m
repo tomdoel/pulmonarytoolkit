@@ -10,7 +10,7 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
     % Syntax:
     %     main_image = PTKGetMainRegionExcludingPaddingBorder(threshold_image, reporting)
     %
-    % Inputs:
+    % Parameters:
     %     threshold_image - a binary 3D volume as a PTKImage.
     %
     %     minimum_region_volume_mm3 (optional) - ignore any regions below this
@@ -30,11 +30,11 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
     %     main_image - a PTKImage binary volume of the found region
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     if ~isa(threshold_image, 'PTKImage')

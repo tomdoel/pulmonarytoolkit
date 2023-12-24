@@ -1,16 +1,15 @@
 classdef PTKTreeModel < PTKTree
-    % PTKTreeModel. A branch of a tree model (used to store airways, vessels
-    % etc.)
+    % A branch of a tree model (used to store airways, vessels etc.)
     %
     % A PTKTreeModel is a tree structure which represents an airway centreline
     % with radius information. As such, it is a "model" of an airway, rather
     % than a "segmentation"
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %           
     
     properties
@@ -133,9 +132,8 @@ classdef PTKTreeModel < PTKTree
             
         end
 
-        % Returns the number of branches in this tree, from this branch
-        % downwards
         function number_of_points = CountPointsInTree(obj)
+            % Return number of branches in this tree, from this branch downwards
             number_of_points = 0;            
             branches_to_do = obj;
             while ~isempty(branches_to_do)
@@ -146,9 +144,8 @@ classdef PTKTreeModel < PTKTree
             end
         end
         
-        % Returns the number of branches in this tree, from this branch
-        % downwards
         function number_of_points = CountSmoothedCentrelinePointsInTree(obj)
+            % Return number of branches in this tree, from this branch downwards
             number_of_points = 0;            
             branches_to_do = obj;
             while ~isempty(branches_to_do)
@@ -306,9 +303,9 @@ classdef PTKTreeModel < PTKTree
             end
         end
         
-        % LengthMm computes the segment length based on the start and end
-        % voxels. This method works for arrays.
         function length_mm = LengthMm(obj)
+            % LengthMm computes the segment length based on the start and end
+            % voxels. This method works for arrays.
             start_points = [obj.StartPoint];
             end_points = [obj.EndPoint];
             coord_start = [[start_points.CoordX]; [end_points.CoordY]; [start_points.CoordZ]];
@@ -317,8 +314,8 @@ classdef PTKTreeModel < PTKTree
             length_mm = sqrt(sum((coord_start - coord_end).^2, 1));
         end
         
-        % This function exists for compatibility with PTKAirwayGrowingTree
         function branch = FindCentrelineBranch(obj, branch_to_find, reporting)
+            % This function exists for compatibility with PTKAirwayGrowingTree
             segments_to_do = obj;
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
@@ -333,10 +330,10 @@ classdef PTKTreeModel < PTKTree
             reporting.Error('FindCentrelineBranch', 'Branch not found');
         end
     
-        % ToDo: This method is duplicated in PTKAirwayGrowingTree
-        % Returns the coordinates of each terminal branch in the tree below this
-        % branch
         function terminal_coords = GetTerminalCoordinates(obj, reporting)
+            % ToDo: This method is duplicated in PTKAirwayGrowingTree
+            % Returns the coordinates of each terminal branch in the tree below this
+            % branch
             num_branches = obj.CountBranches;
             num_terminal_branches = obj.CountTerminalBranches;
             
@@ -387,9 +384,9 @@ classdef PTKTreeModel < PTKTree
             
         end
         
-        % Returns the number of branches in this tree, from this branch
-        % and excluding generations above the max_generation_number
         function number_of_branches = CountBranchesUpToGeneration(obj, max_generation_number)
+            % Returns the number of branches in this tree, from this branch
+            % and excluding generations above the max_generation_number
             number_of_branches = 0;
             if obj.GenerationNumber > max_generation_number
                 return;
@@ -413,9 +410,9 @@ classdef PTKTreeModel < PTKTree
             new_tree.CreateFromSkeletonTreeBranch(skeleton_tree, image_template);
         end
         
-        % Creates a copy of the tree, but only copies the radius property, but
-        % also maintains a reference to the branch that was copied
         function new_tree = SimpleTreeCopy(tree)
+            % Creates a copy of the tree, but only copies the radius property, but
+            % also maintains a reference to the branch that was copied
             new_tree = PTKTreeModel;
             new_tree.SimpleCopyBranch(tree);
         end
@@ -423,4 +420,3 @@ classdef PTKTreeModel < PTKTree
     end
     
 end
-

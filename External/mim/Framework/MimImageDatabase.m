@@ -1,14 +1,16 @@
 classdef MimImageDatabase < handle
-    % MimImageDatabase. Part of the internal framework of the TD MIM Toolkit.
+    % Database of source imaging data 
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
+    % Part of the internal framework of the TD MIM Toolkit.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % You should not use this class within your own code. It is intended to
+    % be used internally within the framework of the TD MIM Toolkit.
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Constant)
@@ -255,7 +257,7 @@ classdef MimImageDatabase < handle
                 notify(obj, 'DatabaseHasChanged');
             end
             
-            reporting.CompleteProgress;
+            reporting.CompleteProgress();
         end
         
         function SaveDatabase(obj, reporting)

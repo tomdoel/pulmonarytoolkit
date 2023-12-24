@@ -1,11 +1,11 @@
 classdef PTKFissurePlane < PTKPlugin
     % PTKFissurePlane. Plugin to obtain an approximation of the fissures
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
-    %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See PTKPlugin.m for more information on how to run plugins.
+    % This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    % the gui, or through the interfaces provided by the Pulmonary Toolkit.
+    % See PTKPlugin.m for more information on how to run plugins.
     %
-    %     Plugins should not be run directly from your code.
+    % Plugins should not be run directly from your code.
     %
     %     This is an intermediate stage towards lobar segmentation.
     %
@@ -17,11 +17,11 @@ classdef PTKFissurePlane < PTKPlugin
     %     [Doel et al., Pulmonary lobe segmentation from CT images using
     %     fissureness, airways, vessels and multilevel B-splines, 2012]
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     properties

@@ -1,23 +1,22 @@
 function path_name = MimSaveMarkersAs(markers_struct, path_name, reporting)
-    % MimSaveMarkersAs. Prompts the user for a filename, and saves the markers object
+    % Prompt the user for a filename, and saves the markers object
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     MimSaveMarkersAs(patch_object, path_name, reporting)
     %
-    %         MimSaveMarkersAs(patch_object, path_name, reporting)
+    % Parameters:
+    %     markers_struct: the struct to be saved in XML
+    %     path_name: specify the location to save the xml file.
+    %     reporting (CoreReportingInterface): an object for
+    %         reporting progress and warnings
     %
-    %             markers_struct    is a struct to be saved in XML
-    %             path_name  specify the location to save the xml file.
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
     %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %  
     
     if ~isstruct(markers_struct)
         error('Requires a struct as input');

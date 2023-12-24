@@ -1,37 +1,36 @@
 function MimSave(file_path, filename_base, image_data, compression, reporting)
-    % MimSave. Saves an image or a structure containing images, with compression support
+    % Save an image or a structure containing images, with compression support
     %
-    %    MimSave allows you to save a structure as a .mat file, where every
-    %    PTKImage in the structure has its raw data saved as a separate
-    %    .raw file, with compression if supported. Use MimLoad to reload
-    %    the structure.
+    % MimSave allows you to save a structure as a .mat file, where every
+    % PTKImage in the structure has its raw data saved as a separate
+    % .raw file, with compression if supported. Use MimLoad to reload
+    % the structure.
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     MimSave(file_path, filename_base, image_data, compression, reporting);
     %
-    %         MimSave(file_path, filename_base, image_data, compression, reporting)
+    % Parameters:
+    %     file_path: specify the location to save the files.
+    %     filename_base: specify the file prefix. Suffixes will be
+    %                    added automatically. A single header file
+    %                    will be saved for the structure or image,
+    %                    and a separate raw image file will be
+    %                    created for each image in the structure
+    %     image_data: is a PTKImage (or PTKDicomImage) class containing the image
+    %                 to be saved, or a structure which could
+    %                 contain one or more PTKImages
+    %     compression: the compression to use when saving the
+    %                  raw data in PTKImage files
+    %     reporting (CoreReportingInterface): an object
+    %                for reporting progress and warnings
     %
-    %             file_path       specify the location to save the files.
-    %             filename_base   specify the file prefix. Suffixes will be
-    %                             added automatically. A single header file
-    %                             will be saved for the structure or image,
-    %                             and a separate raw image file will be
-    %                             created for each image in the structure
-    %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
-    %                             to be saved, or a structure which could
-    %                             contain one or more PTKImages
-    %             compression     the compression to use when saving the
-    %                             raw data in PTKImage files
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
     %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %            
     
     result = ConvertStructAndSaveRawImageData(image_data, file_path, filename_base, 0, compression, reporting);
     filename = [fullfile(file_path, filename_base) '.mat'];
@@ -75,5 +74,3 @@ function [new_structure, next_index] = ConvertStructAndSaveRawImageData(old_stru
         end
     end
 end
-
-

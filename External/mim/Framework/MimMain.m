@@ -1,47 +1,47 @@
 classdef MimMain < CoreBaseClass
-    % MimMain. Imports and provides access to data from the TD MIM Toolkit
+    % Import and provides access to data from the TD MIM Toolkit
     %
-    %     MimMain provides access to data from the TD MIM Toolkit, and allows 
-    %     you to import new data. Data is accessed through one or more MimDataset
-    %     objects. Your code should create a single MimMain object, and then ask
-    %     it to create a MimDataset object for each dataset you wish to access. 
+    % MimMain provides access to data from the TD MIM Toolkit, and allows 
+    % you to import new data. Data is accessed through one or more MimDataset
+    % objects. Your code should create a single MimMain object, and then ask
+    % it to create a MimDataset object for each dataset you wish to access. 
     %
-    %     MimMain is essentially a class factory for MimDatasets, but shares the 
-    %     MimReportingInterface (error/progress reporting) objects between all 
-    %     datasets, so you have a single error/progress reporting pipeline for 
-    %     your use of the TD MIM Toolkit.
+    % MimMain is essentially a class factory for MimDatasets, but shares the 
+    % MimReportingInterface (error/progress reporting) objects between all 
+    % datasets, so you have a single error/progress reporting pipeline for 
+    % your use of the TD MIM Toolkit.
     %
-    %     To import a new dataset, construct a PTKImageInfo object with the file
-    %     path and file name set to the image file. For DICOM files it is only
-    %     necessary to specify the path since all image files in that directory
-    %     will be imported. Then call CreateDatasetFromInfo. MimMain will import
-    %     the data (if it has not already been imported) and return a new
-    %     MimDataset object for that dataset.
+    % To import a new dataset, construct a PTKImageInfo object with the file
+    % path and file name set to the image file. For DICOM files it is only
+    % necessary to specify the path since all image files in that directory
+    % will be imported. Then call CreateDatasetFromInfo. MimMain will import
+    % the data (if it has not already been imported) and return a new
+    % MimDataset object for that dataset.
     %
-    %     To access an existing dataset you can use CreateDatasetFromInfo as
-    %     above, or you can use CreateDatasetFromUid to retrieve a dataset which
-    %     has peviously been imported, using the UID that was associated with
-    %     that dataset.
+    % To access an existing dataset you can use CreateDatasetFromInfo as
+    % above, or you can use CreateDatasetFromUid to retrieve a dataset which
+    % has peviously been imported, using the UID that was associated with
+    % that dataset.
     %
-    %     Example
-    %     -------
-    %     Replace <image path> and <filenames> with the path and filenames
-    %     to your image data.
+    % Example
+    % -------
+    % Replace <image path> and <filenames> with the path and filenames
+    % to your image data.
     %
-    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         mim = MimMain();
-    %         dataset = mim.CreateDatasetFromInfo(image_info);
+    %     image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
+    %     mim = MimMain();
+    %     dataset = mim.CreateDatasetFromInfo(image_info);
     %
-    %     You can then obtain results from this dataset, e.g.
+    % You can then obtain results from this dataset, e.g.
     %
-    %         results = dataset.GetResult('PluginName');
+    %     results = dataset.GetResult('PluginName');
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (SetAccess = private)

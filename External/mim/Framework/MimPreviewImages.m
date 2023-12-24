@@ -1,19 +1,14 @@
 classdef MimPreviewImages < CoreBaseClass
-    % MimPreviewImages. Part of the internal framework of the TD MIM Toolkit.
+    % Caches a list of 'preview images' which are thumbnails 
+    % of previous plugin results for this dataset. These images are used by
+    % the GUI as a 'preview' of the results obtained when running a plugin.
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
     %
-    %     MimPreviewImages caches a list of 'preview images' which are thumbnails 
-    %     of previous plugin results for this dataset. These images are used by
-    %     the GUI as a 'preview' of the results obtained when running a
-    %     plugin.
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

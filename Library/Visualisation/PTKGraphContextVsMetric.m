@@ -13,21 +13,21 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list, pa
     % Syntax:
     %     figure_handle = PTKGraphContextVsMetric(table, metric, context_list, patient_uids)
     %
-    % Inputs:
-    %     table - a MimResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
-    %     metric - a string containing the id of the metric to plot. This must correspond to the metic id in the table.
-    %     context_list - Set to [] to plot all contexts, otherwise specify a set of one or more contexts or context sets to plot. Contexts will appear on the x-axis.
-    %     patient_uids - Set to [] to plot all patients, otherwise specify a set of one of more patient UIDs to appear on the graph.
+    % Parameters:
+    %     table: a MimResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
+    %     metric: a string containing the id of the metric to plot. This must correspond to the metic id in the table.
+    %     context_list: Set to [] to plot all contexts, otherwise specify a set of one or more contexts or context sets to plot. Contexts will appear on the x-axis.
+    %     patient_uids: Set to [] to plot all patients, otherwise specify a set of one of more patient UIDs to appear on the graph.
     %         Each patient will appear with different markers and will appear in the legend.
     %
-    % Output:
-    %     figure_handle - the handle of the generated figure. Use this handle to export the figure to an image file
+    % Returns:
+    %     figure_handle: the handle of the generated figure. Use this handle to export the figure to an image file
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     if nargin < 4

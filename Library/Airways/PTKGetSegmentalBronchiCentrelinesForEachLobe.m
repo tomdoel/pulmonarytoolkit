@@ -1,13 +1,12 @@
 function start_branches = PTKGetSegmentalBronchiCentrelinesForEachLobe(airway_tree, lobes, template, reporting)
-    % PTKGetSegmentalBronchiCentrelinesForEachLobe. Given a segmented airway tree, finds the bronchus
-    %     corresponding to each pulmonary segment
+    % Given a segmented airway tree, finds the bronchus corresponding to each pulmonary segment
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     start_branches = PTKGetAirwaysLabelledByLobe(template, airway_tree, reporting);

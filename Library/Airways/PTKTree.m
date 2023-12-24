@@ -1,15 +1,15 @@
 classdef PTKTree < handle
-    % PTKTree. A base class representing a tree structure
+    % A base class representing a tree structure
     %
-    %     Each branch in a tree structure is represented by a PTKTree.
-    %     Each branch references its parent and child branches; therefore it is
-    %     possible to reconstruct the entire tree from a single branch.
+    % Each branch in a tree structure is represented by a PTKTree.
+    % Each branch references its parent and child branches; therefore it is
+    % possible to reconstruct the entire tree from a single branch.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
     properties (SetAccess = protected)

@@ -1,12 +1,12 @@
 function start_nodes = PTKConvertListsToNodes(node_index_list, xc, yc, zc, radius_list, node_index_1, node_index_2, reporting)
-    % PTKConvertListsToNodes. Converts a list of point indices, coordinates and parameters into a node structure
+    % Converts a list of point indices, coordinates and parameters into a node structure
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
 
     valid_node_indices = [];

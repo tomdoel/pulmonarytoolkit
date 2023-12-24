@@ -1,14 +1,16 @@
 function result = MimExpandResultToContext(result, this_result, child_context, output_template_image, image_templates, dataset_stack, reporting)
-    % MimExpandResultToContext. Part of the internal framework of the TD MIM Toolkit.
+    % Convert a plugin result from one context to a higher context.
     %
-    %     This function is used to convert a plugin result from one context
-    %     to a higher context
+    % For example, some plugins perform computations at a lobar level. Each result will be for its
+    % lobar context. You use this funciton to combine these lobar context results into a lung context 
+    % and this view the aggregate result for the whole lung.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
         
     if isempty(result)

@@ -1,18 +1,13 @@
 classdef PTKSoftwareInfo < handle
-    % PTKSoftwareInfo. Part of the internal framework of the Pulmonary Toolkit.
-    %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the Pulmonary Toolkit.
-    %
-    %     Provides information about the software including folder names and 
-    %     DICOM metadata written to exported files.
+    % Provides information about the software including folder names and 
+    % DICOM metadata written to exported files.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     properties (Constant)
@@ -51,4 +46,3 @@ classdef PTKSoftwareInfo < handle
         RegistrationBodyForceDiffTol = 0.001
     end
 end
-

@@ -1,30 +1,30 @@
 classdef CoreReportingInterface < CoreBaseClass
-    % CoreReportingInterface. Provides an interface for error and progress reporting.
+    % Provides an interface for error and progress reporting.
     %
-    %     CoreReportingInterface is the interface used by CoreMat and other
-    %     libraries to process errors, warnings, messages, logging
-    %     information and progress reports. This means that warnings,
-    %     errors and progress are handled via a callback instead of
-    %     directly bringing up message and progress boxes or writing to the
-    %     command window. This allows applications to choose how they
-    %     process error, warning and progress information.
+    % CoreReportingInterface is the interface used by CoreMat and other
+    % libraries to process errors, warnings, messages, logging
+    % information and progress reports. This means that warnings,
+    % errors and progress are handled via a callback instead of
+    % directly bringing up message and progress boxes or writing to the
+    % command window. This allows applications to choose how they
+    % process error, warning and progress information.
     %
-    %     You can create your own implementation of this interface to get
-    %     customised message behaviour; for example, if you are running a batch
-    %     script you may wish to write all messages to a log file instead of
-    %     displaying them on the command line.
+    % You can create your own implementation of this interface to get
+    % customised message behaviour; for example, if you are running a batch
+    % script you may wish to write all messages to a log file instead of
+    % displaying them on the command line.
     %
-    %     This is an abstract class; you should not directly create an instance
-    %     of CoreReportingInterface. Instead, you should either use one of the
-    %     existing implementation classes (CoreReporting, CoreReportingDefault) or
-    %     you can create your own to achieve customised behaviour.
+    % This is an abstract class; you should not directly create an instance
+    % of CoreReportingInterface. Instead, you should either use one of the
+    % existing implementation classes (CoreReporting, CoreReportingDefault) or
+    % you can create your own to achieve customised behaviour.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
 
     

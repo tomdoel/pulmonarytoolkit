@@ -1,16 +1,16 @@
 classdef GemAxes < GemUserInterfaceObject
     % GemAxes GEM class for Matlab axes
     %
-    %     GemAxes is used to build axes for supporting image display.
-    %     By default the axes are always hidden, but they are required in order to
-    %     define the image limits to display
+    % GemAxes is used to build axes for supporting image display.
+    % By default the axes are always hidden, but they are required in order to
+    % define the image limits to display
     %
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = private)

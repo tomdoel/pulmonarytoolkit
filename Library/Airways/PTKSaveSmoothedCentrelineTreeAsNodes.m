@@ -1,30 +1,25 @@
 function PTKSaveSmoothedCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
-    % PTKSaveSmoothedCentrelineTreeAsNodes. Exports a centreline tree structure into node and element files
+    % Export a centreline tree structure into node and element files
     %
-    %     Syntax
-    %     ------
-    %
+    % Syntax:
     %         PTKSaveSmoothedCentrelineTreeAsNodes(tree_root, file_path, base_filename, template_image, reporting)
     %
-    %             tree_root       is the root branch in a PTKTreeModel structure 
-    %             file_path       is the path where the node and element files
-    %                             are to be stored
-    %             filename_prefix is the filename prefix. The node and element
-    %                             files will have '_node.txt' and '_element.txt'
-    %                             appended to this prefix before saving.
-    %             coordinate_system  a MimCoordinateSystem enumeration
-    %                             specifying the coordinate system to use
-    %             template_image  A PTKImage providing voxel size and image size
-    %                             parameters
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
+    % Parameters:
+    %             tree_root: root branch in a PTKTreeModel structure 
+    %             file_path: path where the node and element files are to be stored
+    %             filename_prefix: filename prefix. The node and element
+    %                              files will have '_node.txt' and '_element.txt'
+    %                              appended to this prefix before saving.
+    %             coordinate_system (MimCoordinateSystem): enumeration
+    %                                                      specifying the coordinate system to use
+    %             template_image (PTKImage): an image providing voxel size and image size parameters
+    %             reporting (CoreReportingInterface): object for reporting progress and warnings
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
     if nargin < 4

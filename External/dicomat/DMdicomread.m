@@ -1,7 +1,7 @@
 function imageData = DMdicomread(fileName_or_metaHeader)
-    % DMdicomread Reads image data from a Dicom file
+    % Reads image data from a Dicom file
     %
-    % Usage:
+    % Syntax:
     %     imageData = DMdicomread(fileName)
     %         fileName: path and filename of the file to test
     %
@@ -13,11 +13,11 @@ function imageData = DMdicomread(fileName_or_metaHeader)
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
 
     if isstruct(fileName_or_metaHeader)

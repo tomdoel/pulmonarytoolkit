@@ -1,13 +1,13 @@
 classdef GemUserInterfaceObject < CoreBaseClass
-    % GemUserInterfaceObject. Base class for GEM user interface components
+    % Base class for GEM user interface components
     %
     % All GEM controls inherit from this class
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     %
 

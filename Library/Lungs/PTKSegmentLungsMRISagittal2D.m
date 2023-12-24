@@ -1,30 +1,28 @@
-function [new_image, bounds] = PTKSegmentLungsMRISagittal2D(original_image, filter_size_mm, reporting)
-    % PTKSegmentLungsMRISagittal2D. Generates an approximate segmentation the lungs
+function [new_image, bounds] = PTKSegmentLungsMRISagittal2D(original_image, filter_size_mm, reporting, start_point)
+    % Generate an approximate segmentation the lungs
     % from MRI images using region growing with a variable threshold.
     %
     %
-    %     Syntax:
-    %         [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_size_mm, reporting, start_point_right)
+    % Syntax:
+    %     [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_size_mm, reporting, start_point_right);
     %
-    %         Inputs:
-    %         ------
-    %             original_image - The MRI image from which to segment the lungs
-    %             filter_size_mm - The standard deviation of the filter to apply
-    %             reporting      - an object implementing CoreReportingInterface
-    %                              for reporting progress and warnings
-    %             start_point_right - optionally specify a starting point
+    % Parameters:
+    %     original_image (PTKImage): The MRI image from which to segment the lungs
+    %     filter_size_mm: The standard deviation of the filter to apply
+    %     reporting: an object implementing CoreReportingInterface
+    %                for reporting progress and warnings
+    %     start_point_right: optionally specify a starting point
     %
-    %         Outputs:
-    %         -------
-    %             new_image - A binary PTKImage containing the segmented lungs
-    %             bounds - The image threshold determined for lung segmentation
+    % Returns:
+    %     new_image (PTKImage): a binary PTKImage containing the segmented lungs
+    %     bounds: the image threshold determined for lung segmentation
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     if ~isa(original_image, 'PTKImage')

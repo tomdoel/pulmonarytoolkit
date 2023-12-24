@@ -1,37 +1,36 @@
 classdef MimPlugin < handle
-    % MimPlugin. Base class for a Plugin used by MIM.
+    % Base class for a Plugin used by MIM.
     %
-    %     Plugins are classes you create to run your own routines from the
-    %     MIM toolkit. When you create a plugin, it can automatically
-    %     appear as a button in compatible guis, and is available to scripts and other
-    %     plugins which use the MIM toolkit. The framework automatically
-    %     handles result caching, dependency tracking and preview thumbnail
-    %     generation.
+    % Plugins are classes you create to run your own routines from the
+    % MIM toolkit. When you create a plugin, it can automatically
+    % appear as a button in compatible guis, and is available to scripts and other
+    % plugins which use the MIM toolkit. The framework automatically
+    % handles result caching, dependency tracking and preview thumbnail
+    % generation.
     %
-    %     To run a plugin from your own code, first create a suitable
-    %     MimMain object, usually by using a specific application such as
-    %     PTKMain for PTK. Then call CreateDatasetFromInfo() to create a MimDataset for the image files
-    %     you wish to run the plugin with. Then call GetResult() on this dataset
-    %     interface to run the plugin or fetch a previously cached result.
+    % To run a plugin from your own code, first create a suitable
+    % MimMain object, usually by using a specific application such as
+    % PTKMain for PTK. Then call CreateDatasetFromInfo() to create a MimDataset for the image files
+    % you wish to run the plugin with. Then call GetResult() on this dataset
+    % interface to run the plugin or fetch a previously cached result.
     %
-    %     Example
-    %     -------
-    %     Replace <image path> and <filenames> with the path and filenames
-    %     to your image data, and MyPluginName with the name of the plugin to
-    %     run.
+    % Example
+    % -------
+    % Replace <image path> and <filenames> with the path and filenames
+    % to your image data, and MyPluginName with the name of the plugin to
+    % run.
     %
-    %         image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
-    %         ptk = PTKMain();
-    %         dataset = ptk.CreateDatasetFromInfo(image_info);
-    %         results = dataset.GetResult('MyPluginName');
-    %    
+    %     image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
+    %     ptk = PTKMain();
+    %     dataset = ptk.CreateDatasetFromInfo(image_info);
+    %     results = dataset.GetResult('MyPluginName');
+    % 
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     
@@ -54,13 +53,16 @@ classdef MimPlugin < handle
         % Should normally be set to 'ReplaceOverlay'.
         % This specifies how the plugin result will be displayed to the user
         % when using the gui. Allowable values are:
-        % 'ReplaceOverlay' - the result is displayed as an image overlay
-        % 'ReplaceImage'   - the result replaces the image. Normally you would
-        %                    only do this when creating a new image context 
-        %                    (i.e. region of interest)
-        % 'DoNothing'      - do not display any results. This option is
-        %                    appropriate if your plugin displays its results in
-        %                    its own window
+        %  - ReplaceOverlay:
+        %        the result is displayed as an image overlay
+        %  - ReplaceImage:
+        %        the result replaces the image. Normally you would
+        %        only do this when creating a new image context 
+        %        (i.e. region of interest)
+        %  - DoNothing:
+        %        do not display any results. This option is
+        %        appropriate if your plugin displays its results in
+        %        its own window
         PluginType
         
         % Set to force the plugin to appear in a particular panel name in the gui.

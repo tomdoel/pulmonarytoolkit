@@ -3,15 +3,15 @@ function deformation_field = PTKGetChangeInDeformation(deformation_field, rigid_
     %     original affine translation
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     deformation_field_raw = deformation_field.RawImage;
-    deformation_field = deformation_field.BlankCopy;
+    deformation_field = deformation_field.BlankCopy();
     deformation_field_raw(:,:,:,1) = deformation_field_raw(:,:,:,1) + rigid_affine_matrix(2, 4);
     deformation_field_raw(:,:,:,2) = deformation_field_raw(:,:,:,2) + rigid_affine_matrix(1, 4);
     deformation_field_raw(:,:,:,3) = deformation_field_raw(:,:,:,3) + rigid_affine_matrix(3, 4);

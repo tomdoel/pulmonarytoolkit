@@ -1,23 +1,22 @@
 function label_image = PTKCoordListToLabelMatrix(points_list, image_template, reporting)
-    % PTKCoordListToLabelMatrix. Converts sets of image points into a label
-    %     matrix
+    % Convert sets of image points into a label matrix
     %
-    %     PTKCoordListToLabelMatrix takes in a set of regions, each member of
-    %     which is a vector of points for that region. Each point is defined by
-    %     its global index. Each vector of points is assigned a label in the
-    %     output image.
+    % PTKCoordListToLabelMatrix takes in a set of regions, each member of
+    % which is a vector of points for that region. Each point is defined by
+    % its global index. Each vector of points is assigned a label in the
+    % output image.
+
+    % So if start_points == {[14, 35, 53], [90, 138]}, then the output image
+    % will have two colour values (1 and 2). The points with global indices
+    % 14, 35 and 53 will be set to colour index 1, and the points with
+    % global indices 90 and 138 will be set to colour index 2.
     %
-    %     So if start_points == {[14, 35, 53], [90, 138]}, then the output image
-    %     will have two colour values (1 and 2). The points with global indices
-    %     14, 35 and 53 will be set to colour index 1, and the points with
-    %     global indices 90 and 138 will be set to colour index 2.
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
      
     if ~isa(image_template, 'PTKImage')

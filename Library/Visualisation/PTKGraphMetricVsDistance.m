@@ -14,9 +14,9 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     % Note the figure is optimised for exporting to a file, not for displaying on-screen. The on-screen figure is not intended for viewing and may have font and graphic sizes in the wrong proportions. To view the figure in its correct proportions, you should export the figure as a graphics file (e.g. png or jpg) and then view the file.
     %
     % Syntax:
-    %     figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, figure_title, context_list, patient_list, reporting)
+    %     figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, figure_title, context_list, patient_list, reporting);
     %
-    % Inputs:
+    % Parameters:
     %     table - a MimResultsTable containing the data to plot. Only a subset of data will be plotted, determined by the other parameters.
     %     metric - a string containing the id of the metric to plot. This must correspond to the metic id in the table.
     %     metric_std - a string containing the id of the metric to use for the error
@@ -28,16 +28,16 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     %     distance label - The distance label to be used on the x-axis
     %     reporting - an object implementing CoreReportingInterface for reporting progress and warnings
     %
-    % Output:
+    % Returns:
     %     figure_handle - the handle of the generated figure. Use this handle to export the figure to an image file
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     if isempty(patient_list)

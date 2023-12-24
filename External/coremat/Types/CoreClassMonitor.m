@@ -1,17 +1,17 @@
 classdef (Sealed) CoreClassMonitor < handle
-    % CoreClassMonitor. Monitors creation and destruction of classes
+    % Monitors creation and destruction of classes
     %
-    %     This class repesents a singleton which reference counts objects 
-    %     (of base type CoreBaseClass). It is used in testing to ensure that
-    %     objects have been destroyed properly (i.e. that references to the
-    %     objects have been correctly removed).
+    % This class repesents a singleton which reference counts objects 
+    % (of base type CoreBaseClass). It is used in testing to ensure that
+    % objects have been destroyed properly (i.e. that references to the
+    % objects have been correctly removed).
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

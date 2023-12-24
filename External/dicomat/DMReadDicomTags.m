@@ -1,20 +1,21 @@
 function header = DMReadDicomTags(fileName, dictionary)
     % DMReadDicomTags Reads in metainformation from a Dicom file.
     %
-    % Usage:
+    % Syntax:
     %     header = DMReadDicomTags(fileName, dictionary)
     %
+    % Parameters:
     %     fileName: path and filename of the Dicom file to read
     %
-    %     dictionary - an object of class DMDicomDictionary containing the tags
+    %     dictionary: an object of class DMDicomDictionary containing the tags
     %         to fetch.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %        
 
     tag_map = dictionary.TagMap;

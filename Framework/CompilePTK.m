@@ -1,4 +1,14 @@
 function CompilePTK
+    % Script for compiling PTK into a standalone application using the Matlab compiler
+    %
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, Copyright 2016.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
+
     Compile(true);  % Compile GUI
     Compile(false); % Compile API
 end

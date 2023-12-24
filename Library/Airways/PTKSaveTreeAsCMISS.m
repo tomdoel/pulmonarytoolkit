@@ -1,11 +1,10 @@
 function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
-    % PTKSaveTreeAsCMISS. Exports a tree structure into ipnode and ipelem files
+    % Export a tree structure into ipnode and ipelem files
     %
-    %     Syntax
-    %     ------
+    % Example:
+    %     PTKSaveTreeAsCMISS(tree_root, file_path, base_filename, reporting);
     %
-    %         PTKSaveTreeAsCMISS(tree_root, file_path, base_filename, reporting)
-    %
+    % Parameters:
     %             tree_root       is the root branch in a PTKTreeModel structure 
     %             file_path       is the path where the node and element files
     %                             are to be stored
@@ -20,11 +19,11 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_sy
     %                             for reporting progress and warnings
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
     if nargin < 4
@@ -291,4 +290,3 @@ function PrintExnodeToFile(file_handle, node_index, x_mm, y_mm, z_mm, radius_mm,
     fprintf(file_handle, '  Node: %5u\r\n', node_index);
     fprintf(file_handle, '   %19.17G   %19.17G   %19.17G   %19.17G   %19.17G\r\n', x_mm, y_mm, z_mm, radius_mm, density_mgml);
 end
-

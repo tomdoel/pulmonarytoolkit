@@ -1,20 +1,20 @@
 classdef PTKSkeletonSegment < PTKTree
-    % PTKSkeletonSegment. A data structure representing an airway tree skeleton
+    % A data structure representing an airway tree skeleton
     %
-    %     A root PTKSkeletonSegment is returned by PTKSkeletonise. From this you
-    %     can extract and analyse the resulting airway skeleton tree.
+    % A root PTKSkeletonSegment is returned by PTKSkeletonise. From this you
+    % can extract and analyse the resulting airway skeleton tree.
     %
-    %     PTKSkeletonSegment is used in the construction and storage of
-    %     skeletonised airway trees. A PTKSkeletonSegment stores an individual
-    %     segment of the skeleton tree, with references to the parent and child
-    %     PTKSkeletonSegments, so that it is possible to reconstruct the entire
-    %     tree from a single segment.
+    % PTKSkeletonSegment is used in the construction and storage of
+    % skeletonised airway trees. A PTKSkeletonSegment stores an individual
+    % segment of the skeleton tree, with references to the parent and child
+    % PTKSkeletonSegments, so that it is possible to reconstruct the entire
+    % tree from a single segment.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
     properties (SetAccess = private)

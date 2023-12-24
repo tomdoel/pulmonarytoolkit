@@ -3,11 +3,11 @@ function results = PTKGetRadiusForAirways(centreline_results, lung_image, radius
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
 
     reporting.ShowProgress('Computing radius for each branch');
@@ -42,4 +42,3 @@ function [results, airway_skeleton] = GetRadius(lung_image, airway_skeleton, rad
         
     end
 end
-

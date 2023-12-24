@@ -1,16 +1,17 @@
 function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, reporting, debug_mode)
-    % PTKFindTopOfTrachea. Finds the trachea from a thresholded lung CT image.
+    % Finds the trachea from a thresholded lung CT image.
     %
     % Given a binary image which representes an airway threshold applied to a
     % lung CT image, PTKFindTopOfTrachea finds the coordinate of a point
     % within and near the top of the trachea
     %
-    % Syntax:
+    % Example:
     %     top_of_trachea = PTKFindTopOfTrachea(lung_image, reporting)
+    %
     %     [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, reporting)
     %
-    % Inputs:
-    %     lung_image - a lung volume stored as a PTKImage which has been
+    % Parameters:
+    %     lung_image: a lung volume stored as a PTKImage which has been
     %         thresholded for air voxels (1=air, 0=background).
     %         Note: the lung volume can be a region-of-interest, or the entire
     %         volume. To ensure correct results, PTKImage usage guidelines 
@@ -19,22 +20,22 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     %         crop the image, so that the correct VoxelSize,
     %         OriginalImageSize and Origin parameters are set.
     %
-    %     reporting (optional) - an object implementing CoreReportingInterface
+    %     reporting (optional): an object implementing CoreReportingInterface
     %         for reporting progress and warnings
     %
-    % Outputs:
-    %     top_of_trachea - coordinate (i,j,k) of a point inside and near the top
+    % Returns:
+    %     top_of_trachea is the coordinate (i,j,k) of a point inside and near the top
     %         of the trachea
     %
-    %     trachea_voxels - voxel indices (relative to the input image) of
+    %     trachea_voxels: voxel indices (relative to the input image) of
     %         voxels within the trachea
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     if ~isa(lung_image, 'PTKImage')

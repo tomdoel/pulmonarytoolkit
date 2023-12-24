@@ -1,34 +1,33 @@
 function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
-    % PTKSaveTreeAsVTK. Exports a tree structure into a VTK file
+    % Export a tree structure into a VTK file
     %
-    %     PTKSaveTreeAsVTK saves the tree whose root branch is tree_root into a
-    %     .vtk file which can be viewed with ParaView. 
+    % PTKSaveTreeAsVTK saves the tree whose root branch is tree_root into a
+    % .vtk file which can be viewed with ParaView. 
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     PTKSaveTreeAsVTK(tree_root, file_path, base_filename, reporting);
     %
-    %         PTKSaveTreeAsVTK(tree_root, file_path, base_filename, reporting)
-    %
-    %             tree_root       is the root branch in a PTKTreeModel structure 
-    %             file_path       is the path where the node and element files
-    %                             are to be stored
-    %             filename_prefix is the filename prefix. The node and element
-    %                             files will have '_node.txt' and '_element.txt'
-    %                             appended to this prefix before saving.
-    %             coordinate_system  a MimCoordinateSystem enumeration
-    %                             specifying the coordinate system to use
-    %             template_image  A PTKImage providing voxel size and image size
+    % Parameters:
+    %             tree_root:       is the root branch in a PTKTreeModel structure 
+    %             file_path:       is the path where the node and element files
+    %                              are to be stored
+    %             filename_prefix: is the filename prefix. The node and element
+    %                              files will have '_node.txt' and '_element.txt'
+    %                              appended to this prefix before saving.
+    %             coordinate_system: a MimCoordinateSystem enumeration
+    %                                specifying the coordinate system to use
+    %             template_image: A PTKImage providing voxel size and image size
     %                             parameters
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
+    %             reporting: an object implementing CoreReportingInterface
+    %                        for reporting progress and warnings
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
     if nargin < 6

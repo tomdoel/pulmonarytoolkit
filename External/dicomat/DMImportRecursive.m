@@ -1,40 +1,39 @@
 function fileGrouper = DMImportRecursive(filenameOrRootDirectory, dicomLibrary, reporting)
-    % DMImportRecursive. Loads metadata from a series of DICOM files
+    % Loads metadata from a series of DICOM files
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     file_grouper = DMLoadMetaDMImportRecursivedataFromDicomFiles(filenameOrRootDirectory, dicomLibrary, reporting)
     %
-    %         file_grouper = DMLoadMetaDMImportRecursivedataFromDicomFiles(filenameOrRootDirectory, dicomLibrary, reporting)
+    % Parameters:
+    %     file_grouper    a DMFileGrouper object containing the 
+    %                     metadata grouped into coherent sequences of images
     %
-    %             file_grouper    a DMFileGrouper object containing the 
-    %                             metadata grouped into coherent sequences of images
+    %     filenameOrRootDirectory specify the location of the DICOM
+    %                     files.
     %
-    %             filenameOrRootDirectory specify the location of the DICOM
-    %                             files.
+    %     dicomLibrary    (Optional) An object implementing
+    %                     DMDicomLibraryInterface, used to parse
+    %                     the Dicom files. If no object is provided
+    %                     then the default DMDicomLibrary is used
     %
-    %             dicomLibrary    (Optional) An object implementing
-    %                             DMDicomLibraryInterface, used to parse
-    %                             the Dicom files. If no object is provided
-    %                             then the default DMDicomLibrary is used
-    %
-    %             reporting       A CoreReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a CoreReporting
-    %                             with no arguments to hide all reporting. If no
-    %                             reporting object is specified then a default
-    %                             reporting object with progress dialog is
-    %                             created
+    %     reporting       A CoreReporting or implementor of the same interface,
+    %                     for error and progress reporting. Create a CoreReporting
+    %                     with no arguments to hide all reporting. If no
+    %                     reporting object is specified then a default
+    %                     reporting object with progress dialog is
+    %                     created
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %        
     
     % Create a reporting object if none was provided
     if nargin < 3 || isempty(reporting)
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     % Create a library object if none was provided
@@ -74,7 +73,7 @@ function fileGrouper = DMImportRecursive(filenameOrRootDirectory, dicomLibrary, 
         reporting.Error('DMImportRecursive:FileDoesNotExist', ['The file or directory ' filenameOrRootDirectory ' does not exist.']);
     end
     
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end
 
 function ImportDirectoryRecursive(fileGrouper, dicomLibrary, directory, dictionary, reporting)

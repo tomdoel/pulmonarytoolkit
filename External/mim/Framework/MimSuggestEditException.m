@@ -1,26 +1,23 @@
 classdef MimSuggestEditException < MException
-    % MimSuggestEditException. Error that can be overcome using a manual edit.
+    % Error that can be overcome using a manual edit.
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
+    % MimSuggestEditException is raised when an error occurs in certain
+    % Plugins. Normally a plugin failure would mean that no clients of
+    % the Plugin can be used. However, if a manual edit can be created
+    % to replace the plugin call, clients of the Plugin can continue.
+    % This exception is used to indicate to the caller (the GUI or the
+    % caller of the API) that it might be possible to create a manual
+    % edit for this purpose, and indicates the Plugin for which the
+    % manual edit should occur. While it is possible to create a manual
+    % edit for any Plugin, it is simpler from a user perspective to
+    % only allow creation of manual edits for certain meaningful Plugins
+    % 
     %
-    %     MimSuggestEditException is raised when an error occurs in certain
-    %     Plugins. Normally a plugin failure would mean that no clients of
-    %     the Plugin can be used. However, if a manual edit can be created
-    %     to replace the plugin call, clients of the Plugin can continue.
-    %     This exception is used to indicate to the caller (the GUI or the
-    %     caller of the API) that it might be possible to create a manual
-    %     edit for this purpose, and indicates the Plugin for which the
-    %     manual edit should occur. While it is possible to create a manual
-    %     edit for any Plugin, it is simpler from a user perspective to
-    %     only allow creation of manual edits for certain meaningful Plugins
-    %    
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (SetAccess = private)

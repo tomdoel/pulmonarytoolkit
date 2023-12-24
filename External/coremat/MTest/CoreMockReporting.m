@@ -1,15 +1,15 @@
 classdef CoreMockReporting < CoreReportingInterface
-    % CoreMockReporting Mock Reporting class for MTest unit tests
+    % Mock Reporting class for MTest unit tests
     %
     % This class is used in tests in place of an object implementing the
     % CoreReportingInterface. It allows expected calls to be verified, while
     % maintaining some of the expected behaviour of a Reporting object.
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
 
     properties

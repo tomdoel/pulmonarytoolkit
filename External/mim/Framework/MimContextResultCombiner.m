@@ -1,15 +1,12 @@
 classdef MimContextResultCombiner < CoreBaseClass
-    % MimContextResultCombiner. Part of the internal framework of the TD MIM Toolkit.
-    %
-    %     This class is used to build up aggregate results combined from results for different contexts
+    % This class is used to build up aggregate results combined from results for different contexts
     %
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     

@@ -1,15 +1,15 @@
 classdef (Sealed) CoreMexSingleton < handle
-    % CoreMexSingleton. A singleton used for storing mex compilation information
+    % A singleton used for storing mex compilation information
     %
-    %     CoreMexSingleton is a singleton. It cannot be created using the
-    %     constructor; instead call CoreMexSingleton.GetMexSingleton;
+    % CoreMexSingleton is a singleton. It cannot be created using the
+    % constructor; instead call CoreMexSingleton.GetMexSingleton;
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

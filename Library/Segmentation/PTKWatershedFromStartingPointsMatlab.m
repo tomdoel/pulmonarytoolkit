@@ -1,22 +1,26 @@
 function labeled_output = PTKWatershedFromStartingPointsMatlab(image, starting_labels)
-    % PTKWatershedFromStartingPointsMatlab. A 3D watershed-like function.
+    % A 3D watershed-like function.
     %
+    % Attention:
     %     This is a Matlab-only implementation of the mex function
-    %     PTKWatershedFromStartingPoints. Use the mex function is possible as this is faster. 
+    %     PTKWatershedFromStartingPoints. It exists to prodive an alternative if the mex function
+    %     cannot be compiled or for testing purposes.
     %
-    %     The watershed starts from the positive-valued labels in
-    %     starting_labels and grows out into the zero-valued points, with the
-    %     result returned in labeled_output. Regions starting from points with
-    %     the same label can merge together. Negative labels are treated as
-    %     fixed barriers. The do not grow and other regions cannot grow into
-    %     them.
+    %     Use the mex function PTKWatershedFromStartingPoints instead of using this function 
+    %     if possible, as that is faster. 
     %
+    % The watershed starts from the positive-valued labels in
+    % starting_labels and grows out into the zero-valued points, with the
+    % result returned in labeled_output. Regions starting from points with
+    % the same label can merge together. Negative labels are treated as
+    % fixed barriers. The do not grow and other regions cannot grow into
+    % them.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
 

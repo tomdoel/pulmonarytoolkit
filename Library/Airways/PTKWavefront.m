@@ -25,11 +25,11 @@ classdef PTKWavefront < handle
     %         Pending voxels are 'accepted' or 'rejected' according to whether
     %         the heuristics have determined an explosion has occurred.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
         
     properties (SetAccess = private)
@@ -94,21 +94,21 @@ classdef PTKWavefront < handle
             end
         end
 
-        % Returns the very front layer of voxels at the wavefront
         function frontmost_points = GetFrontmostWavefrontVoxels(obj)
+            % Returns the very front layer of voxels at the wavefront
             frontmost_points = obj.WavefrontVoxelIndices{end}; 
         end
         
-        % Returns the wavefront for this segment, which includes voxels that may
-        % be separated into child segments
         function wavefront_voxels = GetWavefrontVoxels(obj)
+            % Returns the wavefront for this segment, which includes voxels that may
+            % be separated into child segments
             wavefront_voxels = obj.ConcatenateVoxels(obj.WavefrontVoxelIndices);
         end
 
-        % Add new voxels to this segment, and returns a list of all segments
-        % that require further processing (including this one, and any child
-        % segments which have been created as a result of bifurcations)
         function segments_to_do = AddNewVoxelsAndGetNewSegments(obj, indices_of_new_points, image_size, reporting)
+            % Add new voxels to this segment, and returns a list of all segments
+            % that require further processing (including this one, and any child
+            % segments which have been created as a result of bifurcations)
             
             % Check that indices are unique
             if (numel(indices_of_new_points) ~= numel(unique(indices_of_new_points)))

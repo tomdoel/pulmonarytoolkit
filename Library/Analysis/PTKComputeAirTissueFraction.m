@@ -1,12 +1,12 @@
 function results = PTKComputeAirTissueFraction(roi, mask, reporting)
-    % PTKComputeAirTissueFraction. Computes volume and surface area from masks
+    % Compute volume and surface area from masks
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
 
     ct_air_hu = -1000;
     ct_water_hu = 0;

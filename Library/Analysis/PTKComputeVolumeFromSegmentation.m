@@ -2,11 +2,11 @@ function results = PTKComputeVolumeFromSegmentation(segmentation_mask, reporting
     % PTKComputeVolumeFromSegmentation. Computes volume and surface area from masks 
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
 
     voxel_size = segmentation_mask.VoxelSize;
     

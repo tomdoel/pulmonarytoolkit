@@ -1,6 +1,12 @@
 classdef CoreReportingWarningsCache < CoreBaseClass
-    %CoreReportingWarningsCache Summary of this class goes here
-    %   Detailed explanation goes here
+    % Caches errors and warnings in order to avoid showing duplicates
+    %
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
+    %    
     
     properties (Access = private)
         PendingMessages
@@ -64,4 +70,3 @@ classdef CoreReportingWarningsCache < CoreBaseClass
         end
     end
 end
-

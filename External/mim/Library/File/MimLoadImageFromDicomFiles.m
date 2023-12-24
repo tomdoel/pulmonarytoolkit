@@ -1,27 +1,25 @@
 function loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, reporting)
-    % MimLoadImageFromDicomFiles. Loads a series of DICOM files into a 3D volume
+    % Load a series of DICOM files into a 3D volume
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, reporting);
     %
-    %         loaded_image = MimLoadImageFromDicomFiles(image_path, filenames, reporting)
+    % Parameters:
+    %     image_path: location of the DICOM files to load
+    %     filenames: a filename string, or cell array of filenames
+    %     reporting (Optional[CoreReportingInterface]): object
+    %         for reporting progress and warnings
     %
-    %             loaded_image    a PTKImage containing the 3D volume
-    %
-    %             image_path      location of the DICOM files to load
-    %
-    %             filenames       a filename string, or cell array of filenames
-    %
-    %             reporting (optional) - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
+    % Returns:
+    %     loaded_image (PTKImage): a PTKImage containing the 3D volume
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %        
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
+    %
 
     % Create a reporting object if none was provided
     if nargin < 3

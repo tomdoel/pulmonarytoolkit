@@ -1,26 +1,29 @@
 function data = CoreLoadXml(file_name, reporting, conversion_map)
-    % CoreLoadXml. Loads data structure from an XML file
+    % Load data structure from an XML file
     %
-    %     CoreLoadXml loads data which has been serialised to an XML file using
-    %     CoreSaveXml. The data may include arrays, cell arrays, structures, maps and
-    %     classes which support serialisation. Transient class properties
-    %     are note saved.
+    % CoreLoadXml loads data which has been serialised to an XML file using
+    % CoreSaveXml. The data may include arrays, cell arrays, structures, maps and
+    % classes which support serialisation. Transient class properties
+    % are note saved.
     %
-    %     Syntax:
-    %         data = CoreLoadXml(file_name, reporting);
+    % Syntax:
+    %     data = CoreLoadXml(file_name, reporting);
     %
-    %             file_name - a CoreFilename or character array containing the path and filename
-    %             reporting - object of type CoreReportingInterface for error reporting
-    %             conversion_map - optional map specifying that saved
-    %             classes are to be converted to other classes on load
+    % Parameters:
+    %     file_name: a CoreFilename or character array containing the path and filename
+    %     reporting: object of type CoreReportingInterface for error reporting
+    %     conversion_map: optional map specifying that saved
+    %         classes are to be converted to other classes on load
     %
-    %             data - a structure containing all the data which has been loaded
+    % Returns:
+    %     data: a structure containing all the data which has been loaded
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    %
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     XMLVersion = '0.1';

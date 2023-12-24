@@ -1,16 +1,16 @@
 classdef GemCinePanel < GemVirtualPanel
-    % GemCinePanel  Image axes with scrollbar for displaing a slice of a 3D volume
+    % Image axes with scrollbar for displaing a slice of a 3D volume
     %
-    %     GemCinePanel contains a 2D image and a slider, which allows the user to
-    %     cine through slices of a 3D images
+    % GemCinePanel contains a 2D image and a slider, which allows the user to
+    % cine through slices of a 3D images
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %    
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
+    %
 
     properties (Access = protected)
         Axes

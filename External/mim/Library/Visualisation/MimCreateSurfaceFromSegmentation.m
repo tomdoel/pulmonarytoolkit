@@ -1,52 +1,51 @@
 function [fv, normals] = MimCreateSurfaceFromSegmentation(segmentation, smoothing_size, small_structures, label, coordinate_system, template_image, limit_to_one_component_per_index, minimum_component_volume_mm3, reporting)
-    % MimCreateSurfaceFromSegmentation. Creates a surface mesh from a segmentation volume.
+    % Create a surface mesh from a segmentation volume.
     %
-    %     Inputs
-    %     ------
+    % Parameters:
+    %     filepath: path for STL file
     %
-    %     filepath, filename - path and filename for STL file
+    %     filename: filename for STL file
     %
-    %     segmentation - a binary 3D PTKImage containing 1s for the voxels to
+    %     segmentation: a binary 3D PTKImage containing 1s for the voxels to
     %         visualise
     %
-    %     smoothing_size - the amount of smoothing to perform. Higher
+    %     smoothing_size: the amount of smoothing to perform. Higher
     %         smoothing makes the image look better but removes small
     %         structures such as airways and vessels
     %
-    %     small_structures - set to true for improved visualisation of
+    %     small_structures: set to true for improved visualisation of
     %         narrow structures such as airways and vessels
     %
-    %     label - Only voxels of this colour are considered
+    %     label: Only voxels of this colour are considered
     %
-    %     coordinate_system  a MimCoordinateSystem enumeration
+    %     coordinate_system:  a MimCoordinateSystem enumeration
     %         specifying the coordinate system to use
     %
-    %     template_image  A PTKImage providing voxel size and image size
+    %     template_image:  A PTKImage providing voxel size and image size
     %         parameters, which may be required depending on the coordinate
     %         system
     %
-    %     limit_to_one_component_per_index - set this flag to true if each colour
+    %     limit_to_one_component_per_index: set this flag to true if each colour
     %         index in the image represents only a single, large object.
     %         This will prevent the appearance of orphaned 'island' components caused by the
     %         image smoothing and surface rendering approximations.
     % 
-    %     minimum_component_volume_mm3 - if two or more separate components in the
+    %     minimum_component_volume_mm3: if two or more separate components in the
     %         image could share the same colour index, but you want to prevent the
     %         appearance of orphaned 'island' components caused by the
     %         image smoothing and surface rendering approximations, then set this to
     %         an appropriate minimum volume value. Any components smaller than this
     %         value will not be rendered.
     %
-    %     reporting - an object implementing CoreReportingInterface
+    %     reporting: an object implementing CoreReportingInterface
     %                             for reporting progress and warnings
     %
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     

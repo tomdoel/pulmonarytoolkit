@@ -1,10 +1,11 @@
 function DMSaveDicomSeries(base_filename, ordered_image, dicom_coordinates_list, metadata, image_type, software_info, reporting)
+    % Export image as a DICOM series
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
 
     metadata.SeriesInstanceUID = dicomuid; % MUST be unique for our series
@@ -94,7 +95,7 @@ function DMSaveDicomSeries(base_filename, ordered_image, dicom_coordinates_list,
     
     % Signal progress completion
     if exist('reporting', 'var')
-        reporting.CompleteProgress;
+        reporting.CompleteProgress();
     end
     
 end

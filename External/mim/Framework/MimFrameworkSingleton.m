@@ -1,27 +1,27 @@
 classdef (Sealed) MimFrameworkSingleton < handle
-    % MimFrameworkSingleton. The singleton used by all instances of MimMain
+    % The singleton used by all instances of MimMain
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the TD MIM Toolkit.
+    % You should not use this class within your own code. It is intended to
+    % be used internally within the TD MIM Toolkit.
     %
-    %     Some parts of the MIM framework (such as the image database) rely on
-    %     in-memory caches. Typically changes will be written to disk when the
-    %     caches change, but they will not be reloaded at each operation for
-    %     efficiency reasons. This would cause inconsistencies if multiple instances
-    %     of these classes were running simultaneously.
+    % Some parts of the MIM framework (such as the image database) rely on
+    % in-memory caches. Typically changes will be written to disk when the
+    % caches change, but they will not be reloaded at each operation for
+    % efficiency reasons. This would cause inconsistencies if multiple instances
+    % of these classes were running simultaneously.
     %
-    %     To prevent this, cached information is held in a singleton class which all
-    %     instances of MimMain get access to.
+    % To prevent this, cached information is held in a singleton class which all
+    % instances of MimMain get access to.
     %
-    %     MimFrameworkSingleton is a singleton. It cannot be created using the
-    %     constructor; instead call MimFrameworkSingleton.GetFrameworkSingleton;
+    % MimFrameworkSingleton is a singleton. It cannot be created using the
+    % constructor; instead call MimFrameworkSingleton.GetFrameworkSingleton;
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties (Access = private)

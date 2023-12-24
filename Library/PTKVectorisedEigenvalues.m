@@ -13,10 +13,10 @@ function [eigvec, eigval] = PTKVectorisedEigenvalues(M, eigenvalues_only)
     %     number of matrices is involved.
     %
     %
-    %         Syntax:
-    %             [eigvectors, eigvalues] = PTKFastEigenvalues(M [, eigenvalues_only])
+    % Syntax:
+    %     [eigvectors, eigvalues] = PTKFastEigenvalues(M [, eigenvalues_only])
     %
-    %         Input:
+    % Parameters:
     %             M is a 6xn matrix. Each column of M represents one 3x3 symmetric matrix as follows
     %
     %                     [V(1) V(2) V(3); V(2) V(4) V(5); V(3) V(5) V(6)]
@@ -27,21 +27,21 @@ function [eigvec, eigval] = PTKVectorisedEigenvalues(M, eigenvalues_only)
     %                 false. Set to true to only calculate eigenvalues and not
     %                 eigenvectors, which reduces the execution time.
     % 
-    %          Outputs:
-    %              eigenvalues is a 3xn matrix. Each column contains the 3
+    % Returns:
+    %              eigenvalues: a 3xn matrix. Each column contains the 3
     %                  eigenvalues of the matrix V described above
     %
-    %              eigenvectors is a 3x3xn matrix, where each 3x1 row represents
+    %              eigenvectors: a 3x3xn matrix, where each 3x1 row represents
     %                  an eigenvector (3 for each of the n matrices V described
     %                  above).
     % 
     % 
     % 
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     compute_eigenvectors = true;

@@ -1,14 +1,14 @@
 classdef GemListBox < GemPanel
-    % GemListBox A panel containing a list of selectable items.
+    % A panel containing a list of selectable items.
     %
-    %     GemListBox represents a panel of selectable items. GemListBox is a fixed
-    %     size; use GemSlidingListBox for a scrolling list box.
+    % GemListBox represents a panel of selectable items. GemListBox is a fixed
+    % size; use GemSlidingListBox for a scrolling list box.
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
         
     properties (SetAccess = private)

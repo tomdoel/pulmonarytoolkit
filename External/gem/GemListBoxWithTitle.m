@@ -1,14 +1,14 @@
 classdef GemListBoxWithTitle < GemPanel
-    % GemListBoxWithTitle. A GEM scrolling listbox object with a title and add/remove buttons
+    % A GEM scrolling listbox object with a title and add/remove buttons
     %
-    %     GemListBoxWithTitle consists of a title panel with controls and a list box
-    %     underneath
+    % GemListBoxWithTitle consists of a title panel with controls and a list box
+    % underneath
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     properties

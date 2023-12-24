@@ -1,20 +1,17 @@
 classdef MimDatasetResults < handle
-    % MimDatasetResults. 
+    % This class is used to run calculations and fetch cached
+    % results associated with a dataset. The difference between MimDataset 
+    % and MimDatasetResults is that MimDataset is called from outside the 
+    % toolkit, whereas MimDatasetResults is called by plugins during their 
+    % RunPlugin() call. MimDataset calls MimDatasetResults, but provides 
+    % additional progress and error reporting and dependency tracking.
     %
-    %     This class is used to run calculations and fetch cached
-    %     results associated with a dataset. The difference between MimDataset 
-    %     and MimDatasetResults is that MimDataset is called from outside the 
-    %     toolkit, whereas MimDatasetResults is called by plugins during their 
-    %     RunPlugin() call. MimDataset calls MimDatasetResults, but provides 
-    %     additional progress and error reporting and dependency tracking.
+    % You should not create this class directly. An instance of this class
+    % is given to plugins during their RunPlugin() function call.
     %
-    %     You should not create this class directly. An instance of this class
-    %     is given to plugins during their RunPlugin() function call.
-    %
-    %     Example: 
-    %
+    % Example:
     %     classdef MyPlugin < MimPlugin
-    %
+    %     
     %     methods (Static)
     %         function results = RunPlugin(dataset_results, reporting)
     %             ...
@@ -24,11 +21,11 @@ classdef MimDatasetResults < handle
     %     end
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
 
     

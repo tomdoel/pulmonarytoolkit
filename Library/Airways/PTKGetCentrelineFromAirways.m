@@ -1,14 +1,11 @@
 function results = PTKGetCentrelineFromAirways(airway_results, template_image, reporting)
-    % PTKGetCentrelineFromAirways. Computes the centreline and radius for a
-    % segmented airway tree.
+    % Compute the centreline and radius for a segmented airway tree.
     %
-    %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
     airway_segmented_image = PTKGetImageFromAirwayResults(airway_results.AirwayTree, template_image, false, reporting);

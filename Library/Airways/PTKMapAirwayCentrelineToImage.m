@@ -4,16 +4,17 @@ function [airway_mapped_image, airway_tree_root] = PTKMapAirwayCentrelineToImage
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel,
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     
     airway_mapped_image_raw = zeros(airway_image.ImageSize, 'uint16');
-    airway_mapped_image = airway_image.BlankCopy;
+    airway_mapped_image = airway_image.BlankCopy();
     
     airway_tree_root = centreline_results.AirwayCentrelineTree;
     centreline_bronchi_to_do = CoreStack(airway_tree_root);

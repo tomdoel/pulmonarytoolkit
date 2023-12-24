@@ -1,12 +1,12 @@
 classdef (Sealed) DMFallbackDicomLibrary < DMDicomLibraryInterface
     % DMFallbackDicomLibrary uses Dicomat to parse Dicom files, but falls
-    %     back to the Matlab image processing toobox if it fails
+    % back to the Matlab image processing toobox if it fails
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
         
     methods

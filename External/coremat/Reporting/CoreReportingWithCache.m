@@ -1,21 +1,21 @@
 classdef CoreReportingWithCache < CoreReportingInterface
-    % CoreReportingWithCache. Provides error, message and progress reporting, with
-    %     warnings and messages cached to prevent display of duplicates
+    % Provides error, message and progress reporting, with
+    % warnings and messages cached to prevent display of duplicates
     %
-    %     CoreReportingWithCache is a wrapper around a CoreReporting object.
-    %     Messages and warnings are cached using a CoreReportingWarningsCache and displayed
-    %     at the end of the algorith. Duplicate messages and warnings are
-    %     grouped together to prevent multiple messages appearing.
+    % CoreReportingWithCache is a wrapper around a CoreReporting object.
+    % Messages and warnings are cached using a CoreReportingWarningsCache and displayed
+    % at the end of the algorith. Duplicate messages and warnings are
+    % grouped together to prevent multiple messages appearing.
     %
-    %     See CoreReportingIntertface.m for details of the methods this class
-    %     implements.
+    % See CoreReportingIntertface.m for details of the methods this class
+    % implements.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
 
     properties (Access = protected)

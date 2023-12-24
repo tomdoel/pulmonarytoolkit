@@ -1,43 +1,39 @@
 function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image, use_wide_threshold, include_interior_regions, reporting)
-    % PTKSegmentLungsWithoutClosing. Extracts a region comprising the lung and
-    % airways from a CT region of interest image.
+    % Extract a region comprising the lung and airways from a CT region of interest image.
+    %
+    % Syntax:
+    %     lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image, use_wide_threshold, include_interior_regions, reporting);
+    %
+    % Parameters:
+    %     original_image - The image to filter, in a PTKImage class. This
+    %         should generally be the lung region of interest
+    %     filter_image - set to true if a Gaussian filter should be
+    %         applied prior to segmentation. This is better at
+    %         segmenting noisy images (e.g. low dose)
+    %         but may include airway walls
+    %     use_wide_threshold - Segment using a larger threshold range.
+    %         This is better at segmenting the lungs for noisy/diseased
+    %         images where voxels take on a wider range of values, but
+    %         may segment airway walls.
+    %     include_interior_regions - if true, the segmentation will include
+    %         interior disconnected regions within the ROI even though they
+    %         might not be part of the lungs and airways. Generally this
+    %         might be set to true when finding a mask for airway
+    %         segmentation, but set to false when finding a mask for lung
+    %         segmentation
+    %     reporting - an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
+    %
+    % Returns:
+    %     lung_image: A binary PTKImage containing the segmented region
+    %         which comprises the lungs and airways 
     %
     %
-    %     Syntax:
-    %         lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image, use_wide_threshold, include_interior_regions, reporting)
-    %
-    %         Inputs:
-    %         ------
-    %             original_image - The image to filter, in a PTKImage class. This
-    %                 should generally be the lung region of interest
-    %             filter_image - set to true if a Gaussian filter should be
-    %                 applied prior to segmentation. This is better at
-    %                 segmenting noisy images (e.g. low dose)
-    %                 but may include airway walls
-    %             use_wide_threshold - Segment using a larger threshold range.
-    %                 This is better at segmenting the lungs for noisy/diseased
-    %                 images where voxels take on a wider range of values, but
-    %                 may segment airway walls.
-    %             include_interior_regions - if true, the segmentation will include
-    %                 interior disconnected regions within the ROI even though they
-    %                 might not be part of the lungs and airways. Generally this
-    %                 might be set to true when finding a mask for airway
-    %                 segmentation, but set to false when finding a mask for lung
-    %                 segmentation
-    %             reporting - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %
-    %         Outputs:
-    %         -------
-    %             lung_image - A binary PTKImage containing the segmented region
-    %             which comprises the lungs and airways 
-    %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     if ~isa(original_image, 'PTKImage')

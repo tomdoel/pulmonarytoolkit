@@ -1,12 +1,12 @@
 classdef CoreSystemUtilities
-    % CoreSystemUtilities. Utility functions relating to the hardware or operating system.
+    % Utility functions relating to the hardware or operating system.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     methods (Static)

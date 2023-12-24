@@ -1,15 +1,15 @@
 classdef GemLineAxes < GemAxes
-    % GemLineAxes GEM class for drawing a line on a GUI
+    % GEM class for drawing a line on a GUI
     %
-    %     GemLineAxes is used to add a line to a GUI, by creating axes and attaching
-    %     the line to the axes.
+    % GemLineAxes is used to add a line to a GUI, by creating axes and attaching
+    % the line to the axes.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = private)

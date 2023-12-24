@@ -1,12 +1,12 @@
 classdef GemSlider < GemUserInterfaceObject
-    % GemSlider GEM class for building a slider control
+    % GEM class for building a slider control
     %
     %
-    %     Licence
-    %     -------
-    %     Part of GEM. https://github.com/tomdoel/gem
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of GEM. https://github.com/tomdoel/gem
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
         
     properties (SetAccess = private)        

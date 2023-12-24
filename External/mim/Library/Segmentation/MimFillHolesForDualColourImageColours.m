@@ -1,16 +1,16 @@
 function filled_image = MimFillHolesForDualColourImageColours(original_image, colour_1, colour_2)
-    % MimFillHolesForDualColourImageColours. Fills in holes in a colourmap image
+    % Fills in holes in a colourmap image
     %
-    %     MimFillHolesForDualColourImageColours takes in a indexed image and fills in any completely
-    %     enclosed holes, where holes are regions of one the the colours 
-    %     surrounded completely by other the other colour or zero.
+    % MimFillHolesForDualColourImageColours takes in a indexed image and fills in any completely
+    % enclosed holes, where holes are regions of one the the colours 
+    % surrounded completely by other the other colour or zero.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
         
     filled_image = FillHolesInImage(original_image, colour_1, colour_2);

@@ -1,5 +1,5 @@
 function match = DMAreImagesInSameGroup(this_metadata, other_metadata, this_metadata_2)
-    % DMAreImagesInSameGroup. Determines whether two Dicom images form a coherent sequence
+    % Determine whether two Dicom images form a coherent sequence
     %
     % DMAreImagesInSameGroup compares the metadata from two Dicom images. If
     % the images are from the same patient, study and series, and have similar
@@ -7,24 +7,24 @@ function match = DMAreImagesInSameGroup(this_metadata, other_metadata, this_meta
     % part of a coherent sequence.
     %
     %
-    %     Syntax:
-    %         match = DMAreImagesInSameGroup(this_metadata, other_metadata)
+    % Syntax:
+    %     match = DMAreImagesInSameGroup(this_metadata, other_metadata)
     %
-    %     Inputs:
-    %         this_metadata, other_metadata - metadata structures representing
-    %             two Dicom images
-    %         this_metadata_2 - additional image used only for checking that the
-    %             image locations form a coherant set
+    % Parameters:
+    %     this_metadata, other_metadata: metadata structures representing
+    %         two Dicom images
+    %     this_metadata_2: additional image used only for checking that the
+    %         image locations form a coherant set
     %
-    %     Outputs:
-    %         match - True if the two images form a coherent sequence
+    % Returns:
+    %     match - True if the two images form a coherent sequence
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %    
    
     if nargin < 3
@@ -130,4 +130,3 @@ function matches = CompareFieldsInexactMatch(field_name, this_metadata, other_me
     % Inexact numeric match
     matches = max(abs(field_this(:) - field_other(:))) < tolerance;
 end
-

@@ -1,23 +1,19 @@
 classdef MimLinkedDatasetChooser < CoreBaseClass
-    % MimLinkedDatasetChooser. Part of the internal framework of the TD MIM Toolkit.
+    % Used to select between linked datasets.
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
-    %
-    %     MimLinkedDatasetChooser is used to select between linked datasets.
-    %     By default, each dataset acts independently, but you can link datasets
-    %     together (for example, if you wanted to register images between two
-    %     datasets). When datasets are linked, one is the primary dataset, and
-    %     linked results are stored in the primary cache. The primary dataset
-    %     may access results from any of its linked datasets (but not vice
-    %     versa). Linking can be nested.
+    % By default, each dataset acts independently, but you can link datasets
+    % together (for example, if you wanted to register images between two
+    % datasets). When datasets are linked, one is the primary dataset, and
+    % linked results are stored in the primary cache. The primary dataset
+    % may access results from any of its linked datasets (but not vice
+    % versa). Linking can be nested.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
 
     properties (Access = private)

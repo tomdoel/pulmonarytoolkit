@@ -1,17 +1,17 @@
 classdef DMFileGrouping < CoreBaseClass
-    % DMFileGrouping. Stores a set of Dicom metadata structures, corresponding
-    %     to a coherent sequence of images
+    % Stores a set of Dicom metadata structures, corresponding
+    % to a coherent sequence of images
     %
-    %     DMFileGrouping objects are created by the DMFileGrouper class,
-    %     which separates and groups images into coherent sequences according to
-    %     their metadata.
-    %        
+    % DMFileGrouping objects are created by the DMFileGrouper class,
+    % which separates and groups images into coherent sequences according to
+    % their metadata.
+    %    
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %    
         
     properties (SetAccess = private)

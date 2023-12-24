@@ -1,11 +1,11 @@
 classdef PTKAirwaySkeleton < PTKPlugin
     % PTKAirwaySkeleton. Plugin for finding the centreline of the pulmonary airway tree.
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
-    %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See PTKPlugin.m for more information on how to run plugins.
+    % This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    % the gui, or through the interfaces provided by the Pulmonary Toolkit.
+    % See PTKPlugin.m for more information on how to run plugins.
     %
-    %     Plugins should not be run directly from your code.
+    % Plugins should not be run directly from your code.
     %
     %     PTKAirwayCentreline calls the PTKAirways plugin to segment the airway
     %     tree. It then uses the PTKSkeletonise library routine to reduce the
@@ -17,11 +17,11 @@ classdef PTKAirwaySkeleton < PTKPlugin
     %     bifurcation points as 3 and removed internal loop points as 6.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
     

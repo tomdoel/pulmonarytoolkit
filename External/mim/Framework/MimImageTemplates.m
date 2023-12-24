@@ -1,22 +1,17 @@
 classdef MimImageTemplates < CoreBaseClass
-    % MimImageTemplates. Part of the internal framework of the TD MIM Toolkit.
-    %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
-    %
-    %     MimImageTemplates maintains a list of template images for contexts.
-    %     A context is a region of interest of the lung (e.g. lung roi, left
-    %     lung, right lung, original image). For each context there can exist a
-    %     template image, which is an empty image containing the correct metadata
-    %     for that image. A template image allows the construction of results
-    %     images with the correct metadata.
+    % MimImageTemplates maintains a list of template images for contexts.
+    % A context is a region of interest of the lung (e.g. lung roi, left
+    % lung, right lung, original image). For each context there can exist a
+    % template image, which is an empty image containing the correct metadata
+    % for that image. A template image allows the construction of results
+    % images with the correct metadata.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
      
     properties (Access = private)

@@ -1,15 +1,15 @@
 classdef CoreTestExpectationChecker < handle
-    % CoreTestExpectationChecker. Part of the MTest unit test framework
+    % Part of the MTest unit test framework
     %
     % This class is used to stores and verify a list of expected behaviour for a
     % mock class for use in tests.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     

@@ -1,13 +1,28 @@
 function results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, trachea_top_local, reporting)
-    % PTKGetLeftAndRightLungs. Extracts left and right lungs from a lung
-    %     segmentation, with morphological smoothing and hole-flling
+    % Extract left and right lungs from a lung segmentation, with morphological smoothing and hole-flling
     %
+    % Syntax:
+    %     results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, trachea_top_local, reporting)
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % Arguments:
+    %     unclosed_lungs (PTKImage): unclocsed binary segmentation of the lungs
+    %     filtered_threshold_lung (PTKImage): binary mask produced by filtering and then applying
+    %         a threshold to the original image data
+    %     lung_roi (PTKImage): the original image data cropped to a region of interest just bigger
+    %         than the lungs
+    %     trachea_top_local: 
+    %         coordinates of the top of the trachea in local image coordinates (relative to the ROI)
+    %     reporting (CoreReportingInterface):
+    %         for error and progress reporting
+    %
+    % Returns:
+    %     results (PTKImage): Labelled image where each voxel is labelled 1 or 2
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     
     
     min_volume_warning_limit = 2000;

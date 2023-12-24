@@ -1,36 +1,36 @@
 classdef PTKAirwayGenerator < handle
-    % PTKAirwayGenerator. Creates an artifical airway tree using a volume-filling
-    % algorithm.
+    % Creates an artifical airway tree using a volume-filling algorithm.
     %
-    %     This class generates an artificial model of the airway tree. You
-    %     specify the lung volume to fill, and provide a starting tree (such as 
-    %     that produced by a CT region-growing algorithm). The airway growing
-    %     starts at the endpoints of the starting tree and grows into the
-    %     provided volume. The resulting tree includes the starting tree.
+    % This class generates an artificial model of the airway tree. You
+    % specify the lung volume to fill, and provide a starting tree (such as 
+    % that produced by a CT region-growing algorithm). The airway growing
+    % starts at the endpoints of the starting tree and grows into the
+    % provided volume. The resulting tree includes the starting tree.
     %
-    %     You can also choose to grow specific parts of the tree into specific
-    %     volumes, so for example a lobar region can be exclusively allocated to
-    %     a lobar bronchus and its descendents.
+    % You can also choose to grow specific parts of the tree into specific
+    % volumes, so for example a lobar region can be exclusively allocated to
+    % a lobar bronchus and its descendents.
     %
-    %     This code has in part been adapted from C++ code by Rafel Bordas which
-    %     forms part of the Chaste project at the University of Oxford.
-    %     The algorithm is derived from Tawhai et al. (2004), although some
-    %     changes have been made to the algorithm.
+    % This code has in part been adapted from C++ code by Rafel Bordas which
+    % forms part of the Chaste project at the University of Oxford.
+    % The algorithm is derived from Tawhai et al. (2004), although some
+    % changes have been made to the algorithm.
     %
-    %     Syntax:
-    %         airway_generator = PTKAirwayGenerator(
-    %             lung_mask,              % A binary mask of the whole lung volume
-    %             centreline_tree,          % A PTKModelTree produced from PTKAirwayCentreline
-    %             point_limit_voxels,     % Branches will terminate if the size of the region they grow into in voxels is less than this limit
-    %             approx_number_points,   %
-    %             reporting               % A CoreReportingInterface object for error, warning and progress reporting
-    %         )
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % Syntax:
+    %     airway_generator = PTKAirwayGenerator(
+    %         lung_mask,              % A binary mask of the whole lung volume
+    %         centreline_tree,        % A PTKModelTree produced from PTKAirwayCentreline
+    %         point_limit_voxels,     % Branches will terminate if the size of the region they grow into in voxels is less than this limit
+    %         approx_number_points,   % The number of grid points desired in the final volume region. The original volume will be resampled to achieve approximately this number of points.
+    %         reporting               % A CoreReportingInterface object for error, warning and progress reporting
+    %     )
+    %    
+    % 
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     properties (Constant)
@@ -70,10 +70,12 @@ classdef PTKAirwayGenerator < handle
         end
         
         function delete(~)
+            % Destructor
         end
         
-        % Starting from the initial airway tree generated from AddTree(),  
         function GrowTree(obj, growth_volume, starting_segment, reporting)
+            % Grow the tree into the provided volume starting from the initial airway tree generated from AddTree()
+
             obj.InitialApexImage = PTKAirwayGenerator.GrowTreeUsingThisGridSpacing(obj.AirwayTree, growth_volume, starting_segment, obj.GridSpacingMm, reporting);
         end        
     end
@@ -81,20 +83,20 @@ classdef PTKAirwayGenerator < handle
     methods (Static, Access = private)
         function initial_apex_image = GrowTreeUsingThisGridSpacing(airway_tree, growth_volume, starting_segment, grid_spacing_mm, reporting)
             
-            reporting.PushProgress;
+            reporting.PushProgress();
             
             resampled_volume = PTKAirwayGenerator.CreatePointCloud(growth_volume, grid_spacing_mm);
-            disp(['Number of seed points:' int2str(sum(resampled_volume.RawImage(:)))]);
+            % disp(['Number of seed points:' int2str(sum(resampled_volume.RawImage(:)))]);
             
             initial_apex_image = PTKAirwayGenerator.Grow(resampled_volume, airway_tree, starting_segment, reporting);
             
-            reporting.PopProgress;
+            reporting.PopProgress();
         end
         
-        % Use CreateInitialTreeFromSegmentation to create an initial airway tree
-        % from the airway centreline results
         function airway_tree = CreateInitialTreeFromSegmentation(segmented_centreline_tree, maximum_generation_number, reporting)
-            airway_tree = PTKAirwayGrowingTree;
+            % Use CreateInitialTreeFromSegmentation to create an initial airway tree
+            % from the airway centreline results
+            airway_tree = PTKAirwayGrowingTree();
             airway_tree.CentrelineTreeSegment = segmented_centreline_tree;
             segments_to_do = airway_tree;
             while ~isempty(segments_to_do)
@@ -246,10 +248,11 @@ classdef PTKAirwayGenerator < handle
             end
         end
         
-        % Find the smallest generation number of a branch in the airway tree
-        % which is still growing. This will return an empty variable if no more
-        % airways are growing
         function generation_number = GetMinimumActiveTerminalGeneration(airway_tree, start_centreline_branches, reporting)
+            % Find the smallest generation number of a branch in the airway tree
+            % which is still growing. This will return an empty variable if no more
+            % airways are growing
+
             % Find the starting segments
             segments_to_do = [];
             for centreline_branch = start_centreline_branches
@@ -312,12 +315,12 @@ classdef PTKAirwayGenerator < handle
             closest_point = cloud.Coords(min_index, :);
         end
         
-        % Compute a normalised direction vector for a plane parallel to the
-        % given vector and the direction of the given branch. If the two vectors
-        % are parallel then the direction of the parent branch is used. If this
-        % does not exist or is still parallel, then we choose a guaranteed
-        % non-parallel vector using the null space.
         function plane_normal = GetValidPlaneNormal(vector_to_com, branch)
+            % Compute a normalised direction vector for a plane parallel to the
+            % given vector and the direction of the given branch. If the two vectors
+            % are parallel then the direction of the parent branch is used. If this
+            % does not exist or is still parallel, then we choose a guaranteed
+            % non-parallel vector using the null space.
             
             if ~isempty(branch.Parent)
                 parent_branch_direction = branch.Parent.Direction;
@@ -382,8 +385,9 @@ classdef PTKAirwayGenerator < handle
             resampled_volume.Resample(grid_spacing, '*nearest')
         end
        
-        % Checks the branch angle of a proposed growth centre and adjusts it within tolerance, if necessary
         function end_point = CheckBranchAngleLengthAndAdjust(start_point, end_coords, parent_direction, parent_length_mm, generation_number)
+            % Checks the branch angle of a proposed growth centre and adjusts it within tolerance, if necessary
+
             % calculate vector from apex start to the centre
             start_coords = [start_point.CoordX, start_point.CoordY, start_point.CoordZ];
             new_direction = end_coords - start_coords;

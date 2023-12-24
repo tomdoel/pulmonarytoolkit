@@ -1,5 +1,5 @@
 function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
-    % PTKSaveTreeAsNodes. Exports a tree structure into node and element files
+    % Export a tree structure into node and element files
     %
     % Two text files are produced; a node file and an element file.
     %
@@ -17,14 +17,15 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
     % node_1, node_2
     % where node_1 and node_2 are connected by the tree
     %
-    %     Syntax
-    %     ------
+    % Example:
     %
     %         PTKSaveTreeAsNodes(tree_root, file_path, base_filename, reporting)
     %
-    %             tree_root       is the root branch in a PTKTreeModel structure 
-    %             file_path       is the path where the node and element files
-    %                             are to be stored
+    %             tree_root is the root branch in a PTKTreeModel structure
+    %
+    %             file_path is the path where the node and element files
+    %                       are to be stored
+    %
     %             filename_prefix is the filename prefix. The node and element
     %                             files will have '_node.txt' and '_element.txt'
     %                             appended to this prefix before saving.
@@ -34,13 +35,12 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
     %                             parameters
     %             reporting       an object implementing CoreReportingInterface
     %                             for reporting progress and warnings
-    %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
     if nargin < 4

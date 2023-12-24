@@ -1,26 +1,39 @@
 function results = PTKProcessAirwaySkeleton(skeleton_image, start_point, reporting)
-    % PTKProcessAirwaySkeleton. Processes a skeletonised image of the airway
-    % tree, beginning from start_point and returning a data structure containing
-    % the processed informtion
+    % Process a skeletonised image of the airway tree, beginning from 
+    % start_point and returning a data structure containing the processed 
+    % informtion
     %
-    % Syntax:
-    %     results = PTKProcessAirwaySkeleton(skeleton_image, start_point)
-    %            
-    %     skeleton_image - A 3D volume containing the airway skeleton:
+    % Example:
+    %     results = PTKProcessAirwaySkeleton(skeleton_image, start_point, reporting)
+    %        
+    % Arguments:
+    %     skeleton_image:
+    %         A 3D volume containing the airway skeleton. 
     %         0=background, 1=skeleton point
     %
-    %     start_point - coordinate of the first point in the skeleton (the
-    %         trachea) as a coordinate vector [i,j,k]
+    %     start_point:
+    %         coordinate of the first point in the skeleton (the trachea) 
+    %         as a coordinate vector [i,j,k]
     %
-    %     reporting (optional) - an object implementing CoreReportingInterface
+    %     reporting (CoreReportingInterface), optional:
+    %         an object implementing CoreReportingInterface
     %         for reporting progress and warnings
     %
+    % Returns:
+    %     results is a structure containing the following fields
+    %         * original_skeleton_points
+    %         * airway_skeleton
+    %         * bifurcation_points
+    %         * skeleton_points
+    %         * image_size
+    %         * start_point
+    %         * removed_points
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     [airway_skeleton, skeleton_points, bifurcation_points, removed_points] = GetSkeletonTree(skeleton_image, start_point, reporting);

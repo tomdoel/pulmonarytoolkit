@@ -13,7 +13,7 @@ function filtered_image = PTKImageDivider(image_data, filter_function, mask, gau
     %     provided as input. The resulting images are recombined, discarding
     %     the overlap regions
     %
-    %     Syntax:
+    %     Example:
     %         filtered_image = PTKImageDivider(image_data, filter_function, gaussian_sigma, hessian_filter_gaussian, dont_divide, is_left_lung, reporting)
     %
     %             image_data - The image to filter, in a PTKImage class
@@ -51,11 +51,11 @@ function filtered_image = PTKImageDivider(image_data, filter_function, mask, gau
     %   
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)

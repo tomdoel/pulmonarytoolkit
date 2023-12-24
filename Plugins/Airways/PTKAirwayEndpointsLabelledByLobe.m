@@ -2,14 +2,14 @@ classdef PTKAirwayEndpointsLabelledByLobe < PTKPlugin
     % PTKAirwayEndpointsLabelledByLobe. Plugin to visualise parts of the airway tree labelled
     % according to lobe
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
-    %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See PTKPlugin.m for more information on how to run plugins.
+    % This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    % the gui, or through the interfaces provided by the Pulmonary Toolkit.
+    % See PTKPlugin.m for more information on how to run plugins.
     %
-    %     Plugins should not be run directly from your code.
+    % Plugins should not be run directly from your code.
     %
     %     PTKAirwayEndpointsLabelledByLobe is based on
-    %     PTKAirwaysLabelledByLob, but returns only the endpoints of each
+    %     PTKAirwaysLabelledByLobe, but returns only the endpoints of each
     %     set of branches (determined by geodesic distance) in order to
     %     reduce the effect of the branches nearest the lobar bifurcation
     %     points.
@@ -24,11 +24,11 @@ classdef PTKAirwayEndpointsLabelledByLobe < PTKPlugin
     %         3 - Lobe could not be determined with certainty
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
  
     properties

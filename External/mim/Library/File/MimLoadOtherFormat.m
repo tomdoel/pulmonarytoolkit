@@ -1,29 +1,30 @@
 function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_format, reporting)
-    % MimLoadOtherFormat. Reads images from various_formats returns as a PTKImage.
+    % Read images from various_formats returns as a PTKImage.
     %
-    %     Note: Currently assumes that images are CT
+    % Caution:
+    %     Currently assumes that images are CT
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     ptk_image = MimLoadOtherFormat(path, filenames, study_uid, reporting)
     %
-    %         ptk_image = MimLoadOtherFormat(path, filenames, study_uid, reporting)
+    % Parameters:
+    %     path: path where the files are located. For the
+    %           current directory, use .
+    %     filenames: filename of the header file to load.
+    %     image_file_format (MimImageFileFormat): enumeration of MimImageFileFormat
+    %         describing the file format
+    %     reporting (Optional[CoreReportingInterface]): an object
+    %         for reporting progress and warnings
+    % Returns:
+    %     ptk_image (PTKDicomImage): class containing the image
     %
-    %             ptk_image     is a PTKDicomImage class containing the image
-    %             path            The path where the files are located. For the
-    %                             current directory, use .
-    %             filenames       the filename of the header file to load.
-    %             image_file_format   enumeration of MimImageFileFormat
-    %                                 describing the file format
-    %             reporting (optional) - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
     %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %        
 
     if nargin < 4
         reporting = CoreReportingDefault();

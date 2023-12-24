@@ -1,29 +1,25 @@
 function [node_index, x, y, z, radius, is_terminal, node_index_1, node_index_2] = PTKLoadNodeListFromChaste(file_path, node_filename, edge_filename, reporting)
-    % PTKLoadNodeListFromChaste. Loads lists of node parameters from Chaste
-    % format node/element files.
+    % Load lists of node parameters from Chaste format node/element files.
     %
     % Use this function if you just want to load in the values.
     % If you want to parse the files into a tree structure, use
     % PTKLoadTreeFromChaste instead.
     %
     %
-    %     Syntax
-    %     ------
+    % Example:
+    %     [node_index, x, y, z, radius, node_index_1, node_index_2] = PTKLoadNodeListFromChaste(file_path, node_filename, edge_filename, coordinate_system, reporting);
     %
-    %         [node_index, x, y, z, radius, node_index_1, node_index_2] = PTKLoadNodeListFromChaste(file_path, node_filename, edge_filename, coordinate_system, reporting)
+    % Parameters:
+    %     file_path: path where the node and edge files are to be stored
+    %     node_filename: name of the node file
+    %     edge_filename: name of the edge file
+    %     reporting (Optional[CoreReportingInterface]): object for reporting progress and warnings
     %
-    %             file_path       is the path where the node and edge files
-    %                             are to be stored
-    %             node_filename   is the name of the node file
-    %             edge_filename   is the name of the edge file
-    %             reporting (optional) - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
     if nargin < 4

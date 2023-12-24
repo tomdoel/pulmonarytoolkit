@@ -1,27 +1,24 @@
 function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_filename, coordinate_system, template_image, reporting)
-    % PTKLoadTreeFromChaste. Load a tree strucure from branches stored in Chaste format node/element files
+    % Load a tree strucure from branches stored in Chaste format node/element files
     %
-    %     Syntax
-    %     ------
+    % Example:
+    %     root_branch = PTKLoadTreeFromChaste(file_path, filename_prefix, reporting);
     %
-    %         root_branch = PTKLoadTreeFromChaste(file_path, filename_prefix, reporting)
+    % Parameters:
+    %     root_branch: root branch in a PTKTreeModel structure 
+    %     file_path: path where the node and edge files are to be stored
+    %     node_filename: name of the node file
+    %     edge_filename: name of the edge file
+    %     coordinate_system: 
+    %     template_image: used tp provide a reference coordinate system
+    %     reporting (Optional[CoreReportingInterface])) - an object 
+    %         for reporting progress and warnings
     %
-    %             root_branch     is the root branch in a PTKTreeModel structure 
-    %             file_path       is the path where the node and edge files
-    %                             are to be stored
-    %             node_filename   is the name of the node file
-    %             edge_filename   is the name of the edge file
-    %             coordinate_system
-    %             template_image  is used to provide a reference coordinate
-    %                             system
-    %             reporting (optional) - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %       
     
     if nargin < 4

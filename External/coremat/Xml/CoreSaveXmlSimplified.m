@@ -1,25 +1,25 @@
 function CoreSaveXmlSimplified(data, name, file_name, alias_mapping, reporting)
-    % CoreSaveXmlSimplified. Saves a data structure as an XML file
+    % Saves a data structure as an XML file
     %
-    %     CoreSaveXmlSimplified saves data into an XML file in a simplified format. The data may include arrays,
-    %     cell arrays, structures, maps and classes which support serialisation.
+    % CoreSaveXmlSimplified saves data into an XML file in a simplified format. The data may include arrays,
+    % cell arrays, structures, maps and classes which support serialisation.
     %
-    %     Syntax:
-    %         CoreSaveXmlSimplified(data, name, file_name, reporting)
+    % Example:
+    %     CoreSaveXmlSimplified(data, name, file_name, reporting)
     %
-    %             data - the root object of the data to store. Can be a value, a class, a structure, map or cell array
-    %             name - the name of the root object 
-    %             file_name - a CoreFilename or character array containing the path and filename
-    %             alias_mapping - Class names will be replaced by the
-    %                             corresponding entry in the map alias_mapping
-    %             reporting - object of type CoreReportingInterface for error reporting
+    %         data - the root object of the data to store. Can be a value, a class, a structure, map or cell array
+    %         name - the name of the root object 
+    %         file_name - a CoreFilename or character array containing the path and filename
+    %         alias_mapping - Class names will be replaced by the
+    %                         corresponding entry in the map alias_mapping
+    %         reporting - object of type CoreReportingInterface for error reporting
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     XMLVersion = '0.1';

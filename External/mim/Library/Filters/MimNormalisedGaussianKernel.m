@@ -1,15 +1,14 @@
 function kernel = MimNormalisedGaussianKernel(voxel_size_mm, filter_size_mm, minimum_grid_size_mm)
     % MimNormalisedGaussianKernel.
     %
+    % The input and output images are of class PTKImage.
     %
-    %     The input and output images are of class PTKImage.
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     if nargin < 3

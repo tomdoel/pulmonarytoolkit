@@ -1,25 +1,24 @@
 function CoreCompileMexFiles(mex_cache, output_directory, mex_files_to_compile, force_recompile, retry_instructions, reporting)
-    % CoreCompileMexFiles. Checks if mex files are up to date and re-compiles if
-    % necessary
+    % Checks if mex files are up to date and re-compiles if necessary
     %
-    %     CoreCompileMexFiles takes in a list of mex files to be compiled,
-    %     with version numbers. The last compiled versions
-    %     are cached using the supplied mex_cache. If the versions have changed, files
-    %     are automatically recompiled. Recompilation also occurs if the output
-    %     files are missing or the mex_cache file has been deleted.
+    % CoreCompileMexFiles takes in a list of mex files to be compiled,
+    % with version numbers. The last compiled versions
+    % are cached using the supplied mex_cache. If the versions have changed, files
+    % are automatically recompiled. Recompilation also occurs if the output
+    % files are missing or the mex_cache file has been deleted.
     %
-    %     CoreCompileMexFiles checks for the presence of compilers and warns the
-    %     user if no compiler has been detected. CoreCompileMexFiles does not
-    %     attempt to recompile a particular mex file again after a failed
-    %     compile attempt. Recompilation can be achieved using the
-    %     force_recompile flag or by deleting the mex_cache file.
+    % CoreCompileMexFiles checks for the presence of compilers and warns the
+    % user if no compiler has been detected. CoreCompileMexFiles does not
+    % attempt to recompile a particular mex file again after a failed
+    % compile attempt. Recompilation can be achieved using the
+    % force_recompile flag or by deleting the mex_cache file.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     cached_mex_file_info = mex_cache.MexInfoMap;
@@ -166,7 +165,7 @@ function Compile(mex_files_to_compile, framework_cache, cached_mex_file_info, ou
         end
     end
     if progress_message_showing_compile
-        reporting.CompleteProgress;        
+        reporting.CompleteProgress();
     end
 end
 

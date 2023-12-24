@@ -1,22 +1,21 @@
 function path_name = MimSavePatchAs(patch_object, path_name, reporting)
-    % MimSavePatchAs. Prompts the user for a filename, and saves the patch object
+    % Prompt the user for a filename, and saves the patch object
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     MimSavePatchAs(patch_object, path_name, reporting);
     %
-    %         MimSavePatchAs(patch_object, path_name, reporting)
+    % Parameters:
+    %     patch_object: a PTKPatch object to be saved
+    %     path: specify the path location where the patch object will be saved
+    %     filename: specify the filename in which to save the patch object.
+    %     reporting (CoreReportingInterface): object for reporting progress and warnings
     %
-    %             patch_object    is a PTKPatch object to be saved
-    %             path, filename  specify the location to save the patch pbject.
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %  
     
     if ~isa(patch_object, 'PTKPatch')

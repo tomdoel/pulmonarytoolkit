@@ -1,21 +1,30 @@
 function density_values_g_ml = PTKConvertHuToDensity(hu_values)
-    % PTKConvertHuToDensity. Converts density values in HU to g/ml
+    % Convert density values in HU to g/ml
     %
-    %     PTKConvertHuToDensity converts the HU values in the vector hu_values to
-    %     the approximate values of mass density, assuming a linear
-    %     relationshoip between radiodensity values and mass density.
+    % PTKConvertHuToDensity converts the HU values in the vector hu_values to
+    % the approximate values of mass density, assuming a linear
+    % relationshoip between radiodensity values and mass density.
     %
-    %     Note: this is often a reasonable approximation, but it depends on the
+    % Note: this is often a reasonable approximation, but it depends on the
     %     scanner and the material being scanned. 
     %
-    %     The output will be a vector containing density values in g/mL.
+    % The output will be a vector containing density values in g/mL.
+    %
+    % Syntax:
+    %     density_values_g_ml = PTKConvertHuToDensity(hu_values);
+    %
+    % Parameters:
+    %     hu_values: Vector of density values in HU
+    %
+    % Returns:
+    %     density_values_g_ml: Vector of density values in g/mL
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     density_water_mgmL = 999.8395; % at STP

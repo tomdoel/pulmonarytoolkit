@@ -1,15 +1,15 @@
 classdef PTKSegmentLobes < MimGuiPlugin
-    % PTKSegmentLobes. Gui Plugin for activating lobe segmentation
+    % Gui Plugin for activating lobe segmentation
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used by the gui of the Pulmonary Toolkit.
+    % You should not use this class directly within your own code.
+    % It is intended to be used by the GUI of the Pulmonary Toolkit.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
     properties

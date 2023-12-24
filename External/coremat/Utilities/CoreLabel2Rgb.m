@@ -1,12 +1,12 @@
 function rgb_image = CoreLabel2Rgb(label_image)
-    % CoreLabel2Rgb. Converts a label image to an RGB image using the default colorscheme
+    % Converts a label image to an RGB image using the default colorscheme
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
 
     adjusted_colourmap = [[0,0,0]; CoreSystemUtilities.BackwardsCompatibilityColormap];

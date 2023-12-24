@@ -1,12 +1,12 @@
 function results = PTKComputeMeanADC(adc, region_mask)
-    % PTKComputeMeanADC. Computes the mean ADC over a given region
+    % Computes the mean ADC over a given region
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2014.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2014.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
 
     
     % ADC is only computed over voxels in the mask which have an ADC

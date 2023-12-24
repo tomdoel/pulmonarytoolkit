@@ -1,13 +1,13 @@
 classdef (Sealed) DMDicomLibrary < DMDicomLibraryInterface
-    % DMDICOMLIBRARY DicoMat implementation of DMDicomLibraryInterface for
+    % DicoMat implementation of DMDicomLibraryInterface for
     % reading Dicom data. 
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
     %
     
     methods

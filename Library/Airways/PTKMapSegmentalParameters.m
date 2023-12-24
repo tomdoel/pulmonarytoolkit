@@ -1,13 +1,12 @@
 function airway_tree_without_segmental_labels = PTKMapSegmentalParameters(airway_tree_with_segmental_labels, airway_tree_without_segmental_labels, reporting)
-    % PTKMapSegmentalParameters. Copies segmental labels from one airway tree to
-    % another
+    % Copies segmental labels from one airway tree to another
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     root_labelled = airway_tree_with_segmental_labels.GetRoot;

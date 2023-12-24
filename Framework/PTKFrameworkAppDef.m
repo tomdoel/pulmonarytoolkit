@@ -1,16 +1,15 @@
 classdef PTKFrameworkAppDef < handle
-    % PTKFrameworkAppDef. Defines application-dependent behaviour for the
-    % Framework
+    % Defines application-dependent behaviour for the Framework
     %
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2015.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %    
-    
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2015.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
+
     properties (Access = private)
         Config
         ContextDef

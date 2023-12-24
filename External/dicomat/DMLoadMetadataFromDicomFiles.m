@@ -1,42 +1,44 @@
 function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, dicomLibrary, reporting)
     % DMLoadMetadataFromDicomFiles. Loads metadata from a series of DICOM files
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     file_grouper = DMLoadMetadataFromDicomFiles(path, filenames, reporting);
     %
-    %         file_grouper = DMLoadMetadataFromDicomFiles(path, filenames, reporting)
+    % Parameters:
+    %     file_grouper    a DMFileGrouper object containing the 
+    %                     metadata grouped into coherent sequences of images
     %
-    %             file_grouper    a DMFileGrouper object containing the 
-    %                             metadata grouped into coherent sequences of images
+    %     image_path: location of the DICOM files
     %
-    %             image_path, filenames specify the location of the DICOM
-    %                             files. filenames can be a string for a
-    %                             single filename, or a cell array of
-    %                             strings
-    %
-    %             dicomLibrary    (Optional) An object implementing
-    %                             DMDicomLibraryInterface, used to parse
-    %                             the Dicom files. If no object is provided
-    %                             then the default DMDicomLibrary is used
-    %
-    %             reporting       A CoreReporting or implementor of the same interface,
-    %                             for error and progress reporting. Create a CoreReporting
-    %                             with no arguments to hide all reporting. If no
-    %                             reporting object is specified then a default
-    %                             reporting object with progress dialog is
-    %                             created
+    %     filenames: names of DICOM files within the image_path.
+    %                     filenames can be a string for a
+    %                     single filename, or a cell array of
+    %                     strings
     %
     %
-    %     Licence
-    %     -------
-    %     Part of DicoMat. https://github.com/tomdoel/dicomat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
-    %        
+    %     dicomLibrary:    (Optional) An object implementing
+    %                     DMDicomLibraryInterface, used to parse
+    %                     the Dicom files. If no object is provided
+    %                     then the default DMDicomLibrary is used
+    %
+    %     reporting:      A CoreReporting or implementor of the same interface,
+    %                     for error and progress reporting. Create a CoreReporting
+    %                     with no arguments to hide all reporting. If no
+    %                     reporting object is specified then a default
+    %                     reporting object with progress dialog is
+    %                     created
+    %
+    %
+    % .. Licence
+    %    -------
+    %    Part of DicoMat. https://github.com/tomdoel/dicomat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the BSD 3-Clause license. Please see the file LICENSE for details.
+    %
 
     % Create a reporting object if none was provided
     if nargin < 4 || isempty(reporting)
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     % Create a library object if none was provided
@@ -85,5 +87,5 @@ function file_grouper = DMLoadMetadataFromDicomFiles(image_path, filenames, dico
         
     end
 
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end

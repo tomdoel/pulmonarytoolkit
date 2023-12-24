@@ -1,20 +1,19 @@
 function PTKVisualiseTreeModel(parent_branch)
     % PTKVisualiseTreeModel. Draws a simplified visualisation of a tree
     %
-    %     Syntax
-    %     ------
+    % Example:
     %
-    %         PTKVisualiseTreeModel(parent_branch)
+    %     PTKVisualiseTreeModel(parent_branch)
     %
-    %             parent_branch     is the root branch in a PTKTreeModel structure 
+    % Parameters:
+    %     parent_branch: root branch in a PTKTreeModel structure 
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
-    %           
-    %     
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
     
     % Assumes coordinates are in mm so no voxel size conversion required
     aspect_ratio = [1, 1, 1];

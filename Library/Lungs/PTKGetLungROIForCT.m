@@ -1,27 +1,22 @@
 function lung_image = PTKGetLungROIForCT(lung_image, reporting)
-    % PTKGetLungROIForCT. Finds a region of interest from a chest CT image which
-    %     contains the lungs and airways
+    % Find a region of interest from a chest CT image which contains the lungs and airways
     %
-    %     Inputs
-    %     ------
+    % Syntax:
+    %     lung_image = PTKGetLungROIForCT(lung_image, reporting);
     %
-    %     lung_image - the full original lung volume stored as a PTKImage.
+    % Arguments:
+    %     lung_image (PTKImage): the full original lung volume stored as a PTKImage.
+    %     reporting (CoreReportingInterface): an object for reporting progress and warnings
     %
-    %     reporting  - an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %
-    %
-    %     Outputs
-    %     -------
-    %
-    %     lung_image - a PTKImage cropped to the lung region of interest.
+    % Returns:
+    %     lung_image (PTKImage): image cropped to the lung region of interest.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     

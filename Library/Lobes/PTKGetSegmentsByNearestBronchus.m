@@ -7,11 +7,11 @@ function [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchu
     % with segment indices set on each bronchus.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
         
     results_left = GetLeft(airway_root, left_and_right_lungs.Copy, lobes.Copy, segmental_bronchi_by_lobe, reporting);

@@ -1,20 +1,22 @@
 function figure_handle = PTKVisualiseTreeModelCentreline(parent_branch, voxel_size, centreline_only, hide_nodes)
     % PTKVisualiseTreeModelCentreline. Draws a simplified visualisation of a tree centreline
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     PTKVisualiseTreeModelCentreline(parent_branch)
     %
-    %         PTKVisualiseTreeModelCentreline(parent_branch)
+    % Parameters:
+    %     parent_branch: root branch in a PTKTreeModel structure 
+    %     voxel_size: Voxel size in mm
+    %     centreline_only: If true, show centerline without radius
+    %     hide_nodes: if true, show a continuous line instead of the nodes
     %
-    %             parent_branch     is the root branch in a PTKTreeModel structure 
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %           
-    %
     
     if nargin < 3
         centreline_only = false;

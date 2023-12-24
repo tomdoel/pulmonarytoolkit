@@ -1,16 +1,16 @@
 function filled_image_raw = MimFillHolesForMultiColourImage(filled_image_raw, allow_fill_with_background)
-    % MimFillHolesForMultiColourImage. Fills in holes in a colourmap image
+    % Fills in holes in a colourmap image
     %
-    %     MimFillHolesForMultiColourImage takes in a indexed image and fills in any completely
-    %     enclosed holes, where holes are regions of one the the colours 
-    %     surrounded completely by other the other colour or zero.
+    % MimFillHolesForMultiColourImage takes in a indexed image and fills in any completely
+    % enclosed holes, where holes are regions of one the the colours 
+    % surrounded completely by other the other colour or zero.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     colours = unique(filled_image_raw(:));

@@ -1,23 +1,33 @@
 function density_image = PTKConvertCTToDensity(ct_image)
     % PTKConvertCTToDensity. Converts image from Hounsfield Units to density
     %
-    %     PTKConvertCTToDensity takes a CT image and converts the HU values to
-    %     the approximate values of mass density, assuming a linear
-    %     relationshoip between radiodensity values and mass density.
+    % PTKConvertCTToDensity takes a CT image and converts the HU values to
+    % the approximate values of mass density, assuming a linear
+    % relationshoip between radiodensity values and mass density.
     %
-    %     Note: this is often a reasonable approximation, but it depends on the
+    % Note: this is often a reasonable approximation, but it depends on the
     %     scanner and the material being scanned. 
     %
-    %     The input must be of type PTKImage, with values in Hounsfield Units.
+    % The input must be of type PTKImage, with values in Hounsfield Units.
     %
-    %     The output will also be a PTKImage, containing density values in g/mL.
+    % The output will also be a PTKImage, containing density values in g/mL.
+    %
+    % Syntax:
+    %     density_image = PTKConvertCTToDensity(ct_image);
+    %
+    % Parameters:
+    %     ct_image (PTKImage): image containing values in HU
+    %
+    % Returns:
+    %     density_image (PTKImage): image containing density values in g/mL.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     

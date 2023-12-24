@@ -2,11 +2,11 @@ classdef PTKSpongeModel < PTKPlugin
     % PTKSpongeModel. Plugin for illustrating slice-by-slice relation between
     % gravitational compartments and volumes of air and tissue.
     %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
-    %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See PTKPlugin.m for more information on how to run plugins.
+    % This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
+    % the gui, or through the interfaces provided by the Pulmonary Toolkit.
+    % See PTKPlugin.m for more information on how to run plugins.
     %
-    %     Plugins should not be run directly from your code.
+    % Plugins should not be run directly from your code.
     %
     %     PTKSpongeModel produces an illustration of the air and tissue volumes
     %     in different gravitational compartments, on a slice by slice basis.
@@ -16,11 +16,11 @@ classdef PTKSpongeModel < PTKPlugin
     %     (air) to represent the volumes of air and tissue in that compartment.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     properties
@@ -47,7 +47,7 @@ classdef PTKSpongeModel < PTKPlugin
             roi = application.GetResult('PTKLungROI');
                         
             results = roi.Copy;
-            results.Clear;
+            results.Clear();
             
             if ~roi.IsCT
                 reporting.ShowMessage('PTKSpongeModel:NotCTImage', 'Cannot perform density analysis as this is not a CT image');

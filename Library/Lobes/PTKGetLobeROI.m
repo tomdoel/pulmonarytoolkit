@@ -1,12 +1,12 @@
 function mask = PTKGetLobeROI(lobe_mask, context, reporting)
-    % PTKGetLobeROI. Extracts a region of interest for one of the lobes.
+    %  Extract a region of interest for one of the lobes.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     mask = lobe_mask.BlankCopy();

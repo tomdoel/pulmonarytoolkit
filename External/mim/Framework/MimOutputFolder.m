@@ -1,18 +1,17 @@
 classdef MimOutputFolder < CoreBaseClass
-    % MimOutputFolder. Part of the internal framework of the TD MIM Toolkit.
+    % Used to save and keep track of results and graphs saved to the output folder.
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
+    % The output folder stores files the user may wish to preserve, such as 
+    % analysis results and graphs. This class provides a consistent way of writing
+    % out such results, keeping track of them so that the user can be informed
+    % when new results have been added.
     %
-    %     MimOutputFolder is used to save and keep track of results and graphs saved
-    %     to the output folder.
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = private)

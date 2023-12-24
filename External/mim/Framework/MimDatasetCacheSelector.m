@@ -1,20 +1,15 @@
 classdef MimDatasetCacheSelector < handle
-    % MimDatasetCacheSelector. Part of the internal framework of the TD MIM Toolkit.
-    %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the TD MIM Toolkit.
-    %
-    %     A class used by MimPluginDependencyTracker to save and load plugin
-    %     results and data associated with a particular dataset. This class
-    %     ensures dependencies are correctly added, saved and validated when
-    %     results are accessed or changed.
+    % A class used by MimPluginDependencyTracker to save and load plugin
+    % results and data associated with a particular dataset. This class
+    % ensures dependencies are correctly added, saved and validated when
+    % results are accessed or changed.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
     
     properties (Access = private)

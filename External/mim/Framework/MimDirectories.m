@@ -1,14 +1,12 @@
 classdef MimDirectories < CoreBaseClass
-    % MimDirectories. Helper functions relating to directory use by the MIM
-    % toolkit
+    % Helper functions relating to directory use by the MIM toolkit
     %
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
 
     properties (Access = private)

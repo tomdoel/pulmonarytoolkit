@@ -1,29 +1,30 @@
 function MimSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting)
-    % MimSaveAsMetaheaderAndRaw. Writes out a PTKImage in metaheader & raw format
+    % Writes out a PTKImage in metaheader and raw format
     %
-    %     Syntax
-    %     ------
+    % Syntax:
+    %     MimSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, reporting);
     %
-    %         MimSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, orientation, reporting)
+    % Parameters:
+    %     image_data: is a PTKImage (or PTKDicomImage) class containing the image
+    %         to be saved
+    %     path: specify the location to save the DICOM data. One 2D file
+    %     filename: specify the filenames. One 2D file
+    %         will be created for each image slice in the z direction. 
+    %         Each file is numbered, starting from 0.
+    %         So if filename is 'MyImage.DCM' then the files will be
+    %         'MyImage0.DCM', 'MyImage1.DCM', etc.
+    %     data_type: Data type to save as. If uint8 or char the image will be rescaled if
+    %         required to fit in 8 bits
+    %     reporting (CoreReportingInterface): an object 
+    %         for reporting progress and warnings
     %
-    %             image_data      is a PTKImage (or PTKDicomImage) class containing the image
-    %                             to be saved
-    %             path, filename  specify the location to save the DICOM data. One 2D file
-    %                             will be created for each image slice in the z direction. 
-    %                             Each file is numbered, starting from 0.
-    %                             So if filename is 'MyImage.DCM' then the files will be
-    %                             'MyImage0.DCM', 'MyImage1.DCM', etc.
-    %             data_type
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
     %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %        
 
     if ~isa(image_data, 'PTKImage')
         reporting.Error('MimSaveAsMetaheaderAndRaw:InputMustBePTKImage', 'Requires a PTKImage as input');
@@ -75,4 +76,3 @@ function MimSaveAsMetaheaderAndRaw(image_data, path, filename, data_type, report
     
     MimWrite3DMetaFile(full_filename, image, resolution, data_type, offset, orientation, reporting);  
 end
-

@@ -1,23 +1,24 @@
 function CoreSaveXml(data, name, file_name, reporting)
-    % CoreSaveXml. Saves a data structure as an XML file
+    % Saves a data structure as an XML file
     %
-    %     CoreSaveXml saves data into an XML file. The data may include arrays,
-    %     cell arrays, structures, maps and classes which support serialisation.
+    % CoreSaveXml saves data into an XML file. The data may include arrays,
+    % cell arrays, structures, maps and classes which support serialisation.
     %
-    %     Syntax:
-    %         CoreSaveXml(data, name, file_name, reporting)
+    % Syntax:
+    %     CoreSaveXml(data, name, file_name, reporting)
     %
-    %             data - the root object of the data to store. Can be a value, a class, a structure, map or cell array
-    %             name - the name of the root object 
-    %             file_name - a CoreFilename or character array containing the path and filename
-    %             reporting - object of type CoreReportingInterface for error reporting
+    % Parameters:
+    %     data: the root object of the data to store. Can be a value, a class, a structure, map or cell array
+    %     name: the name of the root object 
+    %     file_name: a CoreFilename or character array containing the path and filename
+    %     reporting: object of type CoreReportingInterface for error reporting
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %    
     
     XMLVersion = '0.1';

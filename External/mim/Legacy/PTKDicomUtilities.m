@@ -1,13 +1,12 @@
 classdef PTKDicomUtilities
-    % PTKDicomUtilities. Legacy utility functions related to Dicom files
+    % Legacy utility functions related to Dicom files Replaced with DMUtilities.m
     %
-    %     Deprecated: Replaced with DMUtilities.m
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
     methods (Static)

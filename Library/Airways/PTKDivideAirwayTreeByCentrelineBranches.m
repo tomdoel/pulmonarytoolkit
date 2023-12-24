@@ -1,19 +1,18 @@
 function results_image = PTKDivideAirwayTreeByCentrelineBranches(start_branches, airway_tree, template)
-    % PTKDivideAirwayTreeByCentrelineBranches. Given a set of branches, this
-    %     creates an output image which divides an airway tree into the subtrees
-    %     serving each branch
+    % Given a set of branches, this creates an output image which divides 
+    % an airway tree into the subtrees serving each branch
     %
-    %     PTKDivideAirwayTreeByCentrelineBranches takes a segmented airway tree
-    %     (airway_tree) and creates an output image (results_image) which is
-    %     coloured according to the the subtrees served by the branches
-    %     (start_branches). Any branches which serve more than one branch in
-    %     start_branches will not be coloured.
+    % PTKDivideAirwayTreeByCentrelineBranches takes a segmented airway tree
+    % (airway_tree) and creates an output image (results_image) which is
+    % coloured according to the the subtrees served by the branches
+    % (start_branches). Any branches which serve more than one branch in
+    % start_branches will not be coloured.
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
     number_startsegments = length(start_branches);

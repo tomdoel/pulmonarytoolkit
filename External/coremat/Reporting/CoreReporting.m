@@ -1,46 +1,46 @@
 classdef CoreReporting < CoreReportingInterface
-    % CoreReporting. Provides error, message and progress reporting.
+    % Provides error, message and progress reporting.
     %
-    %     CoreReporting. Implementation of CoreReportingInterface, which is used by
-    %     CoreMat and other libraries for progress and error/message reporting. This
-    %     implementation displays warnings and messages on the command window,
-    %     and uses Matlab's error() command to process errors. Logging
-    %     information is writen to a log file. An object which implements
-    %     the CoreProgressInterface can be passed in for progress reporting.
+    % CoreReporting. Implementation of CoreReportingInterface, which is used by
+    % CoreMat and other libraries for progress and error/message reporting. This
+    % implementation displays warnings and messages on the command window,
+    % and uses Matlab's error() command to process errors. Logging 
+    % information is writen to a log file. An object which implements
+    % the CoreProgressInterface can be passed in for progress reporting.
     %
-    %     Usage
-    %     -----
+    % Usage
+    % -----
     %
-    %     You should create a single CoreReporting object and pass it into all the
-    %     CoreMat routines you use in order to provide error, warning,
-    %     message and progress reporting during execution of routines.
+    % You should create a single CoreReporting object and pass it into all the
+    % CoreMat routines you use in order to provide error, warning,
+    % message and progress reporting during execution of routines.
     %
-    %     If you are not writing a gui application but would like a standard
-    %     pop-up progress dialog to appear while waiting for plugins to execute,
-    %     consider creating a CoreReportingDefault object instead. Use CoreReporting
-    %     if you want to specify your own progress dialog, or specify a gui
-    %     viewing panel, or if you want no progress dialog at all.
+    % If you are not writing a gui application but would like a standard
+    % pop-up progress dialog to appear while waiting for plugins to execute,
+    % consider creating a CoreReportingDefault object instead. Use CoreReporting
+    % if you want to specify your own progress dialog, or specify a gui
+    % viewing panel, or if you want no progress dialog at all.
     %
-    %         reporting = CoreReporting(progress_dialog, viewing_panel);
+    %     reporting = CoreReporting(progress_dialog, viewing_panel);
     %
-    %             progress_dialog - a CoreProgressInterface object such as
-    %                 a CoreProgressDialog for displaying a progress bar. You can omit this argument
-    %                 or replace it with [] if you are writing scripts to run
-    %                 in the background and do not want progress dialogs popping
-    %                 up. Otherwise, you should create a CoreProgressDialog
-    %                 or else implement your own progress class if you want
-    %                 custom behaviour.
+    %         progress_dialog - a CoreProgressInterface object such as
+    %             a CoreProgressDialog for displaying a progress bar. You can omit this argument
+    %             or replace it with [] if you are writing scripts to run 
+    %             in the background and do not want progress dialogs popping
+    %             up. Otherwise, you should create a CoreProgressDialog
+    %             or else implement your own progress class if you want
+    %             custom behaviour.
     %
-    %     See CoreReportingIntertface.m for details of the methods this class
-    %     implements.
+    % See CoreReportingIntertface.m for details of the methods this class
+    % implements.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of CoreMat. https://github.com/tomdoel/coremat
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %
+    % .. Licence
+    %    -------
+    %    Part of CoreMat. https://github.com/tomdoel/coremat
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
+    %    
 
     properties (Constant)
         CancelErrorId = 'CoreReporting:UserCancel'

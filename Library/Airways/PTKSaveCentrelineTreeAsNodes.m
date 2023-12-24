@@ -1,31 +1,30 @@
 function PTKSaveCentrelineTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
-    % PTKSaveCentrelineTreeAsNodes. Exports a centreline tree structure into node and element files
+    % Export a centreline tree structure into node and element files
     %
-    %     Syntax
-    %     ------
+    % Example:
+    %     PTKSaveCentrelineTreeAsNodes(tree_root, file_path, base_filename, reporting);
     %
-    %         PTKSaveCentrelineTreeAsNodes(tree_root, file_path, base_filename, reporting)
+    % Parameters:
+    %             tree_root:       is the root branch in a PTKTreeModel structure 
+    %             file_path:       is the path where the node and element files
+    %                              are to be stored
+    %             filename_prefix: is the filename prefix. The node and element
+    %                              files will have '_node.txt' and '_element.txt'
+    %                              appended to this prefix before saving.
+    %             coordinate_system: a MimCoordinateSystem enumeration
+    %                                specifying the coordinate system to use
+    %             template_image:  may be required, depending on the value of
+    %                              coordinate_system. Provides the required
+    %                              parameters for saving the centreline tree.
+    %             reporting:       an object implementing CoreReportingInterface
+    %                              for reporting progress and warnings
     %
-    %             tree_root       is the root branch in a PTKTreeModel structure 
-    %             file_path       is the path where the node and element files
-    %                             are to be stored
-    %             filename_prefix is the filename prefix. The node and element
-    %                             files will have '_node.txt' and '_element.txt'
-    %                             appended to this prefix before saving.
-    %             coordinate_system  a MimCoordinateSystem enumeration
-    %                             specifying the coordinate system to use
-    %             template_image  may be required, depending on the value of
-    %                             coordinate_system. Provides the required
-    %                             parameters for saving the centreline tree.
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %        
 
     if nargin < 4

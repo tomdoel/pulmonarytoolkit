@@ -1,14 +1,26 @@
 function MimSaveMarkerListAsXml(path_name, marker_list, patient_name, series_uid, template_image, reporting)
-    % MimSaveMarkerListAsXml Exports a marker set into an xml file
+    % Export a marker set into an xml file
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, 2013.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
-    %       
+    % Syntax:
+    %     MimSaveMarkerListAsXml(path_name, marker_list, patient_name, series_uid, template_image, reporting);
+    %
+    % Parameters:
+    %     path_name: path where the output file is to be stored
+    %     marker_list: the marker set
+    %     patient_name: the patient name string
+    %     series_uid: Series UID
+    %     template_image: A PTKImage providing voxel size and image size parameters
+    %     reporting (CoreReportingInterface): an object implementing 
+    %         for reporting progress and warnings
+    %
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, 2013.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
+    %
 
-    
     coords_global = marker_list(:, 1:3);
     coords_mm = MimImageCoordinateUtilities.PTKToDicomCoordinates(coords_global, template_image);
     labels = marker_list(:, 4);    

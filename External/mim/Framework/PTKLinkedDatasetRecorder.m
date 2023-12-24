@@ -1,19 +1,15 @@
 classdef PTKLinkedDatasetRecorder < CoreBaseClass
-    % PTKLinkedDatasetRecorder. Part of the internal framework of the MIM Toolkit.
+    % Used to cache links between datasets for
+    % multimodal analysis. Links can be explicitly made using the MimDataset API
+    % call LinkDataset(). This class caches such links so that they can be made
+    % automatically.
     %
-    %     PTKLinkedDatasetRecorder is used to cache links between datasets for
-    %     multimodal analysis. Links can be explicitly made using the MimDataset API
-    %     call LinkDataset(). This class caches such links so that they can be made
-    %     automatically.
     %
-    %     You should not use this class within your own code. It is intended to
-    %     be used internally within the framework of the MIM Toolkit.
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
 
     properties

@@ -1,12 +1,18 @@
 function start_branches = PTKGetAirwaysLabelledByLobe(template, airway_centreline_tree, reporting)
-    % PTKGetAirwaysLabelledByLobe. Label segmented bronchi according to the
-    % lobes they serve.
+    % Label segmented bronchi according to the lobes they serve.
     % 
-    % Usage:
+    % This function uses the airway centreline returned by PTKAirwayCentreline
+    % and the airway tree returned by PTKAirwayRegionGrowingWithExplosionControl.
+    % The centreline is analysed to determine its branching structure. At each
+    % bufurcation, the entire subtree growing from each branch is analysed to
+    % determine its centroid. The two centroids are compared to separate the
+    % branches according to lobes.
+    %
+    % Example:
     %
     %     [results_image, start_branches] = PTKGetAirwaysLabelledByLobe(template, airway_results, airway_centreline_tree, reporting)
     %
-    % Inputs:
+    % Parameters:
     %
     %     template : A PTKImage representing the region of interest used by the
     %         centreline algorithm
@@ -17,23 +23,15 @@ function start_branches = PTKGetAirwaysLabelledByLobe(template, airway_centrelin
     %     reporting - an object implementing CoreReportingInterface
     %         for reporting progress and warnings
     %
-    % Outputs:
+    % Returns:
     %
-    %    start_branches : a structure containing the first branch for each lobe
+    %    start_branches is  a structure containing the first branch for each lobe
     %
-    % This function uses the airway centreline returned by PTKAirwayCentreline
-    % and the airway tree returned by PTKAirwayRegionGrowingWithExplosionControl.
-    % The centreline is analysed to determine its branching structure. At each
-    % bufurcation, the entire subtree growing from each branch is analysed to
-    % determine its centroid. The two centroids are compared to separate the
-    % branches according to lobes.
-    %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     start_segment = airway_centreline_tree;

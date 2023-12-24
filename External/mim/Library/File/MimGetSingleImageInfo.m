@@ -1,15 +1,30 @@
 function single_image_info = MimGetSingleImageInfo(file_path, file_name, file_format, tags_to_get, reporting)
-    % MimGetSingleImageInfo. Populates a DMSingleImageMetaInfo object with meta
-    %     information derived from an image file
+    % Populate a DMSingleImageMetaInfo object with meta
+    % information derived from an image file
     %
-    %     file_format (optional) - an enum of type MimImageFileFormat, or
-    %         set to [] for MIM to detect the file format automatically
+    % Syntax:
+    %     single_image_info = MimGetSingleImageInfo(file_path, file_name, file_format, tags_to_get, reporting);
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % Parameters:
+    %     filepath: path where the image file is located
+    %     filename: Filename for the image file in the filepath
+    %     file_format (optional): an enum of type MimImageFileFormat, or
+    %         set to [] to detect the file format automatically
+    %     tags_to_get: the DICOM tages to read. Set to [] to use the default
+    %         DMDicomDictionary.GroupingDictionary.
+    %     reporting: an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
+    %
+    % Returns:
+    %     single_image_info (DMSingleImageMetaInfo): structure containing metadata from 
+    %         the image
+    %
+    %
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
 
     if nargin < 4

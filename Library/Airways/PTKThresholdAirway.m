@@ -1,31 +1,29 @@
 function threshold_image = PTKThresholdAirway(lung_image, use_wide_threshold)
-    % PTKThresholdAirway. Threshold a 3D volume with typical values for air
+    % Threshold a 3D volume with typical values for air
     %
-    %     This function performs a threshold operation which returns voxels
-    %     which lie within typical expected ranges for CT data, and for certain
-    %     MR data.
+    % This function performs a threshold operation which returns voxels
+    % which lie within typical expected ranges for CT data, and for certain
+    % MR data.
     %
-    %     Syntax:
-    %         threshold_image = PTKThresholdAirway(lung_image, use_wide_threshold)
+    % Syntax:
+    %     threshold_image = PTKThresholdAirway(lung_image, use_wide_threshold)
     %
-    %         Inputs:
-    %         ------
-    %             lung_image - The original image in a PTKImage class.
-    %             use_wide_threshold - Provides a winder range of values for the
-    %                 threshold, which will better segment noisy images but may
-    %                 oversegment, e.g. airway walls.
+    % Parameters:
+    %     lung_image (PTKImage): the original image in a PTKImage class.
+    %     use_wide_threshold: Provides a winder range of values for the
+    %         threshold, which will better segment noisy images but may
+    %         oversegment, e.g. airway walls.
     %
-    %         Outputs:
-    %         -------
-    %             threshold_image - A binary PTKImage containing the voxels which
-    %                 lie within the threshold range.
+    % Returns:
+    %     threshold_image is a binary PTKImage containing the voxels which
+    %     lie within the threshold range.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     if ~isa(lung_image, 'PTKImage')
@@ -54,7 +52,7 @@ function threshold_image = PTKThresholdAirway(lung_image, use_wide_threshold)
     raw_image = lung_image.RawImage;
     raw_image = (raw_image >= limit_1 & raw_image <= limit_2);
     
-    threshold_image = lung_image.BlankCopy;
+    threshold_image = lung_image.BlankCopy();
     threshold_image.ImageType = PTKImageType.Colormap;
     threshold_image.ChangeRawImage(raw_image);
 end

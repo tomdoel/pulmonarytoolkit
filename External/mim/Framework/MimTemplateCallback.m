@@ -1,17 +1,17 @@
 classdef MimTemplateCallback < CoreBaseClass
-    % MimTemplateCallback. Used by plugins to fetch empty template images
+    % Used by plugins to fetch empty template images
     %
-    %     Template images are empty images with metadata matching the current
-    %     image. They are used to create images that will be compatible with
-    %     other images from the same dataset. The metadata image size and origin
-    %     depends on the chosen context.
+    % Template images are empty images with metadata matching the current
+    % image. They are used to create images that will be compatible with
+    % other images from the same dataset. The metadata image size and origin
+    % depends on the chosen context.
     %
     %
-    %     Licence
-    %     -------
-    %     Part of the TD MIM Toolkit. https://github.com/tomdoel
-    %     Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
-    %     Distributed under the MIT licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD MIM Toolkit. https://github.com/tomdoel
+    %    Author: Tom Doel, Copyright Tom Doel 2014.  www.tomdoel.com
+    %    Distributed under the MIT licence. Please see website for details.
     %
 
     properties (Access = private)

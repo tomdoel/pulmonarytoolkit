@@ -1,20 +1,12 @@
 function results = PTKDrawAirwayGrowingBranchesAsSegmentation(airway_tree, template_image, reporting)
-    % PTKDrawAirwayGrowingBranchesAsSegmentation. Creates a segmentation image
-    %     based on the centreline of an airway growing tree
-    %
-    %     This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
-    %     the gui, or through the interfaces provided by the Pulmonary Toolkit.
-    %     See PTKPlugin.m for more information on how to run plugins.
-    %
-    %     Plugins should not be run directly from your code.
+    % Creates a segmentation image based on the centreline of an airway growing tree
     %
     %
-    %
-    %     Licence
-    %     -------
-    %     Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
-    %     Author: Tom Doel, 2012.  www.tomdoel.com
-    %     Distributed under the GNU GPL v3 licence. Please see website for details.
+    % .. Licence
+    %    -------
+    %    Part of the TD Pulmonary Toolkit. https://github.com/tomdoel/pulmonarytoolkit
+    %    Author: Tom Doel, 2012.  www.tomdoel.com
+    %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
     results = template_image;
