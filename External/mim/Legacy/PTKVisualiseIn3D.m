@@ -40,7 +40,7 @@ function axes_handle = PTKVisualiseIn3D(axes_handle, segmentation, smoothing_siz
     end
     
     if nargin < 5
-        reporting = CoreReportingDefault;    
+        reporting = CoreReportingDefault();    
     end
     
     limit_to_one_component_per_index = false;

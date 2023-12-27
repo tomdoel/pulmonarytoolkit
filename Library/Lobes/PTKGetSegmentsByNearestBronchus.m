@@ -22,7 +22,7 @@ function [segment_image_map, labelled_segments] = PTKGetSegmentsByNearestBronchu
 end
 
 function results_right = GetRight(airway_root, left_and_right_lungs, lobes, segmental_bronchi_by_lobe, reporting)
-    results_right = left_and_right_lungs.BlankCopy;
+    results_right = left_and_right_lungs.BlankCopy();
     results_right.ChangeRawImage(zeros(results_right.ImageSize, 'uint8'));
     all_segments = segmental_bronchi_by_lobe.Segments;
     
@@ -39,7 +39,7 @@ function results_right = GetRight(airway_root, left_and_right_lungs, lobes, segm
 end
 
 function results_left = GetLeft(airway_root, left_and_right_lungs, lobes, segmental_bronchi_by_lobe, reporting)
-    results_left = left_and_right_lungs.BlankCopy;
+    results_left = left_and_right_lungs.BlankCopy();
     results_left.ChangeRawImage(zeros(results_left.ImageSize, 'uint8'));
     all_segments = segmental_bronchi_by_lobe.Segments;
     
@@ -53,7 +53,7 @@ function results_left = GetLeft(airway_root, left_and_right_lungs, lobes, segmen
 end
 
 function results = GetSegmentsFromUpperRightLobe(airway_root, lobes, all_segments, reporting)
-    roi = lobes.BlankCopy;
+    roi = lobes.BlankCopy();
     roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightUpperLobe);
     segments = all_segments.UpperRightSegments;
     segments_remaining = segments;    
@@ -80,7 +80,7 @@ function results = GetSegmentsFromUpperRightLobe(airway_root, lobes, all_segment
 end
 
 function results = GetSegmentsFromMidRightLobe(airway_root, lobes, all_segments, reporting)
-    roi = lobes.BlankCopy;
+    roi = lobes.BlankCopy();
     roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightMiddleLobe);
     segments = all_segments.MiddleRightSegments;
     segments_remaining = segments;    
@@ -104,7 +104,7 @@ function results = GetSegmentsFromMidRightLobe(airway_root, lobes, all_segments,
 end
 
 function results = GetSegmentsFromLowerRightLobe(airway_root, lobes, all_segments, reporting)
-    roi = lobes.BlankCopy;
+    roi = lobes.BlankCopy();
     roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightLowerLobe);
     segments = all_segments.LowerRightSegments;
     segments_remaining = segments;    
@@ -137,7 +137,7 @@ function results = GetSegmentsFromLowerRightLobe(airway_root, lobes, all_segment
 end
 
 function results = GetSegmentsFromUpperLeftLobe(airway_root, lobes, all_segments, reporting)
-    roi = lobes.BlankCopy;
+    roi = lobes.BlankCopy();
     roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.LeftUpperLobe);
     segments = all_segments.UpperLeftSegments;
     segments_remaining = segments;
@@ -171,7 +171,7 @@ function results = GetSegmentsFromUpperLeftLobe(airway_root, lobes, all_segments
 end
 
 function results = GetSegmentsFromLowerLeftLobe(airway_root, lobes, all_segments, reporting)
-    roi = lobes.BlankCopy;
+    roi = lobes.BlankCopy();
     roi.ChangeRawImage(lobes.RawImage == PTKColormapLabels.LeftLowerLobe);
     segments = all_segments.LowerLeftSegments;
     segments_remaining = segments;
@@ -241,7 +241,7 @@ end
 function [starting_airways, d1, d2, is, js, ks] = DivideImageCropped(starting_airways, roi)
     roi = roi.Copy;
     roi.ChangeRawImage(roi.RawImage | ((starting_airways.RawImage > 0) & (starting_airways.RawImage ~= 7)));
-    template = roi.BlankCopy;
+    template = roi.BlankCopy();
     roi.CropToFit;
     starting_airways.ResizeToMatch(roi);
     raw_image = int8(starting_airways.RawImage);

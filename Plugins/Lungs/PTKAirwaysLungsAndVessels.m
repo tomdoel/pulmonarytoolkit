@@ -46,7 +46,7 @@ classdef PTKAirwaysLungsAndVessels < PTKPlugin
             vesselness_image = dataset.GetResult('PTKVesselness');
 
             % Make our output image the lugn segmentation
-            results = left_and_right_lungs_image.BlankCopy;
+            results = left_and_right_lungs_image.BlankCopy();
             
             % Make an image matrix with 1 for right lung, 2 for left lung and 3
             % for airways

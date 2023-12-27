@@ -32,7 +32,7 @@ function label_image = PTKCoordListToLabelMatrix(points_list, image_template, re
         reporting.Error('PTKCoordListToLabelMatrix:TooManyRegions', 'Maximum number of 255 different labels');
     end
     
-    label_image = image_template.BlankCopy;
+    label_image = image_template.BlankCopy();
     label_image.ChangeRawImage(zeros(image_template.ImageSize, 'uint8'));
     for label_index = 1 : numel(points_list)
         label_image.SetIndexedVoxelsToThis(points_list{label_index}, label_index);

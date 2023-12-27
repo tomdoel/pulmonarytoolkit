@@ -41,7 +41,7 @@ classdef PTKGetContextForLungROI < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, ~, ~)
-            results = dataset.GetResult('PTKLungROI').BlankCopy;
+            results = dataset.GetResult('PTKLungROI').BlankCopy();
         end
     end
 end

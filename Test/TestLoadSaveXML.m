@@ -11,7 +11,7 @@ classdef TestLoadSaveXML < CoreTest
 
     methods
         function obj = TestLoadSaveXML
-            reporting = CoreReportingDefault;
+            reporting = CoreReportingDefault();
             test_class = obj.getTestClass('MimStruct');
             obj.TestLoadAndSave(test_class, reporting);
             test_class_2 = obj.getTestClass('TestClass');
@@ -52,7 +52,7 @@ classdef TestLoadSaveXML < CoreTest
         end
 
         function map = GetTestMap(obj)
-            map = containers.Map;
+            map = containers.Map();
             map('A') = 'String1';
             map('1') = 'String1';
             map('J') = 'String3';
@@ -107,7 +107,7 @@ classdef TestLoadSaveXML < CoreTest
             file_name = 'TestXML.xml';
             CoreSaveXml(base_class, 'Test', CoreFilename(temp_folder, file_name), reporting);
             
-            conversion_map = containers.Map;
+            conversion_map = containers.Map();
             conversion_map(class(base_class)) = new_class_name;
             loaded_base_class = CoreLoadXml(CoreFilename(temp_folder, file_name), reporting, conversion_map);
             loaded_base_class = loaded_base_class.Test;

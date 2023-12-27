@@ -36,7 +36,7 @@ function result = MimReduceResultToContext(full_result, child_context, image_tem
     result.ResizeToMatch(template_image);
     
     if template_image.ImageExists
-        result.Clear;
+        result.Clear();
         result.ChangeSubImageWithMask(full_result, template_image, true);
     end
 end

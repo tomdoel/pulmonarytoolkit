@@ -38,7 +38,7 @@ classdef PTKAirwayDistanceTransform < PTKPlugin
             lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage > 0));
             [airways, airway_image] = dataset.GetResult('PTKAirways');
-            results = airway_image.BlankCopy;
+            results = airway_image.BlankCopy();
             
             airways_dt = bwdist(airway_image.RawImage == 1);
 

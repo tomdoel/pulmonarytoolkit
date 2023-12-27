@@ -9,8 +9,8 @@ function mex_files_to_compile_map = PTKGetMexFilesToCompile(reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    root_dir = PTKDirectories.GetSourceDirectory;
-    mex_dir = PTKDirectories.GetMexSourceDirectory;
+    root_dir = PTKDirectories.GetSourceDirectory();
+    mex_dir = PTKDirectories.GetMexSourceDirectory();
 
     % Populate list with known mex files
     mex_files_to_compile = CoreCompiledFileInfo.empty(0);
@@ -26,7 +26,7 @@ function mex_files_to_compile_map = PTKGetMexFilesToCompile(reporting)
         fullfile(root_dir, 'External', 'mba', 'src', 'UCBsplineSurface.cpp'), fullfile(root_dir, 'External', 'mba', 'src', 'MBAdata.cpp')});
     
     % Transfer to a map
-    mex_files_to_compile_map = containers.Map;
+    mex_files_to_compile_map = containers.Map();
     for mex_file = mex_files_to_compile
         mex_files_to_compile_map(mex_file.Name) = mex_file;
     end
@@ -42,5 +42,4 @@ function mex_files_to_compile_map = PTKGetMexFilesToCompile(reporting)
         else
         end
     end
-    
 end

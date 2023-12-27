@@ -41,7 +41,7 @@ classdef PTKGradients < PTKPlugin
             
             % Matlab's gradient returns [x,y,z] which is our [i,j,k]
             [gj, gi, gk] = gradient(single(image.RawImage));
-            results = image.BlankCopy;
+            results = image.BlankCopy();
             results.ChangeRawImage(cat(4, gi, gj, gk));
         end
     end

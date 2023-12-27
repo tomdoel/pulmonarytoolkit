@@ -28,7 +28,7 @@ classdef MimOrganisedPlugins < CoreBaseClass
         end
         
         function Repopulate(obj, reporting)
-            obj.OrganisedPluginsModeList.Clear;
+            obj.OrganisedPluginsModeList.Clear();
             plugin_list = obj.GetListOfPossiblePluginNames();
             obj.OrganisedPluginsModeList.AddList(plugin_list, obj.GuiApp, reporting);
             gui_plugin_list = obj.GetListOfPossibleGuiPluginNames;
@@ -41,7 +41,7 @@ classdef MimOrganisedPlugins < CoreBaseClass
         
         function tool_list = GetOrderedPlugins(obj, mode)
             tool_maps = obj.GetAllPluginsForMode(mode);
-            tool_maps = tool_maps.values;
+            tool_maps = tool_maps.values();
             tool_list = [];
             for tool_map = tool_maps
                 tool_list = horzcat(tool_list, tool_map{1}.values);
@@ -57,7 +57,7 @@ classdef MimOrganisedPlugins < CoreBaseClass
             % Obtains a list of all Gui plugins available for this app
             
             plugin_name_list = {};
-            plugins_folders = obj.AppDef.GetListOfGuiPluginsFolders;
+            plugins_folders = obj.AppDef.GetListOfGuiPluginsFolders();
             for folder = plugins_folders
                 plugin_names = CoreDiskUtilities.GetAllMatlabFilesInFolders(CoreDiskUtilities.GetRecursiveListOfDirectories(folder{1}));
                 plugin_name_list = horzcat(plugin_name_list, plugin_names);
@@ -68,7 +68,7 @@ classdef MimOrganisedPlugins < CoreBaseClass
             % Obtains a list of all plugins available for this app
             
             plugin_name_list = {};
-            plugins_folders = obj.AppDef.GetListOfPluginsFolders;
+            plugins_folders = obj.AppDef.GetListOfPluginsFolders();
             for folder = plugins_folders
                 plugin_names = CoreDiskUtilities.GetAllMatlabFilesInFolders(CoreDiskUtilities.GetRecursiveListOfDirectories(folder{1}));
                 plugin_name_list = horzcat(plugin_name_list, plugin_names);

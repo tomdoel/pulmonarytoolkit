@@ -42,7 +42,7 @@ function figure_handle = PTKDrawMetricVsMetric(table, metric_x, metric_y, contex
     
     result_list = [];
     
-    patient_uids = table.NameMaps{1}.keys;
+    patient_uids = table.NameMaps{1}.keys();
     
     max_x = 0;
     max_y = 0;

@@ -35,7 +35,7 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
             try
                 linked_recorder_filename = framework_app_def.GetFrameworkDirectories.GetLinkingCacheFilePath;
                 if exist(linked_recorder_filename, 'file')
-                    legacy_conversion = containers.Map;
+                    legacy_conversion = containers.Map();
                     linked_recorder = CoreLoadXml(linked_recorder_filename, reporting, legacy_conversion);
                     linked_recorder = linked_recorder.LinkingCache;
                     linked_recorder.FrameworkAppDef = framework_app_def;
@@ -55,8 +55,8 @@ classdef PTKLinkedDatasetRecorder < CoreBaseClass
     
     methods
         function obj = PTKLinkedDatasetRecorder()
-            obj.LinkMap = containers.Map;
-            obj.AssociatedDatasetsMap = containers.Map;
+            obj.LinkMap = containers.Map();
+            obj.AssociatedDatasetsMap = containers.Map();
         end
 
         function is_primary = IsPrimaryDataset(obj, series_uid)

@@ -39,7 +39,7 @@ classdef PTKCarina < PTKPlugin
             labeled_region = PTKCarina.GetTracheaAndMainBronchi(airway_results.AirwayTree, main_bronchi);
             main_bronchi.ChangeRawImage(labeled_region);
             main_bronchi.ImageType = PTKImageType.Colormap;
-            bronchi_surface = main_bronchi.BlankCopy;
+            bronchi_surface = main_bronchi.BlankCopy();
             bronchi_surface.ChangeRawImage(PTKGetSurfaceFromSegmentation(main_bronchi.RawImage));
             
             k_found = PTKCarina.GetCarinaSliceIndex(main_bronchi, reporting);

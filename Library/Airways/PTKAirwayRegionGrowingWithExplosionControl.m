@@ -121,7 +121,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
 
     if debug_mode
         pause_skip = 0;
-        debug_image = threshold_image_handle.BlankCopy;
+        debug_image = threshold_image_handle.BlankCopy();
         debug_image.ChangeRawImage(zeros(debug_image.ImageSize, 'uint8'));
     end
     threshold_image = logical(threshold_image_handle.RawImage);

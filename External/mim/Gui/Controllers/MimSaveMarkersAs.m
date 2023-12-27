@@ -24,7 +24,7 @@ function path_name = MimSaveMarkersAs(markers_struct, path_name, reporting)
     end
     
     if nargin < 3
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     [filename, path_name, filter_index] = SaveMarkersDialogBox(path_name);
@@ -51,7 +51,7 @@ function SaveMarkers(markers_struct, filename, pathname, filter_index, reporting
         
         switch filter_index
             case 1
-                alias_mapping = containers.Map;
+                alias_mapping = containers.Map();
                 alias_mapping('MimMarkerPoint') = 'Marker';
                 CoreSaveXmlSimplified(markers_struct, 'MimMarkerPoints', fullfile(pathname, filename), alias_mapping, reporting);
         end

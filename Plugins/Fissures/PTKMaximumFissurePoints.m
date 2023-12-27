@@ -70,7 +70,7 @@ classdef PTKMaximumFissurePoints < PTKPlugin
             
             [high_fissure_indices, ref_image] = PTKGetMaxFissurePoints(fissure_approximation.RawImage == 6, lung_mask, fissureness_roi.LeftMainFissure, left_lung_roi, left_lung_roi.ImageSize);
             
-            left_results = left_lung_roi.BlankCopy;
+            left_results = left_lung_roi.BlankCopy();
             left_results.ChangeRawImage(ref_image);
         end
         
@@ -93,7 +93,7 @@ classdef PTKMaximumFissurePoints < PTKPlugin
             ref_image(ref_image_o == 1) = 1;
             ref_image(ref_image_m == 1) = 8;
             
-            right_results = right_lung_roi.BlankCopy;
+            right_results = right_lung_roi.BlankCopy();
             right_results.ChangeRawImage(ref_image);
         end
     end

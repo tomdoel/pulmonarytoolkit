@@ -21,7 +21,7 @@ classdef PTKLinkedDatasetCacheRecord < CoreBaseClass
     
     methods
         function obj = PTKLinkedDatasetCacheRecord()
-            obj.LinkMap = containers.Map;
+            obj.LinkMap = containers.Map();
         end
         
         function AddLink(obj, name, uid)

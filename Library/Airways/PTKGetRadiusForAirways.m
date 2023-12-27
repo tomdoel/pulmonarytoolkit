@@ -25,7 +25,7 @@ function [results, airway_skeleton] = GetRadius(lung_image, airway_skeleton, rad
     number_of_segments = airway_skeleton.CountBranches;
     segments_done = 0;
     
-    lung_image_as_double = lung_image.BlankCopy;
+    lung_image_as_double = lung_image.BlankCopy();
     lung_image_as_double.ChangeRawImage(double(lung_image.RawImage));
     
     segments = airway_skeleton.GetBranchesAsListByGeneration;

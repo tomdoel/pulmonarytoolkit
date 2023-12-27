@@ -30,7 +30,7 @@ function data = CoreLoadXml(file_name, reporting, conversion_map)
     end
     
     if (nargin < 3)
-        conversion_map = containers.Map;
+        conversion_map = containers.Map();
     end
     
     xml_doc_node = xmlread(file_name);
@@ -213,7 +213,7 @@ end
 function map = ParseMap(xml_node, conversion_map)
     
     % Create an empty map
-    map = containers.Map;
+    map = containers.Map();
     
     % Iterate through the child nodes, looking for cell element nodes
     child_nodes = GetChildNodes(xml_node);

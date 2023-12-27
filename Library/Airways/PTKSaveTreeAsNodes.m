@@ -126,7 +126,7 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
     fclose(node_file_handle);
     fclose(element_file_handle);
     
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end
    
     

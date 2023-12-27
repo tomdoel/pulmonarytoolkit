@@ -38,7 +38,7 @@ classdef PTKLungSurface < PTKPlugin
     methods (Static)
         function results = RunPlugin(dataset, ~)
             lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
-            results = lung_mask.BlankCopy;
+            results = lung_mask.BlankCopy();
             lungs = PTKGetSurfaceFromSegmentation(uint8(lung_mask.RawImage > 0));
             results.ChangeRawImage(lungs);
             results.ImageType = PTKImageType.Colormap;

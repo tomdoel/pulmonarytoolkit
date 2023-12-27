@@ -29,7 +29,7 @@ function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_file
     end
     
     if nargin < 6
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end    
     
     if ~isa(coordinate_system, 'MimCoordinateSystem')

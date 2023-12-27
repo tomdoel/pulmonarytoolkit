@@ -52,7 +52,7 @@ classdef PTKThresholdLungFiltered < PTKPlugin
                 limits = mri_lung_threshold.Bounds;
                 raw_image = filtered_image.RawImage;
                 raw_image = (raw_image >= limits(1) & raw_image <= limits(2));
-                threshold_image = lung_roi.BlankCopy;
+                threshold_image = lung_roi.BlankCopy();
                 threshold_image.ChangeRawImage(raw_image);
                 threshold_image.ImageType = PTKImageType.Colormap;
             elseif strcmp(dataset.GetImageInfo.Modality, 'MR')
@@ -60,7 +60,7 @@ classdef PTKThresholdLungFiltered < PTKPlugin
                 limits = mri_lung_threshold.Bounds;
                 raw_image = filtered_image.RawImage;
                 raw_image = (raw_image >= limits(1) & raw_image <= limits(2));
-                threshold_image = lung_roi.BlankCopy;
+                threshold_image = lung_roi.BlankCopy();
                 threshold_image.ChangeRawImage(raw_image);
                 threshold_image.ImageType = PTKImageType.Colormap;
             else
@@ -74,7 +74,7 @@ classdef PTKThresholdLungFiltered < PTKPlugin
                 % Voxles within the narrow unfiltered threshold are given value 1
                 filtered_image(lung_roi.RawImage >= limit_1 & lung_roi.RawImage <= limit_2) = 1;
                 
-                threshold_image = lung_roi.BlankCopy;
+                threshold_image = lung_roi.BlankCopy();
                 threshold_image.ChangeRawImage(filtered_image);
                 
                 threshold_image.ImageType = PTKImageType.Colormap;

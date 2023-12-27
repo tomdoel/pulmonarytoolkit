@@ -10,5 +10,5 @@ function template = PTKCreateTemplateForLungROI(roi, context, reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
-    template = roi.BlankCopy;
+    template = roi.BlankCopy();
 end

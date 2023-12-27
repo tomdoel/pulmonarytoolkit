@@ -40,7 +40,7 @@ classdef MimPipelines < CoreBaseClass
             % not as default property values. Initialising as default property
             % values results in every instance of this claas sharing the same
             % map instance
-            obj.PipelinePlugins = containers.Map;
+            obj.PipelinePlugins = containers.Map();
         end
         
         function AddPipeline(obj, trigger_plugin, trigger_context, pipeline_plugin)

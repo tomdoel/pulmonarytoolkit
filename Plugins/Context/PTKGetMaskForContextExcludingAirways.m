@@ -46,7 +46,7 @@ classdef PTKGetMaskForContextExcludingAirways < PTKPlugin
             airway_image.ResizeToMatch(context_mask);
             
             % Create a region mask excluding the airways
-            context_no_airways = context_mask.BlankCopy;
+            context_no_airways = context_mask.BlankCopy();
             context_no_airways.ChangeRawImage(context_mask.RawImage & airway_image.RawImage ~= 1);            
         end
     end

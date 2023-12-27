@@ -32,14 +32,14 @@ classdef MimResultsTable < handle
             obj.IndexMaps = [];
             obj.NameMaps = [];
             
-            obj.IndexMaps{obj.PatientDim} = containers.Map;
-            obj.IndexMaps{obj.MetricDim} = containers.Map;
-            obj.IndexMaps{obj.ContextDim} = containers.Map;
+            obj.IndexMaps{obj.PatientDim} = containers.Map();
+            obj.IndexMaps{obj.MetricDim} = containers.Map();
+            obj.IndexMaps{obj.ContextDim} = containers.Map();
             obj.IndexMaps{obj.SliceNumberDim} = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
             
-            obj.NameMaps{obj.PatientDim} = containers.Map;
-            obj.NameMaps{obj.MetricDim} = containers.Map;
-            obj.NameMaps{obj.ContextDim} = containers.Map;
+            obj.NameMaps{obj.PatientDim} = containers.Map();
+            obj.NameMaps{obj.MetricDim} = containers.Map();
+            obj.NameMaps{obj.ContextDim} = containers.Map();
             obj.NameMaps{obj.SliceNumberDim} = containers.Map('KeyType', 'uint32', 'ValueType', 'any');
         end
         

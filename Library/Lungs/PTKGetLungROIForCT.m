@@ -30,7 +30,7 @@ function lung_image = PTKGetLungROIForCT(lung_image, reporting)
     end
 
     if nargin < 2
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     reporting.ShowProgress('Rescaling image');
@@ -62,5 +62,5 @@ function lung_image = PTKGetLungROIForCT(lung_image, reporting)
     lung_image = lung_image.Copy;
     lung_image.Crop(start_crop, end_crop);
     
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end

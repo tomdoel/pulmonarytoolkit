@@ -31,7 +31,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list, pa
     %
     
     if nargin < 4
-        patient_uids = table.NameMaps{1}.keys;
+        patient_uids = table.NameMaps{1}.keys();
     end
     
     y_label = table.NameMaps{2}(metric);
@@ -44,7 +44,7 @@ function figure_handle = PTKGraphContextVsMetric(table, metric, context_list, pa
 
     
     if nargin < 3 || isempty(context_list)
-        context_list = table.IndexMaps{3}.keys;
+        context_list = table.IndexMaps{3}.keys();
     end
     
     context_list = SortContexts(context_list);

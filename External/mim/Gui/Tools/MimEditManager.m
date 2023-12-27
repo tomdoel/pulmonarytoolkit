@@ -57,7 +57,7 @@ classdef MimEditManager < MimTool
         end
         
         function Enter(obj)
-            obj.InitialiseEditMode;
+            obj.InitialiseEditMode();
         end
 
         function processed = Keypressed(obj, key_name)
@@ -70,18 +70,18 @@ classdef MimEditManager < MimTool
         end
         
         function ImageChanged(obj)
-            obj.InitialiseEditMode;
+            obj.InitialiseEditMode();
         end
         
         function OverlayImageChanged(obj)
             if ~obj.OverlayChangeLock
-                obj.InitialiseEditMode;
+                obj.InitialiseEditMode();
             end
         end
               
         function InitialiseEditMode(obj)
             obj.EditModeInitialised = true;
-            obj.UndoStack.Clear;
+            obj.UndoStack.Clear();
             
             obj.FixedOuterBoundary = strcmp(obj.ViewerPanel.SubMode, MimSubModes.FixedBoundariesEditing);
         end
@@ -247,7 +247,7 @@ classdef MimEditManager < MimTool
                 cropped_image.Crop(min_coords, max_coords);
                 subimage = cropped_image.RawImage;
                 
-                dt_subimage_second = cropped_image.BlankCopy;
+                dt_subimage_second = cropped_image.BlankCopy();
                 dt_subimage_second.ChangeRawImage(cropped_image.RawImage == second_closest_colour);
                 dt_subimage_second = MimImageUtilities.GetNonisotropicDistanceTransform(dt_subimage_second);
                 
@@ -273,7 +273,7 @@ classdef MimEditManager < MimTool
                 
                 % Perform a morphological opening to force disconnection of neighbouring
                 % segments, which will be removed in the hole filling step
-                cropped_image_copy = cropped_image.BlankCopy;
+                cropped_image_copy = cropped_image.BlankCopy();
                 cropped_image_copy.ChangeRawImage(subimage == closest_colour);
                 cropped_image_copy.BinaryMorph(@imopen, 2);
                 subimage((subimage == closest_colour) & (~cropped_image_copy.RawImage)) = second_closest_colour;

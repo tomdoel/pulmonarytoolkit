@@ -21,7 +21,7 @@ function density_image = PTKConvertCTToDensity(ct_image)
     %
     
     
-    density_image = ct_image.BlankCopy;
+    density_image = ct_image.BlankCopy();
     
     % Find the raw values
     density_values_raw = ct_image.RawImage;
@@ -36,4 +36,3 @@ function density_image = PTKConvertCTToDensity(ct_image)
     density_image.ChangeRawImage(density_values_raw);
     density_image.ImageType = PTKImageType.Grayscale;
 end
-

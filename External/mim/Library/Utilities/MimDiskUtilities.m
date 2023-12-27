@@ -143,7 +143,7 @@ classdef MimDiskUtilities
                 otherwise
                     reporting.Error('MimDiskUtilities:SaveImageCapture:UnknownImageType', ['SaveImageCapture() does not support the image type ', save_type]);
             end
-            reporting.CompleteProgress;
+            reporting.CompleteProgress();
         end
         
         function compression_supported = CompressionSupported(compression, data_type, reporting)

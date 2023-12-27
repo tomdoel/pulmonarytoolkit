@@ -44,7 +44,7 @@ classdef PTKVentilationMask < PTKPlugin
             threshold = mean_signal + 2*std_noise;
             
             threshold_image = logical(roi.RawImage >= threshold);
-            results = roi.BlankCopy;
+            results = roi.BlankCopy();
             results.ChangeRawImage(threshold_image);
             
             results.BinaryMorph(@imopen, 6);

@@ -29,7 +29,7 @@ classdef MimLinkedDatasetChooserMemoryCache < handle
         function obj = MimLinkedDatasetChooserMemoryCache(framework_app_def, linked_recorder_singleton, plugin_cache)
             obj.ContextDef = framework_app_def.GetContextDef;
             obj.FrameworkAppDef = framework_app_def;
-            obj.LinkedDatasetChooserCacheMap = containers.Map;
+            obj.LinkedDatasetChooserCacheMap = containers.Map();
             obj.LinkedRecorderSingleton = linked_recorder_singleton;
             obj.PluginCache = plugin_cache;
         end

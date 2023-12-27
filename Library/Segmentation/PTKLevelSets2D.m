@@ -10,7 +10,7 @@ function result = PTKLevelSets2D(original_image, initial_mask, bounds, figure_ha
     %
     
     
-    result = initial_mask.BlankCopy;
+    result = initial_mask.BlankCopy();
     result.ImageType = PTKImageType.Colormap;
     
     initial_mask.ChangeRawImage(logical(initial_mask.RawImage));

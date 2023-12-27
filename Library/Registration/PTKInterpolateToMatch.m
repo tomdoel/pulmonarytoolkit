@@ -13,7 +13,7 @@ function deformed_image = PTKInterpolateToMatch(original_image, deformation_fiel
     % This is similar to PTKDeformImage but there is no actual image deformation;
     % we are just reinterpolating to match the template provided by the
     % deformation field
-    deformed_image = deformation_field.BlankCopy;
+    deformed_image = deformation_field.BlankCopy();
     deformed_image.ImageType = PTKImageType.Grayscale;
     [i_o, j_o, k_o] = original_image.GetGlobalCoordinatesMm;
     [i_o, j_o, k_o] = ndgrid(i_o, j_o, k_o);

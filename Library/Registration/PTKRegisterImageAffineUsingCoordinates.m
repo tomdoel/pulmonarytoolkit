@@ -22,7 +22,7 @@ function transformed_matrix = PTKRegisterImageAffineUsingCoordinates(image_to_tr
     else
         transformed_matrix_raw = interpn(i_o, j_o, k_o, single(image_to_transform.RawImage), it, jt, kt, interpolation_type, 0);
     end
-    transformed_matrix = template_to_match.BlankCopy;
+    transformed_matrix = template_to_match.BlankCopy();
     transformed_matrix.ChangeRawImage(transformed_matrix_raw);
 end
 

@@ -49,7 +49,7 @@ classdef MimView3D < MimGuiPlugin
             render_panel = gui_app.GetRenderPanel;
             current_label = render_panel.VisualisationLabel;
             if ~isempty(current_name) && ~strcmp(current_label, new_label)
-                render_panel.Clear;
+                render_panel.Clear();
 
                 switch current_name
                     case {'PTKAirways', 'PTKAirwaysLabelledByBronchus', 'PTKAirwaysLabelledByLobe', ...

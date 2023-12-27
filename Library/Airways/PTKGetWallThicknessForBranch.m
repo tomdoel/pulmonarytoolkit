@@ -543,7 +543,7 @@ function [inner_radius_values, valid_values_inner, outer_radius_values, valid_va
         v_ct.ViewerPanelHandle.Level = -600;
         v_ct.ViewerPanelHandle.Orientation = PTKImageOrientation.Axial;
         
-        im_overlay = im_ct.BlankCopy;
+        im_overlay = im_ct.BlankCopy();
         im_overlay_raw = zeros(im_ct.ImageSize, 'uint8');
         v_ct.ViewerPanelHandle.OverlayImage = im_overlay;
         im_overlay.ImageType = PTKImageType.Colormap;
@@ -611,7 +611,7 @@ function [inner_radius_values, valid_values_inner, outer_radius_values, valid_va
         v_ct.ViewerPanelHandle.Level = -600;
         v_ct.ViewerPanelHandle.Orientation = PTKImageOrientation.Axial;
         
-        im_overlay = im_ct.BlankCopy;
+        im_overlay = im_ct.BlankCopy();
         im_overlay_raw = zeros(im_ct.ImageSize, 'uint8');
         v_ct.ViewerPanelHandle.OverlayImage = im_overlay;
         im_overlay.ImageType = PTKImageType.Colormap;

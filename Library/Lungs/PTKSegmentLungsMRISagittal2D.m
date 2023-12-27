@@ -31,12 +31,12 @@ function [new_image, bounds] = PTKSegmentLungsMRISagittal2D(original_image, filt
         reporting.Error('PTKComputeSegmentLungsMRI:BadInput', 'PTKComputeSegmentLungsMRI requires a PTKImage as input');
     end
     
-    reporting.PushProgress;
+    reporting.PushProgress();
     
     reporting.UpdateProgressMessage('Finding approximate MRI lung segmentation by region growing');
 
     min_image = original_image.Limits(1);
-    filtered_image = original_image.BlankCopy;
+    filtered_image = original_image.BlankCopy();
     filtered_image.ChangeRawImage(original_image.RawImage - min_image);
     filtered_image = MimGaussianFilter(filtered_image, filter_size_mm);
     
@@ -54,7 +54,7 @@ function [new_image, bounds] = PTKSegmentLungsMRISagittal2D(original_image, filt
     new_image.ChangeRawImage(uint8((image_raw_new) > 0));
 
     bounds = bounds_new;
-    reporting.PopProgress;
+    reporting.PopProgress();
 end
 
 function lung_point = AutoFindLungPoint(original_image)
@@ -110,7 +110,7 @@ function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_v
     start_points_global = lung_image.LocalToGlobalCoordinates(cell2mat(start_points'));
     start_points_global = num2cell(start_points_global, 2)';
     
-    next_image_open = lung_image.BlankCopy;
+    next_image_open = lung_image.BlankCopy();
     
     for increment = increments
         while (~IsTouchingSides(next_image))
@@ -119,9 +119,9 @@ function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_v
             next_image = int16((lung_image.RawImage >= min_value) & (lung_image.RawImage <= max_value));
             
             next_image_open.ChangeRawImage(next_image);
-            reporting.PushProgress;
+            reporting.PushProgress();
             next_image = PTKSimpleRegionGrowing(next_image_open, start_points_global, reporting);
-            reporting.PopProgress;
+            reporting.PopProgress();
             next_image = next_image.RawImage;
         end
         max_value = max_value - increment;

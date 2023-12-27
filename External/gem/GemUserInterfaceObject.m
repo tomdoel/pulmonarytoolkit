@@ -62,7 +62,7 @@ classdef GemUserInterfaceObject < CoreBaseClass
             if nargin < 1 || isempty(parent)
                 obj.StyleSheet = GemStyleSheet;
                 if nargin < 2 || isempty(reporting)
-                    obj.Reporting = CoreReportingDefault;
+                    obj.Reporting = CoreReportingDefault();
                 else
                     obj.Reporting = reporting;
                 end

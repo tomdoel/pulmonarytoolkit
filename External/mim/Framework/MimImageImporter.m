@@ -39,7 +39,7 @@ function [uids, patient_ids] = MimImageImporter(filename_or_root_directory, data
         reporting.Error('MimImageImporter:FileDoesNotExist', ['The file or directory ' filename_or_root_directory ' does not exist.']);
     end
     
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end
 
 function [uids, patient_ids] = ImportDirectoryRecursive(database, import_folder, tags_to_get, reporting)

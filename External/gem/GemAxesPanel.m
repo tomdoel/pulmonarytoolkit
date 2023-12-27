@@ -44,7 +44,7 @@ classdef GemAxesPanel < GemPanel
 
         function Clear(obj)
             % Clears the axes and resets the render panel
-            obj.GetRenderAxes.Clear;
+            obj.GetRenderAxes.Clear();
             obj.VisualisationLabel = [];
         end
         

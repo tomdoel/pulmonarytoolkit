@@ -25,7 +25,7 @@ classdef MimImageDatabasePatient < handle
                 obj.Name = name;
                 obj.PatientId = id;
                 obj.SetVisibleNames(name, id);
-                obj.SeriesMap = containers.Map;
+                obj.SeriesMap = containers.Map();
             end
         end
         
@@ -48,7 +48,7 @@ classdef MimImageDatabasePatient < handle
         
         
         function series = GetListOfSeries(obj)
-            series = obj.SeriesMap.values;
+            series = obj.SeriesMap.values();
             dates = CoreContainerUtilities.GetFieldValuesFromSet(series, 'Date');
             times = CoreContainerUtilities.GetFieldValuesFromSet(series, 'Time');
             date_time = strcat(dates, times);

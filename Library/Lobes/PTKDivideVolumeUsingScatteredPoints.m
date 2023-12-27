@@ -11,7 +11,7 @@ function separated_mask = PTKDivideVolumeUsingScatteredPoints(volume_mask, scatt
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    volume_mask_copy = volume_mask.BlankCopy;
+    volume_mask_copy = volume_mask.BlankCopy();
     volume_mask_copy.ChangeRawImage(logical(volume_mask.RawImage));
     
     % Find the main parts of the two main regions
@@ -35,7 +35,7 @@ function separated_mask = PTKDivideVolumeUsingScatteredPoints(volume_mask, scatt
 end
 
 function output_mask = FillRemaining(mask, separated_mask)
-    output_mask = separated_mask.BlankCopy;
+    output_mask = separated_mask.BlankCopy();
     method = 'cityblock';
     dt_1 = bwdistgeodesic(mask.RawImage, separated_mask.RawImage == 1, method);
     dt_2 = bwdistgeodesic(mask.RawImage, separated_mask.RawImage == 2, method);
@@ -48,7 +48,7 @@ end
 function separated_mask = SeparateIntoTwo(volume_mask, scattered_points, volume_fraction_threshold, reporting)
         
     % Place the points in their own image
-    dividing_points_image = volume_mask.BlankCopy;
+    dividing_points_image = volume_mask.BlankCopy();
     dividing_points_image_raw = false(dividing_points_image.ImageSize);
     dividing_points_image_raw(scattered_points) = true;
     dividing_points_image.ChangeRawImage(dividing_points_image_raw);
@@ -78,7 +78,7 @@ function separated_mask = SeparateIntoTwo(volume_mask, scattered_points, volume_
         end
     end
     
-    separated_mask = volume_mask.BlankCopy;
+    separated_mask = volume_mask.BlankCopy();
     separated_mask_raw = zeros(volume_mask.ImageSize, 'uint8');
     separated_mask_raw(region_1_indices) = 1;
     separated_mask_raw(region_2_indices) = 2;

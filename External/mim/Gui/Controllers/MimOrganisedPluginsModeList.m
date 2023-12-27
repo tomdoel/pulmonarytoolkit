@@ -21,19 +21,19 @@ classdef MimOrganisedPluginsModeList < CoreBaseClass
     methods
         function obj = MimOrganisedPluginsModeList(app_def, plugin_cache)
             obj.AppDef = app_def;
-            obj.Clear;
+            obj.Clear();
             obj.PluginCache = plugin_cache;
         end
         
         function Clear(obj)
-            obj.Modes = containers.Map;
+            obj.Modes = containers.Map();
         end
         
         function plugin_list = GetPlugins(obj, mode)
             if obj.Modes.isKey(mode)
                 plugin_list = obj.Modes(mode);
             else
-                plugin_list = containers.Map;
+                plugin_list = containers.Map();
             end
         end        
 
@@ -71,13 +71,13 @@ classdef MimOrganisedPluginsModeList < CoreBaseClass
             if obj.Modes.isKey(mode)
                 mode_map = obj.Modes(mode);
             else
-                mode_map = containers.Map;
+                mode_map = containers.Map();
             end
             
             if mode_map.isKey(category)
                 category_map = mode_map(category);
             else
-                category_map = containers.Map;
+                category_map = containers.Map();
             end
             
             category_map(name) = plugin_wrapper;

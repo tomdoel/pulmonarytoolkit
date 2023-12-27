@@ -71,7 +71,7 @@ classdef PTKMaximumFissurePointsHorizontal < PTKPlugin
             
             ref_image(ref_image == 1) = 8;
             
-            results = lung_roi.BlankCopy;
+            results = lung_roi.BlankCopy();
             results.ChangeRawImage(ref_image);
         end
         

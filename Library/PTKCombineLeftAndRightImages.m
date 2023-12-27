@@ -13,13 +13,13 @@ function combined_image = PTKCombineLeftAndRightImages(template, left, right, le
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    combined_image = left.Copy;
+    combined_image = left.Copy();
     combined_image.ResizeToMatch(template);
     combined_raw_image = combined_image.RawImage;
     right_mask = left_and_right_lungs.RawImage == 1;
     left_mask = left_and_right_lungs.RawImage == 2;
     combined_raw_image(~left_mask) = 0;
-    combined_image.Clear;
+    combined_image.Clear();
     combined_image.ChangeSubImage(right);
         
     combined_raw_image(right_mask) = combined_image.RawImage(right_mask);

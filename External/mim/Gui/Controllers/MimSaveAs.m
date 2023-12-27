@@ -43,7 +43,7 @@ function path_name = MimSaveAs(image_data, patient_name, path_name, is_secondary
     end
     
     if nargin < 6
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     if islogical(image_data.RawImage)

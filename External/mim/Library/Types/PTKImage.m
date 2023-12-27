@@ -19,7 +19,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
     %
     %             % Creates a template image with no data, but with metadata
     %             % matching the input image
-    %             output_image = input_image.BlankCopy;
+    %             output_image = input_image.BlankCopy();
     %
     %             % Access the actual image data
     %             image_data = input_image.RawImage;
@@ -205,7 +205,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function header_file = CreateHeader(obj, raw_filename, compression)
             % Creates a cache header file template suitable for saving separately from pixel data
             
-            header_file = obj.BlankCopy;
+            header_file = obj.BlankCopy();
             
             % We cache these values in the image class so they can be retrieved
             % when loading the raw data
@@ -292,7 +292,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             if nargin < 2
                 mask_index = 1;
             end
-            masked_image = obj.BlankCopy;
+            masked_image = obj.BlankCopy();
             masked_image.ChangeRawImage(obj.RawImage == mask_index);
         end
         
@@ -302,7 +302,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             if nargin < 3
                 mask_index = 1;
             end
-            masked_image = obj.BlankCopy;
+            masked_image = obj.BlankCopy();
             masked_image.ChangeRawImage(obj.RawImage.*cast(mask.RawImage == mask_index, class(obj.RawImage)));
         end
         
@@ -857,7 +857,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         function GeneratePreview(obj, preview_size, flatten_before_preview)
             % Creates a 2D thumbnail preview image and stores it in the Preview property
             [preview_image_slice, preview_scale] = MimImageUtilities.GeneratePreviewImage(obj, preview_size, flatten_before_preview);
-            obj.Preview = obj.BlankCopy;
+            obj.Preview = obj.BlankCopy();
             obj.Preview.RawImage = preview_image_slice;
             obj.Preview.Scale = [preview_scale, preview_scale];
             obj.Preview.GlobalLimits = obj.Limits;

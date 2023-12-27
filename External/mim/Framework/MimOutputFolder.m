@@ -32,14 +32,14 @@ classdef MimOutputFolder < CoreBaseClass
     
     methods
         function obj = MimOutputFolder(framework_app_def, dataset_disk_cache, image_info, image_templates, reporting)
-            obj.Config = framework_app_def.GetFrameworkConfig;
-            obj.Directories = framework_app_def.GetFrameworkDirectories;
+            obj.Config = framework_app_def.GetFrameworkConfig();
+            obj.Directories = framework_app_def.GetFrameworkDirectories();
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.FrameworkAppDef = framework_app_def;
             obj.ImageTemplates = image_templates;
             obj.ImageUid = image_info.ImageUid;
             
-            obj.OutputRecords = obj.FrameworkAppDef.GetClassFactory.CreateEmptyOutputInfo;
+            obj.OutputRecords = obj.FrameworkAppDef.GetClassFactory.CreateEmptyOutputInfo();
             
             % Loads cached template data
             obj.Load(reporting);

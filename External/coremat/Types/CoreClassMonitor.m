@@ -30,7 +30,7 @@ classdef (Sealed) CoreClassMonitor < handle
     
     methods
         function Reset(obj)
-            obj.CountMap = containers.Map;
+            obj.CountMap = containers.Map();
         end
         
         function ObjectCreated(obj, class_name)
@@ -48,7 +48,7 @@ classdef (Sealed) CoreClassMonitor < handle
         end
         
         function Status(obj)
-            keys = obj.CountMap.keys;
+            keys = obj.CountMap.keys();
             all_ok = true;
             for index = 1 : obj.CountMap.Count
                 next_key = keys{index};
@@ -67,7 +67,7 @@ classdef (Sealed) CoreClassMonitor < handle
     
     methods (Access = private)
         function obj = CoreClassMonitor
-            obj.CountMap = containers.Map;
+            obj.CountMap = containers.Map();
         end
     end
     

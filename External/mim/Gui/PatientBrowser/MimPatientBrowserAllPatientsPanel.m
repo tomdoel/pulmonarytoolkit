@@ -30,14 +30,14 @@ classdef MimPatientBrowserAllPatientsPanel < GemCompositePanel
             obj.GuiCallback = gui_callback;
             obj.GroupPatientsWithSameName = group_patients_with_same_name;
             
-            obj.PatientPanels = containers.Map;
+            obj.PatientPanels = containers.Map();
             
             obj.AddPatientPanels();
         end
 
         function DatabaseHasChanged(obj)
             obj.RemoveAllPanels;
-            obj.PatientPanels = containers.Map;
+            obj.PatientPanels = containers.Map();
             obj.AddPatientPanels;
         end
         

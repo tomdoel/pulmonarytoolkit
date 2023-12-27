@@ -68,7 +68,7 @@ classdef PTKFissurenessVesselsFactor < PTKPlugin
             vesselness = 1 - exp((-(vesselness).^2)./(2*nu_voxels^2));
             
             % Store in results
-            results = lung_mask.BlankCopy;            
+            results = lung_mask.BlankCopy();
             results.ChangeRawImage(100*vesselness.*single(lung_mask.RawImage > 0));
             results.ImageType = PTKImageType.Scaled;
         end

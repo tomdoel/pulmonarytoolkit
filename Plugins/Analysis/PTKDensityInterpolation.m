@@ -95,7 +95,7 @@ classdef PTKDensityInterpolation < PTKPlugin
             results_raw = zeros(image_size, 'single');
             results_raw(:) = roi_interp(indices);
 
-            results = roi.BlankCopy;
+            results = roi.BlankCopy();
             
             
             results.ChangeRawImage(single(results_raw));

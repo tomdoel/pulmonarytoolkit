@@ -14,9 +14,8 @@ classdef CoreWrapper < handle
     %     This example shows how to use a CoreWrapper to pass an image to a sub
     %     function. As CoreWrapper is a handle class, only the reference is passed
     %     to the subfunction, avoiding copying of the large image matrix.
-    %
-    %
-    %     image_wrapper = CoreWrapper;
+    %     
+    %     image_wrapper = CoreWrapper();
     %     image_wrapper.RawImage = <large image matrix>
     %     SubFunction(image_wrapper);
     %

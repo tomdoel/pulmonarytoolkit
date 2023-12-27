@@ -34,7 +34,7 @@ function [density_average, density_values_computed_mask, density_valid_values_ma
     end
     
     if nargin < 4
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     % Compute the density at each voxel

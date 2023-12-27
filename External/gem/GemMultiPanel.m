@@ -24,7 +24,7 @@ classdef GemMultiPanel < GemPanel
         function obj = GemMultiPanel(parent)
             obj = obj@GemPanel(parent);
             
-            obj.PanelMap = containers.Map;
+            obj.PanelMap = containers.Map();
         end
         
         function AddPanel(obj, panel, tag)

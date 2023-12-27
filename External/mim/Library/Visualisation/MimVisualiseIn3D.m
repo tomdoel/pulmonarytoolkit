@@ -72,7 +72,7 @@ function axes_handle = MimVisualiseIn3D(axes_handle, segmentation, smoothing_siz
     end
 
     if nargin < 8
-        reporting = CoreReportingDefault;    
+        reporting = CoreReportingDefault();
     end
     
     if isempty(axes_handle)
@@ -160,5 +160,5 @@ function axes_handle = MimVisualiseIn3D(axes_handle, segmentation, smoothing_siz
     set(cl, 'Position', [400, 500, -50]);
 
     reporting.UpdateProgressValue(100);
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end

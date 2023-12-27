@@ -30,7 +30,7 @@ function mask = PTKGetInteriorLungRegion(lung_roi, reporting)
     end
 
     if nargin < 2
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     reporting.ShowProgress('Applying threshold');
@@ -39,5 +39,5 @@ function mask = PTKGetInteriorLungRegion(lung_roi, reporting)
     mask = PTKSegmentLungsWithoutClosing(lung_roi, false, false, true, reporting);
     mask.ResizeToMatch(lung_roi);
     
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end

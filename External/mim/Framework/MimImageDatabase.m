@@ -42,8 +42,8 @@ classdef MimImageDatabase < handle
             if nargin > 0
                 obj.Filename = filename;
             end
-            obj.PatientMap = containers.Map;
-            obj.SeriesMap = containers.Map;
+            obj.PatientMap = containers.Map();
+            obj.SeriesMap = containers.Map();
             obj.Version = obj.CurrentVersionNumber;
             obj.VersionHasChanged = false;
         end
@@ -81,7 +81,7 @@ classdef MimImageDatabase < handle
         end
         
         function uids = GetSeriesUids(obj)
-            uids = obj.SeriesMap.keys;
+            uids = obj.SeriesMap.keys();
         end
         
         function series_exists = SeriesExists(obj, series_uid)
@@ -99,8 +99,8 @@ classdef MimImageDatabase < handle
                 paths = [];
                 uids = [];
             else
-                uids = obj.SeriesMap.keys;
-                values = obj.SeriesMap.values;
+                uids = obj.SeriesMap.keys();
+                values = obj.SeriesMap.values();
                 paths = CoreContainerUtilities.GetFieldValuesFromSet(values, 'GetVisiblePath');
                 
                 % Sort the uids and paths by the pathname
@@ -149,7 +149,7 @@ classdef MimImageDatabase < handle
                 end
             end
             if anything_changed
-                obj.InvalidateCachedPaths;
+                obj.InvalidateCachedPaths();
                 obj.SaveDatabase(reporting);
                 notify(obj, 'DatabaseHasChanged');
             end
@@ -180,8 +180,8 @@ classdef MimImageDatabase < handle
             
             % If we are rebuilding the menu then remove existings entries
             if rebuild_all
-                obj.PatientMap = containers.Map;
-                obj.SeriesMap = containers.Map;
+                obj.PatientMap = containers.Map();
+                obj.SeriesMap = containers.Map();
             end
             
             tags_to_get = [];
@@ -292,12 +292,12 @@ classdef MimImageDatabase < handle
                 short_visible_names = {};
                 num_series = [];
                 num_patients_combined = [];
-                patient_id_map = containers.Map;
+                patient_id_map = containers.Map();
                 return;
             end
 
-            ids = obj.PatientMap.keys;
-            values = obj.PatientMap.values;
+            ids = obj.PatientMap.keys();
+            values = obj.PatientMap.values();
             names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'VisibleName');
             short_visible_names = CoreContainerUtilities.GetFieldValuesFromSet(values, 'ShortVisibleName');
             num_series = CoreContainerUtilities.GetMatrixOfFieldValuesFromSet(values, 'GetNumberOfSeries');
@@ -308,7 +308,7 @@ classdef MimImageDatabase < handle
                 short_visible_names = [];
                 num_series = [];
                 num_patients_combined = [];
-                patient_id_map = containers.Map;
+                patient_id_map = containers.Map();
                 return;
             end
             
@@ -365,7 +365,7 @@ classdef MimImageDatabase < handle
         end
         
         function patient_info = GetPatients(obj, group_patients)
-            patient_info = obj.PatientMap.values;
+            patient_info = obj.PatientMap.values();
             family_names = CoreContainerUtilities.GetFieldValuesFromSet(patient_info, 'Name');
             family_names = CoreContainerUtilities.GetFieldValuesFromSet(family_names, 'FamilyName');
             short_visible_names = CoreContainerUtilities.GetFieldValuesFromSet(patient_info, 'ShortVisibleName');

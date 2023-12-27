@@ -31,12 +31,12 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
         reporting.Error('PTKComputeSegmentLungsMRI:BadInput', 'PTKComputeSegmentLungsMRI requires a PTKImage as input');
     end
     
-    reporting.PushProgress;
+    reporting.PushProgress();
     
     reporting.UpdateProgressMessage('Finding approximate MRI lung segmentation by region growing');
 
     min_image = original_image.Limits(1);
-    filtered_image = original_image.BlankCopy;
+    filtered_image = original_image.BlankCopy();
     filtered_image.ChangeRawImage(original_image.RawImage - min_image);
     filtered_image = MimGaussianFilter(filtered_image, filter_size_mm);
     
@@ -81,7 +81,7 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     
     bounds = bounds + cast(min_image, class(bounds));
     
-    reporting.PopProgress;
+    reporting.PopProgress();
 end
 
 function lung_point = AutoFindLungPoint(original_image, find_left)
@@ -127,7 +127,7 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, loc
     max_value = floor(lung_image.RawImage(local_start_point(1), local_start_point(2), local_start_point(3)));
     
     if coronal_mode
-        new_image = lung_image.BlankCopy;
+        new_image = lung_image.BlankCopy();
         new_image.ChangeRawImage(zeros(lung_image.ImageSize, 'int16'));
         first_coronal_slice_index = local_start_point(1);
         [new_image_slice, bounds_middle_slice, first_slice_points] = GetVariableThresholdForSlice(first_coronal_slice_index, lung_image, min_value, max_value, {local_start_point}, coronal_mode, reporting);
@@ -191,7 +191,7 @@ function [new_image_slice, bounds, next_points] = GetVariableThresholdForSlice(c
     output_slice_size = new_image_size;
     output_slice_size(1) = 1;
     lung_image_slice.ResizeToMatchOriginAndSize(new_origin, new_image_size);
-    new_image_slice = lung_image_slice.BlankCopy;
+    new_image_slice = lung_image_slice.BlankCopy();
     new_image_slice.ResizeToMatchOriginAndSize(output_slice_origin, output_slice_size);
     new_image_slice.ChangeRawImage(new_image(2, :, :));
    
@@ -221,7 +221,7 @@ function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_v
     start_points_global = lung_image.LocalToGlobalCoordinates(cell2mat(start_points'));
     start_points_global = num2cell(start_points_global, 2)';
     
-    next_image_open = lung_image.BlankCopy;
+    next_image_open = lung_image.BlankCopy();
     progress_stage = 1;
     approx_stages = double(round((max(lung_image.Limits(2) - max_value))/2));
     
@@ -235,9 +235,9 @@ function [new_image, bounds] = GetVariableThreshold(lung_image, min_value, max_v
             next_image = int16((lung_image.RawImage >= min_value) & (lung_image.RawImage <= max_value));
             
             next_image_open.ChangeRawImage(next_image);
-            reporting.PushProgress;
+            reporting.PushProgress();
             next_image = PTKSimpleRegionGrowing(next_image_open, start_points_global, reporting);
-            reporting.PopProgress;
+            reporting.PopProgress();
             next_image = next_image.RawImage;
         end
         max_value = max_value - increment;

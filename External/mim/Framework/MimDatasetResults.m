@@ -314,7 +314,7 @@ classdef MimDatasetResults < handle
             % edited result to be used if a plugin fails to compute a
             % result automatically
             
-            reporting.PushProgress;
+            reporting.PushProgress();
             if nargin < 4
                 context = [];
             end
@@ -330,9 +330,9 @@ classdef MimDatasetResults < handle
             dataset_callback = MimDatasetCallback(obj.LinkedDatasetChooser, dataset_stack, context, reporting);
             edited_result = plugin_class.GenerateDefaultEditedResultFollowingFailure(dataset_callback, context, reporting);
             
-            reporting.CompleteProgress;
+            reporting.CompleteProgress();
             
-            reporting.PopProgress;
+            reporting.PopProgress();
         end        
         
         function DeleteEditedPluginResult(obj, plugin_name, reporting)
@@ -367,7 +367,7 @@ classdef MimDatasetResults < handle
             % Save edit data to a cache file associated with this dataset
             
             dataset_uid = obj.ImageInfo.ImageUid;
-            reporting.PushProgress;
+            reporting.PushProgress();
             if nargin < 3 || isempty(input_context)
                 reporting.Error('MimDatasetResults:NoContextSpecified', 'When calling SaveEditedResult(), the contex of the input image must be specified.');
             end
@@ -386,8 +386,8 @@ classdef MimDatasetResults < handle
                 rethrow(ex);
             end
 
-            reporting.CompleteProgress;
-            reporting.PopProgress;
+            reporting.CompleteProgress();
+            reporting.PopProgress();
         end
         
         function dataset_cache_path = GetDatasetCachePath(obj, reporting)

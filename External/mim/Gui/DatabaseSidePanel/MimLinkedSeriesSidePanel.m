@@ -111,7 +111,7 @@ classdef MimLinkedSeriesSidePanel < GemListBoxWithTitle
             % The primary dataset in a set of links does not have a name, but it is useful
             % to assign one as a visual clue in the GUI
             name = 'Primary';
-            names = link_record.LinkMap.values;
+            names = link_record.LinkMap.values();
             if ismember('MR', names) && ismember('CT', names)
                 name = 'XE';
             end

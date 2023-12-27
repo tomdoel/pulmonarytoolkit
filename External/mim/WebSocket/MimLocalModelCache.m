@@ -8,7 +8,7 @@ classdef MimLocalModelCache < CoreBaseClass
     methods
         function obj = MimLocalModelCache(controller)
             obj.Controller = controller;
-            obj.ModelDictionary = containers.Map;
+            obj.ModelDictionary = containers.Map();
         end
         
         function entry = getModelCacheEntry(obj, modelName)

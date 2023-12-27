@@ -44,7 +44,7 @@ classdef PTKAirwaysGeodesicDistance < PTKPlugin
             seed_image.ChangeRawImage(seed_image_raw);
             results_raw = bwdistgeodesic(airway_image.RawImage == 1, seed_image.RawImage, 'quasi-euclidean');
             results_raw(isnan(results_raw(:))) = 0;
-            results = airway_image.BlankCopy;
+            results = airway_image.BlankCopy();
             results.ChangeRawImage(results_raw);
             results.ImageType = PTKImageType.Scaled;
         end

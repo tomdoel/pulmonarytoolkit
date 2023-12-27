@@ -46,7 +46,7 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
     end
     
     if nargin < 3
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
 
     reporting.ShowProgress('Finding lung region');
@@ -198,7 +198,7 @@ function main_image = PTKGetMainRegionExcludingPaddingBorder(original_image, thr
         end
     end
      
-    main_image = threshold_image.BlankCopy;
+    main_image = threshold_image.BlankCopy();
     main_image.ChangeRawImage(bordered_image(2:end-1, 2:end-1, 2:end-1));
 end
 

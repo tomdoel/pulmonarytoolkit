@@ -44,8 +44,8 @@ classdef PTKLobesFromFissurePlaneOblique < PTKPlugin
             left_and_right_lungs = application.GetResult('PTKLeftAndRightLungs');
             fissure_plane = application.GetResult('PTKFissurePlaneOblique');
             lung_mask = application.GetResult('PTKLeftAndRightLungs');
-            left_lung_template = application.GetTemplateImage(PTKContext.LeftLung).BlankCopy;
-            right_lung_template = application.GetTemplateImage(PTKContext.RightLung).BlankCopy;
+            left_lung_template = application.GetTemplateImage(PTKContext.LeftLung).BlankCopy();
+            right_lung_template = application.GetTemplateImage(PTKContext.RightLung).BlankCopy();
             results_left = PTKLobesFromFissurePlaneOblique.GetLeftLungResults(left_lung_template, lung_mask.Copy, fissure_plane.Copy, reporting);
             results_right = PTKLobesFromFissurePlaneOblique.GetRightLungResults(right_lung_template, lung_mask, fissure_plane, reporting);
             

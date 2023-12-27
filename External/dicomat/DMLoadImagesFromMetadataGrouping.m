@@ -38,7 +38,7 @@ function imageWrapper = DMLoadImagesFromMetadataGrouping(metadataGrouping, dicom
     reporting.ShowProgress('Reading pixel data');
     reporting.UpdateProgressValue(0);
 
-    imageWrapper = CoreWrapper;
+    imageWrapper = CoreWrapper();
     
     num_slices = length(metadataGrouping.Metadata);
 

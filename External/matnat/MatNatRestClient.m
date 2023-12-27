@@ -33,7 +33,7 @@ classdef MatNatRestClient < handle
             % Returns a map of project IDs to MatNatProject objects containing project metadata
             
             structFromServer = obj.requestJson('REST/projects', 'format', 'json', 'owner', 'true', 'member', 'true');
-            projectMap = containers.Map;
+            projectMap = containers.Map();
             
             if ~isempty(structFromServer)
                 objectList = structFromServer.ResultSet.Result;
@@ -49,7 +49,7 @@ classdef MatNatRestClient < handle
             % Returns a map of subject IDs to MatNatSubject objects containing subject metadata
             
             structFromServer = obj.requestJson(['REST/projects/' projectName '/subjects'], 'format', 'json', 'owner', 'true', 'member', 'true', 'columns', 'DEFAULT');
-            subjectMap = containers.Map;
+            subjectMap = containers.Map();
             
             if ~isempty(structFromServer)
                 objectList = structFromServer.ResultSet.Result;
@@ -65,7 +65,7 @@ classdef MatNatRestClient < handle
             % Returns a map of session IDs to MatNatSession objects containing session metadata
             
             structFromServer = obj.requestJson(['REST/projects/' projectName '/subjects/' subjectName '/experiments'], 'format', 'json', 'owner', 'true', 'member', 'true');
-            sessionMap = containers.Map;
+            sessionMap = containers.Map();
             
             if ~isempty(structFromServer)
                 objectList = structFromServer.ResultSet.Result;
@@ -80,7 +80,7 @@ classdef MatNatRestClient < handle
             % Returns a map of scan IDs to MatNatScan objects containing scan metadata
 
             structFromServer = obj.requestJson(['REST/projects/' projectName '/subjects/' subjectName '/experiments/' sessionName '/scans'], 'format', 'json', 'owner', 'true', 'member', 'true');
-            scanMap = containers.Map;
+            scanMap = containers.Map();
             
             if ~isempty(structFromServer)
                 objectList = structFromServer.ResultSet.Result;

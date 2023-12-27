@@ -67,7 +67,7 @@ classdef PTKFissureApproximation < PTKPlugin
             left_and_right_lungs.ResizeToMatch(left_lung_roi);
             
             fissures = (lobes_guess.RawImage == 0) & (left_and_right_lungs.RawImage == 2);
-            left_results = left_lung_roi.BlankCopy;
+            left_results = left_lung_roi.BlankCopy();
             left_results.ChangeRawImage(6*uint8(fissures));
         end
         
@@ -97,7 +97,7 @@ classdef PTKFissureApproximation < PTKPlugin
             border_RM = convn(RM, filter, 'same');
             RM_fissure = uint8(border_RM & border_RU & fissures);
             
-            right_results = right_lung_roi.BlankCopy;
+            right_results = right_lung_roi.BlankCopy();
             right_results.ChangeRawImage(2*uint8(R_fissure) + 3*uint8(RM_fissure));
         end
     end

@@ -46,10 +46,10 @@ classdef PTKSettings < CoreBaseClass
                 end
                 settings.SettingsFilename = settings_filename;
                 if isempty(settings.LastMarkerSetForPatientMap)
-                    settings.LastMarkerSetForPatientMap = containers.Map;
+                    settings.LastMarkerSetForPatientMap = containers.Map();
                 end
                 if isempty(settings.LastUidForPatientMap)
-                    settings.LastUidForPatientMap = containers.Map;
+                    settings.LastUidForPatientMap = containers.Map();
                 end
                 
                 
@@ -64,8 +64,8 @@ classdef PTKSettings < CoreBaseClass
     
     methods
         function obj = PTKSettings
-            obj.LastUidForPatientMap = containers.Map;
-            obj.LastMarkerSetForPatientMap = containers.Map;
+            obj.LastUidForPatientMap = containers.Map();
+            obj.LastMarkerSetForPatientMap = containers.Map();
         end
         
         function ApplySettingsToGui(obj, gui, viewer_panel)
@@ -93,14 +93,14 @@ classdef PTKSettings < CoreBaseClass
         
         function AddLastPatientUid(obj, patient_id, series_uid)
             if isempty(obj.LastUidForPatientMap)
-                obj.LastUidForPatientMap = containers.Map;
+                obj.LastUidForPatientMap = containers.Map();
             end
             obj.LastUidForPatientMap(patient_id) = series_uid;
         end
         
         function AddLastMarkerSet(obj, series_uid, marker_set_name)
             if isempty(obj.LastMarkerSetForPatientMap)
-                obj.LastMarkerSetForPatientMap = containers.Map;
+                obj.LastMarkerSetForPatientMap = containers.Map();
             end
             obj.LastMarkerSetForPatientMap(series_uid) = marker_set_name;
         end
@@ -121,7 +121,7 @@ classdef PTKSettings < CoreBaseClass
 
         function marker_set_name = GetLastMarkerSetName(obj, series_uid)
             if isempty(obj.LastMarkerSetForPatientMap)
-                obj.LastMarkerSetForPatientMap = containers.Map;
+                obj.LastMarkerSetForPatientMap = containers.Map();
             end
             if obj.LastMarkerSetForPatientMap.isKey(series_uid)
                 marker_set_name = obj.LastMarkerSetForPatientMap(series_uid);

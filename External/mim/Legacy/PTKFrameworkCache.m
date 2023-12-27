@@ -41,7 +41,7 @@ classdef PTKFrameworkCache < handle
     
     methods
         function obj = PTKFrameworkCache
-            obj.MexInfoMap = containers.Map;
+            obj.MexInfoMap = containers.Map();
         end
     end
 end

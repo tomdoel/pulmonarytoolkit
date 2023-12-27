@@ -45,7 +45,7 @@ classdef MimImageDatabaseSeries < handle
                 obj.ImageFileFormat = single_image_metainfo.ImageFileFormat;
                 obj.StudyUid = single_image_metainfo.StudyUid;
                 
-                obj.ImageMap = containers.Map;
+                obj.ImageMap = containers.Map();
                 
                 obj.Version = obj.CurrentVersionNumber;
             end
@@ -53,7 +53,7 @@ classdef MimImageDatabaseSeries < handle
         
         function visible_path = GetVisiblePath(obj)
             if obj.ImageMap.Count == 1
-                filenames = obj.ImageMap.values;
+                filenames = obj.ImageMap.values();
                 first_filename = filenames{1};
                 visible_path = first_filename.FullFile;                
             else
@@ -71,7 +71,7 @@ classdef MimImageDatabaseSeries < handle
         
         function image_info = GetImageInfo(obj)
             filenames_cells = [];
-            filenames_objects = obj.ImageMap.values;
+            filenames_objects = obj.ImageMap.values();
             for image_index = 1 : numel(filenames_objects)
                 filenames_cells{end + 1} = filenames_objects{image_index};
             end

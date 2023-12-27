@@ -85,7 +85,7 @@ classdef PTKFissurenessROIHorizontal < PTKPlugin
             
             fissureness_M = fissureness.RawImage.*multiplier_M.*supressor;
 
-            results_right_mid = right_lung_roi.BlankCopy;
+            results_right_mid = right_lung_roi.BlankCopy();
             results_right_mid.ChangeRawImage(fissureness_M);
         end
         

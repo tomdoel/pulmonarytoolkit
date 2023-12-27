@@ -223,7 +223,7 @@ classdef MimMain < CoreBaseClass
         
         function directories = GetDirectories(obj)
             % Returns a MimDirectories object which can be used to query and create framework directories
-            directories = obj.FrameworkAppDef.GetFrameworkDirectories;
+            directories = obj.FrameworkAppDef.GetFrameworkDirectories();
         end
         
         function DeleteDatasets(obj, series_uids)

@@ -73,13 +73,13 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     %         that quadrant.
     %
     %         function ComputeFilter
-    %             reporting = CoreReportingDefault;
+    %             reporting = CoreReportingDefault();
     %             gaussian_size_mm = 1.5;
     %             filtered_image = PTKImageDividerHessian(image_data, @FilterFunction, [], gaussian_size_mm, [], [], [], [], reporting)
     %         end
     %
     %         function output_wrapper = FilterFunction(hessian_eigenvalues_wrapper)
-    %             output_wrapper = CoreWrapper;
+    %             output_wrapper = CoreWrapper();
     %             output_wrapper.RawImage = FilterFromHessanEigenvalues(hessian_eigenvalues_wrapper.RawImage);
     %         end
     %
@@ -91,7 +91,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    reporting.PushProgress;
+    reporting.PushProgress();
     
     if ~isempty(hessian_filter_gaussian) && ~isempty(mask)
         reporting.ShowWarning('PTKImageDividerHessian:MaskAndFilteringNotSupported', 'Currently the function does not support a mask when using Hessian component filtering', []);
@@ -136,7 +136,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
     
     output_size = [image_data.ImageSize];
     filtered_image_raw = zeros(output_size, 'single');
-    filtered_image = image_data.BlankCopy;
+    filtered_image = image_data.BlankCopy();
     
     overlap_size = 10;
     image_size = image_data.ImageSize;
@@ -199,7 +199,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
             if ~isempty(hessian_filter_gaussian)
                 reporting.UpdateProgressText('Filtering Hessian components');
                 for component_index = 1 : 6
-                    img = image_data.BlankCopy;
+                    img = image_data.BlankCopy();
                     img.ChangeRawImage(reshape(hessian_components.RawImage(component_index, :), part_image.ImageSize));
                     img = MimGaussianFilter(img, hessian_filter_gaussian);
                     hessian_components.RawImage(component_index, :) = img.RawImage(:);
@@ -250,7 +250,7 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
         filtered_image.ChangeRawImage(filtered_image_raw);
     end
     
-    reporting.PopProgress;
+    reporting.PopProgress();
     
 end
 
@@ -300,7 +300,7 @@ end
 function hessian_eigvals = HessianVectorised(hessian_components, reduced_image_size, mask)
     [~, evals_v] = PTKFastEigenvalues(hessian_components.RawImage, true);
     
-    hessian_eigvals = CoreWrapper;
+    hessian_eigvals = CoreWrapper();
     if isempty(mask)
         hessian_eigvals.RawImage = zeros([reduced_image_size, 3], 'single');
         hessian_eigvals.RawImage(:,:,:,1) = reshape(evals_v(1, :), reduced_image_size);

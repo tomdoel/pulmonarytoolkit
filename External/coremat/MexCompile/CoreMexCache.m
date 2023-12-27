@@ -51,7 +51,7 @@ classdef CoreMexCache < CoreBaseClass
                 if nargin > 1 && ~isempty(mex_info_map)
                     obj.MexInfoMap = mex_info_map;
                 else
-                    obj.MexInfoMap = containers.Map;
+                    obj.MexInfoMap = containers.Map();
                 end
             end
         end

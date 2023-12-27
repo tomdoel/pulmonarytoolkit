@@ -26,7 +26,7 @@ function ptk_image = MimLoadOtherFormat(path, filenames, study_uid, image_file_f
     %        
 
     if nargin < 4
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     if nargin < 2

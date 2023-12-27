@@ -12,16 +12,16 @@ function Compile(is_gui)
         compiled_output_subfolder = 'compiled_api';
     end
     compiled_output_path = GetCompiledOutputPath(compiled_output_subfolder);
-    PTKAddPaths;
+    PTKAddPaths();
     
     % Create a PTKMain object to ensure mex files are compiled
     PTKMain(CoreReporting);
     
     CoreDiskUtilities.CreateDirectoryIfNecessary(compiled_output_path);
 
-    plugins = GetListOfPlugins;
-    scripts = GetListOfScripts;
-    gui_plugins = GetListOfGuiPlugins;
+    plugins = GetListOfPlugins();
+    scripts = GetListOfScripts();
+    gui_plugins = GetListOfGuiPlugins();
     
     dirs_to_include = {'bin', fullfile('External', 'mim'), 'Framework', 'Plugins', 'Scripts'};
     if is_gui
@@ -57,9 +57,9 @@ function Compile(is_gui)
     
     fprintf(fileID, '%s\n', 'end');
     fclose(fileID);
-    RenameMatlabFilesInMexFolder;
+    RenameMatlabFilesInMexFolder();
     mcc('-B', fullfile(compiled_output_path, 'compileopts_gen'));
-    RestoreMatlabFilesInMexFolder;
+    RestoreMatlabFilesInMexFolder();
 end
 
 function temporary_file = CreateTemporaryCompileOptionsFile(dirs_to_include, main_function_file, compiled_output_path)
@@ -94,7 +94,7 @@ function mex_file_list = GetListOfMexFiles
     mex_file_list = CoreDiskUtilities.GetRecursiveListOfFiles(GetCompiledMexFilesPath, '*');
 end
 
-function RenameMatlabFilesInMexFolder
+function RenameMatlabFilesInMexFolder()
     for mex_matlab_function = CoreDiskUtilities.GetDirectoryFileList(fullfile(GetBasePath, 'Library', 'mex'), '*.m')
         next_mat_fun = mex_matlab_function{1};
         filename = fullfile(GetBasePath, 'Library', 'mex', next_mat_fun);
@@ -102,7 +102,7 @@ function RenameMatlabFilesInMexFolder
     end
 end
 
-function RestoreMatlabFilesInMexFolder
+function RestoreMatlabFilesInMexFolder()
     for mex_matlab_function = CoreDiskUtilities.GetDirectoryFileList(fullfile(GetBasePath, 'Library', 'mex'), '*.renamed')
         next_mat_fun = mex_matlab_function{1};
         filename = fullfile(GetBasePath, 'Library', 'mex', next_mat_fun);

@@ -49,7 +49,7 @@ classdef PTKLungInteriorNonParenchymaPoints < PTKPlugin
             pruned_airways.BinaryMorph(@imdilate, 6);
 
             threshold_roi = (roi.RawImage > roi.HounsfieldToGreyscale(-1000)) & (roi.RawImage < roi.HounsfieldToGreyscale(-400));
-            results = lungs.BlankCopy;
+            results = lungs.BlankCopy();
             
             vesselness_dilated = dataset.GetResult('PTKVesselnessDilated');
             

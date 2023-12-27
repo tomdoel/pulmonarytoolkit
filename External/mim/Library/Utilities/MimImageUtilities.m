@@ -97,14 +97,14 @@ classdef MimImageUtilities
             seg_raw = single(bwdist(seg.RawImage == 0)); 
             max_val = single(max(seg_raw(:)));
             seg_raw = seg_raw/max_val;
-            dt = seg.BlankCopy;
+            dt = seg.BlankCopy();
             dt.ChangeRawImage(seg_raw);
             dt.ImageType = PTKImageType.Scaled;
         end
 
         function [dt, border_image] = GetBorderDistanceTransformBySlice(image_mask, direction)
             border_image = image_mask.Copy;
-            dt = image_mask.BlankCopy;
+            dt = image_mask.BlankCopy();
             
             % Slice by slice replace the dt image with a 2D distance transform
             for slice_index = 1 : image_mask.ImageSize(direction)
@@ -168,7 +168,7 @@ classdef MimImageUtilities
         function [results, combined_image] = ComputeDice(image_1, image_2)
             MimImageUtilities.MatchSizes(image_1, image_2);
             
-            combined_image = image_1.BlankCopy;
+            combined_image = image_1.BlankCopy();
             
             combined_image_raw = zeros(combined_image.ImageSize, 'uint8');
             
@@ -191,7 +191,7 @@ classdef MimImageUtilities
         function [dice, combined_image] = ComputeDiceWithCoronalAllowance(image_1, image_2)
             MimImageUtilities.MatchSizes(image_1, image_2);
             
-            combined_image = image_1.BlankCopy;
+            combined_image = image_1.BlankCopy();
             
             combined_image_raw = zeros(combined_image.ImageSize, 'uint8');
             

@@ -40,7 +40,7 @@ classdef PTKSegmentsByNearestGrowingBronchus < PTKPlugin
             
             acinar_map = dataset.GetResult('PTKAcinarMapLabelledBySegment');
             lobes = dataset.GetResult('PTKLobes');
-            results = lobes.BlankCopy;
+            results = lobes.BlankCopy();
             results.ChangeRawImage(zeros(lobes.ImageSize, 'uint8'));
             
             lobe_labels = [1, 2, 4, 5, 6];
@@ -48,7 +48,7 @@ classdef PTKSegmentsByNearestGrowingBronchus < PTKPlugin
             
             for lobe_index = 1 : 5
                 lobe_label = lobe_labels(lobe_index);
-                lobe_mask = lobes.BlankCopy;
+                lobe_mask = lobes.BlankCopy();
                 lobe_mask.ChangeRawImage(lobes.RawImage == lobe_label);
                 segments_map = PTKSegmentsByNearestGrowingBronchus.ComputeForLobe(lobe_mask, acinar_map, segmental_labels{lobe_index}, reporting);
                 results.ChangeSubImageWithMask(segments_map, lobe_mask);
@@ -56,13 +56,13 @@ classdef PTKSegmentsByNearestGrowingBronchus < PTKPlugin
         end
         
         function segment_map = ComputeForLobe(lobe_mask, acinar_map, segmental_labels, reporting)
-            template = lobe_mask.BlankCopy;
+            template = lobe_mask.BlankCopy();
             nn_mask = false(lobe_mask.ImageSize);
             for segment_index = segmental_labels
                 nn_mask(acinar_map.RawImage == segment_index) = true;
             end
             [~, nn_index] = bwdist(nn_mask);
-            segment_map = lobe_mask.BlankCopy;
+            segment_map = lobe_mask.BlankCopy();
             segment_map.ChangeRawImage(acinar_map.RawImage(nn_index));
             segment_map.ResizeToMatch(template);
         end

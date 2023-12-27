@@ -24,7 +24,7 @@ classdef CoreMex < CoreBaseClass
             % date
             
             if nargin < 2
-                reporting = CoreReportingDefault;
+                reporting = CoreReportingDefault();
             end
             
             coreMexDirectory = fullfile(CoreDiskUtilities.GetUserDirectory, 'coremex');

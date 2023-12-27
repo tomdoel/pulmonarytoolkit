@@ -54,7 +54,7 @@ classdef MimMatNatDatabase < handle
             names = {};
             ids = {};
             short_visible_names = {};
-            patient_id_map = containers.Map;
+            patient_id_map = containers.Map();
             
             project = obj.Database.getProject(project_id);
             
@@ -75,7 +75,7 @@ classdef MimMatNatDatabase < handle
             short_visible_names = {};
             num_series = [];
             num_patients_combined = [];
-            patient_id_map = containers.Map;
+            patient_id_map = containers.Map();
             
             project = obj.Database.getProject(project_id);
             

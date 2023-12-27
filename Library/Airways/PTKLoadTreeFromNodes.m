@@ -32,7 +32,7 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     end
     
     if nargin < 6
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end    
     
     if ~isa(coordinate_system, 'MimCoordinateSystem')

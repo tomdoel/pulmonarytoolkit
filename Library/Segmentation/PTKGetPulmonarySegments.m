@@ -10,7 +10,7 @@ function segments = PTKGetPulmonarySegments(lobes, acinar_map, reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %    
     
-    segments = lobes.BlankCopy;
+    segments = lobes.BlankCopy();
     segments.ChangeRawImage(zeros(lobes.ImageSize, 'uint8'));
     
     lobe_labels = [1, 2, 4, 5, 6];
@@ -18,7 +18,7 @@ function segments = PTKGetPulmonarySegments(lobes, acinar_map, reporting)
     
     for lobe_index = 1 : 5
         lobe_label = lobe_labels(lobe_index);
-        lobe_mask = lobes.BlankCopy;
+        lobe_mask = lobes.BlankCopy();
         lobe_mask.ChangeRawImage(lobes.RawImage == lobe_label);
         segments_map = ComputeSmoothedSegmentsForLobe(lobe_mask, acinar_map, segmental_labels{lobe_index}, reporting);
         segments.ChangeSubImageWithMask(segments_map, lobe_mask);
@@ -26,7 +26,7 @@ function segments = PTKGetPulmonarySegments(lobes, acinar_map, reporting)
 end
 function segment_map = ComputeSmoothedSegmentsForLobe(lobe_mask, acinar_map, segmental_labels, reporting)
     smoothing_size_mm = 20;
-    template = lobe_mask.BlankCopy;
+    template = lobe_mask.BlankCopy();
     lobe_mask.CropToFit;
     acinar_map_cropped = acinar_map.Copy;
     acinar_map_cropped.ResizeToMatch(lobe_mask);

@@ -19,7 +19,7 @@ function [metrics, emphysema_mask] = PTKComputeEmphysemaFromMask(roi_data, mask)
     upper_threshold = (roi_data.RawImage <= emphysema_threshold_value_2) & (mask.RawImage > 0);
     emphysema_mask_raw = uint8(upper_threshold);
     emphysema_mask_raw(lower_threshold) = 3;
-    emphysema_mask = mask.BlankCopy;
+    emphysema_mask = mask.BlankCopy();
     emphysema_mask.ChangeRawImage(emphysema_mask_raw);
     
     number_of_voxels_in_mask = sum(mask.RawImage(:));
@@ -34,7 +34,7 @@ function [metrics, emphysema_mask] = PTKComputeEmphysemaFromMask(roi_data, mask)
         emphysema_percentile_density_hu = roi_data.GreyscaleToHounsfield(emphysema_percentile_density);
     end
     
-    metrics = PTKMetrics;
+    metrics = PTKMetrics();
     metrics.AddMetric('EmphysemaPercentage', emphysema_percentage, '% of emphysema');
     metrics.AddMetric('EmphysemaPercentileDensityHU', emphysema_percentile_density_hu, 'Emphysema percentile density (HU)');
 end

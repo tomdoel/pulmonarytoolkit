@@ -71,7 +71,7 @@ classdef PTKViewer < GemFigure
             end
             
             if nargin < 3
-                reporting = CoreReportingDefault;
+                reporting = CoreReportingDefault();
             end
             
             title = 'PTK Viewer';

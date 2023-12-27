@@ -19,22 +19,22 @@ function deformation_field_combined = PTKCombineDeformationFields(deformation_le
     end
     
     % Create a combined deformation field
-    deformation_field_combined = left_right_mask.BlankCopy;
+    deformation_field_combined = left_right_mask.BlankCopy();
     deformation_field_combined.ChangeRawImage(zeros([deformation_field_combined.ImageSize, 3], 'double'));
 
     % Create a mask of the deformation regions which have been set
-    has_been_set_mask = left_right_mask.BlankCopy;
+    has_been_set_mask = left_right_mask.BlankCopy();
     has_been_set_mask.ChangeRawImage(false([left_right_mask.ImageSize]));
     
     % Set the deformations for the left lung
-    region_mask = left_right_mask.BlankCopy;
+    region_mask = left_right_mask.BlankCopy();
     region_mask.ChangeRawImage(left_right_mask.RawImage == 1);
     region_mask.ResizeToMatch(deformation_right);
     deformation_field_combined.ChangeSubImageWithMask(deformation_right, region_mask);
     has_been_set_mask.ChangeSubImageWithMask(region_mask, region_mask);
     
     % Set the deformations for the right lung
-    region_mask = left_right_mask.BlankCopy;
+    region_mask = left_right_mask.BlankCopy();
     region_mask.ChangeRawImage(left_right_mask.RawImage == 2);
     region_mask.ResizeToMatch(deformation_left);
     deformation_field_combined.ChangeSubImageWithMask(deformation_left, region_mask);
@@ -43,7 +43,7 @@ function deformation_field_combined = PTKCombineDeformationFields(deformation_le
     % Fill in the unset regions using the deformation values of the nearest
     % points
     [~, nn_index] = bwdist(has_been_set_mask.RawImage);
-    nn_deformation_field = left_right_mask.BlankCopy;
+    nn_deformation_field = left_right_mask.BlankCopy();
     nn_deformation_field_raw = zeros([deformation_field_combined.ImageSize], 'double');
     
     deformation_field_combined_component = deformation_field_combined.RawImage(:, :, :, 1);

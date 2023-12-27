@@ -47,7 +47,7 @@ classdef PTKOriginalImage < PTKPlugin
         function results = RunPlugin(dataset, context, reporting)
             reporting.ShowProgress('Loading Images');
             results = MimLoadImages(dataset.GetImageInfo, reporting);
-            reporting.CompleteProgress;
+            reporting.CompleteProgress();
         end
     end
 end

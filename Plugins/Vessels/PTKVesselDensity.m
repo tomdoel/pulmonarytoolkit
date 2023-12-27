@@ -45,7 +45,7 @@ classdef PTKVesselDensity < PTKPlugin
             lung_mask = dataset.GetResult('PTKLeftAndRightLungs');
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage > 0));
             vesselness = dataset.GetResult('PTKVesselness');
-            results = vesselness.BlankCopy;
+            results = vesselness.BlankCopy();
                         
             filtered_vesselness = PTKVesselDensity.CalculateVesselDensity(vesselness);
             

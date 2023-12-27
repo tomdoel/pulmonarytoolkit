@@ -34,7 +34,7 @@ classdef MimModeTabControl < GemTabControl
             obj.PreviewFetcher = preview_fetcher;
             obj.OrganisedPlugins = organised_plugins;
             obj.OrganisedManualSegmentations = organised_manual_segmentations;
-            obj.TabEnabled = containers.Map;
+            obj.TabEnabled = containers.Map();
 
             obj.Gui = parent;
             

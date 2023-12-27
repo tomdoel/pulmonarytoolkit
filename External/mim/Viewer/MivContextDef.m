@@ -91,14 +91,14 @@ classdef MivContextDef < handle
     methods (Access = private)
         function CreateContexts(obj)
             % Create the hierarchy of context types
-            obj.ContextSets = containers.Map;
+            obj.ContextSets = containers.Map();
             full_set =  MimContextSetMapping(PTKContextSet.OriginalImage, []);
             any_set = MimContextSetMapping(PTKContextSet.Any, []);
             obj.ContextSets(char(PTKContextSet.OriginalImage)) = full_set;
             obj.ContextSets(char(PTKContextSet.Any)) = any_set;
             
             % Create the hierarchy of contexts
-            obj.Contexts = containers.Map;
+            obj.Contexts = containers.Map();
             full_context =  MimContextMapping(PTKContext.OriginalImage, full_set, 'PTKGetContextForOriginalImage', 'PTKOriginalImage', []);
 
             obj.Contexts(char(PTKContext.OriginalImage)) = full_context;

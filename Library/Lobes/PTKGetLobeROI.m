@@ -9,7 +9,7 @@ function mask = PTKGetLobeROI(lobe_mask, context, reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    mask = lobe_mask.BlankCopy;
+    mask = lobe_mask.BlankCopy();
     
     if context == PTKContext.LeftUpperLobe
         colormap_index = PTKColormapLabels.LeftUpperLobe;

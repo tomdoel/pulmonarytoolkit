@@ -41,7 +41,7 @@ classdef MimLinkedDatasetChooser < CoreBaseClass
             primary_dataset_results = MimDatasetResults(framework_app_def, context_def, image_info, obj, obj, dataset_disk_cache, plugin_cache, reporting);
             obj.PrimaryDatasetUid = primary_dataset_results.GetImageInfo.ImageUid;
             obj.PrimaryDatasetResults = primary_dataset_results;
-            obj.LinkedDatasetChooserList = containers.Map;
+            obj.LinkedDatasetChooserList = containers.Map();
             obj.LinkedDatasetChooserList(obj.PrimaryDatasetUid) = obj;
         end
 

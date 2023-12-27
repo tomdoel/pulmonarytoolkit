@@ -68,7 +68,7 @@ classdef PTKAirwayRadiusApproximation < PTKPlugin
                 segments_to_do = [segments_to_do segment.Children];
             end
             
-            results = airway_segmented_image.BlankCopy;
+            results = airway_segmented_image.BlankCopy();
             results.ChangeRawImage(segmented_image);
             results.ImageType = PTKImageType.Scaled;
         end

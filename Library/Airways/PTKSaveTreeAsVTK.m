@@ -32,7 +32,7 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     %        
 
     if nargin < 6
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     if nargin < 4
@@ -164,7 +164,7 @@ function PTKSaveTreeAsVTK(tree_root, file_path, filename_prefix, coordinate_syst
     
     fclose(vtk_file_handle);
     
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end
 
 function WriteHeader(file_handle, reporting)

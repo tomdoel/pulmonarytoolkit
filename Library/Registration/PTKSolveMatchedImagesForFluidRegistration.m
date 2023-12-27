@@ -24,8 +24,8 @@ function deformation_field = PTKSolveMatchedImagesForFluidRegistration(image_to_
 end
 
 function [deformation_field, deformed_image] = Solve(image_1, image_2, reporting)
-    deformation_field = image_2.BlankCopy;
-    deformed_image = image_2.BlankCopy;
+    deformation_field = image_2.BlankCopy();
+    deformed_image = image_2.BlankCopy();
     voxel_size = image_2.VoxelSize;
     if ~isequal(voxel_size, image_1.VoxelSize)
         reporting.Error('PTKGetFluidDeformationField:DifferentVoxelSizes', 'Images must have the same voxel size');

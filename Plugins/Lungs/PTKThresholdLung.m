@@ -48,7 +48,7 @@ classdef PTKThresholdLung < PTKPlugin
                 lung_roi = dataset.GetResult('PTKLungROI');
                 raw_image = lung_roi.RawImage;
                 raw_image = (raw_image >= limits(1) & raw_image <= limits(2));
-                results = lung_roi.BlankCopy;
+                results = lung_roi.BlankCopy();
                 results.ChangeRawImage(raw_image);
                 results.ImageType = PTKImageType.Colormap;
             else

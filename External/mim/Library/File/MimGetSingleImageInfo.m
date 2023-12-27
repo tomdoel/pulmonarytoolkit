@@ -13,7 +13,7 @@ function single_image_info = MimGetSingleImageInfo(file_path, file_name, file_fo
     %
 
     if nargin < 4
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
 
     if isempty(tags_to_get)

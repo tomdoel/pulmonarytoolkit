@@ -990,13 +990,13 @@ classdef MimGuiBase < GemFigure
             if obj.ImagePanel.OverlayImage.ImageExists
                 obj.ImagePanel.OverlayImage.ResizeToMatch(new_image);
             else
-                obj.ImagePanel.OverlayImage = new_image.BlankCopy;
+                obj.ImagePanel.OverlayImage = new_image.BlankCopy();
             end
 
             if obj.ImagePanel.QuiverImage.ImageExists
                 obj.ImagePanel.QuiverImage.ResizeToMatch(new_image);
             else
-                obj.ImagePanel.QuiverImage = new_image.BlankCopy;
+                obj.ImagePanel.QuiverImage = new_image.BlankCopy();
             end
 
             % Make image visible when it is altered

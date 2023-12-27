@@ -42,7 +42,7 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     end
     
     if nargin < 2
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     if nargin < 3

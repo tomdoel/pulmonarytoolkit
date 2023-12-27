@@ -43,7 +43,7 @@ classdef PTKDownsampledInitialFluidRegistrationImageCT < PTKPlugin
 
             ct_single_lung_mask.AddBorder(10);
 
-            resampled_ct_mask_template = mr_initial_downsampled.ResampledMrMask.BlankCopy;
+            resampled_ct_mask_template = mr_initial_downsampled.ResampledMrMask.BlankCopy();
             resampled_ct_mask_template.AddBorder(10);
             
             ct_single_lung_mask.ChangeRawImage(single(ct_single_lung_mask.RawImage));

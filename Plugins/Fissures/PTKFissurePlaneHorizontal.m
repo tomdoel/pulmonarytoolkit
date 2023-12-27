@@ -78,7 +78,7 @@ classdef PTKFissurePlaneHorizontal < PTKPlugin
                 return;
             end
             
-            right_results = right_lung_roi.BlankCopy;
+            right_results = right_lung_roi.BlankCopy();
             right_results.ChangeRawImage(fissures_right);
         end
         

@@ -537,7 +537,7 @@ classdef MimViewerPanel < GemPanel
         end
 
         function ClearRenderAxes(obj)
-            obj.RenderPanel.Clear;
+            obj.RenderPanel.Clear();
         end
 
     end

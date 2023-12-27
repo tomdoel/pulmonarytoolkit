@@ -19,7 +19,7 @@ classdef PTKFrameworkAppDef < handle
     end
     
     methods
-        function obj = PTKFrameworkAppDef
+        function obj = PTKFrameworkAppDef()
             obj.Config = MimConfig;
             obj.ContextDef = PTKContextDef;
             obj.Directories = MimDirectories(obj.GetApplicationParentDirectory, obj.Config);

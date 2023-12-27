@@ -49,7 +49,7 @@ classdef MimImageTemplates < CoreBaseClass
     methods
         function obj = MimImageTemplates(framework_app_def, dataset_results, context_def, dataset_disk_cache, pipelines, reporting)
 
-            obj.Config = framework_app_def.GetFrameworkConfig;
+            obj.Config = framework_app_def.GetFrameworkConfig();
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.DatasetResults = dataset_results;
             obj.FrameworkAppDef = framework_app_def;
@@ -58,10 +58,10 @@ classdef MimImageTemplates < CoreBaseClass
             % not as default property values. Initialising as default property
             % values results in every instance of this claas sharing the same
             % map instance
-            obj.ValidContexts  = containers.Map;
-            obj.TemplateGenerationFunctions = containers.Map;
-            obj.TemplatePluginsRun = containers.Map;
-            obj.TemplatePluginsRunSuccess = containers.Map;
+            obj.ValidContexts  = containers.Map();
+            obj.TemplateGenerationFunctions = containers.Map();
+            obj.TemplatePluginsRun = containers.Map();
+            obj.TemplatePluginsRunSuccess = containers.Map();
 
             context_mappings = context_def.GetContexts;
             for context = context_mappings.keys
@@ -179,8 +179,8 @@ classdef MimImageTemplates < CoreBaseClass
 
         function ClearCache(obj, reporting)
             % Clears cached templates
-            obj.TemplatePluginsRun = containers.Map;
-            obj.TemplatePluginsRunSuccess = containers.Map;
+            obj.TemplatePluginsRun = containers.Map();
+            obj.TemplatePluginsRunSuccess = containers.Map();
         end
     end
 
@@ -212,13 +212,13 @@ classdef MimImageTemplates < CoreBaseClass
                 if isfield(info, 'TemplatePluginsRun')
                     obj.TemplatePluginsRun = info.TemplatePluginsRun;
                 else
-                    obj.TemplatePluginsRun = containers.Map;
+                    obj.TemplatePluginsRun = containers.Map();
                 end
 
                 if isfield(info, 'TemplatePluginsRunSuccess') && ~isempty(info.TemplatePluginsRunSuccess)
                     obj.TemplatePluginsRunSuccess = info.TemplatePluginsRunSuccess;
                 else
-                    obj.TemplatePluginsRunSuccess = containers.Map;
+                    obj.TemplatePluginsRunSuccess = containers.Map();
                 end
             end
         end

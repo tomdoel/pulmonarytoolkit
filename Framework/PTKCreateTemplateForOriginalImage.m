@@ -10,5 +10,5 @@ function template = PTKCreateTemplateForOriginalImage(original_image, context, r
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    template = original_image.BlankCopy;
+    template = original_image.BlankCopy();
 end 

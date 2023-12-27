@@ -40,7 +40,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
         
         % Create a mask of voxels which could not be allocated to left or right lungs
         voxels_to_remap = both_lungs.Copy;
-        voxels_to_remap.Clear;
+        voxels_to_remap.Clear();
         
         any_slice_failure = false;
         for coronal_index = 1 : lung_roi.ImageSize(1)
@@ -55,7 +55,7 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
                     any_slice_failure = true;
                     reporting.LogVerbose(['Failed to separate left and right lungs in a coronal slice after ' int2str(max_iter) ' opening attempts. Using nearest neighbour interpolation.']);
                     voxels_to_remap.ReplaceImageSlice(both_lungs_slice.RawImage, coronal_index, PTKImageOrientation.Coronal);
-                    both_lungs_slice.Clear;
+                    both_lungs_slice.Clear();
                 end
                 
             end
@@ -141,7 +141,7 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
     region_2_voxels = CC.PixelIdxList{second_largest_area_index};
     region_2_centroid = GetCentroid(both_lungs.ImageSize, region_2_voxels);
     
-    both_lungs.Clear;
+    both_lungs.Clear();
     both_lungs.ImageType = PTKImageType.Colormap;
     
     if is_coronal

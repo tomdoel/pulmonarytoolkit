@@ -105,7 +105,7 @@ classdef PTKAirwayCentreline < PTKPlugin
             new_image(template_image.GlobalToLocalIndices(skeleton_results.RemovedPoints)) = 6;
             new_image(template_image.GlobalToLocalIndices(skeleton_results.BifurcationPoints)) = 3;
             
-            results = template_image.BlankCopy;
+            results = template_image.BlankCopy();
             results.ChangeRawImage(new_image);
             results.ImageType = PTKImageType.Colormap;
             

@@ -21,7 +21,7 @@ classdef PTKImageDatabaseSeries
             % uids to image metainfo. Now we replace it with a simple list of
             % CoreFilename objects
             if isempty(obj.Version)
-                image_infos = obj.ImageMap.values;
+                image_infos = obj.ImageMap.values();
                 
                 % These propeties did not exist in the first version of the
                 % class
@@ -29,7 +29,7 @@ classdef PTKImageDatabaseSeries
                 obj.ImageFileFormat = image_infos{1}.ImageFileFormat;
                 obj.StudyUid = image_infos{1}.StudyUid;
         
-                filenames = containers.Map;
+                filenames = containers.Map();
                 for image_index = 1 : numel(image_infos)
                     single_image_info = image_infos{image_index};
                     filenames(single_image_info.ImageUid) = CoreFilename(single_image_info.ImagePath, single_image_info.ImageFilename);
@@ -44,7 +44,7 @@ classdef PTKImageDatabaseSeries
                 % Version 3 changes the image list to a map to UIDs
                 % The database will be rebuilt, so the following is a temporary change to get the
                 % database in a good state before the rebuild happens
-                image_map = containers.Map;
+                image_map = containers.Map();
                 for image_index = 1 : numel(obj.ImageMap)
                     image_uid = int2str(image_index);
                     image_map(image_uid) = obj.ImageMap(image_index);

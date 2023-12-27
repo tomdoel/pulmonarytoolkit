@@ -94,7 +94,7 @@ classdef PTKFissurenessROIOblique < PTKPlugin
                 fissureness = fissureness.RawImage.*multiplier.*supressor_M;
             end
 
-            results = lung_roi.BlankCopy;
+            results = lung_roi.BlankCopy();
             results.ChangeRawImage(fissureness);
         end
     end

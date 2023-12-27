@@ -33,7 +33,7 @@ classdef MimPluginResultsInfo < handle
             if nargin > 0
                 obj.ResultsInfo = info_map;
             else
-                obj.ResultsInfo = containers.Map;
+                obj.ResultsInfo = containers.Map();
             end
         end
         

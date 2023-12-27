@@ -30,7 +30,7 @@ function lung_image = PTKFillCoronalHoles(lung_image, is_right, reporting)
         lung_image.ReplaceImageSlice(coronal_slice, coronal_index, PTKImageOrientation.Coronal);
     end    
     lung_image.RemoveBorder(10);
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end
 
 function mask = OpenOrClose(mask, is_right, opening_size, closing_size, reporting)

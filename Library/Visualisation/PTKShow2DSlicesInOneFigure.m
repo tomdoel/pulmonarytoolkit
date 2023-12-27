@@ -11,7 +11,7 @@ function figure_handle = PTKShow2DSlicesInOneFigure(viewer_panel_handle, orienta
     %
 
     if nargin < 4
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     % Number of plots along x axis

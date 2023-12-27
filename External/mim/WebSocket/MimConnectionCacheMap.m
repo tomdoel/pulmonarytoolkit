@@ -28,7 +28,7 @@ classdef MimConnectionCacheMap < CoreBaseClass
         end
         
         function connections = getAllConnections(obj)
-            connections = obj.ConnectionCacheDictionary.values;
+            connections = obj.ConnectionCacheDictionary.values();
         end
         
         function connectionCache = getConnection(obj, connection)

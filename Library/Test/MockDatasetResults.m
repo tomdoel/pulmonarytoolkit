@@ -20,7 +20,7 @@ classdef MockDatasetResults < handle
     
     methods
         function obj = MockDatasetResults
-            obj.MockResults = containers.Map;
+            obj.MockResults = containers.Map();
         end
         
         function AddMockResult(obj, name, context, result_to_add, cache_info, output_image, has_been_run)

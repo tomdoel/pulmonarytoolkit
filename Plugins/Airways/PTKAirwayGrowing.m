@@ -54,7 +54,7 @@ classdef PTKAirwayGrowing < PTKPlugin
             left_lung = left_and_right_lungs.Copy;
             left_lung.ChangeRawImage(left_and_right_lungs.RawImage == 2);
             
-            template = left_and_right_lungs.BlankCopy;
+            template = left_and_right_lungs.BlankCopy();
             approx_number_points = 31000;
             airway_generator = PTKAirwayGenerator(left_and_right_lungs, airways_by_lobe.StartBranches.Trachea, approx_number_points, reporting);
             

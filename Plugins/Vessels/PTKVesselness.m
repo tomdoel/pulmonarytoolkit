@@ -49,7 +49,7 @@ classdef PTKVesselness < PTKPlugin
             
             right_lung = dataset.GetResult('PTKGetRightLungROI');
             
-            reporting.PushProgress;
+            reporting.PushProgress();
             
             reporting.UpdateProgressStage(0, 2);
             vesselness_right = PTKVesselness.ComputeVesselness(right_lung, reporting, false);
@@ -58,7 +58,7 @@ classdef PTKVesselness < PTKPlugin
             left_lung = dataset.GetResult('PTKGetLeftLungROI');
             vesselness_left = PTKVesselness.ComputeVesselness(left_lung, reporting, true);
 
-            reporting.PopProgress;
+            reporting.PopProgress();
             
             left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungs');
             
@@ -81,7 +81,7 @@ classdef PTKVesselness < PTKPlugin
         
         function vesselness = ComputeVesselness(image_data, reporting, is_left_lung)
             
-            reporting.PushProgress;
+            reporting.PushProgress();
             
             sigma_range = 0.5 : 0.5: 2;
             num_calculations = numel(sigma_range);
@@ -101,7 +101,7 @@ classdef PTKVesselness < PTKPlugin
                 end
             end
             
-            reporting.PopProgress;
+            reporting.PopProgress();
             
         end
                 

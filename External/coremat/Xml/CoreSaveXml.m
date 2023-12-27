@@ -139,7 +139,7 @@ function node = AddValuesToNode(node, value, xml_doc_node, reporting)
 
     elseif isa(value, 'containers.Map')
         % Map
-        keys = value.keys;
+        keys = value.keys();
         for index = 1 : length(keys)
             key = keys{index};
             node.appendChild(CreateMapNode(value(key), key, xml_doc_node, reporting));

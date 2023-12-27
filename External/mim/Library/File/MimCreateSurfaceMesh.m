@@ -47,7 +47,7 @@ function MimCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, 
     end
     
     if nargin < 3
-        reporting = CoreReportingDefault;    
+        reporting = CoreReportingDefault();
     end
         
     reporting.ShowProgress('Generating the surface mesh');
@@ -92,5 +92,5 @@ function MimCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, 
     end
     
     reporting.UpdateProgressValue(100);
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end

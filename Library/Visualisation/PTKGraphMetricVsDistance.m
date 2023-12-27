@@ -41,15 +41,15 @@ function figure_handle = PTKGraphMetricVsDistance(table, metric, metric_std, con
     %
     
     if isempty(patient_list)
-        patient_list = table.IndexMaps{1}.keys;
+        patient_list = table.IndexMaps{1}.keys();
     end
     
 
     if isempty(context_list)
-        context_list = table.IndexMaps{3}.keys;
+        context_list = table.IndexMaps{3}.keys();
     else
         % Ensure we only plot for known contexts
-        known_context_list = table.IndexMaps{3}.keys;
+        known_context_list = table.IndexMaps{3}.keys();
         context_list = intersect(context_list, known_context_list);
     end
     

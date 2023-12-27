@@ -48,10 +48,10 @@ classdef MimToolbarPanel < GemPanel
             obj.TopBorder = ~group_vertically;
             obj.AppDef = app_def;
             obj.GuiApp = gui_app;
-            obj.ControlGroups = containers.Map;
-            obj.ControlGroupSeparators = containers.Map;
+            obj.ControlGroups = containers.Map();
+            obj.ControlGroupSeparators = containers.Map();
             obj.OrderedControlGroupList = {};
-            obj.ToolMap = containers.Map;
+            obj.ToolMap = containers.Map();
             obj.OrganisedPlugins = organised_plugins;
             obj.GroupVertically = group_vertically;
             obj.AllowWrapping = allow_wrapping;

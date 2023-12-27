@@ -76,7 +76,7 @@ classdef PTKFissurenessROI < PTKPlugin
     methods (Static, Access = private)
         function left_results = GetLeftLungResults(application, fissure_approximation, left_and_right_lungs, fissureness)
             left_lung_roi = application.GetResult('PTKGetLeftLungROI');
-            left_results = left_lung_roi.BlankCopy;
+            left_results = left_lung_roi.BlankCopy();
             
             fissure_approximation = fissure_approximation.Copy;
             fissure_approximation.ResizeToMatch(left_lung_roi);
@@ -126,10 +126,10 @@ classdef PTKFissurenessROI < PTKPlugin
             fissureness_UL = fissureness.RawImage.*multiplier.*supressor_M;
             fissureness_M = fissureness.RawImage.*multiplier_M.*supressor;
 
-            results_right = right_lung_roi.BlankCopy;
+            results_right = right_lung_roi.BlankCopy();
             results_right.ChangeRawImage(fissureness_UL);
 
-            results_right_mid = right_lung_roi.BlankCopy;
+            results_right_mid = right_lung_roi.BlankCopy();
             results_right_mid.ChangeRawImage(fissureness_M);
         end
     end

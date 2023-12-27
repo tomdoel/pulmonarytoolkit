@@ -53,7 +53,7 @@ classdef MimPluginsPanel < GemCompositePanel
             obj.LeftMargin = 5;
             obj.RightMargin = 5;
             
-            obj.PluginPanels = containers.Map;
+            obj.PluginPanels = containers.Map();
             
             obj.RunPluginCallback = run_plugin_callback;
             obj.RunGuiPluginCallback = run_gui_plugin_callback;
@@ -121,7 +121,7 @@ classdef MimPluginsPanel < GemCompositePanel
         function AddPluginCategoryPanels(obj, plugins_by_category)
             % Add panels for each plugin category
             
-            obj.PluginPanels = containers.Map;
+            obj.PluginPanels = containers.Map();
             
             for category = plugins_by_category.keys
                 current_category_map = plugins_by_category(char(category));

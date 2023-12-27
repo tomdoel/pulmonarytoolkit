@@ -90,7 +90,7 @@ classdef MimViewerPanelToolbar < GemPanel
             
             % Buttons for each mouse tool
             obj.MouseControlPanel = uibuttongroup('Parent', obj.Parent.GetContainerHandle, 'Units', 'pixels', 'BorderType', 'none', 'SelectionChangeFcn', @obj.ControlsCallback, 'BackgroundColor', 'black', 'ForegroundColor', 'white');
-            obj.MouseControlButtons = containers.Map;
+            obj.MouseControlButtons = containers.Map();
             for tool_set = obj.Tools.Tools.values
                 tool = tool_set{1};
                 tag = tool.Tag;

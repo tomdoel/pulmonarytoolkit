@@ -69,7 +69,7 @@ classdef PTKAirwayEndpointsLabelledByLobe < PTKPlugin
                 results_raw(indices(part_indices)) = 0;
             end
 
-            results = airway_mapped_image.BlankCopy;
+            results = airway_mapped_image.BlankCopy();
             results.ChangeRawImage(results_raw);
         end
         

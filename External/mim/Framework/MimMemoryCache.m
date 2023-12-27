@@ -65,7 +65,7 @@ classdef MimMemoryCache < handle
         function Delete(obj, ~)
             % Clears the cache
             
-            obj.MemoryCacheMap = containers.Map;
+            obj.MemoryCacheMap = containers.Map();
             obj.TemporaryKeys = [];
         end
 

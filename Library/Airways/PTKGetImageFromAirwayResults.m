@@ -31,7 +31,7 @@ function airway_image = PTKGetImageFromAirwayResults(airway_tree, template_image
         segments_to_do = [segments_to_do, segment.Children];
     end
     
-    airway_image = template_image.BlankCopy;
+    airway_image = template_image.BlankCopy();
     airway_image.ChangeRawImage(airway_image_raw);
     airway_image.ImageType = PTKImageType.Colormap;
 end

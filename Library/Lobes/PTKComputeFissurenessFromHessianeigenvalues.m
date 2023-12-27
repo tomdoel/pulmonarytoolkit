@@ -29,7 +29,7 @@ function fissureness_wrapper = PTKComputeFissurenessFromHessianeigenvalues(hessi
     %
 
     % lam1 = smallest eigenvalue, lam3 = largest eigenvalue
-    fissureness_wrapper = CoreWrapper;
+    fissureness_wrapper = CoreWrapper();
 
     % This allows us to compute the Fissureness in a vectorised or matrix-based way
     if ndims(hessian_eigs_wrapper.RawImage) == 2

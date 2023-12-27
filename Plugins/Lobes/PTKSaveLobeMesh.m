@@ -56,16 +56,16 @@ classdef PTKSaveLobeMesh < PTKPlugin
                 smoothing_size = 3;
                 filename = ['LobeSurfaceMesh_' lobe_names{lobe_index} '.stl'];
                 current_lobe.AddBorder(6);
-                reporting.PushProgress;
+                reporting.PushProgress();
                 
                 small_structures = false;
                 dataset.SaveSurfaceMesh('PTKSaveLobeMesh', 'Lobe mesh', filename, 'Surface mesh of the segmented lobes' , current_lobe, smoothing_size, small_structures, coordinate_system, template_image);
                 
-                reporting.PopProgress;
+                reporting.PopProgress();
             end
             results = lobes;
             reporting.UpdateProgressValue(100);
-            reporting.CompleteProgress;
+            reporting.CompleteProgress();
             
         end
         

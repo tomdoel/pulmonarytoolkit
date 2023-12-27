@@ -13,11 +13,11 @@ function result = MimExpandResultToContext(result, this_result, child_context, o
         
     if isempty(result)
         if isa(this_result, 'PTKImage')
-            result = this_result.Copy;
+            result = this_result.Copy();
             result.ResizeToMatch(output_template_image);
-            result.Clear;
+            result.Clear();
         else
-            result = MimCompositeResult;
+            result = MimCompositeResult();
         end
     end
     

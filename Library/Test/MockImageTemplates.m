@@ -19,7 +19,7 @@ classdef MockImageTemplates < handle
     
     methods
         function obj = MockImageTemplates()
-            obj.MockTemplateImages = containers.Map;
+            obj.MockTemplateImages = containers.Map();
         end
         
         function AddMockImage(obj, context, template_image)

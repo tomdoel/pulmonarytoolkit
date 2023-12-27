@@ -13,7 +13,7 @@ classdef MimDerivedModelMap < handle
             if obj.DerivedModelMap.isKey(modelName)
                 modelMap = obj.DerivedModelMap(modelName);
             else
-                modelMap = containers.Map;
+                modelMap = containers.Map();
                 obj.DerivedModelMap(modelName) = modelMap;
             end
         end

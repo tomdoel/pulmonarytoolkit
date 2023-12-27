@@ -218,7 +218,7 @@ function points_coords = RemoveNonConnectedPoints(points_coords, template_image,
     indices = sub2ind(image_size, points_coords(:,1), points_coords(:,2), points_coords(:,3));
     image_mask(indices) = true;
     
-    tci = template_image.BlankCopy;
+    tci = template_image.BlankCopy();
     tci.ChangeRawImage(image_mask);
     tci.BinaryMorph(@imdilate, dilate_size_mm);
     connected_image = tci.RawImage;

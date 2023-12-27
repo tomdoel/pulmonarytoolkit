@@ -9,7 +9,7 @@ function mask = PTKGetSegmentROI(segment_mask, context, reporting)
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    mask = segment_mask.BlankCopy;
+    mask = segment_mask.BlankCopy();
     
     if context == PTKContext.R_AP
         colormap_index = PTKPulmonarySegmentLabels.R_AP;

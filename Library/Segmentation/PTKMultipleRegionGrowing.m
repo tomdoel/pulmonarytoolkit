@@ -40,7 +40,7 @@ function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_g
         reporting.ShowProgress('Region growing');
     end
     
-    output_image = threshold_image.BlankCopy;
+    output_image = threshold_image.BlankCopy();
     segmented_image = zeros(threshold_image.ImageSize, 'uint8');
     
     [linear_offsets, ~] = MimImageCoordinateUtilities.GetLinearOffsets(threshold_image.ImageSize);
@@ -100,7 +100,7 @@ function output_image = PTKMultipleRegionGrowing(threshold_image, start_points_g
     output_image.ChangeRawImage(segmented_image);
     
     if exist('reporting', 'var')
-        reporting.CompleteProgress;
+        reporting.CompleteProgress();
     end
  end
  

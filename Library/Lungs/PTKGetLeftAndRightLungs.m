@@ -64,10 +64,10 @@ function results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lu
     
     reporting.UpdateProgressAndMessage(75, 'Combining');
     
-    results.Clear;
+    results.Clear();
     results.ChangeSubImage(left_lung);
-    results2 = results.Copy;
-    results2.Clear;
+    results2 = results.Copy();
+    results2.Clear();
     results2.ChangeSubImage(right_lung);
     results.ChangeRawImage(min(2, results.RawImage + results2.RawImage));
     results.ImageType = PTKImageType.Colormap;

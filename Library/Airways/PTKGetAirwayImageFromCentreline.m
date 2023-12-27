@@ -12,7 +12,7 @@ function results_image = PTKGetAirwayImageFromCentreline(label_bronchi, airway_r
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    results_image = template.BlankCopy;
+    results_image = template.BlankCopy();
     
     % Create a vector containing every centreline voxel in the tree, and a cell
     % array, containing a vector of centreline points for each label segment

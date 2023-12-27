@@ -72,7 +72,7 @@ classdef PTKFissurePlaneOblique < PTKPlugin
             
             [~, fissure_plane] = PTKSeparateIntoLobesWithVariableExtrapolation(max_fissure_points, lung_mask, lung_roi.ImageSize, 5, reporting);
                         
-            results = lung_roi.BlankCopy;
+            results = lung_roi.BlankCopy();
             results.ChangeRawImage(4*uint8(fissure_plane == 3));
         end
         
@@ -92,7 +92,7 @@ classdef PTKFissurePlaneOblique < PTKPlugin
             
             [~, fissure_plane] = PTKSeparateIntoLobesWithVariableExtrapolation(max_fissure_points, lung_mask, lung_roi.ImageSize, 5, reporting);
             
-            results = lung_roi.BlankCopy;
+            results = lung_roi.BlankCopy();
             results.ChangeRawImage(fissure_plane);
         end
         

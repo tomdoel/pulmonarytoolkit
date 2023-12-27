@@ -30,7 +30,7 @@ function hessian_components = PTKGetHessianComponents(image_data, mask)
         mask = [];
     end
     
-    hessian_components = CoreWrapper;
+    hessian_components = CoreWrapper();
     if isempty(mask)
         num_points = numel(image_data.RawImage);
     else

@@ -63,7 +63,7 @@ classdef MimPluginGroupPanel < GemPanel
         function AddPlugins(obj, category_map)
             obj.CachedPanelHeight = [];
             obj.CachedPanelWidth = [];
-            obj.PluginButtonHandlesMap = containers.Map;
+            obj.PluginButtonHandlesMap = containers.Map();
             
             % Add the buttons to the panel
             for current_plugin_key = category_map.keys

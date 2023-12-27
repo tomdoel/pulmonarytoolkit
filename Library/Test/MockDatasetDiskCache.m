@@ -20,7 +20,7 @@ classdef MockDatasetDiskCache < handle
     
     methods
         function obj = MockDatasetDiskCache()
-            obj.StoredData = containers.Map;
+            obj.StoredData = containers.Map();
         end
 
         function AddEntry(obj, name, value, context)

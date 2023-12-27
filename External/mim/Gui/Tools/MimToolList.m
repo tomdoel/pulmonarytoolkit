@@ -50,7 +50,7 @@ classdef MimToolList < handle
            
             tool_list = {obj.ZoomMatlabTool, obj.PanMatlabTool, obj.Rotate3dMatlabTool, obj.MarkerPointTool, obj.WindowLevelTool, obj.CineTool, obj.EditTool, obj.ReplaceColourTool, obj.MapColourTool};
 
-            obj.Tools = containers.Map;
+            obj.Tools = containers.Map();
             for tool_set = tool_list
                 tool = tool_set{1};
                 tag = tool.Tag;
@@ -81,7 +81,7 @@ classdef MimToolList < handle
         end
         
         function UpdateTools(obj)
-            tool_list = obj.Tools.values;
+            tool_list = obj.Tools.values();
             
             % Disable inactive tools before enabling new tools
             for tool_set = tool_list

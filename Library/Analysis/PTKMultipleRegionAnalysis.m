@@ -8,7 +8,7 @@ function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, cont
     %     Author: Tom Doel, 2014.  www.tomdoel.com
     %     Distributed under the GNU GPL v3 licence. Please see website for details.
     
-    results = PTKMetrics.empty;
+    results = PTKMetrics.empty();
 
     if isempty(context_mask) || ~context_mask.ImageExists
         return;
@@ -37,12 +37,12 @@ function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, cont
         coordinates = region.Coordinates;
         
         % Create a mask for this bin
-        mask = bin_image.BlankCopy;
+        mask = bin_image.BlankCopy();
         mask.ChangeRawImage(bin_image.RawImage == bin_colour_index & context_mask.RawImage);
         mask.CropToFit;
         
         % Create a mask for this bin excluding the airways
-        no_airways_mask = bin_image.BlankCopy;
+        no_airways_mask = bin_image.BlankCopy();
         no_airways_mask.ChangeRawImage(bin_image.RawImage == bin_colour_index & context_no_airways.RawImage);
         no_airways_mask.ResizeToMatch(mask);
         

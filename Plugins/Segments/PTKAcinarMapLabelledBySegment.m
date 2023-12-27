@@ -40,7 +40,7 @@ classdef PTKAcinarMapLabelledBySegment < PTKPlugin
             template = dataset.GetTemplateImage(PTKContext.LungROI);
             segmental_bronchi_for_lobes = dataset.GetResult('PTKAirwayGrowingLabelledBySegment');
             
-            results = template.BlankCopy;
+            results = template.BlankCopy();
             
             segmental_index_map = zeros(template.ImageSize, 'uint8');
             airways_to_do = CoreStack(segmental_bronchi_for_lobes.StartBranches);

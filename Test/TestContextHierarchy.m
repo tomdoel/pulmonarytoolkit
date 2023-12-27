@@ -120,14 +120,14 @@ classdef TestContextHierarchy < CoreTest
             results_2.ImageResult = image_2;
             mock_dependency_tracker.AddMockResult(plugin_2, PTKContext.OriginalImage, dataset_uid_2, results_2, cache_info_2, true);
 
-            image_template_2 = image_2.BlankCopy;
+            image_template_2 = image_2.BlankCopy();
             image_template_2.Title = 'Template for OriginalImage';
                         
             mock_plugin = MockPlugin;
 
             image_template_l = image_2.Copy;
             image_template_l.Crop([2,2,2], [7,7,7]);
-            image_template_l = image_template_l.BlankCopy;
+            image_template_l = image_template_l.BlankCopy();
             image_template_l.Title = 'Template for ROI';
             
             mock_image_templates.AddMockImage(PTKContext.OriginalImage, image_template_2);
@@ -163,7 +163,7 @@ classdef TestContextHierarchy < CoreTest
             mock_original_image = PTKImage(ones(15,15,15));
             mock_original_image.Title = 'OriginalResultImage';
             mock_original_image.ChangeRawImage(uint8(rand(mock_original_image.ImageSize) > 0.5));
-            template_original = mock_original_image.BlankCopy;
+            template_original = mock_original_image.BlankCopy();
             template_original.Title = 'TemplateOriginal';
             
             mock_roi_image = mock_original_image.Copy;
@@ -171,7 +171,7 @@ classdef TestContextHierarchy < CoreTest
             original_image_cropped = mock_roi_image.Copy;
             mock_roi_image.ChangeRawImage(uint8(rand(10,10,10) > 0.5));
             mock_roi_image.Title = 'ResultImage';
-            template_roi = mock_roi_image.BlankCopy;
+            template_roi = mock_roi_image.BlankCopy();
             template_roi.Title = 'TemplateROI';
             
             mock_lr_lung_image_raw = false(10,10,10);
@@ -182,14 +182,14 @@ classdef TestContextHierarchy < CoreTest
             mock_lr_lung_image_raw = uint8(mock_lr_lung_image_raw_r) + 2*uint8(mock_lr_lung_image_raw_l);
             
             % Create template for both lungs
-            template_lungs = template_roi.BlankCopy;
+            template_lungs = template_roi.BlankCopy();
             template_lungs.ChangeRawImage(mock_lr_lung_image_raw > 0);
             template_lungs.Title = 'TemplateLungs';
             
             % Create templates for left and right lungs
-            template_right = mock_roi_image.BlankCopy;
+            template_right = mock_roi_image.BlankCopy();
             template_right.ChangeRawImage(mock_lr_lung_image_raw_r);
-            template_left = mock_roi_image.BlankCopy;
+            template_left = mock_roi_image.BlankCopy();
             template_left.ChangeRawImage(mock_lr_lung_image_raw_l);
             
             % Add templates to the template class
@@ -200,7 +200,7 @@ classdef TestContextHierarchy < CoreTest
             mock_image_templates.AddMockImage(PTKContext.RightLung, template_right);
             
             % Create image defining left and right lungs
-            mock_lr_lung_image = mock_roi_image.BlankCopy;
+            mock_lr_lung_image = mock_roi_image.BlankCopy();
             mock_lr_lung_image.ChangeRawImage(mock_lr_lung_image_raw);
             mock_lr_lung_image.Title = 'LeftAndRight';
             
@@ -375,7 +375,7 @@ classdef TestContextHierarchy < CoreTest
             obj.Assert(isequal(output_image.RawImage, expected_output_image.RawImage), 'Expected output image');
                         
             expected_output_image = mock_original_image.Copy;
-            expected_output_image.Clear;
+            expected_output_image.Clear();
             expected_output_image.ChangeSubImageWithMask(left_image, template_left);
             expected_output_image.ChangeSubImageWithMask(right_image, template_right);
             obj.Assert(isequal(output_image.RawImage, expected_output_image.RawImage), 'Image is correct ROI');
@@ -397,7 +397,7 @@ classdef TestContextHierarchy < CoreTest
             mock_original_image = PTKImage(ones(15,15,15));
             mock_original_image.Title = 'OriginalResultImage';
             mock_original_image.ChangeRawImage(uint8(rand(mock_original_image.ImageSize) > 0.5));
-            template_original = mock_original_image.BlankCopy;
+            template_original = mock_original_image.BlankCopy();
             template_original.Title = 'TemplateOriginal';
             
             mock_roi_image = mock_original_image.Copy;
@@ -405,7 +405,7 @@ classdef TestContextHierarchy < CoreTest
             original_image_cropped = mock_roi_image.Copy;
             mock_roi_image.ChangeRawImage(uint8(rand(10,10,10) > 0.5));
             mock_roi_image.Title = 'ResultImage';
-            template_roi = mock_roi_image.BlankCopy;
+            template_roi = mock_roi_image.BlankCopy();
             template_roi.Title = 'TemplateROI';
             
             mock_lr_lung_image_raw = false(10,10,10);
@@ -430,26 +430,26 @@ classdef TestContextHierarchy < CoreTest
                 + 4*uint8(mock_lobe_image_raw_rl) + 5*uint8(mock_lobe_image_raw_lu) + 6*uint8(mock_lobe_image_raw_ll);
             
             % Create template for both lungs
-            template_lungs = template_roi.BlankCopy;
+            template_lungs = template_roi.BlankCopy();
             template_lungs.ChangeRawImage(mock_lr_lung_image_raw > 0);
             template_lungs.Title = 'TemplateLungs';
             
             % Create templates for left and right lungs
-            template_right = mock_roi_image.BlankCopy;
+            template_right = mock_roi_image.BlankCopy();
             template_right.ChangeRawImage(mock_lr_lung_image_raw_r);
-            template_left = mock_roi_image.BlankCopy;
+            template_left = mock_roi_image.BlankCopy();
             template_left.ChangeRawImage(mock_lr_lung_image_raw_l);
 
             % Create templates for lobes
-            template_ru = mock_roi_image.BlankCopy;
+            template_ru = mock_roi_image.BlankCopy();
             template_ru.ChangeRawImage(mock_lobe_image_raw_ru);
-            template_rm = mock_roi_image.BlankCopy;
+            template_rm = mock_roi_image.BlankCopy();
             template_rm.ChangeRawImage(mock_lobe_image_raw_rm);
-            template_rl = mock_roi_image.BlankCopy;
+            template_rl = mock_roi_image.BlankCopy();
             template_rl.ChangeRawImage(mock_lobe_image_raw_rl);
-            template_lu = mock_roi_image.BlankCopy;
+            template_lu = mock_roi_image.BlankCopy();
             template_lu.ChangeRawImage(mock_lobe_image_raw_lu);
-            template_ll = mock_roi_image.BlankCopy;
+            template_ll = mock_roi_image.BlankCopy();
             template_ll.ChangeRawImage(mock_lobe_image_raw_ll);
             
 %             template_roi.CropToFit;
@@ -475,12 +475,12 @@ classdef TestContextHierarchy < CoreTest
             mock_image_templates.AddMockImage(PTKContext.LeftLowerLobe, template_ll);
             
             % Create image defining left and right lungs
-            mock_lr_lung_image = mock_roi_image.BlankCopy;
+            mock_lr_lung_image = mock_roi_image.BlankCopy();
             mock_lr_lung_image.ChangeRawImage(mock_lr_lung_image_raw);
             mock_lr_lung_image.Title = 'LeftAndRight';
             
             % Create image defining lobes
-            mock_lobe_lung_image = mock_roi_image.BlankCopy;
+            mock_lobe_lung_image = mock_roi_image.BlankCopy();
             mock_lobe_lung_image.ChangeRawImage(mock_lobe_image_raw);
             mock_lobe_lung_image.Title = 'Lobes';
             
@@ -645,7 +645,7 @@ classdef TestContextHierarchy < CoreTest
             obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung, cache_info_input), 'Expected run output');
 
             expected_output_image = mock_original_image.Copy;
-            expected_output_image.Clear;
+            expected_output_image.Clear();
             expected_output_image.ChangeSubImageWithMask(left_image, template_left);
             expected_output_image.ChangeSubImageWithMask(right_image, template_right);
             obj.Assert(isequal(output_image.RawImage, expected_output_image.RawImage), 'Image is correct ROI');
@@ -735,7 +735,7 @@ classdef TestContextHierarchy < CoreTest
             obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung.RightLowerLobe, cache_info_input), 'Expected run output');
 
             expected_output_image = mock_original_image.Copy;
-            expected_output_image.Clear;
+            expected_output_image.Clear();
             expected_output_image.ChangeSubImageWithMask(lu_image, template_lu);
             expected_output_image.ChangeSubImageWithMask(ll_image, template_ll);
             expected_output_image.ChangeSubImageWithMask(ru_image, template_ru);
@@ -764,7 +764,7 @@ classdef TestContextHierarchy < CoreTest
             obj.Assert(isequal(result.LungROI.Lungs.RightLung.RightLowerLobe.ImageResult.RawImage, rl_image.RawImage), 'Image is correct ROI');
 
             expected_output_image = mock_original_image.Copy;
-            expected_output_image.Clear;
+            expected_output_image.Clear();
             expected_output_image.ChangeSubImageWithMask(lu_image, template_lu);
             expected_output_image.ChangeSubImageWithMask(ll_image, template_ll);
             expected_output_image.ChangeSubImageWithMask(ru_image, template_ru);

@@ -36,4 +36,3 @@ function density_values_g_ml = PTKConvertHuToDensity(hu_values)
     % negative density values - threshold at zero
     density_values_g_ml = max(0, density_values_g_ml);
 end
-

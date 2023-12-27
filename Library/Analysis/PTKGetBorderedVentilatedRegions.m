@@ -20,6 +20,6 @@ function masked_ventilated_volume = PTKGetBorderedVentilatedRegions(ventilation_
     border = PTKGetSurfaceFromSegmentation(masked_ventilated_volume_raw, PTKImageOrientation.Coronal);
     masked_ventilated_volume_raw(border) = 3;
     
-    masked_ventilated_volume = ventilation_mask.BlankCopy;
+    masked_ventilated_volume = ventilation_mask.BlankCopy();
     masked_ventilated_volume.ChangeRawImage(masked_ventilated_volume_raw);
 end

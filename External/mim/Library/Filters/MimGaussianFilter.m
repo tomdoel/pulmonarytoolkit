@@ -50,7 +50,7 @@ function filtered_image = MimGaussianFilter(original_image, filter_size_mm, bord
     kerj = kerj./sum(kerj);
     kerk = kerk./sum(kerk);
    
-    filtered_image = original_image.BlankCopy;
+    filtered_image = original_image.BlankCopy();
     
     % Shift the image so zero is the minimum, because the convolution uses
     % zero-padding
@@ -62,7 +62,7 @@ function filtered_image = MimGaussianFilter(original_image, filter_size_mm, bord
     raw_image = raw_image + intensity_offset;
     
     if border_correction
-        border_image = original_image.BlankCopy;
+        border_image = original_image.BlankCopy();
         
         % Create a mask image defining voxels where the filtered values
         % will be replaced with the original values. This deals with border

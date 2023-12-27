@@ -28,7 +28,7 @@ classdef MimOrganisedManualSegmentations < CoreBaseClass
         end
         
         function Repopulate(obj, reporting)
-            obj.OrganisedPluginsModeList.Clear;
+            obj.OrganisedPluginsModeList.Clear();
             segmentation_list = obj.GetListOfPossibleSegmentationNames;
             obj.OrganisedPluginsModeList.AddSegmentationList(segmentation_list, obj.GuiApp, reporting);
         end
@@ -39,7 +39,7 @@ classdef MimOrganisedManualSegmentations < CoreBaseClass
         
         function tool_list = GetOrderedPlugins(obj, mode)
             tool_maps = obj.GetAllPluginsForMode(mode);
-            tool_maps = tool_maps.values;
+            tool_maps = tool_maps.values();
             tool_list = [];
             for tool_map = tool_maps
                 tool_list = horzcat(tool_list, tool_map{1}.values);

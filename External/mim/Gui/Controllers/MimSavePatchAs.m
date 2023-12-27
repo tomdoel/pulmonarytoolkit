@@ -24,7 +24,7 @@ function path_name = MimSavePatchAs(patch_object, path_name, reporting)
     end
     
     if nargin < 3
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     [filename, path_name, filter_index] = SavePatchDialogBox(path_name);

@@ -11,8 +11,8 @@ classdef CoreReportingWarningsCache < CoreBaseClass
     methods
         function obj = CoreReportingWarningsCache(reporting_with_cache)
             obj.ReportingWithCache = reporting_with_cache;
-            obj.PendingMessages = containers.Map;
-            obj.PendingWarnings = containers.Map;
+            obj.PendingMessages = containers.Map();
+            obj.PendingWarnings = containers.Map();
         end
 
         function AddPendingWarning(obj, warning_id, warning_text, supplementary_info)
@@ -59,8 +59,8 @@ classdef CoreReportingWarningsCache < CoreBaseClass
                 end
                 obj.ReportingWithCache.ShowCachedMessage(message{1}.ID, message_text);
             end
-            obj.PendingWarnings = containers.Map;
-            obj.PendingMessages = containers.Map;
+            obj.PendingWarnings = containers.Map();
+            obj.PendingMessages = containers.Map();
         end
     end
 end

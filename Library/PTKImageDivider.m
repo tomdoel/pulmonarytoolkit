@@ -93,7 +93,7 @@ function filtered_image = PTKImageDivider(image_data, filter_function, mask, gau
     
     output_size = [image_data.ImageSize];
     filtered_image_raw = zeros(output_size, 'single');
-    filtered_image = image_data.BlankCopy;
+    filtered_image = image_data.BlankCopy();
     
     overlap_size = 10;
     image_size = image_data.ImageSize;

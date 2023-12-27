@@ -76,7 +76,7 @@ classdef (Sealed) MimSplashScreen < CoreProgressInterface & GemFigure
             position(2) = max(1, round((screen_size(4) - position(4))/2));
 
             % Call the base class to initialise the hidden window
-            reporting = CoreReportingDefault;
+            reporting = CoreReportingDefault();
             obj = obj@GemFigure('', position, reporting);
             obj.StyleSheet = app_def.GetDefaultStyleSheet;
 

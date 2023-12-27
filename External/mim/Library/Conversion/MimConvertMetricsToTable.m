@@ -10,7 +10,7 @@ function results_table = MimConvertMetricsToTable(results, patient_name, patient
     %       
    
     if nargin < 6 || isempty(results_table)
-        results_table = MimResultsTable;
+        results_table = MimResultsTable();
     end
     AddToTable(results_table, results, patient_id, context_mapping_function, reporting);
     results_table.AddPatientName(patient_id, patient_name);
@@ -45,7 +45,7 @@ function AddToTable(table, results, patient_id, context_mapping_function, report
 end
 
 function field_map = GetFieldMap(results, table, context_mapping_function)
-    field_map = containers.Map;
+    field_map = containers.Map();
     if isstruct(results)
         field_names = fieldnames(results);
         for field_name_set = field_names'

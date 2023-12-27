@@ -72,7 +72,7 @@ function output_image = PTKSmoothedRegionGrowing(threshold_image, start_points_g
     output_raw = PTKSmoothedRegionGrowingFromBorderedImage(input_image_raw, ball_raw, max_number_of_iterations);
     output_raw(output_raw == -1) = 0;
     
-    output_image = threshold_image_resized.BlankCopy;
+    output_image = threshold_image_resized.BlankCopy();
     output_image.ChangeRawImage(output_raw);
     output_image.ResizeToMatch(threshold_image);
 end

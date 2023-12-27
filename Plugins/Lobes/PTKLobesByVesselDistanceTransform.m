@@ -79,7 +79,7 @@ classdef PTKLobesByVesselDistanceTransform < PTKPlugin
             airways_by_lobe = int8(5*(airways_by_lobe == 5) + 6*(airways_by_lobe == 6));
             airways_by_lobe(~(left_lung_mask.RawImage)) = -1;
             
-            results_left = left_lung_mask.BlankCopy;
+            results_left = left_lung_mask.BlankCopy();
             
             results_raw = PTKWatershedMeyerFromStartingPoints(vesselness, airways_by_lobe);
             results_raw = max(0, results_raw);
@@ -105,7 +105,7 @@ classdef PTKLobesByVesselDistanceTransform < PTKPlugin
             airways_by_lobe_1 = int8(1*(airways_by_lobe == 1) + 1*(airways_by_lobe == 2) + 4*(airways_by_lobe == 4));
             airways_by_lobe_1(~(right_lung_mask.RawImage)) = -1;
             
-            results_right = right_lung_mask.BlankCopy;
+            results_right = right_lung_mask.BlankCopy();
             
             results_1 = PTKWatershedMeyerFromStartingPoints(vesselness, airways_by_lobe_1);
             

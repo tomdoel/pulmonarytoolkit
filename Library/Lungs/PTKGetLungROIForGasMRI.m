@@ -30,7 +30,7 @@ function lung_image = PTKGetLungROIForGasMRI(lung_image, reporting)
     end
     
     if nargin < 2
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
 
     reporting.ShowProgress('Finding region of interest');
@@ -50,5 +50,5 @@ function lung_image = PTKGetLungROIForGasMRI(lung_image, reporting)
     lung_threshold.CropToFitWithBorder(5);
     lung_image.ResizeToMatch(lung_threshold);
     
-    reporting.CompleteProgress;
+    reporting.CompleteProgress();
 end

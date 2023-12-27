@@ -219,7 +219,7 @@ classdef MimImageCoordinateUtilities
             deformation_field_raw(:,:,:,1) = df_i - df_i_t;
             deformation_field_raw(:,:,:,2) = df_j - df_j_t;
             deformation_field_raw(:,:,:,3) = df_k - df_k_t;
-            deformation_field2 = deformation_field.BlankCopy;
+            deformation_field2 = deformation_field.BlankCopy();
             deformation_field2.ChangeRawImage(deformation_field_raw);
             deformation_field = deformation_field2;
         end

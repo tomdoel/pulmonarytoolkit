@@ -55,7 +55,7 @@ function [fv, normals] = MimCreateSurfaceFromSegmentation(segmentation, smoothin
     end
     
     % Isolate this colour component
-    sub_seg = segmentation.BlankCopy;
+    sub_seg = segmentation.BlankCopy();
     raw_image = segmentation.GetMappedRawImage;
     sub_seg.ChangeRawImage(raw_image == label);
     

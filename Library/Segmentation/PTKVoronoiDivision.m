@@ -41,7 +41,7 @@ function labeled_subregion_mask = PTKVoronoiDivision(region_mask, start_points, 
     end
     
     % Make a copy of the region image before resizing
-    output_template = region_mask.BlankCopy;
+    output_template = region_mask.BlankCopy();
     
     % First, make copies of the inputs since this could modify them
     start_points = start_points.Copy;
@@ -59,7 +59,7 @@ function labeled_subregion_mask = PTKVoronoiDivision(region_mask, start_points, 
     results_image_raw = start_points.RawImage(nn_indicies);
     
     % Store results
-    labeled_subregion_mask = region_mask.BlankCopy;
+    labeled_subregion_mask = region_mask.BlankCopy();
     labeled_subregion_mask.ChangeRawImage(results_image_raw); 
     
     % Resize to match original input size

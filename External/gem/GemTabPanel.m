@@ -41,7 +41,7 @@ classdef GemTabPanel < GemPanel
             obj.FontColour = [1 1 1];
             obj.BottomBorder = true;
             
-            obj.Tabs = containers.Map;
+            obj.Tabs = containers.Map();
             
             obj.BlankText = GemText(obj, '', '', 'blank');
             

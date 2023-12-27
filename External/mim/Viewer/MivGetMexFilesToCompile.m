@@ -16,7 +16,7 @@ function mex_files_to_compile_map = MivGetMexFilesToCompile(reporting)
 %     mex_files_to_compile(end + 1) = CoreCompiledFileInfo(1, 'mex_file_name', 'cpp', 'mex_file_dir', [], []);
     
     % Transfer to a map
-    mex_files_to_compile_map = containers.Map;
+    mex_files_to_compile_map = containers.Map();
     for mex_file = mex_files_to_compile
         mex_files_to_compile_map(mex_file.Name) = mex_file;
     end

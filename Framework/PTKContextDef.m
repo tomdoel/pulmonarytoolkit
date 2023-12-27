@@ -156,7 +156,7 @@ classdef PTKContextDef < handle
             obj.ContextSets(char(PTKContextSet.Any)) = any_set;
 
             % Create the hierarchy of contexts
-            obj.Contexts = containers.Map;
+            obj.Contexts = containers.Map();
             full_context =  MimContextMapping(PTKContext.OriginalImage, full_set, 'PTKGetContextForOriginalImage', 'PTKOriginalImage', []);
             roi_context = MimContextMapping(PTKContext.LungROI, roi_set, 'PTKGetContextForLungROI', 'PTKLungROI', full_context);
             lungs_context = MimContextMapping(PTKContext.Lungs, lungs_set, 'PTKGetContextForLungs', 'PTKLeftAndRightLungs', roi_context);

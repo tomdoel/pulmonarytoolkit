@@ -70,7 +70,7 @@ classdef PTKMaximumFissurePointsOblique < PTKPlugin
                 reporting.ShowWarning('PTKMaximumFissurePointsOblique:FissurePointsNotFound', ['The oblique fissure could not be found in the ' lung_name ' lung']);
             end
             
-            results = lung_roi.BlankCopy;
+            results = lung_roi.BlankCopy();
             results.ChangeRawImage(ref_image);
         end        
     end

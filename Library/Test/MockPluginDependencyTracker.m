@@ -22,8 +22,8 @@ classdef MockPluginDependencyTracker < handle
     methods
         
         function obj = MockPluginDependencyTracker()
-            obj.MockResults = containers.Map;            
-            obj.SavedMockResults = containers.Map;
+            obj.MockResults = containers.Map();
+            obj.SavedMockResults = containers.Map();
         end
         
         function AddMockResult(obj, name, context, dataset_uid, result_to_add, cache_info, has_been_run)

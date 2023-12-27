@@ -41,16 +41,16 @@ classdef MimDatasetCacheSelector < handle
     
     methods
         function obj = MimDatasetCacheSelector(dataset_uid, framework_app_def, reporting)
-            obj.Config = framework_app_def.GetFrameworkConfig;
+            obj.Config = framework_app_def.GetFrameworkConfig();
             obj.FrameworkAppDef = framework_app_def;
-            directories = framework_app_def.GetFrameworkDirectories;
+            directories = framework_app_def.GetFrameworkDirectories();
             obj.ManualSegmentationsDiskCache = MimDiskCache(directories.GetManualSegmentationDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
             obj.ResultsDiskAndMemoryCache = MimDatasetDiskAndMemoryCache(dataset_uid, framework_app_def, reporting);
             obj.EditedResultsDiskCache = MimDiskCache(directories.GetEditedResultsDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
             obj.MarkersDiskCache = MimDiskCache(directories.GetMarkersDirectoryAndCreateIfNecessary, dataset_uid, obj.Config, true, reporting);
             obj.FrameworkDatasetDiskCache = MimDiskCache(directories.GetFrameworkDatasetCacheDirectory, dataset_uid, obj.Config, false, reporting);
 
-            obj.CacheMap = containers.Map;
+            obj.CacheMap = containers.Map();
             obj.CacheMap(char(MimCacheType.Results)) = obj.ResultsDiskAndMemoryCache;
             obj.CacheMap(char(MimCacheType.Edited)) = obj.EditedResultsDiskCache;
             obj.CacheMap(char(MimCacheType.Markers)) = obj.MarkersDiskCache;

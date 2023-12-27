@@ -24,7 +24,7 @@ function dicom_image = MimLoad3DRawAndMetaFiles(path, filenames, study_uid, repo
     %        
 
     if nargin < 4
-        reporting = CoreReportingDefault;
+        reporting = CoreReportingDefault();
     end
     
     if nargin < 2

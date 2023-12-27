@@ -25,7 +25,7 @@ classdef MimDatasetApiCache < handle
     methods
         function obj = MimDatasetApiCache(framework_app_def)
             obj.FrameworkAppDef = framework_app_def;
-            obj.DatasetCacheMap = containers.Map;
+            obj.DatasetCacheMap = containers.Map();
         end
         
         function RemoveAllCachedFiles(obj, reporting)

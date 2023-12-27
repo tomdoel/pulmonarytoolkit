@@ -16,7 +16,7 @@ classdef PTKDirectories < CoreBaseClass
 
 
     methods (Static)
-        function source_directory = GetSourceDirectory
+        function source_directory = GetSourceDirectory()
             % Returns the full path to root of the PTK source code
         
             full_path = mfilename('fullpath');
@@ -24,7 +24,7 @@ classdef PTKDirectories < CoreBaseClass
             source_directory = fullfile(path_root, '..');
         end
         
-        function source_directory = GetTestSourceDirectory
+        function source_directory = GetTestSourceDirectory()
             % Returns the full path to root of the PTK test source code
         
             full_path = mfilename('fullpath');
@@ -32,11 +32,10 @@ classdef PTKDirectories < CoreBaseClass
             source_directory = fullfile(path_root, '..', PTKSoftwareInfo.TestSourceDirectory);
         end
         
-        function mex_source_directory = GetMexSourceDirectory
+        function mex_source_directory = GetMexSourceDirectory()
             % Returns the full path to the mex file directory
             
             mex_source_directory = fullfile(PTKDirectories.GetSourceDirectory, PTKSoftwareInfo.MexSourceDirectory);
         end
     end
 end
-

@@ -24,7 +24,7 @@ classdef MimPreviewImages < CoreBaseClass
     
     methods
         function obj = MimPreviewImages(framework_app_def, dataset_disk_cache, reporting)
-            obj.Config = framework_app_def.GetFrameworkConfig;
+            obj.Config = framework_app_def.GetFrameworkConfig();
             obj.DatasetDiskCache = dataset_disk_cache;
             obj.LoadPreviewFile(reporting);
         end
@@ -54,7 +54,7 @@ classdef MimPreviewImages < CoreBaseClass
         function Clear(obj, reporting)
             % Erase previews. Typically you would do this when erasing the disk
             % cache, so that previews do not become stale
-            obj.Previews = containers.Map;
+            obj.Previews = containers.Map();
             obj.SavePreviewFile(reporting);
         end
     end
@@ -64,7 +64,7 @@ classdef MimPreviewImages < CoreBaseClass
             % Cache previews on disk
             cached_previews = obj.DatasetDiskCache.LoadData(obj.Config.PreviewImageFileName, reporting);
             if isempty(cached_previews)
-                obj.Previews = containers.Map;
+                obj.Previews = containers.Map();
             else
                 obj.Previews = cached_previews;
             end
