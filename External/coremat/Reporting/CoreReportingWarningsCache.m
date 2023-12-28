@@ -48,14 +48,14 @@ classdef CoreReportingWarningsCache < CoreBaseClass
             for warning = obj.PendingWarnings.values
                 warning_message = warning{1}.Text;
                 if warning{1}.Count > 1
-                    warning_message = ['(repeated ×' int2str(warning{1}.Count) ') ' warning_message];
+                    warning_message = ['(repeated x' int2str(warning{1}.Count) ') ' warning_message];
                 end
                 obj.ReportingWithCache.ShowCachedWarning(warning{1}.ID, warning_message, warning{1}.SupplementaryInfo);
             end
             for message = obj.PendingMessages.values
                 message_text = message{1}.Text;
                 if message{1}.Count > 1
-                    message_text = ['(repeated ×' int2str(message{1}.Count) ') ' message_text];
+                    message_text = ['(repeated x' int2str(message{1}.Count) ') ' message_text];
                 end
                 obj.ReportingWithCache.ShowCachedMessage(message{1}.ID, message_text);
             end
