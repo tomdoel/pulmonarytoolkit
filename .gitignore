@@ -5,3 +5,4 @@ compiled
 compiled_api
 ptk-docs/_build
 .DS_Store
+ptk-docs-sphinx/build
