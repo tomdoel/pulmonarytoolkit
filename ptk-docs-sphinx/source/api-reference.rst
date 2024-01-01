@@ -6,5 +6,6 @@ API reference
    :caption: Functions:
 
    api/framework
+   api/legacy
    api/gui-reference
    api/gui-plugins
