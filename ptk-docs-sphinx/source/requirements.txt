@@ -1,2 +1,3 @@
 sphinxcontrib-matlabdomain
 pydata-sphinx-theme
+myst-parser
