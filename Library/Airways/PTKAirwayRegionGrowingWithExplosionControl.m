@@ -8,7 +8,7 @@ function results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, s
     % segmentation proceeds by wavefront growing and splitting, with
     % heuristics to prevent 'explosions' into the lung parenchyma.
     %
-    % Example:
+    % Syntax:
     %     results = PTKAirwayRegionGrowingWithExplosionControl(threshold_image, start_point, maximum_number_of_generations, explosion_multiplier, reporting, debug_mode)
     %
     % Parameters:

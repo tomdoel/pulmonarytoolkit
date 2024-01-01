@@ -9,7 +9,8 @@ classdef MimDatasetResults < handle
     % You should not create this class directly. An instance of this class
     % is given to plugins during their RunPlugin() function call.
     %
-    % Example:
+    % Example::
+    %
     %     classdef MyPlugin < MimPlugin
     %     
     %     methods (Static)

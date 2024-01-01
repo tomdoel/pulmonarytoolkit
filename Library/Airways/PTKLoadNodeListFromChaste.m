@@ -6,7 +6,7 @@ function [node_index, x, y, z, radius, is_terminal, node_index_1, node_index_2] 
     % PTKLoadTreeFromChaste instead.
     %
     %
-    % Example:
+    % Syntax:
     %     [node_index, x, y, z, radius, node_index_1, node_index_2] = PTKLoadNodeListFromChaste(file_path, node_filename, edge_filename, coordinate_system, reporting);
     %
     % Parameters:

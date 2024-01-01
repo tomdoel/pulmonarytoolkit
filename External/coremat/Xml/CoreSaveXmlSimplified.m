@@ -4,15 +4,16 @@ function CoreSaveXmlSimplified(data, name, file_name, alias_mapping, reporting)
     % CoreSaveXmlSimplified saves data into an XML file in a simplified format. The data may include arrays,
     % cell arrays, structures, maps and classes which support serialisation.
     %
-    % Example:
-    %     CoreSaveXmlSimplified(data, name, file_name, reporting)
+    % Syntax::
+    %     CoreSaveXmlSimplified(data, name, file_name, reporting);
     %
-    %         data - the root object of the data to store. Can be a value, a class, a structure, map or cell array
-    %         name - the name of the root object 
-    %         file_name - a CoreFilename or character array containing the path and filename
-    %         alias_mapping - Class names will be replaced by the
-    %                         corresponding entry in the map alias_mapping
-    %         reporting - object of type CoreReportingInterface for error reporting
+    % Parameters:
+    %     data: the root object of the data to store. Can be a value, a class, a structure, map or cell array
+    %     name: the name of the root object 
+    %     file_name: a CoreFilename or character array containing the path and filename
+    %     alias_mapping: Class names will be replaced by the
+    %                    corresponding entry in the map alias_mapping
+    %     reporting (CoreReportingInterface): object for error reporting
     %
     %
     % .. Licence

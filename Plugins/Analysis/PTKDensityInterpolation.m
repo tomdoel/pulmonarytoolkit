@@ -42,7 +42,7 @@ classdef PTKDensityInterpolation < PTKPlugin
             % The size of the 'voxels' for calculating the density.
             % Note if you want to change this, you should change the above 
             % property 
-            %     AlwaysRunPlugin = false
+            % AlwaysRunPlugin = false
             % so that the plug is forced to re-run
             
             interp_voxel_size_mm = [5, 5, 5];
@@ -96,8 +96,7 @@ classdef PTKDensityInterpolation < PTKPlugin
             results_raw(:) = roi_interp(indices);
 
             results = roi.BlankCopy();
-            
-            
+
             results.ChangeRawImage(single(results_raw));
             results.ImageType = PTKImageType.Scaled;
 

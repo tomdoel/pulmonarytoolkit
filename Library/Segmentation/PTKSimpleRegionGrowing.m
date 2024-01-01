@@ -6,20 +6,20 @@ function output_image = PTKSimpleRegionGrowing(threshold_image, start_points_glo
     %
     % See Also: PTKMultipleRegionGrowing, PTKSmoothedRegionGrowing
     %
-    % Example:
+    % Syntax:
     %     output_image = PTKSimpleRegionGrowing(threshold_image, start_points_global, reporting)
     %
     % Parameters:
-    %     threshold_image - The threshold image in a PTKImage class. 1s
+    %     threshold_image: The threshold image in a PTKImage class. 1s
     %         represents voxels which are connected
-    %     start_points - an array of points, where each point is a
+    %     start_points:an array of points, where each point is a
     %         coordinate in the form [i, j, k]. The region growing will
     %         begin from all these points simultaneously
-    %     reporting (CoreReportingInterface) - object for reporting progress and warnings
+    %     reporting (CoreReportingInterface): object for reporting progress and warnings
     %
     % Returns:
     %     output_image: A binary PTKImage containing the segmented region
-    %                   of all voxels connected to the starting points
+    %         of all voxels connected to the starting points
     %
     %
     % .. Licence

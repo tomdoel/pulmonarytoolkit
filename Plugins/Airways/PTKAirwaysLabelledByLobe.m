@@ -8,20 +8,21 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
     %
     % Plugins should not be run directly from your code.
     %
-    %     PTKAirwaysLabelledByLobe calls the PTKAirways plugin to segment the
-    %     airway tree and the PTKAirwayCentreline plguin to obtain the airway
-    %     centreline. It then calls the library function PTKGetAirwaysLabelledByLobe
-    %     to allocate each broncus to the unique lobe it serves. Bronchi serving
-    %     more than one lobe are not displayed.
+    % PTKAirwaysLabelledByLobe calls the PTKAirways plugin to segment the
+    % airway tree and the PTKAirwayCentreline plguin to obtain the airway
+    % centreline. It then calls the library function PTKGetAirwaysLabelledByLobe
+    % to allocate each broncus to the unique lobe it serves. Bronchi serving
+    % more than one lobe are not displayed.
     %
-    %     The resulting image is a labelled image with nonzero values
-    %     representing bronchi allocated to the following lobes:
-    %         1 - Upper right lobe
-    %         2 - Mid right lobe
-    %         4 - Lower right lobe
-    %         5 - Upper left lobe
-    %         6 - Lower left lobe
-    %         3 - Lobe could not be determined with certainty
+    % The resulting image is a labelled image with nonzero values
+    % representing bronchi allocated to the following lobes:
+    % 
+    % - 1: Upper right lobe
+    % - 2: Mid right lobe
+    % - 4: Lower right lobe
+    % - 5: Upper left lobe
+    % - 6: Lower left lobe
+    % - 3: Lobe could not be determined with certainty
     %
     %
     % .. Licence

@@ -4,8 +4,9 @@ classdef (ConstructOnLoad) CoreEventData < event.EventData
     % Use this class when you trigger an event which needs to provide data
     % to its listeners.
     %
-    % Example:
-    %     This example triggers a MouseClick event and passes the image coordiates
+    % Example::
+    %
+    %     % This example triggers a MouseClick event and passes the image coordiates
     %
     %     coords = GetImageCoordinates;
     %     notify(obj, 'MouseClick', CoreEventData(coords));

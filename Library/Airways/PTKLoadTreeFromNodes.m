@@ -1,7 +1,7 @@
 function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_filename, coordinate_system, template_image, reporting)
     % Load a tree strucure from branches stored in node/element files
     %
-    % Example:
+    % Syntax:
     %     root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_filename, coordinate_system, template_image, reporting);
     %
     % Parameters:
@@ -20,7 +20,8 @@ function root_branch = PTKLoadTreeFromNodes(file_path, node_filename, element_fi
     %                 for reporting progress and warnings
     %
     % Returns:
-    %     The root branch of the loaded tree structure as a PTKTreeModel
+    %     root_branch: The root branch of the loaded tree structure as a PTKTreeModel
+    %
     %
     % .. Licence
     %    -------

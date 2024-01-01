@@ -1,22 +1,22 @@
 function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_system, template_image, reporting)
     % Export a tree structure into ipnode and ipelem files
     %
-    % Example:
+    % Syntax:
     %     PTKSaveTreeAsCMISS(tree_root, file_path, base_filename, reporting);
     %
     % Parameters:
-    %             tree_root       is the root branch in a PTKTreeModel structure 
-    %             file_path       is the path where the node and element files
-    %                             are to be stored
-    %             filename_prefix is the filename prefix. The node and element
-    %                             files will have '_node.txt' and '_element.txt'
-    %                             appended to this prefix before saving.
-    %             coordinate_system  a MimCoordinateSystem enumeration
-    %                             specifying the coordinate system to use
-    %             template_image  A PTKImage providing voxel size and image size
-    %                             parameters
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
+    %     tree_root: root branch in a PTKTreeModel structure 
+    %     file_path: path where the node and element files
+    %         are to be stored
+    %     filename_prefix: filename prefix. The node and element
+    %         files will have '_node.txt' and '_element.txt'
+    %         appended to this prefix before saving.
+    %     coordinate_system: a MimCoordinateSystem enumeration
+    %         specifying the coordinate system to use
+    %     template_image: A PTKImage providing voxel size and image size
+    %         parameters
+    %     reporting: an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
     %
     % .. Licence

@@ -5,7 +5,7 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     % lung CT image, PTKFindTopOfTrachea finds the coordinate of a point
     % within and near the top of the trachea
     %
-    % Example:
+    % Syntax:
     %     top_of_trachea = PTKFindTopOfTrachea(lung_image, reporting)
     %
     %     [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, reporting)

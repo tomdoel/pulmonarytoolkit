@@ -1,7 +1,7 @@
 function root_branch = PTKLoadTreeFromChaste(file_path, node_filename, edge_filename, coordinate_system, template_image, reporting)
     % Load a tree strucure from branches stored in Chaste format node/element files
     %
-    % Example:
+    % Syntax:
     %     root_branch = PTKLoadTreeFromChaste(file_path, filename_prefix, reporting);
     %
     % Parameters:

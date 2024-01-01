@@ -8,7 +8,7 @@ function start_branches = PTKGetAirwaysLabelledByLobe(template, airway_centrelin
     % determine its centroid. The two centroids are compared to separate the
     % branches according to lobes.
     %
-    % Example:
+    % Syntax:
     %
     %     [results_image, start_branches] = PTKGetAirwaysLabelledByLobe(template, airway_results, airway_centreline_tree, reporting)
     %

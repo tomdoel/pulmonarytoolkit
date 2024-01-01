@@ -16,14 +16,15 @@ classdef PTKAirwayGenerator < handle
     % The algorithm is derived from Tawhai et al. (2004), although some
     % changes have been made to the algorithm.
     %
-    % Syntax:
+    % Syntax::
+    %
     %     airway_generator = PTKAirwayGenerator(
     %         lung_mask,              % A binary mask of the whole lung volume
     %         centreline_tree,        % A PTKModelTree produced from PTKAirwayCentreline
     %         point_limit_voxels,     % Branches will terminate if the size of the region they grow into in voxels is less than this limit
     %         approx_number_points,   % The number of grid points desired in the final volume region. The original volume will be resampled to achieve approximately this number of points.
     %         reporting               % A CoreReportingInterface object for error, warning and progress reporting
-    %     )
+    %     );
     %    
     % 
     % .. Licence

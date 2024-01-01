@@ -1,27 +1,25 @@
 function fileGrouper = DMImportRecursive(filenameOrRootDirectory, dicomLibrary, reporting)
     % Loads metadata from a series of DICOM files
     %
-    % Syntax:
-    %     file_grouper = DMLoadMetaDMImportRecursivedataFromDicomFiles(filenameOrRootDirectory, dicomLibrary, reporting)
+    % Syntax::
+    %     file_grouper = DMLoadMetaDMImportRecursivedataFromDicomFiles(filenameOrRootDirectory, dicomLibrary, reporting);
     %
     % Parameters:
-    %     file_grouper    a DMFileGrouper object containing the 
-    %                     metadata grouped into coherent sequences of images
+    %     filenameOrRootDirectory: specify the location of the DICOM files
+    %     dicomLibrary (Optional[DMDicomLibraryInterface]): An object used to
+    %         parse the Dicom files. If no object is provided
+    %         then the default DMDicomLibrary is used
+    %     reporting (CoreReportingInterface): A CoreReporting or implementor of 
+    %          the same interface,
+    %          for error and progress reporting. Create a CoreReporting
+    %          with no arguments to hide all reporting. If no
+    %          reporting object is specified then a default
+    %          reporting object with progress dialog is
+    %          created
     %
-    %     filenameOrRootDirectory specify the location of the DICOM
-    %                     files.
-    %
-    %     dicomLibrary    (Optional) An object implementing
-    %                     DMDicomLibraryInterface, used to parse
-    %                     the Dicom files. If no object is provided
-    %                     then the default DMDicomLibrary is used
-    %
-    %     reporting       A CoreReporting or implementor of the same interface,
-    %                     for error and progress reporting. Create a CoreReporting
-    %                     with no arguments to hide all reporting. If no
-    %                     reporting object is specified then a default
-    %                     reporting object with progress dialog is
-    %                     created
+    % Returns:
+    %     file_grouper (DMFileGrouper): object containing the 
+    %         metadata grouped into coherent sequences of images
     %
     %
     % .. Licence

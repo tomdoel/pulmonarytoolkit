@@ -53,16 +53,15 @@ classdef MimPlugin < handle
         % Should normally be set to 'ReplaceOverlay'.
         % This specifies how the plugin result will be displayed to the user
         % when using the gui. Allowable values are:
-        %  - ReplaceOverlay:
-        %        the result is displayed as an image overlay
-        %  - ReplaceImage:
-        %        the result replaces the image. Normally you would
-        %        only do this when creating a new image context 
-        %        (i.e. region of interest)
-        %  - DoNothing:
-        %        do not display any results. This option is
-        %        appropriate if your plugin displays its results in
-        %        its own window
+        %
+        % - ReplaceOverlay: the result is displayed as an image overlay
+        % - ReplaceImage: the result replaces the image. Normally you would
+        %   only do this when creating a new image context 
+        %   (i.e. region of interest)
+        % - DoNothing: do not display any results. This option is
+        %   appropriate if your plugin displays its results in
+        %   its own window
+        %
         PluginType
         
         % Set to force the plugin to appear in a particular panel name in the gui.

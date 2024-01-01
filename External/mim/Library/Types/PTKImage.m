@@ -14,7 +14,8 @@ classdef (ConstructOnLoad = true) PTKImage < handle
     % PTKImage as output, with the metadata preserved. You can do this by
     % creating a 'template image' using the BlankCopy() method, e.g.
     %
-    % Example:
+    % Example::
+    %
     %     % This function doubles the values in a PTKImage
     %     function output_image = DoubleImage(input_image)
     %

@@ -1,9 +1,8 @@
 function PTKVisualiseTreeModel(parent_branch)
     % PTKVisualiseTreeModel. Draws a simplified visualisation of a tree
     %
-    % Example:
-    %
-    %     PTKVisualiseTreeModel(parent_branch)
+    % Syntax:
+    %     PTKVisualiseTreeModel(parent_branch);
     %
     % Parameters:
     %     parent_branch: root branch in a PTKTreeModel structure 

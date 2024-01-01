@@ -7,11 +7,13 @@ classdef PTKTutorial < MimScript
     %     it is intended to be run in the Matlab Command Window, or by creating your own script.
     %
     %     Hence this PTKScript is mainly for testing purposes, but you can run it if you like using PTK's RunScript() method.
-    %     You will need to specify a path to some Dicom lung image volume files. For example:
+    %     You will need to specify a path to some Dicom lung image volume files.
+    %     For example::
     %
     %       PTKAddPaths()
     %       ptk_main = PTKMain();
     %       ptk_main.RunScript('PTKTutorial', source_path_dicom);
+    %
     %
     % .. Licence
     %    -------

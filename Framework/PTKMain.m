@@ -25,15 +25,16 @@ classdef PTKMain < MimMain
     % has peviously been imported, using the UID that was associated with
     % that dataset.
     % 
-    % Example:
-    %     Replace <image path> and <filenames> with the path and filenames
-    %     to your image data.
+    % Example::
+    %
+    %     % Replace <image path> and <filenames> with the path and filenames
+    %     % to your image data.
     % 
     %     image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
     %     ptk = PTKMain();
     %     dataset = ptk.CreateDatasetFromInfo(image_info);
     % 
-    %     You can then obtain results from this dataset, e.g.
+    %     % You can then obtain results from this dataset, e.g.
     % 
     %     airways = dataset.GetResult('PTKAirways');
     %

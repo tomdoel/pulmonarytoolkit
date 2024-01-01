@@ -3,10 +3,10 @@ function results = PTKProcessAirwaySkeleton(skeleton_image, start_point, reporti
     % start_point and returning a data structure containing the processed 
     % informtion
     %
-    % Example:
+    % Syntax:
     %     results = PTKProcessAirwaySkeleton(skeleton_image, start_point, reporting)
     %        
-    % Arguments:
+    % Parameters:
     %     skeleton_image:
     %         A 3D volume containing the airway skeleton. 
     %         0=background, 1=skeleton point
@@ -20,14 +20,16 @@ function results = PTKProcessAirwaySkeleton(skeleton_image, start_point, reporti
     %         for reporting progress and warnings
     %
     % Returns:
-    %     results is a structure containing the following fields
-    %         * original_skeleton_points
-    %         * airway_skeleton
-    %         * bifurcation_points
-    %         * skeleton_points
-    %         * image_size
-    %         * start_point
-    %         * removed_points
+    %     results is a structure containing the following fields:
+    %
+    %         - original_skeleton_points
+    %         - airway_skeleton
+    %         - bifurcation_points
+    %         - skeleton_points
+    %         - image_size
+    %         - start_point
+    %         - removed_points
+    %         
     %
     % .. Licence
     %    -------

@@ -16,14 +16,16 @@ classdef MimDataset < CoreBaseClass
     % CreateDatasetFromUid to get a MimDataset object for each dataset you are
     % working with.
     %
-    % Example: Replace <image path> and <filenames> with the path and filenames
-    % to your image data.
+    % Example::
+    %
+    %     % Replace <image path> and <filenames> with the path and filenames
+    %     % to your image data.
     %
     %     image_info = PTKImageInfo( <image path>, <filenames>, [], [], [], []);
     %     mim = MimMain;
     %     dataset = mim.CreateDatasetFromInfo(image_info);
     %
-    % You can then obtain results from this dataset, e.g.
+    %     % You can then obtain results from this dataset, e.g.
     %
     %     results = dataset.GetResult('PluginName');
     %

@@ -8,11 +8,11 @@ classdef CoreWrapper < handle
     % which should prevent unecessary copying, this wrapper class also
     % allows the contents to be modified without copying.
     %
-    % Example:
+    % Example::
     %
-    %     This example shows how to use a CoreWrapper to pass an image to a sub
-    %     function. As CoreWrapper is a handle class, only the reference is passed
-    %     to the subfunction, avoiding copying of the large image matrix.
+    %     % This example shows how to use a CoreWrapper to pass an image to a sub
+    %     % function. As CoreWrapper is a handle class, only the reference is passed
+    %     % to the subfunction, avoiding copying of the large image matrix.
     %     
     %     image_wrapper = CoreWrapper();
     %     image_wrapper.RawImage = <large image matrix>

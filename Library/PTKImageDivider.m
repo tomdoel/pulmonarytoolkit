@@ -1,55 +1,54 @@
 function filtered_image = PTKImageDivider(image_data, filter_function, mask, gaussian_sigma, hessian_filter_gaussian, dont_divide, is_left_lung, reporting)
-    % PTKImageDivider. Computes a filter for an image, one octant at a time.
-    
+    % Compute a filter for an image, one octant at a time.
     %
-    %     This function performs filtering on an image, but 
-    %     reduces memory usage by first dividing the image into octants, 
-    %     computing the filter for each octant, and then recombining to produce 
-    %     an output image.
+    % This function performs filtering on an image, but 
+    % reduces memory usage by first dividing the image into octants, 
+    % computing the filter for each octant, and then recombining to produce 
+    % an output image.
     %
-    %     The function first divides the image into octants by dividing each
-    %     dimension in half but allowing for an overlap border. The provided function
-    %     handle is called for each octant, with the subimage
-    %     provided as input. The resulting images are recombined, discarding
-    %     the overlap regions
+    % The function first divides the image into octants by dividing each
+    % dimension in half but allowing for an overlap border. The provided function
+    % handle is called for each octant, with the subimage
+    % provided as input. The resulting images are recombined, discarding
+    % the overlap regions
     %
-    %     Example:
-    %         filtered_image = PTKImageDivider(image_data, filter_function, gaussian_sigma, hessian_filter_gaussian, dont_divide, is_left_lung, reporting)
+    % Syntax:
+    %     filtered_image = PTKImageDivider(image_data, filter_function, gaussian_sigma, hessian_filter_gaussian, dont_divide, is_left_lung, reporting);
     %
-    %             image_data - The image to filter, in a PTKImage class
-    %             filter_function - handle to a user-defined filter function 
-    %                 which is to be applied to each quadrant. See below for syntax.
-    %             mask - a logical matrix specifying which elements of
-    %                 image_data should be processed.
-    %             gaussian_sigma - The size of the Gaussian filter to be applied to the whole image
-    %                 before filtering using the supplied function. Specify [] for no filtering.
-    %             hessian_filter_gaussian - Gaussian filter size to be applied
-    %                 to each component of the Hessian matrix before filtering 
-    %                 using the supplied function. Specify [] for no filtering.
-    %             dont_divide - If true, then the image is not divided into
-    %                 quadrants. A value of [] is equivalent to false.
-    %             is_left_lung - used for progress reporting. Specify true if
-    %                 the functin is currently computing values for the left 
-    %                 lung. The progress reporting assumes the right lung is
-    %                 computed first, and corresponds to the first half of the
-    %                 progress bar. Processing the left lung corresponds to the
-    %                 right half of the progress bar. If [] is specified, the
-    %                 left lung is assumed and a warning is issued.
-    %             reporting       an object implementing CoreReportingInterface
-    %                             for reporting progress and warnings
-    %     Notes
-    %     -----
-    %         The filter_function is a handle to a function of the form
-    %             function output_wrapper = FilterFunction(subimage, mask)
-    %             
-    %         This function will be called once for each octant of the image.
-    %      
-    %         subimage is a PTKImage object, containing the image octant.
+    % Parameters:
+    %     image_data: The image to filter, in a PTKImage class
+    %     filter_function: handle to a user-defined filter function 
+    %         which is to be applied to each quadrant. See below for syntax.
+    %     mask: a logical matrix specifying which elements of
+    %         image_data should be processed.
+    %     gaussian_sigma: The size of the Gaussian filter to be applied to the whole image
+    %         before filtering using the supplied function. Specify [] for no filtering.
+    %     hessian_filter_gaussian: Gaussian filter size to be applied
+    %         to each component of the Hessian matrix before filtering 
+    %         using the supplied function. Specify [] for no filtering.
+    %     dont_divide: If true, then the image is not divided into
+    %         quadrants. A value of [] is equivalent to false.
+    %     is_left_lung: used for progress reporting. Specify true if
+    %         the functin is currently computing values for the left 
+    %         lung. The progress reporting assumes the right lung is
+    %         computed first, and corresponds to the first half of the
+    %         progress bar. Processing the left lung corresponds to the
+    %         right half of the progress bar. If [] is specified, the
+    %         left lung is assumed and a warning is issued.
+    %     reporting: an object implementing CoreReportingInterface
+    %         for reporting progress and warnings
     %
-    %         output_wrapper is a PTKImage object containing the image resulting 
-    %             from the filter.
+    % Notes:
+    %     The filter_function is a handle to a function of the form
+    %         function output_wrapper = FilterFunction(subimage, mask)
+    %         
+    %     This function will be called once for each octant of the image.
+    %  
+    %     subimage is a PTKImage object, containing the image octant.
+    %
+    %     output_wrapper is a PTKImage object containing the image resulting 
+    %         from the filter.
     %   
-    %
     %
     % .. Licence
     %    -------
