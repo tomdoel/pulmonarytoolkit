@@ -6,9 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-import os # imports os 
-import sphinx_cobra_theme
-import sphinx_rtd_theme
+import os
 
 project = 'Pulmonary Toolkit'
 copyright = '2023, Tom Doel'
