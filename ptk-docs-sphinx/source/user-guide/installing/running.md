@@ -3,7 +3,7 @@
 Make sure you have followed the installation instructions. If running from Matlab, you need the Matlab Image Processing Toolbox and you need to have a C++ compiler configured to work with Matlab.
 
 
----
+
 
 ## Running the GUI from Matlab
 
