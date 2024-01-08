@@ -134,39 +134,3 @@ macOS users might be prompted to install command-line tools when running this co
 
 If you don't have a command-line git installed, or if you want to update your command-line git to a newer version, [see the official docs](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git). You can also use package managers such as Homebrew (macOS) which allow you to install new versions without affecting with your system installation.
 
-
----
-
-## 4. Download the Pulmonary Toolkit using git
-
-The main PTK codebase lives on GitHub: https://github.com/tomdoel/pulmonarytoolkit.
-
-### Using a command-line git client
-You can download the Toolkit into a folder called “pulmonarytoolkit” using the following command:
-```
-git clone https://github.com/tomdoel/pulmonarytoolkit.git
-```
-
-### Using GitHub Desktop
-
-Go to GitHub: https://github.com/tomdoel/pulmonarytoolkit
-Click Clone or Download
-Click Open in Desktop
-Select a folder to store your local clone
-
-### Using SourceTree
-
-Open SourceTree
-From the File menu, click New / Clone.
-Click + New Repository
-Click Clone from URL
-In the Source URL, enter https://github.com/tomdoel/pulmonarytoolkit
-Choose a destination path
-Click Clone
-
-
----
-
-## 5. Run the Pulmonary Toolkit
-
-See [Running the Pulmonary Toolkit](../user-guide/running)

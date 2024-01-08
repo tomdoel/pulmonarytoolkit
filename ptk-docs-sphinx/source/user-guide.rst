@@ -2,11 +2,11 @@ User guide
 ^^^^^^^^^^
 
 .. toctree::
-   :maxdepth: 2
-   :caption: User guide
+   :maxdepth: 1
+   :caption: Installing and running
 
-   user-guide/required-software
-   user-guide/installing
-   user-guide/installing-without-matlab
-   user-guide/running
-   user-guide/Running-PTK-without-Matlab
+   user-guide/installing/required-software
+   user-guide/installing/installing
+   user-guide/installing/running
+   user-guide/installing/updating
+   user-guide/installing/running-without-matlab

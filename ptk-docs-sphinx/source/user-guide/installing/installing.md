@@ -3,12 +3,6 @@
 The recomended way to use the PTK is to obtain the code using git and run
 it using Matlab.
 
-```{tip}
-Alternatively, if you want to run PTK without Matlab, you can run an older version as a pre-built executable. See [Installing without Matlab](../user-guide/installing-without-matlab) for more information.
-```
-
-## 1. Required software
-
 You should have the following software installed before continuing:
  * Matlab version R2010b or later
  * The Matlab Image Processing Toolbox
@@ -17,8 +11,11 @@ You should have the following software installed before continuing:
 
 Please see [Required Software](required-software.md) for more information about how to install these.
 
+```{tip}
+Alternatively, if you want to run PTK without Matlab, you can run an older version as a pre-built executable. See [Installing without Matlab](../user-guide/running-without-matlab) for more information.
+```
 
-## 2. Download the Pulmonary Toolkit using git
+## Download the Pulmonary Toolkit using git
 
 The main PTK codebase lives on GitHub: https://github.com/tomdoel/pulmonarytoolkit.
 To obtain the code, you clone it using your git client.
@@ -52,13 +49,13 @@ Click Clone
 
 ---
 
-## 3. Run the Pulmonary Toolkit
+## Run the Pulmonary Toolkit
 
 See [Running the Pulmonary Toolkit](../user-guide/running)
 
 ---
 
-## 4. Updating the Pulmonary Toolkit
+## Updating the Pulmonary Toolkit
 
 To update to the latest version of PTK, you "pull" the latest changes using git.
 
