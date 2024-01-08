@@ -1,9 +1,18 @@
-# Running PTK without Matlab
+# Installing the Pulmonary Toolkit without Matlab
 
-_Added in PTK v0.6.6_
+If you do not need to develop your own plugins and scripts, you can run the Pulmonary Toolkit without a Matlab license by installing a [pre-built release](https://github.com/tomdoel/pulmonarytoolkit/releases)
 
-PTK can be run without a Matlab license by using a compiled version of PTK.
-You can find pre-compiled versions of PTK under the GitHub [releases](https://github.com/tomdoel/pulmonarytoolkit/releases) page. You can also compile PTK yourself compile it yourself. Compiling PTK requires a Matlab license, but using the compiled version does not require a license.
+```{warning} Pre-built releases are not available for the latest versions of the Pulmonary Toolkit. The available versions do not have the latest featuers and bug fixes.
+```
+
+Each release has two executables; the PTK GUI runs the full graphical user interface, or you can use PTK Command-Line to run pre-compiled scripts from a command prompt/terminal window or batch file/shell script.
+
+The pre-built releases are compiled using specific versions of Matlab. In order to run them, you will need to install the free Matlab Runtime (MCR) for the exact same version of Matlab. On Windows, you also need to install the free Visual C++ Redistributable. Details are provided on the release page: https://github.com/tomdoel/pulmonarytoolkit/releases
+Pre-built releases do not provide an update mechanism, and you cannot write your own plugins or scripts.
+
+
+
+You can also compile PTK yourself. Compiling PTK requires a Matlab license, but using the compiled version does not require a license.
 
 Running compiled version requires the following:
  * The free Matlab MCR to be installed, which MUST match the version of Matlab used to compile PTK.

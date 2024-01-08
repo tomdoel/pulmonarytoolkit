@@ -13,11 +13,12 @@ Pulmonary Toolkit
    getting-started
    user-guide
    tutorials
-   developer
+   developer-guide
    plugin-reference
    ptk-library
    api-reference
    contributing
+   reference
 
 
 Indices and tables

@@ -13,7 +13,7 @@ Recommended:
 * A git client
 
 ```{tip}
-If you want to run PTK without Matlab, you can install an older version as a pre-built executable. Be aware this will not have the latest bug fixes. See [Installing without Matlab](../user-guide/installing-without-matlab) for more information.
+You can run an older version of PTK without these requirements by installing a pre-built executable. Be aware this will not have the latest features and bug fixes. See [Installing without Matlab](../user-guide/installing-without-matlab) for more information.
 ```
 
 ---
