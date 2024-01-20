@@ -1,6 +1,8 @@
 classdef MivDefaultStyleSheet
-    % MivDefaultStyleSheet. Defines the default styles for GUI components.
+    % Defines the default styles for GUI components used by the MIV application
     %
+    % When creating a custom application, you may wish to create a new version
+    % of this class with appropriate modifications.
     %
     %
     % .. Licence

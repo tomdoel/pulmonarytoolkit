@@ -1,31 +1,31 @@
 classdef MivContextDef < handle
-    % MivContextDef. Defines contexts for MIV
+    % Defines contexts used by the MIV application.
     %
+    % There are a number of contexts, which each represent particular
+    % regions of the lung. For example, the OriginalImage context is the
+    % entire image, whereas the LungROI is the parrallipiped region
+    % containing the lungs and airways. The LeftLung and RightLung comprise
+    % just the voumes of the left and right lung respectively.
     %
-    %     There are a number of contexts, which each represent particular
-    %     regions of the lung. For example, the OriginalImage context is the
-    %     entire image, whereas the LungROI is the parrallipiped region
-    %     containing the lungs and airways. The LeftLung and RightLung comprise
-    %     just the voumes of the left and right lung respectively.
+    % Context sets describe a collection of related contexts. For example,
+    % the SingleLung context set contains LeftLung and RightLung.
     %
-    %     Context sets describe a collection of related contexts. For example,
-    %     the SingleLung context set contains LeftLung and RightLung.
+    % Each plugin specifies its context set, which is the domain of the
+    % results produced by the plugin. Some plugins operate over the whole
+    % LungROI region, while some operate on individual lungs.
     %
-    %     Each plugin specifies its context set, which is the domain of the
-    %     results produced by the plugin. Some plugins operate over the whole
-    %     LungROI region, while some operate on individual lungs.
+    % This class manages the situations where a result is requested for a
+    % particualar context (e.g. LungROI) but the plugin defines a different
+    % context set (e.g. SingleLung). The LungROI can be built from the two
+    % contexts in the SingleLung set. Therefore in this case, the plugin is run twice,
+    % once for the left and once for the right lung. Then the resutls are
+    % combined to produce the result for the LungROI context.
     %
-    %     This class manages the situations where a result is requested for a
-    %     particualar context (e.g. LungROI) but the plugin defines a different
-    %     context set (e.g. SingleLung). The LungROI can be built from the two
-    %     contexts in the SingleLung set. Therefore in this case, the plugin is run twice,
-    %     once for the left and once for the right lung. Then the resutls are
-    %     combined to produce the result for the LungROI context.
+    % Thie class defines this heirarchy of contexts and context sets. In
+    % this way plugins can operate on whichever context is appropriate,
+    % while results can be requested for any context, and the conversions
+    % are handled automatically.
     %
-    %     Thie class defines this heirarchy of contexts and context sets. In
-    %     this way plugins can operate on whichever context is appropriate,
-    %     while results can be requested for any context, and the conversions
-    %     are handled automatically.
     %
     % .. Licence
     %    -------
@@ -40,7 +40,7 @@ classdef MivContextDef < handle
     end
     
     methods
-        function obj = MivContextDef
+        function obj = MivContextDef()
             obj.CreateContexts;
         end
         

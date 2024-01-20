@@ -1,5 +1,8 @@
 function mex_files_to_compile_map = MivGetMexFilesToCompile(reporting)
-    % MivGetMexFilesToCompile. Returns a list of mex files used by PTK
+    % Returns a list of mex files used by the MIV application.
+    %
+    % When create a custom application, create a new version of this class 
+    % and populate mex_files_to_compile with all the required mex files
     %
     %
     % .. Licence
@@ -12,8 +15,8 @@ function mex_files_to_compile_map = MivGetMexFilesToCompile(reporting)
     % Populate list with known mex files
     mex_files_to_compile = CoreCompiledFileInfo.empty(0);
     
-% Add mex files using the following template
-%     mex_files_to_compile(end + 1) = CoreCompiledFileInfo(1, 'mex_file_name', 'cpp', 'mex_file_dir', [], []);
+    % Add mex files using the following template
+    %     mex_files_to_compile(end + 1) = CoreCompiledFileInfo(1, 'mex_file_name', 'cpp', 'mex_file_dir', [], []);
     
     % Transfer to a map
     mex_files_to_compile_map = containers.Map();

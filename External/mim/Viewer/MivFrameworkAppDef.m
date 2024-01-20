@@ -1,7 +1,8 @@
 classdef MivFrameworkAppDef < handle
-    % MivFrameworkAppDef. Defines application-dependent behaviour for the
-    % Framework
+    % Defines framework behaviour specifically for the MIV application
     %
+    % When creating a custom application, create a new version of this class 
+    % with appropriate modifications.
     %
     %
     % .. Licence
@@ -19,7 +20,7 @@ classdef MivFrameworkAppDef < handle
     end
     
     methods
-        function obj = MivFrameworkAppDef
+        function obj = MivFrameworkAppDef()
             obj.Config = MimConfig();
             obj.ContextDef = MivContextDef();
             obj.Directories = MimDirectories(obj.GetApplicationParentDirectory, obj.Config);
