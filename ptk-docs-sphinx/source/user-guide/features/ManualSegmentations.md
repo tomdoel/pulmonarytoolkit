@@ -26,23 +26,8 @@ The key to using manual segmentations with plugins is to write your plugin to us
 is to set the plugin's `ContextSet` property to `PTKContextSet.Any`use an incoming `Context`
 
 
-
-
-
-Some PTK Plugins
-
- You could also use this to
-
-
-
-You can write plugins that process
-
 This allows you to write plugins that analyse manually-defined regions instead of (or in addition to) regions generated automatically by plugins.
 
-
-
-While a plugin will often create
-This allows you to run analysis on These allow to to run analysis over
 
 The PTK GUI provides some basic tools to create and edit manual segmentations; you can also use external tools (such as ITK-Snap) by exporting a manual segmentation to an appropriate file format, modifying using the external tool, and then importing the modified file.
 

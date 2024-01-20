@@ -1,8 +1,8 @@
 classdef PTKPatch
-    % Interface for sharing image edits with other PTK clients 
+    % Interface for sharing image edits with other PTK users.
     %
-    % You should not use this class within your own code. It is intended to
-    % be used by the gui of the Pulmonary Toolkit.
+    % Edited results can be shared with other users by exporting the edited result as
+    % a PTKPatch object. This can then be imported by the other user.
     %
     %
     % .. Licence

@@ -1,5 +1,8 @@
 classdef PTKReporting < MimReporting
-    % Legacy support function. Replaced by MimReporting
+    % Provides error, message and progress reporting. For the implementation, see
+    % the MimReporting class. This class provides backwards compatibility allowing
+    % PTKReporting to contnue to be used.
+    %
     %
     % .. Licence
     %    -------
