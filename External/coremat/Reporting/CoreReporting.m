@@ -73,7 +73,7 @@ classdef CoreReporting < CoreReportingInterface
             if nargin > 2
                 obj.LogFileName = log_file_name;
             else
-                obj.LogFileName = fullfile(CoreDiskUtilities.GetUserDirectory, 'corereporting.log');
+                obj.LogFileName = fullfile(CoreDiskUtilities.GetUserDirectory(), 'corereporting.log');
             end
             obj.ClearProgressStack();
         end

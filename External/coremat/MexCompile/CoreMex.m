@@ -27,7 +27,7 @@ classdef CoreMex < CoreBaseClass
                 reporting = CoreReportingDefault();
             end
             
-            coreMexDirectory = fullfile(CoreDiskUtilities.GetUserDirectory, 'coremex');
+            coreMexDirectory = fullfile(CoreDiskUtilities.GetUserDirectory(), 'coremex');
             mexCacheFilename = fullfile(coreMexDirectory, 'MexCache.xml');
             
             obj.Reporting = reporting;

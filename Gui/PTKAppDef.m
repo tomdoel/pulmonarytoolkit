@@ -33,7 +33,7 @@ classdef PTKAppDef < handle
         end
         
         function context_def = GetContextDef(obj)
-            context_def = PTKContextDef;
+            context_def = PTKContextDef();
         end
         
         function name = GetName(obj)
@@ -53,7 +53,7 @@ classdef PTKAppDef < handle
         end
         
         function style_sheet = GetDefaultStyleSheet(obj)
-            style_sheet = PTKDefaultStyleSheet;
+            style_sheet = PTKDefaultStyleSheet();
         end
 
         function logo = GetLogoFilename(obj)
@@ -69,7 +69,7 @@ classdef PTKAppDef < handle
         end
         
         function plugins_folders = GetListOfPluginsFolders(obj)
-            app_plugins_path = obj.GetPluginsPath;
+            app_plugins_path = obj.GetPluginsPath();
             shared_plugins_path = obj.GetFrameworkAppDef.GetFrameworkDirectories.GetSharedPluginsDirectory;
             user_plugins_path = obj.GetUserPluginsPath;
             plugins_folders = {app_plugins_path, shared_plugins_path, user_plugins_path};

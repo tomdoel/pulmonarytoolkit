@@ -35,11 +35,11 @@ classdef MivFrameworkAppDef < handle
         end
         
         function parent_directory = GetApplicationParentDirectory(obj)
-            parent_directory = CoreDiskUtilities.GetUserDirectory;
+            parent_directory = CoreDiskUtilities.GetUserDirectory();
         end
         
         function bin_directory = GetBinDirectory(obj)
-            bin_directory = fullfile(CoreDiskUtilities.GetUserDirectory, 'mim', 'bin');
+            bin_directory = fullfile(CoreDiskUtilities.GetUserDirectory(), 'mim', 'bin');
         end
         
         function files_to_compile = GetFilesToCompile(obj, reporting)

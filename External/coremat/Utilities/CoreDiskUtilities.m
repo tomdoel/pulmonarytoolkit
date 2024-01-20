@@ -68,7 +68,7 @@ classdef CoreDiskUtilities
             end
         end
         
-        function home_directory = GetUserDirectory
+        function home_directory = GetUserDirectory()
             % Returns a path to the user's home folder
             if (ispc)
                 home_directory = getenv('USERPROFILE');
@@ -171,7 +171,7 @@ classdef CoreDiskUtilities
             % Displays a dialog for selecting files
             
             if isempty(path)
-                path = CoreDiskUtilities.GetUserDirectory;
+                path = CoreDiskUtilities.GetUserDirectory();
             end
             
             if (allow_multiple_files)
@@ -200,7 +200,7 @@ classdef CoreDiskUtilities
             % Displays a dialog for selecting a folder
             
             if isempty(folder_path)
-                folder_path = CoreDiskUtilities.GetUserDirectory;
+                folder_path = CoreDiskUtilities.GetUserDirectory();
             end
             
             input_path = folder_path;

@@ -34,7 +34,7 @@ classdef MivAppDef < handle
         end
 
         function context_def = GetContextDef(obj)
-            context_def = MivContextDef;
+            context_def = MivContextDef();
         end
                 
         function name = GetName(obj)
@@ -54,7 +54,7 @@ classdef MivAppDef < handle
         end
         
         function style_sheet = GetDefaultStyleSheet(obj)
-            style_sheet = MivDefaultStyleSheet;
+            style_sheet = MivDefaultStyleSheet();
         end
         
         function logo = GetLogoFilename(~)

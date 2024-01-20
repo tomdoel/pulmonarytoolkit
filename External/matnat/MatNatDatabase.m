@@ -78,7 +78,7 @@ classdef MatNatDatabase < handle
         end
 
         function application_directory = getApplicationDirectoryAndCreateIfNecessary(obj)
-            home_directory = MatNatDatabase.getUserDirectory;
+            home_directory = MatNatDatabase.getUserDirectory();
             application_directory = fullfile(home_directory, obj.Config.getApplicationDirectory);  
             if ~exist(application_directory, 'dir')
                 mkdir(application_directory);
@@ -122,7 +122,7 @@ classdef MatNatDatabase < handle
             end
         end
         
-        function home_directory = getUserDirectory
+        function home_directory = getUserDirectory()
             % Returns a path to the user's home folder
             if (ispc)
                 home_directory = getenv('USERPROFILE');

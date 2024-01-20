@@ -19,10 +19,10 @@ classdef PTKFrameworkAppDef < handle
     
     methods
         function obj = PTKFrameworkAppDef()
-            obj.Config = MimConfig;
-            obj.ContextDef = PTKContextDef;
+            obj.Config = MimConfig();
+            obj.ContextDef = PTKContextDef();
             obj.Directories = MimDirectories(obj.GetApplicationParentDirectory, obj.Config);
-            obj.ClassFactory = PTKClassFactory;
+            obj.ClassFactory = PTKClassFactory();
         end
         
         function context_def = GetContextDef(obj)
@@ -37,7 +37,7 @@ classdef PTKFrameworkAppDef < handle
             if ~isempty(PTKConfig.CacheFolder)
                 parent_directory = PTKConfig.CacheFolder;
             else
-                parent_directory = CoreDiskUtilities.GetUserDirectory;
+                parent_directory = CoreDiskUtilities.GetUserDirectory();
             end
         end
         
