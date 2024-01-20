@@ -1,4 +1,4 @@
-function PTKCheckMatlabVersion
+function PTKCheckMatlabVersion()
     % A function for verifying that an appropriate version
     % of Matlab is installed for the Pulmonary Toolkit.
     %

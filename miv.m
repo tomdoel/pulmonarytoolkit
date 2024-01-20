@@ -21,7 +21,7 @@ splash_screen = MimSplashScreen.GetSplashScreen(MivAppDef);
 splash_screen.ShowAndHold('Initialising');
 
 % Verify that an appropriate version of Matlab is being run
-PTKCheckMatlabVersion;
+PTKCheckMatlabVersion();
 
 % Run the toolkit gui
 MivGui(splash_screen);
