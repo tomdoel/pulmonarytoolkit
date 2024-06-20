@@ -89,8 +89,10 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
     num_pixels = cellfun(@numel, CC.PixelIdxList);
     total_num_pixels = sum(num_pixels);
     [largest_area_numpixels, largest_areas_indices] = sort(num_pixels, 'descend');
-
-    if ~isempty(trachea_top_local)
+        
+    if ~isempty(trachea_top_local) && ...
+            length(trachea_top_local) > 1 && ...
+            length(size(both_lungs.RawImage)) > 2
         left_region = both_lungs.RawImage(:, 1:trachea_top_local(2), :);
         right_region = both_lungs.RawImage(:, trachea_top_local(2) + 1:end, :);
         left_sum = sum(left_region(:));

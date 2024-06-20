@@ -181,8 +181,14 @@ function [radius_mm_list, wall_thickness_mm_list, global_coords] = GetRadiusAndC
     % tissue
     min_hu = -1024;
     max_hu = 0;
-    min_intensity = lung_image_as_double.HounsfieldToGreyscale(min_hu);
-    max_intensity = lung_image_as_double.HounsfieldToGreyscale(max_hu);
+    try
+        min_intensity = lung_image_as_double.HounsfieldToGreyscale(min_hu);
+        max_intensity = lung_image_as_double.HounsfieldToGreyscale(max_hu);
+    catch
+        imgV = lung_image_as_double.RawImage(:);
+        min_intensity = max(min_hu,min(imgV));
+        max_intensity = min(max_hu,max(imgV));
+    end    
     interp_image = max(double(min_intensity), interp_image);
     interp_image = min(double(max_intensity), interp_image);
     midpoint = ceil(size(interp_image, 1)/2);
