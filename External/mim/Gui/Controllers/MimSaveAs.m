@@ -46,7 +46,7 @@ function path_name = MimSaveAs(image_data, patient_name, path_name, is_secondary
     end
     
     if islogical(image_data.RawImage)
-        image_data = image_data.Copy;
+        image_data = image_data.Copy();
         image_data.ChangeRawImage(uint8(image_data.RawImage));
     end
 

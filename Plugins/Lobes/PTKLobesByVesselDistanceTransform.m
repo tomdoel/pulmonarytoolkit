@@ -64,15 +64,15 @@ classdef PTKLobesByVesselDistanceTransform < PTKPlugin
         
         function results_left = GetLeftLobes(dataset, left_and_right_lungs, vesselness, airways_by_lobe)
             left_lung_roi = dataset.GetResult('PTKGetLeftLungROI');
-            left_lung_mask = left_and_right_lungs.Copy;
+            left_lung_mask = left_and_right_lungs.Copy();
             left_lung_mask.ResizeToMatch(left_lung_roi);
             left_lung_mask.ChangeRawImage(left_lung_mask.RawImage == 2);
             
-            vesselness = vesselness.Copy;
+            vesselness = vesselness.Copy();
             vesselness.ResizeToMatch(left_lung_roi);
             vesselness = vesselness.RawImage;
                         
-            airways_by_lobe = airways_by_lobe.Copy;
+            airways_by_lobe = airways_by_lobe.Copy();
             airways_by_lobe.ResizeToMatch(left_lung_roi);
             
             airways_by_lobe = PTKLobesByVesselDistanceTransform.DilateAirways(airways_by_lobe, [5 6]);
@@ -90,15 +90,15 @@ classdef PTKLobesByVesselDistanceTransform < PTKPlugin
         
         function results_right = GetRightLobes(dataset, left_and_right_lungs, vesselness, airways_by_lobe)
             right_lung_roi = dataset.GetResult('PTKGetRightLungROI');
-            right_lung_mask = left_and_right_lungs.Copy;
+            right_lung_mask = left_and_right_lungs.Copy();
             right_lung_mask.ResizeToMatch(right_lung_roi);
             right_lung_mask.ChangeRawImage(right_lung_mask.RawImage == 1);
             
-            vesselness = vesselness.Copy;
+            vesselness = vesselness.Copy();
             vesselness.ResizeToMatch(right_lung_roi);
             vesselness = vesselness.RawImage;
             
-            airways_by_lobe = airways_by_lobe.Copy;
+            airways_by_lobe = airways_by_lobe.Copy();
             airways_by_lobe.ResizeToMatch(right_lung_roi);
             
             airways_by_lobe = PTKLobesByVesselDistanceTransform.DilateAirways(airways_by_lobe, [1 2 4]);
@@ -129,7 +129,7 @@ classdef PTKLobesByVesselDistanceTransform < PTKPlugin
         function dilated_airways = DilateAirways(airways, colour_range)
             dilated_airways = zeros(airways.ImageSize, 'int8');
             for colour = colour_range
-                next_image = airways.Copy;
+                next_image = airways.Copy();
                 next_image.ChangeRawImage(next_image.GetMappedRawImage == colour);
                 next_image.BinaryMorph(@imdilate, 5);
                 dilated_airways = dilated_airways + colour*int8(next_image.RawImage);

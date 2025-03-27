@@ -40,7 +40,7 @@ function figure_handle = PTKVisualiseTreeModelCentreline(parent_branch, voxel_si
     view(-37.5, 30);
     cl = camlight('headlight');
     
-    branches = parent_branch.GetBranchesAsList;
+    branches = parent_branch.GetBranchesAsList();
     
     for branch = branches
         radius = [];

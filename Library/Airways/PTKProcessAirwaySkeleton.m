@@ -102,7 +102,7 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
                 % The first point in any segment is permitted to connect to its
                 % siblings - this is not a loop, since the bifurcation point
                 % already connects these points
-                segments_to_check_for_loop = setdiff(segments_to_do, current_skeleton_segment.GetSiblings);
+                segments_to_check_for_loop = setdiff(segments_to_do, current_skeleton_segment.GetSiblings());
             else
                 segments_to_check_for_loop = segments_to_do;
             end
@@ -150,7 +150,7 @@ function [results, skeleton_points, bifurcation_points, removed_points] = GetSke
                 segments_to_do = skeleton_parent.GetIncompleteSegments;
             end
             
-            % Remove inedices outside of ROI
+            % Remove indices outside of ROI
             if any(neighbour_indices(:) > numel(skeleton))
                 neighbour_indices = neighbour_indices(neighbour_indices <= numel(skeleton));
                 reporting.ShowWarning('PTKProcessAirwaySkeleton:ExternalNeighbours', 'The airway skeleton touches the boundary of the ROI. This may lead to unexpected airway results.', []);

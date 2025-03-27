@@ -243,7 +243,7 @@ classdef MimEditManager < MimTool
                 
                 raw_image = obj.ViewerPanel.OverlayImage.RawImage;
                 
-                cropped_image = obj.ViewerPanel.OverlayImage.Copy;
+                cropped_image = obj.ViewerPanel.OverlayImage.Copy();
                 cropped_image.Crop(min_coords, max_coords);
                 subimage = cropped_image.RawImage;
                 
@@ -296,7 +296,7 @@ classdef MimEditManager < MimTool
         end
         
         function RevertEdit(obj)
-            old_image = obj.UndoStack.Pop;
+            old_image = obj.UndoStack.Pop();
             if ~isempty(old_image)
                 obj.OverlayChangeLock = true;
                 obj.ViewerPanel.OverlayImage.ChangeRawImage(old_image);

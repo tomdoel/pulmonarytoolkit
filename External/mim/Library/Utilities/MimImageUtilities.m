@@ -85,7 +85,7 @@ classdef MimImageUtilities
         end
         
         function combined_image = CombineImages(image_1, image_2)
-            combined_image = image_1.Copy;
+            combined_image = image_1.Copy();
             new_origin = min(image_1.Origin, image_2.Origin);
             br_coords = max(image_1.Origin + image_1.ImageSize - [1,1,1], image_2.Origin + image_2.ImageSize - [1,1,1]);
             new_size = br_coords - new_origin + [1,1,1];
@@ -103,7 +103,7 @@ classdef MimImageUtilities
         end
 
         function [dt, border_image] = GetBorderDistanceTransformBySlice(image_mask, direction)
-            border_image = image_mask.Copy;
+            border_image = image_mask.Copy();
             dt = image_mask.BlankCopy();
             
             % Slice by slice replace the dt image with a 2D distance transform
@@ -140,7 +140,7 @@ classdef MimImageUtilities
             register_voxel_size = register_voxel_size./round(register_voxel_size/min(register_voxel_size));
             
             % Resample both images so they have the same image and voxel size
-            reference_image_resampled = reference_image.Copy;
+            reference_image_resampled = reference_image.Copy();
             
             if strcmp(interpolation_type, 'PTK smoothed binary')
                 reference_image_resampled.ResampleBinary(register_voxel_size);
@@ -159,7 +159,7 @@ classdef MimImageUtilities
                 dt.Resample(binary_image.VoxelSize, '*nearest');
                 dt.ResizeToMatch(binary_image);
             else
-                dt = binary_image.Copy;
+                dt = binary_image.Copy();
                 dt.ChangeRawImage(bwdist(logical(dt.RawImage)));
             end
             dt.ImageType = PTKImageType.Scaled;
@@ -218,10 +218,10 @@ classdef MimImageUtilities
         
         function results = ComputeBorderError(image_1, image_2)
             
-            image_1 = image_1.Copy;
+            image_1 = image_1.Copy();
             image_1.ChangeRawImage(image_1.RawImage > 0);
             
-            image_2 = image_2.Copy;
+            image_2 = image_2.Copy();
             image_2.ChangeRawImage(image_2.RawImage > 0);
             
             % Compute the in-plane resolution of the image
@@ -398,7 +398,7 @@ classdef MimImageUtilities
             slice_position = round(image.ImageSize(1)/2);
 
             if flatten_before_preview
-                image_copy = image.Copy;
+                image_copy = image.Copy();
                 image_copy.Flatten(GemImageOrientation.XZ);
                 slice = image_copy.GetSlice(slice_position, GemImageOrientation.XZ);
             else

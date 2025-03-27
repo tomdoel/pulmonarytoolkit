@@ -24,7 +24,7 @@ function filled_image_raw = FillHolesInImage(filled_image_raw, colour_1, colour_
         connected_components_structure =  bwconncomp(filled_image_raw == colour, 6);
         labeled_components = labelmatrix(connected_components_structure);
         if connected_components_structure.NumObjects > 0
-            edge_components = GetAllUnqiueValuesFromImageBoundaries(labeled_components);
+            edge_components = GetAllUniqueValuesFromImageBoundaries(labeled_components);
             
             % We set label components to zero if they are not to be changed
             for component_index = edge_components'
@@ -42,7 +42,7 @@ function filled_image_raw = FillHolesInImage(filled_image_raw, colour_1, colour_
     end
 end
 
-function edge_components = GetAllUnqiueValuesFromImageBoundaries(labeled_components)
+function edge_components = GetAllUniqueValuesFromImageBoundaries(labeled_components)
       edge_components_1 = labeled_components([1, end], :, :); 
       edge_components_2 = labeled_components(:, [1, end], :); 
       edge_components_3 = labeled_components(:, :, [1, end]);

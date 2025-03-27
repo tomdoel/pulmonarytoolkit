@@ -182,14 +182,14 @@ function filtered_image = PTKImageDividerHessian(image_data, filter_function, ma
             limits_result = octant_limits_result(octant_index, :);
             
             % Fetch image for this octant
-            part_image = image_data.Copy;
+            part_image = image_data.Copy();
             part_image.Crop([limits_in(1), limits_in(3), limits_in(5)], [limits_in(2), limits_in(4), limits_in(6)]);
             
             if isempty(mask)
                 part_mask = [];
             else
                 % Fetch mask for this octant
-                part_mask = mask.Copy;
+                part_mask = mask.Copy();
                 part_mask.Crop([limits_in(1), limits_in(3), limits_in(5)], [limits_in(2), limits_in(4), limits_in(6)]);
             end
             

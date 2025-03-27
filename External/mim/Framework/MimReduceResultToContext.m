@@ -30,7 +30,7 @@ function result = MimReduceResultToContext(full_result, child_context, image_tem
     template_image = image_templates.GetTemplateImage(child_context, dataset_stack, reporting);
     
     % Make a copy before we resize
-    result = full_result.Copy;
+    result = full_result.Copy();
     result.ResizeToMatch(template_image);
     
     if template_image.ImageExists

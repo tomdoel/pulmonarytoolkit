@@ -155,7 +155,7 @@ classdef PTKAirwayGenerator < handle
                         if branch_length < length_limit
                             if ~isempty(branch.Parent)
                                 reporting.ShowWarning('PTKAirwayGenerator:SegmentedBranchesBelowLimit', 'Initial branches have been excluded due to their length being below the limit', []);
-                                branch.Parent.RemoveChildren;
+                                branch.Parent.RemoveChildren();
                                 has_changed = true;
                             end
                         end
@@ -381,7 +381,7 @@ classdef PTKAirwayGenerator < handle
         end
         
         function resampled_volume = CreatePointCloud(growth_volume, grid_spacing_mm)
-            resampled_volume = growth_volume.Copy;
+            resampled_volume = growth_volume.Copy();
             grid_spacing = [grid_spacing_mm, grid_spacing_mm, grid_spacing_mm];
             resampled_volume.Resample(grid_spacing, '*nearest')
         end
@@ -604,7 +604,7 @@ classdef PTKAirwayGenerator < handle
             
             % We need to keep a copy of the lung mask for checking that airways
             % are inside. The original image will have points removed as airways are grown. 
-            lung_mask = lung_volume.Copy;
+            lung_mask = lung_volume.Copy();
             
             reporting.ShowProgress('Growing branches');
             reporting.UpdateProgressValue(0);

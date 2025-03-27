@@ -150,7 +150,7 @@ classdef MimMapColourTool < MimTool
             if ~isempty(child_label_map)
                 children_to_do = CoreStack(child_label_map{segmentation_colour});
                 while ~children_to_do.IsEmpty
-                    next_child_colour = children_to_do.Pop;
+                    next_child_colour = children_to_do.Pop();
                     colourmap(next_child_colour + 1) = to_colour;
                     children_to_do.Push(child_label_map{next_child_colour});
                 end

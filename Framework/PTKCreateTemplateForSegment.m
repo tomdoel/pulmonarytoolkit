@@ -8,5 +8,5 @@ function template = PTKCreateTemplateForSegment(segment_mask, context, reporting
     %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    template = segment_mask.Copy;
+    template = segment_mask.Copy();
 end

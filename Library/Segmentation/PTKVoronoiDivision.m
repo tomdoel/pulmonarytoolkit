@@ -44,12 +44,12 @@ function labeled_subregion_mask = PTKVoronoiDivision(region_mask, start_points, 
     output_template = region_mask.BlankCopy();
     
     % First, make copies of the inputs since this could modify them
-    start_points = start_points.Copy;
-    region_mask = region_mask.Copy;
+    start_points = start_points.Copy();
+    region_mask = region_mask.Copy();
     
     % Now crop to the minimal sizes and then match the sizes
-    region_mask.CropToFit;
-    start_points.CropToFit;
+    region_mask.CropToFit();
+    start_points.CropToFit();
     MimImageUtilities.MatchSizesAndOrigin(start_points, region_mask);
     
     % Use the DT function to find the nearest neighbours

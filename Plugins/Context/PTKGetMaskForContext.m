@@ -41,7 +41,7 @@ classdef PTKGetMaskForContext < PTKPlugin
                 results = dataset.GetTemplateImage(PTKContext.Lungs);
             end
             
-            results.CropToFit;
+            results.CropToFit();
         end
     end
 end

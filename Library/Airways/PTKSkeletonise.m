@@ -29,12 +29,12 @@ function binary_image = PTKSkeletonise(binary_image, fixed_points_global, report
     fixed_points = binary_image.GlobalToLocalIndices(fixed_points_global);
     
     % Marks endpoints with 3
-    binary_image = binary_image.Copy;
+    binary_image = binary_image.Copy();
     binary_image.ChangeRawImage(MarkEndpoints(binary_image.RawImage, fixed_points));
     total_number_of_points = sum(binary_image.RawImage(:) > 0);
 
     binary_image.AddBorder(2);
-    direction_vectors = CalculateDirectionVectors;
+    direction_vectors = CalculateDirectionVectors();
     
     raw_image = binary_image.RawImage;
 
@@ -107,7 +107,7 @@ function binary_image = MarkEndpoints(binary_image, fixed_points)
 end
 
 
-function direction_vectors = CalculateDirectionVectors
+function direction_vectors = CalculateDirectionVectors()
     [i, j, k] = ind2sub([3 3 3], 1 : 27);
     direction_vectors = [i' - 2, j' - 2, k' - 2];
 end

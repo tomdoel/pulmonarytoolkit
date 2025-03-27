@@ -137,7 +137,7 @@ classdef PTKCarina < PTKPlugin
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
-                segmented_image(template.GlobalToLocalIndices(segment.GetAllAirwayPoints)) = 1;
+                segmented_image(template.GlobalToLocalIndices(segment.GetAllAirwayPoints())) = 1;
             end
         end
     end

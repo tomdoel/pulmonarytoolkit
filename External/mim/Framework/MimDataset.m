@@ -106,7 +106,7 @@ classdef MimDataset < CoreBaseClass
         function [result, output_image] = GetResult(obj, plugin_name, varargin)
             % GetResult: Returns the results of a plugin.
             % If a valid result is cached on disk,
-            % this wil be returned provided all the dependencies are valid.
+            % this will be returned provided all the dependencies are valid.
             % Otherwise the plugin will be executed and the new result returned.
             % The optional context parameter specifies the region of interest to which the output result will be framed.
             % Specifying a second argument also produces a representative image from
@@ -310,7 +310,7 @@ classdef MimDataset < CoreBaseClass
         end
 
         function DeleteCacheForThisDataset(obj, varargin)
-            % Removes the cache file fodler associated with this dataset. This
+            % Removes the cache file folder associated with this dataset. This
             % should not be called unless you are completely removing the dataset
             
             obj.PreCallTidy;

@@ -46,11 +46,11 @@ function both_lungs = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshol
         both_lungs.ChangeRawImage(uint8(unclosed_lungs.RawImage & (filtered_threshold_lung.RawImage > 0)));
 
         % 3D approach failed. Try slice-by-slice coronal approach
-        results = both_lungs.Copy;
+        results = both_lungs.Copy();
         results.ImageType = PTKImageType.Colormap;
         
         % Create a mask of voxels which could not be allocated to left or right lungs
-        voxels_to_remap = both_lungs.Copy;
+        voxels_to_remap = both_lungs.Copy();
         voxels_to_remap.Clear();
         
         any_slice_failure = false;
@@ -127,7 +127,7 @@ function [success, max_iter] = SeparateLungs(both_lungs, lung_roi, unclosed_lung
         iter_number = iter_number + 1;
         reporting.LogVerbose(['Failed to separate left and right lungs. Retrying after morphological opening attempt ' num2str(iter_number) '.']);
         opening_size = opening_sizes(iter_number);
-        image_to_close = both_lungs.Copy;
+        image_to_close = both_lungs.Copy();
         image_to_close.BinaryMorph(@imopen, opening_size);
         
         CC = bwconncomp(image_to_close.RawImage > 0, 26);

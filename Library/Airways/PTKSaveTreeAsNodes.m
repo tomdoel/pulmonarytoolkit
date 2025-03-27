@@ -55,7 +55,7 @@ function PTKSaveTreeAsNodes(tree_root, file_path, filename_prefix, coordinate_sy
     node_file_name = fullfile(file_path, [filename_prefix '_node.txt']);
     element_file_name = fullfile(file_path, [filename_prefix '_element.txt']);
     
-    linear_branch_list = tree_root.GetBranchesAsList;
+    linear_branch_list = tree_root.GetBranchesAsList();
     
     num_branches = length(linear_branch_list);
 

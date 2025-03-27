@@ -36,7 +36,7 @@ classdef MimShowCacheFolder < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            dataset_cache_path = gui_app.GetDatasetCachePath;
+            dataset_cache_path = gui_app.GetDatasetCachePath();
             CoreDiskUtilities.OpenDirectoryWindow(dataset_cache_path);
         end
         

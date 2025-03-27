@@ -40,7 +40,7 @@ classdef PTKMRILungThreshold < PTKPlugin
             if dataset.IsGasMRI
                 full_image = dataset.GetResult('PTKInvertImage', PTKContext.OriginalImage);
                 [lung_mask, bounds] = PTKComputeSegmentLungsMRI(full_image, 2, reporting);
-                lung_mask.CropToFit;
+                lung_mask.CropToFit();
                 lung_mask.ImageType = PTKImageType.Colormap;
                 results.Bounds = bounds;
                 results.LungMask = lung_mask;

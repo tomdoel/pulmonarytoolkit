@@ -86,8 +86,8 @@ function axes_handle = MimVisualiseIn3D(axes_handle, segmentation, smoothing_siz
     
     % Crop surrounding whitespace and reduce the image size if it is large.
     % A smaller image size is necessary for the use of isonormals
-    segmentation = segmentation.Copy;
-    segmentation.CropToFit;
+    segmentation = segmentation.Copy();
+    segmentation.CropToFit();
     
     % Speed up visualisation by rescaling large images.
     if ~small_structures

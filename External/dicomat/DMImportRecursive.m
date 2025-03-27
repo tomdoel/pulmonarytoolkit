@@ -78,7 +78,7 @@ function ImportDirectoryRecursive(fileGrouper, dicomLibrary, directory, dictiona
     directories_to_do = CoreStack(directory);
     
     while ~directories_to_do.IsEmpty
-        current_dir = directories_to_do.Pop;
+        current_dir = directories_to_do.Pop();
         
         reporting.UpdateProgressMessage(['Importing data from: ' current_dir]);
         

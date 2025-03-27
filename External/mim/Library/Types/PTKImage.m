@@ -152,7 +152,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
         
         function ChangeColorLabelMap(obj, new_colourmap)
             obj.ColorLabelMap = new_colourmap;
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function ChangeColorLabelParentChildMap(obj, new_parent_map, new_child_map)
@@ -253,7 +253,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             
             obj.RawImage = new_image;
             obj.ColorLabelMap = [];
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function raw_image = GetRawImageForPlotting(obj)
@@ -286,7 +286,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                     src_start_crop(3) : src_end_crop(3), ...    
                     : ...
                 );
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
 
         function masked_image = GetMask(obj, mask_index)
@@ -313,7 +313,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             if nargin < 4
                 mask_index = [];
             end
-            mask = mask.Copy;
+            mask = mask.Copy();
             mask.ResizeToMatch(new_subimage);
             if ~mask.ImageExists
                 mask.ChangeRawImage(true(mask.ImageSize));
@@ -369,7 +369,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                     : ...
                 )  = existing_subimage_raw;
             
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function ResizeToMatch(obj, template_image)
@@ -410,12 +410,12 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                     src_start_crop(3) : src_end_crop(3),  ...
                     : );
                 obj.RawImage = new_rawimage;
-                obj.CheckForZeroImageSize;
+                obj.CheckForZeroImageSize();
             else
                 obj.LastImageSize = new_image_size;
             end
             obj.Origin = new_origin;
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function copy = Copy(obj)
@@ -467,7 +467,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             obj.VoxelSize = scale.*obj.VoxelSize;
             obj.Scale = scale.*obj.Scale;
             obj.RawImage = obj.RawImage(round(1:scale(1):end), round(1:scale(2):end), round(1:scale(3):end));
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
             obj.Origin = floor(obj.Origin./scale);
         end
         
@@ -579,26 +579,26 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             for index = 1 : size(local_coords, 1)
                 obj.RawImage(local_coords(index, 1), local_coords(index, 2), local_coords(index, 3)) = value;
             end
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
 
         function SetIndexedVoxelsToThis(obj, global_indices, value)
             % Changes the value of the voxel specified by an index value
             local_indices = obj.GlobalToLocalIndices(global_indices);
             obj.RawImage(local_indices) = value;
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
 
         function Clear(obj)
             % Sets all image values to zero
             obj.RawImage(:) = 0;
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
 
         function Reset(obj)
             % Deletes the image
             obj.RawImage = [];
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
 
         function Flatten(obj, direction)
@@ -613,7 +613,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 case GemImageOrientation.XY
                     obj.RawImage = repmat(flat, [1 1 number_of_repeats]);
             end
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function ReplaceImageSlice(obj, new_slice, slice_index, direction)
@@ -626,22 +626,22 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 case GemImageOrientation.XY
                     obj.RawImage(:, :, slice_index) = new_slice;
             end
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function CropToFit(obj)
             % Removes boundary zeros; i.e. strips away planes of zeros from the edges of the image
             if obj.ImageExists
-                bounds = obj.GetBounds;
+                bounds = obj.GetBounds();
                 if isempty(bounds)
                     obj.RawImage = [];
-                    obj.CheckForZeroImageSize;
-                    obj.NotifyImageChanged;
+                    obj.CheckForZeroImageSize();
+                    obj.NotifyImageChanged();
                 else
                     % Create new image
                     obj.RawImage = obj.RawImage(bounds(1):bounds(2), bounds(3):bounds(4), bounds(5):bounds(6));
                     obj.Origin = obj.Origin + [bounds(1) - 1, bounds(3) - 1, bounds(5) - 1];
-                    obj.NotifyImageChanged;
+                    obj.NotifyImageChanged();
                 end
             end
         end
@@ -651,11 +651,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             
             if obj.ImageExists
                 image_size = obj.ImageSize;
-                bounds = obj.GetBounds;
+                bounds = obj.GetBounds();
                 if isempty(bounds)
                     obj.RawImage = [];
-                    obj.NotifyImageChanged;
-                    obj.CheckForZeroImageSize;
+                    obj.NotifyImageChanged();
+                    obj.CheckForZeroImageSize();
                     return;
                 end
                 
@@ -671,12 +671,12 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 obj.RawImage = obj.RawImage(bounds(1):bounds(2), bounds(3):bounds(4), bounds(5):bounds(6));
                 
                 obj.Origin = obj.Origin + [bounds(1) - 1, bounds(3) - 1, bounds(5) - 1];
-                obj.NotifyImageChanged;
+                obj.NotifyImageChanged();
             end
         end
         
         function bounds = GetBounds(obj)
-            % Returns the bounding cordinates of a binary image
+            % Returns the bounding coordinates of a binary image
             bounds = [];
             i_min = find(any(any(obj.RawImage, 2), 3), 1, 'first');
             if isempty(i_min)
@@ -703,12 +703,12 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             % Strips away a border around the image, returning the region specified by start_crop and end_crop
             if obj.ImageExists
                 obj.RawImage = obj.RawImage(start_crop(1):end_crop(1), start_crop(2):end_crop(2), start_crop(3):end_crop(3));
-                obj.CheckForZeroImageSize;
+                obj.CheckForZeroImageSize();
             else
                 obj.LastImageSize = [1 + end_crop(1) - start_crop(1), 1 + end_crop(2) - start_crop(2), 1 + end_crop(3) - start_crop(3)];
             end
             obj.Origin = obj.Origin + [start_crop(1) - 1, start_crop(2) - 1, start_crop(3) - 1];
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function AddBorder(obj, border_size)
@@ -730,10 +730,10 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 
                 new_image(1+added_size(1):end-added_size(1), 1+added_size(2):end-added_size(2), 1+added_size(3):end-added_size(3)) = obj.RawImage;
                 obj.RawImage = new_image;
-                obj.CheckForZeroImageSize;
+                obj.CheckForZeroImageSize();
             end
             obj.Origin = obj.Origin - added_size;
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function RemoveBorder(obj, border_size)
@@ -745,7 +745,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 obj.RawImage = obj.RawImage(1+border_size : end-border_size, 1+border_size : end-border_size, 1+border_size : end-border_size);
             end
             obj.Origin = obj.Origin + added_size;
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function ResampleBinary(obj, new_voxel_size_mm)
@@ -817,21 +817,21 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 
                 % Find the nearest value for each point in the new grid
                 obj.RawImage = interpn(old_i_grid, old_j_grid, old_k_grid, obj.RawImage, new_i_grid, new_j_grid, new_k_grid, interpolation_function, 0);
-                obj.CheckForZeroImageSize;
+                obj.CheckForZeroImageSize();
             end
             
             obj.Origin = min_new_coords;
             obj.OriginalImageSize = ceil((obj.OriginalImageSize.*obj.VoxelSize)./new_voxel_size_mm);
             obj.VoxelSize = new_voxel_size_mm;
             obj.Scale = [1, 1, 1];
-            obj.NotifyImageChanged;            
+            obj.NotifyImageChanged();            
         end
         
         function Morph(obj, morph_function_handle, size_mm)
             % Performs a Matlab morphological operation using a spherical element of the specified size in mm, adjusting for the voxel size
             ball_element = obj.CreateBallStructuralElement(size_mm);
             obj.RawImage = uint8(morph_function_handle(obj.RawImage, ball_element));
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
 
         function BinaryMorph(obj, morph_function_handle, size_mm)
@@ -839,11 +839,11 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             ball_element = obj.CreateBallStructuralElement(size_mm);
             obj.RawImage = obj.RawImage > 0;
             obj.RawImage = logical(morph_function_handle(obj.RawImage, ball_element));
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function MorphWithBorder(obj, morph_function_handle, size_mm)
-            % Performs a Matlab morphological operation as with Morph(), but first adds an additional boder to the image
+            % Performs a Matlab morphological operation as with Morph(), but first adds an additional border to the image
             ball_element = obj.CreateBallStructuralElement(size_mm);
             borders = size(ball_element);
             image_size_with_borders = obj.ImageSize + 2*borders;
@@ -853,7 +853,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             morphed_image(start_pos(1):end_pos(1), start_pos(2):end_pos(2), start_pos(3):end_pos(3)) = obj.RawImage > 0;
             morphed_image = uint8(morph_function_handle(morphed_image, ball_element));
             obj.RawImage = uint8(morphed_image(start_pos(1):end_pos(1), start_pos(2):end_pos(2), start_pos(3):end_pos(3)));
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function GeneratePreview(obj, preview_size, flatten_before_preview)
@@ -1024,7 +1024,7 @@ classdef (ConstructOnLoad = true) PTKImage < handle
                 i_r, j_r, k_r, '*linear', 0);
             obj.Origin = template.Origin;
             obj.VoxelSize = template.VoxelSize;
-            obj.NotifyImageChanged;
+            obj.NotifyImageChanged();
         end
         
         function volume_mm3 = Volume(obj)
@@ -1083,14 +1083,14 @@ classdef (ConstructOnLoad = true) PTKImage < handle
     
     methods (Access = private)
         
-        % This method should be called whenever the raw image is changed
         function NotifyImageChanged(obj)
+            % This method should be called whenever the raw image is changed
             obj.InvalidateCachedData;
             obj.NotifyImageChangedCacheStillValid
         end
         
-        % This method is called when the raw image has changed
         function NotifyImageChangedCacheStillValid(obj)
+            % This method is called when the raw image has changed
             obj.InvalidateCachedData;
             if ~isempty(obj.RawImage)
                 obj.LastImageSize = size(obj.RawImage);
@@ -1107,8 +1107,8 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             ball_element = CoreImageUtilities.CreateBallStructuralElement(obj.VoxelSize, size_mm);
         end
         
-        % Guesses which type of image rendering would be best. 
         function image_type = GuessImageType(obj)
+            % Guesses which type of image rendering would be best.
             if isempty(obj.RawImage)
                 image_type = PTKImageType.Colormap;
                 return
@@ -1132,14 +1132,14 @@ classdef (ConstructOnLoad = true) PTKImage < handle
             end
         end
         
-        % Settings have changed
         function ImagePropertyChangedCallback(obj, ~, ~, ~)
-            obj.NotifyImageChanged;
+            % Settings have changed
+            obj.NotifyImageChanged();
         end
         
-        % If a cropping operation removes the entire image, we need to set the
-        % LastImageSize to zero, otherwise it will be assumed the image is template 
         function CheckForZeroImageSize(obj)
+            % If a cropping operation removes the entire image, we need to set the
+            % LastImageSize to zero, otherwise it will be assumed the image is template
             if isempty(obj.RawImage)
                 obj.LastImageSize = [0, 0, 0];
             end

@@ -42,7 +42,7 @@ classdef PTKSaveAirwayMesh < PTKPlugin
             
             smoothing_size = 1;
             filename = 'PrunedAirwaysSurfaceMesh.stl';
-            results_upsampled = results.Copy;
+            results_upsampled = results.Copy();
             results_upsampled.AddBorder(6);
             results_upsampled.DownsampleImage(0.25);
 

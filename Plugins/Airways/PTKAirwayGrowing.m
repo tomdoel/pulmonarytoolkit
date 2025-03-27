@@ -48,10 +48,10 @@ classdef PTKAirwayGrowing < PTKPlugin
             upper_left_start_segment = airways_by_lobe.StartBranches.LeftUpper;
             lower_left_start_segment = airways_by_lobe.StartBranches.LeftLower;
             
-            right_lung = left_and_right_lungs.Copy;
+            right_lung = left_and_right_lungs.Copy();
             right_lung.ChangeRawImage(left_and_right_lungs.RawImage == 1);
 
-            left_lung = left_and_right_lungs.Copy;
+            left_lung = left_and_right_lungs.Copy();
             left_lung.ChangeRawImage(left_and_right_lungs.RawImage == 2);
             
             template = left_and_right_lungs.BlankCopy();
@@ -61,48 +61,48 @@ classdef PTKAirwayGrowing < PTKPlugin
             
             reporting.ShowProgress('RIGHT - upper');
             reporting.UpdateProgressStage(0, 5);
-            lobes_fill = lobes.Copy;
+            lobes_fill = lobes.Copy();
             lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightUpperLobe);
-            lobes_fill.CropToFit;
+            lobes_fill.CropToFit();
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, upper_right_start_segment, reporting)
             
             reporting.ShowProgress('RIGHT - middle');
             reporting.UpdateProgressStage(1, 5);
-            lobes_fill = lobes.Copy;
+            lobes_fill = lobes.Copy();
             lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightMiddleLobe);
-            lobes_fill.CropToFit;
+            lobes_fill.CropToFit();
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, middle_right_start_segment, reporting)
             
             reporting.ShowProgress('RIGHT - lower');
             reporting.UpdateProgressStage(2, 5);
-            lobes_fill = lobes.Copy;
+            lobes_fill = lobes.Copy();
             lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.RightLowerLobe);
-            lobes_fill.CropToFit;
+            lobes_fill.CropToFit();
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, lower_right_start_segment, reporting)
                                     
             reporting.ShowProgress('LEFT - upper');
             reporting.UpdateProgressStage(3, 5);
-            lobes_fill = lobes.Copy;
+            lobes_fill = lobes.Copy();
             lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.LeftUpperLobe);
-            lobes_fill.CropToFit;
+            lobes_fill.CropToFit();
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, upper_left_start_segment, reporting)
             
             reporting.ShowProgress('LEFT - lower');
             reporting.UpdateProgressStage(4, 5);
-            lobes_fill = lobes.Copy;
+            lobes_fill = lobes.Copy();
             lobes_fill.ChangeRawImage(lobes.RawImage == PTKColormapLabels.LeftLowerLobe);
-            lobes_fill.CropToFit;
+            lobes_fill.CropToFit();
             lobes_fill.AddBorder(2);
             airway_generator.GrowTree(lobes_fill, lower_left_start_segment, reporting)
             
             % Compute radius values based on Strahler orders
-            airway_generator.AirwayTree.ComputeStrahlerOrders;
+            airway_generator.AirwayTree.ComputeStrahlerOrders();
             
-%             airway_generator.AirwayTree.GenerateBranchParameters;
+%             airway_generator.AirwayTree.GenerateBranchParameters();
             
             % Add values of tissue density
             density = dataset.GetResult('PTKDensityAverage');
@@ -111,10 +111,10 @@ classdef PTKAirwayGrowing < PTKPlugin
             results = [];
             results.Airways = airway_generator.AirwayTree;
             
-            count_terminal_points = results.Airways.CountTerminalBranches;
+            count_terminal_points = results.Airways.CountTerminalBranches();
             disp(['Number of terminal points: ' int2str(count_terminal_points)]);
             
-            count_branches = results.Airways.CountBranches;
+            count_branches = results.Airways.CountBranches();
             disp(['Number of branches: ' int2str(count_branches)]);
 
             results.InitialImage = airway_generator.InitialApexImage;

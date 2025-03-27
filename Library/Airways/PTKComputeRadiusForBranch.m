@@ -42,7 +42,7 @@ function next_result = PTKComputeRadiusForBranch(next_segment, lung_image_as_dou
     
     % To compute the direction vector, we select two points on the centreline.
     % If the airway is long enough, we use the 1/4 and 3/4 points. For shorter
-    % airways we chooser further away points to get a better centreline
+    % airways we choose further away points to get a better centreline
     if abs(three_quarter_point_index - quarter_point_index) < 4
         quarter_point_index = max(1, quarter_point_index - 2);
     end

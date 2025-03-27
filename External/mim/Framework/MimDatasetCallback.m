@@ -59,7 +59,7 @@ classdef MimDatasetCallback < handle
 
         function [result, output_image] = GetResult(obj, plugin_name, context, varargin)
             % Returns the results of a plugin. If a valid result is cached on disk,
-            % this wil be returned provided all the dependencies are valid.
+            % this will be returned provided all the dependencies are valid.
             % Otherwise the plugin will be executed and the new result returned.
             % The optional context parameter specifies the region of interest to which the output result will be framed.
             % The dataset_uid argument specifies the name (or UID) of the linked

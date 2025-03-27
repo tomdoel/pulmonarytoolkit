@@ -175,7 +175,7 @@ classdef PTKTreeModel < PTKTree
             % Create copies of child branches and set the Children and Parent
             % properties correctly
             for child = obj.Children
-                child_copy = child.Copy;
+                child_copy = child.Copy();
                 child_copy.Parent = copy;
                 copy.Children = [copy.Children child_copy];
             end
@@ -299,7 +299,7 @@ classdef PTKTreeModel < PTKTree
                 obj.Radius = radius_sum/number_radius_points;
             end
             for child = obj.Children
-                child.GenerateBranchParameters;
+                child.GenerateBranchParameters();
             end
         end
         
@@ -334,8 +334,8 @@ classdef PTKTreeModel < PTKTree
             % ToDo: This method is duplicated in PTKAirwayGrowingTree
             % Returns the coordinates of each terminal branch in the tree below this
             % branch
-            num_branches = obj.CountBranches;
-            num_terminal_branches = obj.CountTerminalBranches;
+            num_branches = obj.CountBranches();
+            num_terminal_branches = obj.CountTerminalBranches();
             
             reporting.UpdateProgressMessage('Finding terminal coordinates');
             

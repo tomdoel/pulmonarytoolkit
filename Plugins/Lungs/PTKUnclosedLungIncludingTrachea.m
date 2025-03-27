@@ -17,7 +17,7 @@ classdef PTKUnclosedLungIncludingTrachea < PTKPlugin
     %    
     
     properties
-        ButtonText = 'Lungs with trachea';
+        ButtonText = 'Lungs with trachea'
         ToolTip = 'Find unclosed lung region including the trachea and main bronchi'
         Category = 'Lungs'
         

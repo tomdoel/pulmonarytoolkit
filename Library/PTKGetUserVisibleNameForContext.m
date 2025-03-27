@@ -1,6 +1,6 @@
 function name = PTKGetUserVisibleNameForContext(context)
-    % PTKGetUserVisibleNameForContext.
-    %
+    % PTKGetUserVisibleNameForContext. Returns a string representation of
+    % a context suitable for reporting to the user
     %
     %
     % .. Licence

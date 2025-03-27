@@ -88,7 +88,7 @@ classdef PTKLobesFromFissurePlane < PTKPlugin
             fissure_plane_m = find(fissure_plane.RawImage(:) == 2);
             
             if ~isempty(fissure_plane_m)
-                lung_mask_excluding_lower = lung_mask.Copy;
+                lung_mask_excluding_lower = lung_mask.Copy();
                 lung_mask_excluding_lower.ChangeRawImage(results_right.RawImage == 1);
                 
                 results_mid_right = PTKDivideVolumeUsingScatteredPoints(lung_mask_excluding_lower, fissure_plane_m, 20, reporting);

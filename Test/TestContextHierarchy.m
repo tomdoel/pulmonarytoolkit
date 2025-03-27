@@ -125,7 +125,7 @@ classdef TestContextHierarchy < CoreTest
                         
             mock_plugin = MockPlugin;
 
-            image_template_l = image_2.Copy;
+            image_template_l = image_2.Copy();
             image_template_l.Crop([2,2,2], [7,7,7]);
             image_template_l = image_template_l.BlankCopy();
             image_template_l.Title = 'Template for ROI';
@@ -142,7 +142,7 @@ classdef TestContextHierarchy < CoreTest
             
             % Test saving an edited version of this result with LungROI context,
             % and see that it is correctly inserted into the OriginalImage
-            edited_image_1 = output_image.Copy;
+            edited_image_1 = output_image.Copy();
             edited_image_1.ChangeRawImage(edited_image_1.RawImage + 10);
             edited_image_1.Title = 'Edited Image 1';
             context_hierarchy.SaveEditedResult(plugin_2, PTKContext.LungROI, edited_image_1, mock_plugin_info_2, [], dataset_uid_2, mock_reporting);
@@ -166,9 +166,9 @@ classdef TestContextHierarchy < CoreTest
             template_original = mock_original_image.BlankCopy();
             template_original.Title = 'TemplateOriginal';
             
-            mock_roi_image = mock_original_image.Copy;
+            mock_roi_image = mock_original_image.Copy();
             mock_roi_image.Crop([3, 4, 5], [12, 13, 14]);
-            original_image_cropped = mock_roi_image.Copy;
+            original_image_cropped = mock_roi_image.Copy();
             mock_roi_image.ChangeRawImage(uint8(rand(10,10,10) > 0.5));
             mock_roi_image.Title = 'ResultImage';
             template_roi = mock_roi_image.BlankCopy();
@@ -240,13 +240,13 @@ classdef TestContextHierarchy < CoreTest
             mock_plugin_info5.PluginType = 'ReplaceOverlay';
             
             
-            results = mock_roi_image.Copy;
-            results_original = mock_original_image.Copy;
+            results = mock_roi_image.Copy();
+            results_original = mock_original_image.Copy();
             
-            left_image = template_left.Copy;
+            left_image = template_left.Copy();
             left_image.ChangeRawImage(uint8(left_image.RawImage).*uint8(mock_roi_image.RawImage));
             left_image.Title = 'LeftResultImage';
-            right_image = template_right.Copy;
+            right_image = template_right.Copy();
             right_image.ChangeRawImage(uint8(right_image.RawImage).*uint8(mock_roi_image.RawImage));
             right_image.Title = 'RightResultImage';
             
@@ -347,7 +347,7 @@ classdef TestContextHierarchy < CoreTest
             result = context_hierarchy.GetResult(plugin4, PTKContext.OriginalImage, [], mock_plugin_info4, mock_plugin4, dataset_uid, [], false, false, mock_reporting);
             [result, output_image, plugin_has_been_run, cache_info] = context_hierarchy.GetResult(plugin4, PTKContext.OriginalImage, [], mock_plugin_info4, mock_plugin4, dataset_uid, [], force_generate_image, false, mock_reporting);
             
-            expected_output_image = mock_lr_lung_image.Copy;
+            expected_output_image = mock_lr_lung_image.Copy();
             expected_output_image.ChangeRawImage((expected_output_image.RawImage > 0) & mock_roi_image.RawImage);
             expected_output_image.ResizeToMatch(mock_original_image);
             obj.Assert(isequal(result.RawImage, expected_output_image.RawImage), 'Expected output image');
@@ -369,12 +369,12 @@ classdef TestContextHierarchy < CoreTest
             obj.Assert(isequal(result.LungROI.Lungs.LeftLung.ImageResult.RawImage, left_image.RawImage), 'Image is correct ROI');
             obj.Assert(isequal(result.LungROI.Lungs.RightLung.ImageResult.RawImage, right_image.RawImage), 'Image is correct ROI');
             
-            expected_output_image = mock_lr_lung_image.Copy;
+            expected_output_image = mock_lr_lung_image.Copy();
             expected_output_image.ChangeRawImage((expected_output_image.RawImage > 0) & mock_roi_image.RawImage);
             expected_output_image.ResizeToMatch(mock_original_image);            
             obj.Assert(isequal(output_image.RawImage, expected_output_image.RawImage), 'Expected output image');
                         
-            expected_output_image = mock_original_image.Copy;
+            expected_output_image = mock_original_image.Copy();
             expected_output_image.Clear();
             expected_output_image.ChangeSubImageWithMask(left_image, template_left);
             expected_output_image.ChangeSubImageWithMask(right_image, template_right);
@@ -400,9 +400,9 @@ classdef TestContextHierarchy < CoreTest
             template_original = mock_original_image.BlankCopy();
             template_original.Title = 'TemplateOriginal';
             
-            mock_roi_image = mock_original_image.Copy;
+            mock_roi_image = mock_original_image.Copy();
             mock_roi_image.Crop([3, 4, 5], [12, 13, 14]);
-            original_image_cropped = mock_roi_image.Copy;
+            original_image_cropped = mock_roi_image.Copy();
             mock_roi_image.ChangeRawImage(uint8(rand(10,10,10) > 0.5));
             mock_roi_image.Title = 'ResultImage';
             template_roi = mock_roi_image.BlankCopy();
@@ -452,15 +452,15 @@ classdef TestContextHierarchy < CoreTest
             template_ll = mock_roi_image.BlankCopy();
             template_ll.ChangeRawImage(mock_lobe_image_raw_ll);
             
-%             template_roi.CropToFit;
-            template_lungs.CropToFit;
-            template_left.CropToFit;
-            template_right.CropToFit;
-            template_ru.CropToFit;
-            template_rm.CropToFit;
-            template_rl.CropToFit;
-            template_lu.CropToFit;
-            template_ll.CropToFit;
+%             template_roi.CropToFit();
+            template_lungs.CropToFit();
+            template_left.CropToFit();
+            template_right.CropToFit();
+            template_ru.CropToFit();
+            template_rm.CropToFit();
+            template_rl.CropToFit();
+            template_lu.CropToFit();
+            template_ll.CropToFit();
             
             % Add templates to the template class
             mock_image_templates.AddMockImage(PTKContext.OriginalImage, template_original);
@@ -530,31 +530,31 @@ classdef TestContextHierarchy < CoreTest
             mock_plugin_info5c.Context = PTKContextSet.Lobe;
             mock_plugin_info5c.PluginType = 'ReplaceOverlay';
 
-            results = mock_roi_image.Copy;
-            results_original = mock_original_image.Copy;
+            results = mock_roi_image.Copy();
+            results_original = mock_original_image.Copy();
             
-            lungs_image = template_lungs.Copy;
+            lungs_image = template_lungs.Copy();
             lungs_image.ChangeRawImage(uint8(lungs_image.RawImage).*uint8(rand(lungs_image.ImageSize) > 0.5));
             lungs_image.Title = 'LungsResultImage';
-            left_image = template_left.Copy;
+            left_image = template_left.Copy();
             left_image.ChangeRawImage(uint8(left_image.RawImage).*uint8(rand(left_image.ImageSize) > 0.5));
             left_image.Title = 'LeftResultImage';
-            right_image = template_right.Copy;
+            right_image = template_right.Copy();
             right_image.ChangeRawImage(uint8(right_image.RawImage).*uint8(rand(right_image.ImageSize) > 0.5));
             right_image.Title = 'RightResultImage';
-            ru_image = template_ru.Copy;
+            ru_image = template_ru.Copy();
             ru_image.ChangeRawImage(uint8(ru_image.RawImage).*uint8(rand(ru_image.ImageSize) > 0.5));
             ru_image.Title = 'RUResultImage';
-            rm_image = template_rm.Copy;
+            rm_image = template_rm.Copy();
             rm_image.ChangeRawImage(uint8(rm_image.RawImage).*uint8(rand(rm_image.ImageSize) > 0.5));
             rm_image.Title = 'RMResultImage';
-            rl_image = template_rl.Copy;
+            rl_image = template_rl.Copy();
             rl_image.ChangeRawImage(uint8(rl_image.RawImage).*uint8(rand(rl_image.ImageSize) > 0.5));
             rl_image.Title = 'RLResultImage';
-            lu_image = template_lu.Copy;
+            lu_image = template_lu.Copy();
             lu_image.ChangeRawImage(uint8(lu_image.RawImage).*uint8(rand(lu_image.ImageSize) > 0.5));
             lu_image.Title = 'LUResultImage';
-            ll_image = template_ll.Copy;
+            ll_image = template_ll.Copy();
             ll_image.ChangeRawImage(uint8(ll_image.RawImage).*uint8(rand(ll_image.ImageSize) > 0.5));
             ll_image.Title = 'LLResultImage';
             
@@ -616,7 +616,7 @@ classdef TestContextHierarchy < CoreTest
             
             % Test saving an edited version of this result with RightLung context,
             % and see that it is correctly inserted into the OriginalImage
-            edited_image_1 = output_image.Copy;
+            edited_image_1 = output_image.Copy();
             edited_image_1.ChangeRawImage(edited_image_1.RawImage + 10);
             edited_image_1.Title = 'Edited Image 1';
             context_hierarchy.SaveEditedResult(plugin, PTKContext.RightLung, edited_image_1, mock_plugin_info, [], dataset_uid, mock_reporting);
@@ -644,7 +644,7 @@ classdef TestContextHierarchy < CoreTest
             obj.Assert(strcmp(cache_info.LungROI.Lungs.LeftLung, cache_info_input), 'Expected run output');
             obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung, cache_info_input), 'Expected run output');
 
-            expected_output_image = mock_original_image.Copy;
+            expected_output_image = mock_original_image.Copy();
             expected_output_image.Clear();
             expected_output_image.ChangeSubImageWithMask(left_image, template_left);
             expected_output_image.ChangeSubImageWithMask(right_image, template_right);
@@ -734,7 +734,7 @@ classdef TestContextHierarchy < CoreTest
             obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung.RightMiddleLobe, cache_info_input), 'Expected run output');
             obj.Assert(strcmp(cache_info.LungROI.Lungs.RightLung.RightLowerLobe, cache_info_input), 'Expected run output');
 
-            expected_output_image = mock_original_image.Copy;
+            expected_output_image = mock_original_image.Copy();
             expected_output_image.Clear();
             expected_output_image.ChangeSubImageWithMask(lu_image, template_lu);
             expected_output_image.ChangeSubImageWithMask(ll_image, template_ll);
@@ -763,7 +763,7 @@ classdef TestContextHierarchy < CoreTest
             obj.Assert(isequal(result.LungROI.Lungs.RightLung.RightMiddleLobe.ImageResult.RawImage, rm_image.RawImage), 'Image is correct ROI');
             obj.Assert(isequal(result.LungROI.Lungs.RightLung.RightLowerLobe.ImageResult.RawImage, rl_image.RawImage), 'Image is correct ROI');
 
-            expected_output_image = mock_original_image.Copy;
+            expected_output_image = mock_original_image.Copy();
             expected_output_image.Clear();
             expected_output_image.ChangeSubImageWithMask(lu_image, template_lu);
             expected_output_image.ChangeSubImageWithMask(ll_image, template_ll);
@@ -773,7 +773,7 @@ classdef TestContextHierarchy < CoreTest
             obj.Assert(isequal(output_image.RawImage, expected_output_image.RawImage), 'Image is correct ROI');
 
             % Test saving an edited version of this result
-            edited_image_2 = output_image.Copy;
+            edited_image_2 = output_image.Copy();
             edited_image_2.ChangeRawImage(edited_image_2.RawImage + 10);            
             edited_image_2.Title = 'Edited Image 2';
             context_hierarchy.SaveEditedResult(plugin5, PTKContext.LungROI, edited_image_2, mock_plugin_info5, [], dataset_uid, mock_reporting);
@@ -783,27 +783,27 @@ classdef TestContextHierarchy < CoreTest
             saved_edited_result_rm = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.RightMiddleLobe) '.' dataset_uid]);
             saved_edited_result_rl = mock_dependency_tracker.SavedMockResults([plugin5 '.' char(PTKContext.RightLowerLobe) '.' dataset_uid]);
             
-            expected_result_lu = edited_image_2.Copy;
+            expected_result_lu = edited_image_2.Copy();
             expected_result_lu.ResizeToMatch(lu_image);
             expected_result_lu.ChangeRawImage(expected_result_lu.RawImage .* uint8(template_lu.RawImage> 0));
             obj.Assert(isequal(saved_edited_result_lu.RawImage, expected_result_lu.RawImage), 'Image is correct ROI');
 
-            expected_result_ru = edited_image_2.Copy;
+            expected_result_ru = edited_image_2.Copy();
             expected_result_ru.ResizeToMatch(ru_image);
             expected_result_ru.ChangeRawImage(expected_result_ru.RawImage .* uint8(template_ru.RawImage> 0));
             obj.Assert(isequal(saved_edited_result_ru.RawImage, expected_result_ru.RawImage), 'Image is correct ROI');
 
-            expected_result_ll = edited_image_2.Copy;
+            expected_result_ll = edited_image_2.Copy();
             expected_result_ll.ResizeToMatch(ll_image);
             expected_result_ll.ChangeRawImage(expected_result_ll.RawImage .* uint8(template_ll.RawImage> 0));
             obj.Assert(isequal(saved_edited_result_ll.RawImage, expected_result_ll.RawImage), 'Image is correct ROI');
 
-            expected_result_rl = edited_image_2.Copy;
+            expected_result_rl = edited_image_2.Copy();
             expected_result_rl.ResizeToMatch(rl_image);
             expected_result_rl.ChangeRawImage(expected_result_rl.RawImage .* uint8(template_rl.RawImage> 0));
             obj.Assert(isequal(saved_edited_result_rl.RawImage, expected_result_rl.RawImage), 'Image is correct ROI');
 
-            expected_result_rm = edited_image_2.Copy;
+            expected_result_rm = edited_image_2.Copy();
             expected_result_rm.ResizeToMatch(rm_image);
             expected_result_rm.ChangeRawImage(expected_result_rm.RawImage .* uint8(template_rm.RawImage> 0));
             obj.Assert(isequal(saved_edited_result_rm.RawImage, expected_result_rm.RawImage), 'Image is correct ROI');
@@ -813,7 +813,7 @@ classdef TestContextHierarchy < CoreTest
     
     methods (Static)
         function combined_raw = CombineAndCrop(template, roi)
-            roi = roi.Copy;
+            roi = roi.Copy();
             roi.ResizeToMatch(template)
             combined_raw = template.RawImage & roi.RawImage;
         end

@@ -11,8 +11,8 @@ function new_mask = PTKAddMissingCoronalEdgeSlices(mask_image, resample_voxel_si
     
     
     bounds = mask_image.GetBounds;
-    mask_resampled = mask_image.Copy;
-    new_mask = mask_image.Copy;
+    mask_resampled = mask_image.Copy();
+    new_mask = mask_image.Copy();
     
     if (bounds(1) <= 2) || (bounds(2) >=  (mask_resampled.ImageSize(1)-1))
         mask_resampled.AddBorder(1);

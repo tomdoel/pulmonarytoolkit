@@ -27,8 +27,8 @@ end
 function segment_map = ComputeSmoothedSegmentsForLobe(lobe_mask, acinar_map, segmental_labels, reporting)
     smoothing_size_mm = 20;
     template = lobe_mask.BlankCopy();
-    lobe_mask.CropToFit;
-    acinar_map_cropped = acinar_map.Copy;
+    lobe_mask.CropToFit();
+    acinar_map_cropped = acinar_map.Copy();
     acinar_map_cropped.ResizeToMatch(lobe_mask);
     starting_indices = [];
     for segment_index = 1 : numel(segmental_labels)

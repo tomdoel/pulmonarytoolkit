@@ -88,11 +88,11 @@ function [top_of_trachea, trachea_voxels] = PTKFindTopOfTrachea(lung_image, repo
     endpoint = min(image_size, endpoint);
 
     % Crop the image
-    partial_image = lung_image.Copy;
+    partial_image = lung_image.Copy();
     partial_image.Crop(startpoint, endpoint);
     
     if debug_mode
-        debug_image = partial_image.Copy;
+        debug_image = partial_image.Copy();
     end
     
     if debug_mode

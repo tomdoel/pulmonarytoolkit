@@ -30,7 +30,7 @@ function lung_image = PTKGetLungROIForCT(lung_image, reporting)
     
     reporting.ShowProgress('Rescaling image');
     
-    reduced_image = lung_image.Copy;
+    reduced_image = lung_image.Copy();
     
     reduced_image.RescaleToMaxSize(128);
 
@@ -43,7 +43,7 @@ function lung_image = PTKGetLungROIForCT(lung_image, reporting)
     
     % Use the crop function to find the offset and image size
     original_origin = reduced_image.Origin;
-    reduced_image.CropToFit;
+    reduced_image.CropToFit();
     offset = reduced_image.Origin - original_origin;
     
     % Scale back to normal size, allowing a border
@@ -54,7 +54,7 @@ function lung_image = PTKGetLungROIForCT(lung_image, reporting)
     end_crop = min(end_crop, lung_image.ImageSize);
     
     reporting.ShowProgress('Cropping image');    
-    lung_image = lung_image.Copy;
+    lung_image = lung_image.Copy();
     lung_image.Crop(start_crop, end_crop);
     
     reporting.CompleteProgress();

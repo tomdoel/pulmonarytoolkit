@@ -61,9 +61,9 @@ classdef PTKFissureApproximation < PTKPlugin
         function left_results = GetLeftLungResults(application, lobes_guess, left_and_right_lungs)
             left_lung_roi = application.GetResult('PTKGetLeftLungROI');
             
-            lobes_guess = lobes_guess.Copy;
+            lobes_guess = lobes_guess.Copy();
             lobes_guess.ResizeToMatch(left_lung_roi);
-            left_and_right_lungs = left_and_right_lungs.Copy;
+            left_and_right_lungs = left_and_right_lungs.Copy();
             left_and_right_lungs.ResizeToMatch(left_lung_roi);
             
             fissures = (lobes_guess.RawImage == 0) & (left_and_right_lungs.RawImage == 2);
@@ -73,9 +73,9 @@ classdef PTKFissureApproximation < PTKPlugin
         
         function right_results = GetRightLungResults(application, lobes_guess, left_and_right_lungs)
             right_lung_roi = application.GetResult('PTKGetRightLungROI');
-            lobes_guess = lobes_guess.Copy;
+            lobes_guess = lobes_guess.Copy();
             lobes_guess.ResizeToMatch(right_lung_roi);
-            left_and_right_lungs = left_and_right_lungs.Copy;
+            left_and_right_lungs = left_and_right_lungs.Copy();
             left_and_right_lungs.ResizeToMatch(right_lung_roi);
 
             fissures = (lobes_guess.RawImage == 0) & (left_and_right_lungs.RawImage == 1);

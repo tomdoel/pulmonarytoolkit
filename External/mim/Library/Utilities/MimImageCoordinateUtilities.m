@@ -27,7 +27,7 @@ classdef MimImageCoordinateUtilities
         end
         
         function linear_offsets = GetLinearOffsetsForDirections(dirs, image_size)
-            direction_vectors = MimImageCoordinateUtilities.CalculateDirectionVectors;            
+            direction_vectors = MimImageCoordinateUtilities.CalculateDirectionVectors();
             linear_offsets = zeros(1, numel(dirs));
             for n = 1 : length(dirs)
                 direction = dirs(n);

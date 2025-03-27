@@ -94,7 +94,7 @@ classdef MimImageTemplates < CoreBaseClass
                 end
                 template = template.(context_list{1});
 
-                template = template.Copy;
+                template = template.Copy();
             else
                 if obj.DatasetDiskCache.ManualSegmentationExists(context, reporting)
                     template = obj.DatasetDiskCache.LoadManualSegmentation(context, reporting);

@@ -16,7 +16,7 @@ function airway_tree = PTKCloseBranchesInTree(airway_tree, closing_size_mm, imag
         reporting = [];
     end
 
-    number_of_segments = airway_tree.CountBranches;
+    number_of_segments = airway_tree.CountBranches();
     
     reporting.ShowProgress('Closing branches in the airway tree');
     segments_to_do = airway_tree;
@@ -42,7 +42,7 @@ function airway_tree = PTKCloseBranchesInTree(airway_tree, closing_size_mm, imag
 end
 
 function CloseSegment(segment, closing_size_mm, image_size)
-    voxel_indices = segment.GetAcceptedVoxels;
+    voxel_indices = segment.GetAcceptedVoxels();
     
     if ~isempty(voxel_indices)
         all_points = GetClosedIndicesForSegmentAndChildren(segment, closing_size_mm, image_size);
@@ -52,13 +52,13 @@ function CloseSegment(segment, closing_size_mm, image_size)
 end
 
 function result_points = GetClosedIndicesForSegmentAndChildren(current_segment, closing_size_mm, image_size)
-    segment_indices = current_segment.GetAcceptedVoxels;
+    segment_indices = current_segment.GetAcceptedVoxels();
     if isempty(current_segment.Children)
         result_points = GetClosedIndices(segment_indices, closing_size_mm, image_size);
     else
         result_points = [];
         for child_segment  = current_segment.Children
-            child_indices = child_segment.GetAcceptedVoxels;
+            child_indices = child_segment.GetAcceptedVoxels();
             all_indices = [segment_indices; child_indices];
             new_points_all = GetClosedIndices(all_indices, closing_size_mm, image_size);
             new_points_children = GetClosedIndices(child_indices, closing_size_mm, image_size);

@@ -1,5 +1,5 @@
 classdef PTKAirwaysAndLungs < PTKPlugin
-    % PTKAirwaysAndLungs. Plugin for displaying segented airways and lungs together
+    % PTKAirwaysAndLungs. Plugin for displaying segmented airways and lungs together
     %
     % This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     % the gui, or through the interfaces provided by the Pulmonary Toolkit.

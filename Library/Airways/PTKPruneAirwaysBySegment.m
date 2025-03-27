@@ -21,6 +21,6 @@ end
 
 function PruneAirways(segments)
     for airway = segments
-        airway.RemoveChildren;
+        airway.RemoveChildren();
     end
 end

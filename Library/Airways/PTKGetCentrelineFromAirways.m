@@ -22,7 +22,7 @@ function results = PTKGetCentrelineFromAirways(airway_results, template_image, r
     
     % No need for this line since the image from PTKGetImageFromAirwayResults
     % does not include exploded points
-    %             airway_segented_image.ChangeRawImage(uint8(airway_segented_image.RawImage == 1));
+    %             airway_segmented_image.ChangeRawImage(uint8(airway_segmented_image.RawImage == 1));
     
     % While each branch of the tree has been closed, there may still be
     % holes where branches meet. Hence we perform a hole filling to

@@ -60,7 +60,7 @@ classdef MimView3D < MimGuiPlugin
                         airways = false;
                 end
 
-                segmentation = gui_app.ImagePanel.OverlayImage.Copy;
+                segmentation = gui_app.ImagePanel.OverlayImage.Copy();
                 if segmentation.ImageExists
                     if airways
                         if isa(segmentation.RawImage, 'single') || isa(segmentation.RawImage, 'double')

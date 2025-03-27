@@ -36,7 +36,7 @@ function start_branches = PTKGetAirwaysLabelledByLobe(template, airway_centrelin
 
     start_segment = airway_centreline_tree;
     
-    start_segment.GenerateBranchParameters;
+    start_segment.GenerateBranchParameters();
 
     % Separate into left and right lungs
     [left_lung_start, right_lung_start] = SeparateIntoLeftAndRightLungs(start_segment, template, reporting);

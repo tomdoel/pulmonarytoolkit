@@ -356,7 +356,7 @@ classdef MimContextHierarchy < CoreBaseClass
                 end
                 parent_context = higher_context_mapping.Context;
                 parent_image_template = obj.ImageTemplates.GetTemplateImage(parent_context, dataset_stack, reporting);
-                new_edited_image_for_context_image = edited_result_image.Copy;
+                new_edited_image_for_context_image = edited_result_image.Copy();
                 new_edited_image_for_context_image.ResizeToMatch(parent_image_template);
                 obj.SaveEditedResultRecursive(plugin_name, parent_context, new_edited_image_for_context_image, plugin_info, dataset_stack, dataset_uid, reporting);
 

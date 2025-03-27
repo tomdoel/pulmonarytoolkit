@@ -56,7 +56,7 @@ function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, cont
     bin_regions = slice_bins.BinRegions;
     
     % Reduce all images to a consistent size
-    bin_image.CropToFit;
+    bin_image.CropToFit();
     roi.ResizeToMatch(bin_image);
     context_mask.ResizeToMatch(bin_image);
     context_no_airways.ResizeToMatch(bin_image);
@@ -77,14 +77,14 @@ function results = PTKMultipleRegionAnalysis(slice_bins, roi, context_mask, cont
         % Create a mask for this bin
         mask = bin_image.BlankCopy();
         mask.ChangeRawImage(bin_image.RawImage == bin_colour_index & context_mask.RawImage);
-        mask.CropToFit;
+        mask.CropToFit();
         
         % Create a mask for this bin excluding the airways
         no_airways_mask = bin_image.BlankCopy();
         no_airways_mask.ChangeRawImage(bin_image.RawImage == bin_colour_index & context_no_airways.RawImage);
         no_airways_mask.ResizeToMatch(mask);
         
-        roi_reduced = roi.Copy;
+        roi_reduced = roi.Copy();
         roi_reduced.ResizeToMatch(mask);
         bin_results = PTKComputeAirTissueFraction(roi_reduced, mask, reporting);
         [emphysema_results, ~] = PTKComputeEmphysemaFromMask(roi_reduced, no_airways_mask);

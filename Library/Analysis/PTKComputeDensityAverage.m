@@ -87,7 +87,7 @@ function [density_average, density_values_computed_mask, density_valid_values_ma
     
     density_average_raw(~mask.RawImage) = 0;
     
-    density_values_computed_mask = mask.Copy;
+    density_values_computed_mask = mask.Copy();
     
     reporting.ShowProgress('Storing results');
     density_average = lung_roi.BlankCopy();

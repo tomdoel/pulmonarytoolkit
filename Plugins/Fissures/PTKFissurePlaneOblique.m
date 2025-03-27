@@ -57,9 +57,9 @@ classdef PTKFissurePlaneOblique < PTKPlugin
     methods (Static, Access = private)
         
         function results = GetLeftLungResults(max_fissure_points, lung_roi, left_and_right_lungs, reporting)
-            max_fissure_points = max_fissure_points.Copy;
+            max_fissure_points = max_fissure_points.Copy();
             
-            lung_mask = left_and_right_lungs.Copy;
+            lung_mask = left_and_right_lungs.Copy();
             lung_mask.ResizeToMatch(lung_roi);
             lung_mask.ChangeRawImage(lung_mask.RawImage == 2);
             
@@ -77,9 +77,9 @@ classdef PTKFissurePlaneOblique < PTKPlugin
         end
         
         function results = GetRightLungResults(max_fissure_points, lung_roi, left_and_right_lungs, reporting)
-            max_fissure_points = max_fissure_points.Copy;
+            max_fissure_points = max_fissure_points.Copy();
             
-            lung_mask = left_and_right_lungs.Copy;
+            lung_mask = left_and_right_lungs.Copy();
             lung_mask.ResizeToMatch(lung_roi);
             lung_mask.ChangeRawImage(lung_mask.RawImage == 1);
             

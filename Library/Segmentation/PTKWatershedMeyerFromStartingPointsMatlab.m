@@ -10,7 +10,7 @@ function labeled_output = PTKWatershedMeyerFromStartingPointsMatlab(image, start
     %     if possible, as that is faster. 
     %
     % Parameters:
-    %     image: 16-bit ingeter image (int16). The watershed regions grow according to the minima of these points
+    %     image: 16-bit integer image (int16). The watershed regions grow according to the minima of these points
     %     starting_labels: 8-bit integer (int8). Labels of starting points for the watershed
     %     labeled_output: 8-bit integer (int8). Labels of the image assigned to
     %         watershed regions. Watershed points are given the label -2

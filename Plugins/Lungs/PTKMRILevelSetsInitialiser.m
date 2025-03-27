@@ -40,7 +40,7 @@ classdef PTKMRILevelSetsInitialiser < PTKPlugin
     
     methods (Static)
         function results = RunPlugin(dataset, reporting)
-            is_gas = dataset.IsGasMRI;
+            is_gas = dataset.IsGasMRI();
 
             left_and_right_lungs = dataset.GetResult('PTKLeftAndRightLungsInitialiser');
             roi = dataset.GetResult('PTKLungROI');
@@ -60,7 +60,7 @@ classdef PTKMRILevelSetsInitialiser < PTKPlugin
         end
         
         function results = ProcessLevelSets(lung_roi, left_and_right_lungs, mask_colour, is_gas, reporting)
-            lung_mask = left_and_right_lungs.Copy;
+            lung_mask = left_and_right_lungs.Copy();
             lung_mask.ResizeToMatch(lung_roi);
             lung_mask.ChangeRawImage(lung_mask.RawImage == mask_colour);
 

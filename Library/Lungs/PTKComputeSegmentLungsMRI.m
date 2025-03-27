@@ -49,8 +49,8 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     end
     
     reporting.UpdateProgressMessage('Finding optimal threshold values');
-    new_image_left = filtered_image.Copy;
-    new_image_right = filtered_image.Copy;
+    new_image_left = filtered_image.Copy();
+    new_image_right = filtered_image.Copy();
     
     coronal_mode = filtered_image.VoxelSize(1) > 5;
     
@@ -64,7 +64,7 @@ function [new_image, bounds] = PTKComputeSegmentLungsMRI(original_image, filter_
     
     
     
-    new_image = new_image_left.Copy;
+    new_image = new_image_left.Copy();
     new_image.ChangeRawImage(uint8((new_image_left.RawImage + new_image_right.RawImage) > 0));
 
     
@@ -167,7 +167,7 @@ function [new_image, bounds] = FindMaximumRegionNotTouchingSides(lung_image, loc
 end
 
 function [new_image_slice, bounds, next_points] = GetVariableThresholdForSlice(coronal_index, lung_image, min_value, max_value, local_start_points, coronal_mode, reporting)
-    lung_image_slice = lung_image.Copy;
+    lung_image_slice = lung_image.Copy();
     new_origin = lung_image.Origin;
     new_origin(1) = new_origin(1) + coronal_index - 2;
     for local_start_point_index = 1 : numel(local_start_points)
@@ -201,7 +201,7 @@ function [new_image_slice, bounds, next_points] = GetVariableThresholdForSlice(c
 end
 
 function next_points = GetNextSetOfStartPoints(new_image_slice)
-    eroded_image_slice = new_image_slice.Copy;
+    eroded_image_slice = new_image_slice.Copy();
     eroded_image_slice.BinaryMorph(@imerode, 20);
     next_points = find(eroded_image_slice.RawImage);
     if numel(next_points) < 20

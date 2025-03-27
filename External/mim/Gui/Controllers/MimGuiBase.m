@@ -370,7 +370,7 @@ classdef MimGuiBase < GemFigure
         end
 
         function dataset_cache_path = GetDatasetCachePath(obj)
-            dataset_cache_path = obj.GuiDataset.GetDatasetCachePath;
+            dataset_cache_path = obj.GuiDataset.GetDatasetCachePath();
         end
 
         function edited_results_path = GetEditedResultsPath(obj)

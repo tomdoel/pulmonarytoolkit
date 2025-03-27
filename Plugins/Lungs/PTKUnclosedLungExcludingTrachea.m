@@ -93,7 +93,7 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
                 if segment.GenerationNumber <= max_generation_number
-                    voxels = template.GlobalToLocalIndices(segment.GetAllAirwayPoints);
+                    voxels = template.GlobalToLocalIndices(segment.GetAllAirwayPoints());
                     segmented_image(voxels) = 1;
                     segments_to_do = [segments_to_do, segment.Children];
                 end
@@ -106,7 +106,7 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
-                voxels = template.GlobalToLocalIndices(segment.GetAllAirwayPoints);
+                voxels = template.GlobalToLocalIndices(segment.GetAllAirwayPoints());
                 segmented_image(voxels) = 1;
                 segments_to_do = [segments_to_do, segment.Parent];
             end

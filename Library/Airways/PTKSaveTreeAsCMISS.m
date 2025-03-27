@@ -40,7 +40,7 @@ function PTKSaveTreeAsCMISS(tree_root, file_path, filename_prefix, coordinate_sy
     exnode_file_name = fullfile(file_path, [filename_prefix '.exnode']);
     exelem_file_name = fullfile(file_path, [filename_prefix '.exelem']);
     
-    linear_branch_list = tree_root.GetBranchesAsList;
+    linear_branch_list = tree_root.GetBranchesAsList();
     
     num_branches = length(linear_branch_list);
     

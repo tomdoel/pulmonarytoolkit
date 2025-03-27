@@ -68,10 +68,10 @@ classdef PTKFissurenessROIOblique < PTKPlugin
     
     methods (Static, Access = private)
         function results = GetResultsForLung(fissure_approximation, lung_roi, fissureness, main_fissure_colour, mid_fissure_colour)
-            fissureness = fissureness.Copy;
+            fissureness = fissureness.Copy();
             fissureness.ResizeToMatch(lung_roi);
 
-            fissure_approximation = fissure_approximation.Copy;
+            fissure_approximation = fissure_approximation.Copy();
             fissure_approximation.ResizeToMatch(lung_roi);
 
             fissure = fissure_approximation.RawImage == main_fissure_colour;

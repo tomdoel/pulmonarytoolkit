@@ -57,7 +57,7 @@ classdef PTKMRILevelSets < PTKPlugin
         
         function results = ProcessLevelSets(dataset, lung_roi, left_and_right_lungs_initial, mask_colour, reporting)
             reporting.PushProgress();
-            lung_mask = left_and_right_lungs_initial.Copy;
+            lung_mask = left_and_right_lungs_initial.Copy();
             lung_mask.ResizeToMatch(lung_roi);
             lung_mask.ChangeRawImage(lung_mask.RawImage == mask_colour);
 
@@ -76,7 +76,7 @@ classdef PTKMRILevelSets < PTKPlugin
                 figure_handle = [];
             end
             
-            results = lung_mask.Copy;
+            results = lung_mask.Copy();
             results.ImageType = PTKImageType.Colormap;
             for coronal_index = 1 : lung_roi.ImageSize(1)
                 reporting.UpdateProgressStage(coronal_index, lung_roi.ImageSize(1));

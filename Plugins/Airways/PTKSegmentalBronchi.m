@@ -37,7 +37,7 @@ end
             lobes = dataset.GetResult('PTKLobes');
             centreline_tree = dataset.GetResult('PTKAirwayCentreline');
             results_image = dataset.GetTemplateImage(PTKContext.LungROI);
-            centreline_tree.AirwayCentrelineTree.GenerateBranchParameters;
+            centreline_tree.AirwayCentrelineTree.GenerateBranchParameters();
             new_centreline_tree = PTKGetSegmentalBronchiCentrelinesForEachLobe(centreline_tree.AirwayCentrelineTree, lobes, results_image, reporting);
 
             results = [];

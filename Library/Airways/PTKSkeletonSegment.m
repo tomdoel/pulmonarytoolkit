@@ -108,7 +108,7 @@ classdef PTKSkeletonSegment < PTKTree
                 end
             end
             if (length(obj.Children) == 1)
-                obj.MergeWithChild;
+                obj.MergeWithChild();
             end
         end
                 

@@ -123,9 +123,9 @@ classdef PTKTreeSegment < PTKTree
             endpoints = obj.AcceptedVoxelIndices{end};
         end
 
-        % Returns all accepted region-growing points, plus those added from the airway closing operation
         function all_points = GetAllAirwayPoints(obj)
-            all_points = [obj.GetAcceptedVoxels; obj.ClosedPoints];
+            % Returns all accepted region-growing points, plus those added from the airway closing operation
+            all_points = [obj.GetAcceptedVoxels(); obj.ClosedPoints];
         end
         
         % Points which are added later to close gaps in the airway tree
@@ -180,7 +180,7 @@ classdef PTKTreeSegment < PTKTree
             obj.PendingVoxelIndices{end + 1} = indices_of_new_points;
             
             if obj.MarkedExplosion
-                obj.RejectAllPendingVoxelIndices;
+                obj.RejectAllPendingVoxelIndices();
                 return;
             end
             
@@ -199,7 +199,7 @@ classdef PTKTreeSegment < PTKTree
             % Keep track of the point at which an explosion starts to occur
             if (number_of_points <= obj.LastNumberOfVoxels)
                 obj.LastNumberOfVoxels = number_of_points;
-                obj.AcceptAllPendingVoxelIndices;
+                obj.AcceptAllPendingVoxelIndices();
             end
             
             % Explosion control: we allow a certain number of consecutive
@@ -208,12 +208,12 @@ classdef PTKTreeSegment < PTKTree
             % deleted later.
             if (obj.NumberOfVoxelsSkipped > obj.PermittedVoxelSkips)
                 obj.MarkedExplosion = true;
-                obj.RejectAllPendingVoxelIndices;
+                obj.RejectAllPendingVoxelIndices();
             end
         end
         
         function EarlyTerminateBranch(obj)
-            obj.CompleteThisSegment;
+            obj.CompleteThisSegment();
             if ~obj.MarkedExplosion
                 obj.ExceededMaximumNumberOfGenerations = true;
             end
@@ -221,9 +221,9 @@ classdef PTKTreeSegment < PTKTree
         
         function CompleteThisSegment(obj)
             if obj.MarkedExplosion
-                obj.RejectAllPendingVoxelIndices;
+                obj.RejectAllPendingVoxelIndices();
             else
-                obj.AcceptAllPendingVoxelIndices;
+                obj.AcceptAllPendingVoxelIndices();
             end
         end
         

@@ -49,7 +49,7 @@ classdef PTKDeformationFieldAlignedCtToGasMr < PTKPlugin
 %             
 %             
 %             % For verification
-%             ct_verify = ct_initial.ResampledCtMask.Copy;
+%             ct_verify = ct_initial.ResampledCtMask.Copy();
 %             ct_verify.ChangeRawImage(single(ct_verify.RawImage));
 %             resampled_ct_mask = PTKRegisterImageFluid(ct_verify, deformation_field_single_lung, '*linear', reporting);
 %             resampled_ct_mask.ChangeRawImage(uint8(resampled_ct_mask.RawImage > 0.5));

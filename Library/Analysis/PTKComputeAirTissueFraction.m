@@ -1,5 +1,5 @@
 function results = PTKComputeAirTissueFraction(roi, mask, reporting)
-    % Compute volume and surface area from masks
+    % Compute density and approximate air and tissue fractions
     %
     %
     % .. Licence

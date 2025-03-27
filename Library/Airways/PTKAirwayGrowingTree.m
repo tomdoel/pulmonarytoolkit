@@ -149,8 +149,8 @@ classdef PTKAirwayGrowingTree < PTKTreeModel
         function terminal_coords = GetTerminalCoordinates(obj, reporting)
             % Returns the coordinates of each terminal branch in the tree below this
             % branch
-            num_branches = obj.CountBranches;
-            num_terminal_branches = obj.CountTerminalBranches;
+            num_branches = obj.CountBranches();
+            num_terminal_branches = obj.CountTerminalBranches();
             
             reporting.UpdateProgressMessage('Finding terminal coordinates');
             

@@ -53,7 +53,7 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
         filter_size = 0.5;
         filtered_lung_image = MimGaussianFilter(original_image, filter_size);
     else
-        filtered_lung_image = original_image.Copy;
+        filtered_lung_image = original_image.Copy();
     end
 
     raw_image = original_image.RawImage;
@@ -87,7 +87,7 @@ function lung_image = PTKSegmentLungsWithoutClosing(original_image, filter_image
     
     while still_searching
         open_value = open_params(open_index);
-        filtered_lung_image_copy = filtered_lung_image.Copy;
+        filtered_lung_image_copy = filtered_lung_image.Copy();
         filtered_lung_image_copy.BinaryMorph(@imerode, open_value);
         adjusted_lung_image = PTKGetMainRegionExcludingPaddingBorder(original_image, filtered_lung_image_copy, minimum_region_volume_mm3, include_interior_regions, reporting);
         

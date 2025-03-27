@@ -39,8 +39,8 @@ function output_image = PTKSmoothedRegionGrowingMatlab(threshold_image, start_po
         reporting.ShowProgress('Smoothed region growing');
     end
     
-    threshold_image_cropped = threshold_image.Copy;
-    threshold_image_cropped.CropToFit;
+    threshold_image_cropped = threshold_image.Copy();
+    threshold_image_cropped.CropToFit();
     
     points_left = threshold_image_cropped.RawImage;
     output_image_raw = zeros(threshold_image_cropped.ImageSize, 'uint8');

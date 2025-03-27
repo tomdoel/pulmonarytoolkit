@@ -52,8 +52,8 @@ function MimCreateSurfaceMesh(filepath, filename, segmentation, smoothing_size, 
     
     % Crop surrounding whitespace and reduce the image size if it is large.
     % A smaller image size is necessary for the use of isonormals
-    segmentation = segmentation.Copy;
-    segmentation.CropToFit;
+    segmentation = segmentation.Copy();
+    segmentation.CropToFit();
     
     % Speed up visualisation by rescaling large images.
     if ~small_structures

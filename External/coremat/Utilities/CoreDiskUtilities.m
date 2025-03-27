@@ -138,7 +138,7 @@ classdef CoreDiskUtilities
             if ~isempty(root_path)
                 dirs_to_do = CoreStack(CorePair(root_path, ''));
                 while ~dirs_to_do.IsEmpty
-                    next_dir = dirs_to_do.Pop;
+                    next_dir = dirs_to_do.Pop();
                     dirs_found.Push(next_dir);
                     this_dir_list = CoreDiskUtilities.GetListOfDirectories(next_dir.First);
                     for index = 1 : numel(this_dir_list)
@@ -287,7 +287,7 @@ classdef CoreDiskUtilities
             folders_to_scan = CoreStack(folders_to_scan);
             mfilesFound = CoreStack;
             while ~folders_to_scan.IsEmpty
-                next_folder = folders_to_scan.Pop;
+                next_folder = folders_to_scan.Pop();
                 next_plugin_list = CoreDiskUtilities.GetDirectoryFileList(next_folder.First, '*.m');
                 for next_plugin = next_plugin_list
                     mfilesFound.Push(CorePair(CoreTextUtilities.StripFileparts(next_plugin{1}), next_folder.Second));

@@ -40,7 +40,7 @@ classdef PTKWavefront < handle
     
         % The wavefront is a thick layer of voxels which is used to detect 
         % and process bifurcations in the airway tree before these voxels are
-        % added to the segement's list of pending indices
+        % added to the segment's list of pending indices
         WavefrontVoxelIndices
 
         % Additional voxels that were not originally part of the segment but 
@@ -115,7 +115,7 @@ classdef PTKWavefront < handle
                 reporting.Error('PTKWavefront:Duplicates', 'Algorithm error - some points have been duplicated');
             end
             
-            if any(ismember(indices_of_new_points, obj.CurrentBranch.GetAcceptedVoxels))
+            if any(ismember(indices_of_new_points, obj.CurrentBranch.GetAcceptedVoxels()))
                 reporting.Error('PTKWavefront:Duplicates', 'Algorithm error - some points have been duplicated');
             end
                         
@@ -133,7 +133,7 @@ classdef PTKWavefront < handle
             
             % If an explosion has been detected then do not continue
             if obj.CurrentBranch.MarkedExplosion
-                obj.MoveAllWavefrontVoxelsToPendingVoxels;
+                obj.MoveAllWavefrontVoxelsToPendingVoxels();
 %                 obj.DeleteSegmentIfNoAcceptedVoxels;
                 segments_to_do = PTKWavefront.empty; % This segment has been terminated
                 return
@@ -216,9 +216,9 @@ classdef PTKWavefront < handle
                 
                 % If the branch has divided, there may be some unaccepted points
                 % left over
-                obj.CompleteThisSegment;
+                obj.CompleteThisSegment();
 
-                if isempty(obj.CurrentBranch.GetAcceptedVoxels)
+                if isempty(obj.CurrentBranch.GetAcceptedVoxels())
                     reporting.ShowWarning('PTKWavefront:EmptyBranch', 'Algorithm error - no points in final branch');
                 end
                 
@@ -228,8 +228,8 @@ classdef PTKWavefront < handle
         
         
         function CompleteThisSegment(obj)
-            obj.MoveAllWavefrontVoxelsToPendingVoxels;
-            obj.CurrentBranch.CompleteThisSegment
+            obj.MoveAllWavefrontVoxelsToPendingVoxels();
+            obj.CurrentBranch.CompleteThisSegment()
         end
     end
         

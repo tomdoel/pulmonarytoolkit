@@ -485,8 +485,8 @@ classdef GemUserInterfaceObject < CoreBaseClass
             object_hierarchy = obj.GetObjectHierarchy(child_object);
 
             % Use the hierarchy to modify the coordinates
-            while ~object_hierarchy.IsEmpty
-                next_object = object_hierarchy.Pop;
+            while ~object_hierarchy.IsEmpty()
+                next_object = object_hierarchy.Pop();
                 click_point = next_object.ParentToChildCoordinates(click_point);
             end
         end

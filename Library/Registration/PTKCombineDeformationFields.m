@@ -14,7 +14,7 @@ function deformation_field_combined = PTKCombineDeformationFields(deformation_le
     % Resample the mask if necessary. This may be necessary if the deformation
     % was computed with a higher resolution image than the actual data
     if ~isequal(left_right_mask.VoxelSize, deformation_left.VoxelSize)
-        left_right_mask = left_right_mask.Copy;
+        left_right_mask = left_right_mask.Copy();
         left_right_mask.Resample(deformation_left.VoxelSize, '*nearest');
     end
     

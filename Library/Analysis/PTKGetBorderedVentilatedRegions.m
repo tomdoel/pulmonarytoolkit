@@ -10,7 +10,7 @@ function masked_ventilated_volume = PTKGetBorderedVentilatedRegions(ventilation_
     %    Distributed under the GNU GPL v3 licence. Please see website for details.
 
     % Resize the lung mask
-    lung_mask = lung_mask.Copy;
+    lung_mask = lung_mask.Copy();
     lung_mask.ResizeToMatch(ventilation_mask);
     
     % Create a new ventilation image using the mask

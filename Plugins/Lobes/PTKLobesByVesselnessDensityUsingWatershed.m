@@ -65,15 +65,15 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
         
         function results_left = GetLeftLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe, reporting)
             left_lung_roi = dataset.GetResult('PTKGetLeftLungROI');
-            left_lung_mask = left_and_right_lungs.Copy;
+            left_lung_mask = left_and_right_lungs.Copy();
             left_lung_mask.ResizeToMatch(left_lung_roi);
             left_lung_mask.ChangeRawImage(left_lung_mask.RawImage == 2);
             
-            vessel_density = vessel_density.Copy;
+            vessel_density = vessel_density.Copy();
             vessel_density.ResizeToMatch(left_lung_roi);
             vessel_density = vessel_density.RawImage;
             
-            airways_by_lobe = airways_by_lobe.Copy;
+            airways_by_lobe = airways_by_lobe.Copy();
             airways_by_lobe.ResizeToMatch(left_lung_roi);
             
             airways_by_lobe = PTKLobesByVesselnessDensityUsingWatershed.TryDilationSizes(airways_by_lobe, [5 6], left_lung_mask, vessel_density, reporting);
@@ -91,15 +91,15 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
         
         function results_right = GetRightLobes(dataset, left_and_right_lungs, vessel_density, airways_by_lobe, reporting)
             right_lung_roi = dataset.GetResult('PTKGetRightLungROI');
-            right_lung_mask = left_and_right_lungs.Copy;
+            right_lung_mask = left_and_right_lungs.Copy();
             right_lung_mask.ResizeToMatch(right_lung_roi);
             right_lung_mask.ChangeRawImage(right_lung_mask.RawImage == 1);
             
-            vessel_density = vessel_density.Copy;
+            vessel_density = vessel_density.Copy();
             vessel_density.ResizeToMatch(right_lung_roi);
             vessel_density = vessel_density.RawImage;
             
-            airways_by_lobe = airways_by_lobe.Copy;
+            airways_by_lobe = airways_by_lobe.Copy();
             airways_by_lobe.ResizeToMatch(right_lung_roi);
             
             airways_by_lobe = PTKLobesByVesselnessDensityUsingWatershed.TryDilationSizes(airways_by_lobe, [1 2 4], right_lung_mask, vessel_density, reporting);
@@ -150,7 +150,7 @@ classdef PTKLobesByVesselnessDensityUsingWatershed < PTKPlugin
             max_iterations = round(initial_volume_mm3/prod(lung_mask.VoxelSize));
             dilated_airways = zeros(airways.ImageSize, 'int8');
             for colour = colour_range
-                next_image = airways.Copy;
+                next_image = airways.Copy();
                 next_image.ChangeRawImage(next_image.GetMappedRawImage == colour);
                 
                 % Dilate the airways

@@ -79,7 +79,7 @@ classdef PTKFissurenessHessianFactor < PTKPlugin
         
         function fissureness = ComputeFissureness(image_data, left_and_right_lungs, reporting, is_left_lung)
             
-            left_and_right_lungs = left_and_right_lungs.Copy;
+            left_and_right_lungs = left_and_right_lungs.Copy();
             left_and_right_lungs.ResizeToMatch(image_data);
             image_data.ChangeRawImage(PTKFissurenessHessianFactor.DuplicateImageInMask(image_data.RawImage, left_and_right_lungs.RawImage));
             

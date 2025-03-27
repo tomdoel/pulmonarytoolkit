@@ -46,7 +46,7 @@ classdef PTKSpongeModel < PTKPlugin
         function results = RunPlugin(application, reporting)
             roi = application.GetResult('PTKLungROI');
                         
-            results = roi.Copy;
+            results = roi.Copy();
             results.Clear();
             
             if ~roi.IsCT

@@ -58,7 +58,7 @@ function [fv, normals] = MimCreateSurfaceFromSegmentation(segmentation, smoothin
     raw_image = segmentation.GetMappedRawImage;
     sub_seg.ChangeRawImage(raw_image == label);
     
-    sub_seg.CropToFit;
+    sub_seg.CropToFit();
     
     
     % Perform a closing operation and filter the image to create a smoother appearance

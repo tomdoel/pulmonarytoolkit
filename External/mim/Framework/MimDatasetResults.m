@@ -76,7 +76,7 @@ classdef MimDatasetResults < handle
         
         function [result, cache_info, output_image] = GetResult(obj, plugin_name, dataset_stack, output_context, parameters, reporting, allow_results_to_be_cached_override)
             % Returns the results of a plugin. If a valid result is cached on disk,
-            % this wil be returned provided all the dependencies are valid.
+            % this will be returned provided all the dependencies are valid.
             % Otherwise the plugin will be executed and the new result returned.
             % The optional context parameter specifies the region of interest to which the output result will be framed.
             % Specifying a second argument also produces a representative image from
@@ -463,7 +463,7 @@ classdef MimDatasetResults < handle
         % general
         function is_gas_mri = IsGasMRI(obj, dataset_stack, reporting)
             if ~isempty(obj.IsGasMri)
-                is_gas_mri = obj.IsGasMri;
+                is_gas_mri = obj.IsGasMri();
             else
                 is_gas_mri = false;
                 if strcmp(obj.GetImageInfo.Modality, 'MR')

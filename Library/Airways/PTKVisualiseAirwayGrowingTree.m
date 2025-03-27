@@ -39,7 +39,7 @@ function PTKVisualiseAirwayGrowingTree(airway_tree, reporting)
 
     next_generation = airway_tree;
     segment_count = 0;
-    total_segments = airway_tree.CountBranches;
+    total_segments = airway_tree.CountBranches();
     
     while ~isempty(next_generation)
         current_generation = next_generation;

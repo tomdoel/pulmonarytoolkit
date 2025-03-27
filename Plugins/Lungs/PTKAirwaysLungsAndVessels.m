@@ -1,5 +1,5 @@
 classdef PTKAirwaysLungsAndVessels < PTKPlugin
-    % PTKAirwaysLungsAndVessels. Plugin for displaying segented airways, lungs and vessels together
+    % PTKAirwaysLungsAndVessels. Plugin for displaying segmented airways, lungs and vessels together
     %
     % This is a plugin for the Pulmonary Toolkit. Plugins can be run using 
     % the gui, or through the interfaces provided by the Pulmonary Toolkit.
@@ -17,7 +17,7 @@ classdef PTKAirwaysLungsAndVessels < PTKPlugin
     %    
     
     properties
-        ButtonText = 'Airways, Lungs<BR> and vesssels'
+        ButtonText = 'Airways, Lungs<BR> and vessels'
         ToolTip = 'Shows a segmentation of the airways and lungs'
         Category = 'Lungs'
 

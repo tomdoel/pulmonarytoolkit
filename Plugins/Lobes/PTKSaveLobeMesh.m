@@ -49,7 +49,7 @@ classdef PTKSaveLobeMesh < PTKPlugin
             for lobe_index = 1 : 5
                 reporting.UpdateProgressStage((lobe_index-1), 5);
                 
-                current_lobe = lobes.Copy;
+                current_lobe = lobes.Copy();
                 current_lobe.ChangeRawImage(lobes.RawImage == lobe_index_colours(lobe_index));
                 current_lobe = PTKFillHolesInImage(current_lobe);
                 

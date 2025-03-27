@@ -62,7 +62,7 @@ classdef PTKAirwayRadiusApproximation < PTKPlugin
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
-                airway_points_local = template.GlobalToLocalIndices(segment.GetAllAirwayPoints);
+                airway_points_local = template.GlobalToLocalIndices(segment.GetAllAirwayPoints());
                 max_radius = max(dt_image(airway_points_local))*min_voxel_size_mm;
                 segmented_image(airway_points_local) = max_radius;
                 segments_to_do = [segments_to_do segment.Children];

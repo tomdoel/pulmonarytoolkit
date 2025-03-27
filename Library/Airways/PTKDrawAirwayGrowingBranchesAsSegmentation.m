@@ -10,7 +10,7 @@ function results = PTKDrawAirwayGrowingBranchesAsSegmentation(airway_tree, templ
     %
 
     results = template_image;
-    num_branches = airway_tree.CountBranches;
+    num_branches = airway_tree.CountBranches();
     results_raw = zeros(results.ImageSize, 'uint8');
     
     reporting.UpdateProgressMessage('Drawing branches');

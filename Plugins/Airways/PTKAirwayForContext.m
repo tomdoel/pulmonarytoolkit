@@ -72,7 +72,7 @@ classdef PTKAirwayForContext < PTKPlugin
                     bronchi = PTKAirwayForContext.FindSegmentalBronchus(airways.AirwaysBySegment.Trachea, context);
             end
             for branch = bronchi
-                branch.GenerateBranchParameters;
+                branch.GenerateBranchParameters();
             end
             
             results = [];
@@ -83,7 +83,7 @@ classdef PTKAirwayForContext < PTKPlugin
             segment_label = uint8(PTKPulmonarySegmentLabels.(char(context)));
             airways_to_do = CoreStack(airways);
             while ~airways_to_do.IsEmpty
-                next_airways = airways_to_do.Pop;
+                next_airways = airways_to_do.Pop();
                 if next_airways.SegmentIndex == segment_label
                     bronchus = next_airways;
                     return;

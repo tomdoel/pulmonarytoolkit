@@ -57,10 +57,10 @@ classdef PTKMaximumFissurePointsOblique < PTKPlugin
     
     methods (Static, Access = private)
         function results = GetResultsForLung(fissure_approximation, fissureness_roi, lung_roi, left_and_right_lungs, lung_colour, fissure_colour, lung_name, reporting)
-            lung_mask = left_and_right_lungs.Copy;
+            lung_mask = left_and_right_lungs.Copy();
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage == lung_colour));
             
-            fissure_approximation = fissure_approximation.Copy;
+            fissure_approximation = fissure_approximation.Copy();
             fissure_approximation.ResizeToMatch(lung_roi);
             lung_mask.ResizeToMatch(lung_roi);
             

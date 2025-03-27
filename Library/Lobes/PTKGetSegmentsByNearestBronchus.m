@@ -239,10 +239,10 @@ function SetSegmentIndex(segments, segment_index)
 end
 
 function [starting_airways, d1, d2, is, js, ks] = DivideImageCropped(starting_airways, roi)
-    roi = roi.Copy;
+    roi = roi.Copy();
     roi.ChangeRawImage(roi.RawImage | ((starting_airways.RawImage > 0) & (starting_airways.RawImage ~= 7)));
     template = roi.BlankCopy();
-    roi.CropToFit;
+    roi.CropToFit();
     starting_airways.ResizeToMatch(roi);
     raw_image = int8(starting_airways.RawImage);
     raw_image(starting_airways.RawImage == 7) = 0;

@@ -48,7 +48,7 @@ function [new_image, bounds] = PTKSegmentLungsMRISagittal2D(original_image, filt
     [image_raw_new, bounds_new] = FindMaximumRegionNotTouchingSides(filtered_image.Copy(), start_point, true, reporting);
     
     
-    new_image = original_image.Copy;
+    new_image = original_image.Copy();
     new_image.ChangeRawImage(uint8((image_raw_new) > 0));
 
     bounds = bounds_new;

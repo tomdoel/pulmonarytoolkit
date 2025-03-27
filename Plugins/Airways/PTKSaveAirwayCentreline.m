@@ -42,10 +42,10 @@ classdef PTKSaveAirwayCentreline < PTKPlugin
             
             starting_segment = dataset.GetResult('PTKAirwayCentreline');
             starting_segment = starting_segment.AirwayCentrelineTree;
-            starting_segment.GenerateBranchParameters;
+            starting_segment.GenerateBranchParameters();
             
             % Get the results directory
-            path_base = dataset.GetOutputPathAndCreateIfNecessary;
+            path_base = dataset.GetOutputPathAndCreateIfNecessary();
             file_path = fullfile(path_base, 'AirwayTree');
             CoreDiskUtilities.CreateDirectoryIfNecessary(file_path);
             
@@ -53,11 +53,11 @@ classdef PTKSaveAirwayCentreline < PTKPlugin
             
             centreline_tree_filename_prefix = 'AirwayTree_Centreline';
             PTKSaveCentrelineTreeAsNodes(starting_segment, file_path, centreline_tree_filename_prefix, coordinate_system, template_image, reporting)
-            dataset.RecordNewFileAdded('PTKSaveAirwayCentreline', file_path, centreline_tree_filename_prefix, 'Centreline model of the airwya tree down to the segmental bronchi, constructed from the segmented airway tree.');
+            dataset.RecordNewFileAdded('PTKSaveAirwayCentreline', file_path, centreline_tree_filename_prefix, 'Centreline model of the airway tree down to the segmental bronchi, constructed from the segmented airway tree.');
             
             airway_tree_filename_prefix = 'AirwayTree_Model';            
             PTKSaveTreeAsNodes(starting_segment, file_path, airway_tree_filename_prefix, coordinate_system, template_image, reporting)    
-            dataset.RecordNewFileAdded('PTKSaveAirwayCentreline', file_path, airway_tree_filename_prefix, 'Model of the airwya tree down to the segmental bronchi, constructed from the segmented airway tree.');
+            dataset.RecordNewFileAdded('PTKSaveAirwayCentreline', file_path, airway_tree_filename_prefix, 'Model of the airway tree down to the segmental bronchi, constructed from the segmented airway tree.');
 
             % Save the smoothed airway centreline
             airway_tree_filename_prefix = 'AirwayTree_SmoothedCentreline';            
@@ -72,7 +72,7 @@ classdef PTKSaveAirwayCentreline < PTKPlugin
                 
                 % Save the pruned, smoothed airway centreline
                 starting_segment_pruned = starting_segment_pruned.StartBranches.Trachea;
-                starting_segment_pruned.GenerateBranchParameters;
+                starting_segment_pruned.GenerateBranchParameters();
                 
                 airway_tree_filename_prefix = 'AirwayTree_PrunedSmoothedCentreline';
                 PTKSaveSmoothedCentrelineTreeAsNodes(starting_segment_pruned, file_path, airway_tree_filename_prefix, coordinate_system, template_image, reporting);

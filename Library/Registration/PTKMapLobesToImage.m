@@ -9,9 +9,9 @@ function results = PTKMapLobesToImage(lobes, gas_image_template, fluid_deformati
     %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    lobes_ct_right = lobes.Copy;
-    lobes_ct_left = lobes_ct_right.Copy;
-    results = gas_image_template.Copy;
+    lobes_ct_right = lobes.Copy();
+    lobes_ct_left = lobes_ct_right.Copy();
+    results = gas_image_template.Copy();
     
     
     % Right lung
@@ -33,11 +33,11 @@ function results = PTKMapLobesToImage(lobes, gas_image_template, fluid_deformati
     % Combine
     results.ChangeRawImage(zeros(results.ImageSize, 'uint8'));
     
-    right_lung_mask = deformed_ct_lobes_right.Copy;
+    right_lung_mask = deformed_ct_lobes_right.Copy();
     right_lung_mask.ChangeRawImage((right_lung_mask.RawImage == 1) | (right_lung_mask.RawImage == 2) | (right_lung_mask.RawImage == 4));
     results.ChangeSubImageWithMask(deformed_ct_lobes_right, right_lung_mask);
     
-    left_lung_mask = deformed_ct_lobes_left.Copy;
+    left_lung_mask = deformed_ct_lobes_left.Copy();
     left_lung_mask.ChangeRawImage((left_lung_mask.RawImage == 5) | (left_lung_mask.RawImage == 6));
     results.ChangeSubImageWithMask(deformed_ct_lobes_left, left_lung_mask);
     

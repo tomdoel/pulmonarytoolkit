@@ -66,16 +66,16 @@ classdef PTKDensityGridPerLobe < PTKPlugin
                 reporting.UpdateProgressValue(round(100*(lobe_index - 1)/5));
                 
                 % Select the lobe and crop the image
-                lobes_copy = lobes.Copy;
+                lobes_copy = lobes.Copy();
                 lobes_copy.ChangeRawImage(lobes_copy.RawImage == lobe_colours(lobe_index));
-                lobes_copy.CropToFit;
+                lobes_copy.CropToFit();
                 
                 % Crop the density to the same size
-                density_average_copy = density_average.Copy;
+                density_average_copy = density_average.Copy();
                 density_average_copy.ResizeToMatch(lobes_copy);
-                lung_excluding_surface_copy = lung_excluding_surface.Copy;
+                lung_excluding_surface_copy = lung_excluding_surface.Copy();
                 lung_excluding_surface_copy.ResizeToMatch(lobes_copy);
-                density_average_valid_mask_copy = density_average_valid_mask.Copy;
+                density_average_valid_mask_copy = density_average_valid_mask.Copy();
                 density_average_valid_mask_copy.ResizeToMatch(lobes_copy);
 
                 % Resample lobes and density

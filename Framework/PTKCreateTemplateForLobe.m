@@ -8,5 +8,5 @@ function template = PTKCreateTemplateForLobe(lobe_mask, context, reporting)
     %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
     
-    template = lobe_mask.Copy;
+    template = lobe_mask.Copy();
 end

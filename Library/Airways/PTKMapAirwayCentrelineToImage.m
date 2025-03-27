@@ -22,7 +22,7 @@ function [airway_mapped_image, airway_tree_root] = PTKMapAirwayCentrelineToImage
     bronchus_index = uint16(1);
     
     
-    number_of_branches = airway_tree_root.CountBranches;
+    number_of_branches = airway_tree_root.CountBranches();
     
     parent_map = cell(number_of_branches, 1);
     child_map = cell(number_of_branches, 1);
@@ -30,7 +30,7 @@ function [airway_mapped_image, airway_tree_root] = PTKMapAirwayCentrelineToImage
     % Assign a label to each centreline bronchus, and mark the label
     % image with that index at each centreline voxel
     while ~centreline_bronchi_to_do.IsEmpty
-        next_centreline_bronchus = centreline_bronchi_to_do.Pop;
+        next_centreline_bronchus = centreline_bronchi_to_do.Pop();
         voxels = PTKTreeUtilities.GetCentrelineVoxelsForTheseBranches(next_centreline_bronchus, airway_image);
         airway_mapped_image_raw(voxels) = bronchus_index;
         next_centreline_bronchus.BronchusIndex = bronchus_index;

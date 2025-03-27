@@ -24,8 +24,8 @@ function filled_image = PTKFillHolesInImage(original_image)
     if ~isa(original_image, 'PTKImage')
         error('Requires a PTKImage as input');
     end
-    original_reduced = original_image.Copy;
-    original_reduced.CropToFit;
+    original_reduced = original_image.Copy();
+    original_reduced.CropToFit();
     filled_image = FillHolesInImage(original_reduced);
     filled_image.ResizeToMatch(original_image);
 end
@@ -39,7 +39,7 @@ function filled_image = FillHolesInImage(original_image)
         return;
     end
     labeled_components = labelmatrix(connected_components_structure);
-    edge_components = GetAllUnqiueValuesFromImageBoundaries(labeled_components);
+    edge_components = GetAllUniqueValuesFromImageBoundaries(labeled_components);
     for component_index = edge_components'
         labeled_components(labeled_components == component_index) = 0;
     end
@@ -50,7 +50,7 @@ function filled_image = FillHolesInImage(original_image)
     filled_image.ChangeRawImage(filled_image_raw);
 end
 
-function edge_components = GetAllUnqiueValuesFromImageBoundaries(labeled_components)
+function edge_components = GetAllUniqueValuesFromImageBoundaries(labeled_components)
       edge_components_1 = labeled_components([1, end], :, :); 
       edge_components_2 = labeled_components(:, [1, end], :); 
       edge_components_3 = labeled_components(:, :, [1, end]);

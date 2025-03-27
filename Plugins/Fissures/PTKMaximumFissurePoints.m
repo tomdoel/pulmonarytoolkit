@@ -64,7 +64,7 @@ classdef PTKMaximumFissurePoints < PTKPlugin
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage == 2));
             
             left_lung_roi = application.GetResult('PTKGetLeftLungROI');
-            fissure_approximation = fissure_approximation.Copy;
+            fissure_approximation = fissure_approximation.Copy();
             fissure_approximation.ResizeToMatch(left_lung_roi);
             lung_mask.ResizeToMatch(left_lung_roi);
             
@@ -81,7 +81,7 @@ classdef PTKMaximumFissurePoints < PTKPlugin
             lung_mask.ChangeRawImage(uint8(lung_mask.RawImage == 1));
             
             right_lung_roi = application.GetResult('PTKGetRightLungROI');
-            fissure_approximation = fissure_approximation.Copy;
+            fissure_approximation = fissure_approximation.Copy();
             fissure_approximation.ResizeToMatch(right_lung_roi);
             lung_mask.ResizeToMatch(right_lung_roi);
             

@@ -9,8 +9,8 @@ function viewer_handle = PTKVisualiseImageFusion(image_1, image_2)
     %    Distributed under the GNU GPL v3 licence. Please see website for details.
     %
 
-    image_1 = image_1.Copy;
-    image_2 = image_2.Copy;
+    image_1 = image_1.Copy();
+    image_2 = image_2.Copy();
     MimImageUtilities.MatchSizesAndOrigin(image_1, image_2);
     viewer_handle = PTKViewer(image_1);
     viewer_handle.ViewerPanelHandle.OverlayImage = image_2;

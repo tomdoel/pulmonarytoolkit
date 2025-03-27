@@ -169,7 +169,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
         segments_in_progress(end) = [];
         
         % Fetch the front of the wavefront for this segment
-        frontmost_points_global = current_segment.GetFrontmostWavefrontVoxels;
+        frontmost_points_global = current_segment.GetFrontmostWavefrontVoxels();
         
         % Find the neighbours of these points, which will form the next 
         % generation of points to add to the wavefront
@@ -187,7 +187,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
         if coronal_mode
             if isempty(indices_of_new_points_global)
                 % Fetch the front of the wavefront for this segment
-                frontmost_points_global = current_segment.GetWavefrontVoxels;
+                frontmost_points_global = current_segment.GetWavefrontVoxels();
                 indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global, linear_offsets_global);
                 indices_of_new_points_local = threshold_image_handle.GlobalToLocalIndices(indices_of_new_points_global);
                 
@@ -200,7 +200,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
                 indices_of_new_points_global = indices_of_new_points_global(in_threshold);
                 
                 if isempty(indices_of_new_points_global)
-                    frontmost_points_global = current_segment.CurrentBranch.GetAcceptedVoxels;
+                    frontmost_points_global = current_segment.CurrentBranch.GetAcceptedVoxels();
                     indices_of_new_points_global = GetNeighbouringPoints(frontmost_points_global, linear_offsets_global);
                     indices_of_new_points_local = threshold_image_handle.GlobalToLocalIndices(indices_of_new_points_global);
                     
@@ -219,7 +219,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
         % segment
         if isempty(indices_of_new_points_global)
             
-            current_segment.CompleteThisSegment;
+            current_segment.CompleteThisSegment();
 
             % If the segment is ending, then report progress
             last_progress_value = GuessSegmentsLeft(segments_in_progress, maximum_number_of_generations, last_progress_value, reporting);
@@ -229,7 +229,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
 
             if debug_mode
                 pause_skip = pause_skip + 1;
-                debug_image.SetIndexedVoxelsToThis(current_segment.GetWavefrontVoxels, 1);
+                debug_image.SetIndexedVoxelsToThis(current_segment.GetWavefrontVoxels(), 1);
             end
                         
             % Add points to the current segment and retrieve a list of segments
@@ -240,7 +240,7 @@ function first_segment = RegionGrowing(threshold_image_handle, start_point_globa
             if debug_mode
                 colour_index = 2;
                 for segment = next_segments
-                    wavefront_voxels = segment.GetWavefrontVoxels;
+                    wavefront_voxels = segment.GetWavefrontVoxels();
                     debug_image.SetIndexedVoxelsToThis(wavefront_voxels, colour_index);
                     colour_index = colour_index + 1;
                 end
@@ -298,7 +298,7 @@ function explosion_points = GetExplosionPoints(processed_segments)
     while ~isempty(segments_to_do)
         next_segment = segments_to_do(1);
         segments_to_do(1) = [];
-        explosion_points = cat(1, explosion_points, next_segment.GetRejectedVoxels);
+        explosion_points = cat(1, explosion_points, next_segment.GetRejectedVoxels());
         segments_to_do = [segments_to_do, next_segment.Children]; %#ok<AGROW>
     end
 end
@@ -349,8 +349,8 @@ function airway_tree = RemoveCompletelyExplodedSegments(airway_tree, reporting)
         segments_to_do(1) = [];
         
         % Remove segments which are explosions
-        if numel(next_segment.GetAcceptedVoxels) == 0
-            next_segment.CutFromTree;
+        if numel(next_segment.GetAcceptedVoxels()) == 0
+            next_segment.CutFromTree();
             if ~isempty(next_segment.Children)
                reporting.Error('PTKAirwayRegionGrowingWithExplosionControl:ExplodedSegmentWithChildren', 'Exploded segment has children - this should never happen, and indicates an program error.');
             end
@@ -360,7 +360,7 @@ function airway_tree = RemoveCompletelyExplodedSegments(airway_tree, reporting)
             % segment
             if (length(next_segment.Parent.Children) == 1)
                 remaining_child = next_segment.Parent.Children;
-                next_segment.Parent.MergeWithChild;
+                next_segment.Parent.MergeWithChild();
                 
                 % Need to be careful when merging a child branch with its
                 % parent - if the child branch is currently in the
@@ -387,7 +387,7 @@ function endpoints = FindEndpointsInAirwayTree(airway_tree, reporting)
         segments_to_do = [segments_to_do, segment.Children];
 
         if isempty(segment.Children)
-            final_voxels_in_segment = segment.GetEndpoints;
+            final_voxels_in_segment = segment.GetEndpoints();
             if isempty(final_voxels_in_segment)
                 reporting.Error('PTKAirwayRegionGrowingWithExplosionControl:NoAcceptedIndices', 'No accepted indices in this airway segment');
             end

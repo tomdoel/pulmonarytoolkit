@@ -73,7 +73,7 @@ classdef MimEditMode < handle
             obj.UnsavedChanges = false;
             
             if ~isempty(plugin_info)
-                obj.ImageBeforeEdit = obj.ViewerPanel.OverlayImage.Copy;
+                obj.ImageBeforeEdit = obj.ViewerPanel.OverlayImage.Copy();
                 
                 if strcmp(plugin_info.SubMode, MimSubModes.EditBoundariesEditing)
                     obj.ViewerPanel.SetModes(MimModes.EditMode, MimSubModes.EditBoundariesEditing);
@@ -91,7 +91,7 @@ classdef MimEditMode < handle
                     obj.ViewerPanel.SetModes(MimModes.EditMode, []);
                 end
             elseif ~isempty(obj.ManualSegmentationName)
-                 obj.ImageBeforeEdit = obj.ViewerPanel.OverlayImage.Copy;
+                 obj.ImageBeforeEdit = obj.ViewerPanel.OverlayImage.Copy();
                  obj.ViewerPanel.SetModes(MimModes.EditMode, MimSubModes.PaintEditing);
                  % Manual edit mode always defaults to paint over
                  % background
@@ -206,7 +206,7 @@ classdef MimEditMode < handle
         
         function ExportEdit(obj)
             obj.SaveEdit;
-            edited_result = obj.ViewerPanel.OverlayImage.Copy;
+            edited_result = obj.ViewerPanel.OverlayImage.Copy();
             patient_name = obj.ViewerPanel.BackgroundImage.Title;
             template = obj.GuiDataset.GetTemplateImage;
             edited_result.ResizeToMatch(template);
@@ -220,7 +220,7 @@ classdef MimEditMode < handle
         function ExportPatch(obj)
             if ~isempty(obj.PluginName)
                 obj.SaveEdit;
-                edited_result = obj.ViewerPanel.OverlayImage.Copy;
+                edited_result = obj.ViewerPanel.OverlayImage.Copy();
                 template = obj.GuiDataset.GetTemplateImage;
                 edited_result.ResizeToMatch(template);
                 path_name = obj.Settings.SaveImagePath;

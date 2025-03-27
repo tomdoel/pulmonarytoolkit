@@ -39,7 +39,7 @@ classdef PTKThresholdGasMRIAirways < PTKPlugin
             results_filtered = MimGaussianFilter(results, 2);
             results_filtered.ChangeRawImage(results_filtered.RawImage > 50);
             results.ChangeRawImage(results.RawImage > 100);
-            extended = results.Copy;
+            extended = results.Copy();
             extended_raw = extended.RawImage;
             extended_raw = imdilate(extended_raw, ones(3,1,1));
             extended.BinaryMorph(@imdilate, 15);

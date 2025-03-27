@@ -31,9 +31,9 @@ function results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lu
     results = PTKSeparateAndLabelLungs(unclosed_lungs, filtered_threshold_lung, lung_roi, trachea_top_local, reporting);
     
     reporting.UpdateProgressAndMessage(25, 'Closing right lung');
-    right_lung = results.Copy;
+    right_lung = results.Copy();
     right_lung.ChangeRawImage(right_lung.RawImage == 1);
-    right_lung.CropToFit;
+    right_lung.CropToFit();
     
     if PTKSoftwareInfo.FastMode
         close_size = 5;
@@ -56,9 +56,9 @@ function results = PTKGetLeftAndRightLungs(unclosed_lungs, filtered_threshold_lu
     end
     
     reporting.UpdateProgressAndMessage(50, 'Closing left lung');
-    left_lung = results.Copy;
+    left_lung = results.Copy();
     left_lung.ChangeRawImage(left_lung.RawImage == 2);
-    left_lung.CropToFit;
+    left_lung.CropToFit();
     
     % Perform morphological closing with a spherical structure element
     left_lung.MorphWithBorder(@imclose, close_size);

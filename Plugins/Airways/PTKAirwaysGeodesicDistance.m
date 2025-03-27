@@ -38,7 +38,7 @@ classdef PTKAirwaysGeodesicDistance < PTKPlugin
             start_point_global = airways.StartPoint;
             start_point_index_global = sub2ind(airways.ImageSize, start_point_global(1), start_point_global(2), start_point_global(3));
             start_point_index_local = airway_image.GlobalToLocalIndices(start_point_index_global);
-            seed_image = airway_image.Copy;
+            seed_image = airway_image.Copy();
             seed_image_raw = false(airway_image.ImageSize);
             seed_image_raw(start_point_index_local) = true;
             seed_image.ChangeRawImage(seed_image_raw);

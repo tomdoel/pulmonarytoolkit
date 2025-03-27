@@ -22,7 +22,7 @@ end
 function [results, airway_skeleton] = GetRadius(lung_image, airway_skeleton, radius_approximation, reporting, figure_airways_3d)
     results = {};
     
-    number_of_segments = airway_skeleton.CountBranches;
+    number_of_segments = airway_skeleton.CountBranches();
     segments_done = 0;
     
     lung_image_as_double = lung_image.BlankCopy();

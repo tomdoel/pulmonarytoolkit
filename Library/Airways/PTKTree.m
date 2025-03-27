@@ -51,6 +51,9 @@ classdef PTKTree < handle
             
             if ~isempty(obj.Parent)
                 obj.Parent.Children = [setdiff(obj.Parent.Children, obj), obj.Children];
+                for branch = obj.Children
+                    branch.Parent = obj.Parent;
+                end
             end
         end
 
@@ -118,7 +121,8 @@ classdef PTKTree < handle
         end
         
         function minimum_generation = GetMinimumTerminalGeneration(obj)
-            % Returns the number of branches in this tree, from this branch downwards
+            % Returns the generation number of the terminal branch which 
+            % is highest in the tree, from this branch downwards
 
             minimum_generation = 99;
             branches_to_do = obj;
@@ -169,7 +173,7 @@ classdef PTKTree < handle
 
             branches_list = obj;
             for child = obj.Children
-                branches_list = [branches_list child.GetBranchesAsListUsingRecursion];
+                branches_list = [branches_list child.GetBranchesAsListUsingRecursion()];
             end
         end
     end

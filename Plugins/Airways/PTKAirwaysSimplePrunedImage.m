@@ -81,7 +81,7 @@ classdef PTKAirwaysSimplePrunedImage < PTKPlugin
             while ~isempty(segments_to_do)
                 segment = segments_to_do(end);
                 segments_to_do(end) = [];
-                segmented_image(template.GlobalToLocalIndices(segment.GetAllAirwayPoints)) = segment.Colour;
+                segmented_image(template.GlobalToLocalIndices(segment.GetAllAirwayPoints())) = segment.Colour;
                 segments_to_do = [segments_to_do segment.Children];
             end
         end

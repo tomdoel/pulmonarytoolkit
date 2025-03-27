@@ -274,11 +274,11 @@ classdef PTKTreeUtilities < handle
             % remove each end branch from the tree
             bronchi_to_do = CoreStack(tree_root);
             while ~bronchi_to_do.IsEmpty
-                next_bronchus = bronchi_to_do.Pop;
+                next_bronchus = bronchi_to_do.Pop();
                 children = next_bronchus.Children;
                 
                 if isempty(children)
-                    next_bronchus.CutFromTree;
+                    next_bronchus.CutFromTree();
                 else
                     bronchi_to_do.Push(children);
                 end
@@ -291,14 +291,14 @@ classdef PTKTreeUtilities < handle
             
             bronchi_to_do = CoreStack(tree_root);
             while ~bronchi_to_do.IsEmpty
-                next_bronchus = bronchi_to_do.Pop;
+                next_bronchus = bronchi_to_do.Pop();
                 children = next_bronchus.Children;
                 
                 if isempty(children)
                     
                     branch_length = next_bronchus.LengthMm;
                     if branch_length < min_length
-                      next_bronchus.CutFromTree;
+                      next_bronchus.CutFromTree();
                       bronchi_to_do.Push(next_bronchus.Parent);
                     end
                 else
