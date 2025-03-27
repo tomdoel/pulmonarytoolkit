@@ -86,14 +86,9 @@ function match = CompareMainTags(this_metadata, other_metadata)
         return;
     end
     
-    if isfield(this_metadata, 'ImagePositionPatient') ~= isfield(other_metadata, 'ImagePositionPatient')
-        match = false;
-        return;
-    end
-    
     % If the positions match exactly, then these are should not be in the
     % same group - they may be duplicates, or different time points
-    if CompareFieldsInexactMatch('ImagePositionPatient', this_metadata, other_metadata, 0.0001)
+    if isfield(this_metadata, 'ImagePositionPatient') && isfield(other_metadata, 'ImagePositionPatient') && CompareFieldsInexactMatch('ImagePositionPatient', this_metadata, other_metadata, 0.0001)
         match = false;
         return;
     end
