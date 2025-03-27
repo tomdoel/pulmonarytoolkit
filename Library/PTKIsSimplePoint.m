@@ -87,7 +87,7 @@ global neighbours_26 neighbours_6 neighbours_logical_6 neighbours_logical_26
                         k_n = k+k_o;
                         
                         % Avoid connectivity to centre point
-                        if ((i_n ~= 0) || (j_n ~= 0) || (k_n ~= 0))
+                        if ((i_n ~= 2) || (j_n ~= 2) || (k_n ~= 2))
                         
                             % Work out 26-connectivity
                             if ((i_n>=1) && (i_n<=3) && (j_n>=1) && (j_n<=3) && (k_n>=1) && (k_n<=3))
