@@ -224,7 +224,7 @@ classdef PTKAirwayGrowingTree < PTKTreeModel
             % This method is identical to that in PTKTreeModel
             start_points = [obj.StartPoint];
             end_points = [obj.EndPoint];
-            coord_start = [[start_points.CoordX]; [end_points.CoordY]; [start_points.CoordZ]];
+            coord_start = [[start_points.CoordX]; [start_points.CoordY]; [start_points.CoordZ]];
             coord_end = [[end_points.CoordX]; [end_points.CoordY]; [end_points.CoordZ]];
             
             length_mm = sqrt(sum((coord_start - coord_end).^2, 1));
