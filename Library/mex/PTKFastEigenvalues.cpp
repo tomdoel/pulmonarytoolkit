@@ -6,7 +6,7 @@
 //     loop. Each input matrix must be symmetric and is represented by a single
 //     row of the input matrix as described below.
 //
-//     This is a Matlab MEX function and must be compled before use. To compile, type 
+//     This is a Matlab MEX function and must be compiled before use. To compile, type 
 //
 //         mex PTKFastEigenvalues
 //

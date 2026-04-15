@@ -4,7 +4,7 @@
 //
 //   See the Matlab functon PTKSmoothedRegionGrowing.m for how to use this function.
 //
-//     This is a Matlab MEX function and must be compled before use. To compile, type
+//     This is a Matlab MEX function and must be compiled before use. To compile, type
 //
 //         mex PTKSmoothedRegionGrowingFromBorderedImage
 //

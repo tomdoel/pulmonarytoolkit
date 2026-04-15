@@ -35,7 +35,7 @@ classdef MimClearOverlays < MimGuiPlugin
     
     methods (Static)
         function RunGuiPlugin(gui_app)
-            gui_app.DeleteOverlays;
+            gui_app.DeleteOverlays();
         end
         
         function enabled = IsEnabled(gui_app)

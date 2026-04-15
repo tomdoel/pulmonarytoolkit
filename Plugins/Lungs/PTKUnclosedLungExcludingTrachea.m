@@ -63,7 +63,7 @@ classdef PTKUnclosedLungExcludingTrachea < PTKPlugin
             else
                 airways_by_lobe = dataset.GetResult('PTKAirwaysLabelledByLobe');
                 start_branches = airways_by_lobe.StartBranches;
-                main_airways = PTKColourBranchesBelowLobe(start_branches, airway_tree.AirwayTree, threshold_image.BlankCopy);
+                main_airways = PTKColourBranchesBelowLobe(start_branches, airway_tree.AirwayTree, threshold_image.BlankCopy());
                 main_airways = (airway_image.RawImage == 1) & (main_airways == 0);
             end
             

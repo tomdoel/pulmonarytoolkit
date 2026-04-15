@@ -132,7 +132,7 @@ classdef PTKAirwaysLabelledByLobe < PTKPlugin
             airway_mapping = [];
             
             % Map the whole tree initially to 0 to take into account any
-            % parent parenches of the lobar bronchi
+            % parent branches of the lobar bronchi
             airway_mapping = PTKAirwaysLabelledByLobe.MapTheseBranchesToLabel(airway_mapping, start_branches.Trachea, 0);
 
             % Map the labels to the lobar colours

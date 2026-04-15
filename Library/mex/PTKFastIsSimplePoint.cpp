@@ -1,6 +1,6 @@
 // PTKFastIsSimplePoint. Function for determining if a point is topologically simple.
 //
-//     This is a Matlab MEX function and must be compled before use. To compile, type 
+//     This is a Matlab MEX function and must be compiled before use. To compile, type 
 //
 //         mex PTKFastIsSimplePoint
 //
